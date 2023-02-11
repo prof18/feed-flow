@@ -1,0 +1,15 @@
+CREATE TABLE feed_source (
+    url_hash INTEGER AS Int NOT NULL PRIMARY KEY,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    category_id INTEGER
+);
+
+
+insertFeedSource:
+INSERT OR IGNORE INTO feed_source(url_hash, url, title, category_id)
+VALUES (?,?,?,(SELECT id FROM feed_source_category WHERE title = ?));
+
+
+selectFeedUrls:
+SELECT url, url_hash, title FROM feed_source;

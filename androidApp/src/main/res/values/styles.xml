@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Allows us to override night specific attributes in the
+         values-night folder. -->
+    <style name="NightAdjusted.Theme.FeedFlow" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+    </style>
+
+    <!-- Allows us to override platform level specific attributes in their
+         respective values-vXX folder. -->
+    <style name="PlatformAdjusted.Theme.FeedFlow" parent="NightAdjusted.Theme.FeedFlow">
+        <item name="android:statusBarColor">@color/black30</item>
+    </style>
+
+    <!-- The final theme we use -->
+    <style name="Theme.FeedFlow" parent="PlatformAdjusted.Theme.FeedFlow" />
+
+</resources>

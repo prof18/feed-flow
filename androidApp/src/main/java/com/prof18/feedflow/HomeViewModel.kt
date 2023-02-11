@@ -1,10 +1,13 @@
 package com.prof18.feedflow
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -19,8 +22,8 @@ class HomeViewModel(
     val feedState = mutableFeedState.asStateFlow()
 
     // Error
-    private val mutableErrorState: MutableStateFlow<ErrorState?> = MutableStateFlow(null)
-    val errorState = mutableErrorState.asStateFlow()
+    private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
+    val errorState = mutableUIErrorState.asSharedFlow()
 
     private val updateReadStatusFlow = MutableSharedFlow<List<FeedItemId>>()
     private var lastUpdateIndex = 0
@@ -35,9 +38,35 @@ class HomeViewModel(
         viewModelScope.launch {
             feedRetrieverRepository.getFeeds()
                 .collect { feedItems ->
-                    Logger.d { "Got feeds on VM" }
                     mutableFeedState.update {
                         feedItems
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            feedRetrieverRepository.errorState
+                .collect { error ->
+                    when (error) {
+                        is FeedErrorState -> {
+                            mutableUIErrorState.emit(
+                                UIErrorState(
+                                    message = "Something is wrong with: ${error.failingSourceName} :("
+                                )
+                            )
+                        }
+
+                        NoFeedSourceError -> {
+                            mutableUIErrorState.emit(
+                                UIErrorState(
+                                    message = "There are no sources. Please add some source"
+                                )
+                            )
+                        }
+
+                        null -> {
+                            // Do nothing
+                        }
                     }
                 }
         }
@@ -54,22 +83,7 @@ class HomeViewModel(
     fun getNewFeeds() {
         lastUpdateIndex = 0
         viewModelScope.launch {
-            try {
-                feedRetrieverRepository.fetchFeeds()
-            } catch (e: NoFeedException) {
-                mutableErrorState.update {
-                    ErrorState(
-                        message = "There are no sources. Please add some source"
-                    )
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                mutableErrorState.update {
-                    ErrorState(
-                        message = "Something is wrong :("
-                    )
-                }
-            }
+            feedRetrieverRepository.fetchFeeds()
         }
     }
 
@@ -97,6 +111,4 @@ class HomeViewModel(
             updateReadStatusFlow.emit(urlToUpdates)
         }
     }
-
-    fun clearErrorState() = mutableErrorState.update { null }
 }

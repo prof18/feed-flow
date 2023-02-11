@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -61,7 +62,6 @@ internal fun HomeScreen(
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
-    val errorState by homeViewModel.errorState.collectAsStateWithLifecycle()
     val unReadCount = feedState.count { !it.isRead }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -70,15 +70,12 @@ internal fun HomeScreen(
         onRefresh = { homeViewModel.getNewFeeds() },
     )
 
-    if (errorState != null) {
-        LaunchedEffect(errorState) {
-            launch {
-                snackbarHostState.showSnackbar(
-                    errorState!!.message,
-                    duration = SnackbarDuration.Long,
-                )
-                homeViewModel.clearErrorState()
-            }
+    LaunchedEffect(Unit) {
+        homeViewModel.errorState.collect { errorState ->
+            snackbarHostState.showSnackbar(
+                errorState!!.message,
+                duration = SnackbarDuration.Short,
+            )
         }
     }
 
@@ -223,7 +220,6 @@ private fun FeedList(
             .collect { index ->
                 if (index != 0) {
                     updateReadStatus(index)
-                    Logger.d { "First visible item: $index" }
                 }
             }
     }

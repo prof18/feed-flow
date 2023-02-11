@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.UnknownServiceException
 import java.util.Date
 
 class FeedRetrieverRepository(
@@ -24,6 +23,10 @@ class FeedRetrieverRepository(
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> =
         MutableStateFlow(StartedFeedUpdateStatus)
     val updateState = updateMutableState.asStateFlow()
+
+    private val errorMutableState: MutableStateFlow<ErrorState?> =
+        MutableStateFlow(null)
+    val errorState = errorMutableState.asStateFlow()
 
     fun getFeeds(): Flow<List<FeedItem>> = databaseHelper.getFeedItems()
 
@@ -39,7 +42,9 @@ class FeedRetrieverRepository(
                     totalFeedCount = 0,
                 )
             )
-            throw NoFeedException()
+            errorMutableState.update {
+                NoFeedSourceError
+            }
         } else {
             databaseHelper.updateNewStatus()
             createFetchingPipeline(feedSourceUrls)
@@ -74,10 +79,15 @@ class FeedRetrieverRepository(
                                 feedSource = feedSource,
                             )
                             send(result)
-                        } catch (e: UnknownServiceException) {
-                            // TODO: send error as well as result
-                            // TODO: report error somewhere?
-                            Logger.e(e) { "Something went wrong, skipping: ${e.printStackTrace()}" }
+                        } catch (e: Exception) {
+                            Logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }
+                            e.printStackTrace()
+                            errorMutableState.update {
+                                FeedErrorState(
+                                    failingSourceName = feedSource.title
+                                )
+                            }
+                            updateRefreshCount()
                         }
                     }
                 }
@@ -91,25 +101,7 @@ class FeedRetrieverRepository(
                         "<- Got back ${rssChannelResult.rssChannel.title}"
                     }
 
-                    updateMutableState.update { oldUpdate ->
-                        val refreshedFeedCount = oldUpdate.refreshedFeedCount + 1
-                        val totalFeedCount = oldUpdate.totalFeedCount
-
-                        Logger.d {
-                            "Refreshed: $refreshedFeedCount. Total: $totalFeedCount"
-                        }
-                        if (refreshedFeedCount == totalFeedCount) {
-                            FinishedFeedUpdateStatus(
-                                refreshedFeedCount = refreshedFeedCount,
-                                totalFeedCount = totalFeedCount,
-                            )
-                        } else {
-                            InProgressFeedUpdateStatus(
-                                refreshedFeedCount = refreshedFeedCount,
-                                totalFeedCount = totalFeedCount,
-                            )
-                        }
-                    }
+                    updateRefreshCount()
 
                     val feedItems = rssChannelResult.rssChannel.getFeedItems(rssChannelResult.feedSource)
                     databaseHelper.insertFeedItems(feedItems)
@@ -117,6 +109,28 @@ class FeedRetrieverRepository(
             }
         }
 
+    }
+
+    private fun updateRefreshCount() {
+        updateMutableState.update { oldUpdate ->
+            val refreshedFeedCount = oldUpdate.refreshedFeedCount + 1
+            val totalFeedCount = oldUpdate.totalFeedCount
+
+            Logger.d {
+                "Refreshed: $refreshedFeedCount. Total: $totalFeedCount"
+            }
+            if (refreshedFeedCount == totalFeedCount) {
+                FinishedFeedUpdateStatus(
+                    refreshedFeedCount = refreshedFeedCount,
+                    totalFeedCount = totalFeedCount,
+                )
+            } else {
+                InProgressFeedUpdateStatus(
+                    refreshedFeedCount = refreshedFeedCount,
+                    totalFeedCount = totalFeedCount,
+                )
+            }
+        }
     }
 
     private fun Channel.getFeedItems(feedSource: FeedSource): List<FeedItem> =

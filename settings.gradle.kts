@@ -17,10 +17,10 @@ rootProject.name = "FeedFlow"
 include(":androidApp")
 include(":shared")
 
-includeBuild("../../Android/RSS-Parser") {
-    dependencySubstitution {
-        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))
-    }
-}
+//includeBuild("../../Android/RSS-Parser") {
+//    dependencySubstitution {
+//        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))
+//    }
+//}
 
 

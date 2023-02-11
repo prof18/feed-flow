@@ -1,5 +1,5 @@
 package com.prof18.feedflow
 
-data class ErrorState(
+data class UIErrorState(
     val message: String,
 )

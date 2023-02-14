@@ -1,9 +1,8 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 
-package com.prof18.feedflow
+package com.prof18.feedflow.home
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,20 +37,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import co.touchlab.kermit.Logger
+import com.prof18.feedflow.FFTopAppBar
+import com.prof18.feedflow.FeedItem
+import com.prof18.feedflow.FeedUpdateStatus
+import com.prof18.feedflow.home.components.FeedList
+import com.prof18.feedflow.home.components.NoFeedsView
+import com.prof18.feedflow.ui.theme.Spacing
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import java.time.format.TextStyle
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -136,10 +139,16 @@ private fun HomeScreenContent(
         ) {
 
             AnimatedVisibility(loadingState.isLoading()) {
-                val feedRefreshCounter =
-                    "${loadingState.refreshedFeedCount}/${loadingState.totalFeedCount}"
+                val feedRefreshCounter = """
+                    ${loadingState.refreshedFeedCount}/${loadingState.totalFeedCount}
+                """.trimIndent()
                 Text(
-                    text = "Loading feeds $feedRefreshCounter"
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Spacing.regular),
+                    text = "Loading feeds $feedRefreshCounter",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
 
@@ -166,61 +175,6 @@ private fun HomeScreenContent(
     }
 }
 
-@Composable
-private fun NoFeedsView(
-    modifier: Modifier,
-    onReloadClick: () -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("No feeds")
-        Button(
-            onClick = {
-                onReloadClick()
-            }
-        ) {
-            Text("Reload")
-        }
-    }
-}
 
-@OptIn(FlowPreview::class)
-@Composable
-private fun FeedList(
-    modifier: Modifier,
-    feedItems: List<FeedItem>,
-    updateReadStatus: (Int) -> Unit,
-) {
-    val listState = rememberLazyListState()
 
-    LazyColumn(
-        modifier = modifier,
-        state = listState,
-    ) {
-        items(feedItems) { item ->
-            Column {
-                Text(item.title)
-                if (item.isRead) {
-                    Text("READ")
-                } else {
-                    Text("UNREAD")
-                }
-            }
-        }
-    }
 
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemIndex }
-            .distinctUntilChanged()
-            .debounce(2000)
-            .collect { index ->
-                if (index != 0) {
-                    updateReadStatus(index)
-                }
-            }
-    }
-}

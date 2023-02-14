@@ -28,13 +28,14 @@ viewModel-compose = "2.5.1"
 lifecycle-runtime-compose = "2.6.0-alpha05"
 kotlinx-serialization = "1.4.0"
 native-coroutines = "0.13.1"
-androidx-compose-material3 = "1.1.0-alpha05"
+androidx-compose-material3 = "1.1.0-alpha06"
 androidx-compose-bom = "2023.01.00"
 org-robolectric = "4.9"
 sqlDelight = "1.5.5"
 rss-parser = "5.0.1"
 kotlinx-date-time = "0.4.0"
 accompanist = "0.28.0"
+jsoup = "1.15.3"
 
 
 [libraries]
@@ -90,7 +91,7 @@ squareup-sqldelight-sqlite-driver = { module = "com.squareup.sqldelight:sqlite-d
 com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref = "rss-parser" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
-
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup"  }
 
 [bundles]
 androidx-test = ["androidx-test-core", "androidx-test-ext-junit", "androidx-test-rules", "androidx-test-runner"]

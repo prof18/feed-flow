@@ -39,6 +39,7 @@ kotlin {
             dependencies {
                 implementation(libs.squareup.sqldelight.android.driver)
                 implementation(libs.com.prof18.rss.parser)
+                implementation(libs.jsoup)
             }
         }
         val androidTest by getting {

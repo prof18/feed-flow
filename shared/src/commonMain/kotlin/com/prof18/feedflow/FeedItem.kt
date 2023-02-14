@@ -10,5 +10,6 @@ data class FeedItem(
     val feedSource: FeedSource,
     val isRead: Boolean,
     val pubDateMillis: Long,
+    val dateString: String,
 )
 

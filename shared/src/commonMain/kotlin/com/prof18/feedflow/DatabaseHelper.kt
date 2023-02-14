@@ -2,6 +2,7 @@ package com.prof18.feedflow
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.db.SelectFeeds
 import com.squareup.sqldelight.Transacter
 import com.squareup.sqldelight.TransactionWithoutReturn
 import com.squareup.sqldelight.db.SqlDriver
@@ -32,36 +33,9 @@ class DatabaseHelper(
             }
 
 
-    fun getFeedItems(): Flow<List<FeedItem>> =
+    fun getFeedItems(): Flow<List<SelectFeeds>> =
         dbRef.feedItemQueries
-            .selectFeeds { url_hash: Int,
-                           url: String,
-                           title: String,
-                           subtitle: String?,
-                           content: String?,
-                           image_url: String?,
-                           pub_date: Long,
-                           is_read: Boolean,
-                           feed_source_title: String,
-                           feed_source_id: Int,
-                           feed_source_url: String ->
-
-                FeedItem(
-                    id = url_hash,
-                    url = url,
-                    title = title,
-                    subtitle = subtitle,
-                    content = content,
-                    imageUrl = image_url,
-                    feedSource = FeedSource(
-                        id = feed_source_id,
-                        url = feed_source_url,
-                        title = feed_source_title,
-                    ),
-                    isRead = is_read,
-                    pubDateMillis = pub_date,
-                )
-            }
+            .selectFeeds()
             .asFlow()
             .mapToList()
             .flowOn(backgroundDispatcher)

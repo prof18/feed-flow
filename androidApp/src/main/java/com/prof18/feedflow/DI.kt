@@ -1,5 +1,6 @@
 package com.prof18.feedflow
 
+import com.prof18.feedflow.home.HomeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

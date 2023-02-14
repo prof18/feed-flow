@@ -1,7 +1,14 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.FeedErrorState
+import com.prof18.feedflow.FeedItem
+import com.prof18.feedflow.FeedItemId
+import com.prof18.feedflow.FeedRetrieverRepository
+import com.prof18.feedflow.FeedUpdateStatus
+import com.prof18.feedflow.NoFeedSourceError
+import com.prof18.feedflow.UIErrorState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

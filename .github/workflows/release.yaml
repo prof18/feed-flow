@@ -27,7 +27,7 @@ jobs:
       - name: Configure Keystore
         run: |
           echo '${{ secrets.KEYSTORE_FILE }}' > release.keystore.asc
-          gpg -d --passphrase '${{ secrets.KEYSTORE_PASSPHRASE }}' --batch release.keystore.asc > android/release.keystore
+          gpg -d --passphrase '${{ secrets.KEYSTORE_PASSPHRASE }}' --batch release.keystore.asc > androidApp/release.keystore
           echo "storeFile=release.keystore" >> keystore.properties
           echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> keystore.properties
           echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> keystore.properties

@@ -10,9 +10,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 fun initKoinIos(): KoinApplication = initKoin(
-    module {
-
-    }
+    modules = listOf()
 )
 
 actual val platformModule: Module = module {

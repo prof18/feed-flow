@@ -85,7 +85,7 @@ sqldelight {
 }
 
 android {
-    namespace = "com.prof18.feedflow"
+    namespace = "com.prof18.feedflow.shared"
     compileSdk = 33
     defaultConfig {
         minSdk = 24

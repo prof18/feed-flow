@@ -36,7 +36,7 @@ rss-parser = "5.0.1"
 kotlinx-date-time = "0.4.0"
 accompanist = "0.28.0"
 jsoup = "1.15.3"
-
+triplet-play = "3.8.1"
 
 [libraries]
 androidx-activity-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -116,3 +116,4 @@ touchlab-kermit = { id = "co.touchlab.kermit", version.ref = "kermit" }
 versionsBenManes = { id = "com.github.ben-manes.versions", version.ref = "versions-ben-manes" }
 native-coroutines = { id = "com.rickclephas.kmp.nativecoroutines", version.ref = "native-coroutines" }
 sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }
+triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }

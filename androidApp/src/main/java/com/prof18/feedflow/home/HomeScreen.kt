@@ -3,8 +3,9 @@
 package com.prof18.feedflow.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,9 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -25,7 +23,6 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -37,24 +34,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.BrowserSelector
 import com.prof18.feedflow.FFTopAppBar
 import com.prof18.feedflow.FeedItem
 import com.prof18.feedflow.FeedUpdateStatus
 import com.prof18.feedflow.home.components.FeedList
 import com.prof18.feedflow.home.components.NoFeedsView
 import com.prof18.feedflow.ui.theme.Spacing
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import org.koin.androidx.compose.koinViewModel
-import java.time.format.TextStyle
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -72,6 +66,8 @@ internal fun HomeScreen(
         refreshing = loadingState.isLoading(),
         onRefresh = { homeViewModel.getNewFeeds() },
     )
+
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         homeViewModel.errorState.collect { errorState ->
@@ -114,6 +110,13 @@ internal fun HomeScreen(
             updateReadStatus = { lastVisibleIndex ->
                 homeViewModel.updateReadStatus(lastVisibleIndex)
             },
+            onFeedItemClicked = { url ->
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(url)
+                    setPackage(BrowserSelector.getBrowserPackageName(context, this))
+                }
+                context.startActivity(intent)
+            }
         )
     }
 }
@@ -126,6 +129,7 @@ private fun HomeScreenContent(
     pullRefreshState: PullRefreshState,
     onRefresh: () -> Unit = {},
     updateReadStatus: (Int) -> Unit,
+    onFeedItemClicked: (String) -> Unit,
 ) {
     if (!loadingState.isLoading() && feedState.isEmpty()) {
         NoFeedsView(
@@ -162,6 +166,9 @@ private fun HomeScreenContent(
                     feedItems = feedState,
                     updateReadStatus = { index ->
                         updateReadStatus(index)
+                    },
+                    onFeedItemClicked = { url ->
+                        onFeedItemClicked(url)
                     }
                 )
 

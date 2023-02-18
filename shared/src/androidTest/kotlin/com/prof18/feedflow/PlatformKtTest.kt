@@ -12,7 +12,8 @@ class PlatformKtTest {
         val dateString = "Wed, 15 May 2019 20:48:02 +0000"
 
         val millis = getDateMillisFromString(dateString)
-        assertEquals(1557960482000, millis)
+        println(millis)
+        assertEquals(1557953282000, millis)
     }
 
     @Test

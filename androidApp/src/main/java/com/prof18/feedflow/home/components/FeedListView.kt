@@ -2,6 +2,7 @@ package com.prof18.feedflow.home.components
 
 import FeedFlowTheme
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -51,6 +52,7 @@ internal fun FeedList(
     modifier: Modifier = Modifier,
     feedItems: List<FeedItem>,
     updateReadStatus: (Int) -> Unit,
+    onFeedItemClicked: (String) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
@@ -59,7 +61,10 @@ internal fun FeedList(
         state = listState,
     ) {
         items(feedItems) { item ->
-            FeedItemView(feedItem = item)
+            FeedItemView(
+                feedItem = item,
+                onFeedItemClicked,
+            )
         }
     }
 
@@ -76,9 +81,15 @@ internal fun FeedList(
 }
 
 @Composable
-private fun FeedItemView(feedItem: FeedItem) {
+private fun FeedItemView(
+    feedItem: FeedItem,
+    onFeedItemClicked: (String) -> Unit,
+) {
     Column(
         modifier = Modifier
+            .clickable {
+                onFeedItemClicked(feedItem.url)
+            }
             .padding(horizontal = Spacing.regular)
             .padding(vertical = Spacing.small)
     ) {
@@ -197,6 +208,7 @@ private fun FeedListPreview() {
             FeedList(
                 feedItems = feedItemsForPreview,
                 updateReadStatus = {},
+                onFeedItemClicked = {}
             )
         }
     }

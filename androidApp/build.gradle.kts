@@ -1,7 +1,17 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     kotlin("android")
+    alias(libs.plugins.triplet.play)
 }
+
+val local = Properties()
+val localProperties: File = rootProject.file("keystore.properties")
+if (localProperties.exists()) {
+    localProperties.inputStream().use { local.load(it) }
+}
+
 
 android {
     namespace = "com.prof18.feedflow"
@@ -10,8 +20,8 @@ android {
         applicationId = "com.prof18.feedflow"
         minSdk = 24
         targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = getVersionCode()
+        versionName = getVersionName()
     }
     buildFeatures {
         compose = true
@@ -24,9 +34,22 @@ android {
 //            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    signingConfigs {
+        create("release") {
+            keyAlias = local.getProperty("keyAlias")
+            keyPassword = local.getProperty("keyPassword")
+            storeFile = file(local.getProperty("storeFile") ?: "NOT_FOUND")
+            storePassword = local.getProperty("storePassword")
+        }
+    }
+
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
+
         }
     }
 }
@@ -42,4 +65,28 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
     implementation(libs.touchlab.kermit)
+}
+
+play {
+    // The play_config.json file will be provided on CI
+    serviceAccountCredentials.set(file("../play_config.json"))
+    track.set("alpha")
+}
+
+fun getVersionCode(): Int {
+    val outputStream = org.apache.commons.io.output.ByteArrayOutputStream()
+    project.exec {
+        commandLine = "git rev-list HEAD --first-parent --count".split(" ")
+        standardOutput = outputStream
+    }
+    return outputStream.toString().trim().toInt()
+}
+
+fun getVersionName(): String {
+    val outputStream = org.apache.commons.io.output.ByteArrayOutputStream()
+    project.exec {
+        commandLine = "git describe --tags --abbrev=0".split(" ")
+        standardOutput = outputStream
+    }
+    return outputStream.toString().trim()
 }

@@ -9,4 +9,4 @@ class IOSPlatform: Platform {
 actual fun getPlatform(): Platform = IOSPlatform()
 
 // TODO
-actual fun getDateMillisFromString(dateString: String): Long = -1
+actual fun getDateMillisFromString(dateString: String): Long? = null

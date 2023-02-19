@@ -8,15 +8,16 @@ CREATE TABLE feed_item (
     feed_source_id INTEGER AS Int NOT NULL,
     is_read INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_new INTEGER AS Boolean NOT NULL DEFAULT 1,
-    pub_date INTEGER NOT NULL
+    pub_date INTEGER NOT NULL,
+    comments_url TEXT
 );
 
 insertFeedItem:
-INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date)
-VALUES (?,?,?,?,?,?,?,?);
+INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date, comments_url)
+VALUES (?,?,?,?,?,?,?,?, ?);
 
 selectFeeds:
-SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, content, image_url, pub_date, is_read, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url FROM feed_item
+SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, content, image_url, pub_date, is_read, comments_url, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 WHERE is_new == 1

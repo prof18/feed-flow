@@ -3,9 +3,11 @@
 package com.prof18.feedflow.home
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +18,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -34,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,6 +53,7 @@ import com.prof18.feedflow.FeedUpdateStatus
 import com.prof18.feedflow.home.components.FeedList
 import com.prof18.feedflow.home.components.NoFeedsView
 import com.prof18.feedflow.ui.theme.Spacing
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -61,11 +67,13 @@ internal fun HomeScreen(
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
     val unReadCount = feedState.count { !it.isRead }
 
+    val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val pullRefreshState = rememberPullRefreshState(
         refreshing = loadingState.isLoading(),
         onRefresh = { homeViewModel.getNewFeeds() },
     )
+    val listState = rememberLazyListState()
 
     val context = LocalContext.current
 
@@ -90,7 +98,12 @@ internal fun HomeScreen(
                     }
                 },
                 actionIcon = Icons.Default.Settings,
-                modifier = Modifier,
+                modifier = Modifier
+                    .clickable {
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                    },
                 onActionClick = { onSettingsButtonClicked() }
             )
         },
@@ -104,18 +117,18 @@ internal fun HomeScreen(
             loadingState = loadingState,
             feedState = feedState,
             pullRefreshState = pullRefreshState,
+            listState = listState,
             onRefresh = {
                 homeViewModel.getNewFeeds()
             },
             updateReadStatus = { lastVisibleIndex ->
                 homeViewModel.updateReadStatus(lastVisibleIndex)
             },
-            onFeedItemClicked = { url ->
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(url)
-                    setPackage(BrowserSelector.getBrowserPackageName(context, this))
-                }
-                context.startActivity(intent)
+            onFeedItemClick = { url ->
+                openUrl(url, context)
+            },
+            onFeedItemLongClick = { url ->
+                openUrl(url, context)
             }
         )
     }
@@ -127,9 +140,11 @@ private fun HomeScreenContent(
     loadingState: FeedUpdateStatus,
     feedState: List<FeedItem>,
     pullRefreshState: PullRefreshState,
+    listState: LazyListState,
     onRefresh: () -> Unit = {},
     updateReadStatus: (Int) -> Unit,
-    onFeedItemClicked: (String) -> Unit,
+    onFeedItemClick: (String) -> Unit,
+    onFeedItemLongClick: (String) -> Unit,
 ) {
     if (!loadingState.isLoading() && feedState.isEmpty()) {
         NoFeedsView(
@@ -164,11 +179,15 @@ private fun HomeScreenContent(
                 FeedList(
                     modifier = Modifier,
                     feedItems = feedState,
+                    listState = listState,
                     updateReadStatus = { index ->
                         updateReadStatus(index)
                     },
-                    onFeedItemClicked = { url ->
-                        onFeedItemClicked(url)
+                    onFeedItemClick = { url ->
+                        onFeedItemClick(url)
+                    },
+                    onFeedItemLongClick = { url ->
+                        onFeedItemLongClick(url)
                     }
                 )
 
@@ -182,6 +201,10 @@ private fun HomeScreenContent(
     }
 }
 
-
-
-
+private fun openUrl(url: String, context: Context) {
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse(url)
+        setPackage(BrowserSelector.getBrowserPackageName(context, this))
+    }
+    context.startActivity(intent)
+}

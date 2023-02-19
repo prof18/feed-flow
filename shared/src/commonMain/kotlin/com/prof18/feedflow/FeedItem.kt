@@ -11,5 +11,6 @@ data class FeedItem(
     val isRead: Boolean,
     val pubDateMillis: Long,
     val dateString: String,
+    val commentsUrl: String?,
 )
 

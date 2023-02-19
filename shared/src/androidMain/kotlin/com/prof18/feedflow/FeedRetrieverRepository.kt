@@ -46,6 +46,7 @@ class FeedRetrieverRepository(
                 isRead = selectedFeed.is_read,
                 pubDateMillis = selectedFeed.pub_date,
                 dateString = formatDate(selectedFeed.pub_date),
+                commentsUrl = selectedFeed.comments_url,
             )
         }
     }
@@ -161,12 +162,12 @@ class FeedRetrieverRepository(
             val url = article.link
             val pubDate = article.pubDate
             val dateMillis = if (pubDate != null) {
-                getDateMillisFromString(pubDate)
+                getDateMillisFromString(pubDate) ?: Date().time
             } else {
                 Date().time
             }
 
-            if (title == null || url == null || dateMillis == null) {
+            if (title == null || url == null) {
                 Logger.d { "Skipping: $article" }
                 null
             } else {
@@ -183,6 +184,7 @@ class FeedRetrieverRepository(
                     isRead = false,
                     pubDateMillis = dateMillis,
                     dateString = formatDate(dateMillis),
+                    commentsUrl = article.commentsUrl,
                 )
             }
 

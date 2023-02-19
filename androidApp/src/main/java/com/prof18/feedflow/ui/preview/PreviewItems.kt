@@ -14,7 +14,8 @@ internal val feedItemsForPreview = listOf(
         feedSource = FeedSource(id = 1, url = "https://www.ilpost.it", title = "Il Post"),
         isRead = false,
         pubDateMillis = 1676107668000,
-        dateString = "16:22"
+        dateString = "16:22",
+        commentsUrl = null,
     ),
     FeedItem(
         id = 1,
@@ -27,6 +28,7 @@ internal val feedItemsForPreview = listOf(
         isRead = true,
         pubDateMillis = 1675890077000,
         dateString = "12/02 - 16:22",
+        commentsUrl = null,
     ),
     FeedItem(
         id = 2,
@@ -39,5 +41,6 @@ internal val feedItemsForPreview = listOf(
         isRead = false,
         pubDateMillis = 0,
         dateString = "12/12 - 9:22",
+        commentsUrl = null,
     ),
 )

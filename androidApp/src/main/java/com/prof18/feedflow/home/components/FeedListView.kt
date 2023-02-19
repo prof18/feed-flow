@@ -1,8 +1,10 @@
 package com.prof18.feedflow.home.components
 
 import FeedFlowTheme
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,11 +54,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 internal fun FeedList(
     modifier: Modifier = Modifier,
     feedItems: List<FeedItem>,
+    listState: LazyListState = rememberLazyListState(),
     updateReadStatus: (Int) -> Unit,
-    onFeedItemClicked: (String) -> Unit,
+    onFeedItemClick: (String) -> Unit,
+    onFeedItemLongClick: (String) -> Unit,
 ) {
-    val listState = rememberLazyListState()
-
     LazyColumn(
         modifier = modifier,
         state = listState,
@@ -63,7 +66,8 @@ internal fun FeedList(
         items(feedItems) { item ->
             FeedItemView(
                 feedItem = item,
-                onFeedItemClicked,
+                onFeedItemClick = onFeedItemClick,
+                onFeedItemLongClick = onFeedItemLongClick,
             )
         }
     }
@@ -80,16 +84,27 @@ internal fun FeedList(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FeedItemView(
     feedItem: FeedItem,
-    onFeedItemClicked: (String) -> Unit,
+    onFeedItemClick: (String) -> Unit,
+    onFeedItemLongClick: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier
-            .clickable {
-                onFeedItemClicked(feedItem.url)
-            }
+            .combinedClickable(
+                onClick = {
+                    onFeedItemClick(feedItem.url)
+                },
+                onLongClick = if (feedItem.commentsUrl != null) {
+                    {
+                        onFeedItemLongClick(feedItem.commentsUrl!!)
+                    }
+                } else {
+                    null
+                }
+            )
             .padding(horizontal = Spacing.regular)
             .padding(vertical = Spacing.small)
     ) {
@@ -208,7 +223,8 @@ private fun FeedListPreview() {
             FeedList(
                 feedItems = feedItemsForPreview,
                 updateReadStatus = {},
-                onFeedItemClicked = {}
+                onFeedItemClick = {},
+                onFeedItemLongClick = {},
             )
         }
     }

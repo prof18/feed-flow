@@ -75,6 +75,7 @@ class DatabaseHelper(
                         image_url = imageUrl,
                         feed_source_id = feedSource.id,
                         pub_date = pubDateMillis,
+                        comments_url = commentsUrl,
                     )
                 }
             }

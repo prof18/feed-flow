@@ -55,7 +55,7 @@ class FeedRetrieverRepository(
         databaseHelper.updateReadStatus(itemsToUpdates)
 
     suspend fun fetchFeeds() {
-        val feedSourceUrls = databaseHelper.getFeedSourceUrls()
+        val feedSourceUrls = databaseHelper.getFeedSources()
         if (feedSourceUrls.isEmpty()) {
             updateMutableState.emit(
                 FinishedFeedUpdateStatus(

@@ -12,4 +12,21 @@ class FeedManagerRepository(
         databaseHelper.insertCategories(categories)
         databaseHelper.insertFeedSource(feeds)
     }
+
+    suspend fun getFeeds(): List<FeedSource> {
+        return databaseHelper.getFeedSources()
+    }
+
+    // TODO: Add category
+    suspend fun addFeed(url: String, name: String) {
+        databaseHelper.insertFeedSource(
+            listOf(
+                ParsedFeedSource(
+                    url = url,
+                    title = name,
+                    category = null,
+                )
+            )
+        )
+    }
 }

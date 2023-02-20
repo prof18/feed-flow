@@ -8,6 +8,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
@@ -15,7 +16,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.prof18.feedflow.addtfeed.AddFeedScreen
+import com.prof18.feedflow.addtfeed.ImportFeedScreen
+import com.prof18.feedflow.feedlist.FeedListScreen
 import com.prof18.feedflow.home.HomeScreen
+import com.prof18.feedflow.settings.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,12 +52,31 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Home.name) {
                             HomeScreen(
                                 onSettingsButtonClicked = {
-                                    navController.navigate(Screen.ImportFeed.name)
+                                    navController.navigate(Screen.Settings.name)
                                 }
                             )
                         }
                         composable(Screen.ImportFeed.name) {
                             ImportFeedScreen()
+                        }
+
+                        composable(Screen.Settings.name) {
+                            SettingsScreen(
+                                onAddFeedClick = {
+                                    navController.navigate(Screen.AddFeed.name)
+                                },
+                                onFeedListClick = {
+                                    navController.navigate(Screen.FeedList.name)
+                                },
+                            )
+                        }
+
+                        composable(Screen.AddFeed.name) {
+                            AddFeedScreen()
+                        }
+
+                        composable(Screen.FeedList.name) {
+                            FeedListScreen()
                         }
                     }
                 }

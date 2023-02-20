@@ -129,7 +129,10 @@ internal fun HomeScreen(
             },
             onFeedItemLongClick = { url ->
                 openUrl(url, context)
-            }
+            },
+            onAddFeedClick = {
+                onSettingsButtonClicked()
+            },
         )
     }
 }
@@ -145,11 +148,14 @@ private fun HomeScreenContent(
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (String) -> Unit,
     onFeedItemLongClick: (String) -> Unit,
+    onAddFeedClick: () -> Unit,
 ) {
     if (!loadingState.isLoading() && feedState.isEmpty()) {
         NoFeedsView(
             modifier = Modifier.padding(paddingValues),
-            onReloadClick = { onRefresh() })
+            onReloadClick = { onRefresh() },
+            onAddFeedClick = { onAddFeedClick() }
+            )
     } else {
         Column(
             modifier = Modifier

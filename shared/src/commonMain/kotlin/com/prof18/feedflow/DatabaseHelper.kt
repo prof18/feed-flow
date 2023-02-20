@@ -20,7 +20,7 @@ class DatabaseHelper(
 ) {
     private val dbRef: FeedFlowDB = FeedFlowDB(sqlDriver)
 
-    fun getFeedSourceUrls(): List<FeedSource> =
+    suspend fun getFeedSources(): List<FeedSource> = withContext(backgroundDispatcher) {
         dbRef.feedSourceQueries
             .selectFeedUrls()
             .executeAsList()
@@ -31,6 +31,8 @@ class DatabaseHelper(
                     title = feedSource.title,
                 )
             }
+    }
+
 
 
     fun getFeedItems(): Flow<List<SelectFeeds>> =
@@ -51,13 +53,20 @@ class DatabaseHelper(
     suspend fun insertFeedSource(feedSource: List<ParsedFeedSource>) {
         dbRef.transactionWithContext(backgroundDispatcher) {
             feedSource.forEach { feedSource ->
-                dbRef.feedSourceQueries.insertFeedSource(
-                    url_hash = feedSource.hashCode(),
-                    url = feedSource.url,
-                    title = feedSource.title,
-                    title_ = feedSource.category ?: "", // todo: does it make sense?
-
-                )
+                if (feedSource.category != null) {
+                    dbRef.feedSourceQueries.insertFeedSource(
+                        url_hash = feedSource.hashCode(),
+                        url = feedSource.url,
+                        title = feedSource.title,
+                        title_ = feedSource.category,
+                    )
+                } else {
+                    dbRef.feedSourceQueries.insertFeedSourceWithNoCategory(
+                        url_hash = feedSource.hashCode(),
+                        url = feedSource.url,
+                        title = feedSource.title,
+                    )
+                }
             }
         }
     }

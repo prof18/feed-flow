@@ -1,4 +1,4 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.addtfeed
 
 import android.net.Uri
 import android.widget.Toast
@@ -15,13 +15,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.prof18.feedflow.settings.SettingsViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ImportFeedScreen() {
 
-    val viewModel = koinViewModel<ImportFeedViewModel>()
+    val viewModel = koinViewModel<SettingsViewModel>()
 
     val context = LocalContext.current
     val openFileURI = remember { mutableStateOf<Uri?>(null) }

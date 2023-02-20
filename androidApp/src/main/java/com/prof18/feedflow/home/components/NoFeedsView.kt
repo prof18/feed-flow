@@ -16,6 +16,7 @@ import com.prof18.feedflow.ui.preview.FeedFlowPreview
 internal fun NoFeedsView(
     modifier: Modifier = Modifier,
     onReloadClick: () -> Unit,
+    onAddFeedClick: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -23,7 +24,14 @@ internal fun NoFeedsView(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("No feeds")
+        Text("No feeds found. Please add a new feed")
+        Button(
+            onClick = {
+                onAddFeedClick()
+            }
+        ) {
+            Text("Add feed")
+        }
         Button(
             onClick = {
                 onReloadClick()
@@ -39,7 +47,7 @@ internal fun NoFeedsView(
 fun NoFeedsViewPreview() {
     FeedFlowTheme {
         Surface {
-            NoFeedsView(onReloadClick = {})
+            NoFeedsView(onReloadClick = {}, onAddFeedClick = {})
         }
     }
 }

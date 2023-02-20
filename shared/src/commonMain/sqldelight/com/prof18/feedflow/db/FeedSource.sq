@@ -10,6 +10,10 @@ insertFeedSource:
 INSERT OR IGNORE INTO feed_source(url_hash, url, title, category_id)
 VALUES (?,?,?,(SELECT id FROM feed_source_category WHERE title = ?));
 
+insertFeedSourceWithNoCategory:
+INSERT OR IGNORE INTO feed_source(url_hash, url, title)
+VALUES (?,?,?);
 
 selectFeedUrls:
-SELECT url, url_hash, title FROM feed_source;
+SELECT url, url_hash, title FROM feed_source
+ORDER BY title COLLATE NOCASE ASC;

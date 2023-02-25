@@ -44,7 +44,7 @@ class AddFeedViewModel(
             isAddDoneMutableState.update { true }
             feedUrlMutableState.value = TextFieldValue()
             feedNameMutableState.value = TextFieldValue()
-            feedRetrieverRepository.fetchFeeds()
+            feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
         }
     }
 

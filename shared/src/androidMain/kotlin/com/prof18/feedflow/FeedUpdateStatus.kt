@@ -1,11 +1,17 @@
 package com.prof18.feedflow
 
+import co.touchlab.kermit.Logger
+
 sealed interface FeedUpdateStatus {
     val refreshedFeedCount: Int
     val totalFeedCount: Int
 
-    fun isLoading(): Boolean =
-        this is StartedFeedUpdateStatus || this is InProgressFeedUpdateStatus
+    fun isLoading(): Boolean {
+        val isLoading =  this is StartedFeedUpdateStatus || this is InProgressFeedUpdateStatus
+        Logger.d { ">>>> $this" }
+        Logger.d { ">>>> IsLoading? $isLoading" }
+        return isLoading
+    }
 }
 
 object NoFeedSourcesStatus: FeedUpdateStatus {

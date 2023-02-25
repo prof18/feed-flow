@@ -24,8 +24,11 @@ class FeedRetrieverRepository(
     private val dispatcherProvider: DispatcherProvider,
 ) {
 
-    private val updateMutableState: MutableStateFlow<FeedUpdateStatus> =
-        MutableStateFlow(StartedFeedUpdateStatus)
+    private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
+        FinishedFeedUpdateStatus(
+            refreshedFeedCount = 0, totalFeedCount = 0,
+        ),
+    )
     val updateState = updateMutableState.asStateFlow()
 
     private val errorMutableState: MutableStateFlow<ErrorState?> =
@@ -57,21 +60,25 @@ class FeedRetrieverRepository(
     suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
         databaseHelper.updateReadStatus(itemsToUpdates)
 
-    suspend fun fetchFeeds() {
+    suspend fun fetchFeeds(updateLoadingInfo: Boolean = true) {
+        Logger.d { ">>> UpdateLoanding info? $updateLoadingInfo" }
+        if (updateLoadingInfo) {
+            updateMutableState.update { StartedFeedUpdateStatus }
+        } else {
+            updateMutableState.update {
+                FinishedFeedUpdateStatus(
+                    refreshedFeedCount = 0, totalFeedCount = 0,
+                )
+            }
+        }
         val feedSourceUrls = databaseHelper.getFeedSources()
         if (feedSourceUrls.isEmpty()) {
-            updateMutableState.emit(
-                FinishedFeedUpdateStatus(
-                    refreshedFeedCount = 0,
-                    totalFeedCount = 0,
-                )
-            )
             updateMutableState.update {
                 NoFeedSourcesStatus
             }
         } else {
             databaseHelper.updateNewStatus()
-            createFetchingPipeline(feedSourceUrls)
+            createFetchingPipeline(feedSourceUrls, updateLoadingInfo)
         }
     }
 
@@ -87,21 +94,29 @@ class FeedRetrieverRepository(
         databaseHelper.deleteOldFeedItems(threshold)
     }
 
-    private fun CoroutineScope.produceFeedSources(feedSourceUrls: List<FeedSource>) = produce {
-        updateMutableState.emit(
-            InProgressFeedUpdateStatus(
-                refreshedFeedCount = 0,
-                totalFeedCount = feedSourceUrls.size,
+    private fun CoroutineScope.produceFeedSources(
+        feedSourceUrls: List<FeedSource>,
+        updateLoadingInfo: Boolean,
+    ) = produce {
+        if (updateLoadingInfo) {
+            updateMutableState.emit(
+                InProgressFeedUpdateStatus(
+                    refreshedFeedCount = 0,
+                    totalFeedCount = feedSourceUrls.size,
+                )
             )
-        )
+        }
         Logger.d { "Feed Size: ${feedSourceUrls.size}" }
         for (feedSource in feedSourceUrls) {
             send(feedSource)
         }
     }
 
-    private suspend fun createFetchingPipeline(feedSourceUrls: List<FeedSource>) = coroutineScope {
-        val feedSourcesChannel = produceFeedSources(feedSourceUrls)
+    private suspend fun createFetchingPipeline(
+        feedSourceUrls: List<FeedSource>,
+        updateLoadingInfo: Boolean,
+    ) = coroutineScope {
+        val feedSourcesChannel = produceFeedSources(feedSourceUrls, updateLoadingInfo)
 
         val feedToSaveChannel = produce(capacity = UNLIMITED) {
             repeat(NUMBER_OF_CONCURRENT_PARSING_REQUESTS) {
@@ -123,7 +138,10 @@ class FeedRetrieverRepository(
                                     failingSourceName = feedSource.title
                                 )
                             }
-                            updateRefreshCount()
+
+                            if (updateLoadingInfo) {
+                                updateRefreshCount()
+                            }
                         }
                     }
                 }
@@ -137,7 +155,9 @@ class FeedRetrieverRepository(
                         "<- Got back ${rssChannelResult.rssChannel.title}"
                     }
 
-                    updateRefreshCount()
+                    if (updateLoadingInfo) {
+                        updateRefreshCount()
+                    }
 
                     val feedItems = rssChannelResult.rssChannel.getFeedItems(
                         feedSource = rssChannelResult.feedSource

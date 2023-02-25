@@ -29,7 +29,7 @@ class SettingsViewModel(
             // todo: add a try/catch?
             feedManagerRepository.addFeedsFromFile(feed)
             isImportDoneMutableState.update { true }
-            feedRetrieverRepository.fetchFeeds()
+            feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
         }
     }
 

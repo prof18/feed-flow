@@ -66,8 +66,8 @@ class FeedRetrieverRepository(
                     totalFeedCount = 0,
                 )
             )
-            errorMutableState.update {
-                NoFeedSourceError
+            updateMutableState.update {
+                NoFeedSourcesStatus
             }
         } else {
             databaseHelper.updateNewStatus()

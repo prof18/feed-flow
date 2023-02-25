@@ -5,7 +5,12 @@ sealed interface FeedUpdateStatus {
     val totalFeedCount: Int
 
     fun isLoading(): Boolean =
-        this !is FinishedFeedUpdateStatus
+        this is StartedFeedUpdateStatus || this is InProgressFeedUpdateStatus
+}
+
+object NoFeedSourcesStatus: FeedUpdateStatus {
+    override val refreshedFeedCount: Int = 0
+    override val totalFeedCount: Int = 0
 }
 
 object StartedFeedUpdateStatus : FeedUpdateStatus {

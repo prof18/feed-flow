@@ -58,8 +58,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserSelector
 import com.prof18.feedflow.FeedItem
 import com.prof18.feedflow.FeedUpdateStatus
+import com.prof18.feedflow.NoFeedSourcesStatus
+import com.prof18.feedflow.home.components.EmptyFeedView
 import com.prof18.feedflow.home.components.FeedList
-import com.prof18.feedflow.home.components.NoFeedsView
+import com.prof18.feedflow.home.components.NoFeedsSourceView
 import com.prof18.feedflow.ui.theme.Spacing
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -75,7 +77,6 @@ internal fun HomeScreen(
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
     val unReadCount = feedState.count { !it.isRead }
 
-    val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val pullRefreshState = rememberPullRefreshState(
         refreshing = loadingState.isLoading(),
@@ -93,70 +94,16 @@ internal fun HomeScreen(
         }
     }
 
-    var showMenu by remember { mutableStateOf(false) }
-
     // TODO: Check localisation
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Row {
-                        Text("FeedFlow")
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("(${unReadCount})")
-                    }
+            HomeAppBar(
+                unReadCount = unReadCount,
+                listState = listState,
+                onSettingsButtonClicked = onSettingsButtonClicked,
+                onMarkAllReadClicked = {
+                    homeViewModel.markAllRead()
                 },
-                actions = {
-                    IconButton(onClick = { showMenu = !showMenu }) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = null,
-                        )
-                    }
-
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
-                        DropdownMenuItem(
-                            onClick = {
-                                homeViewModel.markAllRead()
-                                showMenu = false
-                            },
-                            text = {
-                                Text("Mark all read")
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.DoneAll,
-                                    contentDescription = null,
-                                )
-                            },
-                        )
-
-                        DropdownMenuItem(
-                            onClick = {
-                                onSettingsButtonClicked()
-                            },
-                            text = {
-                                Text("Settings")
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = null,
-                                )
-                            },
-                        )
-                    }
-
-                },
-                modifier = Modifier
-                    .clickable {
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(0)
-                        }
-                    },
             )
         },
         containerColor = Color.Transparent,
@@ -189,6 +136,7 @@ internal fun HomeScreen(
     }
 }
 
+
 @Composable
 private fun HomeScreenContent(
     paddingValues: PaddingValues,
@@ -202,61 +150,141 @@ private fun HomeScreenContent(
     onFeedItemLongClick: (String) -> Unit,
     onAddFeedClick: () -> Unit,
 ) {
-    if (!loadingState.isLoading() && feedState.isEmpty()) {
-        NoFeedsView(
-            modifier = Modifier.padding(paddingValues),
-            onReloadClick = { onRefresh() },
-            onAddFeedClick = { onAddFeedClick() }
-        )
-    } else {
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
+    when {
+        loadingState is NoFeedSourcesStatus -> {
+            NoFeedsSourceView(
+                modifier = Modifier.padding(paddingValues),
+                onAddFeedClick = { onAddFeedClick() },
+            )
+        }
+        !loadingState.isLoading() && feedState.isEmpty() -> {
+            EmptyFeedView(
+                modifier = Modifier.padding(paddingValues),
+                onReloadClick = { onRefresh() }
+            )
+        }
+        else -> {
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
 
-            AnimatedVisibility(loadingState.isLoading()) {
-                val feedRefreshCounter = """
+                AnimatedVisibility(loadingState.isLoading()) {
+                    val feedRefreshCounter = """
                     ${loadingState.refreshedFeedCount}/${loadingState.totalFeedCount}
                 """.trimIndent()
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = Spacing.regular),
-                    text = "Loading feeds $feedRefreshCounter",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Spacing.regular),
+                        text = "Loading feeds $feedRefreshCounter",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
 
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .pullRefresh(pullRefreshState)
-            ) {
-                FeedList(
-                    modifier = Modifier,
-                    feedItems = feedState,
-                    listState = listState,
-                    updateReadStatus = { index ->
-                        updateReadStatus(index)
-                    },
-                    onFeedItemClick = { url ->
-                        onFeedItemClick(url)
-                    },
-                    onFeedItemLongClick = { url ->
-                        onFeedItemLongClick(url)
-                    }
-                )
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .pullRefresh(pullRefreshState)
+                ) {
+                    FeedList(
+                        modifier = Modifier,
+                        feedItems = feedState,
+                        listState = listState,
+                        updateReadStatus = { index ->
+                            updateReadStatus(index)
+                        },
+                        onFeedItemClick = { url ->
+                            onFeedItemClick(url)
+                        },
+                        onFeedItemLongClick = { url ->
+                            onFeedItemLongClick(url)
+                        }
+                    )
 
-                PullRefreshIndicator(
-                    loadingState.isLoading(),
-                    pullRefreshState,
-                    Modifier.align(Alignment.TopCenter)
-                )
+                    PullRefreshIndicator(
+                        loadingState.isLoading(),
+                        pullRefreshState,
+                        Modifier.align(Alignment.TopCenter)
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+private fun HomeAppBar(
+    unReadCount: Int,
+    listState: LazyListState,
+    onMarkAllReadClicked: () -> Unit,
+    onSettingsButtonClicked: () -> Unit,
+) {
+    var showMenu by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    TopAppBar(
+        title = {
+            Row {
+                Text("FeedFlow")
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("(${unReadCount})")
+            }
+        },
+        actions = {
+            IconButton(onClick = { showMenu = !showMenu }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = null,
+                )
+            }
+
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false }
+            ) {
+                DropdownMenuItem(
+                    onClick = {
+                        onMarkAllReadClicked()
+                        showMenu = false
+                    },
+                    text = {
+                        Text("Mark all read")
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.DoneAll,
+                            contentDescription = null,
+                        )
+                    },
+                )
+
+                DropdownMenuItem(
+                    onClick = {
+                        onSettingsButtonClicked()
+                    },
+                    text = {
+                        Text("Settings")
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = null,
+                        )
+                    },
+                )
+            }
+
+        },
+        modifier = Modifier
+            .clickable {
+                scope.launch {
+                    listState.animateScrollToItem(0)
+                }
+            },
+    )
 }
 
 private fun openUrl(url: String, context: Context) {

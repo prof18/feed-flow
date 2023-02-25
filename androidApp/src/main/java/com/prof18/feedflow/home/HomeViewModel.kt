@@ -8,7 +8,6 @@ import com.prof18.feedflow.FeedItem
 import com.prof18.feedflow.FeedItemId
 import com.prof18.feedflow.FeedRetrieverRepository
 import com.prof18.feedflow.FeedUpdateStatus
-import com.prof18.feedflow.NoFeedSourceError
 import com.prof18.feedflow.UIErrorState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,13 +61,9 @@ class HomeViewModel(
                             )
                         }
 
-                        NoFeedSourceError -> {
-                            mutableUIErrorState.emit(
-                                UIErrorState(
-                                    message = "There are no sources. Please add some source"
-                                )
-                            )
-                        }
+//                        NoFeedSourceError -> {
+////                            loadingState.value =
+//                        }
 
                         null -> {
                             // Do nothing

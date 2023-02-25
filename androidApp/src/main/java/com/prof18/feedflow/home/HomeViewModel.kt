@@ -2,6 +2,7 @@ package com.prof18.feedflow.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.FeedErrorState
 import com.prof18.feedflow.FeedItem
 import com.prof18.feedflow.FeedItemId
@@ -32,12 +33,10 @@ class HomeViewModel(
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
     val errorState = mutableUIErrorState.asSharedFlow()
 
-    private val updateReadStatusFlow = MutableSharedFlow<List<FeedItemId>>()
     private var lastUpdateIndex = 0
 
     init {
         observeFeeds()
-        observeReadStatusFlow()
         getNewFeeds()
     }
 
@@ -79,14 +78,6 @@ class HomeViewModel(
         }
     }
 
-    private fun observeReadStatusFlow() {
-        viewModelScope.launch {
-            updateReadStatusFlow.collect { itemUrls ->
-                feedRetrieverRepository.updateReadStatus(itemUrls)
-            }
-        }
-    }
-
     fun getNewFeeds() {
         lastUpdateIndex = 0
         viewModelScope.launch {
@@ -96,26 +87,35 @@ class HomeViewModel(
 
     fun updateReadStatus(lastVisibleIndex: Int) {
         val urlToUpdates = mutableListOf<FeedItemId>()
-        mutableFeedState.update { feedState ->
-            val items = feedState.toMutableList()
-            for (index in lastUpdateIndex..lastVisibleIndex) {
-                val item = items[index]
-                if (!item.isRead) {
-                    urlToUpdates.add(
-                        FeedItemId(
-                            id = item.id,
-                        )
-                    )
-                }
-                items[index] = items[index].copy(isRead = true)
-            }
 
-            items
+        val items = feedState.value.toMutableList()
+        Logger.d { "Last visibile: $lastVisibleIndex. Last update: $lastUpdateIndex" }
+        if (lastVisibleIndex < lastUpdateIndex) {
+            Logger.d { "Not Updating anything" }
+            return
+        }
+        for (index in lastUpdateIndex..lastVisibleIndex) {
+            Logger.d { "Update stuff" }
+            val item = items[index]
+            if (!item.isRead) {
+                urlToUpdates.add(
+                    FeedItemId(
+                        id = item.id,
+                    )
+                )
+            }
         }
 
         lastUpdateIndex = lastVisibleIndex
         viewModelScope.launch {
-            updateReadStatusFlow.emit(urlToUpdates)
+            feedRetrieverRepository.updateReadStatus(urlToUpdates)
+        }
+    }
+
+    fun markAllRead() {
+        viewModelScope.launch {
+            feedRetrieverRepository.markAllFeedAsRead()
+            feedRetrieverRepository.fetchFeeds()
         }
     }
 }

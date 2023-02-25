@@ -10,6 +10,7 @@ import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
@@ -33,13 +34,16 @@ class DatabaseHelper(
             }
     }
 
-
-
     fun getFeedItems(): Flow<List<SelectFeeds>> =
         dbRef.feedItemQueries
             .selectFeeds()
             .asFlow()
             .mapToList()
+                // TODO: add catch again
+//            .catch {
+//                Logger.e(it) { "Something wrong while getting data from Database" }
+//               emit(listOf())
+//            }
             .flowOn(backgroundDispatcher)
 
 
@@ -94,7 +98,7 @@ class DatabaseHelper(
         dbRef.transactionWithContext(backgroundDispatcher) {
             for (item in itemsToUpdates) {
                 Logger.d {
-                    "Updating: ${item.id}"
+                    "Updating read status for: ${item.id}"
                 }
                 dbRef.feedItemQueries.updateReadStatus(item.id)
             }
@@ -104,6 +108,11 @@ class DatabaseHelper(
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedItemQueries.updateNewStatus()
             Logger.d { "Update new status" }
+        }
+
+    suspend fun markAllFeedAsRead() =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.markAllRead()
         }
 
     private suspend fun Transacter.transactionWithContext(

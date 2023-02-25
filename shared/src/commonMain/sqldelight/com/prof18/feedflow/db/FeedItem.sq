@@ -32,3 +32,8 @@ updateNewStatus:
 UPDATE feed_item
 SET is_new = 0
 WHERE is_read = 1;
+
+markAllRead:
+UPDATE feed_item
+SET is_read = 1
+WHERE is_read = 0;

@@ -3,7 +3,6 @@ package com.prof18.feedflow.home.components
 import FeedFlowTheme
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,7 +62,10 @@ internal fun FeedList(
         modifier = modifier,
         state = listState,
     ) {
-        items(feedItems) { item ->
+        items(
+            items = feedItems,
+            key = { it.id },
+        ) { item ->
             FeedItemView(
                 feedItem = item,
                 onFeedItemClick = onFeedItemClick,
@@ -77,8 +79,8 @@ internal fun FeedList(
             .distinctUntilChanged()
             .debounce(2000)
             .collect { index ->
-                if (index != 0) {
-                    updateReadStatus(index)
+                if (index > 1) {
+                    updateReadStatus(index - 1)
                 }
             }
     }

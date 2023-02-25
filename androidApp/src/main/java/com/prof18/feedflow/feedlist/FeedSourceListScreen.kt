@@ -51,7 +51,8 @@ fun FeedListScreen() {
                     .padding(paddingValues),
                 contentPadding = PaddingValues(Spacing.regular),
             ) {
-                items(feeds) { feedSource ->
+                items(
+                    items = feeds) { feedSource ->
                     Text(
                         modifier = Modifier
                             .padding(top = Spacing.small),

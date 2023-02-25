@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.prof.rssparser.Channel
 import com.prof.rssparser.Parser
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.coroutineScope
@@ -14,7 +15,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
+import kotlin.random.Random
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FeedRetrieverRepository(
     private val parser: Parser,
     private val databaseHelper: DatabaseHelper,
@@ -72,6 +75,10 @@ class FeedRetrieverRepository(
         }
     }
 
+    suspend fun markAllFeedAsRead() {
+        databaseHelper.markAllFeedAsRead()
+    }
+
     private fun CoroutineScope.produceFeedSources(feedSourceUrls: List<FeedSource>) = produce {
         updateMutableState.emit(
             InProgressFeedUpdateStatus(
@@ -124,8 +131,9 @@ class FeedRetrieverRepository(
 
                     updateRefreshCount()
 
-                    val feedItems =
-                        rssChannelResult.rssChannel.getFeedItems(rssChannelResult.feedSource)
+                    val feedItems = rssChannelResult.rssChannel.getFeedItems(
+                        feedSource = rssChannelResult.feedSource
+                    )
                     databaseHelper.insertFeedItems(feedItems)
                 }
             }
@@ -161,10 +169,14 @@ class FeedRetrieverRepository(
             val title = article.title
             val url = article.link
             val pubDate = article.pubDate
+
+            val randomTimeToSubtract = Random.nextLong(1800000L, 10800000L)
+            val defaultDate = Date().time - randomTimeToSubtract
             val dateMillis = if (pubDate != null) {
-                getDateMillisFromString(pubDate) ?: Date().time
+                getDateMillisFromString(pubDate) ?: defaultDate
             } else {
-                Date().time
+                // Between 30 minutes and 3 hours ago
+                defaultDate
             }
 
             if (title == null || url == null) {

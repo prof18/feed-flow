@@ -1,9 +1,18 @@
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import com.prof18.feedflow.ui.theme.*
+import com.prof18.feedflow.ui.theme.Pink40
+import com.prof18.feedflow.ui.theme.Pink80
+import com.prof18.feedflow.ui.theme.Purple40
+import com.prof18.feedflow.ui.theme.Purple80
+import com.prof18.feedflow.ui.theme.PurpleGrey40
+import com.prof18.feedflow.ui.theme.PurpleGrey80
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,

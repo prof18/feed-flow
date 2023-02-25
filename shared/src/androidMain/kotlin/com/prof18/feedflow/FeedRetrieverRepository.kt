@@ -79,6 +79,14 @@ class FeedRetrieverRepository(
         databaseHelper.markAllFeedAsRead()
     }
 
+    suspend fun deleteOldFeeds() {
+        // One week
+        // (((1 hour in seconds) * 24 hours) * 7 days)
+        val oneWeekInMillis = (((60 * 60) * 24) * 7) * 1000L
+        val threshold = Date().time - oneWeekInMillis
+        databaseHelper.deleteOldFeedItems(threshold)
+    }
+
     private fun CoroutineScope.produceFeedSources(feedSourceUrls: List<FeedSource>) = produce {
         updateMutableState.emit(
             InProgressFeedUpdateStatus(
@@ -202,10 +210,8 @@ class FeedRetrieverRepository(
 
         }
 
-
     private companion object {
         const val NUMBER_OF_CONCURRENT_PARSING_REQUESTS = 20
         const val NUMBER_OF_CONCURRENT_FEED_SAVER = 20
     }
-
 }

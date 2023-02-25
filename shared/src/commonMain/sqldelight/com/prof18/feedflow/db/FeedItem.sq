@@ -37,3 +37,7 @@ markAllRead:
 UPDATE feed_item
 SET is_read = 1
 WHERE is_read = 0;
+
+clear:
+DELETE FROM feed_item
+WHERE is_read = 1 AND pub_date < :threshold;

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.FeedManagerRepository
 import com.prof18.feedflow.FeedRetrieverRepository
 import com.prof18.feedflow.OPMLImporter
+import com.prof18.feedflow.workmanager.WorkManagerHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -15,6 +16,7 @@ class SettingsViewModel(
     private val feedManagerRepository: FeedManagerRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val opmlImporter: OPMLImporter,
+    private val workManagerHandler: WorkManagerHandler,
 ) : ViewModel() {
 
     private val isImportDoneMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -28,6 +30,14 @@ class SettingsViewModel(
             feedManagerRepository.addFeedsFromFile(feed)
             isImportDoneMutableState.update { true }
             feedRetrieverRepository.fetchFeeds()
+        }
+    }
+
+    fun scheduleCleaning(isCleaningEnabled: Boolean) {
+        if (isCleaningEnabled) {
+            workManagerHandler.enqueueCleanupWork()
+        } else {
+            // TODO: delete worker
         }
     }
 }

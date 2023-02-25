@@ -114,6 +114,11 @@ class DatabaseHelper(
             dbRef.feedItemQueries.markAllRead()
         }
 
+    suspend fun deleteOldFeedItems(timeThreshold: Long) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.clear(timeThreshold)
+        }
+
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,

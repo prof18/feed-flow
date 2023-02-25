@@ -14,5 +14,7 @@ class FeedFlowApp : Application() {
                 single<Context> { this@FeedFlowApp }
             } + appModule,
         )
+
+        // TODO: check worker?
     }
 }

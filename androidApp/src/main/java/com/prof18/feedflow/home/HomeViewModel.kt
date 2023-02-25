@@ -113,4 +113,14 @@ class HomeViewModel(
             feedRetrieverRepository.fetchFeeds()
         }
     }
+
+    fun markAsRead(feedItemId: Int) {
+        viewModelScope.launch {
+            feedRetrieverRepository.updateReadStatus(
+                listOf(
+                    FeedItemId(feedItemId)
+                )
+            )
+        }
+    }
 }

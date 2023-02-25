@@ -123,11 +123,13 @@ internal fun HomeScreen(
             updateReadStatus = { lastVisibleIndex ->
                 homeViewModel.updateReadStatus(lastVisibleIndex)
             },
-            onFeedItemClick = { url ->
-                openUrl(url, context)
+            onFeedItemClick = { feedInfo ->
+                openUrl(feedInfo.url, context)
+                homeViewModel.markAsRead(feedInfo.id)
             },
-            onFeedItemLongClick = { url ->
-                openUrl(url, context)
+            onFeedItemLongClick = { feedInfo ->
+                openUrl(feedInfo.url, context)
+                homeViewModel.markAsRead(feedInfo.id)
             },
             onAddFeedClick = {
                 onSettingsButtonClicked()
@@ -146,8 +148,8 @@ private fun HomeScreenContent(
     listState: LazyListState,
     onRefresh: () -> Unit = {},
     updateReadStatus: (Int) -> Unit,
-    onFeedItemClick: (String) -> Unit,
-    onFeedItemLongClick: (String) -> Unit,
+    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
+    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
     onAddFeedClick: () -> Unit,
 ) {
     when {
@@ -196,11 +198,11 @@ private fun HomeScreenContent(
                         updateReadStatus = { index ->
                             updateReadStatus(index)
                         },
-                        onFeedItemClick = { url ->
-                            onFeedItemClick(url)
+                        onFeedItemClick = { feedInfo ->
+                            onFeedItemClick(feedInfo)
                         },
-                        onFeedItemLongClick = { url ->
-                            onFeedItemLongClick(url)
+                        onFeedItemLongClick = { feedInfo ->
+                            onFeedItemLongClick(feedInfo)
                         }
                     )
 

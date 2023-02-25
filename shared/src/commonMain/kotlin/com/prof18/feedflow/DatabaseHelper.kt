@@ -39,11 +39,10 @@ class DatabaseHelper(
             .selectFeeds()
             .asFlow()
             .mapToList()
-                // TODO: add catch again
-//            .catch {
-//                Logger.e(it) { "Something wrong while getting data from Database" }
-//               emit(listOf())
-//            }
+            .catch {
+                Logger.e(it) { "Something wrong while getting data from Database" }
+               emit(listOf())
+            }
             .flowOn(backgroundDispatcher)
 
 

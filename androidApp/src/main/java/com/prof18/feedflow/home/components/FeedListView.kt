@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.prof18.feedflow.FeedItem
+import com.prof18.feedflow.home.FeedItemClickedInfo
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.ui.theme.Spacing
@@ -55,8 +56,8 @@ internal fun FeedList(
     feedItems: List<FeedItem>,
     listState: LazyListState = rememberLazyListState(),
     updateReadStatus: (Int) -> Unit,
-    onFeedItemClick: (String) -> Unit,
-    onFeedItemLongClick: (String) -> Unit,
+    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
+    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -90,18 +91,28 @@ internal fun FeedList(
 @Composable
 private fun FeedItemView(
     feedItem: FeedItem,
-    onFeedItemClick: (String) -> Unit,
-    onFeedItemLongClick: (String) -> Unit,
+    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
+    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .combinedClickable(
                 onClick = {
-                    onFeedItemClick(feedItem.url)
+                    onFeedItemClick(
+                        FeedItemClickedInfo(
+                            id = feedItem.id,
+                            url = feedItem.url
+                        )
+                    )
                 },
                 onLongClick = if (feedItem.commentsUrl != null) {
                     {
-                        onFeedItemLongClick(feedItem.commentsUrl!!)
+                        onFeedItemLongClick(
+                            FeedItemClickedInfo(
+                                id = feedItem.id,
+                                url = feedItem.commentsUrl!!,
+                            )
+                        )
                     }
                 } else {
                     null

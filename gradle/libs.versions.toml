@@ -10,7 +10,7 @@ androidx-test-runner = "1.5.1"
 androidx-work-manager = "2.8.0"
 com-google-accompanist = "0.28.0"
 compose = "1.3.1"
-compose-compiler = "1.4.0"
+compose-compiler = "1.4.3"
 coroutines = "1.6.4"
 detekt = "1.21.0"
 io-coil = "2.2.2"
@@ -19,17 +19,17 @@ junit = "4.13.2"
 kermit = "1.2.2"
 koin = "3.2.2"
 koin-android = "3.3.0"
-kotlin = "1.8.0"
+kotlin = "1.8.10"
 ktor = "2.1.2"
-nav-compose = "2.5.0"
+nav-compose = "2.5.3"
 turbine = "0.12.1"
 versions-ben-manes = "0.44.0"
 viewModel-ktx = "2.5.1"
 viewModel-compose = "2.5.1"
-lifecycle-runtime-compose = "2.6.0-alpha05"
+lifecycle-runtime-compose = "2.6.0-rc01"
 kotlinx-serialization = "1.4.0"
 native-coroutines = "0.13.1"
-androidx-compose-material3 = "1.1.0-alpha06"
+androidx-compose-material3 = "1.1.0-alpha07"
 androidx-compose-bom = "2023.01.00"
 org-robolectric = "4.9"
 sqlDelight = "1.5.5"
@@ -50,6 +50,8 @@ androidx-compose-material = { module = "androidx.compose.material:material" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-ui-test = { module = "androidx.compose.ui:ui-test-junit4" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-lifecycle-viewModel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "viewModel-ktx" }
@@ -99,10 +101,11 @@ jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup"  }
 androidx-test = ["androidx-test-core", "androidx-test-ext-junit", "androidx-test-rules", "androidx-test-runner"]
 compose = [
     "androidx-activity-activity-compose", "androidx-compose-foundation", "androidx-compose-material-icons-core",
-    "androidx-compose-material-icons-extended", "androidx-compose-runtime", "androidx-compose-ui", "androidx-compose-ui-test",
-    "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-navigation-navigation-compose",
+    "androidx-compose-material-icons-extended", "androidx-compose-runtime", "androidx-compose-ui",
+     "androidx-compose-ui-tooling-preview", "androidx-navigation-navigation-compose",
     "androidx-compose-material3", "io-coil-compose", "accompanist-systemuicontroller",
-    "androidx-lifecycle-runtime-compose", "androidx-lifecycle-viewModel-compose", "androidx-compose-material"
+    "androidx-lifecycle-runtime-compose", "androidx-lifecycle-viewModel-compose",
+    "androidx-compose-material", "androidx-compose-ui-graphics"
 ]
 koin = ["koin-android", "koin-compose", "koin-core"]
 

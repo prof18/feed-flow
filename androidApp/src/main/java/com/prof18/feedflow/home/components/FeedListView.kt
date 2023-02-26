@@ -26,6 +26,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,6 +94,11 @@ private fun FeedItemView(
     onFeedItemClick: (FeedItemClickedInfo) -> Unit,
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
 ) {
+
+    val alpha = remember(feedItem) {
+        getReadUnreadAlpha(feedItem.isRead)
+    }
+
     Column(
         modifier = Modifier
             .combinedClickable(
@@ -121,9 +127,11 @@ private fun FeedItemView(
             .padding(vertical = Spacing.small)
     ) {
 
+
+
         Text(
             modifier = Modifier
-                .alpha(getReadUnreadAlpha(feedItem.isRead)),
+                .alpha(alpha),
             text = feedItem.feedSource.title,
             style = MaterialTheme.typography.bodySmall,
         )
@@ -142,7 +150,7 @@ private fun FeedItemView(
                 Text(
                     modifier = Modifier
                         .padding(top = Spacing.small)
-                        .alpha(getReadUnreadAlpha(feedItem.isRead)),
+                        .alpha(alpha),
                     text = feedItem.title,
                     style = MaterialTheme.typography.titleSmall,
                 )
@@ -151,7 +159,7 @@ private fun FeedItemView(
                     Text(
                         modifier = Modifier
                             .padding(top = Spacing.small)
-                            .alpha(getReadUnreadAlpha(feedItem.isRead)),
+                            .alpha(alpha),
                         text = subtitle,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
@@ -174,7 +182,7 @@ private fun FeedItemView(
         Text(
             modifier = Modifier
                 .padding(top = Spacing.small)
-                .alpha(getReadUnreadAlpha(feedItem.isRead)),
+                .alpha(alpha),
             text = feedItem.dateString,
             style = MaterialTheme.typography.bodySmall
         )

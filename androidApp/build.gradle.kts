@@ -66,6 +66,9 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.touchlab.kermit)
     implementation(libs.androidx.work.manager)
+
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
 play {

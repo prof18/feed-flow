@@ -10,7 +10,7 @@ androidx-test-runner = "1.5.1"
 androidx-work-manager = "2.8.0"
 com-google-accompanist = "0.28.0"
 compose = "1.3.1"
-compose-compiler = "1.4.3"
+compose-compiler = "1.4.1"
 coroutines = "1.6.4"
 detekt = "1.21.0"
 io-coil = "2.2.2"
@@ -19,7 +19,7 @@ junit = "4.13.2"
 kermit = "1.2.2"
 koin = "3.2.2"
 koin-android = "3.3.0"
-kotlin = "1.8.10"
+kotlin = "1.8.0"
 ktor = "2.1.2"
 nav-compose = "2.5.3"
 turbine = "0.12.1"
@@ -38,6 +38,7 @@ kotlinx-date-time = "0.4.0"
 accompanist = "0.28.0"
 jsoup = "1.15.3"
 triplet-play = "3.8.1"
+compose-multiplatform = "1.3.0"
 
 [libraries]
 androidx-activity-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -122,3 +123,4 @@ versionsBenManes = { id = "com.github.ben-manes.versions", version.ref = "versio
 native-coroutines = { id = "com.rickclephas.kmp.nativecoroutines", version.ref = "native-coroutines" }
 sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }
 triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

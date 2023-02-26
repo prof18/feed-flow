@@ -14,7 +14,7 @@ actual val platformModule: Module = module {
         AndroidSqliteDriver(
             FeedFlowDB.Schema,
             get(),
-            "FeedFlowDB"
+            DatabaseHelper.DATABASE_NAME,
         )
     }
 

@@ -15,7 +15,7 @@ fun initKoinIos(): KoinApplication = initKoin(
 
 actual val platformModule: Module = module {
     single<SqlDriver> {
-        NativeSqliteDriver(FeedFlowDB.Schema, "FeedFlowDB")
+        NativeSqliteDriver(FeedFlowDB.Schema, DatabaseHelper.DATABASE_NAME)
     }
 
     single<DispatcherProvider> {

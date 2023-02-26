@@ -130,4 +130,10 @@ class DatabaseHelper(
             }
         }
     }
+
+    internal companion object {
+        const val DB_FILE_NAME_WITH_EXTENSION = "FeedFlow.db"
+        const val DB_FILE_NAME = "FeedFlow"
+        const val DATABASE_NAME = "FeedFlowDB"
+    }
 }

@@ -7,7 +7,11 @@ plugins {
 
 kotlin {
     android()
-    
+
+    jvm("desktop") {
+        jvmToolchain(11)
+    }
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -75,6 +79,14 @@ kotlin {
                 implementation(libs.squareup.sqldelight.native.driver)
             }
         }
+
+        val desktopMain by getting {
+            dependencies {
+//                api(compose.preview)
+                implementation(libs.squareup.sqldelight.sqlite.driver)
+            }
+        }
+        val desktopTest by getting
     }
 }
 

@@ -16,6 +16,7 @@ dependencyResolutionManagement {
 rootProject.name = "FeedFlow"
 include(":androidApp")
 include(":shared")
+include(":desktopApp")
 
 //includeBuild("../../Android/RSS-Parser") {
 //    dependencySubstitution {

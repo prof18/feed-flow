@@ -65,7 +65,6 @@ internal fun FeedList(
     ) {
         items(
             items = feedItems,
-            key = { it.id },
         ) { item ->
             FeedItemView(
                 feedItem = item,

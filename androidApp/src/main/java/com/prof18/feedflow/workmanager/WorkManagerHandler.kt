@@ -12,7 +12,6 @@ class WorkManagerHandler(
     fun enqueueCleanupWork() {
         val saveRequest = PeriodicWorkRequestBuilder<FeedsCleanerWorker>(7, TimeUnit.DAYS)
             .addTag(WORK_TAG)
-            // Additional configuration
             .build()
 
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(

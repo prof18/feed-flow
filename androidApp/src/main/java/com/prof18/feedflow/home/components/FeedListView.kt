@@ -26,7 +26,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -95,8 +94,10 @@ private fun FeedItemView(
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
 ) {
 
-    val alpha = remember(feedItem) {
-        getReadUnreadAlpha(feedItem.isRead)
+    val modifierWithAlpha = if (feedItem.isRead) {
+        Modifier.alpha(0.3f)
+    } else {
+        Modifier.alpha(1f)
     }
 
     Column(
@@ -127,11 +128,8 @@ private fun FeedItemView(
             .padding(vertical = Spacing.small)
     ) {
 
-
-
         Text(
-            modifier = Modifier
-                .alpha(alpha),
+            modifier = modifierWithAlpha,
             text = feedItem.feedSource.title,
             style = MaterialTheme.typography.bodySmall,
         )
@@ -148,18 +146,17 @@ private fun FeedItemView(
             ) {
 
                 Text(
-                    modifier = Modifier
-                        .padding(top = Spacing.small)
-                        .alpha(alpha),
+                    modifier = modifierWithAlpha
+                        .padding(top = Spacing.small),
                     text = feedItem.title,
                     style = MaterialTheme.typography.titleSmall,
                 )
 
                 feedItem.subtitle?.let { subtitle ->
                     Text(
-                        modifier = Modifier
+                        modifier = modifierWithAlpha
                             .padding(top = Spacing.small)
-                            .alpha(alpha),
+                            ,
                         text = subtitle,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
@@ -170,19 +167,18 @@ private fun FeedItemView(
 
             feedItem.imageUrl?.let { url ->
                 FeedItemImage(
-                    modifier = Modifier
+                    modifier = modifierWithAlpha
                         .padding(start = Spacing.regular),
                     url = url,
-                    isRead = feedItem.isRead,
                     width = 96.dp,
                 )
             }
         }
 
         Text(
-            modifier = Modifier
+            modifier = modifierWithAlpha
                 .padding(top = Spacing.small)
-                .alpha(alpha),
+                ,
             text = feedItem.dateString,
             style = MaterialTheme.typography.bodySmall
         )
@@ -196,18 +192,10 @@ private fun FeedItemView(
     }
 }
 
-private fun getReadUnreadAlpha(isRead: Boolean): Float =
-    if (isRead) {
-        0.3f
-    } else {
-        1f
-    }
-
 @Composable
 private fun FeedItemImage(
     modifier: Modifier = Modifier,
     url: String,
-    isRead: Boolean,
     width: Dp
 ) {
     if (LocalInspectionMode.current) {
@@ -228,7 +216,6 @@ private fun FeedItemImage(
                 .wrapContentHeight()
                 .width(width)
                 .clip(RoundedCornerShape(Spacing.small))
-                .alpha(getReadUnreadAlpha(isRead)),
         )
     }
 }

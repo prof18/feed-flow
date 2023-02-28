@@ -22,6 +22,8 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(compose.preview)
                 implementation(libs.koin.core)
+                implementation(libs.decompose)
+                implementation(libs.decompose.compose.jetbrains)
             }
         }
         val jvmTest by getting
@@ -30,7 +32,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "com.prof18.feedflow.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "feed-flow"

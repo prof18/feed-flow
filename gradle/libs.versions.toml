@@ -39,6 +39,7 @@ accompanist = "0.28.0"
 jsoup = "1.15.3"
 triplet-play = "3.8.1"
 compose-multiplatform = "1.3.0"
+decompose = "1.0.0"
 
 [libraries]
 androidx-activity-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -97,6 +98,8 @@ com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup"  }
+decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+decompose-compose-jetbrains = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
 
 [bundles]
 androidx-test = ["androidx-test-core", "androidx-test-ext-junit", "androidx-test-rules", "androidx-test-runner"]

@@ -61,10 +61,6 @@ class HomeViewModel(
                             )
                         }
 
-//                        NoFeedSourceError -> {
-////                            loadingState.value =
-//                        }
-
                         null -> {
                             // Do nothing
                         }

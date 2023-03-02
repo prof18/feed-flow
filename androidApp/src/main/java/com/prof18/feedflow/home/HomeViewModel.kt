@@ -77,6 +77,10 @@ class HomeViewModel(
     }
 
     fun updateReadStatus(lastVisibleIndex: Int) {
+        // To avoid issues
+        if (loadingState.value.isLoading()) {
+            return
+        }
         val urlToUpdates = mutableListOf<FeedItemId>()
 
         val items = feedState.value.toMutableList()

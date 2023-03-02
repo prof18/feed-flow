@@ -79,7 +79,7 @@ internal fun HomeScreen() {
                 url = selectedFeed.url,
                 title = selectedFeed.title,
                 subtitle = selectedFeed.subtitle,
-                content = selectedFeed.content,
+                content = null,
                 imageUrl = selectedFeed.image_url,
                 feedSource = FeedSource(
                     id = selectedFeed.feed_source_id,

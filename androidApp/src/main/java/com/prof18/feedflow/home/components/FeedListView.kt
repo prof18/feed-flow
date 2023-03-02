@@ -29,7 +29,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -93,13 +92,6 @@ private fun FeedItemView(
     onFeedItemClick: (FeedItemClickedInfo) -> Unit,
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
 ) {
-
-    val modifierWithAlpha = if (feedItem.isRead) {
-        Modifier.alpha(0.3f)
-    } else {
-        Modifier.alpha(1f)
-    }
-
     Column(
         modifier = Modifier
             .combinedClickable(
@@ -129,7 +121,6 @@ private fun FeedItemView(
     ) {
 
         Text(
-            modifier = modifierWithAlpha,
             text = feedItem.feedSource.title,
             style = MaterialTheme.typography.bodySmall,
         )
@@ -146,7 +137,7 @@ private fun FeedItemView(
             ) {
 
                 Text(
-                    modifier = modifierWithAlpha
+                    modifier = Modifier
                         .padding(top = Spacing.small),
                     text = feedItem.title,
                     style = MaterialTheme.typography.titleSmall,
@@ -154,7 +145,7 @@ private fun FeedItemView(
 
                 feedItem.subtitle?.let { subtitle ->
                     Text(
-                        modifier = modifierWithAlpha
+                        modifier = Modifier
                             .padding(top = Spacing.small)
                             ,
                         text = subtitle,
@@ -167,7 +158,7 @@ private fun FeedItemView(
 
             feedItem.imageUrl?.let { url ->
                 FeedItemImage(
-                    modifier = modifierWithAlpha
+                    modifier = Modifier
                         .padding(start = Spacing.regular),
                     url = url,
                     width = 96.dp,
@@ -176,7 +167,7 @@ private fun FeedItemView(
         }
 
         Text(
-            modifier = modifierWithAlpha
+            modifier = Modifier
                 .padding(top = Spacing.small)
                 ,
             text = feedItem.dateString,

@@ -1,5 +1,6 @@
 package com.prof18.feedflow
 
+import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 

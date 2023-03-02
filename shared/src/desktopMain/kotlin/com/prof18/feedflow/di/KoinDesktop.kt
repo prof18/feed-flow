@@ -1,5 +1,6 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.di
 
+import com.prof18.feedflow.initDatabase
 import com.squareup.sqldelight.db.SqlDriver
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module

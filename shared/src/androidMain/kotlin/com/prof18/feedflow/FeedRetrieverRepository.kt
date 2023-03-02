@@ -3,6 +3,13 @@ package com.prof18.feedflow
 import co.touchlab.kermit.Logger
 import com.prof.rssparser.Channel
 import com.prof.rssparser.Parser
+import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.domain.model.FeedItem
+import com.prof18.feedflow.domain.model.FeedItemId
+import com.prof18.feedflow.domain.model.FeedSource
+import com.prof18.feedflow.presentation.model.ErrorState
+import com.prof18.feedflow.presentation.model.FeedErrorState
+import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED

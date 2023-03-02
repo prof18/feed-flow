@@ -1,4 +1,4 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.utils
 
 import kotlinx.coroutines.CoroutineDispatcher
 

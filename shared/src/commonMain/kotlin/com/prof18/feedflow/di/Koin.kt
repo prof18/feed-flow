@@ -1,5 +1,6 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.di
 
+import com.prof18.feedflow.data.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin

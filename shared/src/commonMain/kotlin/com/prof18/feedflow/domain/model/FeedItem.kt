@@ -1,4 +1,4 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.domain.model
 
 data class FeedItem(
     val id: Int,

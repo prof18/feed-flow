@@ -1,6 +1,10 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.data
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.domain.model.FeedItem
+import com.prof18.feedflow.domain.model.FeedItemId
+import com.prof18.feedflow.domain.model.FeedSource
+import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.SelectFeeds
 import com.squareup.sqldelight.Transacter

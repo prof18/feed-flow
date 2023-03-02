@@ -1,4 +1,4 @@
-package com.prof18.feedflow.ui
+package com.prof18.feedflow.ui.style
 
 import androidx.compose.ui.graphics.Color
 

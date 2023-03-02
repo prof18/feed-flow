@@ -1,7 +1,13 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.di
 
 import com.prof.rssparser.Parser
+import com.prof18.feedflow.FeedManagerRepository
+import com.prof18.feedflow.FeedRetrieverRepository
+import com.prof18.feedflow.OPMLFeedParser
+import com.prof18.feedflow.OPMLImporter
+import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.utils.DispatcherProvider
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import kotlinx.coroutines.CoroutineDispatcher

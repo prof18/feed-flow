@@ -1,7 +1,7 @@
 package com.prof18.feedflow.ui.preview
 
-import com.prof18.feedflow.FeedItem
-import com.prof18.feedflow.FeedSource
+import com.prof18.feedflow.domain.model.FeedItem
+import com.prof18.feedflow.domain.model.FeedSource
 
 internal val feedItemsForPreview = listOf(
     FeedItem(

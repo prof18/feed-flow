@@ -1,6 +1,7 @@
 package com.prof18.feedflow
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver

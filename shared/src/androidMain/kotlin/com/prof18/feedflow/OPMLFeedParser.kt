@@ -1,5 +1,7 @@
 package com.prof18.feedflow
 
+import com.prof18.feedflow.domain.model.ParsedFeedSource
+import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
@@ -7,6 +9,7 @@ import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.io.Reader
 
+// TODO: move to common jvm package
 class OPMLFeedParser(
     private val dispatcherProvider: DispatcherProvider,
 ) {

@@ -3,9 +3,9 @@ package com.prof18.feedflow.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import com.prof18.feedflow.FeedErrorState
-import com.prof18.feedflow.FeedItem
-import com.prof18.feedflow.FeedItemId
+import com.prof18.feedflow.presentation.model.FeedErrorState
+import com.prof18.feedflow.domain.model.FeedItem
+import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.FeedRetrieverRepository
 import com.prof18.feedflow.FeedUpdateStatus
 import com.prof18.feedflow.UIErrorState

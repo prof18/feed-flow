@@ -1,4 +1,4 @@
-package com.prof18.feedflow.home
+package com.prof18.feedflow
 
 data class FeedItemClickedInfo(
     val id: Int,

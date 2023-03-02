@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserSelector
 import com.prof18.feedflow.FeedItem
+import com.prof18.feedflow.FeedItemClickedInfo
 import com.prof18.feedflow.FeedUpdateStatus
 import com.prof18.feedflow.NoFeedSourcesStatus
 import com.prof18.feedflow.home.components.EmptyFeedView

@@ -17,11 +17,20 @@ kotlin {
     }
     sourceSets {
         val jvmMain by getting {
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             dependencies {
                 implementation(project(":shared"))
                 implementation(compose.desktop.currentOs)
+                implementation(compose.material3)
                 implementation(compose.preview)
                 implementation(libs.koin.core)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.decompose)
+                implementation(libs.decompose.compose.jetbrains)
+                implementation(libs.jsystem.theme.detector)
+
+                implementation("org.slf4j:slf4j-nop:2.0.6")
+
             }
         }
         val jvmTest by getting
@@ -30,7 +39,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "com.prof18.feedflow.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "feed-flow"

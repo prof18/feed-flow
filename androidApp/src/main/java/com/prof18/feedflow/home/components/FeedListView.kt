@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.prof18.feedflow.FeedItem
-import com.prof18.feedflow.home.FeedItemClickedInfo
+import com.prof18.feedflow.FeedItemClickedInfo
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.ui.theme.Spacing

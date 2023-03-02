@@ -1,4 +1,4 @@
-package com.prof18.feedflow.ui.theme
+package com.prof18.feedflow.ui
 
 import androidx.compose.ui.unit.dp
 

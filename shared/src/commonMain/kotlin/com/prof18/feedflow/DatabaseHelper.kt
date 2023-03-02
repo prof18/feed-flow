@@ -116,7 +116,7 @@ class DatabaseHelper(
 
     suspend fun deleteOldFeedItems(timeThreshold: Long) =
         dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedItemQueries.clear(timeThreshold)
+            dbRef.feedItemQueries.clearOldItems(timeThreshold)
         }
 
     private suspend fun Transacter.transactionWithContext(

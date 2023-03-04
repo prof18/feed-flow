@@ -9,6 +9,7 @@ import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
+import org.koin.core.component.KoinComponent
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -28,4 +29,9 @@ actual val platformModule: Module = module {
             override val io: CoroutineDispatcher = Dispatchers.Default
         }
     }
+}
+
+@Suppress("unused") // Called from Swift
+object KotlinDependencies : KoinComponent {
+//    fun getMovieRepository() = getKoin().get<MovieRepository>()
 }

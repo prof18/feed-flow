@@ -8,6 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -95,16 +97,28 @@ internal fun HomeScreen(
         }
     }
 
+    val scope = rememberCoroutineScope()
+
     // TODO: Check localisation
     Scaffold(
         topBar = {
             HomeAppBar(
                 unReadCount = unReadCount,
-                listState = listState,
                 onSettingsButtonClicked = onSettingsButtonClicked,
                 onMarkAllReadClicked = {
                     homeViewModel.markAllRead()
                 },
+                onClick = {
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                },
+                onDoubleClick = {
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                        homeViewModel.getNewFeeds()
+                    }
+                }
             )
         },
         containerColor = Color.Transparent,
@@ -221,12 +235,12 @@ private fun HomeScreenContent(
 @Composable
 private fun HomeAppBar(
     unReadCount: Int,
-    listState: LazyListState,
     onMarkAllReadClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
+    onClick: () -> Unit,
+    onDoubleClick: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
 
     TopAppBar(
         title = {
@@ -281,12 +295,12 @@ private fun HomeAppBar(
             }
 
         },
-        modifier = Modifier
-            .clickable {
-                scope.launch {
-                    listState.animateScrollToItem(0)
-                }
-            },
+        modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures(
+                onDoubleTap = { onDoubleClick() },
+                onTap = { onClick() }
+            )
+        }
     )
 }
 

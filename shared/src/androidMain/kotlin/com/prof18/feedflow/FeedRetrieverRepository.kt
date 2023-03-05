@@ -38,8 +38,7 @@ class FeedRetrieverRepository(
     )
     val updateState = updateMutableState.asStateFlow()
 
-    private val errorMutableState: MutableStateFlow<ErrorState?> =
-        MutableStateFlow(null)
+    private val errorMutableState: MutableStateFlow<ErrorState?> = MutableStateFlow(null)
     val errorState = errorMutableState.asStateFlow()
 
     fun getFeeds(): Flow<List<FeedItem>> = databaseHelper.getFeedItems().map { feedList ->

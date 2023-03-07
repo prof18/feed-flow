@@ -1,9 +1,9 @@
 package com.prof18.feedflow.di
 
 import com.prof.rssparser.Parser
-import com.prof18.feedflow.FeedManagerRepository
+import com.prof18.feedflow.domain.feedmanager.FeedManagerRepository
 import com.prof18.feedflow.FeedRetrieverRepository
-import com.prof18.feedflow.OPMLFeedParser
+import com.prof18.feedflow.domain.opml.OPMLFeedParser
 import com.prof18.feedflow.OPMLImporter
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
@@ -34,13 +34,6 @@ actual val platformModule: Module = module {
         OPMLImporter(
             context = get(),
             dispatcherProvider = get(),
-        )
-    }
-
-    factory {
-        FeedManagerRepository(
-            databaseHelper = get(),
-            opmlFeedParser = get(),
         )
     }
 

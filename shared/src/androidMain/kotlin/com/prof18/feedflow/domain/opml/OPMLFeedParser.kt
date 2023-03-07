@@ -1,5 +1,7 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.domain.opml
 
+import com.prof18.feedflow.attributeValue
+import com.prof18.feedflow.contains
 import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
@@ -9,12 +11,11 @@ import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.io.Reader
 
-// TODO: move to common jvm package
-class OPMLFeedParser(
+actual class OPMLFeedParser(
     private val dispatcherProvider: DispatcherProvider,
 ) {
 
-    suspend fun parse(feed: String): List<ParsedFeedSource> = withContext(dispatcherProvider.default) {
+    actual suspend fun parse(feed: String): List<ParsedFeedSource> = withContext(dispatcherProvider.default) {
 
         val feedSources = mutableListOf<ParsedFeedSource>()
 
@@ -34,26 +35,21 @@ class OPMLFeedParser(
             when (eventType) {
                 XmlPullParser.START_TAG -> when {
 
-                    xmlPullParser.contains("outline") -> {
-                        when (xmlPullParser.attributeValue("type")) {
-                            "rss" -> {
-                                val title = xmlPullParser.attributeValue("title")
-                                val url = xmlPullParser.attributeValue("xmlUrl")
-                                if (title != null && url != null) {
-                                    val urlWithHttps = url
-                                        .replace("http://", "https://")
-                                    feedSources.add(
-                                        ParsedFeedSource(
-                                            url = urlWithHttps,
-                                            title = title,
-                                            category = categoryName,
-                                        )
-                                    )
+                    xmlPullParser.contains(OPMLConstants.OUTLINE) -> {
+                        when (xmlPullParser.attributeValue(OPMLConstants.TYPE)) {
+                            OPMLConstants.RSS -> {
+                                val builder = ParsedFeedSource.Builder().apply {
+                                    title(xmlPullParser.attributeValue(OPMLConstants.TITLE))
+                                    url(xmlPullParser.attributeValue(OPMLConstants.XML_URL))
+                                    category(categoryName)
+                                }
+                                builder.build()?.let {
+                                    feedSources.add(it)
                                 }
                             }
 
                             null -> {
-                                categoryName = xmlPullParser.attributeValue("title")
+                                categoryName = xmlPullParser.attributeValue(OPMLConstants.TITLE)
                             }
                         }
                     }

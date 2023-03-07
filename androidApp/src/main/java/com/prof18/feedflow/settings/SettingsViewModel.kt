@@ -3,7 +3,7 @@ package com.prof18.feedflow.settings
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prof18.feedflow.FeedManagerRepository
+import com.prof18.feedflow.domain.feedmanager.FeedManagerRepository
 import com.prof18.feedflow.FeedRetrieverRepository
 import com.prof18.feedflow.OPMLImporter
 import com.prof18.feedflow.workmanager.WorkManagerHandler

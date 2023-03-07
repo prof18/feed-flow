@@ -2,7 +2,7 @@ package com.prof18.feedflow.feedlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prof18.feedflow.FeedManagerRepository
+import com.prof18.feedflow.domain.feedmanager.FeedManagerRepository
 import com.prof18.feedflow.domain.model.FeedSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

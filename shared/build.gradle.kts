@@ -39,14 +39,31 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.test)
             }
         }
-        val androidMain by getting {
+
+        val commonJvmAndroidMain by creating {
+            dependsOn(commonMain)
+
             dependencies {
-                implementation(libs.squareup.sqldelight.android.driver)
-                implementation(libs.com.prof18.rss.parser)
                 implementation(libs.jsoup)
             }
         }
+
+        val commonJvmAndroidTest by creating {
+            dependsOn(commonTest)
+        }
+
+
+        val androidMain by getting {
+            dependsOn(commonJvmAndroidMain)
+
+            dependencies {
+                implementation(libs.squareup.sqldelight.android.driver)
+                implementation(libs.com.prof18.rss.parser)
+            }
+        }
         val androidTest by getting {
+            dependsOn(commonJvmAndroidTest)
+
             dependencies {
                 implementation(libs.junit)
                 implementation(libs.org.robolectric)
@@ -80,13 +97,20 @@ kotlin {
             }
         }
 
+
         val desktopMain by getting {
+            dependsOn(commonJvmAndroidMain)
+
             dependencies {
 //                api(compose.preview)
                 implementation(libs.squareup.sqldelight.sqlite.driver)
             }
         }
-        val desktopTest by getting
+        val desktopTest by getting {
+            dependsOn(commonJvmAndroidTest)
+            dependsOn(commonTest)
+
+        }
     }
 }
 

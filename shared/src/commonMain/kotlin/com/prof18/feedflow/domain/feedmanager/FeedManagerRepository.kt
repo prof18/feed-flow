@@ -1,8 +1,9 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.domain.feedmanager
 
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.domain.model.ParsedFeedSource
+import com.prof18.feedflow.domain.opml.OPMLFeedParser
 
 class FeedManagerRepository(
     private val databaseHelper: DatabaseHelper,

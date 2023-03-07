@@ -1,16 +1,12 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.domain.opml
 
-import com.prof18.feedflow.domain.opml.OPMLFeedParser
+import com.prof18.feedflow.TestDispatcherProvider
+import com.prof18.feedflow.opml
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@RunWith(RobolectricTestRunner::class)
-@Config(manifest=Config.NONE)
 class OPMLFeedParserTest {
 
     private val parser = OPMLFeedParser(
@@ -64,4 +60,5 @@ class OPMLFeedParserTest {
         assertEquals("https://feeds.ilpost.it/ilpost", feedSources[5].url)
         assertEquals("News", feedSources[5].category)
     }
+
 }

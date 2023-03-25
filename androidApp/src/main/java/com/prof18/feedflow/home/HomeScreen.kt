@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,8 +59,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserSelector
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
-import com.prof18.feedflow.FeedUpdateStatus
-import com.prof18.feedflow.NoFeedSourcesStatus
+import com.prof18.feedflow.domain.model.FeedUpdateStatus
+import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.home.components.EmptyFeedView
 import com.prof18.feedflow.home.components.FeedList
 import com.prof18.feedflow.home.components.NoFeedsSourceView

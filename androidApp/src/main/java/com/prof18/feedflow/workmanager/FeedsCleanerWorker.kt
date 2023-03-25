@@ -5,7 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import coil.annotation.ExperimentalCoilApi
 import coil.imageLoader
-import com.prof18.feedflow.FeedRetrieverRepository
+import com.prof18.feedflow.domain.FeedRetrieverRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

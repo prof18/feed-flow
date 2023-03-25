@@ -1,6 +1,8 @@
 package com.prof18.feedflow.di
 
+import com.prof.rssparser.Parser
 import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.domain.FeedRetrieverRepository
 import com.prof18.feedflow.domain.feedmanager.FeedManagerRepository
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
@@ -27,6 +29,14 @@ private val coreModule = module {
         FeedManagerRepository(
             databaseHelper = get(),
             opmlFeedParser = get(),
+        )
+    }
+
+    single {
+        FeedRetrieverRepository(
+            parser = get(),
+            databaseHelper = get(),
+            dispatcherProvider = get(),
         )
     }
 }

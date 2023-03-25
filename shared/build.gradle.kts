@@ -31,6 +31,7 @@ kotlin {
                 implementation(libs.touchlab.kermit)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.datetime)
+                implementation(libs.com.prof18.rss.parser)
             }
         }
         val commonTest by getting {
@@ -58,7 +59,6 @@ kotlin {
 
             dependencies {
                 implementation(libs.squareup.sqldelight.android.driver)
-                implementation(libs.com.prof18.rss.parser)
             }
         }
         val androidTest by getting {
@@ -124,7 +124,7 @@ android {
     namespace = "com.prof18.feedflow.shared"
     compileSdk = 33
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
     }
 }

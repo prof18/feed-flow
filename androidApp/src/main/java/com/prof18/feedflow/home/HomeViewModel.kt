@@ -6,8 +6,8 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
-import com.prof18.feedflow.FeedRetrieverRepository
-import com.prof18.feedflow.FeedUpdateStatus
+import com.prof18.feedflow.domain.FeedRetrieverRepository
+import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.UIErrorState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

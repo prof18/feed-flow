@@ -1,4 +1,4 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.domain
 
 import co.touchlab.kermit.Logger
 import com.prof.rssparser.Channel
@@ -7,6 +7,12 @@ import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedSource
+import com.prof18.feedflow.domain.model.FeedUpdateStatus
+import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
+import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus
+import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
+import com.prof18.feedflow.domain.model.RssChannelResult
+import com.prof18.feedflow.domain.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.presentation.model.ErrorState
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.utils.DispatcherProvider
@@ -21,8 +27,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Date
+import kotlinx.datetime.Clock
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.days
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FeedRetrieverRepository(
@@ -93,10 +100,7 @@ class FeedRetrieverRepository(
     }
 
     suspend fun deleteOldFeeds() {
-        // One week
-        // (((1 hour in seconds) * 24 hours) * 7 days)
-        val oneWeekInMillis = (((60 * 60) * 24) * 7) * 1000L
-        val threshold = Date().time - oneWeekInMillis
+        val threshold = Clock.System.now().minus(7.days).epochSeconds
         databaseHelper.deleteOldFeedItems(threshold)
     }
 
@@ -205,7 +209,8 @@ class FeedRetrieverRepository(
             val pubDate = article.pubDate
 
             val randomTimeToSubtract = Random.nextLong(1800000L, 10800000L)
-            val defaultDate = Date().time - randomTimeToSubtract
+            val defaultDate = Clock.System.now().epochSeconds - randomTimeToSubtract
+
             val dateMillis = if (pubDate != null) {
                 getDateMillisFromString(pubDate) ?: defaultDate
             } else {

@@ -1,5 +1,6 @@
 package com.prof18.feedflow
 
+import com.prof18.feedflow.domain.getDateMillisFromString
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

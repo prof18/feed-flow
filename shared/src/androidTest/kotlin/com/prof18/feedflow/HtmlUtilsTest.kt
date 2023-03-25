@@ -1,5 +1,6 @@
 package com.prof18.feedflow
 
+import com.prof18.feedflow.domain.getTextFromHTML
 import org.junit.Test
 import kotlin.test.assertEquals
 

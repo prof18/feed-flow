@@ -1,5 +1,7 @@
 package com.prof18.feedflow.di
 
+import com.prof.rssparser.Parser
+import com.prof.rssparser.build
 import com.prof18.feedflow.initDatabase
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.squareup.sqldelight.db.SqlDriver
@@ -16,6 +18,12 @@ fun initKoinDesktop(): KoinApplication = initKoin(
 actual val platformModule: Module = module {
     single<SqlDriver> {
         initDatabase()
+    }
+
+    single {
+//        Parser.Builder()
+//            .build()
+        Parser.build()
     }
 
     single<DispatcherProvider> {

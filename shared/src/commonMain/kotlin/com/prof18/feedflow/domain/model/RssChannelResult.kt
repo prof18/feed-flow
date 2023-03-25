@@ -1,4 +1,4 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.domain.model
 
 import com.prof.rssparser.Channel
 import com.prof18.feedflow.domain.model.FeedSource

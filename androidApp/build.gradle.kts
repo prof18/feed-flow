@@ -18,7 +18,7 @@ android {
     compileSdk = 33
     defaultConfig {
         applicationId = "com.prof18.feedflow"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = getVersionCode()
         versionName = getVersionName()

@@ -41,9 +41,15 @@ compose.desktop {
     application {
         mainClass = "com.prof18.feedflow.MainKt"
         nativeDistributions {
+
+            modules("java.instrument", "java.sql", "jdk.unsupported")
+
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "feed-flow"
+            packageName = "FeedFlow"
             packageVersion = "1.0.0"
+
+            description = "FeedFlow - Read RSS Feed"
+            copyright = "© 2023 Marco Gomiero. All rights reserved."
 
             val iconsRoot = project.file("src/jvmMain/resources/icons/")
 

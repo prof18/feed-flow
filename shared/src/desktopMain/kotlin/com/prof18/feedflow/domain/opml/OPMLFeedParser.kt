@@ -9,7 +9,7 @@ import org.xml.sax.helpers.DefaultHandler
 import java.io.StringReader
 import javax.xml.parsers.SAXParserFactory
 
-actual class OPMLFeedParser(
+internal actual class OPMLFeedParser(
     private val dispatcherProvider: DispatcherProvider,
 ) {
     actual suspend fun parse(feed: String): List<ParsedFeedSource> = withContext(dispatcherProvider.io) {

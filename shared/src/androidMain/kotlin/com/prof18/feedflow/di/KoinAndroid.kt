@@ -19,12 +19,12 @@ import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel as koinViewModel
 
-actual inline fun <reified T: BaseViewModel> Module.viewModel(
+internal actual inline fun <reified T: BaseViewModel> Module.viewModel(
     qualifier: Qualifier?,
     noinline definition: Definition<T>
 ): Pair<Module, InstanceFactory<T>> = koinViewModel(qualifier, definition)
 
-actual val platformModule: Module = module {
+internal actual val platformModule: Module = module {
     single<SqlDriver> {
         AndroidSqliteDriver(
             FeedFlowDB.Schema,

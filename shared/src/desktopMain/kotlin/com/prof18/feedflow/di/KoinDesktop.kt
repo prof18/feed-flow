@@ -22,12 +22,12 @@ fun initKoinDesktop(): KoinApplication = initKoin(
     modules = listOf()
 )
 
-actual inline fun <reified T: BaseViewModel> Module.viewModel(
+internal actual inline fun <reified T: BaseViewModel> Module.viewModel(
     qualifier: Qualifier?,
     noinline definition: Definition<T>
 ): Pair<Module, InstanceFactory<T>> = factory(qualifier, definition)
 
-actual val platformModule: Module = module {
+internal actual val platformModule: Module = module {
     single<SqlDriver> {
         initDatabase()
     }

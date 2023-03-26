@@ -1,16 +1,16 @@
-package com.prof18.feedflow.domain.feedmanager
+package com.prof18.feedflow.domain.feed.manager
 
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.domain.opml.OPMLFeedParser
 
-class FeedManagerRepository(
+internal class FeedManagerRepositoryImpl(
     private val databaseHelper: DatabaseHelper,
     private val opmlFeedParser: OPMLFeedParser,
-) {
+) : FeedManagerRepository {
 
-    suspend fun addFeedsFromFile(source: String) {
+    override suspend fun addFeedsFromFile(source: String) {
         val feeds = opmlFeedParser.parse(source)
         val categories = feeds.mapNotNull { it.category }.distinct()
 
@@ -18,12 +18,12 @@ class FeedManagerRepository(
         databaseHelper.insertFeedSource(feeds)
     }
 
-    suspend fun getFeeds(): List<FeedSource> {
+    override suspend fun getFeeds(): List<FeedSource> {
         return databaseHelper.getFeedSources()
     }
 
     // TODO: Add category
-    suspend fun addFeed(url: String, name: String) {
+    override suspend fun addFeed(url: String, name: String) {
         databaseHelper.insertFeedSource(
             listOf(
                 ParsedFeedSource(

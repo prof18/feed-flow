@@ -1,9 +1,13 @@
-package com.prof18.feedflow.domain
+package com.prof18.feedflow.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
 import com.prof.rssparser.Channel
 import com.prof.rssparser.Parser
 import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.domain.feed.retriever.model.RssChannelResult
+import com.prof18.feedflow.domain.formatDate
+import com.prof18.feedflow.domain.getDateMillisFromString
+import com.prof18.feedflow.domain.getTextFromHTML
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedSource
@@ -11,7 +15,6 @@ import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
-import com.prof18.feedflow.domain.model.RssChannelResult
 import com.prof18.feedflow.domain.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.presentation.model.ErrorState
 import com.prof18.feedflow.presentation.model.FeedErrorState
@@ -32,23 +35,23 @@ import kotlin.random.Random
 import kotlin.time.Duration.Companion.days
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FeedRetrieverRepository(
+internal class FeedRetrieverRepositoryImpl(
     private val parser: Parser,
     private val databaseHelper: DatabaseHelper,
     private val dispatcherProvider: DispatcherProvider,
-) {
+) : FeedRetrieverRepository {
 
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
         FinishedFeedUpdateStatus(
             refreshedFeedCount = 0, totalFeedCount = 0,
         ),
     )
-    val updateState = updateMutableState.asStateFlow()
+    override val updateState = updateMutableState.asStateFlow()
 
     private val errorMutableState: MutableStateFlow<ErrorState?> = MutableStateFlow(null)
-    val errorState = errorMutableState.asStateFlow()
+    override val errorState = errorMutableState.asStateFlow()
 
-    fun getFeeds(): Flow<List<FeedItem>> = databaseHelper.getFeedItems().map { feedList ->
+    override fun getFeeds(): Flow<List<FeedItem>> = databaseHelper.getFeedItems().map { feedList ->
         feedList.map { selectedFeed ->
             FeedItem(
                 id = selectedFeed.url_hash,
@@ -70,10 +73,10 @@ class FeedRetrieverRepository(
         }
     }
 
-    suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
+    override suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
         databaseHelper.updateReadStatus(itemsToUpdates)
 
-    suspend fun fetchFeeds(updateLoadingInfo: Boolean = true) {
+    override suspend fun fetchFeeds(updateLoadingInfo: Boolean) {
         Logger.d { ">>> UpdateLoanding info? $updateLoadingInfo" }
         if (updateLoadingInfo) {
             updateMutableState.update { StartedFeedUpdateStatus }
@@ -95,11 +98,11 @@ class FeedRetrieverRepository(
         }
     }
 
-    suspend fun markAllFeedAsRead() {
+    override suspend fun markAllFeedAsRead() {
         databaseHelper.markAllFeedAsRead()
     }
 
-    suspend fun deleteOldFeeds() {
+    override suspend fun deleteOldFeeds() {
         val threshold = Clock.System.now().minus(7.days).epochSeconds
         databaseHelper.deleteOldFeedItems(threshold)
     }

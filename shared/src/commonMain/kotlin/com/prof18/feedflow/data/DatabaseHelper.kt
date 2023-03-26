@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
-class DatabaseHelper(
+internal class DatabaseHelper(
     sqlDriver: SqlDriver,
     private val backgroundDispatcher: CoroutineDispatcher
 ) {

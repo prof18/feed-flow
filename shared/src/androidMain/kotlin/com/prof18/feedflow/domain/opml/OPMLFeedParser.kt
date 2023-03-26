@@ -11,7 +11,7 @@ import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.io.Reader
 
-actual class OPMLFeedParser(
+internal actual class OPMLFeedParser(
     private val dispatcherProvider: DispatcherProvider,
 ) {
 

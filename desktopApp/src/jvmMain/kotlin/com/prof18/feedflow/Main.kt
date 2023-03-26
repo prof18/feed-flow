@@ -37,8 +37,6 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.prof18.feedflow.di.initKoinDesktop
-import com.prof18.feedflow.domain.feedmanager.FeedManagerRepository
-import com.prof18.feedflow.domain.opml.OPMLImporter
 import com.prof18.feedflow.domain.opml.OPMLInput
 import com.prof18.feedflow.feedlist.FeedListScreen
 import com.prof18.feedflow.home.FeedFlowMenuBar

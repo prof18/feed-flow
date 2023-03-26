@@ -8,7 +8,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
-expect fun getDateMillisFromString(dateString: String): Long?
+internal expect fun getDateMillisFromString(dateString: String): Long?
 
 internal fun formatDate(millis: Long): String {
     val instant = Instant.fromEpochMilliseconds(millis)

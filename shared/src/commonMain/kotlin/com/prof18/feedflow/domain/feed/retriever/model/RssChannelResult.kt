@@ -1,9 +1,9 @@
-package com.prof18.feedflow.domain.model
+package com.prof18.feedflow.domain.feed.retriever.model
 
 import com.prof.rssparser.Channel
 import com.prof18.feedflow.domain.model.FeedSource
 
-data class RssChannelResult(
+internal data class RssChannelResult(
     val rssChannel: Channel,
     val feedSource: FeedSource,
 )

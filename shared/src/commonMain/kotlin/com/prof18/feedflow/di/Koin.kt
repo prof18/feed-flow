@@ -1,8 +1,10 @@
 package com.prof18.feedflow.di
 
 import com.prof18.feedflow.data.DatabaseHelper
-import com.prof18.feedflow.domain.FeedRetrieverRepository
-import com.prof18.feedflow.domain.feedmanager.FeedManagerRepository
+import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.domain.feed.manager.FeedManagerRepositoryImpl
+import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepositoryImpl
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
@@ -32,15 +34,15 @@ private val coreModule = module {
         )
     }
 
-    factory {
-        FeedManagerRepository(
+    factory<FeedManagerRepository> {
+        FeedManagerRepositoryImpl(
             databaseHelper = get(),
             opmlFeedParser = get(),
         )
     }
 
-    single {
-        FeedRetrieverRepository(
+    single<FeedRetrieverRepository> {
+        FeedRetrieverRepositoryImpl(
             parser = get(),
             databaseHelper = get(),
             dispatcherProvider = get(),
@@ -75,9 +77,9 @@ private val coreModule = module {
     }
 }
 
-expect val platformModule: Module
+internal expect val platformModule: Module
 
-expect inline fun <reified T: BaseViewModel> Module.viewModel(
+internal expect inline fun <reified T: BaseViewModel> Module.viewModel(
     qualifier: Qualifier? = null,
     noinline definition: Definition<T>
 ): Pair<Module, InstanceFactory<T>>

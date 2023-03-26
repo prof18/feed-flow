@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.touchlab.kermit)
+    alias(libs.plugins.native.coroutines)
 }
 
 kotlin {
@@ -59,6 +60,8 @@ kotlin {
 
             dependencies {
                 implementation(libs.squareup.sqldelight.android.driver)
+                implementation(libs.androidx.lifecycle.viewModel.ktx)
+                implementation(libs.koin.android)
             }
         }
         val androidTest by getting {
@@ -104,6 +107,7 @@ kotlin {
             dependencies {
 //                api(compose.preview)
                 implementation(libs.squareup.sqldelight.sqlite.driver)
+                implementation(libs.kotlinx.coroutines.swing)
             }
         }
         val desktopTest by getting {

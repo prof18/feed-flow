@@ -1,7 +1,5 @@
-package com.prof18.feedflow.feedlist
+package com.prof18.feedflow.presentation
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.domain.feedmanager.FeedManagerRepository
 import com.prof18.feedflow.domain.model.FeedSource
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,13 +10,13 @@ import kotlinx.coroutines.launch
 
 class FeedSourceListViewModel(
     private val feedManagerRepository: FeedManagerRepository
-): ViewModel() {
+): BaseViewModel() {
 
     private val feedsMutableState: MutableStateFlow<List<FeedSource>> = MutableStateFlow(listOf())
     val feedsState: StateFlow<List<FeedSource>> = feedsMutableState.asStateFlow()
 
     init {
-        viewModelScope.launch {
+        scope.launch {
             val feeds = feedManagerRepository.getFeeds()
             feedsMutableState.update { feeds }
         }

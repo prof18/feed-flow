@@ -15,7 +15,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.prof18.feedflow.settings.SettingsViewModel
+import com.prof18.feedflow.domain.opml.OPMLInput
+import com.prof18.feedflow.presentation.SettingsViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +31,7 @@ internal fun ImportFeedScreen() {
         openFileURI.value = it
     }
     openFileURI.value?.let { uri ->
-        viewModel.importFeed(uri)
+        viewModel.importFeed(OPMLInput(uri))
         // TODO: move this toast from here??
         Toast.makeText(context, "Start importing", Toast.LENGTH_SHORT)
             .show()

@@ -64,10 +64,12 @@ import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.home.components.EmptyFeedView
 import com.prof18.feedflow.home.components.FeedList
 import com.prof18.feedflow.home.components.NoFeedsSourceView
+import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.ui.theme.Spacing
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 internal fun HomeScreen(

@@ -28,7 +28,7 @@ viewModel-ktx = "2.6.1"
 viewModel-compose = "2.6.1"
 lifecycle-runtime-compose = "2.6.1"
 kotlinx-serialization = "1.4.0"
-native-coroutines = "0.13.1"
+native-coroutines = "0.13.3"
 androidx-compose-material3 = "1.1.0-beta01"
 androidx-compose-bom = "2023.03.00"
 org-robolectric = "4.9"
@@ -80,6 +80,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

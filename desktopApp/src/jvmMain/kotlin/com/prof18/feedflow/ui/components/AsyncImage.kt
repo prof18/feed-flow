@@ -35,7 +35,7 @@ fun <T> AsyncImage(
             try {
                 val result = load()
                 ImageData.Success(result)
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 ImageData.Error
             }
         }

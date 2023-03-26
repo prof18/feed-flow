@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.triplet.play) apply false
     alias(libs.plugins.compose.multiplatform) apply false
+    alias(libs.plugins.native.coroutines) apply false
     alias(libs.plugins.detekt)
 }
 

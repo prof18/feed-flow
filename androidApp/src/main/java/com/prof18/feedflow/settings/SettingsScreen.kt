@@ -24,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.domain.opml.OPMLInput
+import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.settings.components.SettingsDivider
 import com.prof18.feedflow.settings.components.SettingsMenuItem
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
@@ -43,7 +45,7 @@ fun SettingsScreen(
 
     val openFileAction = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let {
-            viewModel.importFeed(it)
+            viewModel.importFeed(OPMLInput(it))
             Toast.makeText(context, "Importing feed", Toast.LENGTH_SHORT)
             .show()
         }
@@ -95,33 +97,33 @@ fun SettingsScreen(
                 SettingsDivider()
             }
 
-            item {
-                // TODO: add field to VM and persist to settings
-                val checkedState = remember { mutableStateOf(true) }
-
-                Row(
-                    modifier = Modifier
-                        .padding(vertical = Spacing.small)
-                        .padding(horizontal = Spacing.regular)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .weight(1f),
-                        text = "Delete old feeds every week",
-                        style = MaterialTheme.typography.bodyMedium,
-                        )
-
-                    Switch(
-                        checked = checkedState.value,
-                        onCheckedChange = {
-                            checkedState.value = it
-                            viewModel.scheduleCleaning(it)
-                        }
-                    )
-                }
-            }
+//            item {
+//                // TODO: add field to VM and persist to settings
+//                val checkedState = remember { mutableStateOf(true) }
+//
+//                Row(
+//                    modifier = Modifier
+//                        .padding(vertical = Spacing.small)
+//                        .padding(horizontal = Spacing.regular)
+//                        .fillMaxWidth(),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Text(
+//                        modifier = Modifier
+//                            .weight(1f),
+//                        text = "Delete old feeds every week",
+//                        style = MaterialTheme.typography.bodyMedium,
+//                        )
+//
+//                    Switch(
+//                        checked = checkedState.value,
+//                        onCheckedChange = {
+//                            checkedState.value = it
+//                            viewModel.scheduleCleaning(it)
+//                        }
+//                    )
+//                }
+//            }
 
             item {
                 SettingsDivider()

@@ -1,12 +1,9 @@
-package com.prof18.feedflow.settings
+package com.prof18.feedflow.presentation
 
-import android.net.Uri
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.prof18.feedflow.domain.feedmanager.FeedManagerRepository
 import com.prof18.feedflow.domain.FeedRetrieverRepository
-import com.prof18.feedflow.OPMLImporter
-import com.prof18.feedflow.workmanager.WorkManagerHandler
+import com.prof18.feedflow.domain.feedmanager.FeedManagerRepository
+import com.prof18.feedflow.domain.opml.OPMLImporter
+import com.prof18.feedflow.domain.opml.OPMLInput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,28 +13,19 @@ class SettingsViewModel(
     private val feedManagerRepository: FeedManagerRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val opmlImporter: OPMLImporter,
-    private val workManagerHandler: WorkManagerHandler,
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val isImportDoneMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isImportDoneState = isImportDoneMutableState.asStateFlow()
 
-    fun importFeed(uri: Uri) {
-        viewModelScope.launch {
+    fun importFeed(opmlInput: OPMLInput) {
+        scope.launch {
             isImportDoneMutableState.update { false }
-            val feed = opmlImporter.getOPML(uri)
+            val feed = opmlImporter.getOPML(opmlInput)
             // todo: add a try/catch?
             feedManagerRepository.addFeedsFromFile(feed)
             isImportDoneMutableState.update { true }
             feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
-        }
-    }
-
-    fun scheduleCleaning(isCleaningEnabled: Boolean) {
-        if (isCleaningEnabled) {
-            workManagerHandler.enqueueCleanupWork()
-        } else {
-            // TODO: delete worker
         }
     }
 }

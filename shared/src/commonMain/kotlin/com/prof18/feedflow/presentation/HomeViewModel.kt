@@ -1,14 +1,12 @@
-package com.prof18.feedflow.home
+package com.prof18.feedflow.presentation
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import com.prof18.feedflow.presentation.model.FeedErrorState
+import com.prof18.feedflow.domain.FeedRetrieverRepository
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
-import com.prof18.feedflow.domain.FeedRetrieverRepository
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
-import com.prof18.feedflow.UIErrorState
+import com.prof18.feedflow.presentation.model.FeedErrorState
+import com.prof18.feedflow.presentation.model.UIErrorState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val feedRetrieverRepository: FeedRetrieverRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     // Loading
     val loadingState: StateFlow<FeedUpdateStatus> = feedRetrieverRepository.updateState
@@ -40,7 +38,7 @@ class HomeViewModel(
     }
 
     private fun observeFeeds() {
-        viewModelScope.launch {
+        scope.launch {
             feedRetrieverRepository.getFeeds()
                 .collect { feedItems ->
                     mutableFeedState.update {
@@ -49,7 +47,7 @@ class HomeViewModel(
                 }
         }
 
-        viewModelScope.launch {
+        scope.launch {
             feedRetrieverRepository.errorState
                 .collect { error ->
                     when (error) {
@@ -71,7 +69,7 @@ class HomeViewModel(
 
     fun getNewFeeds() {
         lastUpdateIndex = 0
-        viewModelScope.launch {
+        scope.launch {
             feedRetrieverRepository.fetchFeeds()
         }
     }
@@ -102,20 +100,20 @@ class HomeViewModel(
         }
 
         lastUpdateIndex = lastVisibleIndex
-        viewModelScope.launch {
+        scope.launch {
             feedRetrieverRepository.updateReadStatus(urlToUpdates)
         }
     }
 
     fun markAllRead() {
-        viewModelScope.launch {
+        scope.launch {
             feedRetrieverRepository.markAllFeedAsRead()
             feedRetrieverRepository.fetchFeeds()
         }
     }
 
     fun markAsRead(feedItemId: Int) {
-        viewModelScope.launch {
+        scope.launch {
             feedRetrieverRepository.updateReadStatus(
                 listOf(
                     FeedItemId(feedItemId)

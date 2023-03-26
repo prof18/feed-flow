@@ -12,10 +12,14 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.ui.theme.Spacing
 import org.koin.androidx.compose.koinViewModel
 
@@ -24,11 +28,15 @@ import org.koin.androidx.compose.koinViewModel
 fun AddFeedScreen() {
 
     val viewModel = koinViewModel<AddFeedViewModel>()
+    var feedName by remember { mutableStateOf("") }
+    var feedUrl by remember { mutableStateOf("") }
 
     val context = LocalContext.current
     val isAddDone by viewModel.isAddDoneState.collectAsStateWithLifecycle()
 
     if (isAddDone) {
+        feedName = ""
+        feedUrl = ""
         Toast.makeText(context, "Feed Added", Toast.LENGTH_SHORT)
             .show()
     }
@@ -41,13 +49,16 @@ fun AddFeedScreen() {
                 .padding(paddingValues)
                 .padding(horizontal = Spacing.regular)
         ) {
-
+            
             TextField(
                 modifier = Modifier
                     .fillMaxWidth(),
                 label = { Text(text = "Feed name") },
-                value = viewModel.feedNameState.value,
-                onValueChange = { viewModel.updateFeedNameTextFieldValue(it) },
+                value = feedName,
+                onValueChange = {
+                    feedName = it
+                    viewModel.updateFeedNameTextFieldValue(it)
+                },
                 placeholder = {
                     Text(
                         "My Favourite Blog",
@@ -57,13 +68,18 @@ fun AddFeedScreen() {
                 maxLines = 1,
             )
 
+
+
             TextField(
                 modifier = Modifier
                     .padding(top = Spacing.regular)
                     .fillMaxWidth(),
                 label = { Text(text = "Feed url") },
-                value = viewModel.feedUrlState.value,
-                onValueChange = { viewModel.updateFeedUrlTextFieldValue(it) },
+                value = feedUrl,
+                onValueChange = {
+                    feedUrl = it
+                    viewModel.updateFeedUrlTextFieldValue(it)
+                },
                 placeholder = {
                     Text(
                         "https://myfavouriteblog.com/feed",
@@ -83,8 +99,6 @@ fun AddFeedScreen() {
             ) {
                 Text("Add Feed")
             }
-
         }
     }
-
 }

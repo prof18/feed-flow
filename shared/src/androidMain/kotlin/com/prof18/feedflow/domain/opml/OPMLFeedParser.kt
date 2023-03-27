@@ -1,5 +1,6 @@
 package com.prof18.feedflow.domain.opml
 
+import android.content.Context
 import com.prof18.feedflow.attributeValue
 import com.prof18.feedflow.contains
 import com.prof18.feedflow.domain.model.ParsedFeedSource
@@ -7,6 +8,7 @@ import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
+import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.io.Reader
@@ -14,16 +16,15 @@ import java.io.Reader
 internal actual class OPMLFeedParser(
     private val dispatcherProvider: DispatcherProvider,
 ) {
-
-    actual suspend fun parse(feed: String): List<ParsedFeedSource> = withContext(dispatcherProvider.default) {
-
+    actual suspend fun parse(opmlInput: OPMLInput): List<ParsedFeedSource> = withContext(dispatcherProvider.io) {
+        val inputStream = opmlInput.inputStream
         val feedSources = mutableListOf<ParsedFeedSource>()
 
         val factory = XmlPullParserFactory.newInstance()
         factory.isNamespaceAware = false
 
         val xmlPullParser = factory.newPullParser()
-        val reader: Reader = InputStreamReader(ByteArrayInputStream(feed.trim().toByteArray()))
+        val reader: Reader = InputStreamReader(inputStream)
 
         xmlPullParser.setInput(reader)
 
@@ -57,6 +58,7 @@ internal actual class OPMLFeedParser(
             }
             eventType = xmlPullParser.next()
         }
+        inputStream?.close()
         return@withContext feedSources
     }
 }

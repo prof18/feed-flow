@@ -71,6 +71,7 @@ kotlin {
                 implementation(libs.junit)
                 implementation(libs.org.robolectric)
                 implementation(libs.squareup.sqldelight.sqlite.driver)
+                implementation(libs.androidx.test.core.ktx)
             }
         }
         val iosX64Main by getting

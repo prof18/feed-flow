@@ -1,27 +1,25 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.domain.opml
 
-import androidx.test.core.app.ApplicationProvider
-import com.prof18.feedflow.domain.opml.OPMLFeedParser
-import com.prof18.feedflow.domain.opml.OPMLInput
+import com.prof18.feedflow.TestDispatcherProvider
+import com.prof18.feedflow.opml
 import kotlinx.coroutines.test.runTest
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.Robolectric
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import platform.Foundation.NSData
+import platform.Foundation.NSString
+import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.dataUsingEncoding
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@RunWith(RobolectricTestRunner::class)
-@Config(manifest=Config.NONE)
 class OPMLFeedParserTest {
 
     private val parser = OPMLFeedParser(
-        dispatcherProvider = TestDispatcherProvider,
+        dispatcherProvider = TestDispatcherProvider
     )
 
-    private val opmlInput = OPMLInput(
-        inputStream = opml.byteInputStream()
+
+    val opmlInput = OPMLInput(
+        opmlData = (opml as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData()
     )
 
     @Test

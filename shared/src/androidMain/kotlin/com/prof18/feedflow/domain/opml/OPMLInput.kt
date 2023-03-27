@@ -1,7 +1,7 @@
 package com.prof18.feedflow.domain.opml
 
-import android.net.Uri
+import java.io.InputStream
 
 actual data class OPMLInput(
-    val uri: Uri
+    val inputStream: InputStream?
 )

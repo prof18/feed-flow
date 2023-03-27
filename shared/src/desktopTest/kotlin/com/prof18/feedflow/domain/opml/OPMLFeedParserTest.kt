@@ -4,6 +4,7 @@ import com.prof18.feedflow.TestDispatcherProvider
 import com.prof18.feedflow.opml
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -13,15 +14,25 @@ class OPMLFeedParserTest {
         dispatcherProvider = TestDispatcherProvider
     )
 
+    private val file = File.createTempFile( "some-prefix", ".tmp").apply {
+        deleteOnExit()
+        writeText(opml)
+    }
+
+
+    val opmlInput = OPMLInput(
+        file = file
+    )
+
     @Test
     fun `The number of feeds are correct`() = runTest {
-        val feedSources = parser.parse(opml)
+        val feedSources = parser.parse(opmlInput)
         assertTrue(feedSources.size == 6)
     }
 
     @Test
     fun `The number of feed in category are correct`() = runTest {
-        val feedSources = parser.parse(opml)
+        val feedSources = parser.parse(opmlInput)
 
         val techFeeds = feedSources.filter { it.category == "Tech" }
         val basketFeeds = feedSources.filter { it.category == "Basket" }
@@ -34,7 +45,7 @@ class OPMLFeedParserTest {
 
     @Test
     fun `The feeds are parsed correctly`() = runTest {
-        val feedSources = parser.parse(opml)
+        val feedSources = parser.parse(opmlInput)
 
         assertEquals("Hacker News", feedSources[0].title)
         assertEquals("https://news.ycombinator.com/rss", feedSources[0].url)

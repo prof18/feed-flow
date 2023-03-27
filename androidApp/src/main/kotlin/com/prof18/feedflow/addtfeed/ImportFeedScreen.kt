@@ -31,7 +31,7 @@ internal fun ImportFeedScreen() {
         openFileURI.value = it
     }
     openFileURI.value?.let { uri ->
-        viewModel.importFeed(OPMLInput(uri))
+        viewModel.importFeed(OPMLInput(context.contentResolver.openInputStream(uri)))
         // TODO: move this toast from here??
         Toast.makeText(context, "Start importing", Toast.LENGTH_SHORT)
             .show()

@@ -52,7 +52,6 @@ private val coreModule = module {
     viewModel {
         SettingsViewModel(
             feedManagerRepository = get(),
-            opmlImporter = get(),
             feedRetrieverRepository = get(),
         )
     }

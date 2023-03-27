@@ -45,7 +45,7 @@ fun SettingsScreen(
 
     val openFileAction = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let {
-            viewModel.importFeed(OPMLInput(it))
+            viewModel.importFeed(OPMLInput(context.contentResolver.openInputStream(uri)))
             Toast.makeText(context, "Importing feed", Toast.LENGTH_SHORT)
             .show()
         }

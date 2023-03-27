@@ -12,7 +12,8 @@ import javax.xml.parsers.SAXParserFactory
 internal actual class OPMLFeedParser(
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    actual suspend fun parse(feed: String): List<ParsedFeedSource> = withContext(dispatcherProvider.io) {
+    actual suspend fun parse(opmlInput: OPMLInput): List<ParsedFeedSource> = withContext(dispatcherProvider.io) {
+        val feed = opmlInput.file.readText()
         val parser = SAXParserFactory.newInstance().newSAXParser()
         val handler = SaxFeedHandler()
         parser.parse(InputSource(StringReader(feed)), handler)

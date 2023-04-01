@@ -3,8 +3,10 @@ package com.prof18.feedflow.domain.opml
 import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
+import platform.Foundation.NSData
 import platform.Foundation.NSXMLParser
 import platform.Foundation.NSXMLParserDelegateProtocol
+import platform.Foundation.dataWithContentsOfURL
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -14,7 +16,9 @@ internal actual class OPMLFeedParser(
 ){
     actual suspend fun parse(opmlInput: OPMLInput): List<ParsedFeedSource> = withContext(dispatcherProvider.default) {
         suspendCoroutine { continuation ->
-            NSXMLParser(opmlInput.opmlData).apply {
+            val data = NSData.dataWithContentsOfURL(opmlInput.opmlData)
+            requireNotNull(data)
+            NSXMLParser(data).apply {
                 delegate = NSXMLParserDelegate { continuation.resume(it) }
             }.parse()
         }

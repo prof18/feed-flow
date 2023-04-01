@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/mg/Workspace/Personal/KMP/feed-flow/iosApp/FeedFlow.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>

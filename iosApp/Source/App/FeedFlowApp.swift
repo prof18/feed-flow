@@ -2,7 +2,9 @@ import SwiftUI
 import shared
 
 @main
-struct iOSApp: App {
+struct FeedFlowApp: App {
+    
+    @StateObject var appState: AppState = AppState()
     
     init() {
         startKoin()
@@ -11,6 +13,7 @@ struct iOSApp: App {
 	var body: some Scene {
 		WindowGroup {
 			ContentView()
+                .environmentObject(appState)
 		}
 	}
 }

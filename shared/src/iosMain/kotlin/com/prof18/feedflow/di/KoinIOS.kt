@@ -4,7 +4,10 @@ import com.prof.rssparser.Parser
 import com.prof.rssparser.build
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.domain.opml.OPMLFeedParser
 import com.prof18.feedflow.presentation.BaseViewModel
+import com.prof18.feedflow.presentation.HomeViewModel
+import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
@@ -45,9 +48,16 @@ internal actual val platformModule: Module = module {
 //            .build()
         Parser.build()
     }
+
+    factory {
+        OPMLFeedParser(
+            dispatcherProvider = get(),
+        )
+    }
 }
 
 @Suppress("unused") // Called from Swift
 object KotlinDependencies : KoinComponent {
-//    fun getMovieRepository() = getKoin().get<MovieRepository>()
+    fun getHomeViewModel() = getKoin().get<HomeViewModel>()
+    fun getSettingsViewModel() = getKoin().get<SettingsViewModel>()
 }

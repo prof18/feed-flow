@@ -27,10 +27,10 @@ include(":androidApp")
 include(":shared")
 include(":desktopApp")
 
-//includeBuild("../../Android/RSS-Parser") {
-//    dependencySubstitution {
-//        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))
-//    }
-//}
+includeBuild("../../Android/RSS-Parser") {
+    dependencySubstitution {
+        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))
+    }
+}
 
 

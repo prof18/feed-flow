@@ -19,8 +19,8 @@ struct HomeScreen: View {
     @State var feedState: [FeedItem] = []
     @State var errorState: UIErrorState? = nil
     @State var showLoading: Bool = true
-    
     @State private var showSettings = false
+    @State var visibleFeedItemsIds: Set<Int> = []
     
     var body: some View {
         ScrollViewReader { proxy in
@@ -29,6 +29,7 @@ struct HomeScreen: View {
                 feedState: $feedState,
                 errorState: $errorState,
                 showLoading: $showLoading,
+                visibleFeedItemsIds: $visibleFeedItemsIds,
                 onReloadClick: {
                     homeViewModel.getNewFeeds()
                 },
@@ -70,8 +71,7 @@ struct HomeScreen: View {
             do {
                 let stream = asyncStream(for: homeViewModel.loadingStateNative)
                 for try await state in stream {
-                    print(">> Got update")
-                    let isLoading = state.isLoading() && state.totalFeedCount != 0 
+                    let isLoading = state.isLoading() && state.totalFeedCount != 0
                     withAnimation {
                         self.showLoading = isLoading
                     }
@@ -99,6 +99,13 @@ struct HomeScreen: View {
                 }
             } catch {
                 emitGenericError()
+            }
+        }
+        .onChange(of: visibleFeedItemsIds) { indexSet in
+            let index = indexSet.first
+            
+            if let index = index, index > 1 {
+                homeViewModel.updateReadStatus(lastVisibleIndex: Int32(index - 1))
             }
         }
     }

@@ -14,6 +14,7 @@ struct FeedListView: View {
     @Environment(\.openURL) var openURL
     
     let feedState: [FeedItem]
+    @Binding var visibleFeedItemsIds: Set<Int>
 
     let onRefresh: () -> Void
     
@@ -63,6 +64,19 @@ struct FeedListView: View {
                 .id(feedItem.id)
                 .onTapGesture {
                     openURL(URL(string: feedItem.url)!)
+                }
+                .onAppear {
+                    if let index = feedState.firstIndex(of: feedItem) {
+                        self.visibleFeedItemsIds.insert(index)
+                    }
+                    
+                }
+                .onDisappear {
+                    if let index = feedState.firstIndex(of: feedItem) {
+                        
+                        self.visibleFeedItemsIds.remove(index)
+                    }
+                    
                 }
                 
             }
@@ -124,6 +138,7 @@ struct FeedListView_Previews: PreviewProvider {
     static var previews: some View {
         FeedListView(
             feedState: feedState,
+            visibleFeedItemsIds: .constant([]),
             onRefresh: {}
         )
     }

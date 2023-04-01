@@ -15,6 +15,7 @@ struct HomeScreenContent: View {
     @Binding var feedState: [FeedItem]
     @Binding var errorState: UIErrorState?
     @Binding var showLoading: Bool
+    @Binding var visibleFeedItemsIds: Set<Int>
     
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
@@ -46,6 +47,7 @@ struct HomeScreenContent: View {
                 
                 FeedListView(
                     feedState: feedState,
+                    visibleFeedItemsIds: $visibleFeedItemsIds,
                     onRefresh: onReloadClick
                 )
             }
@@ -106,6 +108,7 @@ struct HomeScreenFeed_Previews: PreviewProvider {
             feedState: .constant(feedState),
             errorState: .constant(nil),
             showLoading: .constant(false),
+            visibleFeedItemsIds: .constant([]),
             onReloadClick: {},
             onAddFeedClick: {}
         )
@@ -124,6 +127,7 @@ struct HomeScreenNoFeed_Previews: PreviewProvider {
             feedState: .constant([]),
             errorState: .constant(nil),
             showLoading: .constant(false),
+            visibleFeedItemsIds: .constant([]),
             onReloadClick: {},
             onAddFeedClick: {}
         )
@@ -138,6 +142,7 @@ struct HomeScreenEmptyFeed_Previews: PreviewProvider {
             feedState: .constant([]),
             errorState: .constant(nil),
             showLoading: .constant(false),
+            visibleFeedItemsIds: .constant([]),
             onReloadClick: {},
             onAddFeedClick: {}
         )

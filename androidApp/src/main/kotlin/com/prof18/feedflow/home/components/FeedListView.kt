@@ -146,8 +146,7 @@ private fun FeedItemView(
                 feedItem.subtitle?.let { subtitle ->
                     Text(
                         modifier = Modifier
-                            .padding(top = Spacing.small)
-                            ,
+                            .padding(top = Spacing.small),
                         text = subtitle,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
@@ -168,8 +167,7 @@ private fun FeedItemView(
 
         Text(
             modifier = Modifier
-                .padding(top = Spacing.small)
-                ,
+                .padding(top = Spacing.small),
             text = feedItem.dateString,
             style = MaterialTheme.typography.bodySmall
         )

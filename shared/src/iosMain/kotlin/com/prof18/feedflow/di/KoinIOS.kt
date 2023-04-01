@@ -4,6 +4,7 @@ import com.prof.rssparser.Parser
 import com.prof.rssparser.build
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.opml.OPMLFeedParser
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
@@ -21,14 +22,20 @@ import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 
-fun initKoinIos(): KoinApplication = initKoin(
-    modules = listOf()
+fun initKoinIos(
+    htmlParser: HtmlParser
+): KoinApplication = initKoin(
+    modules = listOf(
+        module {
+            factory { htmlParser }
+        },
+    )
 )
 
 internal actual inline fun <reified T: BaseViewModel> Module.viewModel(
     qualifier: Qualifier?,
     noinline definition: Definition<T>
-): Pair<Module, InstanceFactory<T>> = factory(qualifier, definition)
+): Pair<Module, InstanceFactory<T>> = single(qualifier, definition= definition)
 
 internal actual val platformModule: Module = module {
     single<SqlDriver> {

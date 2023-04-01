@@ -14,17 +14,39 @@ struct HomeScreenContent: View {
     @Binding var loadingState: FeedUpdateStatus?
     @Binding var feedState: [FeedItem]
     @Binding var errorState: UIErrorState?
+    @Binding var showLoading: Bool
     
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
     
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
-            NoFeedsSourceView(onAddFeedClick: onAddFeedClick)
+            NoFeedsSourceView(
+                onAddFeedClick: onAddFeedClick
+            )
         } else if loadingState?.isLoading() == false && feedState.isEmpty {
-            EmptyFeedView(onReloadClick: onReloadClick)
+            EmptyFeedView(
+                onReloadClick: onReloadClick
+            )
         } else {
-            Text("List")
+            VStack(alignment: .center) {
+                
+                if let feedCount = loadingState?.refreshedFeedCount, let totalFeedCount = loadingState?.totalFeedCount {
+                
+                    if showLoading {
+                        
+                        let feedRefreshCounter = "\(feedCount)/\(totalFeedCount)"
+                        
+                        Text("Loading feeds \(feedRefreshCounter)")
+                            .font(.body)
+                    }
+                }
+                
+                FeedListView(
+                    feedState: feedState,
+                    onRefresh: onReloadClick
+                )
+            }
         }
     }
     
@@ -81,6 +103,7 @@ struct HomeScreenFeed_Previews: PreviewProvider {
             loadingState: .constant(FinishedFeedUpdateStatus(refreshedFeedCount: 1, totalFeedCount: 1)),
             feedState: .constant(feedState),
             errorState: .constant(nil),
+            showLoading: .constant(false),
             onReloadClick: {},
             onAddFeedClick: {}
         )
@@ -98,6 +121,7 @@ struct HomeScreenNoFeed_Previews: PreviewProvider {
             loadingState: .constant(noFeedSourceStatus),
             feedState: .constant([]),
             errorState: .constant(nil),
+            showLoading: .constant(false),
             onReloadClick: {},
             onAddFeedClick: {}
         )
@@ -111,6 +135,7 @@ struct HomeScreenEmptyFeed_Previews: PreviewProvider {
             loadingState: .constant(FinishedFeedUpdateStatus(refreshedFeedCount: 1, totalFeedCount: 1)),
             feedState: .constant([]),
             errorState: .constant(nil),
+            showLoading: .constant(false),
             onReloadClick: {},
             onAddFeedClick: {}
         )

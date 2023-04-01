@@ -10,7 +10,9 @@ import Foundation
 import shared
 
 func startKoin() {
-    let koinApplication = KoinIOSKt.doInitKoinIos()
+    let koinApplication = KoinIOSKt.doInitKoinIos(
+        htmlParser: IosHtmlParser()
+    )
     _koin = koinApplication.koin
 }
 

@@ -31,7 +31,7 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.touchlab.kermit)
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.kotlinx.datetime)
+//                implementation(libs.kotlinx.datetime)
                 implementation(libs.com.prof18.rss.parser)
             }
         }

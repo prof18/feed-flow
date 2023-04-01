@@ -11,6 +11,7 @@ import Foundation
 import SwiftUI
 
 struct Spacing {
+    static var xxsmall: CGFloat = 2.0
     static var xsmall: CGFloat = 4.0
     static var small: CGFloat = 8.0
     static var regular: CGFloat = 16.0

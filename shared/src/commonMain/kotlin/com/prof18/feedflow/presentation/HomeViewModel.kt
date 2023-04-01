@@ -33,6 +33,7 @@ class HomeViewModel(
     private var lastUpdateIndex = 0
 
     init {
+        Logger.d { "Init called!" }
         observeFeeds()
         getNewFeeds()
     }

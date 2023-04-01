@@ -18,34 +18,50 @@ struct HomeScreen: View {
     @State var loadingState: FeedUpdateStatus? = nil
     @State var feedState: [FeedItem] = []
     @State var errorState: UIErrorState? = nil
+    @State var showLoading: Bool = false
     
     @State private var showSettings = false
     
     var body: some View {
-        HomeScreenContent(
-            loadingState: $loadingState,
-            feedState: $feedState,
-            errorState: $errorState,
-            onReloadClick: {
-                // todo
-            },
-            onAddFeedClick: {
-                // todo
-            }
-        )
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Text("FeedFlow (\(feedState.count))")
-                    .font(.title2)
+        ScrollViewReader { proxy in
+            HomeScreenContent(
+                loadingState: $loadingState,
+                feedState: $feedState,
+                errorState: $errorState,
+                showLoading: $showLoading,
+                onReloadClick: {
+                    homeViewModel.getNewFeeds()
+                },
+                onAddFeedClick: {
+                    self.showSettings.toggle()
+                }
+            )
+            
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Text("FeedFlow (\(feedState.count))")
+                        .font(.title2)
+                        .padding(.vertical, Spacing.medium)
+                        .onTapGesture(count: 2){
+                            proxy.scrollTo(feedState.first?.id)
+                            homeViewModel.getNewFeeds()
+                        }
+                        .onTapGesture {
+                            withAnimation {
+                                proxy.scrollTo(feedState.first?.id)
+                            }
+                        }
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        self.showSettings.toggle()
+                    } label: {
+                        Image(systemName: "gear")
+                    }
+                }
+                
             }
             
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    self.showSettings.toggle()
-                } label: {
-                    Image(systemName: "gear")
-                }
-            }
         }
         .sheet(isPresented: self.$showSettings) {
             SettingsScreen()
@@ -54,6 +70,11 @@ struct HomeScreen: View {
             do {
                 let stream = asyncStream(for: homeViewModel.loadingStateNative)
                 for try await state in stream {
+                    print(">> Got update")
+                    let isLoading = state.isLoading() && state.totalFeedCount != 0 
+                    withAnimation {
+                        self.showLoading = isLoading
+                    }
                     self.loadingState = state
                 }
             } catch {

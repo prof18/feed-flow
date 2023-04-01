@@ -2,6 +2,8 @@ package com.prof18.feedflow.di
 
 import com.prof.rssparser.Parser
 import com.prof.rssparser.build
+import com.prof18.feedflow.domain.HtmlParser
+import com.prof18.feedflow.domain.JvmHtmlParser
 import com.prof18.feedflow.domain.opml.OPMLFeedParser
 import com.prof18.feedflow.initDatabase
 import com.prof18.feedflow.presentation.BaseViewModel
@@ -48,5 +50,9 @@ internal actual val platformModule: Module = module {
             override val default: CoroutineDispatcher = Dispatchers.Default
             override val io: CoroutineDispatcher = Dispatchers.IO
         }
+    }
+
+    factory<HtmlParser> {
+        JvmHtmlParser()
     }
 }

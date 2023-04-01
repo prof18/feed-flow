@@ -4,10 +4,11 @@ import co.touchlab.kermit.Logger
 import com.prof.rssparser.Channel
 import com.prof.rssparser.Parser
 import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.domain.HtmlParser
+import com.prof18.feedflow.domain.currentTimeMillis
 import com.prof18.feedflow.domain.feed.retriever.model.RssChannelResult
 import com.prof18.feedflow.domain.formatDate
 import com.prof18.feedflow.domain.getDateMillisFromString
-import com.prof18.feedflow.domain.getTextFromHTML
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedSource
@@ -30,7 +31,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.days
 
@@ -39,6 +39,7 @@ internal class FeedRetrieverRepositoryImpl(
     private val parser: Parser,
     private val databaseHelper: DatabaseHelper,
     private val dispatcherProvider: DispatcherProvider,
+    private val htmlParser: HtmlParser,
 ) : FeedRetrieverRepository {
 
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
@@ -103,7 +104,10 @@ internal class FeedRetrieverRepositoryImpl(
     }
 
     override suspend fun deleteOldFeeds() {
-        val threshold = Clock.System.now().minus(7.days).epochSeconds
+        // One week
+        // (((1 hour in seconds) * 24 hours) * 7 days)
+        val oneWeekInMillis = (((60 * 60) * 24) * 7) * 1000L
+        val threshold = currentTimeMillis() - oneWeekInMillis
         databaseHelper.deleteOldFeedItems(threshold)
     }
 
@@ -153,6 +157,7 @@ internal class FeedRetrieverRepositoryImpl(
                             }
 
                             if (updateLoadingInfo) {
+                                Logger.d { "Updating count info" }
                                 updateRefreshCount()
                             }
                         }
@@ -212,13 +217,19 @@ internal class FeedRetrieverRepositoryImpl(
             val pubDate = article.pubDate
 
             val randomTimeToSubtract = Random.nextLong(1800000L, 10800000L)
-            val defaultDate = Clock.System.now().epochSeconds - randomTimeToSubtract
+            val defaultDate = currentTimeMillis() - randomTimeToSubtract
 
             val dateMillis = if (pubDate != null) {
                 getDateMillisFromString(pubDate) ?: defaultDate
             } else {
                 // Between 30 minutes and 3 hours ago
                 defaultDate
+            }
+
+            val imageUrl = if (article.image?.contains("http:") == true) {
+                article.image?.replace("http:", "https:")
+            } else {
+                article.image
             }
 
             if (title == null || url == null) {
@@ -230,14 +241,14 @@ internal class FeedRetrieverRepositoryImpl(
                     url = url,
                     title = title,
                     subtitle = article.description?.let { description ->
-                        getTextFromHTML(description)
+                        htmlParser.getTextFromHTML(description)
                     },
                     content = article.content,
-                    imageUrl = article.image,
+                    imageUrl = imageUrl,
                     feedSource = feedSource,
                     isRead = false,
                     pubDateMillis = dateMillis,
-                    dateString = formatDate(dateMillis),
+                    dateString = "formatDate(dateMillis)",
                     commentsUrl = article.commentsUrl,
                 )
             }

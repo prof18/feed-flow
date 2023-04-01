@@ -46,6 +46,7 @@ private val coreModule = module {
             parser = get(),
             databaseHelper = get(),
             dispatcherProvider = get(),
+            htmlParser = get(),
         )
     }
 

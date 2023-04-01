@@ -28,6 +28,8 @@ struct HomeScreenContent: View {
             EmptyFeedView(
                 onReloadClick: onReloadClick
             )
+        } else if feedState.isEmpty {
+            ProgressView()
         } else {
             VStack(alignment: .center) {
                 

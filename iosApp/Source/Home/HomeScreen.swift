@@ -18,7 +18,7 @@ struct HomeScreen: View {
     @State var loadingState: FeedUpdateStatus? = nil
     @State var feedState: [FeedItem] = []
     @State var errorState: UIErrorState? = nil
-    @State var showLoading: Bool = false
+    @State var showLoading: Bool = true
     
     @State private var showSettings = false
     

@@ -17,11 +17,11 @@ struct SettingsScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var settingsViewModel: SettingsViewModel = KotlinDependencies.shared.getSettingsViewModel()
     
+    
     var body: some View {
-        ZStack {
+        NavigationStack {
             VStack {
                 Form {
-                    
                     HStack {
                         Button(
                             "Import Feed from OPML",
@@ -31,21 +31,43 @@ struct SettingsScreen: View {
                         )
                     }
                     
-                    HStack {
-                        Text("Add feed")
+                    NavigationLink(value: SheetPage.addFeed) {
+                        HStack {
+                            Text("Add feed")
+                        }
                     }
                     
-                    HStack {
-                        Text("Feeds")
+                    NavigationLink(value: SheetPage.feedList) {
+                        HStack {
+                            Text("Feeds")
+                        }
                     }
                 }
+                ._safeAreaInsets(EdgeInsets(top: -30, leading: 0, bottom: 0, trailing: 0))
             }
-            
-            VStack(spacing: 0) {
-                
-                Spacer()
-                
-                Snackbar(snackbarData: $appState.snackbarDataForSheet)
+            .navigationDestination(for: SheetPage.self) { page in
+                switch page {
+                case .addFeed:
+                    AddFeedScreen()
+                    
+                case .feedList:
+                    FeedsScreen()
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Text("Settings")
+                        .font(.title2)
+                        .padding(.vertical, Spacing.medium)
+                    
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        self.presentationMode.wrappedValue.dismiss()
+                    } label: {
+                        Text("Close")
+                    }
+                }
             }
         }
         .sheet(item: $sheetToShow) { item in
@@ -54,16 +76,13 @@ struct SettingsScreen: View {
                 
             case .filePicker:
                 FilePickerController { url in
-                    // TODO
                     settingsViewModel.importFeed(opmlInput: OPMLInput(opmlData: url))
                     
-                    self.appState.snackbarDataForSheet = SnackbarData(
+                    self.appState.snackbarData = SnackbarData(
                         title: "Importing feed",
                         subtitle: nil,
                         showBanner: true
                     )
-                    
-                    // TODO: close tab?
                 }
             }
         }.task {
@@ -71,16 +90,16 @@ struct SettingsScreen: View {
                 let stream = asyncStream(for: settingsViewModel.isImportDoneStateNative)
                 for try await isImportDone in stream {
                     if isImportDone as! Bool {
-                        // TODO: maybe show in the global snackbar data
-                        self.appState.snackbarDataForSheet = SnackbarData(
+                        self.appState.snackbarData = SnackbarData(
                             title: "Import done",
                             subtitle: nil,
                             showBanner: true
                         )
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             } catch {
-                self.appState.snackbarDataForSheet = SnackbarData(
+                self.appState.snackbarData = SnackbarData(
                     title: "Sorry, something went wrong :(",
                     subtitle: nil,
                     showBanner: true

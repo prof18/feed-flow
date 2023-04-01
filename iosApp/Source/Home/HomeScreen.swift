@@ -104,8 +104,8 @@ struct HomeScreen: View {
         .onChange(of: visibleFeedItemsIds) { indexSet in
             let index = indexSet.first
             
-            if let index = index, index > 1 {
-                homeViewModel.updateReadStatus(lastVisibleIndex: Int32(index - 1))
+            if let index = index, index > 5 {
+                homeViewModel.updateReadStatus(lastVisibleIndex: Int32(index - 5))
             }
         }
     }

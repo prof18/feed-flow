@@ -9,13 +9,14 @@
 import Foundation
 import SwiftUI
 import shared
+import OrderedCollections
 
 struct HomeScreenContent: View {
     @Binding var loadingState: FeedUpdateStatus?
     @Binding var feedState: [FeedItem]
     @Binding var errorState: UIErrorState?
     @Binding var showLoading: Bool
-    @Binding var visibleFeedItemsIds: Set<Int>
+    @Binding var visibleFeedItemsIds: OrderedSet<Int>
     
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void

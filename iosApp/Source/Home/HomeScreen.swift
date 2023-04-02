@@ -9,10 +9,13 @@
 import SwiftUI
 import KMPNativeCoroutinesAsync
 import shared
+import OrderedCollections
 
 struct HomeScreen: View {
     
     @EnvironmentObject var appState: AppState
+    @Environment(\.scenePhase) var scenePhase
+    
     @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
     
     @State var loadingState: FeedUpdateStatus? = nil
@@ -20,7 +23,10 @@ struct HomeScreen: View {
     @State var errorState: UIErrorState? = nil
     @State var showLoading: Bool = true
     @State private var showSettings = false
-    @State var visibleFeedItemsIds: Set<Int> = []
+    @State var visibleFeedItemsIds: OrderedSet<Int> = []
+    @State var unreadItemsCount: Int = 0
+    
+    @State private var lastReadItemIndex = 0
     
     var body: some View {
         ScrollViewReader { proxy in
@@ -37,10 +43,9 @@ struct HomeScreen: View {
                     self.showSettings.toggle()
                 }
             )
-            
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("FeedFlow (\(feedState.count))")
+                    Text("FeedFlow (\(unreadItemsCount))")
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
                         .onTapGesture(count: 2){
@@ -95,17 +100,37 @@ struct HomeScreen: View {
             do {
                 let stream = asyncStream(for: homeViewModel.feedStateNative)
                 for try await state in stream {
+                    print(">>Updating feed: \(state.count)")
+                    print(">>> last visible: \(self.lastReadItemIndex)")
                     self.feedState = state
+                    
+                    let computedUnread = state.count - lastReadItemIndex
+                    print("")
+                    if state.count > computedUnread {
+                        self.unreadItemsCount = computedUnread
+                    } else {
+                        self.unreadItemsCount = state.count
+                    }
                 }
             } catch {
                 emitGenericError()
             }
         }
         .onChange(of: visibleFeedItemsIds) { indexSet in
-            let index = indexSet.first
+            let sortedSet = indexSet.sorted()
+            let index = sortedSet.first ?? 0
             
-            if let index = index, index > 5 {
-                homeViewModel.updateReadStatus(lastVisibleIndex: Int32(index - 5))
+            if index > lastReadItemIndex {
+                self.lastReadItemIndex = index - 1
+                self.unreadItemsCount = self.feedState.count - self.lastReadItemIndex
+            }
+        }
+        .onChange(of: scenePhase) { newScenePhase in
+            switch newScenePhase {
+            case .background:
+                homeViewModel.updateReadStatus(lastVisibleIndex: Int32(lastReadItemIndex))
+            default:
+                break
             }
         }
     }

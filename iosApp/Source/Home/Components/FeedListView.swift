@@ -7,67 +7,34 @@
 //
 
 import SwiftUI
+import Nuke
 import shared
+import NukeUI
+import OrderedCollections
 
 struct FeedListView: View {
     
     @Environment(\.openURL) var openURL
     
     let feedState: [FeedItem]
-    @Binding var visibleFeedItemsIds: Set<Int>
-
-    let onRefresh: () -> Void
+    @Binding var visibleFeedItemsIds: OrderedSet<Int>
     
+    let onRefresh: () -> Void
+
     var body: some View {
         List {
-            ForEach(feedState, id: \.self) { feedItem in
+            ForEach(feedState, id: \.self.id) { feedItem in
                 
-                VStack(alignment: .leading) {
-                    
-                    Text(feedItem.feedSource.title)
-                        .font(.system(size: 12))
-                        .padding(.top, Spacing.small)
-                    
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(feedItem.title)
-                                .font(.system(size: 16))
-                                .bold()
-                            
-                            if let subtitle = feedItem.subtitle {
-                                Text(subtitle)
-                                    .lineLimit(3)
-                                    .font(.system(size: 14))
-                                    .padding(.top, Spacing.xxsmall)
-                            }
-                        }
-                        
-                        if let imageUrl = feedItem.imageUrl {
-                            Spacer()
-                            
-                            ImageLoadingView(
-                                urlString: imageUrl,
-                                size: 100
-                            )
-                            .padding(.leading, Spacing.regular)
-                            .padding(.top, Spacing.xsmall)
-                        }
-                        
-                    }
-                    .padding(.vertical, Spacing.small)
-                    
-                    Text(feedItem.dateString)
-                        .font(.system(size: 12))
-                        .padding(.bottom, Spacing.small)
-                                        
-                }
+                FeedItemView(
+                    feedItem: feedItem
+                )
                 .id(feedItem.id)
                 .onTapGesture {
                     openURL(URL(string: feedItem.url)!)
                 }
                 .onAppear {
                     if let index = feedState.firstIndex(of: feedItem) {
-                        self.visibleFeedItemsIds.insert(index)
+                        self.visibleFeedItemsIds.append(index)
                     }
                     
                 }
@@ -84,6 +51,65 @@ struct FeedListView: View {
         .listStyle(PlainListStyle())
         .refreshable {
             onRefresh()
+        }
+    }
+}
+
+struct FeedItemView : View {
+    
+    let feedItem: FeedItem
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            
+            Text(feedItem.feedSource.title)
+                .font(.system(size: 12))
+                .padding(.top, Spacing.small)
+            
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(feedItem.title)
+                        .font(.system(size: 16))
+                        .bold()
+                    
+                    if let subtitle = feedItem.subtitle {
+                        Text(subtitle)
+                            .lineLimit(3)
+                            .font(.system(size: 14))
+                            .padding(.top, Spacing.xxsmall)
+                    }
+                }
+                
+                if let imageUrl = feedItem.imageUrl {
+                    Spacer()
+                    
+                    LazyImage(url: URL(string: imageUrl)) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 100)
+                                .cornerRadius(16)
+                                .clipped()
+                        } else if state.error != nil {
+                            EmptyView()
+                        } else {
+                            ProgressView()
+                                .frame(width: 100)
+                        }
+                    }
+                    
+                    .padding(.leading, Spacing.regular)
+                    .padding(.top, Spacing.xsmall)
+                }
+                
+            }
+            .padding(.vertical, Spacing.small)
+            
+            Text(feedItem.dateString)
+                .font(.system(size: 12))
+                .padding(.bottom, Spacing.small)
+            
         }
     }
 }

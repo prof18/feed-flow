@@ -84,12 +84,11 @@ class HomeViewModel(
 
         val items = feedState.value.toMutableList()
         Logger.d { "Last visibile: $lastVisibleIndex. Last update: $lastUpdateIndex" }
-        if (lastVisibleIndex < lastUpdateIndex) {
+        if (lastVisibleIndex <= lastUpdateIndex) {
             Logger.d { "Not Updating anything" }
             return
         }
         for (index in lastUpdateIndex..lastVisibleIndex) {
-            Logger.d { "Update stuff" }
             val item = items[index]
             if (!item.isRead) {
                 urlToUpdates.add(

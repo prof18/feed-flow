@@ -17,7 +17,6 @@ struct SettingsScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var settingsViewModel: SettingsViewModel = KotlinDependencies.shared.getSettingsViewModel()
     
-    
     var body: some View {
         NavigationStack {
             VStack {

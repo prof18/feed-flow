@@ -12,10 +12,10 @@ import shared
 import OrderedCollections
 
 struct HomeScreenContent: View {
-    @Binding var loadingState: FeedUpdateStatus?
-    @Binding var feedState: [FeedItem]
-    @Binding var errorState: UIErrorState?
-    @Binding var showLoading: Bool
+    var loadingState: FeedUpdateStatus?
+    var feedState: [FeedItem]
+    var errorState: UIErrorState?
+    var showLoading: Bool
     @Binding var visibleFeedItemsIds: OrderedSet<Int>
     
     let onReloadClick: () -> Void
@@ -105,10 +105,10 @@ struct HomeScreenFeed_Previews: PreviewProvider {
         ]
         
         HomeScreenContent(
-            loadingState: .constant(FinishedFeedUpdateStatus(refreshedFeedCount: 1, totalFeedCount: 1)),
-            feedState: .constant(feedState),
-            errorState: .constant(nil),
-            showLoading: .constant(false),
+            loadingState: FinishedFeedUpdateStatus(refreshedFeedCount: 1, totalFeedCount: 1),
+            feedState: feedState,
+            errorState: nil,
+            showLoading: false,
             visibleFeedItemsIds: .constant([]),
             onReloadClick: {},
             onAddFeedClick: {}
@@ -124,10 +124,10 @@ struct HomeScreenNoFeed_Previews: PreviewProvider {
     static var previews: some View {
         
         HomeScreenContent(
-            loadingState: .constant(noFeedSourceStatus),
-            feedState: .constant([]),
-            errorState: .constant(nil),
-            showLoading: .constant(false),
+            loadingState: noFeedSourceStatus,
+            feedState: [],
+            errorState: nil,
+            showLoading: false,
             visibleFeedItemsIds: .constant([]),
             onReloadClick: {},
             onAddFeedClick: {}
@@ -139,10 +139,10 @@ struct HomeScreenEmptyFeed_Previews: PreviewProvider {
     static var previews: some View {
         
         HomeScreenContent(
-            loadingState: .constant(FinishedFeedUpdateStatus(refreshedFeedCount: 1, totalFeedCount: 1)),
-            feedState: .constant([]),
-            errorState: .constant(nil),
-            showLoading: .constant(false),
+            loadingState: FinishedFeedUpdateStatus(refreshedFeedCount: 1, totalFeedCount: 1),
+            feedState: [],
+            errorState: nil,
+            showLoading: false,
             visibleFeedItemsIds: .constant([]),
             onReloadClick: {},
             onAddFeedClick: {}

@@ -31,10 +31,10 @@ struct HomeScreen: View {
     var body: some View {
         ScrollViewReader { proxy in
             HomeScreenContent(
-                loadingState: $loadingState,
-                feedState: $feedState,
-                errorState: $errorState,
-                showLoading: $showLoading,
+                loadingState: loadingState,
+                feedState: feedState,
+                errorState: errorState,
+                showLoading: showLoading,
                 visibleFeedItemsIds: $visibleFeedItemsIds,
                 onReloadClick: {
                     homeViewModel.getNewFeeds()
@@ -100,12 +100,9 @@ struct HomeScreen: View {
             do {
                 let stream = asyncStream(for: homeViewModel.feedStateNative)
                 for try await state in stream {
-                    print(">>Updating feed: \(state.count)")
-                    print(">>> last visible: \(self.lastReadItemIndex)")
                     self.feedState = state
                     
                     let computedUnread = state.count - lastReadItemIndex
-                    print("")
                     if state.count > computedUnread {
                         self.unreadItemsCount = computedUnread
                     } else {

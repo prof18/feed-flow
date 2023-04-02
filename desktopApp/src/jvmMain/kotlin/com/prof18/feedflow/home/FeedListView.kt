@@ -148,12 +148,16 @@ private fun FeedItemView(
             }
 
             feedItem.imageUrl?.let { url ->
+                val imageLoading = remember(feedItem.id) {
+                    { loadImageBitmap(url) }
+                }
+
                 AsyncImage(
                     modifier = Modifier
                         .wrapContentHeight()
                         .width(96.dp)
                         .clip(RoundedCornerShape(Spacing.small)),
-                    load = { loadImageBitmap(url) },
+                    load = { imageLoading() },
                     painterFor = { remember { BitmapPainter(it) } },
                     contentDescription = null,
                 )

@@ -17,7 +17,6 @@ class OPMLFeedParserTest {
         dispatcherProvider = TestDispatcherProvider
     )
 
-
     val opmlInput = OPMLInput(
         opmlData = (opml as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData()
     )

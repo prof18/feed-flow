@@ -76,7 +76,19 @@ struct SettingsScreen: View {
                 
             case .filePicker:
                 FilePickerController { url in
-                    settingsViewModel.importFeed(opmlInput: OPMLInput(opmlData: url))
+                    
+                    do {
+                        let data = try Data(contentsOf: url)
+                        settingsViewModel.importFeed(opmlInput: OPMLInput(opmlData: data))
+                    } catch {
+                        self.appState.snackbarData = SnackbarData(
+                            title: "Unable to load file",
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    }
+                    
+                    
                     
                     self.appState.snackbarData = SnackbarData(
                         title: "Importing feed",

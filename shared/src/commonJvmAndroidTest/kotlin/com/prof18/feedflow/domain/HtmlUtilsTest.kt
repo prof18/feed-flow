@@ -5,7 +5,7 @@ import kotlin.test.assertEquals
 
 class HtmlUtilsTest {
 
-    private val htmlParser: JvmHtmlParser()
+    private val htmlParser = JvmHtmlParser()
 
     @Test
     fun `When a text has HTML tags then getTextFromHTML returns the text without HTML tags`() {

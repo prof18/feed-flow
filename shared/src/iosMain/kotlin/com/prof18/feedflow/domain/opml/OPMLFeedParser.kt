@@ -16,9 +16,7 @@ internal actual class OPMLFeedParser(
 ){
     actual suspend fun parse(opmlInput: OPMLInput): List<ParsedFeedSource> = withContext(dispatcherProvider.default) {
         suspendCoroutine { continuation ->
-            val data = NSData.dataWithContentsOfURL(opmlInput.opmlData)
-            requireNotNull(data)
-            NSXMLParser(data).apply {
+            NSXMLParser(opmlInput.opmlData).apply {
                 delegate = NSXMLParserDelegate { continuation.resume(it) }
             }.parse()
         }

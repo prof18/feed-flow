@@ -9,7 +9,7 @@ import kotlinx.coroutines.cancel
 actual abstract class BaseViewModel {
 
     @NativeCoroutineScope
-    actual val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    actual val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     actual fun clear() {
         scope.cancel()

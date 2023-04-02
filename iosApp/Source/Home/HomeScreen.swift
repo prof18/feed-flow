@@ -17,17 +17,14 @@ struct HomeScreen: View {
     @Environment(\.scenePhase) var scenePhase
     
     @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
+    @StateObject var indexHolder = HomeListIndexHolder()
     
     @State var loadingState: FeedUpdateStatus? = nil
     @State var feedState: [FeedItem] = []
     @State var errorState: UIErrorState? = nil
     @State var showLoading: Bool = true
     @State private var showSettings = false
-    @State var visibleFeedItemsIds: OrderedSet<Int> = []
-    @State var unreadItemsCount: Int = 0
-    
-    @State private var lastReadItemIndex = 0
-    
+        
     var body: some View {
         ScrollViewReader { proxy in
             HomeScreenContent(
@@ -35,7 +32,6 @@ struct HomeScreen: View {
                 feedState: feedState,
                 errorState: errorState,
                 showLoading: showLoading,
-                visibleFeedItemsIds: $visibleFeedItemsIds,
                 onReloadClick: {
                     homeViewModel.getNewFeeds()
                 },
@@ -43,9 +39,10 @@ struct HomeScreen: View {
                     self.showSettings.toggle()
                 }
             )
+            .environmentObject(indexHolder)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("FeedFlow (\(unreadItemsCount))")
+                    Text("FeedFlow (\(indexHolder.unreadCount))")
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
                         .onTapGesture(count: 2){
@@ -102,30 +99,16 @@ struct HomeScreen: View {
                 for try await state in stream {
                     self.feedState = state
                     
-                    let computedUnread = state.count - lastReadItemIndex
-                    if state.count > computedUnread {
-                        self.unreadItemsCount = computedUnread
-                    } else {
-                        self.unreadItemsCount = state.count
-                    }
+                    indexHolder.updateUnreadCount(unreadCountFromData: state.count)
                 }
             } catch {
                 emitGenericError()
             }
         }
-        .onChange(of: visibleFeedItemsIds) { indexSet in
-            let sortedSet = indexSet.sorted()
-            let index = sortedSet.first ?? 0
-            
-            if index > lastReadItemIndex {
-                self.lastReadItemIndex = index - 1
-                self.unreadItemsCount = self.feedState.count - self.lastReadItemIndex
-            }
-        }
         .onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
             case .background:
-                homeViewModel.updateReadStatus(lastVisibleIndex: Int32(lastReadItemIndex))
+                homeViewModel.updateReadStatus(lastVisibleIndex: Int32(indexHolder.lastReadItemIndex))
             default:
                 break
             }

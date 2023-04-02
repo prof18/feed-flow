@@ -15,10 +15,9 @@ import OrderedCollections
 struct FeedListView: View {
     
     @Environment(\.openURL) var openURL
+    @EnvironmentObject var indexHolder: HomeListIndexHolder
     
     let feedState: [FeedItem]
-    @Binding var visibleFeedItemsIds: OrderedSet<Int>
-    
     let onRefresh: () -> Void
 
     var body: some View {
@@ -34,16 +33,14 @@ struct FeedListView: View {
                 }
                 .onAppear {
                     if let index = feedState.firstIndex(of: feedItem) {
-                        self.visibleFeedItemsIds.append(index)
+                        self.indexHolder.addIndex(index: index)
                     }
                     
                 }
                 .onDisappear {
                     if let index = feedState.firstIndex(of: feedItem) {
-                        
-                        self.visibleFeedItemsIds.remove(index)
+                        self.indexHolder.removeIndex(index: index)
                     }
-                    
                 }
                 
             }
@@ -164,7 +161,6 @@ struct FeedListView_Previews: PreviewProvider {
     static var previews: some View {
         FeedListView(
             feedState: feedState,
-            visibleFeedItemsIds: .constant([]),
             onRefresh: {}
         )
     }

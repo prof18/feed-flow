@@ -46,6 +46,8 @@ struct HomeScreen: View {
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
                         .onTapGesture(count: 2){
+                            homeViewModel.updateReadStatus(lastVisibleIndex: Int32(indexHolder.getLastReadIndex()))
+                            self.indexHolder.refresh()
                             proxy.scrollTo(feedState.first?.id)
                             homeViewModel.getNewFeeds()
                         }
@@ -77,6 +79,7 @@ struct HomeScreen: View {
                     withAnimation {
                         self.showLoading = isLoading
                     }
+                    self.indexHolder.isLoading = isLoading
                     self.loadingState = state
                 }
             } catch {
@@ -99,7 +102,7 @@ struct HomeScreen: View {
                 for try await state in stream {
                     self.feedState = state
                     
-                    indexHolder.updateUnreadCount(unreadCountFromData: state.count)
+                    self.indexHolder.setUnreadCount(count: self.feedState.count)
                 }
             } catch {
                 emitGenericError()
@@ -108,7 +111,7 @@ struct HomeScreen: View {
         .onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
             case .background:
-                homeViewModel.updateReadStatus(lastVisibleIndex: Int32(indexHolder.lastReadItemIndex))
+                homeViewModel.updateReadStatus(lastVisibleIndex: Int32(indexHolder.getLastReadIndex()))
             default:
                 break
             }

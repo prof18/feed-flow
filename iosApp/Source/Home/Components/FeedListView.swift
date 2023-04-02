@@ -31,15 +31,9 @@ struct FeedListView: View {
                 .onTapGesture {
                     openURL(URL(string: feedItem.url)!)
                 }
-                .onAppear {
-                    if let index = feedState.firstIndex(of: feedItem) {
-                        self.indexHolder.addIndex(index: index)
-                    }
-                    
-                }
                 .onDisappear {
                     if let index = feedState.firstIndex(of: feedItem) {
-                        self.indexHolder.removeIndex(index: index)
+                        self.indexHolder.updateReadIndex(index: index)
                     }
                 }
                 

@@ -13,37 +13,28 @@ class HomeListIndexHolder: ObservableObject {
  
     @Published var unreadCount: Int = 0
     
-    var lastReadItemIndex: Int = 0
-    private var visibleFeedItemsIds: OrderedSet<Int> = []
-    private var originalUnreadCountFromData: Int = 0
+    private var lastReadIndex = 0
+    private var originalUnreadFeedCount = 0
+    var isLoading: Bool = false
     
-    func updateUnreadCount(unreadCountFromData: Int) {
-        self.originalUnreadCountFromData = unreadCountFromData
-        let computedUnread = unreadCountFromData - lastReadItemIndex
-        if unreadCountFromData > computedUnread {
-            self.unreadCount = computedUnread
-        } else {
-            self.unreadCount = unreadCountFromData
+    func setUnreadCount(count: Int) {
+        self.originalUnreadFeedCount = count
+        self.unreadCount = count
+    }
+    
+    func updateReadIndex(index: Int) {
+        if !isLoading {
+            lastReadIndex = index
+            self.unreadCount = originalUnreadFeedCount - index
         }
     }
     
-    func addIndex(index: Int) {
-        self.visibleFeedItemsIds.append(index)
-        updateIndex()
+    func getLastReadIndex() -> Int {
+        return lastReadIndex
     }
     
-    func removeIndex(index: Int) {
-        self.visibleFeedItemsIds.remove(index)
-        updateIndex()
-    }
-    
-    private func updateIndex() {
-        let sortedSet = visibleFeedItemsIds.sorted()
-        let index = sortedSet.first ?? 0
-        
-        if index > lastReadItemIndex {
-            self.lastReadItemIndex = index - 1
-            self.unreadCount = originalUnreadCountFromData - self.lastReadItemIndex
-        }
+    func refresh() {
+        self.isLoading = true
+        self.unreadCount = originalUnreadFeedCount
     }
 }

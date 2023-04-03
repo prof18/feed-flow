@@ -23,7 +23,7 @@ class HomeListIndexHolder: ObservableObject {
     }
     
     func updateReadIndex(index: Int) {
-        if !isLoading {
+        if !isLoading && index > lastReadIndex {
             lastReadIndex = index
             self.unreadCount = originalUnreadFeedCount - index
         }

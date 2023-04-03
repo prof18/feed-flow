@@ -55,6 +55,19 @@ compose.desktop {
 
             macOS {
                 iconFile.set(iconsRoot.resolve("icon.icns"))
+
+                bundleID = "com.prof18.feedflow"
+
+                signing {
+                    sign.set(true)
+                    identity.set("Marco Gomiero")
+                    // keychain.set("/path/to/keychain")
+                }
+
+                notarization {
+                    appleID.set("mgp.dev.studio@gmail.com")
+                    password.set("@keychain:NOTARIZATION_PASSWORD")
+                }
             }
             windows {
                 iconFile.set(project.file("icon.ico"))

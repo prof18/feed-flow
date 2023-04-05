@@ -12,7 +12,6 @@ version = "1.0-SNAPSHOT"
 
 kotlin {
     jvm {
-        jvmToolchain(11)
         withJava()
     }
     sourceSets {
@@ -40,6 +39,16 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "com.prof18.feedflow.MainKt"
+        javaHome = "/Library/Java/JavaVirtualMachines/zulu-18.jdk/Contents/Home"
+
+//        buildTypes.release.proguard {
+//            obfuscate.set(true)
+//        }
+//
+//        buildTypes.release.proguard {
+//            configurationFiles.from(project.file("compose-desktop.pro"))
+//        }
+
         nativeDistributions {
 
             modules("java.instrument", "java.sql", "jdk.unsupported")
@@ -57,6 +66,8 @@ compose.desktop {
                 iconFile.set(iconsRoot.resolve("icon.icns"))
 
                 bundleID = "com.prof18.feedflow"
+
+                entitlementsFile.set(project.file("default.entitlements")) // <----------- this line
 
                 signing {
                     sign.set(true)

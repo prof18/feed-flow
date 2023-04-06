@@ -5,6 +5,7 @@ captures
 .externalNativeBuild
 .cxx
 xcuserdata
+Plist
 
 # Gradle files
 .gradle/
@@ -103,3 +104,4 @@ bin/
 
 ### VS Code ###
 .vscode/
+/iosApp/Plist/Prefix

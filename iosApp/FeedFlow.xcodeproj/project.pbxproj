@@ -6,6 +6,20 @@
 	objectVersion = 52;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		CC36F68029DF478100B3EB62 /* VersionGenerator */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = CC36F68129DF478100B3EB62 /* Build configuration list for PBXAggregateTarget "VersionGenerator" */;
+			buildPhases = (
+				CC36F68429DF478C00B3EB62 /* Generate Version */,
+			);
+			dependencies = (
+			);
+			name = VersionGenerator;
+			productName = VersionGenerator;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
@@ -46,6 +60,16 @@
 		CCC86B4429D8C44400AEABB9 /* SheetPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC86B4329D8C44400AEABB9 /* SheetPage.swift */; };
 		CCEB9C5829B33F5A0064D14A /* Koin.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCEB9C5729B33F5A0064D14A /* Koin.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CC36F68529DF47D800B3EB62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7555FF73242A565900829871 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC36F68029DF478100B3EB62;
+			remoteInfo = VersionGenerator;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		7555FFB4242A642300829871 /* Embed Frameworks */ = {
@@ -329,6 +353,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CC36F68629DF47D800B3EB62 /* PBXTargetDependency */,
 			);
 			name = FeedFlow;
 			packageProductDependencies = (
@@ -357,6 +382,9 @@
 					7555FF7A242A565900829871 = {
 						CreatedOnToolsVersion = 11.3.1;
 					};
+					CC36F68029DF478100B3EB62 = {
+						CreatedOnToolsVersion = 14.3;
+					};
 				};
 			};
 			buildConfigurationList = 7555FF76242A565900829871 /* Build configuration list for PBXProject "FeedFlow" */;
@@ -379,6 +407,7 @@
 			projectRoot = "";
 			targets = (
 				7555FF7A242A565900829871 /* FeedFlow */,
+				CC36F68029DF478100B3EB62 /* VersionGenerator */,
 			);
 		};
 /* End PBXProject section */
@@ -415,6 +444,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+		CC36F68429DF478C00B3EB62 /* Generate Version */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Version";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Plist/Prefix",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$SRCROOT\"/.scripts/version.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -453,6 +501,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CC36F68629DF47D800B3EB62 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC36F68029DF478100B3EB62 /* VersionGenerator */;
+			targetProxy = CC36F68529DF47D800B3EB62 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		7555FFA3242A565B00829871 /* Debug */ = {
@@ -506,6 +562,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_PREFIX_HEADER = Plist/Prefix;
+				INFOPLIST_PREPROCESS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -561,6 +619,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_PREFIX_HEADER = Plist/Prefix;
+				INFOPLIST_PREPROCESS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -583,6 +643,8 @@
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeedFlow;
+				INFOPLIST_PREFIX_HEADER = Plist/Prefix;
+				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -604,6 +666,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Preview Content\"";
@@ -612,6 +675,8 @@
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeedFlow;
+				INFOPLIST_PREFIX_HEADER = Plist/Prefix;
+				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -624,8 +689,27 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.prof18.feedflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CC36F68229DF478100B3EB62 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q7CUB3RNAK;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CC36F68329DF478100B3EB62 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q7CUB3RNAK;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -646,6 +730,15 @@
 			buildConfigurations = (
 				7555FFA6242A565B00829871 /* Debug */,
 				7555FFA7242A565B00829871 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC36F68129DF478100B3EB62 /* Build configuration list for PBXAggregateTarget "VersionGenerator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC36F68229DF478100B3EB62 /* Debug */,
+				CC36F68329DF478100B3EB62 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

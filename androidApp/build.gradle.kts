@@ -97,8 +97,10 @@ fun getVersionCode(): Int {
 fun getVersionName(): String {
     val outputStream = org.apache.commons.io.output.ByteArrayOutputStream()
     project.exec {
-        commandLine = "git describe --tags --abbrev=0".split(" ")
+        commandLine = listOf("git", "describe", "--tags", "--abbrev=0", "--match", "*-android")
         standardOutput = outputStream
     }
-    return outputStream.toString().trim()
+    return outputStream.toString()
+        .trim()
+        .replace("-android", "")
 }

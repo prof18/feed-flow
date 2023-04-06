@@ -1,9 +1,9 @@
-name: Deploy Alpha Version
+name: Android Alpha Release
 
 on:
   push:
     tags:
-      - '*'
+      - '*-android'
 
 jobs:
   deploy:

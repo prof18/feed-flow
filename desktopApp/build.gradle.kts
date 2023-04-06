@@ -1,4 +1,3 @@
-import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -39,7 +38,6 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "com.prof18.feedflow.MainKt"
-        javaHome = "/Library/Java/JavaVirtualMachines/zulu-18.jdk/Contents/Home"
 
 //        buildTypes.release.proguard {
 //            obfuscate.set(true)
@@ -51,11 +49,13 @@ compose.desktop {
 
         nativeDistributions {
 
+            outputBaseDir.set(project.buildDir.resolve("release"))
+
             modules("java.instrument", "java.sql", "jdk.unsupported")
 
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "FeedFlow"
-            packageVersion = "1.0.0"
+            packageVersion = getVersionName()
 
             description = "FeedFlow - Read RSS Feed"
             copyright = "© 2023 Marco Gomiero. All rights reserved."
@@ -65,9 +65,10 @@ compose.desktop {
             macOS {
                 iconFile.set(iconsRoot.resolve("icon.icns"))
 
+                packageName = "FeedFlow"
                 bundleID = "com.prof18.feedflow"
 
-                entitlementsFile.set(project.file("default.entitlements")) // <----------- this line
+                entitlementsFile.set(project.file("default.entitlements"))
 
                 signing {
                     sign.set(true)
@@ -88,4 +89,24 @@ compose.desktop {
             }
         }
     }
+}
+
+fun getVersionCode(): Int {
+    val outputStream = org.apache.commons.io.output.ByteArrayOutputStream()
+    project.exec {
+        commandLine = "git rev-list HEAD --first-parent --count".split(" ")
+        standardOutput = outputStream
+    }
+    return outputStream.toString().trim().toInt()
+}
+
+fun getVersionName(): String {
+    val outputStream = org.apache.commons.io.output.ByteArrayOutputStream()
+    project.exec {
+        commandLine = listOf("git", "describe", "--tags", "--abbrev=0", "--match", "*-desktop")
+        standardOutput = outputStream
+    }
+    return outputStream.toString()
+        .trim()
+        .replace("-desktop", "")
 }

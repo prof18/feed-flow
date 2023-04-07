@@ -52,6 +52,7 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          ls ~/Library/MobileDevice/Provisioning\ Profiles
 
       - name: Archive
         working-directory: ./iosApp
@@ -61,6 +62,7 @@ jobs:
                       -sdk iphoneos \
                       -configuration Release \
                       -archivePath $PWD/build/FeedFlow.xcarchive \
+                      -allowProvisioningUpdates \
                       clean archive | xcpretty
 
       - name: Export

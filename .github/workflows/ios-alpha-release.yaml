@@ -57,7 +57,7 @@ jobs:
       - name: Archive
         working-directory: ./iosApp
         run: |
-          xcodebuild -project ./FeedFlow.xcodeproj -scheme FeedFlow -sdk iphoneos -configuration Release -archivePath $PWD/build/FeedFlow.xcarchive -allowProvisioningUpdates archive 
+          xcodebuild -project ./FeedFlow.xcodeproj -scheme FeedFlow -destination 'generic/platform=iOS' -configuration Release -archivePath $PWD/build/FeedFlow.xcarchive archive 
 
       - name: Export
         working-directory: ./iosApp

@@ -58,11 +58,10 @@ jobs:
         working-directory: ./iosApp
         run: |
           xcodebuild -project ./FeedFlow.xcodeproj \
-                      -scheme FeedFlow
+                      -scheme FeedFlow \
                       -sdk iphoneos \
                       -configuration Release \
                       -archivePath $PWD/build/FeedFlow.xcarchive \
-                      -allowProvisioningUpdates \
                       clean archive | xcpretty
 
       - name: Export

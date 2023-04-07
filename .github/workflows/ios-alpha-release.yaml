@@ -33,11 +33,13 @@ jobs:
         run: |
           # create variables
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          CERTIFICATE_DEV_PATH=$RUNNER_TEMP/dev_certificate.p12
           PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
           # import certificate and provisioning profile from secrets
           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          echo -n "$DEV_CERTIFICATE_BASE_64" | base64 --decode -o $CERTIFICATE_DEV_PATH
           echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
 
           # create temporary keychain
@@ -47,6 +49,7 @@ jobs:
 
           # import certificate to keychain
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security import $CERTIFICATE_DEV_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
 
           # apply provisioning profile
@@ -57,7 +60,7 @@ jobs:
       - name: Archive
         working-directory: ./iosApp
         run: |
-          xcodebuild -project ./FeedFlow.xcodeproj -scheme FeedFlow -destination 'generic/platform=iOS' -configuration Release -archivePath $PWD/build/FeedFlow.xcarchive archive 
+          xcodebuild -project ./FeedFlow.xcodeproj -scheme FeedFlow -destination 'generic/platform=iOS' -configuration Release -archivePath $PWD/build/FeedFlow.xcarchive -allowProvisioningUpdates archive 
 
       - name: Export
         working-directory: ./iosApp

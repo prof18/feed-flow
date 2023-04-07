@@ -57,21 +57,12 @@ jobs:
       - name: Archive
         working-directory: ./iosApp
         run: |
-          xcodebuild -project ./FeedFlow.xcodeproj \
-                      -scheme FeedFlow \
-                      -sdk iphoneos \
-                      -configuration Release \
-                      -archivePath $PWD/build/FeedFlow.xcarchive \
-                      clean archive | xcpretty
+          xcodebuild -project ./FeedFlow.xcodeproj -scheme FeedFlow -sdk iphoneos -configuration Release -archivePath $PWD/build/FeedFlow.xcarchive archive 
 
       - name: Export
         working-directory: ./iosApp
         run: |
-          xcodebuild -archivePath $PWD/build/FeedFlow.xcarchive \
-                      -exportOptionsPlist ExportOptions.plist \
-                      -exportPath $PWD/build \
-                      -allowProvisioningUpdates \
-                      -exportArchive | xcpretty
+          xcodebuild -archivePath $PWD/build/FeedFlow.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath $PWD/build -allowProvisioningUpdates -exportArchive 
 
       - name: Upload
         env:

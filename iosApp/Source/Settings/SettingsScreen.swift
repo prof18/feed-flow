@@ -80,19 +80,23 @@ struct SettingsScreen: View {
                         let data = try Data(contentsOf: url)
                         settingsViewModel.importFeed(opmlInput: OPMLInput(opmlData: data))
                     } catch {
-                        self.appState.snackbarData = SnackbarData(
-                            title: "Unable to load file",
-                            subtitle: nil,
-                            showBanner: true
+                        self.appState.snackbarQueue.append(
+                            
+                            SnackbarData(
+                                title: "Unable to load file",
+                                subtitle: nil,
+                                showBanner: true
+                            )
                         )
                     }
                     
                     
-                    
-                    self.appState.snackbarData = SnackbarData(
-                        title: "Importing feed",
-                        subtitle: nil,
-                        showBanner: true
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: "Importing feed",
+                            subtitle: nil,
+                            showBanner: true
+                        )
                     )
                 }
             }
@@ -101,19 +105,23 @@ struct SettingsScreen: View {
                 let stream = asyncStream(for: settingsViewModel.isImportDoneStateNative)
                 for try await isImportDone in stream {
                     if isImportDone as! Bool {
-                        self.appState.snackbarData = SnackbarData(
-                            title: "Import done",
-                            subtitle: nil,
-                            showBanner: true
+                        self.appState.snackbarQueue.append(
+                            SnackbarData(
+                                title: "Import done",
+                                subtitle: nil,
+                                showBanner: true
+                            )
                         )
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
             } catch {
-                self.appState.snackbarData = SnackbarData(
-                    title: "Sorry, something went wrong :(",
-                    subtitle: nil,
-                    showBanner: true
+                self.appState.snackbarQueue.append(
+                    SnackbarData(
+                        title: "Sorry, something went wrong :(",
+                        subtitle: nil,
+                        showBanner: true
+                    )
                 )
             }
         }

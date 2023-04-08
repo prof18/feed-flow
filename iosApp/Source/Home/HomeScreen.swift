@@ -23,7 +23,7 @@ struct HomeScreen: View {
     @State var feedState: [FeedItem] = []
     @State var showLoading: Bool = true
     @State private var showSettings = false
-        
+    
     var body: some View {
         ScrollViewReader { proxy in
             HomeScreenContent(
@@ -89,10 +89,13 @@ struct HomeScreen: View {
                 let stream = asyncStream(for: homeViewModel.errorStateNative)
                 for try await state in stream {
                     if let message = state?.message {
-                        self.appState.snackbarData = SnackbarData(
-                            title: message,
-                            subtitle: nil,
-                            showBanner: true
+                        self.appState.snackbarQueue.append(
+                            
+                            SnackbarData(
+                                title: message,
+                                subtitle: nil,
+                                showBanner: true
+                            )
                         )
                     }
                 }
@@ -123,10 +126,12 @@ struct HomeScreen: View {
     }
     
     private func emitGenericError() {
-        self.appState.snackbarData = SnackbarData(
-            title: "Sorry, something went wrong :(",
-            subtitle: nil,
-            showBanner: true
+        self.appState.snackbarQueue.append(
+            SnackbarData(
+                title: "Sorry, something went wrong :(",
+                subtitle: nil,
+                showBanner: true
+            )
         )
     }
 }

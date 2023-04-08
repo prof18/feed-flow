@@ -8,34 +8,39 @@
 
 
 import SwiftUI
+import Collections
 
 struct Snackbar: View {
-
-    @Binding var snackbarData: SnackbarData
-
+    
+    @Binding var messageQueue: Deque<SnackbarData>
+    @State private var snackbarData: SnackbarData = SnackbarData()
+    
     @State private var showBanner: Bool = false
-
+    
     var body: some View {
-
-        VStack(alignment: .leading, spacing: Spacing.xsmall) {
-
-            Text(snackbarData.title)
-                .font(.title3)
-                .foregroundColor(Color.popupText)
-
-            if let subtitle = snackbarData.subtitle {
-                Text(subtitle)
-                    .font(.caption)
+        
+        HStack {
+            VStack(alignment: .leading, spacing: Spacing.xsmall) {
+                
+                Text(snackbarData.title)
+                    .font(.title3)
                     .foregroundColor(Color.popupText)
+                
+                if let subtitle = snackbarData.subtitle {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(Color.popupText)
+                }
             }
+            .padding(.vertical, Spacing.regular)
+            .padding(.horizontal, Spacing.medium)
+            
+            Spacer()
         }
-        .padding(.vertical, Spacing.regular)
-        .padding(.horizontal, Spacing.medium)
         .background(Color.popupBackground)
         .shadow(radius: 10)
         .cornerRadius(8)
         .transition(AnyTransition.move(edge: .bottom).combined(with: .opacity))
-        .animation(.spring())
         .gesture(
             DragGesture()
                 .onChanged { _ in
@@ -44,23 +49,28 @@ struct Snackbar: View {
                     }
                 }
         )
-        .onChange(of: self.snackbarData) { value  in
-            if !value.isEmpty() {
+        .onChange(of: self.messageQueue) { messageQueue in
+            
+            if let data = self.messageQueue.first {
                 withAnimation {
-                    self.snackbarData = value
+                    self.snackbarData = data
                     self.showBanner = true
                 }
-
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                     withAnimation {
                         showBanner = false
+                        if !self.messageQueue.isEmpty {
+                            self.messageQueue.removeFirst()
+                        }
                     }
                 }
             }
+            
         }
         .padding(.bottom, Spacing.regular)
         .zIndex(100)
         .offset(y: showBanner ? 0 : UIScreen.main.bounds.height)
-
+        .padding(.horizontal, Spacing.medium)
     }
 }

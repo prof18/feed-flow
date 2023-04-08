@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import Collections
 
 class AppState: ObservableObject {
 
-    @Published var snackbarData: SnackbarData = SnackbarData()
+    @Published var snackbarQueue: Deque<SnackbarData> = Deque()
 
-    @Published var snackbarDataForSheet: SnackbarData = SnackbarData()
+    @Published var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
 }

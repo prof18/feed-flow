@@ -29,7 +29,7 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                Snackbar(snackbarData: $appState.snackbarData)
+                Snackbar(messageQueue: $appState.snackbarQueue)
             }
         }
     }

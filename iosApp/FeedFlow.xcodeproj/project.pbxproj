@@ -29,7 +29,6 @@
 		CC23293129D63038005D0E06 /* iosMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292F29D63038005D0E06 /* iosMain */; };
 		CC23293529D8300C005D0E06 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC23293429D8300C005D0E06 /* View+.swift */; };
 		CC23293729D83067005D0E06 /* RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC23293629D83067005D0E06 /* RoundedCorners.swift */; };
-		CC23293929D8309D005D0E06 /* ImageLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC23293829D8309D005D0E06 /* ImageLoadingView.swift */; };
 		CC23293C29D85208005D0E06 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = CC23293B29D85208005D0E06 /* SwiftSoup */; };
 		CC23293F29D85295005D0E06 /* IosHtmlParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC23293E29D85295005D0E06 /* IosHtmlParser.swift */; };
 		CC323E1029D2239300138233 /* KMPNativeCoroutinesAsync in Frameworks */ = {isa = PBXBuildFile; productRef = CC323E0F29D2239300138233 /* KMPNativeCoroutinesAsync */; };
@@ -95,7 +94,6 @@
 		CC23292F29D63038005D0E06 /* iosMain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = iosMain; path = ../../shared/src/iosMain; sourceTree = "<group>"; };
 		CC23293429D8300C005D0E06 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 		CC23293629D83067005D0E06 /* RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCorners.swift; sourceTree = "<group>"; };
-		CC23293829D8309D005D0E06 /* ImageLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoadingView.swift; sourceTree = "<group>"; };
 		CC23293E29D85295005D0E06 /* IosHtmlParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosHtmlParser.swift; sourceTree = "<group>"; };
 		CC323E1529D229AC00138233 /* ObservableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableViewModel.swift; sourceTree = "<group>"; };
 		CC323E1729D22C4200138233 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
@@ -300,7 +298,6 @@
 		CCA704D229D60CDF00560FA3 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				CC23293829D8309D005D0E06 /* ImageLoadingView.swift */,
 				CCA704D529D60D1C00560FA3 /* EmptyFeedView.swift */,
 				CCA704D729D60F4200560FA3 /* NoFeedsSourceView.swift */,
 				CCA704D929D60FA600560FA3 /* FeedListView.swift */,
@@ -487,7 +484,6 @@
 				CCA704D629D60D1C00560FA3 /* EmptyFeedView.swift in Sources */,
 				CC323E1829D22C4200138233 /* HomeScreen.swift in Sources */,
 				CCA704C429D4B67100560FA3 /* AppState.swift in Sources */,
-				CC23293929D8309D005D0E06 /* ImageLoadingView.swift in Sources */,
 				CC323E1629D229AC00138233 /* ObservableViewModel.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				CCA704E529D625E200560FA3 /* SheetToShow.swift in Sources */,

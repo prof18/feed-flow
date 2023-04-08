@@ -21,7 +21,6 @@ struct HomeScreen: View {
     
     @State var loadingState: FeedUpdateStatus? = nil
     @State var feedState: [FeedItem] = []
-    @State var errorState: UIErrorState? = nil
     @State var showLoading: Bool = true
     @State private var showSettings = false
         
@@ -30,7 +29,6 @@ struct HomeScreen: View {
             HomeScreenContent(
                 loadingState: loadingState,
                 feedState: feedState,
-                errorState: errorState,
                 showLoading: showLoading,
                 onReloadClick: {
                     homeViewModel.getNewFeeds()
@@ -90,7 +88,13 @@ struct HomeScreen: View {
             do {
                 let stream = asyncStream(for: homeViewModel.errorStateNative)
                 for try await state in stream {
-                    self.errorState = state
+                    if let message = state?.message {
+                        self.appState.snackbarData = SnackbarData(
+                            title: message,
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    }
                 }
             } catch {
                 emitGenericError()

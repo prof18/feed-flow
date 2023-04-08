@@ -28,6 +28,7 @@ struct FeedListView: View {
                     feedItem: feedItem
                 )
                 .id(feedItem.id)
+                .contentShape(Rectangle())
                 .onTapGesture {
                     openURL(URL(string: feedItem.url)!)
                 }
@@ -78,7 +79,7 @@ struct FeedItemView : View {
                         if let image = state.image {
                             image
                                 .resizable()
-                                .aspectRatio(contentMode: .fill)
+                                .scaledToFill()
                                 .frame(width: 100)
                                 .cornerRadius(16)
                                 .clipped()
@@ -86,12 +87,13 @@ struct FeedItemView : View {
                             EmptyView()
                         } else {
                             ProgressView()
+                                .scaledToFill()
                                 .frame(width: 100)
                         }
                     }
-                    
                     .padding(.leading, Spacing.regular)
-                    .padding(.top, Spacing.xsmall)
+                } else {
+                    Spacer()
                 }
                 
             }

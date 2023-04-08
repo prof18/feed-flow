@@ -14,7 +14,6 @@ import OrderedCollections
 struct HomeScreenContent: View {
     var loadingState: FeedUpdateStatus?
     var feedState: [FeedItem]
-    var errorState: UIErrorState?
     var showLoading: Bool
     
     let onReloadClick: () -> Void
@@ -105,7 +104,6 @@ struct HomeScreenFeed_Previews: PreviewProvider {
         HomeScreenContent(
             loadingState: FinishedFeedUpdateStatus(refreshedFeedCount: 1, totalFeedCount: 1),
             feedState: feedState,
-            errorState: nil,
             showLoading: false,
             onReloadClick: {},
             onAddFeedClick: {}
@@ -123,7 +121,6 @@ struct HomeScreenNoFeed_Previews: PreviewProvider {
         HomeScreenContent(
             loadingState: noFeedSourceStatus,
             feedState: [],
-            errorState: nil,
             showLoading: false,
             onReloadClick: {},
             onAddFeedClick: {}
@@ -137,7 +134,6 @@ struct HomeScreenEmptyFeed_Previews: PreviewProvider {
         HomeScreenContent(
             loadingState: FinishedFeedUpdateStatus(refreshedFeedCount: 1, totalFeedCount: 1),
             feedState: [],
-            errorState: nil,
             showLoading: false,
             onReloadClick: {},
             onAddFeedClick: {}

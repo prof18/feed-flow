@@ -78,7 +78,6 @@ internal class FeedRetrieverRepositoryImpl(
         databaseHelper.updateReadStatus(itemsToUpdates)
 
     override suspend fun fetchFeeds(updateLoadingInfo: Boolean) {
-        Logger.d { ">>> UpdateLoanding info? $updateLoadingInfo" }
         if (updateLoadingInfo) {
             updateMutableState.update { StartedFeedUpdateStatus }
         } else {
@@ -157,7 +156,6 @@ internal class FeedRetrieverRepositoryImpl(
                             }
 
                             if (updateLoadingInfo) {
-                                Logger.d { "Updating count info" }
                                 updateRefreshCount()
                             }
                         }

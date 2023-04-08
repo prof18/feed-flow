@@ -23,6 +23,7 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-home-cache-cleanup: true
+          cache-read-only: false
 
       - name: Configure Keystore
         run: |

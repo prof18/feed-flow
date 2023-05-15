@@ -44,14 +44,14 @@ internal class FeedRetrieverRepositoryImpl(
 ) : FeedRetrieverRepository {
 
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
-        FinishedFeedUpdateStatus(
-            refreshedFeedCount = 0, totalFeedCount = 0,
-        ),
+       FinishedFeedUpdateStatus,
     )
     override val updateState = updateMutableState.asStateFlow()
 
     private val errorMutableState: MutableStateFlow<ErrorState?> = MutableStateFlow(null)
     override val errorState = errorMutableState.asStateFlow()
+
+    private val feedToUpdate = hashSetOf<String>()
 
     override fun getFeeds(): Flow<List<FeedItem>> = databaseHelper.getFeedItems().map { feedList ->
         feedList.map { selectedFeed ->
@@ -82,13 +82,11 @@ internal class FeedRetrieverRepositoryImpl(
         if (updateLoadingInfo) {
             updateMutableState.update { StartedFeedUpdateStatus }
         } else {
-            updateMutableState.update {
-                FinishedFeedUpdateStatus(
-                    refreshedFeedCount = 0, totalFeedCount = 0,
-                )
-            }
+            updateMutableState.update { FinishedFeedUpdateStatus }
         }
         val feedSourceUrls = databaseHelper.getFeedSources()
+        feedToUpdate.clear()
+        feedToUpdate.addAll(feedSourceUrls.map { it.url })
         if (feedSourceUrls.isEmpty()) {
             updateMutableState.update {
                 NoFeedSourcesStatus
@@ -155,7 +153,7 @@ internal class FeedRetrieverRepositoryImpl(
                                     failingSourceName = feedSource.title
                                 )
                             }
-
+                            feedToUpdate.remove(feedSource.url)
                             if (updateLoadingInfo) {
                                 updateRefreshCount()
                             }
@@ -172,6 +170,7 @@ internal class FeedRetrieverRepositoryImpl(
                         "<- Got back ${rssChannelResult.rssChannel.title}"
                     }
 
+                    feedToUpdate.remove(rssChannelResult.feedSource.url)
                     if (updateLoadingInfo) {
                         updateRefreshCount()
                     }
@@ -194,11 +193,8 @@ internal class FeedRetrieverRepositoryImpl(
             Logger.d {
                 "Refreshed: $refreshedFeedCount. Total: $totalFeedCount"
             }
-            if (refreshedFeedCount == totalFeedCount) {
-                FinishedFeedUpdateStatus(
-                    refreshedFeedCount = refreshedFeedCount,
-                    totalFeedCount = totalFeedCount,
-                )
+            if (feedToUpdate.isEmpty()) {
+                FinishedFeedUpdateStatus
             } else {
                 InProgressFeedUpdateStatus(
                     refreshedFeedCount = refreshedFeedCount,

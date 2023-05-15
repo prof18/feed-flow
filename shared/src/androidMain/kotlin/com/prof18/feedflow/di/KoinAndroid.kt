@@ -1,6 +1,6 @@
 package com.prof18.feedflow.di
 
-import com.prof.rssparser.Parser
+import com.prof.rssparser.RssParser
 import com.prof.rssparser.build
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
@@ -43,7 +43,7 @@ internal actual val platformModule: Module = module {
     single {
 //        Parser.Builder()
 //            .build()
-        Parser.build()
+        RssParser.build()
     }
 
     factory<HtmlParser> {

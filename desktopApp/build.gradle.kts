@@ -35,9 +35,14 @@ kotlin {
     }
 }
 
-compose.desktop {
-    application {
-        mainClass = "com.prof18.feedflow.MainKt"
+compose {
+
+    kotlinCompilerPlugin.set(libs.versions.compose.compiler.get())
+    kotlinCompilerPluginArgs.add("suppressKotlinVersionCompatibilityCheck=1.8.21")
+
+    desktop {
+        application {
+            mainClass = "com.prof18.feedflow.MainKt"
 
 //        buildTypes.release.proguard {
 //            obfuscate.set(true)
@@ -47,45 +52,46 @@ compose.desktop {
 //            configurationFiles.from(project.file("compose-desktop.pro"))
 //        }
 
-        nativeDistributions {
+            nativeDistributions {
 
-            outputBaseDir.set(project.buildDir.resolve("release"))
+                outputBaseDir.set(project.buildDir.resolve("release"))
 
-            modules("java.instrument", "java.sql", "jdk.unsupported")
+                modules("java.instrument", "java.sql", "jdk.unsupported")
 
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "FeedFlow"
-            packageVersion = getVersionName()
-
-            description = "FeedFlow - Read RSS Feed"
-            copyright = "© 2023 Marco Gomiero. All rights reserved."
-
-            val iconsRoot = project.file("src/jvmMain/resources/icons/")
-
-            macOS {
-                iconFile.set(iconsRoot.resolve("icon.icns"))
-
+                targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
                 packageName = "FeedFlow"
-                bundleID = "com.prof18.feedflow"
+                packageVersion = getVersionName()
 
-                entitlementsFile.set(project.file("default.entitlements"))
+                description = "FeedFlow - Read RSS Feed"
+                copyright = "© 2023 Marco Gomiero. All rights reserved."
 
-                signing {
-                    sign.set(true)
-                    identity.set("Marco Gomiero")
-                    // keychain.set("/path/to/keychain")
+                val iconsRoot = project.file("src/jvmMain/resources/icons/")
+
+                macOS {
+                    iconFile.set(iconsRoot.resolve("icon.icns"))
+
+                    packageName = "FeedFlow"
+                    bundleID = "com.prof18.feedflow"
+
+                    entitlementsFile.set(project.file("default.entitlements"))
+
+                    signing {
+                        sign.set(true)
+                        identity.set("Marco Gomiero")
+                        // keychain.set("/path/to/keychain")
+                    }
+
+                    notarization {
+                        appleID.set("mgp.dev.studio@gmail.com")
+                        password.set("@keychain:NOTARIZATION_PASSWORD")
+                    }
                 }
-
-                notarization {
-                    appleID.set("mgp.dev.studio@gmail.com")
-                    password.set("@keychain:NOTARIZATION_PASSWORD")
+                windows {
+                    iconFile.set(project.file("icon.ico"))
                 }
-            }
-            windows {
-                iconFile.set(project.file("icon.ico"))
-            }
-            linux {
-                iconFile.set(project.file("icon.png"))
+                linux {
+                    iconFile.set(project.file("icon.png"))
+                }
             }
         }
     }

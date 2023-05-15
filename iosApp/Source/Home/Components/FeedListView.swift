@@ -19,7 +19,7 @@ struct FeedListView: View {
     
     let feedState: [FeedItem]
     let onRefresh: () -> Void
-
+    
     var body: some View {
         List {
             ForEach(feedState, id: \.self.id) { feedItem in
@@ -37,7 +37,6 @@ struct FeedListView: View {
                         self.indexHolder.updateReadIndex(index: index)
                     }
                 }
-                
             }
         }
         .listStyle(PlainListStyle())
@@ -74,7 +73,6 @@ struct FeedItemView : View {
                 
                 if let imageUrl = feedItem.imageUrl {
                     Spacer()
-                    
                     LazyImage(url: URL(string: imageUrl)) { state in
                         if let image = state.image {
                             image
@@ -86,8 +84,7 @@ struct FeedItemView : View {
                         } else if state.error != nil {
                             EmptyView()
                         } else {
-                            ProgressView()
-                                .scaledToFill()
+                            Color(.secondarySystemBackground)
                                 .frame(width: 100)
                         }
                     }

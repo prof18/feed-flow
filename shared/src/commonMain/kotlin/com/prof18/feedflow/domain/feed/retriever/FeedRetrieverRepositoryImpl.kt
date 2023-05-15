@@ -1,8 +1,8 @@
 package com.prof18.feedflow.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
-import com.prof.rssparser.Channel
-import com.prof.rssparser.Parser
+import com.prof.rssparser.RssParser
+import com.prof.rssparser.model.RssChannel
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.currentTimeMillis
@@ -28,15 +28,16 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
-import kotlin.time.Duration.Companion.days
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedRetrieverRepositoryImpl(
-    private val parser: Parser,
+    private val parser: RssParser,
     private val databaseHelper: DatabaseHelper,
     private val dispatcherProvider: DispatcherProvider,
     private val htmlParser: HtmlParser,
@@ -72,12 +73,12 @@ internal class FeedRetrieverRepositoryImpl(
                 commentsUrl = selectedFeed.comments_url,
             )
         }
-    }
+    }.flowOn(dispatcherProvider.io)
 
     override suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
         databaseHelper.updateReadStatus(itemsToUpdates)
 
-    override suspend fun fetchFeeds(updateLoadingInfo: Boolean) {
+    override suspend fun fetchFeeds(updateLoadingInfo: Boolean) = withContext(dispatcherProvider.io) {
         if (updateLoadingInfo) {
             updateMutableState.update { StartedFeedUpdateStatus }
         } else {
@@ -207,12 +208,12 @@ internal class FeedRetrieverRepositoryImpl(
         }
     }
 
-    private fun Channel.getFeedItems(feedSource: FeedSource): List<FeedItem> =
-        this.articles.mapNotNull { article ->
+    private fun RssChannel.getFeedItems(feedSource: FeedSource): List<FeedItem> =
+        this.items.mapNotNull { rssItem ->
 
-            val title = article.title
-            val url = article.link
-            val pubDate = article.pubDate
+            val title = rssItem.title
+            val url = rssItem.link
+            val pubDate = rssItem.pubDate
 
             val randomTimeToSubtract = Random.nextLong(1800000L, 10800000L)
             val defaultDate = currentTimeMillis() - randomTimeToSubtract
@@ -224,30 +225,30 @@ internal class FeedRetrieverRepositoryImpl(
                 defaultDate
             }
 
-            val imageUrl = if (article.image?.contains("http:") == true) {
-                article.image?.replace("http:", "https:")
+            val imageUrl = if (rssItem.image?.contains("http:") == true) {
+                rssItem.image?.replace("http:", "https:")
             } else {
-                article.image
+                rssItem.image
             }
 
             if (title == null || url == null) {
-                Logger.d { "Skipping: $article" }
+                Logger.d { "Skipping: $rssItem" }
                 null
             } else {
                 FeedItem(
                     id = url.hashCode(),
                     url = url,
                     title = title,
-                    subtitle = article.description?.let { description ->
+                    subtitle = rssItem.description?.let { description ->
                         htmlParser.getTextFromHTML(description)
                     },
-                    content = article.content,
+                    content = rssItem.content,
                     imageUrl = imageUrl,
                     feedSource = feedSource,
                     isRead = false,
                     pubDateMillis = dateMillis,
                     dateString = "formatDate(dateMillis)",
-                    commentsUrl = article.commentsUrl,
+                    commentsUrl = rssItem.commentsUrl,
                 )
             }
 

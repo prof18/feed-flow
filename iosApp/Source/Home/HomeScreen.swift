@@ -23,6 +23,8 @@ struct HomeScreen: View {
     @State var feedState: [FeedItem] = []
     @State var showLoading: Bool = true
     @State private var showSettings = false
+
+    @State var unreadCount = 0
     
     var body: some View {
         ScrollViewReader { proxy in
@@ -40,7 +42,7 @@ struct HomeScreen: View {
             .environmentObject(indexHolder)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("FeedFlow (\(indexHolder.unreadCount))")
+                    Text("FeedFlow (\(unreadCount))")
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
                         .onTapGesture(count: 2){
@@ -71,7 +73,7 @@ struct HomeScreen: View {
         }
         .task {
             do {
-                let stream = asyncStream(for: homeViewModel.loadingStateNative)
+                let stream = asyncSequence(for: homeViewModel.loadingStateFlow)
                 for try await state in stream {
                     let isLoading = state.isLoading() && state.totalFeedCount != 0
                     withAnimation {
@@ -86,7 +88,7 @@ struct HomeScreen: View {
         }
         .task {
             do {
-                let stream = asyncStream(for: homeViewModel.errorStateNative)
+                let stream = asyncSequence(for: homeViewModel.errorStateFlow)
                 for try await state in stream {
                     if let message = state?.message {
                         self.appState.snackbarQueue.append(
@@ -105,11 +107,20 @@ struct HomeScreen: View {
         }
         .task {
             do {
-                let stream = asyncStream(for: homeViewModel.feedStateNative)
+                let stream = asyncSequence(for: homeViewModel.feedStateFlow)
                 for try await state in stream {
                     self.feedState = state
-                    
-                    self.indexHolder.setUnreadCount(count: self.feedState.count)
+                }
+            } catch {
+                emitGenericError()
+            }
+        }
+        .task {
+            do {
+                let stream = asyncSequence(for: homeViewModel.countStateFlow)
+                for try await state in stream {
+                    self.unreadCount = Int(truncating: state)
+                    print("New count: \(unreadCount)")
                 }
             } catch {
                 emitGenericError()

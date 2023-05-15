@@ -8,9 +8,21 @@ plugins {
     alias(libs.plugins.triplet.play) apply false
     alias(libs.plugins.compose.multiplatform) apply false
     alias(libs.plugins.native.coroutines) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.detekt)
 }
 
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
+}
+
+
+allprojects {
+    configurations.all {
+        resolutionStrategy.dependencySubstitution {
+            substitute(module("org.jetbrains.compose.compiler:compiler")).apply {
+                using(module("androidx.compose.compiler:compiler:${libs.versions.compose.compiler.get()}"))
+            }
+        }
+    }
 }

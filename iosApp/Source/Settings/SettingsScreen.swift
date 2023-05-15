@@ -102,7 +102,7 @@ struct SettingsScreen: View {
             }
         }.task {
             do {
-                let stream = asyncStream(for: settingsViewModel.isImportDoneStateNative)
+                let stream = asyncSequence(for: settingsViewModel.isImportDoneStateFlow)
                 for try await isImportDone in stream {
                     if isImportDone as! Bool {
                         self.appState.snackbarQueue.append(

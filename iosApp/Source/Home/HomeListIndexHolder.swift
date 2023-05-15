@@ -8,26 +8,14 @@
 
 import Foundation
 import OrderedCollections
+import Combine
+import shared
 
 class HomeListIndexHolder: ObservableObject {
- 
-    @Published var unreadCount: Int = 0
     
-    private var lastReadIndex = 0
-    private var originalUnreadFeedCount = 0
     var isLoading: Bool = false
-    
-    func setUnreadCount(count: Int) {
-        self.originalUnreadFeedCount = count
-        self.unreadCount = count
-    }
-    
-    func updateReadIndex(index: Int) {
-        if !isLoading && index > lastReadIndex {
-            lastReadIndex = index
-            self.unreadCount = originalUnreadFeedCount - index
-        }
-    }
+    private var lastReadIndex = 0
+    private var timer: Timer?
     
     func getLastReadIndex() -> Int {
         return lastReadIndex
@@ -35,6 +23,17 @@ class HomeListIndexHolder: ObservableObject {
     
     func refresh() {
         self.isLoading = true
-        self.unreadCount = originalUnreadFeedCount
+        self.lastReadIndex = 0
+    }
+    
+    func updateReadIndex(index: Int) {
+        if !self.isLoading && index > lastReadIndex {
+            lastReadIndex = index
+            timer?.invalidate()
+            timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [self] _ in
+                KotlinDependencies.shared.getHomeViewModel()
+                    .updateReadStatus(lastVisibleIndex: Int32(getLastReadIndex()))
+            }
+        }
     }
 }

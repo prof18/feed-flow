@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.touchlab.kermit)
     alias(libs.plugins.native.coroutines)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -24,6 +25,11 @@ kotlin {
     }
 
     sourceSets {
+
+       all {
+            languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+        }
+
         val commonMain by getting {
             dependencies {
                 implementation(libs.squareup.sqldelight.runtime)
@@ -32,6 +38,7 @@ kotlin {
                 implementation(libs.touchlab.kermit)
                 implementation(libs.kotlinx.coroutines.core)
 //                implementation(libs.kotlinx.datetime)
+//                implementation(libs.kmm.viewmodel)
                 implementation(libs.com.prof18.rss.parser)
             }
         }
@@ -59,6 +66,7 @@ kotlin {
             dependsOn(commonJvmAndroidMain)
 
             dependencies {
+                implementation(libs.kmm.viewmodel)
                 implementation(libs.squareup.sqldelight.android.driver)
                 implementation(libs.androidx.lifecycle.viewModel.ktx)
                 implementation(libs.koin.android)
@@ -84,6 +92,7 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
 
             dependencies {
+                implementation(libs.kmm.viewmodel)
                 implementation(libs.squareup.sqldelight.native.driver)
             }
         }

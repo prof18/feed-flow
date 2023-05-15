@@ -7,11 +7,16 @@ import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.presentation.model.UIErrorState
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -20,14 +25,20 @@ class HomeViewModel(
 ) : BaseViewModel() {
 
     // Loading
+    @NativeCoroutinesState
     val loadingState: StateFlow<FeedUpdateStatus> = feedRetrieverRepository.updateState
 
     // Feeds
     private val mutableFeedState: MutableStateFlow<List<FeedItem>> = MutableStateFlow(emptyList())
+    @NativeCoroutinesState
     val feedState = mutableFeedState.asStateFlow()
+
+    @NativeCoroutinesState
+    val countState = mutableFeedState.map { it.count { item -> !item.isRead } }
 
     // Error
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
+    @NativeCoroutinesState
     val errorState = mutableUIErrorState.asSharedFlow()
 
     private var lastUpdateIndex = 0

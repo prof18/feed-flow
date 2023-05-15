@@ -2,6 +2,7 @@ package com.prof18.feedflow.presentation
 
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,6 +17,7 @@ class AddFeedViewModel(
     private var feedUrl: String = ""
 
     private val isAddDoneMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    @NativeCoroutinesState
     val isAddDoneState = isAddDoneMutableState.asStateFlow()
 
     fun updateFeedUrlTextFieldValue(feedUrlTextFieldValue: String) {

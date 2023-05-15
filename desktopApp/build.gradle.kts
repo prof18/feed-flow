@@ -36,10 +36,6 @@ kotlin {
 }
 
 compose {
-
-    kotlinCompilerPlugin.set(libs.versions.compose.compiler.get())
-    kotlinCompilerPluginArgs.add("suppressKotlinVersionCompatibilityCheck=1.8.21")
-
     desktop {
         application {
             mainClass = "com.prof18.feedflow.MainKt"

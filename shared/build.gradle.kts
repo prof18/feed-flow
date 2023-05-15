@@ -66,7 +66,6 @@ kotlin {
             dependsOn(commonJvmAndroidMain)
 
             dependencies {
-                implementation(libs.kmm.viewmodel)
                 implementation(libs.squareup.sqldelight.android.driver)
                 implementation(libs.androidx.lifecycle.viewModel.ktx)
                 implementation(libs.koin.android)
@@ -92,7 +91,6 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
 
             dependencies {
-                implementation(libs.kmm.viewmodel)
                 implementation(libs.squareup.sqldelight.native.driver)
             }
         }

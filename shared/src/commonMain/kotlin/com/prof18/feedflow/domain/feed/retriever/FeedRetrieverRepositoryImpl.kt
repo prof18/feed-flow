@@ -1,8 +1,6 @@
 package com.prof18.feedflow.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
-import com.prof.rssparser.RssParser
-import com.prof.rssparser.model.RssChannel
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.currentTimeMillis
@@ -20,6 +18,8 @@ import com.prof18.feedflow.domain.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.presentation.model.ErrorState
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.utils.DispatcherProvider
+import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED

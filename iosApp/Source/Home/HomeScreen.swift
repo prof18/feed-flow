@@ -69,7 +69,14 @@ struct HomeScreen: View {
             
         }
         .sheet(isPresented: self.$showSettings) {
-            SettingsScreen()
+            SettingsScreen(
+                onClearOldArticlesClicked: {
+                    homeViewModel.deleteOldFeedItems()
+                },
+                onMarkAllReadClicked: {
+                    homeViewModel.markAllRead()
+                }
+            )
         }
         .task {
             do {

@@ -30,6 +30,7 @@ class HomeViewModel(
 
     // Feeds
     private val mutableFeedState: MutableStateFlow<List<FeedItem>> = MutableStateFlow(emptyList())
+
     @NativeCoroutinesState
     val feedState = mutableFeedState.asStateFlow()
 
@@ -38,6 +39,7 @@ class HomeViewModel(
 
     // Error
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
+
     @NativeCoroutinesState
     val errorState = mutableUIErrorState.asSharedFlow()
 
@@ -130,6 +132,12 @@ class HomeViewModel(
                     FeedItemId(feedItemId)
                 )
             )
+        }
+    }
+
+    fun deleteOldFeedItems() {
+        scope.launch {
+            feedRetrieverRepository.deleteOldFeeds()
         }
     }
 }

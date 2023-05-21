@@ -17,10 +17,34 @@ struct SettingsScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var settingsViewModel: SettingsViewModel = KotlinDependencies.shared.getSettingsViewModel()
     
+    let onClearOldArticlesClicked: () -> Void
+    let onMarkAllReadClicked: () -> Void
+    
     var body: some View {
         NavigationStack {
             VStack {
                 Form {
+                    
+                    HStack {
+                        Button(
+                            "Mark all read",
+                            action: {
+                                onMarkAllReadClicked()
+                                self.presentationMode.wrappedValue.dismiss()
+                            }
+                        )
+                    }
+                    
+                    HStack {
+                        Button(
+                            "Clear old articles",
+                            action: {
+                                onClearOldArticlesClicked()
+                                self.presentationMode.wrappedValue.dismiss()
+                            }
+                        )
+                    }
+                    
                     HStack {
                         Button(
                             "Import Feed from OPML",
@@ -130,6 +154,13 @@ struct SettingsScreen: View {
 
 struct SettingsScreen_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsScreen()
+        SettingsScreen(
+            onClearOldArticlesClicked: {
+                
+            },
+            onMarkAllReadClicked: {
+                
+            }
+        )
     }
 }

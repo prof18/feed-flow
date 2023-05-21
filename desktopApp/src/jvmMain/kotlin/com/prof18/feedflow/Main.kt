@@ -53,7 +53,7 @@ import javax.swing.UIManager
 
 val koin = initKoinDesktop().koin
 
-@OptIn(ExperimentalDecomposeApi::class)
+@OptIn(ExperimentalDecomposeApi::class, ExperimentalMaterial3Api::class)
 fun main() = application {
 
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
@@ -100,7 +100,7 @@ fun main() = application {
                 }
             },
             onMarkAllReadClick = {
-                // TODO
+                homeViewModel.markAllRead()
             },
             onImportOPMLCLick = { file ->
                 settingsViewModel.importFeed(OPMLInput(file))
@@ -110,6 +110,9 @@ fun main() = application {
             },
             onAddFeedClick = {
                 // TODO
+            },
+            onClearOldFeedClick = {
+                homeViewModel.deleteOldFeedItems()
             }
         )
 

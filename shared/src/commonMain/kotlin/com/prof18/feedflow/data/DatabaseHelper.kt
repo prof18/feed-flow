@@ -44,8 +44,7 @@ internal class DatabaseHelper(
             .asFlow()
             .mapToList()
             .catch {
-                Logger.e(it) { "Something wrong while getting data from Database" }
-               emit(listOf())
+               Logger.e(it) { "Something wrong while getting data from Database" }
             }
             .flowOn(backgroundDispatcher)
 

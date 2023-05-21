@@ -1,7 +1,7 @@
 package com.prof18.feedflow.di
 
-import com.prof.rssparser.RssParser
-import com.prof.rssparser.build
+import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.build
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.domain.HtmlParser

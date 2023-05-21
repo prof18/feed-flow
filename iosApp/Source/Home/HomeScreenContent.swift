@@ -102,7 +102,7 @@ struct HomeScreenFeed_Previews: PreviewProvider {
         ]
         
         HomeScreenContent(
-            loadingState: FinishedFeedUpdateStatus(refreshedFeedCount: 1, totalFeedCount: 1),
+            loadingState: FinishedFeedUpdateStatus(),
             feedState: feedState,
             showLoading: false,
             onReloadClick: {},
@@ -132,7 +132,7 @@ struct HomeScreenEmptyFeed_Previews: PreviewProvider {
     static var previews: some View {
         
         HomeScreenContent(
-            loadingState: FinishedFeedUpdateStatus(refreshedFeedCount: 1, totalFeedCount: 1),
+            loadingState: FinishedFeedUpdateStatus(),
             feedState: [],
             showLoading: false,
             onReloadClick: {},

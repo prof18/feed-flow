@@ -18,6 +18,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onImportOPMLCLick: (File) -> Unit,
     onFeedsListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
+    onClearOldFeedClick: () -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -34,6 +35,13 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 text = "Mark all read",
                 onClick = {
                     onMarkAllReadClick()
+                },
+            )
+
+            Item(
+                text = "Clear old articles",
+                onClick = {
+                    onClearOldFeedClick()
                 },
             )
 

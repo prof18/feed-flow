@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
@@ -109,6 +110,9 @@ internal fun HomeScreen(
                 onMarkAllReadClicked = {
                     homeViewModel.markAllRead()
                 },
+                onClearOldArticlesClicked = {
+                    homeViewModel.deleteOldFeedItems()
+                },
                 onClick = {
                     scope.launch {
                         listState.animateScrollToItem(0)
@@ -175,12 +179,14 @@ private fun HomeScreenContent(
                 onAddFeedClick = { onAddFeedClick() },
             )
         }
+
         !loadingState.isLoading() && feedState.isEmpty() -> {
             EmptyFeedView(
                 modifier = Modifier.padding(paddingValues),
                 onReloadClick = { onRefresh() }
             )
         }
+
         else -> {
             Column(
                 modifier = Modifier
@@ -238,6 +244,7 @@ private fun HomeAppBar(
     unReadCount: Int,
     onMarkAllReadClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
+    onClearOldArticlesClicked: () -> Unit,
     onClick: () -> Unit,
     onDoubleClick: () -> Unit,
 ) {
@@ -274,6 +281,22 @@ private fun HomeAppBar(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.DoneAll,
+                            contentDescription = null,
+                        )
+                    },
+                )
+
+                DropdownMenuItem(
+                    onClick = {
+                        onClearOldArticlesClicked()
+                        showMenu = false
+                    },
+                    text = {
+                        Text("Clear old articles")
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
                             contentDescription = null,
                         )
                     },

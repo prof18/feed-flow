@@ -1,13 +1,14 @@
 package com.prof18.feedflow.di
 
-import com.prof.rssparser.RssParser
-import com.prof.rssparser.build
+import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.build
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.JvmHtmlParser
 import com.prof18.feedflow.domain.opml.OPMLFeedParser
 import com.prof18.feedflow.initDatabase
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
+import com.prof18.rssparser.build
 import com.squareup.sqldelight.db.SqlDriver
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

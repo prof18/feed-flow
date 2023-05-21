@@ -1,6 +1,7 @@
 package com.prof18.feedflow.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,6 +36,7 @@ import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
 import com.prof18.feedflow.ui.components.AsyncImage
 import com.prof18.feedflow.ui.components.loadImageBitmap
 import com.prof18.feedflow.ui.style.Spacing
+import com.seiko.imageloader.rememberAsyncImagePainter
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -148,17 +151,12 @@ private fun FeedItemView(
             }
 
             feedItem.imageUrl?.let { url ->
-                val imageLoading = remember(feedItem.id) {
-                    { loadImageBitmap(url) }
-                }
-
-                AsyncImage(
+                Image(
+                    painter = rememberAsyncImagePainter(url),
                     modifier = Modifier
                         .wrapContentHeight()
                         .width(96.dp)
                         .clip(RoundedCornerShape(Spacing.small)),
-                    load = { imageLoading() },
-                    painterFor = { remember { BitmapPainter(it) } },
                     contentDescription = null,
                 )
             }

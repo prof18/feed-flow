@@ -26,6 +26,7 @@ kotlin {
                 implementation(libs.decompose)
                 implementation(libs.decompose.compose.jetbrains)
                 implementation(libs.jsystem.theme.detector)
+                implementation(libs.compose.image.loader)
 
                 implementation("org.slf4j:slf4j-nop:2.0.6")
 

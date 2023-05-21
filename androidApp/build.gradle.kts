@@ -15,11 +15,11 @@ if (localProperties.exists()) {
 
 android {
     namespace = "com.prof18.feedflow"
-    compileSdk = 33
+    compileSdk = libs.versions.android.compile.sdk.get().toInt()
     defaultConfig {
         applicationId = "com.prof18.feedflow"
-        minSdk = 26
-        targetSdk = 33
+        minSdk = libs.versions.android.min.sdk.get().toInt()
+        targetSdk = libs.versions.android.target.sdk.get().toInt()
         versionCode = getVersionCode()
         versionName = getVersionName()
     }
@@ -29,11 +29,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
-    packagingOptions {
-        resources {
-//            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -41,7 +36,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.VERSION_11.majorVersion
     }
 
     signingConfigs {
@@ -64,7 +59,6 @@ android {
 
 dependencies {
     implementation(project(":shared"))
-//    implementation(project("RSS-Parser:rssparser"))
 
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
@@ -73,7 +67,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
     implementation(libs.touchlab.kermit)
-    implementation(libs.androidx.work.manager)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

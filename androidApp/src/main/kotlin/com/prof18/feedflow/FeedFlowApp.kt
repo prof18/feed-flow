@@ -11,9 +11,11 @@ class FeedFlowApp : Application() {
         super.onCreate()
 
         initKoin(
-            module {
-                single<Context> { this@FeedFlowApp }
-            } + appModule,
+            listOf(
+                module {
+                    single<Context> { this@FeedFlowApp }
+                }
+            )
         )
     }
 }

@@ -1,3 +1,4 @@
+#./gradlew notarizeDmg
 tag=$(git describe --tags --abbrev=0 --match *-desktop)
 version=$(echo "$tag" | sed 's/-desktop$//')
 name="FeedFlow-${version}.dmg"

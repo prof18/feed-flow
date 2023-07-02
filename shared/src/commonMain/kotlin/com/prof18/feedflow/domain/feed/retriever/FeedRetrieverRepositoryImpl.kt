@@ -139,7 +139,7 @@ internal class FeedRetrieverRepositoryImpl(
                     for (feedSource in feedSourcesChannel) {
                         Logger.d { "-> Getting ${feedSource.url}" }
                         try {
-                            val rssChannel = parser.getChannel(feedSource.url)
+                            val rssChannel = parser.getRssChannel(feedSource.url)
                             val result = RssChannelResult(
                                 rssChannel = rssChannel,
                                 feedSource = feedSource,

@@ -42,10 +42,10 @@ internal class DatabaseHelper(
         dbRef.feedItemQueries
             .selectFeeds()
             .asFlow()
-            .mapToList()
             .catch {
                Logger.e(it) { "Something wrong while getting data from Database" }
             }
+            .mapToList()
             .flowOn(backgroundDispatcher)
 
 

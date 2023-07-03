@@ -145,7 +145,7 @@ internal class FeedRetrieverRepositoryImpl(
                                 feedSource = feedSource,
                             )
                             send(result)
-                        } catch (e: Exception) {
+                        } catch (e: Throwable) {
                             Logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }
                             e.printStackTrace()
                             errorMutableState.update {

@@ -1,7 +1,5 @@
 package com.prof18.feedflow.di
 
-import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.build
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.domain.HtmlParser
@@ -9,6 +7,7 @@ import com.prof18.feedflow.domain.JvmHtmlParser
 import com.prof18.feedflow.domain.opml.OPMLFeedParser
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
+import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.build
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
@@ -42,8 +41,6 @@ internal actual val platformModule: Module = module {
     }
 
     single {
-//        Parser.Builder()
-//            .build()
         RssParser.build()
     }
 

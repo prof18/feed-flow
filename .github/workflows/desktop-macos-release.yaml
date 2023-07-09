@@ -1,0 +1,75 @@
+name: Desktop MacOS Release
+on:
+  push:
+    tags:
+      - '*-desktop'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
+          cache-read-only: false
+
+      - name: Import signing certificate into keychain
+        run: |
+          KEYCHAIN_FILE=default.keychain
+          security create-keychain -p KEYCHAIN_PASSWORD_MACOS $KEYCHAIN_FILE
+          security default-keychain -s $KEYCHAIN_FILE
+          security unlock-keychain -p KEYCHAIN_PASSWORD_MACOS $KEYCHAIN_FILE
+          security import <(echo $SIGNING_CERTIFICATE_P12_DATA | base64 --decode) \
+                          -f pkcs12 \
+                          -k $KEYCHAIN_FILE \
+                          -P $SIGNING_CERTIFICATE_PASSWORD \
+                          -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k $KEYCHAIN_PASSWORD $KEYCHAIN_FILE
+        env:
+          SIGNING_CERTIFICATE_P12_DATA: ${{ secrets.SIGNING_CERTIFICATE_P12_DATA_MACOS }}
+          SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD_MACOS }}
+          KEYCHAIN_PASSWORD_MACOS: ${{ secrets.KEYCHAIN_PASSWORD_MACOS }}
+
+      - name: Create DMG
+        run: ./gradlew packageDmg
+
+      - name: Create path variables
+        id: path_variables
+        run: |
+          tag=$(git describe --tags --abbrev=0 --match *-desktop)
+          version=$(echo "$tag" | sed 's/-desktop$//')
+          name="FeedFlow-${version}.dmg"
+          path="desktopApp/build/release/main/dmg/${name}"
+          echo "TAG=$tag" >> $GITHUB_OUTPUT
+          echo "VERSION=$version" >> $GITHUB_OUTPUT
+          echo "RELEASE_PATH=$path" >> $GITHUB_OUTPUT
+
+      - name: Notarization
+        run: |
+          xcrun notarytool submit $RELEASE_PATH --apple-id $APPLE_ID_NOTARIZATION --password $NOTARIZATION_PWD --team-id $APPSTORE_TEAM_ID --wait
+          xcrun stapler staple $RELEASE_PATH
+        env:
+          APPLE_ID_NOTARIZATION: ${{ secrets.APPLE_ID_NOTARIZATION }}
+          APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
+          NOTARIZATION_PWD: ${{ secrets.NOTARIZATION_PWD }}
+          RELEASE_PATH: ${{ steps.path_variables.outputs.RELEASE_PATH }}
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.path_variables.outputs.RELEASE_PATH }}
+          tag: ${{ steps.path_variables.outputs.TAG }}
+          overwrite: true
+          body: "Release ${{ steps.path_variables.outputs.VERSION }}"

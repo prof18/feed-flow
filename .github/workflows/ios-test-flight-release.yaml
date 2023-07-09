@@ -1,4 +1,4 @@
-name: "build-test"
+name: iOS TestFlight Release
 on:
   push:
     tags:
@@ -9,7 +9,20 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
+          cache-read-only: false
 
       - name: import certs
         uses: apple-actions/import-codesign-certs@v2

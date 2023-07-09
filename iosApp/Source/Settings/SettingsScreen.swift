@@ -97,6 +97,9 @@ struct SettingsScreen: View {
             
             switch item {
                 
+            case .feedList:
+                FeedsScreen()
+                
             case .filePicker:
                 FilePickerController { url in
                     

@@ -37,7 +37,7 @@ private val coreModule = module {
     factory<FeedManagerRepository> {
         FeedManagerRepositoryImpl(
             databaseHelper = get(),
-            opmlFeedParser = get(),
+            opmlFeedHandler = get(),
         )
     }
 

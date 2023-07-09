@@ -5,7 +5,7 @@ on:
       - '*-desktop'
 
 jobs:
-  build:
+  deploy:
     runs-on: macos-latest
     timeout-minutes: 60
     permissions:

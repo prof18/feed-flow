@@ -16,6 +16,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onRefreshClick: () -> Unit,
     onMarkAllReadClick: () -> Unit,
     onImportOPMLCLick: (File) -> Unit,
+    onExportOPMLClick: (File) -> Unit,
     onFeedsListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onClearOldFeedClick: () -> Unit,
@@ -26,7 +27,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Item(
                 text = "Refresh Feed",
                 onClick = {
-                   onRefreshClick()
+                    onRefreshClick()
                 },
                 shortcut = KeyShortcut(Key.R, meta = true)
             )
@@ -50,7 +51,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Item(
                 text = "Import Feed from OPML",
                 onClick = {
-                    val fileChooser = JFileChooser("/").apply {
+                    val fileChooser = JFileChooser("~").apply {
                         fileSelectionMode = JFileChooser.FILES_ONLY
                         addChoosableFileFilter(FileNameExtensionFilter("OPML", "opml"))
                         dialogTitle = "Select OPML file"
@@ -59,6 +60,27 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     fileChooser.showOpenDialog(window /* OR null */)
                     val result = fileChooser.selectedFile
                     onImportOPMLCLick(result)
+                },
+            )
+
+            Item(
+                text = "Export Feeds to OPML",
+                onClick = {
+                    val fileChooser = JFileChooser().apply {
+                        dialogTitle = "Save OPML File"
+                        fileFilter = FileNameExtensionFilter("OPML Files (*.opml)", "opml")
+                        approveButtonText = "Export"
+                    }
+
+                    val userSelection = fileChooser.showSaveDialog(null)
+                    if (userSelection == JFileChooser.APPROVE_OPTION) {
+                        var outputFile = fileChooser.selectedFile
+                        if (!outputFile.name.endsWith(".opml")) {
+                            outputFile = File(outputFile.absolutePath + ".opml")
+                        }
+                        onExportOPMLClick(outputFile)
+                    }
+
                 },
             )
 

@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 
 class OPMLFeedParserTest {
 
-    private val parser = OPMLFeedParser(
+    private val parser = OPMLFeedHandler(
         dispatcherProvider = TestDispatcherProvider
     )
 
@@ -23,13 +23,13 @@ class OPMLFeedParserTest {
 
     @Test
     fun `The number of feeds are correct`() = runTest {
-        val feedSources = parser.parse(opmlInput)
+        val feedSources = parser.importFeed(opmlInput)
         assertTrue(feedSources.size == 6)
     }
 
     @Test
     fun `The number of feed in category are correct`() = runTest {
-        val feedSources = parser.parse(opmlInput)
+        val feedSources = parser.importFeed(opmlInput)
 
         val techFeeds = feedSources.filter { it.category == "Tech" }
         val basketFeeds = feedSources.filter { it.category == "Basket" }
@@ -42,7 +42,7 @@ class OPMLFeedParserTest {
 
     @Test
     fun `The feeds are parsed correctly`() = runTest {
-        val feedSources = parser.parse(opmlInput)
+        val feedSources = parser.importFeed(opmlInput)
 
         assertEquals("Hacker News", feedSources[0].title)
         assertEquals("https://news.ycombinator.com/rss", feedSources[0].url)

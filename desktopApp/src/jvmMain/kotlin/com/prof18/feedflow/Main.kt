@@ -38,6 +38,7 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.prof18.feedflow.di.initKoinDesktop
 import com.prof18.feedflow.domain.opml.OPMLInput
+import com.prof18.feedflow.domain.opml.OPMLOutput
 import com.prof18.feedflow.feedlist.FeedListScreen
 import com.prof18.feedflow.home.FeedFlowMenuBar
 import com.prof18.feedflow.home.HomeScreen
@@ -91,9 +92,18 @@ fun main() = application {
             }
         }
 
+        val isExportDone by settingsViewModel.isExportDoneState.collectAsState()
+        if (isExportDone) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    "Export Done",
+                    duration = SnackbarDuration.Short,
+                )
+            }
+        }
+
         FeedFlowMenuBar(
             onRefreshClick = {
-                // TODO
                 scope.launch {
                     listState.animateScrollToItem(0)
                     homeViewModel.getNewFeeds()
@@ -104,6 +114,9 @@ fun main() = application {
             },
             onImportOPMLCLick = { file ->
                 settingsViewModel.importFeed(OPMLInput(file))
+            },
+            onExportOPMLClick = { file ->
+                settingsViewModel.exportFeed(OPMLOutput(file))
             },
             onFeedsListClick = {
                 navigation.push(Screen.FeedList)
@@ -138,6 +151,7 @@ fun main() = application {
                                             // TODO
                                         }
                                     )
+
                                     is Screen.FeedList -> FeedListScreen(navigateBack = { navigation.pop() })
                                 }
                             }

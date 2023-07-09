@@ -2,6 +2,7 @@ package com.prof18.feedflow.settings
 
 import FeedFlowTheme
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,8 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.R
 import com.prof18.feedflow.domain.opml.OPMLInput
+import com.prof18.feedflow.domain.opml.OPMLOutput
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.settings.components.SettingsDivider
 import com.prof18.feedflow.settings.components.SettingsMenuItem
@@ -47,14 +51,31 @@ fun SettingsScreen(
         uri?.let {
             viewModel.importFeed(OPMLInput(context.contentResolver.openInputStream(uri)))
             Toast.makeText(context, "Importing feed", Toast.LENGTH_SHORT)
-            .show()
+                .show()
         }
+    }
+
+    val createFileURI = remember { mutableStateOf<Uri?>(null) }
+    val createFileAction = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("text/x-opml"),
+    ) {
+        createFileURI.value = it
+    }
+    createFileURI.value?.let { uri ->
+        viewModel.exportFeed(OPMLOutput(context.contentResolver.openOutputStream(uri)))
     }
 
     val isImportDone by viewModel.isImportDoneState.collectAsStateWithLifecycle()
 
     if (isImportDone) {
         Toast.makeText(context, "Import Done", Toast.LENGTH_SHORT)
+            .show()
+    }
+
+    val isExportDone by viewModel.isExportDoneState.collectAsStateWithLifecycle()
+
+    if (isExportDone) {
+        Toast.makeText(context, "Export Done", Toast.LENGTH_SHORT)
             .show()
     }
 
@@ -70,6 +91,16 @@ fun SettingsScreen(
             item {
                 SettingsMenuItem(text = "Import Feed from OPML") {
                     openFileAction.launch(arrayOf("*/*"))
+                }
+            }
+
+            item {
+                SettingsDivider()
+            }
+
+            item {
+                SettingsMenuItem(text = "Export Feeds to OPML") {
+                    createFileAction.launch("feeds-export.opml")
                 }
             }
 

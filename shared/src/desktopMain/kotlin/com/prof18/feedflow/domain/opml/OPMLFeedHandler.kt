@@ -1,24 +1,72 @@
 package com.prof18.feedflow.domain.opml
 
+import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
 import org.xml.sax.Attributes
 import org.xml.sax.InputSource
 import org.xml.sax.helpers.DefaultHandler
+import java.io.BufferedOutputStream
+import java.io.FileOutputStream
 import java.io.StringReader
 import javax.xml.parsers.SAXParserFactory
+import javax.xml.stream.XMLOutputFactory
+import javax.xml.stream.XMLStreamWriter
 
-internal actual class OPMLFeedParser(
+internal actual class OPMLFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    actual suspend fun parse(opmlInput: OPMLInput): List<ParsedFeedSource> = withContext(dispatcherProvider.io) {
+    actual suspend fun importFeed(opmlInput: OPMLInput): List<ParsedFeedSource> = withContext(dispatcherProvider.io) {
         val feed = opmlInput.file.readText()
         val parser = SAXParserFactory.newInstance().newSAXParser()
         val handler = SaxFeedHandler()
         parser.parse(InputSource(StringReader(feed)), handler)
 
         return@withContext handler.getFeedSource()
+    }
+
+    actual suspend fun exportFeed(
+        opmlOutput: OPMLOutput,
+        feedSources: List<FeedSource>
+    ) {
+        val factory = XMLOutputFactory.newFactory()
+
+        val writer = factory.createXMLStreamWriter(
+            BufferedOutputStream(
+                FileOutputStream(opmlOutput.file)
+            ),
+            "UTF-8",
+        )
+
+        writer.writeStartDocument("UTF-8", "1.0")
+        writer.writeStartElement("opml")
+        writer.writeAttribute("version", "1.0")
+
+        writer.writeStartElement("head")
+        writer.writeStartElement("title")
+        writer.writeCharacters("Subscriptions from FeedFlow")
+        writer.writeEndElement()
+        writer.writeEndElement()
+
+        writer.writeStartElement("body")
+
+        for (feedSource in feedSources) {
+            writer.writeStartElement("outline")
+            writer.writeAttribute("type", "rss")
+            writer.writeAttribute("text", feedSource.title)
+            writer.writeAttribute("title", feedSource.title)
+            writer.writeAttribute("xmlUrl", feedSource.url)
+            writer.writeAttribute("htmlUrl", feedSource.url)
+            writer.writeEndElement()
+        }
+
+        writer.writeEndElement()
+        writer.writeEndElement()
+        writer.writeEndDocument()
+
+        writer.flush()
+        writer.close()
     }
 
     private class SaxFeedHandler : DefaultHandler() {

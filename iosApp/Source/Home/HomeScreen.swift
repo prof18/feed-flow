@@ -18,13 +18,15 @@ struct HomeScreen: View {
     
     @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
     @StateObject var indexHolder = HomeListIndexHolder()
+    @StateObject var settingsViewModel: SettingsViewModel = KotlinDependencies.shared.getSettingsViewModel()
     
     @State var loadingState: FeedUpdateStatus? = nil
     @State var feedState: [FeedItem] = []
     @State var showLoading: Bool = true
-    @State private var showSettings = false
-
+    @State var sheetToShow: SheetToShow?
+    
     @State var unreadCount = 0
+    
     
     var body: some View {
         ScrollViewReader { proxy in
@@ -36,7 +38,7 @@ struct HomeScreen: View {
                     homeViewModel.getNewFeeds()
                 },
                 onAddFeedClick: {
-                    self.showSettings.toggle()
+                    //                    self.showFeeds.toggle()
                 }
             )
             .environmentObject(indexHolder)
@@ -57,9 +59,48 @@ struct HomeScreen: View {
                             }
                         }
                 }
+                
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        self.showSettings.toggle()
+                    Menu {
+                        Button(
+                            action: {
+                                homeViewModel.markAllRead()
+                            }) {
+                                Label("Mark all read", systemImage: "checkmark")
+                            }
+                        
+                        Button(
+                            action: {
+                                homeViewModel.deleteOldFeedItems()
+                            }) {
+                                Label("Clear old articles", systemImage: "trash")
+                            }
+                        
+                        Button(
+                            action: {
+                                self.sheetToShow = .feedList
+                            })  {
+                                Label("Feeds", systemImage: "list.bullet.rectangle.portrait")
+                            }
+                        
+                        Button(
+                            action: {
+                                self.sheetToShow = .filePicker
+                            })  {
+                                Label("Import feed from OPML", systemImage: "arrow.down.doc")
+                            }
+                        
+                        Button(
+                            action: {
+                                if let url = getUrl() {
+                                    settingsViewModel.exportFeed(opmlOutput: OPMLOutput(url: url))
+                                } else {
+                                    // TODO: handle error
+                                }
+                            })  {
+                                Label("Export feed to OPML", systemImage: "arrow.up.doc")
+                            }
+                        
                     } label: {
                         Image(systemName: "gear")
                     }
@@ -68,15 +109,53 @@ struct HomeScreen: View {
             }
             
         }
-        .sheet(isPresented: self.$showSettings) {
-            SettingsScreen(
-                onClearOldArticlesClicked: {
-                    homeViewModel.deleteOldFeedItems()
-                },
-                onMarkAllReadClicked: {
-                    homeViewModel.markAllRead()
+        .sheet(item: $sheetToShow) { item in
+            switch item {
+            case .filePicker:
+                FilePickerController { url in
+                    
+                    do {
+                        let data = try Data(contentsOf: url)
+                        settingsViewModel.importFeed(opmlInput: OPMLInput(opmlData: data))
+                        self.appState.snackbarQueue.append(
+                            SnackbarData(
+                                title: "Generating export",
+                                subtitle: nil,
+                                showBanner: true
+                            )
+                        )
+                    } catch {
+                        self.appState.snackbarQueue.append(
+                            
+                            SnackbarData(
+                                title: "Unable to load file",
+                                subtitle: nil,
+                                showBanner: true
+                            )
+                        )
+                    }
+                    
+                    
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: "Importing feed",
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    )
                 }
-            )
+                
+                
+            case .shareSheet:
+                
+                ShareSheet(
+                    activityItems: [getUrl()! as URL],
+                    applicationActivities: nil
+                ) { _, _, _, _ in }
+                
+            case .feedList:
+                FeedsScreen()
+            }
         }
         .task {
             do {
@@ -133,6 +212,48 @@ struct HomeScreen: View {
                 emitGenericError()
             }
         }
+        .task {
+            do {
+                let stream = asyncSequence(for: settingsViewModel.isImportDoneStateFlow)
+                for try await isImportDone in stream {
+                    if isImportDone as! Bool {
+                        self.appState.snackbarQueue.append(
+                            SnackbarData(
+                                title: "Import done",
+                                subtitle: nil,
+                                showBanner: true
+                            )
+                        )
+                    }
+                }
+            } catch {
+                self.appState.snackbarQueue.append(
+                    SnackbarData(
+                        title: "Sorry, something went wrong :(",
+                        subtitle: nil,
+                        showBanner: true
+                    )
+                )
+            }
+        }
+        .task {
+            do {
+                let stream = asyncSequence(for: settingsViewModel.isExportDoneStateFlow)
+                for try await isExportDone in stream {
+                    if isExportDone as! Bool {
+                        self.sheetToShow = .shareSheet
+                    }
+                }
+            } catch {
+                self.appState.snackbarQueue.append(
+                    SnackbarData(
+                        title: "Sorry, something went wrong :(",
+                        subtitle: nil,
+                        showBanner: true
+                    )
+                )
+            }
+        }
         .onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
             case .background:
@@ -151,5 +272,10 @@ struct HomeScreen: View {
                 showBanner: true
             )
         )
+    }
+    
+    private func getUrl() -> URL? {
+        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+        return cacheDirectory?.appendingPathComponent("feed-export.opml")
     }
 }

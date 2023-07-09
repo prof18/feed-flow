@@ -35,7 +35,6 @@ jobs:
           cd ${PROJECT_DIR}
           
           xcrun xcodebuild \
-            -workspace "${WORKSPACE}" \
             -scheme "${SCHEME}" \
             -configuration "${CONFIGURATION}" \
             -sdk "${SDK}" \

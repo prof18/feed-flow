@@ -8,6 +8,9 @@ jobs:
   build:
     runs-on: macos-latest
     timeout-minutes: 60
+    permissions:
+      contents: write
+
     steps:
       - uses: actions/checkout@v3
         with:

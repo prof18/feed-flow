@@ -14,7 +14,7 @@ import com.squareup.sqldelight.db.SqlDriver
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.definition.Definition
-import org.koin.core.instance.InstanceFactory
+import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
@@ -23,7 +23,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel as koinViewModel
 internal actual inline fun <reified T: BaseViewModel> Module.viewModel(
     qualifier: Qualifier?,
     noinline definition: Definition<T>
-): Pair<Module, InstanceFactory<T>> = koinViewModel(qualifier, definition)
+): KoinDefinition<T> = koinViewModel(qualifier, definition)
 
 internal actual val platformModule: Module = module {
     single<SqlDriver> {

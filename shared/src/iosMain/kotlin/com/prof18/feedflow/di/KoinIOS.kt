@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.definition.Definition
+import org.koin.core.definition.KoinDefinition
 import org.koin.core.instance.InstanceFactory
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
@@ -37,7 +38,7 @@ fun initKoinIos(
 internal actual inline fun <reified T: BaseViewModel> Module.viewModel(
     qualifier: Qualifier?,
     noinline definition: Definition<T>
-): Pair<Module, InstanceFactory<T>> = single(qualifier, definition= definition)
+): KoinDefinition<T> = single(qualifier, definition= definition)
 
 internal actual val platformModule: Module = module {
     single<SqlDriver> {

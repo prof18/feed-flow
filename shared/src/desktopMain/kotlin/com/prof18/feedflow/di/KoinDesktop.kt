@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
 import org.koin.core.definition.Definition
+import org.koin.core.definition.KoinDefinition
 import org.koin.core.instance.InstanceFactory
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
@@ -25,7 +26,7 @@ fun initKoinDesktop(): KoinApplication = initKoin(
 internal actual inline fun <reified T: BaseViewModel> Module.viewModel(
     qualifier: Qualifier?,
     noinline definition: Definition<T>
-): Pair<Module, InstanceFactory<T>> = factory(qualifier, definition)
+): KoinDefinition<T> = factory(qualifier, definition)
 
 internal actual val platformModule: Module = module {
     single<SqlDriver> {
@@ -33,8 +34,6 @@ internal actual val platformModule: Module = module {
     }
 
     single {
-//        Parser.Builder()
-//            .build()
         RssParser.build()
     }
 

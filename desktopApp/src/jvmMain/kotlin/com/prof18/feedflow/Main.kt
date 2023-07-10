@@ -39,7 +39,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.prof18.feedflow.di.initKoinDesktop
 import com.prof18.feedflow.domain.opml.OPMLInput
 import com.prof18.feedflow.domain.opml.OPMLOutput
-import com.prof18.feedflow.feedlist.FeedListScreen
+import com.prof18.feedflow.feedlist.FeedSourceListScreen
 import com.prof18.feedflow.home.FeedFlowMenuBar
 import com.prof18.feedflow.home.HomeScreen
 import com.prof18.feedflow.navigation.ChildStack
@@ -120,14 +120,10 @@ fun main() = application {
             },
             onFeedsListClick = {
                 navigation.push(Screen.FeedList)
-            },
-            onAddFeedClick = {
-                // TODO
-            },
-            onClearOldFeedClick = {
-                homeViewModel.deleteOldFeedItems()
             }
-        )
+        ) {
+            homeViewModel.deleteOldFeedItems()
+        }
 
         Surface(modifier = Modifier.fillMaxSize()) {
             FeedFlowTheme {
@@ -152,7 +148,7 @@ fun main() = application {
                                         }
                                     )
 
-                                    is Screen.FeedList -> FeedListScreen(navigateBack = { navigation.pop() })
+                                    is Screen.FeedList -> FeedSourceListScreen(navigateBack = { navigation.pop() })
                                 }
                             }
                         }

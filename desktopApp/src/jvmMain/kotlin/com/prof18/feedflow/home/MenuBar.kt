@@ -18,7 +18,6 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onImportOPMLCLick: (File) -> Unit,
     onExportOPMLClick: (File) -> Unit,
     onFeedsListClick: () -> Unit,
-    onAddFeedClick: () -> Unit,
     onClearOldFeedClick: () -> Unit,
 ) {
     MenuBar {
@@ -49,6 +48,13 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Separator()
 
             Item(
+                text = "Feeds",
+                onClick = {
+                    onFeedsListClick()
+                },
+            )
+
+            Item(
                 text = "Import Feed from OPML",
                 onClick = {
                     val fileChooser = JFileChooser("~").apply {
@@ -57,9 +63,11 @@ fun FrameWindowScope.FeedFlowMenuBar(
                         dialogTitle = "Select OPML file"
                         approveButtonText = "Import"
                     }
-                    fileChooser.showOpenDialog(window /* OR null */)
+                    fileChooser.showOpenDialog(window)
                     val result = fileChooser.selectedFile
-                    onImportOPMLCLick(result)
+                    if (result != null) {
+                        onImportOPMLCLick(result)
+                    }
                 },
             )
 
@@ -80,21 +88,6 @@ fun FrameWindowScope.FeedFlowMenuBar(
                         }
                         onExportOPMLClick(outputFile)
                     }
-
-                },
-            )
-
-            Item(
-                text = "Add Feed",
-                onClick = {
-                    onAddFeedClick()
-                },
-            )
-
-            Item(
-                text = "Feeds",
-                onClick = {
-                    onFeedsListClick()
                 },
             )
         }

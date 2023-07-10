@@ -16,7 +16,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.prof18.feedflow.addtfeed.AddFeedScreen
-import com.prof18.feedflow.addtfeed.ImportFeedScreen
 import com.prof18.feedflow.feedlist.FeedListScreen
 import com.prof18.feedflow.home.HomeScreen
 import com.prof18.feedflow.settings.SettingsScreen
@@ -53,9 +52,6 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate(Screen.Settings.name)
                                 }
                             )
-                        }
-                        composable(Screen.ImportFeed.name) {
-                            ImportFeedScreen()
                         }
 
                         composable(Screen.Settings.name) {

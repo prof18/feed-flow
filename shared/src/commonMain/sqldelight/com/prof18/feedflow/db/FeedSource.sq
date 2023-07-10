@@ -17,3 +17,6 @@ VALUES (?,?,?);
 selectFeedUrls:
 SELECT url, url_hash, title FROM feed_source
 ORDER BY title COLLATE NOCASE ASC;
+
+deleteFeedSource:
+DELETE FROM feed_source WHERE url_hash = :urlHash;

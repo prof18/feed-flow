@@ -65,41 +65,60 @@ struct HomeScreen: View {
                         Button(
                             action: {
                                 homeViewModel.markAllRead()
-                            }) {
-                                Label("Mark all read", systemImage: "checkmark")
                             }
+                        ) {
+                            Label("Mark all read", systemImage: "checkmark")
+                        }
                         
                         Button(
                             action: {
                                 homeViewModel.deleteOldFeedItems()
-                            }) {
-                                Label("Clear old articles", systemImage: "trash")
                             }
+                        ) {
+                            Label("Clear old articles", systemImage: "trash")
+                        }
                         
                         Button(
                             action: {
                                 self.sheetToShow = .feedList
-                            })  {
-                                Label("Feeds", systemImage: "list.bullet.rectangle.portrait")
                             }
+                        )  {
+                            Label("Feeds", systemImage: "list.bullet.rectangle.portrait")
+                        }
                         
                         Button(
                             action: {
                                 self.sheetToShow = .filePicker
-                            })  {
-                                Label("Import feed from OPML", systemImage: "arrow.down.doc")
                             }
+                        )  {
+                            Label("Import feed from OPML", systemImage: "arrow.down.doc")
+                        }
                         
                         Button(
                             action: {
                                 if let url = getUrl() {
                                     settingsViewModel.exportFeed(opmlOutput: OPMLOutput(url: url))
+                                    self.appState.snackbarQueue.append(
+                                        SnackbarData(
+                                            title: "Generating export",
+                                            subtitle: nil,
+                                            showBanner: true
+                                        )
+                                    )
                                 } else {
                                     // TODO: handle error
+                                    self.appState.snackbarQueue.append(
+                                        SnackbarData(
+                                            title: "Sorry, something went wrong :(",
+                                            subtitle: nil,
+                                            showBanner: true
+                                        )
+                                    )
                                 }
-                            })  {
-                                Label("Export feed to OPML", systemImage: "arrow.up.doc")
                             }
+                        )  {
+                            Label("Export feed to OPML", systemImage: "arrow.up.doc")
+                        }
                         
                     } label: {
                         Image(systemName: "gear")
@@ -117,13 +136,6 @@ struct HomeScreen: View {
                     do {
                         let data = try Data(contentsOf: url)
                         settingsViewModel.importFeed(opmlInput: OPMLInput(opmlData: data))
-                        self.appState.snackbarQueue.append(
-                            SnackbarData(
-                                title: "Generating export",
-                                subtitle: nil,
-                                showBanner: true
-                            )
-                        )
                     } catch {
                         self.appState.snackbarQueue.append(
                             

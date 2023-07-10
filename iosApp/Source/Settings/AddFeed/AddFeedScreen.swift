@@ -7,10 +7,84 @@
 //
 
 import SwiftUI
+import shared
+import KMPNativeCoroutinesAsync
+
 
 struct AddFeedScreen: View {
+    
+    @EnvironmentObject var appState: AppState
+    @Environment(\.presentationMode) var presentationMode
+    
+    @State private var feedName = ""
+    @State private var feedURL = ""
+    
+    @StateObject var addFeedViewModel: AddFeedViewModel = KotlinDependencies.shared.getAddFeedViewModel()
+    
     var body: some View {
-        Text("Add feed")
+        VStack {
+            TextField("Feed Name", text: $feedName)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.top, Spacing.regular)
+                .padding(.horizontal, Spacing.regular)
+            
+            TextField("Feed URL", text: $feedURL)
+                .keyboardType(.webSearch)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.top, Spacing.regular)
+                .padding(.horizontal, Spacing.regular)
+            
+            
+            Button(
+                action: {
+                    addFeedViewModel.addFeed()
+                }
+            ) {
+                Text("Add Feed")
+            }
+            .buttonStyle(.bordered)
+            .padding(.top, Spacing.regular)
+            
+            Spacer()
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Text("Add Feed")
+                    .font(.title2)
+            }
+        }
+        .onChange(of: feedName) { value in
+            addFeedViewModel.updateFeedNameTextFieldValue(feedNameTextFieldValue: value)
+        }
+        .onChange(of: feedURL) { value in
+            addFeedViewModel.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
+        }
+        .task {
+            do {
+                let stream = asyncSequence(for: addFeedViewModel.isAddDoneStateFlow)
+                for try await isAddDone in stream {
+                    if isAddDone as! Bool {
+                        self.appState.snackbarQueue.append(
+                            SnackbarData(
+                                title: "Feed Added",
+                                subtitle: nil,
+                                showBanner: true
+                            )
+                        )
+                        self.addFeedViewModel.clearAddDoneState()
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            } catch {
+                self.appState.snackbarQueue.append(
+                    SnackbarData(
+                        title: "Sorry, something went wrong :(",
+                        subtitle: nil,
+                        showBanner: true
+                    )
+                )
+            }
+        }
     }
 }
 

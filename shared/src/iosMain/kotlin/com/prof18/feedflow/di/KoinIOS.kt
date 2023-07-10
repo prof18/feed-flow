@@ -6,7 +6,9 @@ import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.opml.OPMLFeedHandler
+import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
+import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
@@ -51,8 +53,6 @@ internal actual val platformModule: Module = module {
     }
 
     single {
-//        Parser.Builder()
-//            .build()
         RssParser.build()
     }
 
@@ -67,4 +67,6 @@ internal actual val platformModule: Module = module {
 object KotlinDependencies : KoinComponent {
     fun getHomeViewModel() = getKoin().get<HomeViewModel>()
     fun getSettingsViewModel() = getKoin().get<SettingsViewModel>()
+    fun getFeedSourceListViewModel() = getKoin().get<FeedSourceListViewModel>()
+    fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()
 }

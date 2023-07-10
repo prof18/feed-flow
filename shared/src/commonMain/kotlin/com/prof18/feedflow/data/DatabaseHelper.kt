@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -37,6 +38,25 @@ internal class DatabaseHelper(
                 )
             }
     }
+
+    fun getFeedSourcesFlow(): Flow<List<FeedSource>> =
+        dbRef.feedSourceQueries
+            .selectFeedUrls()
+            .asFlow()
+            .catch {
+                Logger.e(it) { "Something wrong while getting data from Database" }
+            }
+            .mapToList()
+            .map { feedSources ->
+                feedSources.map { feedSource ->
+                    FeedSource(
+                        id = feedSource.url_hash,
+                        url = feedSource.url,
+                        title = feedSource.title,
+                    )
+                }
+            }
+            .flowOn(backgroundDispatcher)
 
     fun getFeedItems(): Flow<List<SelectFeeds>> =
         dbRef.feedItemQueries
@@ -120,6 +140,11 @@ internal class DatabaseHelper(
     suspend fun deleteOldFeedItems(timeThreshold: Long) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedItemQueries.clearOldItems(timeThreshold)
+        }
+
+    suspend fun deleteFeedSource(feedSource: FeedSource) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.deleteFeedSource(feedSource.id)
         }
 
     private suspend fun Transacter.transactionWithContext(

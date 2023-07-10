@@ -6,6 +6,9 @@ import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.domain.opml.OPMLFeedHandler
 import com.prof18.feedflow.domain.opml.OPMLInput
 import com.prof18.feedflow.domain.opml.OPMLOutput
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 
 internal class FeedManagerRepositoryImpl(
     private val databaseHelper: DatabaseHelper,
@@ -20,9 +23,8 @@ internal class FeedManagerRepositoryImpl(
         databaseHelper.insertFeedSource(feeds)
     }
 
-    override suspend fun getFeeds(): List<FeedSource> {
-        return databaseHelper.getFeedSources()
-    }
+    override suspend fun getFeeds(): Flow<List<FeedSource>> =
+        databaseHelper.getFeedSourcesFlow()
 
     // TODO: Add category
     override suspend fun addFeed(url: String, name: String) {
@@ -40,5 +42,9 @@ internal class FeedManagerRepositoryImpl(
     override suspend fun exportFeedsAsOpml(opmlOutput: OPMLOutput) {
         val feeds = databaseHelper.getFeedSources()
         opmlFeedHandler.exportFeed(opmlOutput, feeds)
+    }
+
+    override suspend fun deleteFeed(feedSource: FeedSource) {
+        databaseHelper.deleteFeedSource(feedSource)
     }
 }

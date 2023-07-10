@@ -27,7 +27,6 @@ class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-
         setContent {
 
             val systemUiController = rememberSystemUiController()
@@ -61,21 +60,32 @@ class MainActivity : ComponentActivity() {
 
                         composable(Screen.Settings.name) {
                             SettingsScreen(
-                                onAddFeedClick = {
-                                    navController.navigate(Screen.AddFeed.name)
-                                },
                                 onFeedListClick = {
                                     navController.navigate(Screen.FeedList.name)
                                 },
+                                 navigateBack = {
+                                     navController.popBackStack()
+                                 },
                             )
                         }
 
                         composable(Screen.AddFeed.name) {
-                            AddFeedScreen()
+                            AddFeedScreen(
+                                navigateBack = {
+                                    navController.popBackStack()
+                                }
+                            )
                         }
 
                         composable(Screen.FeedList.name) {
-                            FeedListScreen()
+                            FeedListScreen(
+                                onAddFeedClick = {
+                                    navController.navigate(Screen.AddFeed.name)
+                                },
+                                navigateBack = {
+                                    navController.popBackStack()
+                                },
+                            )
                         }
                     }
                 }
@@ -83,5 +93,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-

@@ -1,6 +1,7 @@
 package com.prof18.feedflow.presentation
 
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.model.FeedSource
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedSourceListViewModel(
-    private val feedManagerRepository: FeedManagerRepository
+    private val feedManagerRepository: FeedManagerRepository,
+    private val feedRetrieverRepository: FeedRetrieverRepository,
 ): BaseViewModel() {
 
     private val feedsMutableState: MutableStateFlow<List<FeedSource>> = MutableStateFlow(listOf())
@@ -19,8 +21,16 @@ class FeedSourceListViewModel(
 
     init {
         scope.launch {
-            val feeds = feedManagerRepository.getFeeds()
-            feedsMutableState.update { feeds }
+            feedManagerRepository.getFeeds().collect { feeds ->
+                feedsMutableState.update { feeds }
+            }
+        }
+    }
+
+    fun deleteFeedSource(feedSource: FeedSource) {
+        scope.launch {
+            feedManagerRepository.deleteFeed(feedSource)
+            feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
         }
     }
 }

@@ -4,8 +4,13 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -25,8 +30,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddFeedScreen() {
-
+fun AddFeedScreen(
+    navigateBack: () -> Unit,
+) {
     val viewModel = koinViewModel<AddFeedViewModel>()
     var feedName by remember { mutableStateOf("") }
     var feedUrl by remember { mutableStateOf("") }
@@ -42,7 +48,23 @@ fun AddFeedScreen() {
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Add Feed") }) }
+        topBar = {
+            TopAppBar(
+                title = { Text("Add Feed") },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navigateBack()
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
+                }
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier

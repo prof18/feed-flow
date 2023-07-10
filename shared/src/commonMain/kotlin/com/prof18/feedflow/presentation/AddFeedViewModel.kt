@@ -28,7 +28,6 @@ class AddFeedViewModel(
         feedName = feedNameTextFieldValue
     }
 
-    // TODO: handle category
     fun addFeed() {
         scope.launch {
             feedManagerRepository.addFeed(
@@ -38,5 +37,9 @@ class AddFeedViewModel(
             isAddDoneMutableState.update { true }
             feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
         }
+    }
+
+    fun clearAddDoneState() {
+        isAddDoneMutableState.update { false }
     }
 }

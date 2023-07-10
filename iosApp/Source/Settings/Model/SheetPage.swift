@@ -10,5 +10,4 @@ import Foundation
 
 enum SheetPage: Hashable {
     case addFeed
-    case feedList
 }

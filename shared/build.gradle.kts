@@ -11,13 +11,13 @@ kotlin {
     android {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "11"
+                jvmTarget = "17"
             }
         }
     }
 
     jvm("desktop") {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
 
     listOf(
@@ -43,8 +43,6 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.touchlab.kermit)
                 implementation(libs.kotlinx.coroutines.core)
-//                implementation(libs.kotlinx.datetime)
-//                implementation(libs.kmm.viewmodel)
                 implementation(libs.com.prof18.rss.parser)
             }
         }
@@ -119,7 +117,6 @@ kotlin {
             dependsOn(commonJvmAndroidMain)
 
             dependencies {
-//                api(compose.preview)
                 implementation(libs.squareup.sqldelight.sqlite.driver)
                 implementation(libs.kotlinx.coroutines.swing)
             }
@@ -147,8 +144,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 

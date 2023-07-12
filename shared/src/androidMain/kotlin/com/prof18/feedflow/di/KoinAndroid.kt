@@ -1,5 +1,7 @@
 package com.prof18.feedflow.di
 
+import android.content.Context
+import android.preference.PreferenceManager
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.domain.HtmlParser
@@ -9,6 +11,8 @@ import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.build
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.SharedPreferencesSettings
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,6 +21,7 @@ import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
+import org.koin.core.scope.get
 import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel as koinViewModel
 
@@ -46,6 +51,11 @@ internal actual val platformModule: Module = module {
 
     factory<HtmlParser> {
         JvmHtmlParser()
+    }
+
+    single<Settings> {
+        val sharedPrefs = get<Context>().getSharedPreferences("feedflow.shared.pref", Context.MODE_PRIVATE)
+        SharedPreferencesSettings(sharedPrefs)
     }
 
     single<DispatcherProvider> {

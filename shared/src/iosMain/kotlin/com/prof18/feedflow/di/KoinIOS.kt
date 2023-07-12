@@ -12,6 +12,9 @@ import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
+import com.russhwolf.settings.ExperimentalSettingsImplementation
+import com.russhwolf.settings.KeychainSettings
+import com.russhwolf.settings.Settings
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
 import kotlinx.coroutines.CoroutineDispatcher
@@ -40,6 +43,7 @@ internal actual inline fun <reified T: BaseViewModel> Module.viewModel(
     noinline definition: Definition<T>
 ): KoinDefinition<T> = single(qualifier, definition= definition)
 
+@OptIn(ExperimentalSettingsImplementation::class)
 internal actual val platformModule: Module = module {
     single<SqlDriver> {
         NativeSqliteDriver(FeedFlowDB.Schema, DatabaseHelper.DATABASE_NAME)
@@ -62,6 +66,11 @@ internal actual val platformModule: Module = module {
             dispatcherProvider = get(),
         )
     }
+
+    single<Settings> {
+        KeychainSettings(service = "FeedFlow")
+    }
+
 }
 
 @Suppress("unused") // Called from Swift

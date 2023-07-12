@@ -43,6 +43,7 @@ jsystem-theme-detector = "3.6"
 native-coroutines = "1.0.0-ALPHA-7"
 ksp = "1.8.20-1.0.10"
 compose-image-loader = "1.4.2"
+multiplatform-settings = "1.0.0"
 
 [libraries]
 androidx-activity-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -100,6 +101,7 @@ decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decom
 decompose-compose-jetbrains = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 compose-image-loader = { module = "io.github.qdsfdhvh:image-loader", version.ref = "compose-image-loader" }
+multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
 
 [bundles]
 androidx-test = ["androidx-test-core", "androidx-test-ext-junit", "androidx-test-rules", "androidx-test-runner"]

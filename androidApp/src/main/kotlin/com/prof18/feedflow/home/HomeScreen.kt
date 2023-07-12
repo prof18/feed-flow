@@ -68,7 +68,10 @@ import com.prof18.feedflow.home.components.NoFeedsSourceView
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.ui.theme.Spacing
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.getKoin
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -77,6 +80,7 @@ internal fun HomeScreen(
     onSettingsButtonClicked: () -> Unit,
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
+    val browserSelector = koinInject<BrowserSelector>()
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
@@ -144,11 +148,11 @@ internal fun HomeScreen(
                 homeViewModel.updateReadStatus(lastVisibleIndex)
             },
             onFeedItemClick = { feedInfo ->
-                openUrl(feedInfo.url, context)
+                openUrl(feedInfo.url, context, browserSelector)
                 homeViewModel.markAsRead(feedInfo.id)
             },
             onFeedItemLongClick = { feedInfo ->
-                openUrl(feedInfo.url, context)
+                openUrl(feedInfo.url, context, browserSelector)
                 homeViewModel.markAsRead(feedInfo.id)
             },
             onAddFeedClick = {
@@ -328,10 +332,16 @@ private fun HomeAppBar(
     )
 }
 
-private fun openUrl(url: String, context: Context) {
+private fun openUrl(
+    url: String,
+    context: Context,
+    browserSelector: BrowserSelector
+) {
     val intent = Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse(url)
-        setPackage(BrowserSelector.getBrowserPackageName(context, this))
+        browserSelector.getBrowserPackageName()?.let { packageName ->
+            setPackage(packageName)
+        }
     }
     context.startActivity(intent)
 }

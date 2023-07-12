@@ -3,24 +3,49 @@ package com.prof18.feedflow
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
+import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.domain.model.Browser
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
-object BrowserSelector {
+class BrowserSelector(
+    private val context: Context,
+    private val feedManagerRepository: FeedManagerRepository,
+) {
 
-    private var defaultBrowserPackageName: String? = null
+    private val browserListMutableState = MutableStateFlow<List<Browser>>(emptyList())
+    val browserListState = browserListMutableState.asStateFlow()
 
-    fun getBrowserPackageName(context: Context, intent: Intent): String {
-        return if (defaultBrowserPackageName != null) {
-            defaultBrowserPackageName!!
-        } else {
-            val packageName = retrieveBrowserPackageName(context, intent)
-            defaultBrowserPackageName = packageName
-            packageName
+    init {
+        populateBrowserList()
+    }
+
+    fun getBrowserPackageName(): String? {
+        return browserListMutableState.value.firstOrNull { it.isFavourite }?.id
+    }
+
+    fun setFavouriteBrowser(browser: Browser) {
+        feedManagerRepository.setFavouriteBrowser(browser)
+        browserListMutableState.update { browserList ->
+            val newList = browserList.toMutableList()
+            newList.replaceAll {
+                it.copy(isFavourite = it.id == browser.id)
+            }
+            newList
         }
     }
 
-    private fun retrieveBrowserPackageName(context: Context, intent: Intent): String {
-        val resolvedInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    private fun populateBrowserList() {
+        val favouriteBrowserId = feedManagerRepository.getFavouriteBrowserId()
+
+        val intent = Intent(Intent(Intent.ACTION_VIEW)).apply {
+            data = Uri.parse("https://www.example.com")
+        }
+
+        val resolvedInfos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.packageManager.queryIntentActivities(
                 intent,
                 PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_ALL.toLong())
@@ -33,8 +58,18 @@ object BrowserSelector {
             )
         }
 
-        return resolvedInfo.first { it.activityInfo.packageName == "org.mozilla.focus" }
-            .activityInfo.packageName
+        val browserList = resolvedInfos.mapIndexed { index, info ->
+            val id = info.activityInfo.packageName
+            Browser(
+                id = id,
+                name = info.activityInfo.loadLabel(context.packageManager).toString(),
+                isFavourite = if (favouriteBrowserId != null) {
+                    favouriteBrowserId == id
+                } else {
+                    index == 0
+                },
+            )
+        }
+        browserListMutableState.update { browserList }
     }
-
 }

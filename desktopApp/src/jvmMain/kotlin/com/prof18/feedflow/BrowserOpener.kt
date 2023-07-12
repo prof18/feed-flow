@@ -10,8 +10,8 @@ fun openInBrowser(url: String) {
     val desktop = Desktop.getDesktop()
     when {
         Desktop.isDesktopSupported() && desktop.isSupported(Desktop.Action.BROWSE) -> desktop.browse(uri)
-        "mac" in osName -> Runtime.getRuntime().exec("open $uri")
-        "nix" in osName || "nux" in osName -> Runtime.getRuntime().exec("xdg-open $uri")
+        "mac" in osName -> Runtime.getRuntime().exec(arrayOf("open", "$uri"))
+        "nix" in osName || "nux" in osName -> Runtime.getRuntime().exec(arrayOf("xdg-open", "$uri"))
         else -> throw RuntimeException("cannot open $uri")
     }
 }

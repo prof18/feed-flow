@@ -1,6 +1,8 @@
 package com.prof18.feedflow.domain.feed.manager
 
 import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.data.SettingsHelper
+import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.domain.opml.OPMLFeedHandler
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.last
 internal class FeedManagerRepositoryImpl(
     private val databaseHelper: DatabaseHelper,
     private val opmlFeedHandler: OPMLFeedHandler,
+    private val settingsHelper: SettingsHelper,
 ) : FeedManagerRepository {
 
     override suspend fun addFeedsFromFile(opmlInput: OPMLInput) {
@@ -46,5 +49,12 @@ internal class FeedManagerRepositoryImpl(
 
     override suspend fun deleteFeed(feedSource: FeedSource) {
         databaseHelper.deleteFeedSource(feedSource)
+    }
+
+    override fun getFavouriteBrowserId(): String? =
+        settingsHelper.getFavouriteBrowserId()
+
+    override fun setFavouriteBrowser(browser: Browser) {
+        settingsHelper.saveFavouriteBrowserId(browser.id)
     }
 }

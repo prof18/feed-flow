@@ -8,6 +8,8 @@ import com.prof18.feedflow.domain.opml.OPMLFeedHandler
 import com.prof18.feedflow.initDatabase
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
+import com.russhwolf.settings.PreferencesSettings
+import com.russhwolf.settings.Settings
 import com.squareup.sqldelight.db.SqlDriver
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +20,7 @@ import org.koin.core.instance.InstanceFactory
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
+import java.util.prefs.Preferences
 
 fun initKoinDesktop(): KoinApplication = initKoin(
     modules = listOf()
@@ -53,5 +56,10 @@ internal actual val platformModule: Module = module {
 
     factory<HtmlParser> {
         JvmHtmlParser()
+    }
+
+    single<Settings> {
+        val preferences = Preferences.userRoot()
+       PreferencesSettings(preferences)
     }
 }

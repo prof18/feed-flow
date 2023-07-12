@@ -44,6 +44,7 @@ kotlin {
                 implementation(libs.touchlab.kermit)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
+                implementation(libs.multiplatform.settings)
             }
         }
         val commonTest by getting {

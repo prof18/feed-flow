@@ -1,7 +1,6 @@
 package com.prof18.feedflow.settings
 
 import FeedFlowTheme
-import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -21,16 +20,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.BrowserSelector
 import com.prof18.feedflow.domain.opml.OPMLInput
 import com.prof18.feedflow.domain.opml.OPMLOutput
 import com.prof18.feedflow.presentation.SettingsViewModel
+import com.prof18.feedflow.settings.components.BrowserSelectionDialog
 import com.prof18.feedflow.settings.components.SettingsDivider
 import com.prof18.feedflow.settings.components.SettingsMenuItem
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,6 +45,7 @@ fun SettingsScreen(
     val context = LocalContext.current
 
     val viewModel = koinViewModel<SettingsViewModel>()
+    val browserSelector = koinInject<BrowserSelector>()
 
     val openFileAction = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let {
@@ -95,6 +99,25 @@ fun SettingsScreen(
         }
     ) { paddingValues ->
 
+        var showBrowserSelection by remember {
+            mutableStateOf(
+                false,
+            )
+        }
+        val browserListState by browserSelector.browserListState.collectAsStateWithLifecycle()
+
+        if (showBrowserSelection) {
+            BrowserSelectionDialog(
+                browserList = browserListState,
+                onBrowserSelected = { browser ->
+                    browserSelector.setFavouriteBrowser(browser)
+                },
+                dismissDialog = {
+                    showBrowserSelection = false
+                },
+            )
+        }
+
         LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
@@ -103,6 +126,16 @@ fun SettingsScreen(
             item {
                 SettingsMenuItem(text = "Feeds") {
                     onFeedListClick()
+                }
+            }
+
+            item {
+                SettingsDivider()
+            }
+
+            item {
+                SettingsMenuItem(text = "Browser Selection") {
+                    showBrowserSelection = true
                 }
             }
 

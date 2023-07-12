@@ -1,6 +1,7 @@
 package com.prof18.feedflow.di
 
 import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.data.SettingsHelper
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepositoryImpl
@@ -39,6 +40,7 @@ private val coreModule = module {
         FeedManagerRepositoryImpl(
             databaseHelper = get(),
             opmlFeedHandler = get(),
+            settingsHelper = get(),
         )
     }
 
@@ -75,6 +77,12 @@ private val coreModule = module {
         FeedSourceListViewModel(
             feedManagerRepository = get(),
             feedRetrieverRepository = get(),
+        )
+    }
+
+    factory {
+        SettingsHelper(
+            settings = get(),
         )
     }
 }

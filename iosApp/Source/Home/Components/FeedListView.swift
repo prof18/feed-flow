@@ -16,6 +16,7 @@ struct FeedListView: View {
     
     @Environment(\.openURL) var openURL
     @EnvironmentObject var indexHolder: HomeListIndexHolder
+    @EnvironmentObject var browserSelector: BrowserSelector
     
     let feedState: [FeedItem]
     let onRefresh: () -> Void
@@ -30,7 +31,7 @@ struct FeedListView: View {
                 .id(feedItem.id)
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    openURL(URL(string: feedItem.url)!)
+                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                 }
                 .onDisappear {
                     if let index = feedState.firstIndex(of: feedItem) {

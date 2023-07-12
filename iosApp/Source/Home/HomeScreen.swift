@@ -14,6 +14,8 @@ import OrderedCollections
 struct HomeScreen: View {
     
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var browserSelector: BrowserSelector
+
     @Environment(\.scenePhase) var scenePhase
     
     @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
@@ -26,8 +28,7 @@ struct HomeScreen: View {
     @State var sheetToShow: SheetToShow?
     
     @State var unreadCount = 0
-    
-    
+        
     var body: some View {
         ScrollViewReader { proxy in
             HomeScreenContent(
@@ -60,6 +61,7 @@ struct HomeScreen: View {
                         }
                 }
                 
+                
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button(
@@ -84,6 +86,17 @@ struct HomeScreen: View {
                             }
                         )  {
                             Label("Feeds", systemImage: "list.bullet.rectangle.portrait")
+                        }
+                        
+                        Menu {
+                            Picker(selection: $browserSelector.selectedBrowser, label: Text("Picker")) {
+                                ForEach(browserSelector.browsers, id: \.self) { period in
+                                    Text(period.name).tag(period as Browser?)
+                                }
+                            }
+                        }
+                        label: {
+                            Label("Browser Selection", systemImage: "globe")
                         }
                         
                         Button(

@@ -4,6 +4,7 @@ import shared
 struct ContentView: View {
     
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var browserSelector: BrowserSelector
     
     
     var body: some View {
@@ -12,6 +13,7 @@ struct ContentView: View {
             NavigationStack {
                 HomeScreen()
                     .environmentObject(appState)
+                    .environmentObject(browserSelector)
                     .navigationDestination(for: Route.self) { route in
                         //                switch route {
                         //                case let .movieDetail(movieId):

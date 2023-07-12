@@ -5,6 +5,7 @@ import shared
 struct FeedFlowApp: App {
     
     @StateObject var appState: AppState = AppState()
+    @StateObject var browserSelector: BrowserSelector = BrowserSelector()
     
     init() {
         startKoin()
@@ -14,6 +15,7 @@ struct FeedFlowApp: App {
 		WindowGroup {
 			ContentView()
                 .environmentObject(appState)
+                .environmentObject(browserSelector)
 		}
 	}
 }

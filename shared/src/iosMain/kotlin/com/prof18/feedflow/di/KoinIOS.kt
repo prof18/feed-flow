@@ -5,6 +5,7 @@ import com.prof18.rssparser.build
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.domain.HtmlParser
+import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.opml.OPMLFeedHandler
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
@@ -79,4 +80,5 @@ object KotlinDependencies : KoinComponent {
     fun getSettingsViewModel() = getKoin().get<SettingsViewModel>()
     fun getFeedSourceListViewModel() = getKoin().get<FeedSourceListViewModel>()
     fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()
+    fun getFeedManagerRepository() = getKoin().get<FeedManagerRepository>()
 }

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="my_string">My default localization string</string>
+</resources>

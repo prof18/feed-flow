@@ -6,6 +6,8 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
+import com.prof18.feedflow.MR
+import dev.icerock.moko.resources.compose.stringResource
 import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -24,6 +26,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
         Menu("File", mnemonic = 'F') {
 
             Item(
+//                text = stringResource(MR.strings.my_string),
                 text = "Refresh Feed",
                 onClick = {
                     onRefreshClick()

@@ -69,6 +69,8 @@ struct HomeScreen: View {
                                 homeViewModel.markAllRead()
                             }
                         ) {
+                            let string = MR.strings().my_string.desc().localized()
+//                            Label(string, systemImage: "checkmark")
                             Label("Mark all read", systemImage: "checkmark")
                         }
                         

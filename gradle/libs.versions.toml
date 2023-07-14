@@ -44,6 +44,7 @@ native-coroutines = "1.0.0-ALPHA-7"
 ksp = "1.8.20-1.0.10"
 compose-image-loader = "1.4.2"
 multiplatform-settings = "1.0.0"
+moko-resources = "0.23.0"
 
 [libraries]
 androidx-activity-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -102,6 +103,8 @@ decompose-compose-jetbrains = { module = "com.arkivanov.decompose:extensions-com
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 compose-image-loader = { module = "io.github.qdsfdhvh:image-loader", version.ref = "compose-image-loader" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
+moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
+moko-resourcesCompose = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
 
 [bundles]
 androidx-test = ["androidx-test-core", "androidx-test-ext-junit", "androidx-test-rules", "androidx-test-runner"]
@@ -129,3 +132,4 @@ sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }
 triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }

@@ -36,7 +36,7 @@ import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.preview.feedSourcesForPreview
+import com.prof18.feedflow.presentation.preview.feedSourcesForPreview
 import com.prof18.feedflow.ui.theme.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel

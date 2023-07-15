@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@file:OptIn(ExperimentalMaterialApi::class)
 
 package com.prof18.feedflow.home
 
@@ -52,7 +52,7 @@ import com.prof18.feedflow.home.components.NoFeedsSourceView
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.preview.feedItemsForPreview
+import com.prof18.feedflow.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.ui.theme.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch

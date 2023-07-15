@@ -33,7 +33,7 @@ import com.prof18.feedflow.settings.components.BrowserSelectionDialog
 import com.prof18.feedflow.settings.components.SettingsDivider
 import com.prof18.feedflow.settings.components.SettingsMenuItem
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.preview.browsersForPreview
+import com.prof18.feedflow.presentation.preview.browsersForPreview
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject

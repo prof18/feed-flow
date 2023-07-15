@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.preview.browsersForPreview
+import com.prof18.feedflow.presentation.preview.browsersForPreview
 
 @Composable
 internal fun BrowserSelectionDialog(

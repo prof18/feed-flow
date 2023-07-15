@@ -1,5 +1,6 @@
 package com.prof18.feedflow.addfeed
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,19 +20,19 @@ import androidx.compose.ui.Modifier
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.koin
 import com.prof18.feedflow.presentation.AddFeedViewModel
+import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
-val viewModel = koin.get<AddFeedViewModel>()
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFeedScreen(
     onFeedAdded: () -> Unit,
 ) {
     var feedName by remember { mutableStateOf("") }
     var feedUrl by remember { mutableStateOf("") }
+
+    val viewModel = koin.get<AddFeedViewModel>()
 
     val isAddDone by viewModel.isAddDoneState.collectAsState()
 
@@ -41,8 +42,33 @@ fun AddFeedScreen(
         onFeedAdded()
     }
 
-    Scaffold(
-    ) { paddingValues ->
+    AddFeedScreenContent(
+        feedName = feedName,
+        feedUrl = feedUrl,
+        onFeedNameUpdated = { name ->
+            feedName = name
+            viewModel.updateFeedNameTextFieldValue(name)
+        },
+        onFeedUrlUpdated = { url ->
+            feedUrl = url
+            viewModel.updateFeedUrlTextFieldValue(url)
+        },
+        addFeed = {
+            viewModel.addFeed()
+        },
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun AddFeedScreenContent(
+    feedName: String,
+    feedUrl: String,
+    onFeedNameUpdated: (String) -> Unit,
+    onFeedUrlUpdated: (String) -> Unit,
+    addFeed: () -> Unit,
+) {
+    Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -53,14 +79,11 @@ fun AddFeedScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 label = {
-                    Text(
-                        text = stringResource(resource = MR.strings.feed_name)
-                    )
+                    Text(text = stringResource(resource = MR.strings.feed_name))
                 },
                 value = feedName,
                 onValueChange = {
-                    feedName = it
-                    viewModel.updateFeedNameTextFieldValue(it)
+                    onFeedNameUpdated(it)
                 },
                 placeholder = {
                     Text(
@@ -71,21 +94,16 @@ fun AddFeedScreen(
                 maxLines = 1,
             )
 
-
-
             TextField(
                 modifier = Modifier
                     .padding(top = Spacing.regular)
                     .fillMaxWidth(),
                 label = {
-                    Text(
-                        text = stringResource(resource = MR.strings.feed_url)
-                    )
+                    Text(text = stringResource(resource = MR.strings.feed_url))
                 },
                 value = feedUrl,
                 onValueChange = {
-                    feedUrl = it
-                    viewModel.updateFeedUrlTextFieldValue(it)
+                    onFeedUrlUpdated(it)
                 },
                 placeholder = {
                     Text(
@@ -100,14 +118,41 @@ fun AddFeedScreen(
                 modifier = Modifier
                     .padding(top = Spacing.regular)
                     .align(Alignment.CenterHorizontally),
-                onClick = {
-                    viewModel.addFeed()
-                },
+                onClick = addFeed,
             ) {
-                Text(
-                    stringResource(resource = MR.strings.add_feed)
-                )
+                Text(stringResource(resource = MR.strings.add_feed))
             }
         }
+    }
+}
+
+
+@Preview
+@Composable
+private fun AddScreenContentPreview() {
+    FeedFlowTheme {
+        AddFeedScreenContent(
+            feedName = "My Feed",
+            feedUrl = "https://www.ablog.com/feed",
+            onFeedNameUpdated = {},
+            onFeedUrlUpdated = {},
+            addFeed = { },
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun AddScreenContentDarkPreview() {
+    FeedFlowTheme(
+        darkTheme = true
+    ) {
+        AddFeedScreenContent(
+            feedName = "My Feed",
+            feedUrl = "https://www.ablog.com/feed",
+            onFeedNameUpdated = {},
+            onFeedUrlUpdated = {},
+            addFeed = { },
+        )
     }
 }

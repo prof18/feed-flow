@@ -10,14 +10,48 @@ import SwiftUI
 import shared
 import KMPNativeCoroutinesAsync
 
-struct FeedsScreen: View {
+struct FeedSourceListScreen: View {
     
     @EnvironmentObject var appState: AppState
-    @Environment(\.presentationMode) var presentationMode
     @StateObject var feedSourceViewModel: FeedSourceListViewModel = KotlinDependencies.shared.getFeedSourceListViewModel()
     
-    @State private var showAddFeed = false
     @State var feedState: [FeedSource] = []
+    
+    var body: some View {
+        FeedSourceListContent(
+            feedState: $feedState,
+            deleteFeedSource: { feedSource in
+                feedSourceViewModel.deleteFeedSource(feedSource: feedSource)
+            }
+        )
+        .task {
+            do {
+                let stream = asyncSequence(for: feedSourceViewModel.feedSourcesStateFlow)
+                for try await state in stream {
+                    self.feedState = state
+                }
+            } catch {
+                self.appState.snackbarQueue.append(
+                    SnackbarData(
+                        title: MR.strings().generic_error_message.localized,
+                        subtitle: nil,
+                        showBanner: true
+                    )
+                )
+            }
+        }
+    }
+}
+
+private struct FeedSourceListContent: View {
+    
+    @Environment(\.presentationMode) var presentationMode
+    
+    @State private var showAddFeed = false
+    @Binding var feedState: [FeedSource]
+    
+    let deleteFeedSource: (FeedSource) -> Void
+
     
     var body: some View {
         NavigationStack {
@@ -50,7 +84,7 @@ struct FeedsScreen: View {
                             .id(feedSource.id)
                             .contextMenu {
                                 Button {
-                                    feedSourceViewModel.deleteFeedSource(feedSource: feedSource)
+                                    deleteFeedSource(feedSource)
                                 } label: {
                                     Label(
                                         MR.strings().delete_feed.localized,
@@ -96,30 +130,28 @@ struct FeedsScreen: View {
                     }
                 }
             }
-        }
-        .sheet(isPresented: $showAddFeed) {
-            AddFeedScreen()
-        }.task {
-            do {
-                let stream = asyncSequence(for: feedSourceViewModel.feedsStateFlow)
-                for try await state in stream {
-                    self.feedState = state
-                }
-            } catch {
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: MR.strings().generic_error_message.localized,
-                        subtitle: nil,
-                        showBanner: true
-                    )
-                )
+            .sheet(isPresented: $showAddFeed) {
+                AddFeedScreen()
             }
         }
     }
 }
 
-struct SettingsScreen_Previews: PreviewProvider {
+struct FeedSourceListContent_Previews: PreviewProvider {
     static var previews: some View {
-        FeedsScreen()
+        FeedSourceListContent(
+            feedState: .constant(PreviewItemsKt.feedSourcesForPreview),
+            deleteFeedSource: { _ in }
+        )
+    }
+}
+
+
+struct FeedSourceListContentEmpty_Previews: PreviewProvider {
+    static var previews: some View {
+        FeedSourceListContent(
+            feedState: .constant([]),
+            deleteFeedSource: { _ in }
+        )
     }
 }

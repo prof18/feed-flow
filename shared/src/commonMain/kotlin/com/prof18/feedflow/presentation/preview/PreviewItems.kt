@@ -1,10 +1,10 @@
-package com.prof18.feedflow.ui.preview
+package com.prof18.feedflow.presentation.preview
 
 import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedSource
 
-internal val feedItemsForPreview = listOf(
+val feedItemsForPreview = listOf(
     FeedItem(
         id = 0,
         url = "https://www.ilpost.it/2023/02/11/scheumorfismo/",
@@ -46,7 +46,7 @@ internal val feedItemsForPreview = listOf(
     ),
 )
 
-internal val browsersForPreview = listOf(
+val browsersForPreview = listOf(
     Browser(
         id = "",
         name = "Chrome",
@@ -59,7 +59,7 @@ internal val browsersForPreview = listOf(
     )
 )
 
-internal val feedSourcesForPreview = listOf(
+val feedSourcesForPreview = listOf(
     FeedSource(
         id = 0,
         url = "https://www.site1.com",

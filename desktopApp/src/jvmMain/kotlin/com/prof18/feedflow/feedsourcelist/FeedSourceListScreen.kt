@@ -1,5 +1,6 @@
 package com.prof18.feedflow.feedsourcelist
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.PointerMatcher
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -37,15 +38,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.addfeed.AddFeedScreen
+import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.koin
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
+import com.prof18.feedflow.presentation.preview.feedSourcesForPreview
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
-val viewModel = koin.get<FeedSourceListViewModel>()
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun FeedSourceListScreen(
     navigateBack: () -> Unit,
@@ -62,127 +63,175 @@ fun FeedSourceListScreen(
                 }
             )
         }
+        val viewModel = koin.get<FeedSourceListViewModel>()
 
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            stringResource(resource = MR.strings.feeds_title)
+        val feedSources by viewModel.feedSourcesState.collectAsState()
+
+        FeedSourceListContent(
+            feedSources = feedSources,
+            onAddFeedClick = {
+                dialogState = true
+            },
+            onDeleteFeedClick = { feedSource ->
+                viewModel.deleteFeedSource(feedSource)
+            },
+            navigateBack = navigateBack,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+private fun FeedSourceListContent(
+    feedSources: List<FeedSource>,
+    onAddFeedClick: () -> Unit,
+    onDeleteFeedClick: (FeedSource) -> Unit,
+    navigateBack: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        stringResource(resource = MR.strings.feeds_title)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navigateBack()
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = null,
                         )
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                navigateBack()
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(
-                            onClick = {
-//                            onAddFeedClick()
-                                dialogState = true
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                            )
-                        }
                     }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            onAddFeedClick()
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                        )
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        if (feedSources.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(Spacing.regular),
+                    text = stringResource(resource = MR.strings.no_feeds_add_one_message),
                 )
             }
-        ) { paddingValues ->
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(Spacing.regular),
+            ) {
+                items(
+                    items = feedSources,
+                ) { feedSource ->
 
-            val feeds by viewModel.feedSourcesState.collectAsState()
+                    var showFeedMenu by remember {
+                        mutableStateOf(
+                            false,
+                        )
+                    }
 
-            if (feeds.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                ) {
-                    Text(
+                    val interactionSource = remember { MutableInteractionSource() }
+
+                    Column(
                         modifier = Modifier
-                            .padding(Spacing.regular),
-                        text = stringResource(resource = MR.strings.no_feeds_add_one_message),
-                    )
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(paddingValues),
-                    contentPadding = PaddingValues(Spacing.regular),
-                ) {
-                    items(
-                        items = feeds,
-                    ) { feedSource ->
-
-                        var showFeedMenu by remember {
-                            mutableStateOf(
-                                false,
+                            .onClick(
+                                enabled = true,
+                                interactionSource = interactionSource,
+                                matcher = PointerMatcher.mouse(PointerButton.Secondary), // Right Mouse Button
+                                onClick = {
+                                    showFeedMenu = true
+                                }
                             )
-                        }
-
-                        val interactionSource = remember { MutableInteractionSource() }
-
-                        Column(
+                    ) {
+                        Text(
                             modifier = Modifier
-                                .onClick(
-                                    enabled = true,
-                                    interactionSource = interactionSource,
-                                    matcher = PointerMatcher.mouse(PointerButton.Secondary), // Right Mouse Button
-                                    onClick = {
-                                        showFeedMenu = true
-                                    }
-                                )
+                                .padding(top = Spacing.small),
+                            text = feedSource.title,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Text(
+                            modifier = Modifier
+                                .padding(top = Spacing.xsmall)
+                                .padding(bottom = Spacing.small),
+                            text = feedSource.url,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+
+                        DropdownMenu(
+                            expanded = showFeedMenu,
+                            onDismissRequest = { showFeedMenu = false },
                         ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = Spacing.small),
-                                text = feedSource.title,
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = Spacing.xsmall)
-                                    .padding(bottom = Spacing.small),
-                                text = feedSource.url,
-                                style = MaterialTheme.typography.labelLarge
-                            )
-
-                            DropdownMenu(
-                                expanded = showFeedMenu,
-                                onDismissRequest = { showFeedMenu = false },
-                            ) {
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            stringResource(resource = MR.strings.delete_feed)
-                                        )
-                                    },
-                                    onClick = {
-                                        viewModel.deleteFeedSource(feedSource)
-                                        showFeedMenu = false
-                                    }
-                                )
-                            }
-
-                            Divider(
-                                modifier = Modifier,
-                                thickness = 0.2.dp,
-                                color = Color.Gray,
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        stringResource(resource = MR.strings.delete_feed)
+                                    )
+                                },
+                                onClick = {
+                                    showFeedMenu = false
+                                    onDeleteFeedClick(feedSource)
+                                }
                             )
                         }
+
+                        Divider(
+                            modifier = Modifier,
+                            thickness = 0.2.dp,
+                            color = Color.Gray,
+                        )
                     }
                 }
             }
         }
+    }
+}
+
+
+@Preview
+@Composable
+private fun FeedSourceListContentPreview() {
+    FeedFlowTheme {
+        FeedSourceListContent(
+            feedSources = feedSourcesForPreview,
+            onAddFeedClick = {},
+            onDeleteFeedClick = {},
+            navigateBack = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun FeedSourceListContentDarkPreview() {
+    FeedFlowTheme(
+        darkTheme = true
+    ) {
+        FeedSourceListContent(
+            feedSources = feedSourcesForPreview,
+            onAddFeedClick = {},
+            onDeleteFeedClick = {},
+            navigateBack = {}
+        )
     }
 }

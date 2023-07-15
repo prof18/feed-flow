@@ -42,7 +42,7 @@ import coil.request.ImageRequest
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.preview.feedItemsForPreview
+import com.prof18.feedflow.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.ui.theme.Spacing
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce

@@ -45,7 +45,7 @@
 		CC6E68212A5F446A009F4A3C /* BrowserSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6E68202A5F446A009F4A3C /* BrowserSelector.swift */; };
 		CC6E68232A629658009F4A3C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6E68222A629658009F4A3C /* Extensions.swift */; };
 		CC7B9D2B29D8C4FD0026985C /* AddFeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7B9D2A29D8C4FD0026985C /* AddFeedScreen.swift */; };
-		CC7B9D2D29D8C52D0026985C /* FeedsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7B9D2C29D8C52D0026985C /* FeedsScreen.swift */; };
+		CC7B9D2D29D8C52D0026985C /* FeedSourceListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7B9D2C29D8C52D0026985C /* FeedSourceListScreen.swift */; };
 		CCA704C129D4B63300560FA3 /* Snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704C029D4B63300560FA3 /* Snackbar.swift */; };
 		CCA704C429D4B67100560FA3 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704C329D4B67100560FA3 /* AppState.swift */; };
 		CCA704C729D4B69B00560FA3 /* SnackbarData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704C629D4B69B00560FA3 /* SnackbarData.swift */; };
@@ -54,8 +54,8 @@
 		CCA704D129D5A9B600560FA3 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704D029D5A9B600560FA3 /* Colors.swift */; };
 		CCA704D629D60D1C00560FA3 /* EmptyFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704D529D60D1C00560FA3 /* EmptyFeedView.swift */; };
 		CCA704D829D60F4300560FA3 /* NoFeedsSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704D729D60F4200560FA3 /* NoFeedsSourceView.swift */; };
-		CCA704DA29D60FA600560FA3 /* FeedListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704D929D60FA600560FA3 /* FeedListView.swift */; };
-		CCA704DC29D6143400560FA3 /* HomeScreenContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704DB29D6143400560FA3 /* HomeScreenContent.swift */; };
+		CCA704DA29D60FA600560FA3 /* FeedItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704D929D60FA600560FA3 /* FeedItemView.swift */; };
+		CCA704DC29D6143400560FA3 /* FeedListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704DB29D6143400560FA3 /* FeedListView.swift */; };
 		CCA704E529D625E200560FA3 /* SheetToShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E429D625E200560FA3 /* SheetToShow.swift */; };
 		CCA704E729D626D400560FA3 /* FilePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E629D626D400560FA3 /* FilePickerController.swift */; };
 		CCC86B4429D8C44400AEABB9 /* SheetPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC86B4329D8C44400AEABB9 /* SheetPage.swift */; };
@@ -105,7 +105,7 @@
 		CC6E68202A5F446A009F4A3C /* BrowserSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserSelector.swift; sourceTree = "<group>"; };
 		CC6E68222A629658009F4A3C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		CC7B9D2A29D8C4FD0026985C /* AddFeedScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedScreen.swift; sourceTree = "<group>"; };
-		CC7B9D2C29D8C52D0026985C /* FeedsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedsScreen.swift; sourceTree = "<group>"; };
+		CC7B9D2C29D8C52D0026985C /* FeedSourceListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedSourceListScreen.swift; sourceTree = "<group>"; };
 		CCA704C029D4B63300560FA3 /* Snackbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snackbar.swift; sourceTree = "<group>"; };
 		CCA704C329D4B67100560FA3 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		CCA704C629D4B69B00560FA3 /* SnackbarData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnackbarData.swift; sourceTree = "<group>"; };
@@ -114,8 +114,8 @@
 		CCA704D029D5A9B600560FA3 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		CCA704D529D60D1C00560FA3 /* EmptyFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyFeedView.swift; sourceTree = "<group>"; };
 		CCA704D729D60F4200560FA3 /* NoFeedsSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFeedsSourceView.swift; sourceTree = "<group>"; };
-		CCA704D929D60FA600560FA3 /* FeedListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListView.swift; sourceTree = "<group>"; };
-		CCA704DB29D6143400560FA3 /* HomeScreenContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenContent.swift; sourceTree = "<group>"; };
+		CCA704D929D60FA600560FA3 /* FeedItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItemView.swift; sourceTree = "<group>"; };
+		CCA704DB29D6143400560FA3 /* FeedListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListView.swift; sourceTree = "<group>"; };
 		CCA704E429D625E200560FA3 /* SheetToShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetToShow.swift; sourceTree = "<group>"; };
 		CCA704E629D626D400560FA3 /* FilePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePickerController.swift; sourceTree = "<group>"; };
 		CCC86B4329D8C44400AEABB9 /* SheetPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPage.swift; sourceTree = "<group>"; };
@@ -214,7 +214,7 @@
 			children = (
 				CCA704D229D60CDF00560FA3 /* Components */,
 				CC323E1729D22C4200138233 /* HomeScreen.swift */,
-				CCA704DB29D6143400560FA3 /* HomeScreenContent.swift */,
+				CCA704DB29D6143400560FA3 /* FeedListView.swift */,
 				CC4B804329DA03460004A0AB /* HomeListIndexHolder.swift */,
 			);
 			path = Home;
@@ -231,7 +231,7 @@
 		CC7B9D2929D8C4F40026985C /* Feeds */ = {
 			isa = PBXGroup;
 			children = (
-				CC7B9D2C29D8C52D0026985C /* FeedsScreen.swift */,
+				CC7B9D2C29D8C52D0026985C /* FeedSourceListScreen.swift */,
 			);
 			path = Feeds;
 			sourceTree = "<group>";
@@ -305,7 +305,7 @@
 			children = (
 				CCA704D529D60D1C00560FA3 /* EmptyFeedView.swift */,
 				CCA704D729D60F4200560FA3 /* NoFeedsSourceView.swift */,
-				CCA704D929D60FA600560FA3 /* FeedListView.swift */,
+				CCA704D929D60FA600560FA3 /* FeedItemView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -476,7 +476,7 @@
 			files = (
 				CC23293729D83067005D0E06 /* RoundedCorners.swift in Sources */,
 				CC6E68232A629658009F4A3C /* Extensions.swift in Sources */,
-				CC7B9D2D29D8C52D0026985C /* FeedsScreen.swift in Sources */,
+				CC7B9D2D29D8C52D0026985C /* FeedSourceListScreen.swift in Sources */,
 				CC7B9D2B29D8C4FD0026985C /* AddFeedScreen.swift in Sources */,
 				CC6E68212A5F446A009F4A3C /* BrowserSelector.swift in Sources */,
 				CCEB9C5829B33F5A0064D14A /* Koin.swift in Sources */,
@@ -485,9 +485,9 @@
 				CCA704D129D5A9B600560FA3 /* Colors.swift in Sources */,
 				CC4B804429DA03460004A0AB /* HomeListIndexHolder.swift in Sources */,
 				CCA704CC29D4B88E00560FA3 /* Spacing.swift in Sources */,
-				CCA704DC29D6143400560FA3 /* HomeScreenContent.swift in Sources */,
+				CCA704DC29D6143400560FA3 /* FeedListView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* FeedFlowApp.swift in Sources */,
-				CCA704DA29D60FA600560FA3 /* FeedListView.swift in Sources */,
+				CCA704DA29D60FA600560FA3 /* FeedItemView.swift in Sources */,
 				CC23293529D8300C005D0E06 /* View+.swift in Sources */,
 				CCA704D629D60D1C00560FA3 /* EmptyFeedView.swift in Sources */,
 				CC323E1829D22C4200138233 /* HomeScreen.swift in Sources */,

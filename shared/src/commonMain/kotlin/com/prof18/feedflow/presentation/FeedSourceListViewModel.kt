@@ -17,7 +17,7 @@ class FeedSourceListViewModel(
 
     private val feedsMutableState: MutableStateFlow<List<FeedSource>> = MutableStateFlow(listOf())
     @NativeCoroutinesState
-    val feedsState: StateFlow<List<FeedSource>> = feedsMutableState.asStateFlow()
+    val feedSourcesState: StateFlow<List<FeedSource>> = feedsMutableState.asStateFlow()
 
     init {
         scope.launch {

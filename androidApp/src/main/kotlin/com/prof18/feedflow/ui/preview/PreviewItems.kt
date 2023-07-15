@@ -1,5 +1,6 @@
 package com.prof18.feedflow.ui.preview
 
+import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedSource
 
@@ -43,4 +44,35 @@ internal val feedItemsForPreview = listOf(
         dateString = "12/12 - 9:22",
         commentsUrl = null,
     ),
+)
+
+internal val browsersForPreview = listOf(
+    Browser(
+        id = "",
+        name = "Chrome",
+        isFavourite = false
+    ),
+    Browser(
+        id = "",
+        name = "Firefox",
+        isFavourite = true
+    )
+)
+
+internal val feedSourcesForPreview = listOf(
+    FeedSource(
+        id = 0,
+        url = "https://www.site1.com",
+        title = "Site 1"
+    ),
+    FeedSource(
+        id = 1,
+        url = "https://www.site2.com",
+        title = "Site 2"
+    ),
+    FeedSource(
+        id = 2,
+        url = "https://www.site3.com",
+        title = "Site 3"
+    )
 )

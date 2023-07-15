@@ -1,5 +1,6 @@
 package com.prof18.feedflow.feedsourcelist
 
+import FeedFlowTheme
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -32,19 +33,40 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
+import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.ui.preview.feedSourcesForPreview
 import com.prof18.feedflow.ui.theme.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun FeedListScreen(
+fun FeedSourceListScreen(
     onAddFeedClick: () -> Unit,
     navigateBack: () -> Unit,
 ) {
     val viewModel = koinViewModel<FeedSourceListViewModel>()
+    val feedSources by viewModel.feedSourcesState.collectAsStateWithLifecycle()
 
+    FeedSourceListContent(
+        feedSources = feedSources,
+        onAddFeedSourceClick = onAddFeedClick,
+        onDeleteFeedSourceClick = { feedSource ->
+            viewModel.deleteFeedSource(feedSource)
+        },
+        navigateBack = navigateBack,
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+private fun FeedSourceListContent(
+    feedSources: List<FeedSource>,
+    onAddFeedSourceClick: () -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    navigateBack: () -> Unit,
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -66,7 +88,7 @@ fun FeedListScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            onAddFeedClick()
+                            onAddFeedSourceClick()
                         },
                     ) {
                         Icon(
@@ -78,10 +100,7 @@ fun FeedListScreen(
             )
         }
     ) { paddingValues ->
-
-        val feeds by viewModel.feedsState.collectAsStateWithLifecycle()
-
-        if (feeds.isEmpty()) {
+        if (feedSources.isEmpty()) {
             Box(
                 modifier = Modifier
                     .padding(paddingValues)
@@ -100,7 +119,7 @@ fun FeedListScreen(
                 contentPadding = PaddingValues(Spacing.regular),
             ) {
                 items(
-                    items = feeds,
+                    items = feedSources,
                 ) { feedSource ->
 
                     var showFeedMenu by remember {
@@ -145,7 +164,7 @@ fun FeedListScreen(
                                     )
                                 },
                                 onClick = {
-                                    viewModel.deleteFeedSource(feedSource)
+                                    onDeleteFeedSourceClick(feedSource)
                                     showFeedMenu = false
                                 }
                             )
@@ -160,5 +179,18 @@ fun FeedListScreen(
                 }
             }
         }
+    }
+}
+
+@FeedFlowPreview
+@Composable
+private fun FeedSourceListContentPreview() {
+    FeedFlowTheme {
+        FeedSourceListContent(
+            feedSources = feedSourcesForPreview,
+            onAddFeedSourceClick = { },
+            onDeleteFeedSourceClick = {},
+            navigateBack = {},
+        )
     }
 }

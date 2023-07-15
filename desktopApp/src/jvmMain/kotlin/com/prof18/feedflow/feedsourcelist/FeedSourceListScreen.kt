@@ -100,7 +100,7 @@ fun FeedSourceListScreen(
             }
         ) { paddingValues ->
 
-            val feeds by viewModel.feedsState.collectAsState()
+            val feeds by viewModel.feedSourcesState.collectAsState()
 
             if (feeds.isEmpty()) {
                 Box(

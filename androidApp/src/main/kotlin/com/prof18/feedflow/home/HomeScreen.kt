@@ -2,77 +2,61 @@
 
 package com.prof18.feedflow.home
 
+import FeedFlowTheme
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DoneAll
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.prof18.feedflow.BrowserSelector
+import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.model.FeedItem
-import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
+import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
+import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.home.components.EmptyFeedView
 import com.prof18.feedflow.home.components.FeedList
+import com.prof18.feedflow.home.components.HomeAppBar
 import com.prof18.feedflow.home.components.NoFeedsSourceView
 import com.prof18.feedflow.presentation.HomeViewModel
+import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
+import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.ui.theme.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.getKoin
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -82,7 +66,7 @@ internal fun HomeScreen(
     onSettingsButtonClicked: () -> Unit,
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
-    val browserSelector = koinInject<BrowserSelector>()
+    val browserManager = koinInject<BrowserManager>()
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
@@ -107,7 +91,6 @@ internal fun HomeScreen(
 
     val scope = rememberCoroutineScope()
 
-    // TODO: Check localisation
     Scaffold(
         topBar = {
             HomeAppBar(
@@ -150,11 +133,11 @@ internal fun HomeScreen(
                 homeViewModel.updateReadStatus(lastVisibleIndex)
             },
             onFeedItemClick = { feedInfo ->
-                openUrl(feedInfo.url, context, browserSelector)
+                browserManager.openUrl(feedInfo.url, context)
                 homeViewModel.markAsRead(feedInfo.id)
             },
             onFeedItemLongClick = { feedInfo ->
-                openUrl(feedInfo.url, context, browserSelector)
+                browserManager.openUrl(feedInfo.url, context)
                 homeViewModel.markAsRead(feedInfo.id)
             },
             onAddFeedClick = {
@@ -208,7 +191,10 @@ private fun HomeScreenContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = Spacing.regular),
-                        text = stringResource(resource = MR.strings.loading_feed_message, feedRefreshCounter),
+                        text = stringResource(
+                            resource = MR.strings.loading_feed_message,
+                            feedRefreshCounter
+                        ),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleMedium,
                     )
@@ -245,105 +231,48 @@ private fun HomeScreenContent(
     }
 }
 
+@FeedFlowPreview
 @Composable
-private fun HomeAppBar(
-    unReadCount: Int,
-    onMarkAllReadClicked: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
-    onClearOldArticlesClicked: () -> Unit,
-    onClick: () -> Unit,
-    onDoubleClick: () -> Unit,
-) {
-    var showMenu by remember { mutableStateOf(false) }
-
-    TopAppBar(
-        title = {
-            Row {
-                Text(stringResource(resource = MR.strings.app_name))
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("(${unReadCount})")
-            }
-        },
-        actions = {
-            IconButton(onClick = { showMenu = !showMenu }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = null,
-                )
-            }
-
-            DropdownMenu(
-                expanded = showMenu,
-                onDismissRequest = { showMenu = false }
-            ) {
-                DropdownMenuItem(
-                    onClick = {
-                        onMarkAllReadClicked()
-                        showMenu = false
-                    },
-                    text = {
-                        Text(stringResource(resource = MR.strings.mark_all_read_button))
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.DoneAll,
-                            contentDescription = null,
-                        )
-                    },
-                )
-
-                DropdownMenuItem(
-                    onClick = {
-                        onClearOldArticlesClicked()
-                        showMenu = false
-                    },
-                    text = {
-                        Text(stringResource(resource = MR.strings.clear_old_articles_button))
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = null,
-                        )
-                    },
-                )
-
-                DropdownMenuItem(
-                    onClick = {
-                        onSettingsButtonClicked()
-                    },
-                    text = {
-                        Text(stringResource(resource = MR.strings.settings_button))
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = null,
-                        )
-                    },
-                )
-            }
-
-        },
-        modifier = Modifier.pointerInput(Unit) {
-            detectTapGestures(
-                onDoubleTap = { onDoubleClick() },
-                onTap = { onClick() }
-            )
-        }
-    )
+fun HomeScreeContentLoadingPreview() {
+    FeedFlowTheme {
+        HomeScreenContent(
+            paddingValues = PaddingValues(0.dp),
+            loadingState = InProgressFeedUpdateStatus(
+                refreshedFeedCount = 10,
+                totalFeedCount = 42,
+            ),
+            feedState = feedItemsForPreview,
+            pullRefreshState = rememberPullRefreshState(
+                refreshing = false,
+                onRefresh = { }
+            ),
+            listState = rememberLazyListState(),
+            updateReadStatus = {},
+            onFeedItemClick = {},
+            onFeedItemLongClick = {},
+            onAddFeedClick = {},
+            onRefresh = {}
+        )
+    }
 }
 
-private fun openUrl(
-    url: String,
-    context: Context,
-    browserSelector: BrowserSelector
-) {
-    val intent = Intent(Intent.ACTION_VIEW).apply {
-        data = Uri.parse(url)
-        browserSelector.getBrowserPackageName()?.let { packageName ->
-            setPackage(packageName)
-        }
+@FeedFlowPreview
+@Composable
+fun HomeScreeContentLoadedPreview() {
+    FeedFlowTheme {
+        HomeScreenContent(
+            paddingValues = PaddingValues(0.dp),
+            loadingState = FinishedFeedUpdateStatus,
+            feedState = feedItemsForPreview,
+            pullRefreshState = rememberPullRefreshState(
+                refreshing = false,
+                onRefresh = { }
+            ),
+            listState = rememberLazyListState(),
+            updateReadStatus = {},
+            onFeedItemClick = {},
+            onFeedItemLongClick = {},
+            onAddFeedClick = {}
+        )
     }
-    context.startActivity(intent)
 }

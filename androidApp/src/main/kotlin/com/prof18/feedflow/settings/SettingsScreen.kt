@@ -13,7 +13,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -24,8 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.prof18.feedflow.BrowserSelector
+import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.domain.opml.OPMLInput
 import com.prof18.feedflow.domain.opml.OPMLOutput
 import com.prof18.feedflow.presentation.SettingsViewModel
@@ -33,42 +33,22 @@ import com.prof18.feedflow.settings.components.BrowserSelectionDialog
 import com.prof18.feedflow.settings.components.SettingsDivider
 import com.prof18.feedflow.settings.components.SettingsMenuItem
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.ui.preview.browsersForPreview
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onFeedListClick: () -> Unit,
     navigateBack: () -> Unit,
 ) {
-
     val context = LocalContext.current
 
     val viewModel = koinViewModel<SettingsViewModel>()
-    val browserSelector = koinInject<BrowserSelector>()
+    val browserManager = koinInject<BrowserManager>()
 
-    val message = stringResource(resource = MR.strings.feeds_importing_message)
-
-    val openFileAction =
-        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            uri?.let {
-                viewModel.importFeed(OPMLInput(context.contentResolver.openInputStream(uri)))
-                Toast.makeText(context, message, Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-
-    val createFileURI = remember { mutableStateOf<Uri?>(null) }
-    val createFileAction = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("text/x-opml"),
-    ) {
-        createFileURI.value = it
-    }
-    createFileURI.value?.let { uri ->
-        viewModel.exportFeed(OPMLOutput(context.contentResolver.openOutputStream(uri)))
-    }
+    val browserListState by browserManager.browserListState.collectAsStateWithLifecycle()
 
     val isImportDone by viewModel.isImportDoneState.collectAsStateWithLifecycle()
 
@@ -84,6 +64,49 @@ fun SettingsScreen(
         val exportDoneMessage = stringResource(resource = MR.strings.feeds_export_done_message)
         Toast.makeText(context, exportDoneMessage, Toast.LENGTH_SHORT)
             .show()
+    }
+
+    val importingFeedMessage = stringResource(resource = MR.strings.feeds_importing_message)
+
+    SettingsScreenContent(
+        browsers = browserListState,
+        onFeedListClick = onFeedListClick,
+        importFeed = { uri ->
+            viewModel.importFeed(OPMLInput(context.contentResolver.openInputStream(uri)))
+            Toast.makeText(context, importingFeedMessage, Toast.LENGTH_SHORT)
+                .show()
+        },
+        exportFeed = {
+            viewModel.exportFeed(OPMLOutput(context.contentResolver.openOutputStream(it)))
+        },
+        onBrowserSelected = { browser ->
+            browserManager.setFavouriteBrowser(browser)
+        },
+        navigateBack = navigateBack,
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun SettingsScreenContent(
+    browsers: List<Browser>,
+    onFeedListClick: () -> Unit,
+    importFeed: (Uri) -> Unit,
+    exportFeed: (Uri) -> Unit,
+    onBrowserSelected: (Browser) -> Unit,
+    navigateBack: () -> Unit,
+) {
+
+    val openFileAction = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { importFeed(it) }
+    }
+
+    val createFileAction = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("text/x-opml"),
+    ) { uri ->
+        uri?.let { exportFeed(it) }
     }
 
     Scaffold(
@@ -115,13 +138,12 @@ fun SettingsScreen(
                 false,
             )
         }
-        val browserListState by browserSelector.browserListState.collectAsStateWithLifecycle()
 
         if (showBrowserSelection) {
             BrowserSelectionDialog(
-                browserList = browserListState,
+                browserList = browsers,
                 onBrowserSelected = { browser ->
-                    browserSelector.setFavouriteBrowser(browser)
+                    onBrowserSelected(browser)
                 },
                 dismissDialog = {
                     showBrowserSelection = false
@@ -214,13 +236,13 @@ fun SettingsScreen(
 @Composable
 private fun SettingsScreenPreview() {
     FeedFlowTheme {
-        Surface {
-            SettingsScreen(
-                onFeedListClick = {},
-                navigateBack = {},
-            )
-        }
+        SettingsScreenContent(
+            browsers = browsersForPreview,
+            onFeedListClick = {},
+            importFeed = {},
+            exportFeed = {},
+            onBrowserSelected = {},
+            navigateBack = {}
+        )
     }
 }
-
-

@@ -41,9 +41,7 @@ private fun SettingsMenuItemPreview() {
         Surface {
             SettingsMenuItem(
                 text = "Contact us",
-                onClick = {
-
-                }
+                onClick = {}
             )
         }
     }

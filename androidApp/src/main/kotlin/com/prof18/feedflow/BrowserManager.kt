@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class BrowserSelector(
+class BrowserManager(
     private val context: Context,
     private val feedManagerRepository: FeedManagerRepository,
 ) {
@@ -71,5 +71,18 @@ class BrowserSelector(
             )
         }
         browserListMutableState.update { browserList }
+    }
+
+    fun openUrl(
+        url: String,
+        context: Context,
+    ) {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(url)
+            getBrowserPackageName()?.let { packageName ->
+                setPackage(packageName)
+            }
+        }
+        context.startActivity(intent)
     }
 }

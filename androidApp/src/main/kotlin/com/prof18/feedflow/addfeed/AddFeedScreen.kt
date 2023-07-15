@@ -1,5 +1,6 @@
-package com.prof18.feedflow.addtfeed
+package com.prof18.feedflow.addfeed
 
+import FeedFlowTheme
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,11 +26,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.presentation.AddFeedViewModel
+import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.theme.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFeedScreen(
     navigateBack: () -> Unit,
@@ -49,6 +50,34 @@ fun AddFeedScreen(
             .show()
     }
 
+    AddFeedScreenContent(
+        feedName = feedName,
+        feedUrl = feedUrl,
+        onFeedNameUpdated = { name ->
+            feedName = name
+            viewModel.updateFeedNameTextFieldValue(name)
+        },
+        onFeedUrlUpdated = { url ->
+            feedUrl = url
+            viewModel.updateFeedUrlTextFieldValue(url)
+        },
+        addFeed = {
+            viewModel.addFeed()
+        },
+        navigateBack = navigateBack,
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun AddFeedScreenContent(
+    feedName: String,
+    feedUrl: String,
+    onFeedNameUpdated: (String) -> Unit,
+    onFeedUrlUpdated: (String) -> Unit,
+    addFeed: () -> Unit,
+    navigateBack: () -> Unit,
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -84,8 +113,7 @@ fun AddFeedScreen(
                 },
                 value = feedName,
                 onValueChange = {
-                    feedName = it
-                    viewModel.updateFeedNameTextFieldValue(it)
+                    onFeedNameUpdated(it)
                 },
                 placeholder = {
                     Text(
@@ -96,8 +124,6 @@ fun AddFeedScreen(
                 maxLines = 1,
             )
 
-
-
             TextField(
                 modifier = Modifier
                     .padding(top = Spacing.regular)
@@ -107,8 +133,7 @@ fun AddFeedScreen(
                 },
                 value = feedUrl,
                 onValueChange = {
-                    feedUrl = it
-                    viewModel.updateFeedUrlTextFieldValue(it)
+                    onFeedUrlUpdated(it)
                 },
                 placeholder = {
                     Text(
@@ -123,12 +148,26 @@ fun AddFeedScreen(
                 modifier = Modifier
                     .padding(top = Spacing.regular)
                     .align(Alignment.CenterHorizontally),
-                onClick = {
-                    viewModel.addFeed()
-                },
+                onClick = addFeed,
             ) {
                 Text(stringResource(resource = MR.strings.add_feed))
             }
         }
+    }
+}
+
+
+@FeedFlowPreview
+@Composable
+private fun AddScreenContentPreview() {
+    FeedFlowTheme {
+        AddFeedScreenContent(
+            feedName = "My Feed",
+            feedUrl = "https://www.ablog.com/feed",
+            onFeedNameUpdated = {},
+            onFeedUrlUpdated = {},
+            addFeed = { },
+            navigateBack = {},
+        )
     }
 }

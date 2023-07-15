@@ -1,5 +1,6 @@
 package com.prof18.feedflow.settings.components
 
+import FeedFlowTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.domain.model.Browser
+import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.ui.preview.browsersForPreview
 
 @Composable
 internal fun BrowserSelectionDialog(
@@ -47,9 +50,22 @@ internal fun BrowserSelectionDialog(
                     )
                     Text(
                         text = browser.name,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
             }
         }
+    }
+}
+
+@FeedFlowPreview
+@Composable
+private fun BrowserSelectionDialogPreview() {
+    FeedFlowTheme {
+        BrowserSelectionDialog(
+            browserList = browsersForPreview,
+            onBrowserSelected = {},
+            dismissDialog = {}
+        )
     }
 }

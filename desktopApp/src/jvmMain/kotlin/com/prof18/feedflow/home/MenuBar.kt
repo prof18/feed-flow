@@ -26,8 +26,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
         Menu("File", mnemonic = 'F') {
 
             Item(
-//                text = stringResource(MR.strings.my_string),
-                text = "Refresh Feed",
+                text = stringResource(resource = MR.strings.refresh_feeds),
                 onClick = {
                     onRefreshClick()
                 },
@@ -35,14 +34,14 @@ fun FrameWindowScope.FeedFlowMenuBar(
             )
 
             Item(
-                text = "Mark all read",
+                text = stringResource(resource = MR.strings.mark_all_read_button),
                 onClick = {
                     onMarkAllReadClick()
                 },
             )
 
             Item(
-                text = "Clear old articles",
+                text = stringResource(resource = MR.strings.clear_old_articles_button),
                 onClick = {
                     onClearOldFeedClick()
                 },
@@ -51,20 +50,23 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Separator()
 
             Item(
-                text = "Feeds",
+                text = stringResource(resource = MR.strings.feeds_title),
                 onClick = {
                     onFeedsListClick()
                 },
             )
 
+            val importDialogButton = stringResource(resource = MR.strings.import_dialog_button)
+            val importDialogTitle = stringResource(resource = MR.strings.import_dialog_title)
+
             Item(
-                text = "Import Feed from OPML",
+                text = stringResource(resource = MR.strings.import_feed_button),
                 onClick = {
                     val fileChooser = JFileChooser("~").apply {
                         fileSelectionMode = JFileChooser.FILES_ONLY
                         addChoosableFileFilter(FileNameExtensionFilter("OPML", "opml"))
-                        dialogTitle = "Select OPML file"
-                        approveButtonText = "Import"
+                        dialogTitle = importDialogTitle
+                        approveButtonText = importDialogButton
                     }
                     fileChooser.showOpenDialog(window)
                     val result = fileChooser.selectedFile
@@ -74,13 +76,17 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 },
             )
 
+            val exportDialogButton = stringResource(resource = MR.strings.export_dialog_button)
+            val exportDialogTitle = stringResource(resource = MR.strings.export_dialog_title)
+
+
             Item(
-                text = "Export Feeds to OPML",
+                text = stringResource(resource = MR.strings.export_feeds_button),
                 onClick = {
                     val fileChooser = JFileChooser().apply {
-                        dialogTitle = "Save OPML File"
+                        dialogTitle = exportDialogTitle
                         fileFilter = FileNameExtensionFilter("OPML Files (*.opml)", "opml")
-                        approveButtonText = "Export"
+                        approveButtonText = exportDialogButton
                     }
 
                     val userSelection = fileChooser.showSaveDialog(null)

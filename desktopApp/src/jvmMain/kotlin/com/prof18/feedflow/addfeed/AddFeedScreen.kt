@@ -16,10 +16,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.prof18.feedflow.MR
 import com.prof18.feedflow.koin
 import com.prof18.feedflow.presentation.AddFeedViewModel
-import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
+import dev.icerock.moko.resources.compose.stringResource
 
 val viewModel = koin.get<AddFeedViewModel>()
 
@@ -40,63 +41,73 @@ fun AddFeedScreen(
         onFeedAdded()
     }
 
-        Scaffold(
-        ) { paddingValues ->
-            Column(
+    Scaffold(
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(horizontal = Spacing.regular)
+        ) {
+
+            TextField(
                 modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(horizontal = Spacing.regular)
+                    .fillMaxWidth(),
+                label = {
+                    Text(
+                        text = stringResource(resource = MR.strings.feed_name)
+                    )
+                },
+                value = feedName,
+                onValueChange = {
+                    feedName = it
+                    viewModel.updateFeedNameTextFieldValue(it)
+                },
+                placeholder = {
+                    Text(
+                        stringResource(resource = MR.strings.feed_name_placeholder),
+                        maxLines = 1,
+                    )
+                },
+                maxLines = 1,
+            )
+
+
+
+            TextField(
+                modifier = Modifier
+                    .padding(top = Spacing.regular)
+                    .fillMaxWidth(),
+                label = {
+                    Text(
+                        text = stringResource(resource = MR.strings.feed_url)
+                    )
+                },
+                value = feedUrl,
+                onValueChange = {
+                    feedUrl = it
+                    viewModel.updateFeedUrlTextFieldValue(it)
+                },
+                placeholder = {
+                    Text(
+                        stringResource(resource = MR.strings.feed_url_placeholder),
+                        maxLines = 1,
+                    )
+                },
+                maxLines = 1,
+            )
+
+            Button(
+                modifier = Modifier
+                    .padding(top = Spacing.regular)
+                    .align(Alignment.CenterHorizontally),
+                onClick = {
+                    viewModel.addFeed()
+                },
             ) {
-
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    label = { Text(text = "Feed name") },
-                    value = feedName,
-                    onValueChange = {
-                        feedName = it
-                        viewModel.updateFeedNameTextFieldValue(it)
-                    },
-                    placeholder = {
-                        Text(
-                            "My Favourite Blog",
-                            maxLines = 1,
-                        )
-                    },
-                    maxLines = 1,
+                Text(
+                    stringResource(resource = MR.strings.add_feed)
                 )
-
-
-
-                TextField(
-                    modifier = Modifier
-                        .padding(top = Spacing.regular)
-                        .fillMaxWidth(),
-                    label = { Text(text = "Feed url") },
-                    value = feedUrl,
-                    onValueChange = {
-                        feedUrl = it
-                        viewModel.updateFeedUrlTextFieldValue(it)
-                    },
-                    placeholder = {
-                        Text(
-                            "https://myfavouriteblog.com/feed",
-                            maxLines = 1,
-                        )
-                    },
-                    maxLines = 1,
-                )
-
-                Button(
-                    modifier = Modifier
-                        .padding(top = Spacing.regular)
-                        .align(Alignment.CenterHorizontally),
-                    onClick = {
-                        viewModel.addFeed()
-                    },
-                ) {
-                    Text("Add Feed")
-                }
             }
         }
+    }
 }

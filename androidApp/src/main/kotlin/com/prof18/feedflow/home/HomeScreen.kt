@@ -58,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserSelector
+import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
@@ -67,6 +68,7 @@ import com.prof18.feedflow.home.components.FeedList
 import com.prof18.feedflow.home.components.NoFeedsSourceView
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.ui.theme.Spacing
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
@@ -206,7 +208,7 @@ private fun HomeScreenContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = Spacing.regular),
-                        text = "Loading feeds $feedRefreshCounter",
+                        text = stringResource(resource = MR.strings.loading_feed_message, feedRefreshCounter),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleMedium,
                     )
@@ -257,7 +259,7 @@ private fun HomeAppBar(
     TopAppBar(
         title = {
             Row {
-                Text("FeedFlow")
+                Text(stringResource(resource = MR.strings.app_name))
                 Spacer(modifier = Modifier.width(4.dp))
                 Text("(${unReadCount})")
             }
@@ -280,7 +282,7 @@ private fun HomeAppBar(
                         showMenu = false
                     },
                     text = {
-                        Text("Mark all read")
+                        Text(stringResource(resource = MR.strings.mark_all_read_button))
                     },
                     leadingIcon = {
                         Icon(
@@ -296,7 +298,7 @@ private fun HomeAppBar(
                         showMenu = false
                     },
                     text = {
-                        Text("Clear old articles")
+                        Text(stringResource(resource = MR.strings.clear_old_articles_button))
                     },
                     leadingIcon = {
                         Icon(
@@ -311,7 +313,7 @@ private fun HomeAppBar(
                         onSettingsButtonClicked()
                     },
                     text = {
-                        Text("Settings")
+                        Text(stringResource(resource = MR.strings.settings_button))
                     },
                     leadingIcon = {
                         Icon(

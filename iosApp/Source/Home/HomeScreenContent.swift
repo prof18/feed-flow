@@ -38,8 +38,12 @@ struct HomeScreenContent: View {
                     if showLoading {
                         
                         let feedRefreshCounter = "\(feedCount)/\(totalFeedCount)"
-                        
-                        Text("Loading feeds \(feedRefreshCounter)")
+                    
+                        let loadingFeedString = LocalizationUtils.shared.formatString(
+                            resource: MR.strings().loading_feed_message,
+                            args: [feedRefreshCounter]
+                        )
+                        Text(loadingFeedString)
                             .font(.body)
                     }
                 }

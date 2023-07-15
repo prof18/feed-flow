@@ -23,12 +23,18 @@ struct AddFeedScreen: View {
     
     var body: some View {
         VStack {
-            TextField("Feed Name", text: $feedName)
+            TextField(
+                MR.strings().feed_name.localized,
+                text: $feedName
+            )
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.top, Spacing.regular)
                 .padding(.horizontal, Spacing.regular)
             
-            TextField("Feed URL", text: $feedURL)
+            TextField(
+                MR.strings().feed_url.localized,
+                text: $feedURL
+            )
                 .keyboardType(.webSearch)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.top, Spacing.regular)
@@ -40,7 +46,7 @@ struct AddFeedScreen: View {
                     addFeedViewModel.addFeed()
                 }
             ) {
-                Text("Add Feed")
+                Text(MR.strings().add_feed.localized)
             }
             .buttonStyle(.bordered)
             .padding(.top, Spacing.regular)
@@ -49,7 +55,7 @@ struct AddFeedScreen: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Text("Add Feed")
+                Text(MR.strings().add_feed.localized)
                     .font(.title2)
             }
         }
@@ -66,7 +72,7 @@ struct AddFeedScreen: View {
                     if isAddDone as! Bool {
                         self.appState.snackbarQueue.append(
                             SnackbarData(
-                                title: "Feed Added",
+                                title: MR.strings().feed_added_message.localized,
                                 subtitle: nil,
                                 showBanner: true
                             )
@@ -78,7 +84,7 @@ struct AddFeedScreen: View {
             } catch {
                 self.appState.snackbarQueue.append(
                     SnackbarData(
-                        title: "Sorry, something went wrong :(",
+                        title: MR.strings().generic_error_message.localized,
                         subtitle: nil,
                         showBanner: true
                     )

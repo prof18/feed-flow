@@ -1,4 +1,4 @@
-package com.prof18.feedflow.feedlist
+package com.prof18.feedflow.feedsourcelist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.PointerMatcher
@@ -35,11 +35,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerButton
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.prof18.feedflow.MR
 import com.prof18.feedflow.addfeed.AddFeedScreen
 import com.prof18.feedflow.koin
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
+import dev.icerock.moko.resources.compose.stringResource
 
 val viewModel = koin.get<FeedSourceListViewModel>()
 
@@ -65,7 +67,9 @@ fun FeedSourceListScreen(
             topBar = {
                 TopAppBar(
                     title = {
-                        Text("Feeds")
+                        Text(
+                            stringResource(resource = MR.strings.feeds_title)
+                        )
                     },
                     navigationIcon = {
                         IconButton(
@@ -105,9 +109,9 @@ fun FeedSourceListScreen(
                         .fillMaxSize()
                 ) {
                     Text(
-                        modifier = androidx.compose.ui.Modifier
+                        modifier = Modifier
                             .padding(Spacing.regular),
-                        text = "No feeds, please add one",
+                        text = stringResource(resource = MR.strings.no_feeds_add_one_message),
                     )
                 }
             } else {
@@ -159,7 +163,9 @@ fun FeedSourceListScreen(
                             ) {
                                 DropdownMenuItem(
                                     text = {
-                                        Text("Delete")
+                                        Text(
+                                            stringResource(resource = MR.strings.delete_feed)
+                                        )
                                     },
                                     onClick = {
                                         viewModel.deleteFeedSource(feedSource)

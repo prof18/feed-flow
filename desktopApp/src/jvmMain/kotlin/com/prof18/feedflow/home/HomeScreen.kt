@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
@@ -32,6 +33,7 @@ import com.prof18.feedflow.openInBrowser
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
 import com.prof18.feedflow.ui.style.Spacing
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 internal fun HomeScreen(
@@ -108,7 +110,9 @@ private fun HomeScreenContent(
                 TopAppBar(
                     title = {
                         Row {
-                            Text("FeedFlow")
+                            Text(
+                                stringResource(resource = MR.strings.app_name)
+                            )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text("(${unReadCount})")
                         }
@@ -123,7 +127,10 @@ private fun HomeScreenContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = Spacing.regular),
-                        text = "Loading feeds $feedRefreshCounter",
+                        text = stringResource(
+                            resource = MR.strings.loading_feed_message,
+                            feedRefreshCounter
+                        ),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleMedium,
                     )

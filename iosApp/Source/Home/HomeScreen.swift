@@ -69,9 +69,10 @@ struct HomeScreen: View {
                                 homeViewModel.markAllRead()
                             }
                         ) {
-                            let string = MR.strings().my_string.desc().localized()
-//                            Label(string, systemImage: "checkmark")
-                            Label("Mark all read", systemImage: "checkmark")
+                            Label(
+                                MR.strings().mark_all_read_button.localized,
+                                systemImage: "checkmark"
+                            )
                         }
                         
                         Button(
@@ -79,7 +80,10 @@ struct HomeScreen: View {
                                 homeViewModel.deleteOldFeedItems()
                             }
                         ) {
-                            Label("Clear old articles", systemImage: "trash")
+                            Label(
+                                MR.strings().clear_old_articles_button.localized,
+                                systemImage: "trash"
+                            )
                         }
                         
                         Button(
@@ -87,18 +91,27 @@ struct HomeScreen: View {
                                 self.sheetToShow = .feedList
                             }
                         )  {
-                            Label("Feeds", systemImage: "list.bullet.rectangle.portrait")
+                            Label(
+                                MR.strings().feeds_title.localized,
+                                systemImage: "list.bullet.rectangle.portrait"
+                            )
                         }
                         
                         Menu {
-                            Picker(selection: $browserSelector.selectedBrowser, label: Text("Picker")) {
+                            Picker(
+                                selection: $browserSelector.selectedBrowser,
+                                label: Text(MR.strings().browser_selection_button.localized)
+                            ) {
                                 ForEach(browserSelector.browsers, id: \.self) { period in
                                     Text(period.name).tag(period as Browser?)
                                 }
                             }
                         }
                         label: {
-                            Label("Browser Selection", systemImage: "globe")
+                            Label(
+                                MR.strings().browser_selection_button.localized,
+                                systemImage: "globe"
+                            )
                         }
                         
                         Button(
@@ -106,7 +119,10 @@ struct HomeScreen: View {
                                 self.sheetToShow = .filePicker
                             }
                         )  {
-                            Label("Import feed from OPML", systemImage: "arrow.down.doc")
+                            Label(
+                                MR.strings().import_feed_button.localized,
+                                systemImage: "arrow.down.doc"
+                            )
                         }
                         
                         Button(
@@ -115,7 +131,7 @@ struct HomeScreen: View {
                                     settingsViewModel.exportFeed(opmlOutput: OPMLOutput(url: url))
                                     self.appState.snackbarQueue.append(
                                         SnackbarData(
-                                            title: "Generating export",
+                                            title: MR.strings().export_started_message.localized,
                                             subtitle: nil,
                                             showBanner: true
                                         )
@@ -124,7 +140,7 @@ struct HomeScreen: View {
                                     // TODO: handle error
                                     self.appState.snackbarQueue.append(
                                         SnackbarData(
-                                            title: "Sorry, something went wrong :(",
+                                            title: MR.strings().generic_error_message.localized,
                                             subtitle: nil,
                                             showBanner: true
                                         )
@@ -132,7 +148,10 @@ struct HomeScreen: View {
                                 }
                             }
                         )  {
-                            Label("Export feed to OPML", systemImage: "arrow.up.doc")
+                            Label(
+                                MR.strings().export_feeds_button.localized,
+                                systemImage: "arrow.up.doc"
+                            )
                         }
                         
                     } label: {
@@ -155,7 +174,7 @@ struct HomeScreen: View {
                         self.appState.snackbarQueue.append(
                             
                             SnackbarData(
-                                title: "Unable to load file",
+                                title: MR.strings().load_file_error_message.localized,
                                 subtitle: nil,
                                 showBanner: true
                             )
@@ -165,7 +184,7 @@ struct HomeScreen: View {
                     
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: "Importing feed",
+                            title: MR.strings().feeds_importing_message.localized,
                             subtitle: nil,
                             showBanner: true
                         )
@@ -233,7 +252,6 @@ struct HomeScreen: View {
                 let stream = asyncSequence(for: homeViewModel.countStateFlow)
                 for try await state in stream {
                     self.unreadCount = Int(truncating: state)
-                    print("New count: \(unreadCount)")
                 }
             } catch {
                 emitGenericError()
@@ -246,7 +264,7 @@ struct HomeScreen: View {
                     if isImportDone as! Bool {
                         self.appState.snackbarQueue.append(
                             SnackbarData(
-                                title: "Import done",
+                                title: MR.strings().feeds_import_done_message.localized,
                                 subtitle: nil,
                                 showBanner: true
                             )
@@ -256,7 +274,7 @@ struct HomeScreen: View {
             } catch {
                 self.appState.snackbarQueue.append(
                     SnackbarData(
-                        title: "Sorry, something went wrong :(",
+                        title: MR.strings().generic_error_message.localized,
                         subtitle: nil,
                         showBanner: true
                     )
@@ -274,7 +292,7 @@ struct HomeScreen: View {
             } catch {
                 self.appState.snackbarQueue.append(
                     SnackbarData(
-                        title: "Sorry, something went wrong :(",
+                        title: MR.strings().generic_error_message.localized,
                         subtitle: nil,
                         showBanner: true
                     )
@@ -294,7 +312,7 @@ struct HomeScreen: View {
     private func emitGenericError() {
         self.appState.snackbarQueue.append(
             SnackbarData(
-                title: "Sorry, something went wrong :(",
+                title: MR.strings().generic_error_message.localized,
                 subtitle: nil,
                 showBanner: true
             )

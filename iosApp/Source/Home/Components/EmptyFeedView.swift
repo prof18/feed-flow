@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import shared
 
 struct EmptyFeedView: View {
     
@@ -14,11 +15,11 @@ struct EmptyFeedView: View {
     
     var body: some View {
         VStack {
-            Text("Nothing else to read here!")
+            Text(MR.strings().empty_feed_message.localized)
                 .font(.body)
             
             Button(
-                "Refresh Feeds",
+                MR.strings().refresh_feeds.localized,
                 action: {
                     onReloadClick()
                 }

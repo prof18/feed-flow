@@ -24,11 +24,11 @@ struct FeedsScreen: View {
             VStack {
                 if (feedState.isEmpty) {
                     VStack {
-                        Text("No feeds found. Please add a new feed!")
+                        Text(MR.strings().no_feeds_found_message.localized)
                             .font(.body)
                         
                         NavigationLink(value: SheetPage.addFeed) {
-                            Text("Add feed")
+                            Text(MR.strings().add_feed.localized)
                         }
                     }
                 } else {
@@ -52,7 +52,10 @@ struct FeedsScreen: View {
                                 Button {
                                     feedSourceViewModel.deleteFeedSource(feedSource: feedSource)
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Label(
+                                        MR.strings().delete_feed.localized,
+                                        systemImage: "trash"
+                                    )
                                 }
                             }
                             .onTapGesture {
@@ -82,7 +85,7 @@ struct FeedsScreen: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Feeds")
+                    Text(MR.strings().feeds_title.localized)
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
                 }
@@ -105,35 +108,12 @@ struct FeedsScreen: View {
             } catch {
                 self.appState.snackbarQueue.append(
                     SnackbarData(
-                        title: "Sorry, something went wrong :(",
+                        title: MR.strings().generic_error_message.localized,
                         subtitle: nil,
                         showBanner: true
                     )
                 )
             }
-            //            do {
-            //                let stream = asyncSequence(for: settingsViewModel.isImportDoneStateFlow)
-            //                for try await isImportDone in stream {
-            //                    if isImportDone as! Bool {
-            //                        self.appState.snackbarQueue.append(
-            //                            SnackbarData(
-            //                                title: "Import done",
-            //                                subtitle: nil,
-            //                                showBanner: true
-            //                            )
-            //                        )
-            //                        presentationMode.wrappedValue.dismiss()
-            //                    }
-            //                }
-            //            } catch {
-            //                self.appState.snackbarQueue.append(
-            //                    SnackbarData(
-            //                        title: "Sorry, something went wrong :(",
-            //                        subtitle: nil,
-            //                        showBanner: true
-            //                    )
-            //                )
-            //            }
         }
     }
 }

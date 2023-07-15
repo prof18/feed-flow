@@ -1,4 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
-    <string name="my_string">My default localization string</string>
+    <string name="feed_added_message">Feed added</string>
+    <string name="feed_name">Feed name</string>
+    <string name="feed_name_placeholder">My favourite blog</string>
+    <string name="feed_url">Feed url</string>
+    <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
+    <string name="add_feed">Add feed</string>
+    <string name="feeds_title">Feeds</string>
+    <string name="no_feeds_add_one_message">No feeds, please add one</string>
+    <string name="delete_feed">Delete</string>
+    <string name="empty_feed_message">Nothing else to read here!</string>
+    <string name="refresh_feeds">Refresh feeds</string>
+    <string name="no_feeds_found_message">No feeds found. Please add a new feed!</string>
+    <string name="loading_feed_message">Loading feeds %s</string>
+    <string name="app_name">FeedFlow</string>
+    <string name="mark_all_read_button">Mark all read</string>
+    <string name="clear_old_articles_button">Clear old articles</string>
+    <string name="settings_button">Settings</string>
+    <string name="feeds_importing_message">Importing feed</string>
+    <string name="feeds_import_done_message">Import done</string>
+    <string name="feeds_export_done_message">Export done</string>
+    <string name="settings_title">Settings</string>
+    <string name="browser_selection_button">Browser selection</string>
+    <string name="import_feed_button">Import feed from OPML</string>
+    <string name="export_feeds_button">Export feeds to OPML</string>
+    <string name="about_button">About</string>
+    <string name="import_dialog_button">Import</string>
+    <string name="import_dialog_title">Select OPML file</string>
+    <string name="export_dialog_button">Export</string>
+    <string name="export_dialog_title">Save OPML file</string>
+    <string name="export_started_message">Generating export</string>
+    <string name="generic_error_message">Sorry, something went wrong :(</string>
+    <string name="load_file_error_message">Unable to load file</string>
 </resources>

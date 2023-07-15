@@ -26,14 +26,10 @@ struct FilePickerController: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
-        print("Making the picker")
-
         let supportedTypes: [UTType] = [UTType.item]
         let controller = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
 
         controller.delegate = context.coordinator
-        print("Setup the delegate \(context.coordinator)")
-
         return controller
     }
 
@@ -49,11 +45,6 @@ struct FilePickerController: UIViewControllerRepresentable {
         }
 
         func documentPickerWasCancelled() {
-            print("Document picker was thrown away :(")
-        }
-
-        deinit {
-            print("Coordinator going away")
         }
     }
 }

@@ -7,17 +7,18 @@
 //
 
 import SwiftUI
+import shared
 
 struct NoFeedsSourceView: View {
     let onAddFeedClick: () -> Void
     
     var body: some View {
         VStack {
-            Text("No feeds found. Please add a new feed!")
+            Text(MR.strings().no_feeds_found_message.localized)
                 .font(.body)
             
             Button(
-                "Add feed",
+                MR.strings().add_feed.localized,
                 action: {
                     onAddFeedClick()
                 }

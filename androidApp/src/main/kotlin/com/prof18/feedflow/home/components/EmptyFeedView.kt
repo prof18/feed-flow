@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.prof18.feedflow.MR
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.theme.Spacing
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 internal fun EmptyFeedView(
@@ -27,7 +29,7 @@ internal fun EmptyFeedView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Nothing else to read here!",
+            text = stringResource(resource = MR.strings.empty_feed_message),
             style = MaterialTheme.typography.bodyMedium
         )
         Button(
@@ -37,7 +39,7 @@ internal fun EmptyFeedView(
                 onReloadClick()
             }
         ) {
-            Text("Refresh feeds")
+            Text(stringResource(resource = MR.strings.refresh_feeds))
         }
     }
 }

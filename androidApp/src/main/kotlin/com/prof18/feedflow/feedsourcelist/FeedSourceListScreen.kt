@@ -1,4 +1,4 @@
-package com.prof18.feedflow.feedlist
+package com.prof18.feedflow.feedsourcelist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -31,8 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.MR
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.ui.theme.Spacing
+import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -47,7 +49,7 @@ fun FeedListScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Feeds")
+                    Text(stringResource(resource = MR.strings.feeds_title))
                 },
                 navigationIcon = {
                     IconButton(
@@ -88,7 +90,7 @@ fun FeedListScreen(
                 Text(
                     modifier = Modifier
                         .padding(Spacing.regular),
-                    text = "No feeds, please add one",
+                    text = stringResource(resource = MR.strings.no_feeds_add_one_message),
                 )
             }
         } else {
@@ -111,7 +113,7 @@ fun FeedListScreen(
                         modifier = Modifier
                             .combinedClickable(
                                 onClick = {
-                                    // TODO: open delete
+                                    // TODO: open edit
                                 },
                                 onLongClick = {
                                     showFeedMenu = true
@@ -138,7 +140,9 @@ fun FeedListScreen(
                         ) {
                             DropdownMenuItem(
                                 text = {
-                                    Text("Delete")
+                                    Text(
+                                        stringResource(resource = MR.strings.delete_feed)
+                                    )
                                 },
                                 onClick = {
                                     viewModel.deleteFeedSource(feedSource)

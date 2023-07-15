@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,8 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.MR
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.ui.theme.Spacing
+import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,14 +44,17 @@ fun AddFeedScreen(
     if (isAddDone) {
         feedName = ""
         feedUrl = ""
-        Toast.makeText(context, "Feed Added", Toast.LENGTH_SHORT)
+        val message = stringResource(resource = MR.strings.feed_added_message)
+        Toast.makeText(context, message, Toast.LENGTH_SHORT)
             .show()
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add Feed") },
+                title = {
+                    Text(stringResource(resource = MR.strings.add_feed))
+                },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -71,11 +75,13 @@ fun AddFeedScreen(
                 .padding(paddingValues)
                 .padding(horizontal = Spacing.regular)
         ) {
-            
+
             TextField(
                 modifier = Modifier
                     .fillMaxWidth(),
-                label = { Text(text = "Feed name") },
+                label = {
+                    Text(text = stringResource(resource = MR.strings.feed_name))
+                },
                 value = feedName,
                 onValueChange = {
                     feedName = it
@@ -83,7 +89,7 @@ fun AddFeedScreen(
                 },
                 placeholder = {
                     Text(
-                        "My Favourite Blog",
+                        stringResource(resource = MR.strings.feed_name_placeholder),
                         maxLines = 1,
                     )
                 },
@@ -96,7 +102,9 @@ fun AddFeedScreen(
                 modifier = Modifier
                     .padding(top = Spacing.regular)
                     .fillMaxWidth(),
-                label = { Text(text = "Feed url") },
+                label = {
+                    Text(text = stringResource(resource = MR.strings.feed_url))
+                },
                 value = feedUrl,
                 onValueChange = {
                     feedUrl = it
@@ -104,7 +112,7 @@ fun AddFeedScreen(
                 },
                 placeholder = {
                     Text(
-                        "https://myfavouriteblog.com/feed",
+                        stringResource(resource = MR.strings.feed_url_placeholder),
                         maxLines = 1,
                     )
                 },
@@ -119,7 +127,7 @@ fun AddFeedScreen(
                     viewModel.addFeed()
                 },
             ) {
-                Text("Add Feed")
+                Text(stringResource(resource = MR.strings.add_feed))
             }
         }
     }

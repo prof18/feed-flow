@@ -39,7 +39,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.prof18.feedflow.di.initKoinDesktop
 import com.prof18.feedflow.domain.opml.OPMLInput
 import com.prof18.feedflow.domain.opml.OPMLOutput
-import com.prof18.feedflow.feedlist.FeedSourceListScreen
+import com.prof18.feedflow.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.home.FeedFlowMenuBar
 import com.prof18.feedflow.home.HomeScreen
 import com.prof18.feedflow.navigation.ChildStack
@@ -49,6 +49,7 @@ import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.rememberDesktopDarkTheme
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import javax.swing.UIManager
 
@@ -83,20 +84,24 @@ fun main() = application {
         val navigation: StackNavigation<Screen> = remember { StackNavigation() }
 
         val isImportDone by settingsViewModel.isImportDoneState.collectAsState()
+        val importDoneMessage = stringResource(resource = MR.strings.feeds_import_done_message)
+
         if (isImportDone) {
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    "Import Done",
+                    importDoneMessage,
                     duration = SnackbarDuration.Short,
                 )
             }
         }
 
         val isExportDone by settingsViewModel.isExportDoneState.collectAsState()
+        val exportDoneMessage = stringResource(resource = MR.strings.feeds_export_done_message)
+
         if (isExportDone) {
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    "Export Done",
+                    exportDoneMessage,
                     duration = SnackbarDuration.Short,
                 )
             }

@@ -238,12 +238,12 @@ internal class FeedRetrieverRepositoryImpl(
                     subtitle = rssItem.description?.let { description ->
                         htmlParser.getTextFromHTML(description)
                     },
-                    content = rssItem.content,
+                    content = null,
                     imageUrl = imageUrl,
                     feedSource = feedSource,
                     isRead = false,
                     pubDateMillis = dateMillis,
-                    dateString = "formatDate(dateMillis)",
+                    dateString = formatDate(dateMillis),
                     commentsUrl = rssItem.commentsUrl,
                 )
             }

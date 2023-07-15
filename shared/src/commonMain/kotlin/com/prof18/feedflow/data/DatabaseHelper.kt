@@ -66,6 +66,9 @@ internal class DatabaseHelper(
                Logger.e(it) { "Something wrong while getting data from Database" }
             }
             .mapToList()
+            .catch {
+                Logger.e(it) { "Something wrong while getting data from Database" }
+            }
             .flowOn(backgroundDispatcher)
 
 
@@ -106,7 +109,7 @@ internal class DatabaseHelper(
                         url = url,
                         title = title,
                         subtitle = subtitle,
-                        content = content,
+                        content = null,
                         image_url = imageUrl,
                         feed_source_id = feedSource.id,
                         pub_date = pubDateMillis,

@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
@@ -26,6 +29,7 @@ internal fun BrowserSelectionDialog(
     Dialog(onDismissRequest = dismissDialog) {
         Column(
             modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.background)
         ) {
             browserList.forEach { browser ->

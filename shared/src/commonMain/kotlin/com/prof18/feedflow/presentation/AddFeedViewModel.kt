@@ -30,12 +30,14 @@ class AddFeedViewModel(
 
     fun addFeed() {
         scope.launch {
-            feedManagerRepository.addFeed(
-                url = feedUrl,
-                name = feedName,
-            )
-            isAddDoneMutableState.update { true }
-            feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
+            if (feedUrl.isNotEmpty() && feedName.isNotEmpty()) {
+                feedManagerRepository.addFeed(
+                    url = feedUrl,
+                    name = feedName,
+                )
+                isAddDoneMutableState.update { true }
+                feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
+            }
         }
     }
 

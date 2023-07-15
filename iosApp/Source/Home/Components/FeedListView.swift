@@ -92,6 +92,19 @@ struct FeedListView_Previews: PreviewProvider {
     }
 }
 
+struct FeedListViewIpad_Previews: PreviewProvider {
+    static var previews: some View {
+        FeedListView(
+            loadingState: FinishedFeedUpdateStatus(),
+            feedState: PreviewItemsKt.feedItemsForPreview,
+            showLoading: false,
+            onReloadClick: {},
+            onAddFeedClick: {}
+        )
+        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch) (4th generation)"))
+    }
+}
+
 
 struct FeedListViewNoFeed_Previews: PreviewProvider {
     

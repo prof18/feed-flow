@@ -24,43 +24,15 @@ struct FeedItemView : View {
                 .padding(.top, Spacing.small)
             
             HStack {
-                VStack(alignment: .leading) {
-                    Text(feedItem.title)
-                        .font(.system(size: 16))
-                        .bold()
-                    
-                    if let subtitle = feedItem.subtitle {
-                        Text(subtitle)
-                            .lineLimit(3)
-                            .font(.system(size: 14))
-                            .padding(.top, Spacing.xxsmall)
-                    }
-                }
+                TitleAndSubtitleCell(
+                    feedItem: feedItem
+                )
+                .frame(maxHeight: .infinity)
                 
-                if let imageUrl = feedItem.imageUrl {
-                    Spacer()
-                    LazyImage(url: URL(string: imageUrl)) { state in
-                        if let image = state.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100)
-                                .cornerRadius(16)
-                                .clipped()
-                        } else if state.error != nil {
-                            EmptyView()
-                        } else {
-                            Color(.secondarySystemBackground)
-                                .frame(width: 100)
-                        }
-                    }
-                    .padding(.leading, Spacing.regular)
-                } else {
-                    Spacer()
-                }
-                
+                FeedItemImage(
+                    feedItem: feedItem
+                )
             }
-            .padding(.vertical, Spacing.small)
             
             Text(feedItem.dateString)
                 .font(.system(size: 12))
@@ -70,10 +42,69 @@ struct FeedItemView : View {
     }
 }
 
+struct TitleAndSubtitleCell: View {
+    
+    let feedItem: FeedItem
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(feedItem.title)
+                .font(.system(size: 16))
+                .bold()
+            
+            if let subtitle = feedItem.subtitle {
+                Text(subtitle)
+                    .lineLimit(3)
+                    .font(.system(size: 14))
+                    .padding(.top, Spacing.xxsmall)
+            }
+        }
+
+    }
+}
+
+struct FeedItemImage: View {
+    
+    let feedItem: FeedItem
+    
+    var body: some View {
+        if let imageUrl = feedItem.imageUrl {
+            Spacer()
+            LazyImage(url: URL(string: imageUrl)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 100)
+                        .cornerRadius(16)
+                        .clipped()
+                } else if state.error != nil {
+                    EmptyView()
+                } else {
+                    Color(.secondarySystemBackground)
+                        .frame(width: 100)
+                }
+            }
+            .padding(.leading, Spacing.regular)
+        } else {
+            Spacer()
+        }
+    }
+}
+
 struct FeedItemView_Previews: PreviewProvider {
     static var previews: some View {
         FeedItemView(
-            feedItem: PreviewItemsKt.feedItemsForPreview[1]
+            feedItem: PreviewItemsKt.feedItemsForPreview[2]
         )
+    }
+}
+
+struct FeedItemViewIpad_Previews: PreviewProvider {
+    static var previews: some View {
+        FeedItemView(
+            feedItem: PreviewItemsKt.feedItemsForPreview[2]
+        )
+        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch) (4th generation)"))
     }
 }

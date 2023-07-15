@@ -214,7 +214,6 @@
 			children = (
 				CCA704D229D60CDF00560FA3 /* Components */,
 				CC323E1729D22C4200138233 /* HomeScreen.swift */,
-				CCA704DB29D6143400560FA3 /* FeedListView.swift */,
 				CC4B804329DA03460004A0AB /* HomeListIndexHolder.swift */,
 			);
 			path = Home;
@@ -306,6 +305,7 @@
 				CCA704D529D60D1C00560FA3 /* EmptyFeedView.swift */,
 				CCA704D729D60F4200560FA3 /* NoFeedsSourceView.swift */,
 				CCA704D929D60FA600560FA3 /* FeedItemView.swift */,
+				CCA704DB29D6143400560FA3 /* FeedListView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";

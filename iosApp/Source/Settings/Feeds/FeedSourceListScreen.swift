@@ -11,12 +11,12 @@ import shared
 import KMPNativeCoroutinesAsync
 
 struct FeedSourceListScreen: View {
-    
+
     @EnvironmentObject var appState: AppState
-    @StateObject var feedSourceViewModel: FeedSourceListViewModel = KotlinDependencies.shared.getFeedSourceListViewModel()
-    
+    @StateObject var feedSourceViewModel = KotlinDependencies.shared.getFeedSourceListViewModel()
+
     @State var feedState: [FeedSource] = []
-    
+
     var body: some View {
         FeedSourceListContent(
             feedState: $feedState,
@@ -44,23 +44,22 @@ struct FeedSourceListScreen: View {
 }
 
 private struct FeedSourceListContent: View {
-    
+
     @Environment(\.presentationMode) var presentationMode
-    
+
     @State private var showAddFeed = false
     @Binding var feedState: [FeedSource]
-    
+
     let deleteFeedSource: (FeedSource) -> Void
 
-    
     var body: some View {
         NavigationStack {
             VStack {
-                if (feedState.isEmpty) {
+                if feedState.isEmpty {
                     VStack {
                         Text(MR.strings().no_feeds_found_message.localized)
                             .font(.body)
-                        
+
                         NavigationLink(value: SheetPage.addFeed) {
                             Text(MR.strings().add_feed.localized)
                         }
@@ -68,18 +67,17 @@ private struct FeedSourceListContent: View {
                 } else {
                     List {
                         ForEach(feedState, id: \.self.id) { feedSource in
-                            
+
                             VStack(alignment: .leading) {
                                 Text(feedSource.title)
                                     .font(.system(size: 16))
                                     .padding(.top, Spacing.xsmall)
-                                
-                                
+
                                 Text(feedSource.url)
                                     .font(.system(size: 14))
                                     .padding(.top, Spacing.xxsmall)
                                     .padding(.bottom, Spacing.xsmall)
-                                
+
                             }
                             .id(feedSource.id)
                             .contextMenu {
@@ -107,23 +105,24 @@ private struct FeedSourceListContent: View {
                 }
             }
             .toolbar {
-                
+
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(
                         action: {
                             self.presentationMode.wrappedValue.dismiss()
+                        },
+                        label: {
+                            Image(systemName: "xmark")
                         }
-                    ) {
-                        Image(systemName: "xmark")
-                    }
+                    )
                 }
-                
+
                 ToolbarItem(placement: .navigationBarLeading) {
                     Text(MR.strings().feeds_title.localized)
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
                 }
-                
+
                 ToolbarItem(placement: .primaryAction) {
                     NavigationLink(value: SheetPage.addFeed) {
                         Image(systemName: "plus")
@@ -145,7 +144,6 @@ struct FeedSourceListContent_Previews: PreviewProvider {
         )
     }
 }
-
 
 struct FeedSourceListContentEmpty_Previews: PreviewProvider {
     static var previews: some View {

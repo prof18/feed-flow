@@ -10,5 +10,5 @@ import Foundation
 import shared
 import KMPNativeCoroutinesAsync
 
-//@MainActor
-//class HomeView
+// @MainActor
+// class HomeView

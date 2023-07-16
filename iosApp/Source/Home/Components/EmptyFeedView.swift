@@ -10,14 +10,14 @@ import SwiftUI
 import shared
 
 struct EmptyFeedView: View {
-    
+
     let onReloadClick: () -> Void
-    
+
     var body: some View {
         VStack {
             Text(MR.strings().empty_feed_message.localized)
                 .font(.body)
-            
+
             Button(
                 MR.strings().refresh_feeds.localized,
                 action: {

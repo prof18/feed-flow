@@ -12,46 +12,46 @@ import shared
 import NukeUI
 import OrderedCollections
 
-struct FeedItemView : View {
-    
+struct FeedItemView: View {
+
     let feedItem: FeedItem
-    
+
     var body: some View {
         VStack(alignment: .leading) {
-            
+
             Text(feedItem.feedSource.title)
                 .font(.system(size: 12))
                 .padding(.top, Spacing.small)
-            
+
             HStack {
                 TitleAndSubtitleCell(
                     feedItem: feedItem
                 )
                 .frame(maxHeight: .infinity)
-                
+
                 FeedItemImage(
                     feedItem: feedItem
                 )
             }
-            
+
             Text(feedItem.dateString)
                 .font(.system(size: 12))
                 .padding(.bottom, Spacing.small)
-            
+
         }
     }
 }
 
 struct TitleAndSubtitleCell: View {
-    
+
     let feedItem: FeedItem
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(feedItem.title)
                 .font(.system(size: 16))
                 .bold()
-            
+
             if let subtitle = feedItem.subtitle {
                 Text(subtitle)
                     .lineLimit(3)
@@ -64,9 +64,9 @@ struct TitleAndSubtitleCell: View {
 }
 
 struct FeedItemImage: View {
-    
+
     let feedItem: FeedItem
-    
+
     var body: some View {
         if let imageUrl = feedItem.imageUrl {
             Spacer()

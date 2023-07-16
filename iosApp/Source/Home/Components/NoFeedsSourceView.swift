@@ -11,12 +11,12 @@ import shared
 
 struct NoFeedsSourceView: View {
     let onAddFeedClick: () -> Void
-    
+
     var body: some View {
         VStack {
             Text(MR.strings().no_feeds_found_message.localized)
                 .font(.body)
-            
+
             Button(
                 MR.strings().add_feed.localized,
                 action: {

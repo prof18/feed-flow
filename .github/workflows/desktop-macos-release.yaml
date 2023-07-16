@@ -48,7 +48,7 @@ jobs:
         run: ./gradlew check
 
       - name: Create DMG
-        run: ./gradlew packageDmg
+        run: ./gradlew packageReleaseDmg
 
       - name: Create path variables
         id: path_variables

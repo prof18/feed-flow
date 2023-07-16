@@ -12,24 +12,24 @@ import shared
 import OrderedCollections
 
 struct HomeScreen: View {
-    
+
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var browserSelector: BrowserSelector
     @StateObject var indexHolder = HomeListIndexHolder()
-    
+
     @Environment(\.scenePhase) var scenePhase
-    
+
     @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
     @StateObject var settingsViewModel: SettingsViewModel = KotlinDependencies.shared.getSettingsViewModel()
-    
-    @State var loadingState: FeedUpdateStatus? = nil
+
+    @State var loadingState: FeedUpdateStatus?
     @State var feedState: [FeedItem] = []
     @State var showLoading: Bool = true
     @State var sheetToShow: SheetToShow?
     @State var unreadCount = 0
-    
+
     var body: some View {
-        
+
         HomeContent(
             loadingState: $loadingState,
             feedState: $feedState,
@@ -111,16 +111,16 @@ struct HomeScreen: View {
         .task {
             do {
                 let stream = asyncSequence(for: settingsViewModel.isImportDoneStateFlow)
-                for try await isImportDone in stream {
-                    if isImportDone as! Bool {
-                        self.appState.snackbarQueue.append(
-                            SnackbarData(
-                                title: MR.strings().feeds_import_done_message.localized,
-                                subtitle: nil,
-                                showBanner: true
-                            )
+                for try await isImportDone in stream where isImportDone as? Bool ?? false {
+
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: MR.strings().feeds_import_done_message.localized,
+                            subtitle: nil,
+                            showBanner: true
                         )
-                    }
+                    )
+
                 }
             } catch {
                 emitGenericError()
@@ -129,11 +129,11 @@ struct HomeScreen: View {
         .task {
             do {
                 let stream = asyncSequence(for: settingsViewModel.isExportDoneStateFlow)
-                for try await isExportDone in stream {
-                    if isExportDone as! Bool {
-                        self.sheetToShow = .shareSheet
-                    }
+                for try await isExportDone in stream where isExportDone as? Bool ?? false {
+
+                    self.sheetToShow = .shareSheet
                 }
+
             } catch {
                 emitGenericError()
             }
@@ -165,9 +165,7 @@ struct HomeScreen: View {
             }
         }
     }
-    
-    
-    
+
     private func emitGenericError() {
         self.appState.snackbarQueue.append(
             SnackbarData(
@@ -180,26 +178,25 @@ struct HomeScreen: View {
 }
 
 struct HomeContent: View {
-    
+
     @EnvironmentObject var indexHolder: HomeListIndexHolder
     @EnvironmentObject var browserSelector: BrowserSelector
     @EnvironmentObject var appState: AppState
-    
+
     @Binding var loadingState: FeedUpdateStatus?
     @Binding var feedState: [FeedItem]
     @Binding var showLoading: Bool
     @Binding var unreadCount: Int
-    
+
     @State var sheetToShow: SheetToShow?
-    
+
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
     let onMarkAllReadClick: () -> Void
     let onDeleteOldFeedClick: () -> Void
-    let onImportFeedClick: (OPMLInput) -> Void
-    let onExportFeedClick: (OPMLOutput) -> Void
-    
-    
+    let onImportFeedClick: (OpmlInput) -> Void
+    let onExportFeedClick: (OpmlOutput) -> Void
+
     var body: some View {
         ScrollViewReader { proxy in
             FeedListView(
@@ -218,7 +215,7 @@ struct HomeContent: View {
                     Text("\(MR.strings().app_name.localized) (\(unreadCount))")
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
-                        .onTapGesture(count: 2){
+                        .onTapGesture(count: 2) {
                             updateReadStatus(Int32(indexHolder.getLastReadIndex()))
                             self.indexHolder.refresh()
                             proxy.scrollTo(feedState.first?.id)
@@ -230,43 +227,45 @@ struct HomeContent: View {
                             }
                         }
                 }
-                
-                
+
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button(
                             action: {
                                 onMarkAllReadClick()
+                            },
+                            label: {
+                                Label(
+                                    MR.strings().mark_all_read_button.localized,
+                                    systemImage: "checkmark"
+                                )
                             }
-                        ) {
-                            Label(
-                                MR.strings().mark_all_read_button.localized,
-                                systemImage: "checkmark"
-                            )
-                        }
-                        
+                        )
+
                         Button(
                             action: {
                                 onDeleteOldFeedClick()
+                            },
+                            label: {
+                                Label(
+                                    MR.strings().clear_old_articles_button.localized,
+                                    systemImage: "trash"
+                                )
                             }
-                        ) {
-                            Label(
-                                MR.strings().clear_old_articles_button.localized,
-                                systemImage: "trash"
-                            )
-                        }
-                        
+                        )
+
                         Button(
                             action: {
                                 self.sheetToShow = .feedList
+                            },
+                            label: {
+                                Label(
+                                    MR.strings().feeds_title.localized,
+                                    systemImage: "list.bullet.rectangle.portrait"
+                                )
                             }
-                        )  {
-                            Label(
-                                MR.strings().feeds_title.localized,
-                                systemImage: "list.bullet.rectangle.portrait"
-                            )
-                        }
-                        
+                        )
+
                         Menu {
                             Picker(
                                 selection: $browserSelector.selectedBrowser,
@@ -283,22 +282,23 @@ struct HomeContent: View {
                             systemImage: "globe"
                         )
                     }
-                        
+
                         Button(
                             action: {
                                 self.sheetToShow = .filePicker
+                            },
+                            label: {
+                                Label(
+                                    MR.strings().import_feed_button.localized,
+                                    systemImage: "arrow.down.doc"
+                                )
                             }
-                        )  {
-                            Label(
-                                MR.strings().import_feed_button.localized,
-                                systemImage: "arrow.down.doc"
-                            )
-                        }
-                        
+                        )
+
                         Button(
                             action: {
                                 if let url = getUrlForOpmlExport() {
-                                    onExportFeedClick(OPMLOutput(url: url))
+                                    onExportFeedClick(OpmlOutput(url: url))
                                     self.appState.snackbarQueue.append(
                                         SnackbarData(
                                             title: MR.strings().export_started_message.localized,
@@ -315,33 +315,33 @@ struct HomeContent: View {
                                         )
                                     )
                                 }
+                            },
+                            label: {
+                                Label(
+                                    MR.strings().export_feeds_button.localized,
+                                    systemImage: "arrow.up.doc"
+                                )
                             }
-                        )  {
-                            Label(
-                                MR.strings().export_feeds_button.localized,
-                                systemImage: "arrow.up.doc"
-                            )
-                        }
-                        
+                        )
                     } label: {
                         Image(systemName: "gear")
                     }
                 }
-                
+
             }
-            
+
         }
         .sheet(item: $sheetToShow) { item in
             switch item {
             case .filePicker:
                 FilePickerController { url in
-                    
+
                     do {
                         let data = try Data(contentsOf: url)
-                        onImportFeedClick(OPMLInput(opmlData: data))
+                        onImportFeedClick(OpmlInput(opmlData: data))
                     } catch {
                         self.appState.snackbarQueue.append(
-                            
+
                             SnackbarData(
                                 title: MR.strings().load_file_error_message.localized,
                                 subtitle: nil,
@@ -349,8 +349,7 @@ struct HomeContent: View {
                             )
                         )
                     }
-                    
-                    
+
                     self.appState.snackbarQueue.append(
                         SnackbarData(
                             title: MR.strings().feeds_importing_message.localized,
@@ -359,15 +358,14 @@ struct HomeContent: View {
                         )
                     )
                 }
-                
-                
+
             case .shareSheet:
-                
+
                 ShareSheet(
                     activityItems: [getUrlForOpmlExport()! as URL],
                     applicationActivities: nil
                 ) { _, _, _, _ in }
-                
+
             case .feedList:
                 FeedSourceListScreen()
             }
@@ -375,12 +373,10 @@ struct HomeContent: View {
     }
 }
 
-
 private func getUrlForOpmlExport() -> URL? {
     let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
     return cacheDirectory?.appendingPathComponent("feed-export.opml")
 }
-
 
 struct HomeContentLoading_Previews: PreviewProvider {
     static var previews: some View {

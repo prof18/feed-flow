@@ -11,7 +11,7 @@ import shared
 import SwiftSoup
 
 class IosHtmlParser: HtmlParser {
-    
+
     func getTextFromHTML(html: String) -> String? {
         do {
             let doc: Document = try SwiftSoup.parse(html)

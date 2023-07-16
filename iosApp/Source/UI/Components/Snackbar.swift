@@ -6,26 +6,25 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-
 import SwiftUI
 import Collections
 
 struct Snackbar: View {
-    
+
     @Binding var messageQueue: Deque<SnackbarData>
     @State private var snackbarData: SnackbarData = SnackbarData()
-    
+
     @State private var showBanner: Bool = false
-    
+
     var body: some View {
-        
+
         HStack {
             VStack(alignment: .leading, spacing: Spacing.xsmall) {
-                
+
                 Text(snackbarData.title)
                     .font(.title3)
                     .foregroundColor(Color.popupText)
-                
+
                 if let subtitle = snackbarData.subtitle {
                     Text(subtitle)
                         .font(.caption)
@@ -34,7 +33,7 @@ struct Snackbar: View {
             }
             .padding(.vertical, Spacing.regular)
             .padding(.horizontal, Spacing.medium)
-            
+
             Spacer()
         }
         .background(Color.popupBackground)
@@ -49,14 +48,14 @@ struct Snackbar: View {
                     }
                 }
         )
-        .onChange(of: self.messageQueue) { messageQueue in
-            
+        .onChange(of: self.messageQueue) { _ in
+
             if let data = self.messageQueue.first {
                 withAnimation {
                     self.snackbarData = data
                     self.showBanner = true
                 }
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                     withAnimation {
                         showBanner = false
@@ -66,7 +65,7 @@ struct Snackbar: View {
                     }
                 }
             }
-            
+
         }
         .padding(.bottom, Spacing.regular)
         .zIndex(100)

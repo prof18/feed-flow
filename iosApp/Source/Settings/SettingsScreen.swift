@@ -11,20 +11,20 @@ import shared
 import KMPNativeCoroutinesAsync
 
 struct SettingsScreen: View {
-    
+
     @EnvironmentObject var appState: AppState
     @State var sheetToShow: SheetToShow?
     @Environment(\.presentationMode) var presentationMode
     @StateObject var settingsViewModel: SettingsViewModel = KotlinDependencies.shared.getSettingsViewModel()
-    
+
     let onClearOldArticlesClicked: () -> Void
     let onMarkAllReadClicked: () -> Void
-    
+
     var body: some View {
         NavigationStack {
             VStack {
                 Form {
-                    
+
                     HStack {
                         Button(
                             "Mark all read",
@@ -34,7 +34,7 @@ struct SettingsScreen: View {
                             }
                         )
                     }
-                    
+
                     HStack {
                         Button(
                             "Clear old articles",
@@ -44,7 +44,7 @@ struct SettingsScreen: View {
                             }
                         )
                     }
-                    
+
                     HStack {
                         Button(
                             "Import Feed from OPML",
@@ -53,13 +53,13 @@ struct SettingsScreen: View {
                             }
                         )
                     }
-                    
+
                     NavigationLink(value: SheetPage.addFeed) {
                         HStack {
                             Text("Add feed")
                         }
                     }
-                    
+
                     NavigationLink(value: SheetPage.feedList) {
                         HStack {
                             Text("Feeds")
@@ -72,7 +72,7 @@ struct SettingsScreen: View {
                 switch page {
                 case .addFeed:
                     AddFeedScreen()
-                    
+
                 case .feedList:
                     FeedsScreen()
                 }
@@ -82,7 +82,7 @@ struct SettingsScreen: View {
                     Text("Settings")
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
-                    
+
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -94,21 +94,21 @@ struct SettingsScreen: View {
             }
         }
         .sheet(item: $sheetToShow) { item in
-            
+
             switch item {
-                
+
             case .feedList:
                 FeedsScreen()
-                
+
             case .filePicker:
                 FilePickerController { url in
-                    
+
                     do {
                         let data = try Data(contentsOf: url)
                         settingsViewModel.importFeed(opmlInput: OPMLInput(opmlData: data))
                     } catch {
                         self.appState.snackbarQueue.append(
-                            
+
                             SnackbarData(
                                 title: "Unable to load file",
                                 subtitle: nil,
@@ -116,8 +116,7 @@ struct SettingsScreen: View {
                             )
                         )
                     }
-                    
-                    
+
                     self.appState.snackbarQueue.append(
                         SnackbarData(
                             title: "Importing feed",
@@ -130,17 +129,15 @@ struct SettingsScreen: View {
         }.task {
             do {
                 let stream = asyncSequence(for: settingsViewModel.isImportDoneStateFlow)
-                for try await isImportDone in stream {
-                    if isImportDone as! Bool {
-                        self.appState.snackbarQueue.append(
-                            SnackbarData(
-                                title: "Import done",
-                                subtitle: nil,
-                                showBanner: true
-                            )
+                for try await isImportDone in stream where isImportDone as? Bool ?? false {
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: "Import done",
+                            subtitle: nil,
+                            showBanner: true
                         )
-                        presentationMode.wrappedValue.dismiss()
-                    }
+                    )
+                    presentationMode.wrappedValue.dismiss()
                 }
             } catch {
                 self.appState.snackbarQueue.append(
@@ -159,10 +156,10 @@ struct SettingsScreen_Previews: PreviewProvider {
     static var previews: some View {
         SettingsScreen(
             onClearOldArticlesClicked: {
-                
+
             },
             onMarkAllReadClicked: {
-                
+
             }
         )
     }

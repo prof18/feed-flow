@@ -12,20 +12,20 @@ import Combine
 import shared
 
 class HomeListIndexHolder: ObservableObject {
-    
+
     var isLoading: Bool = false
     private var lastReadIndex = 0
     private var timer: Timer?
-    
+
     func getLastReadIndex() -> Int {
         return lastReadIndex
     }
-    
+
     func refresh() {
         self.isLoading = true
         self.lastReadIndex = 0
     }
-    
+
     func updateReadIndex(index: Int) {
         if !self.isLoading && index > lastReadIndex {
             lastReadIndex = index

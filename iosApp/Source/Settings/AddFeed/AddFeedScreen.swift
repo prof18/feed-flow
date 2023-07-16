@@ -10,47 +10,46 @@ import SwiftUI
 import shared
 import KMPNativeCoroutinesAsync
 
-
 struct AddFeedScreen: View {
-    
+
     @EnvironmentObject var appState: AppState
     @Environment(\.presentationMode) var presentationMode
-    
+
     @State private var feedName = ""
     @State private var feedURL = ""
-    
+
     @StateObject var addFeedViewModel: AddFeedViewModel = KotlinDependencies.shared.getAddFeedViewModel()
-    
+
     var body: some View {
         VStack {
             TextField(
                 MR.strings().feed_name.localized,
                 text: $feedName
             )
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.top, Spacing.regular)
-                .padding(.horizontal, Spacing.regular)
-            
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .padding(.top, Spacing.regular)
+            .padding(.horizontal, Spacing.regular)
+
             TextField(
                 MR.strings().feed_url.localized,
                 text: $feedURL
             )
-                .keyboardType(.webSearch)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.top, Spacing.regular)
-                .padding(.horizontal, Spacing.regular)
-            
-            
+            .keyboardType(.webSearch)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .padding(.top, Spacing.regular)
+            .padding(.horizontal, Spacing.regular)
+
             Button(
                 action: {
                     addFeedViewModel.addFeed()
+                },
+                label: {
+                    Text(MR.strings().add_feed.localized)
                 }
-            ) {
-                Text(MR.strings().add_feed.localized)
-            }
+            )
             .buttonStyle(.bordered)
             .padding(.top, Spacing.regular)
-            
+
             Spacer()
         }
         .toolbar {
@@ -68,18 +67,16 @@ struct AddFeedScreen: View {
         .task {
             do {
                 let stream = asyncSequence(for: addFeedViewModel.isAddDoneStateFlow)
-                for try await isAddDone in stream {
-                    if isAddDone as! Bool {
-                        self.appState.snackbarQueue.append(
-                            SnackbarData(
-                                title: MR.strings().feed_added_message.localized,
-                                subtitle: nil,
-                                showBanner: true
-                            )
+                for try await isAddDone in stream where isAddDone as? Bool ?? false {
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: MR.strings().feed_added_message.localized,
+                            subtitle: nil,
+                            showBanner: true
                         )
-                        self.addFeedViewModel.clearAddDoneState()
-                        presentationMode.wrappedValue.dismiss()
-                    }
+                    )
+                    self.addFeedViewModel.clearAddDoneState()
+                    presentationMode.wrappedValue.dismiss()
                 }
             } catch {
                 self.appState.snackbarQueue.append(

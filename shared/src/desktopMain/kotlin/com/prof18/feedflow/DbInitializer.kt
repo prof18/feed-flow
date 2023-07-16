@@ -8,7 +8,6 @@ import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import java.io.File
 import java.util.Properties
 
-
 internal fun initDatabase(): SqlDriver {
     val appPath = AppDataPathBuilder.getAppDataPath()
 

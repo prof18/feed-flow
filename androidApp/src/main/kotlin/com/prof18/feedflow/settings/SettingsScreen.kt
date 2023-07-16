@@ -13,9 +13,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,11 +33,11 @@ import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.domain.opml.OPMLInput
 import com.prof18.feedflow.domain.opml.OPMLOutput
 import com.prof18.feedflow.presentation.SettingsViewModel
+import com.prof18.feedflow.presentation.preview.browsersForPreview
 import com.prof18.feedflow.settings.components.BrowserSelectionDialog
 import com.prof18.feedflow.settings.components.SettingsDivider
 import com.prof18.feedflow.settings.components.SettingsMenuItem
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.presentation.preview.browsersForPreview
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -68,8 +72,19 @@ fun SettingsScreen(
 
     val importingFeedMessage = stringResource(resource = MR.strings.feeds_importing_message)
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) {
+        viewModel.errorState.collect { errorState ->
+            snackbarHostState.showSnackbar(
+                errorState!!.message.toString(context),
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
+
     SettingsScreenContent(
         browsers = browserListState,
+        snackbarHostState = snackbarHostState,
         onFeedListClick = onFeedListClick,
         importFeed = { uri ->
             viewModel.importFeed(OPMLInput(context.contentResolver.openInputStream(uri)))
@@ -90,6 +105,7 @@ fun SettingsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun SettingsScreenContent(
     browsers: List<Browser>,
+    snackbarHostState: SnackbarHostState,
     onFeedListClick: () -> Unit,
     importFeed: (Uri) -> Unit,
     exportFeed: (Uri) -> Unit,
@@ -130,7 +146,8 @@ private fun SettingsScreenContent(
                     }
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
 
         var showBrowserSelection by remember {
@@ -238,6 +255,7 @@ private fun SettingsScreenPreview() {
     FeedFlowTheme {
         SettingsScreenContent(
             browsers = browsersForPreview,
+            snackbarHostState = SnackbarHostState(),
             onFeedListClick = {},
             importFeed = {},
             exportFeed = {},

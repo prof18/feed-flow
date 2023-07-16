@@ -44,6 +44,9 @@ jobs:
           SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD_MACOS }}
           KEYCHAIN_PASSWORD_MACOS: ${{ secrets.KEYCHAIN_PASSWORD_MACOS }}
 
+      - name: Run Checks
+        run: ./gradlew check
+
       - name: Create DMG
         run: ./gradlew packageDmg
 

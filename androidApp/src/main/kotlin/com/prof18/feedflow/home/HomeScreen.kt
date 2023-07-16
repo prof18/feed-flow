@@ -83,7 +83,7 @@ internal fun HomeScreen(
     LaunchedEffect(Unit) {
         homeViewModel.errorState.collect { errorState ->
             snackbarHostState.showSnackbar(
-                errorState!!.message,
+                errorState!!.message.toString(context),
                 duration = SnackbarDuration.Short,
             )
         }

@@ -76,9 +76,8 @@ struct HomeScreen: View {
                 for try await state in stream {
                     if let message = state?.message {
                         self.appState.snackbarQueue.append(
-                            
                             SnackbarData(
-                                title: message,
+                                title: message.localized(),
                                 subtitle: nil,
                                 showBanner: true
                             )
@@ -124,13 +123,7 @@ struct HomeScreen: View {
                     }
                 }
             } catch {
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: MR.strings().generic_error_message.localized,
-                        subtitle: nil,
-                        showBanner: true
-                    )
-                )
+                emitGenericError()
             }
         }
         .task {
@@ -142,13 +135,25 @@ struct HomeScreen: View {
                     }
                 }
             } catch {
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: MR.strings().generic_error_message.localized,
-                        subtitle: nil,
-                        showBanner: true
-                    )
-                )
+                emitGenericError()
+            }
+        }
+        .task {
+            do {
+                let stream = asyncSequence(for: settingsViewModel.errorStateFlow)
+                for try await state in stream {
+                    if let message = state?.message {
+                        self.appState.snackbarQueue.append(
+                            SnackbarData(
+                                title: message.localized(),
+                                subtitle: nil,
+                                showBanner: true
+                            )
+                        )
+                    }
+                }
+            } catch {
+                emitGenericError()
             }
         }
         .onChange(of: scenePhase) { newScenePhase in
@@ -210,7 +215,7 @@ struct HomeContent: View {
             )
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("FeedFlow (\(unreadCount))")
+                    Text("\(MR.strings().app_name.localized) (\(unreadCount))")
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
                         .onTapGesture(count: 2){

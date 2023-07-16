@@ -13,4 +13,3 @@ data class FeedItem(
     val dateString: String,
     val commentsUrl: String?,
 )
-

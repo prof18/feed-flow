@@ -1,22 +1,21 @@
 package com.prof18.feedflow.presentation
 
-import co.touchlab.kermit.Logger
+import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.presentation.model.UIErrorState
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
+import dev.icerock.moko.resources.desc.ResourceFormatted
+import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -46,7 +45,6 @@ class HomeViewModel(
     private var lastUpdateIndex = 0
 
     init {
-        Logger.d { "Init called!" }
         observeFeeds()
         getNewFeeds()
     }
@@ -68,7 +66,10 @@ class HomeViewModel(
                         is FeedErrorState -> {
                             mutableUIErrorState.emit(
                                 UIErrorState(
-                                    message = "Something is wrong with: ${error.failingSourceName} :("
+                                    message = StringDesc.ResourceFormatted(
+                                        stringRes = MR.strings.feed_error_message,
+                                        error.failingSourceName,
+                                    )
                                 )
                             )
                         }
@@ -96,9 +97,7 @@ class HomeViewModel(
         val urlToUpdates = mutableListOf<FeedItemId>()
 
         val items = feedState.value.toMutableList()
-        Logger.d { "Last visibile: $lastVisibleIndex. Last update: $lastUpdateIndex" }
         if (lastVisibleIndex <= lastUpdateIndex) {
-            Logger.d { "Not Updating anything" }
             return
         }
         for (index in lastUpdateIndex..lastVisibleIndex) {

@@ -1,16 +1,13 @@
 package com.prof18.feedflow.domain.opml
 
-import co.touchlab.kermit.Logger
 import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
-import platform.Foundation.NSData
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSXMLParser
 import platform.Foundation.NSXMLParserDelegateProtocol
-import platform.Foundation.dataWithContentsOfURL
 import platform.Foundation.writeToURL
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
@@ -47,8 +44,13 @@ internal actual class OPMLFeedHandler(
             </opml>
         """.trimIndent()
 
-        val result = (opmlString.trim() as NSString).writeToURL(url = opmlOutput.url, atomically = true, encoding = NSUTF8StringEncoding, error = null)
-        Logger.d { "File creation result: $result" }
+        (opmlString.trim() as NSString)
+            .writeToURL(
+                url = opmlOutput.url,
+                atomically = true,
+                encoding = NSUTF8StringEncoding,
+                error = null
+            )
     }
 }
 

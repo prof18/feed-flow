@@ -121,7 +121,6 @@ internal class FeedRetrieverRepositoryImpl(
                 )
             )
         }
-        Logger.d { "Feed Size: ${feedSourceUrls.size}" }
         for (feedSource in feedSourceUrls) {
             send(feedSource)
         }
@@ -190,9 +189,6 @@ internal class FeedRetrieverRepositoryImpl(
             val refreshedFeedCount = oldUpdate.refreshedFeedCount + 1
             val totalFeedCount = oldUpdate.totalFeedCount
 
-            Logger.d {
-                "Refreshed: $refreshedFeedCount. Total: $totalFeedCount"
-            }
             if (feedToUpdate.isEmpty()) {
                 FinishedFeedUpdateStatus
             } else {

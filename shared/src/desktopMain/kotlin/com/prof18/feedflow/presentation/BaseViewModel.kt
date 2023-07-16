@@ -12,5 +12,4 @@ actual abstract class BaseViewModel {
     actual fun clear() {
         scope.cancel()
     }
-
 }

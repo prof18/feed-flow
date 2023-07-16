@@ -132,7 +132,7 @@ private fun FeedSourceListContent(
                         modifier = Modifier
                             .combinedClickable(
                                 onClick = {
-                                    // TODO: open edit
+                                    // TODO: open edit feed
                                 },
                                 onLongClick = {
                                     showFeedMenu = true

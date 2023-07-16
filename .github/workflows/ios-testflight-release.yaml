@@ -24,6 +24,9 @@ jobs:
           gradle-home-cache-cleanup: true
           cache-read-only: false
 
+      - name: Run Checks
+        run: ./gradlew check
+
       - name: import certs
         uses: apple-actions/import-codesign-certs@v2
         with:

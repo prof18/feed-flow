@@ -5,7 +5,6 @@ internal data class ParsedFeedSource(
     val title: String,
     val category: String?,
 ) {
-
     internal data class Builder(
         private var url: String? = null,
         private var title: String? = null,
@@ -26,6 +25,4 @@ internal data class ParsedFeedSource(
             )
         }
     }
-
-
 }

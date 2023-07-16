@@ -17,7 +17,6 @@ internal class FeedManagerRepositoryImpl(
     private val opmlFeedHandler: OPMLFeedHandler,
     private val settingsHelper: SettingsHelper,
 ) : FeedManagerRepository {
-
     override suspend fun addFeedsFromFile(opmlInput: OPMLInput) {
         val feeds = opmlFeedHandler.importFeed(opmlInput)
         val categories = feeds.mapNotNull { it.category }.distinct()
@@ -29,7 +28,7 @@ internal class FeedManagerRepositoryImpl(
     override suspend fun getFeeds(): Flow<List<FeedSource>> =
         databaseHelper.getFeedSourcesFlow()
 
-    // TODO: Add category
+    // TODO: Add category?
     override suspend fun addFeed(url: String, name: String) {
         databaseHelper.insertFeedSource(
             listOf(

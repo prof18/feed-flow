@@ -1,7 +1,6 @@
 package com.prof18.feedflow.di
 
 import android.content.Context
-import android.preference.PreferenceManager
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.domain.HtmlParser
@@ -21,7 +20,6 @@ import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
-import org.koin.core.scope.get
 import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel as koinViewModel
 

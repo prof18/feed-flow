@@ -10,10 +10,31 @@ import platform.Foundation.timeIntervalSince1970
 
 internal actual fun getDateMillisFromString(dateString: String): Long? {
     val dateFormatter = NSDateFormatter().apply {
-        setDateFormat("EEE, d MMM yyyy HH:mm:ss Z")
-        setLocale(NSLocale.currentLocale)
+        setDateFormat("E, d MMM yyyy HH:mm:ss Z")
+        setLocale(NSLocale("en_US_POSIX"))
     }
-    val date = dateFormatter.dateFromString(dateString) ?: return null
+    val timeZoneDateFormatter = NSDateFormatter().apply {
+        setDateFormat("E, d MMM yyyy HH:mm:ss zzz")
+        setLocale(NSLocale("en_US_POSIX"))
+    }
+    var date = try {
+        dateFormatter.dateFromString(dateString)
+    } catch (e: Exception) {
+        null
+    }
+
+    if (date == null) {
+        date = try {
+            timeZoneDateFormatter.dateFromString(dateString)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    if (date == null) {
+        return null
+    }
+
     return (date.timeIntervalSince1970 * 1000).toLong()
 }
 

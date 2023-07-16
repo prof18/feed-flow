@@ -122,9 +122,6 @@ internal class DatabaseHelper(
     suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             for (item in itemsToUpdates) {
-                Logger.d {
-                    "Updating read status for: ${item.id}"
-                }
                 dbRef.feedItemQueries.updateReadStatus(item.id)
             }
         }
@@ -132,7 +129,6 @@ internal class DatabaseHelper(
     suspend fun updateNewStatus() =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedItemQueries.updateNewStatus()
-            Logger.d { "Update new status" }
         }
 
     suspend fun markAllFeedAsRead() =

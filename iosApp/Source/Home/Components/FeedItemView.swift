@@ -82,7 +82,7 @@ struct FeedItemImage: View {
                     EmptyView()
                 } else {
                     Color(.secondarySystemBackground)
-                        .frame(width: 10
+                        .frame(width: 100)
                 }
             }
             .padding(.leading, Spacing.regular)

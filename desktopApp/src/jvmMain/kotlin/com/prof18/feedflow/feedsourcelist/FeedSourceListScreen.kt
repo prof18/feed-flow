@@ -44,6 +44,7 @@ import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.preview.feedSourcesForPreview
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
+import com.prof18.feedflow.desktopViewModel
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -60,7 +61,7 @@ fun FeedSourceListScreen(
                 },
             )
         }
-        val viewModel = koin.get<FeedSourceListViewModel>()
+        val viewModel = desktopViewModel { koin.get<FeedSourceListViewModel>() }
 
         val feedSources by viewModel.feedSourcesState.collectAsState()
 

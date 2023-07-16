@@ -68,8 +68,8 @@ fun main() = application {
 
     LifecycleController(lifecycle, windowState)
 
-    val settingsViewModel = koin.get<SettingsViewModel>()
-    val homeViewModel = koin.get<HomeViewModel>()
+    val settingsViewModel = desktopViewModel { koin.get<SettingsViewModel>() }
+    val homeViewModel = desktopViewModel { koin.get<HomeViewModel>() }
 
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()

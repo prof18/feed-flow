@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.desktopViewModel
 import com.prof18.feedflow.koin
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.ui.style.FeedFlowTheme
@@ -31,7 +32,7 @@ fun AddFeedScreen(
     var feedName by remember { mutableStateOf("") }
     var feedUrl by remember { mutableStateOf("") }
 
-    val viewModel = koin.get<AddFeedViewModel>()
+    val viewModel = desktopViewModel { koin.get<AddFeedViewModel>() }
 
     val isAddDone by viewModel.isAddDoneState.collectAsState()
 

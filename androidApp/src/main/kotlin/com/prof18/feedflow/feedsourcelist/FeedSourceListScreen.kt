@@ -35,8 +35,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.presentation.preview.feedSourcesForPreview
+import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.theme.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
@@ -60,7 +60,6 @@ fun FeedSourceListScreen(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 private fun FeedSourceListContent(
     feedSources: List<FeedSource>,
     onAddFeedSourceClick: () -> Unit,
@@ -69,116 +68,168 @@ private fun FeedSourceListContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(stringResource(resource = MR.strings.feeds_title))
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navigateBack()
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            onAddFeedSourceClick()
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null,
-                        )
-                    }
-                }
+            FeedSourceNavBar(
+                navigateBack = navigateBack,
+                onAddFeedSourceClick = onAddFeedSourceClick,
             )
-        }
+        },
     ) { paddingValues ->
         if (feedSources.isEmpty()) {
-            Box(
+            NoFeedSourcesView(
                 modifier = Modifier
                     .padding(paddingValues)
-                    .fillMaxSize()
+                    .fillMaxSize(),
+            )
+        } else {
+            FeedSourcesList(
+                modifier = Modifier
+                    .padding(paddingValues),
+                feedSources = feedSources,
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FeedSourceNavBar(
+    navigateBack: () -> Unit,
+    onAddFeedSourceClick: () -> Unit,
+) {
+    TopAppBar(
+        title = {
+            Text(stringResource(resource = MR.strings.feeds_title))
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    navigateBack()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                )
+            }
+        },
+        actions = {
+            IconButton(
+                onClick = {
+                    onAddFeedSourceClick()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                )
+            }
+        },
+    )
+}
+
+@Composable
+private fun NoFeedSourcesView(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier,
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(Spacing.regular),
+            text = stringResource(resource = MR.strings.no_feeds_add_one_message),
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun FeedSourcesList(
+    modifier: Modifier = Modifier,
+    feedSources: List<FeedSource>,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(Spacing.regular),
+    ) {
+        items(
+            items = feedSources,
+        ) { feedSource ->
+
+            var showFeedMenu by remember {
+                mutableStateOf(
+                    false,
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .combinedClickable(
+                        onClick = {
+                            // TODO: open edit feed
+                        },
+                        onLongClick = {
+                            showFeedMenu = true
+                        },
+                    ),
             ) {
                 Text(
                     modifier = Modifier
-                        .padding(Spacing.regular),
-                    text = stringResource(resource = MR.strings.no_feeds_add_one_message),
+                        .padding(top = Spacing.small),
+                    text = feedSource.title,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.xsmall)
+                        .padding(bottom = Spacing.small),
+                    text = feedSource.url,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+
+                FeedSourceContextMenu(
+                    showFeedMenu = showFeedMenu,
+                    hideMenu = {
+                        showFeedMenu = false
+                    },
+                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    feedSource = feedSource,
+                )
+
+                Divider(
+                    modifier = Modifier,
+                    thickness = 0.2.dp,
+                    color = Color.Gray,
                 )
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues),
-                contentPadding = PaddingValues(Spacing.regular),
-            ) {
-                items(
-                    items = feedSources,
-                ) { feedSource ->
-
-                    var showFeedMenu by remember {
-                        mutableStateOf(
-                            false,
-                        )
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .combinedClickable(
-                                onClick = {
-                                    // TODO: open edit feed
-                                },
-                                onLongClick = {
-                                    showFeedMenu = true
-                                }
-                            )
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(top = Spacing.small),
-                            text = feedSource.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(top = Spacing.xsmall)
-                                .padding(bottom = Spacing.small),
-                            text = feedSource.url,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-
-                        DropdownMenu(
-                            expanded = showFeedMenu,
-                            onDismissRequest = { showFeedMenu = false },
-                        ) {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        stringResource(resource = MR.strings.delete_feed)
-                                    )
-                                },
-                                onClick = {
-                                    onDeleteFeedSourceClick(feedSource)
-                                    showFeedMenu = false
-                                }
-                            )
-                        }
-
-                        Divider(
-                            modifier = Modifier,
-                            thickness = 0.2.dp,
-                            color = Color.Gray,
-                        )
-                    }
-                }
-            }
         }
+    }
+}
+
+@Composable
+private fun FeedSourceContextMenu(
+    showFeedMenu: Boolean,
+    hideMenu: () -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    feedSource: FeedSource,
+) {
+    DropdownMenu(
+        expanded = showFeedMenu,
+        onDismissRequest = hideMenu,
+    ) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    stringResource(resource = MR.strings.delete_feed),
+                )
+            },
+            onClick = {
+                onDeleteFeedSourceClick(feedSource)
+                hideMenu()
+            },
+        )
     }
 }
 

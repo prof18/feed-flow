@@ -12,6 +12,6 @@ fun openInBrowser(url: String) {
         Desktop.isDesktopSupported() && desktop.isSupported(Desktop.Action.BROWSE) -> desktop.browse(uri)
         "mac" in osName -> Runtime.getRuntime().exec(arrayOf("open", "$uri"))
         "nix" in osName || "nux" in osName -> Runtime.getRuntime().exec(arrayOf("xdg-open", "$uri"))
-        else -> throw RuntimeException("cannot open $uri")
+        else -> error("cannot open $uri")
     }
 }

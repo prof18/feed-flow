@@ -5,19 +5,17 @@ import com.prof18.feedflow.data.SettingsHelper
 import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.domain.model.ParsedFeedSource
-import com.prof18.feedflow.domain.opml.OPMLFeedHandler
-import com.prof18.feedflow.domain.opml.OPMLInput
-import com.prof18.feedflow.domain.opml.OPMLOutput
+import com.prof18.feedflow.domain.opml.OpmlFeedHandler
+import com.prof18.feedflow.domain.opml.OpmlInput
+import com.prof18.feedflow.domain.opml.OpmlOutput
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 
 internal class FeedManagerRepositoryImpl(
     private val databaseHelper: DatabaseHelper,
-    private val opmlFeedHandler: OPMLFeedHandler,
+    private val opmlFeedHandler: OpmlFeedHandler,
     private val settingsHelper: SettingsHelper,
 ) : FeedManagerRepository {
-    override suspend fun addFeedsFromFile(opmlInput: OPMLInput) {
+    override suspend fun addFeedsFromFile(opmlInput: OpmlInput) {
         val feeds = opmlFeedHandler.importFeed(opmlInput)
         val categories = feeds.mapNotNull { it.category }.distinct()
 
@@ -36,12 +34,12 @@ internal class FeedManagerRepositoryImpl(
                     url = url,
                     title = name,
                     category = null,
-                )
-            )
+                ),
+            ),
         )
     }
 
-    override suspend fun exportFeedsAsOpml(opmlOutput: OPMLOutput) {
+    override suspend fun exportFeedsAsOpml(opmlOutput: OpmlOutput) {
         val feeds = databaseHelper.getFeedSources()
         opmlFeedHandler.exportFeed(opmlOutput, feeds)
     }

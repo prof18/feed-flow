@@ -41,8 +41,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.presentation.preview.feedItemsForPreview
+import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.theme.Spacing
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -73,6 +73,7 @@ internal fun FeedList(
         }
     }
 
+    @Suppress("MagicNumber")
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .distinctUntilChanged()
@@ -99,8 +100,8 @@ private fun FeedItemView(
                     onFeedItemClick(
                         FeedItemClickedInfo(
                             id = feedItem.id,
-                            url = feedItem.url
-                        )
+                            url = feedItem.url,
+                        ),
                     )
                 },
                 onLongClick = if (feedItem.commentsUrl != null) {
@@ -109,67 +110,33 @@ private fun FeedItemView(
                             FeedItemClickedInfo(
                                 id = feedItem.id,
                                 url = feedItem.commentsUrl!!,
-                            )
+                            ),
                         )
                     }
                 } else {
                     null
-                }
+                },
             )
             .padding(horizontal = Spacing.regular)
-            .padding(vertical = Spacing.small)
+            .padding(vertical = Spacing.small),
     ) {
-
         Text(
             text = feedItem.feedSource.title,
             style = MaterialTheme.typography.bodySmall,
         )
 
-        Row(
+        TitleSubtitleAndImageRow(
             modifier = Modifier
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-            ) {
-
-                Text(
-                    modifier = Modifier
-                        .padding(top = Spacing.small),
-                    text = feedItem.title,
-                    style = MaterialTheme.typography.titleSmall,
-                )
-
-                feedItem.subtitle?.let { subtitle ->
-                    Text(
-                        modifier = Modifier
-                            .padding(top = Spacing.small),
-                        text = subtitle,
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
-
-            feedItem.imageUrl?.let { url ->
-                FeedItemImage(
-                    modifier = Modifier
-                        .padding(start = Spacing.regular),
-                    url = url,
-                    width = 96.dp,
-                )
-            }
-        }
+            feedItem = feedItem,
+        )
 
         Text(
             modifier = Modifier
                 .padding(top = Spacing.small),
             text = feedItem.dateString,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
         )
 
         Divider(
@@ -182,10 +149,53 @@ private fun FeedItemView(
 }
 
 @Composable
+private fun TitleSubtitleAndImageRow(
+    modifier: Modifier = Modifier,
+    feedItem: FeedItem
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f),
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(top = Spacing.small),
+                text = feedItem.title,
+                style = MaterialTheme.typography.titleSmall,
+            )
+
+            feedItem.subtitle?.let { subtitle ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.small),
+                    text = subtitle,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+
+        feedItem.imageUrl?.let { url ->
+            FeedItemImage(
+                modifier = Modifier
+                    .padding(start = Spacing.regular),
+                url = url,
+                width = 96.dp,
+            )
+        }
+    }
+}
+
+@Composable
 private fun FeedItemImage(
     modifier: Modifier = Modifier,
     url: String,
-    width: Dp
+    width: Dp,
 ) {
     if (LocalInspectionMode.current) {
         Box(
@@ -204,7 +214,7 @@ private fun FeedItemImage(
             modifier = modifier
                 .wrapContentHeight()
                 .width(width)
-                .clip(RoundedCornerShape(Spacing.small))
+                .clip(RoundedCornerShape(Spacing.small)),
         )
     }
 }
@@ -214,7 +224,7 @@ private fun FeedItemImage(
 private fun FeedListPreview() {
     FeedFlowTheme {
         Surface(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             FeedList(
                 feedItems = feedItemsForPreview,

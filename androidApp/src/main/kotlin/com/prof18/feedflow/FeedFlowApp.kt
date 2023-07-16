@@ -20,8 +20,8 @@ class FeedFlowApp : Application() {
                             feedManagerRepository = get(),
                         )
                     }
-                }
-            )
+                },
+            ),
         )
     }
 }

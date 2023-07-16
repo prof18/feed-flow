@@ -13,10 +13,10 @@ import org.xmlpull.v1.XmlSerializer
 import java.io.InputStreamReader
 import java.io.Reader
 
-internal actual class OPMLFeedHandler(
+internal actual class OpmlFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    actual suspend fun importFeed(opmlInput: OPMLInput): List<ParsedFeedSource> =
+    actual suspend fun importFeed(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.default) {
             val inputStream = opmlInput.inputStream
             val feedSources = mutableListOf<ParsedFeedSource>()
@@ -36,13 +36,12 @@ internal actual class OPMLFeedHandler(
             loop@ while (eventType != XmlPullParser.END_DOCUMENT) {
                 when (eventType) {
                     XmlPullParser.START_TAG -> when {
-
-                        xmlPullParser.contains(OPMLConstants.OUTLINE) -> {
-                            when (xmlPullParser.attributeValue(OPMLConstants.TYPE)) {
-                                OPMLConstants.RSS -> {
+                        xmlPullParser.contains(OpmlConstants.OUTLINE) -> {
+                            when (xmlPullParser.attributeValue(OpmlConstants.TYPE)) {
+                                OpmlConstants.RSS -> {
                                     val builder = ParsedFeedSource.Builder().apply {
-                                        title(xmlPullParser.attributeValue(OPMLConstants.TITLE))
-                                        url(xmlPullParser.attributeValue(OPMLConstants.XML_URL))
+                                        title(xmlPullParser.attributeValue(OpmlConstants.TITLE))
+                                        url(xmlPullParser.attributeValue(OpmlConstants.XML_URL))
                                         category(categoryName)
                                     }
                                     builder.build()?.let {
@@ -51,7 +50,7 @@ internal actual class OPMLFeedHandler(
                                 }
 
                                 null -> {
-                                    categoryName = xmlPullParser.attributeValue(OPMLConstants.TITLE)
+                                    categoryName = xmlPullParser.attributeValue(OpmlConstants.TITLE)
                                 }
                             }
                         }
@@ -63,7 +62,7 @@ internal actual class OPMLFeedHandler(
             return@withContext feedSources
         }
 
-    actual suspend fun exportFeed(opmlOutput: OPMLOutput, feedSources: List<FeedSource>): Unit =
+    actual suspend fun exportFeed(opmlOutput: OpmlOutput, feedSources: List<FeedSource>): Unit =
         withContext(dispatcherProvider.default) {
             val serializer: XmlSerializer = Xml.newSerializer()
 
@@ -83,11 +82,11 @@ internal actual class OPMLFeedHandler(
             serializer.startTag(null, "body")
 
             for (feedSource in feedSources) {
-                serializer.startTag(null, OPMLConstants.OUTLINE)
-                serializer.attribute(null, OPMLConstants.TYPE, "rss")
+                serializer.startTag(null, OpmlConstants.OUTLINE)
+                serializer.attribute(null, OpmlConstants.TYPE, "rss")
                 serializer.attribute(null, "text", feedSource.title)
-                serializer.attribute(null, OPMLConstants.TITLE, feedSource.title)
-                serializer.attribute(null, OPMLConstants.XML_URL, feedSource.url)
+                serializer.attribute(null, OpmlConstants.TITLE, feedSource.title)
+                serializer.attribute(null, OpmlConstants.XML_URL, feedSource.url)
                 serializer.endTag(null, "outline")
             }
 

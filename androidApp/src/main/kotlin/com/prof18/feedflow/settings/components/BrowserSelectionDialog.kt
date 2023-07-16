@@ -17,8 +17,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.domain.model.Browser
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.presentation.preview.browsersForPreview
+import com.prof18.feedflow.ui.preview.FeedFlowPreview
 
 @Composable
 internal fun BrowserSelectionDialog(
@@ -30,7 +30,7 @@ internal fun BrowserSelectionDialog(
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
         ) {
             browserList.forEach { browser ->
                 Row(
@@ -41,7 +41,7 @@ internal fun BrowserSelectionDialog(
                             onClick = {
                                 onBrowserSelected(browser)
                                 dismissDialog()
-                            }
+                            },
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -50,7 +50,7 @@ internal fun BrowserSelectionDialog(
                         onClick = {
                             onBrowserSelected(browser)
                             dismissDialog()
-                        }
+                        },
                     )
                     Text(
                         text = browser.name,
@@ -69,7 +69,7 @@ private fun BrowserSelectionDialogPreview() {
         BrowserSelectionDialog(
             browserList = browsersForPreview,
             onBrowserSelected = {},
-            dismissDialog = {}
+            dismissDialog = {},
         )
     }
 }

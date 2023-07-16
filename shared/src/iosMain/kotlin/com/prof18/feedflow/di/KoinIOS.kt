@@ -1,18 +1,18 @@
 package com.prof18.feedflow.di
 
-import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.build
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
-import com.prof18.feedflow.domain.opml.OPMLFeedHandler
+import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
+import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.build
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
 import com.russhwolf.settings.Settings
@@ -24,25 +24,24 @@ import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
-import org.koin.core.instance.InstanceFactory
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 
 fun initKoinIos(
-    htmlParser: HtmlParser
+    htmlParser: HtmlParser,
 ): KoinApplication = initKoin(
     modules = listOf(
         module {
             factory { htmlParser }
         },
-    )
+    ),
 )
 
-internal actual inline fun <reified T: BaseViewModel> Module.viewModel(
+internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
     qualifier: Qualifier?,
-    noinline definition: Definition<T>
-): KoinDefinition<T> = single(qualifier, definition= definition)
+    noinline definition: Definition<T>,
+): KoinDefinition<T> = single(qualifier, definition = definition)
 
 @OptIn(ExperimentalSettingsImplementation::class)
 internal actual val platformModule: Module = module {
@@ -63,7 +62,7 @@ internal actual val platformModule: Module = module {
     }
 
     factory {
-        OPMLFeedHandler(
+        OpmlFeedHandler(
             dispatcherProvider = get(),
         )
     }
@@ -71,7 +70,6 @@ internal actual val platformModule: Module = module {
     single<Settings> {
         KeychainSettings(service = "FeedFlow")
     }
-
 }
 
 @Suppress("unused") // Called from Swift

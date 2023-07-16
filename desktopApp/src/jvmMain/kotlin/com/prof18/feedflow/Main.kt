@@ -5,6 +5,7 @@ package com.prof18.feedflow
 import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.ScrollbarStyle
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -37,8 +38,8 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.prof18.feedflow.di.initKoinDesktop
-import com.prof18.feedflow.domain.opml.OPMLInput
-import com.prof18.feedflow.domain.opml.OPMLOutput
+import com.prof18.feedflow.domain.opml.OpmlInput
+import com.prof18.feedflow.domain.opml.OpmlOutput
 import com.prof18.feedflow.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.home.FeedFlowMenuBar
 import com.prof18.feedflow.home.HomeScreen
@@ -55,9 +56,9 @@ import javax.swing.UIManager
 
 val koin = initKoinDesktop().koin
 
-@OptIn(ExperimentalDecomposeApi::class, ExperimentalMaterial3Api::class)
+@Suppress("LongMethod")
+@OptIn(ExperimentalDecomposeApi::class)
 fun main() = application {
-
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
     val lifecycle = LifecycleRegistry()
@@ -78,9 +79,8 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         state = windowState,
-        title = "FeedFlow"
+        title = "FeedFlow",
     ) {
-
         val navigation: StackNavigation<Screen> = remember { StackNavigation() }
 
         val isImportDone by settingsViewModel.isImportDoneState.collectAsState()
@@ -118,43 +118,61 @@ fun main() = application {
                 homeViewModel.markAllRead()
             },
             onImportOPMLCLick = { file ->
-                settingsViewModel.importFeed(OPMLInput(file))
+                settingsViewModel.importFeed(OpmlInput(file))
             },
             onExportOPMLClick = { file ->
-                settingsViewModel.exportFeed(OPMLOutput(file))
+                settingsViewModel.exportFeed(OpmlOutput(file))
             },
             onFeedsListClick = {
                 navigation.push(Screen.FeedList)
-            }
+            },
         ) {
             homeViewModel.deleteOldFeedItems()
         }
 
-        Surface(modifier = Modifier.fillMaxSize()) {
-            FeedFlowTheme {
-                CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
-                    ProvideComponentContext(rootComponentContext) {
-                        Scaffold(
-                            snackbarHost = { SnackbarHost(snackbarHostState) },
-                        ) { paddingValues ->
-                            ChildStack(
-                                source = navigation,
-                                initialStack = { listOf(Screen.Home) },
-                                handleBackButton = true,
-                                animation = stackAnimation(fade() + scale()),
-                            ) { screen ->
-                                when (screen) {
-                                    is Screen.Home -> HomeScreen(
-                                        paddingValues = paddingValues,
-                                        homeViewModel = homeViewModel,
-                                        listState = listState,
-                                        onAddFeedClick = {
-                                            // TODO
-                                        }
-                                    )
+        MainContent(
+            rootComponentContext = rootComponentContext,
+            snackbarHostState = snackbarHostState,
+            navigation = navigation,
+            homeViewModel = homeViewModel,
+            listState = listState,
+        )
+    }
+}
 
-                                    is Screen.FeedList -> FeedSourceListScreen(navigateBack = { navigation.pop() })
-                                }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MainContent(
+    rootComponentContext: DefaultComponentContext,
+    snackbarHostState: SnackbarHostState,
+    navigation: StackNavigation<Screen>,
+    homeViewModel: HomeViewModel,
+    listState: LazyListState,
+) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        FeedFlowTheme {
+            CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
+                ProvideComponentContext(rootComponentContext) {
+                    Scaffold(
+                        snackbarHost = { SnackbarHost(snackbarHostState) },
+                    ) { paddingValues ->
+                        ChildStack(
+                            source = navigation,
+                            initialStack = { listOf(Screen.Home) },
+                            handleBackButton = true,
+                            animation = stackAnimation(fade() + scale()),
+                        ) { screen ->
+                            when (screen) {
+                                is Screen.Home -> HomeScreen(
+                                    paddingValues = paddingValues,
+                                    homeViewModel = homeViewModel,
+                                    listState = listState,
+                                    onAddFeedClick = {
+                                        // TODO
+                                    },
+                                )
+
+                                is Screen.FeedList -> FeedSourceListScreen(navigateBack = { navigation.pop() })
                             }
                         }
                     }
@@ -181,6 +199,6 @@ fun scrollbarStyle(): ScrollbarStyle {
             MaterialTheme.colors.surface.copy(alpha = 0.50f)
         } else {
             MaterialTheme.colors.onSurface.copy(alpha = 0.50f)
-        }
+        },
     )
 }

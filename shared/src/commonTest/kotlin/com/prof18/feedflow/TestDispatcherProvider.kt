@@ -15,5 +15,4 @@ object TestDispatcherProvider : DispatcherProvider {
     override val main: CoroutineDispatcher = testDispatcher
 
     override val default: CoroutineDispatcher = testDispatcher
-
 }

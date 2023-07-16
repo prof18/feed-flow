@@ -48,13 +48,13 @@ class BrowserManager(
         val resolvedInfos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.packageManager.queryIntentActivities(
                 intent,
-                PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_ALL.toLong())
+                PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_ALL.toLong()),
             )
         } else {
             @Suppress("DEPRECATION")
             context.packageManager.queryIntentActivities(
                 Intent(Intent.ACTION_MAIN, null).addCategory(Intent.CATEGORY_LAUNCHER),
-                PackageManager.GET_META_DATA
+                PackageManager.GET_META_DATA,
             )
         }
 

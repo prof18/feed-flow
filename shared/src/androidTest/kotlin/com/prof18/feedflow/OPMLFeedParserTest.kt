@@ -1,7 +1,7 @@
 package com.prof18.feedflow
 
-import com.prof18.feedflow.domain.opml.OPMLFeedHandler
-import com.prof18.feedflow.domain.opml.OPMLInput
+import com.prof18.feedflow.domain.opml.OpmlFeedHandler
+import com.prof18.feedflow.domain.opml.OpmlInput
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -11,15 +11,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
-@Config(manifest=Config.NONE)
+@Config(manifest = Config.NONE)
 class OPMLFeedParserTest {
 
-    private val parser = OPMLFeedHandler(
+    private val parser = OpmlFeedHandler(
         dispatcherProvider = TestDispatcherProvider,
     )
 
-    private val opmlInput = OPMLInput(
-        inputStream = opml.byteInputStream()
+    private val opmlInput = OpmlInput(
+        inputStream = opml.byteInputStream(),
     )
 
     @Test

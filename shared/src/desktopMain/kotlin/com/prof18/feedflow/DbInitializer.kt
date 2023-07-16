@@ -15,7 +15,7 @@ internal fun initDatabase(): SqlDriver {
 
     val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY + databasePath.absolutePath, Properties())
 
-    val sqlCursor = driver.executeQuery(null, "PRAGMA user_version;", 0, null);
+    val sqlCursor = driver.executeQuery(null, "PRAGMA user_version;", 0, null)
     val currentVer: Int = sqlCursor.use { sqlCursor.getLong(0)?.toInt() ?: 0 }
 
     if (currentVer == 0) {
@@ -36,5 +36,5 @@ internal fun initDatabase(): SqlDriver {
 }
 
 fun setVersion(driver: SqlDriver, version: Int) {
-    driver.execute(null, "PRAGMA user_version = $version;", 0, null);
+    driver.execute(null, "PRAGMA user_version = $version;", 0, null)
 }

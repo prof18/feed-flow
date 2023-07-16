@@ -61,7 +61,7 @@ internal fun FeedFlowTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        content = content
+        content = content,
     )
 }
 

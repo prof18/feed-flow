@@ -1,3 +1,5 @@
+@file:Suppress("MaxLineLength")
+
 package com.prof18.feedflow.presentation.preview
 
 import com.prof18.feedflow.domain.model.Browser
@@ -15,7 +17,7 @@ val feedItemsForPreview = listOf(
         feedSource = FeedSource(
             id = 1,
             url = "https://www.ilpost.it",
-            title = "Il Post"
+            title = "Il Post",
         ),
         isRead = false,
         pubDateMillis = 1676107668000,
@@ -32,7 +34,7 @@ val feedItemsForPreview = listOf(
         feedSource = FeedSource(
             id = 2,
             url = "",
-            title = "Android Police"
+            title = "Android Police",
         ),
         isRead = true,
         pubDateMillis = 1675890077000,
@@ -49,7 +51,7 @@ val feedItemsForPreview = listOf(
         feedSource = FeedSource(
             id = 2,
             url = "",
-            title = "Tech Crunch"
+            title = "Tech Crunch",
         ),
         isRead = true,
         pubDateMillis = 1675890077000,
@@ -66,7 +68,7 @@ val feedItemsForPreview = listOf(
         feedSource = FeedSource(
             id = 3,
             url = "https://9to5linux.com",
-            title = "9to5 Linux"
+            title = "9to5 Linux",
         ),
         isRead = false,
         pubDateMillis = 0,
@@ -79,29 +81,29 @@ val browsersForPreview = listOf(
     Browser(
         id = "",
         name = "Chrome",
-        isFavourite = false
+        isFavourite = false,
     ),
     Browser(
         id = "",
         name = "Firefox",
-        isFavourite = true
-    )
+        isFavourite = true,
+    ),
 )
 
 val feedSourcesForPreview = listOf(
     FeedSource(
         id = 0,
         url = "https://www.site1.com",
-        title = "Site 1"
+        title = "Site 1",
     ),
     FeedSource(
         id = 1,
         url = "https://www.site2.com",
-        title = "Site 2"
+        title = "Site 2",
     ),
     FeedSource(
         id = 2,
         url = "https://www.site3.com",
-        title = "Site 3"
-    )
+        title = "Site 3",
+    ),
 )

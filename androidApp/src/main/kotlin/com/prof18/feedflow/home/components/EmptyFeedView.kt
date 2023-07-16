@@ -26,18 +26,18 @@ internal fun EmptyFeedView(
         modifier = modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = stringResource(resource = MR.strings.empty_feed_message),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
         )
         Button(
             modifier = Modifier
                 .padding(top = Spacing.regular),
             onClick = {
                 onReloadClick()
-            }
+            },
         ) {
             Text(stringResource(resource = MR.strings.refresh_feeds))
         }

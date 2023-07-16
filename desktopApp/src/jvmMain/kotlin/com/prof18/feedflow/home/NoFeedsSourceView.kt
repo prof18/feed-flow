@@ -26,18 +26,18 @@ internal fun NoFeedsSourceView(
         modifier = modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = stringResource(resource = MR.strings.no_feeds_found_message),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
         )
         Button(
             modifier = Modifier
                 .padding(top = Spacing.regular),
             onClick = {
                 onAddFeedClick()
-            }
+            },
         ) {
             Text(stringResource(resource = MR.strings.add_feed))
         }

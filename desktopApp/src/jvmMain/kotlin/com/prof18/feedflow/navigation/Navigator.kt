@@ -23,7 +23,7 @@ fun ProvideComponentContext(componentContext: ComponentContext, content: @Compos
 }
 
 @Composable
-inline fun <reified C: Parcelable> ChildStack(
+inline fun <reified C : Parcelable> ChildStack(
     source: StackNavigationSource<C>,
     noinline initialStack: () -> List<C>,
     modifier: Modifier = Modifier,

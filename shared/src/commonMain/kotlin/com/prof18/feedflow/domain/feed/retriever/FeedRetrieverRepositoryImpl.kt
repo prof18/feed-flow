@@ -44,7 +44,7 @@ internal class FeedRetrieverRepositoryImpl(
 ) : FeedRetrieverRepository {
 
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
-       FinishedFeedUpdateStatus,
+        FinishedFeedUpdateStatus,
     )
     override val updateState = updateMutableState.asStateFlow()
 
@@ -101,6 +101,7 @@ internal class FeedRetrieverRepositoryImpl(
         databaseHelper.markAllFeedAsRead()
     }
 
+    @Suppress("MagicNumber")
     override suspend fun deleteOldFeeds() {
         // One week
         // (((1 hour in seconds) * 24 hours) * 7 days)
@@ -118,7 +119,7 @@ internal class FeedRetrieverRepositoryImpl(
                 InProgressFeedUpdateStatus(
                     refreshedFeedCount = 0,
                     totalFeedCount = feedSourceUrls.size,
-                )
+                ),
             )
         }
         for (feedSource in feedSourceUrls) {
@@ -126,6 +127,7 @@ internal class FeedRetrieverRepositoryImpl(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun createFetchingPipeline(
         feedSourceUrls: List<FeedSource>,
         updateLoadingInfo: Boolean,
@@ -149,7 +151,7 @@ internal class FeedRetrieverRepositoryImpl(
                             e.printStackTrace()
                             errorMutableState.update {
                                 FeedErrorState(
-                                    failingSourceName = feedSource.title
+                                    failingSourceName = feedSource.title,
                                 )
                             }
                             feedToUpdate.remove(feedSource.url)
@@ -175,13 +177,12 @@ internal class FeedRetrieverRepositoryImpl(
                     }
 
                     val feedItems = rssChannelResult.rssChannel.getFeedItems(
-                        feedSource = rssChannelResult.feedSource
+                        feedSource = rssChannelResult.feedSource,
                     )
                     databaseHelper.insertFeedItems(feedItems)
                 }
             }
         }
-
     }
 
     private fun updateRefreshCount() {
@@ -200,6 +201,7 @@ internal class FeedRetrieverRepositoryImpl(
         }
     }
 
+    @Suppress("MagicNumber")
     private fun RssChannel.getFeedItems(feedSource: FeedSource): List<FeedItem> =
         this.items.mapNotNull { rssItem ->
 
@@ -243,7 +245,6 @@ internal class FeedRetrieverRepositoryImpl(
                     commentsUrl = rssItem.commentsUrl,
                 )
             }
-
         }
 
     private companion object {

@@ -6,7 +6,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -20,9 +19,9 @@ import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.xml.sax.InputSource
-import java.io.IOException
 import java.net.URL
 
+@Suppress("SwallowedException", "TooGenericExceptionCaught")
 @Composable
 fun <T> AsyncImage(
     load: suspend () -> T,
@@ -46,11 +45,10 @@ fun <T> AsyncImage(
         ImageData.Loading -> {
             Box(
                 modifier = modifier,
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator()
             }
-
         }
 
         is ImageData.Success -> {
@@ -58,7 +56,7 @@ fun <T> AsyncImage(
                 painter = painterFor((imageData as ImageData.Success<T>).data),
                 contentDescription = contentDescription,
                 contentScale = contentScale,
-                modifier = modifier
+                modifier = modifier,
             )
         }
 

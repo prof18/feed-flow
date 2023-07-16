@@ -46,7 +46,7 @@ internal fun HomeAppBar(
             Row {
                 Text(stringResource(resource = MR.strings.app_name))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("(${unReadCount})")
+                Text("($unReadCount)")
             }
         },
         actions = {
@@ -57,66 +57,84 @@ internal fun HomeAppBar(
                 )
             }
 
-            DropdownMenu(
-                expanded = showMenu,
-                onDismissRequest = { showMenu = false }
-            ) {
-                DropdownMenuItem(
-                    onClick = {
-                        onMarkAllReadClicked()
-                        showMenu = false
-                    },
-                    text = {
-                        Text(stringResource(resource = MR.strings.mark_all_read_button))
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.DoneAll,
-                            contentDescription = null,
-                        )
-                    },
-                )
-
-                DropdownMenuItem(
-                    onClick = {
-                        onClearOldArticlesClicked()
-                        showMenu = false
-                    },
-                    text = {
-                        Text(stringResource(resource = MR.strings.clear_old_articles_button))
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = null,
-                        )
-                    },
-                )
-
-                DropdownMenuItem(
-                    onClick = {
-                        onSettingsButtonClicked()
-                    },
-                    text = {
-                        Text(stringResource(resource = MR.strings.settings_button))
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = null,
-                        )
-                    },
-                )
-            }
-
+            SettingsDropdownMenu(
+                showMenu = showMenu,
+                closeMenu = {
+                    showMenu = false
+                },
+                onMarkAllReadClicked = onMarkAllReadClicked,
+                onClearOldArticlesClicked = onClearOldArticlesClicked,
+                onSettingsButtonClicked = onSettingsButtonClicked,
+            )
         },
         modifier = Modifier.pointerInput(Unit) {
             detectTapGestures(
                 onDoubleTap = { onDoubleClick() },
-                onTap = { onClick() }
+                onTap = { onClick() },
             )
-        }
+        },
     )
+}
+
+@Composable
+private fun SettingsDropdownMenu(
+    showMenu: Boolean,
+    closeMenu: () -> Unit,
+    onMarkAllReadClicked: () -> Unit,
+    onClearOldArticlesClicked: () -> Unit,
+    onSettingsButtonClicked: () -> Unit,
+) {
+    DropdownMenu(
+        expanded = showMenu,
+        onDismissRequest = closeMenu,
+    ) {
+        DropdownMenuItem(
+            onClick = {
+                onMarkAllReadClicked()
+                closeMenu()
+            },
+            text = {
+                Text(stringResource(resource = MR.strings.mark_all_read_button))
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.DoneAll,
+                    contentDescription = null,
+                )
+            },
+        )
+
+        DropdownMenuItem(
+            onClick = {
+                onClearOldArticlesClicked()
+                closeMenu()
+            },
+            text = {
+                Text(stringResource(resource = MR.strings.clear_old_articles_button))
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                )
+            },
+        )
+
+        DropdownMenuItem(
+            onClick = {
+                onSettingsButtonClicked()
+            },
+            text = {
+                Text(stringResource(resource = MR.strings.settings_button))
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = null,
+                )
+            },
+        )
+    }
 }
 
 @FeedFlowPreview
@@ -129,7 +147,7 @@ private fun HomeAppBarPreview() {
             onSettingsButtonClicked = { },
             onClearOldArticlesClicked = { },
             onClick = { },
-            onDoubleClick = {}
+            onDoubleClick = {},
         )
     }
 }

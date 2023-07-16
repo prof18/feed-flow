@@ -3,6 +3,7 @@ package com.prof18.feedflow.settings
 import FeedFlowTheme
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
@@ -30,8 +31,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.model.Browser
-import com.prof18.feedflow.domain.opml.OPMLInput
-import com.prof18.feedflow.domain.opml.OPMLOutput
+import com.prof18.feedflow.domain.opml.OpmlInput
+import com.prof18.feedflow.domain.opml.OpmlOutput
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.presentation.preview.browsersForPreview
 import com.prof18.feedflow.settings.components.BrowserSelectionDialog
@@ -87,12 +88,12 @@ fun SettingsScreen(
         snackbarHostState = snackbarHostState,
         onFeedListClick = onFeedListClick,
         importFeed = { uri ->
-            viewModel.importFeed(OPMLInput(context.contentResolver.openInputStream(uri)))
+            viewModel.importFeed(OpmlInput(context.contentResolver.openInputStream(uri)))
             Toast.makeText(context, importingFeedMessage, Toast.LENGTH_SHORT)
                 .show()
         },
         exportFeed = {
-            viewModel.exportFeed(OPMLOutput(context.contentResolver.openOutputStream(it)))
+            viewModel.exportFeed(OpmlOutput(context.contentResolver.openOutputStream(it)))
         },
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
@@ -102,7 +103,6 @@ fun SettingsScreen(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun SettingsScreenContent(
     browsers: List<Browser>,
     snackbarHostState: SnackbarHostState,
@@ -112,9 +112,8 @@ private fun SettingsScreenContent(
     onBrowserSelected: (Browser) -> Unit,
     navigateBack: () -> Unit,
 ) {
-
     val openFileAction = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument()
+        ActivityResultContracts.OpenDocument(),
     ) { uri ->
         uri?.let { importFeed(it) }
     }
@@ -127,25 +126,7 @@ private fun SettingsScreenContent(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(resource = MR.strings.settings_title)
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navigateBack()
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
-                }
-            )
+            SettingsNavBar(navigateBack)
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
@@ -168,70 +149,113 @@ private fun SettingsScreenContent(
             )
         }
 
-        LazyColumn(
+        SettingsList(
             modifier = Modifier
-                .padding(paddingValues)
-        ) {
+                .padding(paddingValues),
+            onFeedListClick = onFeedListClick,
+            onBrowserSelectionClick = {
+                showBrowserSelection = true
+            },
+            openFileAction = openFileAction,
+            createFileAction = createFileAction,
+        )
+    }
+}
 
-            item {
-                SettingsMenuItem(
-                    text = stringResource(resource = MR.strings.feeds_title)
-                ) {
-                    onFeedListClick()
-                }
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun SettingsNavBar(navigateBack: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                stringResource(resource = MR.strings.settings_title),
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    navigateBack()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                )
             }
+        },
+    )
+}
 
-            item {
-                SettingsDivider()
+@Composable
+private fun SettingsList(
+    modifier: Modifier = Modifier,
+    onFeedListClick: () -> Unit,
+    onBrowserSelectionClick: () -> Unit,
+    openFileAction: ManagedActivityResultLauncher<Array<String>, Uri?>,
+    createFileAction: ManagedActivityResultLauncher<String, Uri?>,
+) {
+    LazyColumn(
+        modifier = modifier,
+    ) {
+        item {
+            SettingsMenuItem(
+                text = stringResource(resource = MR.strings.feeds_title),
+            ) {
+                onFeedListClick()
             }
+        }
 
-            item {
-                SettingsMenuItem(
-                    text = stringResource(resource = MR.strings.browser_selection_button)
-                ) {
-                    showBrowserSelection = true
-                }
-            }
+        item {
+            SettingsDivider()
+        }
 
-            item {
-                SettingsDivider()
+        item {
+            SettingsMenuItem(
+                text = stringResource(resource = MR.strings.browser_selection_button),
+            ) {
+                onBrowserSelectionClick()
             }
+        }
 
-            item {
-                SettingsMenuItem(
-                    text = stringResource(resource = MR.strings.import_feed_button)
-                ) {
-                    openFileAction.launch(arrayOf("*/*"))
-                }
-            }
+        item {
+            SettingsDivider()
+        }
 
-            item {
-                SettingsDivider()
+        item {
+            SettingsMenuItem(
+                text = stringResource(resource = MR.strings.import_feed_button),
+            ) {
+                openFileAction.launch(arrayOf("*/*"))
             }
+        }
 
-            item {
-                SettingsMenuItem(
-                    text = stringResource(
-                        resource = MR.strings.export_feeds_button
-                    )
-                ) {
-                    createFileAction.launch("feeds-export.opml")
-                }
-            }
+        item {
+            SettingsDivider()
+        }
 
-            item {
-                SettingsDivider()
+        item {
+            SettingsMenuItem(
+                text = stringResource(
+                    resource = MR.strings.export_feeds_button,
+                ),
+            ) {
+                createFileAction.launch("feeds-export.opml")
             }
+        }
 
-            item {
-                SettingsMenuItem(
-                    text = stringResource(
-                        resource = MR.strings.about_button
-                    )
-                ) {
-                    // TODO
-                }
+        item {
+            SettingsDivider()
+        }
+
+        item {
+            SettingsMenuItem(
+                text = stringResource(
+                    resource = MR.strings.about_button,
+                ),
+            ) {
+                // TODO
             }
+        }
 
 //            item {
 //                SettingsMenuItem(text = "Contact us") {
@@ -244,8 +268,6 @@ private fun SettingsScreenContent(
 //                    context.startActivity(Intent.createChooser(intent, "Send mail..."))
 //                }
 //            }
-        }
-
     }
 }
 
@@ -260,7 +282,7 @@ private fun SettingsScreenPreview() {
             importFeed = {},
             exportFeed = {},
             onBrowserSelected = {},
-            navigateBack = {}
+            navigateBack = {},
         )
     }
 }

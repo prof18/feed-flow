@@ -7,7 +7,6 @@ import org.junit.Test
 
 class PlatformKtTest {
 
-
     @Test
     fun `getDateMillisFromString returns correct values`() {
         val dateString = "Wed, 15 May 2019 20:48:02 +0000"
@@ -32,5 +31,4 @@ class PlatformKtTest {
         val millis = getDateMillisFromString(dateString)
         assertNull(millis)
     }
-
 }

@@ -1,3 +1,8 @@
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_JAVA
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_KOTLIN
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_JAVA
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_KOTLIN
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
@@ -14,4 +19,32 @@ plugins {
 
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
+}
+
+allprojects {
+    apply {
+        plugin(rootProject.libs.plugins.detekt.get().pluginId)
+    }
+
+    dependencies {
+        detektPlugins(rootProject.libs.io.gitlab.arturbosch.detekt.formatting) {
+            exclude(group = "org.slf4j", module = "slf4j-nop")
+        }
+    }
+
+    detekt {
+        source.setFrom(
+            files(
+                "src",
+                DEFAULT_SRC_DIR_JAVA,
+                DEFAULT_TEST_SRC_DIR_JAVA,
+                DEFAULT_SRC_DIR_KOTLIN,
+                DEFAULT_TEST_SRC_DIR_KOTLIN,
+            )
+        )
+        toolVersion = rootProject.libs.versions.detekt.get()
+        config.setFrom(rootProject.files("config/detekt/detekt.yml"))
+        parallel = true
+        autoCorrect = true
+    }
 }

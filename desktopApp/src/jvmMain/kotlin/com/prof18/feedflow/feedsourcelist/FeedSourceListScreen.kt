@@ -46,21 +46,18 @@ import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
-
 @Composable
 fun FeedSourceListScreen(
     navigateBack: () -> Unit,
 ) {
-
     FeedFlowTheme {
-
         var dialogState by remember { mutableStateOf(false) }
 
         Dialog(visible = dialogState, onCloseRequest = { dialogState = false }) {
             AddFeedScreen(
                 onFeedAdded = {
                     dialogState = false
-                }
+                },
             )
         }
         val viewModel = koin.get<FeedSourceListViewModel>()
@@ -90,123 +87,174 @@ private fun FeedSourceListContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(resource = MR.strings.feeds_title)
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navigateBack()
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            onAddFeedClick()
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null,
-                        )
-                    }
-                }
+            FeedSourceListNavBar(
+                navigateBack = navigateBack,
+                onAddFeedClick = onAddFeedClick,
             )
-        }
+        },
     ) { paddingValues ->
         if (feedSources.isEmpty()) {
-            Box(
+            NoFeedSourcesView(
                 modifier = Modifier
                     .padding(paddingValues)
-                    .fillMaxSize()
+                    .fillMaxSize(),
+            )
+        } else {
+            FeedSourcesList(
+                modifier = Modifier
+                    .padding(paddingValues),
+                feedSources = feedSources,
+                onDeleteFeedClick = onDeleteFeedClick,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FeedSourceListNavBar(
+    navigateBack: () -> Unit,
+    onAddFeedClick: () -> Unit,
+) {
+    TopAppBar(
+        title = {
+            Text(
+                stringResource(resource = MR.strings.feeds_title),
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    navigateBack()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                )
+            }
+        },
+        actions = {
+            IconButton(
+                onClick = {
+                    onAddFeedClick()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                )
+            }
+        },
+    )
+}
+
+@Composable
+private fun NoFeedSourcesView(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier,
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(Spacing.regular),
+            text = stringResource(resource = MR.strings.no_feeds_add_one_message),
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun FeedSourcesList(
+    modifier: Modifier = Modifier,
+    feedSources: List<FeedSource>,
+    onDeleteFeedClick: (FeedSource) -> Unit,
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(Spacing.regular),
+    ) {
+        items(
+            items = feedSources,
+        ) { feedSource ->
+
+            var showFeedMenu by remember {
+                mutableStateOf(
+                    false,
+                )
+            }
+
+            val interactionSource = remember { MutableInteractionSource() }
+
+            Column(
+                modifier = Modifier
+                    .onClick(
+                        enabled = true,
+                        interactionSource = interactionSource,
+                        matcher = PointerMatcher.mouse(PointerButton.Secondary), // Right Mouse Button
+                        onClick = {
+                            showFeedMenu = true
+                        },
+                    ),
             ) {
                 Text(
                     modifier = Modifier
-                        .padding(Spacing.regular),
-                    text = stringResource(resource = MR.strings.no_feeds_add_one_message),
+                        .padding(top = Spacing.small),
+                    text = feedSource.title,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues),
-                contentPadding = PaddingValues(Spacing.regular),
-            ) {
-                items(
-                    items = feedSources,
-                ) { feedSource ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.xsmall)
+                        .padding(bottom = Spacing.small),
+                    text = feedSource.url,
+                    style = MaterialTheme.typography.labelLarge,
+                )
 
-                    var showFeedMenu by remember {
-                        mutableStateOf(
-                            false,
-                        )
-                    }
+                FeedSourceContextMenu(
+                    showFeedMenu = showFeedMenu,
+                    hideMenu = {
+                        showFeedMenu = false
+                    },
+                    onDeleteFeedClick = onDeleteFeedClick,
+                    feedSource = feedSource,
+                )
 
-                    val interactionSource = remember { MutableInteractionSource() }
-
-                    Column(
-                        modifier = Modifier
-                            .onClick(
-                                enabled = true,
-                                interactionSource = interactionSource,
-                                matcher = PointerMatcher.mouse(PointerButton.Secondary), // Right Mouse Button
-                                onClick = {
-                                    showFeedMenu = true
-                                }
-                            )
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(top = Spacing.small),
-                            text = feedSource.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(top = Spacing.xsmall)
-                                .padding(bottom = Spacing.small),
-                            text = feedSource.url,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-
-                        DropdownMenu(
-                            expanded = showFeedMenu,
-                            onDismissRequest = { showFeedMenu = false },
-                        ) {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        stringResource(resource = MR.strings.delete_feed)
-                                    )
-                                },
-                                onClick = {
-                                    showFeedMenu = false
-                                    onDeleteFeedClick(feedSource)
-                                }
-                            )
-                        }
-
-                        Divider(
-                            modifier = Modifier,
-                            thickness = 0.2.dp,
-                            color = Color.Gray,
-                        )
-                    }
-                }
+                Divider(
+                    modifier = Modifier,
+                    thickness = 0.2.dp,
+                    color = Color.Gray,
+                )
             }
         }
     }
 }
 
+@Composable
+private fun FeedSourceContextMenu(
+    showFeedMenu: Boolean,
+    hideMenu: () -> Unit,
+    onDeleteFeedClick: (FeedSource) -> Unit,
+    feedSource: FeedSource,
+) {
+    DropdownMenu(
+        expanded = showFeedMenu,
+        onDismissRequest = hideMenu,
+    ) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    stringResource(resource = MR.strings.delete_feed),
+                )
+            },
+            onClick = {
+                hideMenu()
+                onDeleteFeedClick(feedSource)
+            },
+        )
+    }
+}
 
 @Preview
 @Composable
@@ -216,7 +264,7 @@ private fun FeedSourceListContentPreview() {
             feedSources = feedSourcesForPreview,
             onAddFeedClick = {},
             onDeleteFeedClick = {},
-            navigateBack = {}
+            navigateBack = {},
         )
     }
 }
@@ -225,13 +273,13 @@ private fun FeedSourceListContentPreview() {
 @Composable
 private fun FeedSourceListContentDarkPreview() {
     FeedFlowTheme(
-        darkTheme = true
+        darkTheme = true,
     ) {
         FeedSourceListContent(
             feedSources = feedSourcesForPreview,
             onAddFeedClick = {},
             onDeleteFeedClick = {},
-            navigateBack = {}
+            navigateBack = {},
         )
     }
 }

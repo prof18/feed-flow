@@ -95,53 +95,28 @@ private fun AddFeedScreenContent(
                             contentDescription = null,
                         )
                     }
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(horizontal = Spacing.regular)
+                .padding(horizontal = Spacing.regular),
         ) {
-
-            TextField(
+            FeedNameTextField(
                 modifier = Modifier
                     .fillMaxWidth(),
-                label = {
-                    Text(text = stringResource(resource = MR.strings.feed_name))
-                },
-                value = feedName,
-                onValueChange = {
-                    onFeedNameUpdated(it)
-                },
-                placeholder = {
-                    Text(
-                        stringResource(resource = MR.strings.feed_name_placeholder),
-                        maxLines = 1,
-                    )
-                },
-                maxLines = 1,
+                feedName = feedName,
+                onFeedNameUpdated = onFeedNameUpdated,
             )
 
-            TextField(
+            FeedUrlTextField(
                 modifier = Modifier
                     .padding(top = Spacing.regular)
                     .fillMaxWidth(),
-                label = {
-                    Text(text = stringResource(resource = MR.strings.feed_url))
-                },
-                value = feedUrl,
-                onValueChange = {
-                    onFeedUrlUpdated(it)
-                },
-                placeholder = {
-                    Text(
-                        stringResource(resource = MR.strings.feed_url_placeholder),
-                        maxLines = 1,
-                    )
-                },
-                maxLines = 1,
+                feedUrl = feedUrl,
+                onFeedUrlUpdated = onFeedUrlUpdated,
             )
 
             Button(
@@ -156,6 +131,55 @@ private fun AddFeedScreenContent(
     }
 }
 
+@Composable
+private fun FeedNameTextField(
+    modifier: Modifier = Modifier,
+    feedName: String,
+    onFeedNameUpdated: (String) -> Unit,
+) {
+    TextField(
+        modifier = modifier,
+        label = {
+            Text(text = stringResource(resource = MR.strings.feed_name))
+        },
+        value = feedName,
+        onValueChange = {
+            onFeedNameUpdated(it)
+        },
+        placeholder = {
+            Text(
+                stringResource(resource = MR.strings.feed_name_placeholder),
+                maxLines = 1,
+            )
+        },
+        maxLines = 1,
+    )
+}
+
+@Composable
+private fun FeedUrlTextField(
+    modifier: Modifier = Modifier,
+    feedUrl: String,
+    onFeedUrlUpdated: (String) -> Unit,
+) {
+    TextField(
+        modifier = modifier,
+        label = {
+            Text(text = stringResource(resource = MR.strings.feed_url))
+        },
+        value = feedUrl,
+        onValueChange = {
+            onFeedUrlUpdated(it)
+        },
+        placeholder = {
+            Text(
+                stringResource(resource = MR.strings.feed_url_placeholder),
+                maxLines = 1,
+            )
+        },
+        maxLines = 1,
+    )
+}
 
 @FeedFlowPreview
 @Composable

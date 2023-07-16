@@ -3,7 +3,6 @@
 package com.prof18.feedflow.home
 
 import FeedFlowTheme
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -51,8 +49,8 @@ import com.prof18.feedflow.home.components.HomeAppBar
 import com.prof18.feedflow.home.components.NoFeedsSourceView
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.presentation.preview.feedItemsForPreview
+import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.theme.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
@@ -60,7 +58,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterialApi::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Suppress("LongMethod")
 @Composable
 internal fun HomeScreen(
     onSettingsButtonClicked: () -> Unit,
@@ -112,7 +110,7 @@ internal fun HomeScreen(
                         listState.animateScrollToItem(0)
                         homeViewModel.getNewFeeds()
                     }
-                }
+                },
             )
         },
         containerColor = Color.Transparent,
@@ -147,7 +145,7 @@ internal fun HomeScreen(
     }
 }
 
-
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun HomeScreenContent(
     paddingValues: PaddingValues,
@@ -164,69 +162,96 @@ private fun HomeScreenContent(
     when {
         loadingState is NoFeedSourcesStatus -> {
             NoFeedsSourceView(
-                modifier = Modifier.padding(paddingValues),
-                onAddFeedClick = { onAddFeedClick() },
+                modifier = Modifier
+                    .padding(paddingValues),
+                onAddFeedClick = {
+                    onAddFeedClick()
+                },
             )
         }
 
         !loadingState.isLoading() && feedState.isEmpty() -> {
             EmptyFeedView(
-                modifier = Modifier.padding(paddingValues),
-                onReloadClick = { onRefresh() }
+                modifier = Modifier
+                    .padding(paddingValues),
+                onReloadClick = {
+                    onRefresh()
+                },
             )
         }
 
-        else -> {
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-            ) {
+        else -> FeedWithContentView(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            loadingState = loadingState,
+            pullRefreshState = pullRefreshState,
+            feedState = feedState,
+            listState = listState,
+            updateReadStatus = updateReadStatus,
+            onFeedItemClick = onFeedItemClick,
+            onFeedItemLongClick = onFeedItemLongClick,
+        )
+    }
+}
 
-                AnimatedVisibility(loadingState.isLoading()) {
-                    val feedRefreshCounter = """
+@Composable
+@OptIn(ExperimentalMaterialApi::class)
+private fun FeedWithContentView(
+    modifier: Modifier = Modifier,
+    loadingState: FeedUpdateStatus,
+    pullRefreshState: PullRefreshState,
+    feedState: List<FeedItem>,
+    listState: LazyListState,
+    updateReadStatus: (Int) -> Unit,
+    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
+    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        AnimatedVisibility(loadingState.isLoading()) {
+            val feedRefreshCounter = """
                     ${loadingState.refreshedFeedCount}/${loadingState.totalFeedCount}
-                """.trimIndent()
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = Spacing.regular),
-                        text = stringResource(
-                            resource = MR.strings.loading_feed_message,
-                            feedRefreshCounter
-                        ),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
+            """.trimIndent()
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.regular),
+                text = stringResource(
+                    resource = MR.strings.loading_feed_message,
+                    feedRefreshCounter,
+                ),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
 
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .pullRefresh(pullRefreshState)
-                ) {
-                    FeedList(
-                        modifier = Modifier,
-                        feedItems = feedState,
-                        listState = listState,
-                        updateReadStatus = { index ->
-                            updateReadStatus(index)
-                        },
-                        onFeedItemClick = { feedInfo ->
-                            onFeedItemClick(feedInfo)
-                        },
-                        onFeedItemLongClick = { feedInfo ->
-                            onFeedItemLongClick(feedInfo)
-                        }
-                    )
+        Box(
+            Modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState),
+        ) {
+            FeedList(
+                modifier = Modifier,
+                feedItems = feedState,
+                listState = listState,
+                updateReadStatus = { index ->
+                    updateReadStatus(index)
+                },
+                onFeedItemClick = { feedInfo ->
+                    onFeedItemClick(feedInfo)
+                },
+                onFeedItemLongClick = { feedInfo ->
+                    onFeedItemLongClick(feedInfo)
+                },
+            )
 
-                    PullRefreshIndicator(
-                        loadingState.isLoading(),
-                        pullRefreshState,
-                        Modifier.align(Alignment.TopCenter)
-                    )
-                }
-            }
+            PullRefreshIndicator(
+                loadingState.isLoading(),
+                pullRefreshState,
+                Modifier.align(Alignment.TopCenter),
+            )
         }
     }
 }
@@ -244,14 +269,14 @@ fun HomeScreeContentLoadingPreview() {
             feedState = feedItemsForPreview,
             pullRefreshState = rememberPullRefreshState(
                 refreshing = false,
-                onRefresh = { }
+                onRefresh = { },
             ),
             listState = rememberLazyListState(),
             updateReadStatus = {},
             onFeedItemClick = {},
             onFeedItemLongClick = {},
             onAddFeedClick = {},
-            onRefresh = {}
+            onRefresh = {},
         )
     }
 }
@@ -266,13 +291,13 @@ fun HomeScreeContentLoadedPreview() {
             feedState = feedItemsForPreview,
             pullRefreshState = rememberPullRefreshState(
                 refreshing = false,
-                onRefresh = { }
+                onRefresh = { },
             ),
             listState = rememberLazyListState(),
             updateReadStatus = {},
             onFeedItemClick = {},
             onFeedItemLongClick = {},
-            onAddFeedClick = {}
+            onAddFeedClick = {},
         )
     }
 }

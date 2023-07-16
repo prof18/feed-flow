@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val feedRetrieverRepository: FeedRetrieverRepository
+    private val feedRetrieverRepository: FeedRetrieverRepository,
 ) : BaseViewModel() {
 
     // Loading
@@ -69,8 +69,8 @@ class HomeViewModel(
                                     message = StringDesc.ResourceFormatted(
                                         stringRes = MR.strings.feed_error_message,
                                         error.failingSourceName,
-                                    )
-                                )
+                                    ),
+                                ),
                             )
                         }
 
@@ -106,7 +106,7 @@ class HomeViewModel(
                 urlToUpdates.add(
                     FeedItemId(
                         id = item.id,
-                    )
+                    ),
                 )
             }
         }
@@ -128,8 +128,8 @@ class HomeViewModel(
         scope.launch {
             feedRetrieverRepository.updateReadStatus(
                 listOf(
-                    FeedItemId(feedItemId)
-                )
+                    FeedItemId(feedItemId),
+                ),
             )
         }
     }

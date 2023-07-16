@@ -24,7 +24,6 @@ import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
-
 @Composable
 fun AddFeedScreen(
     onFeedAdded: () -> Unit,
@@ -72,9 +71,8 @@ private fun AddFeedScreenContent(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(horizontal = Spacing.regular)
+                .padding(horizontal = Spacing.regular),
         ) {
-
             TextField(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -126,7 +124,6 @@ private fun AddFeedScreenContent(
     }
 }
 
-
 @Preview
 @Composable
 private fun AddScreenContentPreview() {
@@ -145,7 +142,7 @@ private fun AddScreenContentPreview() {
 @Composable
 private fun AddScreenContentDarkPreview() {
     FeedFlowTheme(
-        darkTheme = true
+        darkTheme = true,
     ) {
         AddFeedScreenContent(
             feedName = "My Feed",

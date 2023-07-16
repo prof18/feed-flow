@@ -13,12 +13,12 @@ import kotlin.test.assertTrue
 
 class OPMLFeedParserTest {
 
-    private val parser = OPMLFeedHandler(
-        dispatcherProvider = TestDispatcherProvider
+    private val parser = OpmlFeedHandler(
+        dispatcherProvider = TestDispatcherProvider,
     )
 
-    val opmlInput = OPMLInput(
-        opmlData = (opml as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData()
+    val opmlInput = OpmlInput(
+        opmlData = (opml as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData(),
     )
 
     @Test

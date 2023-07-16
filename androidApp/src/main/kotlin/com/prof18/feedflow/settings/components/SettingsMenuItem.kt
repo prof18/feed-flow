@@ -22,9 +22,8 @@ fun SettingsMenuItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable { onClick() },
     ) {
-
         Text(
             modifier = Modifier
                 .padding(Spacing.regular),
@@ -41,7 +40,7 @@ private fun SettingsMenuItemPreview() {
         Surface {
             SettingsMenuItem(
                 text = "Contact us",
-                onClick = {}
+                onClick = {},
             )
         }
     }

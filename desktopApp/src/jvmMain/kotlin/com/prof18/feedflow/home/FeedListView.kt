@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,26 +21,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
-import com.prof18.feedflow.ui.components.AsyncImage
-import com.prof18.feedflow.ui.components.loadImageBitmap
 import com.prof18.feedflow.ui.style.Spacing
 import com.seiko.imageloader.rememberAsyncImagePainter
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 
-
+@Suppress("MagicNumber")
 @OptIn(FlowPreview::class)
 @Composable
 internal fun FeedList(
@@ -86,7 +81,6 @@ private fun FeedItemView(
     onFeedItemClick: (FeedItemClickedInfo) -> Unit,
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
 ) {
-
     Column(
         modifier = Modifier
             .combinedClickable(
@@ -94,8 +88,8 @@ private fun FeedItemView(
                     onFeedItemClick(
                         FeedItemClickedInfo(
                             id = feedItem.id,
-                            url = feedItem.url
-                        )
+                            url = feedItem.url,
+                        ),
                     )
                 },
                 onLongClick = if (feedItem.commentsUrl != null) {
@@ -104,69 +98,33 @@ private fun FeedItemView(
                             FeedItemClickedInfo(
                                 id = feedItem.id,
                                 url = feedItem.commentsUrl!!,
-                            )
+                            ),
                         )
                     }
                 } else {
                     null
-                }
+                },
             )
             .padding(horizontal = Spacing.regular)
-            .padding(vertical = Spacing.small)
+            .padding(vertical = Spacing.small),
     ) {
-
         Text(
             text = feedItem.feedSource.title,
             style = MaterialTheme.typography.bodySmall,
         )
 
-        Row(
+        TitleSubtitleAndImageRow(
             modifier = Modifier
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-            ) {
-
-                Text(
-                    modifier = Modifier
-                        .padding(top = Spacing.small),
-                    text = feedItem.title,
-                    style = MaterialTheme.typography.titleSmall,
-                )
-
-                feedItem.subtitle?.let { subtitle ->
-                    Text(
-                        modifier = Modifier
-                            .padding(top = Spacing.small),
-                        text = subtitle,
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
-
-            feedItem.imageUrl?.let { url ->
-                Image(
-                    painter = rememberAsyncImagePainter(url),
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .width(96.dp)
-                        .clip(RoundedCornerShape(Spacing.small)),
-                    contentDescription = null,
-                )
-            }
-        }
+            feedItem = feedItem,
+        )
 
         Text(
             modifier = Modifier
                 .padding(top = Spacing.small),
             text = feedItem.dateString,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
         )
 
         Divider(
@@ -175,5 +133,50 @@ private fun FeedItemView(
             thickness = 0.2.dp,
             color = Color.Gray,
         )
+    }
+}
+
+@Composable
+private fun TitleSubtitleAndImageRow(
+    modifier: Modifier = Modifier,
+    feedItem: FeedItem,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f),
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(top = Spacing.small),
+                text = feedItem.title,
+                style = MaterialTheme.typography.titleSmall,
+            )
+
+            feedItem.subtitle?.let { subtitle ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.small),
+                    text = subtitle,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+
+        feedItem.imageUrl?.let { url ->
+            Image(
+                painter = rememberAsyncImagePainter(url),
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .width(96.dp)
+                    .clip(RoundedCornerShape(Spacing.small)),
+                contentDescription = null,
+            )
+        }
     }
 }

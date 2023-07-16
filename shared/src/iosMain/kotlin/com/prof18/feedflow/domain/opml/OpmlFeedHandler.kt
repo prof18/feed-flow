@@ -13,10 +13,10 @@ import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-internal actual class OPMLFeedHandler(
+internal actual class OpmlFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    actual suspend fun importFeed(opmlInput: OPMLInput): List<ParsedFeedSource> =
+    actual suspend fun importFeed(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.default) {
             suspendCoroutine { continuation ->
                 NSXMLParser(opmlInput.opmlData).apply {
@@ -25,9 +25,10 @@ internal actual class OPMLFeedHandler(
             }
         }
 
+    @Suppress("MaximumLineLength")
     actual suspend fun exportFeed(
-        opmlOutput: OPMLOutput,
-        feedSources: List<FeedSource>
+        opmlOutput: OpmlOutput,
+        feedSources: List<FeedSource>,
     ) {
         val opmlString = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -37,9 +38,9 @@ internal actual class OPMLFeedHandler(
                 </head>
                 <body>
                 ${
-                feedSources.joinToString("\n") { feedSource ->
-                    """<outline type="rss" text="${feedSource.title}" title="${feedSource.title}" xmlUrl="${feedSource.url}" htmlUrl="${feedSource.url}"/>"""
-                }}
+            feedSources.joinToString("\n") { feedSource ->
+                """<outline type="rss" text="${feedSource.title}" title="${feedSource.title}" xmlUrl="${feedSource.url}" htmlUrl="${feedSource.url}"/>"""
+            }}
                 </body>
             </opml>
         """.trimIndent()
@@ -49,13 +50,13 @@ internal actual class OPMLFeedHandler(
                 url = opmlOutput.url,
                 atomically = true,
                 encoding = NSUTF8StringEncoding,
-                error = null
+                error = null,
             )
     }
 }
 
 private class NSXMLParserDelegate(
-    private val onEnd: (List<ParsedFeedSource>) -> Unit
+    private val onEnd: (List<ParsedFeedSource>) -> Unit,
 ) : NSObject(), NSXMLParserDelegateProtocol {
 
     private var isInsideCategory: Boolean = false
@@ -76,19 +77,19 @@ private class NSXMLParserDelegate(
     ) {
         currentElement = didStartElement
         when (currentElement) {
-            OPMLConstants.OUTLINE -> {
-                val rssAttribute = if (attributes.containsKey(OPMLConstants.TYPE)) {
-                    attributes.getValue(OPMLConstants.TYPE)
+            OpmlConstants.OUTLINE -> {
+                val rssAttribute = if (attributes.containsKey(OpmlConstants.TYPE)) {
+                    attributes.getValue(OpmlConstants.TYPE)
                 } else {
                     null
                 }
-                if (rssAttribute != OPMLConstants.RSS) {
+                if (rssAttribute != OpmlConstants.RSS) {
                     isInsideCategory = true
-                    categoryName = (attributes.getValue(OPMLConstants.TITLE) as? String)?.trim()
+                    categoryName = (attributes.getValue(OpmlConstants.TITLE) as? String)?.trim()
                 } else {
                     isInsideItem = true
-                    parsedFeedBuilder.title((attributes.getValue(OPMLConstants.TITLE) as? String)?.trim())
-                    parsedFeedBuilder.url((attributes.getValue(OPMLConstants.XML_URL) as? String)?.trim())
+                    parsedFeedBuilder.title((attributes.getValue(OpmlConstants.TITLE) as? String)?.trim())
+                    parsedFeedBuilder.url((attributes.getValue(OpmlConstants.XML_URL) as? String)?.trim())
                 }
             }
         }
@@ -98,9 +99,8 @@ private class NSXMLParserDelegate(
         parser: NSXMLParser,
         didEndElement: String,
         namespaceURI: String?,
-        qualifiedName: String?
+        qualifiedName: String?,
     ) {
-
         if (isInsideItem) {
             parsedFeedBuilder.category(categoryName)
             parsedFeedBuilder.build()?.let {

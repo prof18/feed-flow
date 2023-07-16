@@ -1,10 +1,11 @@
 package com.prof18.feedflow.presentation
 
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.domain.opml.OPMLInput
-import com.prof18.feedflow.domain.opml.OPMLOutput
+import com.prof18.feedflow.domain.opml.OpmlInput
+import com.prof18.feedflow.domain.opml.OpmlOutput
 import com.prof18.feedflow.presentation.model.UIErrorState
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import dev.icerock.moko.resources.desc.Resource
@@ -22,46 +23,52 @@ class SettingsViewModel(
 ) : BaseViewModel() {
 
     private val isImportDoneMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
     @NativeCoroutinesState
     val isImportDoneState = isImportDoneMutableState.asStateFlow()
 
     private val isExportDoneMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
     @NativeCoroutinesState
     val isExportDoneState = isExportDoneMutableState.asStateFlow()
 
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
+
     @NativeCoroutinesState
     val errorState = mutableUIErrorState.asSharedFlow()
 
-    fun importFeed(opmlInput: OPMLInput) {
+    @Suppress("TooGenericExceptionCaught")
+    fun importFeed(opmlInput: OpmlInput) {
         scope.launch {
             isImportDoneMutableState.update { false }
-            // todo: add a try/catch?
             try {
                 feedManagerRepository.addFeedsFromFile(opmlInput)
                 isImportDoneMutableState.update { true }
                 feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
+                Logger.e(e) { "Error while importing feed" }
                 mutableUIErrorState.emit(
                     UIErrorState(
-                        message = StringDesc.Resource(MR.strings.generic_error_message)
-                    )
+                        message = StringDesc.Resource(MR.strings.generic_error_message),
+                    ),
                 )
             }
         }
     }
 
-    fun exportFeed(opmlOutput: OPMLOutput) {
+    @Suppress("TooGenericExceptionCaught")
+    fun exportFeed(opmlOutput: OpmlOutput) {
         scope.launch {
             isExportDoneMutableState.update { false }
             try {
                 feedManagerRepository.exportFeedsAsOpml(opmlOutput)
                 isExportDoneMutableState.update { true }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
+                Logger.e(e) { "Error while exporting feed" }
                 mutableUIErrorState.emit(
                     UIErrorState(
-                        message = StringDesc.Resource(MR.strings.generic_error_message)
-                    )
+                        message = StringDesc.Resource(MR.strings.generic_error_message),
+                    ),
                 )
             }
         }

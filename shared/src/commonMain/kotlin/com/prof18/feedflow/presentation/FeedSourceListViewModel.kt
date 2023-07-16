@@ -13,9 +13,10 @@ import kotlinx.coroutines.launch
 class FeedSourceListViewModel(
     private val feedManagerRepository: FeedManagerRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
-): BaseViewModel() {
+) : BaseViewModel() {
 
     private val feedsMutableState: MutableStateFlow<List<FeedSource>> = MutableStateFlow(listOf())
+
     @NativeCoroutinesState
     val feedSourcesState: StateFlow<List<FeedSource>> = feedsMutableState.asStateFlow()
 

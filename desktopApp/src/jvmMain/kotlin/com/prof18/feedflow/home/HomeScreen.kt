@@ -70,7 +70,6 @@ internal fun HomeScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreenContent(
     paddingValues: PaddingValues,
@@ -84,87 +83,115 @@ private fun HomeScreenContent(
     onAddFeedClick: () -> Unit,
 ) {
     when {
-        loadingState is NoFeedSourcesStatus -> {
-            NoFeedsSourceView(
-                modifier = Modifier.padding(paddingValues),
-                onAddFeedClick = { onAddFeedClick() },
-            )
-        }
+        loadingState is NoFeedSourcesStatus -> NoFeedsSourceView(
+            modifier = Modifier
+                .padding(paddingValues),
+            onAddFeedClick = {
+                onAddFeedClick()
+            },
+        )
 
-        !loadingState.isLoading() && feedState.isEmpty() -> {
-            EmptyFeedView(
-                modifier = Modifier.padding(paddingValues),
-                onReloadClick = { onRefresh() }
-            )
-        }
+        !loadingState.isLoading() && feedState.isEmpty() -> EmptyFeedView(
+            modifier = Modifier
+                .padding(paddingValues),
+            onReloadClick = {
+                onRefresh()
+            },
+        )
 
-        else -> {
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-            ) {
+        else -> FeedWithContentView(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            paddingValues = paddingValues,
+            feedState = feedState,
+            loadingState = loadingState,
+            listState = listState,
+            updateReadStatus = updateReadStatus,
+            onFeedItemClick = onFeedItemClick,
+            onFeedItemLongClick = onFeedItemLongClick,
+        )
+    }
+}
 
-                val unReadCount = feedState.count { !it.isRead }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FeedWithContentView(
+    modifier: Modifier = Modifier,
+    paddingValues: PaddingValues,
+    feedState: List<FeedItem>,
+    loadingState: FeedUpdateStatus,
+    listState: LazyListState,
+    updateReadStatus: (Int) -> Unit,
+    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
+    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        val unReadCount = feedState.count { !it.isRead }
 
-                TopAppBar(
-                    title = {
-                        Row {
-                            Text(
-                                stringResource(resource = MR.strings.app_name)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("(${unReadCount})")
-                        }
-                    }
-                )
+        FeedContentToolbar(unReadCount)
 
-                AnimatedVisibility(loadingState.isLoading()) {
-                    val feedRefreshCounter = """
+        AnimatedVisibility(loadingState.isLoading()) {
+            val feedRefreshCounter = """
                     ${loadingState.refreshedFeedCount}/${loadingState.totalFeedCount}
-                """.trimIndent()
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = Spacing.regular),
-                        text = stringResource(
-                            resource = MR.strings.loading_feed_message,
-                            feedRefreshCounter
-                        ),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
+            """.trimIndent()
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.regular),
+                text = stringResource(
+                    resource = MR.strings.loading_feed_message,
+                    feedRefreshCounter,
+                ),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
 
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(end = 4.dp)
-                ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(end = 4.dp),
+        ) {
+            FeedList(
+                modifier = Modifier.fillMaxSize().padding(end = 12.dp),
+                feedItems = feedState,
+                listState = listState,
+                updateReadStatus = { index ->
+                    updateReadStatus(index)
+                },
+                onFeedItemClick = { feedInfo ->
+                    onFeedItemClick(feedInfo)
+                },
+                onFeedItemLongClick = { feedInfo ->
+                    onFeedItemLongClick(feedInfo)
+                },
+            )
 
-                    FeedList(
-                        modifier = Modifier.fillMaxSize().padding(end = 12.dp),
-                        feedItems = feedState,
-                        listState = listState,
-                        updateReadStatus = { index ->
-                            updateReadStatus(index)
-                        },
-                        onFeedItemClick = { feedInfo ->
-                            onFeedItemClick(feedInfo)
-                        },
-                        onFeedItemLongClick = { feedInfo ->
-                            onFeedItemLongClick(feedInfo)
-                        }
-                    )
-
-                    VerticalScrollbar(
-                        modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-                        adapter = rememberScrollbarAdapter(
-                            scrollState = listState
-                        )
-                    )
-                }
-            }
+            VerticalScrollbar(
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                adapter = rememberScrollbarAdapter(
+                    scrollState = listState,
+                ),
+            )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FeedContentToolbar(unReadCount: Int) {
+    TopAppBar(
+        title = {
+            Row {
+                Text(
+                    stringResource(resource = MR.strings.app_name),
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("($unReadCount)")
+            }
+        },
+    )
 }

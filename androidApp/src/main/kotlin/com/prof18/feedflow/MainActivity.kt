@@ -27,7 +27,6 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-
             val systemUiController = rememberSystemUiController()
             val darkTheme = isSystemInDarkTheme()
 
@@ -38,19 +37,18 @@ class MainActivity : ComponentActivity() {
             }
 
             FeedFlowTheme {
-
                 val navController = rememberNavController()
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     NavHost(navController = navController, startDestination = Screen.Home.name) {
                         composable(Screen.Home.name) {
                             HomeScreen(
                                 onSettingsButtonClicked = {
                                     navController.navigate(Screen.Settings.name)
-                                }
+                                },
                             )
                         }
 
@@ -59,9 +57,9 @@ class MainActivity : ComponentActivity() {
                                 onFeedListClick = {
                                     navController.navigate(Screen.FeedList.name)
                                 },
-                                 navigateBack = {
-                                     navController.popBackStack()
-                                 },
+                                navigateBack = {
+                                    navController.popBackStack()
+                                },
                             )
                         }
 
@@ -69,7 +67,7 @@ class MainActivity : ComponentActivity() {
                             AddFeedScreen(
                                 navigateBack = {
                                     navController.popBackStack()
-                                }
+                                },
                             )
                         }
 

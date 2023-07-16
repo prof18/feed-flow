@@ -5,7 +5,7 @@ import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.JvmHtmlParser
-import com.prof18.feedflow.domain.opml.OPMLFeedHandler
+import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.rssparser.RssParser
@@ -23,9 +23,9 @@ import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel as koinViewModel
 
-internal actual inline fun <reified T: BaseViewModel> Module.viewModel(
+internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
     qualifier: Qualifier?,
-    noinline definition: Definition<T>
+    noinline definition: Definition<T>,
 ): KoinDefinition<T> = koinViewModel(qualifier, definition)
 
 internal actual val platformModule: Module = module {
@@ -38,7 +38,7 @@ internal actual val platformModule: Module = module {
     }
 
     factory {
-        OPMLFeedHandler(
+        OpmlFeedHandler(
             dispatcherProvider = get(),
         )
     }

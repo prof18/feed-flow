@@ -4,7 +4,7 @@ import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 
 internal class SettingsHelper(
-    private val settings: Settings
+    private val settings: Settings,
 ) {
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
@@ -14,5 +14,5 @@ internal class SettingsHelper(
 }
 
 internal enum class SettingsFields {
-   FAVOURITE_BROWSER_ID
+    FAVOURITE_BROWSER_ID,
 }

@@ -8,7 +8,7 @@ internal data class ParsedFeedSource(
     internal data class Builder(
         private var url: String? = null,
         private var title: String? = null,
-        private var category: String? = null
+        private var category: String? = null,
     ) {
         fun url(url: String?) = apply { this.url = url?.replace("http://", "https://") }
         fun title(title: String?) = apply { this.title = title }

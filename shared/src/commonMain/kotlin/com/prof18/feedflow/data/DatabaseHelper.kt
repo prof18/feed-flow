@@ -1,12 +1,12 @@
 package com.prof18.feedflow.data
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.domain.model.ParsedFeedSource
-import com.prof18.feedflow.db.FeedFlowDB
-import com.prof18.feedflow.db.SelectFeeds
 import com.squareup.sqldelight.Transacter
 import com.squareup.sqldelight.TransactionWithoutReturn
 import com.squareup.sqldelight.db.SqlDriver
@@ -20,9 +20,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
+@Suppress("TooManyFunctions")
 internal class DatabaseHelper(
     sqlDriver: SqlDriver,
-    private val backgroundDispatcher: CoroutineDispatcher
+    private val backgroundDispatcher: CoroutineDispatcher,
 ) {
     private val dbRef: FeedFlowDB = FeedFlowDB(sqlDriver)
 
@@ -63,14 +64,10 @@ internal class DatabaseHelper(
             .selectFeeds()
             .asFlow()
             .catch {
-               Logger.e(it) { "Something wrong while getting data from Database" }
-            }
-            .mapToList()
-            .catch {
                 Logger.e(it) { "Something wrong while getting data from Database" }
             }
+            .mapToList()
             .flowOn(backgroundDispatcher)
-
 
     suspend fun insertCategories(categories: List<String>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
@@ -149,7 +146,7 @@ internal class DatabaseHelper(
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,
-        body: TransactionWithoutReturn.() -> Unit
+        body: TransactionWithoutReturn.() -> Unit,
     ) {
         withContext(coroutineContext) {
             this@transactionWithContext.transaction(noEnclosing) {

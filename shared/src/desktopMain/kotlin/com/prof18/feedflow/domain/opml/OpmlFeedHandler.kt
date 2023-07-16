@@ -12,12 +12,11 @@ import java.io.FileOutputStream
 import java.io.StringReader
 import javax.xml.parsers.SAXParserFactory
 import javax.xml.stream.XMLOutputFactory
-import javax.xml.stream.XMLStreamWriter
 
-internal actual class OPMLFeedHandler(
+internal actual class OpmlFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    actual suspend fun importFeed(opmlInput: OPMLInput): List<ParsedFeedSource> = withContext(dispatcherProvider.io) {
+    actual suspend fun importFeed(opmlInput: OpmlInput): List<ParsedFeedSource> = withContext(dispatcherProvider.io) {
         val feed = opmlInput.file.readText()
         val parser = SAXParserFactory.newInstance().newSAXParser()
         val handler = SaxFeedHandler()
@@ -27,14 +26,14 @@ internal actual class OPMLFeedHandler(
     }
 
     actual suspend fun exportFeed(
-        opmlOutput: OPMLOutput,
-        feedSources: List<FeedSource>
+        opmlOutput: OpmlOutput,
+        feedSources: List<FeedSource>,
     ) {
         val factory = XMLOutputFactory.newFactory()
 
         val writer = factory.createXMLStreamWriter(
             BufferedOutputStream(
-                FileOutputStream(opmlOutput.file)
+                FileOutputStream(opmlOutput.file),
             ),
             "UTF-8",
         )
@@ -88,14 +87,14 @@ internal actual class OPMLFeedHandler(
             attributes: Attributes?,
         ) {
             when (qName) {
-                OPMLConstants.OUTLINE -> {
-                    if (attributes?.getValue(OPMLConstants.TYPE) != OPMLConstants.RSS) {
+                OpmlConstants.OUTLINE -> {
+                    if (attributes?.getValue(OpmlConstants.TYPE) != OpmlConstants.RSS) {
                         isInsideCategory = true
-                        categoryName = attributes?.getValue(OPMLConstants.TITLE)?.trim()
+                        categoryName = attributes?.getValue(OpmlConstants.TITLE)?.trim()
                     } else {
                         isInsideItem = true
-                        parsedFeedBuilder.title(attributes.getValue(OPMLConstants.TITLE).trim())
-                        parsedFeedBuilder.url(attributes.getValue(OPMLConstants.XML_URL).trim())
+                        parsedFeedBuilder.title(attributes.getValue(OpmlConstants.TITLE).trim())
+                        parsedFeedBuilder.url(attributes.getValue(OpmlConstants.XML_URL).trim())
                     }
                 }
             }

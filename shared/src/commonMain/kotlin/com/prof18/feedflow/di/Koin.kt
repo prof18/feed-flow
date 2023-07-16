@@ -2,9 +2,9 @@ package com.prof18.feedflow.di
 
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.data.SettingsHelper
-import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepositoryImpl
+import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepositoryImpl
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
@@ -16,11 +16,9 @@ import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
-import org.koin.core.instance.InstanceFactory
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
-
 
 fun initKoin(modules: List<Module>): KoinApplication {
     return startKoin {
@@ -32,7 +30,7 @@ private val coreModule = module {
     single {
         DatabaseHelper(
             get(),
-            Dispatchers.Default
+            Dispatchers.Default,
         )
     }
 
@@ -89,7 +87,7 @@ private val coreModule = module {
 
 internal expect val platformModule: Module
 
-internal expect inline fun <reified T: BaseViewModel> Module.viewModel(
+internal expect inline fun <reified T : BaseViewModel> Module.viewModel(
     qualifier: Qualifier? = null,
-    noinline definition: Definition<T>
+    noinline definition: Definition<T>,
 ): KoinDefinition<T>

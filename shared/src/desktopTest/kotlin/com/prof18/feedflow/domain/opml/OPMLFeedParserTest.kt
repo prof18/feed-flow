@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.prof18.feedflow.domain.opml
 
 import com.prof18.feedflow.TestDispatcherProvider
@@ -10,18 +12,17 @@ import kotlin.test.assertTrue
 
 class OPMLFeedParserTest {
 
-    private val parser = OPMLFeedHandler(
-        dispatcherProvider = TestDispatcherProvider
+    private val parser = OpmlFeedHandler(
+        dispatcherProvider = TestDispatcherProvider,
     )
 
-    private val file = File.createTempFile( "some-prefix", ".tmp").apply {
+    private val file = File.createTempFile("some-prefix", ".tmp").apply {
         deleteOnExit()
         writeText(opml)
     }
 
-
-    val opmlInput = OPMLInput(
-        file = file
+    val opmlInput = OpmlInput(
+        file = file,
     )
 
     @Test
@@ -71,5 +72,4 @@ class OPMLFeedParserTest {
         assertEquals("https://feeds.ilpost.it/ilpost", feedSources[5].url)
         assertEquals("News", feedSources[5].category)
     }
-
 }

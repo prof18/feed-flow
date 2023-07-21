@@ -47,6 +47,7 @@ import org.koin.compose.koinInject
 fun SettingsScreen(
     onFeedListClick: () -> Unit,
     navigateBack: () -> Unit,
+    onAboutClick: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -99,6 +100,7 @@ fun SettingsScreen(
             browserManager.setFavouriteBrowser(browser)
         },
         navigateBack = navigateBack,
+        onAboutClick = onAboutClick,
     )
 }
 
@@ -111,6 +113,7 @@ private fun SettingsScreenContent(
     exportFeed: (Uri) -> Unit,
     onBrowserSelected: (Browser) -> Unit,
     navigateBack: () -> Unit,
+    onAboutClick: () -> Unit,
 ) {
     val openFileAction = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),
@@ -158,6 +161,7 @@ private fun SettingsScreenContent(
             },
             openFileAction = openFileAction,
             createFileAction = createFileAction,
+            onAboutClick = onAboutClick,
         )
     }
 }
@@ -193,6 +197,7 @@ private fun SettingsList(
     onBrowserSelectionClick: () -> Unit,
     openFileAction: ManagedActivityResultLauncher<Array<String>, Uri?>,
     createFileAction: ManagedActivityResultLauncher<String, Uri?>,
+    onAboutClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -253,7 +258,7 @@ private fun SettingsList(
                     resource = MR.strings.about_button,
                 ),
             ) {
-                // TODO
+                onAboutClick()
             }
         }
 
@@ -283,6 +288,7 @@ private fun SettingsScreenPreview() {
             exportFeed = {},
             onBrowserSelected = {},
             navigateBack = {},
+            onAboutClick = {},
         )
     }
 }

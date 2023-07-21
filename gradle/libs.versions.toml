@@ -1,4 +1,5 @@
 [versions]
+about-libraries = "10.8.3"
 android-compile-sdk = "33"
 android-min-sdk = "26"
 android-target-sdk = "33"
@@ -47,6 +48,8 @@ multiplatform-settings = "1.0.0"
 moko-resources = "0.23.0"
 
 [libraries]
+about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
+about-libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref="about-libraries" }
 androidx-activity-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidx-compose-bom" }
@@ -117,6 +120,7 @@ compose = [
     "androidx-compose-material", "androidx-compose-ui-graphics"
 ]
 koin = ["koin-android", "koin-compose", "koin-core"]
+about-libraries = [ "about-libraries-core", "about-libraries-compose" ]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
@@ -133,3 +137,4 @@ triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
+about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "about-libraries" }

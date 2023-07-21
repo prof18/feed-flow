@@ -1,8 +1,11 @@
+import com.mikepenz.aboutlibraries.plugin.AboutLibrariesExtension
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.about.libraries)
 }
 
 group = "com.prof18"
@@ -29,6 +32,7 @@ kotlin {
                 implementation(libs.jsystem.theme.detector)
                 implementation(libs.compose.image.loader)
                 implementation(libs.moko.resourcesCompose)
+                implementation(libs.bundles.about.libraries)
 
                 implementation("org.slf4j:slf4j-nop:2.0.6")
 
@@ -114,4 +118,12 @@ fun getVersionName(): String {
     return outputStream.toString()
         .trim()
         .replace("-desktop", "")
+}
+
+configure<AboutLibrariesExtension> {
+    registerAndroidTasks = false
+}
+
+tasks.withType(KotlinCompile::class.java) {
+    dependsOn("exportLibraryDefinitions")
 }

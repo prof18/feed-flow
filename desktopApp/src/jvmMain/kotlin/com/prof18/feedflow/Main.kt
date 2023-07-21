@@ -19,10 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -37,6 +40,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.prof18.feedflow.about.AboutContent
 import com.prof18.feedflow.di.initKoinDesktop
 import com.prof18.feedflow.domain.opml.OpmlInput
 import com.prof18.feedflow.domain.opml.OpmlOutput
@@ -107,6 +111,18 @@ fun main() = application {
             }
         }
 
+        var aboutDialogState by remember { mutableStateOf(false) }
+        val dialogTitle = stringResource(MR.strings.app_name)
+        Dialog(
+            title = dialogTitle,
+            visible = aboutDialogState,
+            onCloseRequest = {
+                aboutDialogState = false
+            },
+        ) {
+            AboutContent()
+        }
+
         FeedFlowMenuBar(
             onRefreshClick = {
                 scope.launch {
@@ -126,9 +142,13 @@ fun main() = application {
             onFeedsListClick = {
                 navigation.push(Screen.FeedList)
             },
-        ) {
-            homeViewModel.deleteOldFeedItems()
-        }
+            onClearOldFeedClick = {
+                homeViewModel.deleteOldFeedItems()
+            },
+            onAboutClick = {
+                aboutDialogState = true
+            },
+        )
 
         MainContent(
             rootComponentContext = rootComponentContext,

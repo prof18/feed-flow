@@ -151,7 +151,7 @@ private fun FeedItemView(
 @Composable
 private fun TitleSubtitleAndImageRow(
     modifier: Modifier = Modifier,
-    feedItem: FeedItem
+    feedItem: FeedItem,
 ) {
     Row(
         modifier = modifier,

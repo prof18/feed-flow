@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.compose.multiplatform) apply false
     alias(libs.plugins.native.coroutines) apply false
     alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.about.libraries) apply false
     alias(libs.plugins.detekt)
 }
 
@@ -40,7 +41,7 @@ allprojects {
                 DEFAULT_TEST_SRC_DIR_JAVA,
                 DEFAULT_SRC_DIR_KOTLIN,
                 DEFAULT_TEST_SRC_DIR_KOTLIN,
-            )
+            ),
         )
         toolVersion = rootProject.libs.versions.detekt.get()
         config.setFrom(rootProject.files("config/detekt/detekt.yml"))

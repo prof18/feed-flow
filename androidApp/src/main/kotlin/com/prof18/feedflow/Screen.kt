@@ -5,4 +5,6 @@ sealed class Screen(val name: String) {
     object Settings : Screen("setting")
     object AddFeed : Screen("add_feed")
     object FeedList : Screen("feed_list")
+    object About : Screen("about")
+    object Licenses : Screen("licenses")
 }

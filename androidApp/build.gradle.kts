@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.triplet.play)
+    alias(libs.plugins.about.libraries)
 }
 
 val local = Properties()
@@ -66,6 +67,7 @@ dependencies {
 
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
+    implementation(libs.bundles.about.libraries)
     implementation(libs.touchlab.kermit)
     implementation(libs.moko.resourcesCompose)
 

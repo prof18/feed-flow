@@ -47,6 +47,9 @@ jobs:
       - name: Run Checks
         run: ./gradlew check
 
+      - name: Update Licenses file
+        run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+
       - name: Create DMG
         run: ./gradlew packageReleaseDmg
 

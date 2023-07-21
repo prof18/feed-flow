@@ -38,13 +38,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.addfeed.AddFeedScreen
+import com.prof18.feedflow.desktopViewModel
 import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.koin
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.preview.feedSourcesForPreview
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
-import com.prof18.feedflow.desktopViewModel
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -54,7 +54,11 @@ fun FeedSourceListScreen(
     FeedFlowTheme {
         var dialogState by remember { mutableStateOf(false) }
 
-        Dialog(visible = dialogState, onCloseRequest = { dialogState = false }) {
+        Dialog(
+            title = stringResource(MR.strings.add_feed),
+            visible = dialogState,
+            onCloseRequest = { dialogState = false },
+        ) {
             AddFeedScreen(
                 onFeedAdded = {
                     dialogState = false

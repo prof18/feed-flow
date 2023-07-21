@@ -23,6 +23,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onExportOPMLClick: (File) -> Unit,
     onFeedsListClick: () -> Unit,
     onClearOldFeedClick: () -> Unit,
+    onAboutClick: () -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -64,6 +65,13 @@ fun FrameWindowScope.FeedFlowMenuBar(
 
             ExportFeedsButton(
                 onExportOPMLClick = onExportOPMLClick,
+            )
+
+            Separator()
+
+            Item(
+                text = stringResource(resource = MR.strings.about_button),
+                onClick = onAboutClick,
             )
         }
     }

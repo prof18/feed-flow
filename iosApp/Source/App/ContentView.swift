@@ -13,16 +13,11 @@ struct ContentView: View {
                 HomeScreen()
                     .environmentObject(appState)
                     .environmentObject(browserSelector)
-                    .navigationDestination(for: Route.self) { _ in
-                        //                switch route {
-                        //                case let .movieDetail(movieId):
-                        //                    MovieDetailScreen(
-                        //                        movieDetailState: viewModel.movieDetailState,
-                        //                        onAppear: {
-                        //                            viewModel.getMovie(movieId: movieId)
-                        //                        }
-                        //                    )
-                        //                }
+                    .navigationDestination(for: Route.self) { route in
+                        switch route {
+                        case .aboutScreen:
+                            AboutScreen()
+                        }
                     }
             }
 

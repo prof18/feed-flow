@@ -323,6 +323,13 @@ struct HomeContent: View {
                                 )
                             }
                         )
+
+                        NavigationLink(value: Route.aboutScreen) {
+                            Label(
+                                MR.strings().about_button.localized,
+                                systemImage: "info.circle"
+                            )
+                        }
                     } label: {
                         Image(systemName: "gear")
                     }

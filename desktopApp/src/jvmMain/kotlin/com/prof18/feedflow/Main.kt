@@ -55,6 +55,7 @@ import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.rememberDesktopDarkTheme
 import com.prof18.feedflow.utils.AppEnvironment
+import com.prof18.feedflow.utils.initSentry
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import java.io.InputStream
@@ -68,17 +69,32 @@ fun main() = application {
     val propsFile = DI::class.java.classLoader?.getResourceAsStream("props.properties")
         ?: InputStream.nullInputStream()
     properties.load(propsFile)
+
+    val sentryDns = properties["sentry_dns"]
+        ?.toString()
+    val version = properties["version"]
+        ?.toString()
+
     val isRelease = properties["is_release"]
         ?.toString()
         ?.toBooleanStrictOrNull()
         ?: false
 
+    val appEnvironment = if (isRelease) {
+        AppEnvironment.Release
+    } else {
+        AppEnvironment.Debug
+    }
+
+    if (appEnvironment.isRelease() && sentryDns != null && version != null) {
+        initSentry(
+            dns = sentryDns,
+            version = version,
+        )
+    }
+
     DI.initKoin(
-        appEnvironment = if (isRelease) {
-            AppEnvironment.Release
-        } else {
-            AppEnvironment.Debug
-        },
+        appEnvironment = appEnvironment,
     )
 
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())

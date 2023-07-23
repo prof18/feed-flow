@@ -3,14 +3,14 @@ package com.prof18.feedflow.di
 import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
-import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
+import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.data.SettingsHelper
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepositoryImpl
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepositoryImpl
-import com.prof18.feedflow.logging.feedFlowLogWriter
+import com.prof18.feedflow.logging.crashReportingLogWriter
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
@@ -40,9 +40,9 @@ fun initKoin(
 @OptIn(ExperimentalKermitApi::class)
 private fun getLoggingModule(appEnvironment: AppEnvironment): Module =
     module {
-        val loggers = mutableListOf(feedFlowLogWriter(appEnvironment))
+        val loggers = mutableListOf(platformLogWriter())
         if (appEnvironment.isRelease()) {
-            loggers.add(CrashlyticsLogWriter())
+            loggers.add(crashReportingLogWriter())
         }
 
         val baseLogger = Logger(

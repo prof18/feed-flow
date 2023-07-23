@@ -109,3 +109,4 @@ bin/
 
 /iosApp/Plist/Prefix
 /iosApp/GoogleService-Info.plist
+/desktopApp/src/jvmMain/resources/props.properties

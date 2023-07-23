@@ -47,8 +47,6 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
                 implementation(libs.multiplatform.settings)
-                implementation(libs.crashk.ios)
-                implementation(libs.touchlab.kermit.crashlytics)
 
                 api(libs.touchlab.kermit)
                 api(libs.moko.resources)
@@ -73,13 +71,25 @@ kotlin {
             dependsOn(commonTest)
         }
 
+        val commonMobileMain by creating {
+            dependsOn(commonMain)
+
+            dependencies {
+                implementation(libs.crashk.ios)
+                implementation(libs.touchlab.kermit.crashlytics)
+            }
+        }
+
         val androidMain by getting {
             dependsOn(commonJvmAndroidMain)
+            dependsOn(commonMobileMain)
 
             dependencies {
                 implementation(libs.squareup.sqldelight.android.driver)
                 implementation(libs.androidx.lifecycle.viewModel.ktx)
                 implementation(libs.koin.android)
+                implementation(libs.crashk.ios)
+                implementation(libs.touchlab.kermit.crashlytics)
             }
         }
         val androidTest by getting {
@@ -97,12 +107,14 @@ kotlin {
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependsOn(commonMain)
+            dependsOn(commonMobileMain)
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
 
             dependencies {
                 implementation(libs.squareup.sqldelight.native.driver)
+
                 api(libs.touchlab.kermit.simple)
             }
         }
@@ -126,6 +138,7 @@ kotlin {
             dependencies {
                 implementation(libs.squareup.sqldelight.sqlite.driver)
                 implementation(libs.kotlinx.coroutines.swing)
+                api(libs.sentry)
             }
         }
         val desktopTest by getting {

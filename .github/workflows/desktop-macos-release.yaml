@@ -50,12 +50,6 @@ jobs:
       - name: Update Licenses file
         run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
 
-      - name: Create Properties file
-        run: echo "is_release=true" > desktopApp/src/jvmMain/resources/props.properties
-
-      - name: Create DMG
-        run: ./gradlew packageReleaseDmg
-
       - name: Create path variables
         id: path_variables
         run: |
@@ -66,6 +60,18 @@ jobs:
           echo "TAG=$tag" >> $GITHUB_OUTPUT
           echo "VERSION=$version" >> $GITHUB_OUTPUT
           echo "RELEASE_PATH=$path" >> $GITHUB_OUTPUT
+
+      - name: Create Properties file
+        run: |
+          echo "is_release=true" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "sentry_dns=$SENTRY_DNS" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "version=$VERSION" >> desktopApp/src/jvmMain/resources/props.properties
+        env:
+          SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+          VERSION: ${{ steps.path_variables.outputs.VERSION }}
+
+      - name: Create DMG
+        run: ./gradlew packageReleaseDmg
 
       - name: Notarization
         run: |

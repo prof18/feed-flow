@@ -82,7 +82,7 @@ jobs:
         run: ./gradlew packageReleaseDmg
 
       - name: Upload reports
-        if: fails()
+        if: failure()
         uses: actions/upload-artifact@v3
         with:
           name: reports

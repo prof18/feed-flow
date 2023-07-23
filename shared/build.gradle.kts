@@ -47,6 +47,8 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
                 implementation(libs.multiplatform.settings)
+                implementation(libs.kotlin.test)
+                implementation(libs.kotlin.test.junit)
 
                 api(libs.touchlab.kermit)
                 api(libs.moko.resources)

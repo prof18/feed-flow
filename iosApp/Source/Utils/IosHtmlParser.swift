@@ -17,7 +17,8 @@ class IosHtmlParser: HtmlParser {
             let doc: Document = try SwiftSoup.parse(html)
             return try doc.text()
         } catch {
-            KotlinDependencies.shared.getLogger(tag: "IosHtmlParser").e(messageString: "Error during html parsing: \(error)")
+            KotlinDependencies.shared.getLogger(tag: "IosHtmlParser")
+                .e(messageString: "Error during html parsing: \(error)")
             return nil
         }
     }

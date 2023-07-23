@@ -183,6 +183,8 @@ struct HomeContent: View {
     @EnvironmentObject var browserSelector: BrowserSelector
     @EnvironmentObject var appState: AppState
 
+    @Environment(\.openURL) var openURL
+
     @Binding var loadingState: FeedUpdateStatus?
     @Binding var feedState: [FeedItem]
     @Binding var showLoading: Bool
@@ -320,6 +322,20 @@ struct HomeContent: View {
                                 Label(
                                     MR.strings().export_feeds_button.localized,
                                     systemImage: "arrow.up.doc"
+                                )
+                            }
+                        )
+
+                        Button(
+                            action: {
+                                if let url = URL(string: UserFeedbackReporter.shared.getFeedbackUrl()) {
+                                    self.openURL(url)
+                                }
+                            },
+                            label: {
+                                Label(
+                                    MR.strings().report_issue_button.localized,
+                                    systemImage: "ladybug"
                                 )
                             }
                         )

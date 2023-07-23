@@ -16,7 +16,7 @@ theme = "apsho"
     weight = 2
 [[menu.sitemap]]
     name = "Privacy & Policy"
-    url = "/privacy"
+    url = "https://www.prof18.com/feed-flow/pp/privacy-policy-jul23/"
     weight = 3
 [[menu.sitemap]]
     name = "Report issue"

@@ -55,6 +55,7 @@ import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.rememberDesktopDarkTheme
 import com.prof18.feedflow.utils.AppEnvironment
+import com.prof18.feedflow.utils.UserFeedbackReporter
 import com.prof18.feedflow.utils.initSentry
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
@@ -181,6 +182,9 @@ fun main() = application {
             },
             onAboutClick = {
                 aboutDialogState = true
+            },
+            onBugReportClick = {
+                openInBrowser(UserFeedbackReporter.getFeedbackUrl())
             },
         )
 

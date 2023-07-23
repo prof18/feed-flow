@@ -39,6 +39,7 @@ import com.prof18.feedflow.settings.components.BrowserSelectionDialog
 import com.prof18.feedflow.settings.components.SettingsDivider
 import com.prof18.feedflow.settings.components.SettingsMenuItem
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.utils.UserFeedbackReporter
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -101,6 +102,12 @@ fun SettingsScreen(
         },
         navigateBack = navigateBack,
         onAboutClick = onAboutClick,
+        onBugReportClick = {
+            browserManager.openUrl(
+                url = UserFeedbackReporter.getFeedbackUrl(),
+                context = context,
+            )
+        },
     )
 }
 
@@ -114,6 +121,7 @@ private fun SettingsScreenContent(
     onBrowserSelected: (Browser) -> Unit,
     navigateBack: () -> Unit,
     onAboutClick: () -> Unit,
+    onBugReportClick: () -> Unit,
 ) {
     val openFileAction = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),
@@ -162,6 +170,7 @@ private fun SettingsScreenContent(
             openFileAction = openFileAction,
             createFileAction = createFileAction,
             onAboutClick = onAboutClick,
+            onBugReportClick = onBugReportClick,
         )
     }
 }
@@ -190,6 +199,7 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
     )
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun SettingsList(
     modifier: Modifier = Modifier,
@@ -198,6 +208,7 @@ private fun SettingsList(
     openFileAction: ManagedActivityResultLauncher<Array<String>, Uri?>,
     createFileAction: ManagedActivityResultLauncher<String, Uri?>,
     onAboutClick: () -> Unit,
+    onBugReportClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -255,6 +266,20 @@ private fun SettingsList(
         item {
             SettingsMenuItem(
                 text = stringResource(
+                    resource = MR.strings.report_issue_button,
+                ),
+            ) {
+                onBugReportClick()
+            }
+        }
+
+        item {
+            SettingsDivider()
+        }
+
+        item {
+            SettingsMenuItem(
+                text = stringResource(
                     resource = MR.strings.about_button,
                 ),
             ) {
@@ -289,6 +314,7 @@ private fun SettingsScreenPreview() {
             onBrowserSelected = {},
             navigateBack = {},
             onAboutClick = {},
+            onBugReportClick = {},
         )
     }
 }

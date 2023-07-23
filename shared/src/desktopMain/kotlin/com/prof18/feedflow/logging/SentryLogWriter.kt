@@ -15,6 +15,7 @@ class SentryLogWriter(
 ) : LogWriter() {
 
     init {
+        @Suppress("UseRequire")
         if (minCrashSeverity != null && minSeverity > minCrashSeverity) {
             throw IllegalArgumentException(
                 "minSeverity ($minSeverity) cannot be greater than minCrashSeverity ($minCrashSeverity)",

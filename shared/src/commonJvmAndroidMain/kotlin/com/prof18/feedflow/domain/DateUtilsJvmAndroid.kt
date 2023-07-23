@@ -7,14 +7,16 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
-internal actual fun getDateMillisFromString(dateString: String, logger: Logger): Long? {
+internal actual fun getDateMillisFromString(dateString: String, logger: Logger?): Long? {
     val dateFormat = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.getDefault())
     return try {
         dateFormat.parse(dateString)?.time
     } catch (e: ParseException) {
-        logger.e(e) { "Error while trying to format the date with dateFormatter. Date: $dateString" }
+        logger?.e(e) {
+            "Error while trying to format the date with dateFormatter. Date: $dateString"
+        }
         null
     }
 }

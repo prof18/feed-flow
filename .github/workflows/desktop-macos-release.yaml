@@ -102,7 +102,7 @@ jobs:
 
       - name: Update website
         run: |
-          file_path="../website/data/hero.yml"
+          file_path="website/data/hero.yml"
           new_link="https://github.com/prof18/feed-flow/releases/download/$VERSION/FeedFlow-$VERSION.dmg"
           awk -v new_link="$new_link" '/^button3Link:/ {print "button3Link: " new_link; next} 1' "$file_path" > tmpfile && mv tmpfile "$file_path"
         env:

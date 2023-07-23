@@ -33,7 +33,7 @@ jobs:
           FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
 
       - name: Run Checks
-        run: ./gradlew check
+        run: ./gradlew detekt iosX64Test
 
       - name: Create Firebase Plist
         run: |

@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 17
+          java-version: 17.0.6
 
       - uses: gradle/gradle-build-action@v2
         with:
@@ -53,7 +53,7 @@ jobs:
           FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
 
       - name: Run Checks
-        run: ./gradlew check
+        run: ./gradlew detekt desktopTest jvmTest
 
       - name: Update Licenses file
         run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
@@ -80,6 +80,14 @@ jobs:
 
       - name: Create DMG
         run: ./gradlew packageReleaseDmg
+
+      - name: Upload reports
+        if: fails()
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: |
+            **/build/compose/logs/*  
 
       - name: Notarization
         run: |

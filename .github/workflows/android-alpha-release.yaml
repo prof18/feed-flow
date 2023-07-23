@@ -53,7 +53,7 @@ jobs:
           PLAY_CONFIG_JSON: ${{ secrets.PLAY_CONFIG }}
 
       - name: Run Checks
-        run: ./gradlew check
+        run: ./gradlew detekt testDebugUnitTest
 
       - name: Distribute app to Alpha track
         run: ./gradlew :androidApp:bundleRelease :androidApp:publishBundle

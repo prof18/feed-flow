@@ -8,7 +8,7 @@ import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import java.io.File
 import java.util.Properties
 
-internal fun initDatabase(): SqlDriver {
+internal fun initDatabase(logger: Logger): SqlDriver {
     val appPath = AppDataPathBuilder.getAppDataPath()
 
     val databasePath = File(appPath, "/${DatabaseHelper.DB_FILE_NAME_WITH_EXTENSION}")
@@ -21,15 +21,15 @@ internal fun initDatabase(): SqlDriver {
     if (currentVer == 0) {
         FeedFlowDB.Schema.create(driver)
         setVersion(driver, 1)
-        Logger.d("init: created tables, setVersion to 1")
+        logger.d("init: created tables, setVersion to 1")
     } else {
         val schemaVer: Int = FeedFlowDB.Schema.version
         if (schemaVer > currentVer) {
             FeedFlowDB.Schema.migrate(driver, currentVer, schemaVer)
             setVersion(driver, schemaVer)
-            Logger.d("init: migrated from $currentVer to $schemaVer")
+            logger.d("init: migrated from $currentVer to $schemaVer")
         } else {
-            Logger.d("init")
+            logger.d("init with existing database")
         }
     }
     return driver

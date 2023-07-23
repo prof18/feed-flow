@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.sqldelight)
-    alias(libs.plugins.touchlab.kermit)
     alias(libs.plugins.native.coroutines)
     alias(libs.plugins.ksp)
     alias(libs.plugins.moko.resources)
@@ -24,17 +23,18 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
             export(libs.moko.resources)
+            export(libs.touchlab.kermit.simple)
         }
     }
 
     sourceSets {
 
-       all {
+        all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
         }
 
@@ -43,11 +43,11 @@ kotlin {
                 implementation(libs.squareup.sqldelight.runtime)
                 implementation(libs.squareup.sqldelight.coroutine.extensions)
                 implementation(libs.koin.core)
-                implementation(libs.touchlab.kermit)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
                 implementation(libs.multiplatform.settings)
 
+                api(libs.touchlab.kermit)
                 api(libs.moko.resources)
             }
         }
@@ -69,7 +69,6 @@ kotlin {
         val commonJvmAndroidTest by creating {
             dependsOn(commonTest)
         }
-
 
         val androidMain by getting {
             dependsOn(commonJvmAndroidMain)
@@ -101,6 +100,7 @@ kotlin {
 
             dependencies {
                 implementation(libs.squareup.sqldelight.native.driver)
+                api(libs.touchlab.kermit.simple)
             }
         }
         val iosX64Test by getting
@@ -117,7 +117,6 @@ kotlin {
             }
         }
 
-
         val desktopMain by getting {
             dependsOn(commonJvmAndroidMain)
 
@@ -129,7 +128,6 @@ kotlin {
         val desktopTest by getting {
             dependsOn(commonJvmAndroidTest)
             dependsOn(commonTest)
-
         }
     }
 }
@@ -151,14 +149,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-}
-
-val releaseBuild: String by project
-
-kermit {
-    if(releaseBuild.toBoolean()) {
-        stripBelow = co.touchlab.kermit.gradle.StripSeverity.Info
     }
 }
 

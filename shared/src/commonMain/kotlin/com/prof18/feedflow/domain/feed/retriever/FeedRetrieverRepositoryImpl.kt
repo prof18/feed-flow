@@ -41,6 +41,7 @@ internal class FeedRetrieverRepositoryImpl(
     private val databaseHelper: DatabaseHelper,
     private val dispatcherProvider: DispatcherProvider,
     private val htmlParser: HtmlParser,
+    private val logger: Logger,
 ) : FeedRetrieverRepository {
 
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
@@ -138,7 +139,7 @@ internal class FeedRetrieverRepositoryImpl(
             repeat(NUMBER_OF_CONCURRENT_PARSING_REQUESTS) {
                 launch(dispatcherProvider.default) {
                     for (feedSource in feedSourcesChannel) {
-                        Logger.d { "-> Getting ${feedSource.url}" }
+                        logger.d { "-> Getting ${feedSource.url}" }
                         try {
                             val rssChannel = parser.getRssChannel(feedSource.url)
                             val result = RssChannelResult(
@@ -147,7 +148,7 @@ internal class FeedRetrieverRepositoryImpl(
                             )
                             send(result)
                         } catch (e: Throwable) {
-                            Logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }
+                            logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }
                             e.printStackTrace()
                             errorMutableState.update {
                                 FeedErrorState(
@@ -167,7 +168,7 @@ internal class FeedRetrieverRepositoryImpl(
         repeat(NUMBER_OF_CONCURRENT_FEED_SAVER) {
             launch(dispatcherProvider.io) {
                 for (rssChannelResult in feedToSaveChannel) {
-                    Logger.d {
+                    logger.d {
                         "<- Got back ${rssChannelResult.rssChannel.title}"
                     }
 
@@ -213,7 +214,7 @@ internal class FeedRetrieverRepositoryImpl(
             val defaultDate = currentTimeMillis() - randomTimeToSubtract
 
             val dateMillis = if (pubDate != null) {
-                getDateMillisFromString(pubDate) ?: defaultDate
+                getDateMillisFromString(pubDate, logger) ?: defaultDate
             } else {
                 // Between 30 minutes and 3 hours ago
                 defaultDate
@@ -226,7 +227,7 @@ internal class FeedRetrieverRepositoryImpl(
             }
 
             if (title == null || url == null) {
-                Logger.d { "Skipping: $rssItem" }
+                logger.d { "Skipping: $rssItem" }
                 null
             } else {
                 FeedItem(

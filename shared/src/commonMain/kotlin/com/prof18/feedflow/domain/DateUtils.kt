@@ -1,6 +1,8 @@
 package com.prof18.feedflow.domain
 
-internal expect fun getDateMillisFromString(dateString: String): Long?
+import co.touchlab.kermit.Logger
+
+internal expect fun getDateMillisFromString(dateString: String, logger: Logger): Long?
 
 internal expect fun formatDate(millis: Long): String
 

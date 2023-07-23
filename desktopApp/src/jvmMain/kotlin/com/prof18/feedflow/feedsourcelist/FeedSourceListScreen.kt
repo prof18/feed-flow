@@ -39,8 +39,8 @@ import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktopViewModel
+import com.prof18.feedflow.di.DI
 import com.prof18.feedflow.domain.model.FeedSource
-import com.prof18.feedflow.koin
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.preview.feedSourcesForPreview
 import com.prof18.feedflow.ui.style.FeedFlowTheme
@@ -65,7 +65,7 @@ fun FeedSourceListScreen(
                 },
             )
         }
-        val viewModel = desktopViewModel { koin.get<FeedSourceListViewModel>() }
+        val viewModel = desktopViewModel { DI.koin.get<FeedSourceListViewModel>() }
 
         val feedSources by viewModel.feedSourcesState.collectAsState()
 

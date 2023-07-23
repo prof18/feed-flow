@@ -24,6 +24,7 @@ import kotlin.coroutines.CoroutineContext
 internal class DatabaseHelper(
     sqlDriver: SqlDriver,
     private val backgroundDispatcher: CoroutineDispatcher,
+    private val logger: Logger,
 ) {
     private val dbRef: FeedFlowDB = FeedFlowDB(sqlDriver)
 
@@ -45,7 +46,7 @@ internal class DatabaseHelper(
             .selectFeedUrls()
             .asFlow()
             .catch {
-                Logger.e(it) { "Something wrong while getting data from Database" }
+                logger.e(it) { "Something wrong while getting data from Database" }
             }
             .mapToList()
             .map { feedSources ->
@@ -64,7 +65,7 @@ internal class DatabaseHelper(
             .selectFeeds()
             .asFlow()
             .catch {
-                Logger.e(it) { "Something wrong while getting data from Database" }
+                logger.e(it) { "Something wrong while getting data from Database" }
             }
             .mapToList()
             .flowOn(backgroundDispatcher)

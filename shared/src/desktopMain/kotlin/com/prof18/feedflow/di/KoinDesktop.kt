@@ -5,6 +5,7 @@ import com.prof18.feedflow.domain.JvmHtmlParser
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.initDatabase
 import com.prof18.feedflow.presentation.BaseViewModel
+import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.build
@@ -21,7 +22,10 @@ import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 import java.util.prefs.Preferences
 
-fun initKoinDesktop(): KoinApplication = initKoin(
+fun initKoinDesktop(
+    appEnvironment: AppEnvironment,
+): KoinApplication = initKoin(
+    appEnvironment = appEnvironment,
     modules = listOf(),
 )
 
@@ -32,7 +36,9 @@ internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
 
 internal actual val platformModule: Module = module {
     single<SqlDriver> {
-        initDatabase()
+        initDatabase(
+            logger = getWith("initDatabase"),
+        )
     }
 
     single {

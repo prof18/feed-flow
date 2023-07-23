@@ -1,5 +1,6 @@
 package com.prof18.feedflow.domain
 
+import co.touchlab.kermit.Logger
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -8,11 +9,12 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-internal actual fun getDateMillisFromString(dateString: String): Long? {
+internal actual fun getDateMillisFromString(dateString: String, logger: Logger): Long? {
     val dateFormat = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.getDefault())
     return try {
         dateFormat.parse(dateString)?.time
     } catch (e: ParseException) {
+        logger.e(e) { "Error while trying to format the date with dateFormatter. Date: $dateString" }
         null
     }
 }

@@ -68,7 +68,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.about.libraries)
-    implementation(libs.touchlab.kermit)
     implementation(libs.moko.resourcesCompose)
 
     debugImplementation(libs.androidx.compose.ui.tooling)

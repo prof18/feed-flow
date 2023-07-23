@@ -10,8 +10,16 @@ import Foundation
 import shared
 
 func startKoin() {
+    let appEnvironment: AppEnvironment
+    #if DEBUG
+        appEnvironment = AppEnvironment.Debug()
+    #else
+        appEnvironment = AppEnvironment.Release()
+    #endif
+
     let koinApplication = KoinIOSKt.doInitKoinIos(
-        htmlParser: IosHtmlParser()
+        htmlParser: IosHtmlParser(),
+        appEnvironment: appEnvironment
     )
     _koin = koinApplication.koin
 }

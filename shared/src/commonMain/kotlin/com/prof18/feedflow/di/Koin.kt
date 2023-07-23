@@ -1,36 +1,65 @@
 package com.prof18.feedflow.di
 
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.StaticConfig
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.data.SettingsHelper
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepositoryImpl
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepositoryImpl
+import com.prof18.feedflow.logging.feedFlowLogWriter
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.SettingsViewModel
+import com.prof18.feedflow.utils.AppEnvironment
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
+import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.Qualifier
+import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
-fun initKoin(modules: List<Module>): KoinApplication {
+fun initKoin(
+    appEnvironment: AppEnvironment,
+    modules: List<Module>,
+): KoinApplication {
     return startKoin {
-        modules(modules + coreModule + platformModule)
+        modules(modules + coreModule + getLoggingModule(appEnvironment) + platformModule)
     }
 }
+
+private fun getLoggingModule(appEnvironment: AppEnvironment): Module =
+    module {
+        val baseLogger = Logger(
+            config = StaticConfig(
+                logWriterList = listOf(
+                    feedFlowLogWriter(appEnvironment), // TODO: create the custom one
+                ),
+            ),
+            "FeedFlow",
+        )
+        factory { (tag: String?) ->
+            if (tag != null) {
+                baseLogger.withTag(tag)
+            } else {
+                baseLogger
+            }
+        }
+    }
 
 private val coreModule = module {
     single {
         DatabaseHelper(
-            get(),
-            Dispatchers.Default,
+            sqlDriver = get(),
+            backgroundDispatcher = Dispatchers.Default,
+            logger = getWith("DatabaseHelper"),
         )
     }
 
@@ -48,6 +77,7 @@ private val coreModule = module {
             databaseHelper = get(),
             dispatcherProvider = get(),
             htmlParser = get(),
+            logger = getWith("FeedRetrieverRepositoryImpl"),
         )
     }
 
@@ -55,6 +85,7 @@ private val coreModule = module {
         SettingsViewModel(
             feedManagerRepository = get(),
             feedRetrieverRepository = get(),
+            logger = getWith("SettingsViewModel"),
         )
     }
 
@@ -91,3 +122,7 @@ internal expect inline fun <reified T : BaseViewModel> Module.viewModel(
     qualifier: Qualifier? = null,
     noinline definition: Definition<T>,
 ): KoinDefinition<T>
+
+internal inline fun <reified T> Scope.getWith(vararg params: Any?): T {
+    return get(parameters = { parametersOf(*params) })
+}

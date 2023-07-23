@@ -41,7 +41,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.prof18.feedflow.about.AboutContent
-import com.prof18.feedflow.di.initKoinDesktop
+import com.prof18.feedflow.di.DI
 import com.prof18.feedflow.domain.opml.OpmlInput
 import com.prof18.feedflow.domain.opml.OpmlOutput
 import com.prof18.feedflow.feedsourcelist.FeedSourceListScreen
@@ -54,15 +54,33 @@ import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.rememberDesktopDarkTheme
+import com.prof18.feedflow.utils.AppEnvironment
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
+import java.io.InputStream
+import java.util.Properties
 import javax.swing.UIManager
-
-val koin = initKoinDesktop().koin
 
 @Suppress("LongMethod")
 @OptIn(ExperimentalDecomposeApi::class)
 fun main() = application {
+    val properties = Properties()
+    val propsFile = DI::class.java.classLoader?.getResourceAsStream("props.properties")
+        ?: InputStream.nullInputStream()
+    properties.load(propsFile)
+    val isRelease = properties["is_release"]
+        ?.toString()
+        ?.toBooleanStrictOrNull()
+        ?: false
+
+    DI.initKoin(
+        appEnvironment = if (isRelease) {
+            AppEnvironment.Release
+        } else {
+            AppEnvironment.Debug
+        },
+    )
+
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
     val lifecycle = LifecycleRegistry()
@@ -72,8 +90,8 @@ fun main() = application {
 
     LifecycleController(lifecycle, windowState)
 
-    val settingsViewModel = desktopViewModel { koin.get<SettingsViewModel>() }
-    val homeViewModel = desktopViewModel { koin.get<HomeViewModel>() }
+    val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
+    val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
 
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()

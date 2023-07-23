@@ -1,5 +1,6 @@
 package com.prof18.feedflow.di
 
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.domain.HtmlParser
@@ -10,6 +11,7 @@ import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.SettingsViewModel
+import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.build
@@ -25,12 +27,15 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
+import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 
 fun initKoinIos(
     htmlParser: HtmlParser,
+    appEnvironment: AppEnvironment,
 ): KoinApplication = initKoin(
+    appEnvironment = appEnvironment,
     modules = listOf(
         module {
             factory { htmlParser }
@@ -79,4 +84,5 @@ object KotlinDependencies : KoinComponent {
     fun getFeedSourceListViewModel() = getKoin().get<FeedSourceListViewModel>()
     fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()
     fun getFeedManagerRepository() = getKoin().get<FeedManagerRepository>()
+    fun getLogger(tag: String? = null) = getKoin().get<Logger>() { parametersOf(tag) }
 }

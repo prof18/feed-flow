@@ -17,7 +17,7 @@ detekt = "1.23.0"
 io-coil = "2.2.2"
 java = "11"
 junit = "4.13.2"
-kermit = "1.2.2"
+kermit = "2.0.0-RC4"
 koin = "3.4.2"
 koin-android = "3.4.2"
 koin-compose = "3.4.5"
@@ -90,6 +90,7 @@ kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "kermit" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
 org-robolectric = { module = "org.robolectric:robolectric", version.ref = "org-robolectric" }
 squareup-sqldelight-android-driver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
@@ -129,7 +130,6 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-touchlab-kermit = { id = "co.touchlab.kermit", version.ref = "kermit" }
 versionsBenManes = { id = "com.github.ben-manes.versions", version.ref = "versions-ben-manes" }
 native-coroutines = { id = "com.rickclephas.kmp.nativecoroutines", version.ref = "native-coroutines" }
 sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }

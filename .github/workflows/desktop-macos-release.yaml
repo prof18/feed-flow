@@ -50,6 +50,9 @@ jobs:
       - name: Update Licenses file
         run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
 
+      - name: Create Properties file
+        run: echo "is_release=true" > desktopApp/src/jvmMain/resources/props.properties
+
       - name: Create DMG
         run: ./gradlew packageReleaseDmg
 

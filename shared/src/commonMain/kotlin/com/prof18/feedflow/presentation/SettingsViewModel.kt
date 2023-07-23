@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 class SettingsViewModel(
     private val feedManagerRepository: FeedManagerRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val logger: Logger,
 ) : BaseViewModel() {
 
     private val isImportDoneMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -46,7 +47,7 @@ class SettingsViewModel(
                 isImportDoneMutableState.update { true }
                 feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
             } catch (e: Throwable) {
-                Logger.e(e) { "Error while importing feed" }
+                logger.e(e) { "Error while importing feed" }
                 mutableUIErrorState.emit(
                     UIErrorState(
                         message = StringDesc.Resource(MR.strings.generic_error_message),
@@ -64,7 +65,7 @@ class SettingsViewModel(
                 feedManagerRepository.exportFeedsAsOpml(opmlOutput)
                 isExportDoneMutableState.update { true }
             } catch (e: Throwable) {
-                Logger.e(e) { "Error while exporting feed" }
+                logger.e(e) { "Error while exporting feed" }
                 mutableUIErrorState.emit(
                     UIErrorState(
                         message = StringDesc.Resource(MR.strings.generic_error_message),

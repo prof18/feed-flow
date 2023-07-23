@@ -12,7 +12,7 @@ import platform.Foundation.dateWithTimeIntervalSince1970
 import platform.Foundation.timeIntervalSince1970
 
 @Suppress("TooGenericExceptionCaught")
-internal actual fun getDateMillisFromString(dateString: String): Long? {
+internal actual fun getDateMillisFromString(dateString: String, logger: Logger): Long? {
     val dateFormatter = NSDateFormatter().apply {
         setDateFormat("E, d MMM yyyy HH:mm:ss Z")
         setLocale(NSLocale("en_US_POSIX"))
@@ -45,7 +45,7 @@ internal actual fun getDateMillisFromString(dateString: String): Long? {
 
     if (date == null) {
         if (exception != null && message != null) {
-            Logger.e(exception) {
+            logger.e(exception) {
                 message
             }
         }

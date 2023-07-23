@@ -24,6 +24,14 @@ jobs:
           gradle-home-cache-cleanup: true
           cache-read-only: false
 
+      # Required to run checks
+      - name: Create Firebase json
+        run: |
+          echo "$FIREBASE_JSON" > androidApp/google-services.json.b64
+          base64 -d -i androidApp/google-services.json.b64 > androidApp/google-services.json
+        env:
+          FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
+
       - name: Run Checks
         run: ./gradlew check
 

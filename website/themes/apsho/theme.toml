@@ -1,0 +1,12 @@
+name = "apsho-hugo-theme"
+license = "MIT"
+licenselink = "https://github.com/StaticMania/apsho-hugo/blob/master/LICENSE"
+description = "Apsho Hugo – App Landing Page is the perfect app showcase Hugo Theme. Apsho is a better way to present your modern business and app showcasing. It’s easy to customize and also well documented. And compatible with Desktop, laptop, mobile, and also compatible with major browsers. We follow the modern design system to craft the template."
+homepage = "https://apsho-hugo.staticmania.com/"
+tags = ['clean', 'minimal', 'agency', 'corporate', 'creative agency', 'creative studio', 'portfolio', 'staticmania', 'responsive', 'blog', 'customizable', 'company', 'creative', 'agency template']
+features = ['bootstrap 4', 'responsive design', 'blog', 'responsive','landing-page', 'minimal', 'business', 'agency-template', 'hugo-theme', 'portfolio', 'company', 'creative', 'contact-form']
+min_version = "0.41.0"
+
+[author]
+  name = "Static Mania"
+  homepage = "https://staticmania.com/"

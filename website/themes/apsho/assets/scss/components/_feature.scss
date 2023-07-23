@@ -1,0 +1,139 @@
+.feature {
+  position: relative;
+  overflow: hidden;
+
+  @include desktop {
+    text-align: center;
+    padding-bottom: 80px;
+  }
+
+  &-image {
+    position: relative;
+    text-align: center;
+
+    &-shape1,
+    &-shape2,
+    &-shape3,
+    &-shape4 {
+      position: absolute;
+      z-index: -1;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    &-shape1 {
+      @include desktop {
+        left: -13% !important;
+      }
+
+      @include tablet {
+        left: -17% !important;
+      }
+    }
+
+    &-shape2 {
+      @include desktop {
+        right: 5% !important;
+      }
+
+      @include tablet {
+        right: -10% !important;
+      }
+    }
+
+    &-shape3 {
+      @include desktop {
+        right: -7% !important;
+      }
+
+      @include tablet {
+        right: -9% !important;
+      }
+    }
+
+    &-shape4 {
+      @include desktop {
+        left: -5% !important;
+      }
+
+      @include tablet {
+        left: -15% !important;
+      }
+    }
+  }
+
+  &-content {
+    @include desktop {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+
+      @include tablet {
+        font-size: 35px;
+        line-height: 40px;
+      }
+    }
+
+    p {
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 28px;
+      margin-bottom: 30px;
+    }
+
+    &-list {
+      margin-top: 50px;
+
+      @include desktop {
+        display: flex;
+        justify-content: center;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+
+        li {
+          list-style: none;
+          display: flex;
+          align-items: center;
+          &:not(:last-child) {
+            margin-bottom: 15px;
+          }
+
+          i {
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            line-height: 20px;
+            border: 2px solid $primary-color;
+            border-radius: 5px;
+            margin-right: 15px;
+            color: $primary-color;
+            display: inline-block;
+            font-size: 12px;
+            font-weight: bold;
+          }
+
+          p {
+            font-weight: 500;
+            margin-bottom: 0;
+            display: inline-block;
+            color: $text-color-dark;
+            @include desktop-lg {
+              font-size: 14px;
+            }
+            @include mobile {
+              font-size: 13px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

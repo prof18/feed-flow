@@ -1,0 +1,13 @@
+---
+enable: true
+title: FeedFlow
+caption: Networking
+description: Enjoy team diversity and increase their networks among others people in various fields by providing an exceptional facilities and coworking.
+buttonName: Available on
+button1text: Google Play
+button1Link: https://www.example.com
+button2text: Apple Store
+button2Link: https://www.example.com
+button3text: MacOS
+button3Link: https://github.com/prof18/feed-flow/releases/download/1.0.5-desktop/FeedFlow-1.0.5.dmg
+image: images/hero/hero-image.svg

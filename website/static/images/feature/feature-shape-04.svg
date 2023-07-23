@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="403.74" height="403.74" viewBox="0 0 403.74 403.74">
+  <defs>
+    <clipPath id="clip-path">
+      <rect width="403.74" height="403.74" fill="none"/>
+    </clipPath>
+    <filter id="Rectangle_2180" x="19.016" y="19.015" width="365.708" height="365.708" filterUnits="userSpaceOnUse">
+      <feOffset dy="20" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="22.5" result="blur"/>
+      <feFlood flood-opacity="0.102"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Repeat_Grid_1" data-name="Repeat Grid 1" clip-path="url(#clip-path)">
+    <g transform="translate(-923.13 -2793.13)">
+      <g transform="matrix(1, 0, 0, 1, 923.13, 2793.13)" filter="url(#Rectangle_2180)">
+        <rect id="Rectangle_2180-2" data-name="Rectangle 2180" width="180" height="180" rx="20" transform="matrix(0.34, -0.94, 0.94, 0.34, 86.52, 235.66)" fill="#ffd100"/>
+      </g>
+    </g>
+  </g>
+</svg>

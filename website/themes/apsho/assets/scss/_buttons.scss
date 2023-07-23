@@ -1,0 +1,156 @@
+.btn {
+  font-size: 15px;
+  padding: 18px 50px;
+  border-radius: 10px;
+  transition: 0.5s ease;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.btn-sm {
+  padding: 15px 45px;
+  font-size: 14px;
+}
+
+.btn-primary {
+  position: relative;
+  border: 2px solid $primary-color;
+  color: $primary-color;
+  text-transform: uppercase;
+  background: $white;
+
+  span {
+    display: block;
+    position: relative;
+    transition: 0.9s $site-ease;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    background: $primary-color;
+    border-radius: 10px;
+    left: -2px;
+    top: -2px;
+    transform: scaleY(0);
+    transform-origin: bottom center;
+    transition: 0.5s $site-ease;
+  }
+
+  &::after {
+    content: attr(data-text);
+    color: $white;
+    font-size: 16px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, calc(-50% - 10px));
+    opacity: 0;
+    transition: 0.9s $site-ease;
+  }
+
+  &:hover {
+    color: $primary-color;
+    border-color: $primary-color;
+    background: $white;
+
+    span {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+
+    &::before {
+      transform: scaleY(1);
+    }
+
+    &::after {
+      transform: translate(-50%, -50%);
+      opacity: 1;
+    }
+  }
+}
+
+.btn-platform {
+  display: flex;
+  padding: 15px 40px;
+  border: 2px solid $text-color-dark;
+  align-items: center;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+
+  @include desktop-lg {
+    padding: 15px 30px;
+  }
+  @include mobile {
+    justify-content: center;
+  }
+
+  i {
+    svg {
+      fill: $text-color-dark;
+      transition: all 0.3s ease-in-out;
+    }
+  }
+
+  &-area {
+    margin-left: 12px;
+    color: $text-color-dark;
+    font-size: 18px;
+    transition: all 0.3s ease-in-out;
+
+    @include mobile {
+      font-size: 14px;
+    }
+
+    span {
+      margin-bottom: -5px;
+      display: block;
+      font-size: 14px;
+      color: $text-color;
+      transition: all 0.3s ease-in-out;
+      font-weight: 400;
+      @include mobile {
+        font-size: 12px;
+      }
+    }
+  }
+
+  &:hover {
+    text-decoration: none;
+    background-color: $primary-color;
+    border-color: $primary-color;
+    box-shadow: 0px 8px 20px rgba(44, 93, 167, 0.3);
+    transform: scale(1.05);
+
+    i {
+      svg {
+        fill: $white;
+      }
+    }
+
+    .btn-platform-area {
+      color: $white;
+
+      span {
+        color: $white;
+      }
+    }
+  }
+}
+
+.btn-primary-filled {
+  color: $white;
+  background-color: $primary-color;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: $primary-font;
+  box-shadow: 0px 8px 20px rgba(255, 115, 128, 0.3);
+  transition: 0.3s $site-ease;
+  text-transform: uppercase;
+  &:hover {
+    transform: scale(1.04);
+  }
+}

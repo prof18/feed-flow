@@ -1,0 +1,44 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700");
+
+body {
+  font-family: $primary-font;
+  font-size: 16px;
+  color: $text-color;
+  background: $body-color;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: $text-color-dark;
+  font-family: $primary-font;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+p {
+  font-size: 16px;
+  color: $text-color;
+  line-height: 26px;
+}
+
+h1 {
+  font-size: 50px;
+  line-height: 70px;
+}
+
+h2 {
+  font-size: 40px;
+  line-height: 55px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
+h4 {
+  font-size: 20px;
+}

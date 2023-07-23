@@ -1,0 +1,106 @@
+.faq {
+  padding: 100px 0;
+  @include tablet {
+    padding: 50px 0;
+  }
+  &-content {
+    @include desktop {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h2 {
+      margin-bottom: 25px;
+
+      @include tablet {
+        font-size: 30px;
+        line-height: 40px;
+      }
+
+      @include mobile {
+        font-size: 20px;
+        line-height: 30px;
+      }
+
+      @include mobile-xs {
+        font-size: 18px;
+      }
+    }
+
+    p {
+      @include mobile {
+        font-size: 14px;
+      }
+    }
+  }
+  &-accordion {
+    border-radius: 10px;
+    &-item {
+      margin-bottom: 25px;
+      border-radius: 6px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.05);
+      padding: 20px 30px;
+      .header {
+        position: relative;
+        h5 {
+          position: relative;
+          &::before {
+            content: "";
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            background-color: rgba($color: $primary-color, $alpha: 0.1);
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+          }
+          .btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            color: $text-color-dark;
+            white-space: unset;
+            position: relative;
+            letter-spacing: 0;
+            @include mobile {
+              font-size: 16px;
+            }
+            &:before,
+            &:after {
+              content: "";
+              position: absolute;
+              width: 10px;
+              height: 2px;
+              top: 50%;
+              right: 6.5px;
+              background: $primary-color;
+              transform: translateY(-50%) rotate(0);
+              transition: transform 0.5s ease;
+            }
+            &.collapsed {
+              &:after {
+                transform: translateY(-50%) rotate(270deg);
+              }
+            }
+          }
+        }
+      }
+      .body {
+        color: $text-color;
+        font-size: 15px;
+        line-height: 25px;
+        padding: 20px 0 10px;
+        @include mobile {
+          font-size: 14px;
+          line-height: 22px;
+        }
+      }
+    }
+  }
+}

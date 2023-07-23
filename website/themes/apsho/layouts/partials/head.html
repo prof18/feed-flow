@@ -1,0 +1,25 @@
+<head>
+  <meta charset="utf-8" />
+  <title>{{ .Title }}</title>
+
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  {{ "<!-- Themify -->" | safeHTML }}
+  <link rel="stylesheet" href="{{ "themify/themify.css" | absURL }}">
+
+  {{ "<!-- Critical CSS -->" | safeHTML }}
+  {{ $stylex := resources.Get "scss/critical.scss" | resources.ToCSS | minify }}
+  <link href="{{ $stylex.Permalink }}" rel="stylesheet" />
+
+  {{ "<!--Favicon-->" | safeHTML }}
+  <link rel="shortcut icon" href="{{ "images/favicon/apple-touch-icon.png" | absURL }}" type="image/x-icon" />
+  <link rel="icon" href="{{ "images/favicon/favicon.ico" | absURL }}" type="image/x-icon" />
+  
+  <!--
+  
+  
+  -->
+</head>

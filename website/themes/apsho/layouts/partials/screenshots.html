@@ -1,0 +1,33 @@
+{{ with .Site.Data.screenshots }}
+  {{ if .enable }}
+    <section class="screenshots">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <div class="screenshots-title">
+              <h2>
+                {{ .title }}
+              </h2>
+              <p>
+                {{ .description }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screenshots-wrapper">
+        <div class="screenshots-slider-frame">
+          <img src="images/screenshots/slider-frame.svg" alt="slider-frame" />
+        </div>
+        <div class="screenshots-slider">
+          {{ $Section := .images }}
+          {{ range $Section }}
+            <div class="screenshots-slider-item">
+              <img src={{ .url }} alt="" />
+            </div>
+          {{ end }}
+        </div>
+      </div>
+    </section>
+  {{ end }}
+{{ end }}

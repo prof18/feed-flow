@@ -1,0 +1,120 @@
+.hero {
+  position: relative;
+  padding: 50px 0 100px;
+  overflow: hidden;
+  @include desktop {
+    text-align: center;
+  }
+  @include tablet {
+    padding: 50px 0 80px;
+  }
+  @include mobile {
+    padding: 30px 0 50px;
+  }
+  &-shape {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    svg {
+      &:first-child {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 48%;
+      }
+      &:last-child {
+        width: 10%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+  }
+
+  &-content {
+    &-subtitle {
+      font-size: 14px;
+      font-weight: 400;
+      color: $primary-color;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: inline-block;
+      letter-spacing: 3px;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+      @include tablet {
+        font-size: 40px;
+        line-height: 52px;
+      }
+    }
+
+    p {
+      font-size: 17px;
+      line-height: 37px;
+      font-weight: 400;
+      margin-bottom: 40px;
+      @include mobile {
+        font-size: 16px;
+        line-height: 28px;
+      }
+    }
+
+    &-buttons {
+      padding-left: 0;
+      margin: 0;
+      list-style: none;
+      text-align: center;
+
+      li {
+        display: inline-block;
+
+        &:not(:last-child) {
+          margin-right: 15px;
+          @include mobile {
+            margin-right: 0;
+            margin-bottom: 20px;
+          }
+        }
+        @include mobile {
+          display: block;
+        }
+      }
+    }
+  }
+
+  &-image {
+    margin: -40px;
+    img {
+      max-width: 100%;
+    }
+    @include desktop {
+      margin: 0 auto 40px;
+      width: 70%;
+    }
+    @include tablet {
+      width: 80%;
+    }
+    @include mobile {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  }
+
+  &-svg-icon {
+    position: absolute;
+    top: 0px;
+    right: -505px;
+    width: 99%;
+
+    svg {
+      path {
+        &:first-child {
+          fill: #ffecee;
+        }
+      }
+    }
+  }
+}

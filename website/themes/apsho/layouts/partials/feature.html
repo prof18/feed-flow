@@ -1,0 +1,89 @@
+{{ with .Site.Data.feature }}
+  {{ if .enable }}
+    <section class="feature" id="feature">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <div class="feature-image">
+              <img
+                src="images/feature/feature-shape-01.svg"
+                class="feature-image-shape1"
+                style="left: -25%; top: 10%;"
+                alt="feature-image-shape"
+              />
+              <img
+                src={{ .image1 }}
+                alt="feature-image"
+              />
+              <img
+                src="images/feature/feature-shape-02.svg"
+                style="right: -13%; top: 45%;"
+                class="feature-image-shape2"
+                alt="feature-image-shape"
+              />
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="feature-content ml-25">
+              <h2>
+                {{ .title }}
+              </h2>
+              <p>
+                {{ .description }}
+              </p>
+              <p>
+                {{ .description2 }}
+              </p>
+              <a href="#" data-text={{ .buttonText }} class="btn btn-primary">
+                <span>{{ .buttonText }}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="row align-items-center">
+          <div class="col-lg-6 order-2 order-lg-1">
+            <div class="feature-content mr-25">
+              <h2>
+                {{ .Title2nd }}
+              </h2>
+              <p>
+                {{ .description2nd }}
+              </p>
+              <div class="feature-content-list">
+                <ul>
+                  {{ $Section := .checkItem }}
+                  {{ range $Section }}
+                    <li>
+                      <i class="ti-check"></i>
+                      <p> {{ .text }} </p>
+                    </li>
+                  {{ end }}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 order-1 order-lg-2">
+            <div class="feature-image">
+              <img
+                src="images/feature/feature-shape-03.svg"
+                class="feature-image-shape3"
+                style="right: -25%; top: 10%;"
+                alt="feature-image-shape"
+              />
+              <img
+                src={{ .image2 }}
+                alt="feature-image"
+              />
+              <img
+                src="images/feature/feature-shape-04.svg"
+                style="left: -20%; top: 42%;"
+                class="feature-image-shape4"
+                alt="feature-image-shape"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  {{ end }}
+{{ end }}

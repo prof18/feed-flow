@@ -1,0 +1,35 @@
+<nav class="main-nav navbar navbar-expand-lg">
+  <div class="container-fluid">
+    {{ "<!-- Logo -->" | safeHTML }}
+    <a class="navbar-brand" href="{{ .Site.BaseURL }}">
+      <img
+        class="logo-main"
+        src="{{ .Site.Params.logo | absURL }}"
+        alt="logo-white"
+      />
+    </a>
+    {{ "<!-- Toogle Button -->" | safeHTML }}
+    <button
+      class="navbar-toggler collapsed"
+      type="button"
+      data-toggle="collapse"
+      data-target="#mainNav"
+    >
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <div class="collapse navbar-collapse nav-list" id="mainNav">
+      {{ "<!-- Navigation Links -->" | safeHTML }}
+      
+      {{ $menu := .Site.Menus.main }}
+      <ul class="navbar-nav ml-auto">
+      {{ range $index, $element := $menu }}
+        <li class="nav-item">
+          <a href="{{ $.Site.BaseURL }}{{ .URL }}" class="nav-link {{ if $.IsHome }}scroll{{ end }}">{{ .Name }}</a>
+        </li>
+      {{ end }}
+      </ul>
+    </div>
+  </div>
+</nav>

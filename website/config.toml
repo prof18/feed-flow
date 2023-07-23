@@ -1,0 +1,34 @@
+# MAIN base
+baseURL = "https://apsho-hugo.netlify.app/"
+languageCode = "en-us"
+title = "FeedFlow | RSS Reader"
+description = "FeedFlow - RSS Reader for Android, iOS and MacOS"
+theme = "apsho"
+
+# Footer Sitemap
+[[menu.sitemap]]
+    name = "Home"
+    url = "#"
+    weight = 1
+[[menu.sitemap]]
+    name = "Show on Github"
+    url = "https://github.com/prof18/feed-flow"
+    weight = 2
+[[menu.sitemap]]
+    name = "Privacy & Policy"
+    url = "/privacy"
+    weight = 3
+[[menu.sitemap]]
+    name = "Report issue"
+    url = "/contact"
+    weight = 4
+
+
+[params]
+
+# Header
+logo = "images/logo.png"
+
+# Footer
+copyright1 = "All right reserved"
+copyright2 = "Copyright ©  <a href=\"https://www.marcogomiero.com/\" target=\"_blank\">Marco Gomiero </a> {year}"

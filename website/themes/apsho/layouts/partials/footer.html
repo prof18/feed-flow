@@ -1,0 +1,39 @@
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4 col-md-4">
+        <div class="footer-description">
+          <img src="{{ .Site.Params.logo | absURL }}" alt="logo">
+          <p>
+            {{ .Site.Params.copyright1 }}
+              </br>
+              {{ replace .Site.Params.copyright2   "{year}" now.Year | safeHTML }}
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-4">
+        
+      </div>
+      <div class="col-lg-4 col-md-4">
+        <div class="footer-widget">
+          <h4>Useful Resources</h4>
+          <div class="footer-widget-list">
+            <ul>
+              {{ $sitemap := .Site.Menus.sitemap }}
+                {{ range $sitemap }}
+                  <li><a href="{{ .URL | absURL }}">{{ .Name }}</a></li>
+              {{ end }}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+{{ $style := resources.Get "scss/non-critical.scss" | resources.ToCSS | minify }}
+<link href="{{ $style.Permalink }}" rel="stylesheet" />
+{{ $vendor := resources.Get "js/vendor.js" | minify }}
+<script src="{{ $vendor.Permalink }}"></script>
+{{ $script := resources.Get "js/script.js" | minify }}
+<script src="{{ $script.Permalink }}"></script>

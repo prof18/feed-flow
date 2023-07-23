@@ -1,0 +1,55 @@
+{{ with .Site.Data.faq }}
+  {{ if .enable }}
+    <section class="faq" id="faq">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <div class="faq-content">
+              <h2>
+                {{ .title }}
+              </h2>
+              <p>
+                {{ .description }}
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="faq-accordion" id="faqAccordion">
+              {{ range $index, $Section := .faqItem }}
+              <div class="faq-accordion-item">
+                <div class="header">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link
+                      {{ $first := 0}}
+                      {{ if not (eq $index $first) }}
+                      collapsed
+                      {{ end }}"
+                      type="button"
+                      data-toggle="collapse"
+                      data-target="#collapse{{ .dataTarget }}"
+                      aria-expanded="false"
+                    >
+                      {{ .question }}
+                    </button>
+                  </h5>
+                </div>
+
+                <div
+                  id="collapse{{ .dataTarget }}"
+                  class="collapse {{ .show }}"
+                  data-parent="#faqAccordion"
+                >
+                  <div class="body">
+                    {{ .answer }}
+                  </div>
+                </div>
+              </div>
+              {{ end }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  {{ end }}
+{{ end }}

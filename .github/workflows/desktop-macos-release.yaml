@@ -114,7 +114,9 @@ jobs:
           hugo-version: '0.101.0'
 
       - name: Build
-        run: HUGO_ENV=production hugo --gc --minify
+        run: |
+          cd website
+          HUGO_ENV=production hugo --gc --minify
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

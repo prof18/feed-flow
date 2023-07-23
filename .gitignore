@@ -37,7 +37,6 @@ render.experimental.xml
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
-GoogleService-Info.plist
 
 # Android Profiling
 *.hprof
@@ -108,5 +107,4 @@ bin/
 
 
 /iosApp/Plist/Prefix
-/iosApp/GoogleService-Info.plist
 /desktopApp/src/jvmMain/resources/props.properties

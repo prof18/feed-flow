@@ -7,6 +7,6 @@ import com.prof18.feedflow.utils.AppEnvironment
 
 actual fun feedFlowLogWriter(
     appEnvironment: AppEnvironment,
-    messageStringFormatter: MessageStringFormatter
+    messageStringFormatter: MessageStringFormatter,
 ): LogWriter =
-    LogcatWriter() /// TODO: add crashlytics if not debug
+    LogcatWriter() // / TODO: add crashlytics if not debug

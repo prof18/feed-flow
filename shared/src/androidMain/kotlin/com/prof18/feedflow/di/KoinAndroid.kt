@@ -7,7 +7,6 @@ import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.JvmHtmlParser
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.presentation.BaseViewModel
-import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.build
@@ -17,7 +16,6 @@ import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import org.koin.core.KoinApplication
 import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module

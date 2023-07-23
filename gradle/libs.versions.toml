@@ -46,6 +46,10 @@ ksp = "1.8.20-1.0.10"
 compose-image-loader = "1.4.2"
 multiplatform-settings = "1.0.0"
 moko-resources = "0.23.0"
+crashlytics = "18.4.0"
+crashlytics-plugin = "2.9.7"
+google-services = "4.3.15"
+crashk-ios = "0.8.2"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
@@ -91,6 +95,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "kermit" }
+touchlab-kermit-crashlytics = { module = "co.touchlab:kermit-crashlytics", version.ref = "kermit" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
 org-robolectric = { module = "org.robolectric:robolectric", version.ref = "org-robolectric" }
 squareup-sqldelight-android-driver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
@@ -109,6 +114,8 @@ compose-image-loader = { module = "io.github.qdsfdhvh:image-loader", version.ref
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
 moko-resourcesCompose = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
+firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "crashlytics" }
+crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
 
 [bundles]
 androidx-test = ["androidx-test-core", "androidx-test-ext-junit", "androidx-test-rules", "androidx-test-runner"]
@@ -138,3 +145,6 @@ compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-m
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
 about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "about-libraries" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+crashk-ios-linking = { id = "co.touchlab.crashkios.crashlyticslink", version.ref = "crashk-ios" }

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.native.coroutines)
     alias(libs.plugins.ksp)
     alias(libs.plugins.moko.resources)
+    alias(libs.plugins.crashk.ios.linking)
 }
 
 kotlin {
@@ -46,6 +47,8 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
                 implementation(libs.multiplatform.settings)
+                implementation(libs.crashk.ios)
+                implementation(libs.touchlab.kermit.crashlytics)
 
                 api(libs.touchlab.kermit)
                 api(libs.moko.resources)

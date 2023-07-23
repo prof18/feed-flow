@@ -27,6 +27,13 @@ jobs:
       - name: Run Checks
         run: ./gradlew check
 
+      - name: Create Firebase Plist
+        run: |
+          echo "$FIREBASE_PLIST" > GoogleService-Info.plist.b64
+          base64 -d -i GoogleService-Info.plist.b64 > GoogleService-Info.plist
+        env:
+          FIREBASE_PLIST: ${{ secrets.FIREBASE_PLIST }}
+
       - name: import certs
         uses: apple-actions/import-codesign-certs@v2
         with:

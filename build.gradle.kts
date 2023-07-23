@@ -15,6 +15,8 @@ plugins {
     alias(libs.plugins.native.coroutines) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.about.libraries) apply false
+    alias(libs.plugins.crashlytics) apply false
+    alias(libs.plugins.crashk.ios.linking) apply false
     alias(libs.plugins.detekt)
 }
 

@@ -7,7 +7,7 @@ import com.prof18.feedflow.utils.AppEnvironment
 
 actual fun feedFlowLogWriter(
     appEnvironment: AppEnvironment,
-    messageStringFormatter: MessageStringFormatter
+    messageStringFormatter: MessageStringFormatter,
 ): LogWriter =
     XcodeSeverityWriter(messageStringFormatter)
 // TODO: add crashlytics if not debug

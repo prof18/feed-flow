@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.triplet.play)
     alias(libs.plugins.about.libraries)
+    alias(libs.plugins.crashlytics)
+    alias(libs.plugins.google.services)
 }
 
 val local = Properties()
@@ -69,6 +71,7 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.bundles.about.libraries)
     implementation(libs.moko.resourcesCompose)
+    implementation(libs.firebase.crashlytics.ktx)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

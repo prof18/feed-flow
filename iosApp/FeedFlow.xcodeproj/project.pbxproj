@@ -63,6 +63,8 @@
 		CCA704E529D625E200560FA3 /* SheetToShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E429D625E200560FA3 /* SheetToShow.swift */; };
 		CCA704E729D626D400560FA3 /* FilePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E629D626D400560FA3 /* FilePickerController.swift */; };
 		CCC86B4429D8C44400AEABB9 /* SheetPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC86B4329D8C44400AEABB9 /* SheetPage.swift */; };
+		CCEA11BB2A6D2AC300C661AC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */; };
+		CCEA11BE2A6D2BA600C661AC /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = CCEA11BD2A6D2BA600C661AC /* FirebaseCrashlytics */; };
 		CCEB9C5829B33F5A0064D14A /* Koin.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCEB9C5729B33F5A0064D14A /* Koin.swift */; };
 /* End PBXBuildFile section */
 
@@ -127,6 +129,7 @@
 		CCA704E429D625E200560FA3 /* SheetToShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetToShow.swift; sourceTree = "<group>"; };
 		CCA704E629D626D400560FA3 /* FilePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePickerController.swift; sourceTree = "<group>"; };
 		CCC86B4329D8C44400AEABB9 /* SheetPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPage.swift; sourceTree = "<group>"; };
+		CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CCEB9C5729B33F5A0064D14A /* Koin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Koin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -140,6 +143,7 @@
 				CC323E1229D2239300138233 /* KMPNativeCoroutinesCore in Frameworks */,
 				CC323E1029D2239300138233 /* KMPNativeCoroutinesAsync in Frameworks */,
 				CC23293C29D85208005D0E06 /* SwiftSoup in Frameworks */,
+				CCEA11BE2A6D2BA600C661AC /* FirebaseCrashlytics in Frameworks */,
 				CC4B804229D9A31E0004A0AB /* OrderedCollections in Frameworks */,
 				CC4B803B29D98BB20004A0AB /* Nuke in Frameworks */,
 			);
@@ -163,6 +167,7 @@
 				CC23292D29D62FE2005D0E06 /* Kotlin */,
 				CC323DFD29D21F6500138233 /* Source */,
 				7555FF8C242A565B00829871 /* Info.plist */,
+				CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				7555FF7C242A565900829871 /* Products */,
 				7555FFB0242A642200829871 /* Frameworks */,
@@ -373,6 +378,8 @@
 				7555FF79242A565900829871 /* Resources */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
 				CC6E682B2A6475B1009F4A3C /* SwiftLint */,
+				CCEA11BF2A6D2C6600C661AC /* Crashlytics */,
+				CCEA11C12A6D454C00C661AC /* Crashlytics KMP */,
 			);
 			buildRules = (
 			);
@@ -388,6 +395,7 @@
 				CC4B803C29D98BB20004A0AB /* NukeUI */,
 				CC4B803F29D9A31E0004A0AB /* Collections */,
 				CC4B804129D9A31E0004A0AB /* OrderedCollections */,
+				CCEA11BD2A6D2BA600C661AC /* FirebaseCrashlytics */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* FeedFlow.app */;
@@ -426,6 +434,7 @@
 				CC23293A29D85208005D0E06 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				CC4B803929D98BB20004A0AB /* XCRemoteSwiftPackageReference "Nuke" */,
 				CC4B803E29D9A31E0004A0AB /* XCRemoteSwiftPackageReference "swift-collections" */,
+				CCEA11BC2A6D2BA600C661AC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -448,6 +457,7 @@
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
 				CC23293129D63038005D0E06 /* iosMain in Resources */,
+				CCEA11BB2A6D2AC300C661AC /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,6 +519,44 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint --fix && swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
+		};
+		CCEA11BF2A6D2C6600C661AC /* Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Crashlytics;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  \"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\nfi\n\n";
+		};
+		CCEA11C12A6D454C00C661AC /* Crashlytics KMP */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Crashlytics KMP";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n    find ../shared/build -name \"*.dSYM\" | xargs -I \\{\\} ${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols -gsp ${SRCROOT}/GoogleService-Info.plist -p ios \\{\\}\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -828,6 +876,14 @@
 				version = 1.0.4;
 			};
 		};
+		CCEA11BC2A6D2BA600C661AC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 10.12.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -865,6 +921,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CC4B803E29D9A31E0004A0AB /* XCRemoteSwiftPackageReference "swift-collections" */;
 			productName = OrderedCollections;
+		};
+		CCEA11BD2A6D2BA600C661AC /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCEA11BC2A6D2BA600C661AC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

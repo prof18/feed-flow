@@ -84,5 +84,5 @@ object KotlinDependencies : KoinComponent {
     fun getFeedSourceListViewModel() = getKoin().get<FeedSourceListViewModel>()
     fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()
     fun getFeedManagerRepository() = getKoin().get<FeedManagerRepository>()
-    fun getLogger(tag: String? = null) = getKoin().get<Logger>() { parametersOf(tag) }
+    fun getLogger(tag: String? = null) = getKoin().get<Logger> { parametersOf(tag) }
 }

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="feed_added_message">Feed added</string>
     <string name="feed_name">Feed name</string>
-    <string name="feed_name_placeholder">My favourite blog</string>
-    <string name="feed_url">Feed url</string>
+    <string name="feed_name_placeholder">My favorite blog</string>
+    <string name="feed_url">Feed URL</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="add_feed">Add feed</string>
     <string name="feeds_title">Feeds</string>
@@ -15,13 +15,13 @@
     <string name="loading_feed_message">Loading feeds %s</string>
     <string name="app_name">FeedFlow</string>
     <string name="mark_all_read_button">Mark all read</string>
-    <string name="clear_old_articles_button">Clear old articles</string>
+    <string name="clear_old_articles_button">Delete old entries</string>
     <string name="settings_button">Settings</string>
     <string name="feeds_importing_message">Importing feed</string>
     <string name="feeds_import_done_message">Import done</string>
     <string name="feeds_export_done_message">Export done</string>
     <string name="settings_title">Settings</string>
-    <string name="browser_selection_button">Browser selection</string>
+    <string name="browser_selection_button">Favorite browser</string>
     <string name="import_feed_button">Import feed from OPML</string>
     <string name="export_feeds_button">Export feeds to OPML</string>
     <string name="about_button">About</string>
@@ -36,7 +36,7 @@
     <string name="feed_error_message">Something is wrong with: %s :(</string>
     <string name="author_label">Developed with ❤️ by</string>
     <string name="show_on_github">Show on GitHub</string>
-    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="open_source_licenses">Open source licenses</string>
     <string name="about_the_app">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</string>
     <string name="about_nav_bar">About</string>
     <string name="open_source_nav_bar">Open source licenses</string>

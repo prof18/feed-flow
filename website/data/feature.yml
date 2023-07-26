@@ -1,14 +1,14 @@
 ---
 enable: true
-title: Ultimate experiences with story, emotion
-description: The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps.Error6251 is the best, Bawds jog, flick quartz, vex nymphs.
-description2: Brick quiz whangs jumpy veldt fox. Bright vixens jump; dozy fowl quack. Quick wafting zephyrs.
+title: Just a list.
+description: All you need is a de-cluttered list. Every article opens in the browser of your choice. No more half-available content, multiple clicks to read something. Just focus on reading (or scrolling)!
+description2: Quickly import your existing RSS feeds collection
 
-Title2nd: Product start analytics with real problems.
-description2nd: The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps.Error6251 is the best, Bawds jog, flick quartz, vex nymphs.
-image1: images/feature/feature-illustration-one.svg
-image2: images/feature/feature-illustration-two.svg
+Title2nd: Focus on reading.
+description2nd: Enjoy full control - open articles in your favourite privacy-focused browser and keep your reading experience separated from your main browser.
+image1: images/feature/android-feed.webp
+image2: images/feature/macos-feed.webp
 checkItem:
-  - text: Next to the hosting account you want to use.
-  - text: Select or enter the domain name you want to use.
-  - text: After you purchase a hosting plan.
+  - text: Import your existing collection with one click.
+  - text: Use your favourite browser
+  - text: Built with Jetpack Compose, SwiftUI and Kotlin Multiplatform

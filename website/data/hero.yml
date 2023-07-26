@@ -1,13 +1,12 @@
 ---
 enable: true
 title: FeedFlow
-caption: Networking
-description: Enjoy team diversity and increase their networks among others people in various fields by providing an exceptional facilities and coworking.
+description: Follow your favorite RSS feeds with FeedFlow, a minimalistic and opinionated RSS Reader for Android, iOS, and macOS.
 buttonName: Available on
 button1text: Google Play
-button1Link: https://www.example.com
+button1Link: https://play.google.com/store/apps/details?id=com.prof18.feedflow
 button2text: Apple Store
 button2Link: https://www.example.com
 button3text: MacOS
-button3Link: https://github.com/prof18/feed-flow/releases/download/1.0.5-desktop/FeedFlow-1.0.5.dmg
+button3Link: https://github.com/prof18/feed-flow/releases/download/1.0.6-desktop/FeedFlow-1.0.6.dmg
 image: images/hero/hero-image.svg

@@ -11,4 +11,4 @@ image2: images/feature/macos-feed.webp
 checkItem:
   - text: Import your existing collection with one click.
   - text: Use your favourite browser
-  - text: Built with Jetpack Compose, SwiftUI and Kotlin Multiplatform
+  - text: Built with Compose, SwiftUI, Kotlin Multiplatform

@@ -4,8 +4,9 @@ title: Minimal and clean UI
 
 images:
   - url: images/screenshots/android-feed.webp
-  - url: images/screenshots/ios-menu.webp
-  - url: images/screenshots/ios-feeds.webp
-  - url: images/screenshots/ios-feed.webp
-  - url: images/screenshots/android-browser.webp
   - url: images/screenshots/android-feeds.webp
+  - url: images/screenshots/android-menu.webp
+  - url: images/screenshots/android-browser.webp
+  - url: images/screenshots/android-add-feed.webp
+#  - url: images/screenshots/ios-menu.webp
+#  - url: images/screenshots/ios-feeds.webp

@@ -1,6 +1,6 @@
 name: PR Checks
 on:
-  push:
+  pull_request:
     branches:
       - '*'
 

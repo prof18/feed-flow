@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.sqldelight)
-    alias(libs.plugins.native.coroutines)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.native.coroutines)
     alias(libs.plugins.moko.resources)
     alias(libs.plugins.crashk.ios.linking)
 }
@@ -94,7 +94,7 @@ kotlin {
                 implementation(libs.touchlab.kermit.crashlytics)
             }
         }
-        val androidTest by getting {
+        val androidUnitTest by getting {
             dependsOn(commonJvmAndroidTest)
 
             dependencies {

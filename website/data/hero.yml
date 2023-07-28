@@ -7,6 +7,6 @@ button1text: Google Play
 button1Link: https://play.google.com/store/apps/details?id=com.prof18.feedflow
 button2text: Apple Store
 button2Link: https://www.example.com
-button3text: MacOS
+button3text: macOS
 button3Link: https://github.com/prof18/feed-flow/releases/download/1.0.6-desktop/FeedFlow-1.0.6.dmg
 image: images/hero/hero-image.svg

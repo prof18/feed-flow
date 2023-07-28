@@ -1,5 +1,5 @@
 # MAIN base
-baseURL = "https://apsho-hugo.netlify.app/"
+baseURL = "https://www.feedflow.dev/"
 languageCode = "en-us"
 title = "FeedFlow | RSS Reader"
 description = "FeedFlow - RSS Reader for Android, iOS and MacOS"
@@ -20,9 +20,8 @@ theme = "apsho"
     weight = 3
 [[menu.sitemap]]
     name = "Report issue"
-    url = "/contact"
+    url = "https://github.com/prof18/feed-flow/issues/new?title=App+issue&body=Please+describe+the+issue+and+provide+a+link+to+the+RSS+Feed+that+causes+the+issues:%0A"
     weight = 4
-
 
 [params]
 

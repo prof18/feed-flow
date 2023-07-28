@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.crashk.ios.linking) apply false
     alias(libs.plugins.detekt)
+    alias(libs.plugins.versionsBenManes)
 }
 
 tasks.register("clean", Delete::class) {

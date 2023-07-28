@@ -1,7 +1,6 @@
 name: PR Checks
 on:
-#  pull_request:
-  push:
+  pull_request:
     branches:
       - '*'
 
@@ -30,12 +29,12 @@ jobs:
           cd iosApp
           swiftlint
 
-#      - name: Create Firebase json
-#        run: |
-#          echo "$FIREBASE_JSON" > androidApp/google-services.json.b64
-#          base64 -d -i androidApp/google-services.json.b64 > androidApp/google-services.json
-#        env:
-#          FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
-#
-#      - name: Run Checks
-#        run: ./gradlew check
+      - name: Create Firebase json
+        run: |
+          echo "$FIREBASE_JSON" > androidApp/google-services.json.b64
+          base64 -d -i androidApp/google-services.json.b64 > androidApp/google-services.json
+        env:
+          FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
+
+      - name: Run Checks
+        run: ./gradlew check

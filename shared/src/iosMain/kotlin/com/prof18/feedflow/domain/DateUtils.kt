@@ -13,19 +13,14 @@ import platform.Foundation.timeIntervalSince1970
 
 @Suppress("TooGenericExceptionCaught")
 internal actual fun getDateMillisFromString(dateString: String, logger: Logger?): Long? {
-    val dateFormatter = NSDateFormatter().apply {
-        setDateFormat("E, d MMM yyyy HH:mm:ss Z")
-        setLocale(NSLocale("en_US_POSIX"))
-    }
-    val timeZoneDateFormatter = NSDateFormatter().apply {
-        setDateFormat("E, d MMM yyyy HH:mm:ss zzz")
-        setLocale(NSLocale("en_US_POSIX"))
-    }
-
     var exception: Throwable? = null
     var message: String? = null
 
     var date = try {
+        val dateFormatter = NSDateFormatter().apply {
+            setDateFormat("E, d MMM yyyy HH:mm:ss Z")
+            setLocale(NSLocale("en_US_POSIX"))
+        }
         dateFormatter.dateFromString(dateString)
     } catch (e: Throwable) {
         exception = e
@@ -35,6 +30,24 @@ internal actual fun getDateMillisFromString(dateString: String, logger: Logger?)
 
     if (date == null) {
         date = try {
+            val timeZoneDateFormatter = NSDateFormatter().apply {
+                setDateFormat("E, d MMM yyyy HH:mm:ss zzz")
+                setLocale(NSLocale("en_US_POSIX"))
+            }
+            timeZoneDateFormatter.dateFromString(dateString)
+        } catch (e: Throwable) {
+            exception = e
+            message = "Error while trying to format the date with timeZoneDateFormatter. Date: $dateString"
+            null
+        }
+    }
+
+    if (date == null) {
+        date = try {
+            val timeZoneDateFormatter = NSDateFormatter().apply {
+                setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+                setLocale(NSLocale("en_US_POSIX"))
+            }
             timeZoneDateFormatter.dateFromString(dateString)
         } catch (e: Throwable) {
             exception = e

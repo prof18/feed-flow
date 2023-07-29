@@ -15,7 +15,6 @@ if (localProperties.exists()) {
     localProperties.inputStream().use { local.load(it) }
 }
 
-
 android {
     namespace = "com.prof18.feedflow"
     compileSdk = libs.versions.android.compile.sdk.get().toInt()
@@ -34,12 +33,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.majorVersion
+        jvmTarget = JavaVersion.VERSION_17.majorVersion
     }
 
     signingConfigs {

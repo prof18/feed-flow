@@ -103,7 +103,7 @@ fun SettingsScreen(
         navigateBack = navigateBack,
         onAboutClick = onAboutClick,
         onBugReportClick = {
-            browserManager.openUrl(
+            browserManager.openUrlWithFavoriteBrowser(
                 url = UserFeedbackReporter.getFeedbackUrl(),
                 context = context,
             )

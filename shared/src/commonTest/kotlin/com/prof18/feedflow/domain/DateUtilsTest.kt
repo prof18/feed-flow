@@ -29,4 +29,20 @@ class DateUtilsTest {
         val millis = getDateMillisFromString(dateString)
         assertNull(millis)
     }
+
+    @Test
+    fun `getDateMillisFromString returns a value with a strange format`() {
+        val dateString = "2023-07-28T15:01:10+02:00"
+
+        val millis = getDateMillisFromString(dateString)
+        assertEquals(1690549270000, millis)
+    }
+
+    @Test
+    fun `getDateMillisFromString returns a value with different time zone`() {
+        val dateString = "Fri, 28 Jul 2023 12:37:25 +0300"
+
+        val millis = getDateMillisFromString(dateString)
+        assertEquals(1690537045000, millis)
+    }
 }

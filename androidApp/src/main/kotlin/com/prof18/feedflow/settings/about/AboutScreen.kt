@@ -46,13 +46,13 @@ fun AboutScreen(
     AboutScreenContent(
         licensesClicked = navigateToLibrariesScreen,
         nameClicked = {
-            browserManager.openUrl(
+            browserManager.openUrlWithDefaultBrowser(
                 url = MG_WEBSITE,
                 context = context,
             )
         },
         onOpenWebsiteClick = {
-            browserManager.openUrl(
+            browserManager.openUrlWithDefaultBrowser(
                 url = FEED_FLOW_WEBSITE,
                 context = context,
             )

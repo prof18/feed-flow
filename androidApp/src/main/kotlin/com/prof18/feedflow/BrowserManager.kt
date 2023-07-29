@@ -1,10 +1,12 @@
 package com.prof18.feedflow
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.model.Browser
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.update
 class BrowserManager(
     private val context: Context,
     private val feedManagerRepository: FeedManagerRepository,
+    private val logger: Logger,
 ) {
 
     private val browserListMutableState = MutableStateFlow<List<Browser>>(emptyList())
@@ -73,7 +76,7 @@ class BrowserManager(
         browserListMutableState.update { browserList }
     }
 
-    fun openUrl(
+    fun openUrlWithFavoriteBrowser(
         url: String,
         context: Context,
     ) {
@@ -82,6 +85,23 @@ class BrowserManager(
             getBrowserPackageName()?.let { packageName ->
                 setPackage(packageName)
             }
+        }
+        try {
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            logger.e(e) {
+                "Favourite browser not valid, open with the default one"
+            }
+            openUrlWithDefaultBrowser(url, context)
+        }
+    }
+
+    fun openUrlWithDefaultBrowser(
+        url: String,
+        context: Context,
+    ) {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(url)
         }
         context.startActivity(intent)
     }

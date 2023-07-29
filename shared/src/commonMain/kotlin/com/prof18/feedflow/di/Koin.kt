@@ -129,6 +129,6 @@ internal expect inline fun <reified T : BaseViewModel> Module.viewModel(
     noinline definition: Definition<T>,
 ): KoinDefinition<T>
 
-internal inline fun <reified T> Scope.getWith(vararg params: Any?): T {
+inline fun <reified T> Scope.getWith(vararg params: Any?): T {
     return get(parameters = { parametersOf(*params) })
 }

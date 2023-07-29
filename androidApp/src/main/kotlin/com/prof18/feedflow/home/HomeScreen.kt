@@ -131,11 +131,11 @@ internal fun HomeScreen(
                 homeViewModel.updateReadStatus(lastVisibleIndex)
             },
             onFeedItemClick = { feedInfo ->
-                browserManager.openUrl(feedInfo.url, context)
+                browserManager.openUrlWithFavoriteBrowser(feedInfo.url, context)
                 homeViewModel.markAsRead(feedInfo.id)
             },
             onFeedItemLongClick = { feedInfo ->
-                browserManager.openUrl(feedInfo.url, context)
+                browserManager.openUrlWithFavoriteBrowser(feedInfo.url, context)
                 homeViewModel.markAsRead(feedInfo.id)
             },
             onAddFeedClick = {

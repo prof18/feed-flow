@@ -10,15 +10,36 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 internal actual fun getDateMillisFromString(dateString: String, logger: Logger?): Long? {
-    val dateFormat = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.getDefault())
-    return try {
+    var exception: Throwable? = null
+    var message: String? = null
+
+    var date = try {
+        val dateFormat = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.getDefault())
         dateFormat.parse(dateString)?.time
     } catch (e: ParseException) {
-        logger?.e(e) {
-            "Error while trying to format the date with dateFormatter. Date: $dateString"
-        }
+        exception = e
+        message = "Error while trying to format the date with dateFormatter. Date: $dateString"
         null
     }
+
+    if (date == null) {
+        date = try {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+            dateFormat.parse(dateString)?.time
+        } catch (e: ParseException) {
+            exception = e
+            message = "Error while trying to format the date with dateFormatter. Date: $dateString"
+            null
+        }
+    }
+
+    if (date == null && exception != null && message != null) {
+        logger?.e(exception) {
+            message
+        }
+    }
+
+    return date
 }
 
 internal actual fun formatDate(millis: Long): String {

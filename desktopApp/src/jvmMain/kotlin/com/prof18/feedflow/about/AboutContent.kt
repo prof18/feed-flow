@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.ClickableText
@@ -36,6 +37,8 @@ import com.prof18.feedflow.openInBrowser
 import com.prof18.feedflow.scrollbarStyle
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
+import com.prof18.feedflow.utils.Websites.FEED_FLOW_WEBSITE
+import com.prof18.feedflow.utils.Websites.MG_WEBSITE
 import dev.icerock.moko.resources.compose.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,24 +68,12 @@ fun AboutContent() {
                             .weight(1f)
                             .padding(end = 4.dp),
                     ) {
-                        LazyColumn(
-                            modifier = Modifier,
-                            state = listState,
-                        ) {
-                            item {
-                                AboutTextItem(
-                                    modifier = Modifier.padding(Spacing.regular),
-                                )
-                            }
-                            item {
-                                AboutButtonItem(
-                                    onClick = {
-                                        showLicensesScreen = true
-                                    },
-                                    buttonText = stringResource(MR.strings.open_source_licenses),
-                                )
-                            }
-                        }
+                        SettingsItemList(
+                            listState = listState,
+                            showLicensesScreen = {
+                                showLicensesScreen = true
+                            },
+                        )
 
                         CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
                             VerticalScrollbar(
@@ -104,12 +95,45 @@ fun AboutContent() {
 }
 
 @Composable
+private fun SettingsItemList(
+    listState: LazyListState,
+    showLicensesScreen: () -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier,
+        state = listState,
+    ) {
+        item {
+            AboutTextItem(
+                modifier = Modifier.padding(Spacing.regular),
+            )
+        }
+
+        item {
+            AboutButtonItem(
+                onClick = {
+                    openInBrowser(FEED_FLOW_WEBSITE)
+                },
+                buttonText = stringResource(MR.strings.open_website_button),
+            )
+        }
+
+        item {
+            AboutButtonItem(
+                onClick = showLicensesScreen,
+                buttonText = stringResource(MR.strings.open_source_licenses),
+            )
+        }
+    }
+}
+
+@Composable
 private fun AuthorText(modifier: Modifier = Modifier) {
     AnnotatedClickableText(
         modifier = modifier
             .padding(Spacing.medium),
         onTextClick = {
-            openInBrowser("https://www.marcogomiero.com")
+            openInBrowser(MG_WEBSITE)
         },
     )
 }
@@ -152,7 +176,7 @@ private fun AnnotatedClickableText(
 
         pushStringAnnotation(
             tag = "URL",
-            annotation = "https://www.marcogomiero.com",
+            annotation = MG_WEBSITE,
         )
         withStyle(
             style = SpanStyle(

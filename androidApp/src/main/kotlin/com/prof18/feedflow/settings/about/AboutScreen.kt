@@ -30,6 +30,8 @@ import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.theme.Spacing
+import com.prof18.feedflow.utils.Websites.FEED_FLOW_WEBSITE
+import com.prof18.feedflow.utils.Websites.MG_WEBSITE
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.compose.koinInject
 
@@ -45,7 +47,13 @@ fun AboutScreen(
         licensesClicked = navigateToLibrariesScreen,
         nameClicked = {
             browserManager.openUrl(
-                url = "https://www.marcogomiero.com",
+                url = MG_WEBSITE,
+                context = context,
+            )
+        },
+        onOpenWebsiteClick = {
+            browserManager.openUrl(
+                url = FEED_FLOW_WEBSITE,
                 context = context,
             )
         },
@@ -58,6 +66,7 @@ fun AboutScreen(
 private fun AboutScreenContent(
     licensesClicked: () -> Unit,
     nameClicked: () -> Unit,
+    onOpenWebsiteClick: () -> Unit,
     navigateBack: () -> Unit = {},
 ) {
     Scaffold(
@@ -93,6 +102,12 @@ private fun AboutScreenContent(
                 item {
                     AboutTextItem(
                         modifier = Modifier.padding(Spacing.regular),
+                    )
+                }
+                item {
+                    AboutButtonItem(
+                        onClick = onOpenWebsiteClick,
+                        buttonText = stringResource(MR.strings.open_website_button),
                     )
                 }
                 item {
@@ -157,7 +172,7 @@ private fun AnnotatedClickableText(
 
         pushStringAnnotation(
             tag = "URL",
-            annotation = "https://www.marcogomiero.com",
+            annotation = MG_WEBSITE,
         )
         withStyle(
             style = SpanStyle(
@@ -197,6 +212,7 @@ private fun AboutScreenPreview() {
             AboutScreenContent(
                 licensesClicked = {},
                 nameClicked = {},
+                onOpenWebsiteClick = {},
             )
         }
     }

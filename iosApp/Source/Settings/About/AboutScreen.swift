@@ -24,6 +24,17 @@ struct AboutScreen: View {
                 .font(.system(size: 16))
 
             Button(
+                MR.strings().open_website_button.localized,
+                action: {
+                    if let url = URL(string: Websites.shared.FEED_FLOW_WEBSITE) {
+                        self.openURL(url)
+                    }
+                }
+            )
+            .buttonStyle(.bordered)
+            .padding(.top, Spacing.regular)
+
+            Button(
                 MR.strings().open_source_licenses.localized,
                 action: {
                     let baseURL = Bundle.main.url(forResource: "licenses", withExtension: "html")!
@@ -45,5 +56,8 @@ struct AboutScreen: View {
         }.sheet(isPresented: $showLicensesSheet) {
             LicensesScreen(htmlContent: licensesContent)
         }
+        .navigationTitle(MR.strings().about_nav_bar.localized)
+        .navigationBarTitleDisplayMode(.inline)
+
     }
 }

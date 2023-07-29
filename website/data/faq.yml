@@ -2,7 +2,7 @@
 enable: true
 title: Frequently asked questions
 faqItem:
-  - question: Why no support for feed's content?
+  - question: Why no feed's content?
     answer: The majority of websites with an RSS feed don't share the article's content because they want you to go on their website. For this reason, FeedFlow always opens the original website, but you can choose the browser that you want. For example, you can open an article on DuckDuckGo or Firefox Focus with all the trackers disabled and then just kill all the navigation data. In this way, the reading experience is separated from your main browser instance.
     dataTarget: One
     show: show

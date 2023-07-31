@@ -3,7 +3,7 @@
   <h1>FeedFlow</h1>
 </div>
 
-FeedFlow is a minimalistic and opinionated RSS Reader that I've build for myself and that's now available on Android, iOS and macOS.
+FeedFlow is a minimalistic and opinionated RSS Reader that I've built for myself and that's now available on Android, iOS and macOS.
 
 The majority of websites with an RSS feed don't share the article's content because they want you to go on their website. For this reason, FeedFlow always opens the original website, but you can choose the browser that you want (on mobile). For example, you can open an article on DuckDuckGo or Firefox Focus with all the trackers disabled and then just kill all the navigation data. In this way, the reading experience is separated from your main browser instance.
 

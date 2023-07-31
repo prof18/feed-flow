@@ -12,7 +12,7 @@ Your existing RSS collection can be easily imported: FeedFlow offers full and ea
 Feel free to open an issue (or even better a PR :)) if something is not working or if you want to propose a new feature.
 
 <div align="center">
-  <img src="assets/banner.png">
+  <img src="assets/banners.png">
 </div>
 
 ## Tech Stack

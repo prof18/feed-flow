@@ -22,6 +22,7 @@ import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.definition.Definition
@@ -58,7 +59,7 @@ internal actual val platformModule: Module = module {
         object : DispatcherProvider {
             override val main: CoroutineDispatcher = Dispatchers.Main
             override val default: CoroutineDispatcher = Dispatchers.Default
-            override val io: CoroutineDispatcher = Dispatchers.Default
+            override val io: CoroutineDispatcher = Dispatchers.IO
         }
     }
 

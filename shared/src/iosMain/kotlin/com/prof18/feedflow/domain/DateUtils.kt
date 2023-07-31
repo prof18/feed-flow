@@ -57,6 +57,20 @@ internal actual fun getDateMillisFromString(dateString: String, logger: Logger?)
     }
 
     if (date == null) {
+        date = try {
+            val timeZoneDateFormatter = NSDateFormatter().apply {
+                setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                setLocale(NSLocale("en_US_POSIX"))
+            }
+            timeZoneDateFormatter.dateFromString(dateString)
+        } catch (e: Throwable) {
+            exception = e
+            message = "Error while trying to format the date with timeZoneDateFormatter. Date: $dateString"
+            null
+        }
+    }
+
+    if (date == null) {
         if (exception != null && message != null) {
             logger?.e(exception) {
                 message

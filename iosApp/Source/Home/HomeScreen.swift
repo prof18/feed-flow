@@ -35,6 +35,7 @@ struct HomeScreen: View {
             feedState: $feedState,
             showLoading: $showLoading,
             unreadCount: $unreadCount,
+            sheetToShow: $sheetToShow,
             onRefresh: {
                 homeViewModel.getNewFeeds()
             },
@@ -190,7 +191,7 @@ struct HomeContent: View {
     @Binding var showLoading: Bool
     @Binding var unreadCount: Int
 
-    @State var sheetToShow: SheetToShow?
+    @Binding var sheetToShow: SheetToShow?
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
@@ -413,7 +414,7 @@ struct HomeContentLoading_Previews: PreviewProvider {
             feedState: .constant(PreviewItemsKt.feedItemsForPreview),
             showLoading: .constant(true),
             unreadCount: .constant(42),
-            onRefresh: { },
+            sheetToShow: .constant(nil), onRefresh: { },
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
@@ -435,7 +436,7 @@ struct HomeContentLoaded_Previews: PreviewProvider {
             feedState: .constant(PreviewItemsKt.feedItemsForPreview),
             showLoading: .constant(false),
             unreadCount: .constant(42),
-            onRefresh: { },
+            sheetToShow: .constant(nil), onRefresh: { },
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
@@ -457,7 +458,7 @@ struct HomeContentSettings_Previews: PreviewProvider {
             feedState: .constant(PreviewItemsKt.feedItemsForPreview),
             showLoading: .constant(false),
             unreadCount: .constant(42),
-            sheetToShow: SheetToShow.feedList,
+            sheetToShow: .constant(SheetToShow.feedList),
             onRefresh: { },
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },

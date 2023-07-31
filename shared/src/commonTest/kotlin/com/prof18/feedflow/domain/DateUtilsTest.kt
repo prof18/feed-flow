@@ -45,4 +45,12 @@ class DateUtilsTest {
         val millis = getDateMillisFromString(dateString)
         assertEquals(1690537045000, millis)
     }
+
+    @Test
+    fun `getDateMillisFromString returns a value with another format`() {
+        val dateString = "2023-05-18T15:00:00.000Z"
+
+        val millis = getDateMillisFromString(dateString)
+        assertEquals(1684414800000, millis)
+    }
 }

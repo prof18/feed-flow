@@ -33,6 +33,17 @@ internal actual fun getDateMillisFromString(dateString: String, logger: Logger?)
         }
     }
 
+    if (date == null) {
+        date = try {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            dateFormat.parse(dateString)?.time
+        } catch (e: ParseException) {
+            exception = e
+            message = "Error while trying to format the date with dateFormatter. Date: $dateString"
+            null
+        }
+    }
+
     if (date == null && exception != null && message != null) {
         logger?.e(exception) {
             message

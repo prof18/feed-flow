@@ -25,8 +25,8 @@ FeedFlow uses [RSSParser](https://github.com/prof18/RSS-Parser), a RSS parsing l
 
 FeedFlow is available for Android, iOS and macOS.
 
-<div align="center"><a href=""><img src="assets/appstore/app_store_download.svg" width="200px"/></a></div>
-<div align="center"><a href="https://play.google.com/store/apps/details?id=com.prof.friends_tournament"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="230px"/></a></div>
+<div align="center"><a href="https://apps.apple.com/us/app/feedflow-rss-reader/id6447210518"><img src="assets/appstore/app_store_download.svg" width="200px"/></a></div>
+<div align="center"><a href="https://play.google.com/store/apps/details?id=com.prof18.feedflow"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="230px"/></a></div>
 <div align="center"><a href="https://github.com/prof18/feed-flow/releases/latest"><img src="assets/appstore/mac_store_download.svg" width="200px" /></a></div>
 
 ## License 📄

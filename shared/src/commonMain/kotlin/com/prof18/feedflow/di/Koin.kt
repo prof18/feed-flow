@@ -6,7 +6,6 @@ import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.data.SettingsHelper
-import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepositoryImpl
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository

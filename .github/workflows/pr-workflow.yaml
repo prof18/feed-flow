@@ -28,6 +28,7 @@ jobs:
         run: |
           cd iosApp
           swiftlint
+          cd ..
 
       - name: Create Firebase json
         run: |

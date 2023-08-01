@@ -101,13 +101,14 @@ class HomeViewModel(
             return
         }
         for (index in lastUpdateIndex..lastVisibleIndex) {
-            val item = items[index]
-            if (!item.isRead) {
-                urlToUpdates.add(
-                    FeedItemId(
-                        id = item.id,
-                    ),
-                )
+            items.getOrNull(index)?.let { item ->
+                if (!item.isRead) {
+                    urlToUpdates.add(
+                        FeedItemId(
+                            id = item.id,
+                        ),
+                    )
+                }
             }
         }
 

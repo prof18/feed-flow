@@ -3,7 +3,9 @@ package com.prof18.feedflow.di
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
+import com.prof18.feedflow.domain.IosDateFormatter
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.presentation.AddFeedViewModel
@@ -75,6 +77,12 @@ internal actual val platformModule: Module = module {
 
     single<Settings> {
         KeychainSettings(service = "FeedFlow")
+    }
+
+    single<DateFormatter> {
+        IosDateFormatter(
+            logger = getWith("DateFormatter"),
+        )
     }
 }
 

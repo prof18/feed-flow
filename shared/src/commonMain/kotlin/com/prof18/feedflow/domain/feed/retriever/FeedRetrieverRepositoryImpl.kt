@@ -2,11 +2,9 @@ package com.prof18.feedflow.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
-import com.prof18.feedflow.domain.currentTimeMillis
 import com.prof18.feedflow.domain.feed.retriever.model.RssChannelResult
-import com.prof18.feedflow.domain.formatDate
-import com.prof18.feedflow.domain.getDateMillisFromString
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedSource
@@ -18,6 +16,10 @@ import com.prof18.feedflow.domain.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.presentation.model.ErrorState
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.utils.DispatcherProvider
+import com.prof18.feedflow.utils.getLimitedNumberOfConcurrentFeedSavers
+import com.prof18.feedflow.utils.getLimitedNumberOfConcurrentParsingRequests
+import com.prof18.feedflow.utils.getNumberOfConcurrentFeedSavers
+import com.prof18.feedflow.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.CoroutineScope
@@ -42,6 +44,7 @@ internal class FeedRetrieverRepositoryImpl(
     private val dispatcherProvider: DispatcherProvider,
     private val htmlParser: HtmlParser,
     private val logger: Logger,
+    private val dateFormatter: DateFormatter,
 ) : FeedRetrieverRepository {
 
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
@@ -70,7 +73,7 @@ internal class FeedRetrieverRepositoryImpl(
                 ),
                 isRead = selectedFeed.is_read,
                 pubDateMillis = selectedFeed.pub_date,
-                dateString = formatDate(selectedFeed.pub_date),
+                dateString = dateFormatter.formatDate(selectedFeed.pub_date),
                 commentsUrl = selectedFeed.comments_url,
             )
         }
@@ -107,7 +110,7 @@ internal class FeedRetrieverRepositoryImpl(
         // One week
         // (((1 hour in seconds) * 24 hours) * 7 days)
         val oneWeekInMillis = (((60 * 60) * 24) * 7) * 1000L
-        val threshold = currentTimeMillis() - oneWeekInMillis
+        val threshold = dateFormatter.currentTimeMillis() - oneWeekInMillis
         databaseHelper.deleteOldFeedItems(threshold)
     }
 
@@ -128,15 +131,21 @@ internal class FeedRetrieverRepositoryImpl(
         }
     }
 
-    @Suppress("TooGenericExceptionCaught")
+    @Suppress("TooGenericExceptionCaught", "MagicNumber")
     private suspend fun createFetchingPipeline(
         feedSourceUrls: List<FeedSource>,
         updateLoadingInfo: Boolean,
     ) = coroutineScope {
         val feedSourcesChannel = produceFeedSources(feedSourceUrls, updateLoadingInfo)
 
+        val concurrentParsingRequests = if (feedSourceUrls.size > 40) {
+            getLimitedNumberOfConcurrentParsingRequests()
+        } else {
+            getNumberOfConcurrentParsingRequests()
+        }
+
         val feedToSaveChannel = produce(capacity = UNLIMITED) {
-            repeat(NUMBER_OF_CONCURRENT_PARSING_REQUESTS) {
+            repeat(concurrentParsingRequests) {
                 launch(dispatcherProvider.default) {
                     for (feedSource in feedSourcesChannel) {
                         logger.d { "-> Getting ${feedSource.url}" }
@@ -165,7 +174,13 @@ internal class FeedRetrieverRepositoryImpl(
             }
         }
 
-        repeat(NUMBER_OF_CONCURRENT_FEED_SAVER) {
+        val concurrentSavers = if (feedSourceUrls.size > 40) {
+            getLimitedNumberOfConcurrentFeedSavers()
+        } else {
+            getNumberOfConcurrentFeedSavers()
+        }
+
+        repeat(concurrentSavers) {
             launch(dispatcherProvider.io) {
                 for (rssChannelResult in feedToSaveChannel) {
                     logger.d {
@@ -211,10 +226,11 @@ internal class FeedRetrieverRepositoryImpl(
             val pubDate = rssItem.pubDate
 
             val randomTimeToSubtract = Random.nextLong(1800000L, 10800000L)
-            val defaultDate = currentTimeMillis() - randomTimeToSubtract
+            // TODO: move away from default date?
+            val defaultDate = dateFormatter.currentTimeMillis() - randomTimeToSubtract
 
             val dateMillis = if (pubDate != null) {
-                getDateMillisFromString(pubDate, logger) ?: defaultDate
+                dateFormatter.getDateMillisFromString(pubDate) ?: defaultDate
             } else {
                 // Between 30 minutes and 3 hours ago
                 defaultDate
@@ -242,14 +258,9 @@ internal class FeedRetrieverRepositoryImpl(
                     feedSource = feedSource,
                     isRead = false,
                     pubDateMillis = dateMillis,
-                    dateString = formatDate(dateMillis),
+                    dateString = dateFormatter.formatDate(dateMillis),
                     commentsUrl = rssItem.commentsUrl,
                 )
             }
         }
-
-    private companion object {
-        const val NUMBER_OF_CONCURRENT_PARSING_REQUESTS = 20
-        const val NUMBER_OF_CONCURRENT_FEED_SAVER = 20
-    }
 }

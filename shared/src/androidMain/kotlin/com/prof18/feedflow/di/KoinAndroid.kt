@@ -3,7 +3,9 @@ package com.prof18.feedflow.di
 import android.content.Context
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
+import com.prof18.feedflow.domain.JvmAndroidDateFormatter
 import com.prof18.feedflow.domain.JvmHtmlParser
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.presentation.BaseViewModel
@@ -62,5 +64,11 @@ internal actual val platformModule: Module = module {
             override val default: CoroutineDispatcher = Dispatchers.Default
             override val io: CoroutineDispatcher = Dispatchers.IO
         }
+    }
+
+    single<DateFormatter> {
+        JvmAndroidDateFormatter(
+            logger = getWith("DateFormatter"),
+        )
     }
 }

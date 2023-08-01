@@ -1,9 +1,12 @@
 package com.prof18.feedflow.domain.opml
 
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
+import com.prof18.feedflow.utils.getValueOrNull
 import kotlinx.coroutines.withContext
+import platform.Foundation.NSError
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSXMLParser
@@ -39,7 +42,7 @@ internal actual class OpmlFeedHandler(
                 <body>
                 ${
             feedSources.joinToString("\n") { feedSource ->
-                """<outline type="rss" text="${feedSource.title}" title="${feedSource.title}" xmlUrl="${feedSource.url}" htmlUrl="${feedSource.url}"/>"""
+                """<outline type="rss" text="${feedSource.title.cleanForXml()}" title="${feedSource.title.cleanForXml()}" xmlUrl="${feedSource.url.cleanForXml()}" htmlUrl="${feedSource.url.cleanForXml()}"/>"""
             }}
                 </body>
             </opml>
@@ -53,6 +56,9 @@ internal actual class OpmlFeedHandler(
                 error = null,
             )
     }
+
+    private fun String.cleanForXml(): String =
+        this.replace("&", "&amp;")
 }
 
 private class NSXMLParserDelegate(
@@ -79,17 +85,17 @@ private class NSXMLParserDelegate(
         when (currentElement) {
             OpmlConstants.OUTLINE -> {
                 val rssAttribute = if (attributes.containsKey(OpmlConstants.TYPE)) {
-                    attributes.getValue(OpmlConstants.TYPE)
+                    attributes.getValueOrNull(OpmlConstants.TYPE)
                 } else {
                     null
                 }
                 if (rssAttribute != OpmlConstants.RSS) {
                     isInsideCategory = true
-                    categoryName = (attributes.getValue(OpmlConstants.TITLE) as? String)?.trim()
+                    categoryName = (attributes.getValueOrNull(OpmlConstants.TITLE) as? String)?.trim()
                 } else {
                     isInsideItem = true
-                    parsedFeedBuilder.title((attributes.getValue(OpmlConstants.TITLE) as? String)?.trim())
-                    parsedFeedBuilder.url((attributes.getValue(OpmlConstants.XML_URL) as? String)?.trim())
+                    parsedFeedBuilder.title((attributes.getValueOrNull(OpmlConstants.TITLE) as? String)?.trim())
+                    parsedFeedBuilder.url((attributes.getValueOrNull(OpmlConstants.XML_URL) as? String)?.trim())
                 }
             }
         }
@@ -117,5 +123,10 @@ private class NSXMLParserDelegate(
 
     override fun parserDidEndDocument(parser: NSXMLParser) {
         onEnd(feedSource)
+    }
+
+    override fun parser(parser: NSXMLParser, parseErrorOccurred: NSError) {
+        Logger.d { "ERROR" }
+        Logger.d { parseErrorOccurred.localizedDescription() }
     }
 }

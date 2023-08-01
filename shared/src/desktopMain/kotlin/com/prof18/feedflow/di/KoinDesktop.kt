@@ -1,6 +1,8 @@
 package com.prof18.feedflow.di
 
+import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
+import com.prof18.feedflow.domain.JvmAndroidDateFormatter
 import com.prof18.feedflow.domain.JvmHtmlParser
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.initDatabase
@@ -66,5 +68,11 @@ internal actual val platformModule: Module = module {
     single<Settings> {
         val preferences = Preferences.userRoot()
         PreferencesSettings(preferences)
+    }
+
+    single<DateFormatter> {
+        JvmAndroidDateFormatter(
+            logger = getWith("DateFormatter"),
+        )
     }
 }

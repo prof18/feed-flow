@@ -39,3 +39,11 @@ jobs:
 
       - name: Run Checks
         run: ./gradlew check
+
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-reports
+          path: |
+            **/build/reports/*    

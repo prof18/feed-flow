@@ -27,6 +27,14 @@ jobs:
       - name: Run Checks
         run: ./gradlew detekt iosX64Test
 
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-reports
+          path: |
+            **/build/reports/*    
+
       - name: Create Firebase Plist
         run: |
           echo "$FIREBASE_PLIST" > iosApp/GoogleService-Info.plist.b64

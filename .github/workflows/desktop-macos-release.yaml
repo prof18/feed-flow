@@ -47,6 +47,14 @@ jobs:
       - name: Run Checks
         run: ./gradlew detekt desktopTest jvmTest
 
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-reports
+          path: |
+            **/build/reports/*  
+
       - name: Update Licenses file
         run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
 

@@ -3,6 +3,7 @@ package com.prof18.feedflow.domain
 import com.prof18.feedflow.DateFormatterFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class DateFormatterTest {
 
@@ -26,5 +27,10 @@ class DateFormatterTest {
         for (input in testInputs) {
             assertEquals(input.second, dateFormatter.getDateMillisFromString(input.first))
         }
+    }
+
+    @Test
+    fun fakeTest() {
+        assertTrue(true)
     }
 }

@@ -25,12 +25,10 @@ class DateFormatterTest {
     @Test
     fun `getDateMillisFromString returns correct values`() {
         for (input in testInputs) {
+            println("Testing input: $input")
+            println("Result:")
+            println(dateFormatter.getDateMillisFromString(input.first))
             assertEquals(input.second, dateFormatter.getDateMillisFromString(input.first))
         }
-    }
-
-    @Test
-    fun fakeTest() {
-        assertTrue(true)
     }
 }

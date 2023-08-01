@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -23,6 +24,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.presentation.AddFeedViewModel
@@ -142,6 +146,11 @@ private fun FeedNameTextField(
         label = {
             Text(text = stringResource(resource = MR.strings.feed_name))
         },
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Next,
+            keyboardType = KeyboardType.Text,
+            capitalization = KeyboardCapitalization.Sentences,
+        ),
         value = feedName,
         onValueChange = {
             onFeedNameUpdated(it)
@@ -167,6 +176,11 @@ private fun FeedUrlTextField(
         label = {
             Text(text = stringResource(resource = MR.strings.feed_url))
         },
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Uri,
+            autoCorrect = false,
+        ),
         value = feedUrl,
         onValueChange = {
             onFeedUrlUpdated(it)

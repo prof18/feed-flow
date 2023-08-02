@@ -11,27 +11,6 @@
   @include mobile {
     padding: 30px 0 50px;
   }
-  &-shape {
-    position: absolute;
-    width: 100%;
-    top: 0;
-    left: 0;
-    svg {
-      &:first-child {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 48%;
-      }
-      &:last-child {
-        width: 10%;
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-    }
-  }
-
   &-content {
     &-subtitle {
       font-size: 14px;

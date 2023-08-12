@@ -10,8 +10,6 @@ import com.prof18.feedflow.domain.JvmHtmlParser
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
-import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.build
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
 import com.squareup.sqldelight.android.AndroidSqliteDriver
@@ -43,10 +41,6 @@ internal actual val platformModule: Module = module {
         OpmlFeedHandler(
             dispatcherProvider = get(),
         )
-    }
-
-    single {
-        RssParser.build()
     }
 
     factory<HtmlParser> {

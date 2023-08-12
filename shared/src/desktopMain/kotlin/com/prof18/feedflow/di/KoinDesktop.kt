@@ -9,8 +9,6 @@ import com.prof18.feedflow.initDatabase
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.DispatcherProvider
-import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.build
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
 import com.squareup.sqldelight.db.SqlDriver
@@ -41,10 +39,6 @@ internal actual val platformModule: Module = module {
         initDatabase(
             logger = getWith("initDatabase"),
         )
-    }
-
-    single {
-        RssParser.build()
     }
 
     factory {

@@ -15,8 +15,6 @@ import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.DispatcherProvider
-import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.build
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
 import com.russhwolf.settings.Settings
@@ -63,10 +61,6 @@ internal actual val platformModule: Module = module {
             override val default: CoroutineDispatcher = Dispatchers.Default
             override val io: CoroutineDispatcher = Dispatchers.IO
         }
-    }
-
-    single {
-        RssParser.build()
     }
 
     factory {

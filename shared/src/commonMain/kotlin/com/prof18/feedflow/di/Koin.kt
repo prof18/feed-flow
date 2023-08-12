@@ -17,6 +17,7 @@ import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.utils.AppEnvironment
+import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -67,6 +68,10 @@ private val coreModule = module {
             backgroundDispatcher = Dispatchers.Default,
             logger = getWith("DatabaseHelper"),
         )
+    }
+
+    single {
+        RssParser()
     }
 
     factory<FeedManagerRepository> {

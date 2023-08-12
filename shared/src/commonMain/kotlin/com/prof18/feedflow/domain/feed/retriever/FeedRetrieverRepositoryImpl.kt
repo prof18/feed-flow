@@ -13,6 +13,7 @@ import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.domain.model.StartedFeedUpdateStatus
+import com.prof18.feedflow.presentation.model.DatabaseError
 import com.prof18.feedflow.presentation.model.ErrorState
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.utils.DispatcherProvider
@@ -30,6 +31,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -76,6 +78,11 @@ internal class FeedRetrieverRepositoryImpl(
                 dateString = dateFormatter.formatDate(selectedFeed.pub_date),
                 commentsUrl = selectedFeed.comments_url,
             )
+        }
+    }.catch {
+        logger.e(it) { "Something wrong while getting data from Database" }
+        errorMutableState.update {
+            DatabaseError
         }
     }.flowOn(dispatcherProvider.io)
 

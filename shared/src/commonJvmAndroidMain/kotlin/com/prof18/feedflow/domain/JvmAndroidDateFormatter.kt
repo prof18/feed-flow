@@ -20,6 +20,7 @@ internal class JvmAndroidDateFormatter(
         SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault()),
         SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()),
         SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()),
+        SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'Z'", Locale.getDefault()),
     )
 
     @Suppress("TooGenericExceptionCaught")

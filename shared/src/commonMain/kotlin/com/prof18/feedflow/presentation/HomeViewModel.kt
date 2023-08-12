@@ -5,9 +5,11 @@ import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
+import com.prof18.feedflow.presentation.model.DatabaseError
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.presentation.model.UIErrorState
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
+import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -69,6 +71,16 @@ class HomeViewModel(
                                     message = StringDesc.ResourceFormatted(
                                         stringRes = MR.strings.feed_error_message,
                                         error.failingSourceName,
+                                    ),
+                                ),
+                            )
+                        }
+
+                        is DatabaseError -> {
+                            mutableUIErrorState.emit(
+                                UIErrorState(
+                                    message = StringDesc.Resource(
+                                        stringRes = MR.strings.database_error,
                                     ),
                                 ),
                             )

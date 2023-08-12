@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -60,14 +61,15 @@ internal class DatabaseHelper(
             }
             .flowOn(backgroundDispatcher)
 
+    @Suppress("MagicNumber")
     fun getFeedItems(): Flow<List<SelectFeeds>> =
         dbRef.feedItemQueries
             .selectFeeds()
             .asFlow()
-            .catch {
-                logger.e(it) { "Something wrong while getting data from Database" }
-            }
             .mapToList()
+            .retry(3) { exception ->
+                exception is NullPointerException
+            }
             .flowOn(backgroundDispatcher)
 
     suspend fun insertCategories(categories: List<String>) =

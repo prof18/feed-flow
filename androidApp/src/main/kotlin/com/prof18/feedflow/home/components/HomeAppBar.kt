@@ -79,6 +79,7 @@ internal fun HomeAppBar(
     )
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun SettingsDropdownMenu(
     showMenu: Boolean,

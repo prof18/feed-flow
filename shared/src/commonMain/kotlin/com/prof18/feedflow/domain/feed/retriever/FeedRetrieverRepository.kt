@@ -12,7 +12,7 @@ interface FeedRetrieverRepository {
     val errorState: StateFlow<ErrorState?>
     fun getFeeds(): Flow<List<FeedItem>>
     suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>)
-    suspend fun fetchFeeds(updateLoadingInfo: Boolean = true)
+    suspend fun fetchFeeds(updateLoadingInfo: Boolean = true, forceRefresh: Boolean = false)
     suspend fun markAllFeedAsRead()
     suspend fun deleteOldFeeds()
 }

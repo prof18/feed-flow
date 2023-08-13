@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -38,6 +39,7 @@ internal fun HomeAppBar(
     onClearOldArticlesClicked: () -> Unit,
     onClick: () -> Unit,
     onDoubleClick: () -> Unit,
+    onForceRefreshClick: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -65,6 +67,7 @@ internal fun HomeAppBar(
                 onMarkAllReadClicked = onMarkAllReadClicked,
                 onClearOldArticlesClicked = onClearOldArticlesClicked,
                 onSettingsButtonClicked = onSettingsButtonClicked,
+                onForceRefreshClick = onForceRefreshClick,
             )
         },
         modifier = Modifier.pointerInput(Unit) {
@@ -83,6 +86,7 @@ private fun SettingsDropdownMenu(
     onMarkAllReadClicked: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
+    onForceRefreshClick: () -> Unit,
 ) {
     DropdownMenu(
         expanded = showMenu,
@@ -122,6 +126,22 @@ private fun SettingsDropdownMenu(
 
         DropdownMenuItem(
             onClick = {
+                onForceRefreshClick()
+                closeMenu()
+            },
+            text = {
+                Text(stringResource(resource = MR.strings.force_feed_refresh))
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = null,
+                )
+            },
+        )
+
+        DropdownMenuItem(
+            onClick = {
                 onSettingsButtonClicked()
             },
             text = {
@@ -148,6 +168,7 @@ private fun HomeAppBarPreview() {
             onClearOldArticlesClicked = { },
             onClick = { },
             onDoubleClick = {},
+            onForceRefreshClick = {},
         )
     }
 }

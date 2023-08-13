@@ -38,6 +38,7 @@ internal class DatabaseHelper(
                     id = feedSource.url_hash,
                     url = feedSource.url,
                     title = feedSource.title,
+                    lastSyncTimestamp = feedSource.last_sync_timestamp,
                 )
             }
     }
@@ -56,6 +57,7 @@ internal class DatabaseHelper(
                         id = feedSource.url_hash,
                         url = feedSource.url,
                         title = feedSource.title,
+                        lastSyncTimestamp = feedSource.last_sync_timestamp,
                     )
                 }
             }
@@ -144,6 +146,11 @@ internal class DatabaseHelper(
     suspend fun deleteFeedSource(feedSource: FeedSource) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedSourceQueries.deleteFeedSource(feedSource.id)
+        }
+
+    suspend fun updateLastSyncTimestamp(feedSource: FeedSource, timestamp: Long) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.updateLastSyncTimestamp(timestamp, feedSource.id)
         }
 
     private suspend fun Transacter.transactionWithContext(

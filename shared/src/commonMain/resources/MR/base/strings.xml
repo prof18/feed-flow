@@ -43,4 +43,5 @@
     <string name="report_issue_button">Report issue</string>
     <string name="open_website_button">Open website</string>
     <string name="database_error">Something went wrong during the retrieval of the feeds. Please retry or restart the app :(</string>
+    <string name="force_feed_refresh">Force feeds refresh</string>
 </resources>

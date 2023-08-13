@@ -111,6 +111,12 @@ internal fun HomeScreen(
                         homeViewModel.getNewFeeds()
                     }
                 },
+                onForceRefreshClick = {
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                        homeViewModel.forceFeedRefresh()
+                    }
+                },
             )
         },
         containerColor = Color.Transparent,

@@ -2,7 +2,8 @@ CREATE TABLE feed_source (
     url_hash INTEGER AS Int NOT NULL PRIMARY KEY,
     url TEXT NOT NULL,
     title TEXT NOT NULL,
-    category_id INTEGER
+    category_id INTEGER,
+    last_sync_timestamp INTEGER
 );
 
 
@@ -15,8 +16,13 @@ INSERT OR IGNORE INTO feed_source(url_hash, url, title)
 VALUES (?,?,?);
 
 selectFeedUrls:
-SELECT url, url_hash, title FROM feed_source
+SELECT url, url_hash, title, last_sync_timestamp FROM feed_source
 ORDER BY title COLLATE NOCASE ASC;
 
 deleteFeedSource:
 DELETE FROM feed_source WHERE url_hash = :urlHash;
+
+updateLastSyncTimestamp:
+UPDATE feed_source
+SET last_sync_timestamp = :lastSyncTimestamp
+WHERE url_hash = :urlHash;

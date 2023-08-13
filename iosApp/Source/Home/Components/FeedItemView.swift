@@ -34,9 +34,11 @@ struct FeedItemView: View {
                 )
             }
 
-            Text(feedItem.dateString)
-                .font(.system(size: 12))
-                .padding(.bottom, Spacing.small)
+            if let dateString = feedItem.dateString {
+                Text(dateString)
+                    .font(.system(size: 12))
+                    .padding(.bottom, Spacing.small)
+            }
 
         }
     }

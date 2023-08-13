@@ -26,6 +26,7 @@ import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -37,8 +38,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.random.Random
 
+@Suppress("TooManyFunctions")
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedRetrieverRepositoryImpl(
     private val parser: RssParser,
@@ -59,54 +60,65 @@ internal class FeedRetrieverRepositoryImpl(
 
     private val feedToUpdate = hashSetOf<String>()
 
-    override fun getFeeds(): Flow<List<FeedItem>> = databaseHelper.getFeedItems().map { feedList ->
-        feedList.map { selectedFeed ->
-            FeedItem(
-                id = selectedFeed.url_hash,
-                url = selectedFeed.url,
-                title = selectedFeed.title,
-                subtitle = selectedFeed.subtitle,
-                content = null,
-                imageUrl = selectedFeed.image_url,
-                feedSource = FeedSource(
-                    id = selectedFeed.feed_source_id,
-                    url = selectedFeed.feed_source_url,
-                    title = selectedFeed.feed_source_title,
-                ),
-                isRead = selectedFeed.is_read,
-                pubDateMillis = selectedFeed.pub_date,
-                dateString = dateFormatter.formatDate(selectedFeed.pub_date),
-                commentsUrl = selectedFeed.comments_url,
-            )
-        }
-    }.catch {
-        logger.e(it) { "Something wrong while getting data from Database" }
-        errorMutableState.update {
-            DatabaseError
-        }
-    }.flowOn(dispatcherProvider.io)
+    override fun getFeeds(): Flow<List<FeedItem>> =
+        databaseHelper.getFeedItems().map { feedList ->
+            feedList.map { selectedFeed ->
+                FeedItem(
+                    id = selectedFeed.url_hash,
+                    url = selectedFeed.url,
+                    title = selectedFeed.title,
+                    subtitle = selectedFeed.subtitle,
+                    content = null,
+                    imageUrl = selectedFeed.image_url,
+                    feedSource = FeedSource(
+                        id = selectedFeed.feed_source_id,
+                        url = selectedFeed.feed_source_url,
+                        title = selectedFeed.feed_source_title,
+                        lastSyncTimestamp = selectedFeed.feed_source_last_sync_timestamp,
+                    ),
+                    isRead = selectedFeed.is_read,
+                    pubDateMillis = selectedFeed.pub_date,
+                    dateString = if (selectedFeed.pub_date != null) {
+                        dateFormatter.formatDate(selectedFeed.pub_date)
+                    } else {
+                        null
+                    },
+                    commentsUrl = selectedFeed.comments_url,
+                )
+            }
+        }.catch {
+            logger.e(it) { "Something wrong while getting data from Database" }
+            errorMutableState.update {
+                DatabaseError
+            }
+        }.flowOn(dispatcherProvider.io)
 
     override suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
         databaseHelper.updateReadStatus(itemsToUpdates)
 
-    override suspend fun fetchFeeds(updateLoadingInfo: Boolean) = withContext(dispatcherProvider.io) {
-        if (updateLoadingInfo) {
-            updateMutableState.update { StartedFeedUpdateStatus }
-        } else {
-            updateMutableState.update { FinishedFeedUpdateStatus }
-        }
-        val feedSourceUrls = databaseHelper.getFeedSources()
-        feedToUpdate.clear()
-        feedToUpdate.addAll(feedSourceUrls.map { it.url })
-        if (feedSourceUrls.isEmpty()) {
-            updateMutableState.update {
-                NoFeedSourcesStatus
+    override suspend fun fetchFeeds(updateLoadingInfo: Boolean, forceRefresh: Boolean) =
+        withContext(dispatcherProvider.io) {
+            if (updateLoadingInfo) {
+                updateMutableState.update { StartedFeedUpdateStatus }
+            } else {
+                updateMutableState.update { FinishedFeedUpdateStatus }
             }
-        } else {
-            databaseHelper.updateNewStatus()
-            createFetchingPipeline(feedSourceUrls, updateLoadingInfo)
+            val feedSourceUrls = databaseHelper.getFeedSources()
+            feedToUpdate.clear()
+            feedToUpdate.addAll(feedSourceUrls.map { it.url })
+            if (feedSourceUrls.isEmpty()) {
+                updateMutableState.update {
+                    NoFeedSourcesStatus
+                }
+            } else {
+                databaseHelper.updateNewStatus()
+                createFetchingPipeline(
+                    feedSourceUrls = feedSourceUrls,
+                    updateLoadingInfo = updateLoadingInfo,
+                    forceRefresh = forceRefresh,
+                )
+            }
         }
-    }
 
     override suspend fun markAllFeedAsRead() {
         databaseHelper.markAllFeedAsRead()
@@ -138,14 +150,35 @@ internal class FeedRetrieverRepositoryImpl(
         }
     }
 
-    @Suppress("TooGenericExceptionCaught", "MagicNumber")
     private suspend fun createFetchingPipeline(
         feedSourceUrls: List<FeedSource>,
         updateLoadingInfo: Boolean,
+        forceRefresh: Boolean,
     ) = coroutineScope {
         val feedSourcesChannel = produceFeedSources(feedSourceUrls, updateLoadingInfo)
 
-        val concurrentParsingRequests = if (feedSourceUrls.size > 40) {
+        val feedToSaveChannel = setupParsersPipeline(
+            feedSourceUrls = feedSourceUrls,
+            feedSourcesChannel = feedSourcesChannel,
+            forceRefresh = forceRefresh,
+            updateLoadingInfo = updateLoadingInfo,
+        )
+
+        setupSaversPipeline(
+            feedSourceUrls = feedSourceUrls,
+            feedToSaveChannel = feedToSaveChannel,
+            updateLoadingInfo = updateLoadingInfo,
+        )
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    private fun CoroutineScope.setupParsersPipeline(
+        feedSourceUrls: List<FeedSource>,
+        feedSourcesChannel: ReceiveChannel<FeedSource>,
+        forceRefresh: Boolean,
+        updateLoadingInfo: Boolean,
+    ): ReceiveChannel<RssChannelResult> {
+        val concurrentParsingRequests = if (feedSourceUrls.size > MAX_FEED_SIZE) {
             getLimitedNumberOfConcurrentParsingRequests()
         } else {
             getNumberOfConcurrentParsingRequests()
@@ -157,12 +190,22 @@ internal class FeedRetrieverRepositoryImpl(
                     for (feedSource in feedSourcesChannel) {
                         logger.d { "-> Getting ${feedSource.url}" }
                         try {
-                            val rssChannel = parser.getRssChannel(feedSource.url)
-                            val result = RssChannelResult(
-                                rssChannel = rssChannel,
-                                feedSource = feedSource,
-                            )
-                            send(result)
+                            val shouldRefresh = shouldRefreshFeed(feedSource, forceRefresh)
+
+                            if (shouldRefresh) {
+                                val rssChannel = parser.getRssChannel(feedSource.url)
+                                val result = RssChannelResult(
+                                    rssChannel = rssChannel,
+                                    feedSource = feedSource,
+                                )
+                                send(result)
+                            } else {
+                                logger.d { "One hour is not passed, skipping: ${feedSource.url}}" }
+                                feedToUpdate.remove(feedSource.url)
+                                if (updateLoadingInfo) {
+                                    updateRefreshCount()
+                                }
+                            }
                         } catch (e: Throwable) {
                             logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }
                             e.printStackTrace()
@@ -180,8 +223,15 @@ internal class FeedRetrieverRepositoryImpl(
                 }
             }
         }
+        return feedToSaveChannel
+    }
 
-        val concurrentSavers = if (feedSourceUrls.size > 40) {
+    private fun CoroutineScope.setupSaversPipeline(
+        feedSourceUrls: List<FeedSource>,
+        feedToSaveChannel: ReceiveChannel<RssChannelResult>,
+        updateLoadingInfo: Boolean,
+    ) {
+        val concurrentSavers = if (feedSourceUrls.size > MAX_FEED_SIZE) {
             getLimitedNumberOfConcurrentFeedSavers()
         } else {
             getNumberOfConcurrentFeedSavers()
@@ -203,9 +253,26 @@ internal class FeedRetrieverRepositoryImpl(
                         feedSource = rssChannelResult.feedSource,
                     )
                     databaseHelper.insertFeedItems(feedItems)
+                    databaseHelper.updateLastSyncTimestamp(
+                        rssChannelResult.feedSource,
+                        timestamp = dateFormatter.currentTimeMillis(),
+                    )
                 }
             }
         }
+    }
+
+    @Suppress("MagicNumber")
+    private fun shouldRefreshFeed(
+        feedSource: FeedSource,
+        forceRefresh: Boolean,
+    ): Boolean {
+        val lastSyncTimestamp = feedSource.lastSyncTimestamp
+        val oneHourInMillis = (60 * 60) * 1000
+        val currentTime = dateFormatter.currentTimeMillis()
+        return forceRefresh ||
+            lastSyncTimestamp == null ||
+            currentTime - lastSyncTimestamp >= oneHourInMillis
     }
 
     private fun updateRefreshCount() {
@@ -232,15 +299,10 @@ internal class FeedRetrieverRepositoryImpl(
             val url = rssItem.link
             val pubDate = rssItem.pubDate
 
-            val randomTimeToSubtract = Random.nextLong(1800000L, 10800000L)
-            // TODO: move away from default date?
-            val defaultDate = dateFormatter.currentTimeMillis() - randomTimeToSubtract
-
             val dateMillis = if (pubDate != null) {
-                dateFormatter.getDateMillisFromString(pubDate) ?: defaultDate
+                dateFormatter.getDateMillisFromString(pubDate)
             } else {
-                // Between 30 minutes and 3 hours ago
-                defaultDate
+                null
             }
 
             val imageUrl = if (rssItem.image?.contains("http:") == true) {
@@ -265,9 +327,17 @@ internal class FeedRetrieverRepositoryImpl(
                     feedSource = feedSource,
                     isRead = false,
                     pubDateMillis = dateMillis,
-                    dateString = dateFormatter.formatDate(dateMillis),
+                    dateString = if (dateMillis != null) {
+                        dateFormatter.formatDate(dateMillis)
+                    } else {
+                        null
+                    },
                     commentsUrl = rssItem.commentsUrl,
                 )
             }
         }
+
+    private companion object {
+        const val MAX_FEED_SIZE = 40
+    }
 }

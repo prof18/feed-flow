@@ -186,6 +186,12 @@ fun main() = application {
             onBugReportClick = {
                 openInBrowser(UserFeedbackReporter.getFeedbackUrl())
             },
+            onForceRefreshClick = {
+                scope.launch {
+                    listState.animateScrollToItem(0)
+                    homeViewModel.forceFeedRefresh()
+                }
+            },
         )
 
         MainContent(

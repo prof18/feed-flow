@@ -25,6 +25,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onClearOldFeedClick: () -> Unit,
     onAboutClick: () -> Unit,
     onBugReportClick: () -> Unit,
+    onForceRefreshClick: () -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -34,6 +35,14 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     onRefreshClick()
                 },
                 shortcut = KeyShortcut(Key.R, meta = true),
+            )
+
+            Item(
+                text = stringResource(resource = MR.strings.force_feed_refresh),
+                onClick = {
+                    onForceRefreshClick()
+                },
+                shortcut = KeyShortcut(Key.R, meta = true, shift = true),
             )
 
             Item(

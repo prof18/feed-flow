@@ -4,4 +4,5 @@ data class FeedSource(
     val id: Int,
     val url: String,
     val title: String,
+    val lastSyncTimestamp: Long?,
 )

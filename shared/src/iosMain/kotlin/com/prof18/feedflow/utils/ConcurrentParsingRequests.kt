@@ -4,6 +4,6 @@ package com.prof18.feedflow.utils
 actual fun getNumberOfConcurrentParsingRequests(): Int = 10
 actual fun getNumberOfConcurrentFeedSavers(): Int = 10
 
-actual fun getLimitedNumberOfConcurrentParsingRequests(): Int = 5
+actual fun getLimitedNumberOfConcurrentParsingRequests(): Int = 4
 
-actual fun getLimitedNumberOfConcurrentFeedSavers(): Int = 5
+actual fun getLimitedNumberOfConcurrentFeedSavers(): Int = 4

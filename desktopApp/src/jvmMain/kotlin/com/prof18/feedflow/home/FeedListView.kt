@@ -120,12 +120,14 @@ private fun FeedItemView(
             feedItem = feedItem,
         )
 
-        Text(
-            modifier = Modifier
-                .padding(top = Spacing.small),
-            text = feedItem.dateString,
-            style = MaterialTheme.typography.bodySmall,
-        )
+        feedItem.dateString?.let { dateString ->
+            Text(
+                modifier = Modifier
+                    .padding(top = Spacing.small),
+                text = dateString,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
 
         Divider(
             modifier = Modifier

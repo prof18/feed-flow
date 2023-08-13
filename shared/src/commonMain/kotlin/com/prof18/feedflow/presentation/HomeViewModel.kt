@@ -152,4 +152,11 @@ class HomeViewModel(
             feedRetrieverRepository.deleteOldFeeds()
         }
     }
+
+    fun forceFeedRefresh() {
+        lastUpdateIndex = 0
+        scope.launch {
+            feedRetrieverRepository.fetchFeeds(forceRefresh = true)
+        }
+    }
 }

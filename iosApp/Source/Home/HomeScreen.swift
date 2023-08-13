@@ -53,6 +53,9 @@ struct HomeScreen: View {
             },
             onExportFeedClick: { output in
                 settingsViewModel.exportFeed(opmlOutput: output)
+            },
+            onForceRefreshClick: {
+                homeViewModel.forceFeedRefresh()
             }
         )
         .environmentObject(indexHolder)
@@ -199,6 +202,7 @@ struct HomeContent: View {
     let onDeleteOldFeedClick: () -> Void
     let onImportFeedClick: (OpmlInput) -> Void
     let onExportFeedClick: (OpmlOutput) -> Void
+    let onForceRefreshClick: () -> Void
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -253,6 +257,18 @@ struct HomeContent: View {
                                 Label(
                                     MR.strings().clear_old_articles_button.localized,
                                     systemImage: "trash"
+                                )
+                            }
+                        )
+
+                        Button(
+                            action: {
+                                onForceRefreshClick()
+                            },
+                            label: {
+                                Label(
+                                    MR.strings().force_feed_refresh.localized,
+                                    systemImage: "arrow.clockwise"
                                 )
                             }
                         )
@@ -419,7 +435,8 @@ struct HomeContentLoading_Previews: PreviewProvider {
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
             onImportFeedClick: { _ in },
-            onExportFeedClick: { _ in }
+            onExportFeedClick: { _ in },
+            onForceRefreshClick: {}
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())
@@ -441,7 +458,8 @@ struct HomeContentLoaded_Previews: PreviewProvider {
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
             onImportFeedClick: { _ in },
-            onExportFeedClick: { _ in }
+            onExportFeedClick: { _ in },
+            onForceRefreshClick: {}
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())
@@ -464,7 +482,8 @@ struct HomeContentSettings_Previews: PreviewProvider {
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
             onImportFeedClick: { _ in },
-            onExportFeedClick: { _ in }
+            onExportFeedClick: { _ in },
+            onForceRefreshClick: {}
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())

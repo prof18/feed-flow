@@ -154,6 +154,9 @@ kotlin {
 sqldelight {
     database("FeedFlowDB") {
         packageName = "com.prof18.feedflow.db"
+        schemaOutputDirectory = file("src/commonMain/sqldelight/com/prof18/feedflow/schema")
+
+        verifyMigrations = true
     }
 }
 

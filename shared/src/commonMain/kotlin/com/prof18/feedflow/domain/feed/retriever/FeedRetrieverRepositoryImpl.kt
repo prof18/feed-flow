@@ -4,7 +4,9 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
-import com.prof18.feedflow.domain.feed.retriever.model.RssChannelResult
+import com.prof18.feedflow.domain.feed.retriever.model.RssParsingError
+import com.prof18.feedflow.domain.feed.retriever.model.RssParsingResult
+import com.prof18.feedflow.domain.feed.retriever.model.RssParsingSuccess
 import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedSource
@@ -17,26 +19,23 @@ import com.prof18.feedflow.presentation.model.DatabaseError
 import com.prof18.feedflow.presentation.model.ErrorState
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.utils.DispatcherProvider
-import com.prof18.feedflow.utils.getLimitedNumberOfConcurrentFeedSavers
-import com.prof18.feedflow.utils.getLimitedNumberOfConcurrentParsingRequests
-import com.prof18.feedflow.utils.getNumberOfConcurrentFeedSavers
 import com.prof18.feedflow.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Suppress("TooManyFunctions")
@@ -96,8 +95,8 @@ internal class FeedRetrieverRepositoryImpl(
     override suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
         databaseHelper.updateReadStatus(itemsToUpdates)
 
-    override suspend fun fetchFeeds(updateLoadingInfo: Boolean, forceRefresh: Boolean) =
-        withContext(dispatcherProvider.io) {
+    override suspend fun fetchFeeds(updateLoadingInfo: Boolean, forceRefresh: Boolean) {
+        return withContext(dispatcherProvider.io) {
             if (updateLoadingInfo) {
                 updateMutableState.update { StartedFeedUpdateStatus }
             } else {
@@ -111,14 +110,25 @@ internal class FeedRetrieverRepositoryImpl(
                     NoFeedSourcesStatus
                 }
             } else {
+                if (updateLoadingInfo) {
+                    updateMutableState.emit(
+                        InProgressFeedUpdateStatus(
+                            refreshedFeedCount = 0,
+                            totalFeedCount = feedSourceUrls.size,
+                        ),
+                    )
+                }
                 databaseHelper.updateNewStatus()
-                createFetchingPipeline(
-                    feedSourceUrls = feedSourceUrls,
-                    updateLoadingInfo = updateLoadingInfo,
-                    forceRefresh = forceRefresh,
+
+                val feedResults = parseFeeds(feedSourceUrls, updateLoadingInfo, forceRefresh)
+
+                val items = getFeedItems(
+                    rssChannelResults = feedResults.filterIsInstance<RssParsingSuccess>(),
                 )
+                databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
             }
         }
+    }
 
     override suspend fun markAllFeedAsRead() {
         databaseHelper.markAllFeedAsRead()
@@ -133,134 +143,74 @@ internal class FeedRetrieverRepositoryImpl(
         databaseHelper.deleteOldFeedItems(threshold)
     }
 
-    private fun CoroutineScope.produceFeedSources(
-        feedSourceUrls: List<FeedSource>,
-        updateLoadingInfo: Boolean,
-    ) = produce {
-        if (updateLoadingInfo) {
-            updateMutableState.emit(
-                InProgressFeedUpdateStatus(
-                    refreshedFeedCount = 0,
-                    totalFeedCount = feedSourceUrls.size,
-                ),
-            )
-        }
-        for (feedSource in feedSourceUrls) {
-            send(feedSource)
-        }
-    }
-
-    private suspend fun createFetchingPipeline(
-        feedSourceUrls: List<FeedSource>,
-        updateLoadingInfo: Boolean,
-        forceRefresh: Boolean,
-    ) = coroutineScope {
-        val feedSourcesChannel = produceFeedSources(feedSourceUrls, updateLoadingInfo)
-
-        val feedToSaveChannel = setupParsersPipeline(
-            feedSourceUrls = feedSourceUrls,
-            feedSourcesChannel = feedSourcesChannel,
-            forceRefresh = forceRefresh,
-            updateLoadingInfo = updateLoadingInfo,
-        )
-
-        setupSaversPipeline(
-            feedSourceUrls = feedSourceUrls,
-            feedToSaveChannel = feedToSaveChannel,
-            updateLoadingInfo = updateLoadingInfo,
-        )
-    }
-
     @Suppress("TooGenericExceptionCaught")
-    private fun CoroutineScope.setupParsersPipeline(
+    private suspend fun parseFeeds(
         feedSourceUrls: List<FeedSource>,
-        feedSourcesChannel: ReceiveChannel<FeedSource>,
+        updateLoadingInfo: Boolean,
         forceRefresh: Boolean,
-        updateLoadingInfo: Boolean,
-    ): ReceiveChannel<RssChannelResult> {
-        val concurrentParsingRequests = if (feedSourceUrls.size > MAX_FEED_SIZE) {
-            getLimitedNumberOfConcurrentParsingRequests()
-        } else {
-            getNumberOfConcurrentParsingRequests()
-        }
-
-        val feedToSaveChannel = produce(capacity = UNLIMITED) {
-            repeat(concurrentParsingRequests) {
-                launch(dispatcherProvider.default) {
-                    for (feedSource in feedSourcesChannel) {
-                        logger.d { "-> Getting ${feedSource.url}" }
-                        try {
-                            val shouldRefresh = shouldRefreshFeed(feedSource, forceRefresh)
-
-                            if (shouldRefresh) {
-                                val rssChannel = parser.getRssChannel(feedSource.url)
-                                val result = RssChannelResult(
-                                    rssChannel = rssChannel,
-                                    feedSource = feedSource,
-                                )
-                                send(result)
-                            } else {
-                                logger.d { "One hour is not passed, skipping: ${feedSource.url}}" }
-                                feedToUpdate.remove(feedSource.url)
-                                if (updateLoadingInfo) {
-                                    updateRefreshCount()
-                                }
-                            }
-                        } catch (e: Throwable) {
-                            logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }
-                            e.printStackTrace()
-                            errorMutableState.update {
-                                FeedErrorState(
-                                    failingSourceName = feedSource.title,
-                                )
-                            }
-                            feedToUpdate.remove(feedSource.url)
-                            if (updateLoadingInfo) {
-                                updateRefreshCount()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return feedToSaveChannel
-    }
-
-    private fun CoroutineScope.setupSaversPipeline(
-        feedSourceUrls: List<FeedSource>,
-        feedToSaveChannel: ReceiveChannel<RssChannelResult>,
-        updateLoadingInfo: Boolean,
-    ) {
-        val concurrentSavers = if (feedSourceUrls.size > MAX_FEED_SIZE) {
-            getLimitedNumberOfConcurrentFeedSavers()
-        } else {
-            getNumberOfConcurrentFeedSavers()
-        }
-
-        repeat(concurrentSavers) {
-            launch(dispatcherProvider.io) {
-                for (rssChannelResult in feedToSaveChannel) {
-                    logger.d {
-                        "<- Got back ${rssChannelResult.rssChannel.title}"
-                    }
-
-                    feedToUpdate.remove(rssChannelResult.feedSource.url)
+    ): List<RssParsingResult> =
+        feedSourceUrls
+            .mapNotNull { feedSource ->
+                val shouldRefresh = shouldRefreshFeed(feedSource, forceRefresh)
+                if (shouldRefresh) {
+                    feedSource
+                } else {
+                    logger.d { "One hour is not passed, skipping: ${feedSource.url}}" }
+                    feedToUpdate.remove(feedSource.url)
                     if (updateLoadingInfo) {
                         updateRefreshCount()
                     }
-
-                    val feedItems = rssChannelResult.rssChannel.getFeedItems(
-                        feedSource = rssChannelResult.feedSource,
-                    )
-                    databaseHelper.insertFeedItems(feedItems)
-                    databaseHelper.updateLastSyncTimestamp(
-                        rssChannelResult.feedSource,
-                        timestamp = dateFormatter.currentTimeMillis(),
-                    )
+                    null
                 }
             }
+            .asFlow()
+            .flatMapMerge(concurrency = getNumberOfConcurrentParsingRequests()) { feedSource ->
+                suspend {
+                    logger.d { "-> Getting ${feedSource.url}" }
+                    try {
+                        val rssChannel = parser.getRssChannel(feedSource.url)
+                        logger.d { "<- Got back ${rssChannel.title}" }
+                        feedToUpdate.remove(feedSource.url)
+                        if (updateLoadingInfo) {
+                            updateRefreshCount()
+                        }
+                        RssParsingSuccess(
+                            rssChannel = rssChannel,
+                            feedSource = feedSource,
+                        )
+                    } catch (e: Throwable) {
+                        logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }
+                        errorMutableState.update {
+                            FeedErrorState(
+                                failingSourceName = feedSource.title,
+                            )
+                        }
+                        feedToUpdate.remove(feedSource.url)
+                        if (updateLoadingInfo) {
+                            updateRefreshCount()
+                        }
+                        RssParsingError(
+                            feedSource = feedSource,
+                            throwable = e,
+                        )
+                    }
+                }.asFlow()
+            }
+            .toList()
+
+    private suspend fun getFeedItems(
+        rssChannelResults: List<RssParsingSuccess>,
+    ): List<FeedItem> =
+        coroutineScope {
+            rssChannelResults.map { rssChannelResults ->
+                async {
+                    rssChannelResults.rssChannel.getFeedItems(
+                        feedSource = rssChannelResults.feedSource,
+                    )
+                }
+            }.awaitAll()
+                .flatten()
         }
-    }
 
     @Suppress("MagicNumber")
     private fun shouldRefreshFeed(
@@ -336,8 +286,4 @@ internal class FeedRetrieverRepositoryImpl(
                 )
             }
         }
-
-    private companion object {
-        const val MAX_FEED_SIZE = 40
-    }
 }

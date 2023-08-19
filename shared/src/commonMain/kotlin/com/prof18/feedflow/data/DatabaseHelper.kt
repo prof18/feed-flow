@@ -102,7 +102,7 @@ internal class DatabaseHelper(
         }
     }
 
-    suspend fun insertFeedItems(feedItems: List<FeedItem>) =
+    suspend fun insertFeedItems(feedItems: List<FeedItem>, lastSyncTimestamp: Long) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             for (feedItem in feedItems) {
                 with(feedItem) {
@@ -117,6 +117,8 @@ internal class DatabaseHelper(
                         pub_date = pubDateMillis,
                         comments_url = commentsUrl,
                     )
+
+                    dbRef.feedSourceQueries.updateLastSyncTimestamp(lastSyncTimestamp, feedSource.id)
                 }
             }
         }

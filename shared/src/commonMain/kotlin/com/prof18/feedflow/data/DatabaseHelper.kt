@@ -150,11 +150,6 @@ internal class DatabaseHelper(
             dbRef.feedSourceQueries.deleteFeedSource(feedSource.id)
         }
 
-    suspend fun updateLastSyncTimestamp(feedSource: FeedSource, timestamp: Long) =
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedSourceQueries.updateLastSyncTimestamp(timestamp, feedSource.id)
-        }
-
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,
@@ -169,7 +164,6 @@ internal class DatabaseHelper(
 
     internal companion object {
         const val DB_FILE_NAME_WITH_EXTENSION = "FeedFlow.db"
-        const val DB_FILE_NAME = "FeedFlow"
         const val DATABASE_NAME = "FeedFlowDB"
     }
 }

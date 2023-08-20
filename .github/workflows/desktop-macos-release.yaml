@@ -61,7 +61,7 @@ jobs:
       - name: Create path variables
         id: path_variables
         run: |
-          tag=$(git describe --tags --abbrev=0 --match *-desktop)
+          tag=$(git describe --tags --abbrev=0 --match "*-desktop")
           version=$(echo "$tag" | sed 's/-desktop$//')
           name="FeedFlow-${version}.dmg"
           path="desktopApp/build/release/main-release/dmg/${name}"

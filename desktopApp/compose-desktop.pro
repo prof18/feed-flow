@@ -63,7 +63,6 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 
 -keep class kotlinx.coroutines.swing.SwingDispatcherFactory {*;}
--keep class kotlinx.coroutines.android.AndroidExceptionPreHandler {*;}
 
 # Theme detector
 -dontwarn java.awt.*
@@ -88,3 +87,6 @@
 -keepclassmembers class javax.xml.stream.XMLOutputFactory { *; }
 
 -keepnames class javax.xml.stream.** { *; }
+
+# Sentry
+-keep class io.sentry.** { *; }

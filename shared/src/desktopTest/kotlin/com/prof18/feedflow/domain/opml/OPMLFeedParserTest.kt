@@ -4,6 +4,7 @@ package com.prof18.feedflow.domain.opml
 
 import com.prof18.feedflow.TestDispatcherProvider
 import com.prof18.feedflow.opml
+import com.prof18.feedflow.opmlWithText
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.io.File
@@ -71,5 +72,20 @@ class OPMLFeedParserTest {
         assertEquals("Il Post", feedSources[5].title)
         assertEquals("https://feeds.ilpost.it/ilpost", feedSources[5].url)
         assertEquals("News", feedSources[5].category)
+    }
+
+    @Test
+    fun `The opml with text is parsed correctly`() = runTest {
+        val file = File.createTempFile("some-prefix", ".tmp").apply {
+            deleteOnExit()
+            writeText(opmlWithText)
+        }
+
+        val opmlInput = OpmlInput(
+            file = file,
+        )
+
+        val feedSources = parser.importFeed(opmlInput)
+        assertTrue(feedSources.isNotEmpty())
     }
 }

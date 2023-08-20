@@ -37,20 +37,21 @@ internal actual class OpmlFeedHandler(
                 when (eventType) {
                     XmlPullParser.START_TAG -> when {
                         xmlPullParser.contains(OpmlConstants.OUTLINE) -> {
-                            when (xmlPullParser.attributeValue(OpmlConstants.TYPE)) {
-                                OpmlConstants.RSS -> {
-                                    val builder = ParsedFeedSource.Builder().apply {
-                                        title(xmlPullParser.attributeValue(OpmlConstants.TITLE))
-                                        url(xmlPullParser.attributeValue(OpmlConstants.XML_URL))
-                                        category(categoryName)
-                                    }
-                                    builder.build()?.let {
-                                        feedSources.add(it)
-                                    }
+                            val xmlUrl = xmlPullParser.attributeValue(OpmlConstants.XML_URL)
+                            if (xmlUrl != null) {
+                                val builder = ParsedFeedSource.Builder().apply {
+                                    title(xmlPullParser.attributeValue(OpmlConstants.TITLE))
+                                    titleIfNull(xmlPullParser.attributeValue(OpmlConstants.TEXT))
+                                    url(xmlPullParser.attributeValue(OpmlConstants.XML_URL))
+                                    category(categoryName)
                                 }
-
-                                null -> {
-                                    categoryName = xmlPullParser.attributeValue(OpmlConstants.TITLE)
+                                builder.build()?.let {
+                                    feedSources.add(it)
+                                }
+                            } else {
+                                categoryName = xmlPullParser.attributeValue(OpmlConstants.TITLE)
+                                if (categoryName == null) {
+                                    categoryName = xmlPullParser.attributeValue(OpmlConstants.TEXT)
                                 }
                             }
                         }

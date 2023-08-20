@@ -84,17 +84,21 @@ private class NSXMLParserDelegate(
         currentElement = didStartElement
         when (currentElement) {
             OpmlConstants.OUTLINE -> {
-                val rssAttribute = if (attributes.containsKey(OpmlConstants.TYPE)) {
-                    attributes.getValueOrNull(OpmlConstants.TYPE)
+                val xmlUrl = if (attributes.containsKey(OpmlConstants.XML_URL)) {
+                    attributes.getValueOrNull(OpmlConstants.XML_URL)
                 } else {
                     null
                 }
-                if (rssAttribute != OpmlConstants.RSS) {
+                if (xmlUrl == null) {
                     isInsideCategory = true
                     categoryName = (attributes.getValueOrNull(OpmlConstants.TITLE) as? String)?.trim()
+                    if (categoryName == null) {
+                        categoryName = (attributes.getValueOrNull(OpmlConstants.TEXT) as? String)?.trim()
+                    }
                 } else {
                     isInsideItem = true
                     parsedFeedBuilder.title((attributes.getValueOrNull(OpmlConstants.TITLE) as? String)?.trim())
+                    parsedFeedBuilder.titleIfNull((attributes.getValueOrNull(OpmlConstants.TEXT) as? String)?.trim())
                     parsedFeedBuilder.url((attributes.getValueOrNull(OpmlConstants.XML_URL) as? String)?.trim())
                 }
             }

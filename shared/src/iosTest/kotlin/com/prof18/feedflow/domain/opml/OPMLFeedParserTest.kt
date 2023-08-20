@@ -2,6 +2,7 @@ package com.prof18.feedflow.domain.opml
 
 import com.prof18.feedflow.TestDispatcherProvider
 import com.prof18.feedflow.opml
+import com.prof18.feedflow.opmlWithText
 import kotlinx.coroutines.test.runTest
 import platform.Foundation.NSData
 import platform.Foundation.NSString
@@ -17,7 +18,7 @@ class OPMLFeedParserTest {
         dispatcherProvider = TestDispatcherProvider,
     )
 
-    val opmlInput = OpmlInput(
+    private val opmlInput = OpmlInput(
         opmlData = (opml as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData(),
     )
 
@@ -67,5 +68,15 @@ class OPMLFeedParserTest {
         assertEquals("Il Post", feedSources[5].title)
         assertEquals("https://feeds.ilpost.it/ilpost", feedSources[5].url)
         assertEquals("News", feedSources[5].category)
+    }
+
+    @Test
+    fun `The opml with text is parsed correctly`() = runTest {
+        val opmlInput = OpmlInput(
+            opmlData = (opmlWithText as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+                ?: NSData(),
+        )
+        val feedSources = parser.importFeed(opmlInput)
+        assertTrue(feedSources.isNotEmpty())
     }
 }

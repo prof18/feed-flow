@@ -12,6 +12,11 @@ internal data class ParsedFeedSource(
     ) {
         fun url(url: String?) = apply { this.url = url?.replace("http://", "https://") }
         fun title(title: String?) = apply { this.title = title }
+        fun titleIfNull(title: String?) = apply {
+            if (this.title == null) {
+                this.title = title
+            }
+        }
         fun category(category: String?) = apply { this.category = category }
 
         fun build(): ParsedFeedSource? {

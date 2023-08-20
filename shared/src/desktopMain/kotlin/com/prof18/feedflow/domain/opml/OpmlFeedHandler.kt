@@ -88,13 +88,17 @@ internal actual class OpmlFeedHandler(
         ) {
             when (qName) {
                 OpmlConstants.OUTLINE -> {
-                    if (attributes?.getValue(OpmlConstants.TYPE) != OpmlConstants.RSS) {
+                    if (attributes?.getValue(OpmlConstants.XML_URL) == null) {
                         isInsideCategory = true
                         categoryName = attributes?.getValue(OpmlConstants.TITLE)?.trim()
+                        if (categoryName == null) {
+                            categoryName = attributes?.getValue(OpmlConstants.TEXT)?.trim()
+                        }
                     } else {
                         isInsideItem = true
-                        parsedFeedBuilder.title(attributes.getValue(OpmlConstants.TITLE).trim())
-                        parsedFeedBuilder.url(attributes.getValue(OpmlConstants.XML_URL).trim())
+                        parsedFeedBuilder.title(attributes.getValue(OpmlConstants.TITLE)?.trim())
+                        parsedFeedBuilder.titleIfNull(attributes.getValue(OpmlConstants.TEXT)?.trim())
+                        parsedFeedBuilder.url(attributes.getValue(OpmlConstants.XML_URL)?.trim())
                     }
                 }
             }

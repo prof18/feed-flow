@@ -69,4 +69,13 @@ class OPMLFeedParserTest {
         assertEquals("https://feeds.ilpost.it/ilpost", feedSources[5].url)
         assertEquals("News", feedSources[5].category)
     }
+
+    @Test
+    fun `The opml with text is parsed correctly`() = runTest {
+        val opmlInput = OpmlInput(
+            inputStream = opmlWithText.byteInputStream(),
+        )
+        val feedSources = parser.importFeed(opmlInput)
+        assertTrue(feedSources.isNotEmpty())
+    }
 }

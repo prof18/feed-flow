@@ -6,4 +6,5 @@ internal object OpmlConstants {
     const val XML_URL = "xmlUrl"
     const val RSS = "rss"
     const val TYPE = "type"
+    const val TEXT = "text"
 }

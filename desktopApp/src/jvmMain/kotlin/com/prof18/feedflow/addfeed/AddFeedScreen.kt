@@ -1,29 +1,19 @@
 package com.prof18.feedflow.addfeed
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.desktopViewModel
 import com.prof18.feedflow.di.DI
 import com.prof18.feedflow.presentation.AddFeedViewModel
+import com.prof18.feedflow.ui.addfeed.AddFeedsContent
 import com.prof18.feedflow.ui.style.FeedFlowTheme
-import com.prof18.feedflow.ui.style.Spacing
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun AddFeedScreen(
@@ -69,59 +59,14 @@ private fun AddFeedScreenContent(
     addFeed: () -> Unit,
 ) {
     Scaffold { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(horizontal = Spacing.regular),
-        ) {
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                label = {
-                    Text(text = stringResource(resource = MR.strings.feed_name))
-                },
-                value = feedName,
-                onValueChange = {
-                    onFeedNameUpdated(it)
-                },
-                placeholder = {
-                    Text(
-                        stringResource(resource = MR.strings.feed_name_placeholder),
-                        maxLines = 1,
-                    )
-                },
-                maxLines = 1,
-            )
-
-            TextField(
-                modifier = Modifier
-                    .padding(top = Spacing.regular)
-                    .fillMaxWidth(),
-                label = {
-                    Text(text = stringResource(resource = MR.strings.feed_url))
-                },
-                value = feedUrl,
-                onValueChange = {
-                    onFeedUrlUpdated(it)
-                },
-                placeholder = {
-                    Text(
-                        stringResource(resource = MR.strings.feed_url_placeholder),
-                        maxLines = 1,
-                    )
-                },
-                maxLines = 1,
-            )
-
-            Button(
-                modifier = Modifier
-                    .padding(top = Spacing.regular)
-                    .align(Alignment.CenterHorizontally),
-                onClick = addFeed,
-            ) {
-                Text(stringResource(resource = MR.strings.add_feed))
-            }
-        }
+        AddFeedsContent(
+            paddingValues = paddingValues,
+            feedName = feedName,
+            onFeedNameUpdated = onFeedNameUpdated,
+            feedUrl = feedUrl,
+            onFeedUrlUpdated = onFeedUrlUpdated,
+            addFeed = addFeed,
+        )
     }
 }
 

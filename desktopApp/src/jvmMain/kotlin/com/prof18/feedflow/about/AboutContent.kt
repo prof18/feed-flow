@@ -1,23 +1,19 @@
 package com.prof18.feedflow.about
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -26,19 +22,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
+import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.openInBrowser
 import com.prof18.feedflow.scrollbarStyle
+import com.prof18.feedflow.ui.about.AboutButtonItem
+import com.prof18.feedflow.ui.about.AboutTextItem
+import com.prof18.feedflow.ui.about.AuthorText
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
-import com.prof18.feedflow.utils.Websites.FEED_FLOW_WEBSITE
-import com.prof18.feedflow.utils.Websites.MG_WEBSITE
 import dev.icerock.moko.resources.compose.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,6 +81,9 @@ fun AboutContent() {
 
                     AuthorText(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
+                        nameClicked = {
+                            openInBrowser(MG_WEBSITE)
+                        },
                     )
                 }
             }
@@ -127,83 +124,10 @@ private fun SettingsItemList(
     }
 }
 
+@Preview
 @Composable
-private fun AuthorText(modifier: Modifier = Modifier) {
-    AnnotatedClickableText(
-        modifier = modifier
-            .padding(Spacing.medium),
-        onTextClick = {
-            openInBrowser(MG_WEBSITE)
-        },
-    )
-}
-
-@Composable
-private fun AboutButtonItem(
-    onClick: () -> Unit,
-    buttonText: String,
-) {
-    Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = Spacing.regular)
-            .padding(vertical = Spacing.small),
-        onClick = onClick,
-    ) {
-        Text(buttonText)
+private fun AboutContentPreview() {
+    FeedFlowTheme {
+        AboutContent()
     }
-}
-
-@Composable
-private fun AboutTextItem(
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.onBackground,
-        text = stringResource(MR.strings.about_the_app),
-        style = MaterialTheme.typography.bodyMedium,
-    )
-}
-
-@Composable
-private fun AnnotatedClickableText(
-    modifier: Modifier = Modifier,
-    onTextClick: () -> Unit,
-) {
-    val annotatedText = buildAnnotatedString {
-        append(stringResource(MR.strings.author_label))
-
-        pushStringAnnotation(
-            tag = "URL",
-            annotation = MG_WEBSITE,
-        )
-        withStyle(
-            style = SpanStyle(
-                color = Color.Blue,
-                fontWeight = FontWeight.Bold,
-            ),
-        ) {
-            append(" Marco Gomiero")
-        }
-
-        pop()
-    }
-
-    ClickableText(
-        modifier = modifier,
-        text = annotatedText,
-        style = MaterialTheme.typography.bodyMedium.copy(
-            color = MaterialTheme.colorScheme.onBackground,
-        ),
-        onClick = { offset ->
-            annotatedText.getStringAnnotations(
-                tag = "URL",
-                start = offset,
-                end = offset,
-            ).firstOrNull()?.let {
-                onTextClick()
-            }
-        },
-    )
 }

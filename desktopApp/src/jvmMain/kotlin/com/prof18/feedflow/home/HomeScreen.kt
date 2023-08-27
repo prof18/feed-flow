@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,12 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
-import com.prof18.feedflow.domain.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemClickedInfo
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.openInBrowser
 import com.prof18.feedflow.presentation.HomeViewModel
-import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
+import com.prof18.feedflow.ui.home.components.EmptyFeedView
+import com.prof18.feedflow.ui.home.components.FeedList
+import com.prof18.feedflow.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -156,19 +160,27 @@ private fun FeedWithContentView(
                 .padding(end = 4.dp),
         ) {
             FeedList(
-                modifier = Modifier.fillMaxSize().padding(end = 12.dp),
+                modifier = Modifier,
                 feedItems = feedState,
                 listState = listState,
                 updateReadStatus = { index ->
                     updateReadStatus(index)
                 },
-                onFeedItemClick = { feedInfo ->
-                    onFeedItemClick(feedInfo)
-                },
-                onFeedItemLongClick = { feedInfo ->
-                    onFeedItemLongClick(feedInfo)
-                },
-            )
+            ) { feedItem ->
+                com.prof18.feedflow.ui.home.components.FeedItemView(
+                    feedItem = feedItem,
+                    onFeedItemClick = onFeedItemClick,
+                    onFeedItemLongClick = onFeedItemLongClick,
+                    feedItemImage = { url ->
+                        FeedItemImage(
+                            modifier = Modifier
+                                .wrapContentHeight(),
+                            url = url,
+                            width = 96.dp,
+                        )
+                    },
+                )
+            }
 
             VerticalScrollbar(
                 modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),

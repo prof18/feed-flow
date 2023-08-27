@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
     alias(libs.plugins.native.coroutines)
-    alias(libs.plugins.crashk.ios.linking)
 }
 
 kotlin {
@@ -27,9 +26,21 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
+            isStatic = true
+
             export(project(":i18n"))
+            export(project(":core"))
             export(libs.moko.resources)
             export(libs.touchlab.kermit.simple)
+
+            // It should be fixed with Compose MP 1.5, but it seems not
+            it.binaries.forEach { binary ->
+                binary.freeCompilerArgs += listOf(
+                    "-linker-option", "-framework", "-linker-option", "Metal",
+                    "-linker-option", "-framework", "-linker-option", "CoreText",
+                    "-linker-option", "-framework", "-linker-option", "CoreGraphics",
+                )
+            }
         }
     }
 
@@ -50,6 +61,7 @@ kotlin {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlin.test.junit)
 
+                api(project(":core"))
                 api(project(":i18n"))
                 api(libs.touchlab.kermit)
             }

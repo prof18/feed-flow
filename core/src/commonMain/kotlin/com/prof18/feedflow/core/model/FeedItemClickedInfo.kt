@@ -1,4 +1,4 @@
-package com.prof18.feedflow.presentation.model
+package com.prof18.feedflow.core.model
 
 data class FeedItemClickedInfo(
     val id: Int,

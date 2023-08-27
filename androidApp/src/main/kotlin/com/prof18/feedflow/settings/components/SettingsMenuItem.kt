@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.theme.Spacing
+import com.prof18.feedflow.ui.style.Spacing
 
 @Composable
 fun SettingsMenuItem(

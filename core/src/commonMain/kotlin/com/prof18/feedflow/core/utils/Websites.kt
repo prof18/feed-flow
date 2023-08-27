@@ -1,4 +1,4 @@
-package com.prof18.feedflow.utils
+package com.prof18.feedflow.core.utils
 
 object Websites {
     const val MG_WEBSITE = "https://www.marcogomiero.com"

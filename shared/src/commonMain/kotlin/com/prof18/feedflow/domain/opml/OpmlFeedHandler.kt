@@ -1,6 +1,6 @@
 package com.prof18.feedflow.domain.opml
 
-import com.prof18.feedflow.domain.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.domain.model.ParsedFeedSource
 
 internal expect class OpmlFeedHandler {

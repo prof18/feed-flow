@@ -1,6 +1,6 @@
 package com.prof18.feedflow.domain.feed.retriever
 
-import com.prof18.feedflow.domain.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.presentation.model.ErrorState

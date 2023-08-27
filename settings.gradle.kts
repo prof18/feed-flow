@@ -25,6 +25,7 @@ rootProject.name = "FeedFlow"
 include(":androidApp")
 include(":shared")
 include(":desktopApp")
+include(":i18n")
 
 //includeBuild("../../Android/RSS-Parser") {
 //    dependencySubstitution {

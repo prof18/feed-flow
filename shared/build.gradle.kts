@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
     alias(libs.plugins.native.coroutines)
-    alias(libs.plugins.moko.resources)
     alias(libs.plugins.crashk.ios.linking)
 }
 
@@ -28,6 +27,7 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
+            export(project(":i18n"))
             export(libs.moko.resources)
             export(libs.touchlab.kermit.simple)
         }
@@ -50,8 +50,8 @@ kotlin {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlin.test.junit)
 
+                api(project(":i18n"))
                 api(libs.touchlab.kermit)
-                api(libs.moko.resources)
             }
         }
         val commonTest by getting {
@@ -172,33 +172,4 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-}
-
-multiplatformResources {
-    multiplatformResourcesPackage = "com.prof18.feedflow"
-//    multiplatformResourcesClassName = "StringRes" // optional, default MR
-    iosBaseLocalizationRegion = "en" // optional, default "en"
-}
-
-// Various fixes for moko-resources tasks
-// iOS
-if (org.gradle.internal.os.OperatingSystem.current().isMacOsX) {
-    afterEvaluate {
-        tasks.findByPath("kspKotlinIosArm64")?.apply {
-            dependsOn(tasks.getByPath("generateMRiosArm64Main"))
-        }
-        tasks.findByPath("kspKotlinIosSimulatorArm64")?.apply {
-            dependsOn(tasks.getByPath("generateMRiosSimulatorArm64Main"))
-        }
-        tasks.findByPath("kspKotlinIosX64")?.apply {
-            dependsOn(tasks.getByPath("generateMRiosX64Main"))
-        }
-    }
-}
-// Android
-tasks.withType(com.android.build.gradle.tasks.MergeResources::class).configureEach {
-    dependsOn(tasks.getByPath("generateMRandroidMain"))
-}
-tasks.withType(com.android.build.gradle.tasks.MapSourceSetPathsTask::class).configureEach {
-    dependsOn(tasks.getByPath("generateMRandroidMain"))
 }

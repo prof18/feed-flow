@@ -17,9 +17,16 @@ kotlin {
         jvmToolchain(17)
     }
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach {
+        it.binaries.framework {
+            baseName = "i18n"
+            isStatic = true
+        }
+    }
 
     sourceSets {
 
@@ -30,6 +37,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(libs.moko.resources)
+                api(libs.moko.resourcesCompose)
             }
         }
 
@@ -65,6 +73,7 @@ android {
 multiplatformResources {
     multiplatformResourcesPackage = "com.prof18.feedflow"
 //    multiplatformResourcesClassName = "StringRes" // optional, default MR
+    disableStaticFrameworkWarning = true
     iosBaseLocalizationRegion = "en" // optional, default "en"
 }
 

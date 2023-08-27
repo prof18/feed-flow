@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.prof18.feedflow.settings
 
 import FeedFlowTheme

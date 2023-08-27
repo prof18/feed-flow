@@ -1,8 +1,8 @@
-package com.prof18.feedflow.ui.theme
+package com.prof18.feedflow.ui.style
 
 import androidx.compose.ui.unit.dp
 
-internal object Spacing {
+object Spacing {
     val xsmall = 4.dp
     val small = 8.dp
     val regular = 16.dp

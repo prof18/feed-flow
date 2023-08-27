@@ -1,5 +1,7 @@
 import java.net.URI
 
+
+
 pluginManagement {
     repositories {
         google()
@@ -12,6 +14,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven {
             url = URI.create("https://jitpack.io")
             content {
@@ -24,8 +27,10 @@ dependencyResolutionManagement {
 rootProject.name = "FeedFlow"
 include(":androidApp")
 include(":shared")
+include(":sharedUI")
 include(":desktopApp")
 include(":i18n")
+include(":core")
 
 //includeBuild("../../Android/RSS-Parser") {
 //    dependencySubstitution {

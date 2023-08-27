@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterialApi::class)
+@file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 
 package com.prof18.feedflow.home
 
@@ -18,6 +18,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -38,20 +39,22 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
-import com.prof18.feedflow.domain.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemClickedInfo
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
-import com.prof18.feedflow.home.components.EmptyFeedView
-import com.prof18.feedflow.home.components.FeedList
+import com.prof18.feedflow.home.components.FeedItemImage
 import com.prof18.feedflow.home.components.HomeAppBar
-import com.prof18.feedflow.home.components.NoFeedsSourceView
 import com.prof18.feedflow.presentation.HomeViewModel
-import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
 import com.prof18.feedflow.presentation.preview.feedItemsForPreview
+import com.prof18.feedflow.ui.home.components.EmptyFeedView
+import com.prof18.feedflow.ui.home.components.FeedItemView
+import com.prof18.feedflow.ui.home.components.FeedList
+import com.prof18.feedflow.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.theme.Spacing
+import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -245,13 +248,21 @@ private fun FeedWithContentView(
                 updateReadStatus = { index ->
                     updateReadStatus(index)
                 },
-                onFeedItemClick = { feedInfo ->
-                    onFeedItemClick(feedInfo)
-                },
-                onFeedItemLongClick = { feedInfo ->
-                    onFeedItemLongClick(feedInfo)
-                },
-            )
+            ) { feedItem ->
+                FeedItemView(
+                    feedItem = feedItem,
+                    onFeedItemClick = onFeedItemClick,
+                    onFeedItemLongClick = onFeedItemLongClick,
+                    feedItemImage = { url ->
+                        FeedItemImage(
+                            modifier = Modifier
+                                .padding(start = Spacing.regular),
+                            url = url,
+                            width = 96.dp,
+                        )
+                    },
+                )
+            }
 
             PullRefreshIndicator(
                 loadingState.isLoading(),

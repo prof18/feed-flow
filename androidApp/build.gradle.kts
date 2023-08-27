@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.triplet.play)
     alias(libs.plugins.about.libraries)
     alias(libs.plugins.crashlytics)
@@ -27,9 +28,7 @@ android {
     }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        buildConfig = true
     }
 
     compileOptions {
@@ -61,10 +60,15 @@ android {
 
 dependencies {
     implementation(project(":shared"))
+    implementation(project(":sharedUI"))
 
-    val composeBom = platform(libs.androidx.compose.bom)
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
+    implementation(compose.runtime)
+    implementation(compose.foundation)
+    implementation(compose.material3)
+    implementation(compose.material)
+    implementation(compose.materialIconsExtended)
+    implementation(compose.ui)
+    implementation(compose.uiTooling)
 
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
@@ -72,8 +76,7 @@ dependencies {
     implementation(libs.moko.resourcesCompose)
     implementation(libs.firebase.crashlytics.ktx)
 
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    debugImplementation(compose.uiTooling)
 }
 
 play {

@@ -1,62 +1,44 @@
-package com.prof18.feedflow.home.components
+package com.prof18.feedflow.ui.home.components
 
-import FeedFlowTheme
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import com.prof18.feedflow.domain.model.FeedItem
-import com.prof18.feedflow.presentation.model.FeedItemClickedInfo
-import com.prof18.feedflow.presentation.preview.feedItemsForPreview
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.theme.Spacing
+import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemClickedInfo
+import com.prof18.feedflow.ui.style.Spacing
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 
+@Suppress("MagicNumber")
 @OptIn(FlowPreview::class)
 @Composable
-internal fun FeedList(
+fun FeedList(
     modifier: Modifier = Modifier,
     feedItems: List<FeedItem>,
     listState: LazyListState = rememberLazyListState(),
     updateReadStatus: (Int) -> Unit,
-    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
-    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
+    feedItemView: @Composable (FeedItem) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -65,15 +47,10 @@ internal fun FeedList(
         items(
             items = feedItems,
         ) { item ->
-            FeedItemView(
-                feedItem = item,
-                onFeedItemClick = onFeedItemClick,
-                onFeedItemLongClick = onFeedItemLongClick,
-            )
+            feedItemView(item)
         }
     }
 
-    @Suppress("MagicNumber")
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .distinctUntilChanged()
@@ -88,8 +65,9 @@ internal fun FeedList(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun FeedItemView(
+fun FeedItemView(
     feedItem: FeedItem,
+    feedItemImage: @Composable (String) -> Unit,
     onFeedItemClick: (FeedItemClickedInfo) -> Unit,
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
 ) {
@@ -130,6 +108,7 @@ private fun FeedItemView(
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth(),
             feedItem = feedItem,
+            feedItemImage = feedItemImage,
         )
 
         feedItem.dateString?.let { dateString ->
@@ -154,6 +133,7 @@ private fun FeedItemView(
 private fun TitleSubtitleAndImageRow(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
+    feedItemImage: @Composable (String) -> Unit,
 ) {
     Row(
         modifier = modifier,
@@ -183,57 +163,7 @@ private fun TitleSubtitleAndImageRow(
         }
 
         feedItem.imageUrl?.let { url ->
-            FeedItemImage(
-                modifier = Modifier
-                    .padding(start = Spacing.regular),
-                url = url,
-                width = 96.dp,
-            )
-        }
-    }
-}
-
-@Composable
-private fun FeedItemImage(
-    modifier: Modifier = Modifier,
-    url: String,
-    width: Dp,
-) {
-    if (LocalInspectionMode.current) {
-        Box(
-            modifier = modifier
-                .size(width)
-                .background(Color.Green),
-        )
-    } else {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(url)
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier
-                .wrapContentHeight()
-                .width(width)
-                .clip(RoundedCornerShape(Spacing.small)),
-        )
-    }
-}
-
-@FeedFlowPreview
-@Composable
-private fun FeedListPreview() {
-    FeedFlowTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            FeedList(
-                feedItems = feedItemsForPreview,
-                updateReadStatus = {},
-                onFeedItemClick = {},
-                onFeedItemLongClick = {},
-            )
+            feedItemImage(url)
         }
     }
 }

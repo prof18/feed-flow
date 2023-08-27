@@ -1,8 +1,8 @@
 package com.prof18.feedflow.presentation
 
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.domain.model.FeedSource
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

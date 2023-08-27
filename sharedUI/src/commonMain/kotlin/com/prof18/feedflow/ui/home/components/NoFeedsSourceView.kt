@@ -1,24 +1,21 @@
-package com.prof18.feedflow.home.components
+package com.prof18.feedflow.ui.home.components
 
-import FeedFlowTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.MR
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.theme.Spacing
+import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-internal fun NoFeedsSourceView(
+fun NoFeedsSourceView(
     modifier: Modifier = Modifier,
     onAddFeedClick: () -> Unit,
 ) {
@@ -40,16 +37,6 @@ internal fun NoFeedsSourceView(
             },
         ) {
             Text(stringResource(resource = MR.strings.add_feed))
-        }
-    }
-}
-
-@FeedFlowPreview
-@Composable
-fun NoFeedsViewPreview() {
-    FeedFlowTheme {
-        Surface {
-            NoFeedsSourceView {}
         }
     }
 }

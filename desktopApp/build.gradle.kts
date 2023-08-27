@@ -22,6 +22,7 @@ kotlin {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             dependencies {
                 implementation(project(":shared"))
+                implementation(project(":sharedUI"))
                 implementation(compose.desktop.currentOs)
                 implementation(compose.material3)
                 implementation(compose.preview)

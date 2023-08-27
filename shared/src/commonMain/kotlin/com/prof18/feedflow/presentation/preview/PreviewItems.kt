@@ -2,9 +2,9 @@
 
 package com.prof18.feedflow.presentation.preview
 
+import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.domain.model.Browser
-import com.prof18.feedflow.domain.model.FeedItem
-import com.prof18.feedflow.domain.model.FeedSource
 
 val feedItemsForPreview = listOf(
     FeedItem(

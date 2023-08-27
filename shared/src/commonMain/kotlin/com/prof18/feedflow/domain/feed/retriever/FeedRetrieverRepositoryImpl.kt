@@ -1,15 +1,15 @@
 package com.prof18.feedflow.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.feed.retriever.model.RssParsingError
 import com.prof18.feedflow.domain.feed.retriever.model.RssParsingResult
 import com.prof18.feedflow.domain.feed.retriever.model.RssParsingSuccess
-import com.prof18.feedflow.domain.model.FeedItem
 import com.prof18.feedflow.domain.model.FeedItemId
-import com.prof18.feedflow.domain.model.FeedSource
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus

@@ -380,6 +380,7 @@
 				CC6E682B2A6475B1009F4A3C /* SwiftLint */,
 				CCEA11BF2A6D2C6600C661AC /* Crashlytics */,
 				CCEA11C12A6D454C00C661AC /* Crashlytics KMP */,
+				CC67CF542A9BE1E000E7A9E2 /* Moko Resources */,
 			);
 			buildRules = (
 			);
@@ -500,6 +501,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$SRCROOT\"/.scripts/version.sh\n";
+		};
+		CC67CF542A9BE1E000E7A9E2 /* Moko Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Moko Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" :i18n:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"$CONFIGURATION\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \n";
 		};
 		CC6E682B2A6475B1009F4A3C /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -752,6 +771,7 @@
 					"$(inherited)",
 					"-framework",
 					shared,
+					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.prof18.feedflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -784,6 +804,7 @@
 					"$(inherited)",
 					"-framework",
 					shared,
+					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.prof18.feedflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";

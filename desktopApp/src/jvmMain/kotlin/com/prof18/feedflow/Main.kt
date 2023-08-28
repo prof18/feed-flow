@@ -25,7 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -148,7 +148,7 @@ fun main() = application {
 
         var aboutDialogState by remember { mutableStateOf(false) }
         val dialogTitle = stringResource(MR.strings.app_name)
-        Dialog(
+        DialogWindow(
             title = dialogTitle,
             visible = aboutDialogState,
             onCloseRequest = {

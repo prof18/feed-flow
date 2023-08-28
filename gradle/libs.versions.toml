@@ -34,7 +34,7 @@ kotlinx-date-time = "0.4.0"
 accompanist = "0.28.0"
 jsoup = "1.15.3"
 triplet-play = "3.8.1"
-compose-multiplatform = "1.5.0-rc06"
+compose-multiplatform = "1.5.0"
 decompose = "1.0.0"
 jsystem-theme-detector = "3.6"
 native-coroutines = "1.0.0-ALPHA-7"
@@ -47,7 +47,6 @@ crashlytics-plugin = "2.9.7"
 google-services = "4.3.15"
 crashk-ios = "0.8.2"
 sentry = "6.25.2"
-org-jetbrains-kotlin-jvm = "1.8.20"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
@@ -130,4 +129,4 @@ moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.re
 about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "about-libraries" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
-org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin-jvm" }
+org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

@@ -17,7 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerButton
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindow
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.addfeed.AddFeedScreen
 import com.prof18.feedflow.core.model.FeedSource
@@ -38,7 +38,7 @@ fun FeedSourceListScreen(
     FeedFlowTheme {
         var dialogState by remember { mutableStateOf(false) }
 
-        Dialog(
+        DialogWindow(
             title = stringResource(MR.strings.add_feed),
             visible = dialogState,
             onCloseRequest = { dialogState = false },

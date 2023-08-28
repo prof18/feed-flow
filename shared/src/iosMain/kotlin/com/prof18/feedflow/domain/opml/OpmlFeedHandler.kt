@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.feedflow.utils.getValueOrNull
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.withContext
 import platform.Foundation.NSError
 import platform.Foundation.NSString
@@ -16,6 +17,7 @@ import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+@OptIn(ExperimentalForeignApi::class)
 internal actual class OpmlFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {

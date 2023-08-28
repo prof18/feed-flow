@@ -7,6 +7,7 @@ import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.opml.OpmlInput
 import com.prof18.feedflow.domain.opml.OpmlOutput
 import com.prof18.feedflow.presentation.model.UIErrorState
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
@@ -35,7 +36,7 @@ class SettingsViewModel(
 
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
 
-    @NativeCoroutinesState
+    @NativeCoroutines
     val errorState = mutableUIErrorState.asSharedFlow()
 
     @Suppress("TooGenericExceptionCaught")

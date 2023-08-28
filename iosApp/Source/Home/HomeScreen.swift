@@ -76,7 +76,7 @@ struct HomeScreen: View {
         }
         .task {
             do {
-                let stream = asyncSequence(for: homeViewModel.errorStateFlow)
+                let stream = asyncSequence(for: homeViewModel.errorState)
                 for try await state in stream {
                     if let message = state?.message {
                         self.appState.snackbarQueue.append(
@@ -104,7 +104,7 @@ struct HomeScreen: View {
         }
         .task {
             do {
-                let stream = asyncSequence(for: homeViewModel.countStateFlow)
+                let stream = asyncSequence(for: homeViewModel.countState)
                 for try await state in stream {
                     self.unreadCount = Int(truncating: state)
                 }
@@ -144,7 +144,7 @@ struct HomeScreen: View {
         }
         .task {
             do {
-                let stream = asyncSequence(for: settingsViewModel.errorStateFlow)
+                let stream = asyncSequence(for: settingsViewModel.errorState)
                 for try await state in stream {
                     if let message = state?.message {
                         self.appState.snackbarQueue.append(

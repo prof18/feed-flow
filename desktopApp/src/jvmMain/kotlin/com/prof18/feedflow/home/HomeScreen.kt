@@ -118,7 +118,6 @@ private fun HomeScreenContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedWithContentView(
     modifier: Modifier = Modifier,

@@ -26,6 +26,7 @@ android {
         versionCode = getVersionCode()
         versionName = getVersionName()
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -38,6 +39,10 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.majorVersion
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.multiplatform.get()
     }
 
     signingConfigs {
@@ -56,6 +61,10 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+}
+
+compose {
+    kotlinCompilerPlugin.set(libs.versions.compose.multiplatform.get())
 }
 
 dependencies {

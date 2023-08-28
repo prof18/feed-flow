@@ -5,7 +5,7 @@ plugins {
 }
 
 kotlin {
-    android {
+    androidTarget {
         compilations.all {
             kotlinOptions {
                 jvmTarget = "17"
@@ -41,7 +41,10 @@ kotlin {
             }
         }
 
-        val androidMain by getting
+        val androidMain by getting {
+            dependsOn(commonMain)
+        }
+
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -52,7 +55,9 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
         }
 
-        val desktopMain by getting
+        val desktopMain by getting {
+            dependsOn(commonMain)
+        }
     }
 }
 

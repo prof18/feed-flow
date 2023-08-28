@@ -8,6 +8,7 @@ import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.presentation.model.DatabaseError
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.presentation.model.UIErrorState
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.ResourceFormatted
@@ -35,13 +36,13 @@ class HomeViewModel(
     @NativeCoroutinesState
     val feedState = mutableFeedState.asStateFlow()
 
-    @NativeCoroutinesState
+    @NativeCoroutines
     val countState = mutableFeedState.map { it.count { item -> !item.isRead } }
 
     // Error
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
 
-    @NativeCoroutinesState
+    @NativeCoroutines
     val errorState = mutableUIErrorState.asSharedFlow()
 
     private var lastUpdateIndex = 0

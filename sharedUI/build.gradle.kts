@@ -5,7 +5,7 @@ plugins {
 }
 
 kotlin {
-    android()
+    androidTarget()
 
     jvm("desktop") {
         jvmToolchain(17)

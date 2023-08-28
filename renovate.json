@@ -1,0 +1,18 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "groupName": "Kotlin, KSP, Compose Compiler and KMP-NativeCoroutines",
+      "groupSlug": "kotlin",
+      "matchPackageNames": [
+        "com.google.devtools.ksp",
+        "org.jetbrains.kotlin",
+        "org.jetbrains.compose",
+        "com.rickclephas.kmp.nativecoroutines"
+      ]
+    }
+  ]
+}

@@ -7,7 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: macos-latest
-    timeout-minutes: 60
+    timeout-minutes: 40
     permissions:
       contents: write
 
@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 19
+          java-version: 18
 
       - uses: gradle/gradle-build-action@v2.4.2
         with:

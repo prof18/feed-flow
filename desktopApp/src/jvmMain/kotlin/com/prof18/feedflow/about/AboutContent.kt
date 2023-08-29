@@ -35,7 +35,6 @@ import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutContent() {
     FeedFlowTheme {

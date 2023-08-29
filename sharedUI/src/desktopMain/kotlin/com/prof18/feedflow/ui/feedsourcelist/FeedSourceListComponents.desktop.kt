@@ -10,7 +10,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.PointerButton
 
 @OptIn(ExperimentalFoundationApi::class)
-internal actual fun Modifier.feedSourceMenuClickModifier(onLongClick: () -> Unit): Modifier =composed {
+internal actual fun Modifier.feedSourceMenuClickModifier(onLongClick: () -> Unit): Modifier = composed {
     val interactionSource = remember { MutableInteractionSource() }
     return@composed this.onClick(
         enabled = true,

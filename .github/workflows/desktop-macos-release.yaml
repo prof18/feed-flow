@@ -78,8 +78,12 @@ jobs:
           SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
           VERSION: ${{ steps.path_variables.outputs.VERSION }}
 
+      # TODO: temporary to debug errors
+      - name: Proguard
+        run: ./gradlew :desktopApp:proguardReleaseJars
+
       - name: Create DMG
-        run: ./gradlew packageReleaseDmg
+        run: ./gradlew packageReleaseDmg --info
 
       - name: Upload reports
         if: failure()

@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 17.0.6
+          java-version: 19
 
       - uses: gradle/gradle-build-action@v2.4.2
         with:
@@ -77,10 +77,6 @@ jobs:
         env:
           SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
           VERSION: ${{ steps.path_variables.outputs.VERSION }}
-
-      # TODO: temporary to debug errors
-      - name: Proguard
-        run: ./gradlew :desktopApp:proguardReleaseJars
 
       - name: Create DMG
         run: ./gradlew packageReleaseDmg --info

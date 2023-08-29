@@ -2,12 +2,8 @@ package com.prof18.feedflow.feedsourcelist
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.PointerMatcher
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.onClick
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerButton
 import androidx.compose.ui.window.DialogWindow
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.addfeed.AddFeedScreen
@@ -66,7 +61,7 @@ fun FeedSourceListScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FeedSourceListContent(
     feedSources: List<FeedSource>,
@@ -89,31 +84,10 @@ private fun FeedSourceListContent(
                     .fillMaxSize(),
             )
         } else {
-            val interactionSource = remember { MutableInteractionSource() }
-
-            var showFeedMenu by remember {
-                mutableStateOf(
-                    false,
-                )
-            }
-
             FeedSourcesList(
                 modifier = Modifier
                     .padding(paddingValues),
-                feedSourceItemClickModifier = Modifier
-                    .onClick(
-                        enabled = true,
-                        interactionSource = interactionSource,
-                        matcher = PointerMatcher.mouse(PointerButton.Secondary), // Right Mouse Button
-                        onClick = {
-                            showFeedMenu = true
-                        },
-                    ),
                 feedSources = feedSources,
-                showFeedMenu = showFeedMenu,
-                hideFeedMenu = {
-                    showFeedMenu = false
-                },
                 onDeleteFeedSourceClick = onDeleteFeedClick,
             )
         }

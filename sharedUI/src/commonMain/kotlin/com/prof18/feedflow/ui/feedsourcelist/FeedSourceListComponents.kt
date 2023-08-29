@@ -19,21 +19,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
+internal expect fun Modifier.feedSourceMenuClickModifier(onLongClick: () -> Unit): Modifier
+
 @Composable
 fun FeedSourcesList(
     modifier: Modifier = Modifier,
-    feedSourceItemClickModifier: Modifier,
     feedSources: List<FeedSource>,
-    showFeedMenu: Boolean,
-    hideFeedMenu: () -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     LazyColumn(
@@ -44,9 +48,19 @@ fun FeedSourcesList(
             items = feedSources,
         ) { feedSource ->
 
+            var showFeedMenu by remember {
+                mutableStateOf(
+                    false,
+                )
+            }
+
             Column(
                 modifier = Modifier
-                    .then(feedSourceItemClickModifier),
+                    .feedSourceMenuClickModifier(
+                        onLongClick = {
+                            showFeedMenu = true
+                        },
+                    ),
             ) {
                 Text(
                     modifier = Modifier
@@ -64,7 +78,9 @@ fun FeedSourcesList(
 
                 FeedSourceContextMenu(
                     showFeedMenu = showFeedMenu,
-                    hideMenu = hideFeedMenu,
+                    hideMenu = {
+                        showFeedMenu = false
+                    },
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     feedSource = feedSource,
                 )
@@ -80,7 +96,7 @@ fun FeedSourcesList(
 }
 
 @Composable
-fun FeedSourceContextMenu(
+private fun FeedSourceContextMenu(
     showFeedMenu: Boolean,
     hideMenu: () -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
@@ -89,6 +105,7 @@ fun FeedSourceContextMenu(
     DropdownMenu(
         expanded = showFeedMenu,
         onDismissRequest = hideMenu,
+        properties = PopupProperties(),
     ) {
         DropdownMenuItem(
             text = {

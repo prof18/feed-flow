@@ -15,14 +15,14 @@ struct FeedListView: View {
     @Environment(\.openURL) var openURL
     @EnvironmentObject var indexHolder: HomeListIndexHolder
     @EnvironmentObject var browserSelector: BrowserSelector
-
+    
     var loadingState: FeedUpdateStatus?
     var feedState: [FeedItem]
     var showLoading: Bool
-
+    
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
-
+    
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
             NoFeedsSourceView(
@@ -36,13 +36,13 @@ struct FeedListView: View {
             ProgressView()
         } else {
             VStack(alignment: .center) {
-
+                
                 if let feedCount = loadingState?.refreshedFeedCount, let totalFeedCount = loadingState?.totalFeedCount {
-
+                    
                     if showLoading {
-
+                        
                         let feedRefreshCounter = "\(feedCount)/\(totalFeedCount)"
-
+                        
                         let loadingFeedString = LocalizationUtils.shared.formatString(
                             resource: MR.strings().loading_feed_message,
                             args: [feedRefreshCounter]
@@ -51,10 +51,10 @@ struct FeedListView: View {
                             .font(.body)
                     }
                 }
-
+                
                 List {
                     ForEach(feedState, id: \.self.id) { feedItem in
-
+                        
                         FeedItemView(
                             feedItem: feedItem
                         )
@@ -62,6 +62,11 @@ struct FeedListView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                        }
+                        .onLongPressGesture {
+                            if let commentsUrl = feedItem.commentsUrl {
+                                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
+                            }
                         }
                         .onDisappear {
                             if let index = feedState.firstIndex(of: feedItem) {
@@ -77,7 +82,7 @@ struct FeedListView: View {
             }
         }
     }
-
+    
 }
 
 struct FeedListView_Previews: PreviewProvider {
@@ -106,11 +111,11 @@ struct FeedListViewIpad_Previews: PreviewProvider {
 }
 
 struct FeedListViewNoFeed_Previews: PreviewProvider {
-
+    
     static let noFeedSourceStatus = NoFeedSourcesStatus()
-
+    
     static var previews: some View {
-
+        
         FeedListView(
             loadingState: noFeedSourceStatus,
             feedState: [],
@@ -123,7 +128,7 @@ struct FeedListViewNoFeed_Previews: PreviewProvider {
 
 struct FeedListViewEmptyFeed_Previews: PreviewProvider {
     static var previews: some View {
-
+        
         FeedListView(
             loadingState: FinishedFeedUpdateStatus(),
             feedState: [],

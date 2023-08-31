@@ -75,7 +75,7 @@ class OPMLFeedParserTest {
         val opmlInput = OpmlInput(
             inputStream = opmlWithText.byteInputStream(),
         )
-        val feedSources = parser.importFeed(opmlInput)
+        val feedSources = parser.generateFeedSources(opmlInput)
         assertTrue(feedSources.isNotEmpty())
     }
 }

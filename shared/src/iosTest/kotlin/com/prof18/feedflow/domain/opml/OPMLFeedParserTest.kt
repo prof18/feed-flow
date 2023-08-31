@@ -76,7 +76,7 @@ class OPMLFeedParserTest {
             opmlData = (opmlWithText as NSString).dataUsingEncoding(NSUTF8StringEncoding)
                 ?: NSData(),
         )
-        val feedSources = parser.importFeed(opmlInput)
+        val feedSources = parser.generateFeedSources(opmlInput)
         assertTrue(feedSources.isNotEmpty())
     }
 }

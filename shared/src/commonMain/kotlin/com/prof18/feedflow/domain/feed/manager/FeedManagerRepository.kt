@@ -10,6 +10,7 @@ interface FeedManagerRepository {
     suspend fun addFeedsFromFile(opmlInput: OpmlInput)
     suspend fun getFeeds(): Flow<List<FeedSource>>
     suspend fun addFeed(url: String, name: String)
+    suspend fun checkIfValidRss(url: String): Boolean
     suspend fun exportFeedsAsOpml(opmlOutput: OpmlOutput)
     suspend fun deleteFeed(feedSource: FeedSource)
     fun getFavouriteBrowserId(): String?

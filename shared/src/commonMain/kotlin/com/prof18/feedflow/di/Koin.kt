@@ -1,6 +1,5 @@
 package com.prof18.feedflow.di
 
-import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
@@ -38,7 +37,6 @@ fun initKoin(
     }
 }
 
-@OptIn(ExperimentalKermitApi::class)
 private fun getLoggingModule(appEnvironment: AppEnvironment): Module =
     module {
         val loggers = mutableListOf(platformLogWriter())
@@ -79,6 +77,8 @@ private val coreModule = module {
             databaseHelper = get(),
             opmlFeedHandler = get(),
             settingsHelper = get(),
+            rssParser = get(),
+            logger = getWith("FeedManagerRepositoryImpl"),
         )
     }
 

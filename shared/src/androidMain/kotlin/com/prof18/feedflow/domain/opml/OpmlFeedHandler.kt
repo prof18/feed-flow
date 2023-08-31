@@ -16,7 +16,7 @@ import java.io.Reader
 internal actual class OpmlFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    actual suspend fun importFeed(opmlInput: OpmlInput): List<ParsedFeedSource> =
+    actual suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.default) {
             val inputStream = opmlInput.inputStream
             val feedSources = mutableListOf<ParsedFeedSource>()

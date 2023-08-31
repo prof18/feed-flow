@@ -26,6 +26,7 @@ fun AddFeedsContent(
     paddingValues: PaddingValues,
     feedName: String,
     feedUrl: String,
+    isInvalidUrl: Boolean,
     onFeedNameUpdated: (String) -> Unit,
     onFeedUrlUpdated: (String) -> Unit,
     addFeed: () -> Unit,
@@ -47,6 +48,7 @@ fun AddFeedsContent(
                 .padding(top = Spacing.regular)
                 .fillMaxWidth(),
             feedUrl = feedUrl,
+            showError = isInvalidUrl,
             onFeedUrlUpdated = onFeedUrlUpdated,
         )
 
@@ -95,12 +97,21 @@ private fun FeedNameTextField(
 private fun FeedUrlTextField(
     modifier: Modifier = Modifier,
     feedUrl: String,
+    showError: Boolean,
     onFeedUrlUpdated: (String) -> Unit,
 ) {
     TextField(
         modifier = modifier,
         label = {
             Text(text = stringResource(resource = MR.strings.feed_url))
+        },
+        isError = showError,
+        supportingText = if (showError) {
+            {
+                Text(stringResource(MR.strings.invalid_rss_url))
+            }
+        } else {
+            null
         },
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Done,

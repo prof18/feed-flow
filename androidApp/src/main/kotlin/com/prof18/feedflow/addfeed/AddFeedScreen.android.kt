@@ -36,6 +36,7 @@ fun AddFeedScreen(
 
     val context = LocalContext.current
     val isAddDone by viewModel.isAddDoneState.collectAsStateWithLifecycle()
+    val isInvalidUrl by viewModel.isInvalidRssFeed.collectAsStateWithLifecycle()
 
     if (isAddDone) {
         feedName = ""
@@ -48,6 +49,7 @@ fun AddFeedScreen(
     AddFeedScreenContent(
         feedName = feedName,
         feedUrl = feedUrl,
+        isInvalidUrl = isInvalidUrl,
         onFeedNameUpdated = { name ->
             feedName = name
             viewModel.updateFeedNameTextFieldValue(name)
@@ -68,6 +70,7 @@ fun AddFeedScreen(
 private fun AddFeedScreenContent(
     feedName: String,
     feedUrl: String,
+    isInvalidUrl: Boolean,
     onFeedNameUpdated: (String) -> Unit,
     onFeedUrlUpdated: (String) -> Unit,
     addFeed: () -> Unit,
@@ -99,6 +102,7 @@ private fun AddFeedScreenContent(
             feedName = feedName,
             onFeedNameUpdated = onFeedNameUpdated,
             feedUrl = feedUrl,
+            isInvalidUrl = isInvalidUrl,
             onFeedUrlUpdated = onFeedUrlUpdated,
             addFeed = addFeed,
         )
@@ -112,6 +116,23 @@ private fun AddScreenContentPreview() {
         AddFeedScreenContent(
             feedName = "My Feed",
             feedUrl = "https://www.ablog.com/feed",
+            onFeedNameUpdated = {},
+            onFeedUrlUpdated = {},
+            addFeed = { },
+            isInvalidUrl = false,
+            navigateBack = {},
+        )
+    }
+}
+
+@FeedFlowPreview
+@Composable
+private fun AddScreenContentInvalidUrlPreview() {
+    FeedFlowTheme {
+        AddFeedScreenContent(
+            feedName = "My Feed",
+            feedUrl = "https://www.ablog.com/feed",
+            isInvalidUrl = true,
             onFeedNameUpdated = {},
             onFeedUrlUpdated = {},
             addFeed = { },

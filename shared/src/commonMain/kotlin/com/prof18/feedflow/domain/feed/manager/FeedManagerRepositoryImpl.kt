@@ -1,5 +1,6 @@
 package com.prof18.feedflow.domain.feed.manager
 
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.data.SettingsHelper
@@ -8,16 +9,21 @@ import com.prof18.feedflow.domain.model.ParsedFeedSource
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.domain.opml.OpmlInput
 import com.prof18.feedflow.domain.opml.OpmlOutput
+import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.flow.Flow
 
 internal class FeedManagerRepositoryImpl(
     private val databaseHelper: DatabaseHelper,
     private val opmlFeedHandler: OpmlFeedHandler,
     private val settingsHelper: SettingsHelper,
+    private val rssParser: RssParser,
+    private val logger: Logger,
 ) : FeedManagerRepository {
     override suspend fun addFeedsFromFile(opmlInput: OpmlInput) {
-        val feeds = opmlFeedHandler.importFeed(opmlInput)
+        val feeds = opmlFeedHandler.generateFeedSources(opmlInput)
         val categories = feeds.mapNotNull { it.category }.distinct()
+
+        // TODO: check url and returns
 
         databaseHelper.insertCategories(categories)
         databaseHelper.insertFeedSource(feeds)
@@ -53,5 +59,16 @@ internal class FeedManagerRepositoryImpl(
 
     override fun setFavouriteBrowser(browser: Browser) {
         settingsHelper.saveFavouriteBrowserId(browser.id)
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    override suspend fun checkIfValidRss(url: String): Boolean {
+        return try {
+            rssParser.getRssChannel(url)
+            true
+        } catch (e: Throwable) {
+            logger.d { "Wrong url input: $e" }
+            false
+        }
     }
 }

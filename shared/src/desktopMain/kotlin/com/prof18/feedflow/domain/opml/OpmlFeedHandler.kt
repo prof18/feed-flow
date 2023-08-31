@@ -16,14 +16,15 @@ import javax.xml.stream.XMLOutputFactory
 internal actual class OpmlFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    actual suspend fun importFeed(opmlInput: OpmlInput): List<ParsedFeedSource> = withContext(dispatcherProvider.io) {
-        val feed = opmlInput.file.readText()
-        val parser = SAXParserFactory.newInstance().newSAXParser()
-        val handler = SaxFeedHandler()
-        parser.parse(InputSource(StringReader(feed)), handler)
+    actual suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
+        withContext(dispatcherProvider.io) {
+            val feed = opmlInput.file.readText()
+            val parser = SAXParserFactory.newInstance().newSAXParser()
+            val handler = SaxFeedHandler()
+            parser.parse(InputSource(StringReader(feed)), handler)
 
-        return@withContext handler.getFeedSource()
-    }
+            return@withContext handler.getFeedSource()
+        }
 
     actual suspend fun exportFeed(
         opmlOutput: OpmlOutput,

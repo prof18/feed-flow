@@ -1,7 +1,6 @@
 package com.prof18.feedflow.addfeed
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,6 +24,7 @@ fun AddFeedScreen(
     val viewModel = desktopViewModel { DI.koin.get<AddFeedViewModel>() }
 
     val isAddDone by viewModel.isAddDoneState.collectAsState()
+    val isInvalidUrl by viewModel.isInvalidRssFeed.collectAsState()
 
     if (isAddDone) {
         feedName = ""
@@ -35,6 +35,7 @@ fun AddFeedScreen(
     AddFeedScreenContent(
         feedName = feedName,
         feedUrl = feedUrl,
+        isInvalidUrl = isInvalidUrl,
         onFeedNameUpdated = { name ->
             feedName = name
             viewModel.updateFeedNameTextFieldValue(name)
@@ -50,10 +51,10 @@ fun AddFeedScreen(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun AddFeedScreenContent(
     feedName: String,
     feedUrl: String,
+    isInvalidUrl: Boolean,
     onFeedNameUpdated: (String) -> Unit,
     onFeedUrlUpdated: (String) -> Unit,
     addFeed: () -> Unit,
@@ -62,6 +63,7 @@ private fun AddFeedScreenContent(
         AddFeedsContent(
             paddingValues = paddingValues,
             feedName = feedName,
+            isInvalidUrl = isInvalidUrl,
             onFeedNameUpdated = onFeedNameUpdated,
             feedUrl = feedUrl,
             onFeedUrlUpdated = onFeedUrlUpdated,
@@ -77,6 +79,7 @@ private fun AddScreenContentPreview() {
         AddFeedScreenContent(
             feedName = "My Feed",
             feedUrl = "https://www.ablog.com/feed",
+            isInvalidUrl = false,
             onFeedNameUpdated = {},
             onFeedUrlUpdated = {},
             addFeed = { },
@@ -93,6 +96,22 @@ private fun AddScreenContentDarkPreview() {
         AddFeedScreenContent(
             feedName = "My Feed",
             feedUrl = "https://www.ablog.com/feed",
+            isInvalidUrl = false,
+            onFeedNameUpdated = {},
+            onFeedUrlUpdated = {},
+            addFeed = { },
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun AddScreenContentInvalidUrlPreview() {
+    FeedFlowTheme {
+        AddFeedScreenContent(
+            feedName = "My Feed",
+            feedUrl = "https://www.ablog.com/feed",
+            isInvalidUrl = true,
             onFeedNameUpdated = {},
             onFeedUrlUpdated = {},
             addFeed = { },

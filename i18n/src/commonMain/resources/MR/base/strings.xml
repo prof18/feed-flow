@@ -44,4 +44,5 @@
     <string name="open_website_button">Open website</string>
     <string name="database_error">Something went wrong during the retrieval of the feeds. Please retry or restart the app :(</string>
     <string name="force_feed_refresh">Force feeds refresh</string>
+    <string name="invalid_rss_url">The link you provided is not a valid RSS feed</string>
 </resources>

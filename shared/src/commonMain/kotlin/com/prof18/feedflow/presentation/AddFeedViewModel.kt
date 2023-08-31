@@ -17,12 +17,17 @@ class AddFeedViewModel(
     private var feedUrl: String = ""
 
     private val isAddDoneMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val isInvalidRssFeedMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     @NativeCoroutinesState
     val isAddDoneState = isAddDoneMutableState.asStateFlow()
 
+    @NativeCoroutinesState
+    val isInvalidRssFeed = isInvalidRssFeedMutableState.asStateFlow()
+
     fun updateFeedUrlTextFieldValue(feedUrlTextFieldValue: String) {
         feedUrl = feedUrlTextFieldValue
+        isInvalidRssFeedMutableState.update { false }
     }
 
     fun updateFeedNameTextFieldValue(feedNameTextFieldValue: String) {
@@ -32,12 +37,17 @@ class AddFeedViewModel(
     fun addFeed() {
         scope.launch {
             if (feedUrl.isNotEmpty() && feedName.isNotEmpty()) {
-                feedManagerRepository.addFeed(
-                    url = feedUrl,
-                    name = feedName,
-                )
-                isAddDoneMutableState.update { true }
-                feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
+                val isValidRss = feedManagerRepository.checkIfValidRss(feedUrl)
+                if (isValidRss) {
+                    feedManagerRepository.addFeed(
+                        url = feedUrl,
+                        name = feedName,
+                    )
+                    isAddDoneMutableState.update { true }
+                    feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
+                } else {
+                    isInvalidRssFeedMutableState.update { true }
+                }
             }
         }
     }

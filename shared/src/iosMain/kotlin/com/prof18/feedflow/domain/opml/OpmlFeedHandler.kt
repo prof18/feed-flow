@@ -21,7 +21,7 @@ import kotlin.coroutines.suspendCoroutine
 internal actual class OpmlFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    actual suspend fun importFeed(opmlInput: OpmlInput): List<ParsedFeedSource> =
+    actual suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.default) {
             suspendCoroutine { continuation ->
                 NSXMLParser(opmlInput.opmlData).apply {

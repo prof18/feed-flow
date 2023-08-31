@@ -1,4 +1,4 @@
-package com.prof18.feedflow.settings.components
+package com.prof18.feedflow.ui.settings
 
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable

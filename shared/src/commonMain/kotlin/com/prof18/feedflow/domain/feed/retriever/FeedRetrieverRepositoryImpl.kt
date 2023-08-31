@@ -143,7 +143,6 @@ internal class FeedRetrieverRepositoryImpl(
         databaseHelper.deleteOldFeedItems(threshold)
     }
 
-    @Suppress("TooGenericExceptionCaught")
     private suspend fun parseFeeds(
         feedSourceUrls: List<FeedSource>,
         updateLoadingInfo: Boolean,

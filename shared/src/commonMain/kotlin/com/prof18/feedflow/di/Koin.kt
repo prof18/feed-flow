@@ -14,6 +14,7 @@ import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
+import com.prof18.feedflow.presentation.ImportExportViewModel
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.rssparser.RssParser
@@ -124,6 +125,14 @@ private val coreModule = module {
     factory {
         SettingsHelper(
             settings = get(),
+        )
+    }
+
+    viewModel {
+        ImportExportViewModel(
+            feedManagerRepository = get(),
+            feedRetrieverRepository = get(),
+            logger = getWith("FeedImporterUseCase"),
         )
     }
 }

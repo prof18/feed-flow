@@ -23,6 +23,7 @@ import com.prof18.feedflow.home.HomeScreen
 import com.prof18.feedflow.settings.SettingsScreen
 import com.prof18.feedflow.settings.about.AboutScreen
 import com.prof18.feedflow.settings.about.LicensesScreen
+import com.prof18.feedflow.settings.importexport.ImportExportScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +76,9 @@ class MainActivity : ComponentActivity() {
                     onAboutClick = {
                         navController.navigate(Screen.About.name)
                     },
+                    navigateToImportExport = {
+                        navController.navigate(Screen.ImportExport.name)
+                    },
                 )
             }
 
@@ -111,6 +115,14 @@ class MainActivity : ComponentActivity() {
             composable(Screen.Licenses.name) {
                 LicensesScreen(
                     onBackClick = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable(Screen.ImportExport.name) {
+                ImportExportScreen(
+                    navigateBack = {
                         navController.popBackStack()
                     },
                 )

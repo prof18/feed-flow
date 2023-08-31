@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
 import org.xml.sax.InputSource
 import java.net.URL
 
-@Suppress("SwallowedException", "TooGenericExceptionCaught")
+@Suppress("SwallowedException")
 @Composable
 fun <T> AsyncImage(
     load: suspend () -> T,

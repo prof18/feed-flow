@@ -2,7 +2,7 @@ package com.prof18.feedflow.domain.opml
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.domain.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.feedflow.utils.getValueOrNull
 import kotlinx.cinterop.ExperimentalForeignApi

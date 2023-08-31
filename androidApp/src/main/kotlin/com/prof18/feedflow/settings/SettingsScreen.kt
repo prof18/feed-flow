@@ -5,9 +5,6 @@ package com.prof18.feedflow.settings
 import FeedFlowTheme
 import android.net.Uri
 import android.widget.Toast
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -38,8 +35,8 @@ import com.prof18.feedflow.domain.opml.OpmlOutput
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.presentation.preview.browsersForPreview
 import com.prof18.feedflow.settings.components.BrowserSelectionDialog
-import com.prof18.feedflow.settings.components.SettingsDivider
-import com.prof18.feedflow.settings.components.SettingsMenuItem
+import com.prof18.feedflow.ui.settings.SettingsDivider
+import com.prof18.feedflow.ui.settings.SettingsMenuItem
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.utils.UserFeedbackReporter
 import dev.icerock.moko.resources.compose.stringResource
@@ -51,6 +48,7 @@ fun SettingsScreen(
     onFeedListClick: () -> Unit,
     navigateBack: () -> Unit,
     onAboutClick: () -> Unit,
+    navigateToImportExport: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -110,6 +108,7 @@ fun SettingsScreen(
                 context = context,
             )
         },
+        navigateToImportExport = navigateToImportExport,
     )
 }
 
@@ -124,18 +123,9 @@ private fun SettingsScreenContent(
     navigateBack: () -> Unit,
     onAboutClick: () -> Unit,
     onBugReportClick: () -> Unit,
+    navigateToImportExport: () -> Unit,
 ) {
-    val openFileAction = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument(),
-    ) { uri ->
-        uri?.let { importFeed(it) }
-    }
 
-    val createFileAction = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("text/x-opml"),
-    ) { uri ->
-        uri?.let { exportFeed(it) }
-    }
 
     Scaffold(
         topBar = {
@@ -169,8 +159,7 @@ private fun SettingsScreenContent(
             onBrowserSelectionClick = {
                 showBrowserSelection = true
             },
-            openFileAction = openFileAction,
-            createFileAction = createFileAction,
+            navigateToImportExport = navigateToImportExport,
             onAboutClick = onAboutClick,
             onBugReportClick = onBugReportClick,
         )
@@ -207,8 +196,7 @@ private fun SettingsList(
     modifier: Modifier = Modifier,
     onFeedListClick: () -> Unit,
     onBrowserSelectionClick: () -> Unit,
-    openFileAction: ManagedActivityResultLauncher<Array<String>, Uri?>,
-    createFileAction: ManagedActivityResultLauncher<String, Uri?>,
+    navigateToImportExport: () -> Unit,
     onAboutClick: () -> Unit,
     onBugReportClick: () -> Unit,
 ) {
@@ -241,23 +229,9 @@ private fun SettingsList(
 
         item {
             SettingsMenuItem(
-                text = stringResource(resource = MR.strings.import_feed_button),
+                text = stringResource(resource = MR.strings.import_export_opml),
             ) {
-                openFileAction.launch(arrayOf("*/*"))
-            }
-        }
-
-        item {
-            SettingsDivider()
-        }
-
-        item {
-            SettingsMenuItem(
-                text = stringResource(
-                    resource = MR.strings.export_feeds_button,
-                ),
-            ) {
-                createFileAction.launch("feeds-export.opml")
+                navigateToImportExport()
             }
         }
 
@@ -317,6 +291,7 @@ private fun SettingsScreenPreview() {
             navigateBack = {},
             onAboutClick = {},
             onBugReportClick = {},
+            navigateToImportExport = {},
         )
     }
 }

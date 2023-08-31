@@ -33,7 +33,6 @@ internal class IosDateFormatter(
         setLocale(NSLocale.currentLocale)
     }
 
-    @Suppress("TooGenericExceptionCaught")
     private fun NSDateFormatter.parseDateString(dateString: String): DateParsingResult =
         try {
             DateParsingResult.Parsed(

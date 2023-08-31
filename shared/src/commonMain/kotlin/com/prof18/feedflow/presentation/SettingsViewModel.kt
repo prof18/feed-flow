@@ -39,8 +39,13 @@ class SettingsViewModel(
     @NativeCoroutines
     val errorState = mutableUIErrorState.asSharedFlow()
 
-    @Suppress("TooGenericExceptionCaught")
+    // TODO: return response
+
+    // TODO: delete
     fun importFeed(opmlInput: OpmlInput) {
+
+        // TODO: call the use case
+
         scope.launch {
             isImportDoneMutableState.update { false }
             try {
@@ -58,7 +63,7 @@ class SettingsViewModel(
         }
     }
 
-    @Suppress("TooGenericExceptionCaught")
+    // TODO: delete
     fun exportFeed(opmlOutput: OpmlOutput) {
         scope.launch {
             isExportDoneMutableState.update { false }

@@ -4,7 +4,9 @@ package com.prof18.feedflow.presentation.preview
 
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.domain.model.Browser
+import com.prof18.feedflow.presentation.model.FeedImportExportState
 
 val feedItemsForPreview = listOf(
     FeedItem(
@@ -112,5 +114,29 @@ val feedSourcesForPreview = listOf(
         url = "https://www.site3.com",
         title = "Site 3",
         lastSyncTimestamp = null,
+    ),
+)
+
+val importExportStates = listOf(
+    FeedImportExportState.Idle,
+    FeedImportExportState.Error,
+    FeedImportExportState.Loading,
+    FeedImportExportState.ExportSuccess,
+    FeedImportExportState.ImportSuccess(
+        notValidFeedSources = emptyList(),
+    ),
+    FeedImportExportState.ImportSuccess(
+        notValidFeedSources = listOf(
+            ParsedFeedSource(
+                url = "https://www.ilpost.it",
+                title = "Il Post",
+                category = null,
+            ),
+            ParsedFeedSource(
+                url = "https://www.techcrunch.it",
+                title = "Tech Crunch",
+                category = null,
+            ),
+        ),
     ),
 )

@@ -1,10 +1,11 @@
 package com.prof18.feedflow
 
 sealed class Screen(val name: String) {
-    object Home : Screen("home")
-    object Settings : Screen("setting")
-    object AddFeed : Screen("add_feed")
-    object FeedList : Screen("feed_list")
-    object About : Screen("about")
-    object Licenses : Screen("licenses")
+    data object Home : Screen("home")
+    data object Settings : Screen("setting")
+    data object AddFeed : Screen("add_feed")
+    data object FeedList : Screen("feed_list")
+    data object About : Screen("about")
+    data object Licenses : Screen("licenses")
+    data object ImportExport: Screen("import_export")
 }

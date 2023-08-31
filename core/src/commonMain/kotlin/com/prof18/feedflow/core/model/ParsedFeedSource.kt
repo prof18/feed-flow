@@ -1,11 +1,11 @@
-package com.prof18.feedflow.domain.model
+package com.prof18.feedflow.core.model
 
-internal data class ParsedFeedSource(
+data class ParsedFeedSource(
     val url: String,
     val title: String,
     val category: String?,
 ) {
-    internal data class Builder(
+    data class Builder(
         private var url: String? = null,
         private var title: String? = null,
         private var category: String? = null,

@@ -4,7 +4,7 @@ import android.util.Xml
 import com.prof18.feedflow.attributeValue
 import com.prof18.feedflow.contains
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.domain.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser

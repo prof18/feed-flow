@@ -23,7 +23,6 @@ internal class JvmAndroidDateFormatter(
         SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'Z'", Locale.getDefault()),
     )
 
-    @Suppress("TooGenericExceptionCaught")
     private fun SimpleDateFormat.parseDateString(dateString: String): DateParsingResult =
         try {
             DateParsingResult.Parsed(

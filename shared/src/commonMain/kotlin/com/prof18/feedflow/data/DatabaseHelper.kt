@@ -6,7 +6,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.domain.model.FeedItemId
-import com.prof18.feedflow.domain.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.squareup.sqldelight.Transacter
 import com.squareup.sqldelight.TransactionWithoutReturn
 import com.squareup.sqldelight.db.SqlDriver
@@ -89,7 +89,7 @@ internal class DatabaseHelper(
                         url_hash = feedSource.hashCode(),
                         url = feedSource.url,
                         title = feedSource.title,
-                        title_ = feedSource.category,
+                        title_ = feedSource.category!!,
                     )
                 } else {
                     dbRef.feedSourceQueries.insertFeedSourceWithNoCategory(

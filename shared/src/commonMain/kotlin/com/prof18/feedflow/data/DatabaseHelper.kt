@@ -3,10 +3,10 @@ package com.prof18.feedflow.data
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.domain.model.FeedItemId
-import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.squareup.sqldelight.Transacter
 import com.squareup.sqldelight.TransactionWithoutReturn
 import com.squareup.sqldelight.db.SqlDriver

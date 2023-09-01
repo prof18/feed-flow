@@ -9,12 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,7 +46,6 @@ import com.prof18.feedflow.navigation.ChildStack
 import com.prof18.feedflow.navigation.ProvideComponentContext
 import com.prof18.feedflow.navigation.Screen
 import com.prof18.feedflow.presentation.HomeViewModel
-import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.rememberDesktopDarkTheme
 import com.prof18.feedflow.utils.AppEnvironment
@@ -104,7 +101,6 @@ fun main() = application {
 
     LifecycleController(lifecycle, windowState)
 
-    val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
     val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
 
     val listState = rememberLazyListState()
@@ -118,30 +114,6 @@ fun main() = application {
         title = "FeedFlow",
     ) {
         val navigation: StackNavigation<Screen> = remember { StackNavigation() }
-
-        val isImportDone by settingsViewModel.isImportDoneState.collectAsState()
-        val importDoneMessage = stringResource(resource = MR.strings.feeds_import_done_message)
-
-        if (isImportDone) {
-            scope.launch {
-                snackbarHostState.showSnackbar(
-                    importDoneMessage,
-                    duration = SnackbarDuration.Short,
-                )
-            }
-        }
-
-        val isExportDone by settingsViewModel.isExportDoneState.collectAsState()
-        val exportDoneMessage = stringResource(resource = MR.strings.feeds_export_done_message)
-
-        if (isExportDone) {
-            scope.launch {
-                snackbarHostState.showSnackbar(
-                    exportDoneMessage,
-                    duration = SnackbarDuration.Short,
-                )
-            }
-        }
 
         var aboutDialogState by remember { mutableStateOf(false) }
         val dialogTitle = stringResource(MR.strings.app_name)
@@ -227,7 +199,7 @@ private fun MainContent(
                                     homeViewModel = homeViewModel,
                                     listState = listState,
                                     onAddFeedClick = {
-                                        // TODO
+                                        navigation.push(Screen.FeedList)
                                     },
                                 )
 

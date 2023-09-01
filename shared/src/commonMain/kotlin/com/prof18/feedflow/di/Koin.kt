@@ -15,7 +15,6 @@ import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.ImportExportViewModel
-import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.Dispatchers
@@ -91,14 +90,6 @@ private val coreModule = module {
             htmlParser = get(),
             logger = getWith("FeedRetrieverRepositoryImpl"),
             dateFormatter = get(),
-        )
-    }
-
-    viewModel {
-        SettingsViewModel(
-            feedManagerRepository = get(),
-            feedRetrieverRepository = get(),
-            logger = getWith("SettingsViewModel"),
         )
     }
 

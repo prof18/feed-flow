@@ -55,7 +55,7 @@ fun ImportExportScreen(
         feedImportExportState = feedImporterState,
         onDoneClick = navigateBack,
         onRetryClick = {
-            viewModel.clearErrorState()
+            viewModel.clearState()
         },
         onImportClick = {
             openFileAction.launch(arrayOf("*/*"))

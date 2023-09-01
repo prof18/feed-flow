@@ -3,8 +3,6 @@
 package com.prof18.feedflow.settings
 
 import FeedFlowTheme
-import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -13,13 +11,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,17 +24,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.model.Browser
-import com.prof18.feedflow.domain.opml.OpmlInput
-import com.prof18.feedflow.domain.opml.OpmlOutput
-import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.presentation.preview.browsersForPreview
 import com.prof18.feedflow.settings.components.BrowserSelectionDialog
+import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.settings.SettingsDivider
 import com.prof18.feedflow.ui.settings.SettingsMenuItem
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.utils.UserFeedbackReporter
 import dev.icerock.moko.resources.compose.stringResource
-import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 @Composable
@@ -52,51 +42,13 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
 
-    val viewModel = koinViewModel<SettingsViewModel>()
     val browserManager = koinInject<BrowserManager>()
 
     val browserListState by browserManager.browserListState.collectAsStateWithLifecycle()
 
-    val isImportDone by viewModel.isImportDoneState.collectAsStateWithLifecycle()
-
-    if (isImportDone) {
-        val importDoneMessage = stringResource(resource = MR.strings.feeds_import_done_message)
-        Toast.makeText(context, importDoneMessage, Toast.LENGTH_SHORT)
-            .show()
-    }
-
-    val isExportDone by viewModel.isExportDoneState.collectAsStateWithLifecycle()
-
-    if (isExportDone) {
-        val exportDoneMessage = stringResource(resource = MR.strings.feeds_export_done_message)
-        Toast.makeText(context, exportDoneMessage, Toast.LENGTH_SHORT)
-            .show()
-    }
-
-    val importingFeedMessage = stringResource(resource = MR.strings.feeds_importing_message)
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(Unit) {
-        viewModel.errorState.collect { errorState ->
-            snackbarHostState.showSnackbar(
-                errorState!!.message.toString(context),
-                duration = SnackbarDuration.Short,
-            )
-        }
-    }
-
     SettingsScreenContent(
         browsers = browserListState,
-        snackbarHostState = snackbarHostState,
         onFeedListClick = onFeedListClick,
-        importFeed = { uri ->
-            viewModel.importFeed(OpmlInput(context.contentResolver.openInputStream(uri)))
-            Toast.makeText(context, importingFeedMessage, Toast.LENGTH_SHORT)
-                .show()
-        },
-        exportFeed = {
-            viewModel.exportFeed(OpmlOutput(context.contentResolver.openOutputStream(it)))
-        },
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
@@ -115,23 +67,17 @@ fun SettingsScreen(
 @Composable
 private fun SettingsScreenContent(
     browsers: List<Browser>,
-    snackbarHostState: SnackbarHostState,
     onFeedListClick: () -> Unit,
-    importFeed: (Uri) -> Unit,
-    exportFeed: (Uri) -> Unit,
     onBrowserSelected: (Browser) -> Unit,
     navigateBack: () -> Unit,
     onAboutClick: () -> Unit,
     onBugReportClick: () -> Unit,
     navigateToImportExport: () -> Unit,
 ) {
-
-
     Scaffold(
         topBar = {
             SettingsNavBar(navigateBack)
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
 
         var showBrowserSelection by remember {
@@ -190,7 +136,6 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
     )
 }
 
-@Suppress("LongMethod")
 @Composable
 private fun SettingsList(
     modifier: Modifier = Modifier,
@@ -283,15 +228,11 @@ private fun SettingsScreenPreview() {
     FeedFlowTheme {
         SettingsScreenContent(
             browsers = browsersForPreview,
-            snackbarHostState = SnackbarHostState(),
             onFeedListClick = {},
-            importFeed = {},
-            exportFeed = {},
             onBrowserSelected = {},
             navigateBack = {},
             onAboutClick = {},
             onBugReportClick = {},
-            navigateToImportExport = {},
-        )
+        ) {}
     }
 }

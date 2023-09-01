@@ -12,7 +12,7 @@ import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
-import com.prof18.feedflow.presentation.SettingsViewModel
+import com.prof18.feedflow.presentation.ImportExportViewModel
 import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.russhwolf.settings.ExperimentalSettingsImplementation
@@ -83,9 +83,9 @@ internal actual val platformModule: Module = module {
 @Suppress("unused") // Called from Swift
 object KotlinDependencies : KoinComponent {
     fun getHomeViewModel() = getKoin().get<HomeViewModel>()
-    fun getSettingsViewModel() = getKoin().get<SettingsViewModel>()
     fun getFeedSourceListViewModel() = getKoin().get<FeedSourceListViewModel>()
     fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()
     fun getFeedManagerRepository() = getKoin().get<FeedManagerRepository>()
     fun getLogger(tag: String? = null) = getKoin().get<Logger> { parametersOf(tag) }
+    fun getImportExportViewModel() = getKoin().get<ImportExportViewModel>()
 }

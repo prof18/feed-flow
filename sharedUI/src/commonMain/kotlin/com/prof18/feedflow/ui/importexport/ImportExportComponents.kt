@@ -62,11 +62,20 @@ fun ImportExportContent(
                     onRetryClick = onRetryClick,
                 )
 
-            FeedImportExportState.Loading ->
+            FeedImportExportState.LoadingImport ->
                 ImportExportLoadingView(
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize(),
+                    message = stringResource(MR.strings.feed_add_in_progress_message),
+                )
+
+            FeedImportExportState.LoadingExport ->
+                ImportExportLoadingView(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                    stringResource(MR.strings.export_started_message),
                 )
 
             FeedImportExportState.ExportSuccess ->
@@ -149,6 +158,7 @@ private fun ImportExportIdleView(
 @Composable
 private fun ImportExportLoadingView(
     modifier: Modifier = Modifier,
+    message: String,
 ) {
     Column(
         modifier = modifier,
@@ -160,7 +170,7 @@ private fun ImportExportLoadingView(
         Text(
             modifier = Modifier
                 .padding(Spacing.regular),
-            text = stringResource(MR.strings.feed_add_in_progress_message),
+            text = message,
             style = MaterialTheme.typography.bodyMedium,
         )
     }

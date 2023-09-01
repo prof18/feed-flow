@@ -90,9 +90,6 @@ private struct FeedSourceListContent: View {
                                     )
                                 }
                             }
-                            .onTapGesture {
-                                // TODO: edit feed
-                            }
                         }
                     }
                     .listStyle(PlainListStyle())

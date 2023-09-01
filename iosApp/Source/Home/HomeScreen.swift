@@ -20,12 +20,11 @@ struct HomeScreen: View {
     @Environment(\.scenePhase) var scenePhase
 
     @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
-    @StateObject var settingsViewModel: SettingsViewModel = KotlinDependencies.shared.getSettingsViewModel()
 
     @State var loadingState: FeedUpdateStatus?
     @State var feedState: [FeedItem] = []
     @State var showLoading: Bool = true
-    @State var sheetToShow: SheetToShow?
+    @State var sheetToShow: HomeSheetToShow?
     @State var unreadCount = 0
 
     var body: some View {
@@ -47,12 +46,6 @@ struct HomeScreen: View {
             },
             onDeleteOldFeedClick: {
                 homeViewModel.deleteOldFeedItems()
-            },
-            onImportFeedClick: { input in
-                settingsViewModel.importFeed(opmlInput: input)
-            },
-            onExportFeedClick: { output in
-                settingsViewModel.exportFeed(opmlOutput: output)
             },
             onForceRefreshClick: {
                 homeViewModel.forceFeedRefresh()
@@ -112,54 +105,6 @@ struct HomeScreen: View {
                 emitGenericError()
             }
         }
-        .task {
-            do {
-                let stream = asyncSequence(for: settingsViewModel.isImportDoneStateFlow)
-                for try await isImportDone in stream where isImportDone as? Bool ?? false {
-
-                    self.appState.snackbarQueue.append(
-                        SnackbarData(
-                            title: MR.strings().feeds_import_done_message.localized,
-                            subtitle: nil,
-                            showBanner: true
-                        )
-                    )
-
-                }
-            } catch {
-                emitGenericError()
-            }
-        }
-        .task {
-            do {
-                let stream = asyncSequence(for: settingsViewModel.isExportDoneStateFlow)
-                for try await isExportDone in stream where isExportDone as? Bool ?? false {
-
-                    self.sheetToShow = .shareSheet
-                }
-
-            } catch {
-                emitGenericError()
-            }
-        }
-        .task {
-            do {
-                let stream = asyncSequence(for: settingsViewModel.errorState)
-                for try await state in stream {
-                    if let message = state?.message {
-                        self.appState.snackbarQueue.append(
-                            SnackbarData(
-                                title: message.localized(),
-                                subtitle: nil,
-                                showBanner: true
-                            )
-                        )
-                    }
-                }
-            } catch {
-                emitGenericError()
-            }
-        }
         .onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
             case .background:
@@ -194,14 +139,12 @@ struct HomeContent: View {
     @Binding var showLoading: Bool
     @Binding var unreadCount: Int
 
-    @Binding var sheetToShow: SheetToShow?
+    @Binding var sheetToShow: HomeSheetToShow?
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
     let onMarkAllReadClick: () -> Void
     let onDeleteOldFeedClick: () -> Void
-    let onImportFeedClick: (OpmlInput) -> Void
-    let onExportFeedClick: (OpmlOutput) -> Void
     let onForceRefreshClick: () -> Void
 
     var body: some View {
@@ -302,46 +245,12 @@ struct HomeContent: View {
                         )
                     }
 
-                        Button(
-                            action: {
-                                self.sheetToShow = .filePicker
-                            },
-                            label: {
-                                Label(
-                                    MR.strings().import_feed_button.localized,
-                                    systemImage: "arrow.down.doc"
-                                )
-                            }
-                        )
-
-                        Button(
-                            action: {
-                                if let url = getUrlForOpmlExport() {
-                                    onExportFeedClick(OpmlOutput(url: url))
-                                    self.appState.snackbarQueue.append(
-                                        SnackbarData(
-                                            title: MR.strings().export_started_message.localized,
-                                            subtitle: nil,
-                                            showBanner: true
-                                        )
-                                    )
-                                } else {
-                                    self.appState.snackbarQueue.append(
-                                        SnackbarData(
-                                            title: MR.strings().generic_error_message.localized,
-                                            subtitle: nil,
-                                            showBanner: true
-                                        )
-                                    )
-                                }
-                            },
-                            label: {
-                                Label(
-                                    MR.strings().export_feeds_button.localized,
-                                    systemImage: "arrow.up.doc"
-                                )
-                            }
-                        )
+                        NavigationLink(value: Route.importExportScreen) {
+                            Label(
+                                MR.strings().import_export_opml.localized,
+                                systemImage: "arrow.up.arrow.down"
+                            )
+                        }
 
                         Button(
                             action: {
@@ -373,49 +282,11 @@ struct HomeContent: View {
         }
         .sheet(item: $sheetToShow) { item in
             switch item {
-            case .filePicker:
-                FilePickerController { url in
-
-                    do {
-                        let data = try Data(contentsOf: url)
-                        onImportFeedClick(OpmlInput(opmlData: data))
-                    } catch {
-                        self.appState.snackbarQueue.append(
-
-                            SnackbarData(
-                                title: MR.strings().load_file_error_message.localized,
-                                subtitle: nil,
-                                showBanner: true
-                            )
-                        )
-                    }
-
-                    self.appState.snackbarQueue.append(
-                        SnackbarData(
-                            title: MR.strings().feeds_importing_message.localized,
-                            subtitle: nil,
-                            showBanner: true
-                        )
-                    )
-                }
-
-            case .shareSheet:
-
-                ShareSheet(
-                    activityItems: [getUrlForOpmlExport()! as URL],
-                    applicationActivities: nil
-                ) { _, _, _, _ in }
-
             case .feedList:
                 FeedSourceListScreen()
             }
         }
     }
-}
-
-private func getUrlForOpmlExport() -> URL? {
-    let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
-    return cacheDirectory?.appendingPathComponent("feed-export.opml")
 }
 
 struct HomeContentLoading_Previews: PreviewProvider {
@@ -434,8 +305,6 @@ struct HomeContentLoading_Previews: PreviewProvider {
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
-            onImportFeedClick: { _ in },
-            onExportFeedClick: { _ in },
             onForceRefreshClick: {}
         )
         .environmentObject(HomeListIndexHolder())
@@ -457,8 +326,6 @@ struct HomeContentLoaded_Previews: PreviewProvider {
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
-            onImportFeedClick: { _ in },
-            onExportFeedClick: { _ in },
             onForceRefreshClick: {}
         )
         .environmentObject(HomeListIndexHolder())
@@ -476,13 +343,11 @@ struct HomeContentSettings_Previews: PreviewProvider {
             feedState: .constant(PreviewItemsKt.feedItemsForPreview),
             showLoading: .constant(false),
             unreadCount: .constant(42),
-            sheetToShow: .constant(SheetToShow.feedList),
+            sheetToShow: .constant(HomeSheetToShow.feedList),
             onRefresh: { },
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
-            onImportFeedClick: { _ in },
-            onExportFeedClick: { _ in },
             onForceRefreshClick: {}
         )
         .environmentObject(HomeListIndexHolder())

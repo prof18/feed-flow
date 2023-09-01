@@ -50,6 +50,8 @@
 		CC6E683B2A6C1DD3009F4A3C /* LicensesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6E683A2A6C1DD3009F4A3C /* LicensesScreen.swift */; };
 		CC7B9D2B29D8C4FD0026985C /* AddFeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7B9D2A29D8C4FD0026985C /* AddFeedScreen.swift */; };
 		CC7B9D2D29D8C52D0026985C /* FeedSourceListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7B9D2C29D8C52D0026985C /* FeedSourceListScreen.swift */; };
+		CC9C5A492AA254F800323B94 /* ImportExportScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9C5A482AA254F800323B94 /* ImportExportScreen.swift */; };
+		CC9C5A4B2AA278B700323B94 /* ImportExportSheetToShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9C5A4A2AA278B700323B94 /* ImportExportSheetToShow.swift */; };
 		CCA704C129D4B63300560FA3 /* Snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704C029D4B63300560FA3 /* Snackbar.swift */; };
 		CCA704C429D4B67100560FA3 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704C329D4B67100560FA3 /* AppState.swift */; };
 		CCA704C729D4B69B00560FA3 /* SnackbarData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704C629D4B69B00560FA3 /* SnackbarData.swift */; };
@@ -60,7 +62,7 @@
 		CCA704D829D60F4300560FA3 /* NoFeedsSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704D729D60F4200560FA3 /* NoFeedsSourceView.swift */; };
 		CCA704DA29D60FA600560FA3 /* FeedItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704D929D60FA600560FA3 /* FeedItemView.swift */; };
 		CCA704DC29D6143400560FA3 /* FeedListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704DB29D6143400560FA3 /* FeedListView.swift */; };
-		CCA704E529D625E200560FA3 /* SheetToShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E429D625E200560FA3 /* SheetToShow.swift */; };
+		CCA704E529D625E200560FA3 /* HomeSheetToShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E429D625E200560FA3 /* HomeSheetToShow.swift */; };
 		CCA704E729D626D400560FA3 /* FilePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E629D626D400560FA3 /* FilePickerController.swift */; };
 		CCC86B4429D8C44400AEABB9 /* SheetPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC86B4329D8C44400AEABB9 /* SheetPage.swift */; };
 		CCEA11BB2A6D2AC300C661AC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */; };
@@ -116,6 +118,8 @@
 		CC6E683A2A6C1DD3009F4A3C /* LicensesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicensesScreen.swift; sourceTree = "<group>"; };
 		CC7B9D2A29D8C4FD0026985C /* AddFeedScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedScreen.swift; sourceTree = "<group>"; };
 		CC7B9D2C29D8C52D0026985C /* FeedSourceListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedSourceListScreen.swift; sourceTree = "<group>"; };
+		CC9C5A482AA254F800323B94 /* ImportExportScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportExportScreen.swift; sourceTree = "<group>"; };
+		CC9C5A4A2AA278B700323B94 /* ImportExportSheetToShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportExportSheetToShow.swift; sourceTree = "<group>"; };
 		CCA704C029D4B63300560FA3 /* Snackbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snackbar.swift; sourceTree = "<group>"; };
 		CCA704C329D4B67100560FA3 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		CCA704C629D4B69B00560FA3 /* SnackbarData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnackbarData.swift; sourceTree = "<group>"; };
@@ -126,7 +130,7 @@
 		CCA704D729D60F4200560FA3 /* NoFeedsSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFeedsSourceView.swift; sourceTree = "<group>"; };
 		CCA704D929D60FA600560FA3 /* FeedItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItemView.swift; sourceTree = "<group>"; };
 		CCA704DB29D6143400560FA3 /* FeedListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListView.swift; sourceTree = "<group>"; };
-		CCA704E429D625E200560FA3 /* SheetToShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetToShow.swift; sourceTree = "<group>"; };
+		CCA704E429D625E200560FA3 /* HomeSheetToShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSheetToShow.swift; sourceTree = "<group>"; };
 		CCA704E629D626D400560FA3 /* FilePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePickerController.swift; sourceTree = "<group>"; };
 		CCC86B4329D8C44400AEABB9 /* SheetPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPage.swift; sourceTree = "<group>"; };
 		CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -257,6 +261,15 @@
 			path = Feeds;
 			sourceTree = "<group>";
 		};
+		CC9C5A472AA254E300323B94 /* ImportExport */ = {
+			isa = PBXGroup;
+			children = (
+				CC9C5A482AA254F800323B94 /* ImportExportScreen.swift */,
+				CC9C5A4A2AA278B700323B94 /* ImportExportSheetToShow.swift */,
+			);
+			path = ImportExport;
+			sourceTree = "<group>";
+		};
 		CCA704BE29D4B61C00560FA3 /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -337,6 +350,7 @@
 		CCA704DD29D6225B00560FA3 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				CC9C5A472AA254E300323B94 /* ImportExport */,
 				CC6E68352A6C1D37009F4A3C /* About */,
 				CC7B9D2929D8C4F40026985C /* Feeds */,
 				CC7B9D2829D8C4EC0026985C /* AddFeed */,
@@ -351,7 +365,7 @@
 		CCA704E329D6251D00560FA3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				CCA704E429D625E200560FA3 /* SheetToShow.swift */,
+				CCA704E429D625E200560FA3 /* HomeSheetToShow.swift */,
 				CCC86B4329D8C44400AEABB9 /* SheetPage.swift */,
 			);
 			path = Model;
@@ -537,7 +551,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint --fix && swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint --fix && swiftlint #TODO: fix\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
 		};
 		CCEA11BF2A6D2C6600C661AC /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -592,11 +606,13 @@
 				CCEB9C5829B33F5A0064D14A /* Koin.swift in Sources */,
 				CC6E681F2A5B1429009F4A3C /* ShareSheet.swift in Sources */,
 				CC6E68392A6C1D9A009F4A3C /* HtmlView.swift in Sources */,
+				CC9C5A4B2AA278B700323B94 /* ImportExportSheetToShow.swift in Sources */,
 				CC23293F29D85295005D0E06 /* IosHtmlParser.swift in Sources */,
 				CCA704D129D5A9B600560FA3 /* Colors.swift in Sources */,
 				CC6E68302A6BF100009F4A3C /* AboutScreen.swift in Sources */,
 				CC4B804429DA03460004A0AB /* HomeListIndexHolder.swift in Sources */,
 				CCA704CC29D4B88E00560FA3 /* Spacing.swift in Sources */,
+				CC9C5A492AA254F800323B94 /* ImportExportScreen.swift in Sources */,
 				CCA704DC29D6143400560FA3 /* FeedListView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* FeedFlowApp.swift in Sources */,
 				CCA704DA29D60FA600560FA3 /* FeedItemView.swift in Sources */,
@@ -607,7 +623,7 @@
 				CC323E1629D229AC00138233 /* ObservableViewModel.swift in Sources */,
 				CC6E683B2A6C1DD3009F4A3C /* LicensesScreen.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
-				CCA704E529D625E200560FA3 /* SheetToShow.swift in Sources */,
+				CCA704E529D625E200560FA3 /* HomeSheetToShow.swift in Sources */,
 				CCA704E729D626D400560FA3 /* FilePickerController.swift in Sources */,
 				CCA704D829D60F4300560FA3 /* NoFeedsSourceView.swift in Sources */,
 				CCA704C729D4B69B00560FA3 /* SnackbarData.swift in Sources */,

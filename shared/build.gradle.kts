@@ -52,8 +52,9 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
-                implementation(libs.squareup.sqldelight.runtime)
-                implementation(libs.squareup.sqldelight.coroutine.extensions)
+                implementation(libs.sqldelight.runtime)
+                implementation(libs.sqldelight.coroutine.extensions)
+                implementation(libs.sqldelight.primitive.adapter)
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
@@ -100,7 +101,7 @@ kotlin {
             dependsOn(commonMobileMain)
 
             dependencies {
-                implementation(libs.squareup.sqldelight.android.driver)
+                implementation(libs.sqldelight.android.driver)
                 implementation(libs.androidx.lifecycle.viewModel.ktx)
                 implementation(libs.koin.android)
                 implementation(libs.crashk.ios)
@@ -113,7 +114,7 @@ kotlin {
             dependencies {
                 implementation(libs.junit)
                 implementation(libs.org.robolectric)
-                implementation(libs.squareup.sqldelight.sqlite.driver)
+                implementation(libs.sqldelight.sqlite.driver)
                 implementation(libs.androidx.test.core.ktx)
             }
         }
@@ -128,7 +129,7 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
 
             dependencies {
-                implementation(libs.squareup.sqldelight.native.driver)
+                implementation(libs.sqldelight.native.driver)
 
                 api(libs.touchlab.kermit.simple)
             }
@@ -143,7 +144,7 @@ kotlin {
             iosSimulatorArm64Test.dependsOn(this)
 
             dependencies {
-                implementation(libs.squareup.sqldelight.native.driver)
+                implementation(libs.sqldelight.native.driver)
             }
         }
 
@@ -151,7 +152,7 @@ kotlin {
             dependsOn(commonJvmAndroidMain)
 
             dependencies {
-                implementation(libs.squareup.sqldelight.sqlite.driver)
+                implementation(libs.sqldelight.sqlite.driver)
                 implementation(libs.kotlinx.coroutines.swing)
                 api(libs.sentry)
             }
@@ -164,11 +165,13 @@ kotlin {
 }
 
 sqldelight {
-    database("FeedFlowDB") {
-        packageName = "com.prof18.feedflow.db"
-        schemaOutputDirectory = file("src/commonMain/sqldelight/com/prof18/feedflow/schema")
+    databases {
+        create("FeedFlowDB") {
+            packageName.set("com.prof18.feedflow.db")
+            schemaOutputDirectory.set(file("src/commonMain/sqldelight/com/prof18/feedflow/schema"))
 
-        verifyMigrations = true
+            verifyMigrations.set(true)
+        }
     }
 }
 

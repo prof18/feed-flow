@@ -18,6 +18,7 @@ import com.prof18.feedflow.presentation.ImportExportViewModel
 import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.definition.Definition
@@ -63,7 +64,7 @@ private val coreModule = module {
     single {
         DatabaseHelper(
             sqlDriver = get(),
-            backgroundDispatcher = Dispatchers.Default,
+            backgroundDispatcher = Dispatchers.IO,
             logger = getWith("DatabaseHelper"),
         )
     }

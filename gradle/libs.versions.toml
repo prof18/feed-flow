@@ -28,7 +28,7 @@ viewModel-compose = "2.6.1"
 lifecycle-runtime-compose = "2.6.1"
 kotlinx-serialization = "1.5.1"
 org-robolectric = "4.9"
-sqlDelight = "1.5.5"
+sql-delight = "2.0.0"
 rss-parser = "6.0.0"
 kotlinx-date-time = "0.4.0"
 accompanist = "0.28.0"
@@ -82,11 +82,12 @@ touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "
 touchlab-kermit-crashlytics = { module = "co.touchlab:kermit-crashlytics", version.ref = "kermit" }
 touchlab-kermit-test = { module = "co.touchlab:kermit-test", version.ref = "kermit" }
 org-robolectric = { module = "org.robolectric:robolectric", version.ref = "org-robolectric" }
-squareup-sqldelight-android-driver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
-squareup-sqldelight-coroutine-extensions = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
-squareup-sqldelight-native-driver = { module = "com.squareup.sqldelight:native-driver", version.ref = "sqlDelight" }
-squareup-sqldelight-runtime = { module = "com.squareup.sqldelight:runtime", version.ref = "sqlDelight" }
-squareup-sqldelight-sqlite-driver = { module = "com.squareup.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
+sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sql-delight" }
+sqldelight-coroutine-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sql-delight" }
+sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sql-delight" }
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sql-delight" }
+sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql-delight" }
+sqldelight-primitive-adapter = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sql-delight" }
 com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref = "rss-parser" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
@@ -121,7 +122,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 versionsBenManes = { id = "com.github.ben-manes.versions", version.ref = "versions-ben-manes" }
 native-coroutines = { id = "com.rickclephas.kmp.nativecoroutines", version.ref = "native-coroutines" }
-sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sql-delight" }
 triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

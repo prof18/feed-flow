@@ -1,3 +1,5 @@
+import kotlin.Int;
+
 CREATE TABLE feed_source (
     url_hash INTEGER AS Int NOT NULL PRIMARY KEY,
     url TEXT NOT NULL,

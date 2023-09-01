@@ -1,6 +1,4 @@
-package com.prof18.feedflow.presentation.model
-
-import com.prof18.feedflow.core.model.ParsedFeedSource
+package com.prof18.feedflow.core.model
 
 sealed interface FeedImportExportState {
 

@@ -1,11 +1,11 @@
 package com.prof18.feedflow.presentation
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.opml.OpmlInput
 import com.prof18.feedflow.domain.opml.OpmlOutput
-import com.prof18.feedflow.presentation.model.FeedImportExportState
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

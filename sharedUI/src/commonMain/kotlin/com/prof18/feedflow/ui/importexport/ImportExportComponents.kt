@@ -16,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.ui.settings.SettingsDivider
 import com.prof18.feedflow.ui.settings.SettingsMenuItem
@@ -31,8 +33,65 @@ import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
+fun ImportExportContent(
+    feedImportExportState: FeedImportExportState,
+    navigateBack: () -> Unit,
+    onRetryClick: () -> Unit,
+    onDoneClick: () -> Unit,
+    onImportClick: () -> Unit,
+    onExportClick: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            ImportExportNavBar(navigateBack)
+        },
+    ) { paddingValues ->
+        when (feedImportExportState) {
+            is FeedImportExportState.Idle ->
+                ImportExportIdleView(
+                    modifier = Modifier.padding(paddingValues),
+                    onImportClick = onImportClick,
+                    onExportClick = onExportClick,
+                )
+
+            FeedImportExportState.Error ->
+                ImportExportErrorView(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                    onRetryClick = onRetryClick,
+                )
+
+            FeedImportExportState.Loading ->
+                ImportExportLoadingView(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                )
+
+            FeedImportExportState.ExportSuccess ->
+                ExportDoneView(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                    onDoneClick = onDoneClick,
+                )
+
+            is FeedImportExportState.ImportSuccess ->
+                ImportDoneView(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                    feedSources = feedImportExportState.notValidFeedSources,
+                    onDoneClick = onDoneClick,
+                )
+        }
+    }
+}
+
+@Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ImportExportNavBar(navigateBack: () -> Unit) {
+private fun ImportExportNavBar(navigateBack: () -> Unit) {
     TopAppBar(
         title = {
             Text(
@@ -55,7 +114,7 @@ fun ImportExportNavBar(navigateBack: () -> Unit) {
 }
 
 @Composable
-fun ImportExportIdleView(
+private fun ImportExportIdleView(
     modifier: Modifier = Modifier,
     onImportClick: () -> Unit,
     onExportClick: () -> Unit,
@@ -88,7 +147,7 @@ fun ImportExportIdleView(
 }
 
 @Composable
-fun ImportExportLoadingView(
+private fun ImportExportLoadingView(
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -108,7 +167,7 @@ fun ImportExportLoadingView(
 }
 
 @Composable
-fun ImportExportErrorView(
+private fun ImportExportErrorView(
     modifier: Modifier = Modifier,
     onRetryClick: () -> Unit,
 ) {
@@ -133,7 +192,7 @@ fun ImportExportErrorView(
 }
 
 @Composable
-fun ExportDoneView(
+private fun ExportDoneView(
     modifier: Modifier = Modifier,
     onDoneClick: () -> Unit,
 ) {
@@ -157,10 +216,8 @@ fun ExportDoneView(
     }
 }
 
-
-
 @Composable
-fun ImportDoneView(
+private fun ImportDoneView(
     modifier: Modifier = Modifier,
     feedSources: List<ParsedFeedSource>,
     onDoneClick: () -> Unit,
@@ -229,7 +286,6 @@ fun ImportDoneView(
                     }
                 }
             }
-
 
             Button(
                 modifier = Modifier

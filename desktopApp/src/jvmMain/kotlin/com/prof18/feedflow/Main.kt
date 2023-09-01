@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.Window
@@ -39,11 +40,10 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.prof18.feedflow.about.AboutContent
 import com.prof18.feedflow.di.DI
-import com.prof18.feedflow.domain.opml.OpmlInput
-import com.prof18.feedflow.domain.opml.OpmlOutput
 import com.prof18.feedflow.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.home.FeedFlowMenuBar
 import com.prof18.feedflow.home.HomeScreen
+import com.prof18.feedflow.importexport.ImportExportScreen
 import com.prof18.feedflow.navigation.ChildStack
 import com.prof18.feedflow.navigation.ProvideComponentContext
 import com.prof18.feedflow.navigation.Screen
@@ -165,11 +165,8 @@ fun main() = application {
             onMarkAllReadClick = {
                 homeViewModel.markAllRead()
             },
-            onImportOPMLCLick = { file ->
-                settingsViewModel.importFeed(OpmlInput(file))
-            },
-            onExportOPMLClick = { file ->
-                settingsViewModel.exportFeed(OpmlOutput(file))
+            onImportExportClick = {
+                navigation.push(Screen.ImportExport)
             },
             onFeedsListClick = {
                 navigation.push(Screen.FeedList)
@@ -197,6 +194,7 @@ fun main() = application {
             navigation = navigation,
             homeViewModel = homeViewModel,
             listState = listState,
+            window = window,
         )
     }
 }
@@ -208,6 +206,7 @@ private fun MainContent(
     navigation: StackNavigation<Screen>,
     homeViewModel: HomeViewModel,
     listState: LazyListState,
+    window: ComposeWindow,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         FeedFlowTheme {
@@ -232,7 +231,20 @@ private fun MainContent(
                                     },
                                 )
 
-                                is Screen.FeedList -> FeedSourceListScreen(navigateBack = { navigation.pop() })
+                                is Screen.FeedList ->
+                                    FeedSourceListScreen(
+                                        navigateBack = {
+                                            navigation.pop()
+                                        },
+                                    )
+
+                                is Screen.ImportExport ->
+                                    ImportExportScreen(
+                                        composeWindow = window,
+                                        navigateBack = {
+                                            navigation.pop()
+                                        },
+                                    )
                             }
                         }
                     }

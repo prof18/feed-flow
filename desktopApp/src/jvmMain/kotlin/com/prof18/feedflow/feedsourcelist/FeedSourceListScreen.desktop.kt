@@ -1,7 +1,6 @@
 package com.prof18.feedflow.feedsourcelist
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -61,7 +60,6 @@ fun FeedSourceListScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FeedSourceListContent(
     feedSources: List<FeedSource>,

@@ -8,10 +8,8 @@
 
 import Foundation
 
-enum SheetToShow: Identifiable {
-    case filePicker
+enum HomeSheetToShow: Identifiable {
     case feedList
-    case shareSheet
 
     var id: Int {
         hashValue

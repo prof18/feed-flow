@@ -11,16 +11,16 @@ import shared
 import KMPNativeCoroutinesAsync
 
 struct AddFeedScreen: View {
-    
+
     @EnvironmentObject var appState: AppState
     @Environment(\.presentationMode) var presentationMode
-    
+
     @State private var feedName = ""
     @State private var feedURL = ""
     @State private var isInvalidUrl = false
-    
+
     @StateObject var addFeedViewModel: AddFeedViewModel = KotlinDependencies.shared.getAddFeedViewModel()
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             TextField(
@@ -30,7 +30,7 @@ struct AddFeedScreen: View {
             .textFieldStyle(RoundedBorderTextFieldStyle())
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.regular)
-            
+
             TextField(
                 MR.strings().feed_url.localized,
                 text: $feedURL
@@ -40,7 +40,7 @@ struct AddFeedScreen: View {
             .textFieldStyle(RoundedBorderTextFieldStyle())
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.regular)
-            
+
             if isInvalidUrl {
                 Text(MR.strings().invalid_rss_url.localized)
                     .padding(.horizontal, Spacing.regular)
@@ -48,10 +48,10 @@ struct AddFeedScreen: View {
                     .font(.caption)
                     .foregroundColor(.red)
             }
-            
+
             HStack {
                 Spacer()
-                
+
                 Button(
                     action: {
                         addFeedViewModel.addFeed()
@@ -63,10 +63,10 @@ struct AddFeedScreen: View {
                 .frame(alignment: .center)
                 .buttonStyle(.bordered)
                 .padding(.top, Spacing.regular)
-                
+
                 Spacer()
             }
-            
+
             Spacer()
         }
         .navigationTitle(MR.strings().add_feed.localized)

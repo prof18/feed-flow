@@ -35,7 +35,7 @@ fun ImportExportScreen(
         feedImportExportState = feedImporterState,
         onDoneClick = navigateBack,
         onRetryClick = {
-            viewModel.clearErrorState()
+            viewModel.clearState()
         },
         onImportClick = {
             val fileChooser = JFileChooser("~").apply {

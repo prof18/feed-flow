@@ -120,7 +120,8 @@ val feedSourcesForPreview = listOf(
 val importExportStates = listOf(
     FeedImportExportState.Idle,
     FeedImportExportState.Error,
-    FeedImportExportState.Loading,
+    FeedImportExportState.LoadingImport,
+    FeedImportExportState.LoadingExport,
     FeedImportExportState.ExportSuccess,
     FeedImportExportState.ImportSuccess(
         notValidFeedSources = emptyList(),

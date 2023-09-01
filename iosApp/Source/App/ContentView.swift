@@ -17,6 +17,9 @@ struct ContentView: View {
                         switch route {
                         case .aboutScreen:
                             AboutScreen()
+
+                        case .importExportScreen:
+                            ImportExportScreen()
                         }
                     }
             }

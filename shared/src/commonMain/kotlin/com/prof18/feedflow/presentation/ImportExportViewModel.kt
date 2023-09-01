@@ -27,7 +27,7 @@ class ImportExportViewModel(
 
     fun importFeed(opmlInput: OpmlInput) {
         scope.launch {
-            importerMutableState.update { FeedImportExportState.Loading }
+            importerMutableState.update { FeedImportExportState.LoadingImport }
             try {
                 val notValidFeedSources = feedManagerRepository.addFeedsFromFile(opmlInput)
                 importerMutableState.update {
@@ -45,7 +45,7 @@ class ImportExportViewModel(
 
     fun exportFeed(opmlOutput: OpmlOutput) {
         scope.launch {
-            importerMutableState.update { FeedImportExportState.Loading }
+            importerMutableState.update { FeedImportExportState.LoadingImport }
             try {
                 feedManagerRepository.exportFeedsAsOpml(opmlOutput)
                 importerMutableState.update { FeedImportExportState.ExportSuccess }
@@ -56,7 +56,15 @@ class ImportExportViewModel(
         }
     }
 
-    fun clearErrorState() {
+    fun clearState() {
         importerMutableState.update { FeedImportExportState.Idle }
+    }
+
+    fun startExport() {
+        importerMutableState.update { FeedImportExportState.LoadingExport }
+    }
+
+    fun reportExportError() {
+        importerMutableState.update { FeedImportExportState.Error }
     }
 }

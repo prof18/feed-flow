@@ -1,5 +1,6 @@
 package com.prof18.feedflow.di
 
+import app.cash.sqldelight.db.SqlDriver
 import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.JvmAndroidDateFormatter
@@ -11,7 +12,6 @@ import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
-import com.squareup.sqldelight.db.SqlDriver
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication

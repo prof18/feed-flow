@@ -1,17 +1,20 @@
 package com.prof18.feedflow.data
 
+import app.cash.sqldelight.Transacter
+import app.cash.sqldelight.TransactionWithoutReturn
+import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.db.Feed_item
+import com.prof18.feedflow.db.Feed_source
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.domain.model.FeedItemId
-import com.squareup.sqldelight.Transacter
-import com.squareup.sqldelight.TransactionWithoutReturn
-import com.squareup.sqldelight.db.SqlDriver
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -27,7 +30,16 @@ internal class DatabaseHelper(
     private val backgroundDispatcher: CoroutineDispatcher,
     private val logger: Logger,
 ) {
-    private val dbRef: FeedFlowDB = FeedFlowDB(sqlDriver)
+    private val dbRef: FeedFlowDB = FeedFlowDB(
+        sqlDriver,
+        feed_itemAdapter = Feed_item.Adapter(
+            url_hashAdapter = IntColumnAdapter,
+            feed_source_idAdapter = IntColumnAdapter,
+        ),
+        feed_sourceAdapter = Feed_source.Adapter(
+            url_hashAdapter = IntColumnAdapter,
+        ),
+    )
 
     suspend fun getFeedSources(): List<FeedSource> = withContext(backgroundDispatcher) {
         dbRef.feedSourceQueries
@@ -50,7 +62,7 @@ internal class DatabaseHelper(
             .catch {
                 logger.e(it) { "Something wrong while getting data from Database" }
             }
-            .mapToList()
+            .mapToList(backgroundDispatcher)
             .map { feedSources ->
                 feedSources.map { feedSource ->
                     FeedSource(
@@ -68,7 +80,7 @@ internal class DatabaseHelper(
         dbRef.feedItemQueries
             .selectFeeds()
             .asFlow()
-            .mapToList()
+            .mapToList(backgroundDispatcher)
             .retry(3) { exception ->
                 exception is NullPointerException
             }

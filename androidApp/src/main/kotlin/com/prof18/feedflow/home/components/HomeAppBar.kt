@@ -66,7 +66,10 @@ internal fun HomeAppBar(
                 },
                 onMarkAllReadClicked = onMarkAllReadClicked,
                 onClearOldArticlesClicked = onClearOldArticlesClicked,
-                onSettingsButtonClicked = onSettingsButtonClicked,
+                onSettingsButtonClicked = {
+                    showMenu = false
+                    onSettingsButtonClicked()
+                },
                 onForceRefreshClick = onForceRefreshClick,
             )
         },

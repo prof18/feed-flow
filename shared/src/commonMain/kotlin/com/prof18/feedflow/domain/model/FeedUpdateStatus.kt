@@ -9,12 +9,12 @@ sealed interface FeedUpdateStatus {
     }
 }
 
-object NoFeedSourcesStatus : FeedUpdateStatus {
+data object NoFeedSourcesStatus : FeedUpdateStatus {
     override val refreshedFeedCount: Int = 0
     override val totalFeedCount: Int = 0
 }
 
-object StartedFeedUpdateStatus : FeedUpdateStatus {
+data object StartedFeedUpdateStatus : FeedUpdateStatus {
     override val refreshedFeedCount: Int = 0
     override val totalFeedCount: Int = 0
 }
@@ -24,7 +24,7 @@ data class InProgressFeedUpdateStatus(
     override val totalFeedCount: Int,
 ) : FeedUpdateStatus
 
-object FinishedFeedUpdateStatus : FeedUpdateStatus {
+data object FinishedFeedUpdateStatus : FeedUpdateStatus {
     override val refreshedFeedCount: Int = 0
     override val totalFeedCount: Int = 0
 }

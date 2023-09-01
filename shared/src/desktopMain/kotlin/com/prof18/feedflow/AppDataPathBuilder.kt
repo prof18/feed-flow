@@ -11,7 +11,6 @@ internal object AppDataPathBuilder {
         System.getProperty("os.name").contains("windows", true) -> {
             "${System.getProperty("user.home")}\\AppData\\Local\\FeedFlow"
         }
-        // TODO: Add linux!
         else -> {
             error("This type OS not implemented")
         }

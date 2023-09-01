@@ -263,39 +263,12 @@ private fun ImportDoneView(
                 style = MaterialTheme.typography.titleMedium,
             )
 
-            LazyColumn(
-                modifier = Modifier
+            FeedsNotAddedList(
+                modifier = Modifier.Companion
                     .weight(1f)
                     .padding(top = Spacing.regular),
-            ) {
-                items(feedSources) { feedSource ->
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(top = Spacing.small)
-                                .padding(horizontal = Spacing.regular),
-                            text = feedSource.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(top = Spacing.xsmall)
-                                .padding(bottom = Spacing.small)
-                                .padding(horizontal = Spacing.regular),
-                            text = feedSource.url,
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-
-                        Divider(
-                            modifier = Modifier,
-                            thickness = 0.2.dp,
-                            color = Color.Gray,
-                        )
-                    }
-                }
-            }
+                feedSources = feedSources,
+            )
 
             Button(
                 modifier = Modifier
@@ -304,6 +277,44 @@ private fun ImportDoneView(
                 onClick = onDoneClick,
             ) {
                 Text(stringResource(resource = MR.strings.done_button))
+            }
+        }
+    }
+}
+
+@Composable
+private fun FeedsNotAddedList(
+    modifier: Modifier = Modifier,
+    feedSources: List<ParsedFeedSource>,
+) {
+    LazyColumn(
+        modifier = modifier,
+    ) {
+        items(feedSources) { feedSource ->
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.small)
+                        .padding(horizontal = Spacing.regular),
+                    text = feedSource.title,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.xsmall)
+                        .padding(bottom = Spacing.small)
+                        .padding(horizontal = Spacing.regular),
+                    text = feedSource.url,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+
+                Divider(
+                    modifier = Modifier,
+                    thickness = 0.2.dp,
+                    color = Color.Gray,
+                )
             }
         }
     }

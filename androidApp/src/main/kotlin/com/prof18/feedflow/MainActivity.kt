@@ -54,6 +54,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Suppress("LongMethod")
     @Composable
     private fun FeedFlowNavigation(navController: NavHostController) {
         NavHost(navController = navController, startDestination = Screen.Home.name) {

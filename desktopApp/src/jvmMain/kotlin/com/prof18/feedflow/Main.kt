@@ -2,6 +2,7 @@ package com.prof18.feedflow
 
 import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.ScrollbarStyle
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -13,6 +14,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,11 +48,14 @@ import com.prof18.feedflow.navigation.ChildStack
 import com.prof18.feedflow.navigation.ProvideComponentContext
 import com.prof18.feedflow.navigation.Screen
 import com.prof18.feedflow.presentation.HomeViewModel
+import com.prof18.feedflow.ui.components.NewVersionBanner
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.rememberDesktopDarkTheme
 import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.UserFeedbackReporter
 import com.prof18.feedflow.utils.initSentry
+import com.prof18.feedflow.versionchecker.NewVersionChecker
+import com.prof18.feedflow.versionchecker.NewVersionState
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import java.io.InputStream
@@ -102,11 +107,18 @@ fun main() = application {
     LifecycleController(lifecycle, windowState)
 
     val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
+    val newVersionChecker = DI.koin.get<NewVersionChecker>()
 
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val newVersionState by newVersionChecker.newVersionState.collectAsState()
+
+    scope.launch {
+        newVersionChecker.notifyIfNewVersionIsAvailable()
+    }
 
     Window(
         onCloseRequest = ::exitApplication,
@@ -168,6 +180,10 @@ fun main() = application {
             homeViewModel = homeViewModel,
             listState = listState,
             window = window,
+            newVersionState = newVersionState,
+            onCloseDownloadBannerClick = {
+                newVersionChecker.clearNewVersionState()
+            },
         )
     }
 }
@@ -180,6 +196,8 @@ private fun MainContent(
     homeViewModel: HomeViewModel,
     listState: LazyListState,
     window: ComposeWindow,
+    newVersionState: NewVersionState,
+    onCloseDownloadBannerClick: () -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         FeedFlowTheme {
@@ -195,14 +213,27 @@ private fun MainContent(
                             animation = stackAnimation(fade() + scale()),
                         ) { screen ->
                             when (screen) {
-                                is Screen.Home -> HomeScreen(
-                                    paddingValues = paddingValues,
-                                    homeViewModel = homeViewModel,
-                                    listState = listState,
-                                    onAddFeedClick = {
-                                        navigation.push(Screen.FeedList)
-                                    },
-                                )
+                                is Screen.Home -> {
+                                    Column {
+                                        if (newVersionState is NewVersionState.NewVersion) {
+                                            NewVersionBanner(
+                                                onDownloadLinkClick = {
+                                                    openInBrowser(newVersionState.downloadLink)
+                                                },
+                                                onCloseClick = onCloseDownloadBannerClick,
+                                            )
+                                        }
+
+                                        HomeScreen(
+                                            paddingValues = paddingValues,
+                                            homeViewModel = homeViewModel,
+                                            listState = listState,
+                                            onAddFeedClick = {
+                                                navigation.push(Screen.FeedList)
+                                            },
+                                        )
+                                    }
+                                }
 
                                 is Screen.FeedList ->
                                     FeedSourceListScreen(

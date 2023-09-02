@@ -24,9 +24,10 @@ import java.util.prefs.Preferences
 
 fun initKoinDesktop(
     appEnvironment: AppEnvironment,
+    modules: List<Module>,
 ): KoinApplication = initKoin(
     appEnvironment = appEnvironment,
-    modules = listOf(),
+    modules = modules,
 )
 
 internal actual inline fun <reified T : BaseViewModel> Module.viewModel(

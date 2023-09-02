@@ -11,7 +11,6 @@ plugins {
 group = "com.prof18"
 version = "1.0-SNAPSHOT"
 
-
 kotlin {
     jvm {
         jvmToolchain(17)
@@ -34,9 +33,8 @@ kotlin {
                 implementation(libs.compose.image.loader)
                 implementation(libs.moko.resourcesCompose)
                 implementation(libs.bundles.about.libraries)
-
-                implementation("org.slf4j:slf4j-nop:2.0.6")
-
+                implementation(libs.jsoup)
+                implementation(libs.slf4j.nop)
             }
         }
         val jvmTest by getting
@@ -52,9 +50,9 @@ compose {
 //            obfuscate.set(true)
 //        }
 //
-        buildTypes.release.proguard {
-            configurationFiles.from(project.file("compose-desktop.pro"))
-        }
+            buildTypes.release.proguard {
+                configurationFiles.from(project.file("compose-desktop.pro"))
+            }
 
             nativeDistributions {
 

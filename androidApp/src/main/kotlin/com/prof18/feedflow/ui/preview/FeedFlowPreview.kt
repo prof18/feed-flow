@@ -7,6 +7,8 @@ import androidx.compose.ui.tooling.preview.Preview
 @Preview(
     name = "Light theme",
     group = "themes",
+    backgroundColor = 0xFFFFFFFF,
+    showBackground = true,
 )
 @Preview(
     name = "Dark theme",

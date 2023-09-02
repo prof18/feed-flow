@@ -99,6 +99,8 @@ fun FeedItemView(
             .padding(vertical = Spacing.small),
     ) {
         Text(
+            modifier = Modifier
+                .padding(bottom = Spacing.small),
             text = feedItem.feedSource.title,
             style = MaterialTheme.typography.bodySmall,
         )
@@ -144,8 +146,7 @@ private fun TitleSubtitleAndImageRow(
                 .weight(1f),
         ) {
             Text(
-                modifier = Modifier
-                    .padding(top = Spacing.small),
+
                 text = feedItem.title,
                 style = MaterialTheme.typography.titleSmall,
             )

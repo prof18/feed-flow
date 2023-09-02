@@ -19,7 +19,7 @@ val feedItemsForPreview = listOf(
         feedSource = FeedSource(
             id = 1,
             url = "https://www.ilpost.it",
-            title = "Il Post",
+            title = "Windows Central - News, Forums, Reviews, Help for Windows",
             lastSyncTimestamp = null,
         ),
         isRead = false,

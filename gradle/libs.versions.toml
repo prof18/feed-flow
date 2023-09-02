@@ -21,6 +21,7 @@ koin-android = "3.4.2"
 koin-compose = "3.4.5"
 kotlin = "1.9.0"
 nav-compose = "2.7.1"
+slf4jNop = "2.0.6"
 turbine = "1.0.0"
 versions-ben-manes = "0.44.0"
 viewModel-ktx = "2.6.1"
@@ -77,6 +78,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4jNop" }
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "kermit" }
 touchlab-kermit-crashlytics = { module = "co.touchlab:kermit-crashlytics", version.ref = "kermit" }

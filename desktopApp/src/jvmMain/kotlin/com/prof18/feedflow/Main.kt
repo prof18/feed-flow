@@ -158,6 +158,7 @@ fun main() = application {
                     homeViewModel.forceFeedRefresh()
                 }
             },
+            showDebugMenu = appEnvironment.isDebug(),
         )
 
         MainContent(

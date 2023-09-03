@@ -1,34 +1,39 @@
 package com.prof18.feedflow.domain
 
 import co.touchlab.kermit.Logger
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
+import java.time.format.DateTimeFormatterBuilder
+
 
 internal class JvmAndroidDateFormatter(
     private val logger: Logger,
 ) : DateFormatter {
 
-    private val formatters = listOf(
-        SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.getDefault()),
-        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()),
-        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()),
-        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault()),
-        SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()),
-        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()),
-        SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'Z'", Locale.getDefault()),
-    )
-
-    private fun SimpleDateFormat.parseDateString(dateString: String): DateParsingResult =
-        try {
+    private fun parseDateString(dateString: String): DateParsingResult {
+        val dateTimeFormatterBuilder = DateTimeFormatterBuilder()
+            .append(
+                DateTimeFormatter.ofPattern(
+                    "[EEE, d MMM yyyy HH:mm:ss z]" +
+                            "[EEE, d MMM yyyy HH:mm:ss Z]" +
+                            "[EEE, dd MMM yyyy HH:mm:ss 'Z']" +
+                            "[EEE, dd MMM yyyy HH:mm z]" +
+                            "[yyyy-MM-dd'T'HH:mm:ss.SSSXXX]" +
+                            "[yyyy-MM-dd'T'HH:mm:ss.SSS'Z']" +
+                            "[yyyy-MM-dd'T'HH:mm:ssXXX]" +
+                            "[yyyy-MM-dd'T'HH:mm:ss'Z']" +
+                            "[yyyy-MM-dd'T'HH:mm:ss]" +
+                            "[yyyy-MM-dd'T'HH:mm:ss.SSSZ]" +
+                            "[dd MMM yyyy HH:mm:ss Z]"
+                )
+            )
+        val dateTimeFormatter = dateTimeFormatterBuilder.toFormatter()
+        return try {
+            LocalDateTime.parse(dateString, dateTimeFormatter)
             DateParsingResult.Parsed(
-                date = requireNotNull(
-                    this.parse(dateString),
-                ),
+                date = LocalDateTime.parse(dateString, dateTimeFormatter),
             )
         } catch (e: Throwable) {
             DateParsingResult.ParsingError(
@@ -36,28 +41,19 @@ internal class JvmAndroidDateFormatter(
                 message = "Error while trying to format the date with dateFormatter. Date: $dateString",
             )
         }
+    }
 
     override fun getDateMillisFromString(dateString: String): Long? {
-        var exception: Throwable? = null
-        var message: String? = null
-
-        for (formatter in formatters) {
-            val parseResult = formatter.parseDateString(dateString)
-            if (parseResult is DateParsingResult.Parsed) {
-                return parseResult.date.time
-            } else {
-                exception = (parseResult as DateParsingResult.ParsingError).exception
-                message = parseResult.message
-            }
-        }
-
-        val logMessage = message
-        if (exception != null && logMessage != null) {
+        val parseResult = parseDateString(dateString)
+        return if (parseResult is DateParsingResult.Parsed) {
+            parseResult.date.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000;
+        } else {
+            val exception = (parseResult as DateParsingResult.ParsingError).exception
             logger.e(exception) {
-                logMessage
+                parseResult.message
             }
+            null
         }
-        return null
     }
 
     override fun formatDate(millis: Long): String {
@@ -80,7 +76,7 @@ internal class JvmAndroidDateFormatter(
 
     private sealed class DateParsingResult {
         data class Parsed(
-            val date: Date,
+            val date: LocalDateTime,
         ) : DateParsingResult()
 
         data class ParsingError(

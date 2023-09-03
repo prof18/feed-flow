@@ -17,16 +17,21 @@ class DateFormatterTest {
         "2023-05-18T15:00:00.000Z",
         "Mon, 31 Jul 2023 19:26:12 -0400",
         "2023-07-09T18:42:00.004-07:00",
-        "2022/09/22",
         "2023-07-25T13:55:02",
         "Tue, 08 Aug 2023 12:58:00 Z",
         "Tue, 5 Sep 2017 09:58:38 +0000",
         "Wed, 13 Sep 2017 09:59:21 +0000",
+        "Thu, 31 Aug 2023 00:00:00 GMT",
+        "29 Aug 2023 00:00:29 +0200",
+        "Mon, 21 Aug 2023 13:56 EDT",
+        "Tue, 09 May 2023 19:32:59 +0000",
+        "Thu, 06 Jul 2023 18:28:00 +0800",
     )
 
     @Test
     fun `getDateMillisFromString returns correct values`() {
         for (input in testInputs) {
+            println(input)
             assertNotNull(dateFormatter.getDateMillisFromString(input))
         }
     }

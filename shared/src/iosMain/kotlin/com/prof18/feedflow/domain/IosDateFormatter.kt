@@ -20,25 +20,35 @@ internal class IosDateFormatter(
     }
 
     private val patterns = listOf(
-        "E, d MMM yyyy HH:mm:ss Z",
-        "E, d MMM yyyy HH:mm:ss zzz",
+        "E, dd MMM yyyy HH:mm:ss Z",
+        "E, dd MMM yyyy HH:mm:ss z",
+        "E, dd MMM yyyy HH:mm:ss zzz",
+        "E, dd MMM yyyy HH:mm zzz",
         "yyyy-MM-dd'T'HH:mm:ssXXX",
         "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
         "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
-        "yyyy/MM/dd",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ",
+        "yyyy-MM-dd'T'HH:mm:ssZZZZZ",
         "yyyy-MM-dd'T'HH:mm:ss",
+        "yyyy-MM-dd'T'HH:mm:ss'Z'",
+        "yyyy/MM/dd",
+        "dd MMM yyyy HH:mm:ss Z",
     )
 
     private val articleDateFormatter = NSDateFormatter().apply {
         setLocale(NSLocale.currentLocale)
     }
 
-    private fun NSDateFormatter.parseDateString(dateString: String): DateParsingResult =
-        try {
+    private fun NSDateFormatter.parseDateString(dateString: String): DateParsingResult {
+        val formattedDate = this.dateFromString(dateString.trim())
+            ?: return DateParsingResult.ParsingError(
+                exception = NullPointerException(),
+                message = "The formatted date is null. Date: $dateString",
+            )
+        return try {
             DateParsingResult.Parsed(
-                date = requireNotNull(
-                    this.dateFromString(dateString),
-                ),
+                date = formattedDate,
             )
         } catch (e: Throwable) {
             DateParsingResult.ParsingError(
@@ -46,6 +56,7 @@ internal class IosDateFormatter(
                 message = "Error while trying to format the date with dateFormatter. Date: $dateString",
             )
         }
+    }
 
     override fun getDateMillisFromString(dateString: String): Long? {
         var exception: Throwable? = null

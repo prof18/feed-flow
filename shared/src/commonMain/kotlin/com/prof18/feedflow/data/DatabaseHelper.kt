@@ -162,6 +162,11 @@ internal class DatabaseHelper(
             dbRef.feedSourceQueries.deleteFeedSource(feedSource.id)
         }
 
+    fun deleteAllFeeds() =
+        dbRef.transaction {
+            dbRef.feedItemQueries.deleteAll()
+        }
+
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,

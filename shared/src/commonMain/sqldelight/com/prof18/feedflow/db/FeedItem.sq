@@ -44,3 +44,7 @@ WHERE is_read = 0;
 clearOldItems:
 DELETE FROM feed_item
 WHERE pub_date < :threshold;
+
+
+deleteAll:
+DELETE FROM feed_item;

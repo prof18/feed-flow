@@ -266,6 +266,20 @@ struct HomeContent: View {
                             }
                         )
 
+                        #if DEBUG
+                        Button(
+                            action: {
+                                KotlinDependencies.shared.getFeedManagerRepository().deleteAllFeeds()
+                            },
+                            label: {
+                                Label(
+                                    "Delete Database",
+                                    systemImage: "trash"
+                                )
+                            }
+                        )
+                        #endif
+
                         NavigationLink(value: Route.aboutScreen) {
                             Label(
                                 MR.strings().about_button.localized,

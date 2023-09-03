@@ -110,4 +110,8 @@ internal class FeedManagerRepositoryImpl(
             false
         }
     }
+
+    override fun deleteAllFeeds() {
+        databaseHelper.deleteAllFeeds()
+    }
 }

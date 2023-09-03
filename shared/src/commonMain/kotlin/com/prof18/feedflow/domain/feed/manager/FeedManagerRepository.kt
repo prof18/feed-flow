@@ -29,4 +29,5 @@ interface FeedManagerRepository {
     suspend fun deleteFeed(feedSource: FeedSource)
     fun getFavouriteBrowserId(): String?
     fun setFavouriteBrowser(browser: Browser)
+    fun deleteAllFeeds()
 }

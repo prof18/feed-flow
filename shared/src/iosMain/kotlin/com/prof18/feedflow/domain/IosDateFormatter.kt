@@ -43,7 +43,7 @@ internal class IosDateFormatter(
     private fun NSDateFormatter.parseDateString(dateString: String): DateParsingResult {
         val formattedDate = this.dateFromString(dateString.trim())
             ?: return DateParsingResult.ParsingError(
-                exception = NullPointerException(),
+                exception = NullPointerException("The formatted date is null. Date: $dateString"),
                 message = "The formatted date is null. Date: $dateString",
             )
         return try {

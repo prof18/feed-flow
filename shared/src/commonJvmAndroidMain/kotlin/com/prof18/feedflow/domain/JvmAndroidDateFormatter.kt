@@ -7,7 +7,6 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 
-
 internal class JvmAndroidDateFormatter(
     private val logger: Logger,
 ) : DateFormatter {
@@ -17,17 +16,17 @@ internal class JvmAndroidDateFormatter(
             .append(
                 DateTimeFormatter.ofPattern(
                     "[EEE, d MMM yyyy HH:mm:ss z]" +
-                            "[EEE, d MMM yyyy HH:mm:ss Z]" +
-                            "[EEE, dd MMM yyyy HH:mm:ss 'Z']" +
-                            "[EEE, dd MMM yyyy HH:mm z]" +
-                            "[yyyy-MM-dd'T'HH:mm:ss.SSSXXX]" +
-                            "[yyyy-MM-dd'T'HH:mm:ss.SSS'Z']" +
-                            "[yyyy-MM-dd'T'HH:mm:ssXXX]" +
-                            "[yyyy-MM-dd'T'HH:mm:ss'Z']" +
-                            "[yyyy-MM-dd'T'HH:mm:ss]" +
-                            "[yyyy-MM-dd'T'HH:mm:ss.SSSZ]" +
-                            "[dd MMM yyyy HH:mm:ss Z]"
-                )
+                        "[EEE, d MMM yyyy HH:mm:ss Z]" +
+                        "[EEE, dd MMM yyyy HH:mm:ss 'Z']" +
+                        "[EEE, dd MMM yyyy HH:mm z]" +
+                        "[yyyy-MM-dd'T'HH:mm:ss.SSSXXX]" +
+                        "[yyyy-MM-dd'T'HH:mm:ss.SSS'Z']" +
+                        "[yyyy-MM-dd'T'HH:mm:ssXXX]" +
+                        "[yyyy-MM-dd'T'HH:mm:ss'Z']" +
+                        "[yyyy-MM-dd'T'HH:mm:ss]" +
+                        "[yyyy-MM-dd'T'HH:mm:ss.SSSZ]" +
+                        "[dd MMM yyyy HH:mm:ss Z]",
+                ),
             )
         val dateTimeFormatter = dateTimeFormatterBuilder.toFormatter()
         return try {
@@ -43,10 +42,11 @@ internal class JvmAndroidDateFormatter(
         }
     }
 
+    @Suppress("MagicNumber")
     override fun getDateMillisFromString(dateString: String): Long? {
         val parseResult = parseDateString(dateString)
         return if (parseResult is DateParsingResult.Parsed) {
-            parseResult.date.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000;
+            parseResult.date.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
         } else {
             val exception = (parseResult as DateParsingResult.ParsingError).exception
             logger.e(exception) {

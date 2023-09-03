@@ -5,6 +5,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
+import androidx.compose.ui.window.MenuScope
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.di.DI
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
@@ -82,16 +83,21 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onClick = onAboutClick,
             )
 
-            if (showDebugMenu) {
-                Separator()
-
-                Item(
-                    text = "Delete all feeds",
-                    onClick = {
-                        DI.koin.get<FeedManagerRepository>().deleteAllFeeds()
-                    },
-                )
-            }
+            DebugMenu(showDebugMenu)
         }
+    }
+}
+
+@Composable
+private fun MenuScope.DebugMenu(showDebugMenu: Boolean) {
+    if (showDebugMenu) {
+        Separator()
+
+        Item(
+            text = "Delete all feeds",
+            onClick = {
+                DI.koin.get<FeedManagerRepository>().deleteAllFeeds()
+            },
+        )
     }
 }

@@ -35,7 +35,7 @@ kotlin {
                 implementation(libs.moko.resourcesCompose)
                 implementation(libs.bundles.about.libraries)
 
-                implementation("org.slf4j:slf4j-nop:2.0.6")
+                implementation("org.slf4j:slf4j-nop:2.0.9")
 
             }
         }

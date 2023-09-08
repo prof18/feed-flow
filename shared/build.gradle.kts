@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
@@ -40,6 +42,16 @@ kotlin {
                     "-linker-option", "-framework", "-linker-option", "CoreText",
                     "-linker-option", "-framework", "-linker-option", "CoreGraphics",
                 )
+            }
+        }
+    }
+
+    targets.withType<KotlinNativeTarget>().configureEach {
+        compilations.configureEach {
+            compilerOptions.configure {
+                // Try out preview custom allocator in K/N 1.9
+                // https://kotlinlang.org/docs/whatsnew19.html#preview-of-custom-memory-allocator
+                freeCompilerArgs.add("-Xallocator=custom")
             }
         }
     }

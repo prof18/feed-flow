@@ -15,11 +15,11 @@ struct EmptyFeedView: View {
 
     var body: some View {
         VStack {
-            Text(MR.strings().empty_feed_message.localized)
+            Text(localizer.empty_feed_message.localized)
                 .font(.body)
 
             Button(
-                MR.strings().refresh_feeds.localized,
+                localizer.refresh_feeds.localized,
                 action: {
                     onReloadClick()
                 }

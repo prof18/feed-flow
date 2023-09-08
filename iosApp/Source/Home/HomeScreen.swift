@@ -118,7 +118,7 @@ struct HomeScreen: View {
     private func emitGenericError() {
         self.appState.snackbarQueue.append(
             SnackbarData(
-                title: MR.strings().generic_error_message.localized,
+                title: localizer.generic_error_message.localized,
                 subtitle: nil,
                 showBanner: true
             )
@@ -162,7 +162,7 @@ struct HomeContent: View {
             )
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("\(MR.strings().app_name.localized) (\(unreadCount))")
+                    Text("\(localizer.app_name.localized) (\(unreadCount))")
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
                         .onTapGesture(count: 2) {
@@ -186,7 +186,7 @@ struct HomeContent: View {
                             },
                             label: {
                                 Label(
-                                    MR.strings().mark_all_read_button.localized,
+                                    localizer.mark_all_read_button.localized,
                                     systemImage: "checkmark"
                                 )
                             }
@@ -198,7 +198,7 @@ struct HomeContent: View {
                             },
                             label: {
                                 Label(
-                                    MR.strings().clear_old_articles_button.localized,
+                                    localizer.clear_old_articles_button.localized,
                                     systemImage: "trash"
                                 )
                             }
@@ -210,7 +210,7 @@ struct HomeContent: View {
                             },
                             label: {
                                 Label(
-                                    MR.strings().force_feed_refresh.localized,
+                                    localizer.force_feed_refresh.localized,
                                     systemImage: "arrow.clockwise"
                                 )
                             }
@@ -222,7 +222,7 @@ struct HomeContent: View {
                             },
                             label: {
                                 Label(
-                                    MR.strings().feeds_title.localized,
+                                    localizer.feeds_title.localized,
                                     systemImage: "list.bullet.rectangle.portrait"
                                 )
                             }
@@ -231,7 +231,7 @@ struct HomeContent: View {
                         Menu {
                             Picker(
                                 selection: $browserSelector.selectedBrowser,
-                                label: Text(MR.strings().browser_selection_button.localized)
+                                label: Text(localizer.browser_selection_button.localized)
                             ) {
                                 ForEach(browserSelector.browsers, id: \.self) { period in
                                     Text(period.name).tag(period as Browser?)
@@ -240,14 +240,14 @@ struct HomeContent: View {
                         }
                     label: {
                         Label(
-                            MR.strings().browser_selection_button.localized,
+                            localizer.browser_selection_button.localized,
                             systemImage: "globe"
                         )
                     }
 
                         NavigationLink(value: Route.importExportScreen) {
                             Label(
-                                MR.strings().import_export_opml.localized,
+                                localizer.import_export_opml.localized,
                                 systemImage: "arrow.up.arrow.down"
                             )
                         }
@@ -260,7 +260,7 @@ struct HomeContent: View {
                             },
                             label: {
                                 Label(
-                                    MR.strings().report_issue_button.localized,
+                                    localizer.report_issue_button.localized,
                                     systemImage: "ladybug"
                                 )
                             }
@@ -282,7 +282,7 @@ struct HomeContent: View {
 
                         NavigationLink(value: Route.aboutScreen) {
                             Label(
-                                MR.strings().about_button.localized,
+                                localizer.about_button.localized,
                                 systemImage: "info.circle"
                             )
                         }

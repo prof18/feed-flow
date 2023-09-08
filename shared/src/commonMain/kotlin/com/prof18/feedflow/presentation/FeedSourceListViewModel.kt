@@ -22,7 +22,7 @@ class FeedSourceListViewModel(
 
     init {
         scope.launch {
-            feedManagerRepository.getFeeds().collect { feeds ->
+            feedManagerRepository.getFeedSources().collect { feeds ->
                 feedsMutableState.update { feeds }
             }
         }

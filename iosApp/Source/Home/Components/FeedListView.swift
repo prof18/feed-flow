@@ -33,24 +33,24 @@ struct FeedListView: View {
                 onReloadClick: onReloadClick
             )
         } else if feedState.isEmpty {
-            ProgressView()
+            VStack(alignment: .center) {
+                LoadingHeader(
+                    loadingState: loadingState,
+                    showLoading: showLoading
+                )
+
+                Spacer()
+
+                ProgressView()
+
+                Spacer()
+            }
         } else {
             VStack(alignment: .center) {
-
-                if let feedCount = loadingState?.refreshedFeedCount, let totalFeedCount = loadingState?.totalFeedCount {
-
-                    if showLoading {
-
-                        let feedRefreshCounter = "\(feedCount)/\(totalFeedCount)"
-
-                        let loadingFeedString = LocalizationUtils.shared.formatString(
-                            resource: MR.strings().loading_feed_message,
-                            args: [feedRefreshCounter]
-                        )
-                        Text(loadingFeedString)
-                            .font(.body)
-                    }
-                }
+                LoadingHeader(
+                    loadingState: loadingState,
+                    showLoading: showLoading
+                )
 
                 List {
                     ForEach(feedState, id: \.self.id) { feedItem in
@@ -82,7 +82,29 @@ struct FeedListView: View {
             }
         }
     }
+}
 
+struct LoadingHeader: View {
+    var loadingState: FeedUpdateStatus?
+    var showLoading: Bool
+
+    var body: some View {
+        if let feedCount = loadingState?.refreshedFeedCount, let totalFeedCount = loadingState?.totalFeedCount {
+
+            if showLoading {
+
+                let feedRefreshCounter = "\(feedCount)/\(totalFeedCount)"
+
+                let loadingFeedString = LocalizationUtils.shared.formatString(
+                    resource: MR.strings().loading_feed_message,
+                    args: [feedRefreshCounter]
+                )
+                Text(loadingFeedString)
+                    .font(.body)
+            }
+        }
+
+    }
 }
 
 struct FeedListView_Previews: PreviewProvider {

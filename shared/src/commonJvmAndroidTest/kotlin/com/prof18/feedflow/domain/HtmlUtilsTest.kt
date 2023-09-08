@@ -1,11 +1,12 @@
 package com.prof18.feedflow.domain
 
+import com.prof18.feedflow.testLogger
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class HtmlUtilsTest {
 
-    private val htmlParser = JvmHtmlParser()
+    private val htmlParser = JvmHtmlParser(testLogger)
 
     @Test
     fun `When a text has HTML tags then getTextFromHTML returns the text without HTML tags`() {

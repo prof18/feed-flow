@@ -34,7 +34,7 @@ struct LicensesScreen: View {
                 }
 
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text(MR.strings().open_source_nav_bar.localized)
+                    Text(localizer.open_source_nav_bar.localized)
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
                 }

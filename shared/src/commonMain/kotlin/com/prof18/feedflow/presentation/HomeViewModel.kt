@@ -1,7 +1,6 @@
 package com.prof18.feedflow.presentation
 
 import com.prof18.feedflow.MR
-import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
@@ -14,12 +13,9 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -31,13 +27,11 @@ class HomeViewModel(
     val loadingState: StateFlow<FeedUpdateStatus> = feedRetrieverRepository.updateState
 
     // Feeds
-    private val mutableFeedState: MutableStateFlow<List<FeedItem>> = MutableStateFlow(emptyList())
-
     @NativeCoroutinesState
-    val feedState = mutableFeedState.asStateFlow()
+    val feedState = feedRetrieverRepository.feedState
 
     @NativeCoroutines
-    val countState = mutableFeedState.map { it.count { item -> !item.isRead } }
+    val countState = feedState.map { it.count { item -> !item.isRead } }
 
     // Error
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
@@ -53,14 +47,7 @@ class HomeViewModel(
     }
 
     private fun observeFeeds() {
-        scope.launch {
-            feedRetrieverRepository.getFeeds()
-                .collect { feedItems ->
-                    mutableFeedState.update {
-                        feedItems
-                    }
-                }
-        }
+        feedRetrieverRepository.getFeeds()
 
         scope.launch {
             feedRetrieverRepository.errorState

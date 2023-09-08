@@ -14,7 +14,7 @@ interface FeedManagerRepository {
     suspend fun addFeedsFromFile(opmlInput: OpmlInput): NotValidFeedSources
 
     @NativeCoroutinesIgnore
-    suspend fun getFeeds(): Flow<List<FeedSource>>
+    suspend fun getFeedSources(): Flow<List<FeedSource>>
 
     @NativeCoroutinesIgnore
     suspend fun addFeed(url: String, name: String)

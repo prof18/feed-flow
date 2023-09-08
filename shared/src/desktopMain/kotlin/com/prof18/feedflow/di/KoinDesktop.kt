@@ -57,7 +57,9 @@ internal actual val platformModule: Module = module {
     }
 
     factory<HtmlParser> {
-        JvmHtmlParser()
+        JvmHtmlParser(
+            logger = getWith("JvmHtmlParser"),
+        )
     }
 
     single<Settings> {

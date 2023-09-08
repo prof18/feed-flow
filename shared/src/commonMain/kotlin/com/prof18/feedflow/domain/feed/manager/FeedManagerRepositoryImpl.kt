@@ -56,6 +56,7 @@ internal class FeedManagerRepositoryImpl(
             .flatMapMerge(concurrency = getNumberOfConcurrentParsingRequests()) { feedSource ->
                 suspend {
                     val isValidRss = checkIfValidRss(feedSource.url)
+                    logger.d { "${feedSource.url} is valid? $isValidRss" }
                     FeedValidationResult(
                         parsedFeedSource = feedSource,
                         isValid = isValidRss,
@@ -69,8 +70,8 @@ internal class FeedManagerRepositoryImpl(
         val isValid: Boolean,
     )
 
-    override suspend fun getFeeds(): Flow<List<FeedSource>> =
-        databaseHelper.getFeedSourcesFlow()
+    override suspend fun getFeedSources(): Flow<List<FeedSource>> =
+        databaseHelper.getFeedSourcesFlowWithNoTimestamp()
 
     // TODO: Add category?
     override suspend fun addFeed(url: String, name: String) {

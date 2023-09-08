@@ -24,7 +24,7 @@ struct AddFeedScreen: View {
     var body: some View {
         VStack(alignment: .leading) {
             TextField(
-                MR.strings().feed_name.localized,
+                localizer.feed_name.localized,
                 text: $feedName
             )
             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -32,7 +32,7 @@ struct AddFeedScreen: View {
             .padding(.horizontal, Spacing.regular)
 
             TextField(
-                MR.strings().feed_url.localized,
+                localizer.feed_url.localized,
                 text: $feedURL
             )
             .keyboardType(.webSearch)
@@ -42,7 +42,7 @@ struct AddFeedScreen: View {
             .padding(.horizontal, Spacing.regular)
 
             if isInvalidUrl {
-                Text(MR.strings().invalid_rss_url.localized)
+                Text(localizer.invalid_rss_url.localized)
                     .padding(.horizontal, Spacing.regular)
                     .frame(alignment: .leading)
                     .font(.caption)
@@ -57,7 +57,7 @@ struct AddFeedScreen: View {
                         addFeedViewModel.addFeed()
                     },
                     label: {
-                        Text(MR.strings().add_feed.localized)
+                        Text(localizer.add_feed.localized)
                     }
                 )
                 .frame(alignment: .center)
@@ -69,7 +69,7 @@ struct AddFeedScreen: View {
 
             Spacer()
         }
-        .navigationTitle(MR.strings().add_feed.localized)
+        .navigationTitle(localizer.add_feed.localized)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: feedName) { value in
             addFeedViewModel.updateFeedNameTextFieldValue(feedNameTextFieldValue: value)
@@ -83,7 +83,7 @@ struct AddFeedScreen: View {
                 for try await isAddDone in stream where isAddDone as? Bool ?? false {
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: MR.strings().feed_added_message.localized,
+                            title: localizer.feed_added_message.localized,
                             subtitle: nil,
                             showBanner: true
                         )
@@ -94,7 +94,7 @@ struct AddFeedScreen: View {
             } catch {
                 self.appState.snackbarQueue.append(
                     SnackbarData(
-                        title: MR.strings().generic_error_message.localized,
+                        title: localizer.generic_error_message.localized,
                         subtitle: nil,
                         showBanner: true
                     )
@@ -110,7 +110,7 @@ struct AddFeedScreen: View {
             } catch {
                 self.appState.snackbarQueue.append(
                     SnackbarData(
-                        title: MR.strings().generic_error_message.localized,
+                        title: localizer.generic_error_message.localized,
                         subtitle: nil,
                         showBanner: true
                     )

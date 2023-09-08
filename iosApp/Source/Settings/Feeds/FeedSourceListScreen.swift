@@ -33,7 +33,7 @@ struct FeedSourceListScreen: View {
             } catch {
                 self.appState.snackbarQueue.append(
                     SnackbarData(
-                        title: MR.strings().generic_error_message.localized,
+                        title: localizer.generic_error_message.localized,
                         subtitle: nil,
                         showBanner: true
                     )
@@ -57,11 +57,11 @@ private struct FeedSourceListContent: View {
             VStack {
                 if feedState.isEmpty {
                     VStack {
-                        Text(MR.strings().no_feeds_found_message.localized)
+                        Text(localizer.no_feeds_found_message.localized)
                             .font(.body)
 
                         NavigationLink(value: SheetPage.addFeed) {
-                            Text(MR.strings().add_feed.localized)
+                            Text(localizer.add_feed.localized)
                         }
                     }
                 } else {
@@ -85,7 +85,7 @@ private struct FeedSourceListContent: View {
                                     deleteFeedSource(feedSource)
                                 } label: {
                                     Label(
-                                        MR.strings().delete_feed.localized,
+                                        localizer.delete_feed.localized,
                                         systemImage: "trash"
                                     )
                                 }
@@ -115,7 +115,7 @@ private struct FeedSourceListContent: View {
                 }
 
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text(MR.strings().feeds_title.localized)
+                    Text(localizer.feeds_title.localized)
                         .font(.title2)
                         .padding(.vertical, Spacing.medium)
                 }

@@ -6,11 +6,15 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.utils.AppEnvironment
 import java.io.File
 import java.util.Properties
 
-internal fun initDatabase(logger: Logger): SqlDriver {
-    val appPath = AppDataPathBuilder.getAppDataPath()
+internal fun initDatabase(
+    appEnvironment: AppEnvironment,
+    logger: Logger,
+): SqlDriver {
+    val appPath = AppDataPathBuilder.getAppDataPath(appEnvironment)
 
     val databasePath = File(appPath, "/${DatabaseHelper.DB_FILE_NAME_WITH_EXTENSION}")
 
@@ -29,12 +33,12 @@ internal fun initDatabase(logger: Logger): SqlDriver {
 
     if (currentVer == 0L) {
         FeedFlowDB.Schema.create(driver)
-        setVersion(driver, 1)
-        logger.d("init: created tables, setVersion to 1")
+        setVersion(driver, FeedFlowDB.Schema.version)
+        logger.d("init: created tables, setVersion to ${FeedFlowDB.Schema.version}")
     } else {
         val schemaVer = FeedFlowDB.Schema.version
         if (schemaVer > currentVer) {
-            FeedFlowDB.Schema.migrate(driver, currentVer, schemaVer)
+            FeedFlowDB.Schema.migrate(driver, oldVersion = currentVer, newVersion = schemaVer)
             setVersion(driver, schemaVer)
             logger.d("init: migrated from $currentVer to $schemaVer")
         } else {

@@ -14,11 +14,11 @@ struct NoFeedsSourceView: View {
 
     var body: some View {
         VStack {
-            Text(MR.strings().no_feeds_found_message.localized)
+            Text(localizer.no_feeds_found_message.localized)
                 .font(.body)
 
             Button(
-                MR.strings().add_feed.localized,
+                localizer.add_feed.localized,
                 action: {
                     onAddFeedClick()
                 }

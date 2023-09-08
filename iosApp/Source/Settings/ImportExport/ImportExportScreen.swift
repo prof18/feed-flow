@@ -38,7 +38,7 @@ struct ImportExportScreen: View {
                 viewModel.clearState()
             }
         )
-        .navigationTitle(MR.strings().import_export_opml.localized)
+        .navigationTitle(localizer.import_export_opml.localized)
         .navigationBarTitleDisplayMode(.inline)
         .task {
             do {
@@ -52,7 +52,7 @@ struct ImportExportScreen: View {
             } catch {
                 self.appState.snackbarQueue.append(
                     SnackbarData(
-                        title: MR.strings().generic_error_message.localized,
+                        title: localizer.generic_error_message.localized,
                         subtitle: nil,
                         showBanner: true
                     )
@@ -70,7 +70,7 @@ struct ImportExportScreen: View {
                         viewModel.reportExportError()
                         self.appState.snackbarQueue.append(
                             SnackbarData(
-                                title: MR.strings().load_file_error_message.localized,
+                                title: localizer.load_file_error_message.localized,
                                 subtitle: nil,
                                 showBanner: true
                             )
@@ -121,12 +121,12 @@ struct ImportExportContent: View {
 
         case is FeedImportExportState.LoadingImport:
             ImportExportLoadingView(
-                message: MR.strings().feed_add_in_progress_message.localized
+                message: localizer.feed_add_in_progress_message.localized
             )
 
         case is FeedImportExportState.LoadingExport:
             ImportExportLoadingView(
-                message: MR.strings().export_started_message.localized
+                message: localizer.export_started_message.localized
             )
 
         case is FeedImportExportState.ExportSuccess:
@@ -167,7 +167,7 @@ struct ImportExportIdleView: View {
                     action: onImportClick,
                     label: {
                         Label(
-                            MR.strings().import_feed_button.localized,
+                            localizer.import_feed_button.localized,
                             systemImage: "arrow.down.doc"
                         )
                     }
@@ -177,7 +177,7 @@ struct ImportExportIdleView: View {
                     action: onExportClick,
                     label: {
                         Label(
-                            MR.strings().export_feeds_button.localized,
+                            localizer.export_feeds_button.localized,
                             systemImage: "arrow.up.doc"
                         )
                     }
@@ -197,11 +197,11 @@ struct ImportExportErrorView: View {
         VStack {
             Spacer()
 
-            Text(MR.strings().generic_error_message.localized)
+            Text(localizer.generic_error_message.localized)
                 .font(.body)
 
             Button(
-                MR.strings().retry_button.localized,
+                localizer.retry_button.localized,
                 action: onRetryClick
             )
             .buttonStyle(.bordered)
@@ -240,12 +240,12 @@ struct ExportDoneView: View {
         VStack {
             Spacer()
 
-            Text(MR.strings().feeds_export_done_message.localized)
+            Text(localizer.feeds_export_done_message.localized)
                 .font(.body)
                 .multilineTextAlignment(.center)
 
             Button(
-                MR.strings().done_button.localized,
+                localizer.done_button.localized,
                 action: onDoneClick
             )
             .buttonStyle(.bordered)
@@ -268,12 +268,12 @@ struct ImportDoneView: View {
 
                 Spacer()
 
-                Text(MR.strings().feeds_import_done_message.localized)
+                Text(localizer.feeds_import_done_message.localized)
                     .font(.body)
                     .multilineTextAlignment(.center)
 
                 Button(
-                    MR.strings().done_button.localized,
+                    localizer.done_button.localized,
                     action: onDoneClick
                 )
                 .buttonStyle(.bordered)
@@ -282,7 +282,7 @@ struct ImportDoneView: View {
                 Spacer()
             } else {
 
-                Text(MR.strings().wrong_link_report_title.localized)
+                Text(localizer.wrong_link_report_title.localized)
                     .font(.body)
                     .padding(Spacing.regular)
 
@@ -308,7 +308,7 @@ struct ImportDoneView: View {
                 Button {
                     onDoneClick()
                 } label: {
-                    Text(MR.strings().done_button.localized)
+                    Text(localizer.done_button.localized)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)

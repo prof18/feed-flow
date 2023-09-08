@@ -17,10 +17,10 @@ import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.domain.model.FeedItemId
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -55,9 +55,9 @@ internal class DatabaseHelper(
             }
     }
 
-    fun getFeedSourcesFlow(): Flow<List<FeedSource>> =
+    fun getFeedSourcesFlowWithNoTimestamp(): Flow<List<FeedSource>> =
         dbRef.feedSourceQueries
-            .selectFeedUrls()
+            .selectFeedUrlsWithNotTimestamp()
             .asFlow()
             .catch {
                 logger.e(it) { "Something wrong while getting data from Database" }
@@ -69,22 +69,27 @@ internal class DatabaseHelper(
                         id = feedSource.url_hash,
                         url = feedSource.url,
                         title = feedSource.title,
-                        lastSyncTimestamp = feedSource.last_sync_timestamp,
+                        lastSyncTimestamp = null,
                     )
                 }
             }
             .flowOn(backgroundDispatcher)
 
-    @Suppress("MagicNumber")
-    fun getFeedItems(): Flow<List<SelectFeeds>> =
+//    @Suppress("MagicNumber")
+//    fun getFeedItems(): Flow<List<SelectFeeds>> =
+//        dbRef.feedItemQueries
+//            .selectFeeds()
+//            .asFlow()
+//            .mapToList(backgroundDispatcher)
+//            .retry(3) { exception ->
+//                exception is NullPointerException
+//            }
+//            .flowOn(backgroundDispatcher)
+
+    fun getFeedItems(): List<SelectFeeds> =
         dbRef.feedItemQueries
             .selectFeeds()
-            .asFlow()
-            .mapToList(backgroundDispatcher)
-            .retry(3) { exception ->
-                exception is NullPointerException
-            }
-            .flowOn(backgroundDispatcher)
+            .executeAsList()
 
     suspend fun insertCategories(categories: List<String>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
@@ -165,6 +170,7 @@ internal class DatabaseHelper(
     fun deleteAllFeeds() =
         dbRef.transaction {
             dbRef.feedItemQueries.deleteAll()
+            dbRef.feedSourceQueries.deleteAllLastSync()
         }
 
     private suspend fun Transacter.transactionWithContext(

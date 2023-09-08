@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedImportExportState
@@ -172,6 +173,7 @@ private fun ImportExportLoadingView(
                 .padding(Spacing.regular),
             text = message,
             style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
         )
     }
 }

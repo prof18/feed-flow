@@ -4,11 +4,9 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
-import com.prof18.feedflow.domain.feed.retriever.model.RssParsingError
-import com.prof18.feedflow.domain.feed.retriever.model.RssParsingResult
-import com.prof18.feedflow.domain.feed.retriever.model.RssParsingSuccess
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
@@ -19,22 +17,16 @@ import com.prof18.feedflow.presentation.model.DatabaseError
 import com.prof18.feedflow.presentation.model.ErrorState
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.utils.DispatcherProvider
+import com.prof18.feedflow.utils.executeWithRetry
 import com.prof18.feedflow.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import kotlin.experimental.ExperimentalObjCRefinement
@@ -62,38 +54,24 @@ internal class FeedRetrieverRepositoryImpl(
 
     private val feedToUpdate = hashSetOf<String>()
 
-    override fun getFeeds(): Flow<List<FeedItem>> =
-        databaseHelper.getFeedItems().map { feedList ->
-            feedList.map { selectedFeed ->
-                FeedItem(
-                    id = selectedFeed.url_hash,
-                    url = selectedFeed.url,
-                    title = selectedFeed.title,
-                    subtitle = selectedFeed.subtitle,
-                    content = null,
-                    imageUrl = selectedFeed.image_url,
-                    feedSource = FeedSource(
-                        id = selectedFeed.feed_source_id,
-                        url = selectedFeed.feed_source_url,
-                        title = selectedFeed.feed_source_title,
-                        lastSyncTimestamp = selectedFeed.feed_source_last_sync_timestamp,
-                    ),
-                    isRead = selectedFeed.is_read,
-                    pubDateMillis = selectedFeed.pub_date,
-                    dateString = if (selectedFeed.pub_date != null) {
-                        dateFormatter.formatDate(selectedFeed.pub_date)
-                    } else {
-                        null
-                    },
-                    commentsUrl = selectedFeed.comments_url,
-                )
+    private val mutableFeedState: MutableStateFlow<List<FeedItem>> = MutableStateFlow(emptyList())
+    override val feedState = mutableFeedState.asStateFlow()
+
+    override fun getFeeds() {
+        try {
+            val feeds = executeWithRetry {
+                databaseHelper.getFeedItems()
             }
-        }.catch {
-            logger.e(it) { "Something wrong while getting data from Database" }
+            mutableFeedState.update {
+                feeds.map { it.toFeedItem() }
+            }
+        } catch (e: Throwable) {
+            logger.e(e) { "Something wrong while getting data from Database" }
             errorMutableState.update {
                 DatabaseError
             }
-        }.flowOn(dispatcherProvider.io)
+        }
+    }
 
     override suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
         databaseHelper.updateReadStatus(itemsToUpdates)
@@ -123,12 +101,7 @@ internal class FeedRetrieverRepositoryImpl(
                 }
                 databaseHelper.updateNewStatus()
 
-                val feedResults = parseFeeds(feedSourceUrls, updateLoadingInfo, forceRefresh)
-
-                val items = getFeedItems(
-                    rssChannelResults = feedResults.filterIsInstance<RssParsingSuccess>(),
-                )
-                databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
+                parseFeeds(feedSourceUrls, updateLoadingInfo, forceRefresh)
             }
         }
     }
@@ -150,7 +123,7 @@ internal class FeedRetrieverRepositoryImpl(
         feedSourceUrls: List<FeedSource>,
         updateLoadingInfo: Boolean,
         forceRefresh: Boolean,
-    ): List<RssParsingResult> =
+    ) =
         feedSourceUrls
             .mapNotNull { feedSource ->
                 val shouldRefresh = shouldRefreshFeed(feedSource, forceRefresh)
@@ -176,10 +149,18 @@ internal class FeedRetrieverRepositoryImpl(
                         if (updateLoadingInfo) {
                             updateRefreshCount()
                         }
-                        RssParsingSuccess(
-                            rssChannel = rssChannel,
+
+                        val items = rssChannel.getFeedItems(
                             feedSource = feedSource,
                         )
+
+                        databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
+
+                        mutableFeedState.update { oldItems ->
+                            (oldItems.toMutableList() + items)
+                                .distinctBy { it.id }
+                                .sortedByDescending { it.pubDateMillis }
+                        }
                     } catch (e: Throwable) {
                         logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }
                         errorMutableState.update {
@@ -191,28 +172,9 @@ internal class FeedRetrieverRepositoryImpl(
                         if (updateLoadingInfo) {
                             updateRefreshCount()
                         }
-                        RssParsingError(
-                            feedSource = feedSource,
-                            throwable = e,
-                        )
                     }
                 }.asFlow()
-            }
-            .toList()
-
-    private suspend fun getFeedItems(
-        rssChannelResults: List<RssParsingSuccess>,
-    ): List<FeedItem> =
-        coroutineScope {
-            rssChannelResults.map { rssChannelResults ->
-                async {
-                    rssChannelResults.rssChannel.getFeedItems(
-                        feedSource = rssChannelResults.feedSource,
-                    )
-                }
-            }.awaitAll()
-                .flatten()
-        }
+            }.collect()
 
     @Suppress("MagicNumber")
     private fun shouldRefreshFeed(
@@ -264,7 +226,7 @@ internal class FeedRetrieverRepositoryImpl(
             }
 
             if (title == null || url == null) {
-                logger.d { "Skipping: $rssItem" }
+                logger.d { "Skipping: ${rssItem.title}" }
                 null
             } else {
                 FeedItem(
@@ -272,7 +234,12 @@ internal class FeedRetrieverRepositoryImpl(
                     url = url,
                     title = title,
                     subtitle = rssItem.description?.let { description ->
-                        htmlParser.getTextFromHTML(description)
+                        val partialDesc = if (description.isNotEmpty()) {
+                            description.take(500)
+                        } else {
+                            description
+                        }
+                        htmlParser.getTextFromHTML(partialDesc)
                     },
                     content = null,
                     imageUrl = imageUrl,
@@ -288,4 +255,27 @@ internal class FeedRetrieverRepositoryImpl(
                 )
             }
         }
+
+    private fun SelectFeeds.toFeedItem() = FeedItem(
+        id = url_hash,
+        url = url,
+        title = title,
+        subtitle = subtitle,
+        content = null,
+        imageUrl = image_url,
+        feedSource = FeedSource(
+            id = feed_source_id,
+            url = feed_source_url,
+            title = feed_source_title,
+            lastSyncTimestamp = feed_source_last_sync_timestamp,
+        ),
+        isRead = is_read,
+        pubDateMillis = pub_date,
+        dateString = if (pub_date != null) {
+            dateFormatter.formatDate(pub_date)
+        } else {
+            null
+        },
+        commentsUrl = comments_url,
+    )
 }

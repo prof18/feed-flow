@@ -79,7 +79,7 @@ jobs:
           VERSION: ${{ steps.path_variables.outputs.VERSION }}
 
       - name: Create DMG
-        run: ./gradlew packageReleaseDmg --info
+        run: ./gradlew packageReleaseDmg
 
       - name: Upload reports
         if: failure()

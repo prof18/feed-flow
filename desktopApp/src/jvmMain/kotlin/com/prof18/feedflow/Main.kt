@@ -72,6 +72,7 @@ fun main() = application {
 
     val sentryDns = properties["sentry_dns"]
         ?.toString()
+
     val version = properties["version"]
         ?.toString()
 
@@ -136,7 +137,9 @@ fun main() = application {
                 aboutDialogState = false
             },
         ) {
-            AboutContent()
+            AboutContent(
+                versionLabel = "Version: ${version ?: "N/A"}",
+            )
         }
 
         FeedFlowMenuBar(

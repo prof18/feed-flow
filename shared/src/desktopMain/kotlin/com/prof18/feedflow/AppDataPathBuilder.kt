@@ -1,5 +1,6 @@
 package com.prof18.feedflow
 
+import com.prof18.feedflow.utils.AppEnvironment
 import java.io.File
 
 internal object AppDataPathBuilder {
@@ -16,8 +17,12 @@ internal object AppDataPathBuilder {
         }
     }
 
-    fun getAppDataPath(): String {
-        val appPath = appDataPath
+    fun getAppDataPath(appEnvironment: AppEnvironment): String {
+        val appPath = if (appEnvironment.isDebug()) {
+            "$appDataPath-dev"
+        } else {
+            appDataPath
+        }
         if (!File(appPath).exists()) {
             File(appPath).mkdirs()
         }

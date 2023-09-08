@@ -27,7 +27,7 @@ fun initKoinDesktop(
     modules: List<Module>,
 ): KoinApplication = initKoin(
     appEnvironment = appEnvironment,
-    modules = modules,
+    modules = modules + getDatabaseModule(appEnvironment),
 )
 
 internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
@@ -35,13 +35,17 @@ internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
     noinline definition: Definition<T>,
 ): KoinDefinition<T> = factory(qualifier, definition)
 
-internal actual val platformModule: Module = module {
-    single<SqlDriver> {
-        initDatabase(
-            logger = getWith("initDatabase"),
-        )
+private fun getDatabaseModule(appEnvironment: AppEnvironment): Module =
+    module {
+        single<SqlDriver> {
+            initDatabase(
+                appEnvironment = appEnvironment,
+                logger = getWith("initDatabase"),
+            )
+        }
     }
 
+internal actual val platformModule: Module = module {
     factory {
         OpmlFeedHandler(
             dispatcherProvider = get(),

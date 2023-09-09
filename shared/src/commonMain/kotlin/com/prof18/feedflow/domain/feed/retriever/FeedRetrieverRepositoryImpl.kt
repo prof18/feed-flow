@@ -73,6 +73,32 @@ internal class FeedRetrieverRepositoryImpl(
         }
     }
 
+    override suspend fun updateReadStatus(
+        lastUpdateIndex: Int,
+        lastVisibleIndex: Int,
+    ) {
+        val urlToUpdates = mutableListOf<FeedItemId>()
+
+        val items = feedState.value.toMutableList()
+        if (lastVisibleIndex <= lastUpdateIndex) {
+            return
+        }
+        for (index in lastUpdateIndex..lastVisibleIndex) {
+            items.getOrNull(index)?.let { item ->
+                if (!item.isRead) {
+                    urlToUpdates.add(
+                        FeedItemId(
+                            id = item.id,
+                        ),
+                    )
+                }
+                items[index] = item.copy(isRead = true)
+            }
+        }
+        mutableFeedState.update { items }
+        databaseHelper.updateReadStatus(urlToUpdates)
+    }
+
     override suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
         databaseHelper.updateReadStatus(itemsToUpdates)
 

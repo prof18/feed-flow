@@ -94,27 +94,13 @@ class HomeViewModel(
         if (loadingState.value.isLoading()) {
             return
         }
-        val urlToUpdates = mutableListOf<FeedItemId>()
 
-        val items = feedState.value.toMutableList()
-        if (lastVisibleIndex <= lastUpdateIndex) {
-            return
-        }
-        for (index in lastUpdateIndex..lastVisibleIndex) {
-            items.getOrNull(index)?.let { item ->
-                if (!item.isRead) {
-                    urlToUpdates.add(
-                        FeedItemId(
-                            id = item.id,
-                        ),
-                    )
-                }
-            }
-        }
-
-        lastUpdateIndex = lastVisibleIndex
         scope.launch {
-            feedRetrieverRepository.updateReadStatus(urlToUpdates)
+            feedRetrieverRepository.updateReadStatus(
+                lastUpdateIndex = lastUpdateIndex,
+                lastVisibleIndex = lastVisibleIndex,
+            )
+            lastUpdateIndex = lastVisibleIndex
         }
     }
 

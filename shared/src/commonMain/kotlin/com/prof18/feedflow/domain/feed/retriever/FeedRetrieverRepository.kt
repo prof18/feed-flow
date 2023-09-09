@@ -24,6 +24,12 @@ interface FeedRetrieverRepository {
     fun getFeeds()
 
     @NativeCoroutinesIgnore
+    suspend fun updateReadStatus(
+        lastUpdateIndex: Int,
+        lastVisibleIndex: Int,
+    )
+
+    @NativeCoroutinesIgnore
     suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>)
 
     @NativeCoroutinesIgnore

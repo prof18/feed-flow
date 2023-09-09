@@ -23,6 +23,7 @@
 #Jsoup
 
 -keeppackagenames org.jsoup.nodes
+-keep public enum * {    public static **[] values();    public static ** valueOf(java.lang.String); }
 
 -ignorewarnings
 

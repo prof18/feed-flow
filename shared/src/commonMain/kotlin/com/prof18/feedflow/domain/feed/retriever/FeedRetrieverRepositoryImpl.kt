@@ -183,8 +183,13 @@ internal class FeedRetrieverRepositoryImpl(
                         databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
 
                         mutableFeedState.update { oldItems ->
-                            (oldItems.toMutableList() + items)
+                            oldItems
                                 .asSequence()
+                                .plus(
+                                    oldItems.filterNot { item ->
+                                        items.any { it.id == item.id }
+                                    }
+                                )
                                 .filter { !it.isRead }
                                 .distinctBy { it.id }
                                 .sortedByDescending { it.pubDateMillis }

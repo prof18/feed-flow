@@ -206,6 +206,7 @@ struct HomeContent: View {
 
                         Button(
                             action: {
+                                proxy.scrollTo(feedState.first?.id)
                                 onForceRefreshClick()
                             },
                             label: {

@@ -188,9 +188,9 @@ internal class FeedRetrieverRepositoryImpl(
                                 .plus(
                                     oldItems.filterNot { item ->
                                         items.any { it.id == item.id }
-                                    }
+                                    },
                                 )
-                                .filter { !it.isRead }
+                                .filterNot { it.isRead }
                                 .distinctBy { it.id }
                                 .sortedByDescending { it.pubDateMillis }
                                 .toList()

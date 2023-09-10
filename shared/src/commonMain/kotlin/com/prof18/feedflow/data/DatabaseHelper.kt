@@ -75,17 +75,6 @@ internal class DatabaseHelper(
             }
             .flowOn(backgroundDispatcher)
 
-//    @Suppress("MagicNumber")
-//    fun getFeedItems(): Flow<List<SelectFeeds>> =
-//        dbRef.feedItemQueries
-//            .selectFeeds()
-//            .asFlow()
-//            .mapToList(backgroundDispatcher)
-//            .retry(3) { exception ->
-//                exception is NullPointerException
-//            }
-//            .flowOn(backgroundDispatcher)
-
     fun getFeedItems(): List<SelectFeeds> =
         dbRef.feedItemQueries
             .selectFeeds()

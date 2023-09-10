@@ -184,8 +184,11 @@ internal class FeedRetrieverRepositoryImpl(
 
                         mutableFeedState.update { oldItems ->
                             (oldItems.toMutableList() + items)
+                                .asSequence()
+                                .filter { !it.isRead }
                                 .distinctBy { it.id }
                                 .sortedByDescending { it.pubDateMillis }
+                                .toList()
                         }
                     } catch (e: Throwable) {
                         logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }

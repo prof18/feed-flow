@@ -36,7 +36,7 @@ struct HomeScreen: View {
             unreadCount: $unreadCount,
             sheetToShow: $sheetToShow,
             onRefresh: {
-                homeViewModel.getNewFeeds()
+                homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
             updateReadStatus: { index in
                 homeViewModel.updateReadStatus(lastVisibleIndex: index)

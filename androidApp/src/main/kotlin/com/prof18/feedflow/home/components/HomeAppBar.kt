@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.BuildConfig
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import dev.icerock.moko.resources.compose.stringResource
@@ -40,6 +41,7 @@ internal fun HomeAppBar(
     onClick: () -> Unit,
     onDoubleClick: () -> Unit,
     onForceRefreshClick: () -> Unit,
+    onDeleteDatabase: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -71,6 +73,7 @@ internal fun HomeAppBar(
                     onSettingsButtonClicked()
                 },
                 onForceRefreshClick = onForceRefreshClick,
+                onDeleteDatabase = onDeleteDatabase,
             )
         },
         modifier = Modifier.pointerInput(Unit) {
@@ -91,6 +94,7 @@ private fun SettingsDropdownMenu(
     onClearOldArticlesClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onForceRefreshClick: () -> Unit,
+    onDeleteDatabase: () -> Unit,
 ) {
     DropdownMenu(
         expanded = showMenu,
@@ -158,6 +162,23 @@ private fun SettingsDropdownMenu(
                 )
             },
         )
+
+        if (BuildConfig.DEBUG) {
+            DropdownMenuItem(
+                onClick = {
+                    onDeleteDatabase()
+                },
+                text = {
+                    Text("Delete database")
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
+                    )
+                },
+            )
+        }
     }
 }
 
@@ -173,6 +194,7 @@ private fun HomeAppBarPreview() {
             onClick = { },
             onDoubleClick = {},
             onForceRefreshClick = {},
+            onDeleteDatabase = {},
         )
     }
 }

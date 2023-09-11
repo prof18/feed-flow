@@ -33,7 +33,11 @@ interface FeedRetrieverRepository {
     suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>)
 
     @NativeCoroutinesIgnore
-    suspend fun fetchFeeds(updateLoadingInfo: Boolean = true, forceRefresh: Boolean = false)
+    suspend fun fetchFeeds(
+        updateLoadingInfo: Boolean = true,
+        forceRefresh: Boolean = false,
+        isFirstLaunch: Boolean = false,
+    )
 
     @NativeCoroutinesIgnore
     suspend fun markAllFeedAsRead()

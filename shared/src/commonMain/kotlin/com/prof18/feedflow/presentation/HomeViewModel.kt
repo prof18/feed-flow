@@ -42,11 +42,11 @@ class HomeViewModel(
     private var lastUpdateIndex = 0
 
     init {
-        observeFeeds()
-        getNewFeeds()
+        observeErrorState()
+        getNewFeeds(isFirstLaunch = true)
     }
 
-    private fun observeFeeds() {
+    private fun observeErrorState() {
         feedRetrieverRepository.getFeeds()
 
         scope.launch {
@@ -82,10 +82,10 @@ class HomeViewModel(
         }
     }
 
-    fun getNewFeeds() {
+    fun getNewFeeds(isFirstLaunch: Boolean = false) {
         lastUpdateIndex = 0
         scope.launch {
-            feedRetrieverRepository.fetchFeeds()
+            feedRetrieverRepository.fetchFeeds(isFirstLaunch)
         }
     }
 

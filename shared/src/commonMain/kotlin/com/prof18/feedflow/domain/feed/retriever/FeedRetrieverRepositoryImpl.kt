@@ -102,7 +102,11 @@ internal class FeedRetrieverRepositoryImpl(
     override suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
         databaseHelper.updateReadStatus(itemsToUpdates)
 
-    override suspend fun fetchFeeds(updateLoadingInfo: Boolean, forceRefresh: Boolean) {
+    override suspend fun fetchFeeds(
+        updateLoadingInfo: Boolean,
+        forceRefresh: Boolean,
+        isFirstLaunch: Boolean,
+    ) {
         return withContext(dispatcherProvider.io) {
             if (updateLoadingInfo) {
                 updateMutableState.update { StartedFeedUpdateStatus }
@@ -127,7 +131,13 @@ internal class FeedRetrieverRepositoryImpl(
                 }
                 databaseHelper.updateNewStatus()
 
+                if (!isFirstLaunch) {
+                    getFeeds()
+                }
+
                 parseFeeds(feedSourceUrls, updateLoadingInfo, forceRefresh)
+
+                getFeeds()
             }
         }
     }
@@ -183,20 +193,6 @@ internal class FeedRetrieverRepositoryImpl(
                         )
 
                         databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
-
-                        mutableFeedState.update { oldItems ->
-                            oldItems
-                                .asSequence()
-                                .plus(
-                                    oldItems.filterNot { item ->
-                                        items.any { it.id == item.id }
-                                    },
-                                )
-                                .filterNot { it.isRead }
-                                .distinctBy { it.id }
-                                .sortedByDescending { it.pubDateMillis }
-                                .toList()
-                        }
                     } catch (e: Throwable) {
                         logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }
                         errorMutableState.update {

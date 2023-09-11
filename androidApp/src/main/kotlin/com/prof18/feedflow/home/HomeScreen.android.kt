@@ -40,6 +40,7 @@ import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemClickedInfo
+import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus
@@ -66,6 +67,7 @@ internal fun HomeScreen(
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
     val browserManager = koinInject<BrowserManager>()
+    val feedManagerRepository = koinInject<FeedManagerRepository>()
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
@@ -117,6 +119,9 @@ internal fun HomeScreen(
                         listState.animateScrollToItem(0)
                         homeViewModel.forceFeedRefresh()
                     }
+                },
+                onDeleteDatabase = {
+                    feedManagerRepository.deleteAllFeeds()
                 },
             )
         },

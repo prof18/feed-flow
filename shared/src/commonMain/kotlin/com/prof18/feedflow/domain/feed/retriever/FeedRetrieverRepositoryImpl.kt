@@ -134,6 +134,7 @@ internal class FeedRetrieverRepositoryImpl(
 
     override suspend fun markAllFeedAsRead() {
         databaseHelper.markAllFeedAsRead()
+        getFeeds()
     }
 
     @Suppress("MagicNumber")
@@ -143,6 +144,7 @@ internal class FeedRetrieverRepositoryImpl(
         val oneWeekInMillis = (((60 * 60) * 24) * 7) * 1000L
         val threshold = dateFormatter.currentTimeMillis() - oneWeekInMillis
         databaseHelper.deleteOldFeedItems(threshold)
+        getFeeds()
     }
 
     private suspend fun parseFeeds(

@@ -26,6 +26,7 @@
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>mailto</string>
 		<string>firefox</string>
 		<string>ddgQuickLink</string>
 		<string>brave</string>

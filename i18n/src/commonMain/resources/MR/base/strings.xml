@@ -52,4 +52,7 @@
     <string name="new_release_available_title">A new version of FeedFlow is available:</string>
     <string name="new_release_available_link">Download here</string>
     <string name="feed_add_in_progress_message">Please wait, every feed availability is being checked. The operation can take a while depending on the amount of feeds that you are importing</string>
+    <string name="issue_report_title">Report an issue with FeedFlow</string>
+    <string name="issue_content_title">Issue with FeedFlow</string>
+    <string name="issue_content_template">Please describe the issue and provide a link to the RSS Feed that causes the issues</string>
 </resources>

@@ -58,7 +58,9 @@ import com.prof18.feedflow.versionchecker.NewVersionChecker
 import com.prof18.feedflow.versionchecker.NewVersionState
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
+import java.awt.Desktop
 import java.io.InputStream
+import java.net.URI
 import java.util.Properties
 import javax.swing.UIManager
 
@@ -142,6 +144,9 @@ fun main() = application {
             )
         }
 
+        val emailSubject = stringResource(MR.strings.issue_content_title)
+        val emailContent = stringResource(MR.strings.issue_content_template)
+
         FeedFlowMenuBar(
             onRefreshClick = {
                 scope.launch {
@@ -165,7 +170,14 @@ fun main() = application {
                 aboutDialogState = true
             },
             onBugReportClick = {
-                openInBrowser(UserFeedbackReporter.getFeedbackUrl())
+                val desktop = Desktop.getDesktop()
+                val uri = URI.create(
+                    UserFeedbackReporter.getEmailUrl(
+                        subject = emailSubject,
+                        content = emailContent,
+                    ),
+                )
+                desktop.mail(uri)
             },
             onForceRefreshClick = {
                 scope.launch {

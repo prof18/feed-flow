@@ -255,7 +255,15 @@ struct HomeContent: View {
 
                         Button(
                             action: {
-                                if let url = URL(string: UserFeedbackReporter.shared.getFeedbackUrl()) {
+                                let subject = localizer.issue_content_title.localized
+                                let content = localizer.issue_content_template.localized
+
+                                if let url = URL(
+                                    string: UserFeedbackReporter.shared.getEmailUrl(
+                                        subject: subject,
+                                        content: content
+                                    )
+                                ) {
                                     self.openURL(url)
                                 }
                             },

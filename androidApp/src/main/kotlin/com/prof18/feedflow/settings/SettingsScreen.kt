@@ -3,6 +3,8 @@
 package com.prof18.feedflow.settings
 
 import FeedFlowTheme
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
@@ -46,6 +49,10 @@ fun SettingsScreen(
 
     val browserListState by browserManager.browserListState.collectAsStateWithLifecycle()
 
+    val emailSubject = stringResource(MR.strings.issue_content_title)
+    val emailContent = stringResource(MR.strings.issue_content_template)
+    val chooserTitle = stringResource(MR.strings.issue_report_title)
+
     SettingsScreenContent(
         browsers = browserListState,
         onFeedListClick = onFeedListClick,
@@ -55,10 +62,14 @@ fun SettingsScreen(
         navigateBack = navigateBack,
         onAboutClick = onAboutClick,
         onBugReportClick = {
-            browserManager.openUrlWithFavoriteBrowser(
-                url = UserFeedbackReporter.getFeedbackUrl(),
-                context = context,
+            val uri = Uri.parse(
+                UserFeedbackReporter.getEmailUrl(
+                    subject = emailSubject,
+                    content = emailContent,
+                ),
             )
+            val emailIntent = Intent(Intent.ACTION_SENDTO, uri)
+            context.startActivity(Intent.createChooser(emailIntent, chooserTitle))
         },
         navigateToImportExport = navigateToImportExport,
     )
@@ -207,18 +218,6 @@ private fun SettingsList(
                 onAboutClick()
             }
         }
-
-//            item {
-//                SettingsMenuItem(text = "Contact us") {
-//                    val intent = Intent(Intent.ACTION_SEND).apply {
-//                        type = "plain/text"
-//                        putExtra(Intent.EXTRA_EMAIL, arrayOf("mgp.dev.studio@gmail.com"))
-//                        putExtra(Intent.EXTRA_SUBJECT, "FeedFlow Info")
-//
-//                    }
-//                    context.startActivity(Intent.createChooser(intent, "Send mail..."))
-//                }
-//            }
     }
 }
 

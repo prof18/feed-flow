@@ -29,6 +29,12 @@ FeedFlow is available for Android, iOS and macOS.
 <div align="center"><a href="https://play.google.com/store/apps/details?id=com.prof18.feedflow"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="230px"/></a></div>
 <div align="center"><a href="https://github.com/prof18/feed-flow/releases/latest"><img src="assets/appstore/mac_store_download.svg" width="200px" /></a></div>
 
+## Translating 🌍
+
+If you want to help translating FeedFlow, I will more than happy.
+
+To add a new translation, you can use [Weblate](https://hosted.weblate.org/engage/feedflow/) or open a pull request with a new `strings.xml` file inside the `i18n/src/commonMain/resources/MR/<language-code>/strings.xml` folder and new files inside the `assets/storecopy/<language-code>` folder (where `<language-code>` is a [two-letter ISO 639-1 language code](https://en.wikipedia.org/wiki/ISO_639-1)). 
+
 ## License 📄
 
 ```

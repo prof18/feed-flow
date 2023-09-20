@@ -43,4 +43,17 @@
     <string name="feed_name">Informasjonkanalsnavn</string>
     <string name="load_file_error_message">Kunne ikke laste inn fil</string>
     <string name="add_feed">Legg til informasjonskanal</string>
+    <string name="feed_add_in_progress_message">Vent mens informasjonskanalenes tilgjengelighet sjekkes. Dette kan ta en stund hvis det dreier seg om mange informasjonskanaler å importere.</string>
+    <string name="force_feed_refresh">Påtving gjenoppfrisking av informasjonskanaler</string>
+    <string name="database_error">Kunne ikke hente informasjonskanalene. Prøv igjen eller start programmet på ny :(</string>
+    <string name="invalid_rss_url">Lenken du angav er ikke en gyldig RSS-informasjonskanal</string>
+    <string name="issue_content_template">Beskriv problemet og angi en lenke til RSS-informasjonskanalen som forårsaker problemene</string>
+    <string name="issue_content_title">Problem med FeedFlow</string>
+    <string name="wrong_link_report_title">Følgende informasjonskanaler ble ikke lagt til fordi de ikke er gyldige</string>
+    <string name="browser_selection_button">Favorittnettleser</string>
+    <string name="issue_report_title">Innrapporter en feil med FeedFlow</string>
+    <string name="new_release_available_title">En ny versjon av FeedFlow er tilgjengelig:</string>
+    <string name="mark_all_read_button">Marker alle som lest</string>
+    <string name="about_the_app">Minimalistisk RSS-leser med meningers mot. Artikler åpnes i respektiv nettside og du kan velge egen personvernsrespekterende nettleser for å gjøre opplevelsen bedre.
+\nDu kan importere og eksportere din RSS-samling til en OPML-fil.</string>
 </resources>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feed_added_message">Feed "%s" added</string>
     <string name="feed_name_placeholder">My favorite blog</string>
@@ -47,7 +47,7 @@
     <string name="missing_title_and_link">There was an error while getting the title of the feed</string>
     <string name="import_export_opml">Import and export OPML</string>
     <string name="retry_button">Retry</string>
-    <string name="done_button">Okay</string>
+    <string name="done_button">OK</string>
     <string name="wrong_link_report_title">The following feeds were not added because they are not valid</string>
     <string name="new_release_available_title">A new version of FeedFlow is available:</string>
     <string name="new_release_available_link">Download here</string>

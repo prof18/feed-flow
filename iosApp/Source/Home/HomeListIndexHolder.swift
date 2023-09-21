@@ -30,7 +30,8 @@ class HomeListIndexHolder: ObservableObject {
         if !self.isLoading && index > lastReadIndex {
             lastReadIndex = index
             timer?.invalidate()
-            timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [self] _ in
+            timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in
+                guard let self else { return }
                 KotlinDependencies.shared.getHomeViewModel()
                     .updateReadStatus(lastVisibleIndex: Int32(getLastReadIndex()))
             }

@@ -257,7 +257,7 @@ internal class FeedRetrieverRepositoryImpl(
                 rssItem.image
             }
 
-            if (title == null || url == null) {
+            if (url == null) {
                 logger.d { "Skipping: ${rssItem.title}" }
                 null
             } else {

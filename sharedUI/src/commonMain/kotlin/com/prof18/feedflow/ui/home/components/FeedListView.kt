@@ -145,16 +145,22 @@ private fun TitleSubtitleAndImageRow(
             modifier = Modifier
                 .weight(1f),
         ) {
-            Text(
+            feedItem.title?.let { title ->
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall,
+                )
+            }
 
-                text = feedItem.title,
-                style = MaterialTheme.typography.titleSmall,
-            )
+            val paddingTop = when {
+                feedItem.title != null -> Spacing.small
+                else -> 0.dp
+            }
 
             feedItem.subtitle?.let { subtitle ->
                 Text(
                     modifier = Modifier
-                        .padding(top = Spacing.small),
+                        .padding(top = paddingTop),
                     text = subtitle,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,

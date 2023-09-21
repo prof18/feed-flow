@@ -3,7 +3,7 @@ package com.prof18.feedflow.core.model
 data class FeedItem(
     val id: Int,
     val url: String,
-    val title: String,
+    val title: String?,
     val subtitle: String?,
     val content: String?,
     val imageUrl: String?,

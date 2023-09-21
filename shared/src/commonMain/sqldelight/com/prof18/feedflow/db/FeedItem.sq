@@ -4,7 +4,7 @@ import kotlin.Int;
 CREATE TABLE feed_item (
     url_hash INTEGER AS Int NOT NULL PRIMARY KEY,
     url TEXT NOT NULL,
-    title TEXT NOT NULL,
+    title TEXT,
     subtitle TEXT,
     content TEXT,
     image_url TEXT,

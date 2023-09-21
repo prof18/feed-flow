@@ -48,17 +48,27 @@ struct TitleAndSubtitleCell: View {
 
     let feedItem: FeedItem
 
+    func getPaddingTop(feedItem: FeedItem) -> CGFloat {
+        if feedItem.title != nil {
+            return Spacing.xxsmall
+        } else {
+            return CGFloat(0)
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
-            Text(feedItem.title)
-                .font(.system(size: 16))
-                .bold()
+            if let title = feedItem.title {
+                Text(title)
+                    .font(.system(size: 16))
+                    .bold()
+            }
 
             if let subtitle = feedItem.subtitle {
                 Text(subtitle)
                     .lineLimit(3)
                     .font(.system(size: 14))
-                    .padding(.top, Spacing.xxsmall)
+                    .padding(.top, getPaddingTop(feedItem: feedItem))
             }
         }
 

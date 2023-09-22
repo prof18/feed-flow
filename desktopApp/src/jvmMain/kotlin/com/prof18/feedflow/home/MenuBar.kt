@@ -7,12 +7,12 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuScope
 import com.prof18.feedflow.MR
-import com.prof18.feedflow.di.DI
-import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import dev.icerock.moko.resources.compose.stringResource
 
+@Suppress("LongParameterList")
 @Composable
 fun FrameWindowScope.FeedFlowMenuBar(
+    showDebugMenu: Boolean,
     onRefreshClick: () -> Unit,
     onMarkAllReadClick: () -> Unit,
     onImportExportClick: () -> Unit,
@@ -21,7 +21,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onAboutClick: () -> Unit,
     onBugReportClick: () -> Unit,
     onForceRefreshClick: () -> Unit,
-    showDebugMenu: Boolean,
+    deleteFeeds: () -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -83,20 +83,26 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onClick = onAboutClick,
             )
 
-            DebugMenu(showDebugMenu)
+            DebugMenu(
+                showDebugMenu = showDebugMenu,
+                deleteFeeds = deleteFeeds,
+            )
         }
     }
 }
 
 @Composable
-private fun MenuScope.DebugMenu(showDebugMenu: Boolean) {
+private fun MenuScope.DebugMenu(
+    showDebugMenu: Boolean,
+    deleteFeeds: () -> Unit,
+) {
     if (showDebugMenu) {
         Separator()
 
         Item(
             text = "Delete all feeds",
             onClick = {
-                DI.koin.get<FeedManagerRepository>().deleteAllFeeds()
+                deleteFeeds()
             },
         )
     }

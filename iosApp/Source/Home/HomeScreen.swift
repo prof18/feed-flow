@@ -49,6 +49,9 @@ struct HomeScreen: View {
             },
             onForceRefreshClick: {
                 homeViewModel.forceFeedRefresh()
+            },
+            deleteAllFeeds: {
+                homeViewModel.deleteAllFeeds()
             }
         )
         .environmentObject(indexHolder)
@@ -146,6 +149,7 @@ struct HomeContent: View {
     let onMarkAllReadClick: () -> Void
     let onDeleteOldFeedClick: () -> Void
     let onForceRefreshClick: () -> Void
+    let deleteAllFeeds: () -> Void
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -278,7 +282,7 @@ struct HomeContent: View {
                         #if DEBUG
                         Button(
                             action: {
-                                KotlinDependencies.shared.getFeedManagerRepository().deleteAllFeeds()
+                                deleteAllFeeds()
                             },
                             label: {
                                 Label(
@@ -328,7 +332,8 @@ struct HomeContentLoading_Previews: PreviewProvider {
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
-            onForceRefreshClick: {}
+            onForceRefreshClick: {},
+            deleteAllFeeds: {}
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())
@@ -349,7 +354,8 @@ struct HomeContentLoaded_Previews: PreviewProvider {
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
-            onForceRefreshClick: {}
+            onForceRefreshClick: {},
+            deleteAllFeeds: {}
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())
@@ -371,7 +377,8 @@ struct HomeContentSettings_Previews: PreviewProvider {
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
-            onForceRefreshClick: {}
+            onForceRefreshClick: {},
+            deleteAllFeeds: {}
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())

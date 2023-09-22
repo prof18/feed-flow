@@ -5,6 +5,8 @@ import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.data.SettingsHelper
+import com.prof18.feedflow.domain.browser.BrowserSettingsRepository
+import com.prof18.feedflow.domain.browser.BrowserSettingsRepositoryImpl
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepositoryImpl
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
@@ -77,7 +79,6 @@ private val coreModule = module {
         FeedManagerRepositoryImpl(
             databaseHelper = get(),
             opmlFeedHandler = get(),
-            settingsHelper = get(),
             rssParser = get(),
             logger = getWith("FeedManagerRepositoryImpl"),
         )
@@ -97,6 +98,7 @@ private val coreModule = module {
     viewModel {
         HomeViewModel(
             feedRetrieverRepository = get(),
+            feedManagerRepository = get(),
         )
     }
 
@@ -125,6 +127,12 @@ private val coreModule = module {
             feedManagerRepository = get(),
             feedRetrieverRepository = get(),
             logger = getWith("FeedImporterUseCase"),
+        )
+    }
+
+    factory<BrowserSettingsRepository> {
+        BrowserSettingsRepositoryImpl(
+            settingsHelper = get(),
         )
     }
 }

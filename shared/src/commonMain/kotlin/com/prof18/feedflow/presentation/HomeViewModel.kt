@@ -1,6 +1,7 @@
 package com.prof18.feedflow.presentation
 
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
@@ -18,8 +19,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class HomeViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val feedManagerRepository: FeedManagerRepository,
 ) : BaseViewModel() {
 
     // Loading
@@ -132,5 +134,9 @@ class HomeViewModel(
         scope.launch {
             feedRetrieverRepository.fetchFeeds(forceRefresh = true)
         }
+    }
+
+    fun deleteAllFeeds() {
+        feedManagerRepository.deleteAllFeeds()
     }
 }

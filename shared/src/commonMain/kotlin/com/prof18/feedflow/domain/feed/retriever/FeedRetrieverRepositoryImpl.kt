@@ -29,12 +29,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
-import kotlin.experimental.ExperimentalObjCRefinement
-import kotlin.native.HiddenFromObjC
 
 @Suppress("TooManyFunctions")
-@OptIn(ExperimentalCoroutinesApi::class, ExperimentalObjCRefinement::class)
-@HiddenFromObjC
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedRetrieverRepositoryImpl(
     private val parser: RssParser,
     private val databaseHelper: DatabaseHelper,

@@ -17,7 +17,6 @@ import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.domain.model.FeedItemId
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map

@@ -40,7 +40,6 @@ import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemClickedInfo
-import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus
@@ -60,6 +59,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
+@OptIn(ExperimentalMaterialApi::class)
 @Suppress("LongMethod")
 @Composable
 internal fun HomeScreen(
@@ -67,7 +67,6 @@ internal fun HomeScreen(
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
     val browserManager = koinInject<BrowserManager>()
-    val feedManagerRepository = koinInject<FeedManagerRepository>()
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
@@ -121,7 +120,7 @@ internal fun HomeScreen(
                     }
                 },
                 onDeleteDatabase = {
-                    feedManagerRepository.deleteAllFeeds()
+                    homeViewModel.deleteAllFeeds()
                 },
             )
         },

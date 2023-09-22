@@ -4,8 +4,6 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.data.DatabaseHelper
-import com.prof18.feedflow.data.SettingsHelper
-import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.domain.model.NotValidFeedSources
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.domain.opml.OpmlInput
@@ -21,7 +19,6 @@ import kotlinx.coroutines.flow.toList
 internal class FeedManagerRepositoryImpl(
     private val databaseHelper: DatabaseHelper,
     private val opmlFeedHandler: OpmlFeedHandler,
-    private val settingsHelper: SettingsHelper,
     private val rssParser: RssParser,
     private val logger: Logger,
 ) : FeedManagerRepository {
@@ -93,13 +90,6 @@ internal class FeedManagerRepositoryImpl(
 
     override suspend fun deleteFeed(feedSource: FeedSource) {
         databaseHelper.deleteFeedSource(feedSource)
-    }
-
-    override fun getFavouriteBrowserId(): String? =
-        settingsHelper.getFavouriteBrowserId()
-
-    override fun setFavouriteBrowser(browser: Browser) {
-        settingsHelper.saveFavouriteBrowserId(browser.id)
     }
 
     override suspend fun checkIfValidRss(url: String): Boolean {

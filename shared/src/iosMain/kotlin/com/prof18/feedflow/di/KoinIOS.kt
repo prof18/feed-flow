@@ -8,7 +8,7 @@ import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.IosDateFormatter
-import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
@@ -85,7 +85,7 @@ object KotlinDependencies : KoinComponent {
     fun getHomeViewModel() = getKoin().get<HomeViewModel>()
     fun getFeedSourceListViewModel() = getKoin().get<FeedSourceListViewModel>()
     fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()
-    fun getFeedManagerRepository() = getKoin().get<FeedManagerRepository>()
+    fun getBrowserSettingsRepository() = getKoin().get<BrowserSettingsRepository>()
     fun getLogger(tag: String? = null) = getKoin().get<Logger> { parametersOf(tag) }
     fun getImportExportViewModel() = getKoin().get<ImportExportViewModel>()
 }

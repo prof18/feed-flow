@@ -31,7 +31,7 @@ class FeedFlowApp : Application() {
                     single {
                         BrowserManager(
                             context = this@FeedFlowApp,
-                            feedManagerRepository = get(),
+                            browserSettingsRepository = get(),
                             logger = getWith("BrowserManager"),
                         )
                     }

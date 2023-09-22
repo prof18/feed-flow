@@ -50,18 +50,18 @@ class BrowserSelector: ObservableObject {
         )
     ]
 
-    private let feedManagerRepository = KotlinDependencies.shared.getFeedManagerRepository()
+    private let browserSettingsRepository = KotlinDependencies.shared.getBrowserSettingsRepository()
 
     @Published var browsers: [Browser] = []
     @Published var selectedBrowser: Browser? {
         didSet {
-            feedManagerRepository.setFavouriteBrowser(browser: selectedBrowser!)
+            browserSettingsRepository.setFavouriteBrowser(browser: selectedBrowser!)
         }
     }
 
     init() {
 
-        let favouriteBrowser = feedManagerRepository.getFavouriteBrowserId()
+        let favouriteBrowser = browserSettingsRepository.getFavouriteBrowserId()
 
         for (index, browser) in supportedBrowsers.enumerated() {
             let stringUrl = "\(browser.id)https://www.example.com"

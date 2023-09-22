@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import co.touchlab.kermit.Logger
-import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.domain.model.Browser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 
 class BrowserManager(
     private val context: Context,
-    private val feedManagerRepository: FeedManagerRepository,
+    private val browserSettingsRepository: BrowserSettingsRepository,
     private val logger: Logger,
 ) {
 
@@ -26,12 +26,12 @@ class BrowserManager(
         populateBrowserList()
     }
 
-    fun getBrowserPackageName(): String? {
+    private fun getBrowserPackageName(): String? {
         return browserListMutableState.value.firstOrNull { it.isFavourite }?.id
     }
 
     fun setFavouriteBrowser(browser: Browser) {
-        feedManagerRepository.setFavouriteBrowser(browser)
+        browserSettingsRepository.setFavouriteBrowser(browser)
         browserListMutableState.update { browserList ->
             val newList = browserList.toMutableList()
             newList.replaceAll {
@@ -42,7 +42,7 @@ class BrowserManager(
     }
 
     private fun populateBrowserList() {
-        val favouriteBrowserId = feedManagerRepository.getFavouriteBrowserId()
+        val favouriteBrowserId = browserSettingsRepository.getFavouriteBrowserId()
 
         val intent = Intent(Intent(Intent.ACTION_VIEW)).apply {
             data = Uri.parse("https://www.example.com")
@@ -54,7 +54,6 @@ class BrowserManager(
                 PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_ALL.toLong()),
             )
         } else {
-            @Suppress("DEPRECATION")
             context.packageManager.queryIntentActivities(
                 Intent(Intent.ACTION_MAIN, null).addCategory(Intent.CATEGORY_LAUNCHER),
                 PackageManager.GET_META_DATA,

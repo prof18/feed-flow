@@ -148,6 +148,7 @@ fun main() = application {
         val emailContent = stringResource(MR.strings.issue_content_template)
 
         FeedFlowMenuBar(
+            showDebugMenu = appEnvironment.isDebug(),
             onRefreshClick = {
                 scope.launch {
                     listState.animateScrollToItem(0)
@@ -185,7 +186,9 @@ fun main() = application {
                     homeViewModel.forceFeedRefresh()
                 }
             },
-            showDebugMenu = appEnvironment.isDebug(),
+            deleteFeeds = {
+                homeViewModel.deleteAllFeeds()
+            },
         )
 
         MainContent(

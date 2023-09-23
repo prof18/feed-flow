@@ -13,13 +13,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.domain.model.FeedAddedState
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.ui.addfeed.AddFeedsContent
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
@@ -31,29 +32,39 @@ fun AddFeedScreen(
     navigateBack: () -> Unit,
 ) {
     val viewModel = koinViewModel<AddFeedViewModel>()
-    var feedName by remember { mutableStateOf("") }
     var feedUrl by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
-    val isAddDone by viewModel.isAddDoneState.collectAsStateWithLifecycle()
-    val isInvalidUrl by viewModel.isInvalidRssFeed.collectAsStateWithLifecycle()
 
-    if (isAddDone) {
-        feedName = ""
-        feedUrl = ""
-        val message = stringResource(resource = MR.strings.feed_added_message)
-        Toast.makeText(context, message, Toast.LENGTH_SHORT)
-            .show()
+    LaunchedEffect(Unit) {
+        viewModel.feedAddedState.collect { feedAddedState ->
+            when (feedAddedState) {
+                is FeedAddedState.Error -> {
+                    showError = true
+                    errorMessage = feedAddedState.errorMessage.toString(context)
+                }
+
+                is FeedAddedState.FeedAdded -> {
+                    feedUrl = ""
+                    val message = feedAddedState.message.toString(context)
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                FeedAddedState.FeedNotAdded -> {
+                    showError = false
+                    errorMessage = ""
+                }
+            }
+        }
     }
 
     AddFeedScreenContent(
-        feedName = feedName,
         feedUrl = feedUrl,
-        isInvalidUrl = isInvalidUrl,
-        onFeedNameUpdated = { name ->
-            feedName = name
-            viewModel.updateFeedNameTextFieldValue(name)
-        },
+        showError = showError,
+        errorMessage = errorMessage,
         onFeedUrlUpdated = { url ->
             feedUrl = url
             viewModel.updateFeedUrlTextFieldValue(url)
@@ -68,10 +79,9 @@ fun AddFeedScreen(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun AddFeedScreenContent(
-    feedName: String,
     feedUrl: String,
-    isInvalidUrl: Boolean,
-    onFeedNameUpdated: (String) -> Unit,
+    showError: Boolean,
+    errorMessage: String,
     onFeedUrlUpdated: (String) -> Unit,
     addFeed: () -> Unit,
     navigateBack: () -> Unit,
@@ -99,10 +109,9 @@ private fun AddFeedScreenContent(
     ) { paddingValues ->
         AddFeedsContent(
             paddingValues = paddingValues,
-            feedName = feedName,
-            onFeedNameUpdated = onFeedNameUpdated,
             feedUrl = feedUrl,
-            isInvalidUrl = isInvalidUrl,
+            showError = showError,
+            errorMessage = errorMessage,
             onFeedUrlUpdated = onFeedUrlUpdated,
             addFeed = addFeed,
         )
@@ -114,12 +123,11 @@ private fun AddFeedScreenContent(
 private fun AddScreenContentPreview() {
     FeedFlowTheme {
         AddFeedScreenContent(
-            feedName = "My Feed",
             feedUrl = "https://www.ablog.com/feed",
-            onFeedNameUpdated = {},
+            showError = false,
+            errorMessage = "",
             onFeedUrlUpdated = {},
             addFeed = { },
-            isInvalidUrl = false,
             navigateBack = {},
         )
     }
@@ -130,10 +138,9 @@ private fun AddScreenContentPreview() {
 private fun AddScreenContentInvalidUrlPreview() {
     FeedFlowTheme {
         AddFeedScreenContent(
-            feedName = "My Feed",
             feedUrl = "https://www.ablog.com/feed",
-            isInvalidUrl = true,
-            onFeedNameUpdated = {},
+            showError = true,
+            errorMessage = "The link you provided is not a valid RSS feed",
             onFeedUrlUpdated = {},
             addFeed = { },
             navigateBack = {},

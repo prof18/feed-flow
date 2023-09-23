@@ -104,7 +104,6 @@ private val coreModule = module {
 
     viewModel {
         AddFeedViewModel(
-            feedManagerRepository = get(),
             feedRetrieverRepository = get(),
         )
     }

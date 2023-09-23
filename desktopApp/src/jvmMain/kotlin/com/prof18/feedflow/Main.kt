@@ -245,6 +245,7 @@ private fun MainContent(
                                         HomeScreen(
                                             paddingValues = paddingValues,
                                             homeViewModel = homeViewModel,
+                                            snackbarHostState = snackbarHostState,
                                             listState = listState,
                                             onAddFeedClick = {
                                                 navigation.push(Screen.FeedList)

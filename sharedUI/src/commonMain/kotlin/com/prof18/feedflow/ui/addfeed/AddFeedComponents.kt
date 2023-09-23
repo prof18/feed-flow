@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.ui.style.Spacing
@@ -24,10 +23,9 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun AddFeedsContent(
     paddingValues: PaddingValues,
-    feedName: String,
     feedUrl: String,
-    isInvalidUrl: Boolean,
-    onFeedNameUpdated: (String) -> Unit,
+    showError: Boolean,
+    errorMessage: String,
     onFeedUrlUpdated: (String) -> Unit,
     addFeed: () -> Unit,
 ) {
@@ -36,19 +34,13 @@ fun AddFeedsContent(
             .padding(paddingValues)
             .padding(horizontal = Spacing.regular),
     ) {
-        FeedNameTextField(
-            modifier = Modifier
-                .fillMaxWidth(),
-            feedName = feedName,
-            onFeedNameUpdated = onFeedNameUpdated,
-        )
-
         FeedUrlTextField(
             modifier = Modifier
                 .padding(top = Spacing.regular)
                 .fillMaxWidth(),
             feedUrl = feedUrl,
-            showError = isInvalidUrl,
+            showError = showError,
+            errorMessage = errorMessage,
             onFeedUrlUpdated = onFeedUrlUpdated,
         )
 
@@ -64,40 +56,11 @@ fun AddFeedsContent(
 }
 
 @Composable
-private fun FeedNameTextField(
-    modifier: Modifier = Modifier,
-    feedName: String,
-    onFeedNameUpdated: (String) -> Unit,
-) {
-    TextField(
-        modifier = modifier,
-        label = {
-            Text(text = stringResource(resource = MR.strings.feed_name))
-        },
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Next,
-            keyboardType = KeyboardType.Text,
-            capitalization = KeyboardCapitalization.Sentences,
-        ),
-        value = feedName,
-        onValueChange = {
-            onFeedNameUpdated(it)
-        },
-        placeholder = {
-            Text(
-                stringResource(resource = MR.strings.feed_name_placeholder),
-                maxLines = 1,
-            )
-        },
-        maxLines = 1,
-    )
-}
-
-@Composable
 private fun FeedUrlTextField(
     modifier: Modifier = Modifier,
     feedUrl: String,
     showError: Boolean,
+    errorMessage: String,
     onFeedUrlUpdated: (String) -> Unit,
 ) {
     TextField(
@@ -108,7 +71,7 @@ private fun FeedUrlTextField(
         isError = showError,
         supportingText = if (showError) {
             {
-                Text(stringResource(MR.strings.invalid_rss_url))
+                Text(errorMessage)
             }
         } else {
             null

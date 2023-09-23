@@ -1,58 +1,76 @@
 package com.prof18.feedflow.presentation
 
-import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import com.prof18.feedflow.domain.model.AddFeedResponse
+import com.prof18.feedflow.domain.model.FeedAddedState
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
+import dev.icerock.moko.resources.desc.ResourceFormatted
+import dev.icerock.moko.resources.desc.StringDesc
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class AddFeedViewModel internal constructor(
-    private val feedManagerRepository: FeedManagerRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
 ) : BaseViewModel() {
 
-    private var feedName: String = ""
     private var feedUrl: String = ""
+    private val feedAddedMutableState: MutableSharedFlow<FeedAddedState> = MutableSharedFlow()
 
-    private val isAddDoneMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val isInvalidRssFeedMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-
-    @NativeCoroutinesState
-    val isAddDoneState = isAddDoneMutableState.asStateFlow()
-
-    @NativeCoroutinesState
-    val isInvalidRssFeed = isInvalidRssFeedMutableState.asStateFlow()
+    @NativeCoroutines
+    val feedAddedState = feedAddedMutableState.asSharedFlow()
 
     fun updateFeedUrlTextFieldValue(feedUrlTextFieldValue: String) {
         feedUrl = feedUrlTextFieldValue
-        isInvalidRssFeedMutableState.update { false }
-    }
-
-    fun updateFeedNameTextFieldValue(feedNameTextFieldValue: String) {
-        feedName = feedNameTextFieldValue
+        scope.launch {
+            feedAddedMutableState.emit(FeedAddedState.FeedNotAdded)
+        }
     }
 
     fun addFeed() {
         scope.launch {
-            if (feedUrl.isNotEmpty() && feedName.isNotEmpty()) {
-                val isValidRss = feedManagerRepository.checkIfValidRss(feedUrl)
-                if (isValidRss) {
-                    feedManagerRepository.addFeed(
-                        url = feedUrl,
-                        name = feedName,
-                    )
-                    isAddDoneMutableState.update { true }
-                    feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
-                } else {
-                    isInvalidRssFeedMutableState.update { true }
+            if (feedUrl.isNotEmpty()) {
+                when (val feedResponse = feedRetrieverRepository.fetchSingleFeed(feedUrl)) {
+                    is AddFeedResponse.FeedFound -> {
+                        feedRetrieverRepository.addFeedSource(feedResponse)
+                        feedAddedMutableState.emit(
+                            FeedAddedState.FeedAdded(
+                                message = StringDesc.ResourceFormatted(
+                                    stringRes = MR.strings.feed_added_message,
+                                    feedResponse.parsedFeedSource.title,
+                                ),
+                            ),
+                        )
+                    }
+
+                    AddFeedResponse.EmptyFeed -> {
+                        feedAddedMutableState.emit(
+                            FeedAddedState.Error(
+                                errorMessage = StringDesc.ResourceFormatted(
+                                    stringRes = MR.strings.missing_title_and_link,
+                                ),
+                            ),
+                        )
+                    }
+
+                    AddFeedResponse.NotRssFeed -> {
+                        feedAddedMutableState.emit(
+                            FeedAddedState.Error(
+                                errorMessage = StringDesc.ResourceFormatted(
+                                    stringRes = MR.strings.invalid_rss_url,
+                                ),
+                            ),
+                        )
+                    }
                 }
             }
         }
     }
 
     fun clearAddDoneState() {
-        isAddDoneMutableState.update { false }
+        scope.launch {
+            feedAddedMutableState.emit(FeedAddedState.FeedNotAdded)
+        }
     }
 }

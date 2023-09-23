@@ -1,6 +1,7 @@
 package com.prof18.feedflow.domain.feed.retriever
 
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.domain.model.AddFeedResponse
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.presentation.model.ErrorState
@@ -28,4 +29,6 @@ internal interface FeedRetrieverRepository {
 
     suspend fun markAllFeedAsRead()
     suspend fun deleteOldFeeds()
+    suspend fun fetchSingleFeed(url: String): AddFeedResponse
+    suspend fun addFeedSource(feedFound: AddFeedResponse.FeedFound)
 }

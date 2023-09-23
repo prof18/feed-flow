@@ -2,14 +2,18 @@ package com.prof18.feedflow.addfeed
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.prof18.feedflow.desktopViewModel
 import com.prof18.feedflow.di.DI
+import com.prof18.feedflow.domain.model.FeedAddedState
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.ui.addfeed.AddFeedsContent
 import com.prof18.feedflow.ui.style.FeedFlowTheme
@@ -18,28 +22,47 @@ import com.prof18.feedflow.ui.style.FeedFlowTheme
 fun AddFeedScreen(
     onFeedAdded: () -> Unit,
 ) {
-    var feedName by remember { mutableStateOf("") }
     var feedUrl by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
     val viewModel = desktopViewModel { DI.koin.get<AddFeedViewModel>() }
 
-    val isAddDone by viewModel.isAddDoneState.collectAsState()
-    val isInvalidUrl by viewModel.isInvalidRssFeed.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    if (isAddDone) {
-        feedName = ""
-        feedUrl = ""
-        onFeedAdded()
+    LaunchedEffect(Unit) {
+        viewModel.feedAddedState.collect { feedAddedState ->
+            when (feedAddedState) {
+                is FeedAddedState.Error -> {
+                    showError = true
+                    errorMessage = feedAddedState.errorMessage.localized()
+                }
+
+                is FeedAddedState.FeedAdded -> {
+                    val message = feedAddedState.message.localized()
+
+                    snackbarHostState.showSnackbar(
+                        message,
+                        duration = SnackbarDuration.Short,
+                    )
+
+                    feedUrl = ""
+                    onFeedAdded()
+                }
+
+                FeedAddedState.FeedNotAdded -> {
+                    showError = false
+                    errorMessage = ""
+                }
+            }
+        }
     }
 
     AddFeedScreenContent(
-        feedName = feedName,
         feedUrl = feedUrl,
-        isInvalidUrl = isInvalidUrl,
-        onFeedNameUpdated = { name ->
-            feedName = name
-            viewModel.updateFeedNameTextFieldValue(name)
-        },
+        isInvalidUrl = showError,
+        errorMessage = errorMessage,
+        snackbarHostState = snackbarHostState,
         onFeedUrlUpdated = { url ->
             feedUrl = url
             viewModel.updateFeedUrlTextFieldValue(url)
@@ -52,20 +75,21 @@ fun AddFeedScreen(
 
 @Composable
 private fun AddFeedScreenContent(
-    feedName: String,
     feedUrl: String,
     isInvalidUrl: Boolean,
-    onFeedNameUpdated: (String) -> Unit,
+    errorMessage: String,
+    snackbarHostState: SnackbarHostState,
     onFeedUrlUpdated: (String) -> Unit,
     addFeed: () -> Unit,
 ) {
-    Scaffold { paddingValues ->
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { paddingValues ->
         AddFeedsContent(
             paddingValues = paddingValues,
-            feedName = feedName,
-            isInvalidUrl = isInvalidUrl,
-            onFeedNameUpdated = onFeedNameUpdated,
             feedUrl = feedUrl,
+            showError = isInvalidUrl,
+            errorMessage = errorMessage,
             onFeedUrlUpdated = onFeedUrlUpdated,
             addFeed = addFeed,
         )
@@ -77,10 +101,10 @@ private fun AddFeedScreenContent(
 private fun AddScreenContentPreview() {
     FeedFlowTheme {
         AddFeedScreenContent(
-            feedName = "My Feed",
             feedUrl = "https://www.ablog.com/feed",
             isInvalidUrl = false,
-            onFeedNameUpdated = {},
+            errorMessage = "",
+            snackbarHostState = SnackbarHostState(),
             onFeedUrlUpdated = {},
             addFeed = { },
         )
@@ -94,10 +118,10 @@ private fun AddScreenContentDarkPreview() {
         darkTheme = true,
     ) {
         AddFeedScreenContent(
-            feedName = "My Feed",
             feedUrl = "https://www.ablog.com/feed",
             isInvalidUrl = false,
-            onFeedNameUpdated = {},
+            errorMessage = "",
+            snackbarHostState = SnackbarHostState(),
             onFeedUrlUpdated = {},
             addFeed = { },
         )
@@ -109,10 +133,10 @@ private fun AddScreenContentDarkPreview() {
 private fun AddScreenContentInvalidUrlPreview() {
     FeedFlowTheme {
         AddFeedScreenContent(
-            feedName = "My Feed",
             feedUrl = "https://www.ablog.com/feed",
             isInvalidUrl = true,
-            onFeedNameUpdated = {},
+            errorMessage = "The link you provided is not a valid RSS feed",
+            snackbarHostState = SnackbarHostState(),
             onFeedUrlUpdated = {},
             addFeed = { },
         )

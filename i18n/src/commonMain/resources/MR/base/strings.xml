@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="feed_added_message">Feed added</string>
-    <string name="feed_name">Feed name</string>
+    <string name="feed_added_message">Feed "%s" added</string>
     <string name="feed_name_placeholder">My favorite blog</string>
     <string name="feed_url">Feed URL</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
@@ -45,6 +44,7 @@
     <string name="database_error">Something went wrong during the retrieval of the feeds. Please retry or restart the app :(</string>
     <string name="force_feed_refresh">Force feeds refresh</string>
     <string name="invalid_rss_url">The link you provided is not a valid RSS feed</string>
+    <string name="missing_title_and_link">There was an error while getting the title of the feed</string>
     <string name="import_export_opml">Import and export OPML</string>
     <string name="retry_button">Retry</string>
     <string name="done_button">Okay</string>

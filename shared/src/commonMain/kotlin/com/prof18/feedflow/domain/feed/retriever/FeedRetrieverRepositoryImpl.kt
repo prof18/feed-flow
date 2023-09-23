@@ -3,10 +3,12 @@ package com.prof18.feedflow.domain.feed.retriever
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
+import com.prof18.feedflow.domain.model.AddFeedResponse
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
@@ -141,6 +143,57 @@ internal class FeedRetrieverRepositoryImpl(
 
     override suspend fun markAllFeedAsRead() {
         databaseHelper.markAllFeedAsRead()
+        getFeeds()
+    }
+
+    override suspend fun fetchSingleFeed(url: String): AddFeedResponse = withContext(dispatcherProvider.io) {
+        val rssChannel = try {
+            parser.getRssChannel(url)
+        } catch (e: Throwable) {
+            logger.d { "Wrong url input: $e" }
+            return@withContext AddFeedResponse.NotRssFeed
+        }
+        logger.d { "<- Got back ${rssChannel.title}" }
+
+        val title = rssChannel.title
+
+        if (title != null) {
+            val parsedFeedSource = ParsedFeedSource(
+                url = url,
+                title = title,
+                category = null,
+            )
+
+            return@withContext AddFeedResponse.FeedFound(
+                rssChannel = rssChannel,
+                parsedFeedSource = parsedFeedSource,
+            )
+        } else {
+            return@withContext AddFeedResponse.EmptyFeed
+        }
+    }
+
+    override suspend fun addFeedSource(feedFound: AddFeedResponse.FeedFound) = withContext(dispatcherProvider.io) {
+        val rssChannel = feedFound.rssChannel
+        val parsedFeedSource = feedFound.parsedFeedSource
+        val currentTimestamp = dateFormatter.currentTimeMillis()
+        val feedSource = FeedSource(
+            id = parsedFeedSource.hashCode(),
+            url = parsedFeedSource.url,
+            title = parsedFeedSource.title,
+            lastSyncTimestamp = currentTimestamp,
+        )
+
+        val feedItems = rssChannel.getFeedItems(
+            feedSource = feedSource,
+        )
+
+        databaseHelper.insertFeedSource(
+            listOf(
+                parsedFeedSource,
+            ),
+        )
+        databaseHelper.insertFeedItems(feedItems, currentTimestamp)
         getFeeds()
     }
 

@@ -17,9 +17,12 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -43,11 +46,21 @@ import dev.icerock.moko.resources.compose.stringResource
 internal fun HomeScreen(
     paddingValues: PaddingValues,
     homeViewModel: HomeViewModel,
+    snackbarHostState: SnackbarHostState,
     listState: LazyListState,
     onAddFeedClick: () -> Unit,
 ) {
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        homeViewModel.errorState.collect { errorState ->
+            snackbarHostState.showSnackbar(
+                errorState!!.message.localized(),
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
 
     HomeScreenContent(
         paddingValues = paddingValues,

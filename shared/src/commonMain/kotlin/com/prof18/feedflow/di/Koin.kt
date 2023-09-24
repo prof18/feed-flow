@@ -8,9 +8,7 @@ import com.prof18.feedflow.data.SettingsHelper
 import com.prof18.feedflow.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.domain.browser.BrowserSettingsRepositoryImpl
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
-import com.prof18.feedflow.domain.feed.manager.FeedManagerRepositoryImpl
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepositoryImpl
 import com.prof18.feedflow.logging.crashReportingLogWriter
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
@@ -75,8 +73,8 @@ private val coreModule = module {
         RssParser()
     }
 
-    factory<FeedManagerRepository> {
-        FeedManagerRepositoryImpl(
+    factory {
+        FeedManagerRepository(
             databaseHelper = get(),
             opmlFeedHandler = get(),
             rssParser = get(),
@@ -84,8 +82,8 @@ private val coreModule = module {
         )
     }
 
-    single<FeedRetrieverRepository> {
-        FeedRetrieverRepositoryImpl(
+    single {
+        FeedRetrieverRepository(
             parser = get(),
             databaseHelper = get(),
             dispatcherProvider = get(),

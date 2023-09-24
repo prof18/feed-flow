@@ -4,6 +4,7 @@ import com.prof18.feedflow.MR
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.model.AddFeedResponse
 import com.prof18.feedflow.domain.model.FeedAddedState
+import com.prof18.feedflow.utils.sanitizeUrl
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
@@ -31,7 +32,9 @@ class AddFeedViewModel internal constructor(
     fun addFeed() {
         scope.launch {
             if (feedUrl.isNotEmpty()) {
-                when (val feedResponse = feedRetrieverRepository.fetchSingleFeed(feedUrl)) {
+                val url = sanitizeUrl(feedUrl)
+
+                when (val feedResponse = feedRetrieverRepository.fetchSingleFeed(url)) {
                     is AddFeedResponse.FeedFound -> {
                         feedRetrieverRepository.addFeedSource(feedResponse)
                         feedAddedMutableState.emit(

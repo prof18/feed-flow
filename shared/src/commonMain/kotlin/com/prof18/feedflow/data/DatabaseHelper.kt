@@ -153,6 +153,7 @@ internal class DatabaseHelper(
     suspend fun deleteFeedSource(feedSource: FeedSource) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedSourceQueries.deleteFeedSource(feedSource.id)
+            dbRef.feedItemQueries.deleteAllWithFeedSource(feedSource.id)
         }
 
     fun deleteAllFeeds() =

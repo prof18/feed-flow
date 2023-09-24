@@ -48,3 +48,7 @@ WHERE pub_date < :threshold;
 
 deleteAll:
 DELETE FROM feed_item;
+
+deleteAllWithFeedSource:
+DELETE FROM feed_item
+WHERE feed_source_id = :feedSourceId;

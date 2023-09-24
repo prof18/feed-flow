@@ -1,2 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="feed_name_placeholder">Mój ulubiony blog</string>
+    <string name="feed_added_message">Dodano kanał</string>
+    <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
+    <string name="feed_add_in_progress_message">Prosimy poczekać, sprawdzana jest dostępność każdego kanału. Operacja może chwilę potrwać w zależności od ilości importowanych kanałów</string>
+    <string name="force_feed_refresh">Wymuś odświeżenie kanałów</string>
+    <string name="database_error">Coś poszło nie tak podczas pobierania kanałów. Spróbuj ponownie lub uruchom aplikację ponownie :(</string>
+    <string name="import_dialog_title">Wybierz plik OPML</string>
+    <string name="feeds_import_done_message">Import zakończony</string>
+    <string name="import_dialog_button">Importuj</string>
+    <string name="feeds_importing_message">Importowanie kanału</string>
+    <string name="invalid_rss_url">Wprowadzony link nie jest kanałem RSS</string>
+    <string name="no_feeds_found_message">Nie znaleziono kanałów. Prosimy dodać nowy kanał!</string>
+    <string name="clear_old_articles_button">Usuń stare artykuły</string>
+    <string name="no_feeds_add_one_message">Brak kanałów, prosimy o dodanie jednego</string>
+    <string name="new_release_available_link">Pobierz tutaj</string>
+    <string name="refresh_feeds">Odśwież kanały</string>
+    <string name="done_button">OK</string>
+    <string name="issue_content_template">Prosimy o opisanie problemu i podanie linku do kanału RSS, który go powoduje. Jeśli możesz, załącz zrzut ekranu i plik OPML</string>
+    <string name="about_button">O programie</string>
+    <string name="report_issue_button">Zgłoś problem</string>
+    <string name="export_started_message">Generowanie eksportu</string>
+    <string name="import_export_opml">Import i eksport plików OPML</string>
+    <string name="feeds_export_done_message">Eksport zakończony</string>
+    <string name="settings_title">Ustawienia</string>
+    <string name="feed_url">Adres URL kanału</string>
+    <string name="open_website_button">Otwórz stronę internetową</string>
+    <string name="author_label">Stworzone z ❤️ przez</string>
+    <string name="loading_feed_message">Wczytywanie kanałów %s</string>
+    <string name="issue_content_title">Problem z FeedFlow</string>
+    <string name="delete_feed">Usuń</string>
+    <string name="about_nav_bar">O programie</string>
+    <string name="wrong_link_report_title">Te kanały nie zostały dodane ponieważ są one nieprawidłowe</string>
+    <string name="open_source_licenses">Licencje typu open source</string>
+    <string name="browser_selection_button">Ulubiona przeglądarka</string>
+    <string name="feed_error_message">Coś jest nie tak z: %s :(</string>
+    <string name="issue_report_title">Zgłoś problem z FeedFlow</string>
+    <string name="export_dialog_title">Zapisz plik OPML</string>
+    <string name="new_release_available_title">Dostępna jest nowa wersja FeedFlow:</string>
+    <string name="empty_feed_message">Nie ma tu nic więcej do przeczytania!</string>
+    <string name="export_feeds_button">Eksportuj kanał do pliku OPML</string>
+    <string name="export_dialog_button">Eksportuj</string>
+    <string name="settings_button">Ustawienia</string>
+    <string name="open_source_nav_bar">Licencje typu open source</string>
+    <string name="show_on_github">Pokaż na GitHubie</string>
+    <string name="mark_all_read_button">Oznacz jako przeczytane</string>
+    <string name="retry_button">Spróbuj ponownie</string>
+    <string name="generic_error_message">Przepraszamy, coś poszło nie tak :(</string>
+    <string name="default_browser">Domyślna przeglądarka</string>
+    <string name="import_feed_button">Importuj kanał z pliku OPML</string>
+    <string name="app_name">FeedFlow</string>
+    <string name="feeds_title">Kanały</string>
+    <string name="feed_name">Nazwa kanału</string>
+    <string name="about_the_app">FeedFlow to minimalistyczny i ceniony czytnik RSS. Artykuły są otwierane w odpowiedniej witrynie internetowej, a użytkownik może wybrać ulubioną przeglądarkę skoncentrowaną na prywatności, aby oddzielić czytanie od głównej przeglądarki.
+\nMożesz importować i eksportować swoją kolekcję kanałów RSS do pliku OPML.</string>
+    <string name="load_file_error_message">Nie udało się wczytać pliku</string>
+    <string name="add_feed">Dodaj kanał</string>
+</resources>

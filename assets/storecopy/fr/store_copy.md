@@ -1,31 +1,41 @@
-# Title
+# Titre
 
 FeedFlow
 
-## Short desc
+## Description courte
 
-Minimalistic and opinionated RSS Reader
+Lecteur de flux RSS minimaliste
 
-## Long desc
+## Description longue
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic and opinionated RSS Reader. Enjoy a clutter-free reading experience as FeedFlow offers a minimalistic list and it opens the articles on their respective websites.
+Suivez vos flux RSS favoris avec FeedFlow, un lecteur de flux RSS minimaliste.
+Profitez d'une expérience de lecture sans encombrement car FeedFlow propose une
+liste minimaliste et ouvre les articles sur leurs sites web respectifs.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can choose your favorite privacy-focused browser to separate your reading experience from your main browser.
+Personnalisez votre expérience de navigation en choisissant votre navigateur
+préféré. De cette façon, vous pouvez choisir votre navigateur préféré axé sur la
+protection de la vie privée pour séparer votre expérience de lecture de votre
+navigateur principal.
 
-Your existing RSS collection can be easily imported: FeedFlow offers full and easy import and export capabilities through OPML files.
+Votre collection RSS existante peut être facilement importée : FeedFlow offre
+des fonctionnalités complètes et faciles d'importation et d'exportation de
+fichiers OPML.
 
-Just focus on reading (or scrolling)!
+Concentrez-vous sur votre lecture !
 
-The app is still in development, so some features could be missing or there could be some issues. Please report any kind of bugs or feature suggestions!
+L'application est encore en cours de développement, il est donc possible que
+certaines fonctionnalités soient manquantes ou que des problèmes surviennent.
+N'hésitez pas à nous signaler tout dysfonctionnement ou à nous faire part de vos
+suggestions !
 
-## Screenshot 1
+## Capture d'écran 1
 
-All your feeds in your pocket
+Tous vos flux dans votre poche
 
-## Screenshot 3
+## Capture d'écran 3
 
-Import your existing collection
+Importez votre collection existante
 
-## Screenshot 4
+## Capture d'écran 4
 
-Open the articles in your favourite browser
+Ouvrez les articles dans votre navigateur préféré

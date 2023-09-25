@@ -1,2 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="feed_name_placeholder">Mon blog favori</string>
+    <string name="feed_added_message">Flux ajouté</string>
+    <string name="feed_url_placeholder">https://monblogfavori.com/flux</string>
+    <string name="feed_add_in_progress_message">Veuillez patienter, la disponibilité de chaque flux est en cours de vérification. L\'opération peut prendre un certain temps en fonction du nombre de flux que vous importez</string>
+    <string name="force_feed_refresh">Forcer l\'actualisation du flux</string>
+    <string name="database_error">Une erreur s\'est produite lors de la récupération des flux. Veuillez réessayer ou relancer l\'application :(</string>
+    <string name="import_dialog_title">Sélectionner un fichier OPML</string>
+    <string name="feeds_import_done_message">Import terminé</string>
+    <string name="import_dialog_button">Importer</string>
+    <string name="feeds_importing_message">Import du flux</string>
+    <string name="invalid_rss_url">Le lien que vous avez fourni n\'est pas un flux RSS valide</string>
+    <string name="no_feeds_found_message">Aucun flux trouvé. Veuillez ajouter un nouveau flux !</string>
+    <string name="clear_old_articles_button">Supprimer les anciennes entrées</string>
+    <string name="no_feeds_add_one_message">Aucun flux, ajoutez-en un</string>
+    <string name="new_release_available_link">Télécharger ici</string>
+    <string name="refresh_feeds">Actualiser le flux</string>
+    <string name="done_button">OK</string>
+    <string name="issue_content_template">Veuillez décrire le problème et fournir un lien vers le flux RSS à l\'origine du problème. Si vous le pouvez, veuillez joindre une capture d\'écran et le fichier OPML</string>
+    <string name="about_button">À propos</string>
+    <string name="report_issue_button">Signaler un problème</string>
+    <string name="export_started_message">Génération de l\'export</string>
+    <string name="import_export_opml">Import/Export OPML</string>
+    <string name="feeds_export_done_message">Export terminé</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="feed_url">URL du flux</string>
+    <string name="open_website_button">Ouvrir le site Web</string>
+    <string name="author_label">Développé avec ❤️ par</string>
+    <string name="loading_feed_message">Chargement des flux %s</string>
+    <string name="issue_content_title">Problème avec FeedFlow</string>
+    <string name="delete_feed">Supprimer</string>
+    <string name="about_nav_bar">À propos</string>
+    <string name="wrong_link_report_title">Les flux suivants n\'ont pas été ajoutés car ils ne sont pas valides</string>
+    <string name="open_source_licenses">Licences Open Source</string>
+    <string name="browser_selection_button">Navigateur préféré</string>
+    <string name="feed_error_message">Une erreur s\'est produite avec : %s :(</string>
+    <string name="issue_report_title">Signaler un problème avec FeedFlow</string>
+    <string name="export_dialog_title">Enregistrer un fichier OPML</string>
+    <string name="new_release_available_title">Une nouvelle version de FeedFlow est disponible :</string>
+    <string name="empty_feed_message">Il n\'y a rien d\'autre à lire ici !</string>
+    <string name="export_feeds_button">Exporter les flux vers OPML</string>
+    <string name="export_dialog_button">Exporter</string>
+    <string name="settings_button">Paramètres</string>
+    <string name="open_source_nav_bar">Licences Open Source</string>
+    <string name="show_on_github">Voir sur GitHub</string>
+    <string name="mark_all_read_button">Tout marquer comme lu</string>
+    <string name="retry_button">Réessayer</string>
+    <string name="generic_error_message">Oups, une erreur s\'est produite :(</string>
+    <string name="default_browser">Navigateur par défaut</string>
+    <string name="import_feed_button">Importer un flux depuis OPML</string>
+    <string name="app_name">FeedFlow</string>
+    <string name="feeds_title">Flux</string>
+    <string name="feed_name">Nom du flux</string>
+    <string name="about_the_app">FeedFlow est un lecteur RSS minimaliste. Les articles s\'ouvrent sur leur site web respectif et vous pouvez opter pour votre navigateur préféré, respectueux de la vie privée, afin de séparer votre expérience de lecture de votre navigateur principal.
+\nVous pouvez importer et exporter votre collection RSS vers un fichier OPML.</string>
+    <string name="load_file_error_message">Impossible de charger le fichier</string>
+    <string name="add_feed">Ajouter un flux</string>
+</resources>

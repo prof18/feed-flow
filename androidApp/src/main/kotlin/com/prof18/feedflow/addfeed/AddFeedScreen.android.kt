@@ -19,9 +19,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.core.model.CategoriesState
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.domain.model.FeedAddedState
 import com.prof18.feedflow.presentation.AddFeedViewModel
+import com.prof18.feedflow.presentation.preview.categoriesState
 import com.prof18.feedflow.ui.addfeed.AddFeedsContent
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import dev.icerock.moko.resources.compose.stringResource
@@ -61,10 +65,13 @@ fun AddFeedScreen(
         }
     }
 
+    val categoriesState by viewModel.categoriesState.collectAsStateWithLifecycle()
+
     AddFeedScreenContent(
         feedUrl = feedUrl,
         showError = showError,
         errorMessage = errorMessage,
+        categoriesState = categoriesState,
         onFeedUrlUpdated = { url ->
             feedUrl = url
             viewModel.updateFeedUrlTextFieldValue(url)
@@ -73,6 +80,12 @@ fun AddFeedScreen(
             viewModel.addFeed()
         },
         navigateBack = navigateBack,
+        onExpandClick = {
+            viewModel.onExpandCategoryClick()
+        },
+        onAddCategoryClick = { categoryName ->
+            viewModel.addNewCategory(categoryName)
+        },
     )
 }
 
@@ -82,9 +95,12 @@ private fun AddFeedScreenContent(
     feedUrl: String,
     showError: Boolean,
     errorMessage: String,
+    categoriesState: CategoriesState,
     onFeedUrlUpdated: (String) -> Unit,
     addFeed: () -> Unit,
     navigateBack: () -> Unit,
+    onExpandClick: () -> Unit,
+    onAddCategoryClick: (CategoryName) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -112,8 +128,11 @@ private fun AddFeedScreenContent(
             feedUrl = feedUrl,
             showError = showError,
             errorMessage = errorMessage,
+            categoriesState = categoriesState,
             onFeedUrlUpdated = onFeedUrlUpdated,
             addFeed = addFeed,
+            onExpandClick = onExpandClick,
+            onAddCategoryClick = onAddCategoryClick,
         )
     }
 }
@@ -126,9 +145,12 @@ private fun AddScreenContentPreview() {
             feedUrl = "https://www.ablog.com/feed",
             showError = false,
             errorMessage = "",
+            categoriesState = categoriesState,
             onFeedUrlUpdated = {},
             addFeed = { },
             navigateBack = {},
+            onExpandClick = {},
+            onAddCategoryClick = {},
         )
     }
 }
@@ -141,9 +163,12 @@ private fun AddScreenContentInvalidUrlPreview() {
             feedUrl = "https://www.ablog.com/feed",
             showError = true,
             errorMessage = "The link you provided is not a valid RSS feed",
+            categoriesState = categoriesState,
             onFeedUrlUpdated = {},
             addFeed = { },
             navigateBack = {},
+            onExpandClick = {},
+            onAddCategoryClick = {},
         )
     }
 }

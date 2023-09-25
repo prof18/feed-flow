@@ -9,3 +9,6 @@ VALUES (?);
 
 getCategoryByName:
 SELECT * FROM feed_source_category WHERE title = ?;
+
+selectAll:
+SELECT * FROM feed_source_category;

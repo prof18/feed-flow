@@ -20,9 +20,11 @@ INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_u
 VALUES (?,?,?,?,?,?,?,?, ?);
 
 selectFeeds:
-SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, is_read, comments_url, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp FROM feed_item
+SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, is_read, comments_url, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.title AS feed_source_category_title FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
+LEFT JOIN feed_source_category
+ON feed_source.category_id == feed_source_category.id
 WHERE is_new = 1
 ORDER BY pub_date DESC;
 

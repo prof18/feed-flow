@@ -1,7 +1,9 @@
 package com.prof18.feedflow.domain.feed.manager
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.domain.model.NotValidFeedSources
@@ -24,7 +26,7 @@ internal class FeedManagerRepository(
 ) {
     suspend fun addFeedsFromFile(opmlInput: OpmlInput): NotValidFeedSources {
         val feeds = opmlFeedHandler.generateFeedSources(opmlInput)
-        val categories = feeds.mapNotNull { it.category }.distinct()
+        val categories = feeds.mapNotNull { it.categoryName }.distinct()
 
         val validatedFeeds = validateFeeds(feeds)
 
@@ -67,21 +69,8 @@ internal class FeedManagerRepository(
         val isValid: Boolean,
     )
 
-    suspend fun getFeedSources(): Flow<List<FeedSource>> =
+    fun getFeedSources(): Flow<List<FeedSource>> =
         databaseHelper.getFeedSourcesFlowWithNoTimestamp()
-
-    // TODO: Add category?
-    suspend fun addFeed(url: String, name: String) {
-        databaseHelper.insertFeedSource(
-            listOf(
-                ParsedFeedSource(
-                    url = url,
-                    title = name,
-                    category = null,
-                ),
-            ),
-        )
-    }
 
     suspend fun exportFeedsAsOpml(opmlOutput: OpmlOutput) {
         val feeds = databaseHelper.getFeedSources()
@@ -92,7 +81,15 @@ internal class FeedManagerRepository(
         databaseHelper.deleteFeedSource(feedSource)
     }
 
-    suspend fun checkIfValidRss(url: String): Boolean {
+    suspend fun getCategories(): List<FeedSourceCategory> =
+        databaseHelper.getFeedSourceCategories()
+
+    suspend fun createCategory(categoryName: CategoryName) =
+        databaseHelper.insertCategories(
+            listOf(categoryName),
+        )
+
+    private suspend fun checkIfValidRss(url: String): Boolean {
         return try {
             rssParser.getRssChannel(url)
             true

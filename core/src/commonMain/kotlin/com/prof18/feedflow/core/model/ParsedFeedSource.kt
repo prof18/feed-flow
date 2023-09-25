@@ -3,7 +3,7 @@ package com.prof18.feedflow.core.model
 data class ParsedFeedSource(
     val url: String,
     val title: String,
-    val category: String?,
+    val categoryName: CategoryName?,
 ) {
     data class Builder(
         private var url: String? = null,
@@ -17,6 +17,7 @@ data class ParsedFeedSource(
                 this.title = title
             }
         }
+
         fun category(category: String?) = apply { this.category = category }
 
         fun build(): ParsedFeedSource? {
@@ -26,7 +27,11 @@ data class ParsedFeedSource(
             return ParsedFeedSource(
                 url = url!!,
                 title = title!!,
-                category = category,
+                categoryName = if (category != null) {
+                    CategoryName(requireNotNull(category))
+                } else {
+                    null
+                },
             )
         }
     }

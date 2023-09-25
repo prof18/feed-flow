@@ -7,8 +7,10 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item
@@ -48,7 +50,12 @@ internal class DatabaseHelper(
                 FeedSource(
                     id = feedSource.url_hash,
                     url = feedSource.url,
-                    title = feedSource.title,
+                    title = feedSource.feed_source_title,
+                    categoryName = if (feedSource.category_title != null) {
+                        CategoryName(feedSource.category_title)
+                    } else {
+                        null
+                    },
                     lastSyncTimestamp = feedSource.last_sync_timestamp,
                 )
             }
@@ -67,7 +74,12 @@ internal class DatabaseHelper(
                     FeedSource(
                         id = feedSource.url_hash,
                         url = feedSource.url,
-                        title = feedSource.title,
+                        title = feedSource.feed_source_title,
+                        categoryName = if (feedSource.category_title != null) {
+                            CategoryName(feedSource.category_title)
+                        } else {
+                            null
+                        },
                         lastSyncTimestamp = null,
                     )
                 }
@@ -79,22 +91,22 @@ internal class DatabaseHelper(
             .selectFeeds()
             .executeAsList()
 
-    suspend fun insertCategories(categories: List<String>) =
+    suspend fun insertCategories(categories: List<CategoryName>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             categories.forEach { category ->
-                dbRef.feedSourceCategoryQueries.insertFeedSourceCategory(category)
+                dbRef.feedSourceCategoryQueries.insertFeedSourceCategory(category.name)
             }
         }
 
     suspend fun insertFeedSource(feedSource: List<ParsedFeedSource>) {
         dbRef.transactionWithContext(backgroundDispatcher) {
             feedSource.forEach { feedSource ->
-                if (feedSource.category != null) {
+                if (feedSource.categoryName != null) {
                     dbRef.feedSourceQueries.insertFeedSource(
                         url_hash = feedSource.hashCode(),
                         url = feedSource.url,
                         title = feedSource.title,
-                        title_ = feedSource.category!!,
+                        title_ = feedSource.categoryName?.name.toString(),
                     )
                 } else {
                     dbRef.feedSourceQueries.insertFeedSourceWithNoCategory(
@@ -154,6 +166,18 @@ internal class DatabaseHelper(
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedSourceQueries.deleteFeedSource(feedSource.id)
             dbRef.feedItemQueries.deleteAllWithFeedSource(feedSource.id)
+        }
+
+    suspend fun getFeedSourceCategories(): List<FeedSourceCategory> =
+        withContext(backgroundDispatcher) {
+            dbRef.feedSourceCategoryQueries.selectAll()
+                .executeAsList()
+                .map {
+                    FeedSourceCategory(
+                        id = it.id,
+                        title = it.title,
+                    )
+                }
         }
 
     fun deleteAllFeeds() =

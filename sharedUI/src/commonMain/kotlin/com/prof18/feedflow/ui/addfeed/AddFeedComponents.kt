@@ -2,21 +2,22 @@
 
 package com.prof18.feedflow.ui.addfeed
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.core.model.CategoriesState
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -26,31 +27,50 @@ fun AddFeedsContent(
     feedUrl: String,
     showError: Boolean,
     errorMessage: String,
+    categoriesState: CategoriesState,
     onFeedUrlUpdated: (String) -> Unit,
     addFeed: () -> Unit,
+    onExpandClick: () -> Unit,
+    onAddCategoryClick: (CategoryName) -> Unit,
 ) {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .padding(paddingValues)
             .padding(horizontal = Spacing.regular),
     ) {
-        FeedUrlTextField(
-            modifier = Modifier
-                .padding(top = Spacing.regular)
-                .fillMaxWidth(),
-            feedUrl = feedUrl,
-            showError = showError,
-            errorMessage = errorMessage,
-            onFeedUrlUpdated = onFeedUrlUpdated,
-        )
+        item {
+            FeedUrlTextField(
+                modifier = Modifier
+                    .padding(top = Spacing.regular)
+                    .fillMaxWidth(),
+                feedUrl = feedUrl,
+                showError = showError,
+                errorMessage = errorMessage,
+                onFeedUrlUpdated = onFeedUrlUpdated,
+            )
+        }
 
-        Button(
-            modifier = Modifier
-                .padding(top = Spacing.regular)
-                .align(Alignment.CenterHorizontally),
-            onClick = addFeed,
-        ) {
-            Text(stringResource(resource = MR.strings.add_feed))
+        item {
+            CategoriesSelector(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                categoriesState = categoriesState,
+                onExpandClick = onExpandClick,
+                onAddCategoryClick = onAddCategoryClick,
+            )
+        }
+
+        item {
+            Button(
+                modifier = Modifier
+                    .padding(top = Spacing.small)
+                    .padding(bottom = Spacing.regular)
+                    .fillMaxWidth(),
+                enabled = feedUrl.isNotBlank(),
+                onClick = addFeed,
+            ) {
+                Text(stringResource(resource = MR.strings.add_feed))
+            }
         }
     }
 }

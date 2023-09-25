@@ -103,6 +103,7 @@ private val coreModule = module {
     viewModel {
         AddFeedViewModel(
             feedRetrieverRepository = get(),
+            feedManagerRepository = get(),
         )
     }
 

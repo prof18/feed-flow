@@ -2,6 +2,9 @@
 
 package com.prof18.feedflow.presentation.preview
 
+import com.prof18.feedflow.core.model.CategoriesState
+import com.prof18.feedflow.core.model.CategoriesState.CategoryItem
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
@@ -20,6 +23,7 @@ val feedItemsForPreview = listOf(
             id = 1,
             url = "https://www.ilpost.it",
             title = "Windows Central - News, Forums, Reviews, Help for Windows",
+            categoryName = CategoryName("Tech"),
             lastSyncTimestamp = null,
         ),
         isRead = false,
@@ -39,6 +43,7 @@ val feedItemsForPreview = listOf(
             url = "",
             title = "Android Police",
             lastSyncTimestamp = null,
+            categoryName = CategoryName("Tech"),
         ),
         isRead = true,
         pubDateMillis = 1675890077000,
@@ -57,6 +62,7 @@ val feedItemsForPreview = listOf(
             url = "https://9to5linux.com",
             title = "9to5 Linux",
             lastSyncTimestamp = null,
+            categoryName = CategoryName("Tech"),
         ),
         isRead = false,
         pubDateMillis = 0,
@@ -75,6 +81,7 @@ val feedItemsForPreview = listOf(
             url = "https://9to5linux.com",
             title = "9to5 Linux",
             lastSyncTimestamp = null,
+            categoryName = CategoryName("Tech"),
         ),
         isRead = false,
         pubDateMillis = 0,
@@ -102,18 +109,21 @@ val feedSourcesForPreview = listOf(
         url = "https://www.site1.com",
         title = "Site 1",
         lastSyncTimestamp = null,
+        categoryName = CategoryName("Tech"),
     ),
     FeedSource(
         id = 1,
         url = "https://www.site2.com",
         title = "Site 2",
         lastSyncTimestamp = null,
+        categoryName = CategoryName("News"),
     ),
     FeedSource(
         id = 2,
         url = "https://www.site3.com",
         title = "Site 3",
         lastSyncTimestamp = null,
+        categoryName = CategoryName("Tech"),
     ),
 )
 
@@ -131,13 +141,41 @@ val importExportStates = listOf(
             ParsedFeedSource(
                 url = "https://www.ilpost.it",
                 title = "Il Post",
-                category = null,
+                categoryName = null,
             ),
             ParsedFeedSource(
                 url = "https://www.techcrunch.it",
                 title = "Tech Crunch",
-                category = null,
+                categoryName = null,
             ),
+        ),
+    ),
+)
+
+val categoriesState = CategoriesState(
+    isExpanded = true,
+    header = "No category selected",
+    categories = listOf(
+        CategoryItem(
+            id = 0,
+            name = "Android",
+            isSelected = true,
+            isNew = false,
+            onClick = {},
+        ),
+        CategoryItem(
+            id = 0,
+            name = "Apple",
+            isSelected = false,
+            isNew = false,
+            onClick = {},
+        ),
+        CategoryItem(
+            id = 0,
+            name = "Tech",
+            isSelected = false,
+            isNew = false,
+            onClick = {},
         ),
     ),
 )

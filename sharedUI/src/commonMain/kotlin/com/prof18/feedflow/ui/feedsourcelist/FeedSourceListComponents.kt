@@ -34,6 +34,7 @@ import dev.icerock.moko.resources.compose.stringResource
 
 internal expect fun Modifier.feedSourceMenuClickModifier(onLongClick: () -> Unit): Modifier
 
+// TODO: add list with category dropdown
 @Composable
 fun FeedSourcesList(
     modifier: Modifier = Modifier,
@@ -62,9 +63,24 @@ fun FeedSourcesList(
                         },
                     ),
             ) {
+                feedSource.categoryName?.let { categoryName ->
+                    Text(
+                        modifier = Modifier
+                            .padding(top = Spacing.small),
+                        text = categoryName.name,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+
+                val paddingTop = if (feedSource.categoryName != null) {
+                    Spacing.xsmall
+                } else {
+                    Spacing.small
+                }
+
                 Text(
                     modifier = Modifier
-                        .padding(top = Spacing.small),
+                        .padding(top = paddingTop),
                     text = feedSource.title,
                     style = MaterialTheme.typography.bodyLarge,
                 )

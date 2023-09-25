@@ -1,6 +1,7 @@
 package com.prof18.feedflow.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.ParsedFeedSource
@@ -145,7 +146,10 @@ internal class FeedRetrieverRepository(
         getFeeds()
     }
 
-    suspend fun fetchSingleFeed(url: String): AddFeedResponse = withContext(dispatcherProvider.io) {
+    suspend fun fetchSingleFeed(
+        url: String,
+        categoryName: CategoryName?,
+    ): AddFeedResponse = withContext(dispatcherProvider.io) {
         val rssChannel = try {
             parser.getRssChannel(url)
         } catch (e: Throwable) {
@@ -160,7 +164,7 @@ internal class FeedRetrieverRepository(
             val parsedFeedSource = ParsedFeedSource(
                 url = url,
                 title = title,
-                category = null,
+                categoryName = categoryName,
             )
 
             return@withContext AddFeedResponse.FeedFound(
@@ -181,6 +185,7 @@ internal class FeedRetrieverRepository(
             url = parsedFeedSource.url,
             title = parsedFeedSource.title,
             lastSyncTimestamp = currentTimestamp,
+            categoryName = parsedFeedSource.categoryName,
         )
 
         val feedItems = rssChannel.getFeedItems(
@@ -348,6 +353,11 @@ internal class FeedRetrieverRepository(
             id = feed_source_id,
             url = feed_source_url,
             title = feed_source_title,
+            categoryName = if (feed_source_category_title != null) {
+                CategoryName(feed_source_category_title)
+            } else {
+                null
+            },
             lastSyncTimestamp = feed_source_last_sync_timestamp,
         ),
         isRead = is_read,

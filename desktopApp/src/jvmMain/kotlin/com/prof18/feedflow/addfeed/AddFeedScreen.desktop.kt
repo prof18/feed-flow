@@ -7,14 +7,18 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.prof18.feedflow.core.model.CategoriesState
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.desktopViewModel
 import com.prof18.feedflow.di.DI
 import com.prof18.feedflow.domain.model.FeedAddedState
 import com.prof18.feedflow.presentation.AddFeedViewModel
+import com.prof18.feedflow.presentation.preview.categoriesState
 import com.prof18.feedflow.ui.addfeed.AddFeedsContent
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 
@@ -58,6 +62,8 @@ fun AddFeedScreen(
         }
     }
 
+    val categoriesState by viewModel.categoriesState.collectAsState()
+
     AddFeedScreenContent(
         feedUrl = feedUrl,
         isInvalidUrl = showError,
@@ -70,6 +76,13 @@ fun AddFeedScreen(
         addFeed = {
             viewModel.addFeed()
         },
+        categoriesState = categoriesState,
+        onExpandClick = {
+            viewModel.onExpandCategoryClick()
+        },
+        onAddCategoryClick = { categoryName ->
+            viewModel.addNewCategory(categoryName)
+        },
     )
 }
 
@@ -79,8 +92,11 @@ private fun AddFeedScreenContent(
     isInvalidUrl: Boolean,
     errorMessage: String,
     snackbarHostState: SnackbarHostState,
+    categoriesState: CategoriesState,
     onFeedUrlUpdated: (String) -> Unit,
     addFeed: () -> Unit,
+    onExpandClick: () -> Unit,
+    onAddCategoryClick: (CategoryName) -> Unit,
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -90,9 +106,13 @@ private fun AddFeedScreenContent(
             feedUrl = feedUrl,
             showError = isInvalidUrl,
             errorMessage = errorMessage,
+            categoriesState = categoriesState,
             onFeedUrlUpdated = onFeedUrlUpdated,
             addFeed = addFeed,
-        )
+            onExpandClick = onExpandClick,
+            onAddCategoryClick = onAddCategoryClick,
+
+            )
     }
 }
 
@@ -105,8 +125,11 @@ private fun AddScreenContentPreview() {
             isInvalidUrl = false,
             errorMessage = "",
             snackbarHostState = SnackbarHostState(),
+            categoriesState = categoriesState,
             onFeedUrlUpdated = {},
             addFeed = { },
+            onExpandClick = {},
+            onAddCategoryClick = {},
         )
     }
 }
@@ -122,8 +145,11 @@ private fun AddScreenContentDarkPreview() {
             isInvalidUrl = false,
             errorMessage = "",
             snackbarHostState = SnackbarHostState(),
+            categoriesState = categoriesState,
             onFeedUrlUpdated = {},
             addFeed = { },
+            onExpandClick = {},
+            onAddCategoryClick = {},
         )
     }
 }
@@ -137,8 +163,11 @@ private fun AddScreenContentInvalidUrlPreview() {
             isInvalidUrl = true,
             errorMessage = "The link you provided is not a valid RSS feed",
             snackbarHostState = SnackbarHostState(),
+            categoriesState = categoriesState,
             onFeedUrlUpdated = {},
             addFeed = { },
+            onExpandClick = {},
+            onAddCategoryClick = {},
         )
     }
 }

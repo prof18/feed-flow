@@ -1,2 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="feed_name_placeholder">A kedvenc blogom</string>
+    <string name="feed_added_message">Feed hozzáadva</string>
+    <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
+    <string name="feed_add_in_progress_message">Kérlek várj, folyamatban van az összes feed elérhetőségének ellenőrzése. Ez a művelet eltarthat egy ideig attól függően, hogy hány feedet importálsz</string>
+    <string name="force_feed_refresh">Feedek frissítése mindenképp</string>
+    <string name="database_error">Hiba történt a feedek betöltése közben. Próbáld újra, vagy indítsd újra az alkalmazást. :(</string>
+    <string name="import_dialog_title">OMPL fájl kiválasztása</string>
+    <string name="feeds_import_done_message">Importálás kész</string>
+    <string name="import_dialog_button">Impotálás</string>
+    <string name="feeds_importing_message">Feed importálása</string>
+    <string name="invalid_rss_url">A megadott link nem egy érvényes RSS feedre mutat</string>
+    <string name="no_feeds_found_message">Nincs ilyen feed. Adj hozzá újat!</string>
+    <string name="clear_old_articles_button">Régi bejegyzések törlése</string>
+    <string name="no_feeds_add_one_message">Nincs feed, vegyél fel legalább egyet</string>
+    <string name="new_release_available_link">Letöltés</string>
+    <string name="refresh_feeds">Feedek frissítése</string>
+    <string name="done_button">Rendben</string>
+    <string name="issue_content_template">Kérlek, hogy írd le a tapasztalt probléma részleteit és add meg a problémát okozó RSS feed linkjét is. Ha teheted, csatolj képernyőképeket és az OMPL fájlt is</string>
+    <string name="about_button">Az alkalmazásról</string>
+    <string name="report_issue_button">Probléma jelentése</string>
+    <string name="export_started_message">Exportálandó adatok generálása</string>
+    <string name="import_export_opml">Importálás és exportálás OPML-be</string>
+    <string name="feeds_export_done_message">Exportálás kész</string>
+    <string name="settings_title">Beállítások</string>
+    <string name="feed_url">Feed URL-je</string>
+    <string name="open_website_button">Weboldal megnyitása</string>
+    <string name="author_label">Developed with ❤️ by</string>
+    <string name="loading_feed_message">Feedek betöltése %s</string>
+    <string name="issue_content_title">Probléma a FeedFlow-val</string>
+    <string name="delete_feed">Törlés</string>
+    <string name="about_nav_bar">Az alkalmazásról</string>
+    <string name="wrong_link_report_title">Az alábbi feedeket nem sikerült hozzáadni, mert nem érvényes RSS feedek</string>
+    <string name="open_source_licenses">Nyílt forráskódú engedélyek</string>
+    <string name="browser_selection_button">Kedvenc böngésződ</string>
+    <string name="feed_error_message">Valami nem stimmel ezzel: %s :(</string>
+    <string name="issue_report_title">A FeedFlow-val kapcsolatos probléma bejelentése</string>
+    <string name="export_dialog_title">OMPL fájl mentése</string>
+    <string name="new_release_available_title">Elérhető egy frissebb verzió:</string>
+    <string name="empty_feed_message">Itt elfogyott az olvasnivaló!</string>
+    <string name="export_feeds_button">Feedek exportálása OMPL-be</string>
+    <string name="export_dialog_button">Exportálás</string>
+    <string name="settings_button">Beállítások</string>
+    <string name="open_source_nav_bar">Nyílt forráskódú engedélyek</string>
+    <string name="show_on_github">Megnyitás GitHubon</string>
+    <string name="mark_all_read_button">Összes olvasottnak jelölése</string>
+    <string name="retry_button">Újra</string>
+    <string name="generic_error_message">Bocsánat, valami félre ment. :(</string>
+    <string name="default_browser">Alapértelmezett böngésző</string>
+    <string name="import_feed_button">Feed importálása OPML-ből</string>
+    <string name="app_name">FeedFlow</string>
+    <string name="feeds_title">Feedek</string>
+    <string name="feed_name">Feed neve</string>
+    <string name="about_the_app">A FeedFlow egy minimalista RSS olvasó alkalmazás. A cikkek az eredeti weboldalukon nyílnak meg a szabadon választott, kedvenc, akár privát böngészést is támogató böngésződben. Így különválaszthatod az olvasási előzményeidet a mindennapi böngészésedtől.
+\nAz RSS feed gyűjteményedet importálhatod OPML fájlból, vagy exportálhatod a gyűjteményedet innen egy OPML fájlba.</string>
+    <string name="load_file_error_message">HIba történt a fájl betöltésekor</string>
+    <string name="add_feed">Feed hozzáadása</string>
+</resources>

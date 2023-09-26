@@ -1,31 +1,39 @@
-# Title
+# Cím
 
 FeedFlow
 
-## Short desc
+## Rövid leírás
 
-Minimalistic and opinionated RSS Reader
+Egy minimalista RSS olvasó
 
-## Long desc
+## Hosszú leírás
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic and opinionated RSS Reader. Enjoy a clutter-free reading experience as FeedFlow offers a minimalistic list and it opens the articles on their respective websites.
+Kövesd a kedvenc RSS feedjeidet a FeedFlow-val, a minimalista RSS olvasóval.
+Élvezd a zsúfoltság nélküli élményt a FeedFlow egyszerű feed listájával, amiből
+rögtön a cikkek eredeti weboldalára navigálhatsz.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can choose your favorite privacy-focused browser to separate your reading experience from your main browser.
+Szabd saját igényeidhez a böngészési élményedet a kívánt böngésződ
+beállításával. Így a kedvenc, adatvédelmet előtérbe helyező böngésződet
+beállítva különválaszthatod az olvasási előzményeidet az egyéb böngészési
+előzményeidtől.
 
-Your existing RSS collection can be easily imported: FeedFlow offers full and easy import and export capabilities through OPML files.
+Könnyen importálhatod meglévő RSS gyűjteményedet: a FeedFlow teljes és egyszerű
+megoldást nyújt a feedjeid importálására és exportálására OPML fájlok
+segítségével.
 
-Just focus on reading (or scrolling)!
+Koncentrálj az olvasásra (vagy görgetésre)!
 
-The app is still in development, so some features could be missing or there could be some issues. Please report any kind of bugs or feature suggestions!
+Az alkalmazás még fejlesztés alatt áll, így előfordulhatnak hiányzó funkciók és
+esetleges problémák. Szívesen fogadok bármilyen hibajelentést és javaslatot!
 
-## Screenshot 1
+## Képernyőkép 1
 
-All your feeds in your pocket
+Az összes feeded a zsebedben
 
-## Screenshot 3
+## Képernyőkép 3
 
-Import your existing collection
+Importáld meglévő gyűjteményedet
 
-## Screenshot 4
+## Képernyőkép 4
 
-Open the articles in your favourite browser
+Nyisd meg a cikkeket kedvenc böngésződben

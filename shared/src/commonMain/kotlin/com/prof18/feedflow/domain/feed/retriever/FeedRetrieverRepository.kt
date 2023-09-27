@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.db.SelectFeeds
@@ -148,7 +149,7 @@ internal class FeedRetrieverRepository(
 
     suspend fun fetchSingleFeed(
         url: String,
-        categoryName: CategoryName?,
+        category: FeedSourceCategory?,
     ): AddFeedResponse = withContext(dispatcherProvider.io) {
         val rssChannel = try {
             parser.getRssChannel(url)
@@ -164,7 +165,9 @@ internal class FeedRetrieverRepository(
             val parsedFeedSource = ParsedFeedSource(
                 url = url,
                 title = title,
-                categoryName = categoryName,
+                categoryName = category?.title?.let {
+                    CategoryName(it)
+                },
             )
 
             return@withContext AddFeedResponse.FeedFound(
@@ -185,7 +188,12 @@ internal class FeedRetrieverRepository(
             url = parsedFeedSource.url,
             title = parsedFeedSource.title,
             lastSyncTimestamp = currentTimestamp,
-            categoryName = parsedFeedSource.categoryName,
+            category = parsedFeedSource.categoryName?.let { categoryName ->
+                FeedSourceCategory(
+                    id = 2,
+                    title = categoryName.name,
+                )
+            },
         )
 
         val feedItems = rssChannel.getFeedItems(
@@ -353,8 +361,11 @@ internal class FeedRetrieverRepository(
             id = feed_source_id,
             url = feed_source_url,
             title = feed_source_title,
-            categoryName = if (feed_source_category_title != null) {
-                CategoryName(feed_source_category_title)
+            category = if (feed_source_category_title != null && feed_source_category_id != null) {
+                FeedSourceCategory(
+                    id = feed_source_category_id,
+                    title = feed_source_category_title,
+                )
             } else {
                 null
             },

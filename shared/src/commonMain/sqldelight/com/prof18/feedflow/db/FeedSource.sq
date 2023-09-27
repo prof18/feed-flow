@@ -18,13 +18,13 @@ INSERT OR IGNORE INTO feed_source(url_hash, url, title)
 VALUES (?,?,?);
 
 selectFeedUrls:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.title AS category_title FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 ORDER BY feed_source.title COLLATE NOCASE ASC;
 
 selectFeedUrlsWithNotTimestamp:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source_category.title AS category_title FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source_category.id AS category_id, feed_source_category.title AS category_title FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 ORDER BY feed_source.title COLLATE NOCASE ASC;

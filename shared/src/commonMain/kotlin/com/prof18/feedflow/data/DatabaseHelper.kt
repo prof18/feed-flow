@@ -51,8 +51,11 @@ internal class DatabaseHelper(
                     id = feedSource.url_hash,
                     url = feedSource.url,
                     title = feedSource.feed_source_title,
-                    categoryName = if (feedSource.category_title != null) {
-                        CategoryName(feedSource.category_title)
+                    category = if (feedSource.category_title != null && feedSource.category_id != null) {
+                        FeedSourceCategory(
+                            id = requireNotNull(feedSource.category_id),
+                            title = requireNotNull(feedSource.category_title),
+                        )
                     } else {
                         null
                     },
@@ -61,6 +64,7 @@ internal class DatabaseHelper(
             }
     }
 
+    // TODO: delete the no timestamp, maybe
     fun getFeedSourcesFlowWithNoTimestamp(): Flow<List<FeedSource>> =
         dbRef.feedSourceQueries
             .selectFeedUrlsWithNotTimestamp()
@@ -75,8 +79,11 @@ internal class DatabaseHelper(
                         id = feedSource.url_hash,
                         url = feedSource.url,
                         title = feedSource.feed_source_title,
-                        categoryName = if (feedSource.category_title != null) {
-                            CategoryName(feedSource.category_title)
+                        category = if (feedSource.category_title != null && feedSource.category_id != null) {
+                            FeedSourceCategory(
+                                id = requireNotNull(feedSource.category_id),
+                                title = requireNotNull(feedSource.category_title),
+                            )
                         } else {
                             null
                         },

@@ -14,11 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogWindow
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.addfeed.AddFeedScreen
+import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.desktopViewModel
 import com.prof18.feedflow.di.DI
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
-import com.prof18.feedflow.presentation.preview.feedSourcesForPreview
+import com.prof18.feedflow.presentation.preview.feedSourcesState
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourceNavBar
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourcesList
 import com.prof18.feedflow.ui.feedsourcelist.NoFeedSourcesView
@@ -55,6 +57,9 @@ fun FeedSourceListScreen(
             onDeleteFeedClick = { feedSource ->
                 viewModel.deleteFeedSource(feedSource)
             },
+            onExpandClicked = { categoryId ->
+                viewModel.expandCategory(categoryId)
+            },
             navigateBack = navigateBack,
         )
     }
@@ -62,10 +67,11 @@ fun FeedSourceListScreen(
 
 @Composable
 private fun FeedSourceListContent(
-    feedSources: List<FeedSource>,
+    feedSources: List<FeedSourceState>,
     onAddFeedClick: () -> Unit,
     onDeleteFeedClick: (FeedSource) -> Unit,
     navigateBack: () -> Unit,
+    onExpandClicked: (CategoryId?) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -85,7 +91,8 @@ private fun FeedSourceListContent(
             FeedSourcesList(
                 modifier = Modifier
                     .padding(paddingValues),
-                feedSources = feedSources,
+                feedSourceState = feedSources,
+                onExpandClicked = onExpandClicked,
                 onDeleteFeedSourceClick = onDeleteFeedClick,
             )
         }
@@ -97,9 +104,10 @@ private fun FeedSourceListContent(
 private fun FeedSourceListContentPreview() {
     FeedFlowTheme {
         FeedSourceListContent(
-            feedSources = feedSourcesForPreview,
+            feedSources = feedSourcesState,
             onAddFeedClick = {},
             onDeleteFeedClick = {},
+            onExpandClicked = {},
             navigateBack = {},
         )
     }
@@ -112,9 +120,10 @@ private fun FeedSourceListContentDarkPreview() {
         darkTheme = true,
     ) {
         FeedSourceListContent(
-            feedSources = feedSourcesForPreview,
+            feedSources = feedSourcesState,
             onAddFeedClick = {},
             onDeleteFeedClick = {},
+            onExpandClicked = {},
             navigateBack = {},
         )
     }

@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
-import com.prof18.feedflow.presentation.preview.feedSourcesForPreview
+import com.prof18.feedflow.presentation.preview.feedSourcesState
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourceNavBar
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourcesList
 import com.prof18.feedflow.ui.feedsourcelist.NoFeedSourcesView
@@ -31,16 +33,20 @@ fun FeedSourceListScreen(
         onDeleteFeedSourceClick = { feedSource ->
             viewModel.deleteFeedSource(feedSource)
         },
+        onExpandClicked = { categoryId ->
+            viewModel.expandCategory(categoryId)
+        },
         navigateBack = navigateBack,
     )
 }
 
 @Composable
 private fun FeedSourceListContent(
-    feedSources: List<FeedSource>,
+    feedSources: List<FeedSourceState>,
     onAddFeedSourceClick: () -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     navigateBack: () -> Unit,
+    onExpandClicked: (CategoryId?) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -60,7 +66,8 @@ private fun FeedSourceListContent(
             FeedSourcesList(
                 modifier = Modifier
                     .padding(paddingValues),
-                feedSources = feedSources,
+                feedSourceState = feedSources,
+                onExpandClicked = onExpandClicked,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             )
         }
@@ -72,10 +79,11 @@ private fun FeedSourceListContent(
 private fun FeedSourceListContentPreview() {
     FeedFlowTheme {
         FeedSourceListContent(
-            feedSources = feedSourcesForPreview,
+            feedSources = feedSourcesState,
             onAddFeedSourceClick = { },
             onDeleteFeedSourceClick = {},
             navigateBack = {},
+            onExpandClicked = {},
         )
     }
 }

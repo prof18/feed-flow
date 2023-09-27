@@ -51,7 +51,7 @@ class AddFeedViewModel internal constructor(
         scope.launch {
             if (feedUrl.isNotEmpty()) {
                 val url = sanitizeUrl(feedUrl)
-                val categoryName = getSelectedCategoryName()
+                val categoryName = getSelectedCategory()
 
                 when (val feedResponse = feedRetrieverRepository.fetchSingleFeed(url, categoryName)) {
                     is AddFeedResponse.FeedFound -> {
@@ -142,9 +142,12 @@ class AddFeedViewModel internal constructor(
         }
     }
 
-    private fun getSelectedCategoryName(): CategoryName? {
+    private fun getSelectedCategory(): FeedSourceCategory? {
         val category = categoriesState.value.categories.firstOrNull { it.isSelected } ?: return null
-        return CategoryName(category.name)
+        return FeedSourceCategory(
+            id = category.id,
+            title = category.name,
+        )
     }
 
     private fun onCategorySelected(categoryId: CategoryId) {
@@ -175,7 +178,6 @@ class AddFeedViewModel internal constructor(
             id = id,
             name = title,
             isSelected = false,
-            isNew = false,
             onClick = { categoryId ->
                 onCategorySelected(categoryId)
             },

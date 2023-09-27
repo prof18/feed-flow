@@ -56,4 +56,5 @@
     <string name="missing_title_and_link">There was an error while getting the title of the feed</string>
     <string name="no_category_selected_header">No category selected</string>
     <string name="new_category_hint">New category name</string>
+    <string name="no_category">Uncategorized</string>
 </resources>

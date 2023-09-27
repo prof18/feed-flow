@@ -112,7 +112,7 @@ private fun AddFeedScreenContent(
             onExpandClick = onExpandClick,
             onAddCategoryClick = onAddCategoryClick,
 
-            )
+        )
     }
 }
 

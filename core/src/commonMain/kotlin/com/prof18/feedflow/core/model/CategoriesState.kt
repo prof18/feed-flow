@@ -10,7 +10,6 @@ data class CategoriesState(
         val id: Long,
         val name: String,
         val isSelected: Boolean,
-        val isNew: Boolean,
         val onClick: (CategoryId) -> Unit,
     )
 }

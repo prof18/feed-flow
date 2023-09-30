@@ -1,11 +1,14 @@
 package com.prof18.feedflow.domain
 
 import co.touchlab.kermit.Logger
+import java.time.DateTimeException
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
+import java.util.Locale
 
 internal class JvmAndroidDateFormatter(
     private val logger: Logger,
@@ -28,12 +31,26 @@ internal class JvmAndroidDateFormatter(
                         "[dd MMM yyyy HH:mm:ss Z]",
                 ),
             )
-        val dateTimeFormatter = dateTimeFormatterBuilder.toFormatter()
+
+        val dateTimeFormatter = dateTimeFormatterBuilder.toFormatter(Locale.ENGLISH)
+
         return try {
-            LocalDateTime.parse(dateString, dateTimeFormatter)
+            val temporalAccessor = dateTimeFormatter.parse(dateString)
             DateParsingResult.Parsed(
-                date = LocalDateTime.parse(dateString, dateTimeFormatter),
+                date = ZonedDateTime.from(temporalAccessor).withZoneSameInstant(ZoneId.systemDefault()),
             )
+        } catch (e: DateTimeException) {
+            try {
+                val localDateTime = LocalDateTime.parse(dateString, dateTimeFormatter)
+                DateParsingResult.Parsed(
+                    date = localDateTime.atZone(ZoneId.systemDefault()),
+                )
+            } catch (e: Throwable) {
+                DateParsingResult.ParsingError(
+                    exception = e,
+                    message = "Error while trying to format the date with dateFormatter. Date: $dateString",
+                )
+            }
         } catch (e: Throwable) {
             DateParsingResult.ParsingError(
                 exception = e,
@@ -46,7 +63,7 @@ internal class JvmAndroidDateFormatter(
     override fun getDateMillisFromString(dateString: String): Long? {
         val parseResult = parseDateString(dateString)
         return if (parseResult is DateParsingResult.Parsed) {
-            parseResult.date.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
+            parseResult.date.toEpochSecond() * 1000
         } else {
             val exception = (parseResult as DateParsingResult.ParsingError).exception
             logger.e(exception) {
@@ -58,17 +75,21 @@ internal class JvmAndroidDateFormatter(
 
     override fun formatDate(millis: Long): String {
         val instant = Instant.ofEpochMilli(millis)
-        val dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-        val today = LocalDateTime.now(ZoneId.systemDefault())
-        val isToday = dateTime.toLocalDate() == today.toLocalDate()
+        val userTimeZone = ZoneId.systemDefault()
+        val zonedDateTime = instant.atZone(userTimeZone)
 
+        val today = ZonedDateTime.now()
+        val isToday = zonedDateTime.toLocalDate() == today.toLocalDate()
         val pattern = if (isToday) {
             "HH:mm"
         } else {
             "dd/MM - HH:mm"
         }
-        val formatter = DateTimeFormatter.ofPattern(pattern)
-        return formatter.format(dateTime)
+
+        val formatter = DateTimeFormatter
+            .ofPattern(pattern)
+            .withZone(zonedDateTime.zone)
+        return formatter.format(zonedDateTime)
     }
 
     override fun currentTimeMillis(): Long =
@@ -76,7 +97,7 @@ internal class JvmAndroidDateFormatter(
 
     private sealed class DateParsingResult {
         data class Parsed(
-            val date: LocalDateTime,
+            val date: ZonedDateTime,
         ) : DateParsingResult()
 
         data class ParsingError(

@@ -27,11 +27,9 @@ versions-ben-manes = "0.44.0"
 viewModel-ktx = "2.6.1"
 viewModel-compose = "2.6.1"
 lifecycle-runtime-compose = "2.6.1"
-kotlinx-serialization = "1.5.1"
 org-robolectric = "4.9"
 sql-delight = "2.0.0"
 rss-parser = "6.0.2"
-kotlinx-date-time = "0.4.0"
 accompanist = "0.28.0"
 jsoup = "1.15.3"
 triplet-play = "3.8.1"
@@ -77,7 +75,6 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4jNop" }
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "kermit" }
@@ -91,7 +88,6 @@ sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sq
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql-delight" }
 sqldelight-primitive-adapter = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sql-delight" }
 com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref = "rss-parser" }
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup"  }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }

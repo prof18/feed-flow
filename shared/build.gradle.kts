@@ -71,8 +71,6 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
                 implementation(libs.multiplatform.settings)
-                implementation(libs.kotlin.test)
-                implementation(libs.kotlin.test.junit)
 
                 api(project(":core"))
                 api(project(":i18n"))
@@ -82,6 +80,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(libs.kotlin.test.junit)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.touchlab.kermit.test)
             }

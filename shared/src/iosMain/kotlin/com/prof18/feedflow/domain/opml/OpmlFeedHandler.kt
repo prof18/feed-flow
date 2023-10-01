@@ -2,6 +2,7 @@ package com.prof18.feedflow.domain.opml
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.feedflow.utils.getValueOrNull
@@ -33,7 +34,7 @@ internal actual class OpmlFeedHandler(
     @Suppress("MaximumLineLength")
     actual suspend fun exportFeed(
         opmlOutput: OpmlOutput,
-        feedSources: List<FeedSource>,
+        feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>
     ) {
         val opmlString = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -42,10 +43,9 @@ internal actual class OpmlFeedHandler(
                     <title>Subscriptions from FeedFlow</title>
                 </head>
                 <body>
-                ${
-            feedSources.joinToString("\n") { feedSource ->
-                """<outline type="rss" text="${feedSource.title.cleanForXml()}" title="${feedSource.title.cleanForXml()}" xmlUrl="${feedSource.url.cleanForXml()}" htmlUrl="${feedSource.url.cleanForXml()}"/>"""
-            }}
+                    ${getFeedSourceWithCategoriesXml(feedSourcesByCategory)}
+                
+                    ${getFeedSourceWithoutCategories(feedSourcesByCategory)}
                 </body>
             </opml>
         """.trimIndent()
@@ -58,6 +58,29 @@ internal actual class OpmlFeedHandler(
                 error = null,
             )
     }
+
+    private fun getFeedSourceWithoutCategories(feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>) =
+        feedSourcesByCategory.entries.filter { it.key == null }.joinToString("\n") { (category, feedSources) ->
+            feedSources.joinToString("\n") { feedSource ->
+                """<outline type="rss" text="${feedSource.title.cleanForXml()}" title="${feedSource.title.cleanForXml()}" xmlUrl="${feedSource.url.cleanForXml()}" htmlUrl="${feedSource.url.cleanForXml()}"/>"""
+            }
+        }
+
+    private fun getFeedSourceWithCategoriesXml(
+        feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
+    ): String =
+        feedSourcesByCategory.entries.filter { it.key != null && it.value.isNotEmpty() }
+            .joinToString("\n") { (category, sources) ->
+                val categoryTitle = category?.title?.cleanForXml()
+                val outlines = sources.joinToString("\n") { feedSource ->
+                    """<outline type="rss" text="${feedSource.title.cleanForXml()}" title="${feedSource.title.cleanForXml()}" xmlUrl="${feedSource.url.cleanForXml()}" htmlUrl="${feedSource.url.cleanForXml()}"/>"""
+                }
+                """
+            <outline text="$categoryTitle" title="$categoryTitle">
+                $outlines
+            </outline>
+            """
+            }
 
     private fun String.cleanForXml(): String =
         this.replace("&", "&amp;")

@@ -4,6 +4,7 @@ import android.util.Xml
 import com.prof18.feedflow.attributeValue
 import com.prof18.feedflow.contains
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
@@ -63,7 +64,10 @@ internal actual class OpmlFeedHandler(
             return@withContext feedSources
         }
 
-    actual suspend fun exportFeed(opmlOutput: OpmlOutput, feedSources: List<FeedSource>): Unit =
+    actual suspend fun exportFeed(
+        opmlOutput: OpmlOutput,
+        feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
+    ): Unit =
         withContext(dispatcherProvider.default) {
             val serializer: XmlSerializer = Xml.newSerializer()
 
@@ -82,13 +86,25 @@ internal actual class OpmlFeedHandler(
 
             serializer.startTag(null, "body")
 
-            for (feedSource in feedSources) {
-                serializer.startTag(null, OpmlConstants.OUTLINE)
-                serializer.attribute(null, OpmlConstants.TYPE, "rss")
-                serializer.attribute(null, "text", feedSource.title)
-                serializer.attribute(null, OpmlConstants.TITLE, feedSource.title)
-                serializer.attribute(null, OpmlConstants.XML_URL, feedSource.url)
-                serializer.endTag(null, "outline")
+            for ((category, feedSources) in feedSourcesByCategory) {
+                if (category != null) {
+                    serializer.startTag(null, OpmlConstants.OUTLINE)
+                    serializer.attribute(null, OpmlConstants.TEXT, category.title)
+                    serializer.attribute(null, OpmlConstants.TITLE, category.title)
+                }
+
+                for (feedSource in feedSources) {
+                    serializer.startTag(null, OpmlConstants.OUTLINE)
+                    serializer.attribute(null, OpmlConstants.TYPE, "rss")
+                    serializer.attribute(null, "text", feedSource.title)
+                    serializer.attribute(null, OpmlConstants.TITLE, feedSource.title)
+                    serializer.attribute(null, OpmlConstants.XML_URL, feedSource.url)
+                    serializer.endTag(null, "outline")
+                }
+
+                if (category != null) {
+                    serializer.endTag(null, OpmlConstants.OUTLINE)
+                }
             }
 
             serializer.endTag(null, "body")

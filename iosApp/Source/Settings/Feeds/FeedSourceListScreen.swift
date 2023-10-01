@@ -25,20 +25,21 @@ struct FeedSourceListScreen: View {
             }
         )
         .task {
-            do {
-                let stream = asyncSequence(for: feedSourceViewModel.feedSourcesStateFlow)
-                for try await state in stream {
-                    self.feedState = state
-                }
-            } catch {
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: localizer.generic_error_message.localized,
-                        subtitle: nil,
-                        showBanner: true
-                    )
-                )
-            }
+            // TODO: add categories support
+//            do {
+//                let stream = asyncSequence(for: feedSourceViewModel.feedSourcesStateFlow)
+//                for try await state in stream {
+//                    self.feedState = state
+//                }
+//            } catch {
+//                self.appState.snackbarQueue.append(
+//                    SnackbarData(
+//                        title: localizer.generic_error_message.localized,
+//                        subtitle: nil,
+//                        showBanner: true
+//                    )
+//                )
+//            }
         }
     }
 }

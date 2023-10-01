@@ -51,7 +51,6 @@
     <string name="import_feed_button">Feed importálása OPML-ből</string>
     <string name="app_name">FeedFlow</string>
     <string name="feeds_title">Feedek</string>
-    <string name="feed_name">Feed neve</string>
     <string name="about_the_app">A FeedFlow egy minimalista RSS olvasó alkalmazás. A cikkek az eredeti weboldalukon nyílnak meg a szabadon választott, kedvenc, akár privát böngészést is támogató böngésződben. Így különválaszthatod az olvasási előzményeidet a mindennapi böngészésedtől.
 \nAz RSS feed gyűjteményedet importálhatod OPML fájlból, vagy exportálhatod a gyűjteményedet innen egy OPML fájlba.</string>
     <string name="load_file_error_message">HIba történt a fájl betöltésekor</string>

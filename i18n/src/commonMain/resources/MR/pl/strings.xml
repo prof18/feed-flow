@@ -51,7 +51,6 @@
     <string name="import_feed_button">Importuj kanał z pliku OPML</string>
     <string name="app_name">FeedFlow</string>
     <string name="feeds_title">Kanały</string>
-    <string name="feed_name">Nazwa kanału</string>
     <string name="about_the_app">FeedFlow to minimalistyczny i ceniony czytnik RSS. Artykuły są otwierane w odpowiedniej witrynie internetowej, a użytkownik może wybrać ulubioną przeglądarkę skoncentrowaną na prywatności, aby oddzielić czytanie od głównej przeglądarki.
 \nMożesz importować i eksportować swoją kolekcję kanałów RSS do pliku OPML.</string>
     <string name="load_file_error_message">Nie udało się wczytać pliku</string>

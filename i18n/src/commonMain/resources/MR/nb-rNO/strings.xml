@@ -40,7 +40,6 @@
     <string name="import_feed_button">Importer informasjonskanal fra OPML</string>
     <string name="app_name">FeedFlow</string>
     <string name="feeds_title">Informasjonskanaler</string>
-    <string name="feed_name">Informasjonkanalsnavn</string>
     <string name="load_file_error_message">Kunne ikke laste inn fil</string>
     <string name="add_feed">Legg til informasjonskanal</string>
     <string name="feed_add_in_progress_message">Vent mens informasjonskanalenes tilgjengelighet sjekkes. Dette kan ta en stund hvis det dreier seg om mange informasjonskanaler å importere.</string>

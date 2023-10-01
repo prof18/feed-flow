@@ -1,6 +1,7 @@
 package com.prof18.feedflow.domain.opml
 
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
@@ -28,7 +29,7 @@ internal actual class OpmlFeedHandler(
 
     actual suspend fun exportFeed(
         opmlOutput: OpmlOutput,
-        feedSources: List<FeedSource>,
+        feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
     ) {
         val factory = XMLOutputFactory.newFactory()
 
@@ -51,14 +52,27 @@ internal actual class OpmlFeedHandler(
 
         writer.writeStartElement("body")
 
-        for (feedSource in feedSources) {
-            writer.writeStartElement("outline")
-            writer.writeAttribute("type", "rss")
-            writer.writeAttribute("text", feedSource.title)
-            writer.writeAttribute("title", feedSource.title)
-            writer.writeAttribute("xmlUrl", feedSource.url)
-            writer.writeAttribute("htmlUrl", feedSource.url)
-            writer.writeEndElement()
+        for ((category, feedSources) in feedSourcesByCategory) {
+
+            if (category != null) {
+                writer.writeStartElement(OpmlConstants.OUTLINE)
+                writer.writeAttribute(OpmlConstants.TEXT, category.title)
+                writer.writeAttribute(OpmlConstants.TITLE, category.title)
+            }
+
+            for (feedSource in feedSources) {
+                writer.writeStartElement(OpmlConstants.OUTLINE)
+                writer.writeAttribute(OpmlConstants.TYPE, OpmlConstants.RSS)
+                writer.writeAttribute(OpmlConstants.TEXT, feedSource.title)
+                writer.writeAttribute(OpmlConstants.TITLE, feedSource.title)
+                writer.writeAttribute(OpmlConstants.XML_URL, feedSource.url)
+                writer.writeAttribute(OpmlConstants.HTML_URL, feedSource.url)
+                writer.writeEndElement()
+            }
+
+            if (category != null) {
+                writer.writeEndElement()
+            }
         }
 
         writer.writeEndElement()

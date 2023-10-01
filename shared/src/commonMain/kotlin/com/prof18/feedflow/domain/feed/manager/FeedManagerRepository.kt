@@ -74,7 +74,8 @@ internal class FeedManagerRepository(
 
     suspend fun exportFeedsAsOpml(opmlOutput: OpmlOutput) {
         val feeds = databaseHelper.getFeedSources()
-        opmlFeedHandler.exportFeed(opmlOutput, feeds)
+        val feedsByCategory = feeds.groupBy { it.category }
+        opmlFeedHandler.exportFeed(opmlOutput, feedsByCategory)
     }
 
     suspend fun deleteFeed(feedSource: FeedSource) {

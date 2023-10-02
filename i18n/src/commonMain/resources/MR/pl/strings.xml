@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_added_message">Dodano kanał</string>
+    <string name="feed_added_message"></string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="feed_add_in_progress_message">Prosimy poczekać, sprawdzana jest dostępność każdego kanału. Operacja może chwilę potrwać w zależności od ilości importowanych kanałów</string>
     <string name="force_feed_refresh">Wymuś odświeżenie kanałów</string>

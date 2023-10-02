@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feed_added_message">Feed "%s" added</string>
-    <string name="feed_name_placeholder">My favorite blog</string>
     <string name="feed_url">Feed URL</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="add_feed">Add feed</string>

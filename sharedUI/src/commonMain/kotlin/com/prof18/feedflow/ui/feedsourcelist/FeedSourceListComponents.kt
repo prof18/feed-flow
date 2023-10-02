@@ -52,7 +52,7 @@ import dev.icerock.moko.resources.compose.stringResource
 internal expect fun Modifier.feedSourceMenuClickModifier(onLongClick: () -> Unit): Modifier
 
 @Composable
-fun FeedSourcesList(
+fun FeedSourcesWithCategoryList(
     modifier: Modifier = Modifier,
     feedSourceState: List<FeedSourceState>,
     onExpandClicked: (CategoryId?) -> Unit,
@@ -99,33 +99,45 @@ fun FeedSourcesList(
                         modifier = Modifier.rotate(degrees),
                     )
                 }
-                AnimatedVisibility(
-                    visible = feedSourceState.isExpanded,
-                    enter = expandVertically(
-                        spring(
-                            stiffness = Spring.StiffnessMediumLow,
-                            visibilityThreshold = IntSize.VisibilityThreshold,
-                        ),
-                    ),
-                    exit = shrinkVertically(),
-                ) {
-                    Column {
-                        feedSourceState.feedSources.forEachIndexed { index, feedSource ->
 
-                            FeedSourceItem(
-                                feedSource = feedSource,
-                                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                            )
+                FeedSourcesList(
+                    feedSourceState = feedSourceState,
+                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                )
+            }
+        }
+    }
+}
 
-                            if (index < feedSourceState.feedSources.size - 1) {
-                                Divider(
-                                    modifier = Modifier,
-                                    thickness = 0.2.dp,
-                                    color = Color.Gray,
-                                )
-                            }
-                        }
-                    }
+@Composable
+private fun FeedSourcesList(
+    feedSourceState: FeedSourceState,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
+) {
+    AnimatedVisibility(
+        visible = feedSourceState.isExpanded,
+        enter = expandVertically(
+            spring(
+                stiffness = Spring.StiffnessMediumLow,
+                visibilityThreshold = IntSize.VisibilityThreshold,
+            ),
+        ),
+        exit = shrinkVertically(),
+    ) {
+        Column {
+            feedSourceState.feedSources.forEachIndexed { index, feedSource ->
+
+                FeedSourceItem(
+                    feedSource = feedSource,
+                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                )
+
+                if (index < feedSourceState.feedSources.size - 1) {
+                    Divider(
+                        modifier = Modifier,
+                        thickness = 0.2.dp,
+                        color = Color.Gray,
+                    )
                 }
             }
         }

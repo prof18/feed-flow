@@ -22,7 +22,7 @@ import com.prof18.feedflow.di.DI
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.preview.feedSourcesState
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourceNavBar
-import com.prof18.feedflow.ui.feedsourcelist.FeedSourcesList
+import com.prof18.feedflow.ui.feedsourcelist.FeedSourcesWithCategoryList
 import com.prof18.feedflow.ui.feedsourcelist.NoFeedSourcesView
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import dev.icerock.moko.resources.compose.stringResource
@@ -88,7 +88,7 @@ private fun FeedSourceListContent(
                     .fillMaxSize(),
             )
         } else {
-            FeedSourcesList(
+            FeedSourcesWithCategoryList(
                 modifier = Modifier
                     .padding(paddingValues),
                 feedSourceState = feedSources,

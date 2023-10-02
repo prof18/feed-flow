@@ -34,7 +34,7 @@ internal actual class OpmlFeedHandler(
     @Suppress("MaximumLineLength")
     actual suspend fun exportFeed(
         opmlOutput: OpmlOutput,
-        feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>
+        feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
     ) {
         val opmlString = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -59,13 +59,15 @@ internal actual class OpmlFeedHandler(
             )
     }
 
+    @Suppress("MaxLineLength")
     private fun getFeedSourceWithoutCategories(feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>) =
-        feedSourcesByCategory.entries.filter { it.key == null }.joinToString("\n") { (category, feedSources) ->
+        feedSourcesByCategory.entries.filter { it.key == null }.joinToString("\n") { (_, feedSources) ->
             feedSources.joinToString("\n") { feedSource ->
                 """<outline type="rss" text="${feedSource.title.cleanForXml()}" title="${feedSource.title.cleanForXml()}" xmlUrl="${feedSource.url.cleanForXml()}" htmlUrl="${feedSource.url.cleanForXml()}"/>"""
             }
         }
 
+    @Suppress("MaxLineLength")
     private fun getFeedSourceWithCategoriesXml(
         feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
     ): String =

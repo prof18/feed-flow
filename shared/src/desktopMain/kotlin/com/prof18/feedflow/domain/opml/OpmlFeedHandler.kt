@@ -53,7 +53,6 @@ internal actual class OpmlFeedHandler(
         writer.writeStartElement("body")
 
         for ((category, feedSources) in feedSourcesByCategory) {
-
             if (category != null) {
                 writer.writeStartElement(OpmlConstants.OUTLINE)
                 writer.writeAttribute(OpmlConstants.TEXT, category.title)

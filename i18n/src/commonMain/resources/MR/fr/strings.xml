@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_added_message">Flux ajouté</string>
+    <string name="feed_added_message"></string>
     <string name="feed_url_placeholder">https://monblogfavori.com/flux</string>
     <string name="feed_add_in_progress_message">Veuillez patienter, la disponibilité de chaque flux est en cours de vérification. L\'opération peut prendre un certain temps en fonction du nombre de flux que vous importez</string>
     <string name="force_feed_refresh">Forcer l\'actualisation du flux</string>

@@ -75,9 +75,8 @@ android {
     }
 
     lint {
-        baseline = file("../config/lint-baseline.xml")
+        disable.add("MissingTranslation")
     }
-
 }
 
 multiplatformResources {

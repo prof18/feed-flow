@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feed_name_placeholder">Min favorittblogg</string>
-    <string name="feed_added_message">Informasjonskanal "%s" tillagt</string>
+    <string name="feed_added_message">Informasjonskanal tillagt</string>
     <string name="feed_url_placeholder">https://minfavorittblogg.no/kanal</string>
     <string name="import_dialog_title">Velg OPML-fil</string>
     <string name="feeds_import_done_message">Importert</string>
@@ -54,5 +54,5 @@
     <string name="new_release_available_title">En ny versjon av FeedFlow er tilgjengelig:</string>
     <string name="mark_all_read_button">Marker alle som lest</string>
     <string name="about_the_app">Minimalistisk RSS-leser med meningers mot. Artikler åpnes i respektiv nettside og du kan velge egen personvernsrespekterende nettleser for å gjøre opplevelsen bedre.
-\nDu kan importere og eksportere din RSS-samling til en OPML-fil.</string>
+        \nDu kan importere og eksportere din RSS-samling til en OPML-fil.</string>
 </resources>

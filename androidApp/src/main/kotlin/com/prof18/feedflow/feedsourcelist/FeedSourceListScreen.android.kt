@@ -14,7 +14,7 @@ import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.preview.feedSourcesState
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourceNavBar
-import com.prof18.feedflow.ui.feedsourcelist.FeedSourcesList
+import com.prof18.feedflow.ui.feedsourcelist.FeedSourcesWithCategoryList
 import com.prof18.feedflow.ui.feedsourcelist.NoFeedSourcesView
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import org.koin.androidx.compose.koinViewModel
@@ -63,7 +63,7 @@ private fun FeedSourceListContent(
                     .fillMaxSize(),
             )
         } else {
-            FeedSourcesList(
+            FeedSourcesWithCategoryList(
                 modifier = Modifier
                     .padding(paddingValues),
                 feedSourceState = feedSources,

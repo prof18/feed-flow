@@ -87,51 +87,62 @@ fun CategoriesSelector(
                 modifier = Modifier.rotate(degrees),
             )
         }
-        AnimatedVisibility(
-            visible = categoriesState.isExpanded,
-            enter = expandVertically(
-                spring(
-                    stiffness = Spring.StiffnessMediumLow,
-                    visibilityThreshold = IntSize.VisibilityThreshold,
-                ),
-            ),
-            exit = shrinkVertically(),
-        ) {
-            Column {
-                categoriesState.categories.forEach { category ->
-                    Row(
-                        modifier = Modifier
-                            .clip(MaterialTheme.shapes.medium)
-                            .clickable {
-                                category.onClick(CategoryId(category.id))
-                            }
-                            .fillMaxWidth()
-                            .padding(vertical = Spacing.small),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            modifier = Modifier
-                                .padding(vertical = Spacing.small)
-                                .padding(end = Spacing.small),
-                            selected = category.isSelected,
-                            onClick = null,
-                        )
-                        Text(
-                            text = category.name,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                        Spacer(Modifier.weight(1f))
-                    }
-                }
+        CategoriesList(
+            categoriesState = categoriesState,
+            onAddCategoryClick = onAddCategoryClick,
+        )
+    }
+}
 
-                NewCategoryComposer(
+@Composable
+private fun CategoriesList(
+    categoriesState: CategoriesState,
+    onAddCategoryClick: (CategoryName) -> Unit,
+) {
+    AnimatedVisibility(
+        visible = categoriesState.isExpanded,
+        enter = expandVertically(
+            spring(
+                stiffness = Spring.StiffnessMediumLow,
+                visibilityThreshold = IntSize.VisibilityThreshold,
+            ),
+        ),
+        exit = shrinkVertically(),
+    ) {
+        Column {
+            categoriesState.categories.forEach { category ->
+                Row(
                     modifier = Modifier
-                        .padding(bottom = Spacing.regular),
-                    onAddClick = { categoryName ->
-                        onAddCategoryClick(categoryName)
-                    },
-                )
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable {
+                            category.onClick(CategoryId(category.id))
+                        }
+                        .fillMaxWidth()
+                        .padding(vertical = Spacing.small),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RadioButton(
+                        modifier = Modifier
+                            .padding(vertical = Spacing.small)
+                            .padding(end = Spacing.small),
+                        selected = category.isSelected,
+                        onClick = null,
+                    )
+                    Text(
+                        text = category.name,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                    Spacer(Modifier.weight(1f))
+                }
             }
+
+            NewCategoryComposer(
+                modifier = Modifier
+                    .padding(bottom = Spacing.regular),
+                onAddClick = { categoryName ->
+                    onAddCategoryClick(categoryName)
+                },
+            )
         }
     }
 }

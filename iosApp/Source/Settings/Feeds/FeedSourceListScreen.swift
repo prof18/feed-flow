@@ -15,7 +15,7 @@ struct FeedSourceListScreen: View {
     @EnvironmentObject var appState: AppState
     @StateObject var feedSourceViewModel = KotlinDependencies.shared.getFeedSourceListViewModel()
 
-    @State var feedState: [FeedSource] = []
+    @State var feedState: [FeedSourceState] = []
 
     var body: some View {
         FeedSourceListContent(
@@ -25,21 +25,20 @@ struct FeedSourceListScreen: View {
             }
         )
         .task {
-            // TODO: add categories support
-//            do {
-//                let stream = asyncSequence(for: feedSourceViewModel.feedSourcesStateFlow)
-//                for try await state in stream {
-//                    self.feedState = state
-//                }
-//            } catch {
-//                self.appState.snackbarQueue.append(
-//                    SnackbarData(
-//                        title: localizer.generic_error_message.localized,
-//                        subtitle: nil,
-//                        showBanner: true
-//                    )
-//                )
-//            }
+            do {
+                let stream = asyncSequence(for: feedSourceViewModel.feedSourcesStateFlow)
+                for try await state in stream {
+                    self.feedState = state
+                }
+            } catch {
+                self.appState.snackbarQueue.append(
+                    SnackbarData(
+                        title: localizer.generic_error_message.localized,
+                        subtitle: nil,
+                        showBanner: true
+                    )
+                )
+            }
         }
     }
 }
@@ -49,7 +48,7 @@ private struct FeedSourceListContent: View {
     @Environment(\.presentationMode) var presentationMode
 
     @State private var showAddFeed = false
-    @Binding var feedState: [FeedSource]
+    @Binding var feedState: [FeedSourceState]
 
     let deleteFeedSource: (FeedSource) -> Void
 
@@ -67,68 +66,94 @@ private struct FeedSourceListContent: View {
                     }
                 } else {
                     List {
-                        ForEach(feedState, id: \.self.id) { feedSource in
+                        ForEach(feedState, id: \.self.categoryId) { feedSourceState in
 
-                            VStack(alignment: .leading) {
-                                Text(feedSource.title)
-                                    .font(.system(size: 16))
-                                    .padding(.top, Spacing.xsmall)
+                            Section {
+                                ForEach(feedSourceState.feedSources, id: \.self.id) { feedSource in
+                                    VStack(alignment: .leading) {
+                                        Text(feedSource.title)
+                                            .font(.system(size: 16))
+                                            .padding(.top, Spacing.regular)
+                                            .padding(.bottom, 2)
 
-                                Text(feedSource.url)
-                                    .font(.system(size: 14))
-                                    .padding(.top, Spacing.xxsmall)
-                                    .padding(.bottom, Spacing.xsmall)
+                                        Text(feedSource.url)
+                                            .font(.system(size: 12))
+                                            .padding(.top, 0)
+                                            .padding(.bottom, Spacing.regular)
 
-                            }
-                            .id(feedSource.id)
-                            .contextMenu {
-                                Button {
-                                    deleteFeedSource(feedSource)
-                                } label: {
-                                    Label(
-                                        localizer.delete_feed.localized,
-                                        systemImage: "trash"
-                                    )
+                                    }
+                                    .padding(.horizontal, Spacing.small)
+                                    .id(feedSource.id)
+                                    .contextMenu {
+                                        Button {
+                                            deleteFeedSource(feedSource)
+                                        } label: {
+                                            Label(
+                                                localizer.delete_feed.localized,
+                                                systemImage: "trash"
+                                            )
+                                        }
+                                    }
                                 }
+
+                            } header: {
+                                Text(feedSourceState.categoryName ?? localizer.no_category.localized)
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(.black)
+                                    .bold()
+                                    .padding(.horizontal, Spacing.small)
+
                             }
+                            .textCase(nil)
+                            .listRowInsets(
+                                EdgeInsets(
+                                    top: .zero,
+                                    leading: .zero,
+                                    bottom: .zero,
+                                    trailing: Spacing.small)
+                            )
                         }
                     }
-                    .listStyle(PlainListStyle())
-                }
-            }
-            .navigationDestination(for: SheetPage.self) { page in
-                switch page {
-                case .addFeed:
-                    AddFeedScreen()
-                }
-            }
-            .toolbar {
-
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(
-                        action: {
-                            self.presentationMode.wrappedValue.dismiss()
-                        },
-                        label: {
-                            Image(systemName: "xmark")
+                    .listStyle(.sidebar)
+                    .scrollContentBackground(.hidden)
+                    .navigationDestination(for: SheetPage.self) { page in
+                        switch page {
+                        case .addFeed:
+                            AddFeedScreen()
                         }
-                    )
-                }
+                    }
+                    .toolbar {
 
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Text(localizer.feeds_title.localized)
-                        .font(.title2)
-                        .padding(.vertical, Spacing.medium)
-                }
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button(
+                                action: {
+                                    self.presentationMode.wrappedValue.dismiss()
+                                },
+                                label: {
+                                    Image(systemName: "xmark")
+                                }
+                            )
+                            .padding(.leading, Spacing.small)
+                        }
 
-                ToolbarItem(placement: .primaryAction) {
-                    NavigationLink(value: SheetPage.addFeed) {
-                        Image(systemName: "plus")
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Text(localizer.feeds_title.localized)
+                                .font(.title2)
+                                .padding(.vertical, Spacing.medium)
+                        }
+
+                        ToolbarItem(placement: .primaryAction) {
+                            NavigationLink(value: SheetPage.addFeed) {
+                                Image(systemName: "plus")
+                            }
+                            .padding(.trailing, Spacing.small)
+
+                        }
+                    }
+                    .sheet(isPresented: $showAddFeed) {
+                        AddFeedScreen()
                     }
                 }
-            }
-            .sheet(isPresented: $showAddFeed) {
-                AddFeedScreen()
             }
         }
     }
@@ -137,7 +162,7 @@ private struct FeedSourceListContent: View {
 struct FeedSourceListContent_Previews: PreviewProvider {
     static var previews: some View {
         FeedSourceListContent(
-            feedState: .constant(PreviewItemsKt.feedSourcesForPreview),
+            feedState: .constant(PreviewItemsKt.feedSourcesState),
             deleteFeedSource: { _ in }
         )
     }

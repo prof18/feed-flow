@@ -53,4 +53,5 @@
     <string name="issue_report_title">Report an issue with FeedFlow</string>
     <string name="issue_content_title">Issue with FeedFlow</string>
     <string name="issue_content_template">Please describe the issue and provide a link to the RSS Feed that causes the issues. If you can, please attach a screenshot and the OPML file</string>
+    <string name="missing_title_and_link">There was an error while getting the title of the feed</string>
 </resources>

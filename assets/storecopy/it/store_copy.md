@@ -1,37 +1,40 @@
-# Title
+# Titolo
 
 FeedFlow
 
-## Short desc
+## Breve descrizione
 
-Minimalistic and opinionated RSS Reader
+RSS Reader Minimalista
 
-## Long desc
+## Descrizione completa
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic and opinionated RSS
-Reader. Enjoy a clutter-free reading experience as FeedFlow offers a
-minimalistic list and it opens the articles on their respective websites.
+Segui i tuoi feed RSS preferiti con FeedFlow, un lettore RSS minimalista e
+basato sulle opinioni personali dell'autore. Goditi un'esperienza di lettura
+senza fronzoli poiché FeedFlow offre un elenco minimalista e apre gli articoli
+sui rispettivi siti Web.
 
-Tailor your browsing experience by choosing your preferred browser. This way,
-you can choose your favorite privacy-focused browser to separate your reading
-experience from your main browser.
+Personalizza la tua esperienza di navigazione scegliendo il tuo browser
+preferito. In questo modo, puoi scegliere un browser alternativo incentrato
+sulla privacy per separare la tua esperienza di lettura dal browser principale.
 
-Your existing RSS collection can be easily imported: FeedFlow offers full and
-easy import and export capabilities through OPML files.
+La tua raccolta RSS esistente può essere facilmente importata: FeedFlow offre
+funzionalità di importazione ed esportazione semplici e complete tramite file
+OPML.
 
-Just focus on reading (or scrolling)!
+Concentrati solo sulla lettura!
 
-The app is still in development, so some features could be missing or there
-could be some issues. Please report any kind of bugs or feature suggestions!
+L'app è ancora in fase di sviluppo, quindi alcune funzionalità potrebbero
+mancare o potrebbero esserci dei problemi. Si prega di segnalare qualsiasi tipo
+di bug o suggerimento di funzionalità!
 
 ## Screenshot 1
 
-All your feeds in your pocket
+Tutti i tuoi feed in tasca
 
 ## Screenshot 3
 
-Import your existing collection
+Importa la tua collezione esistente
 
 ## Screenshot 4
 
-Open the articles in your favourite browser
+Apri gli articoli nel tuo browser preferito

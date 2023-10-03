@@ -19,7 +19,7 @@
     <string name="feeds_import_done_message">Import done</string>
     <string name="feeds_export_done_message">Export done</string>
     <string name="settings_title">Settings</string>
-    <string name="browser_selection_button">Favorite browser</string>
+    <string name="browser_selection_button">Favorite web browser</string>
     <string name="import_feed_button">Import feed from OPML</string>
     <string name="export_feeds_button">Export feeds to OPML</string>
     <string name="about_button">About</string>

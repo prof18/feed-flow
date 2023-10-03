@@ -35,7 +35,8 @@
     <string name="author_label">Developed with ❤️ by</string>
     <string name="show_on_github">Show on GitHub</string>
     <string name="open_source_licenses">Open source licenses</string>
-    <string name="about_the_app">FeedFlow is a minimalistic and opinionated RSS Reader. The articles are opened in their respective website and you can choose your favorite privacy-focused browser to keep your reading experience separated from your main browser.\nYou can import and export your RSS collection to an OPML file.</string>
+    <string name="about_the_app">FeedFlow is a minimalistic RSS Reader based on the personal opinions of the author. The articles are opened on their respective websites and you can choose your favorite privacy-focused browser to keep your reading experience separated from your main browser.
+\nYou can import and export your RSS collection from and to OPML files.</string>
     <string name="about_nav_bar">About</string>
     <string name="open_source_nav_bar">Open source licenses</string>
     <string name="report_issue_button">Report issue</string>

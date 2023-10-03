@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_added_message">Informasjonskanal \"%s\" tillagt</string>
+    <string name="feed_added_message">Informasjonskanal "%s" tillagt</string>
     <string name="feed_url_placeholder">https://minfavorittblogg.no/kanal</string>
     <string name="import_dialog_title">Velg OPML-fil</string>
     <string name="feeds_import_done_message">Importert</string>

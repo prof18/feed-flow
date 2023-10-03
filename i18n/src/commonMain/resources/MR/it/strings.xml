@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="delete_feed">Cancella</string>
-    <string name="feed_added_message">Feed %s aggiunto</string>
+    <string name="feed_added_message">Feed "%s" aggiunto</string>
     <string name="feed_url_placeholder">https://ilmioblogpreferito.it/feed</string>
     <string name="feed_add_in_progress_message">Per favore attendi, stiamo verificando la disponibilità di ogni feed. L\'operazione può richiedere del tempo a seconda della quantità di feed che stai importando</string>
     <string name="force_feed_refresh">Forza l\'aggiornamento dei feed</string>

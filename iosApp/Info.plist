@@ -13,6 +13,11 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
+		<string>it</string>
+		<string>fr</string>
+		<string>hu</string>
+		<string>pl</string>
+		<string>nb-rNO</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>

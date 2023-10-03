@@ -31,13 +31,7 @@ struct FeedSourceListScreen: View {
                     self.feedState = state
                 }
             } catch {
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: localizer.generic_error_message.localized,
-                        subtitle: nil,
-                        showBanner: true
-                    )
-                )
+                self.appState.emitGenericError()
             }
         }
     }

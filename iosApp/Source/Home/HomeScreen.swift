@@ -67,7 +67,7 @@ struct HomeScreen: View {
                     self.loadingState = state
                 }
             } catch {
-                emitGenericError()
+                self.appState.emitGenericError()
             }
         }
         .task {
@@ -85,7 +85,7 @@ struct HomeScreen: View {
                     }
                 }
             } catch {
-                emitGenericError()
+                self.appState.emitGenericError()
             }
         }
         .task {
@@ -95,7 +95,7 @@ struct HomeScreen: View {
                     self.feedState = state
                 }
             } catch {
-                emitGenericError()
+                self.appState.emitGenericError()
             }
         }
         .task {
@@ -105,7 +105,7 @@ struct HomeScreen: View {
                     self.unreadCount = Int(truncating: state)
                 }
             } catch {
-                emitGenericError()
+                self.appState.emitGenericError()
             }
         }
         .onChange(of: scenePhase) { newScenePhase in
@@ -116,16 +116,6 @@ struct HomeScreen: View {
                 break
             }
         }
-    }
-
-    private func emitGenericError() {
-        self.appState.snackbarQueue.append(
-            SnackbarData(
-                title: localizer.generic_error_message.localized,
-                subtitle: nil,
-                showBanner: true
-            )
-        )
     }
 }
 

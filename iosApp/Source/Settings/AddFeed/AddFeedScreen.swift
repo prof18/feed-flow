@@ -141,13 +141,7 @@ struct AddFeedScreen: View {
                     }
                 }
             } catch {
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: localizer.generic_error_message.localized,
-                        subtitle: nil,
-                        showBanner: true
-                    )
-                )
+                self.appState.emitGenericError()
             }
         }
         .task {
@@ -165,13 +159,7 @@ struct AddFeedScreen: View {
                     self.categoryItems = state.categories
                 }
             } catch {
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: localizer.generic_error_message.localized,
-                        subtitle: nil,
-                        showBanner: true
-                    )
-                )
+                self.appState.emitGenericError()
             }
         }
     }

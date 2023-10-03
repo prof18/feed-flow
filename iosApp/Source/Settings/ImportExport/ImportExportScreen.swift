@@ -50,13 +50,7 @@ struct ImportExportScreen: View {
                     }
                 }
             } catch {
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: localizer.generic_error_message.localized,
-                        subtitle: nil,
-                        showBanner: true
-                    )
-                )
+                self.appState.emitGenericError()
             }
         }
         .sheet(item: $sheetToShow) { item in
@@ -85,10 +79,7 @@ struct ImportExportScreen: View {
                     applicationActivities: nil
                 ) { _, _, _, _ in }
             }
-
-            //        Text("Hello World")
         }
-
     }
 }
 

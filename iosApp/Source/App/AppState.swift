@@ -14,4 +14,14 @@ class AppState: ObservableObject {
     @Published var snackbarQueue: Deque<SnackbarData> = Deque()
 
     @Published var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
+
+    func emitGenericError() {
+        snackbarQueue.append(
+            SnackbarData(
+                title: localizer.generic_error_message.localized,
+                subtitle: nil,
+                showBanner: true
+            )
+        )
+    }
 }

@@ -29,7 +29,7 @@ di bug o suggerimento di funzionalità!
 
 ## Screenshot 1
 
-Tutti i tuoi feed in tasca
+Tutti i tuoi feed a portata di mano
 
 ## Screenshot 3
 

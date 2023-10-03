@@ -30,7 +30,7 @@ internal actual class OpmlFeedHandler(
     actual suspend fun exportFeed(
         opmlOutput: OpmlOutput,
         feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
-    ) {
+    ) = withContext(dispatcherProvider.io) {
         val factory = XMLOutputFactory.newFactory()
 
         val writer = factory.createXMLStreamWriter(

@@ -114,45 +114,48 @@ private struct FeedSourceListContent: View {
                             )
                         }
                     }
+
                     .listStyle(.sidebar)
                     .scrollContentBackground(.hidden)
-                    .navigationDestination(for: SheetPage.self) { page in
-                        switch page {
-                        case .addFeed:
-                            AddFeedScreen()
-                        }
-                    }
-                    .toolbar {
 
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button(
-                                action: {
-                                    self.presentationMode.wrappedValue.dismiss()
-                                },
-                                label: {
-                                    Image(systemName: "xmark")
-                                }
-                            )
-                            .padding(.leading, Spacing.small)
-                        }
-
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Text(localizer.feeds_title.localized)
-                                .font(.title2)
-                                .padding(.vertical, Spacing.medium)
-                        }
-
-                        ToolbarItem(placement: .primaryAction) {
-                            NavigationLink(value: SheetPage.addFeed) {
-                                Image(systemName: "plus")
-                            }
-                            .padding(.trailing, Spacing.small)
-
-                        }
-                    }
                     .sheet(isPresented: $showAddFeed) {
                         AddFeedScreen()
                     }
+                }
+            }
+            .toolbar {
+
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(
+                        action: {
+                            self.presentationMode.wrappedValue.dismiss()
+                        },
+                        label: {
+                            Image(systemName: "xmark")
+                        }
+                    )
+                    .padding(.leading, Spacing.small)
+
+                }
+
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Text(localizer.feeds_title.localized)
+                        .font(.title2)
+                        .padding(.vertical, Spacing.medium)
+                }
+
+                ToolbarItem(placement: .primaryAction) {
+                    NavigationLink(value: SheetPage.addFeed) {
+                        Image(systemName: "plus")
+                    }
+                    .padding(.trailing, Spacing.small)
+
+                }
+            }
+            .navigationDestination(for: SheetPage.self) { page in
+                switch page {
+                case .addFeed:
+                    AddFeedScreen()
                 }
             }
         }

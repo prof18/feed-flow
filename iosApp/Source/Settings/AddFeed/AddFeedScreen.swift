@@ -18,6 +18,10 @@ struct AddFeedScreen: View {
     @State private var feedURL = ""
     @State private var showError = false
     @State private var errorMessage = ""
+    @State private var isCategoriesSelectorExpanded = false
+    @State private var headerMessage = localizer.no_category_selected_header.localized
+    @State private var categoryItems: [CategoriesState.CategoryItem] = []
+    @State private var newCategoryName = ""
 
     @StateObject var addFeedViewModel: AddFeedViewModel = KotlinDependencies.shared.getAddFeedViewModel()
 
@@ -41,23 +45,65 @@ struct AddFeedScreen: View {
                     .foregroundColor(.red)
             }
 
-            HStack {
-                Spacer()
+            DisclosureGroup(
+                isExpanded: $isCategoriesSelectorExpanded,
+                content: {
+                    ForEach(categoryItems, id: \.self.id) { categoryItem in
+                        HStack {
+                            RadioButtonView(
+                                title: categoryItem.name,
+                                isSelected: categoryItem.isSelected,
+                                onRadioSelected: {
+                                    withAnimation {
+                                        isCategoriesSelectorExpanded.toggle()
+                                    }
+                                    categoryItem.onClick(CategoryId(value: categoryItem.id))
+                                }
+                            )
 
-                Button(
-                    action: {
-                        addFeedViewModel.addFeed()
-                    },
-                    label: {
-                        Text(localizer.add_feed.localized)
+                            Spacer()
+                        }
                     }
-                )
-                .frame(alignment: .center)
-                .buttonStyle(.bordered)
-                .padding(.top, Spacing.regular)
+                    .padding(.top, Spacing.small)
 
-                Spacer()
-            }
+                    HStack {
+                        TextField(
+                            localizer.new_category_hint.localized,
+                            text: $newCategoryName
+                        )
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                        Button(
+                            action: {
+                                addFeedViewModel.addNewCategory(
+                                    categoryName: CategoryName(name: newCategoryName)
+                                )
+                            },
+                            label: {
+                                Image(systemName: "plus")
+                            }
+                        )
+                    }
+                    .padding(.top, Spacing.regular)
+                },
+                label: {
+                    Text(headerMessage)
+                }
+            )
+            .padding(Spacing.regular)
+
+            Button(
+                action: {
+                    addFeedViewModel.addFeed()
+                },
+                label: {
+                    Text(localizer.add_feed.localized)
+                        .frame(maxWidth: .infinity)
+                }
+            )
+            .disabled(feedURL.isEmpty)
+            .buttonStyle(.bordered)
+            .padding(.horizontal, Spacing.regular)
 
             Spacer()
         }
@@ -104,6 +150,47 @@ struct AddFeedScreen: View {
                 )
             }
         }
+        .task {
+            do {
+                let stream = asyncSequence(for: addFeedViewModel.categoriesState)
+                for try await state in stream {
+                    isCategoriesSelectorExpanded = state.isExpanded
+
+                    if let header = state.header {
+                        self.headerMessage = header
+                    } else {
+                        self.headerMessage = localizer.no_category_selected_header.localized
+                    }
+
+                    self.categoryItems = state.categories
+                }
+            } catch {
+                self.appState.snackbarQueue.append(
+                    SnackbarData(
+                        title: localizer.generic_error_message.localized,
+                        subtitle: nil,
+                        showBanner: true
+                    )
+                )
+            }
+        }
+    }
+}
+
+private struct RadioButtonView: View {
+    var title: String
+    var isSelected: Bool
+    var onRadioSelected: () -> Void
+
+    var body: some View {
+        Button(action: onRadioSelected) {
+            HStack {
+                Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
+                Text(title)
+            }
+        }
+        .foregroundColor(.primary)
+        .padding(.vertical, 8)
     }
 }
 

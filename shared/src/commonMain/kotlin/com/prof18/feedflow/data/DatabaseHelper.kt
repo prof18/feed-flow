@@ -64,10 +64,9 @@ internal class DatabaseHelper(
             }
     }
 
-    // TODO: delete the no timestamp, maybe
-    fun getFeedSourcesFlowWithNoTimestamp(): Flow<List<FeedSource>> =
+    fun getFeedSourcesFlow(): Flow<List<FeedSource>> =
         dbRef.feedSourceQueries
-            .selectFeedUrlsWithNotTimestamp()
+            .selectFeedUrls()
             .asFlow()
             .catch {
                 logger.e(it) { "Something wrong while getting data from Database" }
@@ -87,7 +86,7 @@ internal class DatabaseHelper(
                         } else {
                             null
                         },
-                        lastSyncTimestamp = null,
+                        lastSyncTimestamp = feedSource.last_sync_timestamp,
                     )
                 }
             }

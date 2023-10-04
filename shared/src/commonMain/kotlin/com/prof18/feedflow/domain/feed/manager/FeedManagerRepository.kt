@@ -70,7 +70,7 @@ internal class FeedManagerRepository(
     )
 
     fun getFeedSources(): Flow<List<FeedSource>> =
-        databaseHelper.getFeedSourcesFlowWithNoTimestamp()
+        databaseHelper.getFeedSourcesFlow()
 
     suspend fun exportFeedsAsOpml(opmlOutput: OpmlOutput) {
         val feeds = databaseHelper.getFeedSources()

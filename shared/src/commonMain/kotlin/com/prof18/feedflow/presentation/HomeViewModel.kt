@@ -87,7 +87,7 @@ class HomeViewModel internal constructor(
     fun getNewFeeds(isFirstLaunch: Boolean = false) {
         lastUpdateIndex = 0
         scope.launch {
-            feedRetrieverRepository.fetchFeeds(isFirstLaunch)
+            feedRetrieverRepository.fetchFeeds(isFirstLaunch = isFirstLaunch)
         }
     }
 

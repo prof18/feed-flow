@@ -93,7 +93,7 @@ private struct FeedSourceListContent: View {
                             } header: {
                                 Text(feedSourceState.categoryName ?? localizer.no_category.localized)
                                     .font(.system(size: 16))
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(Color(UIColor.label))
                                     .bold()
                                     .padding(.horizontal, Spacing.small)
 
@@ -118,7 +118,6 @@ private struct FeedSourceListContent: View {
                 }
             }
             .toolbar {
-
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(
                         action: {

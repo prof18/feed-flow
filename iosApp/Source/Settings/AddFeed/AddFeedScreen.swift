@@ -83,6 +83,7 @@ struct AddFeedScreen: View {
                                 Image(systemName: "plus")
                             }
                         )
+                        .disabled(newCategoryName.isEmpty)
                     }
                     .padding(.top, Spacing.regular)
                 },

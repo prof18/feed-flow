@@ -47,7 +47,7 @@ fun initKoinIos(
 internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
     qualifier: Qualifier?,
     noinline definition: Definition<T>,
-): KoinDefinition<T> = single(qualifier, definition = definition)
+): KoinDefinition<T> = factory(qualifier, definition = definition)
 
 @OptIn(ExperimentalSettingsImplementation::class)
 internal actual val platformModule: Module = module {

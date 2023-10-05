@@ -4,11 +4,11 @@ FeedFlow
 
 ## Short desc
 
-Minimalistic and opinionated RSS Reader
+Minimalistic RSS Reader
 
 ## Long desc
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic and opinionated RSS Reader. Enjoy a clutter-free reading experience as FeedFlow offers a minimalistic list and it opens the articles on their respective websites.
+Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience as FeedFlow offers a minimalistic list and it opens the articles on their respective websites.
 
 Tailor your browsing experience by choosing your preferred browser. This way, you can choose your favorite privacy-focused browser to separate your reading experience from your main browser.
 

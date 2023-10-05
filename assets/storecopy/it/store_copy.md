@@ -4,7 +4,7 @@ FeedFlow
 
 ## Breve descrizione
 
-RSS Reader Minimalista
+Lettore RSS minimalista
 
 ## Descrizione completa
 

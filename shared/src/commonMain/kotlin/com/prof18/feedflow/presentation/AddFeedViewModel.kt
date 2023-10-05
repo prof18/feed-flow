@@ -26,8 +26,8 @@ class AddFeedViewModel internal constructor(
 ) : BaseViewModel() {
 
     private var feedUrl: String = ""
+    private var newCategoryName: CategoryName? = null
     private val feedAddedMutableState: MutableSharedFlow<FeedAddedState> = MutableSharedFlow()
-
     private val categoriesMutableState: MutableStateFlow<CategoriesState> = MutableStateFlow(CategoriesState())
 
     @NativeCoroutines
@@ -105,40 +105,8 @@ class AddFeedViewModel internal constructor(
 
     fun addNewCategory(categoryName: CategoryName) {
         scope.launch {
+            newCategoryName = categoryName
             feedManagerRepository.createCategory(categoryName)
-            val newCategory = feedManagerRepository.getCategories()
-                .firstOrNull {
-                    it.title == categoryName.name
-                }
-
-            if (newCategory != null) {
-                categoriesMutableState.update { state ->
-                    val newCategoryItem = newCategory.toCategoryItem()
-                    val newCategories = state.categories
-                        .toMutableList()
-                        .plus(newCategoryItem)
-                        .distinctBy { categoryItem ->
-                            categoryItem.id
-                        }
-                        .map { categoryItem ->
-                            if (categoryItem.id == newCategoryItem.id) {
-                                categoryItem.copy(
-                                    isSelected = true,
-                                )
-                            } else {
-                                categoryItem.copy(
-                                    isSelected = false,
-                                )
-                            }
-                        }
-
-                    state.copy(
-                        categories = newCategories,
-                        isExpanded = false,
-                        header = newCategoryItem.name,
-                    )
-                }
-            }
         }
     }
 
@@ -173,11 +141,11 @@ class AddFeedViewModel internal constructor(
         }
     }
 
-    private fun FeedSourceCategory.toCategoryItem() =
+    private fun FeedSourceCategory.toCategoryItem(): CategoriesState.CategoryItem =
         CategoriesState.CategoryItem(
             id = id,
             name = title,
-            isSelected = false,
+            isSelected = newCategoryName?.name == title,
             onClick = { categoryId ->
                 onCategorySelected(categoryId)
             },
@@ -185,15 +153,17 @@ class AddFeedViewModel internal constructor(
 
     private fun initCategories() {
         scope.launch {
-            val categories = feedManagerRepository.getCategories()
-            val categoriesState = CategoriesState(
-                isExpanded = false,
-                header = null,
-                categories = categories.map { feedSourceCategory ->
-                    feedSourceCategory.toCategoryItem()
-                },
-            )
-            categoriesMutableState.update { categoriesState }
+            feedManagerRepository.getCategories().collect { categories ->
+                val categoriesState = CategoriesState(
+                    isExpanded = false,
+                    header = newCategoryName?.name,
+                    categories = categories.map { feedSourceCategory ->
+                        feedSourceCategory.toCategoryItem()
+                    },
+                )
+                categoriesMutableState.update { categoriesState }
+                newCategoryName = null
+            }
         }
     }
 }

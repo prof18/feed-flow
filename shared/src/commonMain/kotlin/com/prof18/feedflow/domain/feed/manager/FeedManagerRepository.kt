@@ -82,8 +82,8 @@ internal class FeedManagerRepository(
         databaseHelper.deleteFeedSource(feedSource)
     }
 
-    suspend fun getCategories(): List<FeedSourceCategory> =
-        databaseHelper.getFeedSourceCategories()
+    fun getCategories(): Flow<List<FeedSourceCategory>> =
+        databaseHelper.observeFeedSourceCategories()
 
     suspend fun createCategory(categoryName: CategoryName) =
         databaseHelper.insertCategories(

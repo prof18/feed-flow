@@ -78,6 +78,7 @@ struct AddFeedScreen: View {
                                 addFeedViewModel.addNewCategory(
                                     categoryName: CategoryName(name: newCategoryName)
                                 )
+                                newCategoryName = ""
                             },
                             label: {
                                 Image(systemName: "plus")

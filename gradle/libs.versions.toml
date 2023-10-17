@@ -46,6 +46,7 @@ crashlytics-plugin = "2.9.7"
 google-services = "4.3.15"
 crashk-ios = "0.8.2"
 sentry = "6.25.2"
+material-window-size = "0.3.0"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
@@ -100,6 +101,7 @@ moko-resourcesCompose = { module = "dev.icerock.moko:resources-compose", version
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "crashlytics" }
 crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
 sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
+material-window-size = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "material-window-size" }
 
 [bundles]
 androidx-test = ["androidx-test-core", "androidx-test-ext-junit", "androidx-test-rules", "androidx-test-runner"]

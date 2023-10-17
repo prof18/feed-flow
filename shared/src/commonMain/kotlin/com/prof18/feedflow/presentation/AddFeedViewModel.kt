@@ -153,7 +153,7 @@ class AddFeedViewModel internal constructor(
 
     private fun initCategories() {
         scope.launch {
-            feedManagerRepository.getCategories().collect { categories ->
+            feedManagerRepository.observeCategories().collect { categories ->
                 val categoriesState = CategoriesState(
                     isExpanded = false,
                     header = newCategoryName?.name,

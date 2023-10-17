@@ -188,6 +188,18 @@ internal class DatabaseHelper(
             }
             .flowOn(backgroundDispatcher)
 
+    suspend fun getFeedSourceCategories(): List<FeedSourceCategory> =
+        withContext(backgroundDispatcher) {
+            dbRef.feedSourceCategoryQueries.selectAll()
+                .executeAsList()
+                .map { categories ->
+                    FeedSourceCategory(
+                        id = categories.id,
+                        title = categories.title,
+                    )
+                }
+        }
+
     fun deleteAllFeeds() =
         dbRef.transaction {
             dbRef.feedItemQueries.deleteAll()

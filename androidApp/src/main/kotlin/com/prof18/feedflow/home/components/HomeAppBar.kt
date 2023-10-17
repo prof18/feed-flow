@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MenuOpen
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
@@ -32,9 +34,13 @@ import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import dev.icerock.moko.resources.compose.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("LongParameterList")
 @Composable
 internal fun HomeAppBar(
     unReadCount: Int,
+    showDrawerMenu: Boolean,
+    isDrawerOpen: Boolean,
+    onDrawerMenuClick: () -> Unit,
     onMarkAllReadClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
@@ -46,6 +52,16 @@ internal fun HomeAppBar(
     var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
+        navigationIcon = if (showDrawerMenu) {
+            {
+                DrawerIcon(
+                    onDrawerMenuClick = onDrawerMenuClick,
+                    isDrawerOpen = isDrawerOpen,
+                )
+            }
+        } else {
+            { }
+        },
         title = {
             Row {
                 Text(stringResource(resource = MR.strings.app_name))
@@ -83,6 +99,24 @@ internal fun HomeAppBar(
             )
         },
     )
+}
+
+@Composable
+private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
+    IconButton(
+        onClick = {
+            onDrawerMenuClick()
+        },
+    ) {
+        Icon(
+            imageVector = if (isDrawerOpen) {
+                Icons.Default.MenuOpen
+            } else {
+                Icons.Default.Menu
+            },
+            contentDescription = null,
+        )
+    }
 }
 
 @Suppress("LongMethod")
@@ -187,6 +221,9 @@ private fun SettingsDropdownMenu(
 private fun HomeAppBarPreview() {
     FeedFlowTheme {
         HomeAppBar(
+            showDrawerMenu = true,
+            isDrawerOpen = false,
+            onDrawerMenuClick = {},
             unReadCount = 42,
             onMarkAllReadClicked = { },
             onSettingsButtonClicked = { },

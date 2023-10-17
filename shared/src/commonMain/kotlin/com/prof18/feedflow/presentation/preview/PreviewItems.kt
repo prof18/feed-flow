@@ -5,6 +5,7 @@ package com.prof18.feedflow.presentation.preview
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoriesState.CategoryItem
 import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
@@ -218,5 +219,74 @@ val feedSourcesState = listOf(
         categoryName = "Mobile",
         isExpanded = true,
         feedSources = feedSourcesForPreview,
+    ),
+)
+
+val drawerItemsForPreview = listOf(
+    DrawerItem.Timeline,
+
+    DrawerItem.CategorySectionTitle,
+
+    DrawerItem.DrawerCategory(
+        category = FeedSourceCategory(
+            id = 2414,
+            title = "News",
+        ),
+    ),
+
+    DrawerItem.DrawerCategory(
+        category = FeedSourceCategory(
+            id = 2415,
+            title = "Tech",
+        ),
+    ),
+
+    DrawerItem.DrawerCategory(
+        category = FeedSourceCategory(
+            id = 2416,
+            title = "Basket",
+        ),
+    ),
+
+    DrawerItem.CategorySourcesTitle,
+
+    DrawerItem.DrawerCategoryWrapper(
+        category = FeedSourceCategory(
+            id = 9398,
+            title = "News",
+        ),
+        feedSources = listOf(
+            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
+                feedSource = feedSourcesForPreview[0],
+            ),
+            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
+                feedSource = feedSourcesForPreview[1],
+            ),
+            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
+                feedSource = feedSourcesForPreview[2],
+            ),
+        ),
+        isExpanded = false,
+        onExpandClick = {},
+    ),
+
+    DrawerItem.DrawerCategoryWrapper(
+        category = FeedSourceCategory(
+            id = 9398,
+            title = "News",
+        ),
+        feedSources = listOf(
+            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
+                feedSource = feedSourcesForPreview[0],
+            ),
+            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
+                feedSource = feedSourcesForPreview[1],
+            ),
+            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
+                feedSource = feedSourcesForPreview[2],
+            ),
+        ),
+        isExpanded = true,
+        onExpandClick = {},
     ),
 )

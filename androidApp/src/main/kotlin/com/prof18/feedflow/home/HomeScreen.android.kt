@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterialApi::class)
+@file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 
 package com.prof18.feedflow.home
 
@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,17 +19,26 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,6 +58,7 @@ import com.prof18.feedflow.home.components.FeedItemImage
 import com.prof18.feedflow.home.components.HomeAppBar
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.preview.feedItemsForPreview
+import com.prof18.feedflow.ui.home.components.Drawer
 import com.prof18.feedflow.ui.home.components.EmptyFeedView
 import com.prof18.feedflow.ui.home.components.FeedItemView
 import com.prof18.feedflow.ui.home.components.FeedList
@@ -55,21 +66,22 @@ import com.prof18.feedflow.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalMaterialApi::class)
 @Suppress("LongMethod")
 @Composable
 internal fun HomeScreen(
     onSettingsButtonClicked: () -> Unit,
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
-    val browserManager = koinInject<BrowserManager>()
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
+    val drawerItems by homeViewModel.drawerItems.collectAsStateWithLifecycle()
+    val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsStateWithLifecycle()
     val unReadCount = feedState.count { !it.isRead }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -91,9 +103,159 @@ internal fun HomeScreen(
 
     val scope = rememberCoroutineScope()
 
+    val windowSize = calculateWindowSizeClass()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    var isDrawerMenuFullVisible by remember {
+        mutableStateOf(true)
+    }
+
+    when (windowSize.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            ModalNavigationDrawer(
+                drawerContent = {
+                    ModalDrawerSheet {
+                        Drawer(
+                            drawerItems = drawerItems,
+                            currentFeedFilter = currentFeedFilter,
+                            onFeedFilterSelected = { feedFilter ->
+                                homeViewModel.onFeedFilterSelected(feedFilter)
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            },
+                        )
+                    }
+                },
+                drawerState = drawerState,
+            ) {
+                HomeScaffold(
+                    unReadCount = unReadCount,
+                    onSettingsButtonClicked = onSettingsButtonClicked,
+                    homeViewModel = homeViewModel,
+                    scope = scope,
+                    listState = listState,
+                    snackbarHostState = snackbarHostState,
+                    loadingState = loadingState,
+                    feedState = feedState,
+                    pullRefreshState = pullRefreshState,
+                    showDrawerMenu = true,
+                    onDrawerMenuClick = {
+                        scope.launch {
+                            if (drawerState.isOpen) {
+                                drawerState.close()
+                            } else {
+                                drawerState.open()
+                            }
+                        }
+                    },
+                )
+            }
+        }
+
+        WindowWidthSizeClass.Medium -> {
+            Row {
+                AnimatedVisibility(
+                    modifier = Modifier
+                        .weight(1f),
+                    visible = isDrawerMenuFullVisible,
+                ) {
+                    Scaffold { paddingValues ->
+                        Drawer(
+                            modifier = Modifier
+                                .padding(paddingValues),
+                            drawerItems = drawerItems,
+                            currentFeedFilter = currentFeedFilter,
+                            onFeedFilterSelected = { feedFilter ->
+                                homeViewModel.onFeedFilterSelected(feedFilter)
+                            },
+                        )
+                    }
+                }
+
+                HomeScaffold(
+                    modifier = Modifier
+                        .weight(2f),
+                    unReadCount = unReadCount,
+                    onSettingsButtonClicked = onSettingsButtonClicked,
+                    homeViewModel = homeViewModel,
+                    scope = scope,
+                    listState = listState,
+                    snackbarHostState = snackbarHostState,
+                    loadingState = loadingState,
+                    feedState = feedState,
+                    pullRefreshState = pullRefreshState,
+                    showDrawerMenu = true,
+                    isDrawerMenuOpen = isDrawerMenuFullVisible,
+                    onDrawerMenuClick = {
+                        isDrawerMenuFullVisible = !isDrawerMenuFullVisible
+                    },
+                )
+            }
+        }
+
+        WindowWidthSizeClass.Expanded -> {
+            Row {
+                Scaffold(
+                    modifier = Modifier
+                        .weight(1f),
+                ) { paddingValues ->
+                    Drawer(
+                        modifier = Modifier
+                            .padding(paddingValues),
+                        drawerItems = drawerItems,
+                        currentFeedFilter = currentFeedFilter,
+                        onFeedFilterSelected = { feedFilter ->
+                            homeViewModel.onFeedFilterSelected(feedFilter)
+                        },
+                    )
+                }
+
+                HomeScaffold(
+                    modifier = Modifier
+                        .weight(2f),
+                    unReadCount = unReadCount,
+                    onSettingsButtonClicked = onSettingsButtonClicked,
+                    homeViewModel = homeViewModel,
+                    scope = scope,
+                    listState = listState,
+                    snackbarHostState = snackbarHostState,
+                    loadingState = loadingState,
+                    feedState = feedState,
+                    pullRefreshState = pullRefreshState,
+                )
+            }
+        }
+    }
+}
+
+@Suppress("LongMethod")
+@Composable
+private fun HomeScaffold(
+    unReadCount: Int,
+    homeViewModel: HomeViewModel,
+    scope: CoroutineScope,
+    listState: LazyListState,
+    snackbarHostState: SnackbarHostState,
+    loadingState: FeedUpdateStatus,
+    feedState: List<FeedItem>,
+    pullRefreshState: PullRefreshState,
+    modifier: Modifier = Modifier,
+    showDrawerMenu: Boolean = false,
+    isDrawerMenuOpen: Boolean = false,
+    onSettingsButtonClicked: () -> Unit,
+    onDrawerMenuClick: () -> Unit = {},
+) {
+    val context = LocalContext.current
+    val browserManager = koinInject<BrowserManager>()
+
     Scaffold(
+        modifier = modifier,
         topBar = {
             HomeAppBar(
+                showDrawerMenu = showDrawerMenu,
+                isDrawerOpen = isDrawerMenuOpen,
+                onDrawerMenuClick = onDrawerMenuClick,
                 unReadCount = unReadCount,
                 onSettingsButtonClicked = onSettingsButtonClicked,
                 onMarkAllReadClicked = {

@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.bundles.about.libraries)
     implementation(libs.moko.resourcesCompose)
     implementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.material.window.size)
 
     debugImplementation(compose.uiTooling)
 }

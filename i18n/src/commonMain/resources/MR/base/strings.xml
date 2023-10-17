@@ -58,4 +58,7 @@
     <string name="no_category_selected_header">No category selected</string>
     <string name="new_category_hint">New category name</string>
     <string name="no_category">Uncategorized</string>
+    <string name="drawer_title_timeline">Timeline</string>
+    <string name="drawer_title_categories">Categories</string>
+    <string name="drawer_title_feed_sources">Feed Sources</string>
 </resources>

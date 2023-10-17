@@ -2,6 +2,7 @@ package com.prof18.feedflow.ui.components
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,42 +29,97 @@ import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 internal fun NewVersionBanner(
     onDownloadLinkClick: () -> Unit,
     onCloseClick: () -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primaryContainer),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(Spacing.regular),
-            text = stringResource(MR.strings.new_release_available_title),
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            style = MaterialTheme.typography.titleMedium,
-        )
+    val windowSize = calculateWindowSizeClass()
 
-        AnnotatedClickableText(
-            modifier = Modifier
-                .weight(1f),
-            onTextClick = onDownloadLinkClick,
-        )
+    when (windowSize.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+            ) {
+                CloseButton(
+                    modifier = Modifier
+                        .align(Alignment.End),
+                    onCloseClick = onCloseClick,
+                )
 
-        IconButton(
-            onClick = {
-                onCloseClick()
-            },
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
+                NewVersionMessage()
+
+                DownloadLink(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(start = Spacing.regular)
+                        .padding(bottom = Spacing.regular),
+                    onDownloadLinkClick = onDownloadLinkClick,
+                )
+            }
         }
+
+        else -> {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                NewVersionMessage()
+
+                DownloadLink(
+                    modifier = Modifier
+                        .weight(1f),
+                    onDownloadLinkClick = onDownloadLinkClick,
+                )
+
+                CloseButton(onCloseClick = onCloseClick)
+            }
+        }
+    }
+}
+
+@Composable
+private fun NewVersionMessage() {
+    Text(
+        modifier = Modifier
+            .padding(Spacing.regular),
+        text = stringResource(MR.strings.new_release_available_title),
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        style = MaterialTheme.typography.titleMedium,
+    )
+}
+
+@Composable
+private fun DownloadLink(
+    modifier: Modifier = Modifier,
+    onDownloadLinkClick: () -> Unit,
+) {
+    AnnotatedClickableText(
+        modifier = modifier,
+        onTextClick = onDownloadLinkClick,
+    )
+}
+
+@Composable
+private fun CloseButton(
+    modifier: Modifier = Modifier,
+    onCloseClick: () -> Unit,
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = {
+            onCloseClick()
+        },
+    ) {
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
     }
 }
 

@@ -82,13 +82,24 @@ internal class FeedManagerRepository(
         databaseHelper.deleteFeedSource(feedSource)
     }
 
-    fun getCategories(): Flow<List<FeedSourceCategory>> =
+    fun observeCategories(): Flow<List<FeedSourceCategory>> =
         databaseHelper.observeFeedSourceCategories()
+
+    suspend fun getCategories(): List<FeedSourceCategory> =
+        databaseHelper.getFeedSourceCategories()
 
     suspend fun createCategory(categoryName: CategoryName) =
         databaseHelper.insertCategories(
             listOf(categoryName),
         )
+
+    fun deleteAllFeeds() {
+        databaseHelper.deleteAllFeeds()
+    }
+
+    suspend fun getFeedSourcesByCategory(): Map<FeedSourceCategory?, List<FeedSource>> =
+        databaseHelper.getFeedSources()
+            .groupBy { it.category }
 
     private suspend fun checkIfValidRss(url: String): Boolean {
         return try {
@@ -98,9 +109,5 @@ internal class FeedManagerRepository(
             logger.d { "Wrong url input: $e" }
             false
         }
-    }
-
-    fun deleteAllFeeds() {
-        databaseHelper.deleteAllFeeds()
     }
 }

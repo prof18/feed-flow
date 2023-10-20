@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Feed
@@ -29,6 +28,9 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,13 +42,14 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun Drawer(
     modifier: Modifier = Modifier,
-    drawerItems: List<DrawerItem>,
+    navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
@@ -58,54 +61,32 @@ fun Drawer(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         LazyColumn {
-            items(drawerItems) { drawerItem ->
-                when (drawerItem) {
-                    is DrawerItem.Timeline -> {
-                        DrawerTimelineItem(
-                            currentFeedFilter = currentFeedFilter,
-                            onFeedFilterSelected = onFeedFilterSelected,
-                        )
+            item {
+                DrawerTimelineItem(
+                    currentFeedFilter = currentFeedFilter,
+                    onFeedFilterSelected = onFeedFilterSelected,
+                )
 
-                        DrawerDivider()
-                    }
+                DrawerDivider()
+            }
 
-                    is DrawerItem.CategorySectionTitle -> {
-                        Text(
-                            modifier = Modifier
-                                .padding(start = Spacing.regular)
-                                .padding(bottom = Spacing.regular),
-                            text = stringResource(MR.strings.drawer_title_categories),
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                    }
+            if (navDrawerState.categories.isNotEmpty()) {
+                item {
+                    DrawerCategoriesSection(
+                        navDrawerState = navDrawerState,
+                        currentFeedFilter = currentFeedFilter,
+                        onFeedFilterSelected = onFeedFilterSelected,
+                    )
+                }
+            }
 
-                    is DrawerItem.DrawerCategory -> {
-                        DrawerCategoryItem(
-                            currentFeedFilter = currentFeedFilter,
-                            drawerItem = drawerItem,
-                            onFeedFilterSelected = onFeedFilterSelected,
-                        )
-                    }
-
-                    is DrawerItem.CategorySourcesTitle -> {
-                        DrawerDivider()
-
-                        Text(
-                            modifier = Modifier
-                                .padding(start = Spacing.regular)
-                                .padding(bottom = Spacing.regular),
-                            text = stringResource(MR.strings.drawer_title_feed_sources),
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                    }
-
-                    is DrawerItem.DrawerCategoryWrapper -> {
-                        DrawerFeedSourceByCategoryItem(
-                            drawerItem = drawerItem,
-                            currentFeedFilter = currentFeedFilter,
-                            onFeedFilterSelected = onFeedFilterSelected,
-                        )
-                    }
+            if (navDrawerState.feedSourcesByCategory.isNotEmpty()) {
+                item {
+                    DrawerFeedSourcesByCategories(
+                        navDrawerState = navDrawerState,
+                        currentFeedFilter = currentFeedFilter,
+                        onFeedFilterSelected = onFeedFilterSelected,
+                    )
                 }
             }
         }
@@ -149,17 +130,42 @@ private fun DrawerTimelineItem(
 }
 
 @Composable
+private fun DrawerCategoriesSection(
+    navDrawerState: NavDrawerState,
+    currentFeedFilter: FeedFilter,
+    onFeedFilterSelected: (FeedFilter) -> Unit,
+) {
+    Column {
+        Text(
+            modifier = Modifier
+                .padding(start = Spacing.regular)
+                .padding(bottom = Spacing.regular),
+            text = stringResource(MR.strings.drawer_title_categories),
+            style = MaterialTheme.typography.labelLarge,
+        )
+
+        for (category in navDrawerState.categories) {
+            DrawerCategoryItem(
+                currentFeedFilter = currentFeedFilter,
+                drawerCategory = category as DrawerItem.DrawerCategory,
+                onFeedFilterSelected = onFeedFilterSelected,
+            )
+        }
+    }
+}
+
+@Composable
 private fun DrawerCategoryItem(
     currentFeedFilter: FeedFilter,
-    drawerItem: DrawerItem.DrawerCategory,
+    drawerCategory: DrawerItem.DrawerCategory,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
     NavigationDrawerItem(
         selected = currentFeedFilter is FeedFilter.Category &&
-            drawerItem.category == currentFeedFilter.feedCategory,
+            drawerCategory.category == currentFeedFilter.feedCategory,
         label = {
             Text(
-                text = drawerItem.category.title,
+                text = drawerCategory.category.title,
                 modifier = Modifier.padding(horizontal = Spacing.regular),
             )
         },
@@ -172,22 +178,64 @@ private fun DrawerCategoryItem(
         colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
         onClick = {
             onFeedFilterSelected(
-                FeedFilter.Category(feedCategory = drawerItem.category),
+                FeedFilter.Category(feedCategory = drawerCategory.category),
             )
         },
     )
 }
 
 @Composable
-private fun DrawerFeedSourceByCategoryItem(
-    drawerItem: DrawerItem.DrawerCategoryWrapper,
+private fun DrawerFeedSourcesByCategories(
+    navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
+    onFeedFilterSelected: (FeedFilter) -> Unit,
+) {
+    Column {
+        Column {
+            DrawerDivider()
+
+            Text(
+                modifier = Modifier
+                    .padding(start = Spacing.regular)
+                    .padding(bottom = Spacing.regular),
+                text = stringResource(MR.strings.drawer_title_feed_sources),
+                style = MaterialTheme.typography.labelLarge,
+            )
+
+            for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
+                var isCategoryExpanded by remember {
+                    mutableStateOf(false)
+                }
+
+                DrawerFeedSourceByCategoryItem(
+                    feedSourceCategoryWrapper = categoryWrapper,
+                    drawerFeedSources = drawerFeedSources
+                        .filterIsInstance<DrawerItem.DrawerFeedSource>(),
+                    currentFeedFilter = currentFeedFilter,
+                    isCategoryExpanded = isCategoryExpanded,
+                    onCategoryExpand = {
+                        isCategoryExpanded = !isCategoryExpanded
+                    },
+                    onFeedFilterSelected = onFeedFilterSelected,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DrawerFeedSourceByCategoryItem(
+    feedSourceCategoryWrapper: DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper,
+    drawerFeedSources: List<DrawerItem.DrawerFeedSource>,
+    currentFeedFilter: FeedFilter,
+    isCategoryExpanded: Boolean,
+    onCategoryExpand: () -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
     Column {
         @Suppress("MagicNumber")
         val degrees by animateFloatAsState(
-            targetValue = if (drawerItem.isExpanded) {
+            targetValue = if (isCategoryExpanded) {
                 -90f
             } else {
                 90f
@@ -198,14 +246,14 @@ private fun DrawerFeedSourceByCategoryItem(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)
                 .clickable {
-                    drawerItem.onExpandClick(drawerItem)
+                    onCategoryExpand()
                 }
                 .fillMaxWidth()
                 .padding(vertical = Spacing.regular),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            val headerText = if (drawerItem.category?.title != null) {
-                requireNotNull(drawerItem.category?.title)
+            val headerText = if (feedSourceCategoryWrapper.feedSourceCategory?.title != null) {
+                requireNotNull(feedSourceCategoryWrapper.feedSourceCategory?.title)
             } else {
                 stringResource(resource = MR.strings.no_category)
             }
@@ -225,7 +273,8 @@ private fun DrawerFeedSourceByCategoryItem(
         }
 
         FeedSourcesList(
-            drawerItem = drawerItem,
+            isCategoryExpanded = isCategoryExpanded,
+            drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
             onFeedFilterSelected = onFeedFilterSelected,
         )
@@ -234,12 +283,13 @@ private fun DrawerFeedSourceByCategoryItem(
 
 @Composable
 private fun ColumnScope.FeedSourcesList(
-    drawerItem: DrawerItem.DrawerCategoryWrapper,
+    isCategoryExpanded: Boolean,
+    drawerFeedSources: List<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
     AnimatedVisibility(
-        visible = drawerItem.isExpanded,
+        visible = isCategoryExpanded,
         enter = expandVertically(
             spring(
                 stiffness = Spring.StiffnessMediumLow,
@@ -249,7 +299,7 @@ private fun ColumnScope.FeedSourcesList(
         exit = shrinkVertically(),
     ) {
         Column {
-            drawerItem.feedSources.forEach { feedSourceWrapper ->
+            drawerFeedSources.forEach { feedSourceWrapper ->
                 NavigationDrawerItem(
                     selected = currentFeedFilter is FeedFilter.Source &&
                         currentFeedFilter.feedSource == feedSourceWrapper.feedSource,

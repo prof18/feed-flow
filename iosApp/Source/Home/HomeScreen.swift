@@ -19,13 +19,13 @@ struct HomeScreen: View {
 
     @Environment(\.scenePhase) var scenePhase
 
-    @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
-
     @State var loadingState: FeedUpdateStatus?
     @State var feedState: [FeedItem] = []
     @State var showLoading: Bool = true
     @State var sheetToShow: HomeSheetToShow?
     @State var unreadCount = 0
+
+    let homeViewModel: HomeViewModel
 
     var body: some View {
 

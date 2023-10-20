@@ -2,8 +2,12 @@ package com.prof18.feedflow.presentation
 
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.DrawerItem
+import com.prof18.feedflow.core.model.DrawerItem.DrawerCategory
+import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
+import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.model.FeedItemId
@@ -51,12 +55,10 @@ class HomeViewModel internal constructor(
     val errorState = mutableUIErrorState.asSharedFlow()
 
     // Drawer State
-    private val drawerMutableState = MutableStateFlow<List<DrawerItem>>(
-        listOf(DrawerItem.Timeline),
-    )
+    private val drawerMutableState = MutableStateFlow(NavDrawerState())
 
     @NativeCoroutinesState
-    val drawerItems = drawerMutableState.asStateFlow()
+    val navDrawerState = drawerMutableState.asStateFlow()
 
     private var lastUpdateIndex = 0
 
@@ -106,54 +108,25 @@ class HomeViewModel internal constructor(
             val feedSourceByCategory = feedManagerRepository.getFeedSourcesByCategory()
             val categories = feedManagerRepository.getCategories()
 
-            val drawerItems = mutableListOf<DrawerItem>(
-                DrawerItem.Timeline,
-            )
-
-            if (categories.isNotEmpty()) {
-                drawerItems.add(DrawerItem.CategorySectionTitle)
-            }
-
-            drawerItems.addAll(
-                categories.map { category ->
-                    DrawerItem.DrawerCategory(
-                        category = category,
+            val navDrawerState = NavDrawerState(
+                timeline = listOf(DrawerItem.Timeline),
+                categories = categories.map { category ->
+                    DrawerCategory(category = category)
+                },
+                feedSourcesByCategory = feedSourceByCategory.mapKeys { (category, _) ->
+                    FeedSourceCategoryWrapper(
+                        feedSourceCategory = category,
                     )
+                }.mapValues { (_, sources) ->
+                    sources.map { feedSource ->
+                        DrawerFeedSource(
+                            feedSource = feedSource,
+                        )
+                    }
                 },
             )
 
-            if (feedSourceByCategory.isNotEmpty()) {
-                drawerItems.add(DrawerItem.CategorySourcesTitle)
-            }
-
-            drawerItems.addAll(
-                feedSourceByCategory.map { (category, sources) ->
-                    DrawerItem.DrawerCategoryWrapper(
-                        category = category,
-                        feedSources = sources.map { feedSource ->
-                            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
-                                feedSource = feedSource,
-                            )
-                        },
-                        isExpanded = false,
-                        onExpandClick = { drawerCategoryWrapper ->
-                            drawerMutableState.update { oldDrawerItems ->
-                                oldDrawerItems.map { drawerItem ->
-                                    if (drawerItem is DrawerItem.DrawerCategoryWrapper &&
-                                        drawerItem == drawerCategoryWrapper
-                                    ) {
-                                        drawerItem.copy(isExpanded = !drawerItem.isExpanded)
-                                    } else {
-                                        drawerItem
-                                    }
-                                }
-                            }
-                        },
-                    )
-                },
-            )
-
-            drawerMutableState.update { drawerItems }
+            drawerMutableState.update { navDrawerState }
         }
     }
 

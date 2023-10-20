@@ -80,7 +80,7 @@ internal fun HomeScreen(
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
-    val drawerItems by homeViewModel.drawerItems.collectAsStateWithLifecycle()
+    val navDrawerState by homeViewModel.navDrawerState.collectAsStateWithLifecycle()
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsStateWithLifecycle()
     val unReadCount = feedState.count { !it.isRead }
 
@@ -116,7 +116,7 @@ internal fun HomeScreen(
                 drawerContent = {
                     ModalDrawerSheet {
                         Drawer(
-                            drawerItems = drawerItems,
+                            navDrawerState = navDrawerState,
                             currentFeedFilter = currentFeedFilter,
                             onFeedFilterSelected = { feedFilter ->
                                 homeViewModel.onFeedFilterSelected(feedFilter)
@@ -164,7 +164,7 @@ internal fun HomeScreen(
                         Drawer(
                             modifier = Modifier
                                 .padding(paddingValues),
-                            drawerItems = drawerItems,
+                            navDrawerState = navDrawerState,
                             currentFeedFilter = currentFeedFilter,
                             onFeedFilterSelected = { feedFilter ->
                                 homeViewModel.onFeedFilterSelected(feedFilter)
@@ -203,7 +203,7 @@ internal fun HomeScreen(
                     Drawer(
                         modifier = Modifier
                             .padding(paddingValues),
-                        drawerItems = drawerItems,
+                        navDrawerState = navDrawerState,
                         currentFeedFilter = currentFeedFilter,
                         onFeedFilterSelected = { feedFilter ->
                             homeViewModel.onFeedFilterSelected(feedFilter)

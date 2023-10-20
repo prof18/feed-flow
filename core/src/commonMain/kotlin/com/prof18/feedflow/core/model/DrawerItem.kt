@@ -1,24 +1,26 @@
 package com.prof18.feedflow.core.model
 
-sealed interface DrawerItem {
-    data object Timeline : DrawerItem
+import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper
 
-    data object CategorySectionTitle : DrawerItem
+data class NavDrawerState(
+    val timeline: List<DrawerItem> = listOf(),
+    val categories: List<DrawerItem> = listOf(),
+    val feedSourcesByCategory: Map<FeedSourceCategoryWrapper, List<DrawerItem>> = mapOf(),
+)
+
+sealed class DrawerItem {
+    data object Timeline : DrawerItem()
 
     data class DrawerCategory(
         val category: FeedSourceCategory,
-    ) : DrawerItem
+    ) : DrawerItem()
 
-    data object CategorySourcesTitle : DrawerItem
+    data class DrawerFeedSource(
+        val feedSource: FeedSource,
+    ) : DrawerItem() {
 
-    data class DrawerCategoryWrapper(
-        val category: FeedSourceCategory?,
-        val feedSources: List<FeedSourceWrapper>,
-        val isExpanded: Boolean = false,
-        val onExpandClick: (DrawerCategoryWrapper) -> Unit,
-    ) : DrawerItem {
-        data class FeedSourceWrapper(
-            val feedSource: FeedSource,
+        data class FeedSourceCategoryWrapper(
+            val feedSourceCategory: FeedSourceCategory?,
         )
     }
 }

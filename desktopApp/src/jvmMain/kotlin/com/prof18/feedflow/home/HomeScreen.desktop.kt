@@ -48,10 +48,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
-import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemClickedInfo
+import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.openInBrowser
@@ -76,7 +76,7 @@ internal fun HomeScreen(
 ) {
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()
-    val drawerItems by homeViewModel.drawerItems.collectAsState()
+    val navDrawerState by homeViewModel.navDrawerState.collectAsState()
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -93,7 +93,7 @@ internal fun HomeScreen(
     when (windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             CompactView(
-                drawerItems = drawerItems,
+                navDrawerState = navDrawerState,
                 currentFeedFilter = currentFeedFilter,
                 homeViewModel = homeViewModel,
                 paddingValues = paddingValues,
@@ -106,7 +106,7 @@ internal fun HomeScreen(
 
         WindowWidthSizeClass.Medium -> {
             MediumView(
-                drawerItems = drawerItems,
+                navDrawerState = navDrawerState,
                 currentFeedFilter = currentFeedFilter,
                 homeViewModel = homeViewModel,
                 paddingValues = paddingValues,
@@ -119,7 +119,7 @@ internal fun HomeScreen(
 
         WindowWidthSizeClass.Expanded -> {
             ExpandedView(
-                drawerItems = drawerItems,
+                navDrawerState = navDrawerState,
                 currentFeedFilter = currentFeedFilter,
                 homeViewModel = homeViewModel,
                 paddingValues = paddingValues,
@@ -134,7 +134,7 @@ internal fun HomeScreen(
 
 @Composable
 private fun CompactView(
-    drawerItems: List<DrawerItem>,
+    navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     homeViewModel: HomeViewModel,
     paddingValues: PaddingValues,
@@ -150,7 +150,7 @@ private fun CompactView(
         drawerContent = {
             ModalDrawerSheet {
                 Drawer(
-                    drawerItems = drawerItems,
+                    navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = { feedFilter ->
                         homeViewModel.onFeedFilterSelected(feedFilter)
@@ -201,7 +201,7 @@ private fun CompactView(
 
 @Composable
 private fun MediumView(
-    drawerItems: List<DrawerItem>,
+    navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     homeViewModel: HomeViewModel,
     paddingValues: PaddingValues,
@@ -224,7 +224,7 @@ private fun MediumView(
                 Drawer(
                     modifier = Modifier
                         .padding(paddingValues),
-                    drawerItems = drawerItems,
+                    navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = { feedFilter ->
                         homeViewModel.onFeedFilterSelected(feedFilter)
@@ -268,7 +268,7 @@ private fun MediumView(
 
 @Composable
 private fun ExpandedView(
-    drawerItems: List<DrawerItem>,
+    navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     homeViewModel: HomeViewModel,
     paddingValues: PaddingValues,
@@ -287,7 +287,7 @@ private fun ExpandedView(
                 Drawer(
                     modifier = Modifier
                         .padding(paddingValues),
-                    drawerItems = drawerItems,
+                    navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = { feedFilter ->
                         homeViewModel.onFeedFilterSelected(feedFilter)

@@ -97,9 +97,15 @@ internal class FeedManagerRepository(
         databaseHelper.deleteAllFeeds()
     }
 
-    suspend fun getFeedSourcesByCategory(): Map<FeedSourceCategory?, List<FeedSource>> =
-        databaseHelper.getFeedSources()
+    suspend fun getFeedSourcesByCategory(): Map<FeedSourceCategory?, List<FeedSource>> {
+        val sourcesByCategory = databaseHelper.getFeedSources()
             .groupBy { it.category }
+
+        val sortedKeys = sourcesByCategory.keys.sortedBy { it?.title }
+        return sortedKeys.associateWith {
+            sourcesByCategory[it] ?: emptyList()
+        }
+    }
 
     private suspend fun checkIfValidRss(url: String): Boolean {
         return try {

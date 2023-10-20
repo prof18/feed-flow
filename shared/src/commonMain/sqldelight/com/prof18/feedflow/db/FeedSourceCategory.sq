@@ -11,4 +11,5 @@ getCategoryByName:
 SELECT * FROM feed_source_category WHERE title = ?;
 
 selectAll:
-SELECT * FROM feed_source_category;
+SELECT * FROM feed_source_category
+ORDER BY title COLLATE NOCASE ASC;

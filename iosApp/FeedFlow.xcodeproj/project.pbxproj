@@ -64,6 +64,7 @@
 		CCA704DC29D6143400560FA3 /* FeedListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704DB29D6143400560FA3 /* FeedListView.swift */; };
 		CCA704E529D625E200560FA3 /* HomeSheetToShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E429D625E200560FA3 /* HomeSheetToShow.swift */; };
 		CCA704E729D626D400560FA3 /* FilePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E629D626D400560FA3 /* FilePickerController.swift */; };
+		CCC04D492AE18A9700A463BE /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC04D482AE18A9700A463BE /* Sidebar.swift */; };
 		CCC86B4429D8C44400AEABB9 /* SheetPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC86B4329D8C44400AEABB9 /* SheetPage.swift */; };
 		CCEA11BB2A6D2AC300C661AC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */; };
 		CCEA11BE2A6D2BA600C661AC /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = CCEA11BD2A6D2BA600C661AC /* FirebaseCrashlytics */; };
@@ -132,6 +133,7 @@
 		CCA704DB29D6143400560FA3 /* FeedListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListView.swift; sourceTree = "<group>"; };
 		CCA704E429D625E200560FA3 /* HomeSheetToShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSheetToShow.swift; sourceTree = "<group>"; };
 		CCA704E629D626D400560FA3 /* FilePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePickerController.swift; sourceTree = "<group>"; };
+		CCC04D482AE18A9700A463BE /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		CCC86B4329D8C44400AEABB9 /* SheetPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPage.swift; sourceTree = "<group>"; };
 		CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CCEB9C5729B33F5A0064D14A /* Koin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Koin.swift; sourceTree = "<group>"; };
@@ -297,6 +299,7 @@
 				7555FF82242A565900829871 /* ContentView.swift */,
 				2152FB032600AC8F00CF470E /* FeedFlowApp.swift */,
 				CCA704C329D4B67100560FA3 /* AppState.swift */,
+				CCC04D482AE18A9700A463BE /* Sidebar.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -551,7 +554,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint --fix && swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint --fix && swiftlint\n  #swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
 		};
 		CCEA11BF2A6D2C6600C661AC /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -617,6 +620,7 @@
 				2152FB042600AC8F00CF470E /* FeedFlowApp.swift in Sources */,
 				CCA704DA29D60FA600560FA3 /* FeedItemView.swift in Sources */,
 				CC23293529D8300C005D0E06 /* View+.swift in Sources */,
+				CCC04D492AE18A9700A463BE /* Sidebar.swift in Sources */,
 				CCA704D629D60D1C00560FA3 /* EmptyFeedView.swift in Sources */,
 				CC323E1829D22C4200138233 /* HomeScreen.swift in Sources */,
 				CCA704C429D4B67100560FA3 /* AppState.swift in Sources */,

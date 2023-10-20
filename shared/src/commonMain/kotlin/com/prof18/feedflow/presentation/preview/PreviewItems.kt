@@ -5,7 +5,6 @@ package com.prof18.feedflow.presentation.preview
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoriesState.CategoryItem
 import com.prof18.feedflow.core.model.CategoryId
-import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
@@ -222,71 +221,119 @@ val feedSourcesState = listOf(
     ),
 )
 
-val drawerItemsForPreview = listOf(
-    DrawerItem.Timeline,
+// val navDrawerStateForPreview = NavDrawerState(
+//    timeline = DrawerItem.Timeline,
+//    categories = listOf(
+//        FeedSourceCategoryWrapper(
+//            category = FeedSourceCategory(
+//                id = 2414,
+//                title = "News",
+//            )
+//        ),
+//        FeedSourceCategoryWrapper(
+//            category = FeedSourceCategory(
+//                id = 2415,
+//                title = "Tech",
+//            )
+//        ),
+//        FeedSourceCategoryWrapper(
+//            category = FeedSourceCategory(
+//                id = 2416,
+//                title = "Basket",
+//            )
+//        )
+//    ),
+//    feedSourcesByCategory = listOf(
+//        DrawerCategoryWrapper(
+//            category = FeedSourceCategory(
+//                id = 9398,
+//                title = "News",
+//            ),
+//            feedSources = listOf(
+//                FeedSourceWrapper(
+//                    feedSource = feedSourcesForPreview[0],
+//                ),
+//                FeedSourceWrapper(
+//                    feedSource = feedSourcesForPreview[1],
+//                ),
+//                FeedSourceWrapper(
+//                    feedSource = feedSourcesForPreview[2],
+//                ),
+//            ),
+//            isExpanded = false,
+//            onExpandClick = {},
+//        ),
+//        DrawerCategoryWrapper(
+//            category = FeedSourceCategory(
+//                id = 9398,
+//                title = "News",
+//            ),
+//            feedSources = listOf(
+//                FeedSourceWrapper(
+//                    feedSource = feedSourcesForPreview[0],
+//                ),
+//                FeedSourceWrapper(
+//                    feedSource = feedSourcesForPreview[1],
+//                ),
+//                FeedSourceWrapper(
+//                    feedSource = feedSourcesForPreview[2],
+//                ),
+//            ),
+//            isExpanded = true,
+//            onExpandClick = {},
+//        ),
+//    )
+//
+// )
 
-    DrawerItem.CategorySectionTitle,
+// val drawerItemsForPreview = listOf(
+//    DrawerItem.Timeline,
+//
+//
+//    DrawerItem.DrawerCategory(
 
-    DrawerItem.DrawerCategory(
-        category = FeedSourceCategory(
-            id = 2414,
-            title = "News",
-        ),
-    ),
-
-    DrawerItem.DrawerCategory(
-        category = FeedSourceCategory(
-            id = 2415,
-            title = "Tech",
-        ),
-    ),
-
-    DrawerItem.DrawerCategory(
-        category = FeedSourceCategory(
-            id = 2416,
-            title = "Basket",
-        ),
-    ),
-
-    DrawerItem.CategorySourcesTitle,
-
-    DrawerItem.DrawerCategoryWrapper(
-        category = FeedSourceCategory(
-            id = 9398,
-            title = "News",
-        ),
-        feedSources = listOf(
-            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
-                feedSource = feedSourcesForPreview[0],
-            ),
-            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
-                feedSource = feedSourcesForPreview[1],
-            ),
-            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
-                feedSource = feedSourcesForPreview[2],
-            ),
-        ),
-        isExpanded = false,
-        onExpandClick = {},
-    ),
-
-    DrawerItem.DrawerCategoryWrapper(
-        category = FeedSourceCategory(
-            id = 9398,
-            title = "News",
-        ),
-        feedSources = listOf(
-            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
-                feedSource = feedSourcesForPreview[0],
-            ),
-            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
-                feedSource = feedSourcesForPreview[1],
-            ),
-            DrawerItem.DrawerCategoryWrapper.FeedSourceWrapper(
-                feedSource = feedSourcesForPreview[2],
-            ),
-        ),
-        isExpanded = true,
-        onExpandClick = {},
-    ),
-)
+//    ),
+//
+//    DrawerItem.FeedSourceByCategory(
+//        feedSourcesByCategory = listOf(
+//            DrawerCategoryWrapper(
+//                category = FeedSourceCategory(
+//                    id = 9398,
+//                    title = "News",
+//                ),
+//                feedSources = listOf(
+//                    FeedSourceWrapper(
+//                        feedSource = feedSourcesForPreview[0],
+//                    ),
+//                    FeedSourceWrapper(
+//                        feedSource = feedSourcesForPreview[1],
+//                    ),
+//                    FeedSourceWrapper(
+//                        feedSource = feedSourcesForPreview[2],
+//                    ),
+//                ),
+//                isExpanded = false,
+//                onExpandClick = {},
+//            ),
+//            DrawerCategoryWrapper(
+//                category = FeedSourceCategory(
+//                    id = 9398,
+//                    title = "News",
+//                ),
+//                feedSources = listOf(
+//                    FeedSourceWrapper(
+//                        feedSource = feedSourcesForPreview[0],
+//                    ),
+//                    FeedSourceWrapper(
+//                        feedSource = feedSourcesForPreview[1],
+//                    ),
+//                    FeedSourceWrapper(
+//                        feedSource = feedSourcesForPreview[2],
+//                    ),
+//                ),
+//                isExpanded = true,
+//                onExpandClick = {},
+//            ),
+//        )
+//    )
+// )

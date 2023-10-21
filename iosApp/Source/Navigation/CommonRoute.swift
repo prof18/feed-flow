@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Route: Hashable {
+enum CommonRoute: Hashable {
     case aboutScreen
     case importExportScreen
 }

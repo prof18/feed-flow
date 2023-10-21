@@ -35,7 +35,7 @@
 		CC323E1229D2239300138233 /* KMPNativeCoroutinesCore in Frameworks */ = {isa = PBXBuildFile; productRef = CC323E1129D2239300138233 /* KMPNativeCoroutinesCore */; };
 		CC323E1629D229AC00138233 /* ObservableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC323E1529D229AC00138233 /* ObservableViewModel.swift */; };
 		CC323E1829D22C4200138233 /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC323E1729D22C4200138233 /* HomeScreen.swift */; };
-		CC323E1B29D22E1500138233 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC323E1A29D22E1500138233 /* Route.swift */; };
+		CC323E1B29D22E1500138233 /* CommonRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC323E1A29D22E1500138233 /* CommonRoute.swift */; };
 		CC4B803B29D98BB20004A0AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803A29D98BB20004A0AB /* Nuke */; };
 		CC4B803D29D98BB20004A0AB /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803C29D98BB20004A0AB /* NukeUI */; };
 		CC4B804029D9A31E0004A0AB /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803F29D9A31E0004A0AB /* Collections */; };
@@ -108,7 +108,7 @@
 		CC23293E29D85295005D0E06 /* IosHtmlParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosHtmlParser.swift; sourceTree = "<group>"; };
 		CC323E1529D229AC00138233 /* ObservableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableViewModel.swift; sourceTree = "<group>"; };
 		CC323E1729D22C4200138233 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
-		CC323E1A29D22E1500138233 /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
+		CC323E1A29D22E1500138233 /* CommonRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonRoute.swift; sourceTree = "<group>"; };
 		CC4B804329DA03460004A0AB /* HomeListIndexHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListIndexHolder.swift; sourceTree = "<group>"; };
 		CC6E681E2A5B1429009F4A3C /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		CC6E68202A5F446A009F4A3C /* BrowserSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserSelector.swift; sourceTree = "<group>"; };
@@ -377,7 +377,7 @@
 		CCDF168B29D2347300222A0A /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
-				CC323E1A29D22E1500138233 /* Route.swift */,
+				CC323E1A29D22E1500138233 /* CommonRoute.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -554,7 +554,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint --fix && swiftlint\n  #swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint --fix && swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
 		};
 		CCEA11BF2A6D2C6600C661AC /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -631,7 +631,7 @@
 				CCA704E729D626D400560FA3 /* FilePickerController.swift in Sources */,
 				CCA704D829D60F4300560FA3 /* NoFeedsSourceView.swift in Sources */,
 				CCA704C729D4B69B00560FA3 /* SnackbarData.swift in Sources */,
-				CC323E1B29D22E1500138233 /* Route.swift in Sources */,
+				CC323E1B29D22E1500138233 /* CommonRoute.swift in Sources */,
 				CCA704C129D4B63300560FA3 /* Snackbar.swift in Sources */,
 				CCC86B4429D8C44400AEABB9 /* SheetPage.swift in Sources */,
 			);

@@ -12,3 +12,7 @@ enum CommonRoute: Hashable {
     case aboutScreen
     case importExportScreen
 }
+
+enum CompactViewRoute: Hashable {
+    case feed
+}

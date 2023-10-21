@@ -10,9 +10,9 @@ struct FeedFlowApp: App {
     @StateObject var browserSelector: BrowserSelector = BrowserSelector()
 
     init() {
-#if !DEBUG
+    #if !DEBUG
         CrashlyticsKt.setupCrashlytics()
-#endif
+    #endif
         startKoin()
     }
 
@@ -30,9 +30,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-#if !DEBUG
+    #if !DEBUG
         FirebaseApp.configure()
-#endif
+    #endif
         return true
     }
 }

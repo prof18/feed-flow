@@ -2,6 +2,8 @@ import SwiftUI
 import shared
 import KMPNativeCoroutinesAsync
 
+// TODO: clean up this file
+
 struct ContentView: View {
 
     @EnvironmentObject var appState: AppState
@@ -14,23 +16,6 @@ struct ContentView: View {
             HomeContainer()
                 .environmentObject(appState)
                 .environmentObject(browserSelector)
-            //            NavigationStack {
-            //
-            //                // TODO: add here an home container
-            //
-            //                HomeScreen(homeViewModel: homeViewModel)
-            //                    .environmentObject(appState)
-            //                    .environmentObject(browserSelector)
-            //                    .navigationDestination(for: Route.self) { route in
-            //                        switch route {
-            //                        case .aboutScreen:
-            //                            AboutScreen()
-            //
-            //                        case .importExportScreen:
-            //                            ImportExportScreen()
-            //                        }
-            //                    }
-            //            }
 
             VStack(spacing: 0) {
 
@@ -42,7 +27,11 @@ struct ContentView: View {
     }
 }
 
-// TODO: move the following stuff
+// TODO: move the following stuff\
+
+enum CompactViewRoute: Hashable {
+    case feed
+}
 
 struct HomeContainer: View {
 
@@ -55,7 +44,7 @@ struct HomeContainer: View {
 
     var body: some View {
         if horizontalSizeClass == .compact {
-            CompactView()
+            CompactView(selectedDrawerItem: $selectedDrawerItem, homeViewModel: homeViewModel)
         } else {
             RegularView(selectedDrawerItem: $selectedDrawerItem, homeViewModel: homeViewModel)
         }
@@ -63,10 +52,66 @@ struct HomeContainer: View {
 }
 
 struct CompactView: View {
+
+    @EnvironmentObject
+    var appState: AppState
+
+    @Binding
+    var selectedDrawerItem: DrawerItem?
+
+    let homeViewModel: HomeViewModel
+
+    @State
+    var navDrawerState: NavDrawerState = NavDrawerState(timeline: [], categories: [], feedSourcesByCategory: [:])
+
     var body: some View {
-        Text("Compact View")
+        NavigationStack(path: $appState.path) {
+            SidebarDrawer(
+                selectedDrawerItem: $selectedDrawerItem,
+                navDrawerState: navDrawerState,
+                onFeedFilterSelected: { feedFilter in
+                    appState.navigate(route: CompactViewRoute.feed)
+                    homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
+                }
+            )
+                .navigationDestination(for: CommonRoute.self) { route in
+                    switch route {
+                    case .aboutScreen:
+                        AboutScreen()
+
+                    case .importExportScreen:
+                        ImportExportScreen()
+                    }
+                }
+                .navigationDestination(for: CompactViewRoute.self) { route in
+                    switch route {
+                    case .feed:
+                        HomeScreen(homeViewModel: homeViewModel)
+                    }
+                }
+        }
+        .task {
+            do {
+                let stream = asyncSequence(for: homeViewModel.navDrawerStateFlow)
+                for try await state in stream {
+                    self.navDrawerState = state
+                }
+            } catch {
+                self.appState.emitGenericError()
+            }
+        }
     }
 }
+
+// struct ListDrawer: View {
+//    
+//    @Binding
+//    var selectedDrawerItem: DrawerItem?
+//    
+//    var body: some View {
+//        Text("ListDrawer")
+//    }
+// }
 
 struct RegularView: View {
     @EnvironmentObject
@@ -91,7 +136,18 @@ struct RegularView: View {
                 }
             )
         } detail: {
-            HomeScreen(homeViewModel: homeViewModel)
+            NavigationStack {
+                HomeScreen(homeViewModel: homeViewModel)
+                    .navigationDestination(for: CommonRoute.self) { route in
+                        switch route {
+                        case .aboutScreen:
+                            AboutScreen()
+
+                        case .importExportScreen:
+                            ImportExportScreen()
+                        }
+                    }
+            }
         }
         .navigationSplitViewStyle(.balanced)
         .task {

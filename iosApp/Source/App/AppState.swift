@@ -8,12 +8,23 @@
 
 import Foundation
 import Collections
+import SwiftUI
 
 class AppState: ObservableObject {
 
     @Published var snackbarQueue: Deque<SnackbarData> = Deque()
 
     @Published var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
+
+    @Published var path = NavigationPath()
+
+    init() {
+        path.append(CompactViewRoute.feed)
+    }
+
+    func navigate(route: any Hashable) {
+        path.append(route)
+    }
 
     func emitGenericError() {
         snackbarQueue.append(

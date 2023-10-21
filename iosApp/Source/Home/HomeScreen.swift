@@ -125,7 +125,10 @@ struct HomeContent: View {
     @EnvironmentObject var browserSelector: BrowserSelector
     @EnvironmentObject var appState: AppState
 
-    @Environment(\.openURL) var openURL
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.dismiss) private var dismiss
+
+    @Environment(\.openURL) private var openURL
 
     @Binding var loadingState: FeedUpdateStatus?
     @Binding var feedState: [FeedItem]
@@ -154,22 +157,34 @@ struct HomeContent: View {
                     self.sheetToShow = .feedList
                 }
             )
+            .if(horizontalSizeClass == .compact) { view in
+                view
+                    .navigationBarBackButtonHidden(true)
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("\(localizer.app_name.localized) (\(unreadCount))")
-                        .font(.title2)
-                        .padding(.vertical, Spacing.medium)
-                        .onTapGesture(count: 2) {
-                            updateReadStatus(Int32(indexHolder.getLastReadIndex()))
-                            self.indexHolder.refresh()
-                            proxy.scrollTo(feedState.first?.id)
-                            onRefresh()
+
+                    HStack {
+                        if horizontalSizeClass == .compact {
+
+                            Button(
+                                action: {
+                                    self.dismiss()
+                                },
+                                label: {
+                                    Image(systemName: "sidebar.left")
+                                }
+                            )
                         }
-                        .onTapGesture {
-                            withAnimation {
-                                proxy.scrollTo(feedState.first?.id)
+
+                        Text("\(localizer.app_name.localized) (\(unreadCount))")
+                            .font(.title2)
+                            .padding(.vertical, Spacing.medium)
+                            .onTapGesture(count: 2) {
+                                updateReadStatus(Int32(indexHolder.getLastReadIndex()))
+                                self.indexHolder.refresh()
                             }
-                        }
+                    }
                 }
 
                 ToolbarItem(placement: .primaryAction) {
@@ -240,7 +255,7 @@ struct HomeContent: View {
                         )
                     }
 
-                        NavigationLink(value: Route.importExportScreen) {
+                        NavigationLink(value: CommonRoute.importExportScreen) {
                             Label(
                                 localizer.import_export_opml.localized,
                                 systemImage: "arrow.up.arrow.down"
@@ -283,7 +298,7 @@ struct HomeContent: View {
                         )
                         #endif
 
-                        NavigationLink(value: Route.aboutScreen) {
+                        NavigationLink(value: CommonRoute.aboutScreen) {
                             Label(
                                 localizer.about_button.localized,
                                 systemImage: "info.circle"

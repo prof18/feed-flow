@@ -65,14 +65,24 @@ struct SidebarDrawer: View {
                                 ) { drawerItem in
                                     if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
                                         HStack {
-                                            VStack(alignment: .leading) {
-                                                Text(drawerFeedSource.feedSource.title)
 
-                                                Text(drawerFeedSource.feedSource.url)
-                                            }
+                                            Image(systemName: "square.stack.3d.up")
+
+                                            Text(drawerFeedSource.feedSource.title)
+                                                .lineLimit(2)
+                                                .font(.system(size: 16))
+                                                .padding(.bottom, 2)
+                                                .padding(.leading, Spacing.small)
 
                                             Spacer()
                                         }
+                                        .listRowInsets(
+                                            EdgeInsets(
+                                                top: Spacing.small,
+                                                leading: .zero,
+                                                bottom: Spacing.small,
+                                                trailing: Spacing.small)
+                                        )
                                         .contentShape(Rectangle())
                                         .onTapGesture {
                                             self.selectedDrawerItem = drawerItem

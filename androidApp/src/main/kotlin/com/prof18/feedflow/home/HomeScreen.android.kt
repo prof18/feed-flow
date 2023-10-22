@@ -122,6 +122,7 @@ internal fun HomeScreen(
                                 homeViewModel.onFeedFilterSelected(feedFilter)
                                 scope.launch {
                                     drawerState.close()
+                                    listState.animateScrollToItem(0)
                                 }
                             },
                         )
@@ -168,6 +169,9 @@ internal fun HomeScreen(
                             currentFeedFilter = currentFeedFilter,
                             onFeedFilterSelected = { feedFilter ->
                                 homeViewModel.onFeedFilterSelected(feedFilter)
+                                scope.launch {
+                                    listState.animateScrollToItem(0)
+                                }
                             },
                         )
                     }
@@ -207,6 +211,9 @@ internal fun HomeScreen(
                         currentFeedFilter = currentFeedFilter,
                         onFeedFilterSelected = { feedFilter ->
                             homeViewModel.onFeedFilterSelected(feedFilter)
+                            scope.launch {
+                                listState.animateScrollToItem(0)
+                            }
                         },
                     )
                 }

@@ -13,12 +13,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -27,15 +25,17 @@ import androidx.compose.ui.text.withStyle
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.Spacing
+import com.prof18.feedflow.utils.WindowWidthSizeClass
+import com.prof18.feedflow.utils.calculateWindowSizeClass
 import dev.icerock.moko.resources.compose.stringResource
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 internal fun NewVersionBanner(
+    window: ComposeWindow,
     onDownloadLinkClick: () -> Unit,
     onCloseClick: () -> Unit,
 ) {
-    val windowSize = calculateWindowSizeClass()
+    val windowSize = calculateWindowSizeClass(window)
 
     when (windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
@@ -167,6 +167,7 @@ private fun AnnotatedClickableText(
 private fun NewVersionBannerPreview() {
     FeedFlowTheme {
         NewVersionBanner(
+            window = ComposeWindow(),
             onDownloadLinkClick = {},
             onCloseClick = {},
         )

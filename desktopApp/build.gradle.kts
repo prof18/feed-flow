@@ -36,7 +36,6 @@ kotlin {
                 implementation(libs.bundles.about.libraries)
                 implementation(libs.jsoup)
                 implementation(libs.slf4j.nop)
-                implementation(libs.material.window.size)
             }
         }
         val jvmTest by getting

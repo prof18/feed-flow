@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
 import com.prof18.feedflow.ui.style.Spacing
-import com.seiko.imageloader.rememberAsyncImagePainter
 import com.seiko.imageloader.rememberImagePainter
 
 @Composable

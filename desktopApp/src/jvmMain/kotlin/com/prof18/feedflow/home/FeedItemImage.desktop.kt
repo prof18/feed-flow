@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
 import com.prof18.feedflow.ui.style.Spacing
 import com.seiko.imageloader.rememberAsyncImagePainter
+import com.seiko.imageloader.rememberImagePainter
 
 @Composable
 fun FeedItemImage(
@@ -29,7 +30,7 @@ fun FeedItemImage(
         )
     } else {
         Image(
-            painter = rememberAsyncImagePainter(url),
+            painter = rememberImagePainter(url),
             modifier = modifier
                 .width(width)
                 .clip(RoundedCornerShape(Spacing.small)),

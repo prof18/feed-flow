@@ -42,7 +42,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.multiplatform.get()
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     signingConfigs {
@@ -65,10 +65,6 @@ android {
             )
         }
     }
-}
-
-compose {
-    kotlinCompilerPlugin.set(libs.versions.compose.multiplatform.get())
 }
 
 dependencies {

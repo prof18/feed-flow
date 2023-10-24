@@ -12,7 +12,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -207,7 +206,6 @@ fun main() = application {
     }
 }
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 private fun MainContent(
     rootComponentContext: DefaultComponentContext,
@@ -237,6 +235,7 @@ private fun MainContent(
                                     Column {
                                         if (newVersionState is NewVersionState.NewVersion) {
                                             NewVersionBanner(
+                                                window = window,
                                                 onDownloadLinkClick = {
                                                     openInBrowser(newVersionState.downloadLink)
                                                 },
@@ -245,6 +244,7 @@ private fun MainContent(
                                         }
 
                                         HomeScreen(
+                                            window = window,
                                             paddingValues = paddingValues,
                                             homeViewModel = homeViewModel,
                                             snackbarHostState = snackbarHostState,

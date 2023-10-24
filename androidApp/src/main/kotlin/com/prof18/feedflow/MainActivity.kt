@@ -11,6 +11,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
@@ -29,6 +32,7 @@ import com.prof18.feedflow.settings.about.LicensesScreen
 import com.prof18.feedflow.settings.importexport.ImportExportScreen
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,6 +48,8 @@ class MainActivity : ComponentActivity() {
                 onDispose {}
             }
 
+            val windowSize = calculateWindowSizeClass(this@MainActivity)
+
             FeedFlowTheme {
                 val navController = rememberNavController()
 
@@ -51,7 +57,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    FeedFlowNavigation(navController)
+                    FeedFlowNavigation(
+                        windowSizeClass = windowSize,
+                        navController = navController,
+                    )
                 }
             }
         }
@@ -59,7 +68,10 @@ class MainActivity : ComponentActivity() {
 
     @Suppress("LongMethod")
     @Composable
-    private fun FeedFlowNavigation(navController: NavHostController) {
+    private fun FeedFlowNavigation(
+        windowSizeClass: WindowSizeClass,
+        navController: NavHostController,
+    ) {
         NavHost(
             navController = navController,
             startDestination = Screen.Home.name,
@@ -70,6 +82,7 @@ class MainActivity : ComponentActivity() {
         ) {
             composable(Screen.Home.name) {
                 HomeScreen(
+                    windowSizeClass = windowSizeClass,
                     onSettingsButtonClicked = {
                         navController.navigate(Screen.Settings.name)
                     },

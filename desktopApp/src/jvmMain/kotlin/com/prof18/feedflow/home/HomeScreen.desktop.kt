@@ -32,9 +32,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,6 +42,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
@@ -62,12 +60,14 @@ import com.prof18.feedflow.ui.home.components.FeedItemView
 import com.prof18.feedflow.ui.home.components.FeedList
 import com.prof18.feedflow.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.ui.style.Spacing
+import com.prof18.feedflow.utils.WindowWidthSizeClass
+import com.prof18.feedflow.utils.calculateWindowSizeClass
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 internal fun HomeScreen(
+    window: ComposeWindow,
     paddingValues: PaddingValues,
     homeViewModel: HomeViewModel,
     snackbarHostState: SnackbarHostState,
@@ -88,7 +88,7 @@ internal fun HomeScreen(
         }
     }
 
-    val windowSize = calculateWindowSizeClass()
+    val windowSize = calculateWindowSizeClass(window)
 
     when (windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {

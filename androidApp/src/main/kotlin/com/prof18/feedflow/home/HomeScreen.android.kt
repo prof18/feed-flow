@@ -30,8 +30,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -74,6 +74,7 @@ import org.koin.compose.koinInject
 @Suppress("LongMethod")
 @Composable
 internal fun HomeScreen(
+    windowSizeClass: WindowSizeClass,
     onSettingsButtonClicked: () -> Unit,
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
@@ -103,14 +104,13 @@ internal fun HomeScreen(
 
     val scope = rememberCoroutineScope()
 
-    val windowSize = calculateWindowSizeClass()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     var isDrawerMenuFullVisible by remember {
         mutableStateOf(true)
     }
 
-    when (windowSize.widthSizeClass) {
+    when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             ModalNavigationDrawer(
                 drawerContent = {

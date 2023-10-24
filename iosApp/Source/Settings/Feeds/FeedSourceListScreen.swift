@@ -51,54 +51,57 @@ private struct FeedSourceListContent: View {
             VStack {
                 if feedState.isEmpty {
                     VStack {
+                        Spacer()
+
                         Text(localizer.no_feeds_found_message.localized)
                             .font(.body)
 
                         NavigationLink(value: SheetPage.addFeed) {
                             Text(localizer.add_feed.localized)
                         }
+
+                        Spacer()
                     }
                 } else {
                     List {
                         ForEach(feedState, id: \.self.categoryId) { feedSourceState in
+                            DisclosureGroup(
+                                content: {
+                                    ForEach(feedSourceState.feedSources, id: \.self.id) { feedSource in
+                                        VStack(alignment: .leading) {
+                                            Text(feedSource.title)
+                                                .font(.system(size: 16))
+                                                .padding(.top, Spacing.regular)
+                                                .padding(.bottom, 2)
 
-                            Section {
-                                ForEach(feedSourceState.feedSources, id: \.self.id) { feedSource in
-                                    VStack(alignment: .leading) {
-                                        Text(feedSource.title)
-                                            .font(.system(size: 16))
-                                            .padding(.top, Spacing.regular)
-                                            .padding(.bottom, 2)
+                                            Text(feedSource.url)
+                                                .font(.system(size: 12))
+                                                .padding(.top, 0)
+                                                .padding(.bottom, Spacing.regular)
 
-                                        Text(feedSource.url)
-                                            .font(.system(size: 12))
-                                            .padding(.top, 0)
-                                            .padding(.bottom, Spacing.regular)
-
-                                    }
-                                    .padding(.horizontal, Spacing.small)
-                                    .id(feedSource.id)
-                                    .contextMenu {
-                                        Button {
-                                            deleteFeedSource(feedSource)
-                                        } label: {
-                                            Label(
-                                                localizer.delete_feed.localized,
-                                                systemImage: "trash"
-                                            )
+                                        }
+                                        .padding(.horizontal, Spacing.small)
+                                        .id(feedSource.id)
+                                        .contextMenu {
+                                            Button {
+                                                deleteFeedSource(feedSource)
+                                            } label: {
+                                                Label(
+                                                    localizer.delete_feed.localized,
+                                                    systemImage: "trash"
+                                                )
+                                            }
                                         }
                                     }
+                                },
+                                label: {
+                                    Text(feedSourceState.categoryName ?? localizer.no_category.localized)
+                                        .font(.system(size: 16))
+                                        .foregroundStyle(Color(UIColor.label))
+                                        .bold()
+                                        .padding(Spacing.regular)
                                 }
-
-                            } header: {
-                                Text(feedSourceState.categoryName ?? localizer.no_category.localized)
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(Color(UIColor.label))
-                                    .bold()
-                                    .padding(.horizontal, Spacing.small)
-
-                            }
-                            .textCase(nil)
+                            )
                             .listRowInsets(
                                 EdgeInsets(
                                     top: .zero,
@@ -108,15 +111,15 @@ private struct FeedSourceListContent: View {
                             )
                         }
                     }
-
-                    .listStyle(.sidebar)
-                    .scrollContentBackground(.hidden)
-
+                    .padding(.top, -Spacing.medium)
                     .sheet(isPresented: $showAddFeed) {
                         AddFeedScreen()
                     }
                 }
+
+                Spacer()
             }
+            .scrollContentBackground(.hidden)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(

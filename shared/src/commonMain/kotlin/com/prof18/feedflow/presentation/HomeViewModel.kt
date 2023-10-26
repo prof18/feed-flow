@@ -76,6 +76,8 @@ class HomeViewModel internal constructor(
     }
 
     private fun observeFeed() {
+        feedRetrieverRepository.getFeeds()
+
         scope.launch {
             feedRetrieverRepository.feedState
                 .combine(currentFeedFilter) { items, filter ->
@@ -131,8 +133,6 @@ class HomeViewModel internal constructor(
     }
 
     private fun observeErrorState() {
-        feedRetrieverRepository.getFeeds()
-
         scope.launch {
             feedRetrieverRepository.errorState
                 .collect { error ->

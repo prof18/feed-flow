@@ -1,0 +1,2 @@
+-- Add logo_url
+ALTER TABLE feed_source ADD COLUMN logo_url TEXT;

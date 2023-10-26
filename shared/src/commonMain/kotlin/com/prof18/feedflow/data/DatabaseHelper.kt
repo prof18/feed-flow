@@ -42,6 +42,9 @@ internal class DatabaseHelper(
         ),
     )
 
+    fun getDatabaseVersion(): Long =
+        FeedFlowDB.Schema.version
+
     suspend fun getFeedSources(): List<FeedSource> = withContext(backgroundDispatcher) {
         dbRef.feedSourceQueries
             .selectFeedUrls()
@@ -60,6 +63,7 @@ internal class DatabaseHelper(
                         null
                     },
                     lastSyncTimestamp = feedSource.last_sync_timestamp,
+                    logoUrl = feedSource.feed_source_logo_url,
                 )
             }
     }
@@ -87,6 +91,7 @@ internal class DatabaseHelper(
                             null
                         },
                         lastSyncTimestamp = feedSource.last_sync_timestamp,
+                        logoUrl = feedSource.feed_source_logo_url,
                     )
                 }
             }
@@ -113,12 +118,14 @@ internal class DatabaseHelper(
                         url = feedSource.url,
                         title = feedSource.title,
                         title_ = feedSource.categoryName?.name.toString(),
+                        logo_url = feedSource.logoUrl,
                     )
                 } else {
                     dbRef.feedSourceQueries.insertFeedSourceWithNoCategory(
                         url_hash = feedSource.hashCode(),
                         url = feedSource.url,
                         title = feedSource.title,
+                        logo_url = feedSource.logoUrl,
                     )
                 }
             }
@@ -198,6 +205,14 @@ internal class DatabaseHelper(
                         title = categories.title,
                     )
                 }
+        }
+
+    suspend fun updateFeedSourceLogo(feedSource: FeedSource) =
+        withContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.updateLogoUrl(
+                logoUrl = feedSource.logoUrl,
+                urlHash = feedSource.id,
+            )
         }
 
     fun deleteAllFeeds() =

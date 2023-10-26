@@ -6,25 +6,31 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.domain.model.NotValidFeedSources
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.domain.opml.OpmlInput
 import com.prof18.feedflow.domain.opml.OpmlOutput
+import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.feedflow.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.withContext
 
 internal class FeedManagerRepository(
     private val databaseHelper: DatabaseHelper,
     private val opmlFeedHandler: OpmlFeedHandler,
     private val rssParser: RssParser,
     private val logger: Logger,
+    private val logoRetriever: FeedSourceLogoRetriever,
+    private val dispatcherProvider: DispatcherProvider,
 ) {
-    suspend fun addFeedsFromFile(opmlInput: OpmlInput): NotValidFeedSources {
+    suspend fun addFeedsFromFile(opmlInput: OpmlInput): NotValidFeedSources = withContext(dispatcherProvider.io) {
         val feeds = opmlFeedHandler.generateFeedSources(opmlInput)
         val categories = feeds.mapNotNull { it.categoryName }.distinct()
 
@@ -41,7 +47,7 @@ internal class FeedManagerRepository(
         databaseHelper.insertCategories(categories)
         databaseHelper.insertFeedSource(validFeedSources)
 
-        return NotValidFeedSources(
+        return@withContext NotValidFeedSources(
             feedSources = notValidFeedSources,
         )
     }
@@ -54,10 +60,13 @@ internal class FeedManagerRepository(
             .asFlow()
             .flatMapMerge(concurrency = getNumberOfConcurrentParsingRequests()) { feedSource ->
                 suspend {
-                    val isValidRss = checkIfValidRss(feedSource.url)
+                    val rssChannel = checkIfValidRss(feedSource.url)
+                    val isValidRss = rssChannel != null
+                    val feedSourceLogoUrl = rssChannel?.let { logoRetriever.getFeedSourceLogoUrl(it) }
+
                     logger.d { "${feedSource.url} is valid? $isValidRss" }
                     FeedValidationResult(
-                        parsedFeedSource = feedSource,
+                        parsedFeedSource = feedSource.copy(logoUrl = feedSourceLogoUrl),
                         isValid = isValidRss,
                     )
                 }.asFlow()
@@ -107,13 +116,12 @@ internal class FeedManagerRepository(
         }
     }
 
-    private suspend fun checkIfValidRss(url: String): Boolean {
+    private suspend fun checkIfValidRss(url: String): RssChannel? {
         return try {
             rssParser.getRssChannel(url)
-            true
         } catch (e: Throwable) {
             logger.d { "Wrong url input: $e" }
-            false
+            null
         }
     }
 }

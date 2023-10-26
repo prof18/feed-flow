@@ -6,4 +6,5 @@ data class FeedSource(
     val title: String,
     val category: FeedSourceCategory?,
     val lastSyncTimestamp: Long?,
+    val logoUrl: String?,
 )

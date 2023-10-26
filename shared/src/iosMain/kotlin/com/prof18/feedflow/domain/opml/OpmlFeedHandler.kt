@@ -31,7 +31,7 @@ internal actual class OpmlFeedHandler(
             }
         }
 
-    @Suppress("MaximumLineLength")
+    @Suppress("MaximumLineLength", "CAST_NEVER_SUCCEEDS")
     actual suspend fun exportFeed(
         opmlOutput: OpmlOutput,
         feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,

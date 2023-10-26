@@ -12,6 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Suppress("CAST_NEVER_SUCCEEDS")
 class OPMLFeedParserTest {
 
     private val parser = OpmlFeedHandler(

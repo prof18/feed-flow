@@ -7,8 +7,10 @@ import com.prof18.feedflow.data.DatabaseHelper
 import com.prof18.feedflow.data.SettingsHelper
 import com.prof18.feedflow.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.domain.browser.BrowserSettingsRepositoryImpl
+import com.prof18.feedflow.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.logging.crashReportingLogWriter
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
@@ -79,6 +81,8 @@ private val coreModule = module {
             opmlFeedHandler = get(),
             rssParser = get(),
             logger = getWith("FeedManagerRepositoryImpl"),
+            logoRetriever = get(),
+            dispatcherProvider = get(),
         )
     }
 
@@ -87,9 +91,11 @@ private val coreModule = module {
             parser = get(),
             databaseHelper = get(),
             dispatcherProvider = get(),
-            htmlParser = get(),
             logger = getWith("FeedRetrieverRepositoryImpl"),
             dateFormatter = get(),
+            settingsHelper = get(),
+            feedSourceLogoRetriever = get(),
+            rssChannelMapper = get(),
         )
     }
 
@@ -124,13 +130,29 @@ private val coreModule = module {
         ImportExportViewModel(
             feedManagerRepository = get(),
             feedRetrieverRepository = get(),
-            logger = getWith("FeedImporterUseCase"),
+            logger = getWith("ImportExportViewModel"),
         )
     }
 
     factory<BrowserSettingsRepository> {
         BrowserSettingsRepositoryImpl(
             settingsHelper = get(),
+        )
+    }
+
+    factory {
+        RssChannelMapper(
+            dateFormatter = get(),
+            htmlParser = get(),
+            logger = getWith("RssChannelMapper"),
+        )
+    }
+
+    factory {
+        FeedSourceLogoRetriever(
+            htmlRetriever = get(),
+            htmlParser = get(),
+
         )
     }
 }

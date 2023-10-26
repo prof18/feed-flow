@@ -15,4 +15,12 @@ internal class JvmHtmlParser(
             null
         }
     }
+
+    override fun getFaviconUrl(html: String): String? {
+        val doc = Jsoup.parse(html)
+
+        val faviconLink = doc.select("link[rel~=(?i)^(shortcut|icon)$][href]").firstOrNull()
+
+        return faviconLink?.attr("href")
+    }
 }

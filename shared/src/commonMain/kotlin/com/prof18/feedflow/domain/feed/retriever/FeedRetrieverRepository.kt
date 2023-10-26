@@ -7,9 +7,11 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.data.DatabaseHelper
-import com.prof18.feedflow.db.SelectFeeds
+import com.prof18.feedflow.data.SettingsHelper
 import com.prof18.feedflow.domain.DateFormatter
-import com.prof18.feedflow.domain.HtmlParser
+import com.prof18.feedflow.domain.feed.FeedSourceLogoRetriever
+import com.prof18.feedflow.domain.mappers.RssChannelMapper
+import com.prof18.feedflow.domain.mappers.toFeedItem
 import com.prof18.feedflow.domain.model.AddFeedResponse
 import com.prof18.feedflow.domain.model.FeedItemId
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
@@ -24,7 +26,6 @@ import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.feedflow.utils.executeWithRetry
 import com.prof18.feedflow.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
@@ -34,15 +35,17 @@ import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedRetrieverRepository(
     private val parser: RssParser,
     private val databaseHelper: DatabaseHelper,
     private val dispatcherProvider: DispatcherProvider,
-    private val htmlParser: HtmlParser,
     private val logger: Logger,
     private val dateFormatter: DateFormatter,
+    private val settingsHelper: SettingsHelper,
+    private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
+    private val rssChannelMapper: RssChannelMapper,
 ) {
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
         FinishedFeedUpdateStatus,
@@ -63,7 +66,7 @@ internal class FeedRetrieverRepository(
                 databaseHelper.getFeedItems()
             }
             mutableFeedState.update {
-                feeds.map { it.toFeedItem() }
+                feeds.map { it.toFeedItem(dateFormatter) }
             }
         } catch (e: Throwable) {
             logger.e(e) { "Something wrong while getting data from Database" }
@@ -135,7 +138,16 @@ internal class FeedRetrieverRepository(
                     getFeeds()
                 }
 
-                parseFeeds(feedSourceUrls, updateLoadingInfo, forceRefresh)
+                parseFeeds(
+                    feedSourceUrls = feedSourceUrls,
+                    updateLoadingInfo = updateLoadingInfo,
+                    forceRefresh = forceRefresh,
+                    isFeedSourceMigrationRequired = isFirstLaunch && isSourceImageMigrationRequired(),
+                )
+
+                if (isFirstLaunch && isSourceImageMigrationRequired()) {
+                    settingsHelper.setFeedSourceImageMigrationDone()
+                }
 
                 getFeeds()
             }
@@ -162,12 +174,15 @@ internal class FeedRetrieverRepository(
         val title = rssChannel.title
 
         if (title != null) {
+            val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
+
             val parsedFeedSource = ParsedFeedSource(
                 url = url,
                 title = title,
                 categoryName = category?.title?.let {
                     CategoryName(it)
                 },
+                logoUrl = logoUrl,
             )
 
             return@withContext AddFeedResponse.FeedFound(
@@ -194,9 +209,11 @@ internal class FeedRetrieverRepository(
                     title = categoryName.name,
                 )
             },
+            logoUrl = parsedFeedSource.logoUrl,
         )
 
-        val feedItems = rssChannel.getFeedItems(
+        val feedItems = rssChannelMapper.getFeedItems(
+            rssChannel = rssChannel,
             feedSource = feedSource,
         )
 
@@ -223,6 +240,7 @@ internal class FeedRetrieverRepository(
         feedSourceUrls: List<FeedSource>,
         updateLoadingInfo: Boolean,
         forceRefresh: Boolean,
+        isFeedSourceMigrationRequired: Boolean,
     ) =
         feedSourceUrls
             .mapNotNull { feedSource ->
@@ -250,9 +268,20 @@ internal class FeedRetrieverRepository(
                             updateRefreshCount()
                         }
 
-                        val items = rssChannel.getFeedItems(
+                        val items = rssChannelMapper.getFeedItems(
+                            rssChannel = rssChannel,
                             feedSource = feedSource,
                         )
+
+                        if (isFeedSourceMigrationRequired) {
+                            val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
+
+                            logger.d { "Setting source logo url: $logoUrl" }
+
+                            databaseHelper.updateFeedSourceLogo(
+                                feedSource = feedSource.copy(logoUrl = logoUrl),
+                            )
+                        }
 
                         databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
                     } catch (e: Throwable) {
@@ -300,84 +329,9 @@ internal class FeedRetrieverRepository(
     }
 
     @Suppress("MagicNumber")
-    private fun RssChannel.getFeedItems(feedSource: FeedSource): List<FeedItem> =
-        this.items.mapNotNull { rssItem ->
-
-            val title = rssItem.title
-            val url = rssItem.link
-            val pubDate = rssItem.pubDate
-
-            val dateMillis = if (pubDate != null) {
-                dateFormatter.getDateMillisFromString(pubDate)
-            } else {
-                null
-            }
-
-            val imageUrl = if (rssItem.image?.contains("http:") == true) {
-                rssItem.image?.replace("http:", "https:")
-            } else {
-                rssItem.image
-            }
-
-            if (url == null) {
-                logger.d { "Skipping: ${rssItem.title}" }
-                null
-            } else {
-                FeedItem(
-                    id = url.hashCode(),
-                    url = url,
-                    title = title,
-                    subtitle = rssItem.description?.let { description ->
-                        val partialDesc = if (description.isNotEmpty()) {
-                            description.take(500)
-                        } else {
-                            description
-                        }
-                        htmlParser.getTextFromHTML(partialDesc)
-                    },
-                    content = null,
-                    imageUrl = imageUrl,
-                    feedSource = feedSource,
-                    isRead = false,
-                    pubDateMillis = dateMillis,
-                    dateString = if (dateMillis != null) {
-                        dateFormatter.formatDate(dateMillis)
-                    } else {
-                        null
-                    },
-                    commentsUrl = rssItem.commentsUrl,
-                )
-            }
-        }
-
-    private fun SelectFeeds.toFeedItem() = FeedItem(
-        id = url_hash,
-        url = url,
-        title = title,
-        subtitle = subtitle,
-        content = null,
-        imageUrl = image_url,
-        feedSource = FeedSource(
-            id = feed_source_id,
-            url = feed_source_url,
-            title = feed_source_title,
-            category = if (feed_source_category_title != null && feed_source_category_id != null) {
-                FeedSourceCategory(
-                    id = feed_source_category_id,
-                    title = feed_source_category_title,
-                )
-            } else {
-                null
-            },
-            lastSyncTimestamp = feed_source_last_sync_timestamp,
-        ),
-        isRead = is_read,
-        pubDateMillis = pub_date,
-        dateString = if (pub_date != null) {
-            dateFormatter.formatDate(pub_date)
-        } else {
-            null
-        },
-        commentsUrl = comments_url,
-    )
+    private fun isSourceImageMigrationRequired(): Boolean {
+        val databaseVersion = databaseHelper.getDatabaseVersion()
+        val isMigrationDone = settingsHelper.isFeedSourceImageMigrationDone()
+        return !isMigrationDone && databaseVersion >= 4.0
+    }
 }

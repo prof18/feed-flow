@@ -13,10 +13,14 @@ import NukeUI
 
 struct FeedSourceListScreen: View {
 
-    @EnvironmentObject var appState: AppState
-    @StateObject var feedSourceViewModel = KotlinDependencies.shared.getFeedSourceListViewModel()
+    @EnvironmentObject
+    private var appState: AppState
 
-    @State var feedState: [FeedSourceState] = []
+    @StateObject
+    private var feedSourceViewModel = KotlinDependencies.shared.getFeedSourceListViewModel()
+
+    @State
+    private var feedState: [FeedSourceState] = []
 
     var body: some View {
         FeedSourceListContent(
@@ -40,10 +44,14 @@ struct FeedSourceListScreen: View {
 
 private struct FeedSourceListContent: View {
 
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.presentationMode)
+    private var presentationMode
 
-    @State private var showAddFeed = false
-    @Binding var feedState: [FeedSourceState]
+    @State
+    private var showAddFeed = false
+
+    @Binding
+    var feedState: [FeedSourceState]
 
     let deleteFeedSource: (FeedSource) -> Void
 

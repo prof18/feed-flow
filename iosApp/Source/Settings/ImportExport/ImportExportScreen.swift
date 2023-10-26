@@ -12,12 +12,17 @@ import KMPNativeCoroutinesAsync
 
 struct ImportExportScreen: View {
 
-    @EnvironmentObject var appState: AppState
-    @StateObject var viewModel = KotlinDependencies.shared.getImportExportViewModel()
+    @EnvironmentObject
+    private var appState: AppState
 
-    @State var feedImportExportState: FeedImportExportState = FeedImportExportState.Idle()
+    @StateObject
+    private var viewModel = KotlinDependencies.shared.getImportExportViewModel()
 
-    @State var sheetToShow: ImportExportSheetToShow?
+    @State
+    private var feedImportExportState: FeedImportExportState = FeedImportExportState.Idle()
+
+    @State
+    private var sheetToShow: ImportExportSheetToShow?
 
     var body: some View {
         ImportExportContent(
@@ -85,10 +90,14 @@ struct ImportExportScreen: View {
 
 struct ImportExportContent: View {
 
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.presentationMode)
+    var presentationMode
 
-    @Binding var feedImportExportState: FeedImportExportState
-    @Binding var sheetToShow: ImportExportSheetToShow?
+    @Binding
+    var feedImportExportState: FeedImportExportState
+
+    @Binding
+    var sheetToShow: ImportExportSheetToShow?
 
     let onExportClick: () -> Void
     let onRetryClick: () -> Void

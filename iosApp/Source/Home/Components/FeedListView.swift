@@ -12,9 +12,14 @@ import shared
 import OrderedCollections
 
 struct FeedListView: View {
-    @Environment(\.openURL) var openURL
-    @EnvironmentObject var indexHolder: HomeListIndexHolder
-    @EnvironmentObject var browserSelector: BrowserSelector
+    @Environment(\.openURL)
+    private var openURL
+
+    @EnvironmentObject
+    private var indexHolder: HomeListIndexHolder
+
+    @EnvironmentObject
+    private var browserSelector: BrowserSelector
 
     var loadingState: FeedUpdateStatus?
     var feedState: [FeedItem]

@@ -12,11 +12,14 @@ import SwiftUI
 
 class AppState: ObservableObject {
 
-    @Published var snackbarQueue: Deque<SnackbarData> = Deque()
+    @Published
+    var snackbarQueue: Deque<SnackbarData> = Deque()
 
-    @Published var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
+    @Published
+    var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
 
-    @Published var path = NavigationPath()
+    @Published
+    var path = NavigationPath()
 
     init() {
         path.append(CompactViewRoute.feed)

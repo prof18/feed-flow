@@ -12,18 +12,35 @@ import KMPNativeCoroutinesAsync
 
 struct AddFeedScreen: View {
 
-    @EnvironmentObject var appState: AppState
-    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject
+    private var appState: AppState
 
-    @State private var feedURL = ""
-    @State private var showError = false
-    @State private var errorMessage = ""
-    @State private var isCategoriesSelectorExpanded = false
-    @State private var headerMessage = localizer.no_category_selected_header.localized
-    @State private var categoryItems: [CategoriesState.CategoryItem] = []
-    @State private var newCategoryName = ""
+    @Environment(\.presentationMode)
+    private var presentationMode
 
-    @StateObject var addFeedViewModel: AddFeedViewModel = KotlinDependencies.shared.getAddFeedViewModel()
+    @State
+    private var feedURL = ""
+
+    @State
+    private var showError = false
+
+    @State
+    private var errorMessage = ""
+
+    @State
+    private var isCategoriesSelectorExpanded = false
+
+    @State
+    private var headerMessage = localizer.no_category_selected_header.localized
+
+    @State
+    private var categoryItems: [CategoriesState.CategoryItem] = []
+
+    @State
+    private var newCategoryName = ""
+
+    @StateObject
+    private var addFeedViewModel: AddFeedViewModel = KotlinDependencies.shared.getAddFeedViewModel()
 
     var body: some View {
         VStack(alignment: .leading) {

@@ -4,9 +4,14 @@ import KMPNativeCoroutinesAsync
 
 struct ContentView: View {
 
-    @EnvironmentObject var appState: AppState
-    @EnvironmentObject var browserSelector: BrowserSelector
-    @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
+    @EnvironmentObject
+    var appState: AppState
+
+    @EnvironmentObject
+    var browserSelector: BrowserSelector
+
+    @StateObject
+    var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
 
     var body: some View {
         ZStack {
@@ -26,9 +31,14 @@ struct ContentView: View {
 
 private struct HomeContainer: View {
 
-    @EnvironmentObject var appState: AppState
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
+    @EnvironmentObject
+    var appState: AppState
+
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
+
+    @StateObject
+    var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
 
     @State
     private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline()

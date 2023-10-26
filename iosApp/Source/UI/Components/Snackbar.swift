@@ -11,10 +11,14 @@ import Collections
 
 struct Snackbar: View {
 
-    @Binding var messageQueue: Deque<SnackbarData>
-    @State private var snackbarData: SnackbarData = SnackbarData()
+    @Binding
+    var messageQueue: Deque<SnackbarData>
 
-    @State private var showBanner: Bool = false
+    @State
+    private var snackbarData: SnackbarData = SnackbarData()
+
+    @State
+    private var showBanner: Bool = false
 
     var body: some View {
 

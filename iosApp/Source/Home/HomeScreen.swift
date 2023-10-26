@@ -11,19 +11,35 @@ import KMPNativeCoroutinesAsync
 import shared
 import OrderedCollections
 
+// swiftlint:disable file_length
 struct HomeScreen: View {
 
-    @EnvironmentObject var appState: AppState
-    @EnvironmentObject var browserSelector: BrowserSelector
-    @StateObject var indexHolder = HomeListIndexHolder()
+    @EnvironmentObject
+    private var appState: AppState
 
-    @Environment(\.scenePhase) var scenePhase
+    @EnvironmentObject
+    private var browserSelector: BrowserSelector
 
-    @State var loadingState: FeedUpdateStatus?
-    @State var feedState: [FeedItem] = []
-    @State var showLoading: Bool = true
-    @State var sheetToShow: HomeSheetToShow?
-    @State var unreadCount = 0
+    @StateObject
+    private var indexHolder = HomeListIndexHolder()
+
+    @Environment(\.scenePhase)
+    private var scenePhase
+
+    @State
+    var loadingState: FeedUpdateStatus?
+
+    @State
+    var feedState: [FeedItem] = []
+
+    @State
+    var showLoading: Bool = true
+
+    @State
+    private var sheetToShow: HomeSheetToShow?
+
+    @State
+    var unreadCount = 0
 
     let homeViewModel: HomeViewModel
 
@@ -121,21 +137,38 @@ struct HomeScreen: View {
 
 struct HomeContent: View {
 
-    @EnvironmentObject var indexHolder: HomeListIndexHolder
-    @EnvironmentObject var browserSelector: BrowserSelector
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject
+    private var indexHolder: HomeListIndexHolder
 
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject
+    private var browserSelector: BrowserSelector
 
-    @Environment(\.openURL) private var openURL
+    @EnvironmentObject
+    private var appState: AppState
 
-    @Binding var loadingState: FeedUpdateStatus?
-    @Binding var feedState: [FeedItem]
-    @Binding var showLoading: Bool
-    @Binding var unreadCount: Int
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
 
-    @Binding var sheetToShow: HomeSheetToShow?
+    @Environment(\.dismiss)
+    private var dismiss
+
+    @Environment(\.openURL)
+    private var openURL
+
+    @Binding
+    var loadingState: FeedUpdateStatus?
+
+    @Binding
+    var feedState: [FeedItem]
+
+    @Binding
+    var showLoading: Bool
+
+    @Binding
+    var unreadCount: Int
+
+    @Binding
+    var sheetToShow: HomeSheetToShow?
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
@@ -390,3 +423,4 @@ struct HomeContentSettings_Previews: PreviewProvider {
         .environmentObject(BrowserSelector())
     }
 }
+// swiftlint:enable file_length

@@ -17,11 +17,11 @@ struct RegularView: View {
 
     @State
     var navDrawerState: NavDrawerState = NavDrawerState(timeline: [], categories: [], feedSourcesByCategory: [:])
-    var drawerItems: [DrawerItem] = []
 
     @Binding
     var selectedDrawerItem: DrawerItem?
 
+    var drawerItems: [DrawerItem] = []
     let homeViewModel: HomeViewModel
 
     var body: some View {

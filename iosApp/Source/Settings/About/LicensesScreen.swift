@@ -11,7 +11,9 @@ import shared
 
 struct LicensesScreen: View {
 
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.presentationMode)
+    private var presentationMode
+
     let htmlContent: String
 
     var body: some View {

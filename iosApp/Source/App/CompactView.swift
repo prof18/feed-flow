@@ -19,10 +19,10 @@ struct CompactView: View {
     @Binding
     var selectedDrawerItem: DrawerItem?
 
-    let homeViewModel: HomeViewModel
-
     @State
     var navDrawerState: NavDrawerState = NavDrawerState(timeline: [], categories: [], feedSourcesByCategory: [:])
+
+    let homeViewModel: HomeViewModel
 
     var body: some View {
         NavigationStack(path: $appState.path) {

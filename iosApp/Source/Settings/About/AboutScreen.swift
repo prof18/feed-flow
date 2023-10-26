@@ -12,9 +12,14 @@ import shared
 
 struct AboutScreen: View {
 
-    @Environment(\.openURL) var openURL
-    @State private var showLicensesSheet = false
-    @State private var licensesContent: String = ""
+    @Environment(\.openURL)
+    private var openURL
+
+    @State
+    private var showLicensesSheet = false
+
+    @State
+    private var licensesContent: String = ""
 
     var body: some View {
 

@@ -54,6 +54,7 @@ import com.prof18.feedflow.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.openInBrowser
 import com.prof18.feedflow.presentation.HomeViewModel
+import com.prof18.feedflow.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.ui.home.components.Drawer
 import com.prof18.feedflow.ui.home.components.EmptyFeedView
 import com.prof18.feedflow.ui.home.components.FeedItemView
@@ -152,6 +153,9 @@ private fun CompactView(
                 Drawer(
                     navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
+                    feedSourceImage = { imageUrl ->
+                        FeedSourceImage(imageUrl)
+                    },
                     onFeedFilterSelected = { feedFilter ->
                         homeViewModel.onFeedFilterSelected(feedFilter)
                         scope.launch {
@@ -226,6 +230,9 @@ private fun MediumView(
                         .padding(paddingValues),
                     navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
+                    feedSourceImage = { imageUrl ->
+                        FeedSourceImage(imageUrl)
+                    },
                     onFeedFilterSelected = { feedFilter ->
                         homeViewModel.onFeedFilterSelected(feedFilter)
                     },
@@ -289,6 +296,9 @@ private fun ExpandedView(
                         .padding(paddingValues),
                     navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
+                    feedSourceImage = { imageUrl ->
+                        FeedSourceImage(imageUrl)
+                    },
                     onFeedFilterSelected = { feedFilter ->
                         homeViewModel.onFeedFilterSelected(feedFilter)
                     },
@@ -322,6 +332,14 @@ private fun ExpandedView(
             },
         )
     }
+}
+
+@Composable
+private fun FeedSourceImage(imageUrl: String) {
+    FeedSourceLogoImage(
+        size = 24.dp,
+        imageUrl = imageUrl,
+    )
 }
 
 @Composable

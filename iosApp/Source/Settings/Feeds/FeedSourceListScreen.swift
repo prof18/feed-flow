@@ -9,6 +9,7 @@
 import SwiftUI
 import shared
 import KMPNativeCoroutinesAsync
+import NukeUI
 
 struct FeedSourceListScreen: View {
 
@@ -68,19 +69,41 @@ private struct FeedSourceListContent: View {
                             DisclosureGroup(
                                 content: {
                                     ForEach(feedSourceState.feedSources, id: \.self.id) { feedSource in
-                                        VStack(alignment: .leading) {
-                                            Text(feedSource.title)
-                                                .font(.system(size: 16))
-                                                .padding(.top, Spacing.regular)
-                                                .padding(.bottom, 2)
 
-                                            Text(feedSource.url)
-                                                .font(.system(size: 12))
-                                                .padding(.top, 0)
-                                                .padding(.bottom, Spacing.regular)
+                                        HStack {
 
+                                            if let imageUrl = feedSource.logoUrl {
+                                                LazyImage(url: URL(string: imageUrl)) { state in
+                                                    if let image = state.image {
+                                                        image
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                            .frame(width: 24, height: 24)
+                                                            .cornerRadius(16)
+                                                            .clipped()
+                                                    } else {
+                                                        Image(systemName: "square.stack.3d.up")
+                                                    }
+                                                }
+                                            } else {
+                                                Image(systemName: "square.stack.3d.up")
+                                            }
+
+                                            VStack(alignment: .leading) {
+                                                Text(feedSource.title)
+                                                    .font(.system(size: 16))
+                                                    .padding(.top, Spacing.regular)
+                                                    .padding(.bottom, 2)
+
+                                                Text(feedSource.url)
+                                                    .font(.system(size: 12))
+                                                    .padding(.top, 0)
+                                                    .padding(.bottom, Spacing.regular)
+
+                                            }
+                                            .padding(.leading, Spacing.small)
                                         }
-                                        .padding(.horizontal, Spacing.small)
+                                        .padding(.trailing, Spacing.small)
                                         .id(feedSource.id)
                                         .contextMenu {
                                             Button {

@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -35,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
@@ -55,6 +57,7 @@ internal expect fun Modifier.feedSourceMenuClickModifier(onLongClick: () -> Unit
 fun FeedSourcesWithCategoryList(
     modifier: Modifier = Modifier,
     feedSourceState: List<FeedSourceState>,
+    feedSourceImage: @Composable (String) -> Unit,
     onExpandClicked: (CategoryId?) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
@@ -102,6 +105,7 @@ fun FeedSourcesWithCategoryList(
 
                 FeedSourcesList(
                     feedSourceState = feedSourceState,
+                    feedSourceImage = feedSourceImage,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 )
             }
@@ -112,6 +116,7 @@ fun FeedSourcesWithCategoryList(
 @Composable
 private fun FeedSourcesList(
     feedSourceState: FeedSourceState,
+    feedSourceImage: @Composable (String) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     AnimatedVisibility(
@@ -130,6 +135,7 @@ private fun FeedSourcesList(
                 FeedSourceItem(
                     feedSource = feedSource,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    feedSourceImage = feedSourceImage,
                 )
 
                 if (index < feedSourceState.feedSources.size - 1) {
@@ -147,6 +153,7 @@ private fun FeedSourcesList(
 @Composable
 private fun FeedSourceItem(
     feedSource: FeedSource,
+    feedSourceImage: @Composable (String) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     var showFeedMenu by remember {
@@ -155,7 +162,7 @@ private fun FeedSourceItem(
         )
     }
 
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .feedSourceMenuClickModifier(
@@ -163,29 +170,45 @@ private fun FeedSourceItem(
                     showFeedMenu = true
                 },
             ),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            modifier = Modifier
-                .padding(top = Spacing.small),
-            text = feedSource.title,
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Text(
-            modifier = Modifier
-                .padding(top = Spacing.xsmall)
-                .padding(bottom = Spacing.small),
-            text = feedSource.url,
-            style = MaterialTheme.typography.labelLarge,
-        )
+        val imageUrl = feedSource.logoUrl
+        if (imageUrl != null) {
+            feedSourceImage(imageUrl)
+        } else {
+            Icon(
+                imageVector = Icons.Default.Category,
+                contentDescription = null,
+            )
+        }
 
-        FeedSourceContextMenu(
-            showFeedMenu = showFeedMenu,
-            hideMenu = {
-                showFeedMenu = false
-            },
-            onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-            feedSource = feedSource,
-        )
+        Column(
+            modifier = Modifier
+                .padding(start = Spacing.regular),
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(top = Spacing.small),
+                text = feedSource.title,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                modifier = Modifier
+                    .padding(top = Spacing.xsmall)
+                    .padding(bottom = Spacing.small),
+                text = feedSource.url,
+                style = MaterialTheme.typography.labelLarge,
+            )
+
+            FeedSourceContextMenu(
+                showFeedMenu = showFeedMenu,
+                hideMenu = {
+                    showFeedMenu = false
+                },
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                feedSource = feedSource,
+            )
+        }
     }
 }
 

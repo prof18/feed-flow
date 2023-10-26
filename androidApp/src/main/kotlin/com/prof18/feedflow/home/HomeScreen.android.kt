@@ -58,6 +58,7 @@ import com.prof18.feedflow.home.components.FeedItemImage
 import com.prof18.feedflow.home.components.HomeAppBar
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.preview.feedItemsForPreview
+import com.prof18.feedflow.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.ui.home.components.Drawer
 import com.prof18.feedflow.ui.home.components.EmptyFeedView
 import com.prof18.feedflow.ui.home.components.FeedItemView
@@ -118,6 +119,9 @@ internal fun HomeScreen(
                         Drawer(
                             navDrawerState = navDrawerState,
                             currentFeedFilter = currentFeedFilter,
+                            feedSourceImage = { imageUrl ->
+                                FeedSourceImage(imageUrl)
+                            },
                             onFeedFilterSelected = { feedFilter ->
                                 homeViewModel.onFeedFilterSelected(feedFilter)
                                 scope.launch {
@@ -167,6 +171,9 @@ internal fun HomeScreen(
                                 .padding(paddingValues),
                             navDrawerState = navDrawerState,
                             currentFeedFilter = currentFeedFilter,
+                            feedSourceImage = { imageUrl ->
+                                FeedSourceImage(imageUrl)
+                            },
                             onFeedFilterSelected = { feedFilter ->
                                 homeViewModel.onFeedFilterSelected(feedFilter)
                                 scope.launch {
@@ -209,6 +216,9 @@ internal fun HomeScreen(
                             .padding(paddingValues),
                         navDrawerState = navDrawerState,
                         currentFeedFilter = currentFeedFilter,
+                        feedSourceImage = { imageUrl ->
+                            FeedSourceImage(imageUrl)
+                        },
                         onFeedFilterSelected = { feedFilter ->
                             homeViewModel.onFeedFilterSelected(feedFilter)
                             scope.launch {
@@ -234,6 +244,14 @@ internal fun HomeScreen(
             }
         }
     }
+}
+
+@Composable
+private fun FeedSourceImage(imageUrl: String) {
+    FeedSourceLogoImage(
+        size = 24.dp,
+        imageUrl = imageUrl,
+    )
 }
 
 @Suppress("LongMethod")

@@ -51,6 +51,7 @@ fun Drawer(
     modifier: Modifier = Modifier,
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
+    feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
     Column(
@@ -86,6 +87,7 @@ fun Drawer(
                         navDrawerState = navDrawerState,
                         currentFeedFilter = currentFeedFilter,
                         onFeedFilterSelected = onFeedFilterSelected,
+                        feedSourceImage = feedSourceImage,
                     )
                 }
             }
@@ -189,6 +191,7 @@ private fun DrawerFeedSourcesByCategories(
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    feedSourceImage: @Composable (String) -> Unit,
 ) {
     Column {
         Column {
@@ -217,6 +220,7 @@ private fun DrawerFeedSourcesByCategories(
                         isCategoryExpanded = !isCategoryExpanded
                     },
                     onFeedFilterSelected = onFeedFilterSelected,
+                    feedSourceImage = feedSourceImage,
                 )
             }
         }
@@ -230,6 +234,7 @@ private fun DrawerFeedSourceByCategoryItem(
     currentFeedFilter: FeedFilter,
     isCategoryExpanded: Boolean,
     onCategoryExpand: () -> Unit,
+    feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
     Column {
@@ -277,6 +282,7 @@ private fun DrawerFeedSourceByCategoryItem(
             drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
             onFeedFilterSelected = onFeedFilterSelected,
+            feedSourceImage = feedSourceImage,
         )
     }
 }
@@ -286,6 +292,7 @@ private fun ColumnScope.FeedSourcesList(
     isCategoryExpanded: Boolean,
     drawerFeedSources: List<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
+    feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
     AnimatedVisibility(
@@ -313,10 +320,15 @@ private fun ColumnScope.FeedSourcesList(
                         )
                     },
                     icon = {
-                        Icon(
-                            imageVector = Icons.Default.Category,
-                            contentDescription = null,
-                        )
+                        val imageUrl = feedSourceWrapper.feedSource.logoUrl
+                        if (imageUrl != null) {
+                            feedSourceImage(imageUrl)
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Category,
+                                contentDescription = null,
+                            )
+                        }
                     },
                     colors = NavigationDrawerItemDefaults.colors(
                         unselectedContainerColor = Color.Transparent,

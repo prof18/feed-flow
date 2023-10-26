@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.addfeed.AddFeedScreen
@@ -21,6 +22,7 @@ import com.prof18.feedflow.desktopViewModel
 import com.prof18.feedflow.di.DI
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.preview.feedSourcesState
+import com.prof18.feedflow.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourceNavBar
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourcesWithCategoryList
 import com.prof18.feedflow.ui.feedsourcelist.NoFeedSourcesView
@@ -93,6 +95,12 @@ private fun FeedSourceListContent(
                     .padding(paddingValues),
                 feedSourceState = feedSources,
                 onExpandClicked = onExpandClicked,
+                feedSourceImage = { imageUrl ->
+                    FeedSourceLogoImage(
+                        size = 24.dp,
+                        imageUrl = imageUrl,
+                    )
+                },
                 onDeleteFeedSourceClick = onDeleteFeedClick,
             )
         }

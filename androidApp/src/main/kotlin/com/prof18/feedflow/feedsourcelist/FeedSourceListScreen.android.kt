@@ -7,12 +7,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.preview.feedSourcesState
+import com.prof18.feedflow.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourceNavBar
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourcesWithCategoryList
 import com.prof18.feedflow.ui.feedsourcelist.NoFeedSourcesView
@@ -67,6 +69,12 @@ private fun FeedSourceListContent(
                 modifier = Modifier
                     .padding(paddingValues),
                 feedSourceState = feedSources,
+                feedSourceImage = { imageUrl ->
+                    FeedSourceLogoImage(
+                        size = 24.dp,
+                        imageUrl = imageUrl,
+                    )
+                },
                 onExpandClicked = onExpandClicked,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             )

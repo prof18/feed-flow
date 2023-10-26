@@ -8,6 +8,7 @@
 
 import SwiftUI
 import shared
+import NukeUI
 
 struct SidebarDrawer: View {
 
@@ -66,7 +67,22 @@ struct SidebarDrawer: View {
                                     if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
                                         HStack {
 
-                                            Image(systemName: "square.stack.3d.up")
+                                            if let imageUrl = drawerFeedSource.feedSource.logoUrl {
+                                                LazyImage(url: URL(string: imageUrl)) { state in
+                                                    if let image = state.image {
+                                                        image
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                            .frame(width: 24, height: 24)
+                                                            .cornerRadius(16)
+                                                            .clipped()
+                                                    } else {
+                                                        Image(systemName: "square.stack.3d.up")
+                                                    }
+                                                }
+                                            } else {
+                                                Image(systemName: "square.stack.3d.up")
+                                            }
 
                                             Text(drawerFeedSource.feedSource.title)
                                                 .lineLimit(2)

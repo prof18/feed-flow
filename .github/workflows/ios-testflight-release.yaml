@@ -15,7 +15,16 @@ jobs:
 
       - name: Xcode version
         run: |
-          /usr/bin/xcodebuild -version      
+          /usr/bin/xcodebuild -version   
+          
+      - name: Xcode Select Version
+        uses: mobiledevops/xcode-select-version-action@v1
+        with:
+          xcode-select-version: 15.0
+
+      - name: Xcode version
+        run: |
+          /usr/bin/xcodebuild -version   
 
       - name: set up JDK
         uses: actions/setup-java@v3

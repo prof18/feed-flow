@@ -17,10 +17,9 @@ jobs:
         run: |
           /usr/bin/xcodebuild -version   
           
-      - name: Xcode Select Version
-        uses: mobiledevops/xcode-select-version-action@v1
+      - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-select-version: 15.0
+          xcode-version: latest-stable
 
       - name: Xcode version
         run: |

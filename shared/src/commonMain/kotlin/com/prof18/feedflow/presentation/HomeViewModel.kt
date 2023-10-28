@@ -107,28 +107,29 @@ class HomeViewModel internal constructor(
 
     private fun initDrawerData() {
         scope.launch {
-            val feedSourceByCategory = feedManagerRepository.getFeedSourcesByCategory()
-            val categories = feedManagerRepository.getCategories()
 
-            val navDrawerState = NavDrawerState(
-                timeline = listOf(DrawerItem.Timeline),
-                categories = categories.map { category ->
-                    DrawerCategory(category = category)
-                },
-                feedSourcesByCategory = feedSourceByCategory.mapKeys { (category, _) ->
-                    FeedSourceCategoryWrapper(
-                        feedSourceCategory = category,
+            feedManagerRepository.observeFeedSourcesByCategory()
+                .combine(feedManagerRepository.observeCategories()) { feedSourceByCategory, categories ->
+                    NavDrawerState(
+                        timeline = listOf(DrawerItem.Timeline),
+                        categories = categories.map { category ->
+                            DrawerCategory(category = category)
+                        },
+                        feedSourcesByCategory = feedSourceByCategory.mapKeys { (category, _) ->
+                            FeedSourceCategoryWrapper(
+                                feedSourceCategory = category,
+                            )
+                        }.mapValues { (_, sources) ->
+                            sources.map { feedSource ->
+                                DrawerFeedSource(
+                                    feedSource = feedSource,
+                                )
+                            }
+                        },
                     )
-                }.mapValues { (_, sources) ->
-                    sources.map { feedSource ->
-                        DrawerFeedSource(
-                            feedSource = feedSource,
-                        )
-                    }
-                },
-            )
-
-            drawerMutableState.update { navDrawerState }
+                }.collect {navDrawerState ->
+                    drawerMutableState.update { navDrawerState }
+                }
         }
     }
 

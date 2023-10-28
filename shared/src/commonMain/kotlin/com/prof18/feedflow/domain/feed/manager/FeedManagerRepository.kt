@@ -19,6 +19,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 
@@ -106,15 +107,15 @@ internal class FeedManagerRepository(
         databaseHelper.deleteAllFeeds()
     }
 
-    suspend fun getFeedSourcesByCategory(): Map<FeedSourceCategory?, List<FeedSource>> {
-        val sourcesByCategory = databaseHelper.getFeedSources()
-            .groupBy { it.category }
-
-        val sortedKeys = sourcesByCategory.keys.sortedBy { it?.title }
-        return sortedKeys.associateWith {
-            sourcesByCategory[it] ?: emptyList()
-        }
-    }
+    fun observeFeedSourcesByCategory(): Flow<Map<FeedSourceCategory?, List<FeedSource>>> =
+        databaseHelper.getFeedSourcesFlow()
+            .map { feedSources ->
+                val sourcesByCategory = feedSources.groupBy { it.category }
+                val sortedKeys = sourcesByCategory.keys.sortedBy { it?.title }
+                sortedKeys.associateWith {
+                    sourcesByCategory[it] ?: emptyList()
+                }
+            }
 
     private suspend fun checkIfValidRss(url: String): RssChannel? {
         return try {

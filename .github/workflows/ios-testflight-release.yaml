@@ -13,6 +13,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Xcode Select Version
+        uses: mobiledevops/xcode-select-version-action@v1
+        with:
+          xcode-select-version: 15.0.1
+
       - name: set up JDK
         uses: actions/setup-java@v3
         with:

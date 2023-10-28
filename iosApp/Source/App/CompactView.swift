@@ -22,6 +22,9 @@ struct CompactView: View {
     @State
     var navDrawerState: NavDrawerState = NavDrawerState(timeline: [], categories: [], feedSourcesByCategory: [:])
 
+    @State
+    var scrollUpTrigger: Bool = false
+
     let homeViewModel: HomeViewModel
 
     var body: some View {
@@ -31,10 +34,10 @@ struct CompactView: View {
                 navDrawerState: navDrawerState,
                 onFeedFilterSelected: { feedFilter in
                     appState.navigate(route: CompactViewRoute.feed)
+                    scrollUpTrigger.toggle()
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
                 }
-            )
-                .navigationDestination(for: CommonRoute.self) { route in
+            ).navigationDestination(for: CommonRoute.self) { route in
                     switch route {
                     case .aboutScreen:
                         AboutScreen()
@@ -46,10 +49,14 @@ struct CompactView: View {
                 .navigationDestination(for: CompactViewRoute.self) { route in
                     switch route {
                     case .feed:
-                        HomeScreen(homeViewModel: homeViewModel)
+                        HomeScreen(
+                            toggleListScroll: $scrollUpTrigger,
+                            homeViewModel: homeViewModel
+                        )
                     }
                 }
         }
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             do {
                 let stream = asyncSequence(for: homeViewModel.navDrawerStateFlow)

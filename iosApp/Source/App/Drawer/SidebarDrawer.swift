@@ -28,101 +28,106 @@ struct SidebarDrawer: View {
                     }
             }
 
-            Section(
-                content: {
-                    ForEach(navDrawerState.categories, id: \.self) { drawerItem in
-                        if let categoryItem = drawerItem as? DrawerItem.DrawerCategory {
-                            DrawerCategoryItem(
-                                drawerItem: categoryItem
-                            ).onTapGesture {
-                                self.selectedDrawerItem = categoryItem
-                                self.onFeedFilterSelected(
-                                    FeedFilter.Category(feedCategory: categoryItem.category)
-                                )
+            if !navDrawerState.categories.isEmpty {
+                Section(
+                    content: {
+                        ForEach(navDrawerState.categories, id: \.self) { drawerItem in
+                            if let categoryItem = drawerItem as? DrawerItem.DrawerCategory {
+                                DrawerCategoryItem(
+                                    drawerItem: categoryItem
+                                ).onTapGesture {
+                                    self.selectedDrawerItem = categoryItem
+                                    self.onFeedFilterSelected(
+                                        FeedFilter.Category(feedCategory: categoryItem.category)
+                                    )
+                                }
                             }
                         }
+                    }, header: {
+                        Text(localizer.drawer_title_categories.localized)
                     }
-                }, header: {
-                    Text(localizer.drawer_title_categories.localized)
-                }
-            )
+                )
+            }
 
-            Section(
-                content: {
-                    ForEach(
-                        navDrawerState.feedSourcesByCategory.keys.sorted {
-                            $0.feedSourceCategory?.title ?? "" < $1.feedSourceCategory?.title ?? ""
-                        },
-                        id: \.self
-                    ) { category in
-                        let categoryWrapper = category as
-                        DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
+            if !navDrawerState.feedSourcesByCategory.isEmpty {
 
-                        DisclosureGroup(
-                            content: {
-                                ForEach(
-                                    navDrawerState.feedSourcesByCategory[categoryWrapper] ?? [],
-                                    id: \.self
-                                ) { drawerItem in
-                                    if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
-                                        HStack {
-
-                                            if let imageUrl = drawerFeedSource.feedSource.logoUrl {
-                                                LazyImage(url: URL(string: imageUrl)) { state in
-                                                    if let image = state.image {
-                                                        image
-                                                            .resizable()
-                                                            .scaledToFill()
-                                                            .frame(width: 24, height: 24)
-                                                            .cornerRadius(16)
-                                                            .clipped()
-                                                    } else {
-                                                        Image(systemName: "square.stack.3d.up")
-                                                    }
-                                                }
-                                            } else {
-                                                Image(systemName: "square.stack.3d.up")
-                                            }
-
-                                            Text(drawerFeedSource.feedSource.title)
-                                                .lineLimit(2)
-                                                .font(.system(size: 16))
-                                                .padding(.bottom, 2)
-                                                .padding(.leading, Spacing.small)
-
-                                            Spacer()
-                                        }
-                                        .listRowInsets(
-                                            EdgeInsets(
-                                                top: Spacing.small,
-                                                leading: .zero,
-                                                bottom: Spacing.small,
-                                                trailing: Spacing.small)
-                                        )
-                                        .contentShape(Rectangle())
-                                        .onTapGesture {
-                                            self.selectedDrawerItem = drawerItem
-                                            self.onFeedFilterSelected(
-                                                FeedFilter.Source(
-                                                    feedSource: drawerFeedSource.feedSource
-                                                )
-                                            )
-                                        }
-                                    } else {
-                                        EmptyView()
-                                    }
-                                }
+                Section(
+                    content: {
+                        ForEach(
+                            navDrawerState.feedSourcesByCategory.keys.sorted {
+                                $0.feedSourceCategory?.title ?? "" < $1.feedSourceCategory?.title ?? ""
                             },
-                            label: {
-                                Text(categoryWrapper.feedSourceCategory?.title ?? localizer.no_category.localized)
-                            }
-                        )
+                            id: \.self
+                        ) { category in
+                            let categoryWrapper = category as
+                            DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
+
+                            DisclosureGroup(
+                                content: {
+                                    ForEach(
+                                        navDrawerState.feedSourcesByCategory[categoryWrapper] ?? [],
+                                        id: \.self
+                                    ) { drawerItem in
+                                        if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
+                                            HStack {
+
+                                                if let imageUrl = drawerFeedSource.feedSource.logoUrl {
+                                                    LazyImage(url: URL(string: imageUrl)) { state in
+                                                        if let image = state.image {
+                                                            image
+                                                                .resizable()
+                                                                .scaledToFill()
+                                                                .frame(width: 24, height: 24)
+                                                                .cornerRadius(16)
+                                                                .clipped()
+                                                        } else {
+                                                            Image(systemName: "square.stack.3d.up")
+                                                        }
+                                                    }
+                                                } else {
+                                                    Image(systemName: "square.stack.3d.up")
+                                                }
+
+                                                Text(drawerFeedSource.feedSource.title)
+                                                    .lineLimit(2)
+                                                    .font(.system(size: 16))
+                                                    .padding(.bottom, 2)
+                                                    .padding(.leading, Spacing.small)
+
+                                                Spacer()
+                                            }
+                                            .listRowInsets(
+                                                EdgeInsets(
+                                                    top: Spacing.small,
+                                                    leading: .zero,
+                                                    bottom: Spacing.small,
+                                                    trailing: Spacing.small)
+                                            )
+                                            .contentShape(Rectangle())
+                                            .onTapGesture {
+                                                self.selectedDrawerItem = drawerItem
+                                                self.onFeedFilterSelected(
+                                                    FeedFilter.Source(
+                                                        feedSource: drawerFeedSource.feedSource
+                                                    )
+                                                )
+                                            }
+                                        } else {
+                                            EmptyView()
+                                        }
+                                    }
+                                },
+                                label: {
+                                    Text(categoryWrapper.feedSourceCategory?.title ?? localizer.no_category.localized)
+                                }
+                            )
+                        }
+                    },
+                    header: {
+                        Text(localizer.drawer_title_feed_sources.localized)
                     }
-                },
-                header: {
-                    Text(localizer.drawer_title_feed_sources.localized)
-                }
-            )
+                )
+            }
         }
         .listStyle(.sidebar)
     }

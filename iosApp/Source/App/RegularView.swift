@@ -21,6 +21,9 @@ struct RegularView: View {
     @Binding
     var selectedDrawerItem: DrawerItem?
 
+    @State
+    var scrollUpTrigger: Bool = false
+
     var drawerItems: [DrawerItem] = []
     let homeViewModel: HomeViewModel
 
@@ -30,22 +33,27 @@ struct RegularView: View {
                 selectedDrawerItem: $selectedDrawerItem,
                 navDrawerState: navDrawerState,
                 onFeedFilterSelected: { feedFilter in
+                    scrollUpTrigger.toggle()
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
                 }
             )
+            .navigationBarTitleDisplayMode(.inline)
         } detail: {
             NavigationStack {
-                HomeScreen(homeViewModel: homeViewModel)
-                    .navigationDestination(for: CommonRoute.self) { route in
-                        switch route {
-                        case .aboutScreen:
-                            AboutScreen()
+                HomeScreen(
+                    toggleListScroll: $scrollUpTrigger,
+                    homeViewModel: homeViewModel
+                ).navigationDestination(for: CommonRoute.self) { route in
+                    switch route {
+                    case .aboutScreen:
+                        AboutScreen()
 
-                        case .importExportScreen:
-                            ImportExportScreen()
-                        }
+                    case .importExportScreen:
+                        ImportExportScreen()
                     }
+                }
             }
+            .navigationBarTitleDisplayMode(.inline)
         }
         .navigationSplitViewStyle(.balanced)
         .task {

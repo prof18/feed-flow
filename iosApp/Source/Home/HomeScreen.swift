@@ -41,6 +41,9 @@ struct HomeScreen: View {
     @State
     var unreadCount = 0
 
+    @Binding
+    var toggleListScroll: Bool
+
     let homeViewModel: HomeViewModel
 
     var body: some View {
@@ -51,6 +54,7 @@ struct HomeScreen: View {
             showLoading: $showLoading,
             unreadCount: $unreadCount,
             sheetToShow: $sheetToShow,
+            toggleListScroll: $toggleListScroll,
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
@@ -170,6 +174,9 @@ struct HomeContent: View {
     @Binding
     var sheetToShow: HomeSheetToShow?
 
+    @Binding
+    var toggleListScroll: Bool
+
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
     let onMarkAllReadClick: () -> Void
@@ -190,10 +197,14 @@ struct HomeContent: View {
                     self.sheetToShow = .feedList
                 }
             )
+            .onChange(of: toggleListScroll) { _ in
+                proxy.scrollTo(feedState.first?.id)
+            }
             .if(horizontalSizeClass == .compact) { view in
                 view
                     .navigationBarBackButtonHidden(true)
             }
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
 
@@ -214,6 +225,8 @@ struct HomeContent: View {
                             .font(.title2)
                             .padding(.vertical, Spacing.medium)
                             .onTapGesture(count: 2) {
+                                onRefresh()
+                                proxy.scrollTo(feedState.first?.id)
                                 updateReadStatus(Int32(indexHolder.getLastReadIndex()))
                                 self.indexHolder.refresh()
                             }
@@ -366,7 +379,9 @@ struct HomeContentLoading_Previews: PreviewProvider {
             feedState: .constant(PreviewItemsKt.feedItemsForPreview),
             showLoading: .constant(true),
             unreadCount: .constant(42),
-            sheetToShow: .constant(nil), onRefresh: { },
+            sheetToShow: .constant(nil),
+            toggleListScroll: .constant(false),
+            onRefresh: { },
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
@@ -388,7 +403,9 @@ struct HomeContentLoaded_Previews: PreviewProvider {
             feedState: .constant(PreviewItemsKt.feedItemsForPreview),
             showLoading: .constant(false),
             unreadCount: .constant(42),
-            sheetToShow: .constant(nil), onRefresh: { },
+            sheetToShow: .constant(nil),
+            toggleListScroll: .constant(false),
+            onRefresh: { },
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
@@ -411,6 +428,7 @@ struct HomeContentSettings_Previews: PreviewProvider {
             showLoading: .constant(false),
             unreadCount: .constant(42),
             sheetToShow: .constant(HomeSheetToShow.feedList),
+            toggleListScroll: .constant(false),
             onRefresh: { },
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },

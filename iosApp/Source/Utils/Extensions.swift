@@ -28,4 +28,8 @@ extension View {
             self
         }
     }
+
+    func modify<Content>(@ViewBuilder _ transform: (Self) -> Content) -> Content {
+            transform(self)
+    }
 }

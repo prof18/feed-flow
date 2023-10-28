@@ -207,10 +207,8 @@ struct HomeContent: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-
                     HStack {
                         if horizontalSizeClass == .compact {
-
                             Button(
                                 action: {
                                     self.dismiss()

@@ -107,7 +107,6 @@ class HomeViewModel internal constructor(
 
     private fun initDrawerData() {
         scope.launch {
-
             feedManagerRepository.observeFeedSourcesByCategory()
                 .combine(feedManagerRepository.observeCategories()) { feedSourceByCategory, categories ->
                     NavDrawerState(
@@ -127,7 +126,7 @@ class HomeViewModel internal constructor(
                             }
                         },
                     )
-                }.collect {navDrawerState ->
+                }.collect { navDrawerState ->
                     drawerMutableState.update { navDrawerState }
                 }
         }

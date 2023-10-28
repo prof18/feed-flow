@@ -113,27 +113,7 @@ internal fun HomeScreen(
 
     when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
-            ModalNavigationDrawer(
-                drawerContent = {
-                    ModalDrawerSheet {
-                        Drawer(
-                            navDrawerState = navDrawerState,
-                            currentFeedFilter = currentFeedFilter,
-                            feedSourceImage = { imageUrl ->
-                                FeedSourceImage(imageUrl)
-                            },
-                            onFeedFilterSelected = { feedFilter ->
-                                homeViewModel.onFeedFilterSelected(feedFilter)
-                                scope.launch {
-                                    drawerState.close()
-                                    listState.animateScrollToItem(0)
-                                }
-                            },
-                        )
-                    }
-                },
-                drawerState = drawerState,
-            ) {
+            if (feedState.isEmpty()) {
                 HomeScaffold(
                     unReadCount = unReadCount,
                     onSettingsButtonClicked = onSettingsButtonClicked,
@@ -144,7 +124,7 @@ internal fun HomeScreen(
                     loadingState = loadingState,
                     feedState = feedState,
                     pullRefreshState = pullRefreshState,
-                    showDrawerMenu = true,
+                    showDrawerMenu = false,
                     onDrawerMenuClick = {
                         scope.launch {
                             if (drawerState.isOpen) {
@@ -155,6 +135,50 @@ internal fun HomeScreen(
                         }
                     },
                 )
+            } else {
+                ModalNavigationDrawer(
+                    drawerContent = {
+                        ModalDrawerSheet {
+                            Drawer(
+                                navDrawerState = navDrawerState,
+                                currentFeedFilter = currentFeedFilter,
+                                feedSourceImage = { imageUrl ->
+                                    FeedSourceImage(imageUrl)
+                                },
+                                onFeedFilterSelected = { feedFilter ->
+                                    homeViewModel.onFeedFilterSelected(feedFilter)
+                                    scope.launch {
+                                        drawerState.close()
+                                        listState.animateScrollToItem(0)
+                                    }
+                                },
+                            )
+                        }
+                    },
+                    drawerState = drawerState,
+                ) {
+                    HomeScaffold(
+                        unReadCount = unReadCount,
+                        onSettingsButtonClicked = onSettingsButtonClicked,
+                        homeViewModel = homeViewModel,
+                        scope = scope,
+                        listState = listState,
+                        snackbarHostState = snackbarHostState,
+                        loadingState = loadingState,
+                        feedState = feedState,
+                        pullRefreshState = pullRefreshState,
+                        showDrawerMenu = true,
+                        onDrawerMenuClick = {
+                            scope.launch {
+                                if (drawerState.isOpen) {
+                                    drawerState.close()
+                                } else {
+                                    drawerState.open()
+                                }
+                            }
+                        },
+                    )
+                }
             }
         }
 
@@ -163,7 +187,7 @@ internal fun HomeScreen(
                 AnimatedVisibility(
                     modifier = Modifier
                         .weight(1f),
-                    visible = isDrawerMenuFullVisible,
+                    visible = isDrawerMenuFullVisible && feedState.isNotEmpty(),
                 ) {
                     Scaffold { paddingValues ->
                         Drawer(
@@ -196,7 +220,7 @@ internal fun HomeScreen(
                     loadingState = loadingState,
                     feedState = feedState,
                     pullRefreshState = pullRefreshState,
-                    showDrawerMenu = true,
+                    showDrawerMenu = feedState.isNotEmpty(),
                     isDrawerMenuOpen = isDrawerMenuFullVisible,
                     onDrawerMenuClick = {
                         isDrawerMenuFullVisible = !isDrawerMenuFullVisible
@@ -207,25 +231,27 @@ internal fun HomeScreen(
 
         WindowWidthSizeClass.Expanded -> {
             Row {
-                Scaffold(
-                    modifier = Modifier
-                        .weight(1f),
-                ) { paddingValues ->
-                    Drawer(
+                if (feedState.isNotEmpty()) {
+                    Scaffold(
                         modifier = Modifier
-                            .padding(paddingValues),
-                        navDrawerState = navDrawerState,
-                        currentFeedFilter = currentFeedFilter,
-                        feedSourceImage = { imageUrl ->
-                            FeedSourceImage(imageUrl)
-                        },
-                        onFeedFilterSelected = { feedFilter ->
-                            homeViewModel.onFeedFilterSelected(feedFilter)
-                            scope.launch {
-                                listState.animateScrollToItem(0)
-                            }
-                        },
-                    )
+                            .weight(1f),
+                    ) { paddingValues ->
+                        Drawer(
+                            modifier = Modifier
+                                .padding(paddingValues),
+                            navDrawerState = navDrawerState,
+                            currentFeedFilter = currentFeedFilter,
+                            feedSourceImage = { imageUrl ->
+                                FeedSourceImage(imageUrl)
+                            },
+                            onFeedFilterSelected = { feedFilter ->
+                                homeViewModel.onFeedFilterSelected(feedFilter)
+                                scope.launch {
+                                    listState.animateScrollToItem(0)
+                                }
+                            },
+                        )
+                    }
                 }
 
                 HomeScaffold(

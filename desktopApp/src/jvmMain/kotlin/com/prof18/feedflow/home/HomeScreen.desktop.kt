@@ -133,6 +133,7 @@ internal fun HomeScreen(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun CompactView(
     navDrawerState: NavDrawerState,
@@ -147,26 +148,7 @@ private fun CompactView(
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    ModalNavigationDrawer(
-        drawerContent = {
-            ModalDrawerSheet {
-                Drawer(
-                    navDrawerState = navDrawerState,
-                    currentFeedFilter = currentFeedFilter,
-                    feedSourceImage = { imageUrl ->
-                        FeedSourceImage(imageUrl)
-                    },
-                    onFeedFilterSelected = { feedFilter ->
-                        homeViewModel.onFeedFilterSelected(feedFilter)
-                        scope.launch {
-                            drawerState.close()
-                        }
-                    },
-                )
-            }
-        },
-        drawerState = drawerState,
-    ) {
+    if (feedState.isEmpty()) {
         HomeScreenContent(
             paddingValues = paddingValues,
             loadingState = loadingState,
@@ -200,9 +182,66 @@ private fun CompactView(
                 }
             },
         )
+    } else {
+        ModalNavigationDrawer(
+            drawerContent = {
+                ModalDrawerSheet {
+                    Drawer(
+                        navDrawerState = navDrawerState,
+                        currentFeedFilter = currentFeedFilter,
+                        feedSourceImage = { imageUrl ->
+                            FeedSourceImage(imageUrl)
+                        },
+                        onFeedFilterSelected = { feedFilter ->
+                            homeViewModel.onFeedFilterSelected(feedFilter)
+                            scope.launch {
+                                drawerState.close()
+                                listState.animateScrollToItem(0)
+                            }
+                        },
+                    )
+                }
+            },
+            drawerState = drawerState,
+        ) {
+            HomeScreenContent(
+                paddingValues = paddingValues,
+                loadingState = loadingState,
+                feedState = feedState,
+                listState = listState,
+                onRefresh = {
+                    homeViewModel.getNewFeeds()
+                },
+                updateReadStatus = { lastVisibleIndex ->
+                    homeViewModel.updateReadStatus(lastVisibleIndex)
+                },
+                onFeedItemClick = { feedInfo ->
+                    openInBrowser(feedInfo.url)
+                    homeViewModel.markAsRead(feedInfo.id)
+                },
+                onFeedItemLongClick = { feedInfo ->
+                    openInBrowser(feedInfo.url)
+                    homeViewModel.markAsRead(feedInfo.id)
+                },
+                onAddFeedClick = {
+                    onAddFeedClick()
+                },
+                showDrawerMenu = true,
+                onDrawerMenuClick = {
+                    scope.launch {
+                        if (drawerState.isOpen) {
+                            drawerState.close()
+                        } else {
+                            drawerState.open()
+                        }
+                    }
+                },
+            )
+        }
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun MediumView(
     navDrawerState: NavDrawerState,
@@ -217,12 +256,13 @@ private fun MediumView(
     var isDrawerMenuFullVisible by remember {
         mutableStateOf(true)
     }
+    val scope = rememberCoroutineScope()
 
     Row {
         AnimatedVisibility(
             modifier = Modifier
                 .weight(1f),
-            visible = isDrawerMenuFullVisible,
+            visible = isDrawerMenuFullVisible && feedState.isNotEmpty(),
         ) {
             Scaffold { paddingValues ->
                 Drawer(
@@ -235,6 +275,9 @@ private fun MediumView(
                     },
                     onFeedFilterSelected = { feedFilter ->
                         homeViewModel.onFeedFilterSelected(feedFilter)
+                        scope.launch {
+                            listState.animateScrollToItem(0)
+                        }
                     },
                 )
             }
@@ -284,11 +327,13 @@ private fun ExpandedView(
     listState: LazyListState,
     onAddFeedClick: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+
     Row {
         AnimatedVisibility(
             modifier = Modifier
                 .weight(1f),
-            visible = true,
+            visible = feedState.isNotEmpty(),
         ) {
             Scaffold { paddingValues ->
                 Drawer(
@@ -301,6 +346,9 @@ private fun ExpandedView(
                     },
                     onFeedFilterSelected = { feedFilter ->
                         homeViewModel.onFeedFilterSelected(feedFilter)
+                        scope.launch {
+                            listState.animateScrollToItem(0)
+                        }
                     },
                 )
             }

@@ -21,6 +21,8 @@ class AppState: ObservableObject {
     @Published
     var path = NavigationPath()
 
+    @Published var sizeClass: UserInterfaceSizeClass?
+
     init() {
         path.append(CompactViewRoute.feed)
     }

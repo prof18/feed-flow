@@ -150,9 +150,6 @@ struct HomeContent: View {
     @EnvironmentObject
     private var appState: AppState
 
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass
-
     @Environment(\.dismiss)
     private var dismiss
 
@@ -200,15 +197,15 @@ struct HomeContent: View {
             .onChange(of: toggleListScroll) { _ in
                 proxy.scrollTo(feedState.first?.id)
             }
-            .if(horizontalSizeClass == .compact) { view in
+            .if(appState.sizeClass == .compact) { view in
                 view
                     .navigationBarBackButtonHidden(true)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(id: UUID().uuidString, placement: .navigationBarLeading, showsByDefault: true) {
                     HStack {
-                        if horizontalSizeClass == .compact {
+                        if appState.sizeClass == .compact {
                             Button(
                                 action: {
                                     self.dismiss()
@@ -231,7 +228,7 @@ struct HomeContent: View {
                     }
                 }
 
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItem(id: UUID().uuidString, placement: .primaryAction, showsByDefault: true) {
                     Menu {
                         Button(
                             action: {

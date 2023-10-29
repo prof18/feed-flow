@@ -20,8 +20,8 @@ struct HomeScreen: View {
     @EnvironmentObject
     private var browserSelector: BrowserSelector
 
-    @StateObject
-    private var indexHolder = HomeListIndexHolder()
+    @EnvironmentObject
+    private var indexHolder: HomeListIndexHolder
 
     @Environment(\.scenePhase)
     private var scenePhase
@@ -74,7 +74,6 @@ struct HomeScreen: View {
                 homeViewModel.deleteAllFeeds()
             }
         )
-        .environmentObject(indexHolder)
         .task {
             do {
                 let stream = asyncSequence(for: homeViewModel.loadingStateFlow)

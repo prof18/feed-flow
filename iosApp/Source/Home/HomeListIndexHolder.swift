@@ -16,6 +16,7 @@ class HomeListIndexHolder: ObservableObject {
     var isLoading: Bool = false
     private var lastReadIndex = 0
     private var timer: Timer?
+    private var isClearing = false
 
     func getLastReadIndex() -> Int {
         return lastReadIndex
@@ -26,8 +27,20 @@ class HomeListIndexHolder: ObservableObject {
         self.lastReadIndex = 0
     }
 
+    func clear() {
+        self.lastReadIndex = 0
+        timer?.invalidate()
+        isClearing = true
+
+        let timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in
+            guard let self else { return }
+            self.isClearing = false
+            self.lastReadIndex = 0
+        }
+    }
+
     func updateReadIndex(index: Int) {
-        if !self.isLoading && index > lastReadIndex {
+        if !isClearing && !self.isLoading && index > lastReadIndex {
             lastReadIndex = index
             timer?.invalidate()
             timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in

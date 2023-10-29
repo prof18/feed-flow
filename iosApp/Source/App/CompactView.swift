@@ -19,6 +19,9 @@ struct CompactView: View {
     @Binding
     var selectedDrawerItem: DrawerItem?
 
+    @StateObject
+    private var indexHolder = HomeListIndexHolder()
+
     @State
     var navDrawerState: NavDrawerState = NavDrawerState(timeline: [], categories: [], feedSourcesByCategory: [:])
 
@@ -33,6 +36,7 @@ struct CompactView: View {
                 selectedDrawerItem: $selectedDrawerItem,
                 navDrawerState: navDrawerState,
                 onFeedFilterSelected: { feedFilter in
+                    indexHolder.clear()
                     appState.navigate(route: CompactViewRoute.feed)
                     scrollUpTrigger.toggle()
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
@@ -53,6 +57,7 @@ struct CompactView: View {
                             toggleListScroll: $scrollUpTrigger,
                             homeViewModel: homeViewModel
                         )
+                        .environmentObject(indexHolder)
                     }
                 }
         }

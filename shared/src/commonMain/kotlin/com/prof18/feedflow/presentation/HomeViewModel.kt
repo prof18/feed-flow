@@ -180,10 +180,27 @@ class HomeViewModel internal constructor(
         }
 
         scope.launch {
-            feedRetrieverRepository.updateReadStatus(
-                lastUpdateIndex = lastUpdateIndex,
-                lastVisibleIndex = lastVisibleIndex,
-            )
+            val urlToUpdates = mutableListOf<FeedItemId>()
+
+            val items = feedState.value.toMutableList()
+            if (lastVisibleIndex <= lastUpdateIndex) {
+                return@launch
+            }
+            for (index in lastUpdateIndex..lastVisibleIndex) {
+                items.getOrNull(index)?.let { item ->
+                    if (!item.isRead) {
+                        urlToUpdates.add(
+                            FeedItemId(
+                                id = item.id,
+                            ),
+                        )
+                    }
+                    items[index] = item.copy(isRead = true)
+                }
+            }
+            mutableFeedState.update { items }
+
+            feedRetrieverRepository.updateReadStatus(urlToUpdates)
             lastUpdateIndex = lastVisibleIndex
         }
     }
@@ -223,6 +240,9 @@ class HomeViewModel internal constructor(
     }
 
     fun onFeedFilterSelected(selectedFeedFilter: FeedFilter) {
-        currentFeedFilterMutableState.update { selectedFeedFilter }
+        scope.launch {
+            feedRetrieverRepository.clearReadFeeds()
+            currentFeedFilterMutableState.update { selectedFeedFilter }
+        }
     }
 }

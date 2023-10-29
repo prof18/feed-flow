@@ -15,11 +15,14 @@ struct RegularView: View {
     @EnvironmentObject
     var appState: AppState
 
-    @State
-    var navDrawerState: NavDrawerState = NavDrawerState(timeline: [], categories: [], feedSourcesByCategory: [:])
+    @StateObject
+    private var indexHolder = HomeListIndexHolder()
 
     @Binding
     var selectedDrawerItem: DrawerItem?
+
+    @State
+    var navDrawerState: NavDrawerState = NavDrawerState(timeline: [], categories: [], feedSourcesByCategory: [:])
 
     @State
     var scrollUpTrigger: Bool = false
@@ -33,6 +36,7 @@ struct RegularView: View {
                 selectedDrawerItem: $selectedDrawerItem,
                 navDrawerState: navDrawerState,
                 onFeedFilterSelected: { feedFilter in
+                    indexHolder.clear()
                     scrollUpTrigger.toggle()
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
                 }
@@ -43,7 +47,9 @@ struct RegularView: View {
                 HomeScreen(
                     toggleListScroll: $scrollUpTrigger,
                     homeViewModel: homeViewModel
-                ).navigationDestination(for: CommonRoute.self) { route in
+                )
+                .environmentObject(indexHolder)
+                .navigationDestination(for: CommonRoute.self) { route in
                     switch route {
                     case .aboutScreen:
                         AboutScreen()

@@ -408,7 +408,7 @@ private fun HomeScreenContent(
 ) {
     Column(
         modifier = modifier
-            .padding(paddingValues)
+            .padding(paddingValues),
     ) {
         val unReadCount = feedState.count { !it.isRead }
 

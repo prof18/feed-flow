@@ -93,3 +93,5 @@
 -keep class io.sentry.** { *; }
 
 -keep class com.prof18.feedflow.domain.model.** { *; }
+
+-keep class com.prof18.feedflow.presentation.model.** { *; }

@@ -67,8 +67,12 @@ fun Drawer(
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
                 )
+            }
 
-                DrawerDivider()
+            if (navDrawerState.categories.isNotEmpty() || navDrawerState.feedSourcesByCategory.isNotEmpty()) {
+                item {
+                    DrawerDivider()
+                }
             }
 
             if (navDrawerState.categories.isNotEmpty()) {

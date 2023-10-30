@@ -113,7 +113,7 @@ internal fun HomeScreen(
 
     when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
-            if (feedState.isEmpty()) {
+            if (feedState.isEmpty() && navDrawerState.isEmpty()) {
                 HomeScaffold(
                     unReadCount = unReadCount,
                     onSettingsButtonClicked = onSettingsButtonClicked,
@@ -187,7 +187,7 @@ internal fun HomeScreen(
                 AnimatedVisibility(
                     modifier = Modifier
                         .weight(1f),
-                    visible = isDrawerMenuFullVisible && feedState.isNotEmpty(),
+                    visible = isDrawerMenuFullVisible && (feedState.isNotEmpty() || navDrawerState.isNotEmpty()),
                 ) {
                     Scaffold { paddingValues ->
                         Drawer(
@@ -231,7 +231,7 @@ internal fun HomeScreen(
 
         WindowWidthSizeClass.Expanded -> {
             Row {
-                if (feedState.isNotEmpty()) {
+                if (feedState.isNotEmpty() || navDrawerState.isNotEmpty()) {
                     Scaffold(
                         modifier = Modifier
                             .weight(1f),

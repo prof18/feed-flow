@@ -148,7 +148,7 @@ private fun CompactView(
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    if (feedState.isEmpty()) {
+    if (feedState.isEmpty() && navDrawerState.isEmpty()) {
         HomeScreenContent(
             paddingValues = paddingValues,
             loadingState = loadingState,
@@ -262,7 +262,7 @@ private fun MediumView(
         AnimatedVisibility(
             modifier = Modifier
                 .weight(1f),
-            visible = isDrawerMenuFullVisible && feedState.isNotEmpty(),
+            visible = isDrawerMenuFullVisible && (feedState.isNotEmpty() || navDrawerState.isNotEmpty()),
         ) {
             Scaffold { paddingValues ->
                 Drawer(
@@ -333,7 +333,7 @@ private fun ExpandedView(
         AnimatedVisibility(
             modifier = Modifier
                 .weight(1f),
-            visible = feedState.isNotEmpty(),
+            visible = feedState.isNotEmpty() || navDrawerState.isNotEmpty(),
         ) {
             Scaffold { paddingValues ->
                 Drawer(
@@ -406,58 +406,9 @@ private fun HomeScreenContent(
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
     onAddFeedClick: () -> Unit,
 ) {
-    when {
-        loadingState is NoFeedSourcesStatus -> NoFeedsSourceView(
-            modifier = modifier
-                .padding(paddingValues),
-            onAddFeedClick = {
-                onAddFeedClick()
-            },
-        )
-
-        !loadingState.isLoading() && feedState.isEmpty() -> EmptyFeedView(
-            modifier = modifier
-                .padding(paddingValues),
-            onReloadClick = {
-                onRefresh()
-            },
-        )
-
-        else -> FeedWithContentView(
-            modifier = modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            paddingValues = paddingValues,
-            feedState = feedState,
-            loadingState = loadingState,
-            listState = listState,
-            updateReadStatus = updateReadStatus,
-            showDrawerMenu = showDrawerMenu,
-            isDrawerMenuOpen = isDrawerMenuOpen,
-            onDrawerMenuClick = onDrawerMenuClick,
-            onFeedItemClick = onFeedItemClick,
-            onFeedItemLongClick = onFeedItemLongClick,
-        )
-    }
-}
-
-@Suppress("LongParameterList")
-@Composable
-private fun FeedWithContentView(
-    modifier: Modifier = Modifier,
-    paddingValues: PaddingValues,
-    feedState: List<FeedItem>,
-    loadingState: FeedUpdateStatus,
-    listState: LazyListState,
-    showDrawerMenu: Boolean,
-    isDrawerMenuOpen: Boolean,
-    onDrawerMenuClick: () -> Unit,
-    updateReadStatus: (Int) -> Unit,
-    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
-    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
-) {
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .padding(paddingValues)
     ) {
         val unReadCount = feedState.count { !it.isRead }
 
@@ -468,6 +419,46 @@ private fun FeedWithContentView(
             onDrawerMenuClick = onDrawerMenuClick,
         )
 
+        when {
+            loadingState is NoFeedSourcesStatus -> NoFeedsSourceView(
+                onAddFeedClick = {
+                    onAddFeedClick()
+                },
+            )
+
+            !loadingState.isLoading() && feedState.isEmpty() -> EmptyFeedView(
+                onReloadClick = {
+                    onRefresh()
+                },
+            )
+
+            else -> FeedWithContentView(
+                paddingValues = paddingValues,
+                feedState = feedState,
+                loadingState = loadingState,
+                listState = listState,
+                updateReadStatus = updateReadStatus,
+                onFeedItemClick = onFeedItemClick,
+                onFeedItemLongClick = onFeedItemLongClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun FeedWithContentView(
+    modifier: Modifier = Modifier,
+    paddingValues: PaddingValues,
+    feedState: List<FeedItem>,
+    loadingState: FeedUpdateStatus,
+    listState: LazyListState,
+    updateReadStatus: (Int) -> Unit,
+    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
+    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
+) {
+    Column(
+        modifier = modifier,
+    ) {
         FeedLoader(loadingState = loadingState)
 
         Box(

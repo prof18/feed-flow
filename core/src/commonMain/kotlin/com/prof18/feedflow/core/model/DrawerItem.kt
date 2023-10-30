@@ -6,7 +6,13 @@ data class NavDrawerState(
     val timeline: List<DrawerItem> = listOf(),
     val categories: List<DrawerItem> = listOf(),
     val feedSourcesByCategory: Map<FeedSourceCategoryWrapper, List<DrawerItem>> = mapOf(),
-)
+) {
+    fun isEmpty(): Boolean =
+        categories.isEmpty() && feedSourcesByCategory.isEmpty()
+
+    fun isNotEmpty(): Boolean =
+        categories.isNotEmpty() || feedSourcesByCategory.isNotEmpty()
+}
 
 sealed class DrawerItem {
     data object Timeline : DrawerItem()

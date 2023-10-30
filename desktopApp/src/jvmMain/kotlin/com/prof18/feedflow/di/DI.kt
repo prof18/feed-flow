@@ -16,6 +16,7 @@ object DI {
                     factory {
                         NewVersionChecker(
                             dispatcherProvider = get(),
+                            logger = getWith("NewVersionChecker"),
                         )
                     }
                 },

@@ -73,6 +73,7 @@ internal actual val platformModule: Module = module {
     factory<HtmlRetriever> {
         JvmHtmlRetriever(
             dispatcherProvider = get(),
+            logger = getWith("JvmHtmlRetriever"),
         )
     }
 }

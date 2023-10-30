@@ -1,5 +1,6 @@
 package com.prof18.feedflow.versionchecker
 
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.di.DI
 import com.prof18.feedflow.utils.DispatcherProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +13,7 @@ import java.util.Properties
 
 internal class NewVersionChecker(
     private val dispatcherProvider: DispatcherProvider,
+    private val logger: Logger,
 ) {
 
     private val newVersionMutableState: MutableStateFlow<NewVersionState> =
@@ -20,43 +22,48 @@ internal class NewVersionChecker(
     val newVersionState = newVersionMutableState.asStateFlow()
 
     suspend fun notifyIfNewVersionIsAvailable() = withContext(dispatcherProvider.io) {
-        val doc = Jsoup.connect("https://github.com/prof18/feed-flow/releases/latest").get()
+        try {
+            val doc = Jsoup.connect("https://github.com/prof18/feed-flow/releases/latest").get()
 
-        val content = doc.text()
-        val regex = "Release (\\d+\\.\\d+\\.\\d+-\\w+)".toRegex()
+            val content = doc.text()
+            val regex = "Release (\\d+\\.\\d+\\.\\d+-\\w+)".toRegex()
 
-        val newVersionString = regex.find(content)?.value
-            ?.replace("-desktop", "")
-            ?.replace("Release ", "")
+            val newVersionString = regex.find(content)?.value
+                ?.replace("-desktop", "")
+                ?.replace("Release ", "")
 
-        val newVersion = newVersionString
-            ?.replace(".", "")
-            ?.toIntOrNull()
-            ?: return@withContext
+            val newVersion = newVersionString
+                ?.replace(".", "")
+                ?.toIntOrNull()
+                ?: return@withContext
 
-        val properties = Properties()
-        val propsFile = DI::class.java.classLoader?.getResourceAsStream("props.properties")
-            ?: InputStream.nullInputStream()
-        properties.load(propsFile)
+            val properties = Properties()
+            val propsFile = DI::class.java.classLoader?.getResourceAsStream("props.properties")
+                ?: InputStream.nullInputStream()
+            properties.load(propsFile)
 
-        val version = properties["version"]
-            ?.toString()
-            ?.replace(".", "")
-            ?.toIntOrNull()
-            ?: return@withContext
+            val version = properties["version"]
+                ?.toString()
+                ?.replace(".", "")
+                ?.toIntOrNull()
+                ?: return@withContext
 
-        val versionLink = """
-            https://github.com/prof18/feed-flow/releases/download/$newVersionString-desktop/FeedFlow-$newVersionString.dmg
-        """.trimIndent()
+            val versionLink = """
+                https://github.com/prof18/feed-flow/releases/download/$newVersionString-desktop/FeedFlow-$newVersionString.dmg
+            """.trimIndent()
 
-        newVersionMutableState.update {
-            if (newVersion > version) {
-                NewVersionState.NewVersion(
-                    downloadLink = versionLink,
-                )
-            } else {
-                NewVersionState.NoNewVersion
+            newVersionMutableState.update {
+                if (newVersion > version) {
+                    NewVersionState.NewVersion(
+                        downloadLink = versionLink,
+                    )
+                } else {
+                    NewVersionState.NoNewVersion
+                }
             }
+        } catch (e: Exception) {
+            // Do nothing
+            logger.e(e) { "Error while trying to notify if a new version is available" }
         }
     }
 

@@ -181,6 +181,7 @@
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				7555FF7C242A565900829871 /* Products */,
 				7555FFB0242A642200829871 /* Frameworks */,
+				D9A201890E050A39547A1B1E /* xcschemes */,
 			);
 			sourceTree = "<group>";
 		};
@@ -402,6 +403,14 @@
 				CC323E1A29D22E1500138233 /* Route.swift */,
 			);
 			path = Navigation;
+			sourceTree = "<group>";
+		};
+		D9A201890E050A39547A1B1E /* xcschemes */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = xcschemes;
+			path = FeedFlow.xcodeproj/project.xcworkspace/xcuserdata/mg.xcuserdatad/xcschemes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -922,7 +931,7 @@
 			repositoryURL = "https://github.com/rickclephas/KMP-NativeCoroutines.git";
 			requirement = {
 				kind = exactVersion;
-				version = "1.0.0-ALPHA-18";
+				version = "1.0.0-ALPHA-19";
 			};
 		};
 		CC4B803929D98BB20004A0AB /* XCRemoteSwiftPackageReference "Nuke" */ = {

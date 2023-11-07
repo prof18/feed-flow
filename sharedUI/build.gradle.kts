@@ -17,7 +17,7 @@ kotlin {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
         }
 
-        val commonMain by getting {
+       commonMain {
             dependencies {
                 implementation(project(":i18n"))
                 implementation(project(":core"))
@@ -29,10 +29,6 @@ kotlin {
                 implementation(compose.materialIconsExtended)
             }
         }
-
-        val androidMain by getting
-
-        val desktopMain by getting
     }
 }
 
@@ -41,7 +37,6 @@ android {
     compileSdk = libs.versions.android.compile.sdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.min.sdk.get().toInt()
-        targetSdk = libs.versions.android.target.sdk.get().toInt()
     }
 
     compileOptions {

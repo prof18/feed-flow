@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -17,7 +18,7 @@ kotlin {
         }
     }
 
-    jvm("desktop") {
+    jvm {
         jvmToolchain(17)
     }
 
@@ -46,23 +47,18 @@ kotlin {
         }
     }
 
-    targets.withType<KotlinNativeTarget>().configureEach {
-        compilations.configureEach {
-            compilerOptions.configure {
-                // Try out preview custom allocator in K/N 1.9
-                // https://kotlinlang.org/docs/whatsnew19.html#preview-of-custom-memory-allocator
-                freeCompilerArgs.add("-Xallocator=custom")
-            }
-        }
-    }
+    applyDefaultHierarchyTemplate()
 
     sourceSets {
+        tasks.withType<KotlinCompile>().all {
+            kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
+        }
 
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
         }
 
-        val commonMain by getting {
+       commonMain {
             dependencies {
                 implementation(libs.sqldelight.runtime)
                 implementation(libs.sqldelight.coroutine.extensions)
@@ -77,7 +73,8 @@ kotlin {
                 api(libs.touchlab.kermit)
             }
         }
-        val commonTest by getting {
+
+        commonTest {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.kotlin.test.junit)
@@ -87,7 +84,7 @@ kotlin {
         }
 
         val commonJvmAndroidMain by creating {
-            dependsOn(commonMain)
+            dependsOn(commonMain.get())
 
             dependencies {
                 implementation(libs.jsoup)
@@ -95,11 +92,11 @@ kotlin {
         }
 
         val commonJvmAndroidTest by creating {
-            dependsOn(commonTest)
+            dependsOn(commonTest.get())
         }
 
         val commonMobileMain by creating {
-            dependsOn(commonMain)
+            dependsOn(commonMain.get())
 
             dependencies {
                 implementation(libs.crashk.ios)
@@ -107,7 +104,7 @@ kotlin {
             }
         }
 
-        val androidMain by getting {
+        androidMain {
             dependsOn(commonJvmAndroidMain)
             dependsOn(commonMobileMain)
 
@@ -119,6 +116,7 @@ kotlin {
                 implementation(libs.touchlab.kermit.crashlytics)
             }
         }
+
         val androidUnitTest by getting {
             dependsOn(commonJvmAndroidTest)
 
@@ -129,37 +127,23 @@ kotlin {
                 implementation(libs.androidx.test.core.ktx)
             }
         }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
+
+        iosMain {
             dependsOn(commonMobileMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
 
             dependencies {
                 implementation(libs.sqldelight.native.driver)
-
                 api(libs.touchlab.kermit.simple)
             }
         }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
 
+        iosTest {
             dependencies {
                 implementation(libs.sqldelight.native.driver)
             }
         }
 
-        val desktopMain by getting {
+        jvmMain {
             dependsOn(commonJvmAndroidMain)
 
             dependencies {
@@ -168,9 +152,9 @@ kotlin {
                 api(libs.sentry)
             }
         }
-        val desktopTest by getting {
+
+        jvmTest {
             dependsOn(commonJvmAndroidTest)
-            dependsOn(commonTest)
         }
     }
 }
@@ -191,7 +175,6 @@ android {
     compileSdk = libs.versions.android.compile.sdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.min.sdk.get().toInt()
-        targetSdk = libs.versions.android.target.sdk.get().toInt()
     }
 
     compileOptions {

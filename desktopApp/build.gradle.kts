@@ -17,7 +17,7 @@ kotlin {
         withJava()
     }
     sourceSets {
-        val jvmMain by getting {
+        jvmMain {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             dependencies {
                 implementation(project(":shared"))
@@ -38,7 +38,6 @@ kotlin {
                 implementation(libs.slf4j.nop)
             }
         }
-        val jvmTest by getting
     }
 }
 

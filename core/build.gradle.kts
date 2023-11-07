@@ -21,25 +21,9 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
         }
-
-        val commonMain by getting
-
-        val androidMain by getting
-
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-        }
-        val desktopMain by getting
     }
 }
 
@@ -48,7 +32,6 @@ android {
     compileSdk = libs.versions.android.compile.sdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.min.sdk.get().toInt()
-        targetSdk = libs.versions.android.target.sdk.get().toInt()
     }
 
     compileOptions {

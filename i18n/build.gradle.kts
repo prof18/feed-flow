@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
@@ -13,7 +16,7 @@ kotlin {
         }
     }
 
-    jvm("desktop") {
+    jvm {
         jvmToolchain(17)
     }
 
@@ -28,35 +31,33 @@ kotlin {
         }
     }
 
+    // TODO: remove when Moko resource fix the issue
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
+        tasks.withType<KotlinCompile>().all {
+            kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
+        }
 
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
         }
 
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(libs.moko.resources)
                 api(libs.moko.resourcesCompose)
             }
         }
 
-        val androidMain by getting {
-            dependsOn(commonMain)
+        // TODO: remove when Moko resource fix the issue
+        androidMain {
+            dependsOn(commonMain.get())
         }
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-        }
-
-        val desktopMain by getting {
-            dependsOn(commonMain)
+        // TODO: remove when Moko resource fix the issue
+        jvmMain {
+            dependsOn(commonMain.get())
         }
     }
 }
@@ -66,7 +67,6 @@ android {
     compileSdk = libs.versions.android.compile.sdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.min.sdk.get().toInt()
-        targetSdk = libs.versions.android.target.sdk.get().toInt()
     }
 
     compileOptions {

@@ -79,6 +79,7 @@ internal fun HomeScreen(
     val feedState by homeViewModel.feedState.collectAsState()
     val navDrawerState by homeViewModel.navDrawerState.collectAsState()
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
+    val unReadCount by homeViewModel.unreadCountFlow.collectAsState(initial = 0)
 
     LaunchedEffect(Unit) {
         homeViewModel.errorState.collect { errorState ->
@@ -101,6 +102,7 @@ internal fun HomeScreen(
                 loadingState = loadingState,
                 feedState = feedState,
                 listState = listState,
+                unReadCount = unReadCount,
                 onAddFeedClick = onAddFeedClick,
             )
         }
@@ -114,6 +116,7 @@ internal fun HomeScreen(
                 loadingState = loadingState,
                 feedState = feedState,
                 listState = listState,
+                unReadCount = unReadCount,
                 onAddFeedClick = onAddFeedClick,
             )
         }
@@ -127,6 +130,7 @@ internal fun HomeScreen(
                 loadingState = loadingState,
                 feedState = feedState,
                 listState = listState,
+                unReadCount = unReadCount,
                 onAddFeedClick = onAddFeedClick,
             )
         }
@@ -143,6 +147,7 @@ private fun CompactView(
     loadingState: FeedUpdateStatus,
     feedState: List<FeedItem>,
     listState: LazyListState,
+    unReadCount: Long,
     onAddFeedClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -154,6 +159,7 @@ private fun CompactView(
             loadingState = loadingState,
             feedState = feedState,
             listState = listState,
+            unReadCount = unReadCount,
             onRefresh = {
                 homeViewModel.getNewFeeds()
             },
@@ -209,6 +215,7 @@ private fun CompactView(
                 loadingState = loadingState,
                 feedState = feedState,
                 listState = listState,
+                unReadCount = unReadCount,
                 onRefresh = {
                     homeViewModel.getNewFeeds()
                 },
@@ -251,6 +258,7 @@ private fun MediumView(
     loadingState: FeedUpdateStatus,
     feedState: List<FeedItem>,
     listState: LazyListState,
+    unReadCount: Long,
     onAddFeedClick: () -> Unit,
 ) {
     var isDrawerMenuFullVisible by remember {
@@ -290,6 +298,7 @@ private fun MediumView(
             loadingState = loadingState,
             feedState = feedState,
             listState = listState,
+            unReadCount = unReadCount,
             onRefresh = {
                 homeViewModel.getNewFeeds()
             },
@@ -325,6 +334,7 @@ private fun ExpandedView(
     loadingState: FeedUpdateStatus,
     feedState: List<FeedItem>,
     listState: LazyListState,
+    unReadCount: Long,
     onAddFeedClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -361,6 +371,7 @@ private fun ExpandedView(
             loadingState = loadingState,
             feedState = feedState,
             listState = listState,
+            unReadCount = unReadCount,
             onRefresh = {
                 homeViewModel.getNewFeeds()
             },
@@ -396,9 +407,10 @@ private fun HomeScreenContent(
     loadingState: FeedUpdateStatus,
     feedState: List<FeedItem>,
     listState: LazyListState,
-    modifier: Modifier = Modifier,
+    unReadCount: Long,
     showDrawerMenu: Boolean = false,
     isDrawerMenuOpen: Boolean = false,
+    modifier: Modifier = Modifier,
     onDrawerMenuClick: () -> Unit = {},
     onRefresh: () -> Unit = {},
     updateReadStatus: (Int) -> Unit,
@@ -410,7 +422,6 @@ private fun HomeScreenContent(
         modifier = modifier
             .padding(paddingValues),
     ) {
-        val unReadCount = feedState.count { !it.isRead }
 
         FeedContentToolbar(
             unReadCount = unReadCount,
@@ -522,7 +533,7 @@ private fun ColumnScope.FeedLoader(loadingState: FeedUpdateStatus) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedContentToolbar(
-    unReadCount: Int,
+    unReadCount: Long,
     showDrawerMenu: Boolean,
     isDrawerOpen: Boolean,
     onDrawerMenuClick: () -> Unit,

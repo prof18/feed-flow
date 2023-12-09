@@ -1,10 +1,9 @@
 package com.prof18.feedflow.di
 
 import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import co.touchlab.kermit.Logger
-import com.prof18.feedflow.data.DatabaseHelper
-import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.HtmlRetriever
@@ -17,7 +16,6 @@ import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.ImportExportViewModel
-import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
@@ -54,7 +52,7 @@ internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
 @OptIn(ExperimentalSettingsImplementation::class)
 internal actual val platformModule: Module = module {
     single<SqlDriver> {
-        NativeSqliteDriver(FeedFlowDB.Schema, DatabaseHelper.DATABASE_NAME)
+        createDatabaseDriver()
     }
 
     single<DispatcherProvider> {

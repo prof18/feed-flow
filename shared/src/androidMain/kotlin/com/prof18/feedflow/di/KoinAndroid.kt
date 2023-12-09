@@ -2,9 +2,7 @@ package com.prof18.feedflow.di
 
 import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import com.prof18.feedflow.data.DatabaseHelper
-import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.HtmlRetriever
@@ -32,10 +30,8 @@ internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
 
 internal actual val platformModule: Module = module {
     single<SqlDriver> {
-        AndroidSqliteDriver(
-            FeedFlowDB.Schema,
-            get(),
-            DatabaseHelper.DATABASE_NAME,
+        createDatabaseDriver(
+            context = get(),
         )
     }
 

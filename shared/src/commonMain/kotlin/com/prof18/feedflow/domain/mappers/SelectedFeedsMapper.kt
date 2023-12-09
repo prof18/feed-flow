@@ -18,9 +18,11 @@ internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter) = FeedItem(
         url = feed_source_url,
         title = feed_source_title,
         category = if (feed_source_category_title != null && feed_source_category_id != null) {
+            @Suppress("RedundantRequireNotNullCall")
+            // It's required because the variables come from another module
             FeedSourceCategory(
-                id = feed_source_category_id,
-                title = feed_source_category_title,
+                id = requireNotNull(feed_source_category_id),
+                title = requireNotNull(feed_source_category_title),
             )
         } else {
             null
@@ -31,7 +33,11 @@ internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter) = FeedItem(
     isRead = is_read,
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {
-        dateFormatter.formatDate(pub_date)
+        @Suppress("RedundantRequireNotNullCall")
+        // It's required because the variables come from another module
+        dateFormatter.formatDate(
+            requireNotNull(pub_date),
+        )
     } else {
         null
     },

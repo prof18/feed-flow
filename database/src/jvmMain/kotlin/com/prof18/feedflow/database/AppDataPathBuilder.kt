@@ -1,6 +1,6 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.database
 
-import com.prof18.feedflow.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.AppEnvironment
 import java.io.File
 
 internal object AppDataPathBuilder {

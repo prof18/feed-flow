@@ -1,16 +1,15 @@
-package com.prof18.feedflow
+package com.prof18.feedflow.database
 
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import co.touchlab.kermit.Logger
-import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.db.FeedFlowDB
-import com.prof18.feedflow.utils.AppEnvironment
 import java.io.File
 import java.util.Properties
 
-internal fun initDatabase(
+fun createDatabaseDriver(
     appEnvironment: AppEnvironment,
     logger: Logger,
 ): SqlDriver {

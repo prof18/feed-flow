@@ -30,7 +30,6 @@ internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter) = FeedItem(
         lastSyncTimestamp = feed_source_last_sync_timestamp,
         logoUrl = feed_source_logo_url,
     ),
-    isRead = is_read,
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {
         @Suppress("RedundantRequireNotNullCall")

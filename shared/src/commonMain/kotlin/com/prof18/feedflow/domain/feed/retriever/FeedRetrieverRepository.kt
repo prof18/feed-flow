@@ -2,6 +2,7 @@ package com.prof18.feedflow.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
@@ -27,10 +28,13 @@ import com.prof18.feedflow.utils.executeWithRetry
 import com.prof18.feedflow.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
@@ -60,10 +64,15 @@ internal class FeedRetrieverRepository(
     private val mutableFeedState: MutableStateFlow<List<FeedItem>> = MutableStateFlow(emptyList())
     val feedState = mutableFeedState.asStateFlow()
 
+    private val currentFeedFilterMutableState: MutableStateFlow<FeedFilter> = MutableStateFlow(FeedFilter.Timeline)
+    val currentFeedFilter: StateFlow<FeedFilter> = currentFeedFilterMutableState.asStateFlow()
+
     fun getFeeds() {
         try {
             val feeds = executeWithRetry {
-                databaseHelper.getFeedItems()
+                databaseHelper.getFeedItems(
+                    feedFilter = currentFeedFilterMutableState.value,
+                )
             }
             mutableFeedState.update {
                 feeds.map { it.toFeedItem(dateFormatter) }
@@ -75,6 +84,21 @@ internal class FeedRetrieverRepository(
             }
         }
     }
+
+    fun updateFeedFilter(feedFilter: FeedFilter) {
+        currentFeedFilterMutableState.update {
+            feedFilter
+        }
+        getFeeds()
+    }
+
+    fun getUnreadFeedCountFlow(): Flow<Long> =
+        currentFeedFilter.flatMapLatest { feedFilter ->
+            databaseHelper.getUnreadFeedCountFlow(
+                feedFilter = feedFilter,
+            )
+        }
+
     suspend fun clearReadFeeds() {
         databaseHelper.updateNewStatus()
         getFeeds()

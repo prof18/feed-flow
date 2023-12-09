@@ -84,7 +84,7 @@ internal fun HomeScreen(
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
     val navDrawerState by homeViewModel.navDrawerState.collectAsStateWithLifecycle()
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsStateWithLifecycle()
-    val unReadCount = feedState.count { !it.isRead }
+    val unReadCount by homeViewModel.unreadCountFlow.collectAsStateWithLifecycle(initialValue = 0)
 
     val snackbarHostState = remember { SnackbarHostState() }
     val pullRefreshState = rememberPullRefreshState(
@@ -283,7 +283,7 @@ private fun FeedSourceImage(imageUrl: String) {
 @Suppress("LongMethod")
 @Composable
 private fun HomeScaffold(
-    unReadCount: Int,
+    unReadCount: Long,
     homeViewModel: HomeViewModel,
     scope: CoroutineScope,
     listState: LazyListState,

@@ -8,7 +8,6 @@ data class FeedItem(
     val content: String?,
     val imageUrl: String?,
     val feedSource: FeedSource,
-    val isRead: Boolean,
     val pubDateMillis: Long?,
     val dateString: String?,
     val commentsUrl: String?,

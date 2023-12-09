@@ -5,9 +5,11 @@ import app.cash.sqldelight.TransactionWithoutReturn
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrDefault
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
@@ -97,9 +99,12 @@ class DatabaseHelper constructor(
             }
             .flowOn(backgroundDispatcher)
 
-    fun getFeedItems(): List<SelectFeeds> =
+    fun getFeedItems(feedFilter: FeedFilter): List<SelectFeeds> =
         dbRef.feedItemQueries
-            .selectFeeds()
+            .selectFeeds(
+                feedSourceId = feedFilter.getFeedSourceId(),
+                feedSourceCategoryId = feedFilter.getCategoryId(),
+            )
             .executeAsList()
 
     suspend fun insertCategories(categories: List<CategoryName>) =
@@ -221,6 +226,19 @@ class DatabaseHelper constructor(
             dbRef.feedSourceQueries.deleteAllLastSync()
         }
 
+    fun getUnreadFeedCountFlow(feedFilter: FeedFilter): Flow<Long> =
+        dbRef.feedItemQueries
+            .countUnreadFeeds(
+                feedSourceId = feedFilter.getFeedSourceId(),
+                feedSourceCategoryId = feedFilter.getCategoryId(),
+            )
+            .asFlow()
+            .catch {
+                logger.e(it) { "Something wrong while getting data from Database" }
+            }
+            .mapToOneOrDefault(0, backgroundDispatcher)
+            .flowOn(backgroundDispatcher)
+
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,
@@ -229,6 +247,38 @@ class DatabaseHelper constructor(
         withContext(coroutineContext) {
             this@transactionWithContext.transaction(noEnclosing) {
                 body()
+            }
+        }
+    }
+
+    private fun FeedFilter.getFeedSourceId(): Int? {
+        return when (this) {
+            is FeedFilter.Category -> {
+                null
+            }
+
+            is FeedFilter.Source -> {
+                feedSource.id
+            }
+
+            FeedFilter.Timeline -> {
+                null
+            }
+        }
+    }
+
+    private fun FeedFilter.getCategoryId(): Long? {
+        return when (this) {
+            is FeedFilter.Category -> {
+                feedCategory.id
+            }
+
+            is FeedFilter.Source -> {
+                null
+            }
+
+            FeedFilter.Timeline -> {
+                null
             }
         }
     }

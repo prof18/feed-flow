@@ -19,14 +19,29 @@ insertFeedItem:
 INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date, comments_url)
 VALUES (?,?,?,?,?,?,?,?, ?);
 
+countUnreadFeeds:
+SELECT COUNT(*) FROM feed_item
+INNER JOIN feed_source
+ON feed_item.feed_source_id == feed_source.url_hash
+LEFT JOIN feed_source_category
+ON feed_source.category_id == feed_source_category.id
+WHERE is_new = 1 AND is_read = 0
+AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
+AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCategoryId);
+
 selectFeeds:
-SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, is_read, comments_url, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.id AS feed_source_category_id, feed_source_category.title AS feed_source_category_title, feed_source.logo_url AS feed_source_logo_url FROM feed_item
+SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, comments_url, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.id AS feed_source_category_id, feed_source_category.title AS feed_source_category_title, feed_source.logo_url AS feed_source_logo_url FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
 ON feed_source.category_id == feed_source_category.id
 WHERE is_new = 1
+AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
+AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source_category_id = :feedSourceCategoryId)
 ORDER BY pub_date DESC;
+-- LIMIT :limit OFFSET :offset;
 
 updateReadStatus:
 UPDATE feed_item

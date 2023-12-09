@@ -37,7 +37,7 @@ import dev.icerock.moko.resources.compose.stringResource
 @Suppress("LongParameterList")
 @Composable
 internal fun HomeAppBar(
-    unReadCount: Int,
+    unReadCount: Long,
     showDrawerMenu: Boolean,
     isDrawerOpen: Boolean,
     onDrawerMenuClick: () -> Unit,

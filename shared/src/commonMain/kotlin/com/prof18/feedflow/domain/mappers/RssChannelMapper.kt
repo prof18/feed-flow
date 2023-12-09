@@ -51,7 +51,6 @@ internal class RssChannelMapper(
                     content = null,
                     imageUrl = imageUrl,
                     feedSource = feedSource,
-                    isRead = false,
                     pubDateMillis = dateMillis,
                     dateString = if (dateMillis != null) {
                         dateFormatter.formatDate(dateMillis)

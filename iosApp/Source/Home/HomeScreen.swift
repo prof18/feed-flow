@@ -119,7 +119,7 @@ struct HomeScreen: View {
         }
         .task {
             do {
-                let stream = asyncSequence(for: homeViewModel.countState)
+                let stream = asyncSequence(for: homeViewModel.unreadCountFlow)
                 for try await state in stream {
                     self.unreadCount = Int(truncating: state)
                 }

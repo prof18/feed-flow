@@ -20,13 +20,14 @@ import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -40,19 +41,17 @@ class HomeViewModel internal constructor(
     val loadingState: StateFlow<FeedUpdateStatus> = feedRetrieverRepository.updateState
 
     // Feeds
-    private val mutableFeedState: MutableStateFlow<List<FeedItem>> = MutableStateFlow(emptyList())
-
     @NativeCoroutinesState
-    val feedState = mutableFeedState.asStateFlow()
+    val feedState: StateFlow<List<FeedItem>> = feedRetrieverRepository.feedState
 
     @NativeCoroutines
-    val countState = feedState.map { it.count { item -> !item.isRead } }
+    val unreadCountFlow: Flow<Long> = feedRetrieverRepository.getUnreadFeedCountFlow()
 
     // Error
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
 
     @NativeCoroutines
-    val errorState = mutableUIErrorState.asSharedFlow()
+    val errorState: SharedFlow<UIErrorState?> = mutableUIErrorState.asSharedFlow()
 
     // Drawer State
     private val drawerMutableState = MutableStateFlow(NavDrawerState())
@@ -62,13 +61,11 @@ class HomeViewModel internal constructor(
 
     private var lastUpdateIndex = 0
 
-    private val currentFeedFilterMutableState: MutableStateFlow<FeedFilter> = MutableStateFlow(FeedFilter.Timeline)
-
     @NativeCoroutinesState
-    val currentFeedFilter = currentFeedFilterMutableState.asStateFlow()
+    val currentFeedFilter = feedRetrieverRepository.currentFeedFilter
 
     init {
-        currentFeedFilterMutableState.value = FeedFilter.Timeline
+        feedRetrieverRepository.updateFeedFilter(FeedFilter.Timeline)
         initDrawerData()
         observeErrorState()
         observeFeed()
@@ -77,32 +74,6 @@ class HomeViewModel internal constructor(
 
     private fun observeFeed() {
         feedRetrieverRepository.getFeeds()
-
-        scope.launch {
-            feedRetrieverRepository.feedState
-                .combine(currentFeedFilter) { items, filter ->
-                    lastUpdateIndex = 0
-                    when (filter) {
-                        is FeedFilter.Category -> {
-                            items.filter { feedItem ->
-                                feedItem.feedSource.category?.id == filter.feedCategory.id
-                            }
-                        }
-
-                        is FeedFilter.Source -> {
-                            items.filter { feedItem ->
-                                feedItem.feedSource.id == filter.feedSource.id
-                            }
-                        }
-
-                        FeedFilter.Timeline -> {
-                            items
-                        }
-                    }
-                }.collect { feedItems ->
-                    mutableFeedState.value = feedItems
-                }
-        }
     }
 
     private fun initDrawerData() {
@@ -181,25 +152,19 @@ class HomeViewModel internal constructor(
 
         scope.launch {
             val urlToUpdates = mutableListOf<FeedItemId>()
-
             val items = feedState.value.toMutableList()
             if (lastVisibleIndex <= lastUpdateIndex) {
                 return@launch
             }
             for (index in lastUpdateIndex..lastVisibleIndex) {
                 items.getOrNull(index)?.let { item ->
-                    if (!item.isRead) {
-                        urlToUpdates.add(
-                            FeedItemId(
-                                id = item.id,
-                            ),
-                        )
-                    }
-                    items[index] = item.copy(isRead = true)
+                    urlToUpdates.add(
+                        FeedItemId(
+                            id = item.id,
+                        ),
+                    )
                 }
             }
-            mutableFeedState.update { items }
-
             feedRetrieverRepository.updateReadStatus(urlToUpdates)
             lastUpdateIndex = lastVisibleIndex
         }
@@ -242,7 +207,7 @@ class HomeViewModel internal constructor(
     fun onFeedFilterSelected(selectedFeedFilter: FeedFilter) {
         scope.launch {
             feedRetrieverRepository.clearReadFeeds()
-            currentFeedFilterMutableState.update { selectedFeedFilter }
+            feedRetrieverRepository.updateFeedFilter(selectedFeedFilter)
         }
     }
 }

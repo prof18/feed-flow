@@ -1,10 +1,8 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
-    alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
     alias(libs.plugins.native.coroutines)
 }
@@ -60,9 +58,7 @@ kotlin {
 
        commonMain {
             dependencies {
-                implementation(libs.sqldelight.runtime)
-                implementation(libs.sqldelight.coroutine.extensions)
-                implementation(libs.sqldelight.primitive.adapter)
+                implementation(project(":database"))
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
@@ -109,7 +105,6 @@ kotlin {
             dependsOn(commonMobileMain)
 
             dependencies {
-                implementation(libs.sqldelight.android.driver)
                 implementation(libs.androidx.lifecycle.viewModel.ktx)
                 implementation(libs.koin.android)
                 implementation(libs.crashk.ios)
@@ -123,7 +118,6 @@ kotlin {
             dependencies {
                 implementation(libs.junit)
                 implementation(libs.org.robolectric)
-                implementation(libs.sqldelight.sqlite.driver)
                 implementation(libs.androidx.test.core.ktx)
             }
         }
@@ -132,14 +126,7 @@ kotlin {
             dependsOn(commonMobileMain)
 
             dependencies {
-                implementation(libs.sqldelight.native.driver)
                 api(libs.touchlab.kermit.simple)
-            }
-        }
-
-        iosTest {
-            dependencies {
-                implementation(libs.sqldelight.native.driver)
             }
         }
 
@@ -147,7 +134,6 @@ kotlin {
             dependsOn(commonJvmAndroidMain)
 
             dependencies {
-                implementation(libs.sqldelight.sqlite.driver)
                 implementation(libs.kotlinx.coroutines.swing)
                 api(libs.sentry)
             }
@@ -155,17 +141,6 @@ kotlin {
 
         jvmTest {
             dependsOn(commonJvmAndroidTest)
-        }
-    }
-}
-
-sqldelight {
-    databases {
-        create("FeedFlowDB") {
-            packageName.set("com.prof18.feedflow.db")
-            schemaOutputDirectory.set(file("src/commonMain/sqldelight/com/prof18/feedflow/schema"))
-
-            verifyMigrations.set(true)
         }
     }
 }

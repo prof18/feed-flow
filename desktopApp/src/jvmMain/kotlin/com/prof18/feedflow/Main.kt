@@ -39,6 +39,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.prof18.feedflow.about.AboutContent
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.di.DI
 import com.prof18.feedflow.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.home.FeedFlowMenuBar
@@ -51,7 +52,6 @@ import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.ui.components.NewVersionBanner
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.rememberDesktopDarkTheme
-import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.UserFeedbackReporter
 import com.prof18.feedflow.utils.initSentry
 import com.prof18.feedflow.versionchecker.NewVersionChecker

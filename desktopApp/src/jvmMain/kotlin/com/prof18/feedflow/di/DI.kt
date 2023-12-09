@@ -1,6 +1,6 @@
 package com.prof18.feedflow.di
 
-import com.prof18.feedflow.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.versionchecker.NewVersionChecker
 import org.koin.core.Koin
 import org.koin.dsl.module

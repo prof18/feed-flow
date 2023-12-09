@@ -1,6 +1,8 @@
 package com.prof18.feedflow.di
 
 import app.cash.sqldelight.db.SqlDriver
+import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.domain.DateFormatter
 import com.prof18.feedflow.domain.HtmlParser
 import com.prof18.feedflow.domain.HtmlRetriever
@@ -8,9 +10,7 @@ import com.prof18.feedflow.domain.JvmAndroidDateFormatter
 import com.prof18.feedflow.domain.JvmHtmlParser
 import com.prof18.feedflow.domain.JvmHtmlRetriever
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler
-import com.prof18.feedflow.initDatabase
 import com.prof18.feedflow.presentation.BaseViewModel
-import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
@@ -40,7 +40,7 @@ internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
 private fun getDatabaseModule(appEnvironment: AppEnvironment): Module =
     module {
         single<SqlDriver> {
-            initDatabase(
+            createDatabaseDriver(
                 appEnvironment = appEnvironment,
                 logger = getWith("initDatabase"),
             )

@@ -1,4 +1,4 @@
-package com.prof18.feedflow.utils
+package com.prof18.feedflow.core.utils
 
 sealed class AppEnvironment {
     data object Debug : AppEnvironment()

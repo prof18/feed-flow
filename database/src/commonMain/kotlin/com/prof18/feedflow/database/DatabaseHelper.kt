@@ -1,4 +1,4 @@
-package com.prof18.feedflow.data
+package com.prof18.feedflow.database
 
 import app.cash.sqldelight.Transacter
 import app.cash.sqldelight.TransactionWithoutReturn
@@ -9,6 +9,7 @@ import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
@@ -16,7 +17,6 @@ import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item
 import com.prof18.feedflow.db.Feed_source
 import com.prof18.feedflow.db.SelectFeeds
-import com.prof18.feedflow.domain.model.FeedItemId
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 @Suppress("TooManyFunctions")
-internal class DatabaseHelper(
+class DatabaseHelper constructor(
     sqlDriver: SqlDriver,
     private val backgroundDispatcher: CoroutineDispatcher,
     private val logger: Logger,

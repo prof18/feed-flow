@@ -3,8 +3,9 @@ package com.prof18.feedflow.di
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
-import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.data.SettingsHelper
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.domain.browser.BrowserSettingsRepositoryImpl
 import com.prof18.feedflow.domain.feed.FeedSourceLogoRetriever
@@ -17,7 +18,6 @@ import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.ImportExportViewModel
-import com.prof18.feedflow.utils.AppEnvironment
 import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

@@ -5,7 +5,7 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
-import com.prof18.feedflow.data.DatabaseHelper
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.domain.model.NotValidFeedSources
 import com.prof18.feedflow.domain.opml.OpmlFeedHandler

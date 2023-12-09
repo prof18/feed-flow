@@ -67,13 +67,18 @@ internal class FeedRetrieverRepository(
     private val currentFeedFilterMutableState: MutableStateFlow<FeedFilter> = MutableStateFlow(FeedFilter.Timeline)
     val currentFeedFilter: StateFlow<FeedFilter> = currentFeedFilterMutableState.asStateFlow()
 
-    fun getFeeds() {
+    private var currentPage: Int = 0
+
+    suspend fun getFeeds() {
         try {
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
                     feedFilter = currentFeedFilterMutableState.value,
+                    pageSize = PAGE_SIZE,
+                    offset = 0,
                 )
             }
+            currentPage = 1
             mutableFeedState.update {
                 feeds.map { it.toFeedItem(dateFormatter) }
             }
@@ -85,7 +90,32 @@ internal class FeedRetrieverRepository(
         }
     }
 
-    fun updateFeedFilter(feedFilter: FeedFilter) {
+    suspend fun loadMoreFeeds() {
+        // Stop loading if there are no more items
+        if (mutableFeedState.value.size % PAGE_SIZE != 0L) {
+            return
+        }
+        try {
+            val feeds = executeWithRetry {
+                databaseHelper.getFeedItems(
+                    feedFilter = currentFeedFilterMutableState.value,
+                    pageSize = PAGE_SIZE,
+                    offset = currentPage * PAGE_SIZE,
+                )
+            }
+            currentPage += 1
+            mutableFeedState.update { currentItems ->
+                currentItems + feeds.map { it.toFeedItem(dateFormatter) }
+            }
+        } catch (e: Throwable) {
+            logger.e(e) { "Something wrong while getting data from Database" }
+            errorMutableState.update {
+                DatabaseError
+            }
+        }
+    }
+
+    suspend fun updateFeedFilter(feedFilter: FeedFilter) {
         currentFeedFilterMutableState.update {
             feedFilter
         }
@@ -106,7 +136,6 @@ internal class FeedRetrieverRepository(
 
     suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) {
         databaseHelper.updateReadStatus(itemsToUpdates.toList())
-        getFeeds()
     }
 
     suspend fun fetchFeeds(
@@ -337,5 +366,9 @@ internal class FeedRetrieverRepository(
         val databaseVersion = databaseHelper.getDatabaseVersion()
         val isMigrationDone = settingsHelper.isFeedSourceImageMigrationDone()
         return !isMigrationDone && databaseVersion >= 4.0
+    }
+
+    private companion object {
+        private const val PAGE_SIZE = 40L
     }
 }

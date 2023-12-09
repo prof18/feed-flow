@@ -68,13 +68,20 @@ class DatabaseHelper constructor(
             }
             .flowOn(backgroundDispatcher)
 
-    fun getFeedItems(feedFilter: FeedFilter): List<SelectFeeds> =
+    suspend fun getFeedItems(
+        feedFilter: FeedFilter,
+        pageSize: Long,
+        offset: Long,
+    ): List<SelectFeeds> = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries
             .selectFeeds(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
+                pageSize = pageSize,
+                offset = offset,
             )
             .executeAsList()
+    }
 
     suspend fun insertCategories(categories: List<CategoryName>) =
         dbRef.transactionWithContext(backgroundDispatcher) {

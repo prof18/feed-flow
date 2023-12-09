@@ -40,8 +40,8 @@ WHERE is_new = 1
 AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
 AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_category_id = :feedSourceCategoryId)
-ORDER BY pub_date DESC;
--- LIMIT :limit OFFSET :offset;
+ORDER BY pub_date DESC
+LIMIT :pageSize OFFSET :offset;
 
 updateReadStatus:
 UPDATE feed_item

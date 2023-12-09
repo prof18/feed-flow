@@ -18,6 +18,7 @@ import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item
 import com.prof18.feedflow.db.Feed_source
+import com.prof18.feedflow.db.SelectFeedUrls
 import com.prof18.feedflow.db.SelectFeeds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -51,23 +52,7 @@ class DatabaseHelper constructor(
         dbRef.feedSourceQueries
             .selectFeedUrls()
             .executeAsList()
-            .map { feedSource ->
-                FeedSource(
-                    id = feedSource.url_hash,
-                    url = feedSource.url,
-                    title = feedSource.feed_source_title,
-                    category = if (feedSource.category_title != null && feedSource.category_id != null) {
-                        FeedSourceCategory(
-                            id = requireNotNull(feedSource.category_id),
-                            title = requireNotNull(feedSource.category_title),
-                        )
-                    } else {
-                        null
-                    },
-                    lastSyncTimestamp = feedSource.last_sync_timestamp,
-                    logoUrl = feedSource.feed_source_logo_url,
-                )
-            }
+            .map(::transformToFeedSource)
     }
 
     fun getFeedSourcesFlow(): Flow<List<FeedSource>> =
@@ -79,23 +64,7 @@ class DatabaseHelper constructor(
             }
             .mapToList(backgroundDispatcher)
             .map { feedSources ->
-                feedSources.map { feedSource ->
-                    FeedSource(
-                        id = feedSource.url_hash,
-                        url = feedSource.url,
-                        title = feedSource.feed_source_title,
-                        category = if (feedSource.category_title != null && feedSource.category_id != null) {
-                            FeedSourceCategory(
-                                id = requireNotNull(feedSource.category_id),
-                                title = requireNotNull(feedSource.category_title),
-                            )
-                        } else {
-                            null
-                        },
-                        lastSyncTimestamp = feedSource.last_sync_timestamp,
-                        logoUrl = feedSource.feed_source_logo_url,
-                    )
-                }
+                feedSources.map(::transformToFeedSource)
             }
             .flowOn(backgroundDispatcher)
 
@@ -281,6 +250,26 @@ class DatabaseHelper constructor(
                 null
             }
         }
+    }
+
+    private fun transformToFeedSource(feedSource: SelectFeedUrls): FeedSource {
+        val category = if (feedSource.category_title != null && feedSource.category_id != null) {
+            FeedSourceCategory(
+                id = requireNotNull(feedSource.category_id),
+                title = requireNotNull(feedSource.category_title),
+            )
+        } else {
+            null
+        }
+
+        return FeedSource(
+            id = feedSource.url_hash,
+            url = feedSource.url,
+            title = feedSource.feed_source_title,
+            category = category,
+            lastSyncTimestamp = feedSource.last_sync_timestamp,
+            logoUrl = feedSource.feed_source_logo_url,
+        )
     }
 
     internal companion object {

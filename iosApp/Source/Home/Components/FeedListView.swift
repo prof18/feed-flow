@@ -27,6 +27,7 @@ struct FeedListView: View {
 
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
+    let requestNewPage: () -> Void
 
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
@@ -71,6 +72,13 @@ struct FeedListView: View {
                         .onLongPressGesture {
                             if let commentsUrl = feedItem.commentsUrl {
                                 openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
+                            }
+                        }
+                        .onAppear {
+                            if let index = feedState.firstIndex(of: feedItem) {
+                                if index == feedState.count - 15 {
+                                    requestNewPage()
+                                }
                             }
                         }
                         .onDisappear {
@@ -119,7 +127,8 @@ struct FeedListView_Previews: PreviewProvider {
             feedState: PreviewItemsKt.feedItemsForPreview,
             showLoading: false,
             onReloadClick: {},
-            onAddFeedClick: {}
+            onAddFeedClick: {},
+            requestNewPage: {}
         )
     }
 }
@@ -131,7 +140,8 @@ struct FeedListViewIpad_Previews: PreviewProvider {
             feedState: PreviewItemsKt.feedItemsForPreview,
             showLoading: false,
             onReloadClick: {},
-            onAddFeedClick: {}
+            onAddFeedClick: {},
+            requestNewPage: {}
         )
         .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch) (4th generation)"))
     }
@@ -148,7 +158,8 @@ struct FeedListViewNoFeed_Previews: PreviewProvider {
             feedState: [],
             showLoading: false,
             onReloadClick: {},
-            onAddFeedClick: {}
+            onAddFeedClick: {},
+            requestNewPage: {}
         )
     }
 }
@@ -161,7 +172,8 @@ struct FeedListViewEmptyFeed_Previews: PreviewProvider {
             feedState: [],
             showLoading: false,
             onReloadClick: {},
-            onAddFeedClick: {}
+            onAddFeedClick: {},
+            requestNewPage: {}
         )
     }
 }

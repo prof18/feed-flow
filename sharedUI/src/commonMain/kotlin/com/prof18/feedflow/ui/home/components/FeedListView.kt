@@ -17,6 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,8 +40,19 @@ fun FeedList(
     feedItems: List<FeedItem>,
     listState: LazyListState = rememberLazyListState(),
     updateReadStatus: (Int) -> Unit,
+    requestMoreItems: () -> Unit,
     feedItemView: @Composable (FeedItem) -> Unit,
 ) {
+    val shouldStartPaginate = remember {
+        derivedStateOf {
+            val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                ?: return@derivedStateOf false
+
+            val totalItemsCount = listState.layoutInfo.totalItemsCount
+            lastVisibleItemIndex >= totalItemsCount - 15
+        }
+    }
+
     LazyColumn(
         modifier = modifier,
         state = listState,
@@ -60,6 +73,12 @@ fun FeedList(
                     updateReadStatus(index - 1)
                 }
             }
+    }
+
+    LaunchedEffect(key1 = shouldStartPaginate.value) {
+        if (shouldStartPaginate.value) {
+            requestMoreItems()
+        }
     }
 }
 

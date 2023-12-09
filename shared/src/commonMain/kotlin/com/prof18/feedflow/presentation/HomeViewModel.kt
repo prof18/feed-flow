@@ -65,15 +65,13 @@ class HomeViewModel internal constructor(
     val currentFeedFilter = feedRetrieverRepository.currentFeedFilter
 
     init {
-        feedRetrieverRepository.updateFeedFilter(FeedFilter.Timeline)
-        initDrawerData()
-        observeErrorState()
-        observeFeed()
-        getNewFeeds(isFirstLaunch = true)
-    }
-
-    private fun observeFeed() {
-        feedRetrieverRepository.getFeeds()
+        scope.launch {
+            feedRetrieverRepository.updateFeedFilter(FeedFilter.Timeline)
+            initDrawerData()
+            observeErrorState()
+            feedRetrieverRepository.getFeeds()
+            getNewFeeds(isFirstLaunch = true)
+        }
     }
 
     private fun initDrawerData() {
@@ -170,6 +168,12 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun requestNewFeedsPage() {
+        scope.launch {
+            feedRetrieverRepository.loadMoreFeeds()
+        }
+    }
+
     fun markAllRead() {
         scope.launch {
             feedRetrieverRepository.markAllFeedAsRead()
@@ -208,6 +212,7 @@ class HomeViewModel internal constructor(
         scope.launch {
             feedRetrieverRepository.clearReadFeeds()
             feedRetrieverRepository.updateFeedFilter(selectedFeedFilter)
+            lastUpdateIndex = 0
         }
     }
 }

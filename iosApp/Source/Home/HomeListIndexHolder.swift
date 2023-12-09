@@ -32,7 +32,7 @@ class HomeListIndexHolder: ObservableObject {
         timer?.invalidate()
         isClearing = true
 
-        let timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in
+        _ = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in
             guard let self else { return }
             self.isClearing = false
             self.lastReadIndex = 0

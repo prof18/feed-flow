@@ -187,6 +187,9 @@ private fun CompactView(
                     }
                 }
             },
+            requestMoreItems = {
+                homeViewModel.requestNewFeedsPage()
+            },
         )
     } else {
         ModalNavigationDrawer(
@@ -242,6 +245,9 @@ private fun CompactView(
                             drawerState.open()
                         }
                     }
+                },
+                requestMoreItems = {
+                    homeViewModel.requestNewFeedsPage()
                 },
             )
         }
@@ -321,6 +327,9 @@ private fun MediumView(
             onDrawerMenuClick = {
                 isDrawerMenuFullVisible = !isDrawerMenuFullVisible
             },
+            requestMoreItems = {
+                homeViewModel.requestNewFeedsPage()
+            },
         )
     }
 }
@@ -389,6 +398,9 @@ private fun ExpandedView(
             onAddFeedClick = {
                 onAddFeedClick()
             },
+            requestMoreItems = {
+                homeViewModel.requestNewFeedsPage()
+            },
         )
     }
 }
@@ -401,6 +413,7 @@ private fun FeedSourceImage(imageUrl: String) {
     )
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun HomeScreenContent(
     paddingValues: PaddingValues,
@@ -417,12 +430,12 @@ private fun HomeScreenContent(
     onFeedItemClick: (FeedItemClickedInfo) -> Unit,
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
     onAddFeedClick: () -> Unit,
+    requestMoreItems: () -> Unit,
 ) {
     Column(
         modifier = modifier
             .padding(paddingValues),
     ) {
-
         FeedContentToolbar(
             unReadCount = unReadCount,
             showDrawerMenu = showDrawerMenu,
@@ -451,6 +464,7 @@ private fun HomeScreenContent(
                 updateReadStatus = updateReadStatus,
                 onFeedItemClick = onFeedItemClick,
                 onFeedItemLongClick = onFeedItemLongClick,
+                requestMoreItems = requestMoreItems,
             )
         }
     }
@@ -466,6 +480,7 @@ private fun FeedWithContentView(
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (FeedItemClickedInfo) -> Unit,
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
+    requestMoreItems: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -481,6 +496,7 @@ private fun FeedWithContentView(
                 modifier = Modifier,
                 feedItems = feedState,
                 listState = listState,
+                requestMoreItems = requestMoreItems,
                 updateReadStatus = { index ->
                     updateReadStatus(index)
                 },

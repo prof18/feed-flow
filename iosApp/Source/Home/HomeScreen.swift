@@ -72,6 +72,9 @@ struct HomeScreen: View {
             },
             deleteAllFeeds: {
                 homeViewModel.deleteAllFeeds()
+            },
+            requestNewPage: {
+                homeViewModel.requestNewFeedsPage()
             }
         )
         .task {
@@ -179,6 +182,7 @@ struct HomeContent: View {
     let onDeleteOldFeedClick: () -> Void
     let onForceRefreshClick: () -> Void
     let deleteAllFeeds: () -> Void
+    let requestNewPage: () -> Void
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -191,7 +195,8 @@ struct HomeContent: View {
                 },
                 onAddFeedClick: {
                     self.sheetToShow = .feedList
-                }
+                },
+                requestNewPage: requestNewPage
             )
             .onChange(of: toggleListScroll) { _ in
                 proxy.scrollTo(feedState.first?.id)
@@ -380,7 +385,8 @@ struct HomeContentLoading_Previews: PreviewProvider {
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
             onForceRefreshClick: {},
-            deleteAllFeeds: {}
+            deleteAllFeeds: {},
+            requestNewPage: {}
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())
@@ -404,7 +410,8 @@ struct HomeContentLoaded_Previews: PreviewProvider {
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
             onForceRefreshClick: {},
-            deleteAllFeeds: {}
+            deleteAllFeeds: {},
+            requestNewPage: {}
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())
@@ -428,7 +435,8 @@ struct HomeContentSettings_Previews: PreviewProvider {
             onMarkAllReadClick: { },
             onDeleteOldFeedClick: { },
             onForceRefreshClick: {},
-            deleteAllFeeds: {}
+            deleteAllFeeds: {},
+            requestNewPage: {}
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())

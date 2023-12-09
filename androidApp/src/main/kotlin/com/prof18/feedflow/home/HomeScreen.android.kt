@@ -365,11 +365,15 @@ private fun HomeScaffold(
             onAddFeedClick = {
                 onSettingsButtonClicked()
             },
+            requestMoreItems = {
+                homeViewModel.requestNewFeedsPage()
+            },
         )
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
+@Suppress("LongParameterList")
 @Composable
 private fun HomeScreenContent(
     paddingValues: PaddingValues,
@@ -382,6 +386,7 @@ private fun HomeScreenContent(
     onFeedItemClick: (FeedItemClickedInfo) -> Unit,
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
     onAddFeedClick: () -> Unit,
+    requestMoreItems: () -> Unit,
 ) {
     when {
         loadingState is NoFeedSourcesStatus -> {
@@ -415,6 +420,7 @@ private fun HomeScreenContent(
             updateReadStatus = updateReadStatus,
             onFeedItemClick = onFeedItemClick,
             onFeedItemLongClick = onFeedItemLongClick,
+            requestMoreItems = requestMoreItems,
         )
     }
 }
@@ -430,6 +436,7 @@ private fun FeedWithContentView(
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (FeedItemClickedInfo) -> Unit,
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
+    requestMoreItems: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -463,6 +470,7 @@ private fun FeedWithContentView(
                 updateReadStatus = { index ->
                     updateReadStatus(index)
                 },
+                requestMoreItems = requestMoreItems,
             ) { feedItem ->
                 FeedItemView(
                     feedItem = feedItem,
@@ -509,6 +517,7 @@ fun HomeScreeContentLoadingPreview() {
             onFeedItemLongClick = {},
             onAddFeedClick = {},
             onRefresh = {},
+            requestMoreItems = {},
         )
     }
 }
@@ -530,6 +539,7 @@ fun HomeScreeContentLoadedPreview() {
             onFeedItemClick = {},
             onFeedItemLongClick = {},
             onAddFeedClick = {},
+            requestMoreItems = {},
         )
     }
 }

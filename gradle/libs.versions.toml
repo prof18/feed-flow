@@ -45,7 +45,7 @@ moko-resources = "0.23.0"
 crashlytics = "18.4.0"
 crashlytics-plugin = "2.9.7"
 google-services = "4.3.15"
-crashk-ios = "0.8.2"
+crashk-ios = "0.8.5"
 sentry = "6.25.2"
 material-window-size = "1.1.2"
 

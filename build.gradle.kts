@@ -17,7 +17,6 @@ plugins {
     alias(libs.plugins.about.libraries) apply false
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.detekt)
-    alias(libs.plugins.versionsBenManes)
     alias(libs.plugins.org.jetbrains.kotlin.jvm) apply false
 }
 

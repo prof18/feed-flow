@@ -23,7 +23,6 @@ kotlin = "1.9.21"
 nav-compose = "2.7.5"
 slf4jNop = "2.0.6"
 turbine = "1.0.0"
-versions-ben-manes = "0.44.0"
 viewModel-ktx = "2.6.2"
 viewModel-compose = "2.6.2"
 lifecycle-runtime-compose = "2.6.2"
@@ -121,7 +120,6 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-versionsBenManes = { id = "com.github.ben-manes.versions", version.ref = "versions-ben-manes" }
 native-coroutines = { id = "com.rickclephas.kmp.nativecoroutines", version.ref = "native-coroutines" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sql-delight" }
 triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }

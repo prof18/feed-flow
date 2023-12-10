@@ -10,12 +10,21 @@
       }
     },
     {
+      "identity" : "app-check",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/app-check.git",
+      "state" : {
+        "revision" : "5746b2d35c91c50581590ed97abe4c06b5037274",
+        "version" : "10.18.0"
+      }
+    },
+    {
       "identity" : "firebase-ios-sdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk",
       "state" : {
-        "revision" : "a580250a9ff49ec38da5430cef20f88ddc831db2",
-        "version" : "10.12.0"
+        "revision" : "d9bcd141c3e4ad48a9500e6faeebb073f43cbcbd",
+        "version" : "10.19.0"
       }
     },
     {
@@ -23,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "0a226a8c50494c4cb877fbde27ab6374520a3354",
-        "version" : "10.12.0"
+        "revision" : "6b332152355c372ace9966d8ee76ed191f97025e",
+        "version" : "10.17.0"
       }
     },
     {
@@ -32,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleDataTransport.git",
       "state" : {
-        "revision" : "98a00258d4518b7521253a70b7f70bb76d2120fe",
-        "version" : "9.2.4"
+        "revision" : "a732a4b47f59e4f725a2ea10f0c77e93a7131117",
+        "version" : "9.3.0"
       }
     },
     {
@@ -41,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleUtilities.git",
       "state" : {
-        "revision" : "4446686bc3714d49ce043d0f68318f42ed718cb6",
-        "version" : "7.11.4"
+        "revision" : "bc27fad73504f3d4af235de451f02ee22586ebd3",
+        "version" : "7.12.1"
       }
     },
     {
@@ -50,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/grpc-binary.git",
       "state" : {
-        "revision" : "f1b366129d1125be7db83247e003fc333104b569",
-        "version" : "1.50.2"
+        "revision" : "a673bc2937fbe886dd1f99c401b01b6d977a9c98",
+        "version" : "1.49.1"
       }
     },
     {
@@ -61,6 +70,15 @@
       "state" : {
         "revision" : "d415594121c9e8a4f9d79cecee0965cf35e74dbd",
         "version" : "3.1.1"
+      }
+    },
+    {
+      "identity" : "interop-ios-for-google-sdks",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/interop-ios-for-google-sdks.git",
+      "state" : {
+        "revision" : "2d12673670417654f08f5f90fdd62926dc3a2648",
+        "version" : "100.0.0"
       }
     },
     {
@@ -95,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "f4d9b95788679d0654c032961f73e7e9c16ca6b4",
-        "version" : "12.1.0"
+        "revision" : "1694798e876113d44f6ec6ead965d7286695981d",
+        "version" : "12.2.0"
       }
     },
     {
@@ -140,8 +158,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scinfu/SwiftSoup",
       "state" : {
-        "revision" : "f707b8680cddb96dc1855632340a572ef37bbb98",
-        "version" : "2.5.3"
+        "revision" : "8b6cf29eead8841a1fa7822481cb3af4ddaadba6",
+        "version" : "2.6.1"
       }
     }
   ],

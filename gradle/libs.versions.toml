@@ -9,7 +9,6 @@ androidx-test = "1.5.2"
 androidx-core-ktx = "1.5.0"
 androidx-test-ext = "1.1.5"
 androidx-test-runner = "1.5.1"
-com-google-accompanist = "0.28.0"
 coroutines = "1.7.3"
 detekt = "1.23.4"
 io-coil = "2.2.2"
@@ -27,7 +26,7 @@ viewModel-ktx = "2.6.2"
 viewModel-compose = "2.6.2"
 lifecycle-runtime-compose = "2.6.2"
 org-robolectric = "4.9"
-sql-delight = "2.0.0"
+sql-delight = "2.0.1"
 rss-parser = "6.0.4"
 accompanist = "0.28.0"
 jsoup = "1.15.3"
@@ -62,7 +61,6 @@ androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "a
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test" }
 cashapp-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-com-google-accompanist-system-ui = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "com-google-accompanist" }
 io-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "io-coil" }
 io-gitlab-arturbosch-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 junit = { module = "junit:junit", version.ref = "junit" }

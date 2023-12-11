@@ -482,7 +482,7 @@ private fun FeedWithContentView(
                             modifier = Modifier
                                 .padding(start = Spacing.regular),
                             url = url,
-                            width = 96.dp,
+                            size = 96.dp,
                         )
                     },
                 )

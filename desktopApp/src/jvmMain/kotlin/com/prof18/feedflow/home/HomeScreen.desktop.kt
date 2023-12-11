@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.icons.Icons
@@ -508,7 +507,7 @@ private fun FeedWithContentView(
                     feedItemImage = { url ->
                         FeedItemImage(
                             modifier = Modifier
-                                .wrapContentHeight(),
+                                .padding(start = Spacing.regular),
                             url = url,
                             width = 96.dp,
                         )

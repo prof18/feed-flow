@@ -87,14 +87,14 @@ struct FeedItemImage: View {
                     image
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 100)
+                        .frame(width: 100, height: 100)
                         .cornerRadius(16)
                         .clipped()
                 } else if state.error != nil {
                     EmptyView()
                 } else {
                     Color(.secondarySystemBackground)
-                        .frame(width: 100)
+                        .frame(width: 100, height: 100)
                 }
             }
             .padding(.leading, Spacing.regular)

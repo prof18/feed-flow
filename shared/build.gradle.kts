@@ -45,13 +45,17 @@ kotlin {
         }
     }
 
+    tasks.withType(KotlinCompile::class).configureEach {
+        compilerOptions {
+            freeCompilerArgs.addAll("-Xexpect-actual-classes")
+        }
+
+        kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
+    }
+
     applyDefaultHierarchyTemplate()
 
     sourceSets {
-        tasks.withType<KotlinCompile>().all {
-            kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
-        }
-
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
         }

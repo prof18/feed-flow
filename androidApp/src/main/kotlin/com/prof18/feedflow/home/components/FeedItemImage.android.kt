@@ -3,8 +3,6 @@ package com.prof18.feedflow.home.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,12 +20,12 @@ import com.prof18.feedflow.ui.style.Spacing
 fun FeedItemImage(
     modifier: Modifier = Modifier,
     url: String,
-    width: Dp,
+    size: Dp,
 ) {
     if (LocalInspectionMode.current) {
         Box(
             modifier = modifier
-                .size(width)
+                .size(size)
                 .background(Color.Green),
         )
     } else {
@@ -39,8 +37,7 @@ fun FeedItemImage(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier
-                .wrapContentHeight()
-                .width(width)
+                .size(size)
                 .clip(RoundedCornerShape(Spacing.small)),
         )
     }

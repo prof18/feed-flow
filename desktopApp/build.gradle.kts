@@ -56,7 +56,7 @@ compose {
 
             nativeDistributions {
 
-                outputBaseDir.set(project.buildDir.resolve("release"))
+                outputBaseDir.set(layout.buildDirectory.asFile.get().resolve("release"))
 
                 modules("java.instrument", "java.sql", "jdk.unsupported")
 

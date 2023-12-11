@@ -46,6 +46,7 @@ google-services = "4.4.0"
 crashk-ios = "0.8.5"
 sentry = "7.0.0"
 material-window-size = "1.1.2"
+immutable-collections = "0.3.6"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
@@ -100,6 +101,7 @@ firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-
 crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
 sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
 material-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material-window-size" }
+immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
 
 [bundles]
 androidx-test = ["androidx-test-core", "androidx-test-ext-junit", "androidx-test-rules", "androidx-test-runner"]

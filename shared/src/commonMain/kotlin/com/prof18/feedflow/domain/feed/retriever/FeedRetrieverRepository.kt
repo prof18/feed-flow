@@ -27,6 +27,9 @@ import com.prof18.feedflow.utils.DispatcherProvider
 import com.prof18.feedflow.utils.executeWithRetry
 import com.prof18.feedflow.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,7 +64,7 @@ internal class FeedRetrieverRepository(
 
     private val feedToUpdate = hashSetOf<String>()
 
-    private val mutableFeedState: MutableStateFlow<List<FeedItem>> = MutableStateFlow(emptyList())
+    private val mutableFeedState: MutableStateFlow<ImmutableList<FeedItem>> = MutableStateFlow(persistentListOf())
     val feedState = mutableFeedState.asStateFlow()
 
     private val currentFeedFilterMutableState: MutableStateFlow<FeedFilter> = MutableStateFlow(FeedFilter.Timeline)
@@ -80,7 +83,7 @@ internal class FeedRetrieverRepository(
             }
             currentPage = 1
             mutableFeedState.update {
-                feeds.map { it.toFeedItem(dateFormatter) }
+                feeds.map { it.toFeedItem(dateFormatter) }.toImmutableList()
             }
         } catch (e: Throwable) {
             logger.e(e) { "Something wrong while getting data from Database" }
@@ -105,7 +108,8 @@ internal class FeedRetrieverRepository(
             }
             currentPage += 1
             mutableFeedState.update { currentItems ->
-                currentItems + feeds.map { it.toFeedItem(dateFormatter) }
+                val newList = feeds.map { it.toFeedItem(dateFormatter) }.toImmutableList()
+                (currentItems + newList).toImmutableList()
             }
         } catch (e: Throwable) {
             logger.e(e) { "Something wrong while getting data from Database" }

@@ -67,6 +67,7 @@ import com.prof18.feedflow.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -289,7 +290,7 @@ private fun HomeScaffold(
     listState: LazyListState,
     snackbarHostState: SnackbarHostState,
     loadingState: FeedUpdateStatus,
-    feedState: List<FeedItem>,
+    feedState: ImmutableList<FeedItem>,
     pullRefreshState: PullRefreshState,
     modifier: Modifier = Modifier,
     showDrawerMenu: Boolean = false,
@@ -378,7 +379,7 @@ private fun HomeScaffold(
 private fun HomeScreenContent(
     paddingValues: PaddingValues,
     loadingState: FeedUpdateStatus,
-    feedState: List<FeedItem>,
+    feedState: ImmutableList<FeedItem>,
     pullRefreshState: PullRefreshState,
     listState: LazyListState,
     onRefresh: () -> Unit = {},
@@ -431,7 +432,7 @@ private fun FeedWithContentView(
     modifier: Modifier = Modifier,
     loadingState: FeedUpdateStatus,
     pullRefreshState: PullRefreshState,
-    feedState: List<FeedItem>,
+    feedState: ImmutableList<FeedItem>,
     listState: LazyListState,
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (FeedItemClickedInfo) -> Unit,

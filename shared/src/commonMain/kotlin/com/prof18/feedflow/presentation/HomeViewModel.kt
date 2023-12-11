@@ -20,6 +20,7 @@ import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +43,7 @@ class HomeViewModel internal constructor(
 
     // Feeds
     @NativeCoroutinesState
-    val feedState: StateFlow<List<FeedItem>> = feedRetrieverRepository.feedState
+    val feedState: StateFlow<ImmutableList<FeedItem>> = feedRetrieverRepository.feedState
 
     @NativeCoroutines
     val unreadCountFlow: Flow<Long> = feedRetrieverRepository.getUnreadFeedCountFlow()

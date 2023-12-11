@@ -67,6 +67,7 @@ kotlin {
                 api(project(":core"))
                 api(project(":i18n"))
                 api(libs.touchlab.kermit)
+                api(libs.immutable.collections)
             }
         }
 

@@ -12,8 +12,9 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.domain.model.Browser
+import kotlinx.collections.immutable.persistentListOf
 
-val feedItemsForPreview = listOf(
+val feedItemsForPreview = persistentListOf(
     FeedItem(
         id = 0,
         url = "https://www.ilpost.it/2023/02/11/scheumorfismo/",

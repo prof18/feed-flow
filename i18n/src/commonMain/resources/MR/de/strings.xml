@@ -1,2 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="feed_added_message">Feed %s hinzugefügt</string>
+    <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
+    <string name="feed_add_in_progress_message">Bitte warte, die Verfügbarkeit aller Feeds wird geprüft. Der Vorgang kann eine Weile dauern, je nach der Anzahl der Feeds, die importiert werden</string>
+    <string name="drawer_title_timeline">Zeitleiste</string>
+    <string name="force_feed_refresh">Aktualisieren der Feeds erzwingen</string>
+    <string name="database_error">Beim Abrufen der Feeds ist irgendetwas schief gelaufen. Bitte versuche es erneut oder starte die App neu :(</string>
+    <string name="no_category">Nicht kategorisiert</string>
+    <string name="import_dialog_title">OPML-Datei auswählen</string>
+    <string name="import_dialog_button">Importieren</string>
+    <string name="feeds_importing_message">Feed importieren</string>
+    <string name="invalid_rss_url">Der angegebene Link ist kein gültiger RSS-Feed</string>
+    <string name="no_feeds_found_message">Keine Feeds gefunden. Füge bitte einen neuen hinzu!</string>
+    <string name="clear_old_articles_button">Alte Einträge löschen</string>
+    <string name="no_feeds_add_one_message">Keine Feeds gefunden. Füge einen hinzu.</string>
+    <string name="new_release_available_link">Hier herunterladen</string>
+    <string name="refresh_feeds">Feeds aktualisieren</string>
+    <string name="done_button">OK</string>
+    <string name="issue_content_template">Bitte beschreibe den Fehler und gib einen Link zu dem RSS-Feed an, der den Fehler verursacht. Wenn möglich, hänge bitte einen Screenshot und die OPML-Datei an</string>
+    <string name="about_button">Über</string>
+    <string name="report_issue_button">Fehler melden</string>
+    <string name="export_started_message">Export generieren</string>
+    <string name="import_export_opml">OPML importieren und exportieren</string>
+    <string name="drawer_title_categories">Kategorien</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="feed_url">Feed-URL</string>
+    <string name="open_website_button">Website öffnen</string>
+    <string name="author_label">Mit ❤️ entwickelt von</string>
+    <string name="issue_content_title">Fehler mit FeedFlow</string>
+    <string name="delete_feed">Löschen</string>
+    <string name="about_nav_bar">Über</string>
+    <string name="wrong_link_report_title">Die folgenden Feeds wurden nicht hinzugefügt, da sie nicht gültig sind</string>
+    <string name="missing_title_and_link">Es gab einen Fehler beim Abrufen des Titels des Feeds</string>
+    <string name="open_source_licenses">Open-Source-Lizenzen</string>
+    <string name="browser_selection_button">Bevorzugter Webbrowser</string>
+    <string name="drawer_title_feed_sources">Feed-Quellen</string>
+    <string name="issue_report_title">Fehler mit FeedFlow melden</string>
+    <string name="export_dialog_title">OPML-Datei speichern</string>
+    <string name="new_release_available_title">Es gibt eine neue Version von FeedFlow:</string>
+    <string name="no_category_selected_header">Keine Kategorie ausgewählt</string>
+    <string name="empty_feed_message">Hier gibt es nichts mehr zu lesen!</string>
+    <string name="export_feeds_button">Feed nach OPML exportieren</string>
+    <string name="export_dialog_button">Exportieren</string>
+    <string name="new_category_hint">Neuer Kategoriename</string>
+    <string name="settings_button">Einstellungen</string>
+    <string name="open_source_nav_bar">Open-Source-Lizenzen</string>
+    <string name="show_on_github">Auf GitHub anzeigen</string>
+    <string name="mark_all_read_button">Alle als gelesen markieren</string>
+    <string name="retry_button">Erneut versuchen</string>
+    <string name="generic_error_message">Sorry, irgendetwas ist schiefgelaufen :(</string>
+    <string name="default_browser">Standardbrowser</string>
+    <string name="import_feed_button">Feed aus OPML importieren</string>
+    <string name="app_name">FeedFlow</string>
+    <string name="feeds_title">Feeds</string>
+    <string name="about_the_app">FeedFlow ist ein minimalistischer RSS-Reader, der auf den persönlichen Vorstellungen des Autors basiert. Die Artikel werden auf den jeweiligen Websites geöffnet und du kannst deinen Lieblingsbrowser mit Fokus auf Privatsphäre wählen, um dein Leseerlebnis von deinem Hauptbrowser getrennt zu halten.
+\nDie RSS-Sammlung kann aus OPML-Dateien importiert und exportiert werden.</string>
+    <string name="load_file_error_message">Laden der Datei fehlgeschlagen</string>
+    <string name="add_feed">Feed hinzufügen</string>
+</resources>

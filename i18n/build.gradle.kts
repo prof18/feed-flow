@@ -34,12 +34,8 @@ kotlin {
     // TODO: remove when Moko resource fix the issue
     applyDefaultHierarchyTemplate()
 
-    tasks.withType(KotlinCompile::class).configureEach {
-        compilerOptions { // New lazy configuration options
-            freeCompilerArgs.addAll("-Xexpect-actual-classes")
-        }
-
-        kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     sourceSets {

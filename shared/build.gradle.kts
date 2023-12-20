@@ -45,12 +45,8 @@ kotlin {
         }
     }
 
-    tasks.withType(KotlinCompile::class).configureEach {
-        compilerOptions {
-            freeCompilerArgs.addAll("-Xexpect-actual-classes")
-        }
-
-        kotlinOptions.freeCompilerArgs += "-Xexpect-actual-classes"
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     applyDefaultHierarchyTemplate()

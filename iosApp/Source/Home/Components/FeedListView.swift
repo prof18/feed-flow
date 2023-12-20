@@ -79,6 +79,12 @@ struct FeedListView: View {
                                 if index == feedState.count - 15 {
                                     requestNewPage()
                                 }
+
+                                print("index: \(index)")
+                                if index == feedState.count - 1 {
+                                    print("last item: \(index)")
+                                    self.indexHolder.updateReadIndex(index: index)
+                                }
                             }
                         }
                         .onDisappear {

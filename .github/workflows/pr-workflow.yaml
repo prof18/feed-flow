@@ -22,7 +22,13 @@ jobs:
       - uses: gradle/gradle-build-action@v2.10.0
         with:
           gradle-home-cache-cleanup: true
-          cache-read-only: false
+
+      - name: Cache KMP tooling
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.konan
+          key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
 
       - name: Run Swift Lint
         run: |

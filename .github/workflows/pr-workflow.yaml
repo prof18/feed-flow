@@ -53,3 +53,102 @@ jobs:
           name: build-reports
           path: |
             **/build/reports/*    
+
+  build-android-app:
+    name: Build Android App
+    runs-on: ubuntu-latest
+    needs: [ checks ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2.11.0
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Cache KMP tooling
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.konan
+          key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
+
+      - name: Create Firebase json
+        run: |
+          echo "$FIREBASE_JSON" > androidApp/google-services.json.b64
+          base64 -d -i androidApp/google-services.json.b64 > androidApp/google-services.json    
+
+      - name: Build Android Sample
+        run: ./gradlew :androidApp:assembleDebug
+
+  build-desktop-app:
+    name: Build Desktop App
+    runs-on: ubuntu-latest
+    needs: [ checks ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2.11.0
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Cache KMP tooling
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.konan
+          key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
+
+      - name: Build Desktop App
+        run: ./gradlew :desktopApp:packageDistributionForCurrentOS
+
+  build-ios-app:
+    name: Build iOS Sample
+    runs-on: macos-13
+    needs: [ checks ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2.11.0
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Cache KMP tooling
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.konan
+          key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
+
+      - name: Create Firebase Plist
+        run: |
+          echo "$FIREBASE_PLIST" > iosApp/GoogleService-Info.plist.b64
+          base64 -d -i iosApp/GoogleService-Info.plist.b64 > iosApp/GoogleService-Info.plist
+        env:
+          FIREBASE_PLIST: ${{ secrets.FIREBASE_PLIST }}
+
+      - name: Build iOS Sample
+        run: |
+          cd iosApp
+          xcodebuild -configuration Debug -scheme FeedFlow -sdk iphoneos -destination name='iPhone 14 Pro' build

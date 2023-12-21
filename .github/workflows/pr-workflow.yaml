@@ -84,14 +84,16 @@ jobs:
       - name: Create Firebase json
         run: |
           echo "$FIREBASE_JSON" > androidApp/google-services.json.b64
-          base64 -d -i androidApp/google-services.json.b64 > androidApp/google-services.json    
+          base64 -d -i androidApp/google-services.json.b64 > androidApp/google-services.json
+        env:
+          FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
 
       - name: Build Android Sample
         run: ./gradlew :androidApp:assembleDebug
 
   build-desktop-app:
     name: Build Desktop App
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [ checks ]
     steps:
       - uses: actions/checkout@v4

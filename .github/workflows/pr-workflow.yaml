@@ -60,6 +60,8 @@ jobs:
     needs: [ checks ]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: set up JDK
         uses: actions/setup-java@v4
@@ -70,6 +72,7 @@ jobs:
       - uses: gradle/gradle-build-action@v2.11.0
         with:
           gradle-home-cache-cleanup: true
+          cache-read-only: false
 
       - name: Cache KMP tooling
         uses: actions/cache@v3
@@ -92,6 +95,8 @@ jobs:
     needs: [ checks ]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: set up JDK
         uses: actions/setup-java@v4
@@ -102,6 +107,7 @@ jobs:
       - uses: gradle/gradle-build-action@v2.11.0
         with:
           gradle-home-cache-cleanup: true
+          cache-read-only: false
 
       - name: Cache KMP tooling
         uses: actions/cache@v3
@@ -114,11 +120,13 @@ jobs:
         run: ./gradlew :desktopApp:packageDistributionForCurrentOS
 
   build-ios-app:
-    name: Build iOS Sample
+    name: Build iOS App
     runs-on: macos-13
     needs: [ checks ]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:

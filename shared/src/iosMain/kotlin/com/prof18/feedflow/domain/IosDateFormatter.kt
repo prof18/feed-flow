@@ -34,6 +34,9 @@ internal class IosDateFormatter(
         "yyyy-MM-dd'T'HH:mm:ss'Z'",
         "yyyy/MM/dd",
         "dd MMM yyyy HH:mm:ss Z",
+        "yyyy-MM-dd HH:mm:ss  Z",
+        "yyyy-MM-dd HH:mm:ss Z",
+        "yyyy-MM-dd HH:mm:ss",
     )
 
     private val articleDateFormatter = NSDateFormatter().apply {

@@ -28,6 +28,9 @@ internal class JvmAndroidDateFormatter(
                         "[yyyy-MM-dd'T'HH:mm:ss'Z']" +
                         "[yyyy-MM-dd'T'HH:mm:ss]" +
                         "[yyyy-MM-dd'T'HH:mm:ss.SSSZ]" +
+                        "[yyyy-MM-dd HH:mm:ss  Z]" +
+                        "[yyyy-MM-dd HH:mm:ss Z]" +
+                        "[yyyy-MM-dd HH:mm:ss]" +
                         "[dd MMM yyyy HH:mm:ss Z]",
                 ),
             )

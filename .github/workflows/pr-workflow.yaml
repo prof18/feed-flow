@@ -119,7 +119,7 @@ jobs:
           key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
 
       - name: Build Desktop App
-        run: ./gradlew :desktopApp:packageDistributionForCurrentOS
+        run: ./gradlew :desktopApp:packageDmg
 
   build-ios-app:
     name: Build iOS App

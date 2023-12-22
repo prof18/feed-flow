@@ -27,9 +27,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.BuildConfig
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -37,6 +40,7 @@ import dev.icerock.moko.resources.compose.stringResource
 @Suppress("LongParameterList")
 @Composable
 internal fun HomeAppBar(
+    currentFeedFilter: FeedFilter,
     unReadCount: Long,
     showDrawerMenu: Boolean,
     isDrawerOpen: Boolean,
@@ -64,9 +68,17 @@ internal fun HomeAppBar(
         },
         title = {
             Row {
-                Text(stringResource(resource = MR.strings.app_name))
+                Text(
+                    modifier = Modifier
+                        .weight(1f, fill = false),
+                    text = currentFeedFilter.getTitle(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("($unReadCount)")
+
+                Text(text = "($unReadCount)")
             }
         },
         actions = {
@@ -100,6 +112,14 @@ internal fun HomeAppBar(
         },
     )
 }
+
+@Composable
+private fun FeedFilter.getTitle(): String =
+    when (this) {
+        is FeedFilter.Category -> this.feedCategory.title
+        is FeedFilter.Source -> this.feedSource.title
+        FeedFilter.Timeline -> stringResource(resource = MR.strings.app_name)
+    }
 
 @Composable
 private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
@@ -221,6 +241,38 @@ private fun SettingsDropdownMenu(
 private fun HomeAppBarPreview() {
     FeedFlowTheme {
         HomeAppBar(
+            currentFeedFilter = FeedFilter.Source(
+                feedSource = FeedSource(
+                    id = 0,
+                    url = "",
+                    title = "A very very very very very very long title",
+                    category = null,
+                    lastSyncTimestamp = null,
+                    logoUrl = null,
+                ),
+
+            ),
+            showDrawerMenu = true,
+            isDrawerOpen = false,
+            onDrawerMenuClick = {},
+            unReadCount = 42,
+            onMarkAllReadClicked = { },
+            onSettingsButtonClicked = { },
+            onClearOldArticlesClicked = { },
+            onClick = { },
+            onDoubleClick = {},
+            onForceRefreshClick = {},
+            onDeleteDatabase = {},
+        )
+    }
+}
+
+@FeedFlowPreview
+@Composable
+private fun HomeAppBarSmallPreview() {
+    FeedFlowTheme {
+        HomeAppBar(
+            currentFeedFilter = FeedFilter.Timeline,
             showDrawerMenu = true,
             isDrawerOpen = false,
             onDrawerMenuClick = {},

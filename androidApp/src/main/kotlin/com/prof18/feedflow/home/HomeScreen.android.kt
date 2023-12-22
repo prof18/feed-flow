@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemClickedInfo
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
@@ -126,6 +127,7 @@ internal fun HomeScreen(
                     feedState = feedState,
                     pullRefreshState = pullRefreshState,
                     showDrawerMenu = false,
+                    currentFeedFilter = currentFeedFilter,
                     onDrawerMenuClick = {
                         scope.launch {
                             if (drawerState.isOpen) {
@@ -169,6 +171,7 @@ internal fun HomeScreen(
                         feedState = feedState,
                         pullRefreshState = pullRefreshState,
                         showDrawerMenu = true,
+                        currentFeedFilter = currentFeedFilter,
                         onDrawerMenuClick = {
                             scope.launch {
                                 if (drawerState.isOpen) {
@@ -223,6 +226,7 @@ internal fun HomeScreen(
                     pullRefreshState = pullRefreshState,
                     showDrawerMenu = feedState.isNotEmpty(),
                     isDrawerMenuOpen = isDrawerMenuFullVisible,
+                    currentFeedFilter = currentFeedFilter,
                     onDrawerMenuClick = {
                         isDrawerMenuFullVisible = !isDrawerMenuFullVisible
                     },
@@ -267,6 +271,7 @@ internal fun HomeScreen(
                     loadingState = loadingState,
                     feedState = feedState,
                     pullRefreshState = pullRefreshState,
+                    currentFeedFilter = currentFeedFilter,
                 )
             }
         }
@@ -281,7 +286,7 @@ private fun FeedSourceImage(imageUrl: String) {
     )
 }
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun HomeScaffold(
     unReadCount: Long,
@@ -292,6 +297,7 @@ private fun HomeScaffold(
     loadingState: FeedUpdateStatus,
     feedState: ImmutableList<FeedItem>,
     pullRefreshState: PullRefreshState,
+    currentFeedFilter: FeedFilter,
     modifier: Modifier = Modifier,
     showDrawerMenu: Boolean = false,
     isDrawerMenuOpen: Boolean = false,
@@ -305,6 +311,7 @@ private fun HomeScaffold(
         modifier = modifier,
         topBar = {
             HomeAppBar(
+                currentFeedFilter = currentFeedFilter,
                 showDrawerMenu = showDrawerMenu,
                 isDrawerOpen = isDrawerMenuOpen,
                 onDrawerMenuClick = onDrawerMenuClick,

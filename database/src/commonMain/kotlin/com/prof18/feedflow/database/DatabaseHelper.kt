@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 @Suppress("TooManyFunctions")
-class DatabaseHelper constructor(
+class DatabaseHelper(
     sqlDriver: SqlDriver,
     private val backgroundDispatcher: CoroutineDispatcher,
     private val logger: Logger,
@@ -146,9 +146,19 @@ class DatabaseHelper constructor(
             dbRef.feedItemQueries.updateNewStatus()
         }
 
-    suspend fun markAllFeedAsRead() =
+    suspend fun markAllFeedAsRead(feedFilter: FeedFilter) =
         dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedItemQueries.markAllRead()
+            when (feedFilter) {
+                is FeedFilter.Category -> {
+                    dbRef.feedItemQueries.markAllReadByCategory(feedFilter.feedCategory.id)
+                }
+                is FeedFilter.Source -> {
+                    dbRef.feedItemQueries.markAllReadByFeedSource(feedFilter.feedSource.id)
+                }
+                FeedFilter.Timeline -> {
+                    dbRef.feedItemQueries.markAllRead()
+                }
+            }
         }
 
     suspend fun deleteOldFeedItems(timeThreshold: Long) =

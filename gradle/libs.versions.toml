@@ -46,7 +46,7 @@ google-services = "4.4.0"
 crashk-ios = "0.8.5"
 sentry = "7.0.0"
 material-window-size = "1.1.2"
-immutable-collections = "0.3.6"
+immutable-collections = "0.3.7"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }

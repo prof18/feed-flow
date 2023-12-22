@@ -5,19 +5,13 @@ android-min-sdk = "26"
 android-target-sdk = "33"
 android-gradle-plugin = "8.2.0"
 activity-compose = "1.8.2"
-androidx-test = "1.5.2"
 androidx-core-ktx = "1.5.0"
-androidx-test-ext = "1.1.5"
-androidx-test-runner = "1.5.1"
 coroutines = "1.7.3"
 detekt = "1.23.4"
 io-coil = "2.5.0"
-java = "11"
 junit = "4.13.2"
 kermit = "2.0.2"
-koin = "3.5.3"
-koin-android = "3.5.3"
-koin-compose = "3.5.3"
+koin-bom = "3.5.3"
 kotlin = "1.9.21"
 nav-compose = "2.7.6"
 slf4jNop = "2.0.9"
@@ -32,7 +26,7 @@ accompanist = "0.32.0"
 jsoup = "1.17.1"
 triplet-play = "3.8.6"
 compose-multiplatform = "1.5.11"
-compose-compiler = "1.5.4"
+compose-compiler = "1.5.7"
 decompose = "2.2.1"
 jsystem-theme-detector = "3.6"
 native-coroutines = "1.0.0-ALPHA-22"
@@ -52,23 +46,20 @@ immutable-collections = "0.3.7"
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
 about-libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref="about-libraries" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
+androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 androidx-lifecycle-viewModel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "viewModel-ktx" }
 androidx-lifecycle-viewModel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModel-compose" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-runtime-compose" }
 androidx-navigation-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav-compose" }
-androidx-test-core = { module = "androidx.test:core-ktx", version.ref = "androidx-test" }
 androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-core-ktx" }
-androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext" }
-androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
-androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test" }
 cashapp-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 io-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "io-coil" }
 io-gitlab-arturbosch-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 junit = { module = "junit:junit", version.ref = "junit" }
-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android" }
-koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-compose" }
-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android" }
+koin-compose = { module = "io.insert-koin:koin-androidx-compose" }
+koin-core = { module = "io.insert-koin:koin-core"}
+koin-test = { module = "io.insert-koin:koin-test"}
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -102,15 +93,14 @@ crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "cras
 sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
 material-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material-window-size" }
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 
 [bundles]
-androidx-test = ["androidx-test-core", "androidx-test-ext-junit", "androidx-test-rules", "androidx-test-runner"]
 compose = [
     "androidx-activity-compose", "io-coil-compose", "androidx-lifecycle-viewModel-compose",
     "accompanist-systemuicontroller", "androidx-lifecycle-runtime-compose",
     "androidx-navigation-navigation-compose",
 ]
-koin = ["koin-android", "koin-compose", "koin-core"]
 about-libraries = [ "about-libraries-core", "about-libraries-compose" ]
 
 [plugins]

@@ -11,7 +11,8 @@
         "com.google.devtools.ksp",
         "org.jetbrains.kotlin",
         "org.jetbrains.compose",
-        "com.rickclephas.kmp.nativecoroutines"
+        "com.rickclephas.kmp.nativecoroutines",
+        "androidx.compose.compiler"
       ]
     }
   ]

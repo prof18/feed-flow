@@ -80,13 +80,19 @@ dependencies {
     implementation(compose.uiTooling)
 
     implementation(libs.bundles.compose)
-    implementation(libs.bundles.koin)
     implementation(libs.bundles.about.libraries)
     implementation(libs.moko.resourcesCompose)
     implementation(libs.firebase.crashlytics.ktx)
     implementation(libs.material.window.size)
 
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+
     debugImplementation(compose.uiTooling)
+
+    testImplementation(libs.koin.test)
 }
 
 play {

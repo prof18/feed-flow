@@ -58,10 +58,26 @@ UPDATE feed_item
 SET is_read = 1
 WHERE is_read = 0;
 
+markAllReadByFeedSource:
+UPDATE feed_item
+SET is_read = 1
+WHERE feed_source_id = :feedSourceId
+AND is_read = 0;
+
+markAllReadByCategory:
+UPDATE feed_item
+SET is_read = 1
+WHERE feed_source_id IN (
+  SELECT url_hash
+  FROM feed_source
+  WHERE category_id = :categoryId
+)
+AND is_read = 0;
+
+
 clearOldItems:
 DELETE FROM feed_item
 WHERE pub_date < :threshold;
-
 
 deleteAll:
 DELETE FROM feed_item;

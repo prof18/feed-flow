@@ -192,7 +192,8 @@ internal class FeedRetrieverRepository(
     }
 
     suspend fun markAllFeedAsRead() {
-        databaseHelper.markAllFeedAsRead()
+        val currentFilter = currentFeedFilterMutableState.value
+        databaseHelper.markAllFeedAsRead(currentFilter)
         getFeeds()
     }
 

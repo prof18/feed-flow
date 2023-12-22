@@ -1,5 +1,8 @@
-name: PR Checks
+name: Code Checks
 on:
+  push:
+    branches:
+      - 'main'
   pull_request:
     branches:
       - '*'

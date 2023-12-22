@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedFilter
@@ -177,6 +178,7 @@ private fun CompactView(
                 onAddFeedClick()
             },
             showDrawerMenu = true,
+            currentFeedFilter = currentFeedFilter,
             onDrawerMenuClick = {
                 scope.launch {
                     if (drawerState.isOpen) {
@@ -218,6 +220,7 @@ private fun CompactView(
                 feedState = feedState,
                 listState = listState,
                 unReadCount = unReadCount,
+                currentFeedFilter = currentFeedFilter,
                 onRefresh = {
                     homeViewModel.getNewFeeds()
                 },
@@ -322,6 +325,7 @@ private fun MediumView(
                 onAddFeedClick()
             },
             showDrawerMenu = true,
+            currentFeedFilter = currentFeedFilter,
             isDrawerMenuOpen = isDrawerMenuFullVisible,
             onDrawerMenuClick = {
                 isDrawerMenuFullVisible = !isDrawerMenuFullVisible
@@ -380,6 +384,7 @@ private fun ExpandedView(
             feedState = feedState,
             listState = listState,
             unReadCount = unReadCount,
+            currentFeedFilter = currentFeedFilter,
             onRefresh = {
                 homeViewModel.getNewFeeds()
             },
@@ -422,6 +427,7 @@ private fun HomeScreenContent(
     unReadCount: Long,
     showDrawerMenu: Boolean = false,
     isDrawerMenuOpen: Boolean = false,
+    currentFeedFilter: FeedFilter,
     modifier: Modifier = Modifier,
     onDrawerMenuClick: () -> Unit = {},
     onRefresh: () -> Unit = {},
@@ -440,6 +446,7 @@ private fun HomeScreenContent(
             showDrawerMenu = showDrawerMenu,
             isDrawerOpen = isDrawerMenuOpen,
             onDrawerMenuClick = onDrawerMenuClick,
+            currentFeedFilter = currentFeedFilter,
         )
 
         when {
@@ -551,6 +558,7 @@ private fun FeedContentToolbar(
     unReadCount: Long,
     showDrawerMenu: Boolean,
     isDrawerOpen: Boolean,
+    currentFeedFilter: FeedFilter,
     onDrawerMenuClick: () -> Unit,
 ) {
     TopAppBar(
@@ -577,11 +585,25 @@ private fun FeedContentToolbar(
         title = {
             Row {
                 Text(
-                    stringResource(resource = MR.strings.app_name),
+                    modifier = Modifier
+                        .weight(1f, fill = false),
+                    text = currentFeedFilter.getTitle(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
+
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("($unReadCount)")
+
+                Text(text = "($unReadCount)")
             }
         },
     )
 }
+
+@Composable
+private fun FeedFilter.getTitle(): String =
+    when (this) {
+        is FeedFilter.Category -> this.feedCategory.title
+        is FeedFilter.Source -> this.feedSource.title
+        FeedFilter.Timeline -> stringResource(resource = MR.strings.app_name)
+    }

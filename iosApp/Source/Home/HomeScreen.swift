@@ -41,6 +41,9 @@ struct HomeScreen: View {
     @State
     var unreadCount = 0
 
+    @State
+    var currentFeedFilter: FeedFilter = FeedFilter.Timeline()
+
     @Binding
     var toggleListScroll: Bool
 
@@ -55,6 +58,7 @@ struct HomeScreen: View {
             unreadCount: $unreadCount,
             sheetToShow: $sheetToShow,
             toggleListScroll: $toggleListScroll,
+            currentFeedFilter: $currentFeedFilter,
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
@@ -130,6 +134,16 @@ struct HomeScreen: View {
                 self.appState.emitGenericError()
             }
         }
+        .task {
+            do {
+                let stream = asyncSequence(for: homeViewModel.currentFeedFilterFlow)
+                for try await state in stream {
+                    self.currentFeedFilter = state
+                }
+            } catch {
+                self.appState.emitGenericError()
+            }
+        }
         .onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
             case .background:
@@ -176,6 +190,9 @@ struct HomeContent: View {
     @Binding
     var toggleListScroll: Bool
 
+    @Binding
+    var currentFeedFilter: FeedFilter
+
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
     let onMarkAllReadClick: () -> Void
@@ -220,15 +237,20 @@ struct HomeContent: View {
                             )
                         }
 
-                        Text("\(localizer.app_name.localized) (\(unreadCount))")
-                            .font(.title2)
-                            .padding(.vertical, Spacing.medium)
-                            .onTapGesture(count: 2) {
-                                onRefresh()
-                                proxy.scrollTo(feedState.first?.id)
-                                updateReadStatus(Int32(indexHolder.getLastReadIndex()))
-                                self.indexHolder.refresh()
-                            }
+                        HStack {
+                            Text(currentFeedFilter.getNavBarName())
+                                .font(.title2)
+
+                            Text("(\(unreadCount))")
+                                .font(.title2)
+                        }
+                        .padding(.vertical, Spacing.medium)
+                        .onTapGesture(count: 2) {
+                            onRefresh()
+                            proxy.scrollTo(feedState.first?.id)
+                            updateReadStatus(Int32(indexHolder.getLastReadIndex()))
+                            self.indexHolder.refresh()
+                        }
                     }
                 }
 
@@ -329,7 +351,7 @@ struct HomeContent: View {
                             }
                         )
 
-                        #if DEBUG
+#if DEBUG
                         Button(
                             action: {
                                 deleteAllFeeds()
@@ -341,7 +363,7 @@ struct HomeContent: View {
                                 )
                             }
                         )
-                        #endif
+#endif
 
                         NavigationLink(value: CommonRoute.aboutScreen) {
                             Label(
@@ -366,6 +388,21 @@ struct HomeContent: View {
     }
 }
 
+fileprivate extension FeedFilter {
+    func getNavBarName() -> String {
+        switch self {
+        case let category as FeedFilter.Category:
+            return category.feedCategory.title
+
+        case let source as FeedFilter.Source:
+            return source.feedSource.title
+
+        default:
+            return localizer.app_name.localized
+        }
+    }
+}
+
 struct HomeContentLoading_Previews: PreviewProvider {
     static var previews: some View {
         HomeContent(
@@ -380,6 +417,7 @@ struct HomeContentLoading_Previews: PreviewProvider {
             unreadCount: .constant(42),
             sheetToShow: .constant(nil),
             toggleListScroll: .constant(false),
+            currentFeedFilter: .constant(FeedFilter.Timeline()),
             onRefresh: { },
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
@@ -405,6 +443,7 @@ struct HomeContentLoaded_Previews: PreviewProvider {
             unreadCount: .constant(42),
             sheetToShow: .constant(nil),
             toggleListScroll: .constant(false),
+            currentFeedFilter: .constant(FeedFilter.Timeline()),
             onRefresh: { },
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },
@@ -430,6 +469,7 @@ struct HomeContentSettings_Previews: PreviewProvider {
             unreadCount: .constant(42),
             sheetToShow: .constant(HomeSheetToShow.feedList),
             toggleListScroll: .constant(false),
+            currentFeedFilter: .constant(FeedFilter.Timeline()),
             onRefresh: { },
             updateReadStatus: { _ in },
             onMarkAllReadClick: { },

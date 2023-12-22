@@ -26,7 +26,6 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.preview)
                 implementation(compose.materialIconsExtended)
-                implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.decompose)
                 implementation(libs.decompose.compose.jetbrains)
@@ -36,6 +35,9 @@ kotlin {
                 implementation(libs.bundles.about.libraries)
                 implementation(libs.jsoup)
                 implementation(libs.slf4j.nop)
+
+                implementation(project.dependencies.platform(libs.koin.bom))
+                implementation(libs.koin.core)
             }
         }
     }
@@ -46,10 +48,6 @@ compose {
         application {
             mainClass = "com.prof18.feedflow.MainKt"
 
-//        buildTypes.release.proguard {
-//            obfuscate.set(true)
-//        }
-//
             buildTypes.release.proguard {
                 configurationFiles.from(project.file("compose-desktop.pro"))
             }

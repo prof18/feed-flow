@@ -22,7 +22,7 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - uses: gradle/gradle-build-action@v2.10.0
+      - uses: gradle/gradle-build-action@v2.11.1
         with:
           gradle-home-cache-cleanup: true
 
@@ -72,7 +72,7 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - uses: gradle/gradle-build-action@v2.11.0
+      - uses: gradle/gradle-build-action@v2.11.1
         with:
           gradle-home-cache-cleanup: true
           cache-read-only: false
@@ -109,7 +109,7 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - uses: gradle/gradle-build-action@v2.11.0
+      - uses: gradle/gradle-build-action@v2.11.1
         with:
           gradle-home-cache-cleanup: true
           cache-read-only: false
@@ -143,7 +143,7 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - uses: gradle/gradle-build-action@v2.11.0
+      - uses: gradle/gradle-build-action@v2.11.1
         with:
           gradle-home-cache-cleanup: true
 

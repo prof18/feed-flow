@@ -88,12 +88,6 @@ compose {
                         password.set("@keychain:NOTARIZATION_PASSWORD")
                     }
                 }
-                windows {
-                    iconFile.set(project.file("icon.ico"))
-                }
-                linux {
-                    iconFile.set(project.file("icon.png"))
-                }
             }
         }
     }

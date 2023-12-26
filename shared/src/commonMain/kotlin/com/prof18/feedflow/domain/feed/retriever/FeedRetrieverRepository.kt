@@ -261,6 +261,7 @@ internal class FeedRetrieverRepository(
             ),
         )
         databaseHelper.insertFeedItems(feedItems, currentTimestamp)
+        updateMutableState.update { FinishedFeedUpdateStatus }
         getFeeds()
     }
 

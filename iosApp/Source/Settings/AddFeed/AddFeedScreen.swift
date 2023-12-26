@@ -137,7 +137,7 @@ struct AddFeedScreen: View {
                 for try await state in stream {
                     switch state {
                     case let addedState as FeedAddedState.FeedAdded:
-                        self.addFeedViewModel.clearAddDoneState()
+//                        self.addFeedViewModel.clearAddDoneState()
                         self.appState.snackbarQueue.append(
                             SnackbarData(
                                 title: addedState.message.localized(),

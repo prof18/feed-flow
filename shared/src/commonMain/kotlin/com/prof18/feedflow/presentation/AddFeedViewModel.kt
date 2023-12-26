@@ -91,12 +91,6 @@ class AddFeedViewModel internal constructor(
         }
     }
 
-    fun clearAddDoneState() {
-        scope.launch {
-            feedAddedMutableState.emit(FeedAddedState.FeedNotAdded)
-        }
-    }
-
     fun onExpandCategoryClick() {
         categoriesMutableState.update { state ->
             state.copy(isExpanded = state.isExpanded.not())

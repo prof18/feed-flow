@@ -82,6 +82,7 @@ internal actual val platformModule: Module = module {
     factory<HtmlRetriever> {
         IosHtmlRetriever(
             dispatcherProvider = get(),
+            logger = getWith("IosHtmlRetriever"),
         )
     }
 }

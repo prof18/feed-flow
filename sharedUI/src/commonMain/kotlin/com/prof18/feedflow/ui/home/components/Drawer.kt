@@ -69,13 +69,11 @@ fun Drawer(
                 )
             }
 
-            if (navDrawerState.categories.isNotEmpty() || navDrawerState.feedSourcesByCategory.isNotEmpty()) {
+            if (navDrawerState.categories.isNotEmpty()) {
                 item {
                     DrawerDivider()
                 }
-            }
 
-            if (navDrawerState.categories.isNotEmpty()) {
                 item {
                     DrawerCategoriesSection(
                         navDrawerState = navDrawerState,

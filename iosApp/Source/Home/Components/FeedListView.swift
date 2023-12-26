@@ -28,6 +28,7 @@ struct FeedListView: View {
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
     let requestNewPage: () -> Void
+    let onItemClick: (FeedItemClickedInfo) -> Void
 
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
@@ -67,7 +68,12 @@ struct FeedListView: View {
                         .id(feedItem.id)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                            onItemClick(
+                                FeedItemClickedInfo(
+                                    id: feedItem.id,
+                                    url: feedItem.url
+                                )
+                            )
                         }
                         .onLongPressGesture {
                             if let commentsUrl = feedItem.commentsUrl {
@@ -78,10 +84,6 @@ struct FeedListView: View {
                             if let index = feedState.firstIndex(of: feedItem) {
                                 if index == feedState.count - 15 {
                                     requestNewPage()
-                                }
-
-                                if index == feedState.count - 1 {
-                                    self.indexHolder.updateReadIndex(index: index)
                                 }
                             }
                         }
@@ -132,7 +134,8 @@ struct FeedListView_Previews: PreviewProvider {
             showLoading: false,
             onReloadClick: {},
             onAddFeedClick: {},
-            requestNewPage: {}
+            requestNewPage: {},
+            onItemClick: { _ in }
         )
     }
 }
@@ -145,7 +148,8 @@ struct FeedListViewIpad_Previews: PreviewProvider {
             showLoading: false,
             onReloadClick: {},
             onAddFeedClick: {},
-            requestNewPage: {}
+            requestNewPage: {},
+            onItemClick: { _ in }
         )
         .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch) (4th generation)"))
     }
@@ -163,7 +167,8 @@ struct FeedListViewNoFeed_Previews: PreviewProvider {
             showLoading: false,
             onReloadClick: {},
             onAddFeedClick: {},
-            requestNewPage: {}
+            requestNewPage: {},
+            onItemClick: { _ in }
         )
     }
 }
@@ -177,7 +182,8 @@ struct FeedListViewEmptyFeed_Previews: PreviewProvider {
             showLoading: false,
             onReloadClick: {},
             onAddFeedClick: {},
-            requestNewPage: {}
+            requestNewPage: {},
+            onItemClick: { _ in }
         )
     }
 }

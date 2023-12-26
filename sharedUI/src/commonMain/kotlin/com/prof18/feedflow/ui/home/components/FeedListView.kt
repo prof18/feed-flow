@@ -72,11 +72,6 @@ fun FeedList(
                 if (index > 1) {
                     updateReadStatus(index - 1)
                 }
-                val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-                val totalItemsCount = listState.layoutInfo.totalItemsCount
-                if (lastVisibleItem != null && lastVisibleItem == totalItemsCount - 1) {
-                    updateReadStatus(lastVisibleItem)
-                }
             }
     }
 

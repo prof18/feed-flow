@@ -26,6 +26,9 @@ struct HomeScreen: View {
     @Environment(\.scenePhase)
     private var scenePhase
 
+    @Environment(\.openURL)
+    private var openURL
+
     @State
     var loadingState: FeedUpdateStatus?
 
@@ -79,6 +82,10 @@ struct HomeScreen: View {
             },
             requestNewPage: {
                 homeViewModel.requestNewFeedsPage()
+            },
+            onItemClick: { feedItemClickedInfo in
+                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItemClickedInfo.url))
+                homeViewModel.markAsRead(feedItemId: feedItemClickedInfo.id)
             }
         )
         .task {
@@ -200,6 +207,7 @@ struct HomeContent: View {
     let onForceRefreshClick: () -> Void
     let deleteAllFeeds: () -> Void
     let requestNewPage: () -> Void
+    let onItemClick: (FeedItemClickedInfo) -> Void
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -213,7 +221,8 @@ struct HomeContent: View {
                 onAddFeedClick: {
                     self.sheetToShow = .feedList
                 },
-                requestNewPage: requestNewPage
+                requestNewPage: requestNewPage,
+                onItemClick: onItemClick
             )
             .onChange(of: toggleListScroll) { _ in
                 proxy.scrollTo(feedState.first?.id)
@@ -424,7 +433,8 @@ struct HomeContentLoading_Previews: PreviewProvider {
             onDeleteOldFeedClick: { },
             onForceRefreshClick: {},
             deleteAllFeeds: {},
-            requestNewPage: {}
+            requestNewPage: {},
+            onItemClick: { _ in }
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())
@@ -450,7 +460,8 @@ struct HomeContentLoaded_Previews: PreviewProvider {
             onDeleteOldFeedClick: { },
             onForceRefreshClick: {},
             deleteAllFeeds: {},
-            requestNewPage: {}
+            requestNewPage: {},
+            onItemClick: { _ in }
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())
@@ -476,7 +487,8 @@ struct HomeContentSettings_Previews: PreviewProvider {
             onDeleteOldFeedClick: { },
             onForceRefreshClick: {},
             deleteAllFeeds: {},
-            requestNewPage: {}
+            requestNewPage: {},
+            onItemClick: { _ in }
         )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())

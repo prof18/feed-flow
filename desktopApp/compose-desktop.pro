@@ -95,3 +95,5 @@
 -keep class com.prof18.feedflow.domain.model.** { *; }
 
 -keep class com.prof18.feedflow.presentation.model.** { *; }
+
+-keep class com.arkivanov.decompose.extensions.compose.jetbrains.mainthread.SwingMainThreadChecker

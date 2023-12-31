@@ -77,7 +77,7 @@ class FeedSourceListViewModel internal constructor(
     fun deleteFeedSource(feedSource: FeedSource) {
         scope.launch {
             feedManagerRepository.deleteFeed(feedSource)
-            feedRetrieverRepository.fetchFeeds(updateLoadingInfo = false)
+            feedRetrieverRepository.fetchFeeds()
         }
     }
 

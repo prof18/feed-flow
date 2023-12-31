@@ -143,16 +143,12 @@ internal class FeedRetrieverRepository(
     }
 
     suspend fun fetchFeeds(
-        updateLoadingInfo: Boolean = true,
         forceRefresh: Boolean = false,
         isFirstLaunch: Boolean = false,
     ) {
         return withContext(dispatcherProvider.io) {
-            if (updateLoadingInfo) {
-                updateMutableState.update { StartedFeedUpdateStatus }
-            } else {
-                updateMutableState.update { FinishedFeedUpdateStatus }
-            }
+            updateMutableState.update { StartedFeedUpdateStatus }
+
             val feedSourceUrls = databaseHelper.getFeedSources()
             feedToUpdate.clear()
             feedToUpdate.addAll(feedSourceUrls.map { it.url })
@@ -161,14 +157,12 @@ internal class FeedRetrieverRepository(
                     NoFeedSourcesStatus
                 }
             } else {
-                if (updateLoadingInfo) {
-                    updateMutableState.emit(
-                        InProgressFeedUpdateStatus(
-                            refreshedFeedCount = 0,
-                            totalFeedCount = feedSourceUrls.size,
-                        ),
-                    )
-                }
+                updateMutableState.emit(
+                    InProgressFeedUpdateStatus(
+                        refreshedFeedCount = 0,
+                        totalFeedCount = feedSourceUrls.size,
+                    ),
+                )
                 databaseHelper.updateNewStatus()
 
                 if (!isFirstLaunch) {
@@ -177,7 +171,6 @@ internal class FeedRetrieverRepository(
 
                 parseFeeds(
                     feedSourceUrls = feedSourceUrls,
-                    updateLoadingInfo = updateLoadingInfo,
                     forceRefresh = forceRefresh,
                     isFeedSourceMigrationRequired = isFirstLaunch && isSourceImageMigrationRequired(),
                 )
@@ -277,7 +270,6 @@ internal class FeedRetrieverRepository(
 
     private suspend fun parseFeeds(
         feedSourceUrls: List<FeedSource>,
-        updateLoadingInfo: Boolean,
         forceRefresh: Boolean,
         isFeedSourceMigrationRequired: Boolean,
     ) =
@@ -289,9 +281,7 @@ internal class FeedRetrieverRepository(
                 } else {
                     logger.d { "One hour is not passed, skipping: ${feedSource.url}}" }
                     feedToUpdate.remove(feedSource.url)
-                    if (updateLoadingInfo) {
-                        updateRefreshCount()
-                    }
+                    updateRefreshCount()
                     null
                 }
             }
@@ -303,9 +293,7 @@ internal class FeedRetrieverRepository(
                         val rssChannel = parser.getRssChannel(feedSource.url)
                         logger.d { "<- Got back ${rssChannel.title}" }
                         feedToUpdate.remove(feedSource.url)
-                        if (updateLoadingInfo) {
-                            updateRefreshCount()
-                        }
+                        updateRefreshCount()
 
                         val items = rssChannelMapper.getFeedItems(
                             rssChannel = rssChannel,
@@ -331,9 +319,7 @@ internal class FeedRetrieverRepository(
                             )
                         }
                         feedToUpdate.remove(feedSource.url)
-                        if (updateLoadingInfo) {
-                            updateRefreshCount()
-                        }
+                        updateRefreshCount()
                     }
                 }.asFlow()
             }.collect()
@@ -347,8 +333,8 @@ internal class FeedRetrieverRepository(
         val oneHourInMillis = (60 * 60) * 1000
         val currentTime = dateFormatter.currentTimeMillis()
         return forceRefresh ||
-            lastSyncTimestamp == null ||
-            currentTime - lastSyncTimestamp >= oneHourInMillis
+                lastSyncTimestamp == null ||
+                currentTime - lastSyncTimestamp >= oneHourInMillis
     }
 
     private fun updateRefreshCount() {

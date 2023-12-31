@@ -3,6 +3,7 @@ package com.prof18.feedflow.presentation
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
@@ -18,10 +19,10 @@ class FeedSourceListViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
 ) : BaseViewModel() {
 
-    private val feedsMutableState: MutableStateFlow<List<FeedSourceState>> = MutableStateFlow(listOf())
+    private val feedsMutableState: MutableStateFlow<FeedSourceListState> = MutableStateFlow(FeedSourceListState())
 
     @NativeCoroutinesState
-    val feedSourcesState: StateFlow<List<FeedSourceState>> = feedsMutableState.asStateFlow()
+    val feedSourcesState: StateFlow<FeedSourceListState> = feedsMutableState.asStateFlow()
 
     init {
         scope.launch {
@@ -36,22 +37,39 @@ class FeedSourceListViewModel internal constructor(
                         null
                     }
                 }
+
+                val containsOnlyNullKey = groupedSources.keys.all { it == null }
+
                 val feedSourceStates = mutableListOf<FeedSourceState>()
 
-                groupedSources.forEach { (category: FeedSourceCategory?, feedSources: List<FeedSource>) ->
-                    feedSourceStates.add(
-                        FeedSourceState(
-                            categoryId = category?.id?.let { CategoryId(it) },
-                            categoryName = category?.title,
-                            isExpanded = false,
-                            feedSources = feedSources,
-                        ),
-                    )
+                if (containsOnlyNullKey) {
+                    feedsMutableState.update {
+                        FeedSourceListState(
+                            feedSourcesWithoutCategory = feeds.sortedBy { it.title },
+                            feedSourcesWithCategory = emptyList(),
+                        )
+                    }
+                } else {
+                    groupedSources.forEach { (category: FeedSourceCategory?, feedSources: List<FeedSource>) ->
+                        feedSourceStates.add(
+                            FeedSourceState(
+                                categoryId = category?.id?.let { CategoryId(it) },
+                                categoryName = category?.title,
+                                isExpanded = false,
+                                feedSources = feedSources,
+                            ),
+                        )
+                    }
+
+                    feedSourceStates.sortedBy { it.categoryName }
+
+                    feedsMutableState.update {
+                        FeedSourceListState(
+                            feedSourcesWithoutCategory = emptyList(),
+                            feedSourcesWithCategory = feedSourceStates,
+                        )
+                    }
                 }
-
-                feedSourceStates.sortBy { it.categoryName }
-
-                feedsMutableState.update { feedSourceStates }
             }
         }
     }
@@ -65,13 +83,17 @@ class FeedSourceListViewModel internal constructor(
 
     fun expandCategory(categoryId: CategoryId?) {
         feedsMutableState.update { oldState ->
-            oldState.map { feedSourceState ->
+            val newFeedSourceStates = oldState.feedSourcesWithCategory.map { feedSourceState ->
                 if (categoryId == feedSourceState.categoryId) {
                     feedSourceState.copy(isExpanded = feedSourceState.isExpanded.not())
                 } else {
                     feedSourceState
                 }
             }
+            FeedSourceListState(
+                feedSourcesWithoutCategory = oldState.feedSourcesWithoutCategory,
+                feedSourcesWithCategory = newFeedSourceStates,
+            )
         }
     }
 }

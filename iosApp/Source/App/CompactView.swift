@@ -23,7 +23,12 @@ struct CompactView: View {
     private var indexHolder = HomeListIndexHolder()
 
     @State
-    var navDrawerState: NavDrawerState = NavDrawerState(timeline: [], categories: [], feedSourcesByCategory: [:])
+    var navDrawerState: NavDrawerState = NavDrawerState(
+        timeline: [],
+        categories: [],
+        feedSourcesWithoutCategory: [],
+        feedSourcesByCategory: [:]
+    )
 
     @State
     var scrollUpTrigger: Bool = false

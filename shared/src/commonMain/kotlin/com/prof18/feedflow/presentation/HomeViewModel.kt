@@ -4,7 +4,6 @@ import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerCategory
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
-import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
@@ -79,21 +78,39 @@ class HomeViewModel internal constructor(
         scope.launch {
             feedManagerRepository.observeFeedSourcesByCategory()
                 .combine(feedManagerRepository.observeCategories()) { feedSourceByCategory, categories ->
+
+                    val containsOnlyNullKey = feedSourceByCategory.keys.all { it == null }
+
+                    val feedSourcesWithoutCategory = feedSourceByCategory[null]
+                        ?.map { feedSource ->
+                            DrawerFeedSource(
+                                feedSource = feedSource,
+                            )
+                        } ?: listOf()
+
                     NavDrawerState(
                         timeline = listOf(DrawerItem.Timeline),
                         categories = categories.map { category ->
                             DrawerCategory(category = category)
                         },
-                        feedSourcesByCategory = feedSourceByCategory.mapKeys { (category, _) ->
-                            FeedSourceCategoryWrapper(
-                                feedSourceCategory = category,
-                            )
-                        }.mapValues { (_, sources) ->
-                            sources.map { feedSource ->
-                                DrawerFeedSource(
-                                    feedSource = feedSource,
+                        feedSourcesWithoutCategory = if (containsOnlyNullKey) {
+                            feedSourcesWithoutCategory
+                        } else {
+                            listOf()
+                        },
+                        feedSourcesByCategory = if (containsOnlyNullKey) {
+                            mapOf()
+                        } else {
+                            feedSourceByCategory.map { (category, feedSources) ->
+                                val categoryWrapper = DrawerFeedSource.FeedSourceCategoryWrapper(
+                                    feedSourceCategory = category,
                                 )
-                            }
+                                categoryWrapper to feedSources.map { feedSource ->
+                                    DrawerFeedSource(
+                                        feedSource = feedSource,
+                                    )
+                                }
+                            }.toMap()
                         },
                     )
                 }.collect { navDrawerState ->

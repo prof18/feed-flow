@@ -333,8 +333,8 @@ internal class FeedRetrieverRepository(
         val oneHourInMillis = (60 * 60) * 1000
         val currentTime = dateFormatter.currentTimeMillis()
         return forceRefresh ||
-                lastSyncTimestamp == null ||
-                currentTime - lastSyncTimestamp >= oneHourInMillis
+            lastSyncTimestamp == null ||
+            currentTime - lastSyncTimestamp >= oneHourInMillis
     }
 
     private fun updateRefreshCount() {

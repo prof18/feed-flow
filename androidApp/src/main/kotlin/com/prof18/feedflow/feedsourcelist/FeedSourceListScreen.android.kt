@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.FeedSourceState
+import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.preview.feedSourcesState
 import com.prof18.feedflow.ui.components.FeedSourceLogoImage
@@ -44,7 +44,7 @@ fun FeedSourceListScreen(
 
 @Composable
 private fun FeedSourceListContent(
-    feedSources: List<FeedSourceState>,
+    feedSources: FeedSourceListState,
     onAddFeedSourceClick: () -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     navigateBack: () -> Unit,
@@ -87,7 +87,10 @@ private fun FeedSourceListContent(
 private fun FeedSourceListContentPreview() {
     FeedFlowTheme {
         FeedSourceListContent(
-            feedSources = feedSourcesState,
+            feedSources = FeedSourceListState(
+                feedSourcesWithoutCategory = emptyList(),
+                feedSourcesWithCategory = feedSourcesState,
+            ),
             onAddFeedSourceClick = { },
             onDeleteFeedSourceClick = {},
             navigateBack = {},

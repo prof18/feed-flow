@@ -47,6 +47,7 @@ import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
@@ -56,7 +57,7 @@ internal expect fun Modifier.feedSourceMenuClickModifier(onLongClick: () -> Unit
 @Composable
 fun FeedSourcesWithCategoryList(
     modifier: Modifier = Modifier,
-    feedSourceState: List<FeedSourceState>,
+    feedSourceState: FeedSourceListState,
     feedSourceImage: @Composable (String) -> Unit,
     onExpandClicked: (CategoryId?) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
@@ -65,7 +66,15 @@ fun FeedSourcesWithCategoryList(
         modifier = modifier,
         contentPadding = PaddingValues(Spacing.regular),
     ) {
-        items(feedSourceState) { feedSourceState ->
+        item(feedSourceState.feedSourcesWithoutCategory) {
+            FeedSourcesList(
+                feedSources = feedSourceState.feedSourcesWithoutCategory,
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                feedSourceImage = feedSourceImage,
+            )
+        }
+
+        items(feedSourceState.feedSourcesWithCategory) { feedSourceState ->
             Column {
                 @Suppress("MagicNumber")
                 val degrees by animateFloatAsState(
@@ -103,7 +112,7 @@ fun FeedSourcesWithCategoryList(
                     )
                 }
 
-                FeedSourcesList(
+                FeedSourcesListWithCategorySelector(
                     feedSourceState = feedSourceState,
                     feedSourceImage = feedSourceImage,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
@@ -114,7 +123,7 @@ fun FeedSourcesWithCategoryList(
 }
 
 @Composable
-private fun FeedSourcesList(
+private fun FeedSourcesListWithCategorySelector(
     feedSourceState: FeedSourceState,
     feedSourceImage: @Composable (String) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
@@ -129,22 +138,34 @@ private fun FeedSourcesList(
         ),
         exit = shrinkVertically(),
     ) {
-        Column {
-            feedSourceState.feedSources.forEachIndexed { index, feedSource ->
+        FeedSourcesList(
+            feedSources = feedSourceState.feedSources,
+            onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+            feedSourceImage = feedSourceImage,
+        )
+    }
+}
 
-                FeedSourceItem(
-                    feedSource = feedSource,
-                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                    feedSourceImage = feedSourceImage,
+@Composable
+private fun FeedSourcesList(
+    feedSources: List<FeedSource>,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    feedSourceImage: @Composable (String) -> Unit,
+) {
+    Column {
+        feedSources.forEachIndexed { index, feedSource ->
+            FeedSourceItem(
+                feedSource = feedSource,
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                feedSourceImage = feedSourceImage,
+            )
+
+            if (index < feedSources.size - 1) {
+                Divider(
+                    modifier = Modifier,
+                    thickness = 0.2.dp,
+                    color = Color.Gray,
                 )
-
-                if (index < feedSourceState.feedSources.size - 1) {
-                    Divider(
-                        modifier = Modifier,
-                        thickness = 0.2.dp,
-                        color = Color.Gray,
-                    )
-                }
             }
         }
     }

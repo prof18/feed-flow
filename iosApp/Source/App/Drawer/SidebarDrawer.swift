@@ -49,6 +49,30 @@ struct SidebarDrawer: View {
                 )
             }
 
+            if !navDrawerState.feedSourcesWithoutCategory.isEmpty {
+                Section(
+                    content: {
+                        ForEach(navDrawerState.feedSourcesWithoutCategory, id: \.self) { drawerItem in
+                            if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
+                                FeedSourceDrawerItem(
+                                    feedSource: drawerFeedSource.feedSource,
+                                    onClick: {
+                                        self.selectedDrawerItem = drawerItem
+                                        self.onFeedFilterSelected(
+                                            FeedFilter.Source(
+                                                feedSource: drawerFeedSource.feedSource
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }, header: {
+                        Text(localizer.drawer_title_feed_sources.localized)
+                    }
+                )
+            }
+
             if !navDrawerState.feedSourcesByCategory.isEmpty {
 
                 Section(
@@ -69,33 +93,17 @@ struct SidebarDrawer: View {
                                         id: \.self
                                     ) { drawerItem in
                                         if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
-                                            HStack {
-
-                                                if let imageUrl = drawerFeedSource.feedSource.logoUrl {
-                                                    LazyImage(url: URL(string: imageUrl)) { state in
-                                                        if let image = state.image {
-                                                            image
-                                                                .resizable()
-                                                                .scaledToFill()
-                                                                .frame(width: 24, height: 24)
-                                                                .cornerRadius(16)
-                                                                .clipped()
-                                                        } else {
-                                                            Image(systemName: "square.stack.3d.up")
-                                                        }
-                                                    }
-                                                } else {
-                                                    Image(systemName: "square.stack.3d.up")
+                                            FeedSourceDrawerItem(
+                                                feedSource: drawerFeedSource.feedSource,
+                                                onClick: {
+                                                    self.selectedDrawerItem = drawerItem
+                                                    self.onFeedFilterSelected(
+                                                        FeedFilter.Source(
+                                                            feedSource: drawerFeedSource.feedSource
+                                                        )
+                                                    )
                                                 }
-
-                                                Text(drawerFeedSource.feedSource.title)
-                                                    .lineLimit(2)
-                                                    .font(.system(size: 16))
-                                                    .padding(.bottom, 2)
-                                                    .padding(.leading, Spacing.small)
-
-                                                Spacer()
-                                            }
+                                            )
                                             .listRowInsets(
                                                 EdgeInsets(
                                                     top: Spacing.small,
@@ -103,15 +111,6 @@ struct SidebarDrawer: View {
                                                     bottom: Spacing.small,
                                                     trailing: Spacing.small)
                                             )
-                                            .contentShape(Rectangle())
-                                            .onTapGesture {
-                                                self.selectedDrawerItem = drawerItem
-                                                self.onFeedFilterSelected(
-                                                    FeedFilter.Source(
-                                                        feedSource: drawerFeedSource.feedSource
-                                                    )
-                                                )
-                                            }
                                         } else {
                                             EmptyView()
                                         }
@@ -135,6 +134,46 @@ struct SidebarDrawer: View {
             } else {
                 $0.listStyle(.insetGrouped)
             }
+        }
+    }
+}
+
+struct FeedSourceDrawerItem: View {
+
+    let feedSource: FeedSource
+    let onClick: () -> Void
+
+    var body: some View {
+        HStack {
+            if let imageUrl = feedSource.logoUrl {
+                LazyImage(url: URL(string: imageUrl)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 24, height: 24)
+                            .cornerRadius(16)
+                            .clipped()
+                    } else {
+                        Image(systemName: "square.stack.3d.up")
+                    }
+                }
+            } else {
+                Image(systemName: "square.stack.3d.up")
+            }
+
+            Text(feedSource.title)
+                .lineLimit(2)
+                .font(.system(size: 16))
+                .padding(.bottom, 2)
+                .padding(.leading, Spacing.small)
+
+            Spacer()
+        }
+
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onClick()
         }
     }
 }

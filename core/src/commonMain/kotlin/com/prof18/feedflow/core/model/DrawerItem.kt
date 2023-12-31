@@ -3,8 +3,9 @@ package com.prof18.feedflow.core.model
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper
 
 data class NavDrawerState(
-    val timeline: List<DrawerItem> = listOf(),
-    val categories: List<DrawerItem> = listOf(),
+    val timeline: List<DrawerItem> = emptyList(),
+    val categories: List<DrawerItem> = emptyList(),
+    val feedSourcesWithoutCategory: List<DrawerItem> = emptyList(),
     val feedSourcesByCategory: Map<FeedSourceCategoryWrapper, List<DrawerItem>> = mapOf(),
 ) {
     fun isEmpty(): Boolean =

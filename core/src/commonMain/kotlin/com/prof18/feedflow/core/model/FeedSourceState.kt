@@ -6,3 +6,11 @@ data class FeedSourceState(
     val isExpanded: Boolean = false,
     val feedSources: List<FeedSource>,
 )
+
+data class FeedSourceListState(
+    val feedSourcesWithoutCategory: List<FeedSource> = emptyList(),
+    val feedSourcesWithCategory: List<FeedSourceState> = emptyList(),
+) {
+    fun isEmpty(): Boolean =
+        feedSourcesWithoutCategory.isEmpty() && feedSourcesWithCategory.isEmpty()
+}

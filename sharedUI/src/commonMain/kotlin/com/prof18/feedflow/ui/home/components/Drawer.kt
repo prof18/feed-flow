@@ -83,7 +83,9 @@ fun Drawer(
                 }
             }
 
-            if (navDrawerState.feedSourcesByCategory.isNotEmpty()) {
+            if (navDrawerState.feedSourcesByCategory.isNotEmpty() ||
+                navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
+            ) {
                 item {
                     DrawerFeedSourcesByCategories(
                         navDrawerState = navDrawerState,
@@ -207,6 +209,14 @@ private fun DrawerFeedSourcesByCategories(
                 style = MaterialTheme.typography.labelLarge,
             )
 
+            FeedSourcesList(
+                drawerFeedSources = navDrawerState.feedSourcesWithoutCategory
+                    .filterIsInstance<DrawerItem.DrawerFeedSource>(),
+                currentFeedFilter = currentFeedFilter,
+                feedSourceImage = feedSourceImage,
+                onFeedFilterSelected = onFeedFilterSelected,
+            )
+
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
                 var isCategoryExpanded by remember {
                     mutableStateOf(false)
@@ -279,7 +289,7 @@ private fun DrawerFeedSourceByCategoryItem(
             )
         }
 
-        FeedSourcesList(
+        FeedSourcesListWithCategorySelector(
             isCategoryExpanded = isCategoryExpanded,
             drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
@@ -290,7 +300,7 @@ private fun DrawerFeedSourceByCategoryItem(
 }
 
 @Composable
-private fun ColumnScope.FeedSourcesList(
+private fun ColumnScope.FeedSourcesListWithCategorySelector(
     isCategoryExpanded: Boolean,
     drawerFeedSources: List<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
@@ -307,43 +317,58 @@ private fun ColumnScope.FeedSourcesList(
         ),
         exit = shrinkVertically(),
     ) {
-        Column {
-            drawerFeedSources.forEach { feedSourceWrapper ->
-                NavigationDrawerItem(
-                    selected = currentFeedFilter is FeedFilter.Source &&
-                        currentFeedFilter.feedSource == feedSourceWrapper.feedSource,
-                    label = {
-                        Text(
-                            text = feedSourceWrapper.feedSource.title,
-                            modifier = Modifier
-                                .padding(horizontal = Spacing.small),
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
+        FeedSourcesList(
+            drawerFeedSources = drawerFeedSources,
+            currentFeedFilter = currentFeedFilter,
+            feedSourceImage = feedSourceImage,
+            onFeedFilterSelected = onFeedFilterSelected,
+        )
+    }
+}
+
+@Composable
+private fun FeedSourcesList(
+    drawerFeedSources: List<DrawerItem.DrawerFeedSource>,
+    currentFeedFilter: FeedFilter,
+    feedSourceImage: @Composable (String) -> Unit,
+    onFeedFilterSelected: (FeedFilter) -> Unit,
+) {
+    Column {
+        drawerFeedSources.forEach { feedSourceWrapper ->
+            NavigationDrawerItem(
+                selected = currentFeedFilter is FeedFilter.Source &&
+                    currentFeedFilter.feedSource == feedSourceWrapper.feedSource,
+                label = {
+                    Text(
+                        text = feedSourceWrapper.feedSource.title,
+                        modifier = Modifier
+                            .padding(horizontal = Spacing.small),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                icon = {
+                    val imageUrl = feedSourceWrapper.feedSource.logoUrl
+                    if (imageUrl != null) {
+                        feedSourceImage(imageUrl)
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Category,
+                            contentDescription = null,
                         )
-                    },
-                    icon = {
-                        val imageUrl = feedSourceWrapper.feedSource.logoUrl
-                        if (imageUrl != null) {
-                            feedSourceImage(imageUrl)
-                        } else {
-                            Icon(
-                                imageVector = Icons.Default.Category,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    colors = NavigationDrawerItemDefaults.colors(
-                        unselectedContainerColor = Color.Transparent,
-                    ),
-                    onClick = {
-                        onFeedFilterSelected(
-                            FeedFilter.Source(
-                                feedSource = feedSourceWrapper.feedSource,
-                            ),
-                        )
-                    },
-                )
-            }
+                    }
+                },
+                colors = NavigationDrawerItemDefaults.colors(
+                    unselectedContainerColor = Color.Transparent,
+                ),
+                onClick = {
+                    onFeedFilterSelected(
+                        FeedFilter.Source(
+                            feedSource = feedSourceWrapper.feedSource,
+                        ),
+                    )
+                },
+            )
         }
     }
 }

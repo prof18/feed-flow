@@ -22,7 +22,12 @@ struct RegularView: View {
     var selectedDrawerItem: DrawerItem?
 
     @State
-    var navDrawerState: NavDrawerState = NavDrawerState(timeline: [], categories: [], feedSourcesByCategory: [:])
+    var navDrawerState: NavDrawerState = NavDrawerState(
+        timeline: [],
+        categories: [],
+        feedSourcesWithoutCategory: [],
+        feedSourcesByCategory: [:]
+    )
 
     @State
     var scrollUpTrigger: Bool = false

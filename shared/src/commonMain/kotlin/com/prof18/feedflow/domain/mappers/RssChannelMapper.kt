@@ -57,6 +57,7 @@ internal class RssChannelMapper(
                     } else {
                         null
                     },
+                    isRead = false,
                     commentsUrl = rssItem.commentsUrl,
                 )
             }

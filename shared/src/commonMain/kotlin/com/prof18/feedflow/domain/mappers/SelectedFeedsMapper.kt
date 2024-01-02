@@ -40,5 +40,6 @@ internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter) = FeedItem(
     } else {
         null
     },
+    isRead = is_read,
     commentsUrl = comments_url,
 )

@@ -138,8 +138,17 @@ internal class FeedRetrieverRepository(
         getFeeds()
     }
 
-    suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) {
-        databaseHelper.updateReadStatus(itemsToUpdates.toList())
+    suspend fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
+        mutableFeedState.update { currentItems ->
+            currentItems.map { feedItem ->
+                if (FeedItemId(feedItem.id) in itemsToUpdates) {
+                    feedItem.copy(isRead = true)
+                } else {
+                    feedItem
+                }
+            }.toImmutableList()
+        }
+        databaseHelper.markAsRead(itemsToUpdates.toList())
     }
 
     suspend fun fetchFeeds(

@@ -167,7 +167,7 @@ class HomeViewModel internal constructor(
         }
 
         scope.launch {
-            val urlToUpdates = mutableListOf<FeedItemId>()
+            val urlToUpdates = hashSetOf<FeedItemId>()
             val items = feedState.value.toMutableList()
             if (lastVisibleIndex <= lastUpdateIndex) {
                 return@launch
@@ -181,7 +181,7 @@ class HomeViewModel internal constructor(
                     )
                 }
             }
-            feedRetrieverRepository.updateReadStatus(urlToUpdates)
+            feedRetrieverRepository.markAsRead(urlToUpdates)
             lastUpdateIndex = lastVisibleIndex
         }
     }
@@ -201,8 +201,8 @@ class HomeViewModel internal constructor(
 
     fun markAsRead(feedItemId: Int) {
         scope.launch {
-            feedRetrieverRepository.updateReadStatus(
-                listOf(
+            feedRetrieverRepository.markAsRead(
+                hashSetOf(
                     FeedItemId(feedItemId),
                 ),
             )

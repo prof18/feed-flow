@@ -1,17 +1,21 @@
 package com.prof18.feedflow.ui.home.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -117,12 +122,7 @@ fun FeedItemView(
             .padding(horizontal = Spacing.regular)
             .padding(vertical = Spacing.small),
     ) {
-        Text(
-            modifier = Modifier
-                .padding(bottom = Spacing.small),
-            text = feedItem.feedSource.title,
-            style = MaterialTheme.typography.bodySmall,
-        )
+        FeedSourceAndUnreadDotRow(feedItem)
 
         TitleSubtitleAndImageRow(
             modifier = Modifier
@@ -146,6 +146,30 @@ fun FeedItemView(
                 .padding(top = Spacing.regular),
             thickness = 0.2.dp,
             color = Color.Gray,
+        )
+    }
+}
+
+@Composable
+private fun FeedSourceAndUnreadDotRow(feedItem: FeedItem) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (!feedItem.isRead) {
+            UnreadDot(
+                modifier = Modifier
+                    .padding(
+                        bottom = Spacing.small,
+                        end = Spacing.small,
+                    ),
+            )
+        }
+
+        Text(
+            modifier = Modifier
+                .padding(bottom = Spacing.small),
+            text = feedItem.feedSource.title,
+            style = MaterialTheme.typography.bodySmall,
         )
     }
 }
@@ -192,4 +216,16 @@ private fun TitleSubtitleAndImageRow(
             feedItemImage(url)
         }
     }
+}
+
+@Composable
+private fun UnreadDot(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .size(10.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primary),
+    )
 }

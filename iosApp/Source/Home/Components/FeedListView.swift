@@ -82,6 +82,7 @@ struct FeedListView: View {
                         }
                         .onAppear {
                             if let index = feedState.firstIndex(of: feedItem) {
+                                indexHolder.lastAppearedIndex = index
                                 if index == feedState.count - 15 {
                                     requestNewPage()
                                 }

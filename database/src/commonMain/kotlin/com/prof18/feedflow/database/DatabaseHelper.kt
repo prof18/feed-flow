@@ -134,10 +134,10 @@ class DatabaseHelper(
             }
         }
 
-    suspend fun updateReadStatus(itemsToUpdates: List<FeedItemId>) =
+    suspend fun markAsRead(itemsToUpdates: List<FeedItemId>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             for (item in itemsToUpdates) {
-                dbRef.feedItemQueries.updateReadStatus(item.id)
+                dbRef.feedItemQueries.markAsRead(item.id)
             }
         }
 

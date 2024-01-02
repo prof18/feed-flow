@@ -19,9 +19,17 @@ struct FeedItemView: View {
     var body: some View {
         VStack(alignment: .leading) {
 
-            Text(feedItem.feedSource.title)
-                .font(.system(size: 12))
-                .padding(.top, Spacing.small)
+            HStack {
+                if !feedItem.isRead {
+                    Circle()
+                        .fill(Color.accentColor)
+                        .frame(width: 10, height: 10)
+                }
+
+                Text(feedItem.feedSource.title)
+                    .font(.system(size: 12))
+                    .padding(.top, Spacing.small)
+            }
 
             HStack {
                 TitleAndSubtitleCell(

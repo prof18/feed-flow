@@ -36,6 +36,7 @@ val feedItemsForPreview = persistentListOf(
         pubDateMillis = null,
         dateString = null,
         commentsUrl = null,
+        isRead = true,
     ),
     FeedItem(
         id = 1,
@@ -58,6 +59,7 @@ val feedItemsForPreview = persistentListOf(
         pubDateMillis = 1675890077000,
         dateString = "12/02 - 16:22",
         commentsUrl = null,
+        isRead = false,
     ),
     FeedItem(
         id = 3,
@@ -80,6 +82,7 @@ val feedItemsForPreview = persistentListOf(
         pubDateMillis = 0,
         dateString = "12/12 - 9:22",
         commentsUrl = null,
+        isRead = false,
     ),
     FeedItem(
         id = 4,
@@ -102,6 +105,7 @@ val feedItemsForPreview = persistentListOf(
         pubDateMillis = 0,
         dateString = "12/12 - 9:22",
         commentsUrl = null,
+        isRead = false,
     ),
 )
 

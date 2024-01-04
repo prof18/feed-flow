@@ -12,12 +12,14 @@ import com.prof18.feedflow.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.mappers.RssChannelMapper
+import com.prof18.feedflow.domain.settings.SettingsRepository
 import com.prof18.feedflow.logging.crashReportingLogWriter
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.ImportExportViewModel
+import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -99,10 +101,17 @@ private val coreModule = module {
         )
     }
 
+    single {
+        SettingsRepository(
+            settingsHelper = get(),
+        )
+    }
+
     viewModel {
         HomeViewModel(
             feedRetrieverRepository = get(),
             feedManagerRepository = get(),
+            settingsRepository = get(),
         )
     }
 
@@ -153,6 +162,12 @@ private val coreModule = module {
             htmlRetriever = get(),
             htmlParser = get(),
 
+        )
+    }
+
+    viewModel {
+        SettingsViewModel(
+            settingsRepository = get(),
         )
     }
 }

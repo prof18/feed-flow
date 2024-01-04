@@ -66,7 +66,7 @@ struct HomeScreen: View {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
             updateReadStatus: { index in
-                homeViewModel.updateReadStatus(lastVisibleIndex: index)
+                homeViewModel.markAsReadOnScroll(lastVisibleIndex: index)
             },
             onMarkAllReadClick: {
                 homeViewModel.markAllRead()
@@ -154,7 +154,7 @@ struct HomeScreen: View {
         .onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
             case .background:
-                homeViewModel.updateReadStatus(lastVisibleIndex: Int32(indexHolder.getLastReadIndex()))
+                homeViewModel.markAsReadOnScroll(lastVisibleIndex: Int32(indexHolder.getLastReadIndex()))
             default:
                 break
             }

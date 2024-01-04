@@ -24,6 +24,7 @@ struct FeedItemView: View {
                     Circle()
                         .fill(Color.accentColor)
                         .frame(width: 10, height: 10)
+                        .padding(.top, Spacing.small)
                 }
 
                 Text(feedItem.feedSource.title)

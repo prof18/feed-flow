@@ -360,7 +360,7 @@ private fun HomeScaffold(
                 homeViewModel.getNewFeeds()
             },
             updateReadStatus = { lastVisibleIndex ->
-                homeViewModel.updateReadStatus(lastVisibleIndex)
+                homeViewModel.markAsReadOnScroll(lastVisibleIndex)
             },
             onFeedItemClick = { feedInfo ->
                 browserManager.openUrlWithFavoriteBrowser(feedInfo.url, context)

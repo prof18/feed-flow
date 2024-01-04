@@ -164,7 +164,7 @@ private fun CompactView(
                 homeViewModel.getNewFeeds()
             },
             updateReadStatus = { lastVisibleIndex ->
-                homeViewModel.updateReadStatus(lastVisibleIndex)
+                homeViewModel.markAsReadOnScroll(lastVisibleIndex)
             },
             onFeedItemClick = { feedInfo ->
                 openInBrowser(feedInfo.url)
@@ -225,7 +225,7 @@ private fun CompactView(
                     homeViewModel.getNewFeeds()
                 },
                 updateReadStatus = { lastVisibleIndex ->
-                    homeViewModel.updateReadStatus(lastVisibleIndex)
+                    homeViewModel.markAsReadOnScroll(lastVisibleIndex)
                 },
                 onFeedItemClick = { feedInfo ->
                     openInBrowser(feedInfo.url)
@@ -311,7 +311,7 @@ private fun MediumView(
                 homeViewModel.getNewFeeds()
             },
             updateReadStatus = { lastVisibleIndex ->
-                homeViewModel.updateReadStatus(lastVisibleIndex)
+                homeViewModel.markAsReadOnScroll(lastVisibleIndex)
             },
             onFeedItemClick = { feedInfo ->
                 openInBrowser(feedInfo.url)
@@ -389,7 +389,7 @@ private fun ExpandedView(
                 homeViewModel.getNewFeeds()
             },
             updateReadStatus = { lastVisibleIndex ->
-                homeViewModel.updateReadStatus(lastVisibleIndex)
+                homeViewModel.markAsReadOnScroll(lastVisibleIndex)
             },
             onFeedItemClick = { feedInfo ->
                 openInBrowser(feedInfo.url)

@@ -15,7 +15,7 @@ class HomeListIndexHolder: ObservableObject {
 
     var isLoading: Bool = false
     var lastAppearedIndex = 0
-    
+
     private var lastReadIndex = 0
     private var timer: Timer?
     private var isClearing = false
@@ -48,7 +48,7 @@ class HomeListIndexHolder: ObservableObject {
             timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in
                 guard let self else { return }
                 KotlinDependencies.shared.getHomeViewModel()
-                    .updateReadStatus(lastVisibleIndex: Int32(self.getLastReadIndex()))
+                    .markAsReadOnScroll(lastVisibleIndex: Int32(self.getLastReadIndex()))
             }
         }
     }

@@ -11,6 +11,7 @@ import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.domain.model.FeedUpdateStatus
+import com.prof18.feedflow.domain.settings.SettingsRepository
 import com.prof18.feedflow.presentation.model.DatabaseError
 import com.prof18.feedflow.presentation.model.FeedErrorState
 import com.prof18.feedflow.presentation.model.UIErrorState
@@ -34,6 +35,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val feedManagerRepository: FeedManagerRepository,
+    private val settingsRepository: SettingsRepository,
 ) : BaseViewModel() {
 
     // Loading
@@ -160,29 +162,31 @@ class HomeViewModel internal constructor(
         }
     }
 
-    fun updateReadStatus(lastVisibleIndex: Int) {
-        // To avoid issues
-        if (loadingState.value.isLoading()) {
-            return
-        }
+    fun markAsReadOnScroll(lastVisibleIndex: Int) {
+        if (settingsRepository.isMarkFeedAsReadWhenScrollingEnabled()) {
+            // To avoid issues
+            if (loadingState.value.isLoading()) {
+                return
+            }
 
-        scope.launch {
-            val urlToUpdates = hashSetOf<FeedItemId>()
-            val items = feedState.value.toMutableList()
-            if (lastVisibleIndex <= lastUpdateIndex) {
-                return@launch
-            }
-            for (index in lastUpdateIndex..lastVisibleIndex) {
-                items.getOrNull(index)?.let { item ->
-                    urlToUpdates.add(
-                        FeedItemId(
-                            id = item.id,
-                        ),
-                    )
+            scope.launch {
+                val urlToUpdates = hashSetOf<FeedItemId>()
+                val items = feedState.value.toMutableList()
+                if (lastVisibleIndex <= lastUpdateIndex) {
+                    return@launch
                 }
+                for (index in lastUpdateIndex..lastVisibleIndex) {
+                    items.getOrNull(index)?.let { item ->
+                        urlToUpdates.add(
+                            FeedItemId(
+                                id = item.id,
+                            ),
+                        )
+                    }
+                }
+                feedRetrieverRepository.markAsRead(urlToUpdates)
+                lastUpdateIndex = lastVisibleIndex
             }
-            feedRetrieverRepository.markAsRead(urlToUpdates)
-            lastUpdateIndex = lastVisibleIndex
         }
     }
 

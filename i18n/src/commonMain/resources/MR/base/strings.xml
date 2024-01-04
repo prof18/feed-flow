@@ -61,4 +61,5 @@
     <string name="drawer_title_timeline">Timeline</string>
     <string name="drawer_title_categories">Categories</string>
     <string name="drawer_title_feed_sources">Feed Sources</string>
+    <string name="toggle_mark_read_when_scrolling">Mark items as read automatically when scrolling the list</string>
 </resources>

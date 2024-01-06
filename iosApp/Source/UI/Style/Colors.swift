@@ -20,4 +20,5 @@ extension Color {
     static let onPrimary = Color("OnPrimary")
     static let popupBackground = Color("PopupBackgroundColor")
     static let popupText = Color("PopupTextColor")
+    static let secondaryBackgroundColor = Color("SecondaryBackgroundColor")
 }

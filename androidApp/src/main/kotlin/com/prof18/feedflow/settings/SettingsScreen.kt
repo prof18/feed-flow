@@ -223,7 +223,7 @@ private fun SettingsList(
         item {
             MarkReadWhenScrollingSwitch(
                 setMarkReadWhenScrolling = setMarkReadWhenScrolling,
-                isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled
+                isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
             )
         }
 
@@ -260,7 +260,7 @@ private fun SettingsList(
 @Composable
 private fun MarkReadWhenScrollingSwitch(
     setMarkReadWhenScrolling: (Boolean) -> Unit,
-    isMarkReadWhenScrollingEnabled: Boolean
+    isMarkReadWhenScrollingEnabled: Boolean,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -276,17 +276,17 @@ private fun MarkReadWhenScrollingSwitch(
             )
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(30.dp)
+        horizontalArrangement = Arrangement.spacedBy(30.dp),
     ) {
         Text(
             text = stringResource(resource = MR.strings.toggle_mark_read_when_scrolling),
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
         Switch(
             interactionSource = interactionSource,
             checked = isMarkReadWhenScrollingEnabled,
-            onCheckedChange = setMarkReadWhenScrolling
+            onCheckedChange = setMarkReadWhenScrolling,
         )
     }
 }

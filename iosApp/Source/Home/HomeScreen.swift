@@ -168,9 +168,6 @@ struct HomeContent: View {
     private var indexHolder: HomeListIndexHolder
 
     @EnvironmentObject
-    private var browserSelector: BrowserSelector
-
-    @EnvironmentObject
     private var appState: AppState
 
     @Environment(\.dismiss)
@@ -219,7 +216,7 @@ struct HomeContent: View {
                     onRefresh()
                 },
                 onAddFeedClick: {
-                    self.sheetToShow = .feedList
+                    self.sheetToShow = .settings
                 },
                 requestNewPage: requestNewPage,
                 onItemClick: onItemClick
@@ -304,58 +301,12 @@ struct HomeContent: View {
 
                         Button(
                             action: {
-                                self.sheetToShow = .feedList
+                                self.sheetToShow = .settings
                             },
                             label: {
                                 Label(
-                                    localizer.feeds_title.localized,
-                                    systemImage: "list.bullet.rectangle.portrait"
-                                )
-                            }
-                        )
-
-                        Menu {
-                            Picker(
-                                selection: $browserSelector.selectedBrowser,
-                                label: Text(localizer.browser_selection_button.localized)
-                            ) {
-                                ForEach(browserSelector.browsers, id: \.self) { period in
-                                    Text(period.name).tag(period as Browser?)
-                                }
-                            }
-                        }
-                    label: {
-                        Label(
-                            localizer.browser_selection_button.localized,
-                            systemImage: "globe"
-                        )
-                    }
-
-                        NavigationLink(value: CommonRoute.importExportScreen) {
-                            Label(
-                                localizer.import_export_opml.localized,
-                                systemImage: "arrow.up.arrow.down"
-                            )
-                        }
-
-                        Button(
-                            action: {
-                                let subject = localizer.issue_content_title.localized
-                                let content = localizer.issue_content_template.localized
-
-                                if let url = URL(
-                                    string: UserFeedbackReporter.shared.getEmailUrl(
-                                        subject: subject,
-                                        content: content
-                                    )
-                                ) {
-                                    self.openURL(url)
-                                }
-                            },
-                            label: {
-                                Label(
-                                    localizer.report_issue_button.localized,
-                                    systemImage: "ladybug"
+                                    localizer.settings_button.localized, // ellipsis.circle.fill
+                                    systemImage: "gear"
                                 )
                             }
                         )
@@ -374,14 +325,8 @@ struct HomeContent: View {
                         )
 #endif
 
-                        NavigationLink(value: CommonRoute.aboutScreen) {
-                            Label(
-                                localizer.about_button.localized,
-                                systemImage: "info.circle"
-                            )
-                        }
                     } label: {
-                        Image(systemName: "gear")
+                        Image(systemName: "ellipsis.circle")
                     }
                 }
 
@@ -392,6 +337,8 @@ struct HomeContent: View {
             switch item {
             case .feedList:
                 FeedSourceListScreen()
+            case .settings:
+                SettingsScreen()
             }
         }
     }

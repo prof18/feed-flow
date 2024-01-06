@@ -59,7 +59,6 @@ private struct FeedSourceListContent: View {
     let deleteFeedSource: (FeedSource) -> Void
 
     var body: some View {
-        NavigationStack {
             VStack {
                 if feedState.isEmpty() {
                     VStack {
@@ -68,7 +67,7 @@ private struct FeedSourceListContent: View {
                         Text(localizer.no_feeds_found_message.localized)
                             .font(.body)
 
-                        NavigationLink(value: SheetPage.addFeed) {
+                        NavigationLink(destination: AddFeedScreen()) {
                             Text(localizer.add_feed.localized)
                         }
 
@@ -152,20 +151,13 @@ private struct FeedSourceListContent: View {
                 }
 
                 ToolbarItem(placement: .primaryAction) {
-                    NavigationLink(value: SheetPage.addFeed) {
+                    NavigationLink(destination: AddFeedScreen()) {
                         Image(systemName: "plus")
                     }
                     .padding(.trailing, Spacing.small)
 
                 }
             }
-            .navigationDestination(for: SheetPage.self) { page in
-                switch page {
-                case .addFeed:
-                    AddFeedScreen()
-                }
-            }
-        }
     }
 }
 

@@ -16,6 +16,7 @@ import com.prof18.feedflow.presentation.BaseViewModel
 import com.prof18.feedflow.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.ImportExportViewModel
+import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.utils.DispatcherProvider
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
@@ -95,4 +96,5 @@ object KotlinDependencies : KoinComponent {
     fun getBrowserSettingsRepository() = getKoin().get<BrowserSettingsRepository>()
     fun getLogger(tag: String? = null) = getKoin().get<Logger> { parametersOf(tag) }
     fun getImportExportViewModel() = getKoin().get<ImportExportViewModel>()
+    fun getSettingsViewModel() = getKoin().get<SettingsViewModel>()
 }

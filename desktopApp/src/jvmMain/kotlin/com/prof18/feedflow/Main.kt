@@ -49,6 +49,7 @@ import com.prof18.feedflow.navigation.ChildStack
 import com.prof18.feedflow.navigation.ProvideComponentContext
 import com.prof18.feedflow.navigation.Screen
 import com.prof18.feedflow.presentation.HomeViewModel
+import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.ui.components.NewVersionBanner
 import com.prof18.feedflow.ui.style.FeedFlowTheme
 import com.prof18.feedflow.ui.style.rememberDesktopDarkTheme
@@ -110,6 +111,7 @@ fun main() = application {
     LifecycleController(lifecycle, windowState)
 
     val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
+    val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
     val newVersionChecker = DI.koin.get<NewVersionChecker>()
 
     val listState = rememberLazyListState()
@@ -147,8 +149,11 @@ fun main() = application {
         val emailSubject = stringResource(MR.strings.issue_content_title)
         val emailContent = stringResource(MR.strings.issue_content_template)
 
+        val settingsState by settingsViewModel.settingsState.collectAsState()
+
         FeedFlowMenuBar(
             showDebugMenu = appEnvironment.isDebug(),
+            isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
             onRefreshClick = {
                 scope.launch {
                     listState.animateScrollToItem(0)
@@ -188,6 +193,9 @@ fun main() = application {
             },
             deleteFeeds = {
                 homeViewModel.deleteAllFeeds()
+            },
+            setMarkReadWhenScrolling = { enabled ->
+                settingsViewModel.updateMarkReadWhenScrolling(enabled)
             },
         )
 

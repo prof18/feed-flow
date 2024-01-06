@@ -43,7 +43,7 @@ struct ImportExportScreen: View {
                 viewModel.clearState()
             }
         )
-        .navigationTitle(localizer.import_export_opml.localized)
+        .navigationTitle(localizer.import_export_opml_title.localized)
         .navigationBarTitleDisplayMode(.inline)
         .task {
             do {
@@ -149,7 +149,7 @@ struct ImportExportContent: View {
             )
 
         default:
-            Text("Aronne")
+            EmptyView()
         }
 
     }
@@ -163,6 +163,13 @@ struct ImportExportIdleView: View {
     var body: some View {
         VStack {
             Form {
+
+                Section {
+                    Text(localizer.import_export_description.localized)
+                        .font(.body)
+                        .multilineTextAlignment(.leading)
+                }
+
                 Button(
                     action: onImportClick,
                     label: {

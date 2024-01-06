@@ -13,3 +13,6 @@ SELECT * FROM feed_source_category WHERE title = ?;
 selectAll:
 SELECT * FROM feed_source_category
 ORDER BY title COLLATE NOCASE ASC;
+
+delete:
+DELETE FROM feed_source_category WHERE id = ?;

@@ -94,6 +94,9 @@ class MainActivity : ComponentActivity() {
                     onFeedListClick = {
                         navController.navigate(Screen.FeedList.name)
                     },
+                    onAddFeedClick = {
+                        navController.navigate(Screen.AddFeed.name)
+                    },
                     navigateBack = {
                         navController.popBackStack()
                     },

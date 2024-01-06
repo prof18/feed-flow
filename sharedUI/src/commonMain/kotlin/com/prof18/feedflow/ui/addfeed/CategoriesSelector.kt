@@ -129,7 +129,7 @@ private fun CategoriesList(
                         onClick = null,
                     )
                     Text(
-                        text = category.name,
+                        text = category.name ?: stringResource(MR.strings.no_category_selected_header),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                     Spacer(Modifier.weight(1f))

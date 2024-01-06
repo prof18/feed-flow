@@ -18,6 +18,12 @@ struct AddFeedScreen: View {
     @Environment(\.presentationMode)
     private var presentationMode
 
+    @StateObject
+    private var addFeedViewModel: AddFeedViewModel = KotlinDependencies.shared.getAddFeedViewModel()
+
+    @StateObject
+    private var categorySelectorObserver = CategorySelectorObserver()
+
     @State
     private var feedURL = ""
 
@@ -28,108 +34,63 @@ struct AddFeedScreen: View {
     private var errorMessage = ""
 
     @State
-    private var isCategoriesSelectorExpanded = false
-
-    @State
-    private var headerMessage = localizer.no_category_selected_header.localized
-
-    @State
     private var categoryItems: [CategoriesState.CategoryItem] = []
 
     @State
-    private var newCategoryName = ""
+    private var newCategory: String = ""
 
-    @StateObject
-    private var addFeedViewModel: AddFeedViewModel = KotlinDependencies.shared.getAddFeedViewModel()
+    @State
+    private var isAddingFeed: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading) {
-            TextField(
-                localizer.feed_url.localized,
-                text: $feedURL
+        Form {
+            Section(
+                content: {
+                    TextField(
+                        localizer.feed_url.localized,
+                        text: $feedURL
+                    )
+                },
+                header: {
+                    Text(localizer.feed_url.localized)
+                },
+                footer: {
+                    if showError {
+                        Text(errorMessage)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                    }
+                }
             )
-            .keyboardType(.webSearch)
-            .border(showError ? Color.red : Color.clear)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .padding(.top, Spacing.regular)
-            .padding(.horizontal, Spacing.regular)
 
-            if showError {
-                Text(errorMessage)
-                    .padding(.horizontal, Spacing.regular)
-                    .frame(alignment: .leading)
-                    .font(.caption)
-                    .foregroundColor(.red)
+            Section(localizer.add_feed_category_title.localized) {
+                Picker(
+                    selection: $categorySelectorObserver.selectedCategory,
+                    label: Text(localizer.add_feed_categories_title.localized)
+                ) {
+                    ForEach(categoryItems, id: \.self.id) { categoryItem in
+                        let title = categoryItem.name ?? localizer.no_category_selected_header.localized
+                        Text(title).tag(categoryItem as CategoriesState.CategoryItem?)
+                    }
+                }
             }
 
-            DisclosureGroup(
-                isExpanded: $isCategoriesSelectorExpanded,
-                content: {
-                    ForEach(categoryItems, id: \.self.id) { categoryItem in
-                        HStack {
-                            RadioButtonView(
-                                title: categoryItem.name,
-                                isSelected: categoryItem.isSelected,
-                                onRadioSelected: {
-                                    withAnimation {
-                                        isCategoriesSelectorExpanded.toggle()
-                                    }
-                                    categoryItem.onClick(CategoryId(value: categoryItem.id))
-                                }
-                            )
-
-                            Spacer()
-                        }
-                    }
-                    .padding(.top, Spacing.small)
-
-                    HStack {
-                        TextField(
-                            localizer.new_category_hint.localized,
-                            text: $newCategoryName
-                        )
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                        Button(
-                            action: {
-                                addFeedViewModel.addNewCategory(
-                                    categoryName: CategoryName(name: newCategoryName)
-                                )
-                                newCategoryName = ""
-                            },
-                            label: {
-                                Image(systemName: "plus")
-                            }
-                        )
-                        .disabled(newCategoryName.isEmpty)
-                    }
-                    .padding(.top, Spacing.regular)
-                },
-                label: {
-                    Text(headerMessage)
-                }
-            )
-            .padding(Spacing.regular)
-
-            Button(
-                action: {
-                    addFeedViewModel.addFeed()
-                },
-                label: {
-                    Text(localizer.add_feed.localized)
-                        .frame(maxWidth: .infinity)
-                }
-            )
-            .disabled(feedURL.isEmpty)
-            .buttonStyle(.bordered)
-            .padding(.horizontal, Spacing.regular)
-
-            Spacer()
+            if !categoryItems.isEmpty {
+                categoriesSection
+            }
         }
+        .scrollContentBackground(.hidden)
+        .scrollDismissesKeyboard(.interactively)
+        .background(Color.secondaryBackgroundColor)
         .navigationTitle(localizer.add_feed.localized)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: feedURL) { value in
             addFeedViewModel.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                saveButton
+            }
         }
         .task {
             do {
@@ -137,7 +98,7 @@ struct AddFeedScreen: View {
                 for try await state in stream {
                     switch state {
                     case let addedState as FeedAddedState.FeedAdded:
-//                        self.addFeedViewModel.clearAddDoneState()
+                        //                        self.addFeedViewModel.clearAddDoneState()
                         self.appState.snackbarQueue.append(
                             SnackbarData(
                                 title: addedState.message.localized(),
@@ -153,6 +114,7 @@ struct AddFeedScreen: View {
 
                     case let errorState as FeedAddedState.Error:
                         errorMessage = errorState.errorMessage.localized()
+                        isAddingFeed = false
                         showError = true
 
                     default:
@@ -167,14 +129,7 @@ struct AddFeedScreen: View {
             do {
                 let stream = asyncSequence(for: addFeedViewModel.categoriesState)
                 for try await state in stream {
-                    isCategoriesSelectorExpanded = state.isExpanded
-
-                    if let header = state.header {
-                        self.headerMessage = header
-                    } else {
-                        self.headerMessage = localizer.no_category_selected_header.localized
-                    }
-
+                    self.categorySelectorObserver.selectedCategory = state.categories.first { $0.isSelected }
                     self.categoryItems = state.categories
                 }
             } catch {
@@ -182,27 +137,73 @@ struct AddFeedScreen: View {
             }
         }
     }
-}
 
-private struct RadioButtonView: View {
-    var title: String
-    var isSelected: Bool
-    var onRadioSelected: () -> Void
+    private var categoriesSection: some View {
+        Section(localizer.add_feed_categories_title.localized) {
+            ForEach(categoryItems, id: \.self.id) { categoryItem in
+                if let name = categoryItem.name {
 
-    var body: some View {
-        Button(action: onRadioSelected) {
+                    HStack {
+                        Text(name)
+                        Spacer()
+                        Button {
+                            addFeedViewModel.deleteCategory(categoryId: categoryItem.id)
+                        } label: {
+                            Image(systemName: "trash")
+                                .tint(.red)
+                        }
+                    }
+                }
+            }
+
             HStack {
-                Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
-                Text(title)
+                TextField(localizer.new_category_hint.localized, text: $newCategory, axis: .horizontal)
+                    .onSubmit {
+                        addFeedViewModel.addNewCategory(categoryName: CategoryName(name: newCategory))
+                        newCategory = ""
+                    }
+                Spacer()
+                if !newCategory.isEmpty {
+                    Button {
+                        addFeedViewModel.addNewCategory(categoryName: CategoryName(name: newCategory))
+                        newCategory = ""
+                    } label: {
+                        Image(systemName: "checkmark.circle.fill")
+                            .tint(.green)
+                    }
+                }
             }
         }
-        .foregroundColor(.primary)
-        .padding(.vertical, 8)
+    }
+
+    private var saveButton: some View {
+        Button {
+            Task {
+                isAddingFeed.toggle()
+                addFeedViewModel.addFeed()
+            }
+        } label: {
+            if isAddingFeed {
+                ProgressView()
+            } else {
+                Text(localizer.action_save.localized).bold()
+            }
+        }
+        .disabled(feedURL.isEmpty)
+    }
+
+}
+
+class CategorySelectorObserver: ObservableObject {
+    @Published var selectedCategory: CategoriesState.CategoryItem? {
+        didSet {
+            if let selectedCategory = selectedCategory {
+                selectedCategory.onClick(CategoryId(value: selectedCategory.id))
+            }
+        }
     }
 }
 
-struct SwiftUIView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddFeedScreen()
-    }
+#Preview {
+    AddFeedScreen()
 }

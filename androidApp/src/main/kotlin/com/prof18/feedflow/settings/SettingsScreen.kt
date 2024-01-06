@@ -50,6 +50,7 @@ import org.koin.compose.koinInject
 @Composable
 fun SettingsScreen(
     onFeedListClick: () -> Unit,
+    onAddFeedClick: () -> Unit,
     navigateBack: () -> Unit,
     onAboutClick: () -> Unit,
     navigateToImportExport: () -> Unit,
@@ -69,6 +70,7 @@ fun SettingsScreen(
     SettingsScreenContent(
         browsers = browserListState,
         onFeedListClick = onFeedListClick,
+        onAddFeedClick = onAddFeedClick,
         isMarkReadWhenScrollingEnabled = settingState.isMarkReadWhenScrollingEnabled,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
@@ -92,11 +94,13 @@ fun SettingsScreen(
     )
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun SettingsScreenContent(
     browsers: List<Browser>,
     isMarkReadWhenScrollingEnabled: Boolean,
     onFeedListClick: () -> Unit,
+    onAddFeedClick: () -> Unit,
     onBrowserSelected: (Browser) -> Unit,
     navigateBack: () -> Unit,
     onAboutClick: () -> Unit,
@@ -132,6 +136,7 @@ private fun SettingsScreenContent(
             modifier = Modifier
                 .padding(paddingValues),
             onFeedListClick = onFeedListClick,
+            onAddFeedClick = onAddFeedClick,
             onBrowserSelectionClick = {
                 showBrowserSelection = true
             },
@@ -175,6 +180,7 @@ private fun SettingsList(
     isMarkReadWhenScrollingEnabled: Boolean,
     modifier: Modifier = Modifier,
     onFeedListClick: () -> Unit,
+    onAddFeedClick: () -> Unit,
     onBrowserSelectionClick: () -> Unit,
     navigateToImportExport: () -> Unit,
     onAboutClick: () -> Unit,
@@ -198,9 +204,9 @@ private fun SettingsList(
 
         item {
             SettingsMenuItem(
-                text = stringResource(resource = MR.strings.browser_selection_button),
+                text = stringResource(resource = MR.strings.add_feed),
             ) {
-                onBrowserSelectionClick()
+                onAddFeedClick()
             }
         }
 
@@ -213,6 +219,18 @@ private fun SettingsList(
                 text = stringResource(resource = MR.strings.import_export_opml),
             ) {
                 navigateToImportExport()
+            }
+        }
+
+        item {
+            SettingsDivider()
+        }
+
+        item {
+            SettingsMenuItem(
+                text = stringResource(resource = MR.strings.browser_selection_button),
+            ) {
+                onBrowserSelectionClick()
             }
         }
 
@@ -299,6 +317,7 @@ private fun SettingsScreenPreview() {
             browsers = browsersForPreview,
             isMarkReadWhenScrollingEnabled = true,
             onFeedListClick = {},
+            onAddFeedClick = {},
             onBrowserSelected = {},
             navigateBack = {},
             onAboutClick = {},

@@ -39,3 +39,8 @@ updateLogoUrl:
 UPDATE feed_source
 SET logo_url = :logoUrl
 WHERE url_hash = :urlHash;
+
+resetCategory:
+UPDATE feed_source
+SET category_id = NULL
+WHERE category_id = :categoryId;

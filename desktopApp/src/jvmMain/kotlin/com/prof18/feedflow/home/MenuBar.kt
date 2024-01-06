@@ -8,11 +8,13 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuScope
 import com.prof18.feedflow.MR
 import dev.icerock.moko.resources.compose.stringResource
+import java.awt.SystemColor.text
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 fun FrameWindowScope.FeedFlowMenuBar(
     showDebugMenu: Boolean,
+    isMarkReadWhenScrollingEnabled: Boolean,
     onRefreshClick: () -> Unit,
     onMarkAllReadClick: () -> Unit,
     onImportExportClick: () -> Unit,
@@ -22,6 +24,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onBugReportClick: () -> Unit,
     onForceRefreshClick: () -> Unit,
     deleteFeeds: () -> Unit,
+    setMarkReadWhenScrolling: (Boolean) -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -67,6 +70,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Item(
                 text = stringResource(resource = MR.strings.import_export_opml),
                 onClick = onImportExportClick,
+            )
+
+            CheckboxItem(
+                text = stringResource(resource = MR.strings.toggle_mark_read_when_scrolling),
+                checked = isMarkReadWhenScrollingEnabled,
+                onCheckedChange = setMarkReadWhenScrolling,
             )
 
             Separator()

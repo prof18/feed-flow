@@ -46,25 +46,17 @@ struct CompactView: View {
                     scrollUpTrigger.toggle()
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
                 }
-            ).navigationDestination(for: CommonRoute.self) { route in
-                    switch route {
-                    case .aboutScreen:
-                        AboutScreen()
-
-                    case .importExportScreen:
-                        ImportExportScreen()
-                    }
+            )
+            .navigationDestination(for: CompactViewRoute.self) { route in
+                switch route {
+                case .feed:
+                    HomeScreen(
+                        toggleListScroll: $scrollUpTrigger,
+                        homeViewModel: homeViewModel
+                    )
+                    .environmentObject(indexHolder)
                 }
-                .navigationDestination(for: CompactViewRoute.self) { route in
-                    switch route {
-                    case .feed:
-                        HomeScreen(
-                            toggleListScroll: $scrollUpTrigger,
-                            homeViewModel: homeViewModel
-                        )
-                        .environmentObject(indexHolder)
-                    }
-                }
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .task {

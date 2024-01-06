@@ -25,6 +25,8 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* FeedFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* FeedFlowApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
+		CC14A1462B4851BD0093FF3A /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC14A1452B4851BD0093FF3A /* SettingsScreen.swift */; };
+		CC14A1482B4856B40093FF3A /* NavigationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC14A1472B4856B40093FF3A /* NavigationExtensions.swift */; };
 		CC23293029D63038005D0E06 /* commonMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292E29D63038005D0E06 /* commonMain */; };
 		CC23293129D63038005D0E06 /* iosMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292F29D63038005D0E06 /* iosMain */; };
 		CC23293529D8300C005D0E06 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC23293429D8300C005D0E06 /* View+.swift */; };
@@ -67,7 +69,6 @@
 		CCA704DC29D6143400560FA3 /* FeedListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704DB29D6143400560FA3 /* FeedListView.swift */; };
 		CCA704E529D625E200560FA3 /* HomeSheetToShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E429D625E200560FA3 /* HomeSheetToShow.swift */; };
 		CCA704E729D626D400560FA3 /* FilePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA704E629D626D400560FA3 /* FilePickerController.swift */; };
-		CCC86B4429D8C44400AEABB9 /* SheetPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC86B4329D8C44400AEABB9 /* SheetPage.swift */; };
 		CCEA11BB2A6D2AC300C661AC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */; };
 		CCEA11BE2A6D2BA600C661AC /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = CCEA11BD2A6D2BA600C661AC /* FirebaseCrashlytics */; };
 		CCEB9C5829B33F5A0064D14A /* Koin.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCEB9C5729B33F5A0064D14A /* Koin.swift */; };
@@ -103,6 +104,8 @@
 		7555FF7B242A565900829871 /* FeedFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CC14A1452B4851BD0093FF3A /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
+		CC14A1472B4856B40093FF3A /* NavigationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationExtensions.swift; sourceTree = "<group>"; };
 		CC23292E29D63038005D0E06 /* commonMain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = commonMain; path = ../../shared/src/commonMain; sourceTree = "<group>"; };
 		CC23292F29D63038005D0E06 /* iosMain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = iosMain; path = ../../shared/src/iosMain; sourceTree = "<group>"; };
 		CC23293429D8300C005D0E06 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
@@ -138,7 +141,6 @@
 		CCA704DB29D6143400560FA3 /* FeedListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedListView.swift; sourceTree = "<group>"; };
 		CCA704E429D625E200560FA3 /* HomeSheetToShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSheetToShow.swift; sourceTree = "<group>"; };
 		CCA704E629D626D400560FA3 /* FilePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePickerController.swift; sourceTree = "<group>"; };
-		CCC86B4329D8C44400AEABB9 /* SheetPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPage.swift; sourceTree = "<group>"; };
 		CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CCEB9C5729B33F5A0064D14A /* Koin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Koin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -384,6 +386,7 @@
 				CCA704E629D626D400560FA3 /* FilePickerController.swift */,
 				CC6E681E2A5B1429009F4A3C /* ShareSheet.swift */,
 				CC6E68202A5F446A009F4A3C /* BrowserSelector.swift */,
+				CC14A1452B4851BD0093FF3A /* SettingsScreen.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -392,7 +395,6 @@
 			isa = PBXGroup;
 			children = (
 				CCA704E429D625E200560FA3 /* HomeSheetToShow.swift */,
-				CCC86B4329D8C44400AEABB9 /* SheetPage.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -401,6 +403,7 @@
 			isa = PBXGroup;
 			children = (
 				CC323E1A29D22E1500138233 /* Route.swift */,
+				CC14A1472B4856B40093FF3A /* NavigationExtensions.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -660,13 +663,14 @@
 				CC6E683B2A6C1DD3009F4A3C /* LicensesScreen.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				CCA704E529D625E200560FA3 /* HomeSheetToShow.swift in Sources */,
+				CC14A1462B4851BD0093FF3A /* SettingsScreen.swift in Sources */,
 				CCA704E729D626D400560FA3 /* FilePickerController.swift in Sources */,
 				CCA704D829D60F4300560FA3 /* NoFeedsSourceView.swift in Sources */,
 				CCA704C729D4B69B00560FA3 /* SnackbarData.swift in Sources */,
 				CC2939DA2AE47B31008AF888 /* CompactView.swift in Sources */,
+				CC14A1482B4856B40093FF3A /* NavigationExtensions.swift in Sources */,
 				CC323E1B29D22E1500138233 /* Route.swift in Sources */,
 				CCA704C129D4B63300560FA3 /* Snackbar.swift in Sources */,
-				CCC86B4429D8C44400AEABB9 /* SheetPage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,6 +10,7 @@ import Foundation
 
 enum HomeSheetToShow: Identifiable {
     case feedList
+    case settings
 
     var id: Int {
         hashValue

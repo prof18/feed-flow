@@ -105,7 +105,7 @@ private fun ImportExportNavBar(navigateBack: () -> Unit) {
     TopAppBar(
         title = {
             Text(
-                stringResource(resource = MR.strings.import_export_opml),
+                stringResource(resource = MR.strings.import_export_opml_title),
             )
         },
         navigationIcon = {

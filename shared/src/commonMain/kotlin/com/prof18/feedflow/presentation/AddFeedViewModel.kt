@@ -104,11 +104,20 @@ class AddFeedViewModel internal constructor(
         }
     }
 
+    fun deleteCategory(categoryId: Long) {
+        scope.launch {
+            feedManagerRepository.deleteCategory(categoryId)
+        }
+    }
+
     private fun getSelectedCategory(): FeedSourceCategory? {
-        val category = categoriesState.value.categories.firstOrNull { it.isSelected } ?: return null
+        val category = categoriesState.value.categories.firstOrNull { it.isSelected }
+        if (category == null || category.id == EMPTY_CATEGORY_ID) {
+            return null
+        }
         return FeedSourceCategory(
             id = category.id,
-            title = category.name,
+            title = requireNotNull(category.name),
         )
     }
 
@@ -148,16 +157,30 @@ class AddFeedViewModel internal constructor(
     private fun initCategories() {
         scope.launch {
             feedManagerRepository.observeCategories().collect { categories ->
+                val categoriesWithEmpty = listOf(getEmptyCategory()) + categories.map { feedSourceCategory ->
+                    feedSourceCategory.toCategoryItem()
+                }
                 val categoriesState = CategoriesState(
                     isExpanded = false,
                     header = newCategoryName?.name,
-                    categories = categories.map { feedSourceCategory ->
-                        feedSourceCategory.toCategoryItem()
-                    },
+                    categories = categoriesWithEmpty,
                 )
                 categoriesMutableState.update { categoriesState }
                 newCategoryName = null
             }
         }
+    }
+
+    private fun getEmptyCategory() = CategoriesState.CategoryItem(
+        id = EMPTY_CATEGORY_ID,
+        name = null,
+        isSelected = newCategoryName?.name == null,
+        onClick = { categoryId ->
+            onCategorySelected(categoryId)
+        },
+    )
+
+    private companion object {
+        private const val EMPTY_CATEGORY_ID = Long.MAX_VALUE
     }
 }

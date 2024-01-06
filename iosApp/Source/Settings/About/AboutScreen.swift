@@ -15,54 +15,59 @@ struct AboutScreen: View {
     @Environment(\.openURL)
     private var openURL
 
-    @State
-    private var showLicensesSheet = false
-
-    @State
-    private var licensesContent: String = ""
-
     var body: some View {
-
         VStack {
-            Text(localizer.about_the_app.localized)
-                .padding(Spacing.regular)
-                .font(.system(size: 16))
+            List {
+                Section {
+                    Text(localizer.about_the_app.localized)
+                        .padding(.vertical, Spacing.small)
+                        .font(.system(size: 16))
 
-            Button(
-                localizer.open_website_button.localized,
-                action: {
-                    if let url = URL(string: Websites.shared.FEED_FLOW_WEBSITE) {
-                        self.openURL(url)
+                    NavigationLink(destination: LicensesScreen()) {
+                        Label(
+                            localizer.open_source_licenses.localized,
+                            systemImage: "shield"
+                        )
+                    }
+
+                    Link(destination: URL(string: Websites.shared.FEED_FLOW_WEBSITE)!) {
+                        Label(
+                            localizer.open_website_button.localized,
+                            systemImage: "globe"
+                        )
+                    }
+                } footer: {
+                    if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                        let appVersionString = LocalizationUtils.shared.formatString(
+                            resource: MR.strings().about_app_version,
+                            args: [appVersion]
+                        )
+                        Text(appVersionString)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, Spacing.small)
                     }
                 }
-            )
-            .buttonStyle(.bordered)
-            .padding(.top, Spacing.regular)
-
-            Button(
-                localizer.open_source_licenses.localized,
-                action: {
-                    let baseURL = Bundle.main.url(forResource: "licenses", withExtension: "html")!
-                    let htmlString = try? String(contentsOf: baseURL, encoding: String.Encoding.utf8)
-
-                    self.licensesContent = htmlString ?? ""
-                    self.showLicensesSheet.toggle()
-                }
-            )
-            .buttonStyle(.bordered)
-            .padding(.top, Spacing.regular)
+            }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .padding(.top, -Spacing.medium)
+            .background(Color.secondaryBackgroundColor)
 
             Spacer()
 
             let authorLink: LocalizedStringKey = """
-                \(localizer.author_label.localized) [Marco Gomiero](https://www.marcogomiero.com)
-            """
+                           \(localizer.author_label.localized) [Marco Gomiero](https://www.marcogomiero.com)
+                       """
             Text(authorLink)
-        }.sheet(isPresented: $showLicensesSheet) {
-            LicensesScreen(htmlContent: licensesContent)
+                .padding(.bottom, Spacing.small)
         }
-        .navigationTitle(localizer.about_nav_bar.localized)
+        .background(Color.secondaryBackgroundColor)
+        .navigationTitle(Text(localizer.about_nav_bar.localized))
         .navigationBarTitleDisplayMode(.inline)
-
     }
+}
+
+#Preview {
+    AboutScreen()
+
 }

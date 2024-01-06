@@ -59,37 +59,38 @@ private struct FeedSourceListContent: View {
     let deleteFeedSource: (FeedSource) -> Void
 
     var body: some View {
-            VStack {
-                if feedState.isEmpty() {
-                    VStack {
-                        Spacer()
+        VStack {
+            if feedState.isEmpty() {
+                VStack {
+                    Spacer()
 
-                        Text(localizer.no_feeds_found_message.localized)
-                            .font(.body)
+                    Text(localizer.no_feeds_found_message.localized)
+                        .font(.body)
 
-                        NavigationLink(destination: AddFeedScreen()) {
-                            Text(localizer.add_feed.localized)
-                        }
-
-                        Spacer()
-                    }
-                } else {
-
-                    if feedState.feedSourcesWithoutCategory.count > 0 {
-                        List {
-                            ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
-                                FeedSourceListItem(feedSource: feedSource)
-                            }
-                        }
-                        .padding(.top, -Spacing.medium)
+                    NavigationLink(destination: AddFeedScreen()) {
+                        Text(localizer.add_feed.localized)
                     }
 
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+
+                if feedState.feedSourcesWithoutCategory.count > 0 {
                     List {
-                        ForEach(feedState.feedSourcesWithCategory, id: \.self.categoryId) { feedSourceState in
-                            DisclosureGroup(
-                                content: {
-                                    ForEach(feedSourceState.feedSources, id: \.self.id) { feedSource in
-                                       FeedSourceListItem(feedSource: feedSource)
+                        ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
+                            FeedSourceListItem(feedSource: feedSource)
+                        }
+                    }
+                    .padding(.top, -Spacing.medium)
+                }
+
+                List {
+                    ForEach(feedState.feedSourcesWithCategory, id: \.self.categoryId) { feedSourceState in
+                        DisclosureGroup(
+                            content: {
+                                ForEach(feedSourceState.feedSources, id: \.self.id) { feedSource in
+                                    FeedSourceListItem(feedSource: feedSource)
                                         .padding(.trailing, Spacing.small)
                                         .id(feedSource.id)
                                         .contextMenu {
@@ -102,62 +103,45 @@ private struct FeedSourceListContent: View {
                                                 )
                                             }
                                         }
-                                    }
-                                },
-                                label: {
-                                    Text(feedSourceState.categoryName ?? localizer.no_category.localized)
-                                        .font(.system(size: 16))
-                                        .foregroundStyle(Color(UIColor.label))
-                                        .bold()
-                                        .padding(Spacing.regular)
                                 }
-                            )
-                            .listRowInsets(
-                                EdgeInsets(
-                                    top: .zero,
-                                    leading: .zero,
-                                    bottom: .zero,
-                                    trailing: Spacing.small)
-                            )
-                        }
-                    }
-                    .padding(.top, -Spacing.medium)
-                    .sheet(isPresented: $showAddFeed) {
-                        AddFeedScreen()
+                            },
+                            label: {
+                                Text(feedSourceState.categoryName ?? localizer.no_category.localized)
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(Color(UIColor.label))
+                                    .padding(Spacing.regular)
+                            }
+                        )
+                        .listRowInsets(
+                            EdgeInsets(
+                                top: .zero,
+                                leading: .zero,
+                                bottom: .zero,
+                                trailing: Spacing.regular)
+                        )
                     }
                 }
-
-                Spacer()
-            }
-            .scrollContentBackground(.hidden)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(
-                        action: {
-                            self.presentationMode.wrappedValue.dismiss()
-                        },
-                        label: {
-                            Image(systemName: "xmark")
-                        }
-                    )
-                    .padding(.leading, Spacing.small)
-
-                }
-
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Text(localizer.feeds_title.localized)
-                        .font(.title2)
-                        .padding(.vertical, Spacing.medium)
-                }
-
-                ToolbarItem(placement: .primaryAction) {
-                    NavigationLink(destination: AddFeedScreen()) {
-                        Image(systemName: "plus")
-                    }
-                    .padding(.trailing, Spacing.small)
-
+                .padding(.top, -Spacing.medium)
+                .sheet(isPresented: $showAddFeed) {
+                    AddFeedScreen()
                 }
             }
+
+            Spacer()
+        }
+        .scrollContentBackground(.hidden)
+        .background(Color.secondaryBackgroundColor)
+        .navigationTitle(Text(localizer.feeds_title.localized))
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                NavigationLink(destination: AddFeedScreen()) {
+                    Image(systemName: "plus")
+                }
+                .buttonStyle(.bordered)
+                .padding(.trailing, Spacing.small)
+
+            }
+        }
     }
 }
 
@@ -201,30 +185,26 @@ struct FeedSourceListItem: View {
     }
 }
 
-struct FeedSourceListContent_Previews: PreviewProvider {
-    static var previews: some View {
-        FeedSourceListContent(
-            feedState: .constant(
-                FeedSourceListState(
-                    feedSourcesWithoutCategory: [],
-                    feedSourcesWithCategory: PreviewItemsKt.feedSourcesState
-                )
-            ),
-            deleteFeedSource: { _ in }
-        )
-    }
+#Preview {
+    FeedSourceListContent(
+        feedState: .constant(
+            FeedSourceListState(
+                feedSourcesWithoutCategory: [],
+                feedSourcesWithCategory: PreviewItemsKt.feedSourcesState
+            )
+        ),
+        deleteFeedSource: { _ in }
+    )
 }
 
-struct FeedSourceListContentEmpty_Previews: PreviewProvider {
-    static var previews: some View {
-        FeedSourceListContent(
-            feedState: .constant(
-                FeedSourceListState(
-                    feedSourcesWithoutCategory: [],
-                    feedSourcesWithCategory: []
-                )
-            ),
-            deleteFeedSource: { _ in }
-        )
-    }
+#Preview {
+    FeedSourceListContent(
+        feedState: .constant(
+            FeedSourceListState(
+                feedSourcesWithoutCategory: [],
+                feedSourcesWithCategory: []
+            )
+        ),
+        deleteFeedSource: { _ in }
+    )
 }

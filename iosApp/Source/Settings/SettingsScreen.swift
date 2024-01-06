@@ -117,10 +117,10 @@ private struct SettingsContent: View {
             )
 
             Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
-              Label(
-                localizer.toggle_mark_read_when_scrolling.localized,
-                systemImage: "envelope.open"
-              )
+                Label(
+                    localizer.toggle_mark_read_when_scrolling.localized,
+                    systemImage: "envelope.open"
+                )
             }
         }
     }
@@ -128,10 +128,6 @@ private struct SettingsContent: View {
     @ViewBuilder
     private var appSection: some View {
         Section(localizer.settings_app_title.localized) {
-            NavigationLink(destination: AboutScreen()) {
-                Label(localizer.about_button.localized, systemImage: "info.circle")
-            }
-
             Button(
                 action: {
                     let subject = localizer.issue_content_title.localized
@@ -153,6 +149,10 @@ private struct SettingsContent: View {
                     )
                 }
             )
+
+            NavigationLink(destination: AboutScreen()) {
+                Label(localizer.about_button.localized, systemImage: "info.circle")
+            }
         }
     }
 

@@ -14,35 +14,34 @@ struct LicensesScreen: View {
     @Environment(\.presentationMode)
     private var presentationMode
 
-    let htmlContent: String
+    @State
+    var htmlContent: String?
 
     var body: some View {
-        NavigationStack {
-            HTMLStringView(
-                htmlContent: htmlContent
-            )
+        licenseView
             .padding(Spacing.regular)
-            .toolbar {
+            .onAppear {
+                let baseURL = Bundle.main.url(forResource: "licenses", withExtension: "html")!
+                let htmlString = try? String(contentsOf: baseURL, encoding: String.Encoding.utf8)
 
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(
-                        action: {
-                            self.presentationMode.wrappedValue.dismiss()
-                        },
-                        label: {
-                            Image(systemName: "xmark")
-                        }
-                    )
-                }
-
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Text(localizer.open_source_nav_bar.localized)
-                        .font(.title2)
-                        .padding(.vertical, Spacing.medium)
-                }
+                self.htmlContent = htmlString ?? ""
             }
+    }
+
+    @ViewBuilder
+    private var licenseView: some View {
+        if let content = htmlContent {
+            HTMLStringView(
+                htmlContent: content
+            )
+        } else {
+            Spacer()
+
+            ProgressView()
+            Spacer()
         }
     }
+
 }
 
 struct LicensesScreen_Previews: PreviewProvider {

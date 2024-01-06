@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 
+@Suppress("TooManyFunctions")
 internal class FeedManagerRepository(
     private val databaseHelper: DatabaseHelper,
     private val opmlFeedHandler: OpmlFeedHandler,
@@ -124,5 +125,9 @@ internal class FeedManagerRepository(
             logger.d { "Wrong url input: $e" }
             null
         }
+    }
+
+    suspend fun deleteCategory(categoryId: Long) {
+        databaseHelper.deleteCategory(categoryId)
     }
 }

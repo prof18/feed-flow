@@ -152,9 +152,11 @@ class DatabaseHelper(
                 is FeedFilter.Category -> {
                     dbRef.feedItemQueries.markAllReadByCategory(feedFilter.feedCategory.id)
                 }
+
                 is FeedFilter.Source -> {
                     dbRef.feedItemQueries.markAllReadByFeedSource(feedFilter.feedSource.id)
                 }
+
                 FeedFilter.Timeline -> {
                     dbRef.feedItemQueries.markAllRead()
                 }
@@ -224,6 +226,12 @@ class DatabaseHelper(
             }
             .mapToOneOrDefault(0, backgroundDispatcher)
             .flowOn(backgroundDispatcher)
+
+    suspend fun deleteCategory(id: Long) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.resetCategory(categoryId = id)
+            dbRef.feedSourceCategoryQueries.delete(id = id)
+        }
 
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,

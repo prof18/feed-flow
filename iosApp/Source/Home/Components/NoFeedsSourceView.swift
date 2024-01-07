@@ -18,13 +18,17 @@ struct NoFeedsSourceView: View {
                 .font(.body)
 
             Button(
-                localizer.add_feed.localized,
                 action: {
                     onAddFeedClick()
+                },
+                label: {
+                    Text(localizer.add_feed.localized)
+                        .frame(maxWidth: .infinity)
                 }
             )
             .buttonStyle(.bordered)
             .padding(.top, Spacing.regular)
+            .padding(.horizontal, Spacing.medium)
         }
     }
 }

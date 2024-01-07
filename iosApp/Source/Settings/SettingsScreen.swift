@@ -3,7 +3,7 @@
 //  FeedFlow
 //
 //  Created by Marco Gomiero on 05/01/24.
-//  Copyright © 2024 orgName. All rights reserved.
+//  Copyright © 2024. All rights reserved.
 //
 
 import SwiftUI

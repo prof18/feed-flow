@@ -216,7 +216,7 @@ struct HomeContent: View {
                     onRefresh()
                 },
                 onAddFeedClick: {
-                    self.sheetToShow = .settings
+                    self.sheetToShow = .noFeedSource
                 },
                 requestNewPage: requestNewPage,
                 onItemClick: onItemClick
@@ -335,10 +335,27 @@ struct HomeContent: View {
         }
         .sheet(item: $sheetToShow) { item in
             switch item {
-            case .feedList:
-                FeedSourceListScreen()
             case .settings:
                 SettingsScreen()
+
+            case .noFeedSource:
+                NoFeedsBottomSheet(
+                    onAddFeedClick: {
+                        self.sheetToShow = .addFeed
+                    },
+                    onImportExportClick: {
+                        self.sheetToShow = .importExport
+                    }
+                )
+            case .addFeed:
+                AddFeedScreen(
+                    showCloseButton: true
+                )
+
+            case .importExport:
+                ImportExportScreen(
+                    showCloseButton: true
+                )
             }
         }
     }
@@ -425,7 +442,7 @@ struct HomeContentSettings_Previews: PreviewProvider {
             feedState: .constant(PreviewItemsKt.feedItemsForPreview),
             showLoading: .constant(false),
             unreadCount: .constant(42),
-            sheetToShow: .constant(HomeSheetToShow.feedList),
+            sheetToShow: .constant(HomeSheetToShow.noFeedSource),
             toggleListScroll: .constant(false),
             currentFeedFilter: .constant(FeedFilter.Timeline()),
             onRefresh: { },

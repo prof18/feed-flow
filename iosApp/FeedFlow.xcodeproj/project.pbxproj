@@ -26,7 +26,8 @@
 		2152FB042600AC8F00CF470E /* FeedFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* FeedFlowApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		CC14A1462B4851BD0093FF3A /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC14A1452B4851BD0093FF3A /* SettingsScreen.swift */; };
-		CC14A1482B4856B40093FF3A /* NavigationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC14A1472B4856B40093FF3A /* NavigationExtensions.swift */; };
+		CC14A14A2B4ADAAB0093FF3A /* NoFeedsBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC14A1492B4ADAAB0093FF3A /* NoFeedsBottomSheet.swift */; };
+		CC14A14C2B4B09710093FF3A /* CompatViewRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC14A14B2B4B09710093FF3A /* CompatViewRoute.swift */; };
 		CC23293029D63038005D0E06 /* commonMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292E29D63038005D0E06 /* commonMain */; };
 		CC23293129D63038005D0E06 /* iosMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292F29D63038005D0E06 /* iosMain */; };
 		CC23293529D8300C005D0E06 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC23293429D8300C005D0E06 /* View+.swift */; };
@@ -40,7 +41,6 @@
 		CC323E1229D2239300138233 /* KMPNativeCoroutinesCore in Frameworks */ = {isa = PBXBuildFile; productRef = CC323E1129D2239300138233 /* KMPNativeCoroutinesCore */; };
 		CC323E1629D229AC00138233 /* ObservableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC323E1529D229AC00138233 /* ObservableViewModel.swift */; };
 		CC323E1829D22C4200138233 /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC323E1729D22C4200138233 /* HomeScreen.swift */; };
-		CC323E1B29D22E1500138233 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC323E1A29D22E1500138233 /* Route.swift */; };
 		CC4B803B29D98BB20004A0AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803A29D98BB20004A0AB /* Nuke */; };
 		CC4B803D29D98BB20004A0AB /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803C29D98BB20004A0AB /* NukeUI */; };
 		CC4B804029D9A31E0004A0AB /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803F29D9A31E0004A0AB /* Collections */; };
@@ -105,7 +105,8 @@
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CC14A1452B4851BD0093FF3A /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
-		CC14A1472B4856B40093FF3A /* NavigationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationExtensions.swift; sourceTree = "<group>"; };
+		CC14A1492B4ADAAB0093FF3A /* NoFeedsBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFeedsBottomSheet.swift; sourceTree = "<group>"; };
+		CC14A14B2B4B09710093FF3A /* CompatViewRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompatViewRoute.swift; sourceTree = "<group>"; };
 		CC23292E29D63038005D0E06 /* commonMain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = commonMain; path = ../../shared/src/commonMain; sourceTree = "<group>"; };
 		CC23292F29D63038005D0E06 /* iosMain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = iosMain; path = ../../shared/src/iosMain; sourceTree = "<group>"; };
 		CC23293429D8300C005D0E06 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
@@ -116,7 +117,6 @@
 		CC2939DB2AE47B67008AF888 /* RegularView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegularView.swift; sourceTree = "<group>"; };
 		CC323E1529D229AC00138233 /* ObservableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableViewModel.swift; sourceTree = "<group>"; };
 		CC323E1729D22C4200138233 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
-		CC323E1A29D22E1500138233 /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		CC4B804329DA03460004A0AB /* HomeListIndexHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListIndexHolder.swift; sourceTree = "<group>"; };
 		CC6E681E2A5B1429009F4A3C /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		CC6E68202A5F446A009F4A3C /* BrowserSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserSelector.swift; sourceTree = "<group>"; };
@@ -243,7 +243,6 @@
 				CCA704C929D4B76F00560FA3 /* DI */,
 				CCA704C229D4B66100560FA3 /* App */,
 				CCA704BE29D4B61C00560FA3 /* UI */,
-				CCDF168B29D2347300222A0A /* Navigation */,
 				CC323E1929D22C5100138233 /* Home */,
 				CCA704DD29D6225B00560FA3 /* Settings */,
 				CC323E1529D229AC00138233 /* ObservableViewModel.swift */,
@@ -254,9 +253,11 @@
 		CC323E1929D22C5100138233 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				CCA704E329D6251D00560FA3 /* Model */,
 				CCA704D229D60CDF00560FA3 /* Components */,
 				CC323E1729D22C4200138233 /* HomeScreen.swift */,
 				CC4B804329DA03460004A0AB /* HomeListIndexHolder.swift */,
+				CC14A1492B4ADAAB0093FF3A /* NoFeedsBottomSheet.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -333,6 +334,7 @@
 			isa = PBXGroup;
 			children = (
 				CCA704C629D4B69B00560FA3 /* SnackbarData.swift */,
+				CC14A14B2B4B09710093FF3A /* CompatViewRoute.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -382,7 +384,6 @@
 				CC6E68352A6C1D37009F4A3C /* About */,
 				CC7B9D2929D8C4F40026985C /* Feeds */,
 				CC7B9D2829D8C4EC0026985C /* AddFeed */,
-				CCA704E329D6251D00560FA3 /* Model */,
 				CCA704E629D626D400560FA3 /* FilePickerController.swift */,
 				CC6E681E2A5B1429009F4A3C /* ShareSheet.swift */,
 				CC6E68202A5F446A009F4A3C /* BrowserSelector.swift */,
@@ -397,15 +398,6 @@
 				CCA704E429D625E200560FA3 /* HomeSheetToShow.swift */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		CCDF168B29D2347300222A0A /* Navigation */ = {
-			isa = PBXGroup;
-			children = (
-				CC323E1A29D22E1500138233 /* Route.swift */,
-				CC14A1472B4856B40093FF3A /* NavigationExtensions.swift */,
-			);
-			path = Navigation;
 			sourceTree = "<group>";
 		};
 		D9A201890E050A39547A1B1E /* xcschemes */ = {
@@ -650,6 +642,7 @@
 				CC4B804429DA03460004A0AB /* HomeListIndexHolder.swift in Sources */,
 				CCA704CC29D4B88E00560FA3 /* Spacing.swift in Sources */,
 				CC9C5A492AA254F800323B94 /* ImportExportScreen.swift in Sources */,
+				CC14A14C2B4B09710093FF3A /* CompatViewRoute.swift in Sources */,
 				CC2939D82AE47A6A008AF888 /* SidebarDrawer.swift in Sources */,
 				CCA704DC29D6143400560FA3 /* FeedListView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* FeedFlowApp.swift in Sources */,
@@ -666,10 +659,9 @@
 				CC14A1462B4851BD0093FF3A /* SettingsScreen.swift in Sources */,
 				CCA704E729D626D400560FA3 /* FilePickerController.swift in Sources */,
 				CCA704D829D60F4300560FA3 /* NoFeedsSourceView.swift in Sources */,
+				CC14A14A2B4ADAAB0093FF3A /* NoFeedsBottomSheet.swift in Sources */,
 				CCA704C729D4B69B00560FA3 /* SnackbarData.swift in Sources */,
 				CC2939DA2AE47B31008AF888 /* CompactView.swift in Sources */,
-				CC14A1482B4856B40093FF3A /* NavigationExtensions.swift in Sources */,
-				CC323E1B29D22E1500138233 /* Route.swift in Sources */,
 				CCA704C129D4B63300560FA3 /* Snackbar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -214,6 +214,7 @@ fun main() = application {
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun MainContent(
     rootComponentContext: DefaultComponentContext,
@@ -259,6 +260,9 @@ private fun MainContent(
                                             listState = listState,
                                             onAddFeedClick = {
                                                 navigation.push(Screen.FeedList)
+                                            },
+                                            onImportExportClick = {
+                                                navigation.push(Screen.ImportExport)
                                             },
                                         )
                                     }

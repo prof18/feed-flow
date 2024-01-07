@@ -45,6 +45,7 @@ import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindow
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
@@ -59,6 +60,7 @@ import com.prof18.feedflow.ui.home.components.Drawer
 import com.prof18.feedflow.ui.home.components.EmptyFeedView
 import com.prof18.feedflow.ui.home.components.FeedItemView
 import com.prof18.feedflow.ui.home.components.FeedList
+import com.prof18.feedflow.ui.home.components.NoFeedsInfoContent
 import com.prof18.feedflow.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.ui.style.Spacing
 import com.prof18.feedflow.utils.WindowWidthSizeClass
@@ -66,6 +68,7 @@ import com.prof18.feedflow.utils.calculateWindowSizeClass
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 
+@Suppress("LongMethod")
 @Composable
 internal fun HomeScreen(
     window: ComposeWindow,
@@ -74,6 +77,7 @@ internal fun HomeScreen(
     snackbarHostState: SnackbarHostState,
     listState: LazyListState,
     onAddFeedClick: () -> Unit,
+    onImportExportClick: () -> Unit,
 ) {
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()
@@ -104,6 +108,7 @@ internal fun HomeScreen(
                 listState = listState,
                 unReadCount = unReadCount,
                 onAddFeedClick = onAddFeedClick,
+                onImportExportClick = onImportExportClick,
             )
         }
 
@@ -118,6 +123,7 @@ internal fun HomeScreen(
                 listState = listState,
                 unReadCount = unReadCount,
                 onAddFeedClick = onAddFeedClick,
+                onImportExportClick = onImportExportClick,
             )
         }
 
@@ -132,12 +138,13 @@ internal fun HomeScreen(
                 listState = listState,
                 unReadCount = unReadCount,
                 onAddFeedClick = onAddFeedClick,
+                onImportExportClick = onImportExportClick,
             )
         }
     }
 }
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun CompactView(
     navDrawerState: NavDrawerState,
@@ -149,6 +156,7 @@ private fun CompactView(
     listState: LazyListState,
     unReadCount: Long,
     onAddFeedClick: () -> Unit,
+    onImportExportClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -191,6 +199,7 @@ private fun CompactView(
             requestMoreItems = {
                 homeViewModel.requestNewFeedsPage()
             },
+            onImportExportClick = onImportExportClick,
         )
     } else {
         ModalNavigationDrawer(
@@ -251,12 +260,13 @@ private fun CompactView(
                 requestMoreItems = {
                     homeViewModel.requestNewFeedsPage()
                 },
+                onImportExportClick = onImportExportClick,
             )
         }
     }
 }
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun MediumView(
     navDrawerState: NavDrawerState,
@@ -268,6 +278,7 @@ private fun MediumView(
     listState: LazyListState,
     unReadCount: Long,
     onAddFeedClick: () -> Unit,
+    onImportExportClick: () -> Unit,
 ) {
     var isDrawerMenuFullVisible by remember {
         mutableStateOf(true)
@@ -333,10 +344,12 @@ private fun MediumView(
             requestMoreItems = {
                 homeViewModel.requestNewFeedsPage()
             },
+            onImportExportClick = onImportExportClick,
         )
     }
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun ExpandedView(
     navDrawerState: NavDrawerState,
@@ -348,6 +361,7 @@ private fun ExpandedView(
     listState: LazyListState,
     unReadCount: Long,
     onAddFeedClick: () -> Unit,
+    onImportExportClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -405,6 +419,7 @@ private fun ExpandedView(
             requestMoreItems = {
                 homeViewModel.requestNewFeedsPage()
             },
+            onImportExportClick = onImportExportClick,
         )
     }
 }
@@ -436,6 +451,7 @@ private fun HomeScreenContent(
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
     onAddFeedClick: () -> Unit,
     requestMoreItems: () -> Unit,
+    onImportExportClick: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -449,10 +465,20 @@ private fun HomeScreenContent(
             currentFeedFilter = currentFeedFilter,
         )
 
+        var showDialog by remember { mutableStateOf(false) }
+        NoFeedsDialog(
+            showDialog = showDialog,
+            onDismissRequest = {
+                showDialog = false
+            },
+            onAddFeedClick = onAddFeedClick,
+            onImportExportClick = onImportExportClick,
+        )
+
         when {
             loadingState is NoFeedSourcesStatus -> NoFeedsSourceView(
                 onAddFeedClick = {
-                    onAddFeedClick()
+                    showDialog = true
                 },
             )
 
@@ -471,6 +497,36 @@ private fun HomeScreenContent(
                 onFeedItemClick = onFeedItemClick,
                 onFeedItemLongClick = onFeedItemLongClick,
                 requestMoreItems = requestMoreItems,
+            )
+        }
+    }
+}
+
+@Composable
+private fun NoFeedsDialog(
+    showDialog: Boolean,
+    onDismissRequest: () -> Unit,
+    onAddFeedClick: () -> Unit,
+    onImportExportClick: () -> Unit,
+) {
+    val dialogTitle = stringResource(MR.strings.no_feed_modal_title)
+    DialogWindow(
+        title = dialogTitle,
+        visible = showDialog,
+        onCloseRequest = onDismissRequest,
+    ) {
+        Scaffold {
+            NoFeedsInfoContent(
+                showTitle = false,
+                onDismissRequest = onDismissRequest,
+                onAddFeedClick = {
+                    onDismissRequest()
+                    onAddFeedClick()
+                },
+                onImportExportClick = {
+                    onDismissRequest()
+                    onImportExportClick()
+                },
             )
         }
     }

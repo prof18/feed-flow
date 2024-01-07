@@ -86,6 +86,12 @@ class MainActivity : ComponentActivity() {
                     onSettingsButtonClicked = {
                         navController.navigate(Screen.Settings.name)
                     },
+                    onAddFeedClick = {
+                        navController.navigate(Screen.AddFeed.name)
+                    },
+                    onImportExportClick = {
+                        navController.navigate(Screen.ImportExport.name)
+                    },
                 )
             }
 

@@ -20,6 +20,7 @@ import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -57,6 +58,7 @@ import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.home.components.FeedItemImage
 import com.prof18.feedflow.home.components.HomeAppBar
+import com.prof18.feedflow.home.components.NoFeedsBottomSheet
 import com.prof18.feedflow.presentation.HomeViewModel
 import com.prof18.feedflow.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.ui.components.FeedSourceLogoImage
@@ -79,6 +81,8 @@ import org.koin.compose.koinInject
 internal fun HomeScreen(
     windowSizeClass: WindowSizeClass,
     onSettingsButtonClicked: () -> Unit,
+    onAddFeedClick: () -> Unit,
+    onImportExportClick: () -> Unit = {},
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
 
@@ -137,6 +141,8 @@ internal fun HomeScreen(
                             }
                         }
                     },
+                    onAddFeedClick = onAddFeedClick,
+                    onImportExportClick = onImportExportClick,
                 )
             } else {
                 ModalNavigationDrawer(
@@ -181,6 +187,8 @@ internal fun HomeScreen(
                                 }
                             }
                         },
+                        onAddFeedClick = onAddFeedClick,
+                        onImportExportClick = onImportExportClick,
                     )
                 }
             }
@@ -230,6 +238,8 @@ internal fun HomeScreen(
                     onDrawerMenuClick = {
                         isDrawerMenuFullVisible = !isDrawerMenuFullVisible
                     },
+                    onAddFeedClick = onAddFeedClick,
+                    onImportExportClick = onImportExportClick,
                 )
             }
         }
@@ -272,6 +282,8 @@ internal fun HomeScreen(
                     feedState = feedState,
                     pullRefreshState = pullRefreshState,
                     currentFeedFilter = currentFeedFilter,
+                    onAddFeedClick = onAddFeedClick,
+                    onImportExportClick = onImportExportClick,
                 )
             }
         }
@@ -286,6 +298,7 @@ private fun FeedSourceImage(imageUrl: String) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun HomeScaffold(
@@ -302,6 +315,8 @@ private fun HomeScaffold(
     showDrawerMenu: Boolean = false,
     isDrawerMenuOpen: Boolean = false,
     onSettingsButtonClicked: () -> Unit,
+    onAddFeedClick: () -> Unit,
+    onImportExportClick: () -> Unit = {},
     onDrawerMenuClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -350,6 +365,18 @@ private fun HomeScaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
+        var showBottomSheet by remember { mutableStateOf(false) }
+
+        if (showBottomSheet) {
+            NoFeedsBottomSheet(
+                onDismissRequest = {
+                    showBottomSheet = false
+                },
+                onAddFeedClick = onAddFeedClick,
+                onImportExportClick = onImportExportClick,
+            )
+        }
+
         HomeScreenContent(
             paddingValues = padding,
             loadingState = loadingState,
@@ -371,7 +398,7 @@ private fun HomeScaffold(
                 homeViewModel.markAsRead(feedInfo.id)
             },
             onAddFeedClick = {
-                onSettingsButtonClicked()
+                showBottomSheet = true
             },
             requestMoreItems = {
                 homeViewModel.requestNewFeedsPage()

@@ -12,6 +12,9 @@ import KMPNativeCoroutinesAsync
 
 struct ImportExportScreen: View {
 
+    @Environment(\.presentationMode)
+    private var presentationMode
+
     @EnvironmentObject
     private var appState: AppState
 
@@ -24,27 +27,47 @@ struct ImportExportScreen: View {
     @State
     private var sheetToShow: ImportExportSheetToShow?
 
+    let showCloseButton: Bool
+
+    init(showCloseButton: Bool = false) {
+        self.showCloseButton = showCloseButton
+    }
+
     var body: some View {
-        ImportExportContent(
-            feedImportExportState: $feedImportExportState,
-            sheetToShow: $sheetToShow,
-            onExportClick: {
-                viewModel.startExport()
-                if let url = getUrlForOpmlExport() {
-                    viewModel.exportFeed(opmlOutput: OpmlOutput(url: url))
-                } else {
-                    viewModel.reportExportError()
+        NavigationStack {
+            ImportExportContent(
+                feedImportExportState: $feedImportExportState,
+                sheetToShow: $sheetToShow,
+                onExportClick: {
+                    viewModel.startExport()
+                    if let url = getUrlForOpmlExport() {
+                        viewModel.exportFeed(opmlOutput: OpmlOutput(url: url))
+                    } else {
+                        viewModel.reportExportError()
+                    }
+                },
+                onRetryClick: {
+                    viewModel.clearState()
+                },
+                onDoneClick: {
+                    viewModel.clearState()
                 }
-            },
-            onRetryClick: {
-                viewModel.clearState()
-            },
-            onDoneClick: {
-                viewModel.clearState()
+            )
+            .navigationTitle(localizer.import_export_opml_title.localized)
+            .navigationBarTitleDisplayMode(.inline)
+            .background(Color.secondaryBackgroundColor)
+            .toolbar {
+                if showCloseButton {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            presentationMode.wrappedValue.dismiss()
+                        } label: {
+                            Image(systemName: "xmark.circle")
+                        }
+                    }
+                }
             }
-        )
-        .navigationTitle(localizer.import_export_opml_title.localized)
-        .navigationBarTitleDisplayMode(.inline)
+        }
         .task {
             do {
                 let stream = asyncSequence(for: viewModel.importExportStateFlow)
@@ -163,7 +186,6 @@ struct ImportExportIdleView: View {
     var body: some View {
         VStack {
             Form {
-
                 Section {
                     Text(localizer.import_export_description.localized)
                         .font(.body)
@@ -208,11 +230,15 @@ struct ImportExportErrorView: View {
                 .font(.body)
 
             Button(
-                localizer.retry_button.localized,
-                action: onRetryClick
+                action: onRetryClick,
+                label: {
+                    Text(localizer.retry_button.localized)
+                        .frame(maxWidth: .infinity)
+                }
             )
             .buttonStyle(.bordered)
             .padding(.top, Spacing.regular)
+            .padding(.horizontal, Spacing.medium)
 
             Spacer()
         }
@@ -252,11 +278,15 @@ struct ExportDoneView: View {
                 .multilineTextAlignment(.center)
 
             Button(
-                localizer.done_button.localized,
-                action: onDoneClick
+                action: onDoneClick,
+                label: {
+                    Text(localizer.done_button.localized)
+                        .frame(maxWidth: .infinity)
+                }
             )
             .buttonStyle(.bordered)
             .padding(.top, Spacing.regular)
+            .padding(.horizontal, Spacing.medium)
 
             Spacer()
         }
@@ -280,11 +310,15 @@ struct ImportDoneView: View {
                     .multilineTextAlignment(.center)
 
                 Button(
-                    localizer.done_button.localized,
-                    action: onDoneClick
+                    action: onDoneClick,
+                    label: {
+                        Text(localizer.done_button.localized)
+                            .frame(maxWidth: .infinity)
+                    }
                 )
                 .buttonStyle(.bordered)
                 .padding(.top, Spacing.regular)
+                .padding(.horizontal, Spacing.medium)
 
                 Spacer()
             } else {

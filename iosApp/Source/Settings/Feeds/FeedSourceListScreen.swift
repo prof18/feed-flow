@@ -69,7 +69,11 @@ private struct FeedSourceListContent: View {
 
                     NavigationLink(destination: AddFeedScreen()) {
                         Text(localizer.add_feed.localized)
+                            .frame(maxWidth: .infinity)
                     }
+                    .buttonStyle(.bordered)
+                    .padding(.top, Spacing.regular)
+                    .padding(.horizontal, Spacing.medium)
 
                     Spacer()
                 }
@@ -80,6 +84,17 @@ private struct FeedSourceListContent: View {
                     List {
                         ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
                             FeedSourceListItem(feedSource: feedSource)
+                                .id(feedSource.id)
+                                .contextMenu {
+                                    Button {
+                                        deleteFeedSource(feedSource)
+                                    } label: {
+                                        Label(
+                                            localizer.delete_feed.localized,
+                                            systemImage: "trash"
+                                        )
+                                    }
+                                }
                         }
                     }
                     .padding(.top, -Spacing.medium)

@@ -54,15 +54,6 @@ struct RegularView: View {
                     homeViewModel: homeViewModel
                 )
                 .environmentObject(indexHolder)
-                .navigationDestination(for: CommonRoute.self) { route in
-                    switch route {
-                    case .aboutScreen:
-                        AboutScreen()
-
-                    case .importExportScreen:
-                        ImportExportScreen()
-                    }
-                }
             }
             .navigationBarTitleDisplayMode(.inline)
         }

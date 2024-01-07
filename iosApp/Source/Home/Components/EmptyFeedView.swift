@@ -19,13 +19,17 @@ struct EmptyFeedView: View {
                 .font(.body)
 
             Button(
-                localizer.refresh_feeds.localized,
                 action: {
                     onReloadClick()
+                },
+                label: {
+                    Text(localizer.refresh_feeds.localized)
+                        .frame(maxWidth: .infinity)
                 }
             )
             .buttonStyle(.bordered)
             .padding(.top, Spacing.regular)
+            .padding(.horizontal, Spacing.medium)
         }
     }
 }

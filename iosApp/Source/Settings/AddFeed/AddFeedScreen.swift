@@ -42,54 +42,72 @@ struct AddFeedScreen: View {
     @State
     private var isAddingFeed: Bool = false
 
+    let showCloseButton: Bool
+
+    init(showCloseButton: Bool = false) {
+        self.showCloseButton = showCloseButton
+    }
+
     var body: some View {
-        Form {
-            Section(
-                content: {
-                    TextField(
-                        localizer.feed_url.localized,
-                        text: $feedURL
-                    )
-                },
-                header: {
-                    Text(localizer.feed_url.localized)
-                },
-                footer: {
-                    if showError {
-                        Text(errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.red)
+        NavigationStack {
+            Form {
+                Section(
+                    content: {
+                        TextField(
+                            localizer.feed_url.localized,
+                            text: $feedURL
+                        )
+                    },
+                    header: {
+                        Text(localizer.feed_url.localized)
+                    },
+                    footer: {
+                        if showError {
+                            Text(errorMessage)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                    }
+                )
+
+                Section(localizer.add_feed_category_title.localized) {
+                    Picker(
+                        selection: $categorySelectorObserver.selectedCategory,
+                        label: Text(localizer.add_feed_categories_title.localized)
+                    ) {
+                        ForEach(categoryItems, id: \.self.id) { categoryItem in
+                            let title = categoryItem.name ?? localizer.no_category_selected_header.localized
+                            Text(title).tag(categoryItem as CategoriesState.CategoryItem?)
+                        }
                     }
                 }
-            )
 
-            Section(localizer.add_feed_category_title.localized) {
-                Picker(
-                    selection: $categorySelectorObserver.selectedCategory,
-                    label: Text(localizer.add_feed_categories_title.localized)
-                ) {
-                    ForEach(categoryItems, id: \.self.id) { categoryItem in
-                        let title = categoryItem.name ?? localizer.no_category_selected_header.localized
-                        Text(title).tag(categoryItem as CategoriesState.CategoryItem?)
-                    }
+                if !categoryItems.isEmpty {
+                    categoriesSection
                 }
             }
-
-            if !categoryItems.isEmpty {
-                categoriesSection
+            .scrollContentBackground(.hidden)
+            .scrollDismissesKeyboard(.interactively)
+            .background(Color.secondaryBackgroundColor)
+            .navigationTitle(localizer.add_feed.localized)
+            .navigationBarTitleDisplayMode(.inline)
+            .onChange(of: feedURL) { value in
+                addFeedViewModel.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
             }
-        }
-        .scrollContentBackground(.hidden)
-        .scrollDismissesKeyboard(.interactively)
-        .background(Color.secondaryBackgroundColor)
-        .navigationTitle(localizer.add_feed.localized)
-        .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: feedURL) { value in
-            addFeedViewModel.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                saveButton
+            .toolbar {
+                if showCloseButton {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            presentationMode.wrappedValue.dismiss()
+                        } label: {
+                            Image(systemName: "xmark.circle")
+                        }
+                    }
+                }
+
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    saveButton
+                }
             }
         }
         .task {

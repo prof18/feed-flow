@@ -160,12 +160,12 @@ class AddFeedViewModel internal constructor(
                 val categoriesWithEmpty = listOf(getEmptyCategory()) + categories.map { feedSourceCategory ->
                     feedSourceCategory.toCategoryItem()
                 }
-                val categoriesState = CategoriesState(
-                    isExpanded = false,
-                    header = newCategoryName?.name,
-                    categories = categoriesWithEmpty,
-                )
-                categoriesMutableState.update { categoriesState }
+                categoriesMutableState.update {
+                    it.copy(
+                        header = newCategoryName?.name,
+                        categories = categoriesWithEmpty,
+                    )
+                }
                 newCategoryName = null
             }
         }

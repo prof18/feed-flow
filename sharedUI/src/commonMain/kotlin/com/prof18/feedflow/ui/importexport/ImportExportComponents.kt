@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -28,8 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.ParsedFeedSource
-import com.prof18.feedflow.ui.settings.SettingsDivider
-import com.prof18.feedflow.ui.settings.SettingsMenuItem
+import com.prof18.feedflow.ui.settings.SettingItem
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -133,25 +134,29 @@ private fun ImportExportIdleView(
         modifier = modifier,
     ) {
         item {
-            SettingsMenuItem(
-                text = stringResource(resource = MR.strings.import_feed_button),
-            ) {
-                onImportClick()
-            }
+            Text(
+                modifier = Modifier
+                    .padding(Spacing.regular),
+                color = MaterialTheme.colorScheme.onBackground,
+                text = stringResource(MR.strings.import_export_description),
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
 
         item {
-            SettingsDivider()
+            SettingItem(
+                title = stringResource(resource = MR.strings.import_feed_button),
+                icon = Icons.Default.FileDownload,
+                onClick = onImportClick,
+            )
         }
 
         item {
-            SettingsMenuItem(
-                text = stringResource(
-                    resource = MR.strings.export_feeds_button,
-                ),
-            ) {
-                onExportClick()
-            }
+            SettingItem(
+                title = stringResource(resource = MR.strings.export_feeds_button),
+                icon = Icons.Default.FileUpload,
+                onClick = onExportClick,
+            )
         }
     }
 }

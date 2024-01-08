@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.prof18.feedflow.core.model.CategoriesState
+import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.desktopViewModel
 import com.prof18.feedflow.di.DI
@@ -83,9 +84,13 @@ fun AddFeedScreen(
         onAddCategoryClick = { categoryName ->
             viewModel.addNewCategory(categoryName)
         },
+        onDeleteCategoryClick = { categoryId ->
+            viewModel.deleteCategory(categoryId.value)
+        },
     )
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun AddFeedScreenContent(
     feedUrl: String,
@@ -97,6 +102,7 @@ private fun AddFeedScreenContent(
     addFeed: () -> Unit,
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -111,7 +117,7 @@ private fun AddFeedScreenContent(
             addFeed = addFeed,
             onExpandClick = onExpandClick,
             onAddCategoryClick = onAddCategoryClick,
-
+            onDeleteCategoryClick = onDeleteCategoryClick,
         )
     }
 }
@@ -130,6 +136,7 @@ private fun AddScreenContentPreview() {
             addFeed = { },
             onExpandClick = {},
             onAddCategoryClick = {},
+            onDeleteCategoryClick = {},
         )
     }
 }
@@ -150,6 +157,7 @@ private fun AddScreenContentDarkPreview() {
             addFeed = { },
             onExpandClick = {},
             onAddCategoryClick = {},
+            onDeleteCategoryClick = {},
         )
     }
 }
@@ -168,6 +176,7 @@ private fun AddScreenContentInvalidUrlPreview() {
             addFeed = { },
             onExpandClick = {},
             onAddCategoryClick = {},
+            onDeleteCategoryClick = {},
         )
     }
 }

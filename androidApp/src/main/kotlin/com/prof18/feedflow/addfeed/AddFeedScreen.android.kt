@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.CategoriesState
+import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.domain.model.FeedAddedState
 import com.prof18.feedflow.presentation.AddFeedViewModel
@@ -86,11 +87,15 @@ fun AddFeedScreen(
         onAddCategoryClick = { categoryName ->
             viewModel.addNewCategory(categoryName)
         },
+        onDeleteCategoryClick = { categoryId ->
+            viewModel.deleteCategory(categoryId.value)
+        },
     )
 }
 
-@Composable
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("LongParameterList")
+@Composable
 private fun AddFeedScreenContent(
     feedUrl: String,
     showError: Boolean,
@@ -101,6 +106,7 @@ private fun AddFeedScreenContent(
     navigateBack: () -> Unit,
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -133,6 +139,7 @@ private fun AddFeedScreenContent(
             addFeed = addFeed,
             onExpandClick = onExpandClick,
             onAddCategoryClick = onAddCategoryClick,
+            onDeleteCategoryClick = onDeleteCategoryClick,
         )
     }
 }
@@ -151,6 +158,7 @@ private fun AddScreenContentPreview() {
             navigateBack = {},
             onExpandClick = {},
             onAddCategoryClick = {},
+            onDeleteCategoryClick = {},
         )
     }
 }
@@ -169,6 +177,7 @@ private fun AddScreenContentInvalidUrlPreview() {
             navigateBack = {},
             onExpandClick = {},
             onAddCategoryClick = {},
+            onDeleteCategoryClick = {},
         )
     }
 }

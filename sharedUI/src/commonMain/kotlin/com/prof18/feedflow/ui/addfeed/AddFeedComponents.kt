@@ -9,18 +9,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.CategoriesState
+import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
+@Suppress("LongParameterList")
 @Composable
 fun AddFeedsContent(
     paddingValues: PaddingValues,
@@ -32,6 +34,7 @@ fun AddFeedsContent(
     addFeed: () -> Unit,
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -57,6 +60,7 @@ fun AddFeedsContent(
                 categoriesState = categoriesState,
                 onExpandClick = onExpandClick,
                 onAddCategoryClick = onAddCategoryClick,
+                onDeleteCategoryClick = onDeleteCategoryClick,
             )
         }
 
@@ -83,7 +87,7 @@ private fun FeedUrlTextField(
     errorMessage: String,
     onFeedUrlUpdated: (String) -> Unit,
 ) {
-    TextField(
+    OutlinedTextField(
         modifier = modifier,
         label = {
             Text(text = stringResource(resource = MR.strings.feed_url))

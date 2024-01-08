@@ -17,14 +17,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +51,7 @@ fun CategoriesSelector(
     categoriesState: CategoriesState,
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -90,14 +92,17 @@ fun CategoriesSelector(
         CategoriesList(
             categoriesState = categoriesState,
             onAddCategoryClick = onAddCategoryClick,
+            onDeleteCategoryClick = onDeleteCategoryClick,
         )
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun CategoriesList(
     categoriesState: CategoriesState,
     onAddCategoryClick: (CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     AnimatedVisibility(
         visible = categoriesState.isExpanded,
@@ -129,10 +134,25 @@ private fun CategoriesList(
                         onClick = null,
                     )
                     Text(
-                        text = category.name ?: stringResource(MR.strings.no_category_selected_header),
+                        text = category.name
+                            ?: stringResource(MR.strings.no_category_selected_header),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
+
                     Spacer(Modifier.weight(1f))
+
+                    if (category.name != null) {
+                        IconButton(
+                            onClick = {
+                                onDeleteCategoryClick(CategoryId(category.id))
+                            },
+                        ) {
+                            Icon(
+                                Icons.Outlined.DeleteOutline,
+                                contentDescription = null,
+                            )
+                        }
+                    }
                 }
             }
 
@@ -164,7 +184,7 @@ fun NewCategoryComposer(
         horizontalArrangement = Arrangement.spacedBy(Spacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        TextField(
+        OutlinedTextField(
             modifier = Modifier
                 .weight(1f),
             singleLine = true,
@@ -186,17 +206,20 @@ fun NewCategoryComposer(
                     text = stringResource(MR.strings.new_category_hint),
                 )
             },
-        )
-        IconButton(
-            onClick = {
-                onAddClick(CategoryName(name = categoryName))
+            trailingIcon = {
+                IconButton(
+                    onClick = {
+                        onAddClick(CategoryName(name = categoryName))
+                        categoryName = ""
+                    },
+                    enabled = isAddAllowed,
+                ) {
+                    Icon(
+                        Icons.Outlined.AddCircleOutline,
+                        contentDescription = null,
+                    )
+                }
             },
-            enabled = isAddAllowed,
-        ) {
-            Icon(
-                Icons.Default.Add,
-                contentDescription = null,
-            )
-        }
+        )
     }
 }

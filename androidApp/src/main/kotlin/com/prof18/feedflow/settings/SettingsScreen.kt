@@ -14,7 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.icons.filled.Feed
+import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.BugReport
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.MarkAsUnread
+import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserManager
 import com.prof18.feedflow.MR
@@ -40,8 +45,8 @@ import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.presentation.preview.browsersForPreview
 import com.prof18.feedflow.settings.components.BrowserSelectionDialog
 import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.settings.SettingsDivider
-import com.prof18.feedflow.ui.settings.SettingsMenuItem
+import com.prof18.feedflow.ui.settings.SettingItem
+import com.prof18.feedflow.ui.style.Spacing
 import com.prof18.feedflow.utils.UserFeedbackReporter
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
@@ -191,51 +196,44 @@ private fun SettingsList(
         modifier = modifier,
     ) {
         item {
-            SettingsMenuItem(
-                text = stringResource(resource = MR.strings.feeds_title),
-            ) {
-                onFeedListClick()
-            }
+            Text(
+                text = stringResource(resource = MR.strings.settings_general_title),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(Spacing.regular),
+            )
         }
 
         item {
-            SettingsDivider()
+            SettingItem(
+                title = stringResource(resource = MR.strings.feeds_title),
+                icon = Icons.Default.Feed,
+                onClick = onFeedListClick,
+            )
         }
 
         item {
-            SettingsMenuItem(
-                text = stringResource(resource = MR.strings.add_feed),
-            ) {
-                onAddFeedClick()
-            }
+            SettingItem(
+                title = stringResource(resource = MR.strings.add_feed),
+                icon = Icons.Outlined.AddCircleOutline,
+                onClick = onAddFeedClick,
+            )
         }
 
         item {
-            SettingsDivider()
+            SettingItem(
+                title = stringResource(resource = MR.strings.import_export_opml),
+                icon = Icons.Outlined.SwapVert,
+                onClick = navigateToImportExport,
+            )
         }
 
         item {
-            SettingsMenuItem(
-                text = stringResource(resource = MR.strings.import_export_opml),
-            ) {
-                navigateToImportExport()
-            }
-        }
-
-        item {
-            SettingsDivider()
-        }
-
-        item {
-            SettingsMenuItem(
-                text = stringResource(resource = MR.strings.browser_selection_button),
-            ) {
-                onBrowserSelectionClick()
-            }
-        }
-
-        item {
-            SettingsDivider()
+            SettingItem(
+                title = stringResource(resource = MR.strings.browser_selection_button),
+                icon = Icons.Outlined.Language,
+                onClick = onBrowserSelectionClick,
+            )
         }
 
         item {
@@ -246,31 +244,28 @@ private fun SettingsList(
         }
 
         item {
-            SettingsDivider()
+            Text(
+                text = stringResource(resource = MR.strings.settings_app_title),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(Spacing.regular),
+            )
         }
 
         item {
-            SettingsMenuItem(
-                text = stringResource(
-                    resource = MR.strings.report_issue_button,
-                ),
-            ) {
-                onBugReportClick()
-            }
+            SettingItem(
+                title = stringResource(resource = MR.strings.report_issue_button),
+                icon = Icons.Outlined.BugReport,
+                onClick = onBugReportClick,
+            )
         }
 
         item {
-            SettingsDivider()
-        }
-
-        item {
-            SettingsMenuItem(
-                text = stringResource(
-                    resource = MR.strings.about_button,
-                ),
-            ) {
-                onAboutClick()
-            }
+            SettingItem(
+                title = stringResource(resource = MR.strings.about_button),
+                icon = Icons.Outlined.Info,
+                onClick = onAboutClick,
+            )
         }
     }
 }
@@ -285,21 +280,24 @@ private fun MarkReadWhenScrollingSwitch(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .clickable(
-                interactionSource = interactionSource,
-                indication = rememberRipple(),
-                onClick = {
-                    setMarkReadWhenScrolling(!isMarkReadWhenScrollingEnabled)
-                },
-            )
+            .clickable {
+                setMarkReadWhenScrolling(!isMarkReadWhenScrollingEnabled)
+            }
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(30.dp),
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
+        Icon(
+            Icons.Outlined.MarkAsUnread,
+            contentDescription = null,
+        )
+
         Text(
             text = stringResource(resource = MR.strings.toggle_mark_read_when_scrolling),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f),
         )
         Switch(
             interactionSource = interactionSource,

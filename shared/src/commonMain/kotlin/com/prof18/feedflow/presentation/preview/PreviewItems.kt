@@ -5,13 +5,16 @@ package com.prof18.feedflow.presentation.preview
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoriesState.CategoryItem
 import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceState
+import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.domain.model.Browser
+import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus
 import kotlinx.collections.immutable.persistentListOf
 
 val feedItemsForPreview = persistentListOf(
@@ -231,70 +234,65 @@ val feedSourcesState = listOf(
     ),
 )
 
-// val navDrawerStateForPreview = NavDrawerState(
-//    timeline = DrawerItem.Timeline,
-//    categories = listOf(
-//        FeedSourceCategoryWrapper(
-//            category = FeedSourceCategory(
-//                id = 2414,
-//                title = "News",
-//            )
-//        ),
-//        FeedSourceCategoryWrapper(
-//            category = FeedSourceCategory(
-//                id = 2415,
-//                title = "Tech",
-//            )
-//        ),
-//        FeedSourceCategoryWrapper(
-//            category = FeedSourceCategory(
-//                id = 2416,
-//                title = "Basket",
-//            )
-//        )
-//    ),
-//    feedSourcesByCategory = listOf(
-//        DrawerCategoryWrapper(
-//            category = FeedSourceCategory(
-//                id = 9398,
-//                title = "News",
-//            ),
-//            feedSources = listOf(
-//                FeedSourceWrapper(
-//                    feedSource = feedSourcesForPreview[0],
-//                ),
-//                FeedSourceWrapper(
-//                    feedSource = feedSourcesForPreview[1],
-//                ),
-//                FeedSourceWrapper(
-//                    feedSource = feedSourcesForPreview[2],
-//                ),
-//            ),
-//            isExpanded = false,
-//            onExpandClick = {},
-//        ),
-//        DrawerCategoryWrapper(
-//            category = FeedSourceCategory(
-//                id = 9398,
-//                title = "News",
-//            ),
-//            feedSources = listOf(
-//                FeedSourceWrapper(
-//                    feedSource = feedSourcesForPreview[0],
-//                ),
-//                FeedSourceWrapper(
-//                    feedSource = feedSourcesForPreview[1],
-//                ),
-//                FeedSourceWrapper(
-//                    feedSource = feedSourcesForPreview[2],
-//                ),
-//            ),
-//            isExpanded = true,
-//            onExpandClick = {},
-//        ),
-//    )
-//
-// )
+val inProgressFeedUpdateStatus = InProgressFeedUpdateStatus(
+    refreshedFeedCount = 6,
+    totalFeedCount = 18,
+)
+
+val navDrawerState = NavDrawerState(
+    timeline = listOf(DrawerItem.Timeline),
+    categories = listOf(
+        DrawerItem.DrawerCategory(
+            category = FeedSourceCategory(
+                id = 9398,
+                title = "News",
+            ),
+        ),
+        DrawerItem.DrawerCategory(
+            category = FeedSourceCategory(
+                id = 9398,
+                title = "Basket",
+            ),
+        ),
+    ),
+    feedSourcesWithoutCategory = listOf(),
+    feedSourcesByCategory = mapOf(
+        DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(
+            feedSourceCategory = FeedSourceCategory(
+                id = 9398,
+                title = "News",
+            ),
+        ) to listOf(
+            DrawerItem.DrawerFeedSource(
+                feedSource = FeedSource(
+                    id = 0,
+                    url = "https://www.site1.com",
+                    title = "Site 1",
+                    lastSyncTimestamp = null,
+                    category = FeedSourceCategory(
+                        id = 2,
+                        title = "Tech",
+                    ),
+                    logoUrl = null,
+                ),
+            ),
+            DrawerItem.DrawerFeedSource(
+                feedSource = FeedSource(
+                    id = 1,
+                    url = "https://www.site2.com",
+                    title = "Site 2",
+                    lastSyncTimestamp = null,
+                    category = FeedSourceCategory(
+                        id = 1,
+                        title = "News",
+                    ),
+                    logoUrl = null,
+                ),
+            ),
+        ),
+    ),
+
+)
 
 // val drawerItemsForPreview = listOf(
 //    DrawerItem.Timeline,

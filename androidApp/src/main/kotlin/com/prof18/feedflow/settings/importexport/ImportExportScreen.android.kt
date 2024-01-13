@@ -17,7 +17,7 @@ import com.prof18.feedflow.domain.opml.OpmlOutput
 import com.prof18.feedflow.presentation.ImportExportViewModel
 import com.prof18.feedflow.presentation.preview.importExportStates
 import com.prof18.feedflow.ui.importexport.ImportExportContent
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.ui.preview.FeedFlowPhonePreview
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 
@@ -66,7 +66,7 @@ fun ImportExportScreen(
     )
 }
 
-@FeedFlowPreview
+@FeedFlowPhonePreview
 @Composable
 private fun ImportExportContentPreview(
     @PreviewParameter(ImportExportPreviewParameterProvider::class) state: FeedImportExportState,

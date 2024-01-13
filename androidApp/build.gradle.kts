@@ -67,6 +67,15 @@ android {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs += listOf(
+            "-Xopt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-Xopt-in=androidx.compose.material.ExperimentalMaterialApi",
+        )
+    }
+}
+
 dependencies {
     implementation(project(":shared"))
     implementation(project(":sharedUI"))

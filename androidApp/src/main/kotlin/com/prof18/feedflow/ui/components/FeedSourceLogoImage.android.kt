@@ -15,15 +15,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.prof18.feedflow.ui.preview.FeedFlowPhonePreview
 import com.prof18.feedflow.ui.style.Spacing
 
 @Composable
 fun FeedSourceLogoImage(
     modifier: Modifier = Modifier,
     imageUrl: String,
-    size: Dp,
+    size: Dp = 24.dp,
 ) {
     if (LocalInspectionMode.current) {
         Box(
@@ -46,4 +48,12 @@ fun FeedSourceLogoImage(
                 .clip(RoundedCornerShape(Spacing.small)),
         )
     }
+}
+
+@FeedFlowPhonePreview
+@Composable
+private fun FeedSourceLogoImagePreview() {
+    FeedSourceLogoImage(
+        imageUrl = "https://www.img.com",
+    )
 }

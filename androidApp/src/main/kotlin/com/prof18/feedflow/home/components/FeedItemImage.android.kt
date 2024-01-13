@@ -11,13 +11,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.prof18.feedflow.ui.style.Spacing
 
 @Composable
-fun FeedItemImage(
+internal fun FeedItemImage(
     modifier: Modifier = Modifier,
     url: String,
     size: Dp,
@@ -41,4 +42,13 @@ fun FeedItemImage(
                 .clip(RoundedCornerShape(Spacing.small)),
         )
     }
+}
+
+@Preview
+@Composable
+private fun FeedItemImagePreview() {
+    FeedItemImage(
+        url = "https://www.img.com",
+        size = Spacing.large,
+    )
 }

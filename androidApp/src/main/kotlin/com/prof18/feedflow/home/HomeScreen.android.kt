@@ -1,36 +1,7 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
-
 package com.prof18.feedflow.home
 
-import FeedFlowTheme
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.PullRefreshState
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -38,41 +9,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.BrowserManager
-import com.prof18.feedflow.MR
-import com.prof18.feedflow.core.model.FeedFilter
-import com.prof18.feedflow.core.model.FeedItem
-import com.prof18.feedflow.core.model.FeedItemClickedInfo
-import com.prof18.feedflow.domain.model.FeedUpdateStatus
-import com.prof18.feedflow.domain.model.FinishedFeedUpdateStatus
-import com.prof18.feedflow.domain.model.InProgressFeedUpdateStatus
-import com.prof18.feedflow.domain.model.NoFeedSourcesStatus
-import com.prof18.feedflow.home.components.FeedItemImage
-import com.prof18.feedflow.home.components.HomeAppBar
+import com.prof18.feedflow.home.bywindowsize.CompactHomeView
+import com.prof18.feedflow.home.bywindowsize.ExpandedHomeView
+import com.prof18.feedflow.home.bywindowsize.MediumHomeView
 import com.prof18.feedflow.home.components.NoFeedsBottomSheet
 import com.prof18.feedflow.presentation.HomeViewModel
-import com.prof18.feedflow.presentation.preview.feedItemsForPreview
-import com.prof18.feedflow.ui.components.FeedSourceLogoImage
-import com.prof18.feedflow.ui.home.components.Drawer
-import com.prof18.feedflow.ui.home.components.EmptyFeedView
-import com.prof18.feedflow.ui.home.components.FeedItemView
-import com.prof18.feedflow.ui.home.components.FeedList
-import com.prof18.feedflow.ui.home.components.NoFeedsSourceView
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
-import com.prof18.feedflow.ui.style.Spacing
-import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -85,6 +30,7 @@ internal fun HomeScreen(
     onImportExportClick: () -> Unit = {},
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
+    val browserManager = koinInject<BrowserManager>()
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
@@ -93,13 +39,7 @@ internal fun HomeScreen(
     val unReadCount by homeViewModel.unreadCountFlow.collectAsStateWithLifecycle(initialValue = 0)
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = loadingState.isLoading(),
-        onRefresh = { homeViewModel.getNewFeeds() },
-    )
-    val listState = rememberLazyListState()
     val context = LocalContext.current
-
     LaunchedEffect(Unit) {
         homeViewModel.errorState.collect { errorState ->
             snackbarHostState.showSnackbar(
@@ -109,472 +49,151 @@ internal fun HomeScreen(
         }
     }
 
-    val scope = rememberCoroutineScope()
-
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
-    var isDrawerMenuFullVisible by remember {
-        mutableStateOf(true)
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+        NoFeedsBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            onAddFeedClick = onAddFeedClick,
+            onImportExportClick = onImportExportClick,
+        )
     }
 
     when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
-            if (feedState.isEmpty() && navDrawerState.isEmpty()) {
-                HomeScaffold(
-                    unReadCount = unReadCount,
-                    onSettingsButtonClicked = onSettingsButtonClicked,
-                    homeViewModel = homeViewModel,
-                    scope = scope,
-                    listState = listState,
-                    snackbarHostState = snackbarHostState,
-                    loadingState = loadingState,
-                    feedState = feedState,
-                    pullRefreshState = pullRefreshState,
-                    showDrawerMenu = false,
-                    currentFeedFilter = currentFeedFilter,
-                    onDrawerMenuClick = {
-                        scope.launch {
-                            if (drawerState.isOpen) {
-                                drawerState.close()
-                            } else {
-                                drawerState.open()
-                            }
-                        }
-                    },
-                    onAddFeedClick = onAddFeedClick,
-                    onImportExportClick = onImportExportClick,
-                )
-            } else {
-                ModalNavigationDrawer(
-                    drawerContent = {
-                        ModalDrawerSheet {
-                            Drawer(
-                                navDrawerState = navDrawerState,
-                                currentFeedFilter = currentFeedFilter,
-                                feedSourceImage = { imageUrl ->
-                                    FeedSourceImage(imageUrl)
-                                },
-                                onFeedFilterSelected = { feedFilter ->
-                                    homeViewModel.onFeedFilterSelected(feedFilter)
-                                    scope.launch {
-                                        drawerState.close()
-                                        listState.animateScrollToItem(0)
-                                    }
-                                },
-                            )
-                        }
-                    },
-                    drawerState = drawerState,
-                ) {
-                    HomeScaffold(
-                        unReadCount = unReadCount,
-                        onSettingsButtonClicked = onSettingsButtonClicked,
-                        homeViewModel = homeViewModel,
-                        scope = scope,
-                        listState = listState,
-                        snackbarHostState = snackbarHostState,
-                        loadingState = loadingState,
-                        feedState = feedState,
-                        pullRefreshState = pullRefreshState,
-                        showDrawerMenu = true,
-                        currentFeedFilter = currentFeedFilter,
-                        onDrawerMenuClick = {
-                            scope.launch {
-                                if (drawerState.isOpen) {
-                                    drawerState.close()
-                                } else {
-                                    drawerState.open()
-                                }
-                            }
-                        },
-                        onAddFeedClick = onAddFeedClick,
-                        onImportExportClick = onImportExportClick,
-                    )
-                }
-            }
-        }
-
-        WindowWidthSizeClass.Medium -> {
-            Row {
-                AnimatedVisibility(
-                    modifier = Modifier
-                        .weight(1f),
-                    visible = isDrawerMenuFullVisible && (feedState.isNotEmpty() || navDrawerState.isNotEmpty()),
-                ) {
-                    Scaffold { paddingValues ->
-                        Drawer(
-                            modifier = Modifier
-                                .padding(paddingValues),
-                            navDrawerState = navDrawerState,
-                            currentFeedFilter = currentFeedFilter,
-                            feedSourceImage = { imageUrl ->
-                                FeedSourceImage(imageUrl)
-                            },
-                            onFeedFilterSelected = { feedFilter ->
-                                homeViewModel.onFeedFilterSelected(feedFilter)
-                                scope.launch {
-                                    listState.animateScrollToItem(0)
-                                }
-                            },
-                        )
-                    }
-                }
-
-                HomeScaffold(
-                    modifier = Modifier
-                        .weight(2f),
-                    unReadCount = unReadCount,
-                    onSettingsButtonClicked = onSettingsButtonClicked,
-                    homeViewModel = homeViewModel,
-                    scope = scope,
-                    listState = listState,
-                    snackbarHostState = snackbarHostState,
-                    loadingState = loadingState,
-                    feedState = feedState,
-                    pullRefreshState = pullRefreshState,
-                    showDrawerMenu = feedState.isNotEmpty(),
-                    isDrawerMenuOpen = isDrawerMenuFullVisible,
-                    currentFeedFilter = currentFeedFilter,
-                    onDrawerMenuClick = {
-                        isDrawerMenuFullVisible = !isDrawerMenuFullVisible
-                    },
-                    onAddFeedClick = onAddFeedClick,
-                    onImportExportClick = onImportExportClick,
-                )
-            }
-        }
-
-        WindowWidthSizeClass.Expanded -> {
-            Row {
-                if (feedState.isNotEmpty() || navDrawerState.isNotEmpty()) {
-                    Scaffold(
-                        modifier = Modifier
-                            .weight(1f),
-                    ) { paddingValues ->
-                        Drawer(
-                            modifier = Modifier
-                                .padding(paddingValues),
-                            navDrawerState = navDrawerState,
-                            currentFeedFilter = currentFeedFilter,
-                            feedSourceImage = { imageUrl ->
-                                FeedSourceImage(imageUrl)
-                            },
-                            onFeedFilterSelected = { feedFilter ->
-                                homeViewModel.onFeedFilterSelected(feedFilter)
-                                scope.launch {
-                                    listState.animateScrollToItem(0)
-                                }
-                            },
-                        )
-                    }
-                }
-
-                HomeScaffold(
-                    modifier = Modifier
-                        .weight(2f),
-                    unReadCount = unReadCount,
-                    onSettingsButtonClicked = onSettingsButtonClicked,
-                    homeViewModel = homeViewModel,
-                    scope = scope,
-                    listState = listState,
-                    snackbarHostState = snackbarHostState,
-                    loadingState = loadingState,
-                    feedState = feedState,
-                    pullRefreshState = pullRefreshState,
-                    currentFeedFilter = currentFeedFilter,
-                    onAddFeedClick = onAddFeedClick,
-                    onImportExportClick = onImportExportClick,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun FeedSourceImage(imageUrl: String) {
-    FeedSourceLogoImage(
-        size = 24.dp,
-        imageUrl = imageUrl,
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Suppress("LongMethod", "LongParameterList")
-@Composable
-private fun HomeScaffold(
-    unReadCount: Long,
-    homeViewModel: HomeViewModel,
-    scope: CoroutineScope,
-    listState: LazyListState,
-    snackbarHostState: SnackbarHostState,
-    loadingState: FeedUpdateStatus,
-    feedState: ImmutableList<FeedItem>,
-    pullRefreshState: PullRefreshState,
-    currentFeedFilter: FeedFilter,
-    modifier: Modifier = Modifier,
-    showDrawerMenu: Boolean = false,
-    isDrawerMenuOpen: Boolean = false,
-    onSettingsButtonClicked: () -> Unit,
-    onAddFeedClick: () -> Unit,
-    onImportExportClick: () -> Unit = {},
-    onDrawerMenuClick: () -> Unit = {},
-) {
-    val context = LocalContext.current
-    val browserManager = koinInject<BrowserManager>()
-
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            HomeAppBar(
-                currentFeedFilter = currentFeedFilter,
-                showDrawerMenu = showDrawerMenu,
-                isDrawerOpen = isDrawerMenuOpen,
-                onDrawerMenuClick = onDrawerMenuClick,
+            CompactHomeView(
+                feedItems = feedState,
+                navDrawerState = navDrawerState,
                 unReadCount = unReadCount,
                 onSettingsButtonClicked = onSettingsButtonClicked,
-                onMarkAllReadClicked = {
-                    homeViewModel.markAllRead()
+                snackbarHostState = snackbarHostState,
+                feedUpdateStatus = loadingState,
+                currentFeedFilter = currentFeedFilter,
+                onAddFeedClick = {
+                    showBottomSheet = true
                 },
                 onClearOldArticlesClicked = {
                     homeViewModel.deleteOldFeedItems()
                 },
-                onClick = {
-                    scope.launch {
-                        listState.animateScrollToItem(0)
-                    }
+                refreshData = {
+                    homeViewModel.getNewFeeds()
                 },
-                onDoubleClick = {
-                    scope.launch {
-                        listState.animateScrollToItem(0)
-                        homeViewModel.getNewFeeds()
-                    }
+                requestNewData = {
+                    homeViewModel.requestNewFeedsPage()
                 },
-                onForceRefreshClick = {
-                    scope.launch {
-                        listState.animateScrollToItem(0)
-                        homeViewModel.forceFeedRefresh()
-                    }
+                forceRefreshData = {
+                    homeViewModel.forceFeedRefresh()
                 },
-                onDeleteDatabase = {
+                onDeleteDatabaseClick = {
                     homeViewModel.deleteAllFeeds()
                 },
-            )
-        },
-        containerColor = Color.Transparent,
-        contentColor = MaterialTheme.colorScheme.onBackground,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-    ) { padding ->
-        var showBottomSheet by remember { mutableStateOf(false) }
-
-        if (showBottomSheet) {
-            NoFeedsBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
+                markAsReadOnScroll = { lastVisibleIndex ->
+                    homeViewModel.markAsReadOnScroll(lastVisibleIndex)
                 },
-                onAddFeedClick = onAddFeedClick,
-                onImportExportClick = onImportExportClick,
-            )
-        }
-
-        HomeScreenContent(
-            paddingValues = padding,
-            loadingState = loadingState,
-            feedState = feedState,
-            pullRefreshState = pullRefreshState,
-            listState = listState,
-            onRefresh = {
-                homeViewModel.getNewFeeds()
-            },
-            updateReadStatus = { lastVisibleIndex ->
-                homeViewModel.markAsReadOnScroll(lastVisibleIndex)
-            },
-            onFeedItemClick = { feedInfo ->
-                browserManager.openUrlWithFavoriteBrowser(feedInfo.url, context)
-                homeViewModel.markAsRead(feedInfo.id)
-            },
-            onFeedItemLongClick = { feedInfo ->
-                browserManager.openUrlWithFavoriteBrowser(feedInfo.url, context)
-                homeViewModel.markAsRead(feedInfo.id)
-            },
-            onAddFeedClick = {
-                showBottomSheet = true
-            },
-            requestMoreItems = {
-                homeViewModel.requestNewFeedsPage()
-            },
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Suppress("LongParameterList")
-@Composable
-private fun HomeScreenContent(
-    paddingValues: PaddingValues,
-    loadingState: FeedUpdateStatus,
-    feedState: ImmutableList<FeedItem>,
-    pullRefreshState: PullRefreshState,
-    listState: LazyListState,
-    onRefresh: () -> Unit = {},
-    updateReadStatus: (Int) -> Unit,
-    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
-    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
-    onAddFeedClick: () -> Unit,
-    requestMoreItems: () -> Unit,
-) {
-    when {
-        loadingState is NoFeedSourcesStatus -> {
-            NoFeedsSourceView(
-                modifier = Modifier
-                    .padding(paddingValues),
-                onAddFeedClick = {
-                    onAddFeedClick()
+                markAsRead = { feedItemId ->
+                    homeViewModel.markAsRead(feedItemId.id)
+                },
+                markAllRead = {
+                    homeViewModel.markAllRead()
+                },
+                onFeedFilterSelected = { feedFilter ->
+                    homeViewModel.onFeedFilterSelected(feedFilter)
+                },
+                openUrl = { url ->
+                    browserManager.openUrlWithFavoriteBrowser(url, context)
                 },
             )
         }
 
-        !loadingState.isLoading() && feedState.isEmpty() -> {
-            EmptyFeedView(
-                modifier = Modifier
-                    .padding(paddingValues),
-                onReloadClick = {
-                    onRefresh()
-                },
-            )
-        }
-
-        else -> FeedWithContentView(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            loadingState = loadingState,
-            pullRefreshState = pullRefreshState,
-            feedState = feedState,
-            listState = listState,
-            updateReadStatus = updateReadStatus,
-            onFeedItemClick = onFeedItemClick,
-            onFeedItemLongClick = onFeedItemLongClick,
-            requestMoreItems = requestMoreItems,
-        )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterialApi::class)
-private fun FeedWithContentView(
-    modifier: Modifier = Modifier,
-    loadingState: FeedUpdateStatus,
-    pullRefreshState: PullRefreshState,
-    feedState: ImmutableList<FeedItem>,
-    listState: LazyListState,
-    updateReadStatus: (Int) -> Unit,
-    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
-    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
-    requestMoreItems: () -> Unit,
-) {
-    Column(
-        modifier = modifier,
-    ) {
-        AnimatedVisibility(loadingState.isLoading()) {
-            val feedRefreshCounter = """
-                    ${loadingState.refreshedFeedCount}/${loadingState.totalFeedCount}
-            """.trimIndent()
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Spacing.regular),
-                text = stringResource(
-                    resource = MR.strings.loading_feed_message,
-                    feedRefreshCounter,
-                ),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium,
-            )
-        }
-
-        Box(
-            Modifier
-                .fillMaxSize()
-                .pullRefresh(pullRefreshState),
-        ) {
-            FeedList(
-                modifier = Modifier,
+        WindowWidthSizeClass.Medium -> {
+            MediumHomeView(
                 feedItems = feedState,
-                listState = listState,
-                updateReadStatus = { index ->
-                    updateReadStatus(index)
+                navDrawerState = navDrawerState,
+                currentFeedFilter = currentFeedFilter,
+                unReadCount = unReadCount,
+                onSettingsButtonClicked = onSettingsButtonClicked,
+                snackbarHostState = snackbarHostState,
+                feedUpdateStatus = loadingState,
+                onAddFeedClick = {
+                    showBottomSheet = true
                 },
-                requestMoreItems = requestMoreItems,
-            ) { feedItem ->
-                FeedItemView(
-                    feedItem = feedItem,
-                    onFeedItemClick = onFeedItemClick,
-                    onFeedItemLongClick = onFeedItemLongClick,
-                    feedItemImage = { url ->
-                        FeedItemImage(
-                            modifier = Modifier
-                                .padding(start = Spacing.regular),
-                            url = url,
-                            size = 96.dp,
-                        )
-                    },
-                )
-            }
-
-            PullRefreshIndicator(
-                loadingState.isLoading(),
-                pullRefreshState,
-                Modifier.align(Alignment.TopCenter),
+                onClearOldArticlesClicked = {
+                    homeViewModel.deleteOldFeedItems()
+                },
+                refreshData = {
+                    homeViewModel.getNewFeeds()
+                },
+                requestNewData = {
+                    homeViewModel.requestNewFeedsPage()
+                },
+                forceRefreshData = {
+                    homeViewModel.forceFeedRefresh()
+                },
+                onDeleteDatabaseClick = {
+                    homeViewModel.deleteAllFeeds()
+                },
+                markAsReadOnScroll = { lastVisibleIndex ->
+                    homeViewModel.markAsReadOnScroll(lastVisibleIndex)
+                },
+                markAsRead = { feedItemId ->
+                    homeViewModel.markAsRead(feedItemId.id)
+                },
+                markAllRead = {
+                    homeViewModel.markAllRead()
+                },
+                onFeedFilterSelected = { feedFilter ->
+                    homeViewModel.onFeedFilterSelected(feedFilter)
+                },
+                openUrl = { url ->
+                    browserManager.openUrlWithFavoriteBrowser(url, context)
+                },
             )
         }
-    }
-}
 
-@FeedFlowPreview
-@Composable
-fun HomeScreeContentLoadingPreview() {
-    FeedFlowTheme {
-        HomeScreenContent(
-            paddingValues = PaddingValues(0.dp),
-            loadingState = InProgressFeedUpdateStatus(
-                refreshedFeedCount = 10,
-                totalFeedCount = 42,
-            ),
-            feedState = feedItemsForPreview,
-            pullRefreshState = rememberPullRefreshState(
-                refreshing = false,
-                onRefresh = { },
-            ),
-            listState = rememberLazyListState(),
-            updateReadStatus = {},
-            onFeedItemClick = {},
-            onFeedItemLongClick = {},
-            onAddFeedClick = {},
-            onRefresh = {},
-            requestMoreItems = {},
-        )
-    }
-}
-
-@FeedFlowPreview
-@Composable
-fun HomeScreeContentLoadedPreview() {
-    FeedFlowTheme {
-        HomeScreenContent(
-            paddingValues = PaddingValues(0.dp),
-            loadingState = FinishedFeedUpdateStatus,
-            feedState = feedItemsForPreview,
-            pullRefreshState = rememberPullRefreshState(
-                refreshing = false,
-                onRefresh = { },
-            ),
-            listState = rememberLazyListState(),
-            updateReadStatus = {},
-            onFeedItemClick = {},
-            onFeedItemLongClick = {},
-            onAddFeedClick = {},
-            requestMoreItems = {},
-        )
+        WindowWidthSizeClass.Expanded -> {
+            ExpandedHomeView(
+                feedItems = feedState,
+                navDrawerState = navDrawerState,
+                currentFeedFilter = currentFeedFilter,
+                unReadCount = unReadCount,
+                onSettingsButtonClicked = onSettingsButtonClicked,
+                snackbarHostState = snackbarHostState,
+                feedUpdateStatus = loadingState,
+                onAddFeedClick = {
+                    showBottomSheet = true
+                },
+                onClearOldArticlesClicked = {
+                    homeViewModel.deleteOldFeedItems()
+                },
+                refreshData = {
+                    homeViewModel.getNewFeeds()
+                },
+                requestNewData = {
+                    homeViewModel.requestNewFeedsPage()
+                },
+                forceRefreshData = {
+                    homeViewModel.forceFeedRefresh()
+                },
+                onDeleteDatabaseClick = {
+                    homeViewModel.deleteAllFeeds()
+                },
+                markAsReadOnScroll = { lastVisibleIndex ->
+                    homeViewModel.markAsReadOnScroll(lastVisibleIndex)
+                },
+                markAsRead = { feedItemId ->
+                    homeViewModel.markAsRead(feedItemId.id)
+                },
+                markAllRead = {
+                    homeViewModel.markAllRead()
+                },
+                onFeedFilterSelected = { feedFilter ->
+                    homeViewModel.onFeedFilterSelected(feedFilter)
+                },
+                openUrl = { url ->
+                    browserManager.openUrlWithFavoriteBrowser(url, context)
+                },
+            )
+        }
     }
 }

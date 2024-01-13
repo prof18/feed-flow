@@ -21,7 +21,7 @@
         android:theme="@style/Theme.FeedFlow">
 
         <activity
-            android:name="com.prof18.feedflow.MainActivity"
+            android:name="com.prof18.feedflow.android.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

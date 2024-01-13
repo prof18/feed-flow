@@ -739,7 +739,7 @@ style:
   UnusedPrivateMember:
     active: true
     allowedNames: ''
-    ignoreAnnotated: ['Preview', 'FeedFlowPreview']
+    ignoreAnnotated: ['Preview', 'FeedFlowPhonePreview', 'FeedFlowTabletPreview', 'FeedFlowFoldablePreview']
   UnusedPrivateProperty:
     active: true
     allowedNames: '_|ignored|expected|serialVersionUID'

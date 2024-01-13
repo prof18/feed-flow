@@ -46,7 +46,7 @@ kotlin {
 compose {
     desktop {
         application {
-            mainClass = "com.prof18.feedflow.MainKt"
+            mainClass = "com.prof18.feedflow.desktop.MainKt"
 
             buildTypes.release.proguard {
                 configurationFiles.from(project.file("compose-desktop.pro"))

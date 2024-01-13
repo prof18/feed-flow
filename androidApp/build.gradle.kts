@@ -17,7 +17,7 @@ if (localProperties.exists()) {
 }
 
 android {
-    namespace = "com.prof18.feedflow"
+    namespace = "com.prof18.feedflow.android"
     compileSdk = libs.versions.android.compile.sdk.get().toInt()
     defaultConfig {
         applicationId = "com.prof18.feedflow"
@@ -70,8 +70,8 @@ android {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions {
         freeCompilerArgs += listOf(
-            "-Xopt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-Xopt-in=androidx.compose.material.ExperimentalMaterialApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
         )
     }
 }

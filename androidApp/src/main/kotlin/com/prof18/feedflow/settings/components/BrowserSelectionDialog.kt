@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.presentation.preview.browsersForPreview
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.ui.preview.FeedFlowPhonePreview
 
 @Composable
 internal fun BrowserSelectionDialog(
@@ -62,7 +62,7 @@ internal fun BrowserSelectionDialog(
     }
 }
 
-@FeedFlowPreview
+@FeedFlowPhonePreview
 @Composable
 private fun BrowserSelectionDialogPreview() {
     FeedFlowTheme {

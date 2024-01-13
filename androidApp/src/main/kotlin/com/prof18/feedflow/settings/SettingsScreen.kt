@@ -44,7 +44,7 @@ import com.prof18.feedflow.domain.model.Browser
 import com.prof18.feedflow.presentation.SettingsViewModel
 import com.prof18.feedflow.presentation.preview.browsersForPreview
 import com.prof18.feedflow.settings.components.BrowserSelectionDialog
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.ui.preview.FeedFlowPhonePreview
 import com.prof18.feedflow.ui.settings.SettingItem
 import com.prof18.feedflow.ui.style.Spacing
 import com.prof18.feedflow.utils.UserFeedbackReporter
@@ -307,7 +307,7 @@ private fun MarkReadWhenScrollingSwitch(
     }
 }
 
-@FeedFlowPreview
+@FeedFlowPhonePreview
 @Composable
 private fun SettingsScreenPreview() {
     FeedFlowTheme {

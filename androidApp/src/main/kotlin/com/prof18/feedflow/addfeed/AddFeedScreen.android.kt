@@ -28,7 +28,7 @@ import com.prof18.feedflow.domain.model.FeedAddedState
 import com.prof18.feedflow.presentation.AddFeedViewModel
 import com.prof18.feedflow.presentation.preview.categoriesState
 import com.prof18.feedflow.ui.addfeed.AddFeedsContent
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.ui.preview.FeedFlowPhonePreview
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 
@@ -144,7 +144,7 @@ private fun AddFeedScreenContent(
     }
 }
 
-@FeedFlowPreview
+@FeedFlowPhonePreview
 @Composable
 private fun AddScreenContentPreview() {
     FeedFlowTheme {
@@ -163,7 +163,7 @@ private fun AddScreenContentPreview() {
     }
 }
 
-@FeedFlowPreview
+@FeedFlowPhonePreview
 @Composable
 private fun AddScreenContentInvalidUrlPreview() {
     FeedFlowTheme {

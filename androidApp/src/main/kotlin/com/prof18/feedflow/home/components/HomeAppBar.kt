@@ -6,16 +6,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MenuOpen
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -29,14 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.BuildConfig
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.ui.preview.FeedFlowPhonePreview
 import dev.icerock.moko.resources.compose.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongParameterList")
 @Composable
 internal fun HomeAppBar(
@@ -89,7 +80,7 @@ internal fun HomeAppBar(
                 )
             }
 
-            SettingsDropdownMenu(
+            HomeAppBarDropdownMenu(
                 showMenu = showMenu,
                 closeMenu = {
                     showMenu = false
@@ -139,104 +130,7 @@ private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
     }
 }
 
-@Suppress("LongMethod")
-@Composable
-private fun SettingsDropdownMenu(
-    showMenu: Boolean,
-    closeMenu: () -> Unit,
-    onMarkAllReadClicked: () -> Unit,
-    onClearOldArticlesClicked: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
-    onForceRefreshClick: () -> Unit,
-    onDeleteDatabase: () -> Unit,
-) {
-    DropdownMenu(
-        expanded = showMenu,
-        onDismissRequest = closeMenu,
-    ) {
-        DropdownMenuItem(
-            onClick = {
-                onMarkAllReadClicked()
-                closeMenu()
-            },
-            text = {
-                Text(stringResource(resource = MR.strings.mark_all_read_button))
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.DoneAll,
-                    contentDescription = null,
-                )
-            },
-        )
-
-        DropdownMenuItem(
-            onClick = {
-                onClearOldArticlesClicked()
-                closeMenu()
-            },
-            text = {
-                Text(stringResource(resource = MR.strings.clear_old_articles_button))
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                )
-            },
-        )
-
-        DropdownMenuItem(
-            onClick = {
-                onForceRefreshClick()
-                closeMenu()
-            },
-            text = {
-                Text(stringResource(resource = MR.strings.force_feed_refresh))
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = null,
-                )
-            },
-        )
-
-        DropdownMenuItem(
-            onClick = {
-                onSettingsButtonClicked()
-            },
-            text = {
-                Text(stringResource(resource = MR.strings.settings_button))
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = null,
-                )
-            },
-        )
-
-        if (BuildConfig.DEBUG) {
-            DropdownMenuItem(
-                onClick = {
-                    onDeleteDatabase()
-                },
-                text = {
-                    Text("Delete database")
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                    )
-                },
-            )
-        }
-    }
-}
-
-@FeedFlowPreview
+@FeedFlowPhonePreview
 @Composable
 private fun HomeAppBarPreview() {
     FeedFlowTheme {
@@ -267,7 +161,7 @@ private fun HomeAppBarPreview() {
     }
 }
 
-@FeedFlowPreview
+@FeedFlowPhonePreview
 @Composable
 private fun HomeAppBarSmallPreview() {
     FeedFlowTheme {
@@ -287,3 +181,4 @@ private fun HomeAppBarSmallPreview() {
         )
     }
 }
+

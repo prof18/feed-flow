@@ -18,7 +18,7 @@ import com.prof18.feedflow.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourceNavBar
 import com.prof18.feedflow.ui.feedsourcelist.FeedSourcesWithCategoryList
 import com.prof18.feedflow.ui.feedsourcelist.NoFeedSourcesView
-import com.prof18.feedflow.ui.preview.FeedFlowPreview
+import com.prof18.feedflow.ui.preview.FeedFlowPhonePreview
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -71,7 +71,6 @@ private fun FeedSourceListContent(
                 feedSourceState = feedSources,
                 feedSourceImage = { imageUrl ->
                     FeedSourceLogoImage(
-                        size = 24.dp,
                         imageUrl = imageUrl,
                     )
                 },
@@ -82,7 +81,7 @@ private fun FeedSourceListContent(
     }
 }
 
-@FeedFlowPreview
+@FeedFlowPhonePreview
 @Composable
 private fun FeedSourceListContentPreview() {
     FeedFlowTheme {

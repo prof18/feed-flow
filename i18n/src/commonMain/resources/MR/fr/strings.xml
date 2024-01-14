@@ -31,7 +31,7 @@
     <string name="about_nav_bar">À propos</string>
     <string name="wrong_link_report_title">Les flux suivants n\'ont pas été ajoutés car ils ne sont pas valides</string>
     <string name="open_source_licenses">Licences Open Source</string>
-    <string name="browser_selection_button">Navigateur préféré</string>
+    <string name="browser_selection_button">Navigateur</string>
     <string name="feed_error_message">Une erreur s\'est produite avec : %s :(</string>
     <string name="issue_report_title">Signaler un problème avec FeedFlow</string>
     <string name="export_dialog_title">Enregistrer un fichier OPML</string>

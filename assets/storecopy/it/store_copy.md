@@ -4,14 +4,13 @@ FeedFlow
 
 ## Breve descrizione
 
-Lettore RSS minimalista
+RSS Reader minimalista
 
 ## Descrizione completa
 
-Segui i tuoi feed RSS preferiti con FeedFlow, un lettore RSS minimalista e
-basato sulle opinioni personali dell'autore. Goditi un'esperienza di lettura
-senza fronzoli poiché FeedFlow offre un elenco minimalista e apre gli articoli
-sui rispettivi siti Web.
+Segui i tuoi feed RSS preferiti con FeedFlow, un lettore RSS minimalista. Goditi
+un'esperienza di lettura senza intoppi poiché FeedFlow offre una lista
+minimalista e apre gli articoli sui rispettivi siti Web.
 
 Personalizza la tua esperienza di navigazione scegliendo il tuo browser
 preferito. In questo modo, puoi scegliere un browser alternativo incentrato

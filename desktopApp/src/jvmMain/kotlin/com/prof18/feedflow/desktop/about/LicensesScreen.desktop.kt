@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +31,6 @@ import com.prof18.feedflow.MR
 import com.prof18.feedflow.shared.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LicensesScreen(
     onBackClick: () -> Unit,
@@ -85,7 +82,6 @@ fun LicensesScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun LicenseDialog(
     licenseContent: String,

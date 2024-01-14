@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
-@Suppress("TooManyFunctions", "LongParameterList")
+@Suppress("TooManyFunctions")
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedRetrieverRepository(
     private val parser: RssParser,

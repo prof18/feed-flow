@@ -1,71 +1,57 @@
-package com.prof18.feedflow.android.home.bywindowsize
+package com.prof18.feedflow.desktop.home.bywindowsize
 
-import FeedFlowTheme
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import com.prof18.feedflow.android.home.components.HomeScaffold
-import com.prof18.feedflow.android.ui.components.FeedSourceLogoImage
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.desktop.home.components.HomeScreenContent
+import com.prof18.feedflow.desktop.openInBrowser
+import com.prof18.feedflow.desktop.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.navDrawerState
 import com.prof18.feedflow.shared.ui.home.components.Drawer
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
-import kotlinx.collections.immutable.ImmutableList
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun CompactHomeView(
-    feedItems: ImmutableList<FeedItem>,
+internal fun CompactView(
+    feedItems: List<FeedItem>,
     navDrawerState: NavDrawerState,
     unReadCount: Long,
-    snackbarHostState: SnackbarHostState,
-    feedUpdateStatus: FeedUpdateStatus,
     currentFeedFilter: FeedFilter,
+    paddingValues: PaddingValues,
+    loadingState: FeedUpdateStatus,
+    lazyListState: LazyListState,
     onAddFeedClick: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
-    onClearOldArticlesClicked: () -> Unit,
-    onDeleteDatabaseClick: () -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     refreshData: () -> Unit,
     requestNewData: () -> Unit,
-    forceRefreshData: () -> Unit,
     markAsReadOnScroll: (Int) -> Unit,
     markAsRead: (FeedItemId) -> Unit,
-    markAllRead: () -> Unit,
-    openUrl: (String) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val listState = rememberLazyListState()
-
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = feedUpdateStatus.isLoading(),
-        onRefresh = refreshData,
-    )
 
     if (feedItems.isEmpty() && navDrawerState.isEmpty()) {
-        HomeScaffold(
-            unReadCount = unReadCount,
-            onSettingsButtonClicked = onSettingsButtonClicked,
-            scope = scope,
-            listState = listState,
-            snackbarHostState = snackbarHostState,
-            loadingState = feedUpdateStatus,
+        HomeScreenContent(
+            paddingValues = paddingValues,
+            loadingState = loadingState,
             feedState = feedItems,
-            pullRefreshState = pullRefreshState,
-            showDrawerMenu = false,
+            listState = lazyListState,
+            unReadCount = unReadCount,
+            showDrawerMenu = true,
             currentFeedFilter = currentFeedFilter,
             onDrawerMenuClick = {
                 scope.launch {
@@ -76,16 +62,20 @@ internal fun CompactHomeView(
                     }
                 }
             },
-            onAddFeedClick = onAddFeedClick,
-            onClearOldArticlesClicked = onClearOldArticlesClicked,
-            refreshData = refreshData,
-            requestNewData = requestNewData,
-            forceRefreshData = forceRefreshData,
-            onDeleteDatabaseClick = onDeleteDatabaseClick,
-            markAsReadOnScroll = markAsReadOnScroll,
-            markAsRead = markAsRead,
-            markAllRead = markAllRead,
-            openUrl = openUrl,
+            onRefresh = refreshData,
+            updateReadStatus = markAsReadOnScroll,
+            onFeedItemClick = { feedInfo ->
+                openInBrowser(feedInfo.url)
+                markAsRead(FeedItemId(feedInfo.id))
+            },
+            onFeedItemLongClick = { feedInfo ->
+                openInBrowser(feedInfo.url)
+                markAsRead(FeedItemId(feedInfo.id))
+            },
+            onAddFeedClick = {
+                onAddFeedClick()
+            },
+            requestMoreItems = requestNewData,
         )
     } else {
         ModalNavigationDrawer(
@@ -95,13 +85,16 @@ internal fun CompactHomeView(
                         navDrawerState = navDrawerState,
                         currentFeedFilter = currentFeedFilter,
                         feedSourceImage = { imageUrl ->
-                            FeedSourceLogoImage(imageUrl = imageUrl)
+                            FeedSourceLogoImage(
+                                size = 24.dp,
+                                imageUrl = imageUrl,
+                            )
                         },
                         onFeedFilterSelected = { feedFilter ->
                             onFeedFilterSelected(feedFilter)
                             scope.launch {
                                 drawerState.close()
-                                listState.animateScrollToItem(0)
+                                lazyListState.animateScrollToItem(0)
                             }
                         },
                     )
@@ -109,15 +102,12 @@ internal fun CompactHomeView(
             },
             drawerState = drawerState,
         ) {
-            HomeScaffold(
-                unReadCount = unReadCount,
-                onSettingsButtonClicked = onSettingsButtonClicked,
-                scope = scope,
-                listState = listState,
-                snackbarHostState = snackbarHostState,
-                loadingState = feedUpdateStatus,
+            HomeScreenContent(
+                paddingValues = paddingValues,
+                loadingState = loadingState,
                 feedState = feedItems,
-                pullRefreshState = pullRefreshState,
+                listState = lazyListState,
+                unReadCount = unReadCount,
                 showDrawerMenu = true,
                 currentFeedFilter = currentFeedFilter,
                 onDrawerMenuClick = {
@@ -129,44 +119,43 @@ internal fun CompactHomeView(
                         }
                     }
                 },
-                onAddFeedClick = onAddFeedClick,
-                refreshData = refreshData,
-                requestNewData = requestNewData,
-                forceRefreshData = forceRefreshData,
-                onDeleteDatabaseClick = onDeleteDatabaseClick,
-                markAsReadOnScroll = markAsReadOnScroll,
-                markAsRead = markAsRead,
-                markAllRead = markAllRead,
-                onClearOldArticlesClicked = onClearOldArticlesClicked,
-                openUrl = openUrl,
+                onRefresh = refreshData,
+                updateReadStatus = markAsReadOnScroll,
+                onFeedItemClick = { feedInfo ->
+                    openInBrowser(feedInfo.url)
+                    markAsRead(FeedItemId(feedInfo.id))
+                },
+                onFeedItemLongClick = { feedInfo ->
+                    openInBrowser(feedInfo.url)
+                    markAsRead(FeedItemId(feedInfo.id))
+                },
+                onAddFeedClick = {
+                    onAddFeedClick()
+                },
+                requestMoreItems = requestNewData,
             )
         }
     }
 }
 
-@FeedFlowPhonePreview
+@Preview
 @Composable
-private fun CompactHomeViewPreview() {
+private fun CompactViewPreview() {
     FeedFlowTheme {
-        CompactHomeView(
+        CompactView(
             feedItems = feedItemsForPreview,
             navDrawerState = navDrawerState,
             unReadCount = 42,
-            snackbarHostState = SnackbarHostState(),
-            feedUpdateStatus = inProgressFeedUpdateStatus,
             currentFeedFilter = FeedFilter.Timeline,
+            paddingValues = PaddingValues(),
+            loadingState = inProgressFeedUpdateStatus,
+            lazyListState = LazyListState(),
             onAddFeedClick = {},
-            onSettingsButtonClicked = {},
-            onClearOldArticlesClicked = {},
-            onDeleteDatabaseClick = {},
             onFeedFilterSelected = {},
             refreshData = {},
             requestNewData = {},
-            forceRefreshData = {},
             markAsReadOnScroll = {},
             markAsRead = {},
-            markAllRead = {},
-            openUrl = { },
         )
     }
 }

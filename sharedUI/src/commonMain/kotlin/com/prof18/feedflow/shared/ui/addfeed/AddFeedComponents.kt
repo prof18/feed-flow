@@ -19,7 +19,6 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.shared.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
-@Suppress("LongParameterList")
 @Composable
 fun AddFeedContent(
     feedUrl: String,

@@ -1,4 +1,4 @@
-package com.prof18.feedflow.desktop.home
+package com.prof18.feedflow.desktop.home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

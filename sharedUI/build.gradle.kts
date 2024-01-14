@@ -16,7 +16,6 @@ kotlin {
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
             languageSettings.optIn("androidx.compose.material3.ExperimentalMaterial3Api")
-            languageSettings.optIn("androidx.compose.material.ExperimentalMaterialApi")
         }
 
         commonMain {

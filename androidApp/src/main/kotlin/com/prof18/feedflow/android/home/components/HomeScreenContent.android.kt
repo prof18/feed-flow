@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterialApi::class)
-
 package com.prof18.feedflow.android.home.components
 
 import FeedFlowTheme
@@ -8,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
@@ -26,7 +23,6 @@ import com.prof18.feedflow.shared.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
 import kotlinx.collections.immutable.ImmutableList
 
-@Suppress("LongParameterList")
 @Composable
 internal fun HomeScreenContent(
     paddingValues: PaddingValues,

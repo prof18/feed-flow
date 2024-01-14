@@ -96,7 +96,6 @@ fun SettingsScreen(
     )
 }
 
-@Suppress("LongParameterList")
 @Composable
 private fun SettingsScreenContent(
     browsers: List<Browser>,
@@ -150,7 +149,6 @@ private fun SettingsScreenContent(
         )
     }
 }
-
 
 @Suppress("LongMethod")
 @Composable
@@ -302,7 +300,6 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
         },
     )
 }
-
 
 @FeedFlowPhonePreview
 @Composable

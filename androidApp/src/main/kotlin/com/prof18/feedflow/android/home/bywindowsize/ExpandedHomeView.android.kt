@@ -25,7 +25,6 @@ import com.prof18.feedflow.shared.ui.preview.FeedFlowTabletPreview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
-@Suppress("LongParameterList", "LongMethod")
 @Composable
 internal fun ExpandedHomeView(
     feedItems: ImmutableList<FeedItem>,

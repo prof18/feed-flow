@@ -25,44 +25,42 @@ import dev.icerock.moko.resources.compose.stringResource
 fun FeedSourceListScreen(
     navigateBack: () -> Unit,
 ) {
-    FeedFlowTheme {
-        var dialogState by remember { mutableStateOf(false) }
+    var dialogState by remember { mutableStateOf(false) }
 
-        DialogWindow(
-            title = stringResource(MR.strings.add_feed),
-            visible = dialogState,
-            onCloseRequest = { dialogState = false },
-        ) {
-            AddFeedScreen(
-                onFeedAdded = {
-                    dialogState = false
-                },
-            )
-        }
-        val viewModel = desktopViewModel { DI.koin.get<FeedSourceListViewModel>() }
-
-        val feedSources by viewModel.feedSourcesState.collectAsState()
-
-        FeedSourceListContent(
-            feedSourceListState = feedSources,
-            feedSourceLogoImage = { imageUrl ->
-                    FeedSourceLogoImage(
-                        size = 24.dp,
-                        imageUrl = imageUrl,
-                    )
-                },
-            onAddFeedClick = {
-                dialogState = true
+    DialogWindow(
+        title = stringResource(MR.strings.add_feed),
+        visible = dialogState,
+        onCloseRequest = { dialogState = false },
+    ) {
+        AddFeedScreen(
+            onFeedAdded = {
+                dialogState = false
             },
-            onDeleteFeedClick = { feedSource ->
-                viewModel.deleteFeedSource(feedSource)
-            },
-            onExpandClicked = { categoryId ->
-                viewModel.expandCategory(categoryId)
-            },
-            navigateBack = navigateBack,
         )
     }
+    val viewModel = desktopViewModel { DI.koin.get<FeedSourceListViewModel>() }
+
+    val feedSources by viewModel.feedSourcesState.collectAsState()
+
+    FeedSourceListContent(
+        feedSourceListState = feedSources,
+        feedSourceLogoImage = { imageUrl ->
+            FeedSourceLogoImage(
+                size = 24.dp,
+                imageUrl = imageUrl,
+            )
+        },
+        onAddFeedClick = {
+            dialogState = true
+        },
+        onDeleteFeedClick = { feedSource ->
+            viewModel.deleteFeedSource(feedSource)
+        },
+        onExpandClicked = { categoryId ->
+            viewModel.expandCategory(categoryId)
+        },
+        navigateBack = navigateBack,
+    )
 }
 
 @Preview
@@ -83,8 +81,7 @@ private fun FeedSourceListContentPreview() {
                     size = 24.dp,
                     imageUrl = it,
                 )
-            }
+            },
         )
     }
 }
-

@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -101,7 +100,6 @@ fun ImportExportContent(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun ImportExportNavBar(navigateBack: () -> Unit) {
     TopAppBar(
         title = {

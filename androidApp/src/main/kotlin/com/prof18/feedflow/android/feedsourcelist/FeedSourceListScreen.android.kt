@@ -57,7 +57,7 @@ private fun FeedSourceListContentPreview() {
                     size = 24.dp,
                     imageUrl = it,
                 )
-            }
+            },
         )
     }
 }

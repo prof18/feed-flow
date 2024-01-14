@@ -143,7 +143,7 @@ fun main() = application {
             },
         ) {
             AboutContent(
-                versionLabel = "Version: ${version ?: "N/A"}",
+                versionLabel = stringResource(MR.strings.about_app_version, version ?: "N/A"),
             )
         }
 

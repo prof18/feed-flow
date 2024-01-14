@@ -25,7 +25,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Suppress("LongMethod", "LongParameterList")
 @Composable
 internal fun HomeScaffold(
     unReadCount: Long,

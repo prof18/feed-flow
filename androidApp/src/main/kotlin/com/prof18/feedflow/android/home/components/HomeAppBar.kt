@@ -28,7 +28,6 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
 import dev.icerock.moko.resources.compose.stringResource
 
-@Suppress("LongParameterList")
 @Composable
 internal fun HomeAppBar(
     currentFeedFilter: FeedFilter,

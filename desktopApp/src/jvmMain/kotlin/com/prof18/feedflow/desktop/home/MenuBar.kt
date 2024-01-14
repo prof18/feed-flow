@@ -9,7 +9,6 @@ import androidx.compose.ui.window.MenuScope
 import com.prof18.feedflow.MR
 import dev.icerock.moko.resources.compose.stringResource
 
-@Suppress("LongParameterList", "LongMethod")
 @Composable
 fun FrameWindowScope.FeedFlowMenuBar(
     showDebugMenu: Boolean,

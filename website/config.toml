@@ -22,6 +22,10 @@ theme = "apsho"
     name = "Report issue"
     url = "https://github.com/prof18/feed-flow/issues/new?title=App+issue&body=Please+describe+the+issue+and+provide+a+link+to+the+RSS+Feed+that+causes+the+issues:%0A"
     weight = 4
+[[menu.sitemap]]
+    name = "Contribute with translations"
+    url = "https://hosted.weblate.org/projects/feedflow/"
+    weight = 5
 
 [params]
 

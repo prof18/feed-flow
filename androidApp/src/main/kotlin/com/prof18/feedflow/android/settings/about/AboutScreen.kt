@@ -59,7 +59,6 @@ fun AboutScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongMethod")
 @Composable
 private fun AboutScreenContent(

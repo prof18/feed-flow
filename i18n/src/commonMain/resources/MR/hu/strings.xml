@@ -32,7 +32,7 @@
     <string name="about_nav_bar">Az alkalmazásról</string>
     <string name="wrong_link_report_title">Az alábbi feedeket nem sikerült hozzáadni, mert nem érvényes RSS feedek</string>
     <string name="open_source_licenses">Nyílt forráskódú engedélyek</string>
-    <string name="browser_selection_button">Kedvenc böngésződ</string>
+    <string name="browser_selection_button">Böngésző</string>
     <string name="feed_error_message">Valami nem stimmel ezzel: %s :(</string>
     <string name="issue_report_title">A FeedFlow-val kapcsolatos probléma bejelentése</string>
     <string name="export_dialog_title">OMPL fájl mentése</string>

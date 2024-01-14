@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -21,13 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.MR
-import com.prof18.feedflow.core.model.CategoriesState
-import com.prof18.feedflow.core.model.CategoryId
-import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
-import com.prof18.feedflow.shared.presentation.preview.categoriesState
-import com.prof18.feedflow.shared.ui.addfeed.AddFeedsContent
+import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
+import com.prof18.feedflow.shared.ui.addfeed.AddFeedContent
 import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
@@ -68,7 +64,7 @@ fun AddFeedScreen(
 
     val categoriesState by viewModel.categoriesState.collectAsStateWithLifecycle()
 
-    AddFeedScreenContent(
+    AddFeedContent(
         feedUrl = feedUrl,
         showError = showError,
         errorMessage = errorMessage,
@@ -80,7 +76,6 @@ fun AddFeedScreen(
         addFeed = {
             viewModel.addFeed()
         },
-        navigateBack = navigateBack,
         onExpandClick = {
             viewModel.onExpandCategoryClick()
         },
@@ -90,26 +85,7 @@ fun AddFeedScreen(
         onDeleteCategoryClick = { categoryId ->
             viewModel.deleteCategory(categoryId.value)
         },
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Suppress("LongParameterList")
-@Composable
-private fun AddFeedScreenContent(
-    feedUrl: String,
-    showError: Boolean,
-    errorMessage: String,
-    categoriesState: CategoriesState,
-    onFeedUrlUpdated: (String) -> Unit,
-    addFeed: () -> Unit,
-    navigateBack: () -> Unit,
-    onExpandClick: () -> Unit,
-    onAddCategoryClick: (CategoryName) -> Unit,
-    onDeleteCategoryClick: (CategoryId) -> Unit,
-) {
-    Scaffold(
-        topBar = {
+        topAppBar = {
             TopAppBar(
                 title = {
                     Text(stringResource(resource = MR.strings.add_feed))
@@ -128,56 +104,40 @@ private fun AddFeedScreenContent(
                 },
             )
         },
-    ) { paddingValues ->
-        AddFeedsContent(
-            paddingValues = paddingValues,
-            feedUrl = feedUrl,
-            showError = showError,
-            errorMessage = errorMessage,
-            categoriesState = categoriesState,
-            onFeedUrlUpdated = onFeedUrlUpdated,
-            addFeed = addFeed,
-            onExpandClick = onExpandClick,
-            onAddCategoryClick = onAddCategoryClick,
-            onDeleteCategoryClick = onDeleteCategoryClick,
-        )
-    }
+    )
 }
 
 @FeedFlowPhonePreview
 @Composable
 private fun AddScreenContentPreview() {
     FeedFlowTheme {
-        AddFeedScreenContent(
+        AddFeedContent(
             feedUrl = "https://www.ablog.com/feed",
             showError = false,
             errorMessage = "",
-            categoriesState = categoriesState,
+            categoriesState = categoriesExpandedState,
             onFeedUrlUpdated = {},
             addFeed = { },
-            navigateBack = {},
             onExpandClick = {},
             onAddCategoryClick = {},
             onDeleteCategoryClick = {},
-        )
-    }
-}
-
-@FeedFlowPhonePreview
-@Composable
-private fun AddScreenContentInvalidUrlPreview() {
-    FeedFlowTheme {
-        AddFeedScreenContent(
-            feedUrl = "https://www.ablog.com/feed",
-            showError = true,
-            errorMessage = "The link you provided is not a valid RSS feed",
-            categoriesState = categoriesState,
-            onFeedUrlUpdated = {},
-            addFeed = { },
-            navigateBack = {},
-            onExpandClick = {},
-            onAddCategoryClick = {},
-            onDeleteCategoryClick = {},
+            topAppBar = {
+                TopAppBar(
+                    title = {
+                        Text(stringResource(resource = MR.strings.add_feed))
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {},
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = null,
+                            )
+                        }
+                    },
+                )
+            },
         )
     }
 }

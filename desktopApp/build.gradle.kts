@@ -29,7 +29,6 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.decompose)
                 implementation(libs.decompose.compose.jetbrains)
-                implementation(libs.jsystem.theme.detector)
                 implementation(libs.compose.image.loader)
                 implementation(libs.moko.resourcesCompose)
                 implementation(libs.bundles.about.libraries)

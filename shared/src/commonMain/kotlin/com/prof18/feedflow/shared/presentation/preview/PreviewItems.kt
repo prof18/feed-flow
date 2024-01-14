@@ -188,9 +188,34 @@ val importExportStates = listOf(
     ),
 )
 
-val categoriesState = CategoriesState(
+val categoriesExpandedState = CategoriesState(
     isExpanded = true,
     header = "No category selected",
+    categories = listOf(
+        CategoryItem(
+            id = 0,
+            name = "Android",
+            isSelected = true,
+            onClick = {},
+        ),
+        CategoryItem(
+            id = 0,
+            name = "Apple",
+            isSelected = false,
+            onClick = {},
+        ),
+        CategoryItem(
+            id = 0,
+            name = "Tech",
+            isSelected = false,
+            onClick = {},
+        ),
+    ),
+)
+
+val categoriesCollapsedState = CategoriesState(
+    isExpanded = false,
+    header = "Android",
     categories = listOf(
         CategoryItem(
             id = 0,

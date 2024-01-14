@@ -55,7 +55,7 @@ import dev.icerock.moko.resources.compose.stringResource
 internal expect fun Modifier.feedSourceMenuClickModifier(onLongClick: () -> Unit): Modifier
 
 @Composable
-fun FeedSourcesWithCategoryList(
+internal fun FeedSourcesWithCategoryList(
     modifier: Modifier = Modifier,
     feedSourceState: FeedSourceListState,
     feedSourceImage: @Composable (String) -> Unit,
@@ -259,9 +259,8 @@ private fun FeedSourceContextMenu(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedSourceNavBar(
+internal fun FeedSourceNavBar(
     navigateBack: () -> Unit,
     onAddFeedSourceClick: () -> Unit,
 ) {
@@ -297,7 +296,7 @@ fun FeedSourceNavBar(
 }
 
 @Composable
-fun NoFeedSourcesView(
+internal fun NoFeedSourcesView(
     modifier: Modifier = Modifier,
 ) {
     Box(

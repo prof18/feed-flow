@@ -46,7 +46,7 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun CategoriesSelector(
+internal fun CategoriesSelector(
     modifier: Modifier = Modifier,
     categoriesState: CategoriesState,
     onExpandClick: () -> Unit,
@@ -168,7 +168,7 @@ private fun CategoriesList(
 }
 
 @Composable
-fun NewCategoryComposer(
+internal fun NewCategoryComposer(
     modifier: Modifier = Modifier,
     onAddClick: (CategoryName) -> Unit,
 ) {

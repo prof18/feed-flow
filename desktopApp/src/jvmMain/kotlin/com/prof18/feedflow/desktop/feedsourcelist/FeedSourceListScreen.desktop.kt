@@ -1,21 +1,15 @@
 package com.prof18.feedflow.desktop.feedsourcelist
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import com.prof18.feedflow.MR
-import com.prof18.feedflow.core.model.CategoryId
-import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.desktopViewModel
@@ -23,9 +17,7 @@ import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
-import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceNavBar
-import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourcesWithCategoryList
-import com.prof18.feedflow.shared.ui.feedsourcelist.NoFeedSourcesView
+import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceListContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -53,6 +45,12 @@ fun FeedSourceListScreen(
 
         FeedSourceListContent(
             feedSourceListState = feedSources,
+            feedSourceLogoImage = { imageUrl ->
+                    FeedSourceLogoImage(
+                        size = 24.dp,
+                        imageUrl = imageUrl,
+                    )
+                },
             onAddFeedClick = {
                 dialogState = true
             },
@@ -64,46 +62,6 @@ fun FeedSourceListScreen(
             },
             navigateBack = navigateBack,
         )
-    }
-}
-
-@Composable
-private fun FeedSourceListContent(
-    feedSourceListState: FeedSourceListState,
-    onAddFeedClick: () -> Unit,
-    onDeleteFeedClick: (FeedSource) -> Unit,
-    navigateBack: () -> Unit,
-    onExpandClicked: (CategoryId?) -> Unit,
-) {
-    Scaffold(
-        topBar = {
-            FeedSourceNavBar(
-                navigateBack = navigateBack,
-                onAddFeedSourceClick = onAddFeedClick,
-            )
-        },
-    ) { paddingValues ->
-        if (feedSourceListState.isEmpty()) {
-            NoFeedSourcesView(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize(),
-            )
-        } else {
-            FeedSourcesWithCategoryList(
-                modifier = Modifier
-                    .padding(paddingValues),
-                feedSourceState = feedSourceListState,
-                onExpandClicked = onExpandClicked,
-                feedSourceImage = { imageUrl ->
-                    FeedSourceLogoImage(
-                        size = 24.dp,
-                        imageUrl = imageUrl,
-                    )
-                },
-                onDeleteFeedSourceClick = onDeleteFeedClick,
-            )
-        }
     }
 }
 
@@ -120,25 +78,13 @@ private fun FeedSourceListContentPreview() {
             onDeleteFeedClick = {},
             onExpandClicked = {},
             navigateBack = {},
+            feedSourceLogoImage = {
+                FeedSourceLogoImage(
+                    size = 24.dp,
+                    imageUrl = it,
+                )
+            }
         )
     }
 }
 
-@Preview
-@Composable
-private fun FeedSourceListContentDarkPreview() {
-    FeedFlowTheme(
-        darkTheme = true,
-    ) {
-        FeedSourceListContent(
-            feedSourceListState = FeedSourceListState(
-                feedSourcesWithoutCategory = emptyList(),
-                feedSourcesWithCategory = feedSourcesState,
-            ),
-            onAddFeedClick = {},
-            onDeleteFeedClick = {},
-            onExpandClicked = {},
-            navigateBack = {},
-        )
-    }
-}

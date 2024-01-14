@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.prof18.feedflow.android.settings
 
 import FeedFlowTheme
@@ -21,7 +19,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.SwapVert
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -150,34 +147,10 @@ private fun SettingsScreenContent(
             onBugReportClick = onBugReportClick,
             isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
             setMarkReadWhenScrolling = setMarkReadWhenScrolling,
-
         )
     }
 }
 
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun SettingsNavBar(navigateBack: () -> Unit) {
-    TopAppBar(
-        title = {
-            Text(
-                stringResource(resource = MR.strings.settings_title),
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    navigateBack()
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = null,
-                )
-            }
-        },
-    )
-}
 
 @Suppress("LongMethod")
 @Composable
@@ -306,6 +279,30 @@ private fun MarkReadWhenScrollingSwitch(
         )
     }
 }
+
+@Composable
+private fun SettingsNavBar(navigateBack: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                stringResource(resource = MR.strings.settings_title),
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    navigateBack()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                )
+            }
+        },
+    )
+}
+
 
 @FeedFlowPhonePreview
 @Composable

@@ -11,7 +11,7 @@ import SwiftUI
 
 extension StringResource {
     var localized: String {
-        return self.desc().localized()
+        return self.desc().localizedWithFallback()
    }
 }
 

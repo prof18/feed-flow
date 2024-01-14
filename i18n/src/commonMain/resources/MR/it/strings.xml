@@ -34,12 +34,12 @@
     <string name="wrong_link_report_title">I seguenti feed non sono stati aggiunti perché non sono validi</string>
     <string name="missing_title_and_link">Si è verificato un errore durante il recupero del titolo del feed</string>
     <string name="open_source_licenses">License Open source</string>
-    <string name="browser_selection_button">Web browser preferito</string>
+    <string name="browser_selection_button">Web browser</string>
     <string name="feed_error_message">Qualcosa è andato storto con: %s :(</string>
     <string name="issue_report_title">Segnala un problema con FeedFlow</string>
     <string name="export_dialog_title">Salve file OPML</string>
     <string name="new_release_available_title">Una nuova versione di FeedFlow è disponibile:</string>
-    <string name="no_category_selected_header">Nessuna categoria selezionata</string>
+    <string name="no_category_selected_header">Nessuna categoria</string>
     <string name="empty_feed_message">Niente da leggere qui!</string>
     <string name="export_feeds_button">Esporta feed da OPML</string>
     <string name="export_dialog_button">Esporta</string>
@@ -58,4 +58,19 @@
 \nPuoi importare ed esportare la tua raccolta RSS da e verso un file OPML.</string>
     <string name="load_file_error_message">Impossibile caricare il file</string>
     <string name="add_feed">Aggiungi feed</string>
+    <string name="drawer_title_timeline">Timeline</string>
+    <string name="drawer_title_categories">Categorie</string>
+    <string name="drawer_title_feed_sources">Iscrizioni</string>
+    <string name="toggle_mark_read_when_scrolling">Segna come letto durante lo scorrimento</string>
+    <string name="action_done">Fatto</string>
+    <string name="settings_general_title">Generale</string>
+    <string name="settings_app_title">Aoo</string>
+    <string name="about_app_version">Versione dell\'app: %s</string>
+    <string name="add_feed_category_title">Categoria</string>
+    <string name="add_feed_categories_title">Categorie</string>
+    <string name="action_save">Salva</string>
+    <string name="import_export_description">FeedFlow supporta l\'importazione e l\'esportazione delle tue iscrizioni con un file OPML, per una migliore interoperabilità con gli altri lettori di feed</string>
+    <string name="no_feed_modal_title">Aggiungi un nuovo feed</string>
+    <string name="import_export_opml_title">Importa ed esporta</string>
+    <string name="no_feed_modal_message">Sembra che tu non sia ancora iscritto ad alcun feed. Puoi aggiungere manualmente un feed oppure importare le tue iscrizioni da un altro lettore RSS</string>
 </resources>

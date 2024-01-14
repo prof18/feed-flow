@@ -31,7 +31,7 @@
     <string name="about_nav_bar">O programie</string>
     <string name="wrong_link_report_title">Te kanały nie zostały dodane ponieważ są one nieprawidłowe</string>
     <string name="open_source_licenses">Licencje typu open source</string>
-    <string name="browser_selection_button">Ulubiona przeglądarka</string>
+    <string name="browser_selection_button">Przeglądarka</string>
     <string name="feed_error_message">Coś jest nie tak z: %s :(</string>
     <string name="issue_report_title">Zgłoś problem z FeedFlow</string>
     <string name="export_dialog_title">Zapisz plik OPML</string>

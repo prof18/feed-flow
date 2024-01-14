@@ -50,13 +50,13 @@ import com.prof18.feedflow.desktop.navigation.ChildStack
 import com.prof18.feedflow.desktop.navigation.ProvideComponentContext
 import com.prof18.feedflow.desktop.navigation.Screen
 import com.prof18.feedflow.desktop.ui.components.NewVersionBanner
-import com.prof18.feedflow.desktop.ui.style.FeedFlowTheme
-import com.prof18.feedflow.desktop.ui.style.rememberDesktopDarkTheme
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.desktop.versionchecker.NewVersionChecker
 import com.prof18.feedflow.desktop.versionchecker.NewVersionState
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch

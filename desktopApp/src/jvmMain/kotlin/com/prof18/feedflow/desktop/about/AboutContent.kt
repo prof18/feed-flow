@@ -31,11 +31,11 @@ import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.desktop.scrollbarStyle
-import com.prof18.feedflow.desktop.ui.style.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.about.AboutButtonItem
 import com.prof18.feedflow.shared.ui.about.AboutTextItem
 import com.prof18.feedflow.shared.ui.about.AuthorText
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable

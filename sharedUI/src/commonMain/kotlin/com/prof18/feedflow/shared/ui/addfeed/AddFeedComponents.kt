@@ -1,15 +1,12 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.prof18.feedflow.shared.ui.addfeed
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,8 +21,7 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Suppress("LongParameterList")
 @Composable
-fun AddFeedsContent(
-    paddingValues: PaddingValues,
+fun AddFeedContent(
     feedUrl: String,
     showError: Boolean,
     errorMessage: String,
@@ -35,45 +31,52 @@ fun AddFeedsContent(
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    snackbarHost: @Composable () -> Unit = {},
+    topAppBar: @Composable () -> Unit = {},
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .padding(paddingValues)
-            .padding(horizontal = Spacing.regular),
-    ) {
-        item {
-            FeedUrlTextField(
-                modifier = Modifier
-                    .padding(top = Spacing.regular)
-                    .fillMaxWidth(),
-                feedUrl = feedUrl,
-                showError = showError,
-                errorMessage = errorMessage,
-                onFeedUrlUpdated = onFeedUrlUpdated,
-            )
-        }
+    Scaffold(
+        topBar = topAppBar,
+        snackbarHost = snackbarHost,
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(horizontal = Spacing.regular),
+        ) {
+            item {
+                FeedUrlTextField(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular)
+                        .fillMaxWidth(),
+                    feedUrl = feedUrl,
+                    showError = showError,
+                    errorMessage = errorMessage,
+                    onFeedUrlUpdated = onFeedUrlUpdated,
+                )
+            }
 
-        item {
-            CategoriesSelector(
-                modifier = Modifier
-                    .padding(top = Spacing.regular),
-                categoriesState = categoriesState,
-                onExpandClick = onExpandClick,
-                onAddCategoryClick = onAddCategoryClick,
-                onDeleteCategoryClick = onDeleteCategoryClick,
-            )
-        }
+            item {
+                CategoriesSelector(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular),
+                    categoriesState = categoriesState,
+                    onExpandClick = onExpandClick,
+                    onAddCategoryClick = onAddCategoryClick,
+                    onDeleteCategoryClick = onDeleteCategoryClick,
+                )
+            }
 
-        item {
-            Button(
-                modifier = Modifier
-                    .padding(top = Spacing.small)
-                    .padding(bottom = Spacing.regular)
-                    .fillMaxWidth(),
-                enabled = feedUrl.isNotBlank(),
-                onClick = addFeed,
-            ) {
-                Text(stringResource(resource = MR.strings.add_feed))
+            item {
+                Button(
+                    modifier = Modifier
+                        .padding(top = Spacing.small)
+                        .padding(bottom = Spacing.regular)
+                        .fillMaxWidth(),
+                    enabled = feedUrl.isNotBlank(),
+                    onClick = addFeed,
+                ) {
+                    Text(stringResource(resource = MR.strings.add_feed))
+                }
             }
         }
     }

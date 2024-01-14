@@ -1,4 +1,4 @@
-package com.prof18.feedflow.desktop.ui.style
+package com.prof18.feedflow.shared.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -14,7 +14,7 @@ import org.jetbrains.skiko.SystemTheme
 import org.jetbrains.skiko.currentSystemTheme
 
 @Composable
-internal fun FeedFlowTheme(
+fun FeedFlowTheme(
     darkTheme: Boolean = rememberDesktopDarkTheme(),
     content: @Composable () -> Unit,
 ) {

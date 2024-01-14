@@ -21,12 +21,12 @@ import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.ui.components.FeedSourceLogoImage
-import com.prof18.feedflow.desktop.ui.style.FeedFlowTheme
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceNavBar
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourcesWithCategoryList
 import com.prof18.feedflow.shared.ui.feedsourcelist.NoFeedSourcesView
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable

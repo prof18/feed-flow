@@ -23,10 +23,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import com.prof18.feedflow.MR
-import com.prof18.feedflow.desktop.ui.style.FeedFlowTheme
 import com.prof18.feedflow.desktop.utils.WindowWidthSizeClass
 import com.prof18.feedflow.desktop.utils.calculateWindowSizeClass
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable

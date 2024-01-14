@@ -7,7 +7,7 @@ plugins {
 kotlin {
     androidTarget()
 
-    jvm("desktop") {
+    jvm {
         jvmToolchain(17)
     }
 
@@ -15,9 +15,11 @@ kotlin {
 
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+            languageSettings.optIn("androidx.compose.material3.ExperimentalMaterial3Api")
+            languageSettings.optIn("androidx.compose.material.ExperimentalMaterialApi")
         }
 
-       commonMain {
+        commonMain {
             dependencies {
                 implementation(project(":i18n"))
                 implementation(project(":core"))
@@ -27,6 +29,12 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.preview)
                 implementation(compose.materialIconsExtended)
+            }
+        }
+
+        jvmMain {
+            dependencies {
+                implementation(libs.jsystem.theme.detector)
             }
         }
     }

@@ -319,54 +319,44 @@ val navDrawerState = NavDrawerState(
 
 )
 
-// val drawerItemsForPreview = listOf(
-//    DrawerItem.Timeline,
-//
-//
-//    DrawerItem.DrawerCategory(
+val feedImportSuccessWithErrorState = FeedImportExportState.ImportSuccess(
+    notValidFeedSources = listOf(
+        ParsedFeedSource(
+            url = "https://www.ilpost.it",
+            title = "Il Post",
+            categoryName = null,
+            logoUrl = null,
+        ),
+        ParsedFeedSource(
+            url = "https://www.techcrunch.it",
+            title = "Tech Crunch",
+            categoryName = null,
+            logoUrl = null,
+        ),
+    ),
+)
 
-//    ),
-//
-//    DrawerItem.FeedSourceByCategory(
-//        feedSourcesByCategory = listOf(
-//            DrawerCategoryWrapper(
-//                category = FeedSourceCategory(
-//                    id = 9398,
-//                    title = "News",
-//                ),
-//                feedSources = listOf(
-//                    FeedSourceWrapper(
-//                        feedSource = feedSourcesForPreview[0],
-//                    ),
-//                    FeedSourceWrapper(
-//                        feedSource = feedSourcesForPreview[1],
-//                    ),
-//                    FeedSourceWrapper(
-//                        feedSource = feedSourcesForPreview[2],
-//                    ),
-//                ),
-//                isExpanded = false,
-//                onExpandClick = {},
-//            ),
-//            DrawerCategoryWrapper(
-//                category = FeedSourceCategory(
-//                    id = 9398,
-//                    title = "News",
-//                ),
-//                feedSources = listOf(
-//                    FeedSourceWrapper(
-//                        feedSource = feedSourcesForPreview[0],
-//                    ),
-//                    FeedSourceWrapper(
-//                        feedSource = feedSourcesForPreview[1],
-//                    ),
-//                    FeedSourceWrapper(
-//                        feedSource = feedSourcesForPreview[2],
-//                    ),
-//                ),
-//                isExpanded = true,
-//                onExpandClick = {},
-//            ),
-//        )
-//    )
-// )
+val feedImportSuccessState = FeedImportExportState.ImportSuccess(
+    notValidFeedSources = emptyList(),
+)
+
+val categoryItems = listOf(
+    CategoryItem(
+        id = 0,
+        name = "Android",
+        isSelected = true,
+        onClick = {},
+    ),
+    CategoryItem(
+        id = 1,
+        name = "Apple",
+        isSelected = false,
+        onClick = {},
+    ),
+    CategoryItem(
+        id = 2,
+        name = "Tech",
+        isSelected = false,
+        onClick = {},
+    ),
+)

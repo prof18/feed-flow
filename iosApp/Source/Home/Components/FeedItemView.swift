@@ -12,13 +12,13 @@ import shared
 import NukeUI
 import OrderedCollections
 
+@MainActor
 struct FeedItemView: View {
 
     let feedItem: FeedItem
 
     var body: some View {
         VStack(alignment: .leading) {
-
             HStack {
                 if !feedItem.isRead {
                     Circle()
@@ -33,14 +33,8 @@ struct FeedItemView: View {
             }
 
             HStack {
-                TitleAndSubtitleCell(
-                    feedItem: feedItem
-                )
-                .frame(maxHeight: .infinity)
-
-                FeedItemImage(
-                    feedItem: feedItem
-                )
+                titleAndSubtitleCell.frame(maxHeight: .infinity)
+                feedItemImage
             }
 
             if let dateString = feedItem.dateString {
@@ -48,24 +42,11 @@ struct FeedItemView: View {
                     .font(.system(size: 12))
                     .padding(.bottom, Spacing.small)
             }
-
-        }
-    }
-}
-
-struct TitleAndSubtitleCell: View {
-
-    let feedItem: FeedItem
-
-    func getPaddingTop(feedItem: FeedItem) -> CGFloat {
-        if feedItem.title != nil {
-            return Spacing.xxsmall
-        } else {
-            return CGFloat(0)
         }
     }
 
-    var body: some View {
+    @ViewBuilder
+    private var titleAndSubtitleCell: some View {
         VStack(alignment: .leading) {
             if let title = feedItem.title {
                 Text(title)
@@ -80,15 +61,10 @@ struct TitleAndSubtitleCell: View {
                     .padding(.top, getPaddingTop(feedItem: feedItem))
             }
         }
-
     }
-}
 
-struct FeedItemImage: View {
-
-    let feedItem: FeedItem
-
-    var body: some View {
+    @ViewBuilder
+    private var feedItemImage: some View {
         if let imageUrl = feedItem.imageUrl {
             Spacer()
             LazyImage(url: URL(string: imageUrl)) { state in
@@ -111,21 +87,18 @@ struct FeedItemImage: View {
             Spacer()
         }
     }
-}
 
-struct FeedItemView_Previews: PreviewProvider {
-    static var previews: some View {
-        FeedItemView(
-            feedItem: PreviewItemsKt.feedItemsForPreview[2]
-        )
+    private func getPaddingTop(feedItem: FeedItem) -> CGFloat {
+        if feedItem.title != nil {
+            return Spacing.xxsmall
+        } else {
+            return CGFloat(0)
+        }
     }
 }
 
-struct FeedItemViewIpad_Previews: PreviewProvider {
-    static var previews: some View {
-        FeedItemView(
-            feedItem: PreviewItemsKt.feedItemsForPreview[2]
-        )
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch) (4th generation)"))
-    }
+#Preview {
+    FeedItemView(
+        feedItem: PreviewItemsKt.feedItemsForPreview[2]
+    )
 }

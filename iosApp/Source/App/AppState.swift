@@ -12,15 +12,9 @@ import SwiftUI
 
 class AppState: ObservableObject {
 
-    @Published
-    var snackbarQueue: Deque<SnackbarData> = Deque()
-
-    @Published
-    var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
-
-    @Published
-    var path = NavigationPath()
-
+    @Published var snackbarQueue: Deque<SnackbarData> = Deque()
+    @Published var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
+    @Published var path = NavigationPath()
     @Published var sizeClass: UserInterfaceSizeClass?
 
     init() {

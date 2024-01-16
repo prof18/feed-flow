@@ -4,23 +4,15 @@ import KMPNativeCoroutinesAsync
 
 struct ContentView: View {
 
-    @EnvironmentObject
-    var appState: AppState
+    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var browserSelector: BrowserSelector
 
-    @EnvironmentObject
-    var browserSelector: BrowserSelector
+    @Environment(\.scenePhase) private var scenePhase: ScenePhase
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
 
-    @Environment(\.scenePhase)
-    private var scenePhase: ScenePhase
+    @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
 
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass: UserInterfaceSizeClass?
-
-    @StateObject
-    var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
-
-    @State
-    private var isAppInBackground: Bool = false
+    @State private var isAppInBackground: Bool = false
 
     var body: some View {
         ZStack {
@@ -60,14 +52,11 @@ struct ContentView: View {
 
 private struct HomeContainer: View {
 
-    @EnvironmentObject
-    var appState: AppState
+    @EnvironmentObject var appState: AppState
 
-    @StateObject
-    var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
+    @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
 
-    @State
-    private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline()
+    @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline()
 
     var body: some View {
         if appState.sizeClass == .compact {
@@ -76,4 +65,9 @@ private struct HomeContainer: View {
             RegularView(selectedDrawerItem: $selectedDrawerItem, homeViewModel: homeViewModel)
         }
     }
+}
+
+#Preview {
+    HomeContainer()
+        .environmentObject(AppState())
 }

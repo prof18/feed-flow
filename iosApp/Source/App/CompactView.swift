@@ -13,25 +13,19 @@ import KMPNativeCoroutinesAsync
 
 struct CompactView: View {
 
-    @EnvironmentObject
-    var appState: AppState
+    @EnvironmentObject var appState: AppState
 
-    @Binding
-    var selectedDrawerItem: DrawerItem?
+    @Binding var selectedDrawerItem: DrawerItem?
 
-    @StateObject
-    private var indexHolder = HomeListIndexHolder()
+    @StateObject private var indexHolder = HomeListIndexHolder()
 
-    @State
-    var navDrawerState: NavDrawerState = NavDrawerState(
+    @State var navDrawerState: NavDrawerState = NavDrawerState(
         timeline: [],
         categories: [],
         feedSourcesWithoutCategory: [],
         feedSourcesByCategory: [:]
     )
-
-    @State
-    var scrollUpTrigger: Bool = false
+    @State var scrollUpTrigger: Bool = false
 
     let homeViewModel: HomeViewModel
 
@@ -50,11 +44,8 @@ struct CompactView: View {
             .navigationDestination(for: CompactViewRoute.self) { route in
                 switch route {
                 case .feed:
-                    HomeScreen(
-                        toggleListScroll: $scrollUpTrigger,
-                        homeViewModel: homeViewModel
-                    )
-                    .environmentObject(indexHolder)
+                    HomeScreen(toggleListScroll: $scrollUpTrigger, homeViewModel: homeViewModel)
+                        .environmentObject(indexHolder)
                 }
             }
         }

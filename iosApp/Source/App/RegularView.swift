@@ -12,25 +12,19 @@ import shared
 import KMPNativeCoroutinesAsync
 
 struct RegularView: View {
-    @EnvironmentObject
-    var appState: AppState
+    @EnvironmentObject var appState: AppState
 
-    @StateObject
-    private var indexHolder = HomeListIndexHolder()
+    @StateObject private var indexHolder = HomeListIndexHolder()
 
-    @Binding
-    var selectedDrawerItem: DrawerItem?
+    @Binding var selectedDrawerItem: DrawerItem?
 
-    @State
-    var navDrawerState: NavDrawerState = NavDrawerState(
+    @State var navDrawerState: NavDrawerState = NavDrawerState(
         timeline: [],
         categories: [],
         feedSourcesWithoutCategory: [],
         feedSourcesByCategory: [:]
     )
-
-    @State
-    var scrollUpTrigger: Bool = false
+    @State var scrollUpTrigger: Bool = false
 
     var drawerItems: [DrawerItem] = []
     let homeViewModel: HomeViewModel
@@ -49,11 +43,8 @@ struct RegularView: View {
             .navigationBarTitleDisplayMode(.inline)
         } detail: {
             NavigationStack {
-                HomeScreen(
-                    toggleListScroll: $scrollUpTrigger,
-                    homeViewModel: homeViewModel
-                )
-                .environmentObject(indexHolder)
+                HomeScreen(toggleListScroll: $scrollUpTrigger, homeViewModel: homeViewModel)
+                    .environmentObject(indexHolder)
             }
             .navigationBarTitleDisplayMode(.inline)
         }

@@ -12,50 +12,35 @@ import KMPNativeCoroutinesAsync
 
 struct SettingsScreen: View {
 
-    @EnvironmentObject
-    private var appState: AppState
+    @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var browserSelector: BrowserSelector
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
 
     @StateObject
     private var settingsViewModel: SettingsViewModel = KotlinDependencies.shared.getSettingsViewModel()
 
-    @State
-    private var isMarkReadWhenScrollingEnabled = true
+    @State private var isMarkReadWhenScrollingEnabled = true
 
     var body: some View {
-        SettingsContent(
-            isMarkReadWhenScrollingEnabled: $isMarkReadWhenScrollingEnabled
-        )
-        .task {
-            do {
-                let stream = asyncSequence(for: settingsViewModel.settingsStateFlow)
-                for try await state in stream {
-                    self.isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
+        settingsContent
+            .task {
+                do {
+                    let stream = asyncSequence(for: settingsViewModel.settingsStateFlow)
+                    for try await state in stream {
+                        self.isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
+                    }
+                } catch {
+                    self.appState.emitGenericError()
                 }
-            } catch {
-                self.appState.emitGenericError()
             }
-        }
-        .onChange(of: isMarkReadWhenScrollingEnabled) { newValue in
-            settingsViewModel.updateMarkReadWhenScrolling(value: newValue)
-        }
+            .onChange(of: isMarkReadWhenScrollingEnabled) { newValue in
+                settingsViewModel.updateMarkReadWhenScrolling(value: newValue)
+            }
     }
-}
 
-private struct SettingsContent: View {
-
-    @Environment(\.dismiss)
-    private var dismiss
-
-    @Environment(\.openURL)
-    private var openURL
-
-    @EnvironmentObject
-    private var browserSelector: BrowserSelector
-
-    @Binding
-    var isMarkReadWhenScrollingEnabled: Bool
-
-    var body: some View {
+    private var settingsContent: some View {
         NavigationStack {
             Form {
                 generalSection
@@ -81,24 +66,15 @@ private struct SettingsContent: View {
     private var generalSection: some View {
         Section(localizer.settings_general_title.localized) {
             NavigationLink(destination: FeedSourceListScreen()) {
-                Label(
-                    localizer.feeds_title.localized,
-                    systemImage: "list.bullet.rectangle.portrait"
-                )
+                Label(localizer.feeds_title.localized, systemImage: "list.bullet.rectangle.portrait")
             }
 
             NavigationLink(destination: AddFeedScreen()) {
-                Label(
-                    localizer.add_feed.localized,
-                    systemImage: "plus.app"
-                )
+                Label(localizer.add_feed.localized, systemImage: "plus.app")
             }
 
             NavigationLink(destination: ImportExportScreen()) {
-                Label(
-                    localizer.import_export_opml.localized,
-                    systemImage: "arrow.up.arrow.down"
-                )
+                Label( localizer.import_export_opml.localized, systemImage: "arrow.up.arrow.down")
             }
 
             Picker(
@@ -109,18 +85,12 @@ private struct SettingsContent: View {
                     }
                 },
                 label: {
-                    Label(
-                        localizer.browser_selection_button.localized,
-                        systemImage: "globe"
-                    )
+                    Label(localizer.browser_selection_button.localized, systemImage: "globe")
                 }
             )
 
             Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
-                Label(
-                    localizer.toggle_mark_read_when_scrolling.localized,
-                    systemImage: "envelope.open"
-                )
+                Label(localizer.toggle_mark_read_when_scrolling.localized, systemImage: "envelope.open")
             }
         }
     }
@@ -134,19 +104,13 @@ private struct SettingsContent: View {
                     let content = localizer.issue_content_template.localized
 
                     if let url = URL(
-                        string: UserFeedbackReporter.shared.getEmailUrl(
-                            subject: subject,
-                            content: content
-                        )
+                        string: UserFeedbackReporter.shared.getEmailUrl(subject: subject, content: content)
                     ) {
                         self.openURL(url)
                     }
                 },
                 label: {
-                    Label(
-                        localizer.report_issue_button.localized,
-                        systemImage: "ladybug"
-                    )
+                    Label(localizer.report_issue_button.localized, systemImage: "ladybug")
                 }
             )
 
@@ -155,9 +119,9 @@ private struct SettingsContent: View {
             }
         }
     }
-
 }
 
 #Preview {
     SettingsScreen()
+        .environmentObject(BrowserSelector())
 }

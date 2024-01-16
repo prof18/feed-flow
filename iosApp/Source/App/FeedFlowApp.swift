@@ -5,14 +5,10 @@ import FirebaseCore
 @main
 struct FeedFlowApp: App {
 
-    @UIApplicationDelegateAdaptor(AppDelegate.self)
-    private var delegate
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
-    @StateObject
-    private var appState: AppState = AppState()
-
-    @StateObject
-    private var browserSelector: BrowserSelector = BrowserSelector()
+    @StateObject private var appState: AppState = AppState()
+    @StateObject private var browserSelector: BrowserSelector = BrowserSelector()
 
     init() {
     #if !DEBUG

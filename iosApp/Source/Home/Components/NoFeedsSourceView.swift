@@ -33,10 +33,8 @@ struct NoFeedsSourceView: View {
     }
 }
 
-struct NoFeedsSourceView_Previews: PreviewProvider {
-    static var previews: some View {
-        NoFeedsSourceView(
-            onAddFeedClick: {}
-        )
-    }
+#Preview {
+    NoFeedsSourceView(
+        onAddFeedClick: {}
+    )
 }

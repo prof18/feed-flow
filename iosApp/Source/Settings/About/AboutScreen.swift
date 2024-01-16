@@ -12,8 +12,9 @@ import shared
 
 struct AboutScreen: View {
 
-    @Environment(\.openURL)
-    private var openURL
+    @Environment(\.openURL) private var openURL
+
+    private let authorLink: LocalizedStringKey = "\(localizer.author_label.localized) [Marco Gomiero](https://www.marcogomiero.com)"
 
     var body: some View {
         VStack {
@@ -24,17 +25,11 @@ struct AboutScreen: View {
                         .font(.system(size: 16))
 
                     NavigationLink(destination: LicensesScreen()) {
-                        Label(
-                            localizer.open_source_licenses.localized,
-                            systemImage: "shield"
-                        )
+                        Label(localizer.open_source_licenses.localized, systemImage: "shield" )
                     }
 
                     Link(destination: URL(string: Websites.shared.FEED_FLOW_WEBSITE)!) {
-                        Label(
-                            localizer.open_website_button.localized,
-                            systemImage: "globe"
-                        )
+                        Label(localizer.open_website_button.localized, systemImage: "globe")
                     }
                 } footer: {
                     if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
@@ -55,9 +50,6 @@ struct AboutScreen: View {
 
             Spacer()
 
-            let authorLink: LocalizedStringKey = """
-                           \(localizer.author_label.localized) [Marco Gomiero](https://www.marcogomiero.com)
-                       """
             Text(authorLink)
                 .padding(.bottom, Spacing.small)
         }
@@ -69,5 +61,4 @@ struct AboutScreen: View {
 
 #Preview {
     AboutScreen()
-
 }

@@ -34,10 +34,8 @@ struct EmptyFeedView: View {
     }
 }
 
-struct EmptyFeedView_Previews: PreviewProvider {
-    static var previews: some View {
-        EmptyFeedView(
-            onReloadClick: {}
-        )
-    }
+#Preview {
+    EmptyFeedView(
+        onReloadClick: {}
+    )
 }

@@ -38,12 +38,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.settings.components.BrowserSelectionDialog
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.Browser
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
@@ -177,6 +179,8 @@ private fun SettingsList(
 
         item {
             SettingItem(
+                modifier = Modifier
+                    .tagForTesting(TestingTag.SETTINGS_FEED_ITEM),
                 title = stringResource(resource = MR.strings.feeds_title),
                 icon = Icons.Default.Feed,
                 onClick = onFeedListClick,
@@ -201,6 +205,8 @@ private fun SettingsList(
 
         item {
             SettingItem(
+                modifier = Modifier
+                    .tagForTesting(TestingTag.BROWSER_SELECTOR),
                 title = stringResource(resource = MR.strings.browser_selection_button),
                 icon = Icons.Outlined.Language,
                 onClick = onBrowserSelectionClick,
@@ -233,6 +239,8 @@ private fun SettingsList(
 
         item {
             SettingItem(
+                modifier = Modifier
+                    .tagForTesting(TestingTag.ABOUT_SETTINGS_ITEM),
                 title = stringResource(resource = MR.strings.about_button),
                 icon = Icons.Outlined.Info,
                 onClick = onAboutClick,
@@ -256,7 +264,8 @@ private fun MarkReadWhenScrollingSwitch(
             }
             .fillMaxWidth()
             .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
+            .padding(horizontal = Spacing.regular)
+            .tagForTesting(TestingTag.MARK_AS_READ_SCROLLING_SWITCH),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
         Icon(

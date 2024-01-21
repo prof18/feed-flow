@@ -18,11 +18,12 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 fun SettingItem(
     title: String,
     icon: ImageVector,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .clickable {
                 onClick()
             }

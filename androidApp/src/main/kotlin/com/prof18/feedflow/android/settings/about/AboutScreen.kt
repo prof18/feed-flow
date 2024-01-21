@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.BuildConfig
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.shared.ui.about.AboutButtonItem
@@ -29,6 +30,7 @@ import com.prof18.feedflow.shared.ui.about.AboutTextItem
 import com.prof18.feedflow.shared.ui.about.AuthorText
 import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.compose.koinInject
 
@@ -69,6 +71,8 @@ private fun AboutScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
+                modifier = Modifier
+                    .tagForTesting(TestingTag.ABOUT_TOOLBAR),
                 title = {
                     Text(
                         stringResource(resource = MR.strings.about_nav_bar),
@@ -76,6 +80,8 @@ private fun AboutScreenContent(
                 },
                 navigationIcon = {
                     IconButton(
+                        modifier = Modifier
+                            .tagForTesting(TestingTag.BACK_BUTTON_FEED_SETTINGS),
                         onClick = {
                             navigateBack()
                         },

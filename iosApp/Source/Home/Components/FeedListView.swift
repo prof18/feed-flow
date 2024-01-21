@@ -42,8 +42,8 @@ struct FeedListView: View {
             VStack(alignment: .center) {
                 loadingHeader
                 List {
-                    ForEach(feedState, id: \.self.id) { feedItem in
-                        FeedItemView(feedItem: feedItem)
+                    ForEach(Array(feedState.enumerated()), id: \.element) { index, feedItem in
+                        FeedItemView(feedItem: feedItem, index: index)
                             .id(feedItem.id)
                             .contentShape(Rectangle())
                             .onTapGesture {
@@ -91,6 +91,7 @@ struct FeedListView: View {
                 )
                 Text(loadingFeedString)
                     .font(.body)
+                    .accessibilityIdentifier(TestingTag.shared.LOADING_BAR)
             }
         }
     }

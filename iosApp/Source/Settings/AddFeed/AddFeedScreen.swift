@@ -23,6 +23,7 @@ struct AddFeedScreen: View {
     @State private var errorMessage = ""
     @State private var categoryItems: [CategoriesState.CategoryItem] = []
     @State private var isAddingFeed: Bool = false
+    @State var feedURL = ""
 
     var showCloseButton: Bool
 
@@ -33,6 +34,7 @@ struct AddFeedScreen: View {
     var body: some View {
         NavigationStack {
             AddFeedScreenContent(
+                feedURL: $feedURL,
                 showError: $showError,
                 errorMessage: $errorMessage,
                 categoryItems: $categoryItems,
@@ -66,7 +68,8 @@ struct AddFeedScreen: View {
                                 showBanner: true
                             )
                         )
-                        presentationMode.wrappedValue.dismiss()
+                        self.feedURL = ""
+                        self.isAddingFeed = false
 
                     case is FeedAddedState.FeedNotAdded:
                         errorMessage = ""

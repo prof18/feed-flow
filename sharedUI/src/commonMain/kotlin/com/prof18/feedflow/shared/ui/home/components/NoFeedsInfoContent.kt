@@ -9,7 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -32,7 +34,8 @@ fun NoFeedsInfoContent(
         Text(
             modifier = Modifier
                 .padding(vertical = Spacing.regular)
-                .padding(horizontal = Spacing.regular),
+                .padding(horizontal = Spacing.regular)
+                .tagForTesting(TestingTag.NO_FEED_BOTTOM_SHEET_MESSAGE),
             text = stringResource(MR.strings.no_feed_modal_message),
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -40,7 +43,8 @@ fun NoFeedsInfoContent(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Spacing.regular),
+                .padding(horizontal = Spacing.regular)
+                .tagForTesting(TestingTag.NO_FEED_BOTTOM_SHEET_ADD_BUTTON),
             onClick = {
                 onDismissRequest()
                 onAddFeedClick()
@@ -56,7 +60,8 @@ fun NoFeedsInfoContent(
                 .fillMaxWidth()
                 .padding(top = Spacing.regular)
                 .padding(bottom = Spacing.medium)
-                .padding(horizontal = Spacing.regular),
+                .padding(horizontal = Spacing.regular)
+                .tagForTesting(TestingTag.NO_FEED_BOTTOM_SHEET_IMPORT_BUTTON),
             onClick = {
                 onDismissRequest()
                 onImportExportClick()

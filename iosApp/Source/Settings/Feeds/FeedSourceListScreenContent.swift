@@ -55,6 +55,7 @@ struct FeedSourceListScreenContent: View {
 
             Text(localizer.no_feeds_found_message.localized)
                 .font(.body)
+                .accessibilityIdentifier(TestingTag.shared.NO_FEED_SOURCE_MESSAGE)
 
             NavigationLink(destination: AddFeedScreen()) {
                 Text(localizer.add_feed.localized)
@@ -105,6 +106,7 @@ struct FeedSourceListScreenContent: View {
                                     } label: {
                                         Label(localizer.delete_feed.localized, systemImage: "trash")
                                     }
+                                    .accessibilityIdentifier(TestingTag.shared.FEED_SOURCE_DELETE_BUTTON)
                                 }
                         }
                     },
@@ -122,6 +124,7 @@ struct FeedSourceListScreenContent: View {
                         bottom: .zero,
                         trailing: Spacing.regular)
                 )
+                .accessibilityIdentifier(TestingTag.shared.FEED_SOURCE_SELECTOR)
             }
         }
         .padding(.top, -Spacing.medium)

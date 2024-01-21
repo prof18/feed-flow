@@ -62,9 +62,10 @@ internal fun FeedWithContentView(
                 updateReadStatus = { index ->
                     updateReadStatus(index)
                 },
-            ) { feedItem ->
+            ) { feedItem, index ->
                 FeedItemView(
                     feedItem = feedItem,
+                    index = index,
                     onFeedItemClick = onFeedItemClick,
                     onFeedItemLongClick = onFeedItemLongClick,
                     feedItemImage = { url ->

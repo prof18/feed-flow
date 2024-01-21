@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -31,7 +33,8 @@ fun NoFeedsSourceView(
         )
         Button(
             modifier = Modifier
-                .padding(top = Spacing.regular),
+                .padding(top = Spacing.regular)
+                .tagForTesting(TestingTag.HOME_SCREEN_ADD_FEED_BUTTON),
             onClick = {
                 onAddFeedClick()
             },

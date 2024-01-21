@@ -25,7 +25,9 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -72,7 +74,13 @@ internal fun HomeAppBar(
             }
         },
         actions = {
-            IconButton(onClick = { showMenu = !showMenu }) {
+            IconButton(
+                modifier = Modifier
+                    .tagForTesting(TestingTag.SETTING_BUTTON),
+                onClick = {
+                    showMenu = !showMenu
+                },
+            ) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = null,
@@ -94,12 +102,14 @@ internal fun HomeAppBar(
                 onDeleteDatabase = onDeleteDatabase,
             )
         },
-        modifier = Modifier.pointerInput(Unit) {
-            detectTapGestures(
-                onDoubleTap = { onDoubleClick() },
-                onTap = { onClick() },
-            )
-        },
+        modifier = Modifier
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = { onDoubleClick() },
+                    onTap = { onClick() },
+                )
+            }
+            .tagForTesting(TestingTag.HOME_TOOLBAR),
     )
 }
 
@@ -114,6 +124,8 @@ private fun FeedFilter.getTitle(): String =
 @Composable
 private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
     IconButton(
+        modifier = Modifier
+            .tagForTesting(TestingTag.DRAWER_MENU_BUTTON),
         onClick = {
             onDrawerMenuClick()
         },

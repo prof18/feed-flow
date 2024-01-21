@@ -42,7 +42,9 @@ import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -129,7 +131,8 @@ private fun CategoriesList(
                     RadioButton(
                         modifier = Modifier
                             .padding(vertical = Spacing.small)
-                            .padding(end = Spacing.small),
+                            .padding(end = Spacing.small)
+                            .tagForTesting("${TestingTag.CATEGORY_RADIO_BUTTON}_${category.name}"),
                         selected = category.isSelected,
                         onClick = null,
                     )
@@ -143,6 +146,8 @@ private fun CategoriesList(
 
                     if (category.name != null) {
                         IconButton(
+                            modifier = Modifier
+                                .tagForTesting("${TestingTag.DELETE_CATEGORY_BUTTON}_${category.name}"),
                             onClick = {
                                 onDeleteCategoryClick(CategoryId(category.id))
                             },
@@ -186,7 +191,8 @@ internal fun NewCategoryComposer(
     ) {
         OutlinedTextField(
             modifier = Modifier
-                .weight(1f),
+                .weight(1f)
+                .tagForTesting(TestingTag.CATEGORY_TEXT_INPUT),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -208,6 +214,8 @@ internal fun NewCategoryComposer(
             },
             trailingIcon = {
                 IconButton(
+                    modifier = Modifier
+                        .tagForTesting(TestingTag.ADD_CATEGORY_BUTTON),
                     onClick = {
                         onAddClick(CategoryName(name = categoryName))
                         categoryName = ""

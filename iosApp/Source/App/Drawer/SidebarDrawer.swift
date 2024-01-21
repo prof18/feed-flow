@@ -105,10 +105,12 @@ struct SidebarDrawer: View {
                         let categoryWrapper = category as
                         DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
 
+                        let title = categoryWrapper.feedSourceCategory?.title ?? localizer.no_category.localized
                         makeCategoryDropdown(
                             drawerItems: navDrawerState.feedSourcesByCategory[categoryWrapper] ?? [],
-                            title: categoryWrapper.feedSourceCategory?.title ?? localizer.no_category.localized
+                            title: title
                         )
+                        .accessibilityIdentifier("\(TestingTag.shared.FEED_SOURCE_SELECTOR)_\(title)")
 
                     }
                 },

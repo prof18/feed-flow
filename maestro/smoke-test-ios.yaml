@@ -1,0 +1,164 @@
+appId: com.prof18.feedflow
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "home_screen_add_feed_button"
+- assertVisible:
+    id: "no_feed_bottom_sheet_message"
+- tapOn:
+    id: "no_feed_bottom_sheet_add_button"
+- tapOn:
+    id: "feed_url_input"
+- inputText: "https://ilpost.it/"
+- tapOn:
+    id: "add_feed_button"
+- assertVisible:
+    id: "invalid_url_error_message"
+- tapOn:
+    id: "category_text_input"
+- inputText: "News"
+- tapOn:
+    id: "add_category_button"
+- tapOn:
+    id: "category_text_input"
+- inputText: "Tech"
+- tapOn:
+    id: "add_category_button"
+- tapOn:
+    id: "delete_category_button_News"
+- tapOn: "No category"
+- tapOn:
+    id: "category_radio_button_Tech"
+- tapOn:
+    id: "feed_url_input"
+- inputText: "feed"
+- tapOn:
+    id: "add_feed_button"
+- assertVisible: "Feed URL"
+- tapOn:
+    id: "back_button"
+- assertVisible:
+    text: "Il Post"
+    index: 0
+- swipe:
+    start: 57%,89%
+    end: 58%,34%
+    duration: 672
+- tapOn:
+    id: "setting_button"
+- tapOn: "settings_menu"
+- tapOn:
+    id: "settings_feed_item"
+- tapOn:
+    id: "feed_source_selector"
+- longPressOn: "Il Post"
+- tapOn:
+    id: "feed_source_delete_button"
+- assertVisible:
+    id: "no_feed_source_message"
+- tapOn: "Settings"
+- tapOn:
+    id: "back_button"
+- tapOn:
+    id: "home_screen_add_feed_button"
+- tapOn:
+    id: "no_feed_bottom_sheet_import_button"
+- tapOn:
+    id: "import_feed_opml_button"
+- tapOn:
+    id: feed-export.opml, opml
+- assertVisible:
+    id: "import_done_message"
+- tapOn:
+    id: "import_done_button"
+- assertVisible:
+    id: "unread_dot_0"
+- assertNotVisible:
+    id: "loading_bar"
+- scrollUntilVisible:
+    element:
+      id: "feed_item_20"
+    direction: DOWN
+    timeout: 50000
+    speed: 80
+- tapOn:
+    id: "feed_item_20"
+- tapOn:
+    id: "breadcrumb"
+- scrollUntilVisible:
+    element:
+      id: "feed_item_0"
+    direction: UP
+    timeout: 50000
+    speed: 80
+- assertNotVisible:
+    id: "unread_dot_3"
+- doubleTapOn:
+    id: "home_toolbar"
+- swipe:
+    start: "51%,17%"
+    end: "49%,63%"
+    duration: 3075
+- assertVisible:
+    id: "unread_dot_0"
+- tapOn:
+    id: "setting_button"
+- tapOn: "settings_menu"
+- tapOn:
+    id: "mark_as_read_scrolling_switch"
+- tapOn:
+    id: "back_button"
+- scrollUntilVisible:
+    element:
+      id: "feed_item_20"
+    direction: DOWN
+    timeout: 50000
+    speed: 80
+- tapOn:
+    id: "feed_item_20"
+- assertVisible:
+    id: "TabOverviewButton"
+- tapOn:
+    id: "breadcrumb"
+- assertVisible:
+    id: "home_toolbar"
+- assertNotVisible:
+    id: "unread_dot_20"
+- scrollUntilVisible:
+    element:
+      id: "feed_item_0"
+    direction: UP
+    timeout: 50000
+    speed: 80
+- assertVisible:
+    id: "unread_dot_0"
+- tapOn:
+    id: "setting_button"
+- tapOn: "settings_menu"
+- tapOn:
+    id: "browser_selector"
+- assertVisible: "Default browser"
+- tapOn: "Default browser"
+- tapOn:
+    id: "about_settings_item"
+- assertVisible:
+    id: "about_toolbar"
+- tapOn: "Settings"
+- tapOn:
+    id: "back_button"
+- tapOn:
+    point: 9%,9%
+- assertVisible: "Timeline"
+- tapOn:
+    text: "Basket"
+    index: 0
+- assertVisible: "Basket"
+- tapOn:
+    point: 9%,9%
+- tapOn:
+    id: "feed_source_selector_News"
+- tapOn: "20 Percent Berlin"
+- assertVisible:
+    text: "20 Percent Berlin"
+    index: 0

@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -26,12 +28,15 @@ fun EmptyFeedView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
+            modifier = Modifier
+                .tagForTesting(TestingTag.NO_ITEMS_MESSAGE),
             text = stringResource(resource = MR.strings.empty_feed_message),
             style = MaterialTheme.typography.bodyMedium,
         )
         Button(
             modifier = Modifier
-                .padding(top = Spacing.regular),
+                .padding(top = Spacing.regular)
+                .tagForTesting(TestingTag.REFRESH_FEEDS_BUTTON),
             onClick = {
                 onReloadClick()
             },

@@ -16,8 +16,11 @@ import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
+import java.awt.SystemColor.text
 
 @Composable
 fun AddFeedContent(
@@ -46,7 +49,8 @@ fun AddFeedContent(
                 FeedUrlTextField(
                     modifier = Modifier
                         .padding(top = Spacing.regular)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .tagForTesting(TestingTag.FEED_URL_INPUT),
                     feedUrl = feedUrl,
                     showError = showError,
                     errorMessage = errorMessage,
@@ -57,7 +61,8 @@ fun AddFeedContent(
             item {
                 CategoriesSelector(
                     modifier = Modifier
-                        .padding(top = Spacing.regular),
+                        .padding(top = Spacing.regular)
+                        .tagForTesting(TestingTag.CATEGORY_SELECTOR),
                     categoriesState = categoriesState,
                     onExpandClick = onExpandClick,
                     onAddCategoryClick = onAddCategoryClick,
@@ -70,7 +75,8 @@ fun AddFeedContent(
                     modifier = Modifier
                         .padding(top = Spacing.small)
                         .padding(bottom = Spacing.regular)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .tagForTesting(TestingTag.ADD_FEED_BUTTON),
                     enabled = feedUrl.isNotBlank(),
                     onClick = addFeed,
                 ) {
@@ -97,7 +103,11 @@ private fun FeedUrlTextField(
         isError = showError,
         supportingText = if (showError) {
             {
-                Text(errorMessage)
+                Text(
+                    modifier = Modifier
+                        .tagForTesting(TestingTag.INVALID_URL_ERROR_MESSAGE),
+                    text = errorMessage,
+                )
             }
         } else {
             null

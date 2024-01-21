@@ -53,6 +53,7 @@ struct SettingsScreen: View {
                 } label: {
                     Text(localizer.action_done.localized).bold()
                 }
+                .accessibilityIdentifier(TestingTag.shared.BACK_BUTTON)
             }
             .navigationTitle(
                 Text(localizer.settings_title.localized)
@@ -68,6 +69,7 @@ struct SettingsScreen: View {
             NavigationLink(destination: FeedSourceListScreen()) {
                 Label(localizer.feeds_title.localized, systemImage: "list.bullet.rectangle.portrait")
             }
+            .accessibilityIdentifier(TestingTag.shared.SETTINGS_FEED_ITEM)
 
             NavigationLink(destination: AddFeedScreen()) {
                 Label(localizer.add_feed.localized, systemImage: "plus.app")
@@ -88,10 +90,14 @@ struct SettingsScreen: View {
                     Label(localizer.browser_selection_button.localized, systemImage: "globe")
                 }
             )
+            .accessibilityIdentifier(TestingTag.shared.BROWSER_SELECTOR)
 
             Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
                 Label(localizer.toggle_mark_read_when_scrolling.localized, systemImage: "envelope.open")
+            }.onTapGesture {
+                isMarkReadWhenScrollingEnabled.toggle()
             }
+            .accessibilityIdentifier(TestingTag.shared.MARK_AS_READ_SCROLLING_SWITCH)
         }
     }
 
@@ -117,6 +123,7 @@ struct SettingsScreen: View {
             NavigationLink(destination: AboutScreen()) {
                 Label(localizer.about_button.localized, systemImage: "info.circle")
             }
+            .accessibilityIdentifier(TestingTag.shared.ABOUT_SETTINGS_ITEM)
         }
     }
 }

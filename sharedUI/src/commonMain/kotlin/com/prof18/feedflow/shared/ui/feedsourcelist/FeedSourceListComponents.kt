@@ -48,7 +48,9 @@ import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
 internal expect fun Modifier.feedSourceMenuClickModifier(onLongClick: () -> Unit): Modifier
@@ -74,7 +76,10 @@ internal fun FeedSourcesWithCategoryList(
         }
 
         items(feedSourceState.feedSourcesWithCategory) { feedSourceState ->
-            Column {
+            Column(
+                modifier = Modifier
+                    .tagForTesting(TestingTag.FEED_SOURCE_SELECTOR),
+            ) {
                 @Suppress("MagicNumber")
                 val degrees by animateFloatAsState(
                     if (feedSourceState.isExpanded) {
@@ -245,6 +250,8 @@ private fun FeedSourceContextMenu(
         properties = PopupProperties(),
     ) {
         DropdownMenuItem(
+            modifier = Modifier
+                .tagForTesting(TestingTag.FEED_SOURCE_DELETE_BUTTON),
             text = {
                 Text(
                     stringResource(resource = MR.strings.delete_feed),
@@ -269,6 +276,8 @@ internal fun FeedSourceNavBar(
         },
         navigationIcon = {
             IconButton(
+                modifier = Modifier
+                    .tagForTesting(TestingTag.BACK_BUTTON_FEED_SOURCES),
                 onClick = {
                     navigateBack()
                 },
@@ -303,7 +312,8 @@ internal fun NoFeedSourcesView(
     ) {
         Text(
             modifier = Modifier
-                .padding(Spacing.regular),
+                .padding(Spacing.regular)
+                .tagForTesting(TestingTag.NO_FEED_SOURCE_MESSAGE),
             text = stringResource(resource = MR.strings.no_feeds_add_one_message),
         )
     }

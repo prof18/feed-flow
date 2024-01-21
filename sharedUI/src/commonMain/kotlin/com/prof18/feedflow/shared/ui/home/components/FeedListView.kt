@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
@@ -32,7 +33,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemClickedInfo
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -46,7 +49,7 @@ fun FeedList(
     listState: LazyListState = rememberLazyListState(),
     updateReadStatus: (Int) -> Unit,
     requestMoreItems: () -> Unit,
-    feedItemView: @Composable (FeedItem) -> Unit,
+    feedItemView: @Composable (FeedItem, Int) -> Unit,
 ) {
     val shouldStartPaginate = remember {
         derivedStateOf {
@@ -62,10 +65,10 @@ fun FeedList(
         modifier = modifier,
         state = listState,
     ) {
-        items(
+        itemsIndexed(
             items = feedItems,
-        ) { item ->
-            feedItemView(item)
+        ) { index, item ->
+            feedItemView(item, index)
         }
     }
 
@@ -91,6 +94,7 @@ fun FeedList(
 @Composable
 fun FeedItemView(
     feedItem: FeedItem,
+    index: Int,
     feedItemImage: @Composable (String) -> Unit,
     onFeedItemClick: (FeedItemClickedInfo) -> Unit,
     onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
@@ -120,9 +124,13 @@ fun FeedItemView(
                 },
             )
             .padding(horizontal = Spacing.regular)
-            .padding(vertical = Spacing.small),
+            .padding(vertical = Spacing.small)
+            .tagForTesting(
+                tag = "${TestingTag.FEED_ITEM}_$index",
+                mergeDescendants = true,
+            ),
     ) {
-        FeedSourceAndUnreadDotRow(feedItem)
+        FeedSourceAndUnreadDotRow(feedItem, index)
 
         TitleSubtitleAndImageRow(
             modifier = Modifier
@@ -151,7 +159,10 @@ fun FeedItemView(
 }
 
 @Composable
-private fun FeedSourceAndUnreadDotRow(feedItem: FeedItem) {
+private fun FeedSourceAndUnreadDotRow(
+    feedItem: FeedItem,
+    index: Int,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -161,7 +172,8 @@ private fun FeedSourceAndUnreadDotRow(feedItem: FeedItem) {
                     .padding(
                         bottom = Spacing.small,
                         end = Spacing.small,
-                    ),
+                    )
+                    .tagForTesting("${TestingTag.UNREAD_DOT}_$index"),
             )
         }
 
@@ -226,6 +238,7 @@ private fun UnreadDot(
         modifier = modifier
             .size(10.dp)
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary),
+            .background(MaterialTheme.colorScheme.primary)
+            .tagForTesting(TestingTag.UNREAD_DOT),
     )
 }

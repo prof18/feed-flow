@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemClickedInfo
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -29,6 +30,7 @@ import com.prof18.feedflow.shared.ui.home.components.FeedItemView
 import com.prof18.feedflow.shared.ui.home.components.FeedList
 import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 
@@ -54,7 +56,8 @@ internal fun FeedWithContentView(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = Spacing.regular),
+                    .padding(horizontal = Spacing.regular)
+                    .tagForTesting(TestingTag.LOADING_BAR),
                 text = stringResource(
                     resource = MR.strings.loading_feed_message,
                     feedRefreshCounter,
@@ -77,9 +80,10 @@ internal fun FeedWithContentView(
                     updateReadStatus(index)
                 },
                 requestMoreItems = requestMoreItems,
-            ) { feedItem ->
+            ) { feedItem, index ->
                 FeedItemView(
                     feedItem = feedItem,
+                    index = index,
                     onFeedItemClick = onFeedItemClick,
                     onFeedItemLongClick = onFeedItemLongClick,
                     feedItemImage = { url ->

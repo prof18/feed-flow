@@ -23,6 +23,7 @@ struct AboutScreen: View {
                     Text(localizer.about_the_app.localized)
                         .padding(.vertical, Spacing.small)
                         .font(.system(size: 16))
+                        .accessibilityIdentifier(TestingTag.shared.ABOUT_TOOLBAR)
 
                     NavigationLink(destination: LicensesScreen()) {
                         Label(localizer.open_source_licenses.localized, systemImage: "shield" )

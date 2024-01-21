@@ -11,9 +11,12 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.android.BuildConfig
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
 @Suppress("LongMethod")
@@ -80,6 +83,8 @@ internal fun HomeAppBarDropdownMenu(
         )
 
         DropdownMenuItem(
+            modifier = Modifier
+                .tagForTesting(TestingTag.SETTINGS_MENU),
             onClick = {
                 onSettingsButtonClicked()
             },

@@ -43,7 +43,9 @@ import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -249,7 +251,11 @@ private fun DrawerFeedSourceByCategoryItem(
     feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
-    Column {
+    val categoryTitle = feedSourceCategoryWrapper.feedSourceCategory?.title
+    Column(
+        modifier = Modifier
+            .tagForTesting("${TestingTag.FEED_SOURCE_SELECTOR}_$categoryTitle"),
+    ) {
         @Suppress("MagicNumber")
         val degrees by animateFloatAsState(
             targetValue = if (isCategoryExpanded) {

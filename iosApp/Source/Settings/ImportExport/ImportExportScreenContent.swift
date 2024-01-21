@@ -91,6 +91,7 @@ struct ImportExportContent: View {
                         Label(localizer.import_feed_button.localized, systemImage: "arrow.down.doc")
                     }
                 )
+                .accessibilityIdentifier(TestingTag.shared.IMPORT_FEED_OPML_BUTTON)
 
                 Button(
                     action: onExportClick,
@@ -185,6 +186,7 @@ struct ImportExportContent: View {
         Text(localizer.feeds_import_done_message.localized)
             .font(.body)
             .multilineTextAlignment(.center)
+            .accessibilityIdentifier(TestingTag.shared.IMPORT_DONE_MESSAGE)
 
         Button(
             action: {
@@ -200,6 +202,7 @@ struct ImportExportContent: View {
         .buttonStyle(.bordered)
         .padding(.top, Spacing.regular)
         .padding(.horizontal, Spacing.medium)
+        .accessibilityIdentifier(TestingTag.shared.IMPORT_DONE_BUTTON)
 
         Spacer()
     }

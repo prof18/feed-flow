@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import shared
 
 struct NoFeedsBottomSheet: View {
 
@@ -24,6 +25,7 @@ struct NoFeedsBottomSheet: View {
                     Text(localizer.no_feed_modal_message.localized)
                         .font(.body)
                         .multilineTextAlignment(.leading)
+                        .accessibilityIdentifier(TestingTag.shared.NO_FEED_BOTTOM_SHEET_MESSAGE)
                 }
 
                 Section {
@@ -32,12 +34,14 @@ struct NoFeedsBottomSheet: View {
                     } label: {
                         Label(localizer.add_feed.localized, systemImage: "plus.app")
                     }
+                    .accessibilityIdentifier(TestingTag.shared.NO_FEED_BOTTOM_SHEET_ADD_BUTTON)
 
                     Button {
                         onImportExportClick()
                     } label: {
                         Label(localizer.import_export_opml.localized, systemImage: "arrow.up.arrow.down")
                     }
+                    .accessibilityIdentifier(TestingTag.shared.NO_FEED_BOTTOM_SHEET_IMPORT_BUTTON)
                 }
             }
             .listStyle(.insetGrouped)

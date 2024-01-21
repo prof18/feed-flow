@@ -13,9 +13,9 @@ struct AddFeedScreenContent: View {
 
     @Environment(\.presentationMode) private var presentationMode
 
-    @State var feedURL = ""
     @State private var newCategory: String = ""
 
+    @Binding var feedURL: String
     @Binding var showError: Bool
     @Binding var errorMessage: String
     @Binding var categoryItems: [CategoriesState.CategoryItem]
@@ -34,6 +34,7 @@ struct AddFeedScreenContent: View {
             Section(
                 content: {
                     TextField(localizer.feed_url.localized, text: $feedURL)
+                        .accessibilityIdentifier(TestingTag.shared.FEED_URL_INPUT)
                 },
                 header: {
                     Text(localizer.feed_url.localized)
@@ -43,6 +44,7 @@ struct AddFeedScreenContent: View {
                         Text(errorMessage)
                             .font(.caption)
                             .foregroundColor(.red)
+                            .accessibilityIdentifier(TestingTag.shared.INVALID_URL_ERROR_MESSAGE)
                     }
                 }
             )
@@ -54,10 +56,13 @@ struct AddFeedScreenContent: View {
                 ) {
                     ForEach(categoryItems, id: \.self.id) { categoryItem in
                         let title = categoryItem.name ?? localizer.no_category_selected_header.localized
-                        Text(title).tag(categoryItem as CategoriesState.CategoryItem?)
+                        Text(title)
+                            .tag(categoryItem as CategoriesState.CategoryItem?)
+                            .accessibilityIdentifier("\(TestingTag.shared.CATEGORY_RADIO_BUTTON)_\(title)")
                     }
                 }
             }
+            .accessibilityIdentifier(TestingTag.shared.CATEGORY_SELECTOR)
 
             if !categoryItems.isEmpty {
                 categoriesSection
@@ -79,6 +84,7 @@ struct AddFeedScreenContent: View {
                     } label: {
                         Image(systemName: "xmark.circle")
                     }
+                    .accessibilityIdentifier(TestingTag.shared.BACK_BUTTON)
                 }
             }
 
@@ -101,6 +107,7 @@ struct AddFeedScreenContent: View {
                             Image(systemName: "trash")
                                 .tint(.red)
                         }
+                        .accessibilityIdentifier("\(TestingTag.shared.DELETE_CATEGORY_BUTTON)_\(name)")
                     }
                 }
             }
@@ -111,7 +118,10 @@ struct AddFeedScreenContent: View {
                         addNewCategory(CategoryName(name: newCategory))
                         newCategory = ""
                     }
+                    .accessibilityIdentifier(TestingTag.shared.CATEGORY_TEXT_INPUT)
+
                 Spacer()
+
                 if !newCategory.isEmpty {
                     Button {
                         addNewCategory(CategoryName(name: newCategory))
@@ -120,6 +130,7 @@ struct AddFeedScreenContent: View {
                         Image(systemName: "checkmark.circle.fill")
                             .tint(.green)
                     }
+                    .accessibilityIdentifier(TestingTag.shared.ADD_CATEGORY_BUTTON)
                 }
             }
         }
@@ -137,12 +148,13 @@ struct AddFeedScreenContent: View {
             }
         }
         .disabled(feedURL.isEmpty)
+        .accessibilityIdentifier(TestingTag.shared.ADD_FEED_BUTTON)
     }
 }
 
 #Preview {
     AddFeedScreenContent(
-        feedURL: "https://marcogomiero.com/feed",
+        feedURL: .constant("https://marcogomiero.com/feed"),
         showError: .constant(false),
         errorMessage: .constant(""),
         categoryItems: .constant(PreviewItemsKt.categoryItems),
@@ -158,7 +170,7 @@ struct AddFeedScreenContent: View {
 
 #Preview {
     AddFeedScreenContent(
-        feedURL: "https://marcogomiero.com",
+        feedURL: .constant("https://marcogomiero.com"),
         showError: .constant(true),
         errorMessage: .constant("The provided link is not a RSS feed"),
         categoryItems: .constant(PreviewItemsKt.categoryItems),

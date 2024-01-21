@@ -29,8 +29,10 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -143,6 +145,8 @@ private fun ImportExportIdleView(
 
         item {
             SettingItem(
+                modifier = Modifier
+                    .tagForTesting(TestingTag.IMPORT_FEED_OPML_BUTTON),
                 title = stringResource(resource = MR.strings.import_feed_button),
                 icon = Icons.Default.FileDownload,
                 onClick = onImportClick,
@@ -248,12 +252,15 @@ private fun ImportDoneView(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
+                    modifier = Modifier
+                        .tagForTesting(TestingTag.IMPORT_DONE_MESSAGE),
                     text = stringResource(MR.strings.feeds_import_done_message),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Button(
                     modifier = Modifier
-                        .padding(top = Spacing.regular),
+                        .padding(top = Spacing.regular)
+                        .tagForTesting(TestingTag.IMPORT_DONE_BUTTON),
                     onClick = onDoneClick,
                 ) {
                     Text(stringResource(resource = MR.strings.done_button))

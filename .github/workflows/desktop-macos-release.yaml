@@ -84,6 +84,9 @@ jobs:
           SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
           VERSION: ${{ steps.path_variables.outputs.VERSION }}
 
+      - name: Run Proguard
+        run: ./gradlew :desktopApp:proguardReleaseJars
+
       - name: Create DMG
         run: ./gradlew packageReleaseDmg
 

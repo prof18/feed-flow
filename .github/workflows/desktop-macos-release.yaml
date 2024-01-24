@@ -97,7 +97,7 @@ jobs:
         run: ./gradlew :desktopApp:proguardReleaseJars
 
       - name: Create DMG
-        run: ./gradlew packageReleaseDmg --stacktrace
+        run: ./gradlew packageReleaseDmg --info
 
       - name: Upload reports
         if: failure()

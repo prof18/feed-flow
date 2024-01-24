@@ -42,29 +42,11 @@ jobs:
             ~/.konan
           key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
 
-#      - name: Import signing certificate into keychain
-#        run: |
-#          KEYCHAIN_FILE=default.keychain
-#          security create-keychain -p $KEYCHAIN_PASSWORD_MACOS $KEYCHAIN_FILE
-#          security default-keychain -s $KEYCHAIN_FILE
-#          security unlock-keychain -p $KEYCHAIN_PASSWORD_MACOS $KEYCHAIN_FILE
-#          security import <(echo $SIGNING_CERTIFICATE_P12_DATA | base64 --decode) \
-#                          -f pkcs12 \
-#                          -k $KEYCHAIN_FILE \
-#                          -P $SIGNING_CERTIFICATE_PASSWORD \
-#                          -T /usr/bin/codesign
-#          security set-key-partition-list -S apple-tool:,apple: -s -k $KEYCHAIN_PASSWORD_MACOS $KEYCHAIN_FILE
-#        env:
-#          SIGNING_CERTIFICATE_P12_DATA: ${{ secrets.SIGNING_CERTIFICATE_P12_DATA_MACOS }}
-#          SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD_MACOS }}
-#          KEYCHAIN_PASSWORD_MACOS: ${{ secrets.KEYCHAIN_PASSWORD_MACOS }}
-
       - name: Import signing certificate
         uses: apple-actions/import-codesign-certs@v2
         with:
           p12-file-base64: ${{ secrets.SIGNING_CERTIFICATE_P12_DATA_MACOS }}
           p12-password: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD_MACOS }}
-
 
       - name: Run Checks
         run: ./gradlew detekt desktopTest jvmTest
@@ -100,11 +82,8 @@ jobs:
           SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
           VERSION: ${{ steps.path_variables.outputs.VERSION }}
 
-      - name: Run Proguard
-        run: ./gradlew :desktopApp:proguardReleaseJars
-
       - name: Create DMG
-        run: ./gradlew packageReleaseDmg --info
+        run: ./gradlew packageReleaseDmg
 
       - name: Upload reports
         if: failure()

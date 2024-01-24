@@ -26,6 +26,15 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
+      - name: Setup Gradle Properties
+        shell: bash
+        run: |
+          echo "org.gradle.jvmargs=-Xms10g -Xmx10g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC" >> ~/.gradle/gradle.properties
+          echo "kotlin.daemon.jvmargs=-Xms4g -Xmx4g -XX:+UseParallelGC" >> ~/.gradle/gradle.properties
+          echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
+          echo "org.gradle.workers.max=2" >> ~/.gradle/gradle.properties
+          echo "org.gradle.vfs.watch=false" >> ~/.gradle/gradle.properties               
+
       - name: Cache KMP tooling
         uses: actions/cache@v4
         with:

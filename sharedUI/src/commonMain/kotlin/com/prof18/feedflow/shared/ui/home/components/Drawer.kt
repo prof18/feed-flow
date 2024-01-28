@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Feed
 import androidx.compose.material.icons.filled.Label
+import androidx.compose.material.icons.filled.PlaylistAddCheck
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -66,6 +67,13 @@ fun Drawer(
         LazyColumn {
             item {
                 DrawerTimelineItem(
+                    currentFeedFilter = currentFeedFilter,
+                    onFeedFilterSelected = onFeedFilterSelected,
+                )
+            }
+
+            item {
+                DrawerReadItem(
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
                 )
@@ -133,6 +141,32 @@ private fun DrawerTimelineItem(
         colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
         onClick = {
             onFeedFilterSelected(FeedFilter.Timeline)
+        },
+    )
+}
+
+@Composable
+private fun DrawerReadItem(
+    currentFeedFilter: FeedFilter,
+    onFeedFilterSelected: (FeedFilter) -> Unit,
+) {
+    NavigationDrawerItem(
+        selected = currentFeedFilter is FeedFilter.Read,
+        label = {
+            Text(
+                text = stringResource(MR.strings.drawer_title_read),
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        },
+        icon = {
+            Icon(
+                imageVector = Icons.Default.PlaylistAddCheck,
+                contentDescription = null,
+            )
+        },
+        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+        onClick = {
+            onFeedFilterSelected(FeedFilter.Read)
         },
     )
 }

@@ -134,7 +134,6 @@ internal class FeedRetrieverRepository(
         }
 
     suspend fun clearReadFeeds() {
-        databaseHelper.updateNewStatus()
         getFeeds()
     }
 
@@ -172,7 +171,6 @@ internal class FeedRetrieverRepository(
                         totalFeedCount = feedSourceUrls.size,
                     ),
                 )
-                databaseHelper.updateNewStatus()
 
                 if (!isFirstLaunch) {
                     getFeeds()

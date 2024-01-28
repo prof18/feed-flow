@@ -4,6 +4,8 @@ sealed class FeedFilter {
 
     data object Timeline : FeedFilter()
 
+    data object Read : FeedFilter()
+
     data class Category(
         val feedCategory: FeedSourceCategory,
     ) : FeedFilter()

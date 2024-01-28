@@ -21,6 +21,7 @@ struct CompactView: View {
 
     @State var navDrawerState: NavDrawerState = NavDrawerState(
         timeline: [],
+        read: [],
         categories: [],
         feedSourcesWithoutCategory: [],
         feedSourcesByCategory: [:]

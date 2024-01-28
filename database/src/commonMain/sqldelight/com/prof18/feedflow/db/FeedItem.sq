@@ -10,7 +10,7 @@ CREATE TABLE feed_item (
     image_url TEXT,
     feed_source_id INTEGER AS Int NOT NULL,
     is_read INTEGER AS Boolean NOT NULL DEFAULT 0,
-    is_new INTEGER AS Boolean NOT NULL DEFAULT 1,
+    is_favourite INTEGER AS Boolean NOT NULL DEFAULT 0,
     pub_date INTEGER,
     comments_url TEXT
 );
@@ -25,7 +25,7 @@ INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
 ON feed_source.category_id == feed_source_category.id
-WHERE is_new = 1 AND is_read = 0
+WHERE is_read = 0
 AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
 AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCategoryId);
@@ -36,7 +36,7 @@ INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
 ON feed_source.category_id == feed_source_category.id
-WHERE is_new = 1
+WHERE (:isRead IS NULL OR is_read = :isRead)
 AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
 AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_category_id = :feedSourceCategoryId)
@@ -47,11 +47,6 @@ markAsRead:
 UPDATE feed_item
 SET is_read = 1
 WHERE url_hash = ?;
-
-updateNewStatus:
-UPDATE feed_item
-SET is_new = 0
-WHERE is_read = 1;
 
 markAllRead:
 UPDATE feed_item

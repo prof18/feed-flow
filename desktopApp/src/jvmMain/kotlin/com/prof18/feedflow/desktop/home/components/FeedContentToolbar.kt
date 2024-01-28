@@ -59,9 +59,11 @@ internal fun FeedContentToolbar(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                Spacer(modifier = Modifier.width(4.dp))
+                if (currentFeedFilter !is FeedFilter.Read) {
+                    Spacer(modifier = Modifier.width(4.dp))
 
-                Text(text = "($unReadCount)")
+                    Text(text = "($unReadCount)")
+                }
             }
         },
     )
@@ -73,6 +75,7 @@ private fun FeedFilter.getTitle(): String =
         is FeedFilter.Category -> this.feedCategory.title
         is FeedFilter.Source -> this.feedSource.title
         FeedFilter.Timeline -> stringResource(resource = MR.strings.app_name)
+        FeedFilter.Read -> stringResource(resource = MR.strings.drawer_title_read)
     }
 
 @Preview

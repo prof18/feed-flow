@@ -77,6 +77,7 @@ class DatabaseHelper(
             .selectFeeds(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
+                isRead = feedFilter.getIsReadFlag(),
                 pageSize = pageSize,
                 offset = offset,
             )
@@ -141,11 +142,6 @@ class DatabaseHelper(
             }
         }
 
-    suspend fun updateNewStatus() =
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedItemQueries.updateNewStatus()
-        }
-
     suspend fun markAllFeedAsRead(feedFilter: FeedFilter) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             when (feedFilter) {
@@ -159,6 +155,10 @@ class DatabaseHelper(
 
                 FeedFilter.Timeline -> {
                     dbRef.feedItemQueries.markAllRead()
+                }
+
+                FeedFilter.Read -> {
+                    // Do nothing
                 }
             }
         }
@@ -247,33 +247,34 @@ class DatabaseHelper(
 
     private fun FeedFilter.getFeedSourceId(): Int? {
         return when (this) {
-            is FeedFilter.Category -> {
-                null
-            }
+            is FeedFilter.Source -> feedSource.id
 
-            is FeedFilter.Source -> {
-                feedSource.id
-            }
-
-            FeedFilter.Timeline -> {
-                null
-            }
+            is FeedFilter.Category,
+            FeedFilter.Timeline,
+            FeedFilter.Read,
+            -> null
         }
     }
 
     private fun FeedFilter.getCategoryId(): Long? {
         return when (this) {
-            is FeedFilter.Category -> {
-                feedCategory.id
-            }
+            is FeedFilter.Category -> feedCategory.id
 
-            is FeedFilter.Source -> {
-                null
-            }
+            is FeedFilter.Source,
+            FeedFilter.Timeline,
+            FeedFilter.Read,
+            -> null
+        }
+    }
 
-            FeedFilter.Timeline -> {
-                null
-            }
+    private fun FeedFilter.getIsReadFlag(): Boolean? {
+        return when (this) {
+            is FeedFilter.Read -> true
+
+            is FeedFilter.Category,
+            is FeedFilter.Source,
+            FeedFilter.Timeline,
+            -> false
         }
     }
 

@@ -100,8 +100,10 @@ struct HomeContent: View {
                     Text(currentFeedFilter.getNavBarName())
                         .font(.title2)
 
-                    Text("(\(unreadCount))")
-                        .font(.title2)
+                    if !(currentFeedFilter is FeedFilter.Read) {
+                        Text("(\(unreadCount))")
+                            .font(.title2)
+                    }
                 }
                 .padding(.vertical, Spacing.medium)
                 .onTapGesture(count: 2) {
@@ -168,6 +170,9 @@ fileprivate extension FeedFilter {
 
         case let source as FeedFilter.Source:
             return source.feedSource.title
+
+        case is FeedFilter.Read:
+            return localizer.toolbar_title_read.localized
 
         default:
             return localizer.app_name.localized

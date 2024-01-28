@@ -92,6 +92,7 @@ class HomeViewModel internal constructor(
 
                     NavDrawerState(
                         timeline = listOf(DrawerItem.Timeline),
+                        read = listOf(DrawerItem.Read),
                         categories = categories.map { category ->
                             DrawerCategory(category = category)
                         },

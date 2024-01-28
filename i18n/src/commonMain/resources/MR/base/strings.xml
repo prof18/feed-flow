@@ -73,4 +73,6 @@
     <string name="import_export_description">FeedFlow supports the import and export of your subscriptions with an OPML file, for better interoperability with the other feed readers</string>
     <string name="no_feed_modal_title">Add a new feed</string>
     <string name="no_feed_modal_message">It looks like you are not subscribed to any feeds yet. You can manually add a feed, or you can import your subscriptions from another RSS reader</string>
+    <string name="drawer_title_read">Read articles</string>
+    <string name="toolbar_title_read">Read</string>
 </resources>

@@ -266,6 +266,7 @@ val inProgressFeedUpdateStatus = InProgressFeedUpdateStatus(
 
 val navDrawerState = NavDrawerState(
     timeline = listOf(DrawerItem.Timeline),
+    read = listOf(DrawerItem.Read),
     categories = listOf(
         DrawerItem.DrawerCategory(
             category = FeedSourceCategory(

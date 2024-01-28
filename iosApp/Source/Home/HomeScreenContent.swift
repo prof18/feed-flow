@@ -172,7 +172,7 @@ fileprivate extension FeedFilter {
             return source.feedSource.title
 
         case is FeedFilter.Read:
-            return localizer.toolbar_title_read.localized
+            return localizer.drawer_title_read.localized
 
         default:
             return localizer.app_name.localized

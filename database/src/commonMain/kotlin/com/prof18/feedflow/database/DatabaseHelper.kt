@@ -72,12 +72,13 @@ class DatabaseHelper(
         feedFilter: FeedFilter,
         pageSize: Long,
         offset: Long,
+        showReadItems: Boolean,
     ): List<SelectFeeds> = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries
             .selectFeeds(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
-                isRead = feedFilter.getIsReadFlag(),
+                isRead = feedFilter.getIsReadFlag(showReadItems),
                 pageSize = pageSize,
                 offset = offset,
             )
@@ -267,14 +268,18 @@ class DatabaseHelper(
         }
     }
 
-    private fun FeedFilter.getIsReadFlag(): Boolean? {
+    private fun FeedFilter.getIsReadFlag(showReadItems: Boolean): Boolean? {
         return when (this) {
             is FeedFilter.Read -> true
 
             is FeedFilter.Category,
             is FeedFilter.Source,
             FeedFilter.Timeline,
-            -> false
+            -> if (showReadItems) {
+                null
+            } else {
+                false
+            }
         }
     }
 

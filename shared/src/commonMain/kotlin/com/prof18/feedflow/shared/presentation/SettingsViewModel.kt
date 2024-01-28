@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.presentation
 
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
@@ -11,6 +12,7 @@ import kotlinx.coroutines.launch
 
 class SettingsViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
+    private val feedRetrieverRepository: FeedRetrieverRepository,
 ) : BaseViewModel() {
 
     private val settingsMutableState = MutableStateFlow(SettingsState())
@@ -21,9 +23,11 @@ class SettingsViewModel internal constructor(
     init {
         scope.launch {
             val isMarkReadEnabled = settingsRepository.isMarkFeedAsReadWhenScrollingEnabled()
+            val isShowReadItemsEnabled = settingsRepository.isShowReadArticlesTimelineEnabled()
             settingsMutableState.update {
                 SettingsState(
                     isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
+                    isShowReadItemsEnabled = isShowReadItemsEnabled,
                 )
             }
         }
@@ -37,6 +41,18 @@ class SettingsViewModel internal constructor(
                     isMarkReadWhenScrollingEnabled = value,
                 )
             }
+        }
+    }
+
+    fun updateShowReadItemsOnTimeline(value: Boolean) {
+        scope.launch {
+            settingsRepository.setShowReadArticlesTimeline(value)
+            settingsMutableState.update {
+                it.copy(
+                    isShowReadItemsEnabled = value,
+                )
+            }
+            feedRetrieverRepository.getFeeds()
         }
     }
 }

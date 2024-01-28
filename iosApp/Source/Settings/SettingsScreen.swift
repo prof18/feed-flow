@@ -22,6 +22,7 @@ struct SettingsScreen: View {
     private var settingsViewModel: SettingsViewModel = KotlinDependencies.shared.getSettingsViewModel()
 
     @State private var isMarkReadWhenScrollingEnabled = true
+    @State private var isShowReadItemEnabled = false
 
     var body: some View {
         settingsContent
@@ -30,6 +31,7 @@ struct SettingsScreen: View {
                     let stream = asyncSequence(for: settingsViewModel.settingsStateFlow)
                     for try await state in stream {
                         self.isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
+                        self.isShowReadItemEnabled = state.isShowReadItemsEnabled
                     }
                 } catch {
                     self.appState.emitGenericError()
@@ -37,6 +39,9 @@ struct SettingsScreen: View {
             }
             .onChange(of: isMarkReadWhenScrollingEnabled) { newValue in
                 settingsViewModel.updateMarkReadWhenScrolling(value: newValue)
+            }
+            .onChange(of: isShowReadItemEnabled) { newValue in
+                settingsViewModel.updateShowReadItemsOnTimeline(value: newValue)
             }
     }
 
@@ -98,6 +103,12 @@ struct SettingsScreen: View {
                 isMarkReadWhenScrollingEnabled.toggle()
             }
             .accessibilityIdentifier(TestingTag.shared.MARK_AS_READ_SCROLLING_SWITCH)
+
+            Toggle(isOn: $isShowReadItemEnabled) {
+                Label(localizer.settings_toggle_show_read_articles.localized, systemImage: "text.badge.checkmark")
+            }.onTapGesture {
+                isShowReadItemEnabled.toggle()
+            }
         }
     }
 

@@ -18,6 +18,7 @@ import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.MarkAsUnread
+import androidx.compose.material.icons.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -76,6 +77,7 @@ fun SettingsScreen(
         onFeedListClick = onFeedListClick,
         onAddFeedClick = onAddFeedClick,
         isMarkReadWhenScrollingEnabled = settingState.isMarkReadWhenScrollingEnabled,
+        isShowReadItemEnabled = settingState.isShowReadItemsEnabled,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
@@ -95,6 +97,9 @@ fun SettingsScreen(
         setMarkReadWhenScrolling = { enabled ->
             settingsViewModel.updateMarkReadWhenScrolling(enabled)
         },
+        setShowReadItem = { enabled ->
+            settingsViewModel.updateShowReadItemsOnTimeline(enabled)
+        },
     )
 }
 
@@ -102,6 +107,7 @@ fun SettingsScreen(
 private fun SettingsScreenContent(
     browsers: List<Browser>,
     isMarkReadWhenScrollingEnabled: Boolean,
+    isShowReadItemEnabled: Boolean,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelected: (Browser) -> Unit,
@@ -110,6 +116,7 @@ private fun SettingsScreenContent(
     onBugReportClick: () -> Unit,
     navigateToImportExport: () -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
+    setShowReadItem: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -148,6 +155,8 @@ private fun SettingsScreenContent(
             onBugReportClick = onBugReportClick,
             isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
             setMarkReadWhenScrolling = setMarkReadWhenScrolling,
+            isShowReadItemEnabled = isShowReadItemEnabled,
+            setShowReadItem = setShowReadItem,
         )
     }
 }
@@ -156,6 +165,7 @@ private fun SettingsScreenContent(
 @Composable
 private fun SettingsList(
     isMarkReadWhenScrollingEnabled: Boolean,
+    isShowReadItemEnabled: Boolean,
     modifier: Modifier = Modifier,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
@@ -164,6 +174,7 @@ private fun SettingsList(
     onAboutClick: () -> Unit,
     onBugReportClick: () -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
+    setShowReadItem: (Boolean) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -217,6 +228,13 @@ private fun SettingsList(
             MarkReadWhenScrollingSwitch(
                 setMarkReadWhenScrolling = setMarkReadWhenScrolling,
                 isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
+            )
+        }
+
+        item {
+            ShowReadItemOnTimelineSwitch(
+                isShowReadItemEnabled = isShowReadItemEnabled,
+                setShowReadItem = setShowReadItem,
             )
         }
 
@@ -288,6 +306,43 @@ private fun MarkReadWhenScrollingSwitch(
 }
 
 @Composable
+private fun ShowReadItemOnTimelineSwitch(
+    setShowReadItem: (Boolean) -> Unit,
+    isShowReadItemEnabled: Boolean,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable {
+                setShowReadItem(!isShowReadItemEnabled)
+            }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.Outlined.PlaylistAddCheck,
+            contentDescription = null,
+        )
+
+        Text(
+            text = stringResource(resource = MR.strings.settings_toggle_show_read_articles),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f),
+        )
+        Switch(
+            interactionSource = interactionSource,
+            checked = isShowReadItemEnabled,
+            onCheckedChange = setShowReadItem,
+        )
+    }
+}
+
+@Composable
 private fun SettingsNavBar(navigateBack: () -> Unit) {
     TopAppBar(
         title = {
@@ -317,6 +372,7 @@ private fun SettingsScreenPreview() {
         SettingsScreenContent(
             browsers = browsersForPreview,
             isMarkReadWhenScrollingEnabled = true,
+            isShowReadItemEnabled = false,
             onFeedListClick = {},
             onAddFeedClick = {},
             onBrowserSelected = {},
@@ -325,6 +381,7 @@ private fun SettingsScreenPreview() {
             onBugReportClick = {},
             navigateToImportExport = {},
             setMarkReadWhenScrolling = {},
+            setShowReadItem = {},
         )
     }
 }

@@ -38,9 +38,9 @@ fun initKoin(
 ): KoinApplication {
     return startKoin {
         modules(
-            modules + com.prof18.feedflow.shared.di.coreModule + com.prof18.feedflow.shared.di.getLoggingModule(
+            modules + coreModule + getLoggingModule(
                 appEnvironment,
-            ) + com.prof18.feedflow.shared.di.platformModule,
+            ) + platformModule,
         )
     }
 }
@@ -171,6 +171,7 @@ private val coreModule = module {
     viewModel {
         SettingsViewModel(
             settingsRepository = get(),
+            feedRetrieverRepository = get(),
         )
     }
 }

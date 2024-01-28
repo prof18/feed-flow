@@ -79,6 +79,7 @@ internal class FeedRetrieverRepository(
                     feedFilter = currentFeedFilterMutableState.value,
                     pageSize = PAGE_SIZE,
                     offset = 0,
+                    showReadItems = settingsHelper.getShowReadArticlesTimeline(),
                 )
             }
             currentPage = 1
@@ -104,6 +105,7 @@ internal class FeedRetrieverRepository(
                     feedFilter = currentFeedFilterMutableState.value,
                     pageSize = PAGE_SIZE,
                     offset = currentPage * PAGE_SIZE,
+                    showReadItems = settingsHelper.getShowReadArticlesTimeline(),
                 )
             }
             currentPage += 1

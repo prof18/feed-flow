@@ -155,6 +155,7 @@ fun main() = application {
         FeedFlowMenuBar(
             showDebugMenu = appEnvironment.isDebug(),
             isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
+            isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
             onRefreshClick = {
                 scope.launch {
                     listState.animateScrollToItem(0)
@@ -197,6 +198,9 @@ fun main() = application {
             },
             setMarkReadWhenScrolling = { enabled ->
                 settingsViewModel.updateMarkReadWhenScrolling(enabled)
+            },
+            setShowReadItem = { enabled ->
+                settingsViewModel.updateShowReadItemsOnTimeline(enabled)
             },
         )
 

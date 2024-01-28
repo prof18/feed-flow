@@ -13,6 +13,7 @@ import dev.icerock.moko.resources.compose.stringResource
 fun FrameWindowScope.FeedFlowMenuBar(
     showDebugMenu: Boolean,
     isMarkReadWhenScrollingEnabled: Boolean,
+    isShowReadItemEnabled: Boolean,
     onRefreshClick: () -> Unit,
     onMarkAllReadClick: () -> Unit,
     onImportExportClick: () -> Unit,
@@ -23,6 +24,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onForceRefreshClick: () -> Unit,
     deleteFeeds: () -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
+    setShowReadItem: (Boolean) -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -74,6 +76,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 text = stringResource(resource = MR.strings.toggle_mark_read_when_scrolling),
                 checked = isMarkReadWhenScrollingEnabled,
                 onCheckedChange = setMarkReadWhenScrolling,
+            )
+
+            CheckboxItem(
+                text = stringResource(resource = MR.strings.settings_toggle_show_read_articles),
+                checked = isShowReadItemEnabled,
+                onCheckedChange = setShowReadItem,
             )
 
             Separator()

@@ -1,8 +1,6 @@
 package com.prof18.feedflow.shared.ui.home.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -13,17 +11,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkAdd
+import androidx.compose.material.icons.filled.BookmarkRemove
+import androidx.compose.material.icons.filled.Forum
+import androidx.compose.material.icons.filled.MarkEmailRead
+import androidx.compose.material.icons.filled.MarkEmailUnread
+import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,11 +42,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
+import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedItem
-import com.prof18.feedflow.core.model.FeedItemClickedInfo
+import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.utils.TestingTag
+import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -90,37 +106,35 @@ fun FeedList(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FeedItemView(
     feedItem: FeedItem,
     index: Int,
     feedItemImage: @Composable (String) -> Unit,
-    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
-    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
 ) {
+    var showItemMenu by remember {
+        mutableStateOf(
+            false,
+        )
+    }
+
     Column(
         modifier = Modifier
-            .combinedClickable(
+            .feedSourceMenuClickModifier(
                 onClick = {
                     onFeedItemClick(
-                        FeedItemClickedInfo(
+                        FeedItemUrlInfo(
                             id = feedItem.id,
                             url = feedItem.url,
                         ),
                     )
                 },
-                onLongClick = if (feedItem.commentsUrl != null) {
-                    {
-                        onFeedItemLongClick(
-                            FeedItemClickedInfo(
-                                id = feedItem.id,
-                                url = feedItem.commentsUrl!!,
-                            ),
-                        )
-                    }
-                } else {
-                    null
+                onLongClick = {
+                    showItemMenu = true
                 },
             )
             .padding(horizontal = Spacing.regular)
@@ -155,6 +169,17 @@ fun FeedItemView(
             thickness = 0.2.dp,
             color = Color.Gray,
         )
+
+        FeedItemContextMenu(
+            showMenu = showItemMenu,
+            closeMenu = {
+                showItemMenu = false
+            },
+            feedItem = feedItem,
+            onBookmarkClick = onBookmarkClick,
+            onReadStatusClick = onReadStatusClick,
+            onCommentClick = onCommentClick,
+        )
     }
 }
 
@@ -179,10 +204,22 @@ private fun FeedSourceAndUnreadDotRow(
 
         Text(
             modifier = Modifier
+                .weight(1f)
                 .padding(bottom = Spacing.small),
             text = feedItem.feedSource.title,
             style = MaterialTheme.typography.bodySmall,
         )
+
+        if (feedItem.isBookmarked) {
+            Icon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(bottom = Spacing.small),
+                tint = MaterialTheme.colorScheme.primary,
+                imageVector = Icons.Filled.Bookmark,
+                contentDescription = null,
+            )
+        }
     }
 }
 
@@ -240,5 +277,149 @@ private fun UnreadDot(
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primary)
             .tagForTesting(TestingTag.UNREAD_DOT),
+    )
+}
+
+@Composable
+private fun FeedItemContextMenu(
+    showMenu: Boolean,
+    feedItem: FeedItem,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenu(
+        expanded = showMenu,
+        onDismissRequest = closeMenu,
+        properties = PopupProperties(),
+    ) {
+        ChangeReadStatusMenuItem(
+            feedItem = feedItem,
+            onReadStatusClick = onReadStatusClick,
+            closeMenu = closeMenu,
+        )
+
+        ChangeBookmarkStatusMenuItem(
+            feedItem = feedItem,
+            onBookmarkClick = onBookmarkClick,
+            closeMenu = closeMenu,
+        )
+
+        if (feedItem.commentsUrl != null) {
+            OpenCommentsMenuItem(
+                feedItem = feedItem,
+                closeMenu = closeMenu,
+                onCommentClick = onCommentClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun OpenCommentsMenuItem(
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
+    feedItem: FeedItem,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                stringResource(resource = MR.strings.menu_open_comments),
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Forum,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            onCommentClick(
+                FeedItemUrlInfo(
+                    id = feedItem.id,
+                    url = requireNotNull(feedItem.commentsUrl),
+                ),
+            )
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun ChangeBookmarkStatusMenuItem(
+    feedItem: FeedItem,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = if (feedItem.isBookmarked) {
+                    stringResource(resource = MR.strings.menu_remove_from_bookmark)
+                } else {
+                    stringResource(resource = MR.strings.menu_add_to_bookmark)
+                },
+            )
+        },
+        leadingIcon = {
+            if (feedItem.isBookmarked) {
+                Icon(
+                    imageVector = Icons.Default.BookmarkRemove,
+                    contentDescription = null,
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.BookmarkAdd,
+                    contentDescription = null,
+                )
+            }
+        },
+        onClick = {
+            onBookmarkClick(
+                FeedItemId(feedItem.id),
+                !feedItem.isBookmarked,
+            )
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun ChangeReadStatusMenuItem(
+    feedItem: FeedItem,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = if (feedItem.isRead) {
+                    stringResource(resource = MR.strings.menu_mark_as_unread)
+                } else {
+                    stringResource(resource = MR.strings.menu_mark_as_read)
+                },
+            )
+        },
+        leadingIcon = {
+            if (feedItem.isRead) {
+                Icon(
+                    imageVector = Icons.Default.MarkEmailUnread,
+                    contentDescription = null,
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.MarkEmailRead,
+                    contentDescription = null,
+                )
+            }
+        },
+        onClick = {
+            onReadStatusClick(
+                FeedItemId(feedItem.id),
+                !feedItem.isRead,
+            )
+            closeMenu()
+        },
     )
 }

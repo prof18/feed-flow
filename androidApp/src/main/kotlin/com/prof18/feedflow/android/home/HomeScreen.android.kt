@@ -103,6 +103,12 @@ internal fun HomeScreen(
                 openUrl = { url ->
                     browserManager.openUrlWithFavoriteBrowser(url, context)
                 },
+                updateReadStatus = { feedItemId, isRead ->
+                    homeViewModel.updateReadStatus(feedItemId, isRead)
+                },
+                updateBookmarkStatus = { feedItemId, isBookmarked ->
+                    homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+                },
             )
         }
 
@@ -148,6 +154,12 @@ internal fun HomeScreen(
                 openUrl = { url ->
                     browserManager.openUrlWithFavoriteBrowser(url, context)
                 },
+                updateReadStatus = { feedItemId, isRead ->
+                    homeViewModel.updateReadStatus(feedItemId, isRead)
+                },
+                updateBookmarkStatus = { feedItemId, isBookmarked ->
+                    homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+                },
             )
         }
 
@@ -192,6 +204,12 @@ internal fun HomeScreen(
                 },
                 openUrl = { url ->
                     browserManager.openUrlWithFavoriteBrowser(url, context)
+                },
+                updateReadStatus = { feedItemId, isRead ->
+                    homeViewModel.updateReadStatus(feedItemId, isRead)
+                },
+                updateBookmarkStatus = { feedItemId, isBookmarked ->
+                    homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                 },
             )
         }

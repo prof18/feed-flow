@@ -42,4 +42,5 @@ internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter) = FeedItem(
     },
     isRead = is_read,
     commentsUrl = comments_url,
+    isBookmarked = is_bookmarked,
 )

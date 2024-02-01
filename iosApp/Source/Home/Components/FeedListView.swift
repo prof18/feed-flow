@@ -20,17 +20,23 @@ struct FeedListView: View {
     var loadingState: FeedUpdateStatus?
     var feedState: [FeedItem]
     var showLoading: Bool
+    let currentFeedFilter: FeedFilter
 
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
     let requestNewPage: () -> Void
-    let onItemClick: (FeedItemClickedInfo) -> Void
+    let onItemClick: (FeedItemUrlInfo) -> Void
+    let onBookmarkClick: (FeedItemId, Bool) -> Void
+    let onReadStatusClick: (FeedItemId, Bool) -> Void
 
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
             NoFeedsSourceView(onAddFeedClick: onAddFeedClick)
         } else if loadingState?.isLoading() == false && feedState.isEmpty {
-            EmptyFeedView(onReloadClick: onReloadClick)
+            EmptyFeedView(
+                currentFeedFilter: currentFeedFilter,
+                onReloadClick: onReloadClick
+            )
         } else if feedState.isEmpty {
             VStack(alignment: .center) {
                 loadingHeader
@@ -47,11 +53,13 @@ struct FeedListView: View {
                             .id(feedItem.id)
                             .contentShape(Rectangle())
                             .onTapGesture {
-                                onItemClick(FeedItemClickedInfo(id: feedItem.id, url: feedItem.url))
+                                onItemClick(FeedItemUrlInfo(id: feedItem.id, url: feedItem.url))
                             }
-                            .onLongPressGesture {
-                                if let commentsUrl = feedItem.commentsUrl {
-                                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
+                            .contextMenu {
+                                VStack {
+                                    makeReadUnreadButton(feedItem: feedItem)
+                                    makeBookmarkButton(feedItem: feedItem)
+                                    makeCommentsButton(feedItem: feedItem)
                                 }
                             }
                             .onAppear {
@@ -73,6 +81,43 @@ struct FeedListView: View {
                 .refreshable {
                     onReloadClick()
                 }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func makeReadUnreadButton(feedItem: FeedItem) -> some View {
+        Button {
+            onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead)
+        } label: {
+            if feedItem.isRead {
+                Label(localizer.menu_mark_as_unread.localized, systemImage: "envelope.badge")
+            } else {
+                Label(localizer.menu_mark_as_read.localized, systemImage: "envelope.open")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func makeBookmarkButton(feedItem: FeedItem) -> some View {
+        Button {
+            onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked)
+        } label: {
+            if feedItem.isBookmarked {
+                Label(localizer.menu_remove_from_bookmark.localized, systemImage: "bookmark.slash")
+            } else {
+                Label(localizer.menu_add_to_bookmark.localized, systemImage: "bookmark")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func makeCommentsButton(feedItem: FeedItem) -> some View {
+        if let commentsUrl = feedItem.commentsUrl {
+            Button {
+                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
+            } label: {
+                Label(localizer.menu_open_comments.localized, systemImage: "bubble.left.and.bubble.right")
             }
         }
     }
@@ -103,10 +148,13 @@ struct FeedListView: View {
         loadingState: FinishedFeedUpdateStatus(),
         feedState: PreviewItemsKt.feedItemsForPreview,
         showLoading: false,
+        currentFeedFilter: FeedFilter.Timeline(),
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},
-        onItemClick: { _ in }
+        onItemClick: { _ in },
+        onBookmarkClick: { _, _ in },
+        onReadStatusClick: { _, _ in }
     ).environmentObject(HomeListIndexHolder())
 }
 
@@ -115,10 +163,13 @@ struct FeedListView: View {
         loadingState: NoFeedSourcesStatus(),
         feedState: [],
         showLoading: false,
+        currentFeedFilter: FeedFilter.Timeline(),
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},
-        onItemClick: { _ in }
+        onItemClick: { _ in },
+        onBookmarkClick: { _, _ in },
+        onReadStatusClick: { _, _ in }
     )
 }
 
@@ -127,9 +178,12 @@ struct FeedListView: View {
         loadingState: FinishedFeedUpdateStatus(),
         feedState: [],
         showLoading: false,
+        currentFeedFilter: FeedFilter.Timeline(),
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},
-        onItemClick: { _ in }
+        onItemClick: { _ in },
+        onBookmarkClick: { _, _ in },
+        onReadStatusClick: { _, _ in }
     )
 }

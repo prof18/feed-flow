@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 
-@Suppress("TooManyFunctions")
 internal class FeedManagerRepository(
     private val databaseHelper: DatabaseHelper,
     private val opmlFeedHandler: OpmlFeedHandler,

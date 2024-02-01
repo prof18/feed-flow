@@ -32,7 +32,9 @@ struct HomeContent: View {
     let onForceRefreshClick: () -> Void
     let deleteAllFeeds: () -> Void
     let requestNewPage: () -> Void
-    let onItemClick: (FeedItemClickedInfo) -> Void
+    let onItemClick: (FeedItemUrlInfo) -> Void
+    let onBookmarkClick: (FeedItemId, Bool) -> Void
+    let onReadStatusClick: (FeedItemId, Bool) -> Void
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -40,12 +42,15 @@ struct HomeContent: View {
                 loadingState: loadingState,
                 feedState: feedState,
                 showLoading: showLoading,
+                currentFeedFilter: currentFeedFilter,
                 onReloadClick: onRefresh,
                 onAddFeedClick: {
                     self.sheetToShow = .noFeedSource
                 },
                 requestNewPage: requestNewPage,
-                onItemClick: onItemClick
+                onItemClick: onItemClick,
+                onBookmarkClick: onBookmarkClick,
+                onReadStatusClick: onReadStatusClick
             )
             .onChange(of: toggleListScroll) { _ in
                 proxy.scrollTo(feedState.first?.id)
@@ -100,7 +105,8 @@ struct HomeContent: View {
                     Text(currentFeedFilter.getNavBarName())
                         .font(.title2)
 
-                    if !(currentFeedFilter is FeedFilter.Read) {
+                    if !(currentFeedFilter is FeedFilter.Read) &&
+                        !(currentFeedFilter is FeedFilter.Bookmarks) {
                         Text("(\(unreadCount))")
                             .font(.title2)
                     }
@@ -174,6 +180,9 @@ fileprivate extension FeedFilter {
         case is FeedFilter.Read:
             return localizer.drawer_title_read.localized
 
+        case is FeedFilter.Bookmarks:
+            return localizer.drawer_title_bookmarks.localized
+
         default:
             return localizer.app_name.localized
         }
@@ -201,7 +210,9 @@ fileprivate extension FeedFilter {
         onForceRefreshClick: {},
         deleteAllFeeds: {},
         requestNewPage: {},
-        onItemClick: { _ in }
+        onItemClick: { _ in },
+        onBookmarkClick: { _, _ in },
+        onReadStatusClick: { _, _ in }
     )
     .environmentObject(HomeListIndexHolder())
     .environmentObject(AppState())
@@ -226,7 +237,9 @@ fileprivate extension FeedFilter {
         onForceRefreshClick: {},
         deleteAllFeeds: {},
         requestNewPage: {},
-        onItemClick: { _ in }
+        onItemClick: { _ in },
+        onBookmarkClick: { _, _ in },
+        onReadStatusClick: { _, _ in }
     )
     .environmentObject(HomeListIndexHolder())
     .environmentObject(AppState())
@@ -251,7 +264,9 @@ fileprivate extension FeedFilter {
         onForceRefreshClick: {},
         deleteAllFeeds: {},
         requestNewPage: {},
-        onItemClick: { _ in }
+        onItemClick: { _ in },
+        onBookmarkClick: { _, _ in },
+        onReadStatusClick: { _, _ in }
     )
     .environmentObject(HomeListIndexHolder())
     .environmentObject(AppState())

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Feed
 import androidx.compose.material.icons.filled.Label
@@ -57,53 +58,58 @@ fun Drawer(
     feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxWidth()
             .padding(Spacing.regular),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        LazyColumn {
+        item {
+            DrawerTimelineItem(
+                currentFeedFilter = currentFeedFilter,
+                onFeedFilterSelected = onFeedFilterSelected,
+            )
+        }
+
+        item {
+            DrawerReadItem(
+                currentFeedFilter = currentFeedFilter,
+                onFeedFilterSelected = onFeedFilterSelected,
+            )
+        }
+
+        item {
+            DrawerBookmarksItem(
+                currentFeedFilter = currentFeedFilter,
+                onFeedFilterSelected = onFeedFilterSelected,
+            )
+        }
+
+        if (navDrawerState.categories.isNotEmpty()) {
             item {
-                DrawerTimelineItem(
+                DrawerDivider()
+            }
+
+            item {
+                DrawerCategoriesSection(
+                    navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
                 )
             }
+        }
 
+        if (navDrawerState.feedSourcesByCategory.isNotEmpty() ||
+            navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
+        ) {
             item {
-                DrawerReadItem(
+                DrawerFeedSourcesByCategories(
+                    navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
+                    feedSourceImage = feedSourceImage,
                 )
-            }
-
-            if (navDrawerState.categories.isNotEmpty()) {
-                item {
-                    DrawerDivider()
-                }
-
-                item {
-                    DrawerCategoriesSection(
-                        navDrawerState = navDrawerState,
-                        currentFeedFilter = currentFeedFilter,
-                        onFeedFilterSelected = onFeedFilterSelected,
-                    )
-                }
-            }
-
-            if (navDrawerState.feedSourcesByCategory.isNotEmpty() ||
-                navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
-            ) {
-                item {
-                    DrawerFeedSourcesByCategories(
-                        navDrawerState = navDrawerState,
-                        currentFeedFilter = currentFeedFilter,
-                        onFeedFilterSelected = onFeedFilterSelected,
-                        feedSourceImage = feedSourceImage,
-                    )
-                }
             }
         }
     }
@@ -167,6 +173,32 @@ private fun DrawerReadItem(
         colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
         onClick = {
             onFeedFilterSelected(FeedFilter.Read)
+        },
+    )
+}
+
+@Composable
+private fun DrawerBookmarksItem(
+    currentFeedFilter: FeedFilter,
+    onFeedFilterSelected: (FeedFilter) -> Unit,
+) {
+    NavigationDrawerItem(
+        selected = currentFeedFilter is FeedFilter.Bookmarks,
+        label = {
+            Text(
+                text = stringResource(MR.strings.drawer_title_bookmarks),
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        },
+        icon = {
+            Icon(
+                imageVector = Icons.Default.Bookmarks,
+                contentDescription = null,
+            )
+        },
+        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+        onClick = {
+            onFeedFilterSelected(FeedFilter.Bookmarks)
         },
     )
 }

@@ -53,7 +53,10 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
-internal expect fun Modifier.feedSourceMenuClickModifier(onLongClick: () -> Unit): Modifier
+internal expect fun Modifier.feedSourceMenuClickModifier(
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit,
+): Modifier
 
 @Composable
 internal fun FeedSourcesWithCategoryList(

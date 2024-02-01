@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
-@Suppress("TooManyFunctions")
 class DatabaseHelper(
     sqlDriver: SqlDriver,
     private val backgroundDispatcher: CoroutineDispatcher,
@@ -79,6 +78,7 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isRead = feedFilter.getIsReadFlag(showReadItems),
+                isBookmarked = feedFilter.getBookmarkFlag(),
                 pageSize = pageSize,
                 offset = offset,
             )
@@ -139,8 +139,13 @@ class DatabaseHelper(
     suspend fun markAsRead(itemsToUpdates: List<FeedItemId>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             for (item in itemsToUpdates) {
-                dbRef.feedItemQueries.markAsRead(item.id)
+                dbRef.feedItemQueries.updateReadStatus(urlHash = item.id, isRead = true)
             }
+        }
+
+    suspend fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.updateReadStatus(urlHash = feedItemId.id, isRead = isRead)
         }
 
     suspend fun markAllFeedAsRead(feedFilter: FeedFilter) =
@@ -158,7 +163,7 @@ class DatabaseHelper(
                     dbRef.feedItemQueries.markAllRead()
                 }
 
-                FeedFilter.Read -> {
+                FeedFilter.Read, FeedFilter.Bookmarks -> {
                     // Do nothing
                 }
             }
@@ -234,6 +239,14 @@ class DatabaseHelper(
             dbRef.feedSourceCategoryQueries.delete(id = id)
         }
 
+    suspend fun updateBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.updateBookmarkStatus(
+                starred = isBookmarked,
+                urlHash = feedItemId.id,
+            )
+        }
+
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,
@@ -253,6 +266,7 @@ class DatabaseHelper(
             is FeedFilter.Category,
             FeedFilter.Timeline,
             FeedFilter.Read,
+            FeedFilter.Bookmarks,
             -> null
         }
     }
@@ -264,6 +278,7 @@ class DatabaseHelper(
             is FeedFilter.Source,
             FeedFilter.Timeline,
             FeedFilter.Read,
+            FeedFilter.Bookmarks,
             -> null
         }
     }
@@ -271,6 +286,8 @@ class DatabaseHelper(
     private fun FeedFilter.getIsReadFlag(showReadItems: Boolean): Boolean? {
         return when (this) {
             is FeedFilter.Read -> true
+
+            is FeedFilter.Bookmarks -> null
 
             is FeedFilter.Category,
             is FeedFilter.Source,
@@ -280,6 +297,18 @@ class DatabaseHelper(
             } else {
                 false
             }
+        }
+    }
+
+    private fun FeedFilter.getBookmarkFlag(): Boolean? {
+        return when (this) {
+            is FeedFilter.Bookmarks -> true
+
+            is FeedFilter.Category,
+            is FeedFilter.Source,
+            FeedFilter.Timeline,
+            FeedFilter.Read,
+            -> null
         }
     }
 

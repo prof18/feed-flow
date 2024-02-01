@@ -9,7 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
-import com.prof18.feedflow.core.model.FeedItemClickedInfo
+import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
@@ -32,8 +33,10 @@ internal fun HomeScreenContent(
     onDrawerMenuClick: () -> Unit = {},
     onRefresh: () -> Unit = {},
     updateReadStatus: (Int) -> Unit,
-    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
-    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
     onAddFeedClick: () -> Unit,
     requestMoreItems: () -> Unit,
 ) {
@@ -55,6 +58,7 @@ internal fun HomeScreenContent(
             )
 
             !loadingState.isLoading() && feedState.isEmpty() -> EmptyFeedView(
+                currentFeedFilter = currentFeedFilter,
                 onReloadClick = {
                     onRefresh()
                 },
@@ -67,7 +71,9 @@ internal fun HomeScreenContent(
                 listState = listState,
                 updateReadStatus = updateReadStatus,
                 onFeedItemClick = onFeedItemClick,
-                onFeedItemLongClick = onFeedItemLongClick,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
+                onCommentClick = onCommentClick,
                 requestMoreItems = requestMoreItems,
             )
         }
@@ -88,9 +94,11 @@ private fun HomeScreenContentPreview() {
             onRefresh = {},
             updateReadStatus = {},
             onFeedItemClick = {},
-            onFeedItemLongClick = {},
             onAddFeedClick = {},
             requestMoreItems = {},
+            onBookmarkClick = { _, _ -> },
+            onReadStatusClick = { _, _ -> },
+            onCommentClick = {},
         )
     }
 }

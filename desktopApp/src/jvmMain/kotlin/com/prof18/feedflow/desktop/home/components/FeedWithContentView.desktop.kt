@@ -22,7 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedItem
-import com.prof18.feedflow.core.model.FeedItemClickedInfo
+import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -40,8 +41,10 @@ internal fun FeedWithContentView(
     loadingState: FeedUpdateStatus,
     listState: LazyListState,
     updateReadStatus: (Int) -> Unit,
-    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
-    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
     requestMoreItems: () -> Unit,
 ) {
     Column(
@@ -67,7 +70,9 @@ internal fun FeedWithContentView(
                     feedItem = feedItem,
                     index = index,
                     onFeedItemClick = onFeedItemClick,
-                    onFeedItemLongClick = onFeedItemLongClick,
+                    onBookmarkClick = onBookmarkClick,
+                    onReadStatusClick = onReadStatusClick,
+                    onCommentClick = onCommentClick,
                     feedItemImage = { url ->
                         FeedItemImage(
                             modifier = Modifier
@@ -119,7 +124,9 @@ private fun FeedWithContentViewPreview() {
             listState = LazyListState(),
             updateReadStatus = { },
             onFeedItemClick = { },
-            onFeedItemLongClick = { },
+            onBookmarkClick = { _, _ -> },
+            onReadStatusClick = { _, _ -> },
+            onCommentClick = { },
             requestMoreItems = { },
             paddingValues = PaddingValues(),
         )

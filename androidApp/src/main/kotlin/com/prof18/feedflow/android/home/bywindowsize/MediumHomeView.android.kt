@@ -50,6 +50,8 @@ internal fun MediumHomeView(
     markAsRead: (FeedItemId) -> Unit,
     markAllRead: () -> Unit,
     openUrl: (String) -> Unit,
+    updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
+    updateReadStatus: (FeedItemId, Boolean) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -114,6 +116,8 @@ internal fun MediumHomeView(
             markAllRead = markAllRead,
             onClearOldArticlesClicked = onClearOldArticlesClicked,
             openUrl = openUrl,
+            updateReadStatus = updateReadStatus,
+            updateBookmarkStatus = updateBookmarkStatus,
         )
     }
 }
@@ -141,6 +145,8 @@ private fun MediumHomeViewPreview() {
             markAllRead = {},
             onFeedFilterSelected = {},
             openUrl = {},
+            updateReadStatus = { _, _ -> },
+            updateBookmarkStatus = { _, _ -> },
         )
     }
 }

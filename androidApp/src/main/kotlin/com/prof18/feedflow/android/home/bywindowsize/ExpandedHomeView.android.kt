@@ -45,6 +45,8 @@ internal fun ExpandedHomeView(
     markAsRead: (FeedItemId) -> Unit,
     markAllRead: () -> Unit,
     openUrl: (String) -> Unit,
+    updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
+    updateReadStatus: (FeedItemId, Boolean) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -100,6 +102,8 @@ internal fun ExpandedHomeView(
             onClearOldArticlesClicked = onClearOldArticlesClicked,
             onDrawerMenuClick = {},
             openUrl = openUrl,
+            updateReadStatus = updateReadStatus,
+            updateBookmarkStatus = updateBookmarkStatus,
         )
     }
 }
@@ -127,6 +131,8 @@ fun ExpandedHomeViewPreview() {
             markAllRead = {},
             onFeedFilterSelected = {},
             openUrl = {},
+            updateReadStatus = { _, _ -> },
+            updateBookmarkStatus = { _, _ -> },
         )
     }
 }

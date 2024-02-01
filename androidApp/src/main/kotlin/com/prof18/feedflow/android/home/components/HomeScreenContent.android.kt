@@ -11,8 +11,10 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
-import com.prof18.feedflow.core.model.FeedItemClickedInfo
+import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
@@ -30,10 +32,13 @@ internal fun HomeScreenContent(
     feedState: ImmutableList<FeedItem>,
     pullRefreshState: PullRefreshState,
     listState: LazyListState,
+    currentFeedFilter: FeedFilter,
     onRefresh: () -> Unit = {},
     updateReadStatus: (Int) -> Unit,
-    onFeedItemClick: (FeedItemClickedInfo) -> Unit,
-    onFeedItemLongClick: (FeedItemClickedInfo) -> Unit,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
     onAddFeedClick: () -> Unit,
     requestMoreItems: () -> Unit,
 ) {
@@ -52,6 +57,7 @@ internal fun HomeScreenContent(
             EmptyFeedView(
                 modifier = Modifier
                     .padding(paddingValues),
+                currentFeedFilter = currentFeedFilter,
                 onReloadClick = {
                     onRefresh()
                 },
@@ -68,8 +74,10 @@ internal fun HomeScreenContent(
             lazyListState = listState,
             updateReadStatus = updateReadStatus,
             onFeedItemClick = onFeedItemClick,
-            onFeedItemLongClick = onFeedItemLongClick,
             requestMoreItems = requestMoreItems,
+            onBookmarkClick = onBookmarkClick,
+            onReadStatusClick = onReadStatusClick,
+            onCommentClick = onCommentClick,
         )
     }
 }
@@ -90,12 +98,15 @@ private fun HomeScreeContentLoadingPreview() {
                 onRefresh = { },
             ),
             listState = rememberLazyListState(),
+            currentFeedFilter = FeedFilter.Timeline,
             updateReadStatus = {},
             onFeedItemClick = {},
-            onFeedItemLongClick = {},
             onAddFeedClick = {},
             onRefresh = {},
             requestMoreItems = {},
+            onCommentClick = {},
+            onBookmarkClick = { _, _ -> },
+            onReadStatusClick = { _, _ -> },
         )
     }
 }
@@ -113,11 +124,14 @@ private fun HomeScreeContentLoadedPreview() {
                 onRefresh = { },
             ),
             listState = rememberLazyListState(),
+            currentFeedFilter = FeedFilter.Timeline,
             updateReadStatus = {},
             onFeedItemClick = {},
-            onFeedItemLongClick = {},
             onAddFeedClick = {},
             requestMoreItems = {},
+            onCommentClick = {},
+            onBookmarkClick = { _, _ -> },
+            onReadStatusClick = { _, _ -> },
         )
     }
 }

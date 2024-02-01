@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource.FeedSourceCate
 data class NavDrawerState(
     val timeline: List<DrawerItem> = emptyList(),
     val read: List<DrawerItem> = emptyList(),
+    val bookmarks: List<DrawerItem> = emptyList(),
     val categories: List<DrawerItem> = emptyList(),
     val feedSourcesWithoutCategory: List<DrawerItem> = emptyList(),
     val feedSourcesByCategory: Map<FeedSourceCategoryWrapper, List<DrawerItem>> = mapOf(),
@@ -20,6 +21,8 @@ sealed class DrawerItem {
     data object Timeline : DrawerItem()
 
     data object Read : DrawerItem()
+
+    data object Bookmarks : DrawerItem()
 
     data class DrawerCategory(
         val category: FeedSourceCategory,

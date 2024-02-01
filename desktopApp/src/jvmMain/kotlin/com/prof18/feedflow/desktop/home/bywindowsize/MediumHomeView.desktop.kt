@@ -46,6 +46,8 @@ internal fun MediumView(
     requestNewData: () -> Unit,
     markAsReadOnScroll: (Int) -> Unit,
     markAsRead: (FeedItemId) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
 ) {
     var isDrawerMenuFullVisible by remember {
         mutableStateOf(true)
@@ -100,7 +102,7 @@ internal fun MediumView(
                 openInBrowser(feedInfo.url)
                 markAsRead(FeedItemId(feedInfo.id))
             },
-            onFeedItemLongClick = { feedInfo ->
+            onCommentClick = { feedInfo ->
                 openInBrowser(feedInfo.url)
                 markAsRead(FeedItemId(feedInfo.id))
             },
@@ -108,6 +110,8 @@ internal fun MediumView(
                 onAddFeedClick()
             },
             requestMoreItems = requestNewData,
+            onBookmarkClick = onBookmarkClick,
+            onReadStatusClick = onReadStatusClick,
         )
     }
 }
@@ -130,6 +134,8 @@ private fun MediumViewPreview() {
             requestNewData = {},
             markAsReadOnScroll = {},
             markAsRead = {},
+            onBookmarkClick = { _, _ -> },
+            onReadStatusClick = { _, _ -> },
         )
     }
 }

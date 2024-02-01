@@ -50,6 +50,8 @@ internal fun HomeScaffold(
     markAsRead: (FeedItemId) -> Unit,
     markAllRead: () -> Unit,
     openUrl: (String) -> Unit,
+    updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
+    updateReadStatus: (FeedItemId, Boolean) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -94,6 +96,7 @@ internal fun HomeScaffold(
             feedState = feedState,
             pullRefreshState = pullRefreshState,
             listState = listState,
+            currentFeedFilter = currentFeedFilter,
             onRefresh = {
                 refreshData()
             },
@@ -102,9 +105,15 @@ internal fun HomeScaffold(
                 openUrl(feedInfo.url)
                 markAsRead(FeedItemId(feedInfo.id))
             },
-            onFeedItemLongClick = { feedInfo ->
+            onCommentClick = { feedInfo ->
                 openUrl(feedInfo.url)
                 markAsRead(FeedItemId(feedInfo.id))
+            },
+            onBookmarkClick = { feedItemId, isBookmarked ->
+                updateBookmarkStatus(feedItemId, isBookmarked)
+            },
+            onReadStatusClick = { feedItemId, isRead ->
+                updateReadStatus(feedItemId, isRead)
             },
             onAddFeedClick = onAddFeedClick,
             requestMoreItems = requestNewData,
@@ -145,6 +154,8 @@ private fun HomeScaffoldPreview() {
             showDrawerMenu = true,
             isDrawerMenuOpen = false,
             onDrawerMenuClick = {},
+            updateReadStatus = { _, _ -> },
+            updateBookmarkStatus = { _, _ -> },
         )
     }
 }

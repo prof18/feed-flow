@@ -68,7 +68,9 @@ internal fun HomeAppBar(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                if (currentFeedFilter !is FeedFilter.Read) {
+                if (currentFeedFilter !is FeedFilter.Read &&
+                    currentFeedFilter !is FeedFilter.Bookmarks
+                ) {
                     Spacer(modifier = Modifier.width(4.dp))
 
                     Text(text = "($unReadCount)")
@@ -122,6 +124,7 @@ private fun FeedFilter.getTitle(): String =
         is FeedFilter.Source -> this.feedSource.title
         FeedFilter.Timeline -> stringResource(resource = MR.strings.app_name)
         FeedFilter.Read -> stringResource(resource = MR.strings.drawer_title_read)
+        FeedFilter.Bookmarks -> stringResource(resource = MR.strings.drawer_title_bookmarks)
     }
 
 @Composable

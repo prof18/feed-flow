@@ -40,6 +40,8 @@ internal fun CompactView(
     requestNewData: () -> Unit,
     markAsReadOnScroll: (Int) -> Unit,
     markAsRead: (FeedItemId) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -68,7 +70,7 @@ internal fun CompactView(
                 openInBrowser(feedInfo.url)
                 markAsRead(FeedItemId(feedInfo.id))
             },
-            onFeedItemLongClick = { feedInfo ->
+            onCommentClick = { feedInfo ->
                 openInBrowser(feedInfo.url)
                 markAsRead(FeedItemId(feedInfo.id))
             },
@@ -76,6 +78,8 @@ internal fun CompactView(
                 onAddFeedClick()
             },
             requestMoreItems = requestNewData,
+            onBookmarkClick = onBookmarkClick,
+            onReadStatusClick = onReadStatusClick,
         )
     } else {
         ModalNavigationDrawer(
@@ -125,7 +129,7 @@ internal fun CompactView(
                     openInBrowser(feedInfo.url)
                     markAsRead(FeedItemId(feedInfo.id))
                 },
-                onFeedItemLongClick = { feedInfo ->
+                onCommentClick = { feedInfo ->
                     openInBrowser(feedInfo.url)
                     markAsRead(FeedItemId(feedInfo.id))
                 },
@@ -133,6 +137,8 @@ internal fun CompactView(
                     onAddFeedClick()
                 },
                 requestMoreItems = requestNewData,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
             )
         }
     }
@@ -156,6 +162,8 @@ private fun CompactViewPreview() {
             requestNewData = {},
             markAsReadOnScroll = {},
             markAsRead = {},
+            onBookmarkClick = { _, _ -> },
+            onReadStatusClick = { _, _ -> },
         )
     }
 }

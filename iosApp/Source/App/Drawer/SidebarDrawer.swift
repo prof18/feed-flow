@@ -22,6 +22,7 @@ struct SidebarDrawer: View {
         List(selection: $selectedDrawerItem) {
             timelineSection
             readSection
+            bookmarksSection
             categoriesSection
             feedSourcesWithoutCategorySection
             feedSourcesWithCategorySection
@@ -61,6 +62,21 @@ struct SidebarDrawer: View {
             .onTapGesture {
                 self.selectedDrawerItem = drawerItem
                 self.onFeedFilterSelected(FeedFilter.Read())
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var bookmarksSection: some View {
+        ForEach(navDrawerState.bookmarks, id: \.self) { drawerItem in
+            HStack {
+                Label(localizer.drawer_title_bookmarks.localized, systemImage: "bookmark.square")
+                Spacer()
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                self.selectedDrawerItem = drawerItem
+                self.onFeedFilterSelected(FeedFilter.Bookmarks())
             }
         }
     }

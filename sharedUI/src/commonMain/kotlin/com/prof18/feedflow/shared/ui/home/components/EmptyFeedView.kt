@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.MR
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
@@ -18,6 +19,7 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun EmptyFeedView(
+    currentFeedFilter: FeedFilter,
     modifier: Modifier = Modifier,
     onReloadClick: () -> Unit,
 ) {
@@ -27,23 +29,32 @@ fun EmptyFeedView(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        val emptyMessage = when (currentFeedFilter) {
+            is FeedFilter.Read -> stringResource(resource = MR.strings.read_articles_empty_screen_message)
+            is FeedFilter.Bookmarks -> stringResource(resource = MR.strings.bookmarked_articles_empty_screen_message)
+            else -> stringResource(resource = MR.strings.empty_feed_message)
+        }
+
         Text(
             modifier = Modifier
                 .tagForTesting(TestingTag.NO_ITEMS_MESSAGE),
-            text = stringResource(resource = MR.strings.empty_feed_message),
+            text = emptyMessage,
             style = MaterialTheme.typography.bodyMedium,
         )
-        Button(
-            modifier = Modifier
-                .padding(top = Spacing.regular)
-                .tagForTesting(TestingTag.REFRESH_FEEDS_BUTTON),
-            onClick = {
-                onReloadClick()
-            },
-        ) {
-            Text(
-                stringResource(resource = MR.strings.refresh_feeds),
-            )
+
+        if (currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks) {
+            Button(
+                modifier = Modifier
+                    .padding(top = Spacing.regular)
+                    .tagForTesting(TestingTag.REFRESH_FEEDS_BUTTON),
+                onClick = {
+                    onReloadClick()
+                },
+            ) {
+                Text(
+                    stringResource(resource = MR.strings.refresh_feeds),
+                )
+            }
         }
     }
 }

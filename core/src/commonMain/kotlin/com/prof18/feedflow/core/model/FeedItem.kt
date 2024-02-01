@@ -15,4 +15,5 @@ data class FeedItem(
     val isRead: Boolean,
     val dateString: String?,
     val commentsUrl: String?,
+    val isBookmarked: Boolean,
 )

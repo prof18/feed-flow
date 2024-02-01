@@ -42,7 +42,6 @@ import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
-@Suppress("TooManyFunctions")
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedRetrieverRepository(
     private val parser: RssParser,
@@ -275,6 +274,40 @@ internal class FeedRetrieverRepository(
         val threshold = dateFormatter.currentTimeMillis() - oneWeekInMillis
         databaseHelper.deleteOldFeedItems(threshold)
         getFeeds()
+    }
+
+    suspend fun updateBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) {
+        mutableFeedState.update { currentItems ->
+            currentItems.mapNotNull { feedItem ->
+                if (feedItem.id == feedItemId.id) {
+                    if (currentFeedFilter.value == FeedFilter.Bookmarks && !isBookmarked) {
+                        null
+                    } else {
+                        feedItem.copy(isBookmarked = isBookmarked)
+                    }
+                } else {
+                    feedItem
+                }
+            }.toImmutableList()
+        }
+        databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
+    }
+
+    suspend fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) {
+        mutableFeedState.update { currentItems ->
+            currentItems.mapNotNull { feedItem ->
+                if (feedItem.id == feedItemId.id) {
+                    if (currentFeedFilter.value == FeedFilter.Read && !isRead) {
+                        null
+                    } else {
+                        feedItem.copy(isRead = isRead)
+                    }
+                } else {
+                    feedItem
+                }
+            }.toImmutableList()
+        }
+        databaseHelper.updateReadStatus(feedItemId, isRead)
     }
 
     private suspend fun parseFeeds(

@@ -85,6 +85,12 @@ internal fun HomeScreen(
                 markAsRead = { feedItemId ->
                     homeViewModel.markAsRead(feedItemId.id)
                 },
+                onBookmarkClick = { feedItemId, isBookmarked ->
+                    homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+                },
+                onReadStatusClick = { feedItemId, isRead ->
+                    homeViewModel.updateReadStatus(feedItemId, isRead)
+                },
             )
         }
 
@@ -115,6 +121,12 @@ internal fun HomeScreen(
                 markAsRead = { feedItemId ->
                     homeViewModel.markAsRead(feedItemId.id)
                 },
+                onBookmarkClick = { feedItemId, isBookmarked ->
+                    homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+                },
+                onReadStatusClick = { feedItemId, isRead ->
+                    homeViewModel.updateReadStatus(feedItemId, isRead)
+                },
             )
         }
 
@@ -144,6 +156,12 @@ internal fun HomeScreen(
                 },
                 markAsRead = { feedItemId ->
                     homeViewModel.markAsRead(feedItemId.id)
+                },
+                onBookmarkClick = { feedItemId, isBookmarked ->
+                    homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+                },
+                onReadStatusClick = { feedItemId, isRead ->
+                    homeViewModel.updateReadStatus(feedItemId, isRead)
                 },
             )
         }

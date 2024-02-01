@@ -8,7 +8,7 @@ CREATE TABLE feed_item_temp (
     image_url TEXT,
     feed_source_id INTEGER AS Int NOT NULL,
     is_read INTEGER AS Boolean NOT NULL DEFAULT 0,
-    is_favourite INTEGER AS Boolean NOT NULL DEFAULT 0,
+    is_bookmarked INTEGER AS Boolean NOT NULL DEFAULT 0,
     pub_date INTEGER,
     comments_url TEXT
 );

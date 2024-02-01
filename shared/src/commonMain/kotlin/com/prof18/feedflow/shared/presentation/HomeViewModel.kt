@@ -93,6 +93,7 @@ class HomeViewModel internal constructor(
                     NavDrawerState(
                         timeline = listOf(DrawerItem.Timeline),
                         read = listOf(DrawerItem.Read),
+                        bookmarks = listOf(DrawerItem.Bookmarks),
                         categories = categories.map { category ->
                             DrawerCategory(category = category)
                         },
@@ -236,6 +237,18 @@ class HomeViewModel internal constructor(
             feedRetrieverRepository.clearReadFeeds()
             feedRetrieverRepository.updateFeedFilter(selectedFeedFilter)
             lastUpdateIndex = 0
+        }
+    }
+
+    fun updateReadStatus(feedItemId: FeedItemId, read: Boolean) {
+        scope.launch {
+            feedRetrieverRepository.updateReadStatus(feedItemId, read)
+        }
+    }
+
+    fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {
+        scope.launch {
+            feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
     }
 }

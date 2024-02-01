@@ -85,6 +85,12 @@ struct HomeScreen: View {
             onItemClick: { feedItemClickedInfo in
                 openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItemClickedInfo.url))
                 homeViewModel.markAsRead(feedItemId: feedItemClickedInfo.id)
+            },
+            onBookmarkClick: { feedItemId, isBookmarked in
+                homeViewModel.updateBookmarkStatus(feedItemId: feedItemId, bookmarked: isBookmarked)
+            },
+            onReadStatusClick: { feedItemId, isRead in
+                homeViewModel.updateReadStatus(feedItemId: feedItemId, read: isRead)
             }
         )
         .task {

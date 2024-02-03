@@ -18,20 +18,16 @@ import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatu
 import com.prof18.feedflow.shared.ui.home.components.EmptyFeedView
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsSourceView
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun HomeScreenContent(
     paddingValues: PaddingValues,
     loadingState: FeedUpdateStatus,
-    feedState: List<FeedItem>,
+    feedState: ImmutableList<FeedItem>,
     listState: LazyListState,
     unReadCount: Long,
-    showDrawerMenu: Boolean = false,
-    isDrawerMenuOpen: Boolean = false,
     currentFeedFilter: FeedFilter,
-    modifier: Modifier = Modifier,
-    onDrawerMenuClick: () -> Unit = {},
-    onRefresh: () -> Unit = {},
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
@@ -40,6 +36,11 @@ internal fun HomeScreenContent(
     onAddFeedClick: () -> Unit,
     requestMoreItems: () -> Unit,
     onBackToTimelineClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    showDrawerMenu: Boolean = false,
+    isDrawerMenuOpen: Boolean = false,
+    onDrawerMenuClick: () -> Unit = {},
+    onRefresh: () -> Unit = {},
 ) {
     Column(
         modifier = modifier

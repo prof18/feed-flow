@@ -10,7 +10,8 @@ import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceListContent
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import kotlinx.collections.immutable.persistentListOf
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -39,13 +40,13 @@ fun FeedSourceListScreen(
     )
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun FeedSourceListContentPreview() {
     FeedFlowTheme {
         FeedSourceListContent(
             feedSourceListState = FeedSourceListState(
-                feedSourcesWithoutCategory = emptyList(),
+                feedSourcesWithoutCategory = persistentListOf(),
                 feedSourcesWithCategory = feedSourcesState,
             ),
             onAddFeedClick = {},

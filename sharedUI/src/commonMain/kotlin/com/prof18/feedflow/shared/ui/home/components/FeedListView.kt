@@ -34,6 +34,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -52,6 +53,7 @@ import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -60,11 +62,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 @OptIn(FlowPreview::class)
 @Composable
 fun FeedList(
-    modifier: Modifier = Modifier,
-    feedItems: List<FeedItem>,
-    listState: LazyListState = rememberLazyListState(),
+    feedItems: ImmutableList<FeedItem>,
     updateReadStatus: (Int) -> Unit,
     requestMoreItems: () -> Unit,
+    modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState(),
     feedItemView: @Composable (FeedItem, Int) -> Unit,
 ) {
     val shouldStartPaginate = remember {
@@ -88,20 +90,22 @@ fun FeedList(
         }
     }
 
+    val latestUpdateReadStatus by rememberUpdatedState(updateReadStatus)
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .distinctUntilChanged()
             .debounce(2000)
             .collect { index ->
                 if (index > 1) {
-                    updateReadStatus(index - 1)
+                    latestUpdateReadStatus(index - 1)
                 }
             }
     }
 
+    val latestRequestMoreItems by rememberUpdatedState(requestMoreItems)
     LaunchedEffect(key1 = shouldStartPaginate.value) {
         if (shouldStartPaginate.value) {
-            requestMoreItems()
+            latestRequestMoreItems()
         }
     }
 }
@@ -115,6 +119,7 @@ fun FeedItemView(
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var showItemMenu by remember {
         mutableStateOf(
@@ -123,7 +128,7 @@ fun FeedItemView(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .feedSourceMenuClickModifier(
                 onClick = {
                     onFeedItemClick(
@@ -225,8 +230,8 @@ private fun FeedSourceAndUnreadDotRow(
 
 @Composable
 private fun TitleSubtitleAndImageRow(
-    modifier: Modifier = Modifier,
     feedItem: FeedItem,
+    modifier: Modifier = Modifier,
     feedItemImage: @Composable (String) -> Unit,
 ) {
     Row(

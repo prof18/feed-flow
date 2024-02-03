@@ -34,8 +34,10 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun LicensesScreen(
     onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = {

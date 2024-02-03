@@ -116,7 +116,7 @@ val feedItemsForPreview = persistentListOf(
     ),
 )
 
-val browsersForPreview = listOf(
+val browsersForPreview = persistentListOf(
     Browser(
         id = "",
         name = "Chrome",
@@ -129,7 +129,7 @@ val browsersForPreview = listOf(
     ),
 )
 
-val feedSourcesForPreview = listOf(
+val feedSourcesForPreview = persistentListOf(
     FeedSource(
         id = 0,
         url = "https://www.site1.com",
@@ -172,10 +172,10 @@ val importExportStates = listOf(
     FeedImportExportState.LoadingExport,
     FeedImportExportState.ExportSuccess,
     FeedImportExportState.ImportSuccess(
-        notValidFeedSources = emptyList(),
+        notValidFeedSources = persistentListOf(),
     ),
     FeedImportExportState.ImportSuccess(
-        notValidFeedSources = listOf(
+        notValidFeedSources = persistentListOf(
             ParsedFeedSource(
                 url = "https://www.ilpost.it",
                 title = "Il Post",
@@ -242,7 +242,7 @@ val categoriesCollapsedState = CategoriesState(
     ),
 )
 
-val feedSourcesState = listOf(
+val feedSourcesState = persistentListOf(
     FeedSourceState(
         categoryId = CategoryId(1),
         categoryName = "Tech",
@@ -325,7 +325,7 @@ val navDrawerState = NavDrawerState(
 )
 
 val feedImportSuccessWithErrorState = FeedImportExportState.ImportSuccess(
-    notValidFeedSources = listOf(
+    notValidFeedSources = persistentListOf(
         ParsedFeedSource(
             url = "https://www.ilpost.it",
             title = "Il Post",
@@ -342,7 +342,7 @@ val feedImportSuccessWithErrorState = FeedImportExportState.ImportSuccess(
 )
 
 val feedImportSuccessState = FeedImportExportState.ImportSuccess(
-    notValidFeedSources = emptyList(),
+    notValidFeedSources = persistentListOf(),
 )
 
 val categoryItems = listOf(

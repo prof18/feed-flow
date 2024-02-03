@@ -29,6 +29,7 @@ import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatu
 import com.prof18.feedflow.shared.presentation.preview.navDrawerState
 import com.prof18.feedflow.shared.ui.home.components.Drawer
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
@@ -37,7 +38,7 @@ internal fun MediumView(
     currentFeedFilter: FeedFilter,
     paddingValues: PaddingValues,
     loadingState: FeedUpdateStatus,
-    feedItems: List<FeedItem>,
+    feedItems: ImmutableList<FeedItem>,
     lazyListState: LazyListState,
     unReadCount: Long,
     onAddFeedClick: () -> Unit,

@@ -49,14 +49,16 @@ import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun Drawer(
-    modifier: Modifier = Modifier,
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier
@@ -279,7 +281,7 @@ private fun DrawerFeedSourcesByCategories(
 
             FeedSourcesList(
                 drawerFeedSources = navDrawerState.feedSourcesWithoutCategory
-                    .filterIsInstance<DrawerItem.DrawerFeedSource>(),
+                    .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                 currentFeedFilter = currentFeedFilter,
                 feedSourceImage = feedSourceImage,
                 onFeedFilterSelected = onFeedFilterSelected,
@@ -293,7 +295,7 @@ private fun DrawerFeedSourcesByCategories(
                 DrawerFeedSourceByCategoryItem(
                     feedSourceCategoryWrapper = categoryWrapper,
                     drawerFeedSources = drawerFeedSources
-                        .filterIsInstance<DrawerItem.DrawerFeedSource>(),
+                        .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                     currentFeedFilter = currentFeedFilter,
                     isCategoryExpanded = isCategoryExpanded,
                     onCategoryExpand = {
@@ -310,7 +312,7 @@ private fun DrawerFeedSourcesByCategories(
 @Composable
 private fun DrawerFeedSourceByCategoryItem(
     feedSourceCategoryWrapper: DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper,
-    drawerFeedSources: List<DrawerItem.DrawerFeedSource>,
+    drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
     isCategoryExpanded: Boolean,
     onCategoryExpand: () -> Unit,
@@ -374,7 +376,7 @@ private fun DrawerFeedSourceByCategoryItem(
 @Composable
 private fun ColumnScope.FeedSourcesListWithCategorySelector(
     isCategoryExpanded: Boolean,
-    drawerFeedSources: List<DrawerItem.DrawerFeedSource>,
+    drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
     feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
@@ -400,7 +402,7 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
 
 @Composable
 private fun FeedSourcesList(
-    drawerFeedSources: List<DrawerItem.DrawerFeedSource>,
+    drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
     feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,

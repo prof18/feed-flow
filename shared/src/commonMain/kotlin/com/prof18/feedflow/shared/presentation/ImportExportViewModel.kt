@@ -7,6 +7,7 @@ import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -32,7 +33,7 @@ class ImportExportViewModel internal constructor(
                 val notValidFeedSources = feedManagerRepository.addFeedsFromFile(opmlInput)
                 importerMutableState.update {
                     FeedImportExportState.ImportSuccess(
-                        notValidFeedSources = notValidFeedSources.feedSources,
+                        notValidFeedSources = notValidFeedSources.feedSources.toImmutableList(),
                     )
                 }
                 feedRetrieverRepository.fetchFeeds()

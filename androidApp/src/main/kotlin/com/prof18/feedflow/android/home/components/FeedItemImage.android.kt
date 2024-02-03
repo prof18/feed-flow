@@ -19,9 +19,9 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 
 @Composable
 internal fun FeedItemImage(
-    modifier: Modifier = Modifier,
     url: String,
     size: Dp,
+    modifier: Modifier = Modifier,
 ) {
     if (LocalInspectionMode.current) {
         Box(

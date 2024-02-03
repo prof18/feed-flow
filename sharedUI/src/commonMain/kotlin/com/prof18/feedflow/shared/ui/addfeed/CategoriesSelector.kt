@@ -49,11 +49,11 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 internal fun CategoriesSelector(
-    modifier: Modifier = Modifier,
     categoriesState: CategoriesState,
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,

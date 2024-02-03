@@ -18,11 +18,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.shared.domain.model.Browser
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun BrowserSelectionDialog(
-    browserList: List<Browser>,
+    browserList: ImmutableList<Browser>,
     onBrowserSelected: (Browser) -> Unit,
     dismissDialog: () -> Unit,
 ) {
@@ -62,7 +63,7 @@ internal fun BrowserSelectionDialog(
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun BrowserSelectionDialogPreview() {
     FeedFlowTheme {

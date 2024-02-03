@@ -26,7 +26,7 @@ import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.navDrawerState
 import com.prof18.feedflow.shared.ui.home.components.Drawer
-import com.prof18.feedflow.shared.ui.preview.FeedFlowFoldablePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewFoldable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
@@ -124,7 +124,7 @@ internal fun MediumHomeView(
     }
 }
 
-@FeedFlowFoldablePreview
+@PreviewFoldable
 @Composable
 private fun MediumHomeViewPreview() {
     FeedFlowTheme {

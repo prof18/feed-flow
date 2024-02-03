@@ -21,7 +21,7 @@ import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.navDrawerState
 import com.prof18.feedflow.shared.ui.home.components.Drawer
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
@@ -153,7 +153,7 @@ internal fun CompactHomeView(
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun CompactHomeViewPreview() {
     FeedFlowTheme {

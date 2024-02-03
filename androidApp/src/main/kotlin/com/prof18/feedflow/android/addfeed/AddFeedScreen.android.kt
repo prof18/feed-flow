@@ -23,7 +23,7 @@ import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
 import com.prof18.feedflow.shared.ui.addfeed.AddFeedContent
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
@@ -31,6 +31,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AddFeedScreen(
     navigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val viewModel = koinViewModel<AddFeedViewModel>()
     var feedUrl by remember { mutableStateOf("") }
@@ -65,6 +66,7 @@ fun AddFeedScreen(
     val categoriesState by viewModel.categoriesState.collectAsStateWithLifecycle()
 
     AddFeedContent(
+        modifier = modifier,
         feedUrl = feedUrl,
         showError = showError,
         errorMessage = errorMessage,
@@ -109,7 +111,7 @@ fun AddFeedScreen(
     )
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun AddScreenContentPreview() {
     FeedFlowTheme {

@@ -20,6 +20,7 @@ import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceListContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun FeedSourceListScreen(
@@ -69,7 +70,7 @@ private fun FeedSourceListContentPreview() {
     FeedFlowTheme {
         FeedSourceListContent(
             feedSourceListState = FeedSourceListState(
-                feedSourcesWithoutCategory = emptyList(),
+                feedSourcesWithoutCategory = persistentListOf(),
                 feedSourcesWithCategory = feedSourcesState,
             ),
             onAddFeedClick = {},

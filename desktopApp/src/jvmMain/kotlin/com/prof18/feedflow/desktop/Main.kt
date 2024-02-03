@@ -257,6 +257,7 @@ private fun MainContent(
                                             )
                                         }
 
+                                        @Suppress("ViewModelForwarding")
                                         HomeScreen(
                                             window = window,
                                             paddingValues = paddingValues,

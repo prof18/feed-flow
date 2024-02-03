@@ -31,9 +31,10 @@ fun AuthorText(nameClicked: () -> Unit, modifier: Modifier = Modifier) {
 fun AboutButtonItem(
     onClick: () -> Unit,
     buttonText: String,
+    modifier: Modifier = Modifier,
 ) {
     Button(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = Spacing.regular)
             .padding(vertical = Spacing.small),

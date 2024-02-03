@@ -7,16 +7,16 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsInfoContent
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import md_theme_dark_background
 import md_theme_light_background
 
 @Composable
 internal fun NoFeedsBottomSheet(
-    sheetState: SheetState = rememberModalBottomSheetState(),
     onDismissRequest: () -> Unit,
     onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit,
+    sheetState: SheetState = rememberModalBottomSheetState(),
 ) {
     ModalBottomSheet(
         containerColor = if (isSystemInDarkTheme()) {
@@ -35,7 +35,7 @@ internal fun NoFeedsBottomSheet(
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun NoFeedsBottomSheetPreview() {
     FeedFlowTheme {

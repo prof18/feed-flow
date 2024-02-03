@@ -32,12 +32,12 @@ import com.prof18.feedflow.shared.ui.home.components.FeedList
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun FeedWithContentView(
-    modifier: Modifier = Modifier,
     paddingValues: PaddingValues,
-    feedState: List<FeedItem>,
+    feedState: ImmutableList<FeedItem>,
     loadingState: FeedUpdateStatus,
     listState: LazyListState,
     updateReadStatus: (Int) -> Unit,
@@ -46,6 +46,7 @@ internal fun FeedWithContentView(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     requestMoreItems: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,

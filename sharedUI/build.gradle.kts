@@ -28,6 +28,7 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.preview)
                 implementation(compose.materialIconsExtended)
+                implementation(libs.immutable.collections)
             }
         }
 

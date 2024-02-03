@@ -8,6 +8,8 @@ import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,8 +47,8 @@ class FeedSourceListViewModel internal constructor(
                 if (containsOnlyNullKey) {
                     feedsMutableState.update {
                         FeedSourceListState(
-                            feedSourcesWithoutCategory = feeds.sortedBy { it.title },
-                            feedSourcesWithCategory = emptyList(),
+                            feedSourcesWithoutCategory = feeds.sortedBy { it.title }.toImmutableList(),
+                            feedSourcesWithCategory = persistentListOf(),
                         )
                     }
                 } else {
@@ -56,7 +58,7 @@ class FeedSourceListViewModel internal constructor(
                                 categoryId = category?.id?.let { CategoryId(it) },
                                 categoryName = category?.title,
                                 isExpanded = false,
-                                feedSources = feedSources,
+                                feedSources = feedSources.toImmutableList(),
                             ),
                         )
                     }
@@ -65,8 +67,8 @@ class FeedSourceListViewModel internal constructor(
 
                     feedsMutableState.update {
                         FeedSourceListState(
-                            feedSourcesWithoutCategory = emptyList(),
-                            feedSourcesWithCategory = feedSourceStates,
+                            feedSourcesWithoutCategory = persistentListOf(),
+                            feedSourcesWithCategory = feedSourceStates.toImmutableList(),
                         )
                     }
                 }
@@ -92,7 +94,7 @@ class FeedSourceListViewModel internal constructor(
             }
             FeedSourceListState(
                 feedSourcesWithoutCategory = oldState.feedSourcesWithoutCategory,
-                feedSourcesWithCategory = newFeedSourceStates,
+                feedSourcesWithCategory = newFeedSourceStates.toImmutableList(),
             )
         }
     }

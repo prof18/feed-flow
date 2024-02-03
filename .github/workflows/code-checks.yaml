@@ -17,7 +17,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup environment
-        uses: ./.github/actions/setup-environment
+        uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
       - name: Install Swift Lint
         run: |
@@ -57,7 +59,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup environment
-        uses: ./.github/actions/setup-environment
+        uses: ./.github/actions/setup-gradle
 
       - name: Create Firebase json
         run: |
@@ -79,7 +81,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup environment
-        uses: ./.github/actions/setup-environment
+        uses: ./.github/actions/setup-gradle
 
       - name: Build Desktop App
         run: ./gradlew :desktopApp:packageDistributionForCurrentOS
@@ -98,7 +100,7 @@ jobs:
           xcode-version: latest-stable
 
       - name: Setup environment
-        uses: ./.github/actions/setup-environment
+        uses: ./.github/actions/setup-gradle
 
       - name: Create Firebase Plist
         run: |

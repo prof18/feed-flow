@@ -17,7 +17,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup environment
-        uses: ./.github/actions/setup-environment
+        uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
       - name: Cache KMP tooling
         uses: actions/cache@v4

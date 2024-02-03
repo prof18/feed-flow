@@ -56,6 +56,9 @@ appId: com.prof18.feedflow
 - assertVisible:
     id: "no_feed_source_message"
 - pressKey: back
+- pressKey: back
+#- tapOn:
+#      id: "home_screen_add_feed_button"
 - tapOn:
     id: "home_screen_add_feed_button"
 - tapOn:

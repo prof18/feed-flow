@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.android.BrowserManager
@@ -353,6 +354,8 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
         },
         navigationIcon = {
             IconButton(
+                modifier = Modifier
+                    .testTag(TestingTag.BACK_BUTTON_FEED_SETTINGS),
                 onClick = {
                     navigateBack()
                 },

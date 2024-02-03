@@ -26,6 +26,8 @@ class FeedSourceListViewModel internal constructor(
     @NativeCoroutinesState
     val feedSourcesState: StateFlow<FeedSourceListState> = feedsMutableState.asStateFlow()
 
+    private var expandedCategoryId: CategoryId? = null
+
     init {
         scope.launch {
             feedManagerRepository.getFeedSources().collect { feeds ->
@@ -57,7 +59,7 @@ class FeedSourceListViewModel internal constructor(
                             FeedSourceState(
                                 categoryId = category?.id?.let { CategoryId(it) },
                                 categoryName = category?.title,
-                                isExpanded = false,
+                                isExpanded = category?.id == expandedCategoryId?.value,
                                 feedSources = feedSources.toImmutableList(),
                             ),
                         )
@@ -71,6 +73,7 @@ class FeedSourceListViewModel internal constructor(
                             feedSourcesWithCategory = feedSourceStates.toImmutableList(),
                         )
                     }
+                    expandedCategoryId = null
                 }
             }
         }
@@ -78,6 +81,9 @@ class FeedSourceListViewModel internal constructor(
 
     fun deleteFeedSource(feedSource: FeedSource) {
         scope.launch {
+            expandedCategoryId = feedSourcesState.value.feedSourcesWithCategory.firstOrNull {
+                it.isExpanded
+            }?.categoryId
             feedManagerRepository.deleteFeed(feedSource)
             feedRetrieverRepository.fetchFeeds()
         }

@@ -28,6 +28,7 @@ struct FeedListView: View {
     let onItemClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
+    let onBackToTimelineClick: () -> Void
 
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
@@ -35,7 +36,8 @@ struct FeedListView: View {
         } else if loadingState?.isLoading() == false && feedState.isEmpty {
             EmptyFeedView(
                 currentFeedFilter: currentFeedFilter,
-                onReloadClick: onReloadClick
+                onReloadClick: onReloadClick,
+                onBackToTimelineClick: onBackToTimelineClick
             )
         } else if feedState.isEmpty {
             VStack(alignment: .center) {
@@ -154,7 +156,8 @@ struct FeedListView: View {
         requestNewPage: {},
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
-        onReadStatusClick: { _, _ in }
+        onReadStatusClick: { _, _ in },
+        onBackToTimelineClick: {}
     ).environmentObject(HomeListIndexHolder())
 }
 
@@ -169,7 +172,8 @@ struct FeedListView: View {
         requestNewPage: {},
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
-        onReadStatusClick: { _, _ in }
+        onReadStatusClick: { _, _ in },
+        onBackToTimelineClick: {}
     )
 }
 
@@ -184,6 +188,7 @@ struct FeedListView: View {
         requestNewPage: {},
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
-        onReadStatusClick: { _, _ in }
+        onReadStatusClick: { _, _ in },
+        onBackToTimelineClick: {}
     )
 }

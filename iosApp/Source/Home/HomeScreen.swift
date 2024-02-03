@@ -91,6 +91,9 @@ struct HomeScreen: View {
             },
             onReadStatusClick: { feedItemId, isRead in
                 homeViewModel.updateReadStatus(feedItemId: feedItemId, read: isRead)
+            },
+            onBackToTimelineClick: {
+                homeViewModel.onFeedFilterSelected(selectedFeedFilter: FeedFilter.Timeline())
             }
         )
         .task {

@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.awt.ComposeWindow
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.desktop.home.bywindowsize.CompactView
 import com.prof18.feedflow.desktop.home.bywindowsize.ExpandedView
 import com.prof18.feedflow.desktop.home.bywindowsize.MediumView
@@ -91,6 +92,9 @@ internal fun HomeScreen(
                 onReadStatusClick = { feedItemId, isRead ->
                     homeViewModel.updateReadStatus(feedItemId, isRead)
                 },
+                onBackToTimelineClick = {
+                    homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
+                },
             )
         }
 
@@ -127,6 +131,9 @@ internal fun HomeScreen(
                 onReadStatusClick = { feedItemId, isRead ->
                     homeViewModel.updateReadStatus(feedItemId, isRead)
                 },
+                onBackToTimelineClick = {
+                    homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
+                },
             )
         }
 
@@ -162,6 +169,9 @@ internal fun HomeScreen(
                 },
                 onReadStatusClick = { feedItemId, isRead ->
                     homeViewModel.updateReadStatus(feedItemId, isRead)
+                },
+                onBackToTimelineClick = {
+                    homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
             )
         }

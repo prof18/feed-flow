@@ -47,6 +47,7 @@ internal fun CompactHomeView(
     openUrl: (String) -> Unit,
     updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
     updateReadStatus: (FeedItemId, Boolean) -> Unit,
+    onBackToTimelineClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -90,6 +91,7 @@ internal fun CompactHomeView(
             openUrl = openUrl,
             updateReadStatus = updateReadStatus,
             updateBookmarkStatus = updateBookmarkStatus,
+            onBackToTimelineClick = onBackToTimelineClick,
         )
     } else {
         ModalNavigationDrawer(
@@ -145,6 +147,7 @@ internal fun CompactHomeView(
                 openUrl = openUrl,
                 updateReadStatus = updateReadStatus,
                 updateBookmarkStatus = updateBookmarkStatus,
+                onBackToTimelineClick = onBackToTimelineClick,
             )
         }
     }
@@ -175,6 +178,7 @@ private fun CompactHomeViewPreview() {
             openUrl = { },
             updateBookmarkStatus = { _, _ -> },
             updateReadStatus = { _, _ -> },
+            onBackToTimelineClick = {},
         )
     }
 }

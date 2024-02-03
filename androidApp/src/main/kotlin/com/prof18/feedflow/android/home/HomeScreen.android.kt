@@ -17,6 +17,7 @@ import com.prof18.feedflow.android.home.bywindowsize.CompactHomeView
 import com.prof18.feedflow.android.home.bywindowsize.ExpandedHomeView
 import com.prof18.feedflow.android.home.bywindowsize.MediumHomeView
 import com.prof18.feedflow.android.home.components.NoFeedsBottomSheet
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -109,6 +110,9 @@ internal fun HomeScreen(
                 updateBookmarkStatus = { feedItemId, isBookmarked ->
                     homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                 },
+                onBackToTimelineClick = {
+                    homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
+                },
             )
         }
 
@@ -160,6 +164,9 @@ internal fun HomeScreen(
                 updateBookmarkStatus = { feedItemId, isBookmarked ->
                     homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                 },
+                onBackToTimelineClick = {
+                    homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
+                },
             )
         }
 
@@ -210,6 +217,9 @@ internal fun HomeScreen(
                 },
                 updateBookmarkStatus = { feedItemId, isBookmarked ->
                     homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+                },
+                onBackToTimelineClick = {
+                    homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
             )
         }

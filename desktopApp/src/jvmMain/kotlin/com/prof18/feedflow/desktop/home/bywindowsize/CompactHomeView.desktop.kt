@@ -42,6 +42,7 @@ internal fun CompactView(
     markAsRead: (FeedItemId) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onBackToTimelineClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -80,6 +81,7 @@ internal fun CompactView(
             requestMoreItems = requestNewData,
             onBookmarkClick = onBookmarkClick,
             onReadStatusClick = onReadStatusClick,
+            onBackToTimelineClick = onBackToTimelineClick,
         )
     } else {
         ModalNavigationDrawer(
@@ -139,6 +141,7 @@ internal fun CompactView(
                 requestMoreItems = requestNewData,
                 onBookmarkClick = onBookmarkClick,
                 onReadStatusClick = onReadStatusClick,
+                onBackToTimelineClick = onBackToTimelineClick,
             )
         }
     }
@@ -164,6 +167,7 @@ private fun CompactViewPreview() {
             markAsRead = {},
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
+            onBackToTimelineClick = {},
         )
     }
 }

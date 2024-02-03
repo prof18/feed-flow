@@ -52,6 +52,7 @@ internal fun HomeScaffold(
     openUrl: (String) -> Unit,
     updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
     updateReadStatus: (FeedItemId, Boolean) -> Unit,
+    onBackToTimelineClick: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -117,6 +118,7 @@ internal fun HomeScaffold(
             },
             onAddFeedClick = onAddFeedClick,
             requestMoreItems = requestNewData,
+            onBackToTimelineClick = onBackToTimelineClick,
         )
     }
 }
@@ -156,6 +158,7 @@ private fun HomeScaffoldPreview() {
             onDrawerMenuClick = {},
             updateReadStatus = { _, _ -> },
             updateBookmarkStatus = { _, _ -> },
+            onBackToTimelineClick = {},
         )
     }
 }

@@ -22,6 +22,7 @@ fun EmptyFeedView(
     currentFeedFilter: FeedFilter,
     modifier: Modifier = Modifier,
     onReloadClick: () -> Unit,
+    onBackToTimelineClick: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -42,19 +43,28 @@ fun EmptyFeedView(
             style = MaterialTheme.typography.bodyMedium,
         )
 
-        if (currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks) {
-            Button(
-                modifier = Modifier
-                    .padding(top = Spacing.regular)
-                    .tagForTesting(TestingTag.REFRESH_FEEDS_BUTTON),
-                onClick = {
-                    onReloadClick()
-                },
-            ) {
-                Text(
-                    stringResource(resource = MR.strings.refresh_feeds),
-                )
+        val buttonAction = if (currentFeedFilter is FeedFilter.Read || currentFeedFilter is FeedFilter.Bookmarks) {
+            onBackToTimelineClick
+        } else {
+            onReloadClick
+        }
+
+        val buttonText = when (currentFeedFilter) {
+            is FeedFilter.Read, is FeedFilter.Bookmarks -> {
+                stringResource(resource = MR.strings.empty_screen_back_to_timeline)
             }
+            else -> {
+                stringResource(resource = MR.strings.refresh_feeds)
+            }
+        }
+
+        Button(
+            modifier = Modifier
+                .padding(top = Spacing.regular)
+                .tagForTesting(TestingTag.REFRESH_FEEDS_BUTTON),
+            onClick = buttonAction,
+        ) {
+            Text(buttonText)
         }
     }
 }

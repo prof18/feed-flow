@@ -39,6 +39,7 @@ internal fun HomeScreenContent(
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     onAddFeedClick: () -> Unit,
     requestMoreItems: () -> Unit,
+    onBackToTimelineClick: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -59,9 +60,8 @@ internal fun HomeScreenContent(
 
             !loadingState.isLoading() && feedState.isEmpty() -> EmptyFeedView(
                 currentFeedFilter = currentFeedFilter,
-                onReloadClick = {
-                    onRefresh()
-                },
+                onReloadClick = onRefresh,
+                onBackToTimelineClick = onBackToTimelineClick,
             )
 
             else -> FeedWithContentView(
@@ -99,6 +99,7 @@ private fun HomeScreenContentPreview() {
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
             onCommentClick = {},
+            onBackToTimelineClick = {},
         )
     }
 }

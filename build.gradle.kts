@@ -45,7 +45,6 @@ allprojects {
                 DEFAULT_TEST_SRC_DIR_KOTLIN,
             ),
         )
-        toolVersion = rootProject.libs.versions.detekt.get()
         config.setFrom(rootProject.files("config/detekt/detekt.yml"))
         parallel = true
         autoCorrect = true

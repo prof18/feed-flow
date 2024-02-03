@@ -47,6 +47,7 @@ internal fun ExpandedHomeView(
     openUrl: (String) -> Unit,
     updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
     updateReadStatus: (FeedItemId, Boolean) -> Unit,
+    onBackToTimelineClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -104,6 +105,7 @@ internal fun ExpandedHomeView(
             openUrl = openUrl,
             updateReadStatus = updateReadStatus,
             updateBookmarkStatus = updateBookmarkStatus,
+            onBackToTimelineClick = onBackToTimelineClick,
         )
     }
 }
@@ -133,6 +135,7 @@ fun ExpandedHomeViewPreview() {
             openUrl = {},
             updateReadStatus = { _, _ -> },
             updateBookmarkStatus = { _, _ -> },
+            onBackToTimelineClick = {},
         )
     }
 }

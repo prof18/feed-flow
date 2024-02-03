@@ -41,6 +41,7 @@ internal fun HomeScreenContent(
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     onAddFeedClick: () -> Unit,
     requestMoreItems: () -> Unit,
+    onBackToTimelineClick: () -> Unit,
 ) {
     when {
         loadingState is NoFeedSourcesStatus -> {
@@ -58,9 +59,8 @@ internal fun HomeScreenContent(
                 modifier = Modifier
                     .padding(paddingValues),
                 currentFeedFilter = currentFeedFilter,
-                onReloadClick = {
-                    onRefresh()
-                },
+                onReloadClick = onRefresh,
+                onBackToTimelineClick = onBackToTimelineClick,
             )
         }
 
@@ -107,6 +107,7 @@ private fun HomeScreeContentLoadingPreview() {
             onCommentClick = {},
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
+            onBackToTimelineClick = {},
         )
     }
 }
@@ -132,6 +133,7 @@ private fun HomeScreeContentLoadedPreview() {
             onCommentClick = {},
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
+            onBackToTimelineClick = {},
         )
     }
 }

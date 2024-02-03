@@ -52,6 +52,7 @@ internal fun MediumHomeView(
     openUrl: (String) -> Unit,
     updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
     updateReadStatus: (FeedItemId, Boolean) -> Unit,
+    onBackToTimelineClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -118,6 +119,7 @@ internal fun MediumHomeView(
             openUrl = openUrl,
             updateReadStatus = updateReadStatus,
             updateBookmarkStatus = updateBookmarkStatus,
+            onBackToTimelineClick = onBackToTimelineClick,
         )
     }
 }
@@ -147,6 +149,7 @@ private fun MediumHomeViewPreview() {
             openUrl = {},
             updateReadStatus = { _, _ -> },
             updateBookmarkStatus = { _, _ -> },
+            onBackToTimelineClick = {},
         )
     }
 }

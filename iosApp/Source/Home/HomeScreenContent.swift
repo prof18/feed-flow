@@ -35,6 +35,7 @@ struct HomeContent: View {
     let onItemClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
+    let onBackToTimelineClick: () -> Void
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -50,7 +51,8 @@ struct HomeContent: View {
                 requestNewPage: requestNewPage,
                 onItemClick: onItemClick,
                 onBookmarkClick: onBookmarkClick,
-                onReadStatusClick: onReadStatusClick
+                onReadStatusClick: onReadStatusClick,
+                onBackToTimelineClick: onBackToTimelineClick
             )
             .onChange(of: toggleListScroll) { _ in
                 proxy.scrollTo(feedState.first?.id)
@@ -212,7 +214,8 @@ fileprivate extension FeedFilter {
         requestNewPage: {},
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
-        onReadStatusClick: { _, _ in }
+        onReadStatusClick: { _, _ in },
+        onBackToTimelineClick: {}
     )
     .environmentObject(HomeListIndexHolder())
     .environmentObject(AppState())
@@ -239,7 +242,8 @@ fileprivate extension FeedFilter {
         requestNewPage: {},
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
-        onReadStatusClick: { _, _ in }
+        onReadStatusClick: { _, _ in },
+        onBackToTimelineClick: {}
     )
     .environmentObject(HomeListIndexHolder())
     .environmentObject(AppState())
@@ -266,7 +270,8 @@ fileprivate extension FeedFilter {
         requestNewPage: {},
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
-        onReadStatusClick: { _, _ in }
+        onReadStatusClick: { _, _ in },
+        onBackToTimelineClick: {}
     )
     .environmentObject(HomeListIndexHolder())
     .environmentObject(AppState())

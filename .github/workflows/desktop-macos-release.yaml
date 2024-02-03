@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: macos-latest
+    runs-on: macos-14
     timeout-minutes: 40
     permissions:
       contents: write
@@ -16,24 +16,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: 18
-
-      - uses: gradle/gradle-build-action@v2.11.1
-        with:
-          gradle-home-cache-cleanup: true
-
-      - name: Setup Gradle Properties
-        shell: bash
-        run: |
-          echo "org.gradle.jvmargs=-Xms10g -Xmx10g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC" >> ~/.gradle/gradle.properties
-          echo "kotlin.daemon.jvmargs=-Xms4g -Xmx4g -XX:+UseParallelGC" >> ~/.gradle/gradle.properties
-          echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
-          echo "org.gradle.workers.max=2" >> ~/.gradle/gradle.properties
-          echo "org.gradle.vfs.watch=false" >> ~/.gradle/gradle.properties               
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
       - name: Cache KMP tooling
         uses: actions/cache@v4

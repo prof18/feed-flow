@@ -14,22 +14,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: 17
-
-      - uses: gradle/gradle-build-action@v2.11.1
-        with:
-          gradle-home-cache-cleanup: true
-
-      - name: Cache KMP tooling
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.konan
-          key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
       - name: Configure Keystore
         run: |

@@ -1,6 +1,12 @@
 name: Setup Environment
 description: Setup the environment (Java and Gradle)
 
+inputs:
+  gradle-cache-encryption-key:
+    description: 'The encryption key to use for the Gradle cache'
+    required: true
+
+
 runs:
   using: 'composite'
   steps:
@@ -13,7 +19,7 @@ runs:
     - uses: gradle/actions/setup-gradle@v3
       with:
         gradle-home-cache-cleanup: true
-        cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+        cache-encryption-key: ${{ inputs.gradle-cache-encryption-key }}
 
     - name: Setup Gradle Properties
       shell: bash

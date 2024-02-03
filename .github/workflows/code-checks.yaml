@@ -9,34 +9,24 @@ on:
 
 jobs:
   checks:
-    runs-on: macos-latest
+    runs-on: macos-14
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: 17
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
-      - uses: gradle/gradle-build-action@v2.11.1
-        with:
-          gradle-home-cache-cleanup: true
-
-      - name: Cache KMP tooling
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.konan
-          key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
+      - name: Install Swift Lint
+        run: |
+          brew install swiftlint
 
       - name: Run Swift Lint
         run: |
           cd iosApp
-          swiftlint
+          /opt/homebrew/bin/swiftlint
           cd ..
 
       - name: Create Firebase json
@@ -66,23 +56,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: 17
-
-      - uses: gradle/gradle-build-action@v2.11.1
-        with:
-          gradle-home-cache-cleanup: true
-          cache-read-only: false
-
-      - name: Cache KMP tooling
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.konan
-          key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
       - name: Create Firebase json
         run: |
@@ -103,30 +78,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: 17
-
-      - uses: gradle/gradle-build-action@v2.11.1
-        with:
-          gradle-home-cache-cleanup: true
-          cache-read-only: false
-
-      - name: Cache KMP tooling
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.konan
-          key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
       - name: Build Desktop App
         run: ./gradlew :desktopApp:packageDistributionForCurrentOS
 
   build-ios-app:
     name: Build iOS App
-    runs-on: macos-13
+    runs-on: macos-14
     needs: [ checks ]
     steps:
       - uses: actions/checkout@v4
@@ -137,22 +97,8 @@ jobs:
         with:
           xcode-version: latest-stable
 
-      - name: set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: 17
-
-      - uses: gradle/gradle-build-action@v2.11.1
-        with:
-          gradle-home-cache-cleanup: true
-
-      - name: Cache KMP tooling
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.konan
-          key: ${{ runner.os }}-v1-${{ hashFiles('*.gradle.kts') }}
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
       - name: Create Firebase Plist
         run: |

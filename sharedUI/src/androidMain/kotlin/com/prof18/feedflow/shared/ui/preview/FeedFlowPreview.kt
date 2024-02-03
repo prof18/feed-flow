@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
     group = "themes",
     uiMode = UI_MODE_NIGHT_YES,
 )
-annotation class FeedFlowPhonePreview
+annotation class PreviewPhone
 
 @Preview(
     name = "Light theme",
@@ -29,7 +29,7 @@ annotation class FeedFlowPhonePreview
     uiMode = UI_MODE_NIGHT_YES,
     device = "spec:width=673dp,height=841dp",
 )
-annotation class FeedFlowFoldablePreview
+annotation class PreviewFoldable
 
 @Preview(
     name = "Light theme",
@@ -44,4 +44,4 @@ annotation class FeedFlowFoldablePreview
     uiMode = UI_MODE_NIGHT_YES,
     device = "id:pixel_tablet",
 )
-annotation class FeedFlowTabletPreview
+annotation class PreviewTablet

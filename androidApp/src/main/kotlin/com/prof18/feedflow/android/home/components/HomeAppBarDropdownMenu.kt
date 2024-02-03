@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.core.utils.TestingTag
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -118,9 +118,9 @@ internal fun HomeAppBarDropdownMenu(
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
-fun SettingsDropdownMenuPreview() {
+private fun SettingsDropdownMenuPreview() {
     FeedFlowTheme {
         HomeAppBarDropdownMenu(
             showMenu = true,

@@ -34,6 +34,7 @@ import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun ImportExportContent(
@@ -43,8 +44,10 @@ fun ImportExportContent(
     onDoneClick: () -> Unit,
     onImportClick: () -> Unit,
     onExportClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             ImportExportNavBar(navigateBack)
         },
@@ -78,7 +81,7 @@ fun ImportExportContent(
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize(),
-                    stringResource(MR.strings.export_started_message),
+                    message = stringResource(MR.strings.export_started_message),
                 )
 
             FeedImportExportState.ExportSuccess ->
@@ -126,9 +129,9 @@ private fun ImportExportNavBar(navigateBack: () -> Unit) {
 
 @Composable
 private fun ImportExportIdleView(
-    modifier: Modifier = Modifier,
     onImportClick: () -> Unit,
     onExportClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -165,8 +168,8 @@ private fun ImportExportIdleView(
 
 @Composable
 private fun ImportExportLoadingView(
-    modifier: Modifier = Modifier,
     message: String,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
@@ -237,16 +240,16 @@ private fun ExportDoneView(
 
 @Composable
 private fun ImportDoneView(
-    modifier: Modifier = Modifier,
-    feedSources: List<ParsedFeedSource>,
+    feedSources: ImmutableList<ParsedFeedSource>,
     onDoneClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
     ) {
         if (feedSources.isEmpty()) {
             Column(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -296,8 +299,8 @@ private fun ImportDoneView(
 
 @Composable
 private fun FeedsNotAddedList(
+    feedSources: ImmutableList<ParsedFeedSource>,
     modifier: Modifier = Modifier,
-    feedSources: List<ParsedFeedSource>,
 ) {
     LazyColumn(
         modifier = modifier,

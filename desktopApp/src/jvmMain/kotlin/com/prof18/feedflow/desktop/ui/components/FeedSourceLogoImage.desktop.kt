@@ -20,9 +20,9 @@ import com.seiko.imageloader.rememberImagePainter
 
 @Composable
 fun FeedSourceLogoImage(
-    modifier: Modifier = Modifier,
     imageUrl: String,
     size: Dp,
+    modifier: Modifier = Modifier,
 ) {
     if (LocalInspectionMode.current) {
         Box(

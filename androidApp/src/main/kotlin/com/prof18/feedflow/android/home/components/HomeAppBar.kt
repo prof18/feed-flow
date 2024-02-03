@@ -26,7 +26,7 @@ import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.utils.TestingTag
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
 
@@ -147,7 +147,7 @@ private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun HomeAppBarPreview() {
     FeedFlowTheme {
@@ -177,7 +177,7 @@ private fun HomeAppBarPreview() {
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun HomeAppBarSmallPreview() {
     FeedFlowTheme {

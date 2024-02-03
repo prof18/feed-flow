@@ -20,7 +20,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -35,9 +35,6 @@ internal fun HomeScaffold(
     feedState: ImmutableList<FeedItem>,
     pullRefreshState: PullRefreshState,
     currentFeedFilter: FeedFilter,
-    modifier: Modifier = Modifier,
-    showDrawerMenu: Boolean = false,
-    isDrawerMenuOpen: Boolean = false,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
     onDrawerMenuClick: () -> Unit,
@@ -53,6 +50,9 @@ internal fun HomeScaffold(
     updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
     updateReadStatus: (FeedItemId, Boolean) -> Unit,
     onBackToTimelineClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    showDrawerMenu: Boolean = false,
+    isDrawerMenuOpen: Boolean = false,
 ) {
     Scaffold(
         modifier = modifier,
@@ -123,7 +123,7 @@ internal fun HomeScaffold(
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun HomeScaffoldPreview() {
     FeedFlowTheme {

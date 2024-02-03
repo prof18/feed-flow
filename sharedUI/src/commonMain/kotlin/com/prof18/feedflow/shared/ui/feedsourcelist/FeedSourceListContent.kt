@@ -17,8 +17,10 @@ fun FeedSourceListContent(
     onDeleteFeedClick: (FeedSource) -> Unit,
     navigateBack: () -> Unit,
     onExpandClicked: (CategoryId?) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             FeedSourceNavBar(
                 navigateBack = navigateBack,

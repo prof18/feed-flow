@@ -33,6 +33,7 @@ allprojects {
         detektPlugins(rootProject.libs.io.gitlab.arturbosch.detekt.formatting) {
             exclude(group = "org.slf4j", module = "slf4j-nop")
         }
+        detektPlugins(rootProject.libs.detekt.compose.rules)
     }
 
     detekt {

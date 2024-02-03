@@ -1,5 +1,7 @@
 package com.prof18.feedflow.core.model
 
+import kotlinx.collections.immutable.ImmutableList
+
 sealed class FeedImportExportState {
 
     data object Idle : FeedImportExportState()
@@ -10,7 +12,7 @@ sealed class FeedImportExportState {
     data object Error : FeedImportExportState()
 
     data class ImportSuccess(
-        val notValidFeedSources: List<ParsedFeedSource>,
+        val notValidFeedSources: ImmutableList<ParsedFeedSource>,
     ) : FeedImportExportState()
 
     data object ExportSuccess : FeedImportExportState()

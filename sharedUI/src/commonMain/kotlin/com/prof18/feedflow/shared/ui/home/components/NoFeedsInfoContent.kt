@@ -16,12 +16,15 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun NoFeedsInfoContent(
-    showTitle: Boolean = true,
     onDismissRequest: () -> Unit,
     onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    showTitle: Boolean = true,
 ) {
-    Column {
+    Column(
+        modifier = modifier,
+    ) {
         if (showTitle) {
             Text(
                 modifier = Modifier

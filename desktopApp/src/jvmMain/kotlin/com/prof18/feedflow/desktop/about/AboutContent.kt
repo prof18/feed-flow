@@ -41,9 +41,12 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun AboutContent(
     versionLabel: String,
+    modifier: Modifier = Modifier,
 ) {
     FeedFlowTheme {
-        Scaffold { paddingValues ->
+        Scaffold(
+            modifier = modifier,
+        ) { paddingValues ->
 
             var showLicensesScreen by remember { mutableStateOf(false) }
 

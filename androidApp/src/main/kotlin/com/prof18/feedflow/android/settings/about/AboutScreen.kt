@@ -28,7 +28,7 @@ import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.shared.ui.about.AboutButtonItem
 import com.prof18.feedflow.shared.ui.about.AboutTextItem
 import com.prof18.feedflow.shared.ui.about.AuthorText
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
@@ -139,7 +139,7 @@ private fun AboutScreenContent(
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun AboutScreenPreview() {
     FeedFlowTheme {

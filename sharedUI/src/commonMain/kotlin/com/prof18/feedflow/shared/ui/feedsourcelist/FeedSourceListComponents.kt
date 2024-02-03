@@ -52,6 +52,7 @@ import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableList
 
 internal expect fun Modifier.feedSourceMenuClickModifier(
     onClick: () -> Unit = {},
@@ -60,17 +61,17 @@ internal expect fun Modifier.feedSourceMenuClickModifier(
 
 @Composable
 internal fun FeedSourcesWithCategoryList(
-    modifier: Modifier = Modifier,
     feedSourceState: FeedSourceListState,
     feedSourceImage: @Composable (String) -> Unit,
     onExpandClicked: (CategoryId?) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(Spacing.regular),
     ) {
-        item(feedSourceState.feedSourcesWithoutCategory) {
+        item {
             FeedSourcesList(
                 feedSources = feedSourceState.feedSourcesWithoutCategory,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
@@ -155,7 +156,7 @@ private fun FeedSourcesListWithCategorySelector(
 
 @Composable
 private fun FeedSourcesList(
-    feedSources: List<FeedSource>,
+    feedSources: ImmutableList<FeedSource>,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     feedSourceImage: @Composable (String) -> Unit,
 ) {

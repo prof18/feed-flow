@@ -21,7 +21,7 @@ import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.navDrawerState
 import com.prof18.feedflow.shared.ui.home.components.Drawer
-import com.prof18.feedflow.shared.ui.preview.FeedFlowTabletPreview
+import com.prof18.feedflow.shared.ui.preview.PreviewTablet
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
@@ -110,9 +110,9 @@ internal fun ExpandedHomeView(
     }
 }
 
-@FeedFlowTabletPreview
+@PreviewTablet
 @Composable
-fun ExpandedHomeViewPreview() {
+private fun ExpandedHomeViewPreview() {
     FeedFlowTheme {
         ExpandedHomeView(
             feedItems = feedItemsForPreview,

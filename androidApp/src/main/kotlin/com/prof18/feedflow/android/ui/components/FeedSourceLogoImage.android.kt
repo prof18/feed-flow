@@ -18,13 +18,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
 
 @Composable
 fun FeedSourceLogoImage(
-    modifier: Modifier = Modifier,
     imageUrl: String,
+    modifier: Modifier = Modifier,
     size: Dp = 24.dp,
 ) {
     if (LocalInspectionMode.current) {
@@ -50,7 +50,7 @@ fun FeedSourceLogoImage(
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun FeedSourceLogoImagePreview() {
     FeedSourceLogoImage(

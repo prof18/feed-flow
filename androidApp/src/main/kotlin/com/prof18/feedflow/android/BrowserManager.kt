@@ -9,6 +9,9 @@ import android.os.Build
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.model.Browser
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,7 +22,7 @@ class BrowserManager(
     private val logger: Logger,
 ) {
 
-    private val browserListMutableState = MutableStateFlow<List<Browser>>(emptyList())
+    private val browserListMutableState = MutableStateFlow<ImmutableList<Browser>>(persistentListOf())
     val browserListState = browserListMutableState.asStateFlow()
 
     init {
@@ -37,7 +40,7 @@ class BrowserManager(
             newList.replaceAll {
                 it.copy(isFavourite = it.id == browser.id)
             }
-            newList
+            newList.toImmutableList()
         }
     }
 
@@ -71,7 +74,7 @@ class BrowserManager(
                     index == 0
                 },
             )
-        }
+        }.toImmutableList()
         browserListMutableState.update { browserList }
     }
 

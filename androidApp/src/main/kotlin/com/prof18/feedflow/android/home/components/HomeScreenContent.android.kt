@@ -22,7 +22,7 @@ import com.prof18.feedflow.shared.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.home.components.EmptyFeedView
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsSourceView
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -33,7 +33,6 @@ internal fun HomeScreenContent(
     pullRefreshState: PullRefreshState,
     listState: LazyListState,
     currentFeedFilter: FeedFilter,
-    onRefresh: () -> Unit = {},
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
@@ -42,6 +41,7 @@ internal fun HomeScreenContent(
     onAddFeedClick: () -> Unit,
     requestMoreItems: () -> Unit,
     onBackToTimelineClick: () -> Unit,
+    onRefresh: () -> Unit = {},
 ) {
     when {
         loadingState is NoFeedSourcesStatus -> {
@@ -82,7 +82,7 @@ internal fun HomeScreenContent(
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun HomeScreeContentLoadingPreview() {
     FeedFlowTheme {
@@ -112,7 +112,7 @@ private fun HomeScreeContentLoadingPreview() {
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun HomeScreeContentLoadedPreview() {
     FeedFlowTheme {

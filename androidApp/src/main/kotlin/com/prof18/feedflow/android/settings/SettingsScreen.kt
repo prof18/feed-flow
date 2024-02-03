@@ -43,12 +43,13 @@ import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.Browser
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableList
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -105,7 +106,7 @@ fun SettingsScreen(
 
 @Composable
 private fun SettingsScreenContent(
-    browsers: List<Browser>,
+    browsers: ImmutableList<Browser>,
     isMarkReadWhenScrollingEnabled: Boolean,
     isShowReadItemEnabled: Boolean,
     onFeedListClick: () -> Unit,
@@ -166,7 +167,6 @@ private fun SettingsScreenContent(
 private fun SettingsList(
     isMarkReadWhenScrollingEnabled: Boolean,
     isShowReadItemEnabled: Boolean,
-    modifier: Modifier = Modifier,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelectionClick: () -> Unit,
@@ -175,6 +175,7 @@ private fun SettingsList(
     onBugReportClick: () -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -365,7 +366,7 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
     )
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun SettingsScreenPreview() {
     FeedFlowTheme {

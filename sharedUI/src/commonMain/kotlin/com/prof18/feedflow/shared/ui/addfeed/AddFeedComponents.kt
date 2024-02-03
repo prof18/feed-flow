@@ -33,10 +33,12 @@ fun AddFeedContent(
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    modifier: Modifier = Modifier,
     snackbarHost: @Composable () -> Unit = {},
     topAppBar: @Composable () -> Unit = {},
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = topAppBar,
         snackbarHost = snackbarHost,
     ) { paddingValues ->
@@ -89,11 +91,11 @@ fun AddFeedContent(
 
 @Composable
 private fun FeedUrlTextField(
-    modifier: Modifier = Modifier,
     feedUrl: String,
     showError: Boolean,
     errorMessage: String,
     onFeedUrlUpdated: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     OutlinedTextField(
         modifier = modifier,

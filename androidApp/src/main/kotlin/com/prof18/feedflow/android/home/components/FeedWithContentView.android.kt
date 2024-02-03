@@ -29,7 +29,7 @@ import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.ui.home.components.FeedItemView
 import com.prof18.feedflow.shared.ui.home.components.FeedList
-import com.prof18.feedflow.shared.ui.preview.FeedFlowPhonePreview
+import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import dev.icerock.moko.resources.compose.stringResource
@@ -37,7 +37,6 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun FeedWithContentView(
-    modifier: Modifier = Modifier,
     pullRefreshState: PullRefreshState,
     feedUpdateStatus: FeedUpdateStatus,
     lazyListState: LazyListState,
@@ -48,6 +47,7 @@ internal fun FeedWithContentView(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     requestMoreItems: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
@@ -111,7 +111,7 @@ internal fun FeedWithContentView(
     }
 }
 
-@FeedFlowPhonePreview
+@PreviewPhone
 @Composable
 private fun FeedWithContentViewPreview() {
     FeedFlowTheme {

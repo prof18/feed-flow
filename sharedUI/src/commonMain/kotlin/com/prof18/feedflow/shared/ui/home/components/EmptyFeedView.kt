@@ -20,9 +20,9 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun EmptyFeedView(
     currentFeedFilter: FeedFilter,
-    modifier: Modifier = Modifier,
     onReloadClick: () -> Unit,
     onBackToTimelineClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier

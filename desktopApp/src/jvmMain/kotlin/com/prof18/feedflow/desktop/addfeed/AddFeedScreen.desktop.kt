@@ -10,7 +10,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
@@ -22,6 +24,7 @@ import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 @Composable
 fun AddFeedScreen(
     onFeedAdded: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var feedUrl by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -31,6 +34,7 @@ fun AddFeedScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val latestOnFeedAdded by rememberUpdatedState(onFeedAdded)
     LaunchedEffect(Unit) {
         viewModel.feedAddedState.collect { feedAddedState ->
             when (feedAddedState) {
@@ -48,7 +52,7 @@ fun AddFeedScreen(
                     )
 
                     feedUrl = ""
-                    onFeedAdded()
+                    latestOnFeedAdded()
                 }
 
                 FeedAddedState.FeedNotAdded -> {
@@ -62,6 +66,7 @@ fun AddFeedScreen(
     val categoriesState by viewModel.categoriesState.collectAsState()
 
     AddFeedContent(
+        modifier = modifier,
         feedUrl = feedUrl,
         showError = showError,
         errorMessage = errorMessage,

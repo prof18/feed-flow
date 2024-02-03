@@ -17,9 +17,9 @@ import com.seiko.imageloader.rememberImagePainter
 
 @Composable
 fun FeedItemImage(
-    modifier: Modifier = Modifier,
     url: String,
     width: Dp,
+    modifier: Modifier = Modifier,
 ) {
     if (LocalInspectionMode.current) {
         Box(

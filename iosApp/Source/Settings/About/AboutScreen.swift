@@ -32,6 +32,10 @@ struct AboutScreen: View {
                     Link(destination: URL(string: Websites.shared.FEED_FLOW_WEBSITE)!) {
                         Label(localizer.open_website_button.localized, systemImage: "globe")
                     }
+
+                    Link(destination: URL(string: Websites.shared.TRANSLATION_WEBSITE)!) {
+                        Label(localizer.about_menu_contribute_translations.localized, systemImage: "flag")
+                    }
                 } footer: {
                     if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                         let appVersionString = LocalizationUtils.shared.formatString(

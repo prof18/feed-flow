@@ -25,6 +25,7 @@ import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
+import com.prof18.feedflow.core.utils.Websites.TRANSLATION_WEBSITE
 import com.prof18.feedflow.shared.ui.about.AboutButtonItem
 import com.prof18.feedflow.shared.ui.about.AboutTextItem
 import com.prof18.feedflow.shared.ui.about.AuthorText
@@ -56,6 +57,12 @@ fun AboutScreen(
                 context = context,
             )
         },
+        onHelpWithTranslationsClick = {
+            browserManager.openUrlWithDefaultBrowser(
+                url = TRANSLATION_WEBSITE,
+                context = context,
+            )
+        },
         navigateBack = onBackClick,
     )
 }
@@ -66,6 +73,7 @@ private fun AboutScreenContent(
     licensesClicked: () -> Unit,
     nameClicked: () -> Unit,
     onOpenWebsiteClick: () -> Unit,
+    onHelpWithTranslationsClick: () -> Unit,
     navigateBack: () -> Unit = {},
 ) {
     Scaffold(
@@ -115,11 +123,16 @@ private fun AboutScreenContent(
                 }
                 item {
                     AboutButtonItem(
+                        onClick = onHelpWithTranslationsClick,
+                        buttonText = stringResource(MR.strings.about_menu_contribute_translations),
+                    )
+                }
+                item {
+                    AboutButtonItem(
                         onClick = licensesClicked,
                         buttonText = stringResource(MR.strings.open_source_licenses),
                     )
                 }
-
                 item {
                     Text(
                         modifier = Modifier
@@ -148,6 +161,7 @@ private fun AboutScreenPreview() {
                 licensesClicked = {},
                 nameClicked = {},
                 onOpenWebsiteClick = {},
+                onHelpWithTranslationsClick = {},
             )
         }
     }

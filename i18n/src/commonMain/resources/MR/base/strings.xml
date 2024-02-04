@@ -84,4 +84,5 @@
     <string name="read_articles_empty_screen_message">Nothing here, time to start reading!</string>
     <string name="bookmarked_articles_empty_screen_message">Nothing here, time to bookmark something!</string>
     <string name="empty_screen_back_to_timeline">Back to timeline</string>
+    <string name="about_menu_contribute_translations">Help with translations</string>
 </resources>

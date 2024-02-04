@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
+import com.prof18.feedflow.core.utils.Websites.TRANSLATION_WEBSITE
 import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.desktop.scrollbarStyle
 import com.prof18.feedflow.shared.ui.about.AboutButtonItem
@@ -121,6 +122,15 @@ private fun SettingsItemList(
                     openInBrowser(FEED_FLOW_WEBSITE)
                 },
                 buttonText = stringResource(MR.strings.open_website_button),
+            )
+        }
+
+        item {
+            AboutButtonItem(
+                onClick = {
+                    openInBrowser(TRANSLATION_WEBSITE)
+                },
+                buttonText = stringResource(MR.strings.about_menu_contribute_translations),
             )
         }
 

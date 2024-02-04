@@ -4,10 +4,10 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 
+@Suppress("SwallowedException")
 fun getUnixDeviceName(): String = try {
     executeCommand("uname -n") ?: "desktop"
 } catch (e: IOException) {
-    e.printStackTrace()
     "desktop"
 }
 

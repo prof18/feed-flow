@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain
 
 import co.touchlab.kermit.Logger
+import java.text.SimpleDateFormat
 import java.time.DateTimeException
 import java.time.Instant
 import java.time.LocalDateTime
@@ -8,6 +9,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
+import java.util.Calendar
 import java.util.Locale
 
 internal class JvmAndroidDateFormatter(
@@ -76,7 +78,7 @@ internal class JvmAndroidDateFormatter(
         }
     }
 
-    override fun formatDate(millis: Long): String {
+    override fun formatDateForFeed(millis: Long): String {
         val instant = Instant.ofEpochMilli(millis)
         val userTimeZone = ZoneId.systemDefault()
         val zonedDateTime = instant.atZone(userTimeZone)
@@ -93,6 +95,12 @@ internal class JvmAndroidDateFormatter(
             .ofPattern(pattern)
             .withZone(zonedDateTime.zone)
         return formatter.format(zonedDateTime)
+    }
+
+    override fun getCurrentDateForExport(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("dd-MM-yy", Locale.getDefault())
+        return dateFormat.format(calendar.time)
     }
 
     override fun currentTimeMillis(): Long =

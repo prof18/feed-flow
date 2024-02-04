@@ -1,6 +1,7 @@
 package com.prof18.feedflow.android.settings.importexport
 
 import FeedFlowTheme
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +21,10 @@ import com.prof18.feedflow.shared.ui.importexport.ImportExportContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+
 
 @Composable
 fun ImportExportScreen(
@@ -61,7 +66,10 @@ fun ImportExportScreen(
             openFileAction.launch(arrayOf("*/*"))
         },
         onExportClick = {
-            createFileAction.launch("feeds-export.opml")
+            val deviceName = "${Build.MANUFACTURER}-${Build.MODEL}"
+            val formattedDate = viewModel.getCurrentDateForExport()
+            val fileName = "feedflow-export_${formattedDate}_$deviceName.opml".lowercase()
+            createFileAction.launch(fileName)
         },
     )
 }

@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedImportExportState
+import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
@@ -17,6 +18,7 @@ class ImportExportViewModel internal constructor(
     private val feedManagerRepository: FeedManagerRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val logger: Logger,
+    private val dateFormatter: DateFormatter,
 ) : BaseViewModel() {
 
     private val importerMutableState: MutableStateFlow<FeedImportExportState> = MutableStateFlow(
@@ -68,4 +70,7 @@ class ImportExportViewModel internal constructor(
     fun reportExportError() {
         importerMutableState.update { FeedImportExportState.Error }
     }
+
+    fun getCurrentDateForExport(): String =
+        dateFormatter.getCurrentDateForExport()
 }

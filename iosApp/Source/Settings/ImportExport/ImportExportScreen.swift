@@ -102,6 +102,11 @@ struct ImportExportScreen: View {
 
     private func getUrlForOpmlExport() -> URL? {
         let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
-        return cacheDirectory?.appendingPathComponent("feed-export.opml")
+
+        let formattedDate = viewModel.getCurrentDateForExport()
+        let deviceName = UIDevice.current.name.replacingOccurrences(of: " ", with: "-")
+        let fileName = "feedflow-export_\(formattedDate)_\(deviceName).opml".lowercased()
+
+        return cacheDirectory?.appendingPathComponent(fileName)
     }
 }

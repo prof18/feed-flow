@@ -7,12 +7,16 @@ import androidx.compose.ui.awt.ComposeWindow
 import com.prof18.feedflow.MR
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.utils.getUnixDeviceName
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.ui.importexport.ImportExportContent
 import dev.icerock.moko.resources.compose.stringResource
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
 
@@ -55,6 +59,12 @@ fun ImportExportScreen(
                 dialogTitle = exportDialogTitle
                 fileFilter = FileNameExtensionFilter("OPML Files (*.opml)", "opml")
                 approveButtonText = exportDialogButton
+
+                val deviceName = getUnixDeviceName()
+                val formattedDate = viewModel.getCurrentDateForExport()
+                val fileName = "feedflow-export_${formattedDate}_$deviceName.opml".lowercase()
+
+                selectedFile = File(fileName)
             }
 
             val userSelection = fileChooser.showSaveDialog(null)

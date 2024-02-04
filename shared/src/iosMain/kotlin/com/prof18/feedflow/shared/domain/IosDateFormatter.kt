@@ -85,7 +85,7 @@ internal class IosDateFormatter(
         return null
     }
 
-    override fun formatDate(millis: Long): String {
+    override fun formatDateForFeed(millis: Long): String {
         val date = NSDate.dateWithTimeIntervalSince1970((millis.toDouble() / 1000.0))
 
         val calendar = NSCalendar.currentCalendar
@@ -102,6 +102,13 @@ internal class IosDateFormatter(
 
     override fun currentTimeMillis(): Long =
         (NSDate().timeIntervalSince1970 * 1000).toLong()
+
+    override fun getCurrentDateForExport(): String {
+        val dateFormat = NSDateFormatter()
+        dateFormat.dateFormat = "dd-MM-yy"
+        dateFormat.locale = NSLocale.currentLocale
+        return dateFormat.stringFromDate(NSDate())
+    }
 
     private sealed class DateParsingResult {
         data class Parsed(

@@ -26,7 +26,7 @@ class FeedSourceListViewModel internal constructor(
     @NativeCoroutinesState
     val feedSourcesState: StateFlow<FeedSourceListState> = feedsMutableState.asStateFlow()
 
-    private var expandedCategoryId: CategoryId? = null
+    private var expandedCategories: MutableList<CategoryId> = mutableListOf()
 
     init {
         scope.launch {
@@ -59,7 +59,7 @@ class FeedSourceListViewModel internal constructor(
                             FeedSourceState(
                                 categoryId = category?.id?.let { CategoryId(it) },
                                 categoryName = category?.title,
-                                isExpanded = category?.id == expandedCategoryId?.value,
+                                isExpanded = category?.id?.let { CategoryId(it) } in expandedCategories,
                                 feedSources = feedSources.toImmutableList(),
                             ),
                         )
@@ -73,7 +73,7 @@ class FeedSourceListViewModel internal constructor(
                             feedSourcesWithCategory = feedSourceStates.toImmutableList(),
                         )
                     }
-                    expandedCategoryId = null
+                    expandedCategories.clear()
                 }
             }
         }
@@ -81,9 +81,11 @@ class FeedSourceListViewModel internal constructor(
 
     fun deleteFeedSource(feedSource: FeedSource) {
         scope.launch {
-            expandedCategoryId = feedSourcesState.value.feedSourcesWithCategory.firstOrNull {
+            expandedCategories = feedSourcesState.value.feedSourcesWithCategory.filter {
                 it.isExpanded
-            }?.categoryId
+            }.mapNotNull {
+                it.categoryId
+            }.toMutableList()
             feedManagerRepository.deleteFeed(feedSource)
             feedRetrieverRepository.fetchFeeds()
         }

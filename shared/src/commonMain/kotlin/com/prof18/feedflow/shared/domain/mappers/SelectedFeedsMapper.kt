@@ -34,7 +34,7 @@ internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter) = FeedItem(
     dateString = if (pub_date != null) {
         @Suppress("RedundantRequireNotNullCall")
         // It's required because the variables come from another module
-        dateFormatter.formatDate(
+        dateFormatter.formatDateForFeed(
             requireNotNull(pub_date),
         )
     } else {

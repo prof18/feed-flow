@@ -143,6 +143,7 @@ private val coreModule = module {
             feedManagerRepository = get(),
             feedRetrieverRepository = get(),
             logger = getWith("ImportExportViewModel"),
+            dateFormatter = get(),
         )
     }
 

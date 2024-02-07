@@ -39,7 +39,7 @@ crashlytics-plugin = "2.9.9"
 google-services = "4.4.0"
 crashk-ios = "0.8.5"
 sentry = "7.3.0"
-material-window-size = "1.1.2"
+material-window-size = "1.2.0"
 immutable-collections = "0.3.7"
 detekt-compose-rules = "0.3.11"
 

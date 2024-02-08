@@ -6,7 +6,6 @@
     <string name="database_error">Une erreur s\'est produite lors de la récupération des flux. Veuillez réessayer ou relancer l\'application :(</string>
     <string name="import_dialog_title">Sélectionner un fichier OPML</string>
     <string name="feeds_import_done_message">Import terminé</string>
-    <string name="import_dialog_button">Importer</string>
     <string name="feeds_importing_message">Import du flux</string>
     <string name="invalid_rss_url">Le lien que vous avez fourni n\'est pas un flux RSS valide</string>
     <string name="no_feeds_found_message">Aucun flux trouvé. Veuillez ajouter un nouveau flux !</string>
@@ -38,7 +37,6 @@
     <string name="new_release_available_title">Une nouvelle version de FeedFlow est disponible :</string>
     <string name="empty_feed_message">Il n\'y a rien d\'autre à lire ici !</string>
     <string name="export_feeds_button">Exporter les flux vers OPML</string>
-    <string name="export_dialog_button">Exporter</string>
     <string name="settings_button">Paramètres</string>
     <string name="open_source_nav_bar">Licences Open Source</string>
     <string name="show_on_github">Voir sur GitHub</string>

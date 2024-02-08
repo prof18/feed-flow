@@ -4,7 +4,6 @@
     <string name="feed_url_placeholder">https://minfavorittblogg.no/kanal</string>
     <string name="import_dialog_title">Velg OPML-fil</string>
     <string name="feeds_import_done_message">Importert</string>
-    <string name="import_dialog_button">Importer</string>
     <string name="feeds_importing_message">Importerer informasjonskanal …</string>
     <string name="no_feeds_found_message">Fant ingen informasjonskanaler. Legg til noe.</string>
     <string name="clear_old_articles_button">Slett gamle oppføringer</string>
@@ -29,7 +28,6 @@
     <string name="export_dialog_title">Lagre OPML-fil</string>
     <string name="empty_feed_message">Intet mer å lese her.</string>
     <string name="export_feeds_button">Eksporter informasjonskanaler til OPML</string>
-    <string name="export_dialog_button">Eksporter</string>
     <string name="settings_button">Innstillinger</string>
     <string name="open_source_nav_bar">Frie lisenser</string>
     <string name="show_on_github">Vis på GitHub</string>

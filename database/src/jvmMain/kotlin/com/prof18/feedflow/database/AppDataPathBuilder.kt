@@ -7,7 +7,7 @@ internal object AppDataPathBuilder {
 
     private val appDataPath = when {
         System.getProperty("os.name").contains("Mac", true) -> {
-            "/Users/${System.getProperty("user.name")}/Library/Application Support/FeedFlow"
+            "${System.getProperty("user.home")}/Library/Application Support/FeedFlow"
         }
         System.getProperty("os.name").contains("windows", true) -> {
             "${System.getProperty("user.home")}\\AppData\\Local\\FeedFlow"

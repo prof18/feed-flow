@@ -22,6 +22,10 @@ internal class NewVersionChecker(
     val newVersionState = newVersionMutableState.asStateFlow()
 
     suspend fun notifyIfNewVersionIsAvailable() = withContext(dispatcherProvider.io) {
+        val isSandboxed = System.getenv("APP_SANDBOX_CONTAINER_ID") != null
+        if (isSandboxed) {
+            return@withContext
+        }
         try {
             val doc = Jsoup.connect("https://github.com/prof18/feed-flow/releases/latest").get()
 

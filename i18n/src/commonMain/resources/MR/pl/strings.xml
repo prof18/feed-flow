@@ -6,7 +6,6 @@
     <string name="database_error">Coś poszło nie tak podczas pobierania kanałów. Spróbuj ponownie lub uruchom aplikację ponownie :(</string>
     <string name="import_dialog_title">Wybierz plik OPML</string>
     <string name="feeds_import_done_message">Import zakończony</string>
-    <string name="import_dialog_button">Importuj</string>
     <string name="feeds_importing_message">Importowanie kanału</string>
     <string name="invalid_rss_url">Wprowadzony link nie jest kanałem RSS</string>
     <string name="no_feeds_found_message">Nie znaleziono kanałów. Prosimy dodać nowy kanał!</string>

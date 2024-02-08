@@ -52,12 +52,12 @@ compose {
             }
 
             nativeDistributions {
-
                 outputBaseDir.set(layout.buildDirectory.asFile.get().resolve("release"))
+                appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
 
                 modules("java.instrument", "java.sql", "jdk.unsupported")
 
-                targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+                targetFormats(TargetFormat.Dmg, TargetFormat.Pkg)
                 packageName = "FeedFlow"
                 packageVersion = getVersionName()
 
@@ -72,23 +72,58 @@ compose {
                     packageName = "FeedFlow"
                     bundleID = "com.prof18.feedflow"
 
-                    entitlementsFile.set(project.file("default.entitlements"))
+                    val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
+
+                    appStore = isAppStoreRelease
 
                     signing {
                         sign.set(true)
                         identity.set("Marco Gomiero")
-                        // keychain.set("/path/to/keychain")
                     }
+
+                    minimumSystemVersion = "12.0"
+
+                    provisioningProfile.set(project.file("embedded.provisionprofile"))
+                    runtimeProvisioningProfile.set(project.file("runtime.provisionprofile"))
+
+                    if (isAppStoreRelease) {
+                        entitlementsFile.set(project.file("entitlements.plist"))
+                        runtimeEntitlementsFile.set(project.file("runtime-entitlements.plist"))
+                    } else {
+                        entitlementsFile.set(project.file("default.entitlements"))
+                    }
+
+                    appCategory = "public.app-category.news"
 
                     notarization {
                         appleID.set("mgp.dev.studio@gmail.com")
                         password.set("@keychain:NOTARIZATION_PASSWORD")
+                    }
+
+                    infoPlist {
+                        extraKeysRawXml = macExtraPlistKeys
                     }
                 }
             }
         }
     }
 }
+
+val macExtraPlistKeys: String
+    get() = """
+        <key>ITSAppUsesNonExemptEncryption</key>
+        <false/>
+        <key>CFBundleLocalizations</key>
+        <array>
+          <string>en</string>
+          <string>it</string>
+          <string>fr</string>
+          <string>hu</string>
+          <string>pl</string>
+          <string>nb-rNO</string>
+          <string>de</string>
+        </array>
+    """.trimIndent()
 
 fun getVersionCode(): Int {
     val outputStream = org.apache.commons.io.output.ByteArrayOutputStream()

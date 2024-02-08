@@ -9,7 +9,6 @@
     <string name="no_category">Non categorizzato</string>
     <string name="import_dialog_title">Seleziona file OPML</string>
     <string name="feeds_import_done_message">Importazione effettuata</string>
-    <string name="import_dialog_button">Importa</string>
     <string name="feeds_importing_message">Importazione dei feed in corso</string>
     <string name="invalid_rss_url">Il link che hai fornito non è un valido feed RSS</string>
     <string name="no_feeds_found_message">Nessun feed trovato. Aggiungi un nuovo feed!</string>
@@ -42,7 +41,6 @@
     <string name="no_category_selected_header">Nessuna categoria</string>
     <string name="empty_feed_message">Niente da leggere qui!</string>
     <string name="export_feeds_button">Esporta feed da OPML</string>
-    <string name="export_dialog_button">Esporta</string>
     <string name="new_category_hint">Nuova categoria</string>
     <string name="settings_button">Impostazioni</string>
     <string name="open_source_nav_bar">Licenze open source</string>

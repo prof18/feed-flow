@@ -7,7 +7,6 @@
     <string name="database_error">Hiba történt a feedek betöltése közben. Próbáld újra, vagy indítsd újra az alkalmazást. :(</string>
     <string name="import_dialog_title">OMPL fájl kiválasztása</string>
     <string name="feeds_import_done_message">Importálás kész</string>
-    <string name="import_dialog_button">Impotálás</string>
     <string name="feeds_importing_message">Feed importálása</string>
     <string name="invalid_rss_url">A megadott link nem egy érvényes RSS feedre mutat</string>
     <string name="no_feeds_found_message">Nincs ilyen feed. Adj hozzá újat!</string>
@@ -39,7 +38,6 @@
     <string name="new_release_available_title">Elérhető egy frissebb verzió:</string>
     <string name="empty_feed_message">Itt elfogyott az olvasnivaló!</string>
     <string name="export_feeds_button">Feedek exportálása OMPL-be</string>
-    <string name="export_dialog_button">Exportálás</string>
     <string name="settings_button">Beállítások</string>
     <string name="open_source_nav_bar">Nyílt forráskódú engedélyek</string>
     <string name="show_on_github">Megnyitás GitHubon</string>

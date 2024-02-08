@@ -8,7 +8,6 @@
     <string name="database_error">Beim Abrufen der Feeds ist irgendetwas schief gelaufen. Bitte versuche es erneut oder starte die App neu :(</string>
     <string name="no_category">Nicht kategorisiert</string>
     <string name="import_dialog_title">OPML-Datei auswählen</string>
-    <string name="import_dialog_button">Importieren</string>
     <string name="feeds_importing_message">Feed importieren</string>
     <string name="invalid_rss_url">Der angegebene Link ist kein gültiger RSS-Feed</string>
     <string name="no_feeds_found_message">Keine Feeds gefunden. Füge bitte einen neuen hinzu!</string>
@@ -41,7 +40,6 @@
     <string name="no_category_selected_header">Keine Kategorie ausgewählt</string>
     <string name="empty_feed_message">Hier gibt es nichts mehr zu lesen!</string>
     <string name="export_feeds_button">Feed nach OPML exportieren</string>
-    <string name="export_dialog_button">Exportieren</string>
     <string name="new_category_hint">Neuer Kategoriename</string>
     <string name="settings_button">Einstellungen</string>
     <string name="open_source_nav_bar">Open-Source-Lizenzen</string>

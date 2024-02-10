@@ -939,7 +939,7 @@
 			repositoryURL = "https://github.com/scinfu/SwiftSoup";
 			requirement = {
 				kind = exactVersion;
-				version = 2.6.1;
+				version = 2.7.0;
 			};
 		};
 		CC4B803929D98BB20004A0AB /* XCRemoteSwiftPackageReference "Nuke" */ = {
@@ -947,7 +947,7 @@
 			repositoryURL = "https://github.com/kean/Nuke";
 			requirement = {
 				kind = exactVersion;
-				version = 12.2.0;
+				version = 12.4.0;
 			};
 		};
 		CC4B803E29D9A31E0004A0AB /* XCRemoteSwiftPackageReference "swift-collections" */ = {
@@ -963,7 +963,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = exactVersion;
-				version = 10.19.0;
+				version = 10.21.0;
 			};
 		};
 		CCF647572B6EEFC0006C8843 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */ = {

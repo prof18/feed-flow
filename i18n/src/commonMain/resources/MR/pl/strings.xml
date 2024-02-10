@@ -37,7 +37,6 @@
     <string name="new_release_available_title">Dostępna jest nowa wersja FeedFlow:</string>
     <string name="empty_feed_message">Nie ma tu nic więcej do przeczytania!</string>
     <string name="export_feeds_button">Eksportuj kanał do pliku OPML</string>
-    <string name="export_dialog_button">Eksportuj</string>
     <string name="settings_button">Ustawienia</string>
     <string name="open_source_nav_bar">Licencje typu open source</string>
     <string name="show_on_github">Pokaż na GitHubie</string>

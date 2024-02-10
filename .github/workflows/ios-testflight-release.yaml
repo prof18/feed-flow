@@ -31,7 +31,7 @@ jobs:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
       - name: Run Checks
-        run: ./gradlew detekt iosArm64Test
+        run: ./gradlew check
 
       - name: Upload reports
         if: failure()

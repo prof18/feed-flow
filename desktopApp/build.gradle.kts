@@ -81,7 +81,7 @@ compose {
                         identity.set("Marco Gomiero")
                     }
 
-                    minimumSystemVersion = "12.0"
+//                    minimumSystemVersion = "12.0"
 
                     provisioningProfile.set(project.file("embedded.provisionprofile"))
                     runtimeProvisioningProfile.set(project.file("runtime.provisionprofile"))

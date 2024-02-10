@@ -47,7 +47,7 @@ jobs:
           PLAY_CONFIG_JSON: ${{ secrets.PLAY_CONFIG }}
 
       - name: Run Checks
-        run: ./gradlew detekt testDebugUnitTest
+        run: ./gradlew check
 
       - name: Upload reports
         if: failure()

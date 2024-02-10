@@ -45,7 +45,7 @@ fun ImportExportScreen(
                 if (result != null) {
                     viewModel.importFeed(OpmlInput(result))
                 }
-            }
+            },
         )
     }
 
@@ -68,7 +68,7 @@ fun ImportExportScreen(
                     }
                     viewModel.exportFeed(OpmlOutput(outputFile))
                 }
-            }
+            },
         )
     }
 
@@ -90,11 +90,11 @@ fun ImportExportScreen(
 
 @Composable
 private fun FileDialog(
-    parent: JFrame,
-    isLoadDialog: Boolean = false,
     dialogTitle: String,
+    parent: JFrame,
+    onCloseRequest: (result: File?) -> Unit,
     exportFileName: String? = null,
-    onCloseRequest: (result: File?) -> Unit
+    isLoadDialog: Boolean = false,
 ) = AwtWindow(
     create = {
         val flag = if (isLoadDialog) FileDialog.LOAD else FileDialog.SAVE
@@ -109,5 +109,5 @@ private fun FileDialog(
         dialog.file = exportFileName
         dialog
     },
-    dispose = FileDialog::dispose
+    dispose = FileDialog::dispose,
 )

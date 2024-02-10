@@ -32,6 +32,15 @@ struct FeedItemView: View {
                 Text(feedItem.feedSource.title)
                     .font(.system(size: 12))
                     .padding(.top, Spacing.small)
+
+                Spacer()
+
+                if feedItem.isBookmarked {
+                    Image(systemName: "bookmark.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(Color.accentColor)
+                        .padding(.top, Spacing.small)
+                }
             }
 
             HStack {

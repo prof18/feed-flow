@@ -48,7 +48,8 @@ internal fun CompactView(
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    if (feedItems.isEmpty() && navDrawerState.isEmpty()) {
+    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
+    if (isDrawerHidden) {
         HomeScreenContent(
             paddingValues = paddingValues,
             loadingState = loadingState,

@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -137,7 +138,6 @@ private fun DrawerTimelineItem(
         label = {
             Text(
                 text = stringResource(MR.strings.drawer_title_timeline),
-                modifier = Modifier.padding(horizontal = 16.dp),
             )
         },
         icon = {
@@ -163,7 +163,6 @@ private fun DrawerReadItem(
         label = {
             Text(
                 text = stringResource(MR.strings.drawer_title_read),
-                modifier = Modifier.padding(horizontal = 16.dp),
             )
         },
         icon = {
@@ -189,7 +188,6 @@ private fun DrawerBookmarksItem(
         label = {
             Text(
                 text = stringResource(MR.strings.drawer_title_bookmarks),
-                modifier = Modifier.padding(horizontal = 16.dp),
             )
         },
         icon = {
@@ -242,7 +240,6 @@ private fun DrawerCategoryItem(
         label = {
             Text(
                 text = drawerCategory.category.title,
-                modifier = Modifier.padding(horizontal = Spacing.regular),
             )
         },
         icon = {
@@ -415,8 +412,6 @@ private fun FeedSourcesList(
                 label = {
                     Text(
                         text = feedSourceWrapper.feedSource.title,
-                        modifier = Modifier
-                            .padding(horizontal = Spacing.small),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )

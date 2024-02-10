@@ -59,7 +59,7 @@ internal fun FeedContentToolbar(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                if (currentFeedFilter !is FeedFilter.Read) {
+                if (currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks) {
                     Spacer(modifier = Modifier.width(4.dp))
 
                     Text(text = "($unReadCount)")

@@ -65,11 +65,12 @@ internal fun MediumHomeView(
         mutableStateOf(true)
     }
 
+    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
     Row {
         AnimatedVisibility(
             modifier = Modifier
                 .weight(1f),
-            visible = isDrawerMenuFullVisible && (feedItems.isNotEmpty() || navDrawerState.isNotEmpty()),
+            visible = isDrawerMenuFullVisible && !isDrawerHidden,
         ) {
             Scaffold { paddingValues ->
                 Drawer(

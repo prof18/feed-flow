@@ -56,8 +56,10 @@ internal fun ExpandedHomeView(
         onRefresh = refreshData,
     )
 
+    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
+
     Row {
-        if (feedItems.isNotEmpty() || navDrawerState.isNotEmpty()) {
+        if (!isDrawerHidden) {
             Scaffold(
                 modifier = Modifier
                     .weight(1f),

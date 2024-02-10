@@ -58,7 +58,8 @@ internal fun CompactHomeView(
         onRefresh = refreshData,
     )
 
-    if (feedItems.isEmpty() && navDrawerState.isEmpty()) {
+    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
+    if (isDrawerHidden) {
         HomeScaffold(
             unReadCount = unReadCount,
             onSettingsButtonClicked = onSettingsButtonClicked,

@@ -49,11 +49,13 @@ internal fun ExpandedView(
 ) {
     val scope = rememberCoroutineScope()
 
+    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
+
     Row {
         AnimatedVisibility(
             modifier = Modifier
                 .weight(1f),
-            visible = feedItems.isNotEmpty() || navDrawerState.isNotEmpty(),
+            visible = !isDrawerHidden,
         ) {
             Scaffold { paddingValues ->
                 Drawer(

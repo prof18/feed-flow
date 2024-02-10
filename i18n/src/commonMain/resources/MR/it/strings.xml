@@ -71,4 +71,16 @@
     <string name="no_feed_modal_title">Aggiungi un nuovo feed</string>
     <string name="import_export_opml_title">Importa ed esporta</string>
     <string name="no_feed_modal_message">Sembra che tu non sia ancora iscritto ad alcun feed. Puoi aggiungere manualmente un feed oppure importare le tue iscrizioni da un altro lettore RSS</string>
+    <string name="empty_screen_back_to_timeline">Torna alla timeline</string>
+    <string name="bookmarked_articles_empty_screen_message">Non c\'è nulla qui, tempo di aggiungere qualcosa ai preferiti!</string>
+    <string name="read_articles_empty_screen_message">Non c\'è nulla qui, tempo di cominciare a leggere!</string>
+    <string name="menu_add_to_bookmark">Aggiungi ai preferiti</string>
+    <string name="menu_remove_from_bookmark">Rimuovi dai preferiti</string>
+    <string name="drawer_title_bookmarks">Preferiti</string>
+    <string name="menu_mark_as_unread">Segna come non letto</string>
+    <string name="menu_open_comments">Apri i commenti</string>
+    <string name="menu_mark_as_read">Segna come letto</string>
+    <string name="about_menu_contribute_translations">Aiuto con le traduzioni</string>
+    <string name="drawer_title_read">Letti</string>
+    <string name="settings_toggle_show_read_articles">Mostra articoli letti nella timeline</string>
 </resources>

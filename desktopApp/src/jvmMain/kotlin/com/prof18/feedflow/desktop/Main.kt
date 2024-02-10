@@ -61,12 +61,12 @@ import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import java.awt.Desktop
+import java.io.File
 import java.io.InputStream
 import java.net.URI
 import java.util.Properties
 import javax.swing.UIManager
 
-@Suppress("LongMethod")
 @OptIn(ExperimentalDecomposeApi::class)
 fun main() = application {
     val properties = Properties()
@@ -96,6 +96,19 @@ fun main() = application {
             dns = sentryDns,
             version = version,
         )
+    }
+
+    val isSandboxed = System.getenv("APP_SANDBOX_CONTAINER_ID") != null
+    if (isSandboxed) {
+        val resources = File(System.getProperty("compose.application.resources.dir"))
+
+        // jna
+        System.setProperty("jna.nounpack", "true")
+        System.setProperty("jna.boot.library.path", resources.absolutePath)
+
+        // sqlite-jdbc
+        System.setProperty("org.sqlite.lib.path", resources.absolutePath)
+        System.setProperty("org.sqlite.lib.name", "libsqlitejdbc.dylib")
     }
 
     DI.initKoin(

@@ -23,9 +23,7 @@
     <string name="import_feed_button">Import feed from OPML</string>
     <string name="export_feeds_button">Export feeds to OPML</string>
     <string name="about_button">About</string>
-    <string name="import_dialog_button">Import</string>
     <string name="import_dialog_title">Select OPML file</string>
-    <string name="export_dialog_button">Export</string>
     <string name="export_dialog_title">Save OPML file</string>
     <string name="export_started_message">Generating export</string>
     <string name="generic_error_message">Sorry, something went wrong :(</string>

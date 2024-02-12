@@ -46,8 +46,12 @@ struct CompactView: View {
             .navigationDestination(for: CompactViewRoute.self) { route in
                 switch route {
                 case .feed:
-                    HomeScreen(toggleListScroll: $scrollUpTrigger, homeViewModel: homeViewModel)
-                        .environmentObject(indexHolder)
+                    HomeScreen(
+                        toggleListScroll: $scrollUpTrigger,
+                        selectedDrawerItem: $selectedDrawerItem,
+                        homeViewModel: homeViewModel
+                    )
+                    .environmentObject(indexHolder)
                 }
             }
         }

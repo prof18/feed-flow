@@ -49,6 +49,8 @@ struct HomeScreen: View {
     @Binding
     var toggleListScroll: Bool
 
+    @Binding var selectedDrawerItem: DrawerItem?
+
     let homeViewModel: HomeViewModel
 
     var body: some View {
@@ -94,6 +96,7 @@ struct HomeScreen: View {
             },
             onBackToTimelineClick: {
                 homeViewModel.onFeedFilterSelected(selectedFeedFilter: FeedFilter.Timeline())
+                selectedDrawerItem = DrawerItem.Timeline()
             }
         )
         .task {

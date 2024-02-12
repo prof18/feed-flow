@@ -45,8 +45,12 @@ struct RegularView: View {
             .navigationBarTitleDisplayMode(.inline)
         } detail: {
             NavigationStack {
-                HomeScreen(toggleListScroll: $scrollUpTrigger, homeViewModel: homeViewModel)
-                    .environmentObject(indexHolder)
+                HomeScreen(
+                    toggleListScroll: $scrollUpTrigger,
+                    selectedDrawerItem: $selectedDrawerItem,
+                    homeViewModel: homeViewModel
+                )
+                .environmentObject(indexHolder)
             }
             .navigationBarTitleDisplayMode(.inline)
         }

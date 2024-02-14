@@ -51,9 +51,14 @@ compose {
                 configurationFiles.from(project.file("compose-desktop.pro"))
             }
 
+            val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
+
             nativeDistributions {
                 outputBaseDir.set(layout.buildDirectory.asFile.get().resolve("release"))
-                appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
+
+                if (isAppStoreRelease) {
+                    appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
+                }
 
                 modules("java.instrument", "java.sql", "jdk.unsupported")
 
@@ -72,13 +77,11 @@ compose {
                     packageName = "FeedFlow"
                     bundleID = "com.prof18.feedflow"
 
-                    val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
-
                     appStore = isAppStoreRelease
 
                     signing {
                         sign.set(true)
-                        identity.set("Developer ID Application: Marco Gomiero (Q7CUB3RNAK)")
+                        identity.set("Marco Gomiero")
                     }
 
 //                    minimumSystemVersion = "12.0"

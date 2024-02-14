@@ -83,12 +83,11 @@ compose {
 
 //                    minimumSystemVersion = "12.0"
 
-                    provisioningProfile.set(project.file("embedded.provisionprofile"))
-                    runtimeProvisioningProfile.set(project.file("runtime.provisionprofile"))
-
                     if (isAppStoreRelease) {
                         entitlementsFile.set(project.file("entitlements.plist"))
                         runtimeEntitlementsFile.set(project.file("runtime-entitlements.plist"))
+                        provisioningProfile.set(project.file("embedded.provisionprofile"))
+                        runtimeProvisioningProfile.set(project.file("runtime.provisionprofile"))
                     } else {
                         entitlementsFile.set(project.file("default.entitlements"))
                     }

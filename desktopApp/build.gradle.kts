@@ -78,7 +78,7 @@ compose {
 
                     signing {
                         sign.set(true)
-                        identity.set("Marco Gomiero")
+                        identity.set("Developer ID Application: Marco Gomiero (Q7CUB3RNAK)")
                     }
 
 //                    minimumSystemVersion = "12.0"

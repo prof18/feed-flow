@@ -90,28 +90,3 @@ jobs:
           tag: ${{ steps.path_variables.outputs.TAG }}
           overwrite: true
           body: "Release ${{ steps.path_variables.outputs.VERSION }}"
-
-      - name: Update website
-        run: |
-          file_path="website/data/hero.yml"
-          new_link="https://github.com/prof18/feed-flow/releases/download/$VERSION-desktop/FeedFlow-$VERSION.dmg"
-          awk -v new_link="$new_link" '/^button3Link:/ {print "button3Link: " new_link; next} 1' "$file_path" > tmpfile && mv tmpfile "$file_path"
-        env:
-          VERSION: ${{ steps.path_variables.outputs.VERSION }}
-
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
-        with:
-          hugo-version: '0.101.0'
-          extended: true
-
-      - name: Build
-        run: |
-          cd website
-          HUGO_ENV=production hugo --gc --minify
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: website/public

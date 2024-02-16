@@ -12,7 +12,7 @@
     <string name="feed_url_placeholder">https://mojoblubenyweb.sk/feed</string>
     <string name="add_feed">Pridať feed</string>
     <string name="feeds_title">Feedy</string>
-    <string name="no_feeds_add_one_message">Žiadne feedy, pridajte nejaký</string>
+    <string name="no_feeds_add_one_message">Žiadne feedy, pridaj nejaký</string>
     <string name="refresh_feeds">Obnoviť feedy</string>
     <string name="mark_all_read_button">Označiť všetko prečítané</string>
     <string name="settings_button">Nastavenia</string>
@@ -36,7 +36,7 @@
     <string name="default_browser">Predvolený prehliadač</string>
     <string name="feed_error_message">Niečo nie je v poriadku s: %s :(</string>
     <string name="author_label">Vytvoril s ❤️</string>
-    <string name="open_source_licenses">Licencie Open Source</string>
+    <string name="open_source_licenses">Open Source licencie</string>
     <string name="about_nav_bar">O aplikácii</string>
     <string name="report_issue_button">Nahlásiť problém</string>
     <string name="open_source_nav_bar">Open Source licencie</string>
@@ -78,4 +78,9 @@
     <string name="menu_open_comments">Otvoriť komentáre</string>
     <string name="empty_screen_back_to_timeline">Späť na časovú os</string>
     <string name="about_menu_contribute_translations">Pomoc s prekladmi</string>
+    <string name="about_the_app">FeedFlow je minimalistická RSS čítačka založená na osobných preferenciách autora. Články sa otvárajú na príslušných webových stránkach a môžeš si vybrať svoj obľúbený prehliadač zameraný na ochranu súkromia, pre čítanie oddelené od hlavného prehliadača.
+\nSvoju RSS zbierku môžeš importovať a exportovať z OPML súborov a do nich.</string>
+    <string name="import_export_description">FeedFlow podporuje import a export tvojich odberov pomocou OPML súboru, pre lepšiu kompatibilitu s ostatnými čítačkami feedov</string>
+    <string name="read_articles_empty_screen_message">Nič tu nie je, je čas začať čítať!</string>
+    <string name="bookmarked_articles_empty_screen_message">Nie je tu nič, je čas si niečo pridať do záložiek!</string>
 </resources>

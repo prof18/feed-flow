@@ -1,31 +1,38 @@
-# Title
+# Názov
 
 FeedFlow
 
-## Short desc
+## Krátky popis
 
-Minimalistic RSS Reader
+Minimalistická RSS čítačka
 
-## Long desc
+## Dlhý popis
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience as FeedFlow offers a minimalistic list and it opens the articles on their respective websites.
+Sleduj svoje obľúbené RSS kanály pomocou minimalistickej RSS čítačky FeedFlow.
+Užívaj si prehľadné čítanie bez rušivých prvkov, vďaka minimalistickému zoznamu
+a otváraniu článkov priamo na príslušných webových stránkach.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can choose your favorite privacy-focused browser to separate your reading experience from your main browser.
+Prispôsob si zážitok z prehliadania výberom preferovaného prehliadača. Takto si
+môžeš zvoliť pre svoje čítanie prehliadač zameraný na ochranu súkromia a oddeliť
+ho od tvojho hlavného prehliadača.
 
-Your existing RSS collection can be easily imported: FeedFlow offers full and easy import and export capabilities through OPML files.
+Tvoju existujúcu zbierku RSS kanálov môžeš jednoducho importovať. FeedFlow
+ponúka plnohodnotné a jednoduché importovanie a exportovanie pomocou OPML
+súborov.
 
-Just focus on reading (or scrolling)!
+Sústreď sa len na čítanie (alebo scrollovanie)!
 
-The app is still in development, so some features could be missing or there could be some issues. Please report any kind of bugs or feature suggestions!
+Aplikácia je stále vo vývoji, takže niektoré funkcie môžu chýbať alebo sa môžu
+objaviť chyby. Nahlás nám prosím akékoľvek chyby alebo návrhy na zlepšenie!
 
-## Screenshot 1
+## Snímka obrazovky 1
 
-All your feeds in your pocket
+Všetky tvoje feedy vždy po ruke
 
-## Screenshot 3
+## Snímka obrazovky 3
 
-Import your existing collection
+Importuj svoje existujúce feedy
 
-## Screenshot 4
+## Snímka obrazovky 4
 
-Open the articles in your favourite browser
+Otvor články vo svojom obľúbenom prehliadači

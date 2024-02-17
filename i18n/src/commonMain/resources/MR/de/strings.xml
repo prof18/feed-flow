@@ -37,7 +37,7 @@
     <string name="issue_report_title">Fehler mit FeedFlow melden</string>
     <string name="export_dialog_title">OPML-Datei speichern</string>
     <string name="new_release_available_title">Es gibt eine neue Version von FeedFlow:</string>
-    <string name="no_category_selected_header">Keine Kategorie ausgewählt</string>
+    <string name="no_category_selected_header">Keine Kategorie</string>
     <string name="empty_feed_message">Hier gibt es nichts mehr zu lesen!</string>
     <string name="export_feeds_button">Feed nach OPML exportieren</string>
     <string name="new_category_hint">Neuer Kategoriename</string>

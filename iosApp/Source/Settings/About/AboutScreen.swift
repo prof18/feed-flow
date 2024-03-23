@@ -50,7 +50,6 @@ struct AboutScreen: View {
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
-            .padding(.top, -Spacing.medium)
             .background(Color.secondaryBackgroundColor)
 
             Spacer()

@@ -86,7 +86,6 @@ struct FeedSourceListScreenContent: View {
                         }
                 }
             }
-            .padding(.top, -Spacing.medium)
         }
     }
 
@@ -127,7 +126,6 @@ struct FeedSourceListScreenContent: View {
                 .accessibilityIdentifier(TestingTag.shared.FEED_SOURCE_SELECTOR)
             }
         }
-        .padding(.top, -Spacing.medium)
     }
 
     @ViewBuilder

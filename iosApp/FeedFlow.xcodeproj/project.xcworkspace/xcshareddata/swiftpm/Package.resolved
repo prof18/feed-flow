@@ -1,4 +1,5 @@
 {
+  "originHash" : "b33a0d6cbc687c07a214ba3438aad86a25ebf6af7f61d99891e71a192a684fc4",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -86,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rickclephas/KMP-NativeCoroutines.git",
       "state" : {
-        "revision" : "f3f8338921f0b180c39611351be69619bbfec123",
-        "version" : "1.0.0-ALPHA-22-spm-async"
+        "revision" : "aff8a1fb0bc8f9c4294768a4c2ad2e0d6c56b341",
+        "version" : "1.0.0-ALPHA-26-spm-async"
       }
     },
     {
@@ -154,5 +155,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

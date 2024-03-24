@@ -37,7 +37,7 @@ decompose = "2.2.2"
 # if necessary, download again the native library here
 # https://github.com/java-native-access/jna
 jsystem-theme-detector = "3.6"
-native-coroutines = "1.0.0-ALPHA-26"
+native-coroutines = "1.0.0-ALPHA-27"
 ksp = "1.9.23-1.0.19"
 compose-image-loader = "1.7.8"
 multiplatform-settings = "1.1.1"

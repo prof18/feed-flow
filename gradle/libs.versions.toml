@@ -49,7 +49,7 @@ crashk-ios = "0.8.6"
 sentry = "7.6.0"
 material-window-size = "1.2.0"
 immutable-collections = "0.3.7"
-detekt-compose-rules = "0.3.11"
+detekt-compose-rules = "0.3.12"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }

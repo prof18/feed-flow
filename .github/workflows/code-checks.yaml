@@ -21,10 +21,6 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
-
       - name: Install Swift Lint
         run: |
           brew install swiftlint
@@ -99,9 +95,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Xcode version
+        run: |
+          /usr/bin/xcodebuild -version   
+
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
+
+      - name: Xcode version
+        run: |
+          /usr/bin/xcodebuild -version 
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle

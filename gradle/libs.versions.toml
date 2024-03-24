@@ -29,16 +29,16 @@ rss-parser = "6.0.6"
 accompanist = "0.34.0"
 jsoup = "1.17.2"
 triplet-play = "3.9.0"
-compose-multiplatform = "1.5.11"
-compose-compiler = "1.5.7"
+compose-multiplatform = "1.6.1"
+compose-compiler = "1.5.11"
 decompose = "2.2.2"
 # When updating, check the version of jna in the following link:
 # https://github.com/Dansoftowner/jSystemThemeDetector/blob/master/build.gradle
 # if necessary, download again the native library here
 # https://github.com/java-native-access/jna
 jsystem-theme-detector = "3.6"
-native-coroutines = "1.0.0-ALPHA-22"
-ksp = "1.9.21-1.0.15"
+native-coroutines = "1.0.0-ALPHA-26"
+ksp = "1.9.23-1.0.19"
 compose-image-loader = "1.7.4"
 multiplatform-settings = "1.1.1"
 moko-resources = "0.23.0"

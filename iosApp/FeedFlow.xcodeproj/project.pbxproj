@@ -971,7 +971,7 @@
 			repositoryURL = "https://github.com/rickclephas/KMP-NativeCoroutines.git";
 			requirement = {
 				kind = exactVersion;
-				version = "1.0.0-ALPHA-26-spm-async";
+				version = "1.0.0-ALPHA-27-spm-async";
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

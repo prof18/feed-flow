@@ -101,7 +101,7 @@ jobs:
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '15.2'
 
       - name: Xcode version
         run: |

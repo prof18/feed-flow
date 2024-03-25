@@ -102,9 +102,13 @@ class BrowserManager(
         url: String,
         context: Context,
     ) {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(url)
+        try {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(url)
+            }
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            logger.e(e) { "Unable to start web browser" }
         }
-        context.startActivity(intent)
     }
 }

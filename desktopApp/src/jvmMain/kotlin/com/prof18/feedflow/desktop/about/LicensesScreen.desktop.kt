@@ -69,7 +69,7 @@ fun LicensesScreen(
                 it.bufferedReader().readText()
             },
             onLibraryClick = { library ->
-                openLicenseDialog = library.library.licenses.firstOrNull()?.strippedLicenseContent ?: ""
+                openLicenseDialog = library.licenses.firstOrNull()?.strippedLicenseContent ?: ""
             },
         )
 

@@ -43,15 +43,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 
 internal expect fun Modifier.feedSourceMenuClickModifier(
@@ -105,7 +104,7 @@ internal fun FeedSourcesWithCategoryList(
                     val headerText = if (feedSourceState.categoryName != null) {
                         requireNotNull(feedSourceState.categoryName)
                     } else {
-                        stringResource(resource = MR.strings.no_category)
+                        LocalFeedFlowStrings.current.noCategory
                     }
 
                     Text(
@@ -258,7 +257,7 @@ private fun FeedSourceContextMenu(
                 .tagForTesting(TestingTag.FEED_SOURCE_DELETE_BUTTON),
             text = {
                 Text(
-                    stringResource(resource = MR.strings.delete_feed),
+                    LocalFeedFlowStrings.current.deleteFeed,
                 )
             },
             onClick = {
@@ -276,7 +275,7 @@ internal fun FeedSourceNavBar(
 ) {
     TopAppBar(
         title = {
-            Text(stringResource(resource = MR.strings.feeds_title))
+            Text(LocalFeedFlowStrings.current.feedsTitle)
         },
         navigationIcon = {
             IconButton(
@@ -318,7 +317,7 @@ internal fun NoFeedSourcesView(
             modifier = Modifier
                 .padding(Spacing.regular)
                 .tagForTesting(TestingTag.NO_FEED_SOURCE_MESSAGE),
-            text = stringResource(resource = MR.strings.no_feeds_add_one_message),
+            text = LocalFeedFlowStrings.current.noFeedsAddOneMessage,
         )
     }
 }

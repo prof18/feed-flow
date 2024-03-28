@@ -1,7 +1,8 @@
 package com.prof18.feedflow.shared.presentation.model
 
-import dev.icerock.moko.resources.desc.StringDesc
-
-data class UIErrorState(
-    val message: StringDesc,
-)
+sealed class UIErrorState {
+    data object DatabaseError : UIErrorState()
+    data class FeedErrorState(
+        val feedName: String,
+    ) : UIErrorState()
+}

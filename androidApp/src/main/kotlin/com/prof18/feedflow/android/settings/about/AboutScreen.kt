@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.core.utils.TestingTag
@@ -31,8 +30,8 @@ import com.prof18.feedflow.shared.ui.about.AboutTextItem
 import com.prof18.feedflow.shared.ui.about.AuthorText
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 import org.koin.compose.koinInject
 
 @Composable
@@ -83,7 +82,7 @@ private fun AboutScreenContent(
                     .tagForTesting(TestingTag.ABOUT_TOOLBAR),
                 title = {
                     Text(
-                        stringResource(resource = MR.strings.about_nav_bar),
+                        LocalFeedFlowStrings.current.aboutNavBar,
                     )
                 },
                 navigationIcon = {
@@ -118,19 +117,19 @@ private fun AboutScreenContent(
                 item {
                     AboutButtonItem(
                         onClick = onOpenWebsiteClick,
-                        buttonText = stringResource(MR.strings.open_website_button),
+                        buttonText = LocalFeedFlowStrings.current.openWebsiteButton,
                     )
                 }
                 item {
                     AboutButtonItem(
                         onClick = onHelpWithTranslationsClick,
-                        buttonText = stringResource(MR.strings.about_menu_contribute_translations),
+                        buttonText = LocalFeedFlowStrings.current.aboutMenuContributeTranslations,
                     )
                 }
                 item {
                     AboutButtonItem(
                         onClick = licensesClicked,
-                        buttonText = stringResource(MR.strings.open_source_licenses),
+                        buttonText = LocalFeedFlowStrings.current.openSourceLicenses,
                     )
                 }
                 item {
@@ -139,7 +138,7 @@ private fun AboutScreenContent(
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onBackground,
-                        text = stringResource(MR.strings.about_app_version, BuildConfig.VERSION_NAME),
+                        text = LocalFeedFlowStrings.current.aboutAppVersion(BuildConfig.VERSION_NAME),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }

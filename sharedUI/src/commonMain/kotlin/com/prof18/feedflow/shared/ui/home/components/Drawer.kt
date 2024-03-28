@@ -16,12 +16,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Feed
 import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.PlaylistAddCheck
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,14 +41,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -136,7 +135,7 @@ private fun DrawerTimelineItem(
         selected = currentFeedFilter is FeedFilter.Timeline,
         label = {
             Text(
-                text = stringResource(MR.strings.drawer_title_timeline),
+                text = LocalFeedFlowStrings.current.drawerTitleTimeline,
             )
         },
         icon = {
@@ -161,7 +160,7 @@ private fun DrawerReadItem(
         selected = currentFeedFilter is FeedFilter.Read,
         label = {
             Text(
-                text = stringResource(MR.strings.drawer_title_read),
+                text = LocalFeedFlowStrings.current.drawerTitleRead,
             )
         },
         icon = {
@@ -186,7 +185,7 @@ private fun DrawerBookmarksItem(
         selected = currentFeedFilter is FeedFilter.Bookmarks,
         label = {
             Text(
-                text = stringResource(MR.strings.drawer_title_bookmarks),
+                text = LocalFeedFlowStrings.current.drawerTitleBookmarks,
             )
         },
         icon = {
@@ -213,7 +212,7 @@ private fun DrawerCategoriesSection(
             modifier = Modifier
                 .padding(start = Spacing.regular)
                 .padding(bottom = Spacing.regular),
-            text = stringResource(MR.strings.drawer_title_categories),
+            text = LocalFeedFlowStrings.current.drawerTitleCategories,
             style = MaterialTheme.typography.labelLarge,
         )
 
@@ -271,7 +270,7 @@ private fun DrawerFeedSourcesByCategories(
                 modifier = Modifier
                     .padding(start = Spacing.regular)
                     .padding(bottom = Spacing.regular),
-                text = stringResource(MR.strings.drawer_title_feed_sources),
+                text = LocalFeedFlowStrings.current.drawerTitleFeedSources,
                 style = MaterialTheme.typography.labelLarge,
             )
 
@@ -342,7 +341,7 @@ private fun DrawerFeedSourceByCategoryItem(
             val headerText = if (feedSourceCategoryWrapper.feedSourceCategory?.title != null) {
                 requireNotNull(feedSourceCategoryWrapper.feedSourceCategory?.title)
             } else {
-                stringResource(resource = MR.strings.no_category)
+                LocalFeedFlowStrings.current.noCategory
             }
 
             Text(
@@ -353,7 +352,7 @@ private fun DrawerFeedSourceByCategoryItem(
             )
 
             Icon(
-                imageVector = Icons.Rounded.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                 contentDescription = null,
                 modifier = Modifier.rotate(degrees),
             )

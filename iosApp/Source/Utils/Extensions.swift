@@ -9,12 +9,6 @@
 import shared
 import SwiftUI
 
-extension StringResource {
-    var localized: String {
-        return self.desc().localizedWithFallback()
-   }
-}
-
 extension View {
     /// Applies the given transform if the given condition evaluates to `true`.
     /// - Parameters:
@@ -30,6 +24,6 @@ extension View {
     }
 
     func modify<Content>(@ViewBuilder _ transform: (Self) -> Content) -> Content {
-            transform(self)
+        transform(self)
     }
 }

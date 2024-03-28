@@ -19,6 +19,8 @@ import com.prof18.feedflow.android.home.bywindowsize.MediumHomeView
 import com.prof18.feedflow.android.home.components.NoFeedsBottomSheet
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.model.UIErrorState
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -41,12 +43,26 @@ internal fun HomeScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val strings = LocalFeedFlowStrings.current
     LaunchedEffect(Unit) {
         homeViewModel.errorState.collect { errorState ->
-            snackbarHostState.showSnackbar(
-                errorState!!.message.toString(context),
-                duration = SnackbarDuration.Short,
-            )
+            when (errorState) {
+                UIErrorState.DatabaseError -> {
+                    snackbarHostState.showSnackbar(
+                        strings.databaseError,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
+                is UIErrorState.FeedErrorState -> {
+                    snackbarHostState.showSnackbar(
+                        strings.feedErrorMessage(errorState.feedName),
+                        duration = SnackbarDuration.Short,
+                    )
+                }
+                null -> {
+                    // Do nothing
+                }
+            }
         }
     }
 

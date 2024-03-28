@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_added_message">Feed %s hinzugefügt</string>
+    <string name="feed_added_message">Feed "%s" hinzugefügt</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="feed_add_in_progress_message">Bitte warte, die Verfügbarkeit aller Feeds wird geprüft. Der Vorgang kann eine Weile dauern, je nach der Anzahl der Feeds, die importiert werden</string>
     <string name="drawer_title_timeline">Zeitleiste</string>

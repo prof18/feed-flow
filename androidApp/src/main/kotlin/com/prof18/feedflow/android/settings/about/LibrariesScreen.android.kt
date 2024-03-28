@@ -13,8 +13,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
-import com.prof18.feedflow.MR
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun LicensesScreen(
@@ -27,7 +26,7 @@ fun LicensesScreen(
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(stringResource(resource = MR.strings.open_source_nav_bar))
+                        Text(LocalFeedFlowStrings.current.openSourceNavBar)
                     },
                     navigationIcon = {
                         IconButton(

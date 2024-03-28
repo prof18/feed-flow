@@ -20,6 +20,8 @@ import com.prof18.feedflow.desktop.home.components.NoFeedsDialog
 import com.prof18.feedflow.desktop.utils.WindowWidthSizeClass
 import com.prof18.feedflow.desktop.utils.calculateWindowSizeClass
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.model.UIErrorState
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun HomeScreen(
@@ -37,12 +39,28 @@ internal fun HomeScreen(
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
     val unReadCount by homeViewModel.unreadCountFlow.collectAsState(initial = 0)
 
+    val strings = LocalFeedFlowStrings.current
     LaunchedEffect(Unit) {
         homeViewModel.errorState.collect { errorState ->
-            snackbarHostState.showSnackbar(
-                errorState!!.message.localized(),
-                duration = SnackbarDuration.Short,
-            )
+            when (errorState) {
+                UIErrorState.DatabaseError -> {
+                    snackbarHostState.showSnackbar(
+                        strings.databaseError,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
+
+                is UIErrorState.FeedErrorState -> {
+                    snackbarHostState.showSnackbar(
+                        strings.feedErrorMessage(errorState.feedName),
+                        duration = SnackbarDuration.Short,
+                    )
+                }
+
+                null -> {
+                    // Do nothing
+                }
+            }
         }
     }
 

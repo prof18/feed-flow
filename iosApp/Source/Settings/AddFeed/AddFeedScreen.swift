@@ -63,7 +63,7 @@ struct AddFeedScreen: View {
                     case let addedState as FeedAddedState.FeedAdded:
                         self.appState.snackbarQueue.append(
                             SnackbarData(
-                                title: addedState.message.localized(),
+                                title: feedFlowStrings.feedAddedMessage(addedState.feedName),
                                 subtitle: nil,
                                 showBanner: true
                             )
@@ -76,7 +76,17 @@ struct AddFeedScreen: View {
                         showError = false
 
                     case let errorState as FeedAddedState.Error:
-                        errorMessage = errorState.errorMessage.localized()
+                        switch errorState {
+                        case is FeedAddedState.ErrorInvalidUrl:
+                            errorMessage = feedFlowStrings.invalidRssUrl
+
+                        case is FeedAddedState.ErrorInvalidTitleLink:
+                            errorMessage = feedFlowStrings.missingTitleAndLink
+
+                        default:
+                            break
+                        }
+
                         isAddingFeed = false
                         showError = true
 

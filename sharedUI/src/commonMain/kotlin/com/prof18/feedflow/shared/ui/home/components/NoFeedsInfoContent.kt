@@ -8,11 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun NoFeedsInfoContent(
@@ -29,7 +28,7 @@ fun NoFeedsInfoContent(
             Text(
                 modifier = Modifier
                     .padding(horizontal = Spacing.regular),
-                text = stringResource(MR.strings.no_feed_modal_title),
+                text = LocalFeedFlowStrings.current.noFeedModalTitle,
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -39,7 +38,7 @@ fun NoFeedsInfoContent(
                 .padding(vertical = Spacing.regular)
                 .padding(horizontal = Spacing.regular)
                 .tagForTesting(TestingTag.NO_FEED_BOTTOM_SHEET_MESSAGE),
-            text = stringResource(MR.strings.no_feed_modal_message),
+            text = LocalFeedFlowStrings.current.noFeedModalMessage,
             style = MaterialTheme.typography.bodyMedium,
         )
 
@@ -53,9 +52,7 @@ fun NoFeedsInfoContent(
                 onAddFeedClick()
             },
         ) {
-            Text(
-                stringResource(MR.strings.add_feed),
-            )
+            Text(LocalFeedFlowStrings.current.addFeed)
         }
 
         Button(
@@ -70,9 +67,7 @@ fun NoFeedsInfoContent(
                 onImportExportClick()
             },
         ) {
-            Text(
-                stringResource(MR.strings.import_export_opml),
-            )
+            Text(LocalFeedFlowStrings.current.importExportOpml)
         }
     }
 }

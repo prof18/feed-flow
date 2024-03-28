@@ -30,6 +30,8 @@ import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.about.AboutScreen
 import com.prof18.feedflow.android.settings.about.LicensesScreen
 import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
+import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -52,15 +54,17 @@ class MainActivity : ComponentActivity() {
 
             FeedFlowTheme {
                 val navController = rememberNavController()
-
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background,
-                ) {
-                    FeedFlowNavigation(
-                        windowSizeClass = windowSize,
-                        navController = navController,
-                    )
+                val lyricist = rememberFeedFlowStrings()
+                ProvideFeedFlowStrings(lyricist) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background,
+                    ) {
+                        FeedFlowNavigation(
+                            windowSizeClass = windowSize,
+                            navController = navController,
+                        )
+                    }
                 }
             }
         }

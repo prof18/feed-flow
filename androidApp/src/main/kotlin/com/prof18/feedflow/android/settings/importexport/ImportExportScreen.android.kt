@@ -11,7 +11,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
@@ -19,7 +18,7 @@ import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.preview.importExportStates
 import com.prof18.feedflow.shared.ui.importexport.ImportExportContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -29,7 +28,7 @@ fun ImportExportScreen(
     val viewModel = koinViewModel<ImportExportViewModel>()
 
     val context = LocalContext.current
-    val importingFeedMessage = stringResource(resource = MR.strings.feeds_importing_message)
+    val importingFeedMessage = LocalFeedFlowStrings.current.feedsImportingMessage
 
     val openFileAction = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),

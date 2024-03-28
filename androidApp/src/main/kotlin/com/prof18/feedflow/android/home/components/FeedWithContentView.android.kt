@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -31,8 +30,8 @@ import com.prof18.feedflow.shared.ui.home.components.FeedItemView
 import com.prof18.feedflow.shared.ui.home.components.FeedList
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -61,10 +60,7 @@ internal fun FeedWithContentView(
                     .fillMaxWidth()
                     .padding(horizontal = Spacing.regular)
                     .tagForTesting(TestingTag.LOADING_BAR),
-                text = stringResource(
-                    resource = MR.strings.loading_feed_message,
-                    feedRefreshCounter,
-                ),
+                text = LocalFeedFlowStrings.current.loadingFeedMessage(feedRefreshCounter),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium,
             )

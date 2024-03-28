@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.settings.components.BrowserSelectionDialog
 import com.prof18.feedflow.core.utils.TestingTag
@@ -47,9 +46,9 @@ import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -70,9 +69,9 @@ fun SettingsScreen(
     val browserListState by browserManager.browserListState.collectAsStateWithLifecycle()
     val settingState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
 
-    val emailSubject = stringResource(MR.strings.issue_content_title)
-    val emailContent = stringResource(MR.strings.issue_content_template)
-    val chooserTitle = stringResource(MR.strings.issue_report_title)
+    val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
+    val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
+    val chooserTitle = LocalFeedFlowStrings.current.issueReportTitle
 
     SettingsScreenContent(
         browsers = browserListState,
@@ -183,7 +182,7 @@ private fun SettingsList(
     ) {
         item {
             Text(
-                text = stringResource(resource = MR.strings.settings_general_title),
+                text = LocalFeedFlowStrings.current.settingsGeneralTitle,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(Spacing.regular),
@@ -194,7 +193,7 @@ private fun SettingsList(
             SettingItem(
                 modifier = Modifier
                     .tagForTesting(TestingTag.SETTINGS_FEED_ITEM),
-                title = stringResource(resource = MR.strings.feeds_title),
+                title = LocalFeedFlowStrings.current.feedsTitle,
                 icon = Icons.Default.Feed,
                 onClick = onFeedListClick,
             )
@@ -202,7 +201,7 @@ private fun SettingsList(
 
         item {
             SettingItem(
-                title = stringResource(resource = MR.strings.add_feed),
+                title = LocalFeedFlowStrings.current.addFeed,
                 icon = Icons.Outlined.AddCircleOutline,
                 onClick = onAddFeedClick,
             )
@@ -210,7 +209,7 @@ private fun SettingsList(
 
         item {
             SettingItem(
-                title = stringResource(resource = MR.strings.import_export_opml),
+                title = LocalFeedFlowStrings.current.importExportOpml,
                 icon = Icons.Outlined.SwapVert,
                 onClick = navigateToImportExport,
             )
@@ -220,7 +219,7 @@ private fun SettingsList(
             SettingItem(
                 modifier = Modifier
                     .tagForTesting(TestingTag.BROWSER_SELECTOR),
-                title = stringResource(resource = MR.strings.browser_selection_button),
+                title = LocalFeedFlowStrings.current.browserSelectionButton,
                 icon = Icons.Outlined.Language,
                 onClick = onBrowserSelectionClick,
             )
@@ -242,7 +241,7 @@ private fun SettingsList(
 
         item {
             Text(
-                text = stringResource(resource = MR.strings.settings_app_title),
+                text = LocalFeedFlowStrings.current.settingsAppTitle,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(Spacing.regular),
@@ -251,7 +250,7 @@ private fun SettingsList(
 
         item {
             SettingItem(
-                title = stringResource(resource = MR.strings.report_issue_button),
+                title = LocalFeedFlowStrings.current.reportIssueButton,
                 icon = Icons.Outlined.BugReport,
                 onClick = onBugReportClick,
             )
@@ -261,7 +260,7 @@ private fun SettingsList(
             SettingItem(
                 modifier = Modifier
                     .tagForTesting(TestingTag.ABOUT_SETTINGS_ITEM),
-                title = stringResource(resource = MR.strings.about_button),
+                title = LocalFeedFlowStrings.current.aboutButton,
                 icon = Icons.Outlined.Info,
                 onClick = onAboutClick,
             )
@@ -294,7 +293,7 @@ private fun MarkReadWhenScrollingSwitch(
         )
 
         Text(
-            text = stringResource(resource = MR.strings.toggle_mark_read_when_scrolling),
+            text = LocalFeedFlowStrings.current.toggleMarkReadWhenScrolling,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .weight(1f),
@@ -331,7 +330,7 @@ private fun ShowReadItemOnTimelineSwitch(
         )
 
         Text(
-            text = stringResource(resource = MR.strings.settings_toggle_show_read_articles),
+            text = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .weight(1f),
@@ -348,9 +347,7 @@ private fun ShowReadItemOnTimelineSwitch(
 private fun SettingsNavBar(navigateBack: () -> Unit) {
     TopAppBar(
         title = {
-            Text(
-                stringResource(resource = MR.strings.settings_title),
-            )
+            Text(LocalFeedFlowStrings.current.settingsTitle)
         },
         navigationIcon = {
             IconButton(

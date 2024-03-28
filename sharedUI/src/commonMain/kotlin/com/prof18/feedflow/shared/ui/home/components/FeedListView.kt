@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
-import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -44,15 +43,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -330,7 +328,7 @@ private fun OpenCommentsMenuItem(
     DropdownMenuItem(
         text = {
             Text(
-                stringResource(resource = MR.strings.menu_open_comments),
+                LocalFeedFlowStrings.current.menuOpenComments,
             )
         },
         leadingIcon = {
@@ -361,9 +359,9 @@ private fun ChangeBookmarkStatusMenuItem(
         text = {
             Text(
                 text = if (feedItem.isBookmarked) {
-                    stringResource(resource = MR.strings.menu_remove_from_bookmark)
+                    LocalFeedFlowStrings.current.menuRemoveFromBookmark
                 } else {
-                    stringResource(resource = MR.strings.menu_add_to_bookmark)
+                    LocalFeedFlowStrings.current.menuAddToBookmark
                 },
             )
         },
@@ -400,9 +398,9 @@ private fun ChangeReadStatusMenuItem(
         text = {
             Text(
                 text = if (feedItem.isRead) {
-                    stringResource(resource = MR.strings.menu_mark_as_unread)
+                    LocalFeedFlowStrings.current.menuMarkAsUnread
                 } else {
-                    stringResource(resource = MR.strings.menu_mark_as_read)
+                    LocalFeedFlowStrings.current.menuMarkAsRead
                 },
             )
         },

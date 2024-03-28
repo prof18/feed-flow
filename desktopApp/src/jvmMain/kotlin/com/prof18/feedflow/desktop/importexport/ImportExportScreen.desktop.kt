@@ -8,7 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.window.AwtWindow
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.getUnixDeviceName
@@ -16,7 +15,7 @@ import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.ui.importexport.ImportExportContent
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import java.awt.FileDialog
 import java.io.File
 import javax.swing.JFrame
@@ -29,8 +28,8 @@ fun ImportExportScreen(
     val viewModel = desktopViewModel { DI.koin.get<ImportExportViewModel>() }
     val feedImporterState by viewModel.importExportState.collectAsState()
 
-    val importDialogTitle = stringResource(resource = MR.strings.import_dialog_title)
-    val exportDialogTitle = stringResource(resource = MR.strings.export_dialog_title)
+    val importDialogTitle = LocalFeedFlowStrings.current.importDialogTitle
+    val exportDialogTitle = LocalFeedFlowStrings.current.exportDialogTitle
 
     var showImportDialog by remember { mutableStateOf(false) }
     var showExportDialog by remember { mutableStateOf(false) }

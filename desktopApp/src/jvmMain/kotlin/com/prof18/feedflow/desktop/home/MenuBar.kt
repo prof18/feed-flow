@@ -6,8 +6,7 @@ import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuScope
-import com.prof18.feedflow.MR
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun FrameWindowScope.FeedFlowMenuBar(
@@ -29,7 +28,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     MenuBar {
         Menu("File", mnemonic = 'F') {
             Item(
-                text = stringResource(resource = MR.strings.refresh_feeds),
+                text = LocalFeedFlowStrings.current.refreshFeeds,
                 onClick = {
                     onRefreshClick()
                 },
@@ -37,7 +36,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
             )
 
             Item(
-                text = stringResource(resource = MR.strings.force_feed_refresh),
+                text = LocalFeedFlowStrings.current.forceFeedRefresh,
                 onClick = {
                     onForceRefreshClick()
                 },
@@ -45,14 +44,14 @@ fun FrameWindowScope.FeedFlowMenuBar(
             )
 
             Item(
-                text = stringResource(resource = MR.strings.mark_all_read_button),
+                text = LocalFeedFlowStrings.current.markAllReadButton,
                 onClick = {
                     onMarkAllReadClick()
                 },
             )
 
             Item(
-                text = stringResource(resource = MR.strings.clear_old_articles_button),
+                text = LocalFeedFlowStrings.current.clearOldArticlesButton,
                 onClick = {
                     onClearOldFeedClick()
                 },
@@ -61,25 +60,25 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Separator()
 
             Item(
-                text = stringResource(resource = MR.strings.feeds_title),
+                text = LocalFeedFlowStrings.current.feedsTitle,
                 onClick = {
                     onFeedsListClick()
                 },
             )
 
             Item(
-                text = stringResource(resource = MR.strings.import_export_opml),
+                text = LocalFeedFlowStrings.current.importExportOpml,
                 onClick = onImportExportClick,
             )
 
             CheckboxItem(
-                text = stringResource(resource = MR.strings.toggle_mark_read_when_scrolling),
+                text = LocalFeedFlowStrings.current.toggleMarkReadWhenScrolling,
                 checked = isMarkReadWhenScrollingEnabled,
                 onCheckedChange = setMarkReadWhenScrolling,
             )
 
             CheckboxItem(
-                text = stringResource(resource = MR.strings.settings_toggle_show_read_articles),
+                text = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
                 checked = isShowReadItemEnabled,
                 onCheckedChange = setShowReadItem,
             )
@@ -87,14 +86,14 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Separator()
 
             Item(
-                text = stringResource(resource = MR.strings.report_issue_button),
+                text = LocalFeedFlowStrings.current.reportIssueButton,
                 onClick = onBugReportClick,
             )
 
             Separator()
 
             Item(
-                text = stringResource(resource = MR.strings.about_button),
+                text = LocalFeedFlowStrings.current.aboutButton,
                 onClick = onAboutClick,
             )
 

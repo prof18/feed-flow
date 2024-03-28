@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material3.Button
@@ -26,14 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -73,7 +72,7 @@ fun ImportExportContent(
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize(),
-                    message = stringResource(MR.strings.feed_add_in_progress_message),
+                    message = LocalFeedFlowStrings.current.feedAddInProgressMessage,
                 )
 
             FeedImportExportState.LoadingExport ->
@@ -81,7 +80,7 @@ fun ImportExportContent(
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize(),
-                    message = stringResource(MR.strings.export_started_message),
+                    message = LocalFeedFlowStrings.current.exportStartedMessage,
                 )
 
             FeedImportExportState.ExportSuccess ->
@@ -108,9 +107,7 @@ fun ImportExportContent(
 private fun ImportExportNavBar(navigateBack: () -> Unit) {
     TopAppBar(
         title = {
-            Text(
-                stringResource(resource = MR.strings.import_export_opml_title),
-            )
+            Text(LocalFeedFlowStrings.current.importExportOpmlTitle)
         },
         navigationIcon = {
             IconButton(
@@ -119,7 +116,7 @@ private fun ImportExportNavBar(navigateBack: () -> Unit) {
                 },
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = null,
                 )
             }
@@ -141,7 +138,7 @@ private fun ImportExportIdleView(
                 modifier = Modifier
                     .padding(Spacing.regular),
                 color = MaterialTheme.colorScheme.onBackground,
-                text = stringResource(MR.strings.import_export_description),
+                text = LocalFeedFlowStrings.current.importExportDescription,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -150,7 +147,7 @@ private fun ImportExportIdleView(
             SettingItem(
                 modifier = Modifier
                     .tagForTesting(TestingTag.IMPORT_FEED_OPML_BUTTON),
-                title = stringResource(resource = MR.strings.import_feed_button),
+                title = LocalFeedFlowStrings.current.importFeedButton,
                 icon = Icons.Default.FileDownload,
                 onClick = onImportClick,
             )
@@ -158,7 +155,7 @@ private fun ImportExportIdleView(
 
         item {
             SettingItem(
-                title = stringResource(resource = MR.strings.export_feeds_button),
+                title = LocalFeedFlowStrings.current.exportFeedsButton,
                 icon = Icons.Default.FileUpload,
                 onClick = onExportClick,
             )
@@ -200,7 +197,7 @@ private fun ImportExportErrorView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = stringResource(resource = MR.strings.generic_error_message),
+            text = LocalFeedFlowStrings.current.genericErrorMessage,
             style = MaterialTheme.typography.bodyMedium,
         )
         Button(
@@ -208,7 +205,7 @@ private fun ImportExportErrorView(
                 .padding(top = Spacing.regular),
             onClick = onRetryClick,
         ) {
-            Text(stringResource(resource = MR.strings.retry_button))
+            Text(LocalFeedFlowStrings.current.retryButton)
         }
     }
 }
@@ -225,7 +222,7 @@ private fun ExportDoneView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = stringResource(MR.strings.feeds_export_done_message),
+            text = LocalFeedFlowStrings.current.feedsExportDoneMessage,
             style = MaterialTheme.typography.bodyMedium,
         )
         Button(
@@ -233,7 +230,7 @@ private fun ExportDoneView(
                 .padding(top = Spacing.regular),
             onClick = onDoneClick,
         ) {
-            Text(stringResource(resource = MR.strings.done_button))
+            Text(LocalFeedFlowStrings.current.doneButton)
         }
     }
 }
@@ -257,7 +254,7 @@ private fun ImportDoneView(
                 Text(
                     modifier = Modifier
                         .tagForTesting(TestingTag.IMPORT_DONE_MESSAGE),
-                    text = stringResource(MR.strings.feeds_import_done_message),
+                    text = LocalFeedFlowStrings.current.feedsImportDoneMessage,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Button(
@@ -266,7 +263,7 @@ private fun ImportDoneView(
                         .tagForTesting(TestingTag.IMPORT_DONE_BUTTON),
                     onClick = onDoneClick,
                 ) {
-                    Text(stringResource(resource = MR.strings.done_button))
+                    Text(LocalFeedFlowStrings.current.doneButton)
                 }
             }
         } else {
@@ -274,7 +271,7 @@ private fun ImportDoneView(
                 modifier = Modifier
                     .padding(horizontal = Spacing.regular)
                     .padding(top = Spacing.regular),
-                text = stringResource(MR.strings.wrong_link_report_title),
+                text = LocalFeedFlowStrings.current.wrongLinkReportTitle,
                 style = MaterialTheme.typography.titleMedium,
             )
 
@@ -291,7 +288,7 @@ private fun ImportDoneView(
                     .padding(Spacing.regular),
                 onClick = onDoneClick,
             ) {
-                Text(stringResource(resource = MR.strings.done_button))
+                Text(LocalFeedFlowStrings.current.doneButton)
             }
         }
     }

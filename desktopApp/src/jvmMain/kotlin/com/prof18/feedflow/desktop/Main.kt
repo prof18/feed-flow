@@ -38,7 +38,6 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.desktop.about.AboutContent
 import com.prof18.feedflow.desktop.di.DI
@@ -57,8 +56,8 @@ import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import java.awt.Desktop
 import java.io.File
@@ -147,7 +146,7 @@ fun main() = application {
         val navigation: StackNavigation<Screen> = remember { StackNavigation() }
 
         var aboutDialogState by remember { mutableStateOf(false) }
-        val dialogTitle = stringResource(MR.strings.app_name)
+        val dialogTitle = LocalFeedFlowStrings.current.appName
         DialogWindow(
             title = dialogTitle,
             visible = aboutDialogState,
@@ -156,12 +155,12 @@ fun main() = application {
             },
         ) {
             AboutContent(
-                versionLabel = stringResource(MR.strings.about_app_version, version ?: "N/A"),
+                versionLabel = LocalFeedFlowStrings.current.aboutAppVersion(version ?: "N/A"),
             )
         }
 
-        val emailSubject = stringResource(MR.strings.issue_content_title)
-        val emailContent = stringResource(MR.strings.issue_content_template)
+        val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
+        val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
 
         val settingsState by settingsViewModel.settingsState.collectAsState()
 

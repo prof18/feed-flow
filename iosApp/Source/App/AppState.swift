@@ -28,7 +28,7 @@ class AppState: ObservableObject {
     func emitGenericError() {
         snackbarQueue.append(
             SnackbarData(
-                title: localizer.generic_error_message.localized,
+                title: feedFlowStrings.genericErrorMessage,
                 subtitle: nil,
                 showBanner: true
             )

@@ -10,11 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun NoFeedsSourceView(
@@ -28,7 +27,7 @@ fun NoFeedsSourceView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = stringResource(resource = MR.strings.no_feeds_found_message),
+            text = LocalFeedFlowStrings.current.noFeedsFoundMessage,
             style = MaterialTheme.typography.bodyMedium,
         )
         Button(
@@ -39,7 +38,7 @@ fun NoFeedsSourceView(
                 onAddFeedClick()
             },
         ) {
-            Text(stringResource(resource = MR.strings.add_feed))
+            Text(LocalFeedFlowStrings.current.addFeed)
         }
     }
 }

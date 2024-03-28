@@ -131,26 +131,26 @@ struct HomeContent: View {
                 Button {
                     onMarkAllReadClick()
                 } label: {
-                    Label(localizer.mark_all_read_button.localized, systemImage: "checkmark")
+                    Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
                 }
 
                 Button {
                     onDeleteOldFeedClick()
                 } label: {
-                    Label(localizer.clear_old_articles_button.localized, systemImage: "trash")
+                    Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
                 }
 
                 Button {
                     proxy.scrollTo(feedState.first?.id)
                     onForceRefreshClick()
                 } label: {
-                    Label(localizer.force_feed_refresh.localized, systemImage: "arrow.clockwise")
+                    Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
                 }
 
                 Button {
                     self.sheetToShow = .settings
                 } label: {
-                    Label(localizer.settings_button.localized, systemImage: "gear")
+                    Label(feedFlowStrings.settingsButton, systemImage: "gear")
                 }
                 .accessibilityLabel(TestingTag.shared.SETTINGS_MENU)
 
@@ -180,13 +180,13 @@ fileprivate extension FeedFilter {
             return source.feedSource.title
 
         case is FeedFilter.Read:
-            return localizer.drawer_title_read.localized
+            return feedFlowStrings.drawerTitleRead
 
         case is FeedFilter.Bookmarks:
-            return localizer.drawer_title_bookmarks.localized
+            return feedFlowStrings.drawerTitleBookmarks
 
         default:
-            return localizer.app_name.localized
+            return feedFlowStrings.appName
         }
     }
 }

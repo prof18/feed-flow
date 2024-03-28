@@ -14,35 +14,31 @@ struct AboutScreen: View {
 
     @Environment(\.openURL) private var openURL
 
-    private let authorLink: LocalizedStringKey = "\(localizer.author_label.localized) [Marco Gomiero](https://www.marcogomiero.com)"
+    private let authorLink: LocalizedStringKey = "\(feedFlowStrings.authorLabel) [Marco Gomiero](https://www.marcogomiero.com)"
 
     var body: some View {
         VStack {
             List {
                 Section {
-                    Text(localizer.about_the_app.localized)
+                    Text(feedFlowStrings.aboutTheApp)
                         .padding(.vertical, Spacing.small)
                         .font(.system(size: 16))
                         .accessibilityIdentifier(TestingTag.shared.ABOUT_TOOLBAR)
 
                     NavigationLink(destination: LicensesScreen()) {
-                        Label(localizer.open_source_licenses.localized, systemImage: "shield" )
+                        Label(feedFlowStrings.openSourceLicenses, systemImage: "shield" )
                     }
 
                     Link(destination: URL(string: Websites.shared.FEED_FLOW_WEBSITE)!) {
-                        Label(localizer.open_website_button.localized, systemImage: "globe")
+                        Label(feedFlowStrings.openWebsiteButton, systemImage: "globe")
                     }
 
                     Link(destination: URL(string: Websites.shared.TRANSLATION_WEBSITE)!) {
-                        Label(localizer.about_menu_contribute_translations.localized, systemImage: "flag")
+                        Label(feedFlowStrings.aboutMenuContributeTranslations, systemImage: "flag")
                     }
                 } footer: {
                     if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                        let appVersionString = LocalizationUtils.shared.formatString(
-                            resource: MR.strings().about_app_version,
-                            args: [appVersion]
-                        )
-                        Text(appVersionString)
+                        Text(feedFlowStrings.aboutAppVersion(appVersion))
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.vertical, Spacing.small)
                     }
@@ -58,7 +54,7 @@ struct AboutScreen: View {
                 .padding(.bottom, Spacing.small)
         }
         .background(Color.secondaryBackgroundColor)
-        .navigationTitle(Text(localizer.about_nav_bar.localized))
+        .navigationTitle(Text(feedFlowStrings.aboutNavBar))
         .navigationBarTitleDisplayMode(.inline)
     }
 }

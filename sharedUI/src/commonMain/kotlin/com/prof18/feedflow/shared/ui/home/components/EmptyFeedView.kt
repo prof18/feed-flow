@@ -10,12 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun EmptyFeedView(
@@ -31,9 +30,9 @@ fun EmptyFeedView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val emptyMessage = when (currentFeedFilter) {
-            is FeedFilter.Read -> stringResource(resource = MR.strings.read_articles_empty_screen_message)
-            is FeedFilter.Bookmarks -> stringResource(resource = MR.strings.bookmarked_articles_empty_screen_message)
-            else -> stringResource(resource = MR.strings.empty_feed_message)
+            is FeedFilter.Read -> LocalFeedFlowStrings.current.readArticlesEmptyScreenMessage
+            is FeedFilter.Bookmarks -> LocalFeedFlowStrings.current.bookmarkedArticlesEmptyScreenMessage
+            else -> LocalFeedFlowStrings.current.emptyFeedMessage
         }
 
         Text(
@@ -51,10 +50,10 @@ fun EmptyFeedView(
 
         val buttonText = when (currentFeedFilter) {
             is FeedFilter.Read, is FeedFilter.Bookmarks -> {
-                stringResource(resource = MR.strings.empty_screen_back_to_timeline)
+                LocalFeedFlowStrings.current.emptyScreenBackToTimeline
             }
             else -> {
-                stringResource(resource = MR.strings.refresh_feeds)
+                LocalFeedFlowStrings.current.refreshFeeds
             }
         }
 

@@ -27,9 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.useResource
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.util.strippedLicenseContent
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.shared.ui.style.Spacing
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun LicensesScreen(
@@ -41,7 +40,7 @@ fun LicensesScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(resource = MR.strings.open_source_nav_bar))
+                    Text(LocalFeedFlowStrings.current.openSourceNavBar)
                 },
                 navigationIcon = {
                     IconButton(

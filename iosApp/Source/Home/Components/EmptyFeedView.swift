@@ -56,7 +56,7 @@ struct EmptyFeedView: View {
 //                        onReloadClick()
 //                    },
 //                    label: {
-//                        Text(localizer.refresh_feeds.localized)
+//                        Text(refresh_feeds.localized)
 //                            .frame(maxWidth: .infinity)
 //                    }
 //                )
@@ -72,23 +72,23 @@ fileprivate extension FeedFilter {
     func getEmptyMessage() -> String {
         switch self {
         case is FeedFilter.Read:
-            return localizer.read_articles_empty_screen_message.localized
+            return feedFlowStrings.readArticlesEmptyScreenMessage
 
         case is FeedFilter.Bookmarks:
-            return localizer.bookmarked_articles_empty_screen_message.localized
+            return feedFlowStrings.bookmarkedArticlesEmptyScreenMessage
 
         default:
-            return localizer.empty_feed_message.localized
+            return feedFlowStrings.emptyFeedMessage
         }
     }
 
     func getButtonText() -> String {
         switch self {
         case is FeedFilter.Read, is FeedFilter.Bookmarks:
-            return localizer.empty_screen_back_to_timeline.localized
+            return feedFlowStrings.emptyScreenBackToTimeline
 
         default:
-            return localizer.refresh_feeds.localized
+            return feedFlowStrings.refreshFeeds
         }
     }
 }

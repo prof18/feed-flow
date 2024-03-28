@@ -22,7 +22,7 @@ struct NoFeedsBottomSheet: View {
         NavigationStack {
             List {
                 Section {
-                    Text(localizer.no_feed_modal_message.localized)
+                    Text(feedFlowStrings.noFeedModalMessage)
                         .font(.body)
                         .multilineTextAlignment(.leading)
                         .accessibilityIdentifier(TestingTag.shared.NO_FEED_BOTTOM_SHEET_MESSAGE)
@@ -32,14 +32,14 @@ struct NoFeedsBottomSheet: View {
                     Button {
                         onAddFeedClick()
                     } label: {
-                        Label(localizer.add_feed.localized, systemImage: "plus.app")
+                        Label(feedFlowStrings.addFeed, systemImage: "plus.app")
                     }
                     .accessibilityIdentifier(TestingTag.shared.NO_FEED_BOTTOM_SHEET_ADD_BUTTON)
 
                     Button {
                         onImportExportClick()
                     } label: {
-                        Label(localizer.import_export_opml.localized, systemImage: "arrow.up.arrow.down")
+                        Label(feedFlowStrings.importExportOpml, systemImage: "arrow.up.arrow.down")
                     }
                     .accessibilityIdentifier(TestingTag.shared.NO_FEED_BOTTOM_SHEET_IMPORT_BUTTON)
                 }
@@ -47,14 +47,14 @@ struct NoFeedsBottomSheet: View {
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
             .background(Color.secondaryBackgroundColor)
-            .navigationTitle(localizer.no_feed_modal_title.localized)
+            .navigationTitle(feedFlowStrings.noFeedModalTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         self.presentationMode.wrappedValue.dismiss()
                     } label: {
-                        Text(localizer.action_done.localized).bold()
+                        Text(feedFlowStrings.actionDone).bold()
                     }
                 }
             }

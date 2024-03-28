@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.presentation
 
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
@@ -11,8 +10,6 @@ import com.prof18.feedflow.shared.domain.model.AddFeedResponse
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
-import dev.icerock.moko.resources.desc.ResourceFormatted
-import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -58,33 +55,18 @@ class AddFeedViewModel internal constructor(
                         feedRetrieverRepository.addFeedSource(feedResponse)
                         feedAddedMutableState.emit(
                             FeedAddedState.FeedAdded(
-                                message = StringDesc.ResourceFormatted(
-                                    stringRes = MR.strings.feed_added_message,
-                                    feedResponse.parsedFeedSource.title,
-                                ),
+                                feedResponse.parsedFeedSource.title,
                             ),
                         )
                         initCategories()
                     }
 
                     AddFeedResponse.EmptyFeed -> {
-                        feedAddedMutableState.emit(
-                            FeedAddedState.Error(
-                                errorMessage = StringDesc.ResourceFormatted(
-                                    stringRes = MR.strings.missing_title_and_link,
-                                ),
-                            ),
-                        )
+                        feedAddedMutableState.emit(FeedAddedState.Error.InvalidTitleLink)
                     }
 
                     AddFeedResponse.NotRssFeed -> {
-                        feedAddedMutableState.emit(
-                            FeedAddedState.Error(
-                                errorMessage = StringDesc.ResourceFormatted(
-                                    stringRes = MR.strings.invalid_rss_url,
-                                ),
-                            ),
-                        )
+                        feedAddedMutableState.emit(FeedAddedState.Error.InvalidUrl)
                     }
                 }
             }

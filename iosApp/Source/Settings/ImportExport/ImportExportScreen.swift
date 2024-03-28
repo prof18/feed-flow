@@ -43,7 +43,7 @@ struct ImportExportScreen: View {
                     viewModel.clearState()
                 }
             )
-            .navigationTitle(localizer.import_export_opml_title.localized)
+            .navigationTitle(feedFlowStrings.importExportOpmlTitle)
             .navigationBarTitleDisplayMode(.inline)
             .background(Color.secondaryBackgroundColor)
             .toolbar {
@@ -81,7 +81,7 @@ struct ImportExportScreen: View {
                             viewModel.reportExportError()
                             self.appState.snackbarQueue.append(
                                 SnackbarData(
-                                    title: localizer.load_file_error_message.localized,
+                                    title: feedFlowStrings.loadFileErrorMessage,
                                     subtitle: nil,
                                     showBanner: true
                                 )

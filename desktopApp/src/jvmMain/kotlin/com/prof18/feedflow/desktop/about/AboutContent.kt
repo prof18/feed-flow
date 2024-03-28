@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.TRANSLATION_WEBSITE
@@ -37,7 +36,7 @@ import com.prof18.feedflow.shared.ui.about.AboutTextItem
 import com.prof18.feedflow.shared.ui.about.AuthorText
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun AboutContent(
@@ -121,7 +120,7 @@ private fun SettingsItemList(
                 onClick = {
                     openInBrowser(FEED_FLOW_WEBSITE)
                 },
-                buttonText = stringResource(MR.strings.open_website_button),
+                buttonText = LocalFeedFlowStrings.current.openWebsiteButton,
             )
         }
 
@@ -130,14 +129,14 @@ private fun SettingsItemList(
                 onClick = {
                     openInBrowser(TRANSLATION_WEBSITE)
                 },
-                buttonText = stringResource(MR.strings.about_menu_contribute_translations),
+                buttonText = LocalFeedFlowStrings.current.aboutMenuContributeTranslations,
             )
         }
 
         item {
             AboutButtonItem(
                 onClick = showLicensesScreen,
-                buttonText = stringResource(MR.strings.open_source_licenses),
+                buttonText = LocalFeedFlowStrings.current.openSourceLicenses,
             )
         }
 

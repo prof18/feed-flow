@@ -17,15 +17,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
 import com.prof18.feedflow.shared.ui.addfeed.AddFeedContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -39,18 +38,22 @@ fun AddFeedScreen(
     var errorMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
+    val strings = LocalFeedFlowStrings.current
 
     LaunchedEffect(Unit) {
         viewModel.feedAddedState.collect { feedAddedState ->
             when (feedAddedState) {
                 is FeedAddedState.Error -> {
                     showError = true
-                    errorMessage = feedAddedState.errorMessage.toString(context)
+                    errorMessage = when (feedAddedState) {
+                        FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
+                        FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                    }
                 }
 
                 is FeedAddedState.FeedAdded -> {
                     feedUrl = ""
-                    val message = feedAddedState.message.toString(context)
+                    val message = strings.feedAddedMessage(feedAddedState.feedName)
                     Toast.makeText(context, message, Toast.LENGTH_SHORT)
                         .show()
                 }
@@ -90,7 +93,7 @@ fun AddFeedScreen(
         topAppBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(resource = MR.strings.add_feed))
+                    Text(LocalFeedFlowStrings.current.addFeed)
                 },
                 navigationIcon = {
                     IconButton(
@@ -128,7 +131,7 @@ private fun AddScreenContentPreview() {
             topAppBar = {
                 TopAppBar(
                     title = {
-                        Text(stringResource(resource = MR.strings.add_feed))
+                        Text(LocalFeedFlowStrings.current.addFeed)
                     },
                     navigationIcon = {
                         IconButton(

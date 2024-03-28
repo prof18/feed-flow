@@ -4,6 +4,9 @@ import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.createDatabaseDriver
+import com.prof18.feedflow.i18n.EnFeedFlowStrings
+import com.prof18.feedflow.i18n.FeedFlowStrings
+import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.HtmlRetriever
@@ -36,11 +39,15 @@ import org.koin.dsl.module
 fun initKoinIos(
     htmlParser: HtmlParser,
     appEnvironment: AppEnvironment,
+    languageCode: String,
 ): KoinApplication = initKoin(
     appEnvironment = appEnvironment,
     modules = listOf(
         module {
             factory { htmlParser }
+            single<FeedFlowStrings> {
+                feedFlowStrings[languageCode] ?: EnFeedFlowStrings
+            }
         },
     ),
 )
@@ -97,4 +104,5 @@ object KotlinDependencies : KoinComponent {
     fun getLogger(tag: String? = null) = getKoin().get<Logger> { parametersOf(tag) }
     fun getImportExportViewModel() = getKoin().get<ImportExportViewModel>()
     fun getSettingsViewModel() = getKoin().get<SettingsViewModel>()
+    fun getFeedFlowStrings() = getKoin().get<FeedFlowStrings>()
 }

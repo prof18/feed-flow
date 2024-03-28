@@ -13,10 +13,9 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.shared.ui.style.Spacing
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun AuthorText(nameClicked: () -> Unit, modifier: Modifier = Modifier) {
@@ -51,7 +50,7 @@ fun AboutTextItem(
     Text(
         modifier = modifier,
         color = MaterialTheme.colorScheme.onBackground,
-        text = stringResource(MR.strings.about_the_app),
+        text = LocalFeedFlowStrings.current.aboutTheApp,
         style = MaterialTheme.typography.bodyMedium,
     )
 }
@@ -62,7 +61,7 @@ private fun AnnotatedClickableText(
     onTextClick: () -> Unit,
 ) {
     val annotatedText = buildAnnotatedString {
-        append(stringResource(MR.strings.author_label))
+        append(LocalFeedFlowStrings.current.authorLabel)
 
         pushStringAnnotation(
             tag = "URL",

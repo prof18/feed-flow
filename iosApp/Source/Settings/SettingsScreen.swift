@@ -56,12 +56,12 @@ struct SettingsScreen: View {
                 Button {
                     dismiss()
                 } label: {
-                    Text(localizer.action_done.localized).bold()
+                    Text(feedFlowStrings.actionDone).bold()
                 }
                 .accessibilityIdentifier(TestingTag.shared.BACK_BUTTON)
             }
             .navigationTitle(
-                Text(localizer.settings_title.localized)
+                Text(feedFlowStrings.settingsTitle)
             )
             .navigationBarTitleDisplayMode(.inline)
             .background(Color.secondaryBackgroundColor)
@@ -70,18 +70,18 @@ struct SettingsScreen: View {
 
     @ViewBuilder
     private var generalSection: some View {
-        Section(localizer.settings_general_title.localized) {
+        Section(feedFlowStrings.settingsGeneralTitle) {
             NavigationLink(destination: FeedSourceListScreen()) {
-                Label(localizer.feeds_title.localized, systemImage: "list.bullet.rectangle.portrait")
+                Label(feedFlowStrings.feedsTitle, systemImage: "list.bullet.rectangle.portrait")
             }
             .accessibilityIdentifier(TestingTag.shared.SETTINGS_FEED_ITEM)
 
             NavigationLink(destination: AddFeedScreen()) {
-                Label(localizer.add_feed.localized, systemImage: "plus.app")
+                Label(feedFlowStrings.addFeed, systemImage: "plus.app")
             }
 
             NavigationLink(destination: ImportExportScreen()) {
-                Label( localizer.import_export_opml.localized, systemImage: "arrow.up.arrow.down")
+                Label(feedFlowStrings.importExportOpml, systemImage: "arrow.up.arrow.down")
             }
 
             Picker(
@@ -92,20 +92,20 @@ struct SettingsScreen: View {
                     }
                 },
                 label: {
-                    Label(localizer.browser_selection_button.localized, systemImage: "globe")
+                    Label(feedFlowStrings.browserSelectionButton, systemImage: "globe")
                 }
             )
             .accessibilityIdentifier(TestingTag.shared.BROWSER_SELECTOR)
 
             Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
-                Label(localizer.toggle_mark_read_when_scrolling.localized, systemImage: "envelope.open")
+                Label(feedFlowStrings.toggleMarkReadWhenScrolling, systemImage: "envelope.open")
             }.onTapGesture {
                 isMarkReadWhenScrollingEnabled.toggle()
             }
             .accessibilityIdentifier(TestingTag.shared.MARK_AS_READ_SCROLLING_SWITCH)
 
             Toggle(isOn: $isShowReadItemEnabled) {
-                Label(localizer.settings_toggle_show_read_articles.localized, systemImage: "text.badge.checkmark")
+                Label(feedFlowStrings.settingsToggleShowReadArticles, systemImage: "text.badge.checkmark")
             }.onTapGesture {
                 isShowReadItemEnabled.toggle()
             }
@@ -114,11 +114,11 @@ struct SettingsScreen: View {
 
     @ViewBuilder
     private var appSection: some View {
-        Section(localizer.settings_app_title.localized) {
+        Section(feedFlowStrings.settingsAppTitle) {
             Button(
                 action: {
-                    let subject = localizer.issue_content_title.localized
-                    let content = localizer.issue_content_template.localized
+                    let subject = feedFlowStrings.issueContentTitle
+                    let content = feedFlowStrings.issueContentTemplate
 
                     if let url = URL(
                         string: UserFeedbackReporter.shared.getEmailUrl(subject: subject, content: content)
@@ -127,12 +127,12 @@ struct SettingsScreen: View {
                     }
                 },
                 label: {
-                    Label(localizer.report_issue_button.localized, systemImage: "ladybug")
+                    Label(feedFlowStrings.reportIssueButton, systemImage: "ladybug")
                 }
             )
 
             NavigationLink(destination: AboutScreen()) {
-                Label(localizer.about_button.localized, systemImage: "info.circle")
+                Label(feedFlowStrings.aboutButton, systemImage: "info.circle")
             }
             .accessibilityIdentifier(TestingTag.shared.ABOUT_SETTINGS_ITEM)
         }

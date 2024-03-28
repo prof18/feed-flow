@@ -33,10 +33,10 @@ struct ImportExportContent: View {
             errorView
 
         case is FeedImportExportState.LoadingImport:
-            makeLoadingView(message: localizer.feed_add_in_progress_message.localized)
+            makeLoadingView(message: feedFlowStrings.feedAddInProgressMessage)
 
         case is FeedImportExportState.LoadingExport:
-            makeLoadingView(message: localizer.export_started_message.localized)
+            makeLoadingView(message: feedFlowStrings.exportStartedMessage)
 
         case is FeedImportExportState.ExportSuccess:
             exportDoneView
@@ -59,10 +59,10 @@ struct ImportExportContent: View {
             errorView
 
         case is FeedImportExportState.LoadingImport:
-            makeLoadingView(message: localizer.feed_add_in_progress_message.localized)
+            makeLoadingView(message: feedFlowStrings.feedAddInProgressMessage)
 
         case is FeedImportExportState.LoadingExport:
-            makeLoadingView(message: localizer.export_started_message.localized)
+            makeLoadingView(message: feedFlowStrings.exportStartedMessage)
 
         case is FeedImportExportState.ExportSuccess:
             exportDoneView
@@ -80,7 +80,7 @@ struct ImportExportContent: View {
         VStack {
             Form {
                 Section {
-                    Text(localizer.import_export_description.localized)
+                    Text(feedFlowStrings.importExportDescription)
                         .font(.body)
                         .multilineTextAlignment(.leading)
                 }
@@ -88,7 +88,7 @@ struct ImportExportContent: View {
                 Button(
                     action: { self.sheetToShow = .filePicker },
                     label: {
-                        Label(localizer.import_feed_button.localized, systemImage: "arrow.down.doc")
+                        Label(feedFlowStrings.importFeedButton, systemImage: "arrow.down.doc")
                     }
                 )
                 .accessibilityIdentifier(TestingTag.shared.IMPORT_FEED_OPML_BUTTON)
@@ -96,7 +96,7 @@ struct ImportExportContent: View {
                 Button(
                     action: onExportClick,
                     label: {
-                        Label(localizer.export_feeds_button.localized, systemImage: "arrow.up.doc")
+                        Label(feedFlowStrings.exportFeedsButton, systemImage: "arrow.up.doc")
                     }
                 )
             }
@@ -109,13 +109,13 @@ struct ImportExportContent: View {
         VStack {
             Spacer()
 
-            Text(localizer.generic_error_message.localized)
+            Text(feedFlowStrings.genericErrorMessage)
                 .font(.body)
 
             Button(
                 action: onRetryClick,
                 label: {
-                    Text(localizer.retry_button.localized)
+                    Text(feedFlowStrings.retryButton)
                         .frame(maxWidth: .infinity)
                 }
             )
@@ -145,7 +145,7 @@ struct ImportExportContent: View {
         VStack {
             Spacer()
 
-            Text(localizer.feeds_export_done_message.localized)
+            Text(feedFlowStrings.feedsExportDoneMessage)
                 .font(.body)
                 .multilineTextAlignment(.center)
 
@@ -156,7 +156,7 @@ struct ImportExportContent: View {
                     self.presentationMode.wrappedValue.dismiss()
                 },
                 label: {
-                    Text(localizer.done_button.localized)
+                    Text(feedFlowStrings.doneButton)
                         .frame(maxWidth: .infinity)
                 }
             )
@@ -183,7 +183,7 @@ struct ImportExportContent: View {
     private var allFeedSourceValidView: some View {
         Spacer()
 
-        Text(localizer.feeds_import_done_message.localized)
+        Text(feedFlowStrings.feedsImportDoneMessage)
             .font(.body)
             .multilineTextAlignment(.center)
             .accessibilityIdentifier(TestingTag.shared.IMPORT_DONE_MESSAGE)
@@ -195,7 +195,7 @@ struct ImportExportContent: View {
                 self.presentationMode.wrappedValue.dismiss()
             },
             label: {
-                Text(localizer.done_button.localized)
+                Text(feedFlowStrings.doneButton)
                     .frame(maxWidth: .infinity)
             }
         )
@@ -209,7 +209,7 @@ struct ImportExportContent: View {
 
     @ViewBuilder
     private func makeInvalidFeedSourceView(state: FeedImportExportState.ImportSuccess) -> some View {
-        Text(localizer.wrong_link_report_title.localized)
+        Text(feedFlowStrings.wrongLinkReportTitle)
             .font(.body)
             .padding(Spacing.regular)
 
@@ -237,7 +237,7 @@ struct ImportExportContent: View {
             self.sheetToShow = nil
             self.presentationMode.wrappedValue.dismiss()
         } label: {
-            Text(localizer.done_button.localized)
+            Text(feedFlowStrings.doneButton)
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)

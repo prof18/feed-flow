@@ -93,9 +93,9 @@ struct FeedListView: View {
             onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead)
         } label: {
             if feedItem.isRead {
-                Label(localizer.menu_mark_as_unread.localized, systemImage: "envelope.badge")
+                Label(feedFlowStrings.menuMarkAsUnread, systemImage: "envelope.badge")
             } else {
-                Label(localizer.menu_mark_as_read.localized, systemImage: "envelope.open")
+                Label(feedFlowStrings.menuMarkAsRead, systemImage: "envelope.open")
             }
         }
     }
@@ -106,9 +106,9 @@ struct FeedListView: View {
             onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked)
         } label: {
             if feedItem.isBookmarked {
-                Label(localizer.menu_remove_from_bookmark.localized, systemImage: "bookmark.slash")
+                Label(feedFlowStrings.menuRemoveFromBookmark, systemImage: "bookmark.slash")
             } else {
-                Label(localizer.menu_add_to_bookmark.localized, systemImage: "bookmark")
+                Label(feedFlowStrings.menuAddToBookmark, systemImage: "bookmark")
             }
         }
     }
@@ -119,7 +119,7 @@ struct FeedListView: View {
             Button {
                 openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
             } label: {
-                Label(localizer.menu_open_comments.localized, systemImage: "bubble.left.and.bubble.right")
+                Label(feedFlowStrings.menuOpenComments, systemImage: "bubble.left.and.bubble.right")
             }
         }
     }
@@ -132,11 +132,7 @@ struct FeedListView: View {
 
                 let feedRefreshCounter = "\(feedCount)/\(totalFeedCount)"
 
-                let loadingFeedString = LocalizationUtils.shared.formatString(
-                    resource: MR.strings().loading_feed_message,
-                    args: [feedRefreshCounter]
-                )
-                Text(loadingFeedString)
+                Text(feedFlowStrings.loadingFeedMessage(feedRefreshCounter))
                     .font(.body)
                     .accessibilityIdentifier(TestingTag.shared.LOADING_BAR)
             }

@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.presentation
 
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerCategory
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
@@ -17,9 +16,6 @@ import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
-import dev.icerock.moko.resources.desc.Resource
-import dev.icerock.moko.resources.desc.ResourceFormatted
-import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -130,22 +126,15 @@ class HomeViewModel internal constructor(
                     when (error) {
                         is FeedErrorState -> {
                             mutableUIErrorState.emit(
-                                UIErrorState(
-                                    message = StringDesc.ResourceFormatted(
-                                        stringRes = MR.strings.feed_error_message,
-                                        error.failingSourceName,
-                                    ),
+                                UIErrorState.FeedErrorState(
+                                    feedName = error.failingSourceName,
                                 ),
                             )
                         }
 
                         is DatabaseError -> {
                             mutableUIErrorState.emit(
-                                UIErrorState(
-                                    message = StringDesc.Resource(
-                                        stringRes = MR.strings.database_error,
-                                    ),
-                                ),
+                                UIErrorState.DatabaseError,
                             )
                         }
 

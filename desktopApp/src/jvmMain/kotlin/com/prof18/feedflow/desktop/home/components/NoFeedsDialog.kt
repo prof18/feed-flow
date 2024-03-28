@@ -3,9 +3,8 @@ package com.prof18.feedflow.desktop.home.components
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.DialogWindow
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsInfoContent
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun NoFeedsDialog(
@@ -14,7 +13,7 @@ internal fun NoFeedsDialog(
     onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit,
 ) {
-    val dialogTitle = stringResource(MR.strings.no_feed_modal_title)
+    val dialogTitle = LocalFeedFlowStrings.current.noFeedModalTitle
     DialogWindow(
         title = dialogTitle,
         visible = showDialog,

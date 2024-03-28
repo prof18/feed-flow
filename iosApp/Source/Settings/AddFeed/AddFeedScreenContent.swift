@@ -33,11 +33,11 @@ struct AddFeedScreenContent: View {
         Form {
             Section(
                 content: {
-                    TextField(localizer.feed_url.localized, text: $feedURL)
+                    TextField(feedFlowStrings.feedUrl, text: $feedURL)
                         .accessibilityIdentifier(TestingTag.shared.FEED_URL_INPUT)
                 },
                 header: {
-                    Text(localizer.feed_url.localized)
+                    Text(feedFlowStrings.feedUrl)
                 },
                 footer: {
                     if showError {
@@ -49,13 +49,13 @@ struct AddFeedScreenContent: View {
                 }
             )
 
-            Section(localizer.add_feed_category_title.localized) {
+            Section(feedFlowStrings.addFeedCategoryTitle) {
                 Picker(
                     selection: $categorySelectorObserver.selectedCategory,
-                    label: Text(localizer.add_feed_categories_title.localized)
+                    label: Text(feedFlowStrings.addFeedCategoriesTitle)
                 ) {
                     ForEach(categoryItems, id: \.self.id) { categoryItem in
-                        let title = categoryItem.name ?? localizer.no_category_selected_header.localized
+                        let title = categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader
                         Text(title)
                             .tag(categoryItem as CategoriesState.CategoryItem?)
                             .accessibilityIdentifier("\(TestingTag.shared.CATEGORY_RADIO_BUTTON)_\(title)")
@@ -71,7 +71,7 @@ struct AddFeedScreenContent: View {
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
         .background(Color.secondaryBackgroundColor)
-        .navigationTitle(localizer.add_feed.localized)
+        .navigationTitle(feedFlowStrings.addFeed)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: feedURL) { value in
             updateFeedUrlTextFieldValue(value)
@@ -95,7 +95,7 @@ struct AddFeedScreenContent: View {
     }
 
     private var categoriesSection: some View {
-        Section(localizer.add_feed_categories_title.localized) {
+        Section(feedFlowStrings.addFeedCategoriesTitle) {
             ForEach(categoryItems, id: \.self.id) { categoryItem in
                 if let name = categoryItem.name {
                     HStack {
@@ -113,7 +113,7 @@ struct AddFeedScreenContent: View {
             }
 
             HStack {
-                TextField(localizer.new_category_hint.localized, text: $newCategory, axis: .horizontal)
+                TextField(feedFlowStrings.newCategoryHint, text: $newCategory, axis: .horizontal)
                     .onSubmit {
                         addNewCategory(CategoryName(name: newCategory))
                         newCategory = ""
@@ -144,7 +144,7 @@ struct AddFeedScreenContent: View {
             if isAddingFeed {
                 ProgressView()
             } else {
-                Text(localizer.action_save.localized).bold()
+                Text(feedFlowStrings.actionSave).bold()
             }
         }
         .disabled(feedURL.isEmpty)

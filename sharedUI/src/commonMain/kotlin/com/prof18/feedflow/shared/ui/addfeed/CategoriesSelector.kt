@@ -38,14 +38,13 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntSize
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 internal fun CategoriesSelector(
@@ -78,7 +77,7 @@ internal fun CategoriesSelector(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             val header = if (categoriesState.header == null) {
-                stringResource(MR.strings.no_category_selected_header)
+                LocalFeedFlowStrings.current.noCategorySelectedHeader
             } else {
                 requireNotNull(categoriesState.header)
             }
@@ -138,7 +137,7 @@ private fun CategoriesList(
                     )
                     Text(
                         text = category.name
-                            ?: stringResource(MR.strings.no_category_selected_header),
+                            ?: LocalFeedFlowStrings.current.noCategorySelectedHeader,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
 
@@ -209,7 +208,7 @@ internal fun NewCategoryComposer(
             onValueChange = { categoryName = it },
             placeholder = {
                 Text(
-                    text = stringResource(MR.strings.new_category_hint),
+                    text = LocalFeedFlowStrings.current.newCategoryHint,
                 )
             },
             trailingIcon = {

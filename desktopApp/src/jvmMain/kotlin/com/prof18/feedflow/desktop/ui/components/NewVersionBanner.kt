@@ -22,12 +22,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.desktop.utils.WindowWidthSizeClass
 import com.prof18.feedflow.desktop.utils.calculateWindowSizeClass
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun NewVersionBanner(
@@ -87,7 +86,7 @@ private fun NewVersionMessage() {
     Text(
         modifier = Modifier
             .padding(Spacing.regular),
-        text = stringResource(MR.strings.new_release_available_title),
+        text = LocalFeedFlowStrings.current.newReleaseAvailableTitle,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
         style = MaterialTheme.typography.titleMedium,
     )
@@ -140,7 +139,7 @@ private fun AnnotatedClickableText(
                 textDecoration = TextDecoration.Underline,
             ),
         ) {
-            append(stringResource(MR.strings.new_release_available_link))
+            append(LocalFeedFlowStrings.current.newReleaseAvailableLink)
         }
 
         pop()

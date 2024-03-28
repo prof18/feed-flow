@@ -20,9 +20,10 @@ kotlin {
 
         commonMain {
             dependencies {
-                implementation(project(":i18n"))
+                api(project(":i18n"))
                 implementation(project(":core"))
 
+                api(libs.lyricist)
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)

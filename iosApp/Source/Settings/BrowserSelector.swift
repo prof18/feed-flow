@@ -15,7 +15,7 @@ class BrowserSelector: ObservableObject {
     private let supportedBrowsers = [
         Browser(
             id: "",
-            name: localizer.default_browser.localized,
+            name: feedFlowStrings.defaultBrowser,
             isFavourite: false
         ),
 

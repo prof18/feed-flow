@@ -12,12 +12,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
 
 @Suppress("LongMethod")
 @Composable
@@ -40,7 +39,7 @@ internal fun HomeAppBarDropdownMenu(
                 closeMenu()
             },
             text = {
-                Text(stringResource(resource = MR.strings.mark_all_read_button))
+                Text(LocalFeedFlowStrings.current.markAllReadButton)
             },
             leadingIcon = {
                 Icon(
@@ -56,7 +55,7 @@ internal fun HomeAppBarDropdownMenu(
                 closeMenu()
             },
             text = {
-                Text(stringResource(resource = MR.strings.clear_old_articles_button))
+                Text(LocalFeedFlowStrings.current.clearOldArticlesButton)
             },
             leadingIcon = {
                 Icon(
@@ -72,7 +71,7 @@ internal fun HomeAppBarDropdownMenu(
                 closeMenu()
             },
             text = {
-                Text(stringResource(resource = MR.strings.force_feed_refresh))
+                Text(LocalFeedFlowStrings.current.forceFeedRefresh)
             },
             leadingIcon = {
                 Icon(
@@ -89,7 +88,7 @@ internal fun HomeAppBarDropdownMenu(
                 onSettingsButtonClicked()
             },
             text = {
-                Text(stringResource(resource = MR.strings.settings_button))
+                Text(LocalFeedFlowStrings.current.settingsButton)
             },
             leadingIcon = {
                 Icon(

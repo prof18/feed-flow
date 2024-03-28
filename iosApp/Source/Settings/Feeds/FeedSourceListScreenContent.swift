@@ -33,7 +33,7 @@ struct FeedSourceListScreenContent: View {
         }
         .scrollContentBackground(.hidden)
         .background(Color.secondaryBackgroundColor)
-        .navigationTitle(Text(localizer.feeds_title.localized))
+        .navigationTitle(Text(feedFlowStrings.feedsTitle))
         .sheet(isPresented: $showAddFeed) {
             AddFeedScreen()
         }
@@ -53,12 +53,12 @@ struct FeedSourceListScreenContent: View {
         VStack {
             Spacer()
 
-            Text(localizer.no_feeds_found_message.localized)
+            Text(feedFlowStrings.noFeedsFoundMessage)
                 .font(.body)
                 .accessibilityIdentifier(TestingTag.shared.NO_FEED_SOURCE_MESSAGE)
 
             NavigationLink(destination: AddFeedScreen()) {
-                Text(localizer.add_feed.localized)
+                Text(feedFlowStrings.addFeed)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
@@ -81,7 +81,7 @@ struct FeedSourceListScreenContent: View {
                             Button {
                                 deleteFeedSource(feedSource)
                             } label: {
-                                Label(localizer.delete_feed.localized, systemImage: "trash")
+                                Label(feedFlowStrings.deleteFeed, systemImage: "trash")
                             }
                         }
                 }
@@ -103,14 +103,14 @@ struct FeedSourceListScreenContent: View {
                                     Button {
                                         deleteFeedSource(feedSource)
                                     } label: {
-                                        Label(localizer.delete_feed.localized, systemImage: "trash")
+                                        Label(feedFlowStrings.deleteFeed, systemImage: "trash")
                                     }
                                     .accessibilityIdentifier(TestingTag.shared.FEED_SOURCE_DELETE_BUTTON)
                                 }
                         }
                     },
                     label: {
-                        Text(feedSourceState.categoryName ?? localizer.no_category.localized)
+                        Text(feedSourceState.categoryName ?? feedFlowStrings.noCategory)
                             .font(.system(size: 16))
                             .foregroundStyle(Color(UIColor.label))
                             .padding(Spacing.regular)

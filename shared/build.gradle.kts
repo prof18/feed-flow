@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -31,7 +30,6 @@ kotlin {
 
             export(project(":i18n"))
             export(project(":core"))
-            export(libs.moko.resources)
             export(libs.touchlab.kermit.simple)
 
             // It should be fixed with Compose MP 1.5, but it seems not

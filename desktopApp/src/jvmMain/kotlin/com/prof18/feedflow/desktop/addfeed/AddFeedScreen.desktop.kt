@@ -20,6 +20,7 @@ import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
 import com.prof18.feedflow.shared.ui.addfeed.AddFeedContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun AddFeedScreen(
@@ -35,16 +36,20 @@ fun AddFeedScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val latestOnFeedAdded by rememberUpdatedState(onFeedAdded)
+    val strings = LocalFeedFlowStrings.current
     LaunchedEffect(Unit) {
         viewModel.feedAddedState.collect { feedAddedState ->
             when (feedAddedState) {
                 is FeedAddedState.Error -> {
                     showError = true
-                    errorMessage = feedAddedState.errorMessage.localized()
+                    errorMessage = when (feedAddedState) {
+                        FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
+                        FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                    }
                 }
 
                 is FeedAddedState.FeedAdded -> {
-                    val message = feedAddedState.message.localized()
+                    val message = strings.feedAddedMessage(feedAddedState.feedName)
 
                     snackbarHostState.showSnackbar(
                         message,

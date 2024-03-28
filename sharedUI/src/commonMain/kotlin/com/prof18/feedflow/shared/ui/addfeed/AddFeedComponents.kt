@@ -12,15 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
-import dev.icerock.moko.resources.compose.stringResource
-import java.awt.SystemColor.text
 
 @Composable
 fun AddFeedContent(
@@ -82,7 +80,7 @@ fun AddFeedContent(
                     enabled = feedUrl.isNotBlank(),
                     onClick = addFeed,
                 ) {
-                    Text(stringResource(resource = MR.strings.add_feed))
+                    Text(LocalFeedFlowStrings.current.addFeed)
                 }
             }
         }
@@ -100,7 +98,7 @@ private fun FeedUrlTextField(
     OutlinedTextField(
         modifier = modifier,
         label = {
-            Text(text = stringResource(resource = MR.strings.feed_url))
+            Text(text = LocalFeedFlowStrings.current.feedUrl)
         },
         isError = showError,
         supportingText = if (showError) {
@@ -125,7 +123,7 @@ private fun FeedUrlTextField(
         },
         placeholder = {
             Text(
-                stringResource(resource = MR.strings.feed_url_placeholder),
+                LocalFeedFlowStrings.current.feedUrlPlaceholder,
                 maxLines = 1,
             )
         },

@@ -40,7 +40,7 @@ struct SidebarDrawer: View {
     private var timelineSection: some View {
         ForEach(navDrawerState.timeline, id: \.self) { drawerItem in
             HStack {
-                Label(localizer.drawer_title_timeline.localized, systemImage: "newspaper")
+                Label(feedFlowStrings.drawerTitleTimeline, systemImage: "newspaper")
                 Spacer()
             }
             .contentShape(Rectangle())
@@ -55,7 +55,7 @@ struct SidebarDrawer: View {
     private var readSection: some View {
         ForEach(navDrawerState.read, id: \.self) { drawerItem in
             HStack {
-                Label(localizer.drawer_title_read.localized, systemImage: "text.badge.checkmark")
+                Label(feedFlowStrings.drawerTitleRead, systemImage: "text.badge.checkmark")
                 Spacer()
             }
             .contentShape(Rectangle())
@@ -70,7 +70,7 @@ struct SidebarDrawer: View {
     private var bookmarksSection: some View {
         ForEach(navDrawerState.bookmarks, id: \.self) { drawerItem in
             HStack {
-                Label(localizer.drawer_title_bookmarks.localized, systemImage: "bookmark.square")
+                Label(feedFlowStrings.drawerTitleBookmarks, systemImage: "bookmark.square")
                 Spacer()
             }
             .contentShape(Rectangle())
@@ -100,7 +100,7 @@ struct SidebarDrawer: View {
                         }
                     }
                 }, header: {
-                    Text(localizer.drawer_title_categories.localized)
+                    Text(feedFlowStrings.drawerTitleCategories)
                 }
             )
         }
@@ -117,7 +117,7 @@ struct SidebarDrawer: View {
                         }
                     }
                 }, header: {
-                    Text(localizer.drawer_title_feed_sources.localized)
+                    Text(feedFlowStrings.drawerTitleFeedSources)
                 }
             )
         }
@@ -137,7 +137,7 @@ struct SidebarDrawer: View {
                         let categoryWrapper = category as
                         DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
 
-                        let title = categoryWrapper.feedSourceCategory?.title ?? localizer.no_category.localized
+                        let title = categoryWrapper.feedSourceCategory?.title ?? feedFlowStrings.noCategory
                         makeCategoryDropdown(
                             drawerItems: navDrawerState.feedSourcesByCategory[categoryWrapper] ?? [],
                             title: title
@@ -147,7 +147,7 @@ struct SidebarDrawer: View {
                     }
                 },
                 header: {
-                    Text(localizer.drawer_title_feed_sources.localized)
+                    Text(feedFlowStrings.drawerTitleFeedSources)
                 }
             )
         }

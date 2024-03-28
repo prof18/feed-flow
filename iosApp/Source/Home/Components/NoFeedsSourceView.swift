@@ -14,7 +14,7 @@ struct NoFeedsSourceView: View {
 
     var body: some View {
         VStack {
-            Text(localizer.no_feeds_found_message.localized)
+            Text(feedFlowStrings.noFeedsFoundMessage)
                 .font(.body)
 
             Button(
@@ -22,7 +22,7 @@ struct NoFeedsSourceView: View {
                     onAddFeedClick()
                 },
                 label: {
-                    Text(localizer.add_feed.localized)
+                    Text(feedFlowStrings.addFeed)
                         .frame(maxWidth: .infinity)
                 }
             )

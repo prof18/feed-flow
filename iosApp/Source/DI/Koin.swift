@@ -17,11 +17,15 @@ func startKoin() {
         appEnvironment = AppEnvironment.Release()
     #endif
 
+    let langCode = Locale.current.language.languageCode?.identifier ?? "en"
+
     let koinApplication = KoinIOSKt.doInitKoinIos(
         htmlParser: IosHtmlParser(),
-        appEnvironment: appEnvironment
+        appEnvironment: appEnvironment,
+        languageCode: langCode
     )
     _koin = koinApplication.koin
+    _feedFlowStrings = KotlinDependencies.shared.getFeedFlowStrings()
 }
 
 private var _koin: Koin_coreKoin?
@@ -29,4 +33,7 @@ var koin: Koin_coreKoin {
     return _koin!
 }
 
-let localizer = MR.strings()
+private var _feedFlowStrings: FeedFlowStrings?
+var feedFlowStrings: FeedFlowStrings {
+    return _feedFlowStrings!
+}

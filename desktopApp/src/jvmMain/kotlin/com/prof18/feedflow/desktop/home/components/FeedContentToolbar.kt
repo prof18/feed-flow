@@ -15,10 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun FeedContentToolbar(
@@ -74,9 +73,9 @@ private fun FeedFilter.getTitle(): String =
     when (this) {
         is FeedFilter.Category -> this.feedCategory.title
         is FeedFilter.Source -> this.feedSource.title
-        FeedFilter.Timeline -> stringResource(resource = MR.strings.app_name)
-        FeedFilter.Read -> stringResource(resource = MR.strings.drawer_title_read)
-        FeedFilter.Bookmarks -> stringResource(resource = MR.strings.drawer_title_bookmarks)
+        FeedFilter.Timeline -> LocalFeedFlowStrings.current.appName
+        FeedFilter.Read -> LocalFeedFlowStrings.current.drawerTitleRead
+        FeedFilter.Bookmarks -> LocalFeedFlowStrings.current.drawerTitleBookmarks
     }
 
 @Preview

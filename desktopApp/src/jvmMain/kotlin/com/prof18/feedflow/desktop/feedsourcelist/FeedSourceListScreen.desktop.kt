@@ -9,7 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
-import com.prof18.feedflow.MR
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.desktopViewModel
@@ -19,7 +18,7 @@ import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceListContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import dev.icerock.moko.resources.compose.stringResource
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -29,7 +28,7 @@ fun FeedSourceListScreen(
     var dialogState by remember { mutableStateOf(false) }
 
     DialogWindow(
-        title = stringResource(MR.strings.add_feed),
+        title = LocalFeedFlowStrings.current.addFeed,
         visible = dialogState,
         onCloseRequest = { dialogState = false },
     ) {

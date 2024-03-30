@@ -83,4 +83,5 @@
     <string name="about_menu_contribute_translations">Aiuto con le traduzioni</string>
     <string name="drawer_title_read">Letti</string>
     <string name="settings_toggle_show_read_articles">Mostra articoli letti nella timeline</string>
+    <string name="rename_feed_source_name_button">Rinomina</string>
 </resources>

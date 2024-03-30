@@ -12,14 +12,14 @@ import androidx.compose.ui.input.pointer.PointerButton
 @OptIn(ExperimentalFoundationApi::class)
 internal actual fun Modifier.feedSourceMenuClickModifier(
     onClick: () -> Unit,
-    onLongClick: () -> Unit,
+    onLongClick: (() -> Unit)?,
 ): Modifier = composed {
     val interactionSource = remember { MutableInteractionSource() }
     return@composed this.onClick(
         enabled = true,
         interactionSource = interactionSource,
         matcher = PointerMatcher.mouse(PointerButton.Secondary), // Right Mouse Button
-        onClick = onLongClick,
+        onClick = onLongClick ?: {},
     ).onClick {
         onClick()
     }

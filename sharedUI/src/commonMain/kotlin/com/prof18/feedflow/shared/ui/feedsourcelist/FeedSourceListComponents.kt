@@ -8,6 +8,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,10 +18,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -29,8 +33,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +46,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
@@ -55,7 +67,7 @@ import kotlinx.collections.immutable.ImmutableList
 
 internal expect fun Modifier.feedSourceMenuClickModifier(
     onClick: () -> Unit = {},
-    onLongClick: () -> Unit,
+    onLongClick: (() -> Unit)?,
 ): Modifier
 
 @Composable
@@ -64,6 +76,7 @@ internal fun FeedSourcesWithCategoryList(
     feedSourceImage: @Composable (String) -> Unit,
     onExpandClicked: (CategoryId?) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onRenameFeedSourceClick: (FeedSource, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -75,6 +88,7 @@ internal fun FeedSourcesWithCategoryList(
                 feedSources = feedSourceState.feedSourcesWithoutCategory,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 feedSourceImage = feedSourceImage,
+                onRenameFeedSourceClick = onRenameFeedSourceClick,
             )
         }
 
@@ -123,6 +137,7 @@ internal fun FeedSourcesWithCategoryList(
                     feedSourceState = feedSourceState,
                     feedSourceImage = feedSourceImage,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    onRenameFeedSourceClick = onRenameFeedSourceClick,
                 )
             }
         }
@@ -134,6 +149,7 @@ private fun FeedSourcesListWithCategorySelector(
     feedSourceState: FeedSourceState,
     feedSourceImage: @Composable (String) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onRenameFeedSourceClick: (FeedSource, String) -> Unit,
 ) {
     AnimatedVisibility(
         visible = feedSourceState.isExpanded,
@@ -149,6 +165,7 @@ private fun FeedSourcesListWithCategorySelector(
             feedSources = feedSourceState.feedSources,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             feedSourceImage = feedSourceImage,
+            onRenameFeedSourceClick = onRenameFeedSourceClick,
         )
     }
 }
@@ -157,6 +174,7 @@ private fun FeedSourcesListWithCategorySelector(
 private fun FeedSourcesList(
     feedSources: ImmutableList<FeedSource>,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onRenameFeedSourceClick: (FeedSource, String) -> Unit,
     feedSourceImage: @Composable (String) -> Unit,
 ) {
     Column {
@@ -165,6 +183,7 @@ private fun FeedSourcesList(
                 feedSource = feedSource,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 feedSourceImage = feedSourceImage,
+                onRenameFeedSourceClick = onRenameFeedSourceClick,
             )
 
             if (index < feedSources.size - 1) {
@@ -183,6 +202,7 @@ private fun FeedSourceItem(
     feedSource: FeedSource,
     feedSourceImage: @Composable (String) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onRenameFeedSourceClick: (FeedSource, String) -> Unit,
 ) {
     var showFeedMenu by remember {
         mutableStateOf(
@@ -190,12 +210,36 @@ private fun FeedSourceItem(
         )
     }
 
+    var feedTitleInput by remember(feedSource.title) {
+        mutableStateOf(TextFieldValue(feedSource.title))
+    }
+
+    var isEditEnabled by remember {
+        mutableStateOf(false)
+    }
+
+    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(isEditEnabled) {
+        if (isEditEnabled) {
+            focusRequester.requestFocus()
+            feedTitleInput = feedTitleInput.copy(
+                selection = TextRange(feedTitleInput.text.length),
+            )
+        }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .feedSourceMenuClickModifier(
-                onLongClick = {
-                    showFeedMenu = true
+                onLongClick = if (isEditEnabled) {
+                    null
+                } else {
+                    {
+                        showFeedMenu = true
+                    }
                 },
             ),
         verticalAlignment = Alignment.CenterVertically,
@@ -214,12 +258,33 @@ private fun FeedSourceItem(
             modifier = Modifier
                 .padding(start = Spacing.regular),
         ) {
-            Text(
-                modifier = Modifier
-                    .padding(top = Spacing.small),
-                text = feedSource.title,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            AnimatedVisibility(!isEditEnabled) {
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.small),
+                    text = feedSource.title,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+            val interactionSource = remember { MutableInteractionSource() }
+
+            AnimatedVisibility(isEditEnabled) {
+                FeedSourceTitleEdit(
+                    focusRequester = focusRequester,
+                    feedTitleInput = feedTitleInput,
+                    isEditEnabled = isEditEnabled,
+                    onFeedNameUpdated = {
+                        feedTitleInput = it
+                    },
+                    onRenameFeedSourceClick = {
+                        onRenameFeedSourceClick(feedSource, feedTitleInput.text)
+                        isEditEnabled = false
+                        focusManager.clearFocus()
+                    },
+                    interactionSource = interactionSource,
+                )
+            }
+
             Text(
                 modifier = Modifier
                     .padding(top = Spacing.xsmall)
@@ -235,6 +300,61 @@ private fun FeedSourceItem(
                 },
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 feedSource = feedSource,
+                onRenameFeedSourceClick = {
+                    isEditEnabled = true
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun FeedSourceTitleEdit(
+    focusRequester: FocusRequester,
+    feedTitleInput: TextFieldValue,
+    isEditEnabled: Boolean,
+    onFeedNameUpdated: (TextFieldValue) -> Unit,
+    onRenameFeedSourceClick: () -> Unit,
+    interactionSource: MutableInteractionSource,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TextField(
+            modifier = Modifier
+                .weight(1f)
+                .focusRequester(focusRequester)
+                .padding(top = Spacing.small),
+            value = feedTitleInput,
+            onValueChange = onFeedNameUpdated,
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    onRenameFeedSourceClick()
+                },
+            ),
+            singleLine = true,
+            textStyle = MaterialTheme.typography.bodyLarge,
+            shape = RoundedCornerShape(16.dp),
+            colors = TextFieldDefaults.colors().copy(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                errorIndicatorColor = Color.Transparent,
+            ),
+            enabled = isEditEnabled,
+            interactionSource = interactionSource,
+        )
+
+        IconButton(
+            modifier = Modifier
+                .tagForTesting(TestingTag.ADD_CATEGORY_BUTTON),
+            onClick = {
+                onRenameFeedSourceClick()
+            },
+        ) {
+            Icon(
+                Icons.Outlined.Check,
+                contentDescription = null,
             )
         }
     }
@@ -243,9 +363,10 @@ private fun FeedSourceItem(
 @Composable
 private fun FeedSourceContextMenu(
     showFeedMenu: Boolean,
+    feedSource: FeedSource,
     hideMenu: () -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
-    feedSource: FeedSource,
+    onRenameFeedSourceClick: (FeedSource) -> Unit,
 ) {
     DropdownMenu(
         expanded = showFeedMenu,
@@ -256,12 +377,19 @@ private fun FeedSourceContextMenu(
             modifier = Modifier
                 .tagForTesting(TestingTag.FEED_SOURCE_DELETE_BUTTON),
             text = {
-                Text(
-                    LocalFeedFlowStrings.current.deleteFeed,
-                )
+                Text(LocalFeedFlowStrings.current.deleteFeed)
             },
             onClick = {
                 onDeleteFeedSourceClick(feedSource)
+                hideMenu()
+            },
+        )
+        DropdownMenuItem(
+            text = {
+                Text(LocalFeedFlowStrings.current.renameFeedSourceNameButton)
+            },
+            onClick = {
+                onRenameFeedSourceClick(feedSource)
                 hideMenu()
             },
         )

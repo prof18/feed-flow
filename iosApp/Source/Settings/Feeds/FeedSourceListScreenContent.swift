@@ -20,6 +20,7 @@ struct FeedSourceListScreenContent: View {
     @Binding var feedState: FeedSourceListState
 
     let deleteFeedSource: (FeedSource) -> Void
+    let renameFeedSource: (FeedSource, String) -> Void
 
     var body: some View {
         VStack {
@@ -75,15 +76,13 @@ struct FeedSourceListScreenContent: View {
         if feedState.feedSourcesWithoutCategory.count > 0 {
             List {
                 ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
-                    makeFeedSourceListItem(feedSource: feedSource)
-                        .id(feedSource.id)
-                        .contextMenu {
-                            Button {
-                                deleteFeedSource(feedSource)
-                            } label: {
-                                Label(feedFlowStrings.deleteFeed, systemImage: "trash")
-                            }
-                        }
+                    FeedSourceListItem(
+                        feedSource: feedSource,
+                        feedSourceTitle: feedSource.title,
+                        deleteFeedSource: deleteFeedSource,
+                        renameFeedSource: renameFeedSource
+                    )
+                    .id(feedSource.id )
                 }
             }
         }
@@ -96,17 +95,13 @@ struct FeedSourceListScreenContent: View {
                 DisclosureGroup(
                     content: {
                         ForEach(feedSourceState.feedSources, id: \.self.id) { feedSource in
-                            makeFeedSourceListItem(feedSource: feedSource)
-                                .padding(.trailing, Spacing.small)
-                                .id(feedSource.id)
-                                .contextMenu {
-                                    Button {
-                                        deleteFeedSource(feedSource)
-                                    } label: {
-                                        Label(feedFlowStrings.deleteFeed, systemImage: "trash")
-                                    }
-                                    .accessibilityIdentifier(TestingTag.shared.FEED_SOURCE_DELETE_BUTTON)
-                                }
+                            FeedSourceListItem(
+                                feedSource: feedSource,
+                                feedSourceTitle: feedSource.title,
+                                deleteFeedSource: deleteFeedSource,
+                                renameFeedSource: renameFeedSource
+                            )
+                            .id(feedSource.id )
                         }
                     },
                     label: {
@@ -127,9 +122,21 @@ struct FeedSourceListScreenContent: View {
             }
         }
     }
+}
 
-    @ViewBuilder
-    private func makeFeedSourceListItem(feedSource: FeedSource) -> some View {
+@MainActor
+private struct FeedSourceListItem: View {
+    @State var feedSource: FeedSource
+    @State var feedSourceTitle: String
+
+    @State var isRenameEnabled: Bool = false
+
+    let deleteFeedSource: (FeedSource) -> Void
+    let renameFeedSource: (FeedSource, String) -> Void
+
+    @FocusState var focusedReminder: Bool?
+
+    var body: some View {
         HStack {
             if let imageUrl = feedSource.logoUrl {
                 LazyImage(url: URL(string: imageUrl)) { state in
@@ -149,10 +156,28 @@ struct FeedSourceListScreenContent: View {
             }
 
             VStack(alignment: .leading) {
-                Text(feedSource.title)
-                    .font(.system(size: 16))
-                    .padding(.top, Spacing.regular)
-                    .padding(.bottom, 2)
+                HStack(alignment: .center) {
+                    TextField("", text: $feedSourceTitle)
+                        .focused($focusedReminder, equals: true)
+                        .disabled(!isRenameEnabled)
+                        .font(.system(size: 16))
+                        .padding(.top, Spacing.regular)
+                        .padding(.bottom, 2)
+
+                    Spacer()
+
+                    if isRenameEnabled {
+                        Button {
+                            renameFeedSource(feedSource, feedSourceTitle)
+                            isRenameEnabled = false
+                            focusedReminder = false
+                        } label: {
+                            Image(systemName: "checkmark.circle.fill")
+                                .tint(.green)
+                        }
+                        .padding(.top, Spacing.regular)
+                    }
+                }
 
                 Text(feedSource.url)
                     .font(.system(size: 12))
@@ -162,7 +187,28 @@ struct FeedSourceListScreenContent: View {
             }
             .padding(.leading, Spacing.small)
         }
+        .padding(.trailing, Spacing.small)
+        .if(!isRenameEnabled) { view in
+            view.contextMenu {
+                Button {
+                    deleteFeedSource(feedSource)
+                } label: {
+                    Label(feedFlowStrings.deleteFeed, systemImage: "trash")
+                }
+                .accessibilityIdentifier(TestingTag.shared.FEED_SOURCE_DELETE_BUTTON)
+
+                Button {
+                    isRenameEnabled = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        focusedReminder = true
+                    }
+                } label: {
+                    Label(feedFlowStrings.renameFeedSourceNameButton, systemImage: "pencil")
+                }
+            }
+        }
     }
+
 }
 
 #Preview {
@@ -173,7 +219,8 @@ struct FeedSourceListScreenContent: View {
                 feedSourcesWithCategory: PreviewItemsKt.feedSourcesState
             )
         ),
-        deleteFeedSource: { _ in }
+        deleteFeedSource: { _ in },
+        renameFeedSource: { _, _ in }
     )
 }
 
@@ -185,6 +232,7 @@ struct FeedSourceListScreenContent: View {
                 feedSourcesWithCategory: []
             )
         ),
-        deleteFeedSource: { _ in }
+        deleteFeedSource: { _ in },
+        renameFeedSource: { _, _ in }
     )
 }

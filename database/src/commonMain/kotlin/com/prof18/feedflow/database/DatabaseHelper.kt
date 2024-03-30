@@ -247,6 +247,14 @@ class DatabaseHelper(
             )
         }
 
+    suspend fun updateFeedSourceName(feedSourceId: Int, newName: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.updateFeedSourceTitle(
+                title = newName,
+                urlHash = feedSourceId,
+            )
+        }
+
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,

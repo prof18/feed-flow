@@ -37,6 +37,9 @@ fun FeedSourceListScreen(
             viewModel.expandCategory(categoryId)
         },
         navigateBack = navigateBack,
+        onRenameFeedSourceClick = { feedSource, newName ->
+            viewModel.updateFeedName(feedSource, newName)
+        },
     )
 }
 
@@ -59,6 +62,7 @@ private fun FeedSourceListContentPreview() {
                     imageUrl = it,
                 )
             },
+            onRenameFeedSourceClick = { _, _ -> },
         )
     }
 }

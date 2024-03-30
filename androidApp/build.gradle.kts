@@ -109,22 +109,17 @@ play {
     track.set("alpha")
 }
 
-fun getVersionCode(): Int {
-    val outputStream = org.apache.commons.io.output.ByteArrayOutputStream()
-    project.exec {
-        commandLine = "git rev-list HEAD --first-parent --count".split(" ")
-        standardOutput = outputStream
-    }
-    return outputStream.toString().trim().toInt()
-}
+@Suppress("UnstableApiUsage")
+fun getVersionCode(): Int =
+    providers.exec {
+        commandLine("git", "rev-list", "HEAD", "--first-parent", "--count")
+    }.standardOutput.asText.get().trim().toInt()
 
-fun getVersionName(): String {
-    val outputStream = org.apache.commons.io.output.ByteArrayOutputStream()
-    project.exec {
-        commandLine = listOf("git", "describe", "--tags", "--abbrev=0", "--match", "*-android")
-        standardOutput = outputStream
-    }
-    return outputStream.toString()
+@Suppress("UnstableApiUsage")
+fun getVersionName(): String =
+    providers.exec {
+        commandLine("git", "describe", "--tags", "--abbrev=0", "--match", "*-android")
+    }.standardOutput
+        .asText.get()
         .trim()
         .replace("-android", "")
-}

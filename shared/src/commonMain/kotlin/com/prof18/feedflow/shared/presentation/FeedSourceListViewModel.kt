@@ -81,11 +81,7 @@ class FeedSourceListViewModel internal constructor(
 
     fun deleteFeedSource(feedSource: FeedSource) {
         scope.launch {
-            expandedCategories = feedSourcesState.value.feedSourcesWithCategory.filter {
-                it.isExpanded
-            }.mapNotNull {
-                it.categoryId
-            }.toMutableList()
+            setExpandedCategory()
             feedManagerRepository.deleteFeed(feedSource)
             feedRetrieverRepository.fetchFeeds()
         }
@@ -105,5 +101,21 @@ class FeedSourceListViewModel internal constructor(
                 feedSourcesWithCategory = newFeedSourceStates.toImmutableList(),
             )
         }
+    }
+
+    fun updateFeedName(feedSource: FeedSource, newName: String) {
+        scope.launch {
+            setExpandedCategory()
+            feedManagerRepository.updateFeedSourceName(feedSource.id, newName)
+            feedRetrieverRepository.fetchFeeds()
+        }
+    }
+
+    private fun setExpandedCategory() {
+        expandedCategories = feedSourcesState.value.feedSourcesWithCategory.filter {
+            it.isExpanded
+        }.mapNotNull {
+            it.categoryId
+        }.toMutableList()
     }
 }

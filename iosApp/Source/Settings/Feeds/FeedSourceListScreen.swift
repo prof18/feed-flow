@@ -29,6 +29,9 @@ struct FeedSourceListScreen: View {
             feedState: $feedState,
             deleteFeedSource: { feedSource in
                 feedSourceViewModel.deleteFeedSource(feedSource: feedSource)
+            },
+            renameFeedSource: { feedSource, newName in
+                feedSourceViewModel.updateFeedName(feedSource: feedSource, newName: newName)
             }
         )
         .task {

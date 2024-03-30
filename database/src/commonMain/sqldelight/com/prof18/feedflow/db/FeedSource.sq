@@ -44,3 +44,8 @@ resetCategory:
 UPDATE feed_source
 SET category_id = NULL
 WHERE category_id = :categoryId;
+
+updateFeedSourceTitle:
+UPDATE feed_source
+SET title = :title
+WHERE url_hash = :urlHash;

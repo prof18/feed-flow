@@ -46,7 +46,14 @@ struct HomeContent: View {
                 currentFeedFilter: currentFeedFilter,
                 onReloadClick: onRefresh,
                 onAddFeedClick: {
-                    self.sheetToShow = .noFeedSource
+                    // It's crashing with "Application tried to present modally
+                    // a view controller that is already being presented" on iOS 16
+                    if #unavailable(iOS 17.0) {
+                        // only runs if <iOS 15
+                        self.sheetToShow = .settings
+                    } else {
+                        self.sheetToShow = .noFeedSource
+                    }
                 },
                 requestNewPage: requestNewPage,
                 onItemClick: onItemClick,

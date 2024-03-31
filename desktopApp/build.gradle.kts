@@ -124,6 +124,7 @@ val macExtraPlistKeys: String
           <string>nb-rNO</string>
           <string>de</string>
           <string>sk</string>
+          <string>pt-BR</string>
         </array>
     """.trimIndent()
 

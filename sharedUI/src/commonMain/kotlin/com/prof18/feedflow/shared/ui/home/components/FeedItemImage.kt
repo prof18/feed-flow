@@ -1,4 +1,4 @@
-package com.prof18.feedflow.desktop.home.components
+package com.prof18.feedflow.shared.ui.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

@@ -26,7 +26,7 @@ object DI {
                     single {
                         coilImageLoader(
                             context = PlatformContext.INSTANCE,
-                            debug = appEnvironment.isDebug()
+                            debug = appEnvironment.isDebug(),
                         )
                     }
                 },

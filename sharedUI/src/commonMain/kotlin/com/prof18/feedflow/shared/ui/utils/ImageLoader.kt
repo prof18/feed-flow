@@ -31,4 +31,3 @@ fun coilImageLoader(
 }
 
 internal expect fun newDiskCache(context: PlatformContext): DiskCache
-

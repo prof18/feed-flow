@@ -26,7 +26,6 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
-import com.prof18.feedflow.shared.ui.home.components.FeedItemView
 import com.prof18.feedflow.shared.ui.home.components.FeedList
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
@@ -62,27 +61,14 @@ internal fun FeedWithContentView(
                 feedItems = feedState,
                 listState = listState,
                 requestMoreItems = requestMoreItems,
+                onFeedItemClick = onFeedItemClick,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
+                onCommentClick = onCommentClick,
                 updateReadStatus = { index ->
                     updateReadStatus(index)
                 },
-            ) { feedItem, index ->
-                FeedItemView(
-                    feedItem = feedItem,
-                    index = index,
-                    onFeedItemClick = onFeedItemClick,
-                    onBookmarkClick = onBookmarkClick,
-                    onReadStatusClick = onReadStatusClick,
-                    onCommentClick = onCommentClick,
-                    feedItemImage = { url ->
-                        FeedItemImage(
-                            modifier = Modifier
-                                .padding(start = Spacing.regular),
-                            url = url,
-                            width = 96.dp,
-                        )
-                    },
-                )
-            }
+            )
 
             VerticalScrollbar(
                 modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),

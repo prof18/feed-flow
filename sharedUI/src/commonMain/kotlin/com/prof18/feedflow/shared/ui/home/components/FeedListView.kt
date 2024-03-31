@@ -63,9 +63,12 @@ fun FeedList(
     feedItems: ImmutableList<FeedItem>,
     updateReadStatus: (Int) -> Unit,
     requestMoreItems: () -> Unit,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
-    feedItemView: @Composable (FeedItem, Int) -> Unit,
 ) {
     val shouldStartPaginate = remember {
         derivedStateOf {
@@ -84,7 +87,14 @@ fun FeedList(
         itemsIndexed(
             items = feedItems,
         ) { index, item ->
-            feedItemView(item, index)
+            FeedItemView(
+                feedItem = item,
+                index = index,
+                onFeedItemClick = onFeedItemClick,
+                onCommentClick = onCommentClick,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
+            )
         }
     }
 
@@ -109,10 +119,9 @@ fun FeedList(
 }
 
 @Composable
-fun FeedItemView(
+private fun FeedItemView(
     feedItem: FeedItem,
     index: Int,
-    feedItemImage: @Composable (String) -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
@@ -154,7 +163,6 @@ fun FeedItemView(
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth(),
             feedItem = feedItem,
-            feedItemImage = feedItemImage,
         )
 
         feedItem.dateString?.let { dateString ->
@@ -230,7 +238,6 @@ private fun FeedSourceAndUnreadDotRow(
 private fun TitleSubtitleAndImageRow(
     feedItem: FeedItem,
     modifier: Modifier = Modifier,
-    feedItemImage: @Composable (String) -> Unit,
 ) {
     Row(
         modifier = modifier,
@@ -265,7 +272,12 @@ private fun TitleSubtitleAndImageRow(
         }
 
         feedItem.imageUrl?.let { url ->
-            feedItemImage(url)
+            FeedItemImage(
+                modifier = Modifier
+                    .padding(start = Spacing.regular),
+                url = url,
+                width = 96.dp,
+            )
         }
     }
 }

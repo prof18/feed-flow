@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -26,7 +25,6 @@ import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
-import com.prof18.feedflow.shared.ui.home.components.FeedItemView
 import com.prof18.feedflow.shared.ui.home.components.FeedList
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -75,28 +73,15 @@ internal fun FeedWithContentView(
                 modifier = Modifier,
                 feedItems = feedItems,
                 listState = lazyListState,
+                onFeedItemClick = onFeedItemClick,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
+                onCommentClick = onCommentClick,
                 updateReadStatus = { index ->
                     updateReadStatus(index)
                 },
                 requestMoreItems = requestMoreItems,
-            ) { feedItem, index ->
-                FeedItemView(
-                    feedItem = feedItem,
-                    index = index,
-                    onFeedItemClick = onFeedItemClick,
-                    onCommentClick = onCommentClick,
-                    onBookmarkClick = onBookmarkClick,
-                    onReadStatusClick = onReadStatusClick,
-                    feedItemImage = { url ->
-                        FeedItemImage(
-                            modifier = Modifier
-                                .padding(start = Spacing.regular),
-                            url = url,
-                            size = 96.dp,
-                        )
-                    },
-                )
-            }
+            )
 
             PullRefreshIndicator(
                 feedUpdateStatus.isLoading(),

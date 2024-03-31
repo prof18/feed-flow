@@ -60,6 +60,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.core.utils.TestingTag
+import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
@@ -73,7 +74,6 @@ internal expect fun Modifier.feedSourceMenuClickModifier(
 @Composable
 internal fun FeedSourcesWithCategoryList(
     feedSourceState: FeedSourceListState,
-    feedSourceImage: @Composable (String) -> Unit,
     onExpandClicked: (CategoryId?) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
@@ -87,7 +87,6 @@ internal fun FeedSourcesWithCategoryList(
             FeedSourcesList(
                 feedSources = feedSourceState.feedSourcesWithoutCategory,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                feedSourceImage = feedSourceImage,
                 onRenameFeedSourceClick = onRenameFeedSourceClick,
             )
         }
@@ -135,7 +134,6 @@ internal fun FeedSourcesWithCategoryList(
 
                 FeedSourcesListWithCategorySelector(
                     feedSourceState = feedSourceState,
-                    feedSourceImage = feedSourceImage,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onRenameFeedSourceClick = onRenameFeedSourceClick,
                 )
@@ -147,7 +145,6 @@ internal fun FeedSourcesWithCategoryList(
 @Composable
 private fun FeedSourcesListWithCategorySelector(
     feedSourceState: FeedSourceState,
-    feedSourceImage: @Composable (String) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
 ) {
@@ -164,7 +161,6 @@ private fun FeedSourcesListWithCategorySelector(
         FeedSourcesList(
             feedSources = feedSourceState.feedSources,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-            feedSourceImage = feedSourceImage,
             onRenameFeedSourceClick = onRenameFeedSourceClick,
         )
     }
@@ -175,14 +171,12 @@ private fun FeedSourcesList(
     feedSources: ImmutableList<FeedSource>,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
-    feedSourceImage: @Composable (String) -> Unit,
 ) {
     Column {
         feedSources.forEachIndexed { index, feedSource ->
             FeedSourceItem(
                 feedSource = feedSource,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                feedSourceImage = feedSourceImage,
                 onRenameFeedSourceClick = onRenameFeedSourceClick,
             )
 
@@ -200,7 +194,6 @@ private fun FeedSourcesList(
 @Composable
 private fun FeedSourceItem(
     feedSource: FeedSource,
-    feedSourceImage: @Composable (String) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
 ) {
@@ -246,7 +239,10 @@ private fun FeedSourceItem(
     ) {
         val imageUrl = feedSource.logoUrl
         if (imageUrl != null) {
-            feedSourceImage(imageUrl)
+            FeedSourceLogoImage(
+                size = 24.dp,
+                imageUrl = imageUrl,
+            )
         } else {
             Icon(
                 imageVector = Icons.Default.Category,

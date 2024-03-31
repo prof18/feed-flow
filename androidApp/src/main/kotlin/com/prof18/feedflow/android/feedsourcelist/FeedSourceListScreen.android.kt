@@ -3,9 +3,7 @@ package com.prof18.feedflow.android.feedsourcelist
 import FeedFlowTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.prof18.feedflow.android.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
@@ -24,11 +22,6 @@ fun FeedSourceListScreen(
 
     FeedSourceListContent(
         feedSourceListState = feedSources,
-        feedSourceLogoImage = { imageUrl ->
-            FeedSourceLogoImage(
-                imageUrl = imageUrl,
-            )
-        },
         onAddFeedClick = onAddFeedClick,
         onDeleteFeedClick = { feedSource ->
             viewModel.deleteFeedSource(feedSource)
@@ -56,12 +49,6 @@ private fun FeedSourceListContentPreview() {
             onDeleteFeedClick = {},
             onExpandClicked = {},
             navigateBack = {},
-            feedSourceLogoImage = {
-                FeedSourceLogoImage(
-                    size = 24.dp,
-                    imageUrl = it,
-                )
-            },
             onRenameFeedSourceClick = { _, _ -> },
         )
     }

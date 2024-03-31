@@ -7,13 +7,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceListContent
@@ -44,12 +42,6 @@ fun FeedSourceListScreen(
 
     FeedSourceListContent(
         feedSourceListState = feedSources,
-        feedSourceLogoImage = { imageUrl ->
-            FeedSourceLogoImage(
-                size = 24.dp,
-                imageUrl = imageUrl,
-            )
-        },
         onAddFeedClick = {
             dialogState = true
         },
@@ -79,12 +71,6 @@ private fun FeedSourceListContentPreview() {
             onDeleteFeedClick = {},
             onExpandClicked = {},
             navigateBack = {},
-            feedSourceLogoImage = {
-                FeedSourceLogoImage(
-                    size = 24.dp,
-                    imageUrl = it,
-                )
-            },
             onRenameFeedSourceClick = { _, _ -> },
         )
     }

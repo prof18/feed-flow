@@ -45,6 +45,7 @@ import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.utils.TestingTag
+import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
@@ -55,7 +56,6 @@ import kotlinx.collections.immutable.toImmutableList
 fun Drawer(
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
-    feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -109,7 +109,6 @@ fun Drawer(
                     navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
-                    feedSourceImage = feedSourceImage,
                 )
             }
         }
@@ -260,7 +259,6 @@ private fun DrawerFeedSourcesByCategories(
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
-    feedSourceImage: @Composable (String) -> Unit,
 ) {
     Column {
         Column {
@@ -278,7 +276,6 @@ private fun DrawerFeedSourcesByCategories(
                 drawerFeedSources = navDrawerState.feedSourcesWithoutCategory
                     .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                 currentFeedFilter = currentFeedFilter,
-                feedSourceImage = feedSourceImage,
                 onFeedFilterSelected = onFeedFilterSelected,
             )
 
@@ -297,7 +294,6 @@ private fun DrawerFeedSourcesByCategories(
                         isCategoryExpanded = !isCategoryExpanded
                     },
                     onFeedFilterSelected = onFeedFilterSelected,
-                    feedSourceImage = feedSourceImage,
                 )
             }
         }
@@ -311,7 +307,6 @@ private fun DrawerFeedSourceByCategoryItem(
     currentFeedFilter: FeedFilter,
     isCategoryExpanded: Boolean,
     onCategoryExpand: () -> Unit,
-    feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
     val categoryTitle = feedSourceCategoryWrapper.feedSourceCategory?.title
@@ -363,7 +358,6 @@ private fun DrawerFeedSourceByCategoryItem(
             drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
             onFeedFilterSelected = onFeedFilterSelected,
-            feedSourceImage = feedSourceImage,
         )
     }
 }
@@ -373,7 +367,6 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
     isCategoryExpanded: Boolean,
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
-    feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
     AnimatedVisibility(
@@ -389,7 +382,6 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
         FeedSourcesList(
             drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
-            feedSourceImage = feedSourceImage,
             onFeedFilterSelected = onFeedFilterSelected,
         )
     }
@@ -399,7 +391,6 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
 private fun FeedSourcesList(
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
-    feedSourceImage: @Composable (String) -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
 ) {
     Column {
@@ -417,7 +408,10 @@ private fun FeedSourcesList(
                 icon = {
                     val imageUrl = feedSourceWrapper.feedSource.logoUrl
                     if (imageUrl != null) {
-                        feedSourceImage(imageUrl)
+                        FeedSourceLogoImage(
+                            size = 24.dp,
+                            imageUrl = imageUrl,
+                        )
                     } else {
                         Icon(
                             imageVector = Icons.Default.Category,

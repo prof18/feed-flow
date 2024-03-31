@@ -83,4 +83,5 @@
     <string name="import_export_description">FeedFlow podporuje import a export tvojich odberov pomocou OPML súboru, pre lepšiu kompatibilitu s ostatnými čítačkami feedov</string>
     <string name="read_articles_empty_screen_message">Nič tu nie je, je čas začať čítať!</string>
     <string name="bookmarked_articles_empty_screen_message">Nie je tu nič, je čas si niečo pridať do záložiek!</string>
+    <string name="rename_feed_source_name_button">Premenovať</string>
 </resources>

@@ -1,31 +1,38 @@
-# Title
+# Título
 
 FeedFlow
 
-## Short desc
+## Breve desc
 
-Minimalistic RSS Reader
+Leitor RSS Minimalista
 
-## Long desc
+## Longa desc
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience as FeedFlow offers a minimalistic list and it opens the articles on their respective websites.
+Siga seus feeds RSS favoritos com FeedFlow, um leitor de RSS minimalista.
+Desfrute de uma experiência de leitura sem desordem enquanto o FeedFlow oferece
+uma lista minimalista e abre os artigos em seus respectivos sites.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can choose your favorite privacy-focused browser to separate your reading experience from your main browser.
+Adapte a sua experiência de navegação escolhendo o seu navegador preferido.
+Desta forma, você pode escolher o seu navegador favorito com foco em privacidade
+para separar sua experiência de leitura do seu navegador principal.
 
-Your existing RSS collection can be easily imported: FeedFlow offers full and easy import and export capabilities through OPML files.
+Sua coleção RSS existente pode ser facilmente importada: FeedFlow oferece
+recursos de importação e exportação completos e fáceis através de arquivos OPML.
 
-Just focus on reading (or scrolling)!
+Apenas foco na leitura (ou navegação)!
 
-The app is still in development, so some features could be missing or there could be some issues. Please report any kind of bugs or feature suggestions!
+O aplicativo ainda está em desenvolvimento, então alguns recursos podem estar
+faltando ou pode haver alguns problemas. Por favor, informe qualquer tipo de
+bugs ou sugestões de recursos!
 
-## Screenshot 1
+## Captura 1 da tela
 
-All your feeds in your pocket
+Todos os seus feeds no bolso
 
-## Screenshot 3
+## Captura 2 da tela
 
-Import your existing collection
+Importe sua coleção existente
 
-## Screenshot 4
+## Captura 4 da tela
 
-Open the articles in your favourite browser
+Abra os artigos no seu navegador favorito

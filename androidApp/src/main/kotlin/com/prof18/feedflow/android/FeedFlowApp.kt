@@ -38,7 +38,7 @@ class FeedFlowApp : Application() {
                     single {
                         coilImageLoader(
                             context = this@FeedFlowApp,
-                            debug = appEnvironment.isDebug()
+                            debug = appEnvironment.isDebug(),
                         )
                     }
                 },

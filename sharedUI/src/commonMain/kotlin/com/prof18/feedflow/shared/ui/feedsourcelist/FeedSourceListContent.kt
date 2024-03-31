@@ -12,7 +12,6 @@ import com.prof18.feedflow.core.model.FeedSourceListState
 @Composable
 fun FeedSourceListContent(
     feedSourceListState: FeedSourceListState,
-    feedSourceLogoImage: @Composable (String) -> Unit,
     onAddFeedClick: () -> Unit,
     onDeleteFeedClick: (FeedSource) -> Unit,
     navigateBack: () -> Unit,
@@ -41,7 +40,6 @@ fun FeedSourceListContent(
                     .padding(paddingValues),
                 feedSourceState = feedSourceListState,
                 onExpandClicked = onExpandClicked,
-                feedSourceImage = feedSourceLogoImage,
                 onDeleteFeedSourceClick = onDeleteFeedClick,
                 onRenameFeedSourceClick = onRenameFeedSourceClick,
             )

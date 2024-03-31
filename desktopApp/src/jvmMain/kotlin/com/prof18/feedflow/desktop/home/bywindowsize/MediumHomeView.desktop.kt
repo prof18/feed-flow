@@ -15,14 +15,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.desktop.home.components.HomeScreenContent
 import com.prof18.feedflow.desktop.openInBrowser
-import com.prof18.feedflow.desktop.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -70,12 +68,6 @@ internal fun MediumView(
                         .padding(paddingValues),
                     navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
-                    feedSourceImage = { imageUrl ->
-                        FeedSourceLogoImage(
-                            size = 24.dp,
-                            imageUrl = imageUrl,
-                        )
-                    },
                     onFeedFilterSelected = { feedFilter ->
                         onFeedFilterSelected(feedFilter)
                         scope.launch {

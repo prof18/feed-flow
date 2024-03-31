@@ -16,7 +16,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.android.home.components.HomeScaffold
-import com.prof18.feedflow.android.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
@@ -78,9 +77,6 @@ internal fun MediumHomeView(
                         .padding(paddingValues),
                     navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
-                    feedSourceImage = { imageUrl ->
-                        FeedSourceLogoImage(imageUrl = imageUrl)
-                    },
                     onFeedFilterSelected = { feedFilter ->
                         onFeedFilterSelected(feedFilter)
                         scope.launch {

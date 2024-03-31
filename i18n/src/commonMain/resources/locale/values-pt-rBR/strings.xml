@@ -83,4 +83,5 @@
     <string name="feed_add_in_progress_message">Por favor, aguarde, a disponibilidade de cada feed está sendo verificada. A operação pode demorar um pouco dependendo da quantidade de feeds que você está importando</string>
     <string name="import_export_description">FeedFlow suporta a importação e exportação de suas assinaturas com um arquivo OPML, para melhor interoperabilidade com os outros leitores de feed</string>
     <string name="menu_open_comments">Abrir comentários</string>
+    <string name="rename_feed_source_name_button">Renomear</string>
 </resources>

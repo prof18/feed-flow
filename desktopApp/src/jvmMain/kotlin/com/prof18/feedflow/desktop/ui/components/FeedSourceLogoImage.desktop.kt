@@ -1,6 +1,5 @@
 package com.prof18.feedflow.desktop.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -15,8 +14,10 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 import com.prof18.feedflow.shared.ui.style.Spacing
-import com.seiko.imageloader.rememberImagePainter
 
 @Composable
 fun FeedSourceLogoImage(
@@ -31,16 +32,13 @@ fun FeedSourceLogoImage(
                 .background(Color.Green),
         )
     } else {
-        Image(
-            painter = rememberImagePainter(
-                url = imageUrl,
-                errorPainter = {
-                    rememberVectorPainter(Icons.Default.Category)
-                },
-                placeholderPainter = {
-                    rememberVectorPainter(Icons.Default.Category)
-                },
-            ),
+        AsyncImage(
+            model = ImageRequest.Builder(LocalPlatformContext.current)
+                .data(imageUrl)
+                .build(),
+            placeholder = rememberVectorPainter(Icons.Default.Category),
+            fallback = rememberVectorPainter(Icons.Default.Category),
+            error = rememberVectorPainter(Icons.Default.Category),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier

@@ -1,6 +1,5 @@
 package com.prof18.feedflow.desktop.home.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -12,8 +11,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 import com.prof18.feedflow.shared.ui.style.Spacing
-import com.seiko.imageloader.rememberImagePainter
 
 @Composable
 fun FeedItemImage(
@@ -28,13 +29,15 @@ fun FeedItemImage(
                 .background(Color.Green),
         )
     } else {
-        Image(
-            painter = rememberImagePainter(url),
+        AsyncImage(
+            model = ImageRequest.Builder(LocalPlatformContext.current)
+                .data(url)
+                .build(),
+            contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier
                 .size(width)
                 .clip(RoundedCornerShape(Spacing.small)),
-            contentDescription = null,
         )
     }
 }

@@ -18,12 +18,20 @@ kotlin {
             languageSettings.optIn("androidx.compose.material3.ExperimentalMaterial3Api")
         }
 
+        androidMain {
+            dependencies {
+                api(libs.io.coil.network)
+            }
+        }
+
         commonMain {
             dependencies {
                 api(project(":i18n"))
                 implementation(project(":core"))
 
                 api(libs.lyricist)
+                api(libs.io.coil.compose)
+
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -36,6 +44,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(libs.jsystem.theme.detector)
+                api(libs.io.coil.network)
             }
         }
     }

@@ -8,7 +8,7 @@ activity-compose = "1.8.2"
 androidx-core-ktx = "1.5.0"
 coroutines = "1.8.0"
 detekt = "1.23.6"
-io-coil = "2.6.0"
+io-coil = "3.0.0-alpha06"
 junit = "4.13.2"
 kermit = "2.0.3"
 koin-bom = "3.5.3"
@@ -39,7 +39,6 @@ decompose = "2.2.2"
 jsystem-theme-detector = "3.6"
 native-coroutines = "1.0.0-ALPHA-27"
 ksp = "1.9.23-1.0.19"
-compose-image-loader = "1.7.8"
 multiplatform-settings = "1.1.1"
 crashlytics = "18.6.3"
 crashlytics-plugin = "2.9.9"
@@ -62,7 +61,8 @@ androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-ru
 androidx-navigation-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav-compose" }
 androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-core-ktx" }
 cashapp-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-io-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "io-coil" }
+io-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "io-coil" }
+io-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "io-coil" }
 io-gitlab-arturbosch-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 junit = { module = "junit:junit", version.ref = "junit" }
 koin-android = { module = "io.insert-koin:koin-android" }
@@ -93,7 +93,6 @@ jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup"  }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose-jetbrains = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
-compose-image-loader = { module = "io.github.qdsfdhvh:image-loader", version.ref = "compose-image-loader" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "crashlytics" }
 crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
@@ -110,7 +109,7 @@ lyricist-processorXml = { module = "com.github.prof18:lyricist", version = "e305
 
 [bundles]
 compose = [
-    "androidx-activity-compose", "io-coil-compose", "androidx-lifecycle-viewModel-compose",
+    "androidx-activity-compose", "androidx-lifecycle-viewModel-compose",
     "accompanist-systemuicontroller", "androidx-lifecycle-runtime-compose",
     "androidx-navigation-navigation-compose",
 ]

@@ -12,12 +12,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
 
@@ -35,11 +35,11 @@ fun FeedSourceLogoImage(
         )
     } else {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
+            model = ImageRequest.Builder(LocalPlatformContext.current)
                 .data(imageUrl)
-                .crossfade(true)
                 .build(),
             placeholder = rememberVectorPainter(Icons.Default.Category),
+            fallback = rememberVectorPainter(Icons.Default.Category),
             error = rememberVectorPainter(Icons.Default.Category),
             contentDescription = null,
             contentScale = ContentScale.Crop,

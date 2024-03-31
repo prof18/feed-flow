@@ -27,6 +27,8 @@ import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import coil3.ImageLoader
+import coil3.compose.setSingletonImageLoaderFactory
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
@@ -137,6 +139,9 @@ fun main() = application {
     scope.launch {
         newVersionChecker.notifyIfNewVersionIsAvailable()
     }
+
+    val koin = DI.koin
+    setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
 
     Window(
         onCloseRequest = ::exitApplication,

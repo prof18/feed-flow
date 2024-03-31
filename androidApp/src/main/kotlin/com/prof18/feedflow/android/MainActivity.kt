@@ -22,6 +22,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil3.ImageLoader
+import coil3.annotation.ExperimentalCoilApi
+import coil3.compose.setSingletonImageLoaderFactory
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
 import com.prof18.feedflow.android.feedsourcelist.FeedSourceListScreen
@@ -32,9 +35,10 @@ import com.prof18.feedflow.android.settings.about.LicensesScreen
 import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
+import org.koin.compose.getKoin
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalCoilApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -49,6 +53,9 @@ class MainActivity : ComponentActivity() {
                 systemUiController.systemBarsDarkContentEnabled = !darkTheme
                 onDispose {}
             }
+
+            val koin = getKoin()
+            setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
 
             val windowSize = calculateWindowSizeClass(this@MainActivity)
 

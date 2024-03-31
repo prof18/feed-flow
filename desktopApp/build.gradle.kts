@@ -29,7 +29,6 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.decompose)
                 implementation(libs.decompose.compose.jetbrains)
-                implementation(libs.compose.image.loader)
                 implementation(libs.bundles.about.libraries)
                 implementation(libs.jsoup)
                 implementation(libs.slf4j.nop)

@@ -3,7 +3,7 @@
 //  FeedFlow
 //
 //  Created by Marco Gomiero on 16/01/24.
-//  Copyright © 2024 orgName. All rights reserved.
+//  Copyright © 2024. All rights reserved.
 //
 
 import SwiftUI
@@ -83,6 +83,7 @@ struct FeedSourceListScreenContent: View {
                         renameFeedSource: renameFeedSource
                     )
                     .id(feedSource.id )
+                    .listRowInsets(EdgeInsets())
                 }
             }
         }
@@ -101,7 +102,7 @@ struct FeedSourceListScreenContent: View {
                                 deleteFeedSource: deleteFeedSource,
                                 renameFeedSource: renameFeedSource
                             )
-                            .id(feedSource.id )
+                            .id(feedSource.id)
                         }
                     },
                     label: {
@@ -134,7 +135,7 @@ private struct FeedSourceListItem: View {
     let deleteFeedSource: (FeedSource) -> Void
     let renameFeedSource: (FeedSource, String) -> Void
 
-    @FocusState var focusedReminder: Bool?
+    @FocusState var isTextFieldFocused: Bool?
 
     var body: some View {
         HStack {
@@ -151,14 +152,16 @@ private struct FeedSourceListItem: View {
                         Image(systemName: "square.stack.3d.up")
                     }
                 }
+                .padding(.leading, Spacing.regular)
             } else {
                 Image(systemName: "square.stack.3d.up")
+                    .padding(.leading, Spacing.regular)
             }
 
             VStack(alignment: .leading) {
                 HStack(alignment: .center) {
                     TextField("", text: $feedSourceTitle)
-                        .focused($focusedReminder, equals: true)
+                        .focused($isTextFieldFocused, equals: true)
                         .disabled(!isRenameEnabled)
                         .font(.system(size: 16))
                         .padding(.top, Spacing.regular)
@@ -170,7 +173,7 @@ private struct FeedSourceListItem: View {
                         Button {
                             renameFeedSource(feedSource, feedSourceTitle)
                             isRenameEnabled = false
-                            focusedReminder = false
+                            isTextFieldFocused = false
                         } label: {
                             Image(systemName: "checkmark.circle.fill")
                                 .tint(.green)
@@ -188,6 +191,15 @@ private struct FeedSourceListItem: View {
             .padding(.leading, Spacing.small)
         }
         .padding(.trailing, Spacing.small)
+        .contentShape(Rectangle())
+        .hoverEffect()
+        .listRowInsets(
+            EdgeInsets(
+                top: .zero,
+                leading: -20,
+                bottom: .zero,
+                trailing: .zero)
+        )
         .if(!isRenameEnabled) { view in
             view.contextMenu {
                 Button {
@@ -200,10 +212,18 @@ private struct FeedSourceListItem: View {
                 Button {
                     isRenameEnabled = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        focusedReminder = true
+                        isTextFieldFocused = true
                     }
                 } label: {
                     Label(feedFlowStrings.renameFeedSourceNameButton, systemImage: "pencil")
+                }
+
+                if isOnVisionOSDevice() {
+                    Button {
+                        // No-op so it will close itslef
+                    } label: {
+                        Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
+                    }
                 }
             }
         }

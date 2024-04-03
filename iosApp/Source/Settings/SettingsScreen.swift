@@ -95,6 +95,7 @@ struct SettingsScreen: View {
                     Label(feedFlowStrings.browserSelectionButton, systemImage: "globe")
                 }
             )
+            .hoverEffect()
             .accessibilityIdentifier(TestingTag.shared.BROWSER_SELECTOR)
 
             Toggle(isOn: $isMarkReadWhenScrollingEnabled) {

@@ -49,12 +49,14 @@ struct HomeScreen: View {
     @Binding
     var toggleListScroll: Bool
 
+    @Binding
+    var showSettings: Bool
+
     @Binding var selectedDrawerItem: DrawerItem?
 
     let homeViewModel: HomeViewModel
 
     var body: some View {
-
         HomeContent(
             loadingState: $loadingState,
             feedState: $feedState,
@@ -63,6 +65,7 @@ struct HomeScreen: View {
             sheetToShow: $sheetToShow,
             toggleListScroll: $toggleListScroll,
             currentFeedFilter: $currentFeedFilter,
+            showSettings: $showSettings,
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },

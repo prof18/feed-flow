@@ -17,6 +17,11 @@ struct SidebarDrawer: View {
 
     let navDrawerState: NavDrawerState
     let onFeedFilterSelected: (FeedFilter) -> Void
+    let onMarkAllReadClick: () -> Void
+    let onDeleteOldFeedClick: () -> Void
+    let onForceRefreshClick: () -> Void
+    let deleteAllFeeds: () -> Void
+    let onShowSettingsClick: () -> Void
 
     var body: some View {
         List(selection: $selectedDrawerItem) {
@@ -26,6 +31,9 @@ struct SidebarDrawer: View {
             categoriesSection
             feedSourcesWithoutCategorySection
             feedSourcesWithCategorySection
+            if isOnVisionOSDevice() {
+                visionOsSection
+            }
         }
         .modify {
             if #available(iOS 17.0, *) {
@@ -214,8 +222,56 @@ struct SidebarDrawer: View {
             }
         )
     }
+
+    @ViewBuilder
+    private var visionOsSection: some View {
+        Spacer()
+
+        Divider()
+
+        Button {
+            onMarkAllReadClick()
+        } label: {
+            Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
+        }
+
+        Button {
+            onDeleteOldFeedClick()
+        } label: {
+            Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
+        }
+
+        Button {
+            onForceRefreshClick()
+        } label: {
+            Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
+        }
+
+        #if DEBUG
+        Button {
+            deleteAllFeeds()
+        } label: {
+            Label("Delete Database", systemImage: "trash")
+        }
+        #endif
+
+        Button {
+            onShowSettingsClick()
+        } label: {
+            Label(feedFlowStrings.settingsButton, systemImage: "gear")
+        }
+    }
 }
 
 #Preview {
-    SidebarDrawer(selectedDrawerItem: .constant(nil), navDrawerState: PreviewItemsKt.navDrawerState, onFeedFilterSelected: { _ in })
+    SidebarDrawer(
+        selectedDrawerItem: .constant(nil),
+        navDrawerState: PreviewItemsKt.navDrawerState,
+        onFeedFilterSelected: { _ in },
+        onMarkAllReadClick: { },
+        onDeleteOldFeedClick: { },
+        onForceRefreshClick: { },
+        deleteAllFeeds: { },
+        onShowSettingsClick: { }
+    )
 }

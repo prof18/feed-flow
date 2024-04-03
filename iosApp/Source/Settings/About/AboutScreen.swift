@@ -29,13 +29,28 @@ struct AboutScreen: View {
                         Label(feedFlowStrings.openSourceLicenses, systemImage: "shield" )
                     }
 
-                    Link(destination: URL(string: Websites.shared.FEED_FLOW_WEBSITE)!) {
-                        Label(feedFlowStrings.openWebsiteButton, systemImage: "globe")
-                    }
+                    Button(
+                        action: {
+                            if let url = URL(string: Websites.shared.FEED_FLOW_WEBSITE) {
+                                openURL(url)
+                            }
+                        },
+                        label: {
+                            Label(feedFlowStrings.openWebsiteButton, systemImage: "globe")
+                        }
+                    )
 
-                    Link(destination: URL(string: Websites.shared.TRANSLATION_WEBSITE)!) {
-                        Label(feedFlowStrings.aboutMenuContributeTranslations, systemImage: "flag")
-                    }
+                    Button(
+                        action: {
+                            if let url = URL(string: Websites.shared.TRANSLATION_WEBSITE) {
+                                openURL(url)
+                            }
+                        },
+                        label: {
+                            Label(feedFlowStrings.aboutMenuContributeTranslations, systemImage: "flag")
+                        }
+                    )
+
                 } footer: {
                     if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                         Text(feedFlowStrings.aboutAppVersion(appVersion))

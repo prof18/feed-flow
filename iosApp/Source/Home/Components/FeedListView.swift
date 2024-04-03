@@ -51,32 +51,45 @@ struct FeedListView: View {
                 loadingHeader
                 List {
                     ForEach(Array(feedState.enumerated()), id: \.element) { index, feedItem in
-                        FeedItemView(feedItem: feedItem, index: index)
-                            .id(feedItem.id)
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                onItemClick(FeedItemUrlInfo(id: feedItem.id, url: feedItem.url))
-                            }
-                            .contextMenu {
-                                VStack {
-                                    makeReadUnreadButton(feedItem: feedItem)
-                                    makeBookmarkButton(feedItem: feedItem)
-                                    makeCommentsButton(feedItem: feedItem)
-                                }
-                            }
-                            .onAppear {
-                                if let index = feedState.firstIndex(of: feedItem) {
-                                    indexHolder.lastAppearedIndex = index
-                                    if index == feedState.count - 15 {
-                                        requestNewPage()
+                        Button(action: {
+                            onItemClick(FeedItemUrlInfo(id: feedItem.id, url: feedItem.url))
+                        }, label: {
+                            FeedItemView(feedItem: feedItem, index: index)
+                        })
+                        .buttonStyle(.plain)
+                        .id(feedItem.id)
+                        .contentShape(Rectangle())
+                        .listRowInsets(EdgeInsets())
+                        .hoverEffect()
+                        .contextMenu {
+                            VStack {
+                                makeReadUnreadButton(feedItem: feedItem)
+                                makeBookmarkButton(feedItem: feedItem)
+                                makeCommentsButton(feedItem: feedItem)
+                                if isOnVisionOSDevice() {
+                                    if isOnVisionOSDevice() {
+                                        Button {
+                                            // No-op so it will close itslef
+                                        } label: {
+                                            Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
+                                        }
                                     }
                                 }
                             }
-                            .onDisappear {
-                                if let index = feedState.firstIndex(of: feedItem) {
-                                    self.indexHolder.updateReadIndex(index: index)
+                        }
+                        .onAppear {
+                            if let index = feedState.firstIndex(of: feedItem) {
+                                indexHolder.lastAppearedIndex = index
+                                if index == feedState.count - 15 {
+                                    requestNewPage()
                                 }
                             }
+                        }
+                        .onDisappear {
+                            if let index = feedState.firstIndex(of: feedItem) {
+                                self.indexHolder.updateReadIndex(index: index)
+                            }
+                        }
                     }
                 }
                 .listStyle(PlainListStyle())
@@ -138,7 +151,6 @@ struct FeedListView: View {
             }
         }
     }
-
 }
 
 #Preview {

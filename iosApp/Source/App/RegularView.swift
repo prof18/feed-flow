@@ -27,6 +27,7 @@ struct RegularView: View {
         feedSourcesByCategory: [:]
     )
     @State var scrollUpTrigger: Bool = false
+    @State var showSettings: Bool = false
 
     var drawerItems: [DrawerItem] = []
     let homeViewModel: HomeViewModel
@@ -40,6 +41,22 @@ struct RegularView: View {
                     indexHolder.clear()
                     scrollUpTrigger.toggle()
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
+                },
+                onMarkAllReadClick: {
+                    homeViewModel.markAllRead()
+                },
+                onDeleteOldFeedClick: {
+                    homeViewModel.deleteOldFeedItems()
+                },
+                onForceRefreshClick: {
+                    scrollUpTrigger.toggle()
+                    homeViewModel.forceFeedRefresh()
+                },
+                deleteAllFeeds: {
+                    homeViewModel.deleteAllFeeds()
+                },
+                onShowSettingsClick: {
+                    showSettings.toggle()
                 }
             )
             .navigationBarTitleDisplayMode(.inline)
@@ -47,6 +64,7 @@ struct RegularView: View {
             NavigationStack {
                 HomeScreen(
                     toggleListScroll: $scrollUpTrigger,
+                    showSettings: $showSettings,
                     selectedDrawerItem: $selectedDrawerItem,
                     homeViewModel: homeViewModel
                 )

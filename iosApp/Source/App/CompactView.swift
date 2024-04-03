@@ -41,6 +41,21 @@ struct CompactView: View {
                     appState.navigate(route: CompactViewRoute.feed)
                     scrollUpTrigger.toggle()
                     homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
+                },
+                onMarkAllReadClick: {
+                    // On compact view it's handled by the home
+                },
+                onDeleteOldFeedClick: {
+                    // On compact view it's handled by the home
+                },
+                onForceRefreshClick: {
+                    // On compact view it's handled by the home
+                },
+                deleteAllFeeds: {
+                    // On compact view it's handled by the home
+                },
+                onShowSettingsClick: {
+                    // On compact view it's handled by the home
                 }
             )
             .navigationDestination(for: CompactViewRoute.self) { route in
@@ -48,6 +63,7 @@ struct CompactView: View {
                 case .feed:
                     HomeScreen(
                         toggleListScroll: $scrollUpTrigger,
+                        showSettings: .constant(false),
                         selectedDrawerItem: $selectedDrawerItem,
                         homeViewModel: homeViewModel
                     )

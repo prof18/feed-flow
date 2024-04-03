@@ -3,7 +3,7 @@
 //  FeedFlow
 //
 //  Created by Marco Gomiero on 16/01/24.
-//  Copyright © 2024 orgName. All rights reserved.
+//  Copyright © 2024. All rights reserved.
 //
 
 import SwiftUI
@@ -34,6 +34,10 @@ struct AddFeedScreenContent: View {
             Section(
                 content: {
                     TextField(feedFlowStrings.feedUrl, text: $feedURL)
+                        .keyboardType(.URL)
+                        .textContentType(.URL)
+                        .disableAutocorrection(true)
+                        .hoverEffect()
                         .accessibilityIdentifier(TestingTag.shared.FEED_URL_INPUT)
                 },
                 header: {
@@ -61,6 +65,7 @@ struct AddFeedScreenContent: View {
                             .accessibilityIdentifier("\(TestingTag.shared.CATEGORY_RADIO_BUTTON)_\(title)")
                     }
                 }
+                .hoverEffect()
             }
             .accessibilityIdentifier(TestingTag.shared.CATEGORY_SELECTOR)
 
@@ -106,6 +111,7 @@ struct AddFeedScreenContent: View {
                         } label: {
                             Image(systemName: "trash")
                                 .tint(.red)
+                                .hoverEffect()
                         }
                         .accessibilityIdentifier("\(TestingTag.shared.DELETE_CATEGORY_BUTTON)_\(name)")
                     }
@@ -118,6 +124,7 @@ struct AddFeedScreenContent: View {
                         addNewCategory(CategoryName(name: newCategory))
                         newCategory = ""
                     }
+                    .hoverEffect()
                     .accessibilityIdentifier(TestingTag.shared.CATEGORY_TEXT_INPUT)
 
                 Spacer()
@@ -130,6 +137,7 @@ struct AddFeedScreenContent: View {
                         Image(systemName: "checkmark.circle.fill")
                             .tint(.green)
                     }
+                    .hoverEffect()
                     .accessibilityIdentifier(TestingTag.shared.ADD_CATEGORY_BUTTON)
                 }
             }

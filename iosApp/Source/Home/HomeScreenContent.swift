@@ -3,7 +3,7 @@
 //  FeedFlow
 //
 //  Created by Marco Gomiero on 15/01/24.
-//  Copyright © 2024 orgName. All rights reserved.
+//  Copyright © 2024. All rights reserved.
 //
 
 import SwiftUI
@@ -24,6 +24,7 @@ struct HomeContent: View {
     @Binding var sheetToShow: HomeSheetToShow?
     @Binding var toggleListScroll: Bool
     @Binding var currentFeedFilter: FeedFilter
+    @Binding var showSettings: Bool
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
@@ -64,13 +65,18 @@ struct HomeContent: View {
             .onChange(of: toggleListScroll) { _ in
                 proxy.scrollTo(feedState.first?.id)
             }
+            .onChange(of: showSettings) { _ in
+                sheetToShow = .settings
+            }
             .if(appState.sizeClass == .compact) { view in
                 view.navigationBarBackButtonHidden(true)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 makeToolbarHeaderView(proxy: proxy)
-                makeMenuToolbarView(proxy: proxy)
+                if !isOnVisionOSDevice() {
+                    makeMenuToolbarView(proxy: proxy)
+                }
             }
 
         }
@@ -212,6 +218,7 @@ fileprivate extension FeedFilter {
         sheetToShow: .constant(nil),
         toggleListScroll: .constant(false),
         currentFeedFilter: .constant(FeedFilter.Timeline()),
+        showSettings: .constant(false),
         onRefresh: { },
         updateReadStatus: { _ in },
         onMarkAllReadClick: { },
@@ -240,6 +247,7 @@ fileprivate extension FeedFilter {
         sheetToShow: .constant(nil),
         toggleListScroll: .constant(false),
         currentFeedFilter: .constant(FeedFilter.Timeline()),
+        showSettings: .constant(false),
         onRefresh: { },
         updateReadStatus: { _ in },
         onMarkAllReadClick: { },
@@ -268,6 +276,7 @@ fileprivate extension FeedFilter {
         sheetToShow: .constant(HomeSheetToShow.noFeedSource),
         toggleListScroll: .constant(false),
         currentFeedFilter: .constant(FeedFilter.Timeline()),
+        showSettings: .constant(false),
         onRefresh: { },
         updateReadStatus: { _ in },
         onMarkAllReadClick: { },

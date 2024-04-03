@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
+		13C19E852BBC4314006DEEBC /* VisionOsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */; };
 		CC14A14C2B4B09710093FF3A /* CompatViewRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC14A14B2B4B09710093FF3A /* CompatViewRoute.swift */; };
 		CC23293029D63038005D0E06 /* commonMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292E29D63038005D0E06 /* commonMain */; };
 		CC23293129D63038005D0E06 /* iosMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292F29D63038005D0E06 /* iosMain */; };
@@ -105,6 +106,7 @@
 /* Begin PBXFileReference section */
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionOsUtils.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* FeedFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CC14A14B2B4B09710093FF3A /* CompatViewRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompatViewRoute.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 				CC23293E29D85295005D0E06 /* IosHtmlParser.swift */,
 				CC6E68222A629658009F4A3C /* Extensions.swift */,
 				D9A5A601F98358B64277BD86 /* ObservableViewModel.swift */,
+				13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -649,6 +652,7 @@
 				CCA704C729D4B69B00560FA3 /* SnackbarData.swift in Sources */,
 				CCA704C129D4B63300560FA3 /* Snackbar.swift in Sources */,
 				D9ADE44D1EE93A5F1C7FEF5F /* AppState.swift in Sources */,
+				13C19E852BBC4314006DEEBC /* VisionOsUtils.swift in Sources */,
 				D9AF86D3ED2582EEAC6C9C85 /* CompactView.swift in Sources */,
 				D9A93B9610F495CF136FCF94 /* ContentView.swift in Sources */,
 				D9A462B64B1E5781DA876EB4 /* SidebarDrawer.swift in Sources */,
@@ -681,6 +685,7 @@
 /* Begin PBXTargetDependency section */
 		CC36F68629DF47D800B3EB62 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = CC36F68029DF478100B3EB62 /* VersionGenerator */;
 			targetProxy = CC36F68529DF47D800B3EB62 /* PBXContainerItemProxy */;
 		};
@@ -836,8 +841,11 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.prof18.feedflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Debug;
 		};
@@ -870,8 +878,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.prof18.feedflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Release;
 		};

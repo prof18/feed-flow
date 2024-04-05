@@ -29,7 +29,7 @@ rss-parser = "6.0.7"
 accompanist = "0.34.0"
 jsoup = "1.17.2"
 triplet-play = "3.9.1"
-compose-multiplatform = "1.6.1"
+compose-multiplatform = "1.6.10-dev1561"
 compose-compiler = "1.5.11"
 decompose = "2.2.2"
 # When updating, check the version of jna in the following link:

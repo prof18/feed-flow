@@ -82,7 +82,7 @@ compose {
                         identity.set("Marco Gomiero")
                     }
 
-//                    minimumSystemVersion = "12.0"
+                    minimumSystemVersion = "12.0"
 
                     if (isAppStoreRelease) {
                         entitlementsFile.set(project.file("entitlements.plist"))

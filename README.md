@@ -35,7 +35,13 @@ Download the latest macOS version from [GitHub Releases](https://github.com/prof
 
 If you want to help translate FeedFlow, I will be more than happy.
 
-To add a new translation, you can use [Weblate](https://hosted.weblate.org/engage/feedflow/) or open a pull request with a new `strings.xml` file inside the `i18n/src/commonMain/resources/MR/<language-code>/strings.xml` folder and new files inside the `assets/storecopy/<language-code>` folder (where `<language-code>` is a [two-letter ISO 639-1 language code](https://en.wikipedia.org/wiki/ISO_639-1)). 
+To add a new translation, you can use [Weblate](https://hosted.weblate.org/engage/feedflow/) or open a pull request with a new `strings.xml` file inside the `i18n/src/commonMain/resources/locale/values-<language-code>/strings.xml` folder and new files inside the `assets/storecopy/<language-code>` folder (where `<language-code>` is a [two-letter ISO 639-1 language code](https://en.wikipedia.org/wiki/ISO_639-1)). 
+
+<div align="center">
+<a href="https://hosted.weblate.org/engage/feedflow/">
+<img src="https://hosted.weblate.org/widget/feedflow/287x66-grey.png" alt="Translation status" />
+</a>
+</div>
 
 ## License 📄
 

@@ -97,3 +97,5 @@
 -keep class com.prof18.feedflow.presentation.model.** { *; }
 
 -keep class com.arkivanov.decompose.extensions.compose.jetbrains.mainthread.SwingMainThreadChecker
+
+-keep class coil3.network.okhttp.internal.OkHttpNetworkFetcherServiceLoaderTarget { *; }

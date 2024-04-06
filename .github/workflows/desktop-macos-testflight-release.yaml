@@ -1,4 +1,4 @@
-name: Desktop MacOS Release
+name: Desktop MacOS Testflight Release
 on:
   push:
     tags:
@@ -21,12 +21,30 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
-      # Developer ID Application
-      - name: Import signing certificate
+      - name: Import Mac App Distribution certificate
         uses: apple-actions/import-codesign-certs@v2
         with:
-          p12-file-base64: ${{ secrets.SIGNING_CERTIFICATE_P12_DATA_MACOS }}
-          p12-password: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD_MACOS }}
+          p12-file-base64: ${{ secrets.MAC_APP_DISTRIBUTION_CERTIFICATE }}
+          p12-password: ${{ secrets.MAC_APP_DISTRIBUTION_CERTIFICATE_PWD }}
+
+      - name: Import Mac Installer Distribution certificate
+        uses: apple-actions/import-codesign-certs@v2
+        with:
+          p12-file-base64: ${{ secrets.MAC_INSTALLER_DISTRIBUTION_CERTIFICATE }}
+          p12-password: ${{ secrets.MAC_INSTALLER_DISTRIBUTION_CERTIFICATE_PWD }}
+      - name: Create Embedded Provision Profile
+        run: |
+          echo "$EMBEDDED_PROVISION" > desktopApp/embedded.provisionprofile.b64
+          base64 -d -i desktopApp/embedded.provisionprofile.b64 > desktopApp/embedded.provisionprofile
+        env:
+          EMBEDDED_PROVISION: ${{ secrets.EMBEDDED_PROVISION }}
+
+      - name: Create Runtime Provision Profile
+        run: |
+          echo "$RUNTIME_PROVISION" > desktopApp/runtime.provisionprofile.b64
+          base64 -d -i desktopApp/runtime.provisionprofile.b64 > desktopApp/runtime.provisionprofile
+        env:
+          RUNTIME_PROVISION: ${{ secrets.RUNTIME_PROVISION }}
 
       - name: Run Checks
         run: ./gradlew detekt desktopTest jvmTest
@@ -47,8 +65,8 @@ jobs:
         run: |
           tag=$(git describe --tags --abbrev=0 --match "*-desktop")
           version=$(echo "$tag" | sed 's/-desktop$//')
-          name="FeedFlow-${version}.dmg"
-          path="desktopApp/build/release/main-release/dmg/${name}"
+          name="FeedFlow-${version}.pkg"
+          path="desktopApp/build/release/main-release/pkg/${name}"
           echo "TAG=$tag" >> $GITHUB_OUTPUT
           echo "VERSION=$version" >> $GITHUB_OUTPUT
           echo "RELEASE_PATH=$path" >> $GITHUB_OUTPUT
@@ -62,8 +80,8 @@ jobs:
           SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
           VERSION: ${{ steps.path_variables.outputs.VERSION }}
 
-      - name: Create DMG
-        run: ./gradlew packageReleaseDmg
+      - name: Create PKG
+        run: ./gradlew packageReleasePkg -PmacOsAppStoreRelease=true
 
       - name: Upload reports
         if: failure()
@@ -73,22 +91,9 @@ jobs:
           path: |
             **/build/compose/logs/*  
 
-      - name: Notarization
-        run: |
-          xcrun notarytool submit $RELEASE_PATH --apple-id $APPLE_ID_NOTARIZATION --password $NOTARIZATION_PWD --team-id $APPSTORE_TEAM_ID --wait
-          xcrun stapler staple $RELEASE_PATH
-        env:
-          APPLE_ID_NOTARIZATION: ${{ secrets.APPLE_ID_NOTARIZATION }}
-          APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
-          NOTARIZATION_PWD: ${{ secrets.NOTARIZATION_PWD }}
-          RELEASE_PATH: ${{ steps.path_variables.outputs.RELEASE_PATH }}
-
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
+      - uses: Apple-Actions/upload-testflight-build@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ steps.path_variables.outputs.RELEASE_PATH }}
-          tag: ${{ steps.path_variables.outputs.TAG }}
-          overwrite: true
-          draft: true
-          body: "Release ${{ steps.path_variables.outputs.VERSION }}"
+          app-path: ${{ steps.path_variables.outputs.RELEASE_PATH }}
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
+          api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}

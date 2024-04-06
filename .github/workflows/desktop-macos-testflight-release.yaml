@@ -88,6 +88,7 @@ jobs:
 
       - uses: Apple-Actions/upload-testflight-build@v1
         with:
+          app-type: 'osx'
           app-path: ${{ steps.path_variables.outputs.RELEASE_PATH }}
           issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.APPSTORE_KEY_ID }}

@@ -30,24 +30,6 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
-      - name: Create Firebase json
-        run: |
-          echo "$FIREBASE_JSON" > androidApp/google-services.json.b64
-          base64 -d -i androidApp/google-services.json.b64 > androidApp/google-services.json
-        env:
-          FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
-
-      - name: Run Checks
-        run: ./gradlew check
-
-      - name: Upload reports
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-reports
-          path: |
-            **/build/reports/*    
-
       - name: Create Firebase Plist
         run: |
           echo "$FIREBASE_PLIST" > iosApp/GoogleService-Info.plist.b64

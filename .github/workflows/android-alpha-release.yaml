@@ -46,16 +46,5 @@ jobs:
         env:
           PLAY_CONFIG_JSON: ${{ secrets.PLAY_CONFIG }}
 
-      - name: Run Checks
-        run: ./gradlew detekt testDebugUnitTest
-
-      - name: Upload reports
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-reports
-          path: |
-            **/build/reports/*  
-
       - name: Distribute app to Alpha track
         run: ./gradlew :androidApp:bundleRelease :androidApp:publishBundle

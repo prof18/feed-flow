@@ -7,10 +7,8 @@ import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
-import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.HtmlRetriever
-import com.prof18.feedflow.shared.domain.IosDateFormatter
 import com.prof18.feedflow.shared.domain.IosHtmlRetriever
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
@@ -79,12 +77,6 @@ internal actual val platformModule: Module = module {
 
     single<Settings> {
         KeychainSettings(service = "FeedFlow")
-    }
-
-    single<DateFormatter> {
-        IosDateFormatter(
-            logger = getWith("DateFormatter"),
-        )
     }
 
     factory<HtmlRetriever> {

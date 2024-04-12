@@ -55,6 +55,7 @@ struct FeedItemView: View {
             }
         }
         .padding(.horizontal, Spacing.regular)
+        .padding(.vertical, Spacing.small)
     }
 
     @ViewBuilder

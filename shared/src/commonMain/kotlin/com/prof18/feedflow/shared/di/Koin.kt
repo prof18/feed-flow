@@ -5,6 +5,7 @@ import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepositoryImpl
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
@@ -107,6 +108,12 @@ private val coreModule = module {
     single {
         SettingsRepository(
             settingsHelper = get(),
+        )
+    }
+
+    single {
+        DateFormatter(
+            logger = getWith("DateFormatter"),
         )
     }
 

@@ -63,6 +63,7 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
                 implementation(libs.multiplatform.settings)
+                implementation(libs.kotlinx.date.time)
 
                 api(project(":core"))
                 api(project(":i18n"))

@@ -3,10 +3,8 @@ package com.prof18.feedflow.shared.di
 import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
 import com.prof18.feedflow.database.createDatabaseDriver
-import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.HtmlRetriever
-import com.prof18.feedflow.shared.domain.JvmAndroidDateFormatter
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.JvmHtmlRetriever
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
@@ -58,12 +56,6 @@ internal actual val platformModule: Module = module {
             override val default: CoroutineDispatcher = Dispatchers.Default
             override val io: CoroutineDispatcher = Dispatchers.IO
         }
-    }
-
-    single<DateFormatter> {
-        JvmAndroidDateFormatter(
-            logger = getWith("DateFormatter"),
-        )
     }
 
     factory<HtmlRetriever> {

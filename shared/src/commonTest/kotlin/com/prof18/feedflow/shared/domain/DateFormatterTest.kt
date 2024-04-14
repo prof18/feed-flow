@@ -31,7 +31,7 @@ class DateFormatterTest {
         "Thu, 22 Jun 2023",
         "Tue, 19 Mar 2024 06:00 -0400",
         "Sat, 13 Apr 2024 06:00:00 PDT",
-        "Sat, 13 Apr 2024 06:00:00 PST"
+        "Sat, 13 Apr 2024 06:00:00 PST",
     )
 
     @Test

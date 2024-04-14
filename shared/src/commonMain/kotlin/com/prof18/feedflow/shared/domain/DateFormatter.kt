@@ -68,7 +68,11 @@ class DateFormatter(
                 dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
                 chars(", ")
             }
-            dayOfMonth(Padding.NONE)
+            alternativeParsing({
+                dayOfMonth()
+            }) {
+                dayOfMonth(Padding.NONE)
+            }
             char(' ')
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char(' ')
@@ -90,6 +94,12 @@ class DateFormatter(
             }
             optional {
                 chars("CDT")
+            }
+            optional {
+                chars("PDT")
+            }
+            optional {
+                chars("PST")
             }
         },
 

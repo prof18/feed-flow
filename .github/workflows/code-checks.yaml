@@ -20,6 +20,7 @@ jobs:
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+          konan-cache-required: 'true'
 
       - name: Install Swift Lint
         run: |

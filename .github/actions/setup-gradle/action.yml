@@ -6,6 +6,11 @@ inputs:
     description: 'The encryption key to use for the Gradle cache'
     required: true
 
+  konan-cache-required:
+    description: 'Whether to cache the Konan tooling'
+    required: false
+    default: 'false'
+
 
 runs:
   using: 'composite'
@@ -32,6 +37,7 @@ runs:
 
     - name: Cache KMP tooling
       uses: actions/cache@v4
+      if : ${{ inputs.konan-cache-required == 'true' }}
       with:
         path: |
           ~/.konan

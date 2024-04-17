@@ -6,7 +6,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import androidx.browser.customtabs.CustomTabsIntent
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.utils.BrowserIds
+import com.prof18.feedflow.i18n.EnFeedFlowStrings
+import com.prof18.feedflow.i18n.FeedFlowStrings
+import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.model.Browser
 import kotlinx.collections.immutable.ImmutableList
@@ -15,6 +20,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.Locale
 
 class BrowserManager(
     private val context: Context,
@@ -22,7 +28,9 @@ class BrowserManager(
     private val logger: Logger,
 ) {
 
-    private val browserListMutableState = MutableStateFlow<ImmutableList<Browser>>(persistentListOf())
+    private val browserListMutableState = MutableStateFlow<ImmutableList<Browser>>(
+        persistentListOf(),
+    )
     val browserListState = browserListMutableState.asStateFlow()
 
     init {
@@ -44,6 +52,11 @@ class BrowserManager(
         }
     }
 
+    private fun getCurrentStrings(): FeedFlowStrings {
+        val languageCode = Locale.getDefault().language
+        return feedFlowStrings[languageCode] ?: EnFeedFlowStrings
+    }
+
     private fun populateBrowserList() {
         val favouriteBrowserId = browserSettingsRepository.getFavouriteBrowserId()
 
@@ -63,7 +76,17 @@ class BrowserManager(
             )
         }
 
-        val browserList = resolvedInfos.mapIndexed { index, info ->
+        val browserList = listOf(
+            Browser(
+                id = BrowserIds.IN_APP_BROWSER,
+                name = getCurrentStrings().inAppBrowser,
+                isFavourite = if (favouriteBrowserId != null) {
+                    favouriteBrowserId == BrowserIds.IN_APP_BROWSER
+                } else {
+                    true
+                },
+            ),
+        ) + resolvedInfos.map { info ->
             val id = info.activityInfo.packageName
             Browser(
                 id = id,
@@ -71,30 +94,37 @@ class BrowserManager(
                 isFavourite = if (favouriteBrowserId != null) {
                     favouriteBrowserId == id
                 } else {
-                    index == 0
+                    false
                 },
             )
-        }.toImmutableList()
-        browserListMutableState.update { browserList }
+        }
+        browserListMutableState.update { browserList.toImmutableList() }
     }
 
     fun openUrlWithFavoriteBrowser(
         url: String,
         context: Context,
     ) {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(url)
-            getBrowserPackageName()?.let { packageName ->
-                setPackage(packageName)
+        val browserId = getBrowserPackageName()
+        if (browserId == BrowserIds.IN_APP_BROWSER) {
+            val intent = CustomTabsIntent.Builder()
+                .build()
+            intent.launchUrl(context, Uri.parse(url))
+        } else {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(url)
+                getBrowserPackageName()?.let { packageName ->
+                    setPackage(packageName)
+                }
             }
-        }
-        try {
-            context.startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            logger.e(e) {
-                "Favourite browser not valid, open with the default one"
+            try {
+                context.startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                logger.e(e) {
+                    "Favourite browser not valid, open with the default one"
+                }
+                openUrlWithDefaultBrowser(url, context)
             }
-            openUrlWithDefaultBrowser(url, context)
         }
     }
 

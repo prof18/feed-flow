@@ -50,6 +50,7 @@ immutable-collections = "0.3.7"
 detekt-compose-rules = "0.3.12"
 lyricist = "1.6.2"
 kotlinx-date-time = "0.6.0-RC.2"
+androidx-browser = "1.8.0"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
@@ -108,6 +109,7 @@ lyricist = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" 
 #lyricist-processorXml = { module = "cafe.adriel.lyricist:lyricist-processor-xml", version.ref = "lyricist" }
 lyricist-processorXml = { module = "com.github.prof18:lyricist", version = "e305b936c3" }
 kotlinx-date-time = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
+androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
 
 [bundles]
 compose = [

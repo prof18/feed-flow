@@ -85,4 +85,6 @@
     <string name="about_menu_contribute_translations">Help with translations</string>
     <string name="rename_feed_source_name_button">Rename</string>
     <string name="close_menu_button">Close menu</string>
+    <string name="in_app_browser">In-app browser</string>
+    <string name="reader_mode">Reader mode</string>
 </resources>

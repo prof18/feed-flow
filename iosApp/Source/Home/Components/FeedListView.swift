@@ -17,6 +17,9 @@ struct FeedListView: View {
     @EnvironmentObject private var indexHolder: HomeListIndexHolder
     @EnvironmentObject private var browserSelector: BrowserSelector
 
+    @State
+    private var browserToOpen: BrowserToPresent?
+
     var loadingState: FeedUpdateStatus?
     var feedState: [FeedItem]
     var showLoading: Bool
@@ -52,6 +55,11 @@ struct FeedListView: View {
                 List {
                     ForEach(Array(feedState.enumerated()), id: \.element) { index, feedItem in
                         Button(action: {
+                            if browserSelector.openInAppBrowser() {
+                                browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
+                            } else {
+                                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                            }
                             onItemClick(FeedItemUrlInfo(id: feedItem.id, url: feedItem.url))
                         }, label: {
                             FeedItemView(feedItem: feedItem, index: index)
@@ -96,6 +104,13 @@ struct FeedListView: View {
                 .refreshable {
                     onReloadClick()
                 }
+                .fullScreenCover(item: $browserToOpen) { browserToOpen in
+                    switch browserToOpen {
+                    case .inAppBrowser(let url):
+                        SFSafariView(url: url)
+                            .ignoresSafeArea()
+                    }
+                }
             }
         }
     }
@@ -130,7 +145,11 @@ struct FeedListView: View {
     private func makeCommentsButton(feedItem: FeedItem) -> some View {
         if let commentsUrl = feedItem.commentsUrl {
             Button {
-                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
+                if browserSelector.openInAppBrowser() {
+                    browserToOpen = .inAppBrowser(url: URL(string: commentsUrl)!)
+                } else {
+                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
+                }
             } label: {
                 Label(feedFlowStrings.menuOpenComments, systemImage: "bubble.left.and.bubble.right")
             }

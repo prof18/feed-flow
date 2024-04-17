@@ -63,28 +63,43 @@ class BrowserSelector: ObservableObject {
 
         let favouriteBrowser = browserSettingsRepository.getFavouriteBrowserId()
 
-        for (index, browser) in supportedBrowsers.enumerated() {
+        var isFavourite = false
+        if favouriteBrowser == nil {
+            isFavourite = true
+        } else {
+            isFavourite = favouriteBrowser == BrowserIds.shared.IN_APP_BROWSER
+        }
+
+        let inAppBrowser =  Browser(
+            id: BrowserIds.shared.IN_APP_BROWSER,
+            name: feedFlowStrings.inAppBrowser,
+            isFavourite: isFavourite
+        )
+        browsers.append(inAppBrowser)
+        if isFavourite {
+            selectedBrowser = inAppBrowser
+        }
+
+        supportedBrowsers.forEach { browser in
             let stringUrl = "\(browser.id)https://www.example.com"
 
             if let url = URL(string: stringUrl), UIApplication.shared.canOpenURL(url) {
-                var isFavourite = browser.id == favouriteBrowser
-                if favouriteBrowser == nil {
-                    isFavourite = index == 0
-                }
-
                 let updatedBrowser = Browser(
                     id: browser.id,
                     name: browser.name,
-                    isFavourite: isFavourite
+                    isFavourite: browser.id == favouriteBrowser
                 )
 
                 browsers.append(updatedBrowser)
-                if isFavourite {
+                if updatedBrowser.isFavourite {
                     selectedBrowser = updatedBrowser
                 }
             }
         }
+    }
 
+    func openInAppBrowser() -> Bool {
+        return selectedBrowser?.id == BrowserIds.shared.IN_APP_BROWSER
     }
 
     func getUrlForDefaultBrowser(stringUrl: String) -> URL {

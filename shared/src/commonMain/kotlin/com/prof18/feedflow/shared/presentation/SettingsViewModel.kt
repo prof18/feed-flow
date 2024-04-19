@@ -24,10 +24,12 @@ class SettingsViewModel internal constructor(
         scope.launch {
             val isMarkReadEnabled = settingsRepository.isMarkFeedAsReadWhenScrollingEnabled()
             val isShowReadItemsEnabled = settingsRepository.isShowReadArticlesTimelineEnabled()
+            val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
             settingsMutableState.update {
                 SettingsState(
                     isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
                     isShowReadItemsEnabled = isShowReadItemsEnabled,
+                    isReaderModeEnabled = isReaderModeEnabled,
                 )
             }
         }
@@ -53,6 +55,15 @@ class SettingsViewModel internal constructor(
                 )
             }
             feedRetrieverRepository.getFeeds()
+        }
+    }
+
+    fun updateReaderMode(value: Boolean) {
+        settingsRepository.setUseReaderMode(value)
+        settingsMutableState.update {
+            it.copy(
+                isReaderModeEnabled = value,
+            )
         }
     }
 }

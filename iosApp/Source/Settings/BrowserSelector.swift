@@ -51,6 +51,7 @@ class BrowserSelector: ObservableObject {
     ]
 
     private let browserSettingsRepository = KotlinDependencies.shared.getBrowserSettingsRepository()
+    private let settingsRepository = KotlinDependencies.shared.getSettingsRepository()
 
     @Published var browsers: [Browser] = []
     @Published var selectedBrowser: Browser? {
@@ -60,23 +61,22 @@ class BrowserSelector: ObservableObject {
     }
 
     init() {
-
         let favouriteBrowser = browserSettingsRepository.getFavouriteBrowserId()
 
-        var isFavourite = false
+        var isInAppBrowserFavourite = false
         if favouriteBrowser == nil {
-            isFavourite = true
+            isInAppBrowserFavourite = true
         } else {
-            isFavourite = favouriteBrowser == BrowserIds.shared.IN_APP_BROWSER
+            isInAppBrowserFavourite = favouriteBrowser == BrowserIds.shared.IN_APP_BROWSER
         }
 
         let inAppBrowser =  Browser(
             id: BrowserIds.shared.IN_APP_BROWSER,
             name: feedFlowStrings.inAppBrowser,
-            isFavourite: isFavourite
+            isFavourite: isInAppBrowserFavourite
         )
         browsers.append(inAppBrowser)
-        if isFavourite {
+        if isInAppBrowserFavourite {
             selectedBrowser = inAppBrowser
         }
 
@@ -100,6 +100,10 @@ class BrowserSelector: ObservableObject {
 
     func openInAppBrowser() -> Bool {
         return selectedBrowser?.id == BrowserIds.shared.IN_APP_BROWSER
+    }
+
+    func openReaderMode() -> Bool {
+        return settingsRepository.isUseReaderModeEnabled()
     }
 
     func getUrlForDefaultBrowser(stringUrl: String) -> URL {

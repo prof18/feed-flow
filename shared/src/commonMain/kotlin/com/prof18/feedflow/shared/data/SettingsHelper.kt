@@ -29,6 +29,12 @@ internal class SettingsHelper(
 
     fun setShowReadArticlesTimeline(value: Boolean) =
         settings.set(SettingsFields.SHOW_READ_ARTICLES_TIMELINE.name, value)
+
+    fun getUseReaderMode(): Boolean =
+        settings.getBoolean(SettingsFields.USE_READER_MODE.name, false)
+
+    fun setUseReaderMode(value: Boolean) =
+        settings.set(SettingsFields.USE_READER_MODE.name, value)
 }
 
 internal enum class SettingsFields {
@@ -36,4 +42,5 @@ internal enum class SettingsFields {
     FEED_SOURCE_IMAGE_MIGRATION,
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,
+    USE_READER_MODE,
 }

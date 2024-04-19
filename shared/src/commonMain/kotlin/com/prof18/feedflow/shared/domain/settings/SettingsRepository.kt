@@ -16,4 +16,10 @@ class SettingsRepository internal constructor(
 
     fun setShowReadArticlesTimeline(value: Boolean) =
         settingsHelper.setShowReadArticlesTimeline(value)
+
+    fun isUseReaderModeEnabled(): Boolean =
+        settingsHelper.getUseReaderMode()
+
+    fun setUseReaderMode(value: Boolean) =
+        settingsHelper.setUseReaderMode(value)
 }

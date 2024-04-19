@@ -10,10 +10,15 @@ import Foundation
 import SwiftUI
 import shared
 import KMPNativeCoroutinesAsync
+import Reeeed
 
 struct CompactView: View {
 
     @EnvironmentObject var appState: AppState
+
+    @EnvironmentObject private var browserSelector: BrowserSelector
+
+    @Environment(\.openURL) private var openURL
 
     @Binding var selectedDrawerItem: DrawerItem?
 
@@ -27,12 +32,14 @@ struct CompactView: View {
         feedSourcesWithoutCategory: [],
         feedSourcesByCategory: [:]
     )
-    @State var scrollUpTrigger: Bool = false
+    @State var  scrollUpTrigger: Bool = false
+
+    @State private var browserToOpen: BrowserToPresent?
 
     let homeViewModel: HomeViewModel
 
     var body: some View {
-        NavigationStack(path: $appState.path) {
+        NavigationStack(path: $appState.compatNavigationPath) {
             SidebarDrawer(
                 selectedDrawerItem: $selectedDrawerItem,
                 navDrawerState: navDrawerState,
@@ -68,6 +75,31 @@ struct CompactView: View {
                         homeViewModel: homeViewModel
                     )
                     .environmentObject(indexHolder)
+                }
+            }
+            .navigationDestination(for: CommonViewRoute.self) { route in
+                switch route {
+                case .readerMode(let url):
+                    ReeeederView(
+                        url: url,
+                        options: ReeeederViewOptions(
+                            theme: ReaderTheme(),
+                            onLinkClicked: { url in
+                                if browserSelector.openInAppBrowser() {
+                                    browserToOpen = .inAppBrowser(url: url)
+                                } else {
+                                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
+                                }
+                            }
+                        )
+                    )
+                }
+            }
+            .fullScreenCover(item: $browserToOpen) { browserToOpen in
+                switch browserToOpen {
+                case .inAppBrowser(let url):
+                    SFSafariView(url: url)
+                        .ignoresSafeArea()
                 }
             }
         }

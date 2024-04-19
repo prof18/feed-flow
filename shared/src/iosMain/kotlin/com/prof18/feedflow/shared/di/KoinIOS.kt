@@ -12,6 +12,7 @@ import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.IosHtmlRetriever
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
+import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.BaseViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
@@ -97,4 +98,5 @@ object KotlinDependencies : KoinComponent {
     fun getImportExportViewModel() = getKoin().get<ImportExportViewModel>()
     fun getSettingsViewModel() = getKoin().get<SettingsViewModel>()
     fun getFeedFlowStrings() = getKoin().get<FeedFlowStrings>()
+    fun getSettingsRepository() = getKoin().get<SettingsRepository>()
 }

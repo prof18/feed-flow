@@ -23,6 +23,7 @@ struct SettingsScreen: View {
 
     @State private var isMarkReadWhenScrollingEnabled = true
     @State private var isShowReadItemEnabled = false
+    @State private var isReaderModeEnabled = false
 
     var body: some View {
         settingsContent
@@ -32,6 +33,7 @@ struct SettingsScreen: View {
                     for try await state in stream {
                         self.isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
                         self.isShowReadItemEnabled = state.isShowReadItemsEnabled
+                        self.isReaderModeEnabled = state.isReaderModeEnabled
                     }
                 } catch {
                     self.appState.emitGenericError()
@@ -42,6 +44,8 @@ struct SettingsScreen: View {
             }
             .onChange(of: isShowReadItemEnabled) { newValue in
                 settingsViewModel.updateShowReadItemsOnTimeline(value: newValue)
+            }.onChange(of: isReaderModeEnabled) { newValue in
+                settingsViewModel.updateReaderMode(value: newValue)
             }
     }
 
@@ -82,6 +86,12 @@ struct SettingsScreen: View {
 
             NavigationLink(destination: ImportExportScreen()) {
                 Label(feedFlowStrings.importExportOpml, systemImage: "arrow.up.arrow.down")
+            }
+
+            Toggle(isOn: $isReaderModeEnabled) {
+                Label(feedFlowStrings.settingsReaderMode, systemImage: "newspaper")
+            }.onTapGesture {
+                isReaderModeEnabled.toggle()
             }
 
             Picker(

@@ -86,5 +86,5 @@
     <string name="rename_feed_source_name_button">Rename</string>
     <string name="close_menu_button">Close menu</string>
     <string name="in_app_browser">In-app browser</string>
-    <string name="reader_mode">Reader mode</string>
+    <string name="settings_reader_mode">Open articles on reader view</string>
 </resources>

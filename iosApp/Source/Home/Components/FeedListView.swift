@@ -10,12 +10,15 @@ import Foundation
 import SwiftUI
 import shared
 import OrderedCollections
+import Reeeed
 
 struct FeedListView: View {
     @Environment(\.openURL) private var openURL
 
     @EnvironmentObject private var indexHolder: HomeListIndexHolder
     @EnvironmentObject private var browserSelector: BrowserSelector
+
+    @EnvironmentObject private var appState: AppState
 
     @State
     private var browserToOpen: BrowserToPresent?
@@ -55,7 +58,11 @@ struct FeedListView: View {
                 List {
                     ForEach(Array(feedState.enumerated()), id: \.element) { index, feedItem in
                         Button(action: {
-                            if browserSelector.openInAppBrowser() {
+                            if browserSelector.openReaderMode() {
+                                self.appState.navigate(
+                                    route: CommonViewRoute.readerMode(url: URL(string: feedItem.url)!)
+                                )
+                            } else if  browserSelector.openInAppBrowser() {
                                 browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
                             } else {
                                 openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))

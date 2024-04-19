@@ -6,6 +6,8 @@
 //  Copyright © 2024. All rights reserved.
 //
 
+import Foundation
+
 enum CompactViewRoute: Hashable {
     case feed
 }

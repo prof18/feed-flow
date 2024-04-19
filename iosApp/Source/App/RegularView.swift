@@ -10,9 +10,13 @@ import Foundation
 import SwiftUI
 import shared
 import KMPNativeCoroutinesAsync
+import Reeeed
 
 struct RegularView: View {
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject private var browserSelector: BrowserSelector
+
+    @Environment(\.openURL) private var openURL
 
     @StateObject private var indexHolder = HomeListIndexHolder()
 
@@ -28,6 +32,7 @@ struct RegularView: View {
     )
     @State var scrollUpTrigger: Bool = false
     @State var showSettings: Bool = false
+    @State private var browserToOpen: BrowserToPresent?
 
     var drawerItems: [DrawerItem] = []
     let homeViewModel: HomeViewModel
@@ -61,7 +66,7 @@ struct RegularView: View {
             )
             .navigationBarTitleDisplayMode(.inline)
         } detail: {
-            NavigationStack {
+            NavigationStack(path: $appState.regularNavigationPath) {
                 HomeScreen(
                     toggleListScroll: $scrollUpTrigger,
                     showSettings: $showSettings,
@@ -71,6 +76,31 @@ struct RegularView: View {
                 .environmentObject(indexHolder)
             }
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: CommonViewRoute.self) { route in
+                switch route {
+                case .readerMode(let url):
+                    ReeeederView(
+                        url: url,
+                        options: ReeeederViewOptions(
+                            theme: ReaderTheme(),
+                            onLinkClicked: { url in
+                                if browserSelector.openInAppBrowser() {
+                                    browserToOpen = .inAppBrowser(url: url)
+                                } else {
+                                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
+                                }
+                            }
+                        )
+                    )
+                }
+            }
+            .fullScreenCover(item: $browserToOpen) { browserToOpen in
+                switch browserToOpen {
+                case .inAppBrowser(let url):
+                    SFSafariView(url: url)
+                        .ignoresSafeArea()
+                }
+            }
         }
         .navigationSplitViewStyle(.balanced)
         .task {

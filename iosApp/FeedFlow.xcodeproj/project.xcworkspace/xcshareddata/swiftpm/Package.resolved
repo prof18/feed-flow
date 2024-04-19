@@ -1,5 +1,5 @@
 {
-  "originHash" : "b33a0d6cbc687c07a214ba3438aad86a25ebf6af7f61d99891e71a192a684fc4",
+  "originHash" : "df120f3ab7c9fc7cd7729cc727720a26244bb67a0bb74683141e97ab765a7b75",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -22,10 +22,19 @@
     {
       "identity" : "firebase-ios-sdk",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/firebase/firebase-ios-sdk",
+      "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
         "revision" : "42eae77a0af79e9c3f41df04a23c76f05cfdda77",
         "version" : "10.24.0"
+      }
+    },
+    {
+      "identity" : "fuzi",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cezheng/Fuzi",
+      "state" : {
+        "revision" : "f08c8323da21e985f3772610753bcfc652c2103f",
+        "version" : "3.1.3"
       }
     },
     {
@@ -125,6 +134,15 @@
       "state" : {
         "revision" : "e70e889c0196c76d22759eb50d6a0270ca9f1d9e",
         "version" : "2.3.1"
+      }
+    },
+    {
+      "identity" : "reeeed",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/prof18/reeeed",
+      "state" : {
+        "branch" : "main",
+        "revision" : "1e3653c58e0cb29d56b8de3f371ebbe0104333d2"
       }
     },
     {

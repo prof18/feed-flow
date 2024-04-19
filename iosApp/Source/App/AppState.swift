@@ -14,15 +14,20 @@ class AppState: ObservableObject {
 
     @Published var snackbarQueue: Deque<SnackbarData> = Deque()
     @Published var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
-    @Published var path = NavigationPath()
+    @Published var regularNavigationPath = NavigationPath()
+    @Published var compatNavigationPath = NavigationPath()
     @Published var sizeClass: UserInterfaceSizeClass?
 
     init() {
-        path.append(CompactViewRoute.feed)
+        compatNavigationPath.append(CompactViewRoute.feed)
     }
 
     func navigate(route: any Hashable) {
-        path.append(route)
+        if sizeClass == .compact {
+            compatNavigationPath.append(route)
+        } else {
+            regularNavigationPath.append(route)
+        }
     }
 
     func emitGenericError() {

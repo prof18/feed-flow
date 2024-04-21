@@ -67,8 +67,16 @@ struct FeedListView: View {
                             } else {
                                 openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                             }
-                            onItemClick(FeedItemUrlInfo(id: feedItem.id, url: feedItem.url))
-                        }, label: {
+                            onItemClick(
+                                FeedItemUrlInfo(
+                                    id: feedItem.id,
+                                    url: feedItem.url,
+                                    title: feedItem.title,
+                                    openOnlyOnBrowser: false
+                                )
+                            )
+                        },
+                               label: {
                             FeedItemView(feedItem: feedItem, index: index)
                         })
                         .buttonStyle(.plain)

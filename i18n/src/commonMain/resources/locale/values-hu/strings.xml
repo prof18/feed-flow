@@ -53,7 +53,6 @@
     <string name="load_file_error_message">HIba történt a fájl betöltésekor</string>
     <string name="add_feed">Feed hozzáadása</string>
     <string name="in_app_browser">Alkalmazáson belüli böngésző</string>
-    <string name="reader_mode">Olvasó mód</string>
     <string name="empty_screen_back_to_timeline">Vissza az idővonalhoz</string>
     <string name="action_done">Kész</string>
     <string name="import_export_description">A FeedFlow támogatja a feliratkozások importálását és exportálását OPML fájl formátumban a más feed olvasókkal való könny bb együttműködés érdekében</string>

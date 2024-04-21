@@ -7,8 +7,10 @@ import com.prof18.feedflow.shared.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.JvmHtmlRetriever
+import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.BaseViewModel
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.utils.DispatcherProvider
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
@@ -62,6 +64,19 @@ internal actual val platformModule: Module = module {
         JvmHtmlRetriever(
             dispatcherProvider = get(),
             logger = getWith("JvmHtmlRetriever"),
+        )
+    }
+
+    factory {
+        ReaderModeExtractor(
+            dispatcherProvider = get(),
+            htmlRetriever = get(),
+        )
+    }
+
+    viewModel {
+        ReaderModeViewModel(
+            readerModeExtractor = get(),
         )
     }
 }

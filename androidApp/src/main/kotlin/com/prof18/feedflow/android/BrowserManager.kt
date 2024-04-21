@@ -14,6 +14,7 @@ import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.model.Browser
+import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -25,6 +26,7 @@ import java.util.Locale
 class BrowserManager(
     private val context: Context,
     private val browserSettingsRepository: BrowserSettingsRepository,
+    private val settingsRepository: SettingsRepository,
     private val logger: Logger,
 ) {
 
@@ -37,9 +39,8 @@ class BrowserManager(
         populateBrowserList()
     }
 
-    private fun getBrowserPackageName(): String? {
-        return browserListMutableState.value.firstOrNull { it.isFavourite }?.id
-    }
+    fun openReaderMode(): Boolean =
+        settingsRepository.isUseReaderModeEnabled()
 
     fun setFavouriteBrowser(browser: Browser) {
         browserSettingsRepository.setFavouriteBrowser(browser)
@@ -99,6 +100,10 @@ class BrowserManager(
             )
         }
         browserListMutableState.update { browserList.toImmutableList() }
+    }
+
+    private fun getBrowserPackageName(): String? {
+        return browserListMutableState.value.firstOrNull { it.isFavourite }?.id
     }
 
     fun openUrlWithFavoriteBrowser(

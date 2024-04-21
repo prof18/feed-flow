@@ -14,6 +14,7 @@ import com.prof18.feedflow.android.home.components.HomeScaffold
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
@@ -43,7 +44,7 @@ internal fun CompactHomeView(
     markAsReadOnScroll: (Int) -> Unit,
     markAsRead: (FeedItemId) -> Unit,
     markAllRead: () -> Unit,
-    openUrl: (String) -> Unit,
+    openUrl: (FeedItemUrlInfo) -> Unit,
     updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
     updateReadStatus: (FeedItemId, Boolean) -> Unit,
     onBackToTimelineClick: () -> Unit,

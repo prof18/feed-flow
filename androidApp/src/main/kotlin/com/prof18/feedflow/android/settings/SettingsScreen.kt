@@ -11,14 +11,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Feed
+import androidx.compose.material.icons.automirrored.outlined.Article
+import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Feed
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.MarkAsUnread
-import androidx.compose.material.icons.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -79,6 +81,7 @@ fun SettingsScreen(
         onAddFeedClick = onAddFeedClick,
         isMarkReadWhenScrollingEnabled = settingState.isMarkReadWhenScrollingEnabled,
         isShowReadItemEnabled = settingState.isShowReadItemsEnabled,
+        isReaderModeEnabled = settingState.isReaderModeEnabled,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
@@ -101,6 +104,9 @@ fun SettingsScreen(
         setShowReadItem = { enabled ->
             settingsViewModel.updateShowReadItemsOnTimeline(enabled)
         },
+        setReaderMode = { enabled ->
+            settingsViewModel.updateReaderMode(enabled)
+        },
     )
 }
 
@@ -109,6 +115,7 @@ private fun SettingsScreenContent(
     browsers: ImmutableList<Browser>,
     isMarkReadWhenScrollingEnabled: Boolean,
     isShowReadItemEnabled: Boolean,
+    isReaderModeEnabled: Boolean,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelected: (Browser) -> Unit,
@@ -118,6 +125,7 @@ private fun SettingsScreenContent(
     navigateToImportExport: () -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
+    setReaderMode: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -158,15 +166,17 @@ private fun SettingsScreenContent(
             setMarkReadWhenScrolling = setMarkReadWhenScrolling,
             isShowReadItemEnabled = isShowReadItemEnabled,
             setShowReadItem = setShowReadItem,
+            isReaderModeEnabled = isReaderModeEnabled,
+            setReaderMode = setReaderMode,
         )
     }
 }
 
-@Suppress("LongMethod")
 @Composable
 private fun SettingsList(
     isMarkReadWhenScrollingEnabled: Boolean,
     isShowReadItemEnabled: Boolean,
+    isReaderModeEnabled: Boolean,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelectionClick: () -> Unit,
@@ -175,6 +185,7 @@ private fun SettingsList(
     onBugReportClick: () -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
+    setReaderMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -194,7 +205,7 @@ private fun SettingsList(
                 modifier = Modifier
                     .tagForTesting(TestingTag.SETTINGS_FEED_ITEM),
                 title = LocalFeedFlowStrings.current.feedsTitle,
-                icon = Icons.Default.Feed,
+                icon = Icons.AutoMirrored.Default.Feed,
                 onClick = onFeedListClick,
             )
         }
@@ -212,6 +223,13 @@ private fun SettingsList(
                 title = LocalFeedFlowStrings.current.importExportOpml,
                 icon = Icons.Outlined.SwapVert,
                 onClick = navigateToImportExport,
+            )
+        }
+
+        item {
+            ReaderModeSwitch(
+                setReaderMode = setReaderMode,
+                isReaderModeEnabled = isReaderModeEnabled,
             )
         }
 
@@ -265,6 +283,43 @@ private fun SettingsList(
                 onClick = onAboutClick,
             )
         }
+    }
+}
+
+@Composable
+private fun ReaderModeSwitch(
+    setReaderMode: (Boolean) -> Unit,
+    isReaderModeEnabled: Boolean,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable {
+                setReaderMode(!isReaderModeEnabled)
+            }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.AutoMirrored.Outlined.Article,
+            contentDescription = null,
+        )
+
+        Text(
+            text = LocalFeedFlowStrings.current.settingsReaderMode,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f),
+        )
+        Switch(
+            interactionSource = interactionSource,
+            checked = isReaderModeEnabled,
+            onCheckedChange = setReaderMode,
+        )
     }
 }
 
@@ -325,7 +380,7 @@ private fun ShowReadItemOnTimelineSwitch(
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
         Icon(
-            Icons.Outlined.PlaylistAddCheck,
+            Icons.AutoMirrored.Outlined.PlaylistAddCheck,
             contentDescription = null,
         )
 
@@ -358,7 +413,7 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
                 },
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
                     contentDescription = null,
                 )
             }
@@ -374,6 +429,7 @@ private fun SettingsScreenPreview() {
             browsers = browsersForPreview,
             isMarkReadWhenScrollingEnabled = true,
             isShowReadItemEnabled = false,
+            isReaderModeEnabled = false,
             onFeedListClick = {},
             onAddFeedClick = {},
             onBrowserSelected = {},
@@ -383,6 +439,7 @@ private fun SettingsScreenPreview() {
             navigateToImportExport = {},
             setMarkReadWhenScrolling = {},
             setShowReadItem = {},
+            setReaderMode = {},
         )
     }
 }

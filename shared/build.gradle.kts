@@ -86,6 +86,8 @@ kotlin {
 
             dependencies {
                 implementation(libs.jsoup)
+                implementation(libs.readability4j)
+                implementation(libs.okhttp)
             }
         }
 

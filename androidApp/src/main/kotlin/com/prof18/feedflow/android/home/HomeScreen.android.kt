@@ -18,6 +18,7 @@ import com.prof18.feedflow.android.home.bywindowsize.ExpandedHomeView
 import com.prof18.feedflow.android.home.bywindowsize.MediumHomeView
 import com.prof18.feedflow.android.home.components.NoFeedsBottomSheet
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -28,6 +29,7 @@ import org.koin.compose.koinInject
 @Composable
 internal fun HomeScreen(
     windowSizeClass: WindowSizeClass,
+    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
@@ -53,12 +55,14 @@ internal fun HomeScreen(
                         duration = SnackbarDuration.Short,
                     )
                 }
+
                 is UIErrorState.FeedErrorState -> {
                     snackbarHostState.showSnackbar(
                         strings.feedErrorMessage(errorState.feedName),
                         duration = SnackbarDuration.Short,
                     )
                 }
+
                 null -> {
                     // Do nothing
                 }
@@ -117,8 +121,12 @@ internal fun HomeScreen(
                 onFeedFilterSelected = { feedFilter ->
                     homeViewModel.onFeedFilterSelected(feedFilter)
                 },
-                openUrl = { url ->
-                    browserManager.openUrlWithFavoriteBrowser(url, context)
+                openUrl = { urlInfo ->
+                    if (browserManager.openReaderMode() && !urlInfo.openOnlyOnBrowser) {
+                        navigateToReaderMode(urlInfo)
+                    } else {
+                        browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+                    }
                 },
                 updateReadStatus = { feedItemId, isRead ->
                     homeViewModel.updateReadStatus(feedItemId, isRead)
@@ -171,8 +179,12 @@ internal fun HomeScreen(
                 onFeedFilterSelected = { feedFilter ->
                     homeViewModel.onFeedFilterSelected(feedFilter)
                 },
-                openUrl = { url ->
-                    browserManager.openUrlWithFavoriteBrowser(url, context)
+                openUrl = { urlInfo ->
+                    if (browserManager.openReaderMode() && !urlInfo.openOnlyOnBrowser) {
+                        navigateToReaderMode(urlInfo)
+                    } else {
+                        browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+                    }
                 },
                 updateReadStatus = { feedItemId, isRead ->
                     homeViewModel.updateReadStatus(feedItemId, isRead)
@@ -225,8 +237,12 @@ internal fun HomeScreen(
                 onFeedFilterSelected = { feedFilter ->
                     homeViewModel.onFeedFilterSelected(feedFilter)
                 },
-                openUrl = { url ->
-                    browserManager.openUrlWithFavoriteBrowser(url, context)
+                openUrl = { urlInfo ->
+                    if (browserManager.openReaderMode() && !urlInfo.openOnlyOnBrowser) {
+                        navigateToReaderMode(urlInfo)
+                    } else {
+                        browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+                    }
                 },
                 updateReadStatus = { feedItemId, isRead ->
                     homeViewModel.updateReadStatus(feedItemId, isRead)

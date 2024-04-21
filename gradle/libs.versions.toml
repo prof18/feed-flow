@@ -51,6 +51,9 @@ detekt-compose-rules = "0.3.12"
 lyricist = "1.6.2"
 kotlinx-date-time = "0.6.0-RC.2"
 androidx-browser = "1.8.0"
+readability4j = "1.0.8"
+compose-webview = "1.9.2"
+okhttp = "4.12.0"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
@@ -110,6 +113,9 @@ lyricist = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" 
 lyricist-processorXml = { module = "com.github.prof18:lyricist", version = "e305b936c3" }
 kotlinx-date-time = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
+readability4j = { module = "net.dankito.readability4j:readability4j", version.ref = "readability4j" }
+compose-webview = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "compose-webview" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 
 [bundles]
 compose = [

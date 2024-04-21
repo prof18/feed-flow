@@ -142,6 +142,7 @@ private fun FeedItemView(
                         FeedItemUrlInfo(
                             id = feedItem.id,
                             url = feedItem.url,
+                            title = feedItem.title,
                         ),
                     )
                 },
@@ -354,6 +355,8 @@ private fun OpenCommentsMenuItem(
                 FeedItemUrlInfo(
                     id = feedItem.id,
                     url = requireNotNull(feedItem.commentsUrl),
+                    title = feedItem.title,
+                    openOnlyOnBrowser = true,
                 ),
             )
             closeMenu()

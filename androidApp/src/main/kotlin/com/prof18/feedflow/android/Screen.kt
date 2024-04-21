@@ -8,4 +8,5 @@ sealed class Screen(val name: String) {
     data object About : Screen("about")
     data object Licenses : Screen("licenses")
     data object ImportExport : Screen("import_export")
+    data object ReaderMode : Screen("reader_mode")
 }

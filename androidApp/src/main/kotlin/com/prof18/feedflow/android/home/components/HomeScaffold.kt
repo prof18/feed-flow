@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
@@ -46,7 +47,7 @@ internal fun HomeScaffold(
     markAsReadOnScroll: (Int) -> Unit,
     markAsRead: (FeedItemId) -> Unit,
     markAllRead: () -> Unit,
-    openUrl: (String) -> Unit,
+    openUrl: (FeedItemUrlInfo) -> Unit,
     updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
     updateReadStatus: (FeedItemId, Boolean) -> Unit,
     onBackToTimelineClick: () -> Unit,
@@ -103,11 +104,11 @@ internal fun HomeScaffold(
             },
             updateReadStatus = markAsReadOnScroll,
             onFeedItemClick = { feedInfo ->
-                openUrl(feedInfo.url)
+                openUrl(feedInfo)
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onCommentClick = { feedInfo ->
-                openUrl(feedInfo.url)
+                openUrl(feedInfo)
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onBookmarkClick = { feedItemId, isBookmarked ->

@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.firebase.crashlytics.ktx)
     implementation(libs.material.window.size)
     implementation(libs.androidx.browser)
+    implementation(libs.compose.webview)
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)

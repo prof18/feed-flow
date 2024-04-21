@@ -33,6 +33,7 @@ class FeedFlowApp : Application() {
                             context = this@FeedFlowApp,
                             browserSettingsRepository = get(),
                             logger = getWith("BrowserManager"),
+                            settingsRepository = get(),
                         )
                     }
                     single {

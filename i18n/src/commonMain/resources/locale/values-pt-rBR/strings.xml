@@ -84,4 +84,7 @@
     <string name="import_export_description">FeedFlow suporta a importação e exportação de suas assinaturas com um arquivo OPML, para melhor interoperabilidade com os outros leitores de feed</string>
     <string name="menu_open_comments">Abrir comentários</string>
     <string name="rename_feed_source_name_button">Renomear</string>
+    <string name="in_app_browser">Navegador interno</string>
+    <string name="close_menu_button">Fechar menu</string>
+    <string name="settings_reader_mode">Abrir artigos no modo leitor</string>
 </resources>

@@ -40,9 +40,9 @@ jobs:
           version=$(echo "$tag" | sed 's/-desktop$//')
           name="FeedFlow-${version}.dmg"
           path="desktopApp/build/release/main-release/dmg/${name}"
-          echo "TAG=$tag" >> $GITHUB_OUTPUT
-          echo "VERSION=$version" >> $GITHUB_OUTPUT
-          echo "RELEASE_PATH=$path" >> $GITHUB_OUTPUT
+          echo "TAG=$tag" >> $GITHUB_ENV
+          echo "VERSION=$version" >> $GITHUB_ENV
+          echo "RELEASE_PATH=$path" >> $GITHUB_ENV
 
       - name: Create Properties file
         run: |
@@ -51,7 +51,7 @@ jobs:
           echo "version=$VERSION" >> desktopApp/src/jvmMain/resources/props.properties
         env:
           SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
-          VERSION: ${{ steps.path_variables.outputs.VERSION }}
+          VERSION: ${{ env.VERSION }}
 
       - name: Create DMG
         run: ./gradlew packageReleaseDmg
@@ -72,14 +72,14 @@ jobs:
           APPLE_ID_NOTARIZATION: ${{ secrets.APPLE_ID_NOTARIZATION }}
           APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
           NOTARIZATION_PWD: ${{ secrets.NOTARIZATION_PWD }}
-          RELEASE_PATH: ${{ steps.path_variables.outputs.RELEASE_PATH }}
+          RELEASE_PATH: ${{ env.RELEASE_PATH }}
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ steps.path_variables.outputs.RELEASE_PATH }}
-          tag: ${{ steps.path_variables.outputs.TAG }}
+          file: ${{ env.RELEASE_PATH }}
+          tag: ${{ env.TAG }}
           overwrite: true
           draft: true
-          body: "Release ${{ steps.path_variables.outputs.VERSION }}"
+          body: "Release ${{ env.VERSION }}"

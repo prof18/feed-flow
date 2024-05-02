@@ -25,7 +25,6 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
-@Suppress("LongMethod")
 @Composable
 internal fun HomeScreen(
     windowSizeClass: WindowSizeClass,
@@ -33,6 +32,7 @@ internal fun HomeScreen(
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
+    onSearchClick: () -> Unit,
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
     val browserManager = koinInject<BrowserManager>()
@@ -137,6 +137,7 @@ internal fun HomeScreen(
                 onBackToTimelineClick = {
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
+                onSearchClick = onSearchClick,
             )
         }
 
@@ -195,6 +196,7 @@ internal fun HomeScreen(
                 onBackToTimelineClick = {
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
+                onSearchClick = onSearchClick,
             )
         }
 
@@ -253,6 +255,7 @@ internal fun HomeScreen(
                 onBackToTimelineClick = {
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
+                onSearchClick = onSearchClick,
             )
         }
     }

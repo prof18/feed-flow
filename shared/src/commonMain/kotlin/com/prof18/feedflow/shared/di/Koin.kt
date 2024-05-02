@@ -19,6 +19,7 @@ import com.prof18.feedflow.shared.presentation.BaseViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
+import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.Dispatchers
@@ -180,6 +181,13 @@ private val coreModule = module {
         SettingsViewModel(
             settingsRepository = get(),
             feedRetrieverRepository = get(),
+        )
+    }
+
+    viewModel {
+        SearchViewModel(
+            feedRetrieverRepository = get(),
+            dateFormatter = get(),
         )
     }
 }

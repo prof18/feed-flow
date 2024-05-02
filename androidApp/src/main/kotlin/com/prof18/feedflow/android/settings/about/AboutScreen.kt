@@ -66,7 +66,6 @@ fun AboutScreen(
     )
 }
 
-@Suppress("LongMethod")
 @Composable
 private fun AboutScreenContent(
     licensesClicked: () -> Unit,

@@ -32,6 +32,7 @@ import com.prof18.feedflow.android.addfeed.AddFeedScreen
 import com.prof18.feedflow.android.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.android.home.HomeScreen
 import com.prof18.feedflow.android.readermode.ReaderModeScreen
+import com.prof18.feedflow.android.search.SearchScreen
 import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.about.AboutScreen
 import com.prof18.feedflow.android.settings.about.LicensesScreen
@@ -115,6 +116,9 @@ class MainActivity : ComponentActivity() {
                         readerModeViewModel.getReaderModeHtml(url)
                         navController.navigate(Screen.ReaderMode.name)
                     },
+                    onSearchClick = {
+                        navController.navigate(Screen.Search.name)
+                    },
                 )
             }
 
@@ -191,6 +195,18 @@ class MainActivity : ComponentActivity() {
                     readerModeState = readerModeState,
                     navigateBack = {
                         navController.popBackStack()
+                    },
+                )
+            }
+
+            composable(Screen.Search.name) {
+                SearchScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                    navigateToReaderMode = { urlInfo ->
+                        readerModeViewModel.getReaderModeHtml(urlInfo)
+                        navController.navigate(Screen.ReaderMode.name)
                     },
                 )
             }

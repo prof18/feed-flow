@@ -119,7 +119,7 @@ fun FeedList(
 }
 
 @Composable
-private fun FeedItemView(
+internal fun FeedItemView(
     feedItem: FeedItem,
     index: Int,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,

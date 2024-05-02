@@ -1,0 +1,44 @@
+import kotlin.Int;
+
+CREATE VIRTUAL TABLE IF NOT EXISTS feed_search USING FTS4(
+    url_hash INTEGER AS Int NOT NULL PRIMARY KEY,
+    title TEXT,
+    subtitle TEXT,
+    tokenize="unicode61"
+);
+
+CREATE TRIGGER IF NOT EXISTS populate_feed_search
+AFTER INSERT ON feed_item
+BEGIN INSERT OR IGNORE INTO feed_search(url_hash, title, subtitle) VALUES (new.url_hash, new.title, new.subtitle);
+END;
+
+
+CREATE TRIGGER IF NOT EXISTS delete_feed_search
+BEFORE DELETE ON feed_item
+BEGIN DELETE FROM feed_search WHERE url_hash = old.url_hash;
+END;
+
+search:
+SELECT
+  feed_item.*,
+  feed_source.title AS feed_source_title,
+  feed_source.url_hash AS feed_source_id,
+  feed_source.url AS feed_source_url,
+  feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp,
+  feed_source_category.id AS feed_source_category_id,
+  feed_source_category.title AS feed_source_category_title,
+  feed_source.logo_url AS feed_source_logo_url
+FROM (
+  SELECT *
+  FROM feed_search
+  WHERE feed_search MATCH :query
+) AS searched_feeds
+INNER JOIN feed_item ON searched_feeds.url_hash = feed_item.url_hash
+INNER JOIN feed_source ON feed_item.feed_source_id == feed_source.url_hash
+LEFT JOIN feed_source_category ON feed_source.category_id == feed_source_category.id
+WHERE (:isRead IS NULL OR feed_item.is_read = :isRead)
+  AND (:isBookmarked IS NULL OR feed_item.is_bookmarked = :isBookmarked)
+  AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
+  AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
+  AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId)
+ORDER BY feed_item.pub_date DESC;

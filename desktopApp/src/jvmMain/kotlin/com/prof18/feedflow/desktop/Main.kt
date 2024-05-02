@@ -236,7 +236,6 @@ fun main() = application {
     }
 }
 
-@Suppress("LongMethod")
 @Composable
 private fun MainContent(
     rootComponentContext: DefaultComponentContext,

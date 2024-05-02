@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MenuOpen
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -43,6 +44,7 @@ internal fun HomeAppBar(
     onDoubleClick: () -> Unit,
     onForceRefreshClick: () -> Unit,
     onDeleteDatabase: () -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -77,6 +79,15 @@ internal fun HomeAppBar(
             }
         },
         actions = {
+            IconButton(
+                onClick = onSearchClick,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                )
+            }
+
             IconButton(
                 modifier = Modifier
                     .tagForTesting(TestingTag.SETTING_BUTTON),
@@ -172,6 +183,7 @@ private fun HomeAppBarPreview() {
             onDoubleClick = {},
             onForceRefreshClick = {},
             onDeleteDatabase = {},
+            onSearchClick = {},
         )
     }
 }
@@ -193,6 +205,7 @@ private fun HomeAppBarSmallPreview() {
             onDoubleClick = {},
             onForceRefreshClick = {},
             onDeleteDatabase = {},
+            onSearchClick = {},
         )
     }
 }

@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
@@ -365,6 +366,13 @@ internal class FeedRetrieverRepository(
                     }
                 }.asFlow()
             }.collect()
+
+    fun search(query: String): Flow<List<Search>> =
+        databaseHelper.search(
+            searchQuery = query,
+            feedFilter = currentFeedFilterMutableState.value,
+            showReadItems = settingsHelper.getShowReadArticlesTimeline(),
+        )
 
     @Suppress("MagicNumber")
     private fun shouldRefreshFeed(

@@ -98,7 +98,6 @@ internal fun CategoriesSelector(
     }
 }
 
-@Suppress("LongMethod")
 @Composable
 private fun CategoriesList(
     categoriesState: CategoriesState,

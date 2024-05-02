@@ -65,7 +65,6 @@ sqldelight {
         create("FeedFlowDB") {
             packageName.set("com.prof18.feedflow.db")
             schemaOutputDirectory.set(file("src/commonMain/sqldelight/com/prof18/feedflow/schema"))
-
             verifyMigrations.set(true)
         }
     }

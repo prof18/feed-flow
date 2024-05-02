@@ -18,6 +18,7 @@ import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item
 import com.prof18.feedflow.db.Feed_source
+import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.db.SelectFeedUrls
 import com.prof18.feedflow.db.SelectFeeds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -131,7 +132,10 @@ class DatabaseHelper(
                         comments_url = commentsUrl,
                     )
 
-                    dbRef.feedSourceQueries.updateLastSyncTimestamp(lastSyncTimestamp, feedSource.id)
+                    dbRef.feedSourceQueries.updateLastSyncTimestamp(
+                        lastSyncTimestamp,
+                        feedSource.id,
+                    )
                 }
             }
         }
@@ -254,6 +258,19 @@ class DatabaseHelper(
                 urlHash = feedSourceId,
             )
         }
+
+    fun search(searchQuery: String, feedFilter: FeedFilter, showReadItems: Boolean): Flow<List<Search>> =
+        dbRef.feedSearchQueries
+            .search(
+                query = searchQuery,
+                feedSourceId = feedFilter.getFeedSourceId(),
+                feedSourceCategoryId = feedFilter.getCategoryId(),
+                isRead = feedFilter.getIsReadFlag(showReadItems),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+            )
+            .asFlow()
+            .mapToList(backgroundDispatcher)
+            .flowOn(backgroundDispatcher)
 
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,

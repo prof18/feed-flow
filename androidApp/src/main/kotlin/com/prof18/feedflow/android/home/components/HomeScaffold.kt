@@ -51,6 +51,7 @@ internal fun HomeScaffold(
     updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
     updateReadStatus: (FeedItemId, Boolean) -> Unit,
     onBackToTimelineClick: () -> Unit,
+    onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
     showDrawerMenu: Boolean = false,
     isDrawerMenuOpen: Boolean = false,
@@ -85,6 +86,7 @@ internal fun HomeScaffold(
                     }
                 },
                 onDeleteDatabase = onDeleteDatabaseClick,
+                onSearchClick = onSearchClick,
             )
         },
         containerColor = Color.Transparent,
@@ -160,6 +162,7 @@ private fun HomeScaffoldPreview() {
             updateReadStatus = { _, _ -> },
             updateBookmarkStatus = { _, _ -> },
             onBackToTimelineClick = {},
+            onSearchClick = {},
         )
     }
 }

@@ -36,6 +36,7 @@ internal fun HomeScreenContent(
     onAddFeedClick: () -> Unit,
     requestMoreItems: () -> Unit,
     onBackToTimelineClick: () -> Unit,
+    onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
     showDrawerMenu: Boolean = false,
     isDrawerMenuOpen: Boolean = false,
@@ -52,6 +53,7 @@ internal fun HomeScreenContent(
             isDrawerOpen = isDrawerMenuOpen,
             onDrawerMenuClick = onDrawerMenuClick,
             currentFeedFilter = currentFeedFilter,
+            onSearchClick = onSearchClick,
         )
 
         when {
@@ -101,6 +103,7 @@ private fun HomeScreenContentPreview() {
             onReadStatusClick = { _, _ -> },
             onCommentClick = {},
             onBackToTimelineClick = {},
+            onSearchClick = {},
         )
     }
 }

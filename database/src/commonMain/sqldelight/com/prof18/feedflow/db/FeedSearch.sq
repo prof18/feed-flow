@@ -36,9 +36,4 @@ FROM (
 INNER JOIN feed_item ON searched_feeds.url_hash = feed_item.url_hash
 INNER JOIN feed_source ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category ON feed_source.category_id == feed_source_category.id
-WHERE (:isRead IS NULL OR feed_item.is_read = :isRead)
-  AND (:isBookmarked IS NULL OR feed_item.is_bookmarked = :isBookmarked)
-  AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
-  AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
-  AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId)
 ORDER BY feed_item.pub_date DESC;

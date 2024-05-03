@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.presentation
 
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.shared.domain.DateFormatter
@@ -43,6 +44,7 @@ class SearchViewModel internal constructor(
             .distinctUntilChanged()
             .onEach {
                 if (it.isNotBlank()) {
+                    Logger.d { "Searching for $it" }
                     search(it)
                 } else {
                     clearSearch()

@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MenuOpen
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -26,6 +28,7 @@ internal fun FeedContentToolbar(
     isDrawerOpen: Boolean,
     currentFeedFilter: FeedFilter,
     onDrawerMenuClick: () -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     TopAppBar(
         navigationIcon = if (showDrawerMenu) {
@@ -37,7 +40,7 @@ internal fun FeedContentToolbar(
                 ) {
                     Icon(
                         imageVector = if (isDrawerOpen) {
-                            Icons.Default.MenuOpen
+                            Icons.AutoMirrored.Filled.MenuOpen
                         } else {
                             Icons.Default.Menu
                         },
@@ -65,6 +68,16 @@ internal fun FeedContentToolbar(
                 }
             }
         },
+        actions = {
+            IconButton(
+                onClick = onSearchClick,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                )
+            }
+        }
     )
 }
 
@@ -88,6 +101,7 @@ private fun FeedContentToolbarPreview() {
             isDrawerOpen = false,
             currentFeedFilter = FeedFilter.Timeline,
             onDrawerMenuClick = { },
+            onSearchClick = { },
         )
     }
 }

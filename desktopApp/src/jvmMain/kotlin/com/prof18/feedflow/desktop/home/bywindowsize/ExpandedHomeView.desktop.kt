@@ -44,6 +44,7 @@ internal fun ExpandedView(
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onBackToTimelineClick: () -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -97,6 +98,7 @@ internal fun ExpandedView(
             onBookmarkClick = onBookmarkClick,
             onReadStatusClick = onReadStatusClick,
             onBackToTimelineClick = onBackToTimelineClick,
+            onSearchClick = onSearchClick,
         )
     }
 }
@@ -122,6 +124,7 @@ private fun ExpandedViewPreview() {
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
             onBackToTimelineClick = {},
+            onSearchClick = {},
         )
     }
 }

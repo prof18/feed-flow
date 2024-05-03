@@ -48,6 +48,7 @@ internal fun MediumView(
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onBackToTimelineClick: () -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     var isDrawerMenuFullVisible by remember {
         mutableStateOf(true)
@@ -109,6 +110,7 @@ internal fun MediumView(
             onBookmarkClick = onBookmarkClick,
             onReadStatusClick = onReadStatusClick,
             onBackToTimelineClick = onBackToTimelineClick,
+            onSearchClick = onSearchClick,
         )
     }
 }
@@ -134,6 +136,7 @@ private fun MediumViewPreview() {
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
             onBackToTimelineClick = {},
+            onSearchClick = {},
         )
     }
 }

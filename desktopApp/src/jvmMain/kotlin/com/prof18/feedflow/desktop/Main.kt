@@ -50,6 +50,7 @@ import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.navigation.ChildStack
 import com.prof18.feedflow.desktop.navigation.ProvideComponentContext
 import com.prof18.feedflow.desktop.navigation.Screen
+import com.prof18.feedflow.desktop.search.SearchScreen
 import com.prof18.feedflow.desktop.ui.components.NewVersionBanner
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.desktop.versionchecker.NewVersionChecker
@@ -286,6 +287,9 @@ private fun MainContent(
                                             onImportExportClick = {
                                                 navigation.push(Screen.ImportExport)
                                             },
+                                            onSearchClick = {
+                                                navigation.push(Screen.Search)
+                                            }
                                         )
                                     }
                                 }
@@ -303,6 +307,13 @@ private fun MainContent(
                                         navigateBack = {
                                             navigation.pop()
                                         },
+                                    )
+
+                                is Screen.Search ->
+                                    SearchScreen(
+                                        navigateBack = {
+                                            navigation.pop()
+                                        }
                                     )
                             }
                         }

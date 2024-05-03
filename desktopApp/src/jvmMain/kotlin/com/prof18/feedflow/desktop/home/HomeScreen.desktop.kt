@@ -32,6 +32,7 @@ internal fun HomeScreen(
     listState: LazyListState,
     onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()
@@ -113,6 +114,7 @@ internal fun HomeScreen(
                 onBackToTimelineClick = {
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
+                onSearchClick = onSearchClick,
             )
         }
 
@@ -152,6 +154,7 @@ internal fun HomeScreen(
                 onBackToTimelineClick = {
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
+                onSearchClick = onSearchClick,
             )
         }
 
@@ -191,6 +194,7 @@ internal fun HomeScreen(
                 onBackToTimelineClick = {
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
+                onSearchClick = onSearchClick,
             )
         }
     }

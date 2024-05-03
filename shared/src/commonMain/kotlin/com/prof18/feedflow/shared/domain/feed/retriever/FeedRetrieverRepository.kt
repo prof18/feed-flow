@@ -370,8 +370,6 @@ internal class FeedRetrieverRepository(
     fun search(query: String): Flow<List<Search>> =
         databaseHelper.search(
             searchQuery = query,
-            feedFilter = currentFeedFilterMutableState.value,
-            showReadItems = settingsHelper.getShowReadArticlesTimeline(),
         )
 
     @Suppress("MagicNumber")

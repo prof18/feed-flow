@@ -92,6 +92,9 @@ struct RegularView: View {
                             }
                         )
                     )
+
+                case .search:
+                    SearchScreen()
                 }
             }
             .fullScreenCover(item: $browserToOpen) { browserToOpen in

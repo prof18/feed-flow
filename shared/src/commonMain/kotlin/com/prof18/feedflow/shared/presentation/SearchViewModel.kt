@@ -32,11 +32,9 @@ class SearchViewModel internal constructor(
     val searchState: StateFlow<SearchState> = searchMutableState.asStateFlow()
 
     private val searchQueryMutableState = MutableStateFlow("")
-    val searchQueryState = searchQueryMutableState.asStateFlow()
 
-    fun clearSearch() {
-        searchMutableState.update { SearchState.EmptyState }
-    }
+    @NativeCoroutinesState
+    val searchQueryState = searchQueryMutableState.asStateFlow()
 
     init {
         searchQueryMutableState
@@ -54,6 +52,22 @@ class SearchViewModel internal constructor(
 
     fun updateSearchQuery(query: String) {
         searchQueryMutableState.update { query }
+    }
+
+    fun onBookmarkClick(feedItemId: FeedItemId, bookmarked: Boolean) {
+        scope.launch {
+            feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
+        }
+    }
+
+    fun onReadStatusClick(feedItemId: FeedItemId, read: Boolean) {
+        scope.launch {
+            feedRetrieverRepository.updateReadStatus(feedItemId, read)
+        }
+    }
+
+    private fun clearSearch() {
+        searchMutableState.update { SearchState.EmptyState }
     }
 
     private fun search(query: String) {
@@ -75,17 +89,5 @@ class SearchViewModel internal constructor(
                 }
             }
             .launchIn(scope)
-    }
-
-    fun onBookmarkClick(feedItemId: FeedItemId, bookmarked: Boolean) {
-        scope.launch {
-            feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
-        }
-    }
-
-    fun onReadStatusClick(feedItemId: FeedItemId, read: Boolean) {
-        scope.launch {
-            feedRetrieverRepository.updateReadStatus(feedItemId, read)
-        }
     }
 }

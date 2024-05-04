@@ -93,6 +93,9 @@ struct CompactView: View {
                             }
                         )
                     )
+
+                case .search:
+                    SearchScreen()
                 }
             }
             .fullScreenCover(item: $browserToOpen) { browserToOpen in

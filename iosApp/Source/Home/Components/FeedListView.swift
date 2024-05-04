@@ -20,8 +20,7 @@ struct FeedListView: View {
 
     @EnvironmentObject private var appState: AppState
 
-    @State
-    private var browserToOpen: BrowserToPresent?
+    @State private var browserToOpen: BrowserToPresent?
 
     var loadingState: FeedUpdateStatus?
     var feedState: [FeedItem]

@@ -10,4 +10,5 @@ import Foundation
 
 enum CommonViewRoute: Hashable {
     case readerMode(url: URL)
+    case search
 }

@@ -77,7 +77,7 @@ internal fun FeedContentToolbar(
                     contentDescription = null,
                 )
             }
-        }
+        },
     )
 }
 

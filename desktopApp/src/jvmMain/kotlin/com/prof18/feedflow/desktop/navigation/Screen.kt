@@ -7,5 +7,5 @@ sealed class Screen : Parcelable {
     data object FeedList : Screen()
 
     data object ImportExport : Screen()
-    data object Search: Screen()
+    data object Search : Screen()
 }

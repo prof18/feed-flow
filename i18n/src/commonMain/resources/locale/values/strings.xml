@@ -89,4 +89,6 @@
     <string name="settings_reader_mode">Open articles on reader view</string>
     <string name="search_no_data">No matches for "%s".</string>
     <string name="search_placeholder">Search...</string>
+    <string name="search_hint_title">Start typing...</string>
+    <string name="search_hint_subtitle">the results will appear automatically</string>
 </resources>

@@ -21,14 +21,6 @@ struct EmptyFeedView: View {
 
             }
 
-//            if currentFeedFilter is FeedFilter.Bookmarks {
-//                Image(systemName: "bookmark")
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(width: 32)
-//                    .padding(.bottom, Spacing.regular)
-//            }
-
             Text(currentFeedFilter.getEmptyMessage())
                 .font(.body)
 
@@ -48,22 +40,6 @@ struct EmptyFeedView: View {
             .buttonStyle(.bordered)
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.medium)
-//
-//            if !(currentFeedFilter is FeedFilter.Read) &&
-//                !(currentFeedFilter is FeedFilter.Bookmarks) {
-//                Button(
-//                    action: {
-//                        onReloadClick()
-//                    },
-//                    label: {
-//                        Text(refresh_feeds.localized)
-//                            .frame(maxWidth: .infinity)
-//                    }
-//                )
-//                .buttonStyle(.bordered)
-//                .padding(.top, Spacing.regular)
-//                .padding(.horizontal, Spacing.medium)
-//            }
         }
     }
 }

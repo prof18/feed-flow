@@ -75,6 +75,7 @@ struct HomeContent: View {
             .toolbar {
                 makeToolbarHeaderView(proxy: proxy)
                 if !isOnVisionOSDevice() {
+                    makeSearchToolbarView()
                     makeMenuToolbarView(proxy: proxy)
                 }
             }
@@ -138,6 +139,20 @@ struct HomeContent: View {
         }
     }
 
+    @ToolbarContentBuilder
+    private func makeSearchToolbarView() -> some ToolbarContent {
+        ToolbarItem(id: UUID().uuidString, placement: .navigationBarTrailing) {
+            Button {
+                self.appState.navigate(
+                    route: CommonViewRoute.search
+                )
+            } label: {
+                Image(systemName: "magnifyingglass")
+            }
+        }
+    }
+
+    @ToolbarContentBuilder
     private func makeMenuToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
         ToolbarItem(id: UUID().uuidString, placement: .primaryAction, showsByDefault: true) {
             Menu {
@@ -219,10 +234,10 @@ fileprivate extension FeedFilter {
         toggleListScroll: .constant(false),
         currentFeedFilter: .constant(FeedFilter.Timeline()),
         showSettings: .constant(false),
-        onRefresh: { },
+        onRefresh: {},
         updateReadStatus: { _ in },
-        onMarkAllReadClick: { },
-        onDeleteOldFeedClick: { },
+        onMarkAllReadClick: {},
+        onDeleteOldFeedClick: {},
         onForceRefreshClick: {},
         deleteAllFeeds: {},
         requestNewPage: {},
@@ -231,9 +246,9 @@ fileprivate extension FeedFilter {
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {}
     )
-    .environmentObject(HomeListIndexHolder())
-    .environmentObject(AppState())
-    .environmentObject(BrowserSelector())
+        .environmentObject(HomeListIndexHolder())
+        .environmentObject(AppState())
+        .environmentObject(BrowserSelector())
 }
 
 #Preview("HomeContentLoaded") {
@@ -248,10 +263,10 @@ fileprivate extension FeedFilter {
         toggleListScroll: .constant(false),
         currentFeedFilter: .constant(FeedFilter.Timeline()),
         showSettings: .constant(false),
-        onRefresh: { },
+        onRefresh: {},
         updateReadStatus: { _ in },
-        onMarkAllReadClick: { },
-        onDeleteOldFeedClick: { },
+        onMarkAllReadClick: {},
+        onDeleteOldFeedClick: {},
         onForceRefreshClick: {},
         deleteAllFeeds: {},
         requestNewPage: {},
@@ -260,9 +275,9 @@ fileprivate extension FeedFilter {
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {}
     )
-    .environmentObject(HomeListIndexHolder())
-    .environmentObject(AppState())
-    .environmentObject(BrowserSelector())
+        .environmentObject(HomeListIndexHolder())
+        .environmentObject(AppState())
+        .environmentObject(BrowserSelector())
 }
 
 #Preview("HomeContentSettings") {
@@ -277,10 +292,10 @@ fileprivate extension FeedFilter {
         toggleListScroll: .constant(false),
         currentFeedFilter: .constant(FeedFilter.Timeline()),
         showSettings: .constant(false),
-        onRefresh: { },
+        onRefresh: {},
         updateReadStatus: { _ in },
-        onMarkAllReadClick: { },
-        onDeleteOldFeedClick: { },
+        onMarkAllReadClick: {},
+        onDeleteOldFeedClick: {},
         onForceRefreshClick: {},
         deleteAllFeeds: {},
         requestNewPage: {},
@@ -289,7 +304,7 @@ fileprivate extension FeedFilter {
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {}
     )
-    .environmentObject(HomeListIndexHolder())
-    .environmentObject(AppState())
-    .environmentObject(BrowserSelector())
+        .environmentObject(HomeListIndexHolder())
+        .environmentObject(AppState())
+        .environmentObject(BrowserSelector())
 }

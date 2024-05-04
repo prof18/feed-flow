@@ -289,7 +289,7 @@ private fun MainContent(
                                             },
                                             onSearchClick = {
                                                 navigation.push(Screen.Search)
-                                            }
+                                            },
                                         )
                                     }
                                 }
@@ -313,7 +313,7 @@ private fun MainContent(
                                     SearchScreen(
                                         navigateBack = {
                                             navigation.pop()
-                                        }
+                                        },
                                     )
                             }
                         }

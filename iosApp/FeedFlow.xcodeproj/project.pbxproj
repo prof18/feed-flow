@@ -990,7 +990,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = exactVersion;
-				version = 10.24.0;
+				version = 10.25.0;
 			};
 		};
 		CCF647572B6EEFC0006C8843 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */ = {

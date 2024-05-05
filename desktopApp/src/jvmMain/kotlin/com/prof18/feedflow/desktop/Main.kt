@@ -63,7 +63,6 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.coroutines.launch
 import java.awt.Desktop
-import java.io.File
 import java.io.InputStream
 import java.net.URI
 import java.util.Properties
@@ -102,14 +101,14 @@ fun main() = application {
 
     val isSandboxed = System.getenv("APP_SANDBOX_CONTAINER_ID") != null
     if (isSandboxed) {
-        val resources = System.getProperty("compose.application.resources.dir")
+        val resourcesPath = System.getProperty("compose.application.resources.dir")
 
         // jna
         System.setProperty("jna.nounpack", "true")
-        System.setProperty("jna.boot.library.path", resources)
+        System.setProperty("jna.boot.library.path", resourcesPath)
 
         // sqlite-jdbc
-        System.setProperty("org.sqlite.lib.path", resources)
+        System.setProperty("org.sqlite.lib.path", resourcesPath)
         System.setProperty("org.sqlite.lib.name", "libsqlitejdbc.dylib")
     }
 

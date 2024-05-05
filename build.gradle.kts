@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.org.jetbrains.kotlin.jvm) apply false
+    alias(libs.plugins.google.services) apply false
 }
 
 tasks.register("clean", Delete::class) {

@@ -81,8 +81,8 @@
 
 # If your application uses any other custom XML parsing classes or packages, add additional rules here
 #-keep class * implements org.xml.sax.EntityResolver
--keep class com.prof18.feedflow.domain.opml.SaxFeedHandler { *; }
--keepclassmembers class com.prof18.feedflow.domain.opml.SaxFeedHandler { *; }
+-keep class com.prof18.feedflow.shared.domain.opml.SaxFeedHandler { *; }
+-keepclassmembers class com.prof18.feedflow.shared.domain.opml.SaxFeedHandler { *; }
 
 -keep class javax.xml.stream.XMLOutputFactory { *; }
 -keepclassmembers class javax.xml.stream.XMLOutputFactory { *; }
@@ -92,10 +92,12 @@
 # Sentry
 -keep class io.sentry.** { *; }
 
--keep class com.prof18.feedflow.domain.model.** { *; }
+-keep class com.prof18.feedflow.shared.domain.model.** { *; }
 
--keep class com.prof18.feedflow.presentation.model.** { *; }
+-keep class com.prof18.feedflow.shared.presentation.model.** { *; }
 
 -keep class com.arkivanov.decompose.extensions.compose.jetbrains.mainthread.SwingMainThreadChecker
 
 -keep class coil3.network.okhttp.internal.OkHttpNetworkFetcherServiceLoaderTarget { *; }
+
+-keep class com.prof18.feedflow.desktop.versionchecker.NewVersionState

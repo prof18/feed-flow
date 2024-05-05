@@ -102,14 +102,14 @@ fun main() = application {
 
     val isSandboxed = System.getenv("APP_SANDBOX_CONTAINER_ID") != null
     if (isSandboxed) {
-        val resources = File(System.getProperty("compose.application.resources.dir"))
+        val resources = System.getProperty("compose.application.resources.dir")
 
         // jna
         System.setProperty("jna.nounpack", "true")
-        System.setProperty("jna.boot.library.path", resources.absolutePath)
+        System.setProperty("jna.boot.library.path", resources)
 
         // sqlite-jdbc
-        System.setProperty("org.sqlite.lib.path", resources.absolutePath)
+        System.setProperty("org.sqlite.lib.path", resources)
         System.setProperty("org.sqlite.lib.name", "libsqlitejdbc.dylib")
     }
 

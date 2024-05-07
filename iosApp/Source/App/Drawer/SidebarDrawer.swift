@@ -13,6 +13,8 @@ import NukeUI
 @MainActor
 struct SidebarDrawer: View {
 
+    @EnvironmentObject var appState: AppState
+
     @Binding var selectedDrawerItem: DrawerItem?
 
     let navDrawerState: NavDrawerState
@@ -22,6 +24,7 @@ struct SidebarDrawer: View {
     let onForceRefreshClick: () -> Void
     let deleteAllFeeds: () -> Void
     let onShowSettingsClick: () -> Void
+    let onAddFeedClick: () -> Void
 
     var body: some View {
         List(selection: $selectedDrawerItem) {
@@ -107,7 +110,8 @@ struct SidebarDrawer: View {
                             }
                         }
                     }
-                }, header: {
+                },
+                header: {
                     Text(feedFlowStrings.drawerTitleCategories)
                 }
             )
@@ -124,8 +128,9 @@ struct SidebarDrawer: View {
                             makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
                         }
                     }
-                }, header: {
-                    Text(feedFlowStrings.drawerTitleFeedSources)
+                },
+                header: {
+                    makeAddFeedButton(title: feedFlowStrings.drawerTitleFeedSources)
                 }
             )
         }
@@ -149,14 +154,47 @@ struct SidebarDrawer: View {
                         makeCategoryDropdown(
                             drawerItems: navDrawerState.feedSourcesByCategory[categoryWrapper] ?? [],
                             title: title
-                        )
-                        .accessibilityIdentifier("\(TestingTag.shared.FEED_SOURCE_SELECTOR)_\(title)")
-
+                        ).accessibilityIdentifier("\(TestingTag.shared.FEED_SOURCE_SELECTOR)_\(title)")
                     }
                 },
                 header: {
-                    Text(feedFlowStrings.drawerTitleFeedSources)
+                    makeAddFeedButton(title: feedFlowStrings.drawerTitleFeedSources)
                 }
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func makeAddFeedButton(title: String) -> some View {
+        HStack {
+            Text(title)
+            Spacer()
+            Button(
+                action: {
+                    onAddFeedClick()
+                },
+                label: {
+                    Image(systemName: "plus.app")
+                }
+            )
+        }
+        .if(appState.sizeClass == .compact) { view in
+            view.listRowInsets(
+                EdgeInsets(
+                    top: Spacing.small,
+                    leading: Spacing.small,
+                    bottom: Spacing.small,
+                    trailing: Spacing.small
+                )
+            )
+        }.if(appState.sizeClass == .regular) { view in
+            view.listRowInsets(
+                EdgeInsets(
+                    top: Spacing.small,
+                    leading: Spacing.small,
+                    bottom: Spacing.small,
+                    trailing: -Spacing.xsmall
+                )
             )
         }
     }
@@ -193,8 +231,7 @@ struct SidebarDrawer: View {
         .contentShape(Rectangle())
         .onTapGesture {
             self.selectedDrawerItem = drawerItem
-            self.onFeedFilterSelected( FeedFilter.Source(feedSource: drawerItem.feedSource )
-            )
+            self.onFeedFilterSelected(FeedFilter.Source(feedSource: drawerItem.feedSource))
         }
     }
 
@@ -268,10 +305,11 @@ struct SidebarDrawer: View {
         selectedDrawerItem: .constant(nil),
         navDrawerState: PreviewItemsKt.navDrawerState,
         onFeedFilterSelected: { _ in },
-        onMarkAllReadClick: { },
-        onDeleteOldFeedClick: { },
-        onForceRefreshClick: { },
-        deleteAllFeeds: { },
-        onShowSettingsClick: { }
+        onMarkAllReadClick: {},
+        onDeleteOldFeedClick: {},
+        onForceRefreshClick: {},
+        deleteAllFeeds: {},
+        onShowSettingsClick: {},
+        onAddFeedClick: {}
     )
 }

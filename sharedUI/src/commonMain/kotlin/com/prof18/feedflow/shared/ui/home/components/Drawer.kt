@@ -16,13 +16,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Feed
+import androidx.compose.material.icons.automirrored.filled.Label
+import androidx.compose.material.icons.automirrored.filled.PlaylistAddCheck
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.Feed
-import androidx.compose.material.icons.filled.Label
-import androidx.compose.material.icons.filled.PlaylistAddCheck
-import androidx.compose.material3.Divider
+import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
@@ -57,6 +59,7 @@ fun Drawer(
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    onAddFeedClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -84,6 +87,12 @@ fun Drawer(
             DrawerBookmarksItem(
                 currentFeedFilter = currentFeedFilter,
                 onFeedFilterSelected = onFeedFilterSelected,
+            )
+        }
+
+        item {
+            DrawerAddItem(
+                onAddFeedClicked = onAddFeedClicked,
             )
         }
 
@@ -117,7 +126,7 @@ fun Drawer(
 
 @Composable
 private fun DrawerDivider() {
-    Divider(
+    HorizontalDivider(
         modifier = Modifier
             .padding(vertical = Spacing.regular),
         thickness = 0.2.dp,
@@ -139,7 +148,7 @@ private fun DrawerTimelineItem(
         },
         icon = {
             Icon(
-                imageVector = Icons.Default.Feed,
+                imageVector = Icons.AutoMirrored.Filled.Feed,
                 contentDescription = null,
             )
         },
@@ -164,7 +173,7 @@ private fun DrawerReadItem(
         },
         icon = {
             Icon(
-                imageVector = Icons.Default.PlaylistAddCheck,
+                imageVector = Icons.AutoMirrored.Filled.PlaylistAddCheck,
                 contentDescription = null,
             )
         },
@@ -196,6 +205,30 @@ private fun DrawerBookmarksItem(
         colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
         onClick = {
             onFeedFilterSelected(FeedFilter.Bookmarks)
+        },
+    )
+}
+
+@Composable
+private fun DrawerAddItem(
+    onAddFeedClicked: () -> Unit,
+) {
+    NavigationDrawerItem(
+        selected = false,
+        label = {
+            Text(
+                text = "Add Feed",
+            )
+        },
+        icon = {
+            Icon(
+                imageVector = Icons.Default.AddCircleOutline,
+                contentDescription = null,
+            )
+        },
+        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+        onClick = {
+            onAddFeedClicked()
         },
     )
 }
@@ -241,7 +274,7 @@ private fun DrawerCategoryItem(
         },
         icon = {
             Icon(
-                imageVector = Icons.Default.Label,
+                imageVector = Icons.AutoMirrored.Filled.Label,
                 contentDescription = null,
             )
         },

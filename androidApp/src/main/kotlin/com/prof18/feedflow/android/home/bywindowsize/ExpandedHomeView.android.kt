@@ -70,6 +70,7 @@ internal fun ExpandedHomeView(
                         .padding(paddingValues),
                     navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
+                    onAddFeedClicked = onAddFeedClick,
                     onFeedFilterSelected = { feedFilter ->
                         onFeedFilterSelected(feedFilter)
                         scope.launch {

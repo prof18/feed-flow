@@ -36,6 +36,8 @@ struct CompactView: View {
 
     @State private var browserToOpen: BrowserToPresent?
 
+    @State var showAddFeedSheet = false
+
     let homeViewModel: HomeViewModel
 
     var body: some View {
@@ -63,8 +65,13 @@ struct CompactView: View {
                 },
                 onShowSettingsClick: {
                     // On compact view it's handled by the home
+                },
+                onAddFeedClick: {
+                    showAddFeedSheet.toggle()
                 }
-            )
+            ).sheet(isPresented: $showAddFeedSheet) {
+                AddFeedScreen(showCloseButton: true)
+            }
             .navigationDestination(for: CompactViewRoute.self) { route in
                 switch route {
                 case .feed:

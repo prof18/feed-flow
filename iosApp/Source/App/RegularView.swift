@@ -34,6 +34,8 @@ struct RegularView: View {
     @State var showSettings: Bool = false
     @State private var browserToOpen: BrowserToPresent?
 
+    @State var showAddFeedSheet = false
+
     var drawerItems: [DrawerItem] = []
     let homeViewModel: HomeViewModel
 
@@ -62,6 +64,10 @@ struct RegularView: View {
                 },
                 onShowSettingsClick: {
                     showSettings.toggle()
+                },
+                onAddFeedClick: {
+                    // TODO: open the add
+                    showAddFeedSheet.toggle()
                 }
             )
             .navigationBarTitleDisplayMode(.inline)
@@ -104,6 +110,9 @@ struct RegularView: View {
                         .ignoresSafeArea()
                 }
             }
+        }
+        .sheet(isPresented: $showAddFeedSheet) {
+            AddFeedScreen(showCloseButton: true)
         }
         .navigationSplitViewStyle(.balanced)
         .task {

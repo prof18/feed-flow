@@ -92,6 +92,7 @@ internal fun CompactView(
                     Drawer(
                         navDrawerState = navDrawerState,
                         currentFeedFilter = currentFeedFilter,
+                        onAddFeedClicked = onAddFeedClick,
                         onFeedFilterSelected = { feedFilter ->
                             onFeedFilterSelected(feedFilter)
                             scope.launch {

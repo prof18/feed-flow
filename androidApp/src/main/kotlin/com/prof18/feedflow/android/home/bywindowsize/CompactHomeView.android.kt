@@ -103,6 +103,7 @@ internal fun CompactHomeView(
                     Drawer(
                         navDrawerState = navDrawerState,
                         currentFeedFilter = currentFeedFilter,
+                        onAddFeedClicked = onAddFeedClick,
                         onFeedFilterSelected = { feedFilter ->
                             onFeedFilterSelected(feedFilter)
                             scope.launch {

@@ -66,7 +66,6 @@ struct RegularView: View {
                     showSettings.toggle()
                 },
                 onAddFeedClick: {
-                    // TODO: open the add
                     showAddFeedSheet.toggle()
                 }
             )

@@ -25,6 +25,7 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		13C19E852BBC4314006DEEBC /* VisionOsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */; };
 		CC14A14C2B4B09710093FF3A /* CompatViewRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC14A14B2B4B09710093FF3A /* CompatViewRoute.swift */; };
+		CC21E74D2BED7F980001F160 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = CC21E74C2BED7F980001F160 /* PrivacyInfo.xcprivacy */; };
 		CC23293029D63038005D0E06 /* commonMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292E29D63038005D0E06 /* commonMain */; };
 		CC23293129D63038005D0E06 /* iosMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292F29D63038005D0E06 /* iosMain */; };
 		CC23293529D8300C005D0E06 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC23293429D8300C005D0E06 /* View+.swift */; };
@@ -116,6 +117,7 @@
 		7555FF7B242A565900829871 /* FeedFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CC14A14B2B4B09710093FF3A /* CompatViewRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompatViewRoute.swift; sourceTree = "<group>"; };
+		CC21E74C2BED7F980001F160 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		CC23292E29D63038005D0E06 /* commonMain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = commonMain; path = ../../shared/src/commonMain; sourceTree = "<group>"; };
 		CC23292F29D63038005D0E06 /* iosMain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = iosMain; path = ../../shared/src/iosMain; sourceTree = "<group>"; };
 		CC23293429D8300C005D0E06 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				CC21E74C2BED7F980001F160 /* PrivacyInfo.xcprivacy */,
 				CCA704CD29D5A83D00560FA3 /* Assets */,
 				CC23292D29D62FE2005D0E06 /* Kotlin */,
 				CC323DFD29D21F6500138233 /* Source */,
@@ -554,6 +557,7 @@
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
 				CC23293129D63038005D0E06 /* iosMain in Resources */,
+				CC21E74D2BED7F980001F160 /* PrivacyInfo.xcprivacy in Resources */,
 				CCEA11BB2A6D2AC300C661AC /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

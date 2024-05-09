@@ -5,8 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.SearchState
-import com.prof18.feedflow.desktop.desktopViewModel
+import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -15,9 +16,11 @@ import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 
 @Composable
 internal fun SearchScreen(
+    viewModel: SearchViewModel,
     navigateBack: () -> Unit,
+    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
 ) {
-    val viewModel = desktopViewModel { DI.koin.get<SearchViewModel>() }
+    val browserManager = DI.koin.get<BrowserManager>()
     val state: SearchState by viewModel.searchState.collectAsState()
 
     val searchQuery by viewModel.searchQueryState.collectAsState()
@@ -30,7 +33,11 @@ internal fun SearchScreen(
         },
         navigateBack = navigateBack,
         onFeedItemClick = { urlInfo ->
-            openInBrowser(urlInfo.url)
+            if (browserManager.openReaderMode()) {
+                navigateToReaderMode(urlInfo)
+            } else {
+                openInBrowser(urlInfo.url)
+            }
             viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
         },
         onBookmarkClick = { feedItemId, isBookmarked ->

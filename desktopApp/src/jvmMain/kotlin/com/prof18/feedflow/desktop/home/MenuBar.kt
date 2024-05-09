@@ -13,6 +13,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     showDebugMenu: Boolean,
     isMarkReadWhenScrollingEnabled: Boolean,
     isShowReadItemEnabled: Boolean,
+    isReaderModeEnabled: Boolean,
     onRefreshClick: () -> Unit,
     onMarkAllReadClick: () -> Unit,
     onImportExportClick: () -> Unit,
@@ -24,6 +25,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     deleteFeeds: () -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
+    setReaderMode: (Boolean) -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -69,6 +71,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Item(
                 text = LocalFeedFlowStrings.current.importExportOpml,
                 onClick = onImportExportClick,
+            )
+
+            CheckboxItem(
+                text = LocalFeedFlowStrings.current.settingsReaderMode,
+                checked = isReaderModeEnabled,
+                onCheckedChange = setReaderMode,
             )
 
             CheckboxItem(

@@ -1,7 +1,11 @@
-package com.prof18.feedflow.shared.presentation
+@file:Suppress("MatchingDeclarationName")
+
+package com.prof18.feedflow.android.readermode
 
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
+import com.prof18.feedflow.shared.presentation.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

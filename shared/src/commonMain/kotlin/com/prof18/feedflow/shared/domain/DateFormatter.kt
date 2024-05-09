@@ -59,6 +59,33 @@ class DateFormatter(
             }
         },
 
+        //  "Mon, 6 May 2024 22:00:00 +00:00"
+        Format {
+            alternativeParsing({
+                // the day of week may be missing
+            }) {
+                dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
+                chars(", ")
+            }
+            dayOfMonth(Padding.NONE)
+            char(' ')
+            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            char(' ')
+            year()
+            char(' ')
+            hour()
+            char(':')
+            minute()
+            optional {
+                char(':')
+                second()
+            }
+            chars(" ")
+            offsetHours()
+            char(':')
+            offsetMinutesOfHour()
+        },
+
         // Fri, 7 May 2021 10:44:02 EST
         //  Fri, 7 May 2021 10:44:02 EST
         Format {
@@ -154,6 +181,27 @@ class DateFormatter(
             year()
         },
 
+        // 2024-05-04
+        Format {
+            year()
+            char('-')
+            monthNumber()
+            char('-')
+            dayOfMonth()
+        },
+
+        // 2024-05-03 14:30
+        Format {
+            year()
+            char('-')
+            monthNumber()
+            char('-')
+            dayOfMonth()
+            char(' ')
+            hour()
+            char(':')
+            minute()
+        },
     )
 
     fun getDateMillisFromString(dateString: String): Long? {

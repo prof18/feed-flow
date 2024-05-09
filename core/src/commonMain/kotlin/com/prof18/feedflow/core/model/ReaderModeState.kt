@@ -1,6 +1,4 @@
-package com.prof18.feedflow.shared.presentation
-
-import com.prof18.feedflow.shared.domain.ReaderModeData
+package com.prof18.feedflow.core.model
 
 sealed interface ReaderModeState {
     data object Loading : ReaderModeState

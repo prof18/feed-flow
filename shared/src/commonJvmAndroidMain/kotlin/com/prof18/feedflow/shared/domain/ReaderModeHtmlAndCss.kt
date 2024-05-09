@@ -1,21 +1,23 @@
-package com.prof18.feedflow.android.readermode
+package com.prof18.feedflow.shared.domain
 
-internal fun getReaderModeHtml(
-    colors: ReaderColors,
+fun getReaderModeStyledHtml(
+    colors: ReaderColors?,
     content: String,
     title: String?,
 ): String {
+    val titleTag = if (title != null) {
+        "<h1>$title</h1>"
+    } else {
+        ""
+    }
     // language=html
     return """
     <html lang="en">
-    <head>
-      <title>$title</title>
-    </head>
     <style>
       ${readerModeCss(colors)}
     </style>
     <body>
-    ${title?.let { "<h1>$it</h1>" }}
+    $titleTag
     $content
     <script>    
         document.addEventListener("DOMContentLoaded", function () {
@@ -41,7 +43,7 @@ internal fun getReaderModeHtml(
         .trimIndent()
 }
 
-internal fun readerModeCss(colors: ReaderColors) =
+internal fun readerModeCss(colors: ReaderColors?) =
     // language=css
     """
     h1 {
@@ -59,7 +61,7 @@ internal fun readerModeCss(colors: ReaderColors) =
       padding-top: 16px;
       padding-left: 16px;
       padding-right: 16px;
-      color: ${colors.textColor};
+      ${colors?.let { "color: ${it.textColor};" }}
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       font-size: 16px;
       line-height: 1.5em;
@@ -84,7 +86,7 @@ internal fun readerModeCss(colors: ReaderColors) =
       margin: 0 auto;
     }
     a {
-      color: ${colors.linkColor};
+      ${colors?.let { "color: ${it.linkColor};" }}
     }
     ul {
       list-style: none;
@@ -92,7 +94,7 @@ internal fun readerModeCss(colors: ReaderColors) =
     }
     ul li::before {
       content: "\2022";
-      color: ${colors.textColor};
+      ${colors?.let { "color: ${it.textColor};" }}
       margin-right: 0.25em;
     }
     ul li p {
@@ -106,7 +108,7 @@ internal fun readerModeCss(colors: ReaderColors) =
     ol li::before {
       counter-increment: item;
       content: counters(item, ".") ".";
-      color: ${colors.textColor};
+      ${colors?.let { "color: ${it.textColor};" }}
       margin-right: 0.25em;
     }
     ol li p {
@@ -146,7 +148,7 @@ internal fun readerModeCss(colors: ReaderColors) =
 
     """.trimIndent()
 
-internal data class ReaderColors(
+data class ReaderColors(
     val textColor: String,
     val linkColor: String,
 )

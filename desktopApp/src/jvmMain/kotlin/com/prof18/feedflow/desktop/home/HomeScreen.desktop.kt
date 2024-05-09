@@ -13,10 +13,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.awt.ComposeWindow
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.desktop.BrowserManager
+import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.bywindowsize.CompactView
 import com.prof18.feedflow.desktop.home.bywindowsize.ExpandedView
 import com.prof18.feedflow.desktop.home.bywindowsize.MediumView
 import com.prof18.feedflow.desktop.home.components.NoFeedsDialog
+import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.desktop.utils.WindowWidthSizeClass
 import com.prof18.feedflow.desktop.utils.calculateWindowSizeClass
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -33,12 +37,15 @@ internal fun HomeScreen(
     onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit,
     onSearchClick: () -> Unit,
+    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
 ) {
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()
     val navDrawerState by homeViewModel.navDrawerState.collectAsState()
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
     val unReadCount by homeViewModel.unreadCountFlow.collectAsState(initial = 0)
+
+    val browserManager = DI.koin.get<BrowserManager>()
 
     val strings = LocalFeedFlowStrings.current
     LaunchedEffect(Unit) {
@@ -115,6 +122,13 @@ internal fun HomeScreen(
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
                 onSearchClick = onSearchClick,
+                openUrl = { feedItemUrlInfo ->
+                    if (browserManager.openReaderMode()) {
+                        navigateToReaderMode(feedItemUrlInfo)
+                    } else {
+                        openInBrowser(feedItemUrlInfo.url)
+                    }
+                },
             )
         }
 
@@ -155,6 +169,13 @@ internal fun HomeScreen(
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
                 onSearchClick = onSearchClick,
+                openUrl = { feedItemUrlInfo ->
+                    if (browserManager.openReaderMode()) {
+                        navigateToReaderMode(feedItemUrlInfo)
+                    } else {
+                        openInBrowser(feedItemUrlInfo.url)
+                    }
+                },
             )
         }
 
@@ -195,6 +216,13 @@ internal fun HomeScreen(
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
                 onSearchClick = onSearchClick,
+                openUrl = { feedItemUrlInfo ->
+                    if (browserManager.openReaderMode()) {
+                        navigateToReaderMode(feedItemUrlInfo)
+                    } else {
+                        openInBrowser(feedItemUrlInfo.url)
+                    }
+                },
             )
         }
     }

@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.ui.search
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -66,50 +67,50 @@ fun SearchScreenContent(
     Scaffold(
         modifier = modifier,
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize(),
-        ) {
-            item {
-                SearchBar(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(Spacing.regular),
-                    searchQuery = textFieldValue,
-                    onSearchQueryChange = {
-                        textFieldValue = it
-                        updateSearchQuery(it.text)
-                    },
-                    focusRequester = focusRequester,
-                    clearFocus = {
-                        focusManager.clearFocus()
-                    },
-                    navigateBack = navigateBack,
-                )
-            }
+        Column {
+            SearchBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Spacing.regular),
+                searchQuery = textFieldValue,
+                onSearchQueryChange = {
+                    textFieldValue = it
+                    updateSearchQuery(it.text)
+                },
+                focusRequester = focusRequester,
+                clearFocus = {
+                    focusManager.clearFocus()
+                },
+                navigateBack = navigateBack,
+            )
 
-            when (searchState) {
-                is SearchState.EmptyState -> {
-                    // No-op
-                }
-
-                is SearchState.NoDataFound -> {
-                    item {
-                        NoDataFoundView(searchState)
+            LazyColumn(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
+            ) {
+                when (searchState) {
+                    is SearchState.EmptyState -> {
+                        // No-op
                     }
-                }
 
-                is SearchState.DataFound -> {
-                    itemsIndexed(searchState.items) { index, item ->
-                        FeedItemView(
-                            feedItem = item,
-                            index = index,
-                            onFeedItemClick = onFeedItemClick,
-                            onBookmarkClick = onBookmarkClick,
-                            onReadStatusClick = onReadStatusClick,
-                            onCommentClick = onCommentClick,
-                        )
+                    is SearchState.NoDataFound -> {
+                        item {
+                            NoDataFoundView(searchState)
+                        }
+                    }
+
+                    is SearchState.DataFound -> {
+                        itemsIndexed(searchState.items) { index, item ->
+                            FeedItemView(
+                                feedItem = item,
+                                index = index,
+                                onFeedItemClick = onFeedItemClick,
+                                onBookmarkClick = onBookmarkClick,
+                                onReadStatusClick = onReadStatusClick,
+                                onCommentClick = onCommentClick,
+                            )
+                        }
                     }
                 }
             }

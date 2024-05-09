@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.desktop.home.components.HomeScreenContent
 import com.prof18.feedflow.desktop.openInBrowser
@@ -43,6 +44,7 @@ internal fun CompactView(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onBackToTimelineClick: () -> Unit,
     onSearchClick: () -> Unit,
+    openUrl: (FeedItemUrlInfo) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -69,11 +71,11 @@ internal fun CompactView(
             onRefresh = refreshData,
             updateReadStatus = markAsReadOnScroll,
             onFeedItemClick = { feedInfo ->
-                openInBrowser(feedInfo.url)
+                openUrl(feedInfo)
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onCommentClick = { feedInfo ->
-                openInBrowser(feedInfo.url)
+                openUrl(feedInfo)
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onAddFeedClick = {
@@ -167,6 +169,7 @@ private fun CompactViewPreview() {
             onReadStatusClick = { _, _ -> },
             onBackToTimelineClick = {},
             onSearchClick = {},
+            openUrl = {},
         )
     }
 }

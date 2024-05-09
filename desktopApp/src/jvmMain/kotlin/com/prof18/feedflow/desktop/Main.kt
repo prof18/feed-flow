@@ -28,6 +28,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import coil3.ImageLoader
+import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.setSingletonImageLoaderFactory
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
@@ -50,12 +51,15 @@ import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.navigation.ChildStack
 import com.prof18.feedflow.desktop.navigation.ProvideComponentContext
 import com.prof18.feedflow.desktop.navigation.Screen
+import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
+import com.prof18.feedflow.desktop.reaadermode.ReaderModeViewModel
 import com.prof18.feedflow.desktop.search.SearchScreen
 import com.prof18.feedflow.desktop.ui.components.NewVersionBanner
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.desktop.versionchecker.NewVersionChecker
 import com.prof18.feedflow.desktop.versionchecker.NewVersionState
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
@@ -68,7 +72,7 @@ import java.net.URI
 import java.util.Properties
 import javax.swing.UIManager
 
-@OptIn(ExperimentalDecomposeApi::class)
+@OptIn(ExperimentalDecomposeApi::class, ExperimentalCoilApi::class)
 fun main() = application {
     val properties = Properties()
     val propsFile = DI::class.java.classLoader?.getResourceAsStream("props.properties")
@@ -173,6 +177,7 @@ fun main() = application {
             showDebugMenu = appEnvironment.isDebug(),
             isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
             isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
+            isReaderModeEnabled = settingsState.isReaderModeEnabled,
             onRefreshClick = {
                 scope.launch {
                     listState.animateScrollToItem(0)
@@ -219,6 +224,9 @@ fun main() = application {
             setShowReadItem = { enabled ->
                 settingsViewModel.updateShowReadItemsOnTimeline(enabled)
             },
+            setReaderMode = { enabled ->
+                settingsViewModel.updateReaderMode(enabled)
+            },
         )
 
         MainContent(
@@ -247,6 +255,9 @@ private fun MainContent(
     newVersionState: NewVersionState,
     onCloseDownloadBannerClick: () -> Unit,
 ) {
+    val readerModeViewModel = desktopViewModel { DI.koin.get<ReaderModeViewModel>() }
+    val searchViewModel = desktopViewModel { DI.koin.get<SearchViewModel>() }
+
     Surface(modifier = Modifier.fillMaxSize()) {
         FeedFlowTheme {
             CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
@@ -289,6 +300,10 @@ private fun MainContent(
                                             onSearchClick = {
                                                 navigation.push(Screen.Search)
                                             },
+                                            navigateToReaderMode = { feedItemUrlInfo ->
+                                                readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
+                                                navigation.push(Screen.ReaderMode)
+                                            },
                                         )
                                     }
                                 }
@@ -310,10 +325,24 @@ private fun MainContent(
 
                                 is Screen.Search ->
                                     SearchScreen(
+                                        viewModel = searchViewModel,
+                                        navigateBack = {
+                                            navigation.pop()
+                                        },
+                                        navigateToReaderMode = { feedItemUrlInfo ->
+                                            readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
+                                            navigation.push(Screen.ReaderMode)
+                                        },
+                                    )
+
+                                is Screen.ReaderMode -> {
+                                    ReaderModeScreen(
+                                        readerModeViewModel = readerModeViewModel,
                                         navigateBack = {
                                             navigation.pop()
                                         },
                                     )
+                                }
                             }
                         }
                     }

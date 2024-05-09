@@ -91,4 +91,6 @@
     <string name="search_placeholder">Search...</string>
     <string name="search_hint_title">Start typing...</string>
     <string name="search_hint_subtitle">the results will appear automatically</string>
+    <string name="link_copied_success">Link successfully copied!</string>
+    <string name="reader_mode_warning">&#8505; The reader mode tries to get the content of the article. There might be some glitches or unwanted characters. </string>
 </resources>

@@ -2,10 +2,12 @@ package com.prof18.feedflow.android
 
 import android.app.Application
 import android.content.Context
+import com.prof18.feedflow.android.readermode.ReaderModeViewModel
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import com.prof18.feedflow.shared.utils.enableKmpCrashlytics
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 class FeedFlowApp : Application() {
@@ -40,6 +42,11 @@ class FeedFlowApp : Application() {
                         coilImageLoader(
                             context = this@FeedFlowApp,
                             debug = appEnvironment.isDebug(),
+                        )
+                    }
+                    viewModel {
+                        ReaderModeViewModel(
+                            readerModeExtractor = get(),
                         )
                     }
                 },

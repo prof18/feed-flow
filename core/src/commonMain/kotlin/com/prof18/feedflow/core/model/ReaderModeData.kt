@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.domain
+package com.prof18.feedflow.core.model
 
 data class ReaderModeData(
     val title: String?,

@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.desktop.home.components.HomeScreenContent
-import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -45,6 +45,7 @@ internal fun ExpandedView(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onBackToTimelineClick: () -> Unit,
     onSearchClick: () -> Unit,
+    openUrl: (FeedItemUrlInfo) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -85,11 +86,11 @@ internal fun ExpandedView(
             onRefresh = refreshData,
             updateReadStatus = markAsReadOnScroll,
             onFeedItemClick = { feedInfo ->
-                openInBrowser(feedInfo.url)
+                openUrl(feedInfo)
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onCommentClick = { feedInfo ->
-                openInBrowser(feedInfo.url)
+                openUrl(feedInfo)
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onAddFeedClick = {
@@ -126,6 +127,7 @@ private fun ExpandedViewPreview() {
             onReadStatusClick = { _, _ -> },
             onBackToTimelineClick = {},
             onSearchClick = {},
+            openUrl = {},
         )
     }
 }

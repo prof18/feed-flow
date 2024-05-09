@@ -1,11 +1,12 @@
 package com.prof18.feedflow.shared.domain
 
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.shared.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.extended.Readability4JExtended
 
-internal class ReaderModeExtractor(
+class ReaderModeExtractor internal constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val htmlRetriever: HtmlRetriever,
 ) {

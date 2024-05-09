@@ -8,4 +8,5 @@ sealed class Screen : Parcelable {
 
     data object ImportExport : Screen()
     data object Search : Screen()
+    data object ReaderMode : Screen()
 }

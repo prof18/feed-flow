@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.desktop.home.components.HomeScreenContent
+import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -90,7 +91,7 @@ internal fun ExpandedView(
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onCommentClick = { feedInfo ->
-                openUrl(feedInfo)
+                openInBrowser(feedInfo.url)
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onAddFeedClick = {

@@ -75,7 +75,7 @@ internal fun CompactView(
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onCommentClick = { feedInfo ->
-                openUrl(feedInfo)
+                openInBrowser(feedInfo.url)
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onAddFeedClick = {

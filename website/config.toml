@@ -26,6 +26,10 @@ theme = "apsho"
     name = "Contribute with translations"
     url = "https://hosted.weblate.org/projects/feedflow/"
     weight = 5
+[[menu.sitemap]]
+    name = "Donations 🙏"
+    url = "https://www.paypal.me/MarcoGomiero"
+    weight = 6
 
 [params]
 

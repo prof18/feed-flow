@@ -1,14 +1,14 @@
 ---
 enable: true
 title: Just a list.
-description: All you need is a de-cluttered list. Every article opens in the browser of your choice. No more half-available content, multiple clicks to read something. Just focus on reading (or scrolling)!
+description: All you need is a de-cluttered list. Every article opens in the browser of your choice or in a clutter-free reader mode. No more half-available content, multiple clicks to read something. Just focus on reading (or scrolling)!
 description2: Quickly import your existing RSS feeds collection
 
 Title2nd: Focus on reading.
-description2nd: Enjoy full control - open articles in your favourite privacy-focused browser and keep your reading experience separated from your main browser.
-image1: images/feature/android-feed.webp
-image2: images/feature/macos-feed.webp
+description2nd: Enjoy full control - open articles in your favourite privacy-focused browser and keep your reading experience separated from your main browser. Or use the integrated clutter-free reader mode.
+image1: images/screenshots/android-feed.webp
+image2: images/screenshots/macos-feed.webp
 checkItem:
   - text: Import your existing collection with one click.
-  - text: Use your favourite browser
+  - text: Use your favourite browser or the reader mode
   - text: Built with Compose, SwiftUI, Kotlin Multiplatform

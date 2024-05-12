@@ -1,12 +1,12 @@
 ---
 enable: true
 title: FeedFlow
-description: Follow your favorite RSS feeds with FeedFlow, a minimalistic and opinionated RSS Reader for Android, iOS, and macOS.
+description: Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader for Android, iOS, and macOS.
 buttonName: Available on
 button1text: Google Play
 button1Link: https://play.google.com/store/apps/details?id=com.prof18.feedflow
 button2text: Apple Store
 button2Link: https://apps.apple.com/us/app/feedflow-rss-reader/id6447210518
 button3text: macOS
-button3Link: https://apps.apple.com/it/app/feedflow-rss-reader/id6447210518
+button3Link: https://github.com/prof18/feed-flow/releases/download/1.0.67-desktop/FeedFlow-1.0.67.dmg
 image: images/hero/hero-image.svg

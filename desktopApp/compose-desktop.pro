@@ -101,3 +101,8 @@
 -keep class coil3.network.okhttp.internal.OkHttpNetworkFetcherServiceLoaderTarget { *; }
 
 -keep class com.prof18.feedflow.desktop.versionchecker.NewVersionState
+
+
+# Compose Markdown
+
+-keep class com.mikepenz.markdown.model.** { *; }

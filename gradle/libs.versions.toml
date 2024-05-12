@@ -54,7 +54,7 @@ lyricist = "1.6.2"
 kotlinx-date-time = "0.6.0-RC.2"
 androidx-browser = "1.8.0"
 readability4j = "1.0.8"
-compose-webview = "1.9.6"
+compose-webview = "1.9.7"
 okhttp = "4.12.0"
 
 [libraries]

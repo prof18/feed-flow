@@ -52,8 +52,8 @@
     <string name="import_feed_button">Importa feed da OPML</string>
     <string name="app_name">FeedFlow</string>
     <string name="feeds_title">Elenco dei feed</string>
-    <string name="about_the_app">FeedFlow è un lettore RSS minimalista basato sulle opinioni personali dell\'autore. Gli articoli vengono aperti nei rispettivi siti Web e puoi scegliere il tuo browser preferito per mantenere la tua esperienza di lettura separata dal browser principale.
-\nPuoi importare ed esportare la tua raccolta RSS da e verso un file OPML.</string>
+    <string name="about_the_app">FeedFlow è un lettore RSS minimalista basato sulle opinioni personali dell\'autore. Gli articoli vengono aperti sui rispettivi siti web ed è possibile scegliere il proprio browser preferito incentrato sulla privacy per separare l\'esperienza di lettura dal browser principale. Se si desidera evitare il browser, FeedFlow offre una modalità lettore per godersi il contenuto degli articoli senza distrazioni.
+\nÈ possibile importare ed esportare la propria raccolta RSS da e verso file OPML.</string>
     <string name="load_file_error_message">Impossibile caricare il file</string>
     <string name="add_feed">Aggiungi feed</string>
     <string name="drawer_title_timeline">Timeline</string>
@@ -85,4 +85,12 @@
     <string name="settings_toggle_show_read_articles">Mostra articoli letti nella timeline</string>
     <string name="rename_feed_source_name_button">Rinomina</string>
     <string name="close_menu_button">Chiudi il menu</string>
+    <string name="in_app_browser">Browser integrato</string>
+    <string name="search_no_data">Impossibile trovare \"%s\".</string>
+    <string name="search_hint_subtitle">i risultati appariranno automaticamente</string>
+    <string name="settings_reader_mode">Apri gli articoli in modalità lettura</string>
+    <string name="link_copied_success">Link copiato!</string>
+    <string name="reader_mode_warning">ℹ La modalità Lettore tenta di estrarre il contenuto dell\'articolo. Potrebbero esserci piccole imperfezioni.</string>
+    <string name="search_placeholder">Cerca…</string>
+    <string name="search_hint_title">Inizia a scrivere…</string>
 </resources>

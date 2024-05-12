@@ -3,7 +3,7 @@ enable: true
 title: Frequently asked questions
 faqItem:
   - question: Why no feed's content?
-    answer: The majority of websites with an RSS feed don't share the article's content because they want you to go on their website. For this reason, FeedFlow always opens the original website, but you can choose the browser that you want. For example, you can open an article on DuckDuckGo or Firefox Focus with all the trackers disabled and then just kill all the navigation data. In this way, the reading experience is separated from your main browser instance.
+    answer: Most websites with an RSS feed don't share the article's content because they want you to go on their website. For this reason, FeedFlow always opens the original website, but you can choose the browser you want. For example, you can open an article on DuckDuckGo or Firefox Focus with all the trackers disabled and then kill all the navigation data. This way, the reading experience is separated from your main browser instance. FeedFlow also offers a reader mode that downloads the full content of the article and renders it in a clutter-free view.
     dataTarget: One
     show: show
 
@@ -15,4 +15,9 @@ faqItem:
   - question: Is it privacy friendly?
     answer: Yes! There are no trackers or analytics. Only anonymized crashes and error reports are collected, to help me improve the parsing mechanism.
     dataTarget: Three
-    show: 
+    show:
+
+  - question: How much does it cost?
+    answer: FeedFlow is open source and compeltely free to use. If you want to support the development, consider to make a donation. We will be grateful forever 🙏. (Check the links below)
+    dataTarget: Four
+    show:

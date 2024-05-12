@@ -112,3 +112,4 @@ bin/
 /desktopApp/src/jvmMain/resources/props.properties
 /desktopApp/embedded.provisionprofile
 /desktopApp/runtime.provisionprofile
+/website/public/

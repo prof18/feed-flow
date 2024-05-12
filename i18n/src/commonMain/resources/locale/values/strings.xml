@@ -33,8 +33,7 @@
     <string name="author_label">Developed with ❤️ by</string>
     <string name="show_on_github">Show on GitHub</string>
     <string name="open_source_licenses">Open source licenses</string>
-    <string name="about_the_app">FeedFlow is a minimalistic RSS Reader based on the personal opinions of the author. The articles are opened on their respective websites and you can choose your favorite privacy-focused browser to keep your reading experience separated from your main browser.
-\nYou can import and export your RSS collection from and to OPML files.</string>
+    <string name="about_the_app">FeedFlow is a minimalistic RSS Reader based on the author's personal opinions. The articles are opened on their respective websites, and you can choose your favorite privacy-focused browser to separate your reading experience from your main browser. If you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.\nYou can import and export your RSS collection from and to OPML files.</string>
     <string name="about_nav_bar">About</string>
     <string name="open_source_nav_bar">Open source licenses</string>
     <string name="report_issue_button">Report issue</string>
@@ -86,11 +85,11 @@
     <string name="rename_feed_source_name_button">Rename</string>
     <string name="close_menu_button">Close menu</string>
     <string name="in_app_browser">In-app browser</string>
-    <string name="settings_reader_mode">Open articles on reader view</string>
+    <string name="settings_reader_mode">Open articles on reader mode</string>
     <string name="search_no_data">No matches for "%s".</string>
     <string name="search_placeholder">Search...</string>
     <string name="search_hint_title">Start typing...</string>
     <string name="search_hint_subtitle">the results will appear automatically</string>
     <string name="link_copied_success">Link successfully copied!</string>
-    <string name="reader_mode_warning">&#8505; The reader mode tries to get the content of the article. There might be some glitches or unwanted characters. </string>
+    <string name="reader_mode_warning">&#8505; The reader mode tries to get the content of the article. There might be some glitches or unwanted characters.</string>
 </resources>

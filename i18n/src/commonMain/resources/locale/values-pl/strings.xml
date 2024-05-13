@@ -40,7 +40,7 @@
     <string name="settings_button">Ustawienia</string>
     <string name="open_source_nav_bar">Licencje typu open source</string>
     <string name="show_on_github">Pokaż na GitHubie</string>
-    <string name="mark_all_read_button">Oznacz jako przeczytane</string>
+    <string name="mark_all_read_button">Oznacz wszystkie jako przeczytane</string>
     <string name="retry_button">Spróbuj ponownie</string>
     <string name="generic_error_message">Przepraszamy, coś poszło nie tak :(</string>
     <string name="default_browser">Domyślna przeglądarka</string>
@@ -51,4 +51,20 @@
 \nMożesz importować i eksportować swoją kolekcję kanałów RSS do pliku OPML.</string>
     <string name="load_file_error_message">Nie udało się wczytać pliku</string>
     <string name="add_feed">Dodaj kanał</string>
+    <string name="close_menu_button">Zamknij menu</string>
+    <string name="add_feed_category_title">Kategoria</string>
+    <string name="settings_general_title">Ogólne</string>
+    <string name="import_export_opml_title">Import i eksport</string>
+    <string name="no_category_selected_header">Brak kategorii</string>
+    <string name="action_done">Gotowe</string>
+    <string name="about_app_version">Wersja aplikacji: %s</string>
+    <string name="drawer_title_categories">Kategorie</string>
+    <string name="add_feed_categories_title">Kategorie</string>
+    <string name="no_category">Nieskategoryzowane</string>
+    <string name="menu_add_to_bookmark">Dodaj do zakładek</string>
+    <string name="menu_remove_from_bookmark">Usuń z zakładek</string>
+    <string name="drawer_title_bookmarks">Zakładki</string>
+    <string name="menu_mark_as_read">Oznacz jako przeczytane</string>
+    <string name="menu_mark_as_unread">Oznacz jako nieprzeczytane</string>
+    <string name="rename_feed_source_name_button">Zmień nazwę</string>
 </resources>

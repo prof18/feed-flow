@@ -14,7 +14,7 @@
     <string name="feeds_title">Feedy</string>
     <string name="no_feeds_add_one_message">Žiadne feedy, pridaj nejaký</string>
     <string name="refresh_feeds">Obnoviť feedy</string>
-    <string name="mark_all_read_button">Označiť všetko prečítané</string>
+    <string name="mark_all_read_button">Označiť všetko ako prečítané</string>
     <string name="settings_button">Nastavenia</string>
     <string name="feeds_import_done_message">Import hotový</string>
     <string name="show_on_github">Zobraziť na GitHube</string>

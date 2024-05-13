@@ -4,11 +4,21 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
 }
 
+java {
+    toolchain {
+        vendor = JvmVendorSpec.JETBRAINS
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 kotlin {
     androidTarget()
 
     jvm {
-        jvmToolchain(17)
+        jvmToolchain {
+            vendor = JvmVendorSpec.JETBRAINS
+            languageVersion = JavaLanguageVersion.of(17)
+        }
     }
 
     sourceSets {

@@ -51,4 +51,15 @@
 \nVous pouvez importer et exporter votre collection RSS vers un fichier OPML.</string>
     <string name="load_file_error_message">Impossible de charger le fichier</string>
     <string name="add_feed">Ajouter un flux</string>
+    <string name="add_feed_category_title">Categorie</string>
+    <string name="import_export_opml_title">Importer et exporter</string>
+    <string name="action_done">Terminée</string>
+    <string name="settings_general_title">General</string>
+    <string name="no_category_selected_header">Sans catégorie</string>
+    <string name="no_category">Non classé par catégorie</string>
+    <string name="new_category_hint">Nouvelle catégorie</string>
+    <string name="drawer_title_timeline">Timeline</string>
+    <string name="drawer_title_categories">Catégories</string>
+    <string name="about_app_version">Version de l\'application : %s</string>
+    <string name="add_feed_categories_title">Catégories</string>
 </resources>

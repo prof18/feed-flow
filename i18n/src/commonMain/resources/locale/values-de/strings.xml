@@ -55,4 +55,21 @@
 \nDie RSS-Sammlung kann aus OPML-Dateien importiert und exportiert werden.</string>
     <string name="load_file_error_message">Laden der Datei fehlgeschlagen</string>
     <string name="add_feed">Feed hinzufügen</string>
+    <string name="in_app_browser">In-App-Browser</string>
+    <string name="feeds_import_done_message">Import abgeschlossen</string>
+    <string name="feeds_export_done_message">Export abgeschlossen</string>
+    <string name="close_menu_button">Menü schließen</string>
+    <string name="settings_general_title">Allgemeine Einstellungen</string>
+    <string name="add_feed_category_title">Kategorie</string>
+    <string name="about_app_version">App-Version: %s</string>
+    <string name="action_save">Speichern</string>
+    <string name="add_feed_categories_title">Kategorien</string>
+    <string name="menu_add_to_bookmark">Zu Lesezeichen hinzufügen</string>
+    <string name="drawer_title_bookmarks">Lesezeichen</string>
+    <string name="menu_mark_as_read">Als gelesen markieren</string>
+    <string name="menu_remove_from_bookmark">Aus Lesezeichen entfernen</string>
+    <string name="menu_mark_as_unread">Als ungelesen markieren</string>
+    <string name="import_export_opml_title">Importieren und exportieren</string>
+    <string name="drawer_title_read">Gelesen</string>
+    <string name="rename_feed_source_name_button">Umbenennen</string>
 </resources>

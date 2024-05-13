@@ -11,11 +11,23 @@ plugins {
 group = "com.prof18"
 version = "1.0-SNAPSHOT"
 
+java {
+    toolchain {
+        vendor = JvmVendorSpec.JETBRAINS
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+
 kotlin {
     jvm {
-        jvmToolchain(17)
+        jvmToolchain {
+            vendor = JvmVendorSpec.JETBRAINS
+            languageVersion = JavaLanguageVersion.of(17)
+        }
         withJava()
     }
+
     sourceSets {
         jvmMain {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)

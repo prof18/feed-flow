@@ -67,7 +67,9 @@ fun SearchScreenContent(
     Scaffold(
         modifier = modifier,
     ) { padding ->
-        Column {
+        Column(
+            modifier = Modifier.padding(padding)
+        ) {
             SearchBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -86,7 +88,6 @@ fun SearchScreenContent(
 
             LazyColumn(
                 modifier = Modifier
-                    .padding(padding)
                     .fillMaxSize(),
             ) {
                 when (searchState) {

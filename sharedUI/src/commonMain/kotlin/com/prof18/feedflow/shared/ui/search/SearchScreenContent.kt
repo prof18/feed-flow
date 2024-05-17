@@ -68,7 +68,7 @@ fun SearchScreenContent(
         modifier = modifier,
     ) { padding ->
         Column(
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(padding),
         ) {
             SearchBar(
                 modifier = Modifier

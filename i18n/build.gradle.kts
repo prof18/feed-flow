@@ -7,6 +7,8 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(17)
+
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -15,9 +17,7 @@ kotlin {
         }
     }
 
-    jvm {
-        jvmToolchain(17)
-    }
+    jvm()
 
     listOf(
         iosArm64(),

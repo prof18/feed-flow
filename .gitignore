@@ -113,3 +113,4 @@ bin/
 /desktopApp/embedded.provisionprofile
 /desktopApp/runtime.provisionprofile
 /website/public/
+/.kotlin/

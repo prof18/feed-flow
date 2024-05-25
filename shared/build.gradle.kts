@@ -8,6 +8,8 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(17)
+
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -16,9 +18,7 @@ kotlin {
         }
     }
 
-    jvm {
-        jvmToolchain(17)
-    }
+    jvm()
 
     listOf(
         iosArm64(),
@@ -75,7 +75,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
-                implementation(libs.kotlin.test.junit)
+//                implementation(libs.kotlin.test.junit)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.touchlab.kermit.test)
             }
@@ -93,6 +93,10 @@ kotlin {
 
         val commonJvmAndroidTest by creating {
             dependsOn(commonTest.get())
+
+            dependencies {
+                implementation(libs.kotlin.test.junit)
+            }
         }
 
         val commonMobileMain by creating {

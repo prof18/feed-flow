@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.triplet.play)
     alias(libs.plugins.about.libraries)
     alias(libs.plugins.crashlytics)
@@ -39,10 +40,6 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.majorVersion
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     signingConfigs {

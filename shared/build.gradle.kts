@@ -75,7 +75,6 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
-//                implementation(libs.kotlin.test.junit)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.touchlab.kermit.test)
             }

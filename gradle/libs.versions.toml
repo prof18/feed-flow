@@ -13,7 +13,7 @@ io-coil = "3.0.0-alpha06"
 junit = "4.13.2"
 kermit = "2.0.3"
 koin-bom = "3.5.6"
-kotlin = "1.9.23"
+kotlin = "2.0.0"
 multiplatformMarkdownRendererM3 = "0.16.0"
 nav-compose = "2.7.7"
 slf4jNop = "2.0.12"
@@ -31,16 +31,15 @@ rss-parser = "6.0.7"
 accompanist = "0.34.0"
 jsoup = "1.17.2"
 triplet-play = "3.9.1"
-compose-multiplatform = "1.6.10-rc01"
-compose-compiler = "1.5.13"
+compose-multiplatform = "1.6.10"
 decompose = "2.2.3"
 # When updating, check the version of jna in the following link:
 # https://github.com/Dansoftowner/jSystemThemeDetector/blob/master/build.gradle
 # if necessary, download again the native library here
 # https://github.com/java-native-access/jna
 jsystem-theme-detector = "3.6"
-native-coroutines = "1.0.0-ALPHA-28"
-ksp = "1.9.23-1.0.20"
+native-coroutines = "1.0.0-ALPHA-31"
+ksp = "2.0.0-1.0.21"
 multiplatform-settings = "1.1.1"
 crashlytics = "18.6.4"
 crashlytics-plugin = "3.0.0"
@@ -61,7 +60,6 @@ okhttp = "4.12.0"
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
 about-libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref="about-libraries" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
-androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 androidx-lifecycle-viewModel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "viewModel-ktx" }
 androidx-lifecycle-viewModel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModel-compose" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-runtime-compose" }
@@ -145,3 +143,4 @@ about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "ab
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

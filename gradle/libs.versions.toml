@@ -27,7 +27,7 @@ org-robolectric = "4.12.1"
 # if necessry, dowload again the native library here
 # https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
 sql-delight = "2.0.2"
-rss-parser = "6.0.7"
+rss-parser = "6.0.8"
 accompanist = "0.34.0"
 jsoup = "1.17.2"
 triplet-play = "3.9.1"

@@ -41,8 +41,6 @@ kotlin {
                 implementation(compose.preview)
                 implementation(compose.materialIconsExtended)
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.decompose)
-                implementation(libs.decompose.compose.jetbrains)
                 implementation(libs.bundles.about.libraries)
                 implementation(libs.jsoup)
                 implementation(libs.slf4j.nop)
@@ -52,6 +50,8 @@ kotlin {
 
                 implementation(libs.flexmark.html2md.converter)
                 implementation(libs.multiplatform.markdown.renderer.m3)
+                implementation(libs.voyager.navigator)
+                implementation(libs.voyager.transition)
             }
         }
     }

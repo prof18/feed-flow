@@ -8,6 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.DialogWindow
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.desktopViewModel
@@ -19,43 +22,47 @@ import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
 
-@Composable
-fun FeedSourceListScreen(
-    navigateBack: () -> Unit,
-) {
-    var dialogState by remember { mutableStateOf(false) }
+class FeedSourceListScreen : Screen {
 
-    DialogWindow(
-        title = LocalFeedFlowStrings.current.addFeed,
-        visible = dialogState,
-        onCloseRequest = { dialogState = false },
-    ) {
-        AddFeedScreen(
-            onFeedAdded = {
-                dialogState = false
+    @Composable
+    override fun Content() {
+        var dialogState by remember { mutableStateOf(false) }
+
+        DialogWindow(
+            title = LocalFeedFlowStrings.current.addFeed,
+            visible = dialogState,
+            onCloseRequest = { dialogState = false },
+        ) {
+            AddFeedScreen(
+                onFeedAdded = {
+                    dialogState = false
+                },
+            )
+        }
+        val viewModel = desktopViewModel { DI.koin.get<FeedSourceListViewModel>() }
+        val feedSources by viewModel.feedSourcesState.collectAsState()
+
+        val navigator = LocalNavigator.currentOrThrow
+
+        FeedSourceListContent(
+            feedSourceListState = feedSources,
+            onAddFeedClick = {
+                dialogState = true
+            },
+            onDeleteFeedClick = { feedSource ->
+                viewModel.deleteFeedSource(feedSource)
+            },
+            onExpandClicked = { categoryId ->
+                viewModel.expandCategory(categoryId)
+            },
+            navigateBack = {
+                navigator.pop()
+            },
+            onRenameFeedSourceClick = { feedSource, newName ->
+                viewModel.updateFeedName(feedSource, newName)
             },
         )
     }
-    val viewModel = desktopViewModel { DI.koin.get<FeedSourceListViewModel>() }
-
-    val feedSources by viewModel.feedSourcesState.collectAsState()
-
-    FeedSourceListContent(
-        feedSourceListState = feedSources,
-        onAddFeedClick = {
-            dialogState = true
-        },
-        onDeleteFeedClick = { feedSource ->
-            viewModel.deleteFeedSource(feedSource)
-        },
-        onExpandClicked = { categoryId ->
-            viewModel.expandCategory(categoryId)
-        },
-        navigateBack = navigateBack,
-        onRenameFeedSourceClick = { feedSource, newName ->
-            viewModel.updateFeedName(feedSource, newName)
-        },
-    )
 }
 
 @Preview

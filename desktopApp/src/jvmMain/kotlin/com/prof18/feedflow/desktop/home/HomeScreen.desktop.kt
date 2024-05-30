@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.awt.ComposeWindow
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.desktop.BrowserManager
@@ -21,20 +20,19 @@ import com.prof18.feedflow.desktop.home.bywindowsize.ExpandedView
 import com.prof18.feedflow.desktop.home.bywindowsize.MediumView
 import com.prof18.feedflow.desktop.home.components.NoFeedsDialog
 import com.prof18.feedflow.desktop.openInBrowser
+import com.prof18.feedflow.desktop.utils.WindowSizeClass
 import com.prof18.feedflow.desktop.utils.WindowWidthSizeClass
-import com.prof18.feedflow.desktop.utils.calculateWindowSizeClass
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun HomeScreen(
-    window: ComposeWindow,
+    windowSizeClass: WindowSizeClass,
     paddingValues: PaddingValues,
     homeViewModel: HomeViewModel,
     snackbarHostState: SnackbarHostState,
     listState: LazyListState,
-    onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit,
     onSearchClick: () -> Unit,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
@@ -46,8 +44,8 @@ internal fun HomeScreen(
     val unReadCount by homeViewModel.unreadCountFlow.collectAsState(initial = 0)
 
     val browserManager = DI.koin.get<BrowserManager>()
-
     val strings = LocalFeedFlowStrings.current
+
     LaunchedEffect(Unit) {
         homeViewModel.errorState.collect { errorState ->
             when (errorState) {
@@ -72,19 +70,16 @@ internal fun HomeScreen(
         }
     }
 
-    val windowSize = calculateWindowSizeClass(window)
-
     var showDialog by remember { mutableStateOf(false) }
     NoFeedsDialog(
         showDialog = showDialog,
         onDismissRequest = {
             showDialog = false
         },
-        onAddFeedClick = onAddFeedClick,
         onImportExportClick = onImportExportClick,
     )
 
-    when (windowSize.widthSizeClass) {
+    when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             CompactView(
                 feedItems = feedState,

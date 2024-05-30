@@ -72,4 +72,14 @@
     <string name="import_export_opml_title">Importieren und exportieren</string>
     <string name="drawer_title_read">Gelesen</string>
     <string name="rename_feed_source_name_button">Umbenennen</string>
+    <string name="link_copied_success">Link erfolgreich kopiert!</string>
+    <string name="empty_screen_back_to_timeline">Zurück zur Zeitleiste</string>
+    <string name="about_menu_contribute_translations">Mit Übersetzungen helfen</string>
+    <string name="settings_toggle_show_read_articles">Gelesene Artikel in der Zeitleiste anzeigen</string>
+    <string name="search_no_data">Keine Übereinstimmungen für %s.</string>
+    <string name="search_placeholder">Suchen…</string>
+    <string name="action_done">Fertig</string>
+    <string name="settings_app_title">App</string>
+    <string name="menu_open_comments">Kommentare öffnen</string>
+    <string name="settings_reader_mode">Artikel im Lesemodus öffnen</string>
 </resources>

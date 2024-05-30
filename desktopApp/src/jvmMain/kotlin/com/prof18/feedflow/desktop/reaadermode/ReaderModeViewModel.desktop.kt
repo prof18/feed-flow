@@ -1,5 +1,3 @@
-@file:Suppress("MatchingDeclarationName")
-
 package com.prof18.feedflow.desktop.reaadermode
 
 import com.prof18.feedflow.core.model.FeedItemUrlInfo

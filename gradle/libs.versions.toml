@@ -32,7 +32,6 @@ accompanist = "0.34.0"
 jsoup = "1.17.2"
 triplet-play = "3.9.1"
 compose-multiplatform = "1.6.10"
-decompose = "2.2.3"
 # When updating, check the version of jna in the following link:
 # https://github.com/Dansoftowner/jSystemThemeDetector/blob/master/build.gradle
 # if necessary, download again the native library here
@@ -55,6 +54,7 @@ androidx-browser = "1.8.0"
 readability4j = "1.0.8"
 compose-webview = "1.9.7"
 okhttp = "4.12.0"
+voyager = "1.0.0"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
@@ -97,8 +97,6 @@ sqldelight-primitive-adapter = { module = "app.cash.sqldelight:primitive-adapter
 com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref = "rss-parser" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup"  }
-decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
-decompose-compose-jetbrains = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "crashlytics" }
@@ -118,6 +116,8 @@ androidx-browser = { module = "androidx.browser:browser", version.ref = "android
 readability4j = { module = "net.dankito.readability4j:readability4j", version.ref = "readability4j" }
 compose-webview = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "compose-webview" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-transition = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 
 [bundles]
 compose = [

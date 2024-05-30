@@ -8,6 +8,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.window.AwtWindow
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.getUnixDeviceName
@@ -20,71 +23,79 @@ import java.awt.FileDialog
 import java.io.File
 import javax.swing.JFrame
 
-@Composable
-fun ImportExportScreen(
-    composeWindow: ComposeWindow,
-    navigateBack: () -> Unit,
-) {
-    val viewModel = desktopViewModel { DI.koin.get<ImportExportViewModel>() }
-    val feedImporterState by viewModel.importExportState.collectAsState()
+internal class ImportExportScreen(
+    private val composeWindow: ComposeWindow,
+) : Screen {
 
-    val importDialogTitle = LocalFeedFlowStrings.current.importDialogTitle
-    val exportDialogTitle = LocalFeedFlowStrings.current.exportDialogTitle
+    @Composable
+    override fun Content() {
+        val viewModel = desktopViewModel { DI.koin.get<ImportExportViewModel>() }
+        val feedImporterState by viewModel.importExportState.collectAsState()
 
-    var showImportDialog by remember { mutableStateOf(false) }
-    var showExportDialog by remember { mutableStateOf(false) }
+        val importDialogTitle = LocalFeedFlowStrings.current.importDialogTitle
+        val exportDialogTitle = LocalFeedFlowStrings.current.exportDialogTitle
 
-    if (showImportDialog) {
-        FileDialog(
-            parent = composeWindow,
-            dialogTitle = importDialogTitle,
-            isLoadDialog = true,
-            onCloseRequest = { result ->
-                showImportDialog = false
-                if (result != null) {
-                    viewModel.importFeed(OpmlInput(result))
-                }
-            },
-        )
-    }
+        var showImportDialog by remember { mutableStateOf(false) }
+        var showExportDialog by remember { mutableStateOf(false) }
 
-    if (showExportDialog) {
-        val deviceName = getUnixDeviceName()
-        val formattedDate = viewModel.getCurrentDateForExport()
-        val fileName = "feedflow-export_${formattedDate}_$deviceName.opml".lowercase()
+        val navigator = LocalNavigator.currentOrThrow
 
-        FileDialog(
-            parent = composeWindow,
-            dialogTitle = exportDialogTitle,
-            exportFileName = fileName,
-            onCloseRequest = { result ->
-                showExportDialog = false
-                if (result != null) {
-                    var outputFile = result
-
-                    if (!outputFile.name.endsWith(".opml")) {
-                        outputFile = File(outputFile.absolutePath + ".opml")
+        if (showImportDialog) {
+            FileDialog(
+                parent = composeWindow,
+                dialogTitle = importDialogTitle,
+                isLoadDialog = true,
+                onCloseRequest = { result ->
+                    showImportDialog = false
+                    if (result != null) {
+                        viewModel.importFeed(OpmlInput(result))
                     }
-                    viewModel.exportFeed(OpmlOutput(outputFile))
-                }
+                },
+            )
+        }
+
+        if (showExportDialog) {
+            val deviceName = getUnixDeviceName()
+            val formattedDate = viewModel.getCurrentDateForExport()
+            val fileName = "feedflow-export_${formattedDate}_$deviceName.opml".lowercase()
+
+            FileDialog(
+                parent = composeWindow,
+                dialogTitle = exportDialogTitle,
+                exportFileName = fileName,
+                onCloseRequest = { result ->
+                    showExportDialog = false
+                    if (result != null) {
+                        var outputFile = result
+
+                        if (!outputFile.name.endsWith(".opml")) {
+                            outputFile = File(outputFile.absolutePath + ".opml")
+                        }
+                        viewModel.exportFeed(OpmlOutput(outputFile))
+                    }
+                },
+            )
+        }
+
+        ImportExportContent(
+            navigateBack = {
+                navigator.pop()
+            },
+            feedImportExportState = feedImporterState,
+            onDoneClick = {
+                navigator.pop()
+            },
+            onRetryClick = {
+                viewModel.clearState()
+            },
+            onImportClick = {
+                showImportDialog = true
+            },
+            onExportClick = {
+                showExportDialog = true
             },
         )
     }
-
-    ImportExportContent(
-        navigateBack = navigateBack,
-        feedImportExportState = feedImporterState,
-        onDoneClick = navigateBack,
-        onRetryClick = {
-            viewModel.clearState()
-        },
-        onImportClick = {
-            showImportDialog = true
-        },
-        onExportClick = {
-            showExportDialog = true
-        },
-    )
 }
 
 @Composable

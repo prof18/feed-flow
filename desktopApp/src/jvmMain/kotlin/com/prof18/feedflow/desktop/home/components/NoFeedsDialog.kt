@@ -3,6 +3,9 @@ package com.prof18.feedflow.desktop.home.components
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.DialogWindow
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsInfoContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -10,10 +13,11 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 internal fun NoFeedsDialog(
     showDialog: Boolean,
     onDismissRequest: () -> Unit,
-    onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit,
 ) {
     val dialogTitle = LocalFeedFlowStrings.current.noFeedModalTitle
+    val navigator = LocalNavigator.currentOrThrow
+
     DialogWindow(
         title = dialogTitle,
         visible = showDialog,
@@ -25,7 +29,7 @@ internal fun NoFeedsDialog(
                 onDismissRequest = onDismissRequest,
                 onAddFeedClick = {
                     onDismissRequest()
-                    onAddFeedClick()
+                    navigator.push(FeedSourceListScreen())
                 },
                 onImportExportClick = {
                     onDismissRequest()

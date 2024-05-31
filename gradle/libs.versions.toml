@@ -18,9 +18,9 @@ multiplatformMarkdownRendererM3 = "0.20.0"
 nav-compose = "2.7.7"
 slf4jNop = "2.0.12"
 turbine = "1.1.0"
-viewModel-ktx = "2.8.1"
+viewModel-ktx = "2.7.0"
 viewModel-compose = "2.7.0"
-lifecycle-runtime-compose = "2.8.1"
+lifecycle-runtime-compose = "2.7.0"
 org-robolectric = "4.12.1"
 # When updating, check the version of sqlite-jdbc in the following link:
 # https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L70
@@ -76,7 +76,7 @@ koin-compose = { module = "io.insert-koin:koin-androidx-compose" }
 koin-core = { module = "io.insert-koin:koin-core"}
 koin-test = { module = "io.insert-koin:koin-test"}
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:lkotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }

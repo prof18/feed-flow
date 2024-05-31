@@ -78,7 +78,7 @@
     <string name="menu_open_comments">Otvoriť komentáre</string>
     <string name="empty_screen_back_to_timeline">Späť na časovú os</string>
     <string name="about_menu_contribute_translations">Pomoc s prekladmi</string>
-    <string name="about_the_app">FeedFlow je minimalistická RSS čítačka založená na osobných preferenciách autora. Články sa otvárajú na príslušných webových stránkach a môžeš si vybrať svoj obľúbený prehliadač zameraný na ochranu súkromia, pre čítanie oddelené od hlavného prehliadača.
+    <string name="about_the_app">FeedFlow je minimalistická RSS čítačka založená na osobných preferenciách autora. Články sa otvárajú na príslušných webových stránkach a môžeš si vybrať svoj obľúbený prehliadač zameraný na ochranu súkromia, pre čítanie oddelené od hlavného prehliadača. Ak sa chceš vyhnúť prehliadaču, FeedFlow ponúka režim čítačky pre nerušené vychutnanie obsahu článkov.
 \nSvoju RSS zbierku môžeš importovať a exportovať z OPML súborov a do nich.</string>
     <string name="import_export_description">FeedFlow podporuje import a export tvojich odberov pomocou OPML súboru, pre lepšiu kompatibilitu s ostatnými čítačkami feedov</string>
     <string name="read_articles_empty_screen_message">Nič tu nie je, je čas začať čítať!</string>
@@ -87,4 +87,10 @@
     <string name="in_app_browser">Prehliadač v aplikácii</string>
     <string name="close_menu_button">Zatvoriť menu</string>
     <string name="settings_reader_mode">Otvárať články v režime čítačky</string>
+    <string name="search_hint_title">Začni písať…</string>
+    <string name="search_hint_subtitle">výsledky sa zobrazia automaticky</string>
+    <string name="search_no_data">Žiadne zhody pre %s.</string>
+    <string name="search_placeholder">Vyhľadať…</string>
+    <string name="link_copied_success">Odkaz úspešne skopírovaný!</string>
+    <string name="reader_mode_warning">ℹ Režim čítačky sa snaží získať obsah článku. Môžu sa vyskytnúť chyby alebo nechcené znaky.</string>
 </resources>

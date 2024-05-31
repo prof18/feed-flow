@@ -40,7 +40,7 @@ jsystem-theme-detector = "3.6"
 native-coroutines = "1.0.0-ALPHA-31"
 ksp = "2.0.0-1.0.21"
 multiplatform-settings = "1.1.1"
-crashlytics = "19.0.0"
+firebase-bom = "33.1.0"
 crashlytics-plugin = "3.0.1"
 google-services = "4.4.2"
 crashk-ios = "0.8.6"
@@ -57,8 +57,8 @@ okhttp = "4.12.0"
 voyager = "1.0.0"
 
 [libraries]
-about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref="about-libraries" }
-about-libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref="about-libraries" }
+about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
+about-libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "about-libraries" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 androidx-lifecycle-viewModel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "viewModel-ktx" }
 androidx-lifecycle-viewModel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModel-compose" }
@@ -73,8 +73,8 @@ io-gitlab-arturbosch-detekt-formatting = { module = "io.gitlab.arturbosch.detekt
 junit = { module = "junit:junit", version.ref = "junit" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-compose = { module = "io.insert-koin:koin-androidx-compose" }
-koin-core = { module = "io.insert-koin:koin-core"}
-koin-test = { module = "io.insert-koin:koin-test"}
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-test = { module = "io.insert-koin:koin-test" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -96,10 +96,11 @@ sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", versi
 sqldelight-primitive-adapter = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sql-delight" }
 com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref = "rss-parser" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup"  }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
-firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "crashlytics" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
 sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
 material-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material-window-size" }
@@ -125,7 +126,7 @@ compose = [
     "accompanist-systemuicontroller", "androidx-lifecycle-runtime-compose",
     "androidx-navigation-navigation-compose",
 ]
-about-libraries = [ "about-libraries-core", "about-libraries-compose" ]
+about-libraries = ["about-libraries-core", "about-libraries-compose"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }

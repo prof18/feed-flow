@@ -87,7 +87,8 @@ dependencies {
 
     implementation(libs.bundles.compose)
     implementation(libs.bundles.about.libraries)
-    implementation(libs.firebase.crashlytics.ktx)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
     implementation(libs.material.window.size)
     implementation(libs.androidx.browser)
     implementation(libs.compose.webview)

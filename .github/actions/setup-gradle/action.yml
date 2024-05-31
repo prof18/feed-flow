@@ -35,6 +35,6 @@ runs:
       with:
         path: |
           ~/.konan
-        key: ${{ runner.os }}-v1-${{ hashFiles('*.versions.toml') }}
+        key: ${{ runner.os }}-v1-${{ hashFiles('*.toml') }}
 
 

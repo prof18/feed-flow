@@ -35,11 +35,6 @@ deleteAllLastSync:
 UPDATE feed_source
 SET last_sync_timestamp = NULL;
 
-updateLogoUrl:
-UPDATE feed_source
-SET logo_url = :logoUrl
-WHERE url_hash = :urlHash;
-
 resetCategory:
 UPDATE feed_source
 SET category_id = NULL

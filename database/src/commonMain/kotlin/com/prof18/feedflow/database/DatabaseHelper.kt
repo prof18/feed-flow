@@ -45,9 +45,6 @@ class DatabaseHelper(
         ),
     )
 
-    fun getDatabaseVersion(): Long =
-        FeedFlowDB.Schema.version
-
     suspend fun getFeedSources(): List<FeedSource> = withContext(backgroundDispatcher) {
         dbRef.feedSourceQueries
             .selectFeedUrls()
@@ -208,14 +205,6 @@ class DatabaseHelper(
                         title = categories.title,
                     )
                 }
-        }
-
-    suspend fun updateFeedSourceLogo(feedSource: FeedSource) =
-        withContext(backgroundDispatcher) {
-            dbRef.feedSourceQueries.updateLogoUrl(
-                logoUrl = feedSource.logoUrl,
-                urlHash = feedSource.id,
-            )
         }
 
     fun deleteAllFeeds() =

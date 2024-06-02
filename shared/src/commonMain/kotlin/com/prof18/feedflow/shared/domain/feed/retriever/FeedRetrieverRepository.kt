@@ -198,12 +198,7 @@ internal class FeedRetrieverRepository(
                 parseFeeds(
                     feedSourceUrls = feedSourceUrls,
                     forceRefresh = forceRefresh,
-                    isFeedSourceMigrationRequired = isFirstLaunch && isSourceImageMigrationRequired(),
                 )
-
-                if (isFirstLaunch && isSourceImageMigrationRequired()) {
-                    settingsHelper.setFeedSourceImageMigrationDone()
-                }
 
                 getFeeds()
             }
@@ -330,7 +325,6 @@ internal class FeedRetrieverRepository(
     private suspend fun parseFeeds(
         feedSourceUrls: List<FeedSource>,
         forceRefresh: Boolean,
-        isFeedSourceMigrationRequired: Boolean,
     ) =
         feedSourceUrls
             .mapNotNull { feedSource ->
@@ -358,16 +352,6 @@ internal class FeedRetrieverRepository(
                             rssChannel = rssChannel,
                             feedSource = feedSource,
                         )
-
-                        if (isFeedSourceMigrationRequired) {
-                            val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
-
-                            logger.d { "Setting source logo url: $logoUrl" }
-
-                            databaseHelper.updateFeedSourceLogo(
-                                feedSource = feedSource.copy(logoUrl = logoUrl),
-                            )
-                        }
 
                         databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
                     } catch (e: Throwable) {
@@ -415,13 +399,6 @@ internal class FeedRetrieverRepository(
                 )
             }
         }
-    }
-
-    @Suppress("MagicNumber")
-    private fun isSourceImageMigrationRequired(): Boolean {
-        val databaseVersion = databaseHelper.getDatabaseVersion()
-        val isMigrationDone = settingsHelper.isFeedSourceImageMigrationDone()
-        return !isMigrationDone && databaseVersion >= 4.0
     }
 
     private fun String.buildUrl(originalUrl: String) =

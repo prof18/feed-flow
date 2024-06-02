@@ -12,12 +12,6 @@ internal class SettingsHelper(
     fun saveFavouriteBrowserId(browserId: String) =
         settings.set(SettingsFields.FAVOURITE_BROWSER_ID.name, browserId)
 
-    fun isFeedSourceImageMigrationDone(): Boolean =
-        settings.getBoolean(SettingsFields.FEED_SOURCE_IMAGE_MIGRATION.name, false)
-
-    fun setFeedSourceImageMigrationDone() =
-        settings.set(SettingsFields.FEED_SOURCE_IMAGE_MIGRATION.name, true)
-
     fun getMarkFeedAsReadWhenScrolling(): Boolean =
         settings.getBoolean(SettingsFields.MARK_FEED_AS_READ_WHEN_SCROLLING.name, true)
 
@@ -39,7 +33,6 @@ internal class SettingsHelper(
 
 internal enum class SettingsFields {
     FAVOURITE_BROWSER_ID,
-    FEED_SOURCE_IMAGE_MIGRATION,
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,
     USE_READER_MODE,

@@ -35,6 +35,7 @@ fun AddFeedScreen(
     val viewModel = koinViewModel<AddFeedViewModel>()
     var feedUrl by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+    var showLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
@@ -45,6 +46,7 @@ fun AddFeedScreen(
             when (feedAddedState) {
                 is FeedAddedState.Error -> {
                     showError = true
+                    showLoading = false
                     errorMessage = when (feedAddedState) {
                         FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
                         FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
@@ -53,14 +55,20 @@ fun AddFeedScreen(
 
                 is FeedAddedState.FeedAdded -> {
                     feedUrl = ""
+                    showLoading = false
                     val message = strings.feedAddedMessage(feedAddedState.feedName)
                     Toast.makeText(context, message, Toast.LENGTH_SHORT)
                         .show()
                 }
 
                 FeedAddedState.FeedNotAdded -> {
+                    showLoading = false
                     showError = false
                     errorMessage = ""
+                }
+
+                FeedAddedState.Loading -> {
+                    showLoading = true
                 }
             }
         }
@@ -73,6 +81,7 @@ fun AddFeedScreen(
         feedUrl = feedUrl,
         showError = showError,
         errorMessage = errorMessage,
+        showLoading = showLoading,
         categoriesState = categoriesState,
         onFeedUrlUpdated = { url ->
             feedUrl = url
@@ -121,6 +130,7 @@ private fun AddScreenContentPreview() {
         AddFeedContent(
             feedUrl = "https://www.ablog.com/feed",
             showError = false,
+            showLoading = false,
             errorMessage = "",
             categoriesState = categoriesExpandedState,
             onFeedUrlUpdated = {},

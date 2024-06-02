@@ -13,6 +13,7 @@ import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
+import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import com.prof18.feedflow.shared.domain.model.AddFeedResponse
@@ -28,6 +29,7 @@ import com.prof18.feedflow.shared.utils.DispatcherProvider
 import com.prof18.feedflow.shared.utils.executeWithRetry
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.model.RssChannel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -53,6 +55,7 @@ internal class FeedRetrieverRepository(
     private val settingsHelper: SettingsHelper,
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
     private val rssChannelMapper: RssChannelMapper,
+    private val feedUrlRetriever: FeedUrlRetriever,
 ) {
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
         FinishedFeedUpdateStatus,
@@ -71,6 +74,20 @@ internal class FeedRetrieverRepository(
     val currentFeedFilter: StateFlow<FeedFilter> = currentFeedFilterMutableState.asStateFlow()
 
     private var currentPage: Int = 0
+
+    private val knownUrlSuffix = listOf(
+        "",
+        "feed",
+        "rss",
+        "atom.xml",
+        "feed.xml",
+        "rss.xml",
+        "index.xml",
+        "atom.json",
+        "feed.json",
+        "rss.json",
+        "index.json",
+    )
 
     suspend fun getFeeds() {
         try {
@@ -203,12 +220,11 @@ internal class FeedRetrieverRepository(
         url: String,
         category: FeedSourceCategory?,
     ): AddFeedResponse = withContext(dispatcherProvider.io) {
-        val rssChannel = try {
-            parser.getRssChannel(url)
-        } catch (e: Throwable) {
-            logger.d { "Wrong url input: $e" }
-            return@withContext AddFeedResponse.NotRssFeed
-        }
+        val addResult = guessLinkAndParseFeed(url)
+            ?: return@withContext AddFeedResponse.NotRssFeed
+        val rssChannel = addResult.channel
+        val urlToSave = addResult.usedUrl
+
         logger.d { "<- Got back ${rssChannel.title}" }
 
         val title = rssChannel.title
@@ -217,7 +233,7 @@ internal class FeedRetrieverRepository(
             val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
 
             val parsedFeedSource = ParsedFeedSource(
-                url = url,
+                url = urlToSave,
                 title = title,
                 categoryName = category?.title?.let {
                     CategoryName(it)
@@ -407,6 +423,48 @@ internal class FeedRetrieverRepository(
         val isMigrationDone = settingsHelper.isFeedSourceImageMigrationDone()
         return !isMigrationDone && databaseVersion >= 4.0
     }
+
+    private fun String.buildUrl(originalUrl: String) =
+        if (originalUrl.endsWith("/")) {
+            "$originalUrl$this"
+        } else {
+            "$originalUrl/$this"
+        }
+
+    private suspend fun guessLinkAndParseFeed(originalUrl: String): AddResult? {
+        for (suffix in knownUrlSuffix) {
+            val actualUrl = suffix.buildUrl(originalUrl)
+            logger.d { "Trying with actualUrl: $actualUrl" }
+            try {
+                val channel = parser.getRssChannel(actualUrl)
+                return AddResult(
+                    channel = channel,
+                    usedUrl = actualUrl,
+                )
+            } catch (_: Throwable) {
+                // Do nothing
+            }
+        }
+
+        logger.d { "Trying to get: $originalUrl" }
+        val url = feedUrlRetriever.getFeedUrl(originalUrl) ?: return null
+        logger.d { "Found url: $url" }
+        return try {
+            val channel = parser.getRssChannel(url)
+            AddResult(
+                channel = channel,
+                usedUrl = url,
+            )
+        } catch (_: Throwable) {
+            // Do nothing
+            null
+        }
+    }
+
+    private data class AddResult(
+        val channel: RssChannel,
+        val usedUrl: String,
+    )
 
     private companion object {
         private const val PAGE_SIZE = 40L

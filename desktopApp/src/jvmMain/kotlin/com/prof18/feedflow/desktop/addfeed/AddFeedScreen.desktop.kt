@@ -29,6 +29,7 @@ fun AddFeedScreen(
 ) {
     var feedUrl by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+    var showLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
     val viewModel = desktopViewModel { DI.koin.get<AddFeedViewModel>() }
@@ -41,6 +42,7 @@ fun AddFeedScreen(
         viewModel.feedAddedState.collect { feedAddedState ->
             when (feedAddedState) {
                 is FeedAddedState.Error -> {
+                    showLoading = false
                     showError = true
                     errorMessage = when (feedAddedState) {
                         FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
@@ -56,13 +58,19 @@ fun AddFeedScreen(
                         duration = SnackbarDuration.Short,
                     )
 
+                    showLoading = false
                     feedUrl = ""
                     latestOnFeedAdded()
                 }
 
                 FeedAddedState.FeedNotAdded -> {
+                    showLoading = false
                     showError = false
                     errorMessage = ""
+                }
+
+                FeedAddedState.Loading -> {
+                    showLoading = true
                 }
             }
         }
@@ -74,6 +82,7 @@ fun AddFeedScreen(
         modifier = modifier,
         feedUrl = feedUrl,
         showError = showError,
+        showLoading = showLoading,
         errorMessage = errorMessage,
         onFeedUrlUpdated = { url ->
             feedUrl = url
@@ -103,6 +112,7 @@ private fun AddScreenContentPreview() {
         AddFeedContent(
             feedUrl = "https://www.ablog.com/feed",
             showError = false,
+            showLoading = false,
             errorMessage = "",
             snackbarHost = { SnackbarHost(SnackbarHostState()) },
             categoriesState = categoriesExpandedState,

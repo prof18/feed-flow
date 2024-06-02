@@ -2,7 +2,6 @@ package com.prof18.feedflow.shared.domain
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.shared.utils.DispatcherProvider
-import com.prof18.rssparser.exception.HttpException
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -18,8 +17,8 @@ import platform.Foundation.create
 import platform.Foundation.dataTaskWithURL
 import kotlin.coroutines.resume
 
-@Suppress("CAST_NEVER_SUCCEEDS")
 @OptIn(BetaInteropApi::class)
+@Suppress("MagicNumber")
 internal class IosHtmlRetriever(
     private val dispatcherProvider: DispatcherProvider,
     private val logger: Logger,
@@ -36,17 +35,14 @@ internal class IosHtmlRetriever(
                     logger.e(throwable) { "Unable to retrieve HTML, skipping" }
 
                     continuation.resume(null)
-                } else if (response != null && (response as NSHTTPURLResponse).statusCode !in 200..299) {
-                    val exception = HttpException(
-                        code = response.statusCode.toInt(),
-                        message = response.description,
-                    )
-                    logger.e(exception) { "Unable to retrieve HTML, skipping" }
-
-                    continuation.resume(null)
                 } else if (data != null) {
-                    val htmlString = NSString.create(data = data, encoding = NSUTF8StringEncoding)
-                    continuation.resume(htmlString as String)
+                    val responseCode = (response as? NSHTTPURLResponse)?.statusCode ?: 0
+                    if (responseCode == 200L) {
+                        val htmlString = NSString.create(data, NSUTF8StringEncoding).toString()
+                        continuation.resume(htmlString)
+                    } else {
+                        continuation.resume(null)
+                    }
                 }
             }
 

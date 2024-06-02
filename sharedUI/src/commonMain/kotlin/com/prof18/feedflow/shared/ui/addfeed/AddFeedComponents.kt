@@ -2,14 +2,18 @@ package com.prof18.feedflow.shared.ui.addfeed
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.prof18.feedflow.core.model.CategoriesState
@@ -24,6 +28,7 @@ import com.prof18.feedflow.shared.ui.utils.tagForTesting
 fun AddFeedContent(
     feedUrl: String,
     showError: Boolean,
+    showLoading: Boolean,
     errorMessage: String,
     categoriesState: CategoriesState,
     onFeedUrlUpdated: (String) -> Unit,
@@ -77,10 +82,17 @@ fun AddFeedContent(
                         .padding(bottom = Spacing.regular)
                         .fillMaxWidth()
                         .tagForTesting(TestingTag.ADD_FEED_BUTTON),
-                    enabled = feedUrl.isNotBlank(),
+                    enabled = feedUrl.isNotBlank() && !showLoading,
                     onClick = addFeed,
                 ) {
-                    Text(LocalFeedFlowStrings.current.addFeed)
+                    if (showLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
+                        )
+                    } else {
+                        Text(LocalFeedFlowStrings.current.addFeed)
+                    }
                 }
             }
         }

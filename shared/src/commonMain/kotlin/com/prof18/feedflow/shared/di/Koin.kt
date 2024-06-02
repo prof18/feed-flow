@@ -9,6 +9,7 @@ import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
+import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
@@ -103,6 +104,7 @@ private val coreModule = module {
             settingsHelper = get(),
             feedSourceLogoRetriever = get(),
             rssChannelMapper = get(),
+            feedUrlRetriever = get(),
         )
     }
 
@@ -173,7 +175,6 @@ private val coreModule = module {
         FeedSourceLogoRetriever(
             htmlRetriever = get(),
             htmlParser = get(),
-
         )
     }
 
@@ -188,6 +189,13 @@ private val coreModule = module {
         SearchViewModel(
             feedRetrieverRepository = get(),
             dateFormatter = get(),
+        )
+    }
+
+    factory {
+        FeedUrlRetriever(
+            htmlParser = get(),
+            htmlRetriever = get(),
         )
     }
 }

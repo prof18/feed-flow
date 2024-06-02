@@ -23,4 +23,22 @@ internal class JvmHtmlParser(
 
         return faviconLink?.attr("href")
     }
+
+    override fun getRssUrl(html: String): String? {
+        val doc = Jsoup.parse(html)
+        val queries = listOf(
+            "link[type='application/rss+xml']",
+            "link[type='application/atom+xml']",
+            "link[type='application/json']",
+            "link[type='application/feed+json']",
+        )
+        for (query in queries) {
+            val rssElement = doc.select(query).firstOrNull()
+            val rssUrl = rssElement?.attr("href")
+            if (rssUrl != null) {
+                return rssUrl
+            }
+        }
+        return null
+    }
 }

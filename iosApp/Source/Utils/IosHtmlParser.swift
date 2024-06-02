@@ -34,4 +34,29 @@ class IosHtmlParser: HtmlParser {
             return nil
         }
     }
+
+    func getRssUrl(html: String) -> String? {
+        do {
+            let doc: Document = try SwiftSoup.parse(html)
+
+            let queries = [
+                "link[type='application/rss+xml']",
+                "link[type='application/atom+xml']",
+                "link[type='application/json']",
+                "link[type='application/feed+json']"
+            ]
+            for query in queries {
+                let element = try doc.select(query).first()
+                let url = try element?.attr("href")
+                if url != nil {
+                    return url
+                }
+            }
+            return nil
+        } catch {
+            KotlinDependencies.shared.getLogger(tag: "IosHtmlParser")
+                .e(messageString: "Error during getting the rss url: \(error)")
+            return nil
+        }
+    }
 }

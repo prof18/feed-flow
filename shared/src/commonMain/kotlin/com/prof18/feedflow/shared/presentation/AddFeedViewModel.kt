@@ -46,6 +46,7 @@ class AddFeedViewModel internal constructor(
 
     fun addFeed() {
         scope.launch {
+            feedAddedMutableState.emit(FeedAddedState.Loading)
             if (feedUrl.isNotEmpty()) {
                 val url = sanitizeUrl(feedUrl)
                 val categoryName = getSelectedCategory()

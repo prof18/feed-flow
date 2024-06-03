@@ -31,9 +31,26 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+
     #if !DEBUG
-        FirebaseApp.configure()
+        configureFirebase()
     #endif
         return true
+    }
+
+    private func configureFirebase() {
+        #if DEBUG
+            let fileName = "GoogleService-Info-dev"
+        #else
+            let fileName = "GoogleService-Info"
+        #endif
+
+        guard let filePath = Bundle.main.path(forResource: fileName, ofType: "plist") else {
+            return
+        }
+        guard let options = FirebaseOptions(contentsOfFile: filePath) else {
+            return
+        }
+        FirebaseApp.configure(options: options)
     }
 }

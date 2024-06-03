@@ -109,6 +109,7 @@ bin/
 
 /iosApp/Plist/Prefix
 /iosApp/GoogleService-Info.plist
+/iosApp/GoogleService-Info-dev.plist
 /desktopApp/src/jvmMain/resources/props.properties
 /desktopApp/embedded.provisionprofile
 /desktopApp/runtime.provisionprofile

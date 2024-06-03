@@ -11,6 +11,7 @@ import shared
 import NukeUI
 
 @MainActor
+// swiftlint:disable type_body_length
 struct SidebarDrawer: View {
 
     @EnvironmentObject var appState: AppState
@@ -299,6 +300,7 @@ struct SidebarDrawer: View {
         }
     }
 }
+// swiftlint:enable type_body_length
 
 #Preview {
     SidebarDrawer(

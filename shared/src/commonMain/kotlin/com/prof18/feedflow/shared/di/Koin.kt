@@ -41,9 +41,7 @@ fun initKoin(
 ): KoinApplication {
     return startKoin {
         modules(
-            modules + coreModule + getLoggingModule(
-                appEnvironment,
-            ) + platformModule,
+            modules + coreModule + getLoggingModule(appEnvironment) + getPlatformModule(appEnvironment),
         )
     }
 }
@@ -200,7 +198,7 @@ private val coreModule = module {
     }
 }
 
-internal expect val platformModule: Module
+internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module
 
 internal expect inline fun <reified T : BaseViewModel> Module.viewModel(
     qualifier: Qualifier? = null,

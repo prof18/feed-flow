@@ -342,6 +342,7 @@ class DatabaseHelper(
 
     internal companion object {
         const val DB_FILE_NAME_WITH_EXTENSION = "FeedFlow.db"
-        const val DATABASE_NAME = "FeedFlowDB"
+        const val DATABASE_NAME_PROD = "FeedFlowDB"
+        const val DATABASE_NAME_DEBUG = "FeedFlowDB-debug"
     }
 }

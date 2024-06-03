@@ -37,7 +37,7 @@ internal class RssChannelMapper(
                 null
             } else {
                 FeedItem(
-                    id = url.hashCode(),
+                    id = url.hashCode().toString(),
                     url = url,
                     title = title,
                     subtitle = rssItem.description?.let { description ->

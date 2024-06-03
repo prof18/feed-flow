@@ -2,7 +2,6 @@ package com.prof18.feedflow.database
 
 import app.cash.sqldelight.Transacter
 import app.cash.sqldelight.TransactionWithoutReturn
-import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrDefault
@@ -16,8 +15,6 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.db.FeedFlowDB
-import com.prof18.feedflow.db.Feed_item
-import com.prof18.feedflow.db.Feed_source
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.db.SelectFeedUrls
 import com.prof18.feedflow.db.SelectFeeds
@@ -34,16 +31,7 @@ class DatabaseHelper(
     private val backgroundDispatcher: CoroutineDispatcher,
     private val logger: Logger,
 ) {
-    private val dbRef: FeedFlowDB = FeedFlowDB(
-        sqlDriver,
-        feed_itemAdapter = Feed_item.Adapter(
-            url_hashAdapter = IntColumnAdapter,
-            feed_source_idAdapter = IntColumnAdapter,
-        ),
-        feed_sourceAdapter = Feed_source.Adapter(
-            url_hashAdapter = IntColumnAdapter,
-        ),
-    )
+    private val dbRef: FeedFlowDB = FeedFlowDB(sqlDriver)
 
     suspend fun getFeedSources(): List<FeedSource> = withContext(backgroundDispatcher) {
         dbRef.feedSourceQueries
@@ -86,7 +74,10 @@ class DatabaseHelper(
     suspend fun insertCategories(categories: List<CategoryName>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             categories.forEach { category ->
-                dbRef.feedSourceCategoryQueries.insertFeedSourceCategory(category.name)
+                dbRef.feedSourceCategoryQueries.insertFeedSourceCategory(
+                    id = category.name.hashCode().toString(),
+                    title = category.name,
+                )
             }
         }
 
@@ -95,7 +86,7 @@ class DatabaseHelper(
             feedSource.forEach { feedSource ->
                 if (feedSource.categoryName != null) {
                     dbRef.feedSourceQueries.insertFeedSource(
-                        url_hash = feedSource.hashCode(),
+                        url_hash = feedSource.hashCode().toString(),
                         url = feedSource.url,
                         title = feedSource.title,
                         title_ = feedSource.categoryName?.name.toString(),
@@ -103,7 +94,7 @@ class DatabaseHelper(
                     )
                 } else {
                     dbRef.feedSourceQueries.insertFeedSourceWithNoCategory(
-                        url_hash = feedSource.hashCode(),
+                        url_hash = feedSource.id,
                         url = feedSource.url,
                         title = feedSource.title,
                         logo_url = feedSource.logoUrl,
@@ -226,7 +217,7 @@ class DatabaseHelper(
             .mapToOneOrDefault(0, backgroundDispatcher)
             .flowOn(backgroundDispatcher)
 
-    suspend fun deleteCategory(id: Long) =
+    suspend fun deleteCategory(id: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedSourceQueries.resetCategory(categoryId = id)
             dbRef.feedSourceCategoryQueries.delete(id = id)
@@ -240,7 +231,7 @@ class DatabaseHelper(
             )
         }
 
-    suspend fun updateFeedSourceName(feedSourceId: Int, newName: String) =
+    suspend fun updateFeedSourceName(feedSourceId: String, newName: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedSourceQueries.updateFeedSourceTitle(
                 title = newName,
@@ -267,7 +258,7 @@ class DatabaseHelper(
         }
     }
 
-    private fun FeedFilter.getFeedSourceId(): Int? {
+    private fun FeedFilter.getFeedSourceId(): String? {
         return when (this) {
             is FeedFilter.Source -> feedSource.id
 
@@ -279,7 +270,7 @@ class DatabaseHelper(
         }
     }
 
-    private fun FeedFilter.getCategoryId(): Long? {
+    private fun FeedFilter.getCategoryId(): String? {
         return when (this) {
             is FeedFilter.Category -> feedCategory.id
 

@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MenuOpen
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -148,7 +148,7 @@ private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
     ) {
         Icon(
             imageVector = if (isDrawerOpen) {
-                Icons.Default.MenuOpen
+                Icons.AutoMirrored.Filled.MenuOpen
             } else {
                 Icons.Default.Menu
             },
@@ -164,7 +164,7 @@ private fun HomeAppBarPreview() {
         HomeAppBar(
             currentFeedFilter = FeedFilter.Source(
                 feedSource = FeedSource(
-                    id = 0,
+                    id = "0",
                     url = "",
                     title = "A very very very very very very long title",
                     category = null,

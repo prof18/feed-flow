@@ -1,6 +1,7 @@
 package com.prof18.feedflow.core.model
 
 data class ParsedFeedSource(
+    val id: String,
     val url: String,
     val title: String,
     val categoryName: CategoryName?,
@@ -29,6 +30,7 @@ data class ParsedFeedSource(
                 return null
             }
             return ParsedFeedSource(
+                id = url.hashCode().toString(),
                 url = url!!,
                 title = title!!,
                 categoryName = if (category != null) {

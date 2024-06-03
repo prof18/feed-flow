@@ -1,10 +1,10 @@
 import kotlin.Int;
 
 CREATE TABLE feed_source (
-    url_hash INTEGER AS Int NOT NULL PRIMARY KEY,
+    url_hash TEXT NOT NULL PRIMARY KEY,
     url TEXT NOT NULL,
     title TEXT NOT NULL,
-    category_id INTEGER,
+    category_id TEXT,
     last_sync_timestamp INTEGER,
     logo_url TEXT
 );

@@ -228,6 +228,7 @@ internal class FeedRetrieverRepository(
             val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
 
             val parsedFeedSource = ParsedFeedSource(
+                id = urlToSave.hashCode().toString(),
                 url = urlToSave,
                 title = title,
                 categoryName = category?.title?.let {
@@ -250,13 +251,13 @@ internal class FeedRetrieverRepository(
         val parsedFeedSource = feedFound.parsedFeedSource
         val currentTimestamp = dateFormatter.currentTimeMillis()
         val feedSource = FeedSource(
-            id = parsedFeedSource.hashCode(),
+            id = parsedFeedSource.hashCode().toString(),
             url = parsedFeedSource.url,
             title = parsedFeedSource.title,
             lastSyncTimestamp = currentTimestamp,
             category = parsedFeedSource.categoryName?.let { categoryName ->
                 FeedSourceCategory(
-                    id = 2,
+                    id = categoryName.name.hashCode().toString(),
                     title = categoryName.name,
                 )
             },

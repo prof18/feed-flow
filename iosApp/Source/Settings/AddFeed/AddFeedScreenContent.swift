@@ -25,7 +25,7 @@ struct AddFeedScreenContent: View {
 
     let showCloseButton: Bool
     let updateFeedUrlTextFieldValue: (String) -> Void
-    let deleteCategory: (Int64) -> Void
+    let deleteCategory: (String) -> Void
     let addNewCategory: (CategoryName) -> Void
     let addFeed: () -> Void
 

@@ -46,7 +46,7 @@ private fun getDatabaseModule(appEnvironment: AppEnvironment): Module =
         }
     }
 
-internal actual val platformModule: Module = module {
+internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
     factory {
         OpmlFeedHandler(
             dispatcherProvider = get(),

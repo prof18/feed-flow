@@ -58,9 +58,9 @@ internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
 ): KoinDefinition<T> = single(qualifier, definition = definition)
 
 @OptIn(ExperimentalSettingsImplementation::class)
-internal actual val platformModule: Module = module {
+internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
     single<SqlDriver> {
-        createDatabaseDriver()
+        createDatabaseDriver(appEnvironment)
     }
 
     single<DispatcherProvider> {

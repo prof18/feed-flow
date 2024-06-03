@@ -32,10 +32,14 @@ jobs:
           KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
           KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
 
+      - name: Create Debug dummy Firebase json
+        run: |
+          cp config/dummy-google-services.json androidApp/debug/google-services.json
+
       - name: Create Firebase json
         run: |
-          echo "$FIREBASE_JSON" > androidApp/google-services.json.b64
-          base64 -d -i androidApp/google-services.json.b64 > androidApp/google-services.json
+          echo "$FIREBASE_JSON" > androidApp/release/google-services.json.b64
+          base64 -d -i androidApp/google-services.json.b64 > androidApp/release/google-services.json
         env:
           FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
 

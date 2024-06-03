@@ -61,12 +61,10 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
 
-      - name: Create Firebase json
+      - name: Create dummy Firebase json
         run: |
-          echo "$FIREBASE_JSON" > androidApp/google-services.json.b64
-          base64 -d -i androidApp/google-services.json.b64 > androidApp/google-services.json
-        env:
-          FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
+          cp config/dummy-google-services.json androidApp/debug/google-services.json    
+          cp config/dummy-google-services.json androidApp/release/google-services.json    
 
       - name: Build Android Sample
         run: ./gradlew :androidApp:assembleDebug

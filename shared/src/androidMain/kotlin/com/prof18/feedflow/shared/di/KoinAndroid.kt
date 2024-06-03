@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.di
 
 import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.HtmlRetriever
@@ -27,10 +28,11 @@ internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
     noinline definition: Definition<T>,
 ): KoinDefinition<T> = koinViewModel(qualifier, definition)
 
-internal actual val platformModule: Module = module {
+internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
     single<SqlDriver> {
         createDatabaseDriver(
             context = get(),
+            appEnvironment = appEnvironment,
         )
     }
 

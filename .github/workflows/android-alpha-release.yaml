@@ -34,12 +34,13 @@ jobs:
 
       - name: Create Debug dummy Firebase json
         run: |
-          cp config/dummy-google-services.json androidApp/debug/google-services.json
+          cp config/dummy-google-services.json androidApp/src/debug/
+          mv androidApp/src/debug/dummy-google-services.json androidApp/src/debug/google-services.json
 
       - name: Create Firebase json
         run: |
           echo "$FIREBASE_JSON" > androidApp/release/google-services.json.b64
-          base64 -d -i androidApp/google-services.json.b64 > androidApp/release/google-services.json
+          base64 -d -i androidApp/release/google-services.json.b64 > androidApp/src/release/google-services.json
         env:
           FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
 

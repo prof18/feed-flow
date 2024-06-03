@@ -2,6 +2,8 @@ package com.prof18.feedflow.android
 
 import android.app.Application
 import android.content.Context
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.prof18.feedflow.android.readermode.ReaderModeViewModel
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.shared.di.getWith
@@ -22,6 +24,7 @@ class FeedFlowApp : Application() {
         }
 
         if (appEnvironment.isRelease()) {
+            Firebase.crashlytics.setCrashlyticsCollectionEnabled(true)
             enableKmpCrashlytics()
         }
 

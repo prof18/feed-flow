@@ -4,9 +4,7 @@ import app.cash.sqldelight.db.SqlDriver
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.domain.HtmlParser
-import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
-import com.prof18.feedflow.shared.domain.JvmHtmlRetriever
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.BaseViewModel
@@ -70,13 +68,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     single<Settings> {
         val preferences = Preferences.userRoot()
         PreferencesSettings(preferences)
-    }
-
-    factory<HtmlRetriever> {
-        JvmHtmlRetriever(
-            dispatcherProvider = get(),
-            logger = getWith("JvmHtmlRetriever"),
-        )
     }
 
     factory {

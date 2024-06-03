@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
+import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
@@ -23,6 +24,7 @@ import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.rssparser.RssParser
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.KoinApplication
@@ -194,6 +196,17 @@ private val coreModule = module {
         FeedUrlRetriever(
             htmlParser = get(),
             htmlRetriever = get(),
+        )
+    }
+
+    single {
+        HttpClient()
+    }
+
+    factory {
+        HtmlRetriever(
+            logger = getWith("HtmlRetriever"),
+            client = get(),
         )
     }
 }

@@ -194,7 +194,7 @@ class HomeViewModel internal constructor(
         }
     }
 
-    fun markAsRead(feedItemId: Int) {
+    fun markAsRead(feedItemId: String) {
         scope.launch {
             feedRetrieverRepository.markAsRead(
                 hashSetOf(

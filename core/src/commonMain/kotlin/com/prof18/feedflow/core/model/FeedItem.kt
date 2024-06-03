@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class FeedItem(
-    val id: Int,
+    val id: String,
     val url: String,
     val title: String?,
     val subtitle: String?,

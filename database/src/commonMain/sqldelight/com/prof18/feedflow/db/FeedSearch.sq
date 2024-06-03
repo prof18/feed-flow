@@ -1,7 +1,7 @@
 import kotlin.Int;
 
 CREATE VIRTUAL TABLE IF NOT EXISTS feed_search USING FTS4(
-    url_hash INTEGER AS Int NOT NULL PRIMARY KEY,
+    url_hash TEXT NOT NULL PRIMARY KEY,
     title TEXT,
     subtitle TEXT,
     tokenize="unicode61"

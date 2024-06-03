@@ -87,7 +87,7 @@ class AddFeedViewModel internal constructor(
         }
     }
 
-    fun deleteCategory(categoryId: Long) {
+    fun deleteCategory(categoryId: String) {
         scope.launch {
             feedManagerRepository.deleteCategory(categoryId)
         }
@@ -164,6 +164,7 @@ class AddFeedViewModel internal constructor(
     )
 
     private companion object {
-        private const val EMPTY_CATEGORY_ID = Long.MAX_VALUE
+        // To maintain backward compatibility
+        private const val EMPTY_CATEGORY_ID = Long.MAX_VALUE.toString()
     }
 }

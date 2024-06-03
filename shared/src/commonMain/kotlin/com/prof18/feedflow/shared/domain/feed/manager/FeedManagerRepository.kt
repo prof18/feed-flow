@@ -126,11 +126,11 @@ internal class FeedManagerRepository(
         }
     }
 
-    suspend fun deleteCategory(categoryId: Long) {
+    suspend fun deleteCategory(categoryId: String) {
         databaseHelper.deleteCategory(categoryId)
     }
 
-    suspend fun updateFeedSourceName(feedSourceId: Int, newName: String) {
+    suspend fun updateFeedSourceName(feedSourceId: String, newName: String) {
         databaseHelper.updateFeedSourceName(feedSourceId, newName)
     }
 }

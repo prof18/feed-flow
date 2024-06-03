@@ -2,13 +2,13 @@ import kotlin.Boolean;
 import kotlin.Int;
 
 CREATE TABLE feed_item (
-    url_hash INTEGER AS Int NOT NULL PRIMARY KEY,
+    url_hash TEXT NOT NULL PRIMARY KEY, -- New 'url_hash' as TEXT
     url TEXT NOT NULL,
     title TEXT,
     subtitle TEXT,
     content TEXT,
     image_url TEXT,
-    feed_source_id INTEGER AS Int NOT NULL,
+    feed_source_id TEXT NOT NULL,    -- Updated 'feed_source_id' to TEXT
     is_read INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_bookmarked INTEGER AS Boolean NOT NULL DEFAULT 0,
     pub_date INTEGER,

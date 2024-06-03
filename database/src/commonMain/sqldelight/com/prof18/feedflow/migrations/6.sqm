@@ -1,0 +1,125 @@
+-------- FEED SOURCE CATEGORY --------
+-- Migration of category to change 'id' to a string type (without autoincrement)
+CREATE TABLE new_feed_source_category (
+    id TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL UNIQUE
+);
+
+-- Copy existing data
+INSERT INTO new_feed_source_category (id, title)
+SELECT
+    CAST(id AS TEXT),
+    title
+FROM feed_source_category;
+
+-- Drop old table
+DROP TABLE feed_source_category;
+
+-- Rename new table to original name
+ALTER TABLE new_feed_source_category RENAME TO feed_source_category;
+
+-------- FEED SOURCE --------
+-- Drop existing triggers (as they reference the old table structure)
+DROP TRIGGER IF EXISTS populate_feed_search;
+DROP TRIGGER IF EXISTS delete_feed_search;
+
+-- Migration to change 'url_hash' to a string type in 'feed_source'
+CREATE TABLE new_feed_source (
+    url_hash TEXT NOT NULL PRIMARY KEY,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    category_id TEXT, -- Assuming 'category_id' is now TEXT from previous migration
+    last_sync_timestamp INTEGER,
+    logo_url TEXT
+);
+
+-- Copy existing data, converting url_hash to TEXT
+INSERT INTO new_feed_source (url_hash, url, title, category_id, last_sync_timestamp, logo_url)
+SELECT
+    CAST(url_hash AS TEXT),
+    url,
+    title,
+    CAST(category_id AS TEXT),
+    last_sync_timestamp,
+    logo_url
+FROM feed_source;
+
+-- Drop old table
+DROP TABLE feed_source;
+
+-- Rename new table to original name
+ALTER TABLE new_feed_source RENAME TO feed_source;
+
+-------- FEED ITEM --------
+-- Migration to change 'url_hash' to a string type
+CREATE TABLE new_feed_item (
+    url_hash TEXT NOT NULL PRIMARY KEY, -- New 'url_hash' as TEXT
+    url TEXT NOT NULL,
+    title TEXT,
+    subtitle TEXT,
+    content TEXT,
+    image_url TEXT,
+    feed_source_id TEXT NOT NULL,    -- Updated 'feed_source_id' to TEXT
+    is_read INTEGER AS Boolean NOT NULL DEFAULT 0,
+    is_bookmarked INTEGER AS Boolean NOT NULL DEFAULT 0,
+    pub_date INTEGER,
+    comments_url TEXT
+);
+
+-- Copy existing data, converting url_hash to TEXT
+INSERT INTO new_feed_item (url_hash, url, title, subtitle, content, image_url, feed_source_id, is_read, is_bookmarked, pub_date, comments_url)
+SELECT
+    CAST(url_hash AS TEXT),       -- Directly convert url_hash to strings (no NULL check needed)
+    url,
+    title,
+    subtitle,
+    content,
+    image_url,
+    CAST(feed_source_id AS TEXT), -- Convert feed_source_id to TEXT
+    is_read,
+    is_bookmarked,
+    pub_date,
+    comments_url
+FROM feed_item;
+
+-- Drop old table
+DROP TABLE feed_item;
+
+-- Rename new table to original name
+ALTER TABLE new_feed_item RENAME TO feed_item;
+
+
+-------- FEED SEARCH --------
+-- Version 1.3
+-- Migration to change 'url_hash' to a string type in 'feed_search' and update triggers
+
+DROP TABLE IF EXISTS feed_search;
+
+-- Recreate the FTS4 table with TEXT url_hash and a temporary name
+CREATE VIRTUAL TABLE IF NOT EXISTS feed_search USING FTS4(
+    url_hash TEXT NOT NULL PRIMARY KEY,
+    title TEXT,
+    subtitle TEXT,
+    tokenize="unicode61"
+);
+
+-- Populate the new table (converting url_hash to TEXT)
+INSERT INTO feed_search (url_hash, title, subtitle)
+SELECT
+    url_hash,
+    title,
+    subtitle
+FROM feed_item;
+
+-- Recreate triggers with updated references
+CREATE TRIGGER populate_feed_search
+AFTER INSERT ON feed_item
+BEGIN
+    INSERT OR IGNORE INTO feed_search(url_hash, title, subtitle) VALUES (new.url_hash, new.title, new.subtitle);
+END;
+
+CREATE TRIGGER delete_feed_search
+BEFORE DELETE ON feed_item
+BEGIN
+    DELETE FROM feed_search WHERE url_hash = old.url_hash;
+END;

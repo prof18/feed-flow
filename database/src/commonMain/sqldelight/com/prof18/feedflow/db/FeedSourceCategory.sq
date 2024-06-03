@@ -1,11 +1,11 @@
 CREATE TABLE feed_source_category (
-    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    id TEXT NOT NULL PRIMARY KEY,
     title TEXT NOT NULL UNIQUE
 );
 
 insertFeedSourceCategory:
-INSERT OR IGNORE INTO feed_source_category(title)
-VALUES (?);
+INSERT OR IGNORE INTO feed_source_category(id, title)
+VALUES (?,?);
 
 getCategoryByName:
 SELECT * FROM feed_source_category WHERE title = ?;

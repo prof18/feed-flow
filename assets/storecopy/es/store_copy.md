@@ -1,35 +1,47 @@
-# Title
+# Título
 
 FeedFlow
 
-## Short desc
+## Breve descripción
 
-Minimalistic RSS Reader
+Lector RSS minimalista
 
-## Long desc
+## Descripción larga
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+Sigue tus canales RSS favoritos con FeedFlow, un lector de RSS minimalista.
+Disfruta de una experiencia de lectura ordenada, ya que FeedFlow ofrece una
+lista minimalista y abre los artículos en sus respectivas páginas web o en modo
+lector.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+Adapta tu experiencia de navegación eligiendo tu navegador preferido. De esta
+manera, puedes seleccionar tu navegador favorito centrado en la privacidad para
+separar la experiencia de lectura de tu navegador principal. Y si quieres evitar
+el navegador, FeedFlow ofrece un modo lector para disfrutar del contenido de los
+artículos sin distracciones.
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+Cambiar a FeedFlow es muy sencillo. La colección RSS existente se puede importar
+fácilmente gracias a nuestras funciones de importación y exportación integrales
+y fáciles de usar utilizando archivos OPML, lo que garantiza una experiencia de
+lectura fluida.
 
-Just focus on reading (or scrolling)!
+¡Solo concéntrate en leer (o desplazarte)!
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+La aplicación aún está en desarrollo, por lo que es posible que falten algunas
+funciones o que haya problemas. ¡Informe de cualquier error o sugerencia de
+funciones!
 
 ## Screenshot 1
 
-All your feeds in your pocket
+Todos tus feeds en tu bolsillo
 
 ## Screenshot 3
 
-Import your existing collection
+Importa tu colección existente
 
 ## Screenshot 4
 
-Open the articles in your favourite browser
+Abre los artículos en tu navegador favorito
 
 ## Screenshot 5
 
-Enjoy a clutter-free reader mode
+Disfruta de un modo de lectura ordenado

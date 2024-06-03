@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="add_feed">Añadir canal</string>
+    <string name="feed_url">URL del canal</string>
+    <string name="feed_url_placeholder">https://miblogfavorito.com/feed</string>
+</resources>

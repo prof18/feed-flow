@@ -8,8 +8,6 @@ import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.domain.HtmlParser
-import com.prof18.feedflow.shared.domain.HtmlRetriever
-import com.prof18.feedflow.shared.domain.IosHtmlRetriever
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
@@ -79,13 +77,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     single<Settings> {
         KeychainSettings(service = "FeedFlow")
-    }
-
-    factory<HtmlRetriever> {
-        IosHtmlRetriever(
-            dispatcherProvider = get(),
-            logger = getWith("IosHtmlRetriever"),
-        )
     }
 }
 

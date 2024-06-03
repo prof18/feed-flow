@@ -64,6 +64,7 @@ kotlin {
                 implementation(libs.com.prof18.rss.parser)
                 implementation(libs.multiplatform.settings)
                 implementation(libs.kotlinx.date.time)
+                implementation(libs.ktor.client.core)
 
                 api(project(":core"))
                 api(project(":i18n"))
@@ -86,7 +87,7 @@ kotlin {
             dependencies {
                 implementation(libs.jsoup)
                 implementation(libs.readability4j)
-                implementation(libs.okhttp)
+                implementation(libs.ktor.client.okhttp)
             }
         }
 
@@ -134,6 +135,7 @@ kotlin {
 
             dependencies {
                 api(libs.touchlab.kermit.simple)
+                implementation(libs.ktor.client.darwin)
             }
         }
 

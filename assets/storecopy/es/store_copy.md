@@ -30,18 +30,18 @@ La aplicación aún está en desarrollo, por lo que es posible que falten alguna
 funciones o que haya problemas. ¡Informe de cualquier error o sugerencia de
 funciones!
 
-## Screenshot 1
+## Captura de pantalla 1
 
 Todos tus feeds en tu bolsillo
 
-## Screenshot 3
+## Captura de pantalla 3
 
 Importa tu colección existente
 
-## Screenshot 4
+## Captura de pantalla 4
 
 Abre los artículos en tu navegador favorito
 
-## Screenshot 5
+## Captura de pantalla 5
 
 Disfruta de un modo de lectura ordenado

@@ -9,6 +9,8 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.Search
+import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
+import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
@@ -55,6 +57,7 @@ internal class FeedRetrieverRepository(
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
     private val rssChannelMapper: RssChannelMapper,
     private val feedUrlRetriever: FeedUrlRetriever,
+    private val syncedDatabaseHelper: SyncedDatabaseHelper,
 ) {
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
         FinishedFeedUpdateStatus,
@@ -267,8 +270,12 @@ internal class FeedRetrieverRepository(
             ),
         )
         databaseHelper.insertFeedItems(feedItems, currentTimestamp)
+        syncedDatabaseHelper.insertSyncedFeedSource(listOf(parsedFeedSource.toFeedSource()))
+        syncedDatabaseHelper.closeScope()
+        // TODO: trigger a sync somewhere and then close the scope
+
         updateMutableState.update { FinishedFeedUpdateStatus }
-        getFeeds()
+        getFeeds() // TODO: trigger a sync after that
     }
 
     @Suppress("MagicNumber")

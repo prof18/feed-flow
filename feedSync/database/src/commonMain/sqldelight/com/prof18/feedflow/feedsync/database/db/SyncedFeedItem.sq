@@ -1,0 +1,14 @@
+import kotlin.Boolean;
+
+CREATE TABLE synced_feed_item(
+    url_hash TEXT NOT NULL PRIMARY KEY,
+    is_read INTEGER AS Boolean NOT NULL DEFAULT 0,
+    is_bookmarked INTEGER AS Boolean NOT NULL DEFAULT 0
+);
+
+insertOrReplaceSyncedFeedItem:
+INSERT OR REPLACE INTO synced_feed_item(url_hash, is_read, is_bookmarked)
+VALUES (?, ?,?);
+
+deleteSyncedFeedItem:
+DELETE FROM synced_feed_item WHERE url_hash = ?;

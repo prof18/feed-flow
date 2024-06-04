@@ -1,0 +1,25 @@
+CREATE TABLE synced_feed_source (
+    url_hash TEXT NOT NULL PRIMARY KEY,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    category_id TEXT,
+    logo_url TEXT
+);
+
+getAllSyncedFeedSources:
+SELECT * FROM synced_feed_source;
+
+insertOrIgnoreFeedSource:
+INSERT OR IGNORE INTO synced_feed_source(url_hash, url, title, category_id, logo_url)
+VALUES (?,?,?,?, ?);
+
+delete:
+DELETE FROM synced_feed_source WHERE url_hash = ?;
+
+deleteAll:
+DELETE FROM synced_feed_source;
+
+updateFeedSourceTitle:
+UPDATE synced_feed_source
+SET title = :title
+WHERE url_hash = :urlHash;

@@ -11,7 +11,7 @@ CREATE TABLE feed_source (
 
 insertFeedSource:
 INSERT OR IGNORE INTO feed_source(url_hash, url, title, category_id, logo_url)
-VALUES (?,?,?,(SELECT id FROM feed_source_category WHERE title = ?), ?);
+VALUES (?,?,?,?, ?);
 
 insertFeedSourceWithNoCategory:
 INSERT OR IGNORE INTO feed_source(url_hash, url, title, logo_url)

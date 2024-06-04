@@ -1,7 +1,6 @@
 package com.prof18.feedflow.shared.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
-import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
@@ -231,9 +230,7 @@ internal class FeedRetrieverRepository(
                 id = urlToSave.hashCode().toString(),
                 url = urlToSave,
                 title = title,
-                categoryName = category?.title?.let {
-                    CategoryName(it)
-                },
+                category = category,
                 logoUrl = logoUrl,
             )
 
@@ -255,12 +252,7 @@ internal class FeedRetrieverRepository(
             url = parsedFeedSource.url,
             title = parsedFeedSource.title,
             lastSyncTimestamp = currentTimestamp,
-            category = parsedFeedSource.categoryName?.let { categoryName ->
-                FeedSourceCategory(
-                    id = categoryName.name.hashCode().toString(),
-                    title = categoryName.name,
-                )
-            },
+            category = parsedFeedSource.category,
             logoUrl = parsedFeedSource.logoUrl,
         )
 

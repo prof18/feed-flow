@@ -4,7 +4,7 @@ data class ParsedFeedSource(
     val id: String,
     val url: String,
     val title: String,
-    val categoryName: CategoryName?,
+    val category: FeedSourceCategory?,
     val logoUrl: String?,
 ) {
     data class Builder(
@@ -33,10 +33,11 @@ data class ParsedFeedSource(
                 id = url.hashCode().toString(),
                 url = url!!,
                 title = title!!,
-                categoryName = if (category != null) {
-                    CategoryName(requireNotNull(category))
-                } else {
-                    null
+                category = category?.let { categoryName ->
+                    FeedSourceCategory(
+                        id = categoryName.hashCode().toString(),
+                        title = categoryName,
+                    )
                 },
                 logoUrl = logoUrl,
             )

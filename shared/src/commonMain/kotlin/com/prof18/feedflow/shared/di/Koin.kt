@@ -5,6 +5,7 @@ import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
 import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.HtmlRetriever
@@ -43,7 +44,11 @@ fun initKoin(
 ): KoinApplication {
     return startKoin {
         modules(
-            modules + coreModule + getLoggingModule(appEnvironment) + getPlatformModule(appEnvironment),
+            modules +
+                coreModule +
+                getLoggingModule(appEnvironment) +
+                getPlatformModule(appEnvironment) +
+                getFeedSyncModule(appEnvironment),
         )
     }
 }
@@ -91,6 +96,7 @@ private val coreModule = module {
             logger = getWith("FeedManagerRepositoryImpl"),
             logoRetriever = get(),
             dispatcherProvider = get(),
+            syncedDatabaseHelper = get(),
         )
     }
 
@@ -105,6 +111,7 @@ private val coreModule = module {
             feedSourceLogoRetriever = get(),
             rssChannelMapper = get(),
             feedUrlRetriever = get(),
+            syncedDatabaseHelper = get(),
         )
     }
 

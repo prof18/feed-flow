@@ -6,6 +6,8 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
+import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.model.NotValidFeedSources
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
@@ -30,6 +32,7 @@ internal class FeedManagerRepository(
     private val logger: Logger,
     private val logoRetriever: FeedSourceLogoRetriever,
     private val dispatcherProvider: DispatcherProvider,
+    private val syncedDatabaseHelper: SyncedDatabaseHelper,
 ) {
     suspend fun addFeedsFromFile(opmlInput: OpmlInput): NotValidFeedSources = withContext(dispatcherProvider.io) {
         val feeds = opmlFeedHandler.generateFeedSources(opmlInput)
@@ -47,6 +50,11 @@ internal class FeedManagerRepository(
 
         databaseHelper.insertCategories(categories)
         databaseHelper.insertFeedSource(validFeedSources)
+
+        syncedDatabaseHelper.insertSyncedFeedSource(validFeedSources.map { it.toFeedSource() })
+        syncedDatabaseHelper.insertFeedSourceCategories(categories)
+        syncedDatabaseHelper.closeScope()
+        // TODO: trigger a sync somewhere and then close the scope
 
         return@withContext NotValidFeedSources(
             feedSources = notValidFeedSources,
@@ -90,6 +98,10 @@ internal class FeedManagerRepository(
 
     suspend fun deleteFeed(feedSource: FeedSource) {
         databaseHelper.deleteFeedSource(feedSource)
+
+        syncedDatabaseHelper.deleteFeedSource(feedSource.id)
+        syncedDatabaseHelper.closeScope()
+        // TODO: trigger a sync somewhere and then close the scope
     }
 
     fun observeCategories(): Flow<List<FeedSourceCategory>> =
@@ -98,18 +110,25 @@ internal class FeedManagerRepository(
     suspend fun getCategories(): List<FeedSourceCategory> =
         databaseHelper.getFeedSourceCategories()
 
-    suspend fun createCategory(categoryName: CategoryName) =
-        databaseHelper.insertCategories(
-            listOf(
-                FeedSourceCategory(
-                    id = categoryName.name.hashCode().toString(),
-                    title = categoryName.name,
-                ),
-            ),
+    suspend fun createCategory(categoryName: CategoryName) {
+        val category = FeedSourceCategory(
+            id = categoryName.name.hashCode().toString(),
+            title = categoryName.name,
         )
+        databaseHelper.insertCategories(
+            listOf(category),
+        )
+
+        syncedDatabaseHelper.insertFeedSourceCategories(listOf(category))
+        syncedDatabaseHelper.closeScope()
+        // TODO: trigger a sync somewhere and then close the scope
+    }
 
     fun deleteAllFeeds() {
         databaseHelper.deleteAllFeeds()
+        syncedDatabaseHelper.deleteAllFeedSources()
+        syncedDatabaseHelper.closeScope()
+        // TODO: trigger a sync somewhere and then close the scope
     }
 
     fun observeFeedSourcesByCategory(): Flow<Map<FeedSourceCategory?, List<FeedSource>>> =
@@ -133,9 +152,16 @@ internal class FeedManagerRepository(
 
     suspend fun deleteCategory(categoryId: String) {
         databaseHelper.deleteCategory(categoryId)
+        syncedDatabaseHelper.deleteFeedSourceCategory(categoryId)
+        syncedDatabaseHelper.closeScope()
+        // TODO: trigger a sync somewhere and then close the scope
     }
 
     suspend fun updateFeedSourceName(feedSourceId: String, newName: String) {
         databaseHelper.updateFeedSourceName(feedSourceId, newName)
+
+        syncedDatabaseHelper.updateFeedSourceName(feedSourceId, newName)
+        syncedDatabaseHelper.closeScope()
+        // TODO: trigger a sync somewhere and then close the scope
     }
 }

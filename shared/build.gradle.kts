@@ -58,6 +58,7 @@ kotlin {
        commonMain {
             dependencies {
                 implementation(project(":database"))
+                implementation(project(":feedSync:database"))
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)

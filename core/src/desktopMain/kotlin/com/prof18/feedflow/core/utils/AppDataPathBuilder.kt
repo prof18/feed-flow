@@ -1,9 +1,8 @@
-package com.prof18.feedflow.database
+package com.prof18.feedflow.core.utils
 
-import com.prof18.feedflow.core.utils.AppEnvironment
 import java.io.File
 
-internal object AppDataPathBuilder {
+object AppDataPathBuilder {
 
     private val appDataPath = when {
         System.getProperty("os.name").contains("Mac", true) -> {

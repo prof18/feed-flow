@@ -1,0 +1,14 @@
+CREATE TABLE synced_feed_source_category (
+    id TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL UNIQUE
+);
+
+getAllFeedSourceCategories:
+SELECT * FROM synced_feed_source_category;
+
+insertOrIgnoreFeedSourceCategory:
+INSERT OR IGNORE INTO synced_feed_source_category(id, title)
+VALUES (?,?);
+
+delete:
+DELETE FROM synced_feed_source_category WHERE id = ?;

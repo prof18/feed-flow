@@ -39,10 +39,10 @@ include(":desktopApp")
 include(":i18n")
 include(":core")
 include("database")
+include(":feedSync:database")
 
 // includeBuild("../../Android/RSS-Parser") {
 //    dependencySubstitution {
 //        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))
 //    }
 // }
-

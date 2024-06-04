@@ -1,4 +1,4 @@
-package com.prof18.feedflow.database
+package com.prof18.feedflow.feedsync.database.di
 
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
@@ -6,7 +6,8 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
-import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
+import com.prof18.feedflow.feedsync.database.db.FeedFlowFeedSyncDB
 import java.io.File
 import java.util.Properties
 
@@ -16,7 +17,7 @@ fun createDatabaseDriver(
 ): SqlDriver {
     val appPath = AppDataPathBuilder.getAppDataPath(appEnvironment)
 
-    val databasePath = File(appPath, "/${DatabaseHelper.DB_FILE_NAME_WITH_EXTENSION}")
+    val databasePath = File(appPath, "/${SyncedDatabaseHelper.DB_FILE_NAME_WITH_EXTENSION}")
 
     val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY + databasePath.absolutePath, Properties())
 
@@ -32,13 +33,13 @@ fun createDatabaseDriver(
     val currentVer: Long = sqlCursor.value ?: -1L
 
     if (currentVer == 0L) {
-        FeedFlowDB.Schema.create(driver)
-        setVersion(driver, FeedFlowDB.Schema.version)
-        logger.d("init: created tables, setVersion to ${FeedFlowDB.Schema.version}")
+        FeedFlowFeedSyncDB.Schema.create(driver)
+        setVersion(driver, FeedFlowFeedSyncDB.Schema.version)
+        logger.d("init: created tables, setVersion to ${FeedFlowFeedSyncDB.Schema.version}")
     } else {
-        val schemaVer = FeedFlowDB.Schema.version
+        val schemaVer = FeedFlowFeedSyncDB.Schema.version
         if (schemaVer > currentVer) {
-            FeedFlowDB.Schema.migrate(driver, oldVersion = currentVer, newVersion = schemaVer)
+            FeedFlowFeedSyncDB.Schema.migrate(driver, oldVersion = currentVer, newVersion = schemaVer)
             setVersion(driver, schemaVer)
             logger.d("init: migrated from $currentVer to $schemaVer")
         } else {

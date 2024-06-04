@@ -33,11 +33,11 @@ internal class FeedManagerRepository(
 ) {
     suspend fun addFeedsFromFile(opmlInput: OpmlInput): NotValidFeedSources = withContext(dispatcherProvider.io) {
         val feeds = opmlFeedHandler.generateFeedSources(opmlInput)
-        val categories = feeds.mapNotNull { it.categoryName }.distinct()
+        val categories = feeds.mapNotNull { it.category }.distinct()
 
         val validatedFeeds = validateFeeds(feeds)
 
-        val validFeedSources = validatedFeeds
+        val validFeedSources: List<ParsedFeedSource> = validatedFeeds
             .filter { it.isValid }
             .map { it.parsedFeedSource }
 
@@ -100,7 +100,12 @@ internal class FeedManagerRepository(
 
     suspend fun createCategory(categoryName: CategoryName) =
         databaseHelper.insertCategories(
-            listOf(categoryName),
+            listOf(
+                FeedSourceCategory(
+                    id = categoryName.name.hashCode().toString(),
+                    title = categoryName.name,
+                ),
+            ),
         )
 
     fun deleteAllFeeds() {

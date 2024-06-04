@@ -7,7 +7,6 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrDefault
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
-import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
@@ -71,12 +70,12 @@ class DatabaseHelper(
             .executeAsList()
     }
 
-    suspend fun insertCategories(categories: List<CategoryName>) =
+    suspend fun insertCategories(categories: List<FeedSourceCategory>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             categories.forEach { category ->
                 dbRef.feedSourceCategoryQueries.insertFeedSourceCategory(
-                    id = category.name.hashCode().toString(),
-                    title = category.name,
+                    id = category.id,
+                    title = category.title,
                 )
             }
         }
@@ -84,12 +83,12 @@ class DatabaseHelper(
     suspend fun insertFeedSource(feedSource: List<ParsedFeedSource>) {
         dbRef.transactionWithContext(backgroundDispatcher) {
             feedSource.forEach { feedSource ->
-                if (feedSource.categoryName != null) {
+                if (feedSource.category != null) {
                     dbRef.feedSourceQueries.insertFeedSource(
                         url_hash = feedSource.hashCode().toString(),
                         url = feedSource.url,
                         title = feedSource.title,
-                        title_ = feedSource.categoryName?.name.toString(),
+                        category_id = feedSource.category?.id,
                         logo_url = feedSource.logoUrl,
                     )
                 } else {

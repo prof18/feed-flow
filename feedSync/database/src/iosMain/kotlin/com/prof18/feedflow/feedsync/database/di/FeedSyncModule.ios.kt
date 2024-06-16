@@ -13,9 +13,9 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             NativeSqliteDriver(
                 schema = FeedFlowFeedSyncDB.Schema,
                 name = if (appEnvironment.isDebug()) {
-                    SyncedDatabaseHelper.DATABASE_NAME_DEBUG
+                    SyncedDatabaseHelper.SYNC_DATABASE_NAME_DEBUG
                 } else {
-                    SyncedDatabaseHelper.DATABASE_NAME_PROD
+                    SyncedDatabaseHelper.SYNC_DATABASE_NAME_PROD
                 },
             )
         }

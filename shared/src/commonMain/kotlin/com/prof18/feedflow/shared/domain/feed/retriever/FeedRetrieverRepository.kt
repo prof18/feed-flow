@@ -7,14 +7,15 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.Search
-import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import com.prof18.feedflow.shared.domain.model.AddFeedResponse
@@ -26,7 +27,6 @@ import com.prof18.feedflow.shared.domain.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.ErrorState
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
-import com.prof18.feedflow.shared.utils.DispatcherProvider
 import com.prof18.feedflow.shared.utils.executeWithRetry
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
@@ -57,7 +57,7 @@ internal class FeedRetrieverRepository(
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
     private val rssChannelMapper: RssChannelMapper,
     private val feedUrlRetriever: FeedUrlRetriever,
-    private val syncedDatabaseHelper: SyncedDatabaseHelper,
+    private val feedSyncRepository: FeedSyncRepository,
 ) {
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
         FinishedFeedUpdateStatus,
@@ -169,6 +169,9 @@ internal class FeedRetrieverRepository(
             }.toImmutableList()
         }
         databaseHelper.markAsRead(itemsToUpdates.toList())
+        itemsToUpdates.forEach { feedItemId ->
+            feedSyncRepository.updateFeedItemReadStatus(feedItemId, true)
+        }
     }
 
     suspend fun fetchFeeds(
@@ -177,6 +180,8 @@ internal class FeedRetrieverRepository(
     ) {
         return withContext(dispatcherProvider.io) {
             updateMutableState.update { StartedFeedUpdateStatus }
+
+            feedSyncRepository.syncFeedSources()
 
             val feedSourceUrls = databaseHelper.getFeedSources()
             feedToUpdate.clear()
@@ -202,6 +207,8 @@ internal class FeedRetrieverRepository(
                     forceRefresh = forceRefresh,
                 )
 
+                feedSyncRepository.syncFeedItems()
+
                 getFeeds()
             }
         }
@@ -210,6 +217,8 @@ internal class FeedRetrieverRepository(
     suspend fun markAllFeedAsRead() {
         val currentFilter = currentFeedFilterMutableState.value
         databaseHelper.markAllFeedAsRead(currentFilter)
+        val allFeedItemIds = databaseHelper.getAllFeedItemIds()
+        feedSyncRepository.markAllFeedAsRead(allFeedItemIds)
         getFeeds()
     }
 
@@ -251,7 +260,7 @@ internal class FeedRetrieverRepository(
         val parsedFeedSource = feedFound.parsedFeedSource
         val currentTimestamp = dateFormatter.currentTimeMillis()
         val feedSource = FeedSource(
-            id = parsedFeedSource.hashCode().toString(),
+            id = parsedFeedSource.url.hashCode().toString(),
             url = parsedFeedSource.url,
             title = parsedFeedSource.title,
             lastSyncTimestamp = currentTimestamp,
@@ -270,12 +279,10 @@ internal class FeedRetrieverRepository(
             ),
         )
         databaseHelper.insertFeedItems(feedItems, currentTimestamp)
-        syncedDatabaseHelper.insertSyncedFeedSource(listOf(parsedFeedSource.toFeedSource()))
-        syncedDatabaseHelper.closeScope()
-        // TODO: trigger a sync somewhere and then close the scope
-
+        feedSyncRepository.insertSyncedFeedSource(listOf(parsedFeedSource.toFeedSource()))
+        feedSyncRepository.performBackup()
         updateMutableState.update { FinishedFeedUpdateStatus }
-        getFeeds() // TODO: trigger a sync after that
+        getFeeds()
     }
 
     @Suppress("MagicNumber")
@@ -284,7 +291,9 @@ internal class FeedRetrieverRepository(
         // (((1 hour in seconds) * 24 hours) * 7 days)
         val oneWeekInMillis = (((60 * 60) * 24) * 7) * 1000L
         val threshold = dateFormatter.currentTimeMillis() - oneWeekInMillis
+        val oldFeedIds = databaseHelper.getOldFeedItem(threshold)
         databaseHelper.deleteOldFeedItems(threshold)
+        feedSyncRepository.deleteFeedItems(oldFeedIds)
         getFeeds()
     }
 
@@ -303,6 +312,7 @@ internal class FeedRetrieverRepository(
             }.toImmutableList()
         }
         databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
+        feedSyncRepository.updateFeedItemBookmarkStatus(feedItemId, isBookmarked)
     }
 
     suspend fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) {
@@ -320,6 +330,7 @@ internal class FeedRetrieverRepository(
             }.toImmutableList()
         }
         databaseHelper.updateReadStatus(feedItemId, isRead)
+        feedSyncRepository.updateFeedItemReadStatus(feedItemId, isRead)
     }
 
     private suspend fun parseFeeds(

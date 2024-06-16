@@ -15,13 +15,13 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Feed
 import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.SwapVert
+import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -62,6 +62,7 @@ fun SettingsScreen(
     navigateBack: () -> Unit,
     onAboutClick: () -> Unit,
     navigateToImportExport: () -> Unit,
+    navigateToAccounts: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -98,6 +99,7 @@ fun SettingsScreen(
             context.startActivity(Intent.createChooser(emailIntent, chooserTitle))
         },
         navigateToImportExport = navigateToImportExport,
+        navigateToAccounts = navigateToAccounts,
         setMarkReadWhenScrolling = { enabled ->
             settingsViewModel.updateMarkReadWhenScrolling(enabled)
         },
@@ -123,6 +125,7 @@ private fun SettingsScreenContent(
     onAboutClick: () -> Unit,
     onBugReportClick: () -> Unit,
     navigateToImportExport: () -> Unit,
+    navigateToAccounts: () -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
@@ -162,6 +165,7 @@ private fun SettingsScreenContent(
             navigateToImportExport = navigateToImportExport,
             onAboutClick = onAboutClick,
             onBugReportClick = onBugReportClick,
+            navigateToAccounts = navigateToAccounts,
             isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
             setMarkReadWhenScrolling = setMarkReadWhenScrolling,
             isShowReadItemEnabled = isShowReadItemEnabled,
@@ -183,17 +187,20 @@ private fun SettingsList(
     navigateToImportExport: () -> Unit,
     onAboutClick: () -> Unit,
     onBugReportClick: () -> Unit,
+    navigateToAccounts: () -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     LazyColumn(
         modifier = modifier,
     ) {
         item {
             Text(
-                text = LocalFeedFlowStrings.current.settingsGeneralTitle,
+                text = LocalFeedFlowStrings.current.settingsTitleFeed,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(Spacing.regular),
@@ -227,9 +234,19 @@ private fun SettingsList(
         }
 
         item {
-            ReaderModeSwitch(
-                setReaderMode = setReaderMode,
-                isReaderModeEnabled = isReaderModeEnabled,
+            SettingItem(
+                title = LocalFeedFlowStrings.current.settingsAccounts,
+                icon = Icons.Outlined.Sync,
+                onClick = navigateToAccounts,
+            )
+        }
+
+        item {
+            Text(
+                text = LocalFeedFlowStrings.current.settingsBehaviourTitle,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(Spacing.regular),
             )
         }
 
@@ -240,6 +257,13 @@ private fun SettingsList(
                 title = LocalFeedFlowStrings.current.browserSelectionButton,
                 icon = Icons.Outlined.Language,
                 onClick = onBrowserSelectionClick,
+            )
+        }
+
+        item {
+            ReaderModeSwitch(
+                setReaderMode = setReaderMode,
+                isReaderModeEnabled = isReaderModeEnabled,
             )
         }
 
@@ -437,6 +461,7 @@ private fun SettingsScreenPreview() {
             onAboutClick = {},
             onBugReportClick = {},
             navigateToImportExport = {},
+            navigateToAccounts = {},
             setMarkReadWhenScrolling = {},
             setShowReadItem = {},
             setReaderMode = {},

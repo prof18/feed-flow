@@ -6,6 +6,9 @@ import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuScope
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -59,7 +62,14 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 },
             )
 
-            Separator()
+            DebugMenu(
+                showDebugMenu = showDebugMenu,
+                deleteFeeds = deleteFeeds,
+            )
+        }
+
+        Menu(LocalFeedFlowStrings.current.settingsTitleFeed) {
+            val navigator = LocalNavigator.currentOrThrow
 
             Item(
                 text = LocalFeedFlowStrings.current.feedsTitle,
@@ -73,6 +83,15 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onClick = onImportExportClick,
             )
 
+            Item(
+                text = LocalFeedFlowStrings.current.settingsAccounts,
+                onClick = {
+                    navigator.push(AccountsScreen())
+                },
+            )
+        }
+
+        Menu(LocalFeedFlowStrings.current.settingsBehaviourTitle, mnemonic = 'B') {
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.settingsReaderMode,
                 checked = isReaderModeEnabled,
@@ -90,24 +109,17 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 checked = isShowReadItemEnabled,
                 onCheckedChange = setShowReadItem,
             )
+        }
 
-            Separator()
-
+        Menu(LocalFeedFlowStrings.current.settingsHelpTitle, mnemonic = 'B') {
             Item(
                 text = LocalFeedFlowStrings.current.reportIssueButton,
                 onClick = onBugReportClick,
             )
 
-            Separator()
-
             Item(
                 text = LocalFeedFlowStrings.current.aboutButton,
                 onClick = onAboutClick,
-            )
-
-            DebugMenu(
-                showDebugMenu = showDebugMenu,
-                deleteFeeds = deleteFeeds,
             )
         }
     }

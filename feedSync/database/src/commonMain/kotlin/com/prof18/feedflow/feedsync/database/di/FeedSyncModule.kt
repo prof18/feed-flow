@@ -22,3 +22,4 @@ internal val commonModule = module {
 fun getFeedSyncModule(appEnvironment: AppEnvironment) = commonModule + getPlatformModule(appEnvironment)
 
 internal const val FEED_SYNC_SCOPE_NAME = "FeedSyncScope"
+internal const val SYNC_DB_DRIVER = "SyncDBDriver"

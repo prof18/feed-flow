@@ -59,6 +59,7 @@ kotlin {
             dependencies {
                 implementation(project(":database"))
                 implementation(project(":feedSync:database"))
+                implementation(project(":feedSync:dropbox"))
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
@@ -118,6 +119,8 @@ kotlin {
                 implementation(libs.koin.android)
                 implementation(libs.crashk.ios)
                 implementation(libs.touchlab.kermit.crashlytics)
+                implementation(libs.workmanager)
+                implementation(libs.koin.workmanager)
             }
         }
 

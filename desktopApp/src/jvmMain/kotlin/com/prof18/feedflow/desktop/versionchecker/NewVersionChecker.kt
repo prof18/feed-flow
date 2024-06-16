@@ -1,8 +1,8 @@
 package com.prof18.feedflow.desktop.versionchecker
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.shared.utils.DispatcherProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

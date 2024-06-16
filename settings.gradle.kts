@@ -40,6 +40,7 @@ include(":i18n")
 include(":core")
 include("database")
 include(":feedSync:database")
+include("feedSync:dropbox")
 
 // includeBuild("../../Android/RSS-Parser") {
 //    dependencySubstitution {

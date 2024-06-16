@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.prof18.feedflow.shared.ui.style.Spacing
 
@@ -19,14 +20,22 @@ fun SettingItem(
     title: String,
     icon: ImageVector,
     modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .clickable {
-                onClick()
-            }
+            .then(
+                if (isEnabled) {
+                    Modifier
+                        .clickable(onClick = onClick)
+                } else {
+                    @Suppress("MagicNumber")
+                    Modifier
+                        .alpha(0.5f)
+                },
+            )
             .fillMaxWidth()
             .padding(Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),

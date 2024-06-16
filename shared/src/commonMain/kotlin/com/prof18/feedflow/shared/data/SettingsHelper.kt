@@ -29,6 +29,12 @@ internal class SettingsHelper(
 
     fun setUseReaderMode(value: Boolean) =
         settings.set(SettingsFields.USE_READER_MODE.name, value)
+
+    fun getIsSyncUploadRequired(): Boolean =
+        settings.getBoolean(SettingsFields.IS_SYNC_UPLOAD_REQUIRED.name, false)
+
+    fun setIsSyncUploadRequired(value: Boolean) =
+        settings.set(SettingsFields.IS_SYNC_UPLOAD_REQUIRED.name, value)
 }
 
 internal enum class SettingsFields {
@@ -36,4 +42,5 @@ internal enum class SettingsFields {
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,
     USE_READER_MODE,
+    IS_SYNC_UPLOAD_REQUIRED,
 }

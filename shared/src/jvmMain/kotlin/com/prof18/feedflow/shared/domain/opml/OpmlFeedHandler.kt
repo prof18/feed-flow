@@ -3,7 +3,7 @@ package com.prof18.feedflow.shared.domain.opml
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
-import com.prof18.feedflow.shared.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
 import org.xml.sax.Attributes
 import org.xml.sax.InputSource

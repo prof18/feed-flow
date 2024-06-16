@@ -30,6 +30,7 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation(libs.immutable.collections)
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
     }

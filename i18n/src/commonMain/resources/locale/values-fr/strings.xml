@@ -54,7 +54,6 @@
     <string name="add_feed_category_title">Categorie</string>
     <string name="import_export_opml_title">Importer et exporter</string>
     <string name="action_done">Terminée</string>
-    <string name="settings_general_title">General</string>
     <string name="no_category_selected_header">Sans catégorie</string>
     <string name="no_category">Non classé par catégorie</string>
     <string name="new_category_hint">Nouvelle catégorie</string>

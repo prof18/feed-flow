@@ -6,6 +6,7 @@ import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
+import com.prof18.feedflow.feedsync.dropbox.di.dropboxModule
 import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.HtmlRetriever
@@ -14,9 +15,14 @@ import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAccountsRepository
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.logging.crashReportingLogWriter
+import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.BaseViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
@@ -33,6 +39,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
@@ -41,15 +48,18 @@ import org.koin.dsl.module
 fun initKoin(
     appEnvironment: AppEnvironment,
     modules: List<Module>,
+    platformSetup: KoinApplication.() -> Unit = {},
 ): KoinApplication {
     return startKoin {
         modules(
             modules +
                 coreModule +
+                dropboxModule +
                 getLoggingModule(appEnvironment) +
                 getPlatformModule(appEnvironment) +
                 getFeedSyncModule(appEnvironment),
         )
+        platformSetup()
     }
 }
 
@@ -96,7 +106,7 @@ private val coreModule = module {
             logger = getWith("FeedManagerRepositoryImpl"),
             logoRetriever = get(),
             dispatcherProvider = get(),
-            syncedDatabaseHelper = get(),
+            feedSyncRepository = get(),
         )
     }
 
@@ -111,7 +121,7 @@ private val coreModule = module {
             feedSourceLogoRetriever = get(),
             rssChannelMapper = get(),
             feedUrlRetriever = get(),
-            syncedDatabaseHelper = get(),
+            feedSyncRepository = get(),
         )
     }
 
@@ -214,6 +224,31 @@ private val coreModule = module {
         HtmlRetriever(
             logger = getWith("HtmlRetriever"),
             client = get(),
+        )
+    }
+
+    singleOf(::FeedSyncRepository)
+
+    factory {
+        FeedSyncer(
+            syncedDatabaseHelper = get(),
+            appDatabaseHelper = get(),
+            logger = getWith("FeedSyncer"),
+        )
+    }
+
+    viewModel {
+        AccountsViewModel(
+            dropboxSettings = get(),
+        )
+    }
+
+    singleOf(::FeedSyncMessageQueue)
+
+//    factoryOf(::FeedSyncAccountsRepository)
+    factory {
+        FeedSyncAccountsRepository(
+            dropboxSettings = get(),
         )
     }
 }

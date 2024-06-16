@@ -6,3 +6,20 @@ CREATE TABLE sync_metadata(
 insertMetadata:
 INSERT OR REPLACE INTO sync_metadata (table_name, last_change_timestamp)
 VALUES (?,?);
+
+selectLastChangeTimestamp:
+SELECT last_change_timestamp FROM sync_metadata WHERE table_name = ?;
+
+isSyncDatabaseEmpty:
+WITH table_counts AS (
+    SELECT
+        (SELECT COUNT(*) FROM synced_feed_item) AS item_count,
+        (SELECT COUNT(*) FROM synced_feed_source) AS source_count,
+        (SELECT COUNT(*) FROM synced_feed_source_category) AS category_count
+)
+SELECT
+    CASE
+        WHEN item_count = 0 AND source_count = 0 AND category_count = 0 THEN 0
+        ELSE 1
+    END AS is_database_empty
+FROM table_counts;

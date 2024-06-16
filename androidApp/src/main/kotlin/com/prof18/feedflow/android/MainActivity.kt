@@ -8,15 +8,22 @@ import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,6 +35,7 @@ import coil3.ImageLoader
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.setSingletonImageLoaderFactory
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
 import com.prof18.feedflow.android.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.android.home.HomeScreen
@@ -38,12 +46,19 @@ import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.about.AboutScreen
 import com.prof18.feedflow.android.settings.about.LicensesScreen
 import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
+import com.prof18.feedflow.shared.domain.model.SyncResult
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
+import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.getKoin
 
 class MainActivity : ComponentActivity() {
+
+    private val messageQueue by inject<FeedSyncMessageQueue>()
+
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalCoilApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +81,18 @@ class MainActivity : ComponentActivity() {
             val readerModeViewModel: ReaderModeViewModel = koinViewModel()
 
             val windowSize = calculateWindowSizeClass(this@MainActivity)
+            val snackbarHostState = remember { SnackbarHostState() }
+
+            val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
+            LaunchedEffect(Unit) {
+                messageQueue.messageQueue.collect { message ->
+                    if (message is SyncResult.Error) {
+                        snackbarHostState.showSnackbar(
+                            message = errorMessage,
+                        )
+                    }
+                }
+            }
 
             FeedFlowTheme {
                 val navController = rememberNavController()
@@ -80,6 +107,15 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             readerModeViewModel = readerModeViewModel,
                         )
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Bottom,
+                        ) {
+                            SnackbarHost(snackbarHostState)
+                        }
                     }
                 }
             }
@@ -138,6 +174,9 @@ class MainActivity : ComponentActivity() {
                     },
                     navigateToImportExport = {
                         navController.navigate(Screen.ImportExport.name)
+                    },
+                    navigateToAccounts = {
+                        navController.navigate(Screen.Accounts.name)
                     },
                 )
             }
@@ -207,6 +246,14 @@ class MainActivity : ComponentActivity() {
                     navigateToReaderMode = { urlInfo ->
                         readerModeViewModel.getReaderModeHtml(urlInfo)
                         navController.navigate(Screen.ReaderMode.name)
+                    },
+                )
+            }
+
+            composable(Screen.Accounts.name) {
+                AccountsScreen(
+                    navigateBack = {
+                        navController.popBackStack()
                     },
                 )
             }

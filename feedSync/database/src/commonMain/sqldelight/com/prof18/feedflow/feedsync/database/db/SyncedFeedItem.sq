@@ -12,3 +12,16 @@ VALUES (?, ?,?);
 
 deleteSyncedFeedItem:
 DELETE FROM synced_feed_item WHERE url_hash = ?;
+
+selectAllSyncedFeedItems:
+SELECT * FROM synced_feed_item;
+
+updateIsRead:
+UPDATE synced_feed_item
+SET is_read = :isRead
+WHERE url_hash = :urlHash;
+
+updateIsBookmarked:
+UPDATE synced_feed_item
+SET is_bookmarked = :isBookmarked
+WHERE url_hash = :urlHash;

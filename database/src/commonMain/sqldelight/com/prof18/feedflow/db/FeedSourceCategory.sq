@@ -4,7 +4,7 @@ CREATE TABLE feed_source_category (
 );
 
 insertFeedSourceCategory:
-INSERT OR IGNORE INTO feed_source_category(id, title)
+INSERT OR REPLACE INTO feed_source_category(id, title)
 VALUES (?,?);
 
 getCategoryByName:
@@ -16,3 +16,6 @@ ORDER BY title COLLATE NOCASE ASC;
 
 delete:
 DELETE FROM feed_source_category WHERE id = ?;
+
+selectAllIds:
+SELECT id FROM feed_source_category;

@@ -1,4 +1,4 @@
-package com.prof18.feedflow.feedsync.database.di
+package com.prof18.feedflow.feedsync.database
 
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
@@ -11,13 +11,13 @@ import com.prof18.feedflow.feedsync.database.db.FeedFlowFeedSyncDB
 import java.io.File
 import java.util.Properties
 
-fun createDatabaseDriver(
+internal fun createDatabaseDriver(
     appEnvironment: AppEnvironment,
     logger: Logger,
 ): SqlDriver {
     val appPath = AppDataPathBuilder.getAppDataPath(appEnvironment)
 
-    val databasePath = File(appPath, "/${SyncedDatabaseHelper.DB_FILE_NAME_WITH_EXTENSION}")
+    val databasePath = File(appPath, "/${SyncedDatabaseHelper.SYNC_DATABASE_NAME_PROD}.db")
 
     val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY + databasePath.absolutePath, Properties())
 
@@ -43,7 +43,7 @@ fun createDatabaseDriver(
             setVersion(driver, schemaVer)
             logger.d("init: migrated from $currentVer to $schemaVer")
         } else {
-            logger.d("init with existing database")
+            logger.d("init with existing sync database")
         }
     }
     return driver

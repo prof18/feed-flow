@@ -13,6 +13,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.db.SelectFeedUrls
@@ -83,22 +84,13 @@ class DatabaseHelper(
     suspend fun insertFeedSource(feedSource: List<ParsedFeedSource>) {
         dbRef.transactionWithContext(backgroundDispatcher) {
             feedSource.forEach { feedSource ->
-                if (feedSource.category != null) {
-                    dbRef.feedSourceQueries.insertFeedSource(
-                        url_hash = feedSource.hashCode().toString(),
-                        url = feedSource.url,
-                        title = feedSource.title,
-                        category_id = feedSource.category?.id,
-                        logo_url = feedSource.logoUrl,
-                    )
-                } else {
-                    dbRef.feedSourceQueries.insertFeedSourceWithNoCategory(
-                        url_hash = feedSource.id,
-                        url = feedSource.url,
-                        title = feedSource.title,
-                        logo_url = feedSource.logoUrl,
-                    )
-                }
+                dbRef.feedSourceQueries.insertFeedSource(
+                    url_hash = feedSource.id,
+                    url = feedSource.url,
+                    title = feedSource.title,
+                    category_id = feedSource.category?.id,
+                    logo_url = feedSource.logoUrl,
+                )
             }
         }
     }
@@ -165,10 +157,14 @@ class DatabaseHelper(
             dbRef.feedItemQueries.clearOldItems(timeThreshold)
         }
 
-    suspend fun deleteFeedSource(feedSource: FeedSource) =
+    suspend fun getOldFeedItem(timeThreshold: Long) = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.selectOldItems(timeThreshold).executeAsList().map { FeedItemId(it) }
+    }
+
+    suspend fun deleteFeedSource(feedSourceId: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedSourceQueries.deleteFeedSource(feedSource.id)
-            dbRef.feedItemQueries.deleteAllWithFeedSource(feedSource.id)
+            dbRef.feedSourceQueries.deleteFeedSource(feedSourceId)
+            dbRef.feedItemQueries.deleteAllWithFeedSource(feedSourceId)
         }
 
     fun observeFeedSourceCategories(): Flow<List<FeedSourceCategory>> =
@@ -244,6 +240,55 @@ class DatabaseHelper(
             .asFlow()
             .mapToList(backgroundDispatcher)
             .flowOn(backgroundDispatcher)
+
+    suspend fun getLastChangeTimestamp(tableName: DatabaseTables): Long? = withContext(backgroundDispatcher) {
+        dbRef.syncMetadataQueries.selectLastChangeTimestamp(tableName.tableName)
+            .executeAsOneOrNull()?.last_change_timestamp
+    }
+
+    suspend fun updateSyncMetadata(table: DatabaseTables, timeStamp: Long) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.syncMetadataQueries.insertMetadata(
+                table_name = table.tableName,
+                last_change_timestamp = timeStamp,
+            )
+        }
+
+    suspend fun getAllFeedSourceIds(): List<String> = withContext(backgroundDispatcher) {
+        dbRef.feedSourceQueries.selectAllUrlHashes().executeAsList()
+    }
+
+    suspend fun getAllCategoryIds(): List<String> = withContext(backgroundDispatcher) {
+        dbRef.feedSourceCategoryQueries.selectAllIds().executeAsList()
+    }
+
+    suspend fun updateFeedItemReadAndBookmarked(
+        isRead: Boolean,
+        isBookmarked: Boolean,
+        urlHash: String,
+    ) = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.updateFeedItemReadAndBookmarked(
+            is_read = isRead,
+            is_bookmarked = isBookmarked,
+            url_hash = urlHash,
+        )
+    }
+
+    suspend fun getFeedItemsForSync(): List<SyncedFeedItem> = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.selectForSync()
+            .executeAsList()
+            .map { queryResult ->
+                SyncedFeedItem(
+                    id = queryResult.url_hash,
+                    isRead = queryResult.is_read,
+                    isBookmarked = queryResult.is_bookmarked,
+                )
+            }
+    }
+
+    suspend fun getAllFeedItemIds(): List<FeedItemId> = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.selectAllUrlHashes().executeAsList().map { FeedItemId(it) }
+    }
 
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,

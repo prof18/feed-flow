@@ -59,7 +59,6 @@
     <string name="drawer_title_feed_sources">Fonte do feed</string>
     <string name="toggle_mark_read_when_scrolling">Marcar como lido enquanto navega</string>
     <string name="action_done">Feito</string>
-    <string name="settings_general_title">Geral</string>
     <string name="settings_app_title">Aplicativo</string>
     <string name="about_app_version">Versão do aplicativo: %s</string>
     <string name="add_feed_category_title">Categoria</string>

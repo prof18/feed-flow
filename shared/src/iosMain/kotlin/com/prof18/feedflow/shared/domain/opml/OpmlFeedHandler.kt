@@ -4,7 +4,7 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
-import com.prof18.feedflow.shared.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.shared.utils.getValueOrNull
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.withContext

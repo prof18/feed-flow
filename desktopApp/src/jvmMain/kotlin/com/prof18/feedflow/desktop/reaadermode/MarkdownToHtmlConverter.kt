@@ -1,6 +1,6 @@
 package com.prof18.feedflow.desktop.reaadermode
 
-import com.prof18.feedflow.shared.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter
 import kotlinx.coroutines.withContext
 

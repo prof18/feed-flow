@@ -59,7 +59,6 @@
     <string name="feeds_import_done_message">Import abgeschlossen</string>
     <string name="feeds_export_done_message">Export abgeschlossen</string>
     <string name="close_menu_button">Menü schließen</string>
-    <string name="settings_general_title">Allgemeine Einstellungen</string>
     <string name="add_feed_category_title">Kategorie</string>
     <string name="about_app_version">App-Version: %s</string>
     <string name="action_save">Speichern</string>

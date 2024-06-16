@@ -64,7 +64,6 @@
     <string name="drawer_title_feed_sources">Zdroje feedov</string>
     <string name="toggle_mark_read_when_scrolling">Označiť ako prečítané pri rolovaní</string>
     <string name="action_done">Hotovo</string>
-    <string name="settings_general_title">Všeobecné</string>
     <string name="action_save">Uložiť</string>
     <string name="no_feed_modal_title">Pridať nový feed</string>
     <string name="no_feed_modal_message">Zdá sa, že ešte nemáš odber žiadnych feedov. Feedy môžeš pridať manuálne alebo môžeš odbery importovať z inej RSS čítačky</string>

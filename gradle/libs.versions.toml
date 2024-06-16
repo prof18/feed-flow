@@ -55,6 +55,9 @@ readability4j = "1.0.8"
 compose-webview = "1.9.8"
 voyager = "1.0.0"
 ktor = "2.3.11"
+dropbox-core = "7.0.0"
+workmanager = "2.9.0"
+lifecycleProcess = "2.8.2"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
@@ -121,6 +124,11 @@ voyager-transition = { module = "cafe.adriel.voyager:voyager-transitions", versi
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+dropbox-core = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropbox-core" }
+dropbox-core-android = { module = "com.dropbox.core:dropbox-android-sdk", version.ref = "dropbox-core" }
+workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "workmanager" }
+koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
 
 [bundles]
 compose = [

@@ -17,6 +17,7 @@ if (localProperties.exists()) {
     localProperties.inputStream().use { local.load(it) }
 }
 
+val dropboxAppKey: String = local.getProperty("dropbox_key")
 android {
     namespace = "com.prof18.feedflow.android"
     compileSdk = libs.versions.android.compile.sdk.get().toInt()
@@ -26,6 +27,12 @@ android {
         targetSdk = libs.versions.android.target.sdk.get().toInt()
         versionCode = getVersionCode()
         versionName = getVersionName()
+
+        addManifestPlaceholders(
+            mapOf(
+                "dropboxKey" to dropboxAppKey,
+            ),
+        )
     }
 
     buildFeatures {
@@ -55,6 +62,7 @@ android {
         getByName("debug") {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
+            buildConfigField("String", "DROPBOX_APP_KEY", "\"$dropboxAppKey\"")
         }
 
         getByName("release") {
@@ -65,6 +73,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            buildConfigField("String", "DROPBOX_APP_KEY", "\"$dropboxAppKey\"")
         }
     }
 }
@@ -102,6 +111,11 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
+    implementation(libs.koin.workmanager)
+
+    implementation(libs.dropbox.core.android)
+    implementation(libs.workmanager)
+    implementation(libs.androidx.lifecycle.process)
 
     debugImplementation(compose.uiTooling)
 

@@ -1,0 +1,4 @@
+CREATE TABLE sync_metadata(
+    table_name TEXT PRIMARY KEY,
+    last_change_timestamp INTEGER
+);

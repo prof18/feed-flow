@@ -61,7 +61,6 @@
     <string name="drawer_title_feed_sources">Iscrizioni</string>
     <string name="toggle_mark_read_when_scrolling">Segna come letto durante lo scorrimento</string>
     <string name="action_done">Fatto</string>
-    <string name="settings_general_title">Generale</string>
     <string name="settings_app_title">Aoo</string>
     <string name="about_app_version">Versione dell\'app: %s</string>
     <string name="add_feed_category_title">Categoria</string>

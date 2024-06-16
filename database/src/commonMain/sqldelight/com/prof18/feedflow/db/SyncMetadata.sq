@@ -1,0 +1,11 @@
+CREATE TABLE sync_metadata(
+    table_name TEXT PRIMARY KEY,
+    last_change_timestamp INTEGER
+);
+
+insertMetadata:
+INSERT OR REPLACE INTO sync_metadata (table_name, last_change_timestamp)
+VALUES (?,?);
+
+selectLastChangeTimestamp:
+SELECT last_change_timestamp FROM sync_metadata WHERE table_name = ?;

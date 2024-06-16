@@ -4,9 +4,9 @@ import android.util.Xml
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.shared.attributeValue
 import com.prof18.feedflow.shared.contains
-import com.prof18.feedflow.shared.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory

@@ -2,17 +2,26 @@ package com.prof18.feedflow.android
 
 import android.app.Application
 import android.content.Context
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.prof18.feedflow.android.readermode.ReaderModeViewModel
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.shared.di.getWith
+import com.prof18.feedflow.shared.di.initKoin
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import com.prof18.feedflow.shared.utils.enableKmpCrashlytics
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.dsl.module
 
 class FeedFlowApp : Application() {
+
+    private val feedSyncRepo by inject<FeedSyncRepository>()
 
     override fun onCreate() {
         super.onCreate()
@@ -28,8 +37,11 @@ class FeedFlowApp : Application() {
             enableKmpCrashlytics()
         }
 
-        com.prof18.feedflow.shared.di.initKoin(
+        initKoin(
             appEnvironment = appEnvironment,
+            platformSetup = {
+                workManagerFactory()
+            },
             modules = listOf(
                 module {
                     single<Context> { this@FeedFlowApp }
@@ -55,5 +67,16 @@ class FeedFlowApp : Application() {
                 },
             ),
         )
+
+        with(ProcessLifecycleOwner.get()) {
+            lifecycle.addObserver(
+                object : DefaultLifecycleObserver {
+                    override fun onStop(owner: LifecycleOwner) {
+                        super.onStop(owner)
+                        feedSyncRepo.enqueueBackup()
+                    }
+                },
+            )
+        }
     }
 }

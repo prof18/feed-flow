@@ -2,7 +2,7 @@ package com.prof18.feedflow.shared.domain
 
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeData
-import com.prof18.feedflow.shared.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.extended.Readability4JExtended
 

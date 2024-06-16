@@ -269,6 +269,27 @@ class DateFormatter(
         return dateFormat.format(dateTime)
     }
 
+    fun formatDateForLastRefresh(millis: Long): String {
+        val instant = Instant.fromEpochMilliseconds(millis)
+        val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+
+        val dateFormat = LocalDateTime.Format {
+            dayOfMonth()
+            char('/')
+            monthNumber()
+            char('/')
+            year()
+            chars(" - ")
+            hour()
+            char(':')
+            minute()
+            char(':')
+            second()
+        }
+
+        return dateFormat.format(dateTime)
+    }
+
     fun currentTimeMillis(): Long =
         Clock.System.now().toEpochMilliseconds()
 

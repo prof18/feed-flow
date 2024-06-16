@@ -5,15 +5,15 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
-import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.NotValidFeedSources
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
-import com.prof18.feedflow.shared.utils.DispatcherProvider
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
@@ -32,7 +32,7 @@ internal class FeedManagerRepository(
     private val logger: Logger,
     private val logoRetriever: FeedSourceLogoRetriever,
     private val dispatcherProvider: DispatcherProvider,
-    private val syncedDatabaseHelper: SyncedDatabaseHelper,
+    private val feedSyncRepository: FeedSyncRepository,
 ) {
     suspend fun addFeedsFromFile(opmlInput: OpmlInput): NotValidFeedSources = withContext(dispatcherProvider.io) {
         val feeds = opmlFeedHandler.generateFeedSources(opmlInput)
@@ -51,10 +51,8 @@ internal class FeedManagerRepository(
         databaseHelper.insertCategories(categories)
         databaseHelper.insertFeedSource(validFeedSources)
 
-        syncedDatabaseHelper.insertSyncedFeedSource(validFeedSources.map { it.toFeedSource() })
-        syncedDatabaseHelper.insertFeedSourceCategories(categories)
-        syncedDatabaseHelper.closeScope()
-        // TODO: trigger a sync somewhere and then close the scope
+        feedSyncRepository.addSourceAndCategories(validFeedSources.map { it.toFeedSource() }, categories)
+        feedSyncRepository.performBackup()
 
         return@withContext NotValidFeedSources(
             feedSources = notValidFeedSources,
@@ -97,11 +95,9 @@ internal class FeedManagerRepository(
     }
 
     suspend fun deleteFeed(feedSource: FeedSource) {
-        databaseHelper.deleteFeedSource(feedSource)
-
-        syncedDatabaseHelper.deleteFeedSource(feedSource.id)
-        syncedDatabaseHelper.closeScope()
-        // TODO: trigger a sync somewhere and then close the scope
+        databaseHelper.deleteFeedSource(feedSource.id)
+        feedSyncRepository.deleteFeedSource(feedSource)
+        feedSyncRepository.performBackup()
     }
 
     fun observeCategories(): Flow<List<FeedSourceCategory>> =
@@ -119,16 +115,12 @@ internal class FeedManagerRepository(
             listOf(category),
         )
 
-        syncedDatabaseHelper.insertFeedSourceCategories(listOf(category))
-        syncedDatabaseHelper.closeScope()
-        // TODO: trigger a sync somewhere and then close the scope
+        feedSyncRepository.insertFeedSourceCategories(listOf(category))
     }
 
     fun deleteAllFeeds() {
         databaseHelper.deleteAllFeeds()
-        syncedDatabaseHelper.deleteAllFeedSources()
-        syncedDatabaseHelper.closeScope()
-        // TODO: trigger a sync somewhere and then close the scope
+        feedSyncRepository.deleteAllFeedSources()
     }
 
     fun observeFeedSourcesByCategory(): Flow<Map<FeedSourceCategory?, List<FeedSource>>> =
@@ -152,16 +144,11 @@ internal class FeedManagerRepository(
 
     suspend fun deleteCategory(categoryId: String) {
         databaseHelper.deleteCategory(categoryId)
-        syncedDatabaseHelper.deleteFeedSourceCategory(categoryId)
-        syncedDatabaseHelper.closeScope()
-        // TODO: trigger a sync somewhere and then close the scope
+        feedSyncRepository.deleteFeedSourceCategory(categoryId)
     }
 
     suspend fun updateFeedSourceName(feedSourceId: String, newName: String) {
         databaseHelper.updateFeedSourceName(feedSourceId, newName)
-
-        syncedDatabaseHelper.updateFeedSourceName(feedSourceId, newName)
-        syncedDatabaseHelper.closeScope()
-        // TODO: trigger a sync somewhere and then close the scope
+        feedSyncRepository.updateFeedSourceName(feedSourceId, newName)
     }
 }

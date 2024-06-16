@@ -80,9 +80,7 @@ private fun AboutScreenContent(
                 modifier = Modifier
                     .tagForTesting(TestingTag.ABOUT_TOOLBAR),
                 title = {
-                    Text(
-                        LocalFeedFlowStrings.current.aboutNavBar,
-                    )
+                    Text(LocalFeedFlowStrings.current.aboutNavBar)
                 },
                 navigationIcon = {
                     IconButton(

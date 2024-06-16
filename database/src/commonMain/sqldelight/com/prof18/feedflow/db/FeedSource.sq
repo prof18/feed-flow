@@ -10,12 +10,8 @@ CREATE TABLE feed_source (
 );
 
 insertFeedSource:
-INSERT OR IGNORE INTO feed_source(url_hash, url, title, category_id, logo_url)
+INSERT OR REPLACE INTO feed_source(url_hash, url, title, category_id, logo_url)
 VALUES (?,?,?,?, ?);
-
-insertFeedSourceWithNoCategory:
-INSERT OR IGNORE INTO feed_source(url_hash, url, title, logo_url)
-VALUES (?,?,?, ?);
 
 selectFeedUrls:
 SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url FROM feed_source
@@ -44,3 +40,6 @@ updateFeedSourceTitle:
 UPDATE feed_source
 SET title = :title
 WHERE url_hash = :urlHash;
+
+selectAllUrlHashes:
+SELECT url_hash FROM feed_source;

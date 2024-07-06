@@ -3,7 +3,7 @@
 //  FeedFlow
 //
 //  Created by Marco Gomiero on 20/04/24.
-//  Copyright © 2024 orgName. All rights reserved.
+//  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
 import Foundation

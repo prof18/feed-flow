@@ -52,7 +52,8 @@ struct SettingsScreen: View {
     private var settingsContent: some View {
         NavigationStack {
             Form {
-                generalSection
+                feedSection
+                behaviourSection
                 appSection
             }
             .scrollContentBackground(.hidden)
@@ -73,8 +74,8 @@ struct SettingsScreen: View {
     }
 
     @ViewBuilder
-    private var generalSection: some View {
-        Section(feedFlowStrings.settingsGeneralTitle) {
+    private var feedSection: some View {
+        Section(feedFlowStrings.settingsTitleFeed) {
             NavigationLink(destination: FeedSourceListScreen()) {
                 Label(feedFlowStrings.feedsTitle, systemImage: "list.bullet.rectangle.portrait")
             }
@@ -88,12 +89,18 @@ struct SettingsScreen: View {
                 Label(feedFlowStrings.importExportOpml, systemImage: "arrow.up.arrow.down")
             }
 
-            Toggle(isOn: $isReaderModeEnabled) {
-                Label(feedFlowStrings.settingsReaderMode, systemImage: "newspaper")
-            }.onTapGesture {
-                isReaderModeEnabled.toggle()
+            Button {
+                self.dismiss()
+                appState.navigate(route: CommonViewRoute.accounts)
+            } label: {
+                Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
             }
+        }
+    }
 
+    @ViewBuilder
+    private var behaviourSection: some View {
+        Section(feedFlowStrings.settingsBehaviourTitle) {
             Picker(
                 selection: $browserSelector.selectedBrowser,
                 content: {
@@ -107,6 +114,12 @@ struct SettingsScreen: View {
             )
             .hoverEffect()
             .accessibilityIdentifier(TestingTag.shared.BROWSER_SELECTOR)
+
+            Toggle(isOn: $isReaderModeEnabled) {
+                Label(feedFlowStrings.settingsReaderMode, systemImage: "newspaper")
+            }.onTapGesture {
+                isReaderModeEnabled.toggle()
+            }
 
             Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
                 Label(feedFlowStrings.toggleMarkReadWhenScrolling, systemImage: "envelope.open")

@@ -30,6 +30,7 @@ kotlin {
 
             export(project(":i18n"))
             export(project(":core"))
+            export(project(":feedSync:dropbox"))
             export(libs.touchlab.kermit.simple)
 
             // It should be fixed with Compose MP 1.5, but it seems not
@@ -59,7 +60,6 @@ kotlin {
             dependencies {
                 implementation(project(":database"))
                 implementation(project(":feedSync:database"))
-                implementation(project(":feedSync:dropbox"))
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
@@ -70,6 +70,7 @@ kotlin {
 
                 api(project(":core"))
                 api(project(":i18n"))
+                api(project(":feedSync:dropbox"))
                 api(libs.touchlab.kermit)
                 api(libs.immutable.collections)
             }

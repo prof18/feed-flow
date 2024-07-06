@@ -1,8 +1,6 @@
 package com.prof18.feedflow.shared.presentation
 
 import co.touchlab.kermit.Logger
-import com.dropbox.core.android.Auth
-import com.dropbox.core.oauth.DbxCredential
 import com.prof18.feedflow.core.model.DropboxConnectionUiState
 import com.prof18.feedflow.core.model.DropboxSynMessages
 import com.prof18.feedflow.core.model.DropboxSyncUIState
@@ -10,9 +8,12 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxException
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
+import com.prof18.feedflow.feedsync.dropbox.getDxCredentialsAsString
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -22,7 +23,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// TODO: maybe move to common mobile
 class DropboxSyncViewModel internal constructor(
     private val logger: Logger,
     private val dropboxSettings: DropboxSettings,
@@ -32,11 +32,16 @@ class DropboxSyncViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
 ) : BaseViewModel() {
 
-    private val dropboxSyncUiMutableState =
-        MutableStateFlow<DropboxConnectionUiState>(DropboxConnectionUiState.Unlinked)
+    private val dropboxSyncUiMutableState = MutableStateFlow<DropboxConnectionUiState>(
+        DropboxConnectionUiState.Unlinked,
+    )
+
+    @NativeCoroutinesState
     val dropboxConnectionUiState: StateFlow<DropboxConnectionUiState> = dropboxSyncUiMutableState.asStateFlow()
 
     private val dropboxSyncMessageMutableState = MutableSharedFlow<DropboxSynMessages>()
+
+    @NativeCoroutines
     val dropboxSyncMessageState: SharedFlow<DropboxSynMessages> = dropboxSyncMessageMutableState.asSharedFlow()
 
     init {
@@ -46,8 +51,7 @@ class DropboxSyncViewModel internal constructor(
     fun saveDropboxAuth() {
         scope.launch {
             try {
-                val dbxCredential = Auth.getDbxCredential()
-                val stringCredentials = DbxCredential.Writer.writeToString(dbxCredential)
+                val stringCredentials = getDxCredentialsAsString()
                 dropboxDataSource.saveAuth(DropboxStringCredentials(stringCredentials))
                 dropboxSettings.setDropboxData(stringCredentials)
                 dropboxSyncUiMutableState.update {

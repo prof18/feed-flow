@@ -75,27 +75,6 @@ internal class FeedSyncAndroidWorker(
         }
     }
 
-    override suspend fun downloadAndSyncAll() = withContext(dispatcherProvider.io) {
-        val databaseLocalPath = databasePath()
-        val dropboxDownloadParam = DropboxDownloadParam(
-            path = "/${getDatabaseNameWithExtension()}",
-            outputStream = FileOutputStream(databaseLocalPath),
-        )
-
-        restoreDropboxClient()
-
-        try {
-            feedSyncer.closeDB()
-            dropboxDataSource.performDownload(dropboxDownloadParam)
-            dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
-            feedSyncer.performSync()
-            emitSuccessMessage()
-        } catch (e: Exception) {
-            logger.e("Download from dropbox failed", e)
-            emitErrorMessage()
-        }
-    }
-
     override suspend fun download(): SyncResult = withContext(dispatcherProvider.io) {
         val databaseLocalPath = databasePath()
         val dropboxDownloadParam = DropboxDownloadParam(

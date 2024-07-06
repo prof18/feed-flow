@@ -10,8 +10,8 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
-    scope<FeedSyncScope> {
-        factory<SqlDriver>(named(SYNC_DB_DRIVER)) {
+    scope(named(FEED_SYNC_SCOPE_NAME)) {
+        scoped<SqlDriver>(named(SYNC_DB_DRIVER)) {
             AndroidSqliteDriver(
                 schema = FeedFlowFeedSyncDB.Schema,
                 context = get(),

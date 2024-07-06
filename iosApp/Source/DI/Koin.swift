@@ -22,7 +22,8 @@ func startKoin() {
     let koinApplication = KoinIOSKt.doInitKoinIos(
         htmlParser: IosHtmlParser(),
         appEnvironment: appEnvironment,
-        languageCode: langCode
+        languageCode: langCode,
+        dropboxDataSource: DropboxDataSourceIos()
     )
     _koin = koinApplication.koin
     _feedFlowStrings = KotlinDependencies.shared.getFeedFlowStrings()

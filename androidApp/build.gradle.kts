@@ -17,7 +17,10 @@ if (localProperties.exists()) {
     localProperties.inputStream().use { local.load(it) }
 }
 
-val dropboxAppKey: String = local.getProperty("dropbox_key")
+val dropboxAppKey: String = local.getProperty("dropbox_key").orEmpty()
+if (dropboxAppKey.isEmpty()) {
+    println("Dropbox key not set in keystore.properties. Please add it to the file with the key 'dropbox_key'")
+}
 android {
     namespace = "com.prof18.feedflow.android"
     compileSdk = libs.versions.android.compile.sdk.get().toInt()

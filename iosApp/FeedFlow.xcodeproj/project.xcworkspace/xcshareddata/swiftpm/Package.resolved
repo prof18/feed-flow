@@ -1,5 +1,5 @@
 {
-  "originHash" : "c5b43bb6b8aa6554f4b916215a9c1dfcd01cad75978bdf2832deb7c62d74e002",
+  "originHash" : "0590298bd1ee0d7672b51a92c0f29dfe6519ecaef2fe911df0353ccccbbfccf6",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -170,6 +170,15 @@
       "state" : {
         "revision" : "028487d4a8a291b2fe1b4392b5425b6172056148",
         "version" : "2.7.2"
+      }
+    },
+    {
+      "identity" : "swiftydropbox",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dropbox/SwiftyDropbox.git",
+      "state" : {
+        "revision" : "2e2d6257d24ea57735bff25f6a19563728e574da",
+        "version" : "10.0.7"
       }
     }
   ],

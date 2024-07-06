@@ -24,6 +24,16 @@
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		13C19E852BBC4314006DEEBC /* VisionOsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */; };
+		CC0799422C29B74600067E06 /* SwiftyDropbox in Frameworks */ = {isa = PBXBuildFile; productRef = CC0799412C29B74600067E06 /* SwiftyDropbox */; };
+		CC0799442C29B79100067E06 /* DropboxDataSourceIos.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0799432C29B79100067E06 /* DropboxDataSourceIos.swift */; };
+		CC0799462C29BC5F00067E06 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CC0799452C29BC5F00067E06 /* Config.xcconfig */; };
+		CC07994A2C29BD3000067E06 /* Config.xcconfig.txt in Resources */ = {isa = PBXBuildFile; fileRef = CC0799492C29BD3000067E06 /* Config.xcconfig.txt */; };
+		CC07994C2C2F41A300067E06 /* AccountsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC07994B2C2F41A300067E06 /* AccountsScreen.swift */; };
+		CC07994E2C2F41BA00067E06 /* DropboxSyncScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC07994D2C2F41BA00067E06 /* DropboxSyncScreen.swift */; };
+		CC0799502C2F4C6D00067E06 /* AccountScreenContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC07994F2C2F4C6D00067E06 /* AccountScreenContent.swift */; };
+		CC0799522C30171F00067E06 /* DropboxSyncScreenContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0799512C30171F00067E06 /* DropboxSyncScreenContent.swift */; };
+		CC0799542C30AB6100067E06 /* CustomNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0799532C30AB6100067E06 /* CustomNotification.swift */; };
+		CC0799562C30AE1A00067E06 /* DropboxErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0799552C30AE1A00067E06 /* DropboxErrors.swift */; };
 		CC14A14C2B4B09710093FF3A /* CompatViewRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC14A14B2B4B09710093FF3A /* CompatViewRoute.swift */; };
 		CC1AA1FA2C0E178F00BE9C07 /* GoogleService-Info-dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC1AA1F92C0E178F00BE9C07 /* GoogleService-Info-dev.plist */; };
 		CC21E74D2BED7F980001F160 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = CC21E74C2BED7F980001F160 /* PrivacyInfo.xcprivacy */; };
@@ -117,6 +127,15 @@
 		13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionOsUtils.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* FeedFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CC0799432C29B79100067E06 /* DropboxDataSourceIos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropboxDataSourceIos.swift; sourceTree = "<group>"; };
+		CC0799452C29BC5F00067E06 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		CC0799492C29BD3000067E06 /* Config.xcconfig.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Config.xcconfig.txt; sourceTree = "<group>"; };
+		CC07994B2C2F41A300067E06 /* AccountsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsScreen.swift; sourceTree = "<group>"; };
+		CC07994D2C2F41BA00067E06 /* DropboxSyncScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropboxSyncScreen.swift; sourceTree = "<group>"; };
+		CC07994F2C2F4C6D00067E06 /* AccountScreenContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountScreenContent.swift; sourceTree = "<group>"; };
+		CC0799512C30171F00067E06 /* DropboxSyncScreenContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropboxSyncScreenContent.swift; sourceTree = "<group>"; };
+		CC0799532C30AB6100067E06 /* CustomNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotification.swift; sourceTree = "<group>"; };
+		CC0799552C30AE1A00067E06 /* DropboxErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropboxErrors.swift; sourceTree = "<group>"; };
 		CC14A14B2B4B09710093FF3A /* CompatViewRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompatViewRoute.swift; sourceTree = "<group>"; };
 		CC1AA1F92C0E178F00BE9C07 /* GoogleService-Info-dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-dev.plist"; sourceTree = "<group>"; };
 		CC21E74C2BED7F980001F160 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -186,6 +205,7 @@
 				CCEA11BE2A6D2BA600C661AC /* FirebaseCrashlytics in Frameworks */,
 				CC4B804229D9A31E0004A0AB /* OrderedCollections in Frameworks */,
 				CC4B803B29D98BB20004A0AB /* Nuke in Frameworks */,
+				CC0799422C29B74600067E06 /* SwiftyDropbox in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,6 +252,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		CC0799572C30B2EE00067E06 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				CC0799432C29B79100067E06 /* DropboxDataSourceIos.swift */,
+				CC0799552C30AE1A00067E06 /* DropboxErrors.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
 		CC23292D29D62FE2005D0E06 /* Kotlin */ = {
 			isa = PBXGroup;
 			children = (
@@ -248,6 +277,7 @@
 				CC6E68222A629658009F4A3C /* Extensions.swift */,
 				D9A5A601F98358B64277BD86 /* ObservableViewModel.swift */,
 				13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */,
+				CC0799532C30AB6100067E06 /* CustomNotification.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -270,6 +300,7 @@
 				CC323E1929D22C5100138233 /* Home */,
 				CCA704DD29D6225B00560FA3 /* Settings */,
 				D9A9C1E32A5EC5BE13FCF6EE /* Search */,
+				D9A304A1F0C9F2D4F6B0AAA4 /* Accounts */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -393,6 +424,8 @@
 				CC6E68312A6BF6EC009F4A3C /* licenses.html */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				CCA704CE29D5A85600560FA3 /* Colors.xcassets */,
+				CC0799452C29BC5F00067E06 /* Config.xcconfig */,
+				CC0799492C29BD3000067E06 /* Config.xcconfig.txt */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -440,12 +473,32 @@
 			path = FeedFlow.xcodeproj/project.xcworkspace/xcuserdata/mg.xcuserdatad/xcschemes;
 			sourceTree = "<group>";
 		};
+		D9A304A1F0C9F2D4F6B0AAA4 /* Accounts */ = {
+			isa = PBXGroup;
+			children = (
+				D9A98B31FBAA20E28DBFD16D /* Dropbox */,
+				CC07994B2C2F41A300067E06 /* AccountsScreen.swift */,
+				CC07994F2C2F4C6D00067E06 /* AccountScreenContent.swift */,
+			);
+			path = Accounts;
+			sourceTree = "<group>";
+		};
 		D9A63EFA43CF7477F2CD40EA /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				D9A28A51D7A0DB55B39E6EB4 /* ImportExportSheetToShow.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		D9A98B31FBAA20E28DBFD16D /* Dropbox */ = {
+			isa = PBXGroup;
+			children = (
+				CC0799572C30B2EE00067E06 /* Data */,
+				CC07994D2C2F41BA00067E06 /* DropboxSyncScreen.swift */,
+				CC0799512C30171F00067E06 /* DropboxSyncScreenContent.swift */,
+			);
+			path = Dropbox;
 			sourceTree = "<group>";
 		};
 		D9A9C1E32A5EC5BE13FCF6EE /* Search */ = {
@@ -489,6 +542,7 @@
 				CCF647582B6EEFC0006C8843 /* KMPNativeCoroutinesAsync */,
 				CCF6475A2B6EEFC0006C8843 /* KMPNativeCoroutinesCore */,
 				CC3F46E22BD1C435005DC259 /* Reeeed */,
+				CC0799412C29B74600067E06 /* SwiftyDropbox */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* FeedFlow.app */;
@@ -503,7 +557,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1130;
 				LastUpgradeCheck = 1430;
-				ORGANIZATIONNAME = orgName;
+				ORGANIZATIONNAME = FeedFlow;
 				TargetAttributes = {
 					7555FF7A242A565900829871 = {
 						CreatedOnToolsVersion = 11.3.1;
@@ -538,6 +592,7 @@
 				CCEA11BC2A6D2BA600C661AC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				CCF647572B6EEFC0006C8843 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */,
 				CC3F46E12BD1C435005DC259 /* XCRemoteSwiftPackageReference "reeeed" */,
+				CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -560,6 +615,8 @@
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				CC1AA1FA2C0E178F00BE9C07 /* GoogleService-Info-dev.plist in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
+				CC07994A2C29BD3000067E06 /* Config.xcconfig.txt in Resources */,
+				CC0799462C29BC5F00067E06 /* Config.xcconfig in Resources */,
 				CC23293129D63038005D0E06 /* iosMain in Resources */,
 				CC21E74D2BED7F980001F160 /* PrivacyInfo.xcprivacy in Resources */,
 				CCEA11BB2A6D2AC300C661AC /* GoogleService-Info.plist in Resources */,
@@ -623,7 +680,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n    swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n    #echo \"\"\n    swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
 		};
 		CCEA11BF2A6D2C6600C661AC /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -671,6 +728,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC23293729D83067005D0E06 /* RoundedCorners.swift in Sources */,
+				CC07994E2C2F41BA00067E06 /* DropboxSyncScreen.swift in Sources */,
 				CC5FDB942BD06B9A00960A30 /* BrowserToPresent.swift in Sources */,
 				CC6E68232A629658009F4A3C /* Extensions.swift in Sources */,
 				CC6E68212A5F446A009F4A3C /* BrowserSelector.swift in Sources */,
@@ -692,6 +750,7 @@
 				D9AF86D3ED2582EEAC6C9C85 /* CompactView.swift in Sources */,
 				D9A93B9610F495CF136FCF94 /* ContentView.swift in Sources */,
 				D9A462B64B1E5781DA876EB4 /* SidebarDrawer.swift in Sources */,
+				CC0799542C30AB6100067E06 /* CustomNotification.swift in Sources */,
 				CCF21A6E2BD32AB60017F663 /* CommonViewRoute.swift in Sources */,
 				D9A0CA22D2D59CE810DAE8F8 /* FeedFlowApp.swift in Sources */,
 				D9A98FE9EA6D2538DD9ACB63 /* RegularView.swift in Sources */,
@@ -704,19 +763,24 @@
 				D9A1AA56A6FB676365A8E3BD /* HomeScreen.swift in Sources */,
 				D9A2236B644940B3ECE8F948 /* HomeScreenContent.swift in Sources */,
 				D9AD5632A576F05296E1A187 /* NoFeedsBottomSheet.swift in Sources */,
+				CC0799522C30171F00067E06 /* DropboxSyncScreenContent.swift in Sources */,
 				D9A244EB9B97638411512543 /* AboutScreen.swift in Sources */,
 				D9A6E6B8D6EF41209D55940D /* LicensesScreen.swift in Sources */,
+				CC07994C2C2F41A300067E06 /* AccountsScreen.swift in Sources */,
 				D9A2A68F5B09CA29CEE49B82 /* AddFeedScreen.swift in Sources */,
 				D9A63D8429C5E3AA53301502 /* CategorySelectorObserver.swift in Sources */,
 				D9A99DA85EA4D27A2B98303F /* FeedSourceListScreen.swift in Sources */,
 				D9A7063BD4F705DF78CC5E17 /* FeedSourceListScreenContent.swift in Sources */,
 				D9AB10242E3FAF02531D19B4 /* ImportExportScreenContent.swift in Sources */,
+				CC0799442C29B79100067E06 /* DropboxDataSourceIos.swift in Sources */,
 				D9A3A551379CC7112BD3701B /* ImportExportSheetToShow.swift in Sources */,
+				CC0799562C30AE1A00067E06 /* DropboxErrors.swift in Sources */,
 				D9A9F86D21FC3244A992E310 /* SettingsScreen.swift in Sources */,
 				D9A25AEAD5D262931F7D5981 /* ObservableViewModel.swift in Sources */,
 				D9AE9FC8BADEF8EF5E18ECB4 /* ImportExportScreen.swift in Sources */,
 				D9A44732D81A96E09778142D /* SearchScreen.swift in Sources */,
 				D9A6AF3AEF499BA448DCFBB2 /* SearchScreenContent.swift in Sources */,
+				CC0799502C2F4C6D00067E06 /* AccountScreenContent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -856,6 +920,7 @@
 		};
 		7555FFA6242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC0799452C29BC5F00067E06 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDebug;
 				CODE_SIGN_STYLE = Automatic;
@@ -891,6 +956,7 @@
 		};
 		7555FFA7242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC0799452C29BC5F00067E06 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -977,6 +1043,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dropbox/SwiftyDropbox.git";
+			requirement = {
+				kind = exactVersion;
+				version = 10.0.7;
+			};
+		};
 		CC23293A29D85208005D0E06 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/scinfu/SwiftSoup";
@@ -1028,6 +1102,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CC0799412C29B74600067E06 /* SwiftyDropbox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */;
+			productName = SwiftyDropbox;
+		};
 		CC23293B29D85208005D0E06 /* SwiftSoup */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CC23293A29D85208005D0E06 /* XCRemoteSwiftPackageReference "SwiftSoup" */;

@@ -16,6 +16,7 @@ internal fun NoFeedsBottomSheet(
     onDismissRequest: () -> Unit,
     onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit,
+    onAccountsClick: () -> Unit,
     sheetState: SheetState = rememberModalBottomSheetState(),
 ) {
     ModalBottomSheet(
@@ -31,6 +32,7 @@ internal fun NoFeedsBottomSheet(
             onDismissRequest = onDismissRequest,
             onAddFeedClick = onAddFeedClick,
             onImportExportClick = onImportExportClick,
+            onAccountsClick = onAccountsClick,
         )
     }
 }
@@ -43,6 +45,7 @@ private fun NoFeedsBottomSheetPreview() {
             onAddFeedClick = {},
             onImportExportClick = {},
             onDismissRequest = {},
+            onAccountsClick = {},
         )
     }
 }

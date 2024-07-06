@@ -16,6 +16,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.HomeScreen
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
@@ -76,13 +77,15 @@ internal data class MainScreen(
                     listState = listState,
                     onImportExportClick = {
                         navigator.push(ImportExportScreen(frameWindowScope.window))
-                        //                    navigation.push(ScreenType.ImportExport)
                     },
                     onSearchClick = {
                         navigator.push(SearchScreen(searchViewModel))
                     },
                     navigateToReaderMode = { feedItemUrlInfo ->
                         navigator.push(ReaderModeScreen(feedItemUrlInfo))
+                    },
+                    onAccountsClick = {
+                        navigator.push(AccountsScreen())
                     },
                 )
             }

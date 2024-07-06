@@ -12,6 +12,8 @@ import shared
 struct NoFeedsBottomSheet: View {
 
     @Environment(\.presentationMode) private var presentationMode
+    @EnvironmentObject private var appState: AppState
+    @Environment(\.dismiss) private var dismiss
 
     let onAddFeedClick: () -> Void
     let onImportExportClick: () -> Void
@@ -42,6 +44,13 @@ struct NoFeedsBottomSheet: View {
                         Label(feedFlowStrings.importExportOpml, systemImage: "arrow.up.arrow.down")
                     }
                     .accessibilityIdentifier(TestingTag.shared.NO_FEED_BOTTOM_SHEET_IMPORT_BUTTON)
+
+                    Button {
+                        self.dismiss()
+                        appState.navigate(route: CommonViewRoute.accounts)
+                    } label: {
+                        Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
+                    }
                 }
             }
             .listStyle(.insetGrouped)
@@ -59,8 +68,7 @@ struct NoFeedsBottomSheet: View {
                 }
             }
         }
-        .presentationDetents([.height(preferredHeight), .large])
-    }
+        .presentationDetents([.fraction(0.6)])    }
 }
 
 #Preview {

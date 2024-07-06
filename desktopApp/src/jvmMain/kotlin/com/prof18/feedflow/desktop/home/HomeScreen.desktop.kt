@@ -35,6 +35,7 @@ internal fun HomeScreen(
     listState: LazyListState,
     onImportExportClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onAccountsClick: () -> Unit,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
 ) {
     val loadingState by homeViewModel.loadingState.collectAsState()
@@ -77,6 +78,7 @@ internal fun HomeScreen(
             showDialog = false
         },
         onImportExportClick = onImportExportClick,
+        onAccountsClick = onAccountsClick,
     )
 
     when (windowSizeClass.widthSizeClass) {

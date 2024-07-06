@@ -18,6 +18,7 @@ fun NoFeedsInfoContent(
     onDismissRequest: () -> Unit,
     onAddFeedClick: () -> Unit,
     onImportExportClick: () -> Unit,
+    onAccountsClick: () -> Unit,
     modifier: Modifier = Modifier,
     showTitle: Boolean = true,
 ) {
@@ -59,7 +60,6 @@ fun NoFeedsInfoContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = Spacing.regular)
-                .padding(bottom = Spacing.medium)
                 .padding(horizontal = Spacing.regular)
                 .tagForTesting(TestingTag.NO_FEED_BOTTOM_SHEET_IMPORT_BUTTON),
             onClick = {
@@ -68,6 +68,20 @@ fun NoFeedsInfoContent(
             },
         ) {
             Text(LocalFeedFlowStrings.current.importExportOpml)
+        }
+
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = Spacing.regular)
+                .padding(bottom = Spacing.medium)
+                .padding(horizontal = Spacing.regular),
+            onClick = {
+                onDismissRequest()
+                onAccountsClick()
+            },
+        ) {
+            Text(LocalFeedFlowStrings.current.settingsAccounts)
         }
     }
 }

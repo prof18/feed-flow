@@ -31,8 +31,9 @@ internal fun HomeScreen(
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
-    onImportExportClick: () -> Unit = {},
     onSearchClick: () -> Unit,
+    onAccountsClick: () -> Unit,
+    onImportExportClick: () -> Unit = {},
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
     val browserManager = koinInject<BrowserManager>()
@@ -78,6 +79,7 @@ internal fun HomeScreen(
             },
             onAddFeedClick = onAddFeedClick,
             onImportExportClick = onImportExportClick,
+            onAccountsClick = onAccountsClick,
         )
     }
 

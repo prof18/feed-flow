@@ -155,6 +155,9 @@ class MainActivity : ComponentActivity() {
                     onSearchClick = {
                         navController.navigate(Screen.Search.name)
                     },
+                    onAccountsClick = {
+                        navController.navigate(Screen.Accounts.name)
+                    },
                 )
             }
 

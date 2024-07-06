@@ -74,7 +74,7 @@ private fun getLoggingModule(appEnvironment: AppEnvironment): Module =
             config = StaticConfig(
                 logWriterList = loggers,
             ),
-            "FeedFlow",
+            tag = "FeedFlow",
         )
         factory { (tag: String?) ->
             if (tag != null) {

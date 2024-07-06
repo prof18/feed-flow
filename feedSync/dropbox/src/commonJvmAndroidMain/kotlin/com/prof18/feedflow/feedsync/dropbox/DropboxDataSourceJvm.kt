@@ -63,7 +63,6 @@ internal class DropboxDataSourceJvm(
     override suspend fun revokeAccess() = withContext(dispatcherProvider.io) {
         val client = requireNotNull(dropboxClient)
         try {
-            client.refreshAccessToken()
             client.auth().tokenRevoke()
             dropboxClient = null
         } catch (e: DbxException) {

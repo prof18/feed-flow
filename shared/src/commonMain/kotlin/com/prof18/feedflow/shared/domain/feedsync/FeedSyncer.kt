@@ -9,7 +9,7 @@ import com.prof18.feedflow.feedsync.database.data.SyncTable
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import kotlinx.datetime.Clock
 
-class FeedSyncer(
+internal class FeedSyncer(
     private val syncedDatabaseHelper: SyncedDatabaseHelper,
     private val appDatabaseHelper: DatabaseHelper,
     private val logger: Logger,

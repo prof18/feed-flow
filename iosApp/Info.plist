@@ -39,6 +39,8 @@
 		<string>brave</string>
 		<string>googlechromes</string>
 		<string>firefox-focus</string>
+        <string>dbapi-8-emm</string>
+        <string>dbapi-2</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -71,5 +73,18 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>$(DROPBOX_URL_SCHEME)</string>
+            </array>
+            <key>CFBundleURLName</key>
+            <string></string>
+        </dict>
+    </array>
+    <key>DropboxApiKey</key>
+    <string>$(DROPBOX_API_KEY)</string>
 </dict>
 </plist>

@@ -43,6 +43,7 @@ struct ContentView: View {
                 isAppInBackground = false
             case .background:
                 isAppInBackground = true
+                KotlinDependencies.shared.getFeedSyncRepository().enqueueBackup(forceBackup: false)
             default:
                 break
             }

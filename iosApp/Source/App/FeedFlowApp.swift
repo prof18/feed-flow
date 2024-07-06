@@ -15,6 +15,15 @@ struct FeedFlowApp: App {
         CrashlyticsKt.setupCrashlytics()
     #endif
         startKoin()
+
+        if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
+            if let keys = NSDictionary(contentsOfFile: path) {
+                let key = keys["DropboxApiKey"] as? String ?? ""
+                let dropboxDataSource = KotlinDependencies.shared.getDropboxDataSource()
+                dropboxDataSource.setup(apiKey: key)
+            }
+        }
+
     }
 
     var body: some Scene {
@@ -22,6 +31,25 @@ struct FeedFlowApp: App {
             ContentView()
                 .environmentObject(appState)
                 .environmentObject(browserSelector)
+                .onOpenURL(perform: { url in
+                    KotlinDependencies.shared.getDropboxDataSource().handleOAuthResponse {
+                        DropboxDataSourceIos.handleOAuthResponse(
+                                url: url,
+                                onSuccess: {
+                                    print("Success! User is logged into DropboxClientsManager.")
+                                    NotificationCenter.default.post(name: .didDropboxSuccess, object: nil)
+                                },
+                                onCancel: {
+                                    print("Authorization flow was manually canceled by user!")
+                                    NotificationCenter.default.post(name: .didDropboxCancel, object: nil)
+                                },
+                                onError: {
+                                    print("Error")
+                                    NotificationCenter.default.post(name: .didDropboxError, object: nil)
+                                }
+                        )
+                    }
+                })
         }
     }
 }

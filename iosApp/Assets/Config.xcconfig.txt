@@ -1,0 +1,11 @@
+//
+//  Config.xcconfig
+//  FeedFlow
+//
+//  Created by Marco Gomiero on 24/06/24.
+//  Copyright © 2024 FeedFlow. All rights reserved.
+//
+
+// Rename the file to Config.xcconfig and fill the values with an api key from Dropbox
+DROPBOX_URL_SCHEME=db-<key>
+DROPBOX_API_KEY=<key>

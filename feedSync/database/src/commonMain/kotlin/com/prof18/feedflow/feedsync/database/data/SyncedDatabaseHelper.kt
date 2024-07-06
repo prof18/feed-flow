@@ -10,7 +10,6 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.feedsync.database.db.FeedFlowFeedSyncDB
 import com.prof18.feedflow.feedsync.database.di.FEED_SYNC_SCOPE_NAME
-import com.prof18.feedflow.feedsync.database.di.FeedSyncScope
 import com.prof18.feedflow.feedsync.database.di.SYNC_DB_DRIVER
 import com.prof18.feedflow.feedsync.database.model.SyncedFeedSource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -28,7 +27,8 @@ class SyncedDatabaseHelper(
 
     private fun getDbRef(): FeedFlowFeedSyncDB {
         if (dbRef == null) {
-            val scope = getKoin().getOrCreateScope<FeedSyncScope>(FEED_SYNC_SCOPE_NAME)
+            val scope = getKoin().getOrCreateScope(FEED_SYNC_SCOPE_NAME, named(FEED_SYNC_SCOPE_NAME))
+
             val driver = scope.get<SqlDriver>(qualifier = named(SYNC_DB_DRIVER))
             dbRef = FeedFlowFeedSyncDB(driver)
         }
@@ -36,7 +36,7 @@ class SyncedDatabaseHelper(
     }
 
     fun closeScope() {
-        val scope = getKoin().getOrCreateScope<FeedSyncScope>(FEED_SYNC_SCOPE_NAME)
+        val scope = getKoin().getOrCreateScope(FEED_SYNC_SCOPE_NAME, named(FEED_SYNC_SCOPE_NAME))
         val driver = scope.get<SqlDriver>(qualifier = named(SYNC_DB_DRIVER))
         driver.close()
         scope.close()
@@ -158,8 +158,7 @@ class SyncedDatabaseHelper(
         }
 
     suspend fun isDatabaseEmpty(): Boolean = withContext(backgroundDispatcher) {
-//        getDbRef().syncedMetadataQueries.isSyncDatabaseEmpty().executeAsOne() == 0L
-        true
+        getDbRef().syncedMetadataQueries.isSyncDatabaseEmpty().executeAsOne() == 0L
     }
 
     suspend fun deleteFeedItems(feedItemIds: List<FeedItemId>) =

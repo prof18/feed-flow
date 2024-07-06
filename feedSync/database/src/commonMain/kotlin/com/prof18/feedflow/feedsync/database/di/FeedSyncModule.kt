@@ -7,8 +7,6 @@ import kotlinx.coroutines.IO
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-class FeedSyncScope
-
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module
 
 internal val commonModule = module {

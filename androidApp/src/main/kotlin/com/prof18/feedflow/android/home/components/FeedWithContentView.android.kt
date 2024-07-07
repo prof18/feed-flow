@@ -2,20 +2,16 @@ package com.prof18.feedflow.android.home.components
 
 import FeedFlowTheme
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.PullRefreshState
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.prof18.feedflow.core.model.FeedItem
@@ -34,7 +30,6 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun FeedWithContentView(
-    pullRefreshState: PullRefreshState,
     feedUpdateStatus: FeedUpdateStatus,
     lazyListState: LazyListState,
     feedItems: ImmutableList<FeedItem>,
@@ -44,6 +39,7 @@ internal fun FeedWithContentView(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     requestMoreItems: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -64,10 +60,13 @@ internal fun FeedWithContentView(
             )
         }
 
-        Box(
-            Modifier
-                .fillMaxSize()
-                .pullRefresh(pullRefreshState),
+        val state = rememberPullToRefreshState()
+
+        PullToRefreshBox(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            isRefreshing = feedUpdateStatus.isLoading(),
+            onRefresh = onRefresh,
         ) {
             FeedList(
                 modifier = Modifier,
@@ -82,12 +81,6 @@ internal fun FeedWithContentView(
                 },
                 requestMoreItems = requestMoreItems,
             )
-
-            PullRefreshIndicator(
-                feedUpdateStatus.isLoading(),
-                pullRefreshState,
-                Modifier.align(Alignment.TopCenter),
-            )
         }
     }
 }
@@ -98,18 +91,15 @@ private fun FeedWithContentViewPreview() {
     FeedFlowTheme {
         FeedWithContentView(
             feedUpdateStatus = inProgressFeedUpdateStatus,
-            pullRefreshState = rememberPullRefreshState(
-                refreshing = false,
-                onRefresh = { },
-            ),
-            feedItems = feedItemsForPreview,
             lazyListState = LazyListState(),
+            feedItems = feedItemsForPreview,
             updateReadStatus = {},
             onFeedItemClick = {},
-            requestMoreItems = {},
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
             onCommentClick = {},
+            requestMoreItems = {},
+            onRefresh = {},
         )
     }
 }

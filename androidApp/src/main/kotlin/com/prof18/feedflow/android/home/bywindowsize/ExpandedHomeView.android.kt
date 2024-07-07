@@ -4,7 +4,6 @@ import FeedFlowTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -52,10 +51,6 @@ internal fun ExpandedHomeView(
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = feedUpdateStatus.isLoading(),
-        onRefresh = refreshData,
-    )
 
     val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
 
@@ -91,7 +86,6 @@ internal fun ExpandedHomeView(
             snackbarHostState = snackbarHostState,
             loadingState = feedUpdateStatus,
             feedState = feedItems,
-            pullRefreshState = pullRefreshState,
             currentFeedFilter = currentFeedFilter,
             onAddFeedClick = onAddFeedClick,
             refreshData = refreshData,

@@ -2,7 +2,6 @@ package com.prof18.feedflow.android.home.bywindowsize
 
 import FeedFlowTheme
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -54,11 +53,6 @@ internal fun CompactHomeView(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val listState = rememberLazyListState()
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = feedUpdateStatus.isLoading(),
-        onRefresh = refreshData,
-    )
-
     val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
     if (isDrawerHidden) {
         HomeScaffold(
@@ -69,7 +63,6 @@ internal fun CompactHomeView(
             snackbarHostState = snackbarHostState,
             loadingState = feedUpdateStatus,
             feedState = feedItems,
-            pullRefreshState = pullRefreshState,
             showDrawerMenu = false,
             currentFeedFilter = currentFeedFilter,
             onDrawerMenuClick = {
@@ -124,7 +117,6 @@ internal fun CompactHomeView(
                 snackbarHostState = snackbarHostState,
                 loadingState = feedUpdateStatus,
                 feedState = feedItems,
-                pullRefreshState = pullRefreshState,
                 showDrawerMenu = true,
                 currentFeedFilter = currentFeedFilter,
                 onDrawerMenuClick = {

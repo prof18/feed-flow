@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -57,10 +56,6 @@ internal fun MediumHomeView(
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = feedUpdateStatus.isLoading(),
-        onRefresh = refreshData,
-    )
 
     var isDrawerMenuFullVisible by remember {
         mutableStateOf(true)
@@ -100,7 +95,6 @@ internal fun MediumHomeView(
             snackbarHostState = snackbarHostState,
             loadingState = feedUpdateStatus,
             feedState = feedItems,
-            pullRefreshState = pullRefreshState,
             showDrawerMenu = feedItems.isNotEmpty(),
             isDrawerMenuOpen = isDrawerMenuFullVisible,
             currentFeedFilter = currentFeedFilter,

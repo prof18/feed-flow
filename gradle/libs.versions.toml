@@ -58,6 +58,7 @@ ktor = "2.3.11"
 dropbox-core = "7.0.0"
 workmanager = "2.9.0"
 lifecycleProcess = "2.8.2"
+android-material3 = "1.3.0-beta04"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
@@ -129,6 +130,8 @@ dropbox-core-android = { module = "com.dropbox.core:dropbox-android-sdk", versio
 workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "workmanager" }
 koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
+# TODO: delete once the PullToRefreshBox is added to Compose Multiplatform
+androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "android-material3" }
 
 [bundles]
 compose = [

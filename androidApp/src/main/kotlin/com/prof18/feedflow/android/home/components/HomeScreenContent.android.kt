@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.pullrefresh.PullRefreshState
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,7 +28,6 @@ internal fun HomeScreenContent(
     paddingValues: PaddingValues,
     loadingState: FeedUpdateStatus,
     feedState: ImmutableList<FeedItem>,
-    pullRefreshState: PullRefreshState,
     listState: LazyListState,
     currentFeedFilter: FeedFilter,
     updateReadStatus: (Int) -> Unit,
@@ -69,7 +66,6 @@ internal fun HomeScreenContent(
                 .padding(paddingValues)
                 .fillMaxSize(),
             feedUpdateStatus = loadingState,
-            pullRefreshState = pullRefreshState,
             feedItems = feedState,
             lazyListState = listState,
             updateReadStatus = updateReadStatus,
@@ -78,6 +74,7 @@ internal fun HomeScreenContent(
             onBookmarkClick = onBookmarkClick,
             onReadStatusClick = onReadStatusClick,
             onCommentClick = onCommentClick,
+            onRefresh = onRefresh,
         )
     }
 }
@@ -93,10 +90,6 @@ private fun HomeScreeContentLoadingPreview() {
                 totalFeedCount = 42,
             ),
             feedState = feedItemsForPreview,
-            pullRefreshState = rememberPullRefreshState(
-                refreshing = false,
-                onRefresh = { },
-            ),
             listState = rememberLazyListState(),
             currentFeedFilter = FeedFilter.Timeline,
             updateReadStatus = {},
@@ -120,10 +113,6 @@ private fun HomeScreeContentLoadedPreview() {
             paddingValues = PaddingValues(0.dp),
             loadingState = FinishedFeedUpdateStatus,
             feedState = feedItemsForPreview,
-            pullRefreshState = rememberPullRefreshState(
-                refreshing = false,
-                onRefresh = { },
-            ),
             listState = rememberLazyListState(),
             currentFeedFilter = FeedFilter.Timeline,
             updateReadStatus = {},

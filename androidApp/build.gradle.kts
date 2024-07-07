@@ -97,10 +97,10 @@ dependencies {
     implementation(compose.runtime)
     implementation(compose.foundation)
     implementation(compose.material3)
-    implementation(compose.material)
     implementation(compose.materialIconsExtended)
     implementation(compose.ui)
     implementation(compose.uiTooling)
+    implementation(libs.androidx.material3)
 
     implementation(libs.bundles.compose)
     implementation(libs.bundles.about.libraries)

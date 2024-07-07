@@ -4,8 +4,6 @@ import FeedFlowTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.pullrefresh.PullRefreshState
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -34,7 +32,6 @@ internal fun HomeScaffold(
     snackbarHostState: SnackbarHostState,
     loadingState: FeedUpdateStatus,
     feedState: ImmutableList<FeedItem>,
-    pullRefreshState: PullRefreshState,
     currentFeedFilter: FeedFilter,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
@@ -98,7 +95,6 @@ internal fun HomeScaffold(
             paddingValues = padding,
             loadingState = loadingState,
             feedState = feedState,
-            pullRefreshState = pullRefreshState,
             listState = listState,
             currentFeedFilter = currentFeedFilter,
             onRefresh = {
@@ -140,10 +136,6 @@ private fun HomeScaffoldPreview() {
                 totalFeedCount = 42,
             ),
             feedState = feedItemsForPreview,
-            pullRefreshState = rememberPullRefreshState(
-                refreshing = false,
-                onRefresh = { },
-            ),
             currentFeedFilter = FeedFilter.Timeline,
             onAddFeedClick = { },
             onSettingsButtonClicked = { },

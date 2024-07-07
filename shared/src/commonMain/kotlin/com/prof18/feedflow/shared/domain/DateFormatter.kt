@@ -59,6 +59,31 @@ class DateFormatter(
             }
         },
 
+        //  "Thu 02 May 2024 11:37:00 +0200"
+        Format {
+            alternativeParsing({
+                // the day of week may be missing
+            }) {
+                dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
+                chars(" ")
+            }
+            dayOfMonth(Padding.ZERO)
+            char(' ')
+            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            char(' ')
+            year()
+            char(' ')
+            hour()
+            char(':')
+            minute()
+            optional {
+                char(':')
+                second()
+            }
+            chars(" ")
+            offset(UtcOffset.Formats.FOUR_DIGITS)
+        },
+
         //  "Mon, 6 May 2024 22:00:00 +00:00"
         Format {
             alternativeParsing({

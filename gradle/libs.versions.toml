@@ -2,7 +2,7 @@
 about-libraries = "11.2.1"
 android-compile-sdk = "34"
 android-min-sdk = "26"
-android-target-sdk = "33"
+android-target-sdk = "34"
 android-gradle-plugin = "8.2.2"
 activity-compose = "1.9.0"
 androidx-core-ktx = "1.5.0"
@@ -132,6 +132,10 @@ koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
 # TODO: delete once the PullToRefreshBox is added to Compose Multiplatform
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "android-material3" }
+detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
+detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle-plugin" }
 
 [bundles]
 compose = [
@@ -158,3 +162,5 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+feedflow-library = { id = "com.feedflow.library", version = "unspecified" }
+feedflow-detekt = { id = "com.feedflow.detekt", version = "unspecified" }

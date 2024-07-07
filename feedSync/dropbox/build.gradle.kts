@@ -1,33 +1,9 @@
-import com.android.build.gradle.internal.ide.kmp.KotlinAndroidSourceSetMarker.Companion.android
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.feedflow.library)
 }
 
 kotlin {
-    androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
-        }
-    }
-
-    jvmToolchain(17)
-
-    jvm()
-
-    iosArm64()
-    iosSimulatorArm64()
-
     applyDefaultHierarchyTemplate()
-
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
-    }
 
     sourceSets {
         commonMain {
@@ -69,13 +45,4 @@ kotlin {
 
 android {
     namespace = "com.prof18.feedflow.feedsync.dropbox"
-    compileSdk = libs.versions.android.compile.sdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.min.sdk.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
 }

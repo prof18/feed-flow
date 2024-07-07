@@ -16,7 +16,7 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.about.libraries) apply false
     alias(libs.plugins.crashlytics) apply false
-    alias(libs.plugins.detekt)
+    alias(libs.plugins.detekt) apply false
     alias(libs.plugins.org.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.compose.compiler) apply false
@@ -26,33 +26,34 @@ tasks.register("clean", Delete::class) {
     delete(layout.buildDirectory.get())
 }
 
-allprojects {
-    apply {
-        plugin(rootProject.libs.plugins.detekt.get().pluginId)
-    }
-
-    dependencies {
-        detektPlugins(rootProject.libs.io.gitlab.arturbosch.detekt.formatting) {
-            exclude(group = "org.slf4j", module = "slf4j-nop")
-        }
-        detektPlugins(rootProject.libs.detekt.compose.rules)
-    }
-
-    detekt {
-        source.setFrom(
-            files(
-                "src",
-                DEFAULT_SRC_DIR_JAVA,
-                DEFAULT_TEST_SRC_DIR_JAVA,
-                DEFAULT_SRC_DIR_KOTLIN,
-                DEFAULT_TEST_SRC_DIR_KOTLIN,
-            ),
-        )
-        config.setFrom(rootProject.files("config/detekt/detekt.yml"))
-        parallel = true
-        autoCorrect = true
-    }
-}
+// todo: delete
+//allprojects {
+//    apply {
+//        plugin(rootProject.libs.plugins.detekt.get().pluginId)
+//    }
+//
+//    dependencies {
+//        detektPlugins(rootProject.libs.io.gitlab.arturbosch.detekt.formatting) {
+//            exclude(group = "org.slf4j", module = "slf4j-nop")
+//        }
+//        detektPlugins(rootProject.libs.detekt.compose.rules)
+//    }
+//
+//    detekt {
+//        source.setFrom(
+//            files(
+//                "src",
+//                DEFAULT_SRC_DIR_JAVA,
+//                DEFAULT_TEST_SRC_DIR_JAVA,
+//                DEFAULT_SRC_DIR_KOTLIN,
+//                DEFAULT_TEST_SRC_DIR_KOTLIN,
+//            ),
+//        )
+//        config.setFrom(rootProject.files("config/detekt/detekt.yml"))
+//        parallel = true
+//        autoCorrect = true
+//    }
+//}
 
 subprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

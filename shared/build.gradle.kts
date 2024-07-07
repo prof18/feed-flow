@@ -56,7 +56,7 @@ kotlin {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
         }
 
-       commonMain {
+        commonMain {
             dependencies {
                 implementation(project(":database"))
                 implementation(project(":feedSync:database"))

@@ -80,7 +80,6 @@
     <string name="issue_content_template">Por favor describe el problema y proporcione un enlace a la fuente RSS que causa los problemas. Si puede, adjunte una captura de pantalla y el archivo OPML</string>
     <string name="import_export_description">FeedFlow admite la importación y exportación de tus suscripciones con un archivo OPML, para una mejor interoperabilidad con los otros lectores de feeds</string>
     <string name="no_category_selected_header">Sin categoría</string>
-    <string name="settings_general_title">General</string>
     <string name="action_save">Guardar</string>
     <string name="no_feed_modal_message">Parece que aún no estás suscrito a ningún feed. Puede agregar manualmente un feed o importar sus suscripciones desde otro lector de RSS</string>
     <string name="menu_add_to_bookmark">Añadir a marcadores</string>

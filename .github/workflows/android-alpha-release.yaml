@@ -41,8 +41,8 @@ jobs:
 
       - name: Create Firebase json
         run: |
-          echo "$FIREBASE_JSON" > androidApp/release/google-services.json.b64
-          base64 -d -i androidApp/release/google-services.json.b64 > androidApp/src/release/google-services.json
+          echo "$FIREBASE_JSON" > androidApp/src/release/google-services.json.b64
+          base64 -d -i androidApp/src/release/google-services.json.b64 > androidApp/src/release/google-services.json
         env:
           FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
 

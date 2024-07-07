@@ -16,6 +16,7 @@ mkdir -p "${root_folder}/android/tablet"
 mkdir -p "${root_folder}/ios/ipad"
 mkdir -p "${root_folder}/ios/iphone"
 mkdir -p "${root_folder}/ios/iphone-small"
+mkdir -p "${root_folder}/macos"
 
 # Output the folder structure
 echo "Folder structure created:"

@@ -1,0 +1,10 @@
+//
+//  Config.xcconfig
+//  FeedFlow
+//
+//  Created by Marco Gomiero on 24/06/24.
+//  Copyright © 2024 FeedFlow. All rights reserved.
+//
+
+DROPBOX_URL_SCHEME=db-000000000000000
+DROPBOX_API_KEY=000000000000000

@@ -37,6 +37,13 @@ jobs:
         env:
           FIREBASE_PLIST: ${{ secrets.FIREBASE_PLIST }}
 
+      - name: Create Config xcconfig
+        run: |
+          echo "DROPBOX_URL_SCHEME=db-$DROPBOX_API_KEY" >> iosApp/Assets/Config.xcconfig
+          echo "DROPBOX_API_KEY==$DROPBOX_API_KEY" >> iosApp/Assets/Config.xcconfig
+        env:
+          DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+
       - name: import certs
         uses: apple-actions/import-codesign-certs@v3
         with:

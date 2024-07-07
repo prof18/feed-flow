@@ -117,6 +117,11 @@ jobs:
           cp config/dummy-google-service.plist iosApp/dummy-google-service.plist
           mv iosApp/dummy-google-service.plist iosApp/GoogleService-Info.plist
 
+      - name: Create Config xcconfig
+        run: |
+          cp config/dummy-config.xcconfig iosApp/Assets/dummy-config.xcconfig
+          mv iosApp/Assets/dummy-config.xcconfig iosApp/Assets/Config.xcconfig
+
       - name: Build iOS Sample
         run: |
           cd iosApp

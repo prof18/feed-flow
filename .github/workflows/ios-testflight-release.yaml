@@ -30,6 +30,11 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
+      - name: Create Dummy Firebase Plist
+        run: |
+          cp config/dummy-google-service.plist iosApp/dummy-google-service.plist
+          mv iosApp/dummy-google-service.plist iosApp/GoogleService-Info-dev.plist
+
       - name: Create Firebase Plist
         run: |
           echo "$FIREBASE_PLIST" > iosApp/GoogleService-Info.plist.b64

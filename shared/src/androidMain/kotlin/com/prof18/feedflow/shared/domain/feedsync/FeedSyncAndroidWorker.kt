@@ -9,6 +9,7 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
+import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
@@ -149,19 +150,19 @@ internal class FeedSyncAndroidWorker(
         return if (appEnvironment.isDebug()) {
             SYNC_DATABASE_NAME_DEBUG
         } else {
-            SYNC_DATABASE_NAME_DEBUG
+            SYNC_DATABASE_NAME_PROD
         }
     }
 
     private suspend fun restoreDropboxClient() {
         if (!dropboxDataSource.isClientSet()) {
             val stringCredentials = dropboxSettings.getDropboxData()
-            if (stringCredentials != null) {
+            if (!stringCredentials.isNullOrEmpty()) {
                 dropboxDataSource.restoreAuth(DropboxStringCredentials(stringCredentials))
             }
 
             if (!dropboxDataSource.isClientSet()) {
-                logger.d { "Dropbox client is null" }
+                logger.e { "Dropbox client is null" }
                 emitErrorMessage()
             }
         }

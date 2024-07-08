@@ -17,7 +17,12 @@ internal fun createDatabaseDriver(
 ): SqlDriver {
     val appPath = AppDataPathBuilder.getAppDataPath(appEnvironment)
 
-    val databasePath = File(appPath, "/${SyncedDatabaseHelper.SYNC_DATABASE_NAME_PROD}.db")
+    val databaseName = if (appEnvironment.isDebug()) {
+        SyncedDatabaseHelper.SYNC_DATABASE_NAME_DEBUG
+    } else {
+        SyncedDatabaseHelper.SYNC_DATABASE_NAME_PROD
+    }
+    val databasePath = File(appPath, "/$databaseName.db")
 
     val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY + databasePath.absolutePath, Properties())
 

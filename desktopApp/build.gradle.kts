@@ -141,6 +141,7 @@ val macExtraPlistKeys: String
           <string>de</string>
           <string>sk</string>
           <string>pt-BR</string>
+          <string>es</string>
         </array>
     """.trimIndent()
 

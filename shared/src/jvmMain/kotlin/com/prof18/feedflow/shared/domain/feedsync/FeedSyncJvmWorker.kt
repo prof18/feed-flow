@@ -4,8 +4,8 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
-import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
+import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
@@ -36,7 +36,12 @@ internal class FeedSyncJvmWorker(
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val appPath = AppDataPathBuilder.getAppDataPath(appEnvironment)
-    private val databaseFile = File(appPath, "/${SyncedDatabaseHelper.SYNC_DATABASE_NAME_PROD}.db")
+    private val databaseName = if (appEnvironment.isDebug()) {
+        SYNC_DATABASE_NAME_DEBUG
+    } else {
+        SYNC_DATABASE_NAME_PROD
+    }
+    private val databaseFile = File(appPath, "/$databaseName.db")
 
     override suspend fun uploadImmediate() {
         logger.d { "Start Immediate upload" }
@@ -136,7 +141,7 @@ internal class FeedSyncJvmWorker(
         return if (appEnvironment.isDebug()) {
             SYNC_DATABASE_NAME_DEBUG
         } else {
-            SYNC_DATABASE_NAME_DEBUG
+            SYNC_DATABASE_NAME_PROD
         }
     }
 

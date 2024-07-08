@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
     alias(libs.plugins.native.coroutines)
+    alias(libs.plugins.feedflow.detekt)
 }
 
 kotlin {

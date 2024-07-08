@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.about.libraries)
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.feedflow.detekt)
 }
 
 val local = Properties()

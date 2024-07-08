@@ -20,7 +20,7 @@ class DetektConventionPlugin : Plugin<Project> {
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
             extensions.configure<DetektExtension> {
-                config.setFrom("$rootDir/build-config/detekt-config.yml")
+                config.setFrom("$rootDir/config/detekt/detekt.yml")
                 parallel = true
 
                 source.setFrom(

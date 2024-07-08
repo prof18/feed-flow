@@ -4,6 +4,9 @@ import FeedFlowTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -128,10 +131,10 @@ class MainActivity : ComponentActivity() {
         NavHost(
             navController = navController,
             startDestination = Screen.Home.name,
-//            enterTransition = { MotionDefaults.sharedXAxisEnter(density) },
-//            exitTransition = { MotionDefaults.sharedXAxisExit(density) },
-//            popEnterTransition = { MotionDefaults.sharedXAxisPopEnter(density) },
-//            popExitTransition = { MotionDefaults.sharedXAxisPopExit(density) },
+            enterTransition = { fadeIn() + slideIntoContainer(SlideDirection.Start) },
+            exitTransition = { fadeOut() + slideOutOfContainer(SlideDirection.Start) },
+            popEnterTransition = { fadeIn() + slideIntoContainer(SlideDirection.End) },
+            popExitTransition = { fadeOut() + slideOutOfContainer(SlideDirection.End) },
         ) {
             composable(Screen.Home.name) {
                 HomeScreen(

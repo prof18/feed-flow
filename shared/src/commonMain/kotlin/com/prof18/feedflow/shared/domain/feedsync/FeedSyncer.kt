@@ -14,11 +14,6 @@ internal class FeedSyncer(
     private val appDatabaseHelper: DatabaseHelper,
     private val logger: Logger,
 ) {
-    suspend fun performSync() {
-        syncFeedSourceCategory()
-        syncFeedSource()
-        syncFeedItem()
-    }
 
     suspend fun populateSyncDbIfEmpty() {
         if (syncedDatabaseHelper.isDatabaseEmpty()) {

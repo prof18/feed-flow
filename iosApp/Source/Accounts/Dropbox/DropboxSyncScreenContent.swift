@@ -142,7 +142,7 @@ struct DropboxSyncScreenContent: View {
         VStack {
             Form {
                 Section {
-                    VStack {
+                    VStack(alignment: .leading) {
                         Text(feedFlowStrings.dropboxSyncCommonDescription)
                             .font(.body)
 
@@ -164,6 +164,16 @@ struct DropboxSyncScreenContent: View {
         }
     }
 }
+
+#Preview("Unlinked") {
+    DropboxSyncScreenContent(
+        connectionState: DropboxConnectionUiState.Unlinked(),
+        onDropboxAuthSuccess: {},
+        onBackupClick: {},
+        onDisconnectClick: {}
+    )
+}
+
 
 #Preview("Loading") {
     DropboxSyncScreenContent(

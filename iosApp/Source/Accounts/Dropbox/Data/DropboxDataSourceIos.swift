@@ -70,6 +70,7 @@ class DropboxDataSourceIos: DropboxDataSource {
 
                     } else if let error = error {
                         print(error)
+                        KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(messageString: error.localizedDescription)
                         completionHandler(nil, DropboxErrors.downloadError(reason: error.description))
                     }
                 }
@@ -101,6 +102,7 @@ class DropboxDataSourceIos: DropboxDataSource {
                     completionHandler(uploadResult, nil)
                 } else if let error = error {
                     print(error)
+                    KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(messageString: error.localizedDescription)
                     completionHandler(nil, DropboxErrors.uploadError(reason: error.description))
                 }
             }

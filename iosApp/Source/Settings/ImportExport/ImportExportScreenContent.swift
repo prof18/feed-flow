@@ -124,7 +124,7 @@ struct ImportExportContent: View {
             .padding(.horizontal, Spacing.medium)
 
             Spacer()
-        }
+        }.frame(maxWidth: .infinity)
     }
 
     @ViewBuilder
@@ -138,6 +138,7 @@ struct ImportExportContent: View {
                 .multilineTextAlignment(.center)
             Spacer()
         }
+        .frame(maxWidth: .infinity)
     }
 
     @ViewBuilder

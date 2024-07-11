@@ -19,7 +19,7 @@ WITH table_counts AS (
 )
 SELECT
     CASE
-        WHEN item_count = 0 AND source_count = 0 AND category_count = 0 THEN 0
+        WHEN item_count = 0 OR source_count = 0 OR category_count = 0 THEN 0
         ELSE 1
     END AS is_database_empty
 FROM table_counts;

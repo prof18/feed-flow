@@ -6,8 +6,8 @@ CREATE TABLE synced_feed_item(
     is_bookmarked INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
-insertOrReplaceSyncedFeedItem:
-INSERT OR REPLACE INTO synced_feed_item(url_hash, is_read, is_bookmarked)
+insertOrIgnoreSyncedFeedItem:
+INSERT OR IGNORE INTO synced_feed_item(url_hash, is_read, is_bookmarked)
 VALUES (?, ?,?);
 
 deleteSyncedFeedItem:

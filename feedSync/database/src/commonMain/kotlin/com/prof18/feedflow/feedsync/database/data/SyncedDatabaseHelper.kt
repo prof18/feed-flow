@@ -148,7 +148,7 @@ class SyncedDatabaseHelper(
     suspend fun insertFeedItems(feedItems: List<SyncedFeedItem>) =
         getDbRef().transactionWithContext(backgroundDispatcher) {
             feedItems.forEach { feedItem ->
-                getDbRef().syncedFeedItemQueries.insertOrReplaceSyncedFeedItem(
+                getDbRef().syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
                     url_hash = feedItem.id,
                     is_read = feedItem.isRead,
                     is_bookmarked = feedItem.isBookmarked,
@@ -171,6 +171,11 @@ class SyncedDatabaseHelper(
 
     suspend fun setFeedItemAsRead(feedItemId: FeedItemId, isRead: Boolean) =
         getDbRef().transactionWithContext(backgroundDispatcher) {
+            getDbRef().syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
+                url_hash = feedItemId.id,
+                is_read = isRead,
+                is_bookmarked = false,
+            )
             getDbRef().syncedFeedItemQueries.updateIsRead(
                 isRead = isRead,
                 urlHash = feedItemId.id,
@@ -180,6 +185,11 @@ class SyncedDatabaseHelper(
 
     suspend fun setFeedItemAsBookmarked(feedItemId: FeedItemId, isBookmarked: Boolean) =
         getDbRef().transactionWithContext(backgroundDispatcher) {
+            getDbRef().syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
+                url_hash = feedItemId.id,
+                is_read = false,
+                is_bookmarked = isBookmarked,
+            )
             getDbRef().syncedFeedItemQueries.updateIsBookmarked(
                 isBookmarked = isBookmarked,
                 urlHash = feedItemId.id,

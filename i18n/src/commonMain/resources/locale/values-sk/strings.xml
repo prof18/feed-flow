@@ -66,7 +66,7 @@
     <string name="action_done">Hotovo</string>
     <string name="action_save">Uložiť</string>
     <string name="no_feed_modal_title">Pridať nový feed</string>
-    <string name="no_feed_modal_message">Zdá sa, že ešte nemáš odber žiadnych feedov. Feedy môžeš pridať manuálne alebo môžeš odbery importovať z inej RSS čítačky</string>
+    <string name="no_feed_modal_message">Zdá sa, že ešte nemáš odber žiadnych feedov. Feed môžeš pridať manuálne, môžeš svoje odbery importovať z inej RSS čítačky alebo prepojiť účet pre synchronizáciu dát z iného zariadenia (táto funkcia je v beta verzii).</string>
     <string name="drawer_title_read">Prečítané</string>
     <string name="settings_toggle_show_read_articles">Zobraziť prečítané články na časovej osi</string>
     <string name="menu_add_to_bookmark">Pridať do záložiek</string>
@@ -92,4 +92,27 @@
     <string name="search_placeholder">Vyhľadať…</string>
     <string name="link_copied_success">Odkaz úspešne skopírovaný!</string>
     <string name="reader_mode_warning">ℹ Režim čítačky sa snaží získať obsah článku. Môžu sa vyskytnúť chyby alebo nechcené znaky.</string>
+    <string name="settings_accounts">Účty</string>
+    <string name="settings_title_feed">Feed</string>
+    <string name="accounts_description">Pripoj účet pre synchronizáciu odberu feedov, kategórií, prečítaných článkov a záložiek medzi zariadeniami.
+\n
+\nFunkcia je ešte v Beta verzii, ale v budúcnosti pribudne podpora pre ďalšie služby.</string>
+    <string name="settings_behaviour_title">Správanie</string>
+    <string name="settings_help_title">Pomoc</string>
+    <string name="dropbox_disconnect_button">Odpojiť</string>
+    <string name="dropbox_connect_button">Prepojiť</string>
+    <string name="dropbox_sync_common_description">Prepoj svoj Dropbox účet pre synchronizáciu odberu feedov, kategórií, prečítaných článkov a záložiek medzi zariadeniami. Dáta sa uložia do priečinka špecifického pre aplikáciu. FeedFlow nebude mať prístup k žiadnym tvojim súborom</string>
+    <string name="backup_button">Zálohovať</string>
+    <string name="dropbox_sync_mobile_description">Kliknutím na tlačidlo Prepojiť budeš presmerovaný do aplikácie alebo na webstránku Dropboxu. Po prepojení účtu sa môžeš vrátiť späť do aplikácie FeedFlow</string>
+    <string name="dropbox_sync_desktop_description">Kliknutím na tlačidlo Prepojiť budeš presmerovaný na webstránku Dropboxu. Po prepojení účtu skopíruj autorizačný kód a vlož ho sem do aplikácie</string>
+    <string name="dropbox_auth_code_hint">Autorizačný kód</string>
+    <string name="dropbox_confirm_button">Potvrdiť</string>
+    <string name="dropbox_sync_success">Tvoj Dropbox účet je úspešne prepojený</string>
+    <string name="dropbox_sync_error">Pri pripájaní k Dropboxu sa vyskytla chyba. Skús to prosím znova</string>
+    <string name="last_upload">Naposledy nahrané: %s</string>
+    <string name="last_download">Naposledy stiahnuté: %s</string>
+    <string name="dropbox_refresh_progress">Prebieha obnovenie</string>
+    <string name="feed_sync_in_progress">Prebieha synchronizácia. Po dokončení sa aplikácia automaticky zatvorí.</string>
+    <string name="no_dropbox_sync_yet">Údaje ešte nie sú synchronizované s Dropboxom. Kliknutím na tlačidlo Zálohovať spustíš synchronizáciu</string>
+    <string name="error_account_sync">Ľutujeme, pri synchronizácii údajov v tvojom účte sa vyskytla chyba :(</string>
 </resources>

@@ -129,7 +129,7 @@ dependencies {
 play {
     // The play_config.json file will be provided on CI
     serviceAccountCredentials.set(file("../play_config.json"))
-    track.set("alpha")
+    track.set("internal")
 }
 
 @Suppress("UnstableApiUsage")

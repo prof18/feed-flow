@@ -101,5 +101,6 @@ WHERE url_hash = ?;
 
 selectForSync:
 SELECT url_hash, is_read, is_bookmarked, pub_date
-FROM feed_item;
+FROM feed_item
+WHERE is_read = 1 OR is_bookmarked = 1;
 

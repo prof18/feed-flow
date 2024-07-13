@@ -60,6 +60,7 @@ class DropboxSyncViewModel internal constructor(
                     )
                 }
                 emitSyncLoading()
+                feedSyncRepository.firstSync()
                 feedRetrieverRepository.fetchFeeds()
                 emitLastSyncUpdate()
             } catch (e: Throwable) {

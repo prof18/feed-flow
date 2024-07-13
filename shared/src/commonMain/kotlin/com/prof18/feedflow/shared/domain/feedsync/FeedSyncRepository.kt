@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsHelper
+import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 
 class FeedSyncRepository internal constructor(
@@ -27,6 +28,15 @@ class FeedSyncRepository internal constructor(
     suspend fun performBackup(forceBackup: Boolean = false) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             if (forceBackup || settingsHelper.getIsSyncUploadRequired()) {
+                feedSyncWorker.uploadImmediate()
+            }
+        }
+    }
+
+    internal suspend fun firstSync() {
+        if (feedSyncAccountRepository.isSyncEnabled()) {
+            val result = feedSyncWorker.download()
+            if (result is SyncResult.Error) {
                 feedSyncWorker.uploadImmediate()
             }
         }

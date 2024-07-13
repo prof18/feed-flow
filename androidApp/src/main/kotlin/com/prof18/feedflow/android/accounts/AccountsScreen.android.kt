@@ -3,8 +3,11 @@ package com.prof18.feedflow.android.accounts
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.accounts.dropbox.DropboxSyncActivity
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
@@ -20,8 +23,16 @@ internal fun AccountsScreen(
 
     val syncAccount by viewModel.accountsState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.restoreAccounts()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val state by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
+
+    LaunchedEffect(state) {
+        when (state) {
+            Lifecycle.State.RESUMED -> {
+                viewModel.restoreAccounts()
+            }
+            else -> {}
+        }
     }
 
     AccountsContent(

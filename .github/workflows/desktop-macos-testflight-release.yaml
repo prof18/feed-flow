@@ -60,7 +60,7 @@ jobs:
           echo "is_release=true" >> desktopApp/src/jvmMain/resources/props.properties
           echo "sentry_dns=$SENTRY_DNS" >> desktopApp/src/jvmMain/resources/props.properties
           echo "version=$VERSION" >> desktopApp/src/jvmMain/resources/props.properties
-          echo "dropbox_key=DROPBOX_API_KEY" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "dropbox_key=$DROPBOX_API_KEY" >> desktopApp/src/jvmMain/resources/props.properties
         env:
           SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
           VERSION: ${{ env.VERSION }}

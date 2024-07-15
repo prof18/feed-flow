@@ -34,6 +34,7 @@ internal class FeedSyncAndroidWorker(
     private val dispatcherProvider: DispatcherProvider,
     private val dropboxSettings: DropboxSettings,
 ) : FeedSyncWorker {
+
     override suspend fun uploadImmediate() {
         logger.d { "Start Immediate upload" }
         performUpload()
@@ -56,6 +57,7 @@ internal class FeedSyncAndroidWorker(
 
         try {
             feedSyncer.populateSyncDbIfEmpty()
+            feedSyncer.updateFeedItemsToSyncDatabase()
             feedSyncer.closeDB()
 
             val databaseFile = generateDatabaseFile() ?: return@withContext SyncResult.Error

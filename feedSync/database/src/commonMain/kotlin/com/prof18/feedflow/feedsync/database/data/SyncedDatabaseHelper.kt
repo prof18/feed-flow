@@ -3,6 +3,8 @@ package com.prof18.feedflow.feedsync.database.data
 import app.cash.sqldelight.Transacter
 import app.cash.sqldelight.TransactionWithoutReturn
 import app.cash.sqldelight.db.SqlDriver
+import co.touchlab.stately.concurrency.AtomicReference
+import co.touchlab.stately.concurrency.value
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
@@ -23,16 +25,16 @@ class SyncedDatabaseHelper(
     private val backgroundDispatcher: CoroutineDispatcher,
 ) : KoinComponent {
 
-    private var dbRef: FeedFlowFeedSyncDB? = null
+    private var dbRef: AtomicReference<FeedFlowFeedSyncDB?> = AtomicReference(null)
 
     private fun getDbRef(): FeedFlowFeedSyncDB {
-        if (dbRef == null) {
+        if (dbRef.value == null) {
             val scope = getKoin().getOrCreateScope(FEED_SYNC_SCOPE_NAME, named(FEED_SYNC_SCOPE_NAME))
 
             val driver = scope.get<SqlDriver>(qualifier = named(SYNC_DB_DRIVER))
-            dbRef = FeedFlowFeedSyncDB(driver)
+            dbRef.set(FeedFlowFeedSyncDB(driver))
         }
-        return requireNotNull(dbRef)
+        return requireNotNull(dbRef.get())
     }
 
     fun closeScope() {
@@ -40,7 +42,7 @@ class SyncedDatabaseHelper(
         val driver = scope.get<SqlDriver>(qualifier = named(SYNC_DB_DRIVER))
         driver.close()
         scope.close()
-        dbRef = null
+        dbRef.set(null)
     }
 
     suspend fun insertSyncedFeedSource(sources: List<FeedSource>) {
@@ -148,7 +150,7 @@ class SyncedDatabaseHelper(
     suspend fun insertFeedItems(feedItems: List<SyncedFeedItem>) =
         getDbRef().transactionWithContext(backgroundDispatcher) {
             feedItems.forEach { feedItem ->
-                getDbRef().syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
+                getDbRef().syncedFeedItemQueries.insertOrReplaceSyncedFeedItem(
                     url_hash = feedItem.id,
                     is_read = feedItem.isRead,
                     is_bookmarked = feedItem.isBookmarked,
@@ -166,34 +168,6 @@ class SyncedDatabaseHelper(
             feedItemIds.forEach { feedItemId ->
                 getDbRef().syncedFeedItemQueries.deleteSyncedFeedItem(feedItemId.id)
             }
-            updateMetadata(SyncTable.SYNCED_FEED_ITEM)
-        }
-
-    suspend fun setFeedItemAsRead(feedItemId: FeedItemId, isRead: Boolean) =
-        getDbRef().transactionWithContext(backgroundDispatcher) {
-            getDbRef().syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
-                url_hash = feedItemId.id,
-                is_read = isRead,
-                is_bookmarked = false,
-            )
-            getDbRef().syncedFeedItemQueries.updateIsRead(
-                isRead = isRead,
-                urlHash = feedItemId.id,
-            )
-            updateMetadata(SyncTable.SYNCED_FEED_ITEM)
-        }
-
-    suspend fun setFeedItemAsBookmarked(feedItemId: FeedItemId, isBookmarked: Boolean) =
-        getDbRef().transactionWithContext(backgroundDispatcher) {
-            getDbRef().syncedFeedItemQueries.insertOrIgnoreSyncedFeedItem(
-                url_hash = feedItemId.id,
-                is_read = false,
-                is_bookmarked = isBookmarked,
-            )
-            getDbRef().syncedFeedItemQueries.updateIsBookmarked(
-                isBookmarked = isBookmarked,
-                urlHash = feedItemId.id,
-            )
             updateMetadata(SyncTable.SYNCED_FEED_ITEM)
         }
 

@@ -65,6 +65,7 @@ internal class FeedSyncIosWorker(
 
         try {
             feedSyncer.populateSyncDbIfEmpty()
+            feedSyncer.updateFeedItemsToSyncDatabase()
             feedSyncer.closeDB()
 
             val databasePath = getDatabaseUrl()

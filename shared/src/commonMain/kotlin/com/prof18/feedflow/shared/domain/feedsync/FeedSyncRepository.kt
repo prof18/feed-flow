@@ -99,27 +99,8 @@ class FeedSyncRepository internal constructor(
         }
     }
 
-    internal suspend fun updateFeedItemReadStatus(feedItemId: FeedItemId, isRead: Boolean) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.setFeedItemAsRead(feedItemId, isRead)
-            settingsHelper.setIsSyncUploadRequired(true)
-        }
-    }
-
-    internal suspend fun updateFeedItemBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.setFeedItemAsBookmarked(feedItemId, isBookmarked)
-            settingsHelper.setIsSyncUploadRequired(true)
-        }
-    }
-
-    internal suspend fun markAllFeedAsRead(allFeedItemIds: List<FeedItemId>) {
-        if (feedSyncAccountRepository.isSyncEnabled()) {
-            for (feedItemId in allFeedItemIds) {
-                syncedDatabaseHelper.setFeedItemAsRead(feedItemId, true)
-            }
-            settingsHelper.setIsSyncUploadRequired(true)
-        }
+    internal fun setIsSyncUploadRequired() {
+        settingsHelper.setIsSyncUploadRequired(true)
     }
 
     internal suspend fun syncFeedSources() {

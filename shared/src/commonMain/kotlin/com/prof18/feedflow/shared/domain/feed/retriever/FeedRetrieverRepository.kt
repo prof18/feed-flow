@@ -169,9 +169,7 @@ internal class FeedRetrieverRepository(
             }.toImmutableList()
         }
         databaseHelper.markAsRead(itemsToUpdates.toList())
-        itemsToUpdates.forEach { feedItemId ->
-            feedSyncRepository.updateFeedItemReadStatus(feedItemId, true)
-        }
+        feedSyncRepository.setIsSyncUploadRequired()
     }
 
     suspend fun fetchFeeds(
@@ -217,8 +215,7 @@ internal class FeedRetrieverRepository(
     suspend fun markAllFeedAsRead() {
         val currentFilter = currentFeedFilterMutableState.value
         databaseHelper.markAllFeedAsRead(currentFilter)
-        val allFeedItemIds = databaseHelper.getAllFeedItemIds()
-        feedSyncRepository.markAllFeedAsRead(allFeedItemIds)
+        feedSyncRepository.setIsSyncUploadRequired()
         getFeeds()
     }
 
@@ -312,7 +309,7 @@ internal class FeedRetrieverRepository(
             }.toImmutableList()
         }
         databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
-        feedSyncRepository.updateFeedItemBookmarkStatus(feedItemId, isBookmarked)
+        feedSyncRepository.setIsSyncUploadRequired()
     }
 
     suspend fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) {
@@ -330,7 +327,7 @@ internal class FeedRetrieverRepository(
             }.toImmutableList()
         }
         databaseHelper.updateReadStatus(feedItemId, isRead)
-        feedSyncRepository.updateFeedItemReadStatus(feedItemId, isRead)
+        feedSyncRepository.setIsSyncUploadRequired()
     }
 
     private suspend fun parseFeeds(

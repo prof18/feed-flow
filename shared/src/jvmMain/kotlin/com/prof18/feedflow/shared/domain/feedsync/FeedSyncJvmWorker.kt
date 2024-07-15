@@ -60,6 +60,7 @@ internal class FeedSyncJvmWorker(
 
         try {
             feedSyncer.populateSyncDbIfEmpty()
+            feedSyncer.updateFeedItemsToSyncDatabase()
             feedSyncer.closeDB()
 
             val dropboxUploadParam = DropboxUploadParam(

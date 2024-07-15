@@ -28,6 +28,11 @@ internal class FeedSyncer(
         }
     }
 
+    suspend fun updateFeedItemsToSyncDatabase() {
+        val allFeedItems = appDatabaseHelper.getFeedItemsForSync()
+        syncedDatabaseHelper.insertFeedItems(allFeedItems)
+    }
+
     suspend fun syncFeedSource() {
         val lastSyncTimestamp = appDatabaseHelper.getLastChangeTimestamp(DatabaseTables.FEED_SOURCE)
         val remoteSyncTimestamp = syncedDatabaseHelper.getLastChangeTimestamp(SyncTable.SYNCED_FEED_SOURCE)

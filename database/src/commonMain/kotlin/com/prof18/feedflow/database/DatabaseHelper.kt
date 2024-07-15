@@ -286,10 +286,6 @@ class DatabaseHelper(
             }
     }
 
-    suspend fun getAllFeedItemIds(): List<FeedItemId> = withContext(backgroundDispatcher) {
-        dbRef.feedItemQueries.selectAllUrlHashes().executeAsList().map { FeedItemId(it) }
-    }
-
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,

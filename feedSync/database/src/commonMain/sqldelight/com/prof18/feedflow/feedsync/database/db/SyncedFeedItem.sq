@@ -6,8 +6,8 @@ CREATE TABLE synced_feed_item(
     is_bookmarked INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
-insertOrIgnoreSyncedFeedItem:
-INSERT OR IGNORE INTO synced_feed_item(url_hash, is_read, is_bookmarked)
+insertOrReplaceSyncedFeedItem:
+INSERT OR REPLACE INTO synced_feed_item(url_hash, is_read, is_bookmarked)
 VALUES (?, ?,?);
 
 deleteSyncedFeedItem:
@@ -15,13 +15,3 @@ DELETE FROM synced_feed_item WHERE url_hash = ?;
 
 selectAllSyncedFeedItems:
 SELECT * FROM synced_feed_item;
-
-updateIsRead:
-UPDATE synced_feed_item
-SET is_read = :isRead
-WHERE url_hash = :urlHash;
-
-updateIsBookmarked:
-UPDATE synced_feed_item
-SET is_bookmarked = :isBookmarked
-WHERE url_hash = :urlHash;

@@ -181,6 +181,7 @@ struct HomeScreen: View {
             switch newScenePhase {
             case .background:
                 homeViewModel.markAsReadOnScroll(lastVisibleIndex: Int32(indexHolder.getLastReadIndex()))
+                KotlinDependencies.shared.getFeedSyncRepository().enqueueBackup(forceBackup: false)
             default:
                 break
             }

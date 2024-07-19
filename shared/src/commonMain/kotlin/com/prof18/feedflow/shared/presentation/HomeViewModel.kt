@@ -9,6 +9,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
@@ -32,6 +34,8 @@ class HomeViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val feedManagerRepository: FeedManagerRepository,
     private val settingsRepository: SettingsRepository,
+    private val feedSyncRepository: FeedSyncRepository,
+    feedSyncMessageQueue: FeedSyncMessageQueue,
 ) : BaseViewModel() {
 
     // Loading
@@ -61,6 +65,9 @@ class HomeViewModel internal constructor(
 
     @NativeCoroutinesState
     val currentFeedFilter = feedRetrieverRepository.currentFeedFilter
+
+    @NativeCoroutines
+    val syncMessageQueue = feedSyncMessageQueue.messageQueue
 
     init {
         scope.launch {
@@ -238,6 +245,13 @@ class HomeViewModel internal constructor(
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {
         scope.launch {
             feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
+        }
+    }
+
+    fun markAsReadAndSync(lastVisibleIndex: Int) {
+        scope.launch {
+            markAsReadOnScroll(lastVisibleIndex)
+            feedSyncRepository.enqueueBackup()
         }
     }
 }

@@ -174,7 +174,6 @@ struct DropboxSyncScreenContent: View {
     )
 }
 
-
 #Preview("Loading") {
     DropboxSyncScreenContent(
         connectionState: DropboxConnectionUiState.Linked(syncState: DropboxSyncUIState.Loading()),

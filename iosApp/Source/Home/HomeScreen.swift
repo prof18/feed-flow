@@ -177,11 +177,26 @@ struct HomeScreen: View {
                 self.appState.emitGenericError()
             }
         }
+        .task {
+            do {
+                let stream = asyncSequence(for: homeViewModel.syncMessageQueue)
+                for try await message in stream {
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.errorAccountSync,
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    )
+                }
+            } catch {
+                self.appState.emitGenericError()
+            }
+        }
         .onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
             case .background:
-                homeViewModel.markAsReadOnScroll(lastVisibleIndex: Int32(indexHolder.getLastReadIndex()))
-                KotlinDependencies.shared.getFeedSyncRepository().enqueueBackup(forceBackup: false)
+                homeViewModel.markAsReadAndSync(lastVisibleIndex: Int32(indexHolder.getLastReadIndex()))
             default:
                 break
             }

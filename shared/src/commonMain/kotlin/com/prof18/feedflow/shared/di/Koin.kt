@@ -142,6 +142,8 @@ private val coreModule = module {
             feedRetrieverRepository = get(),
             feedManagerRepository = get(),
             settingsRepository = get(),
+            feedSyncRepository = get(),
+            feedSyncMessageQueue = get(),
         )
     }
 

@@ -105,8 +105,22 @@ class DropboxDataSourceIos: DropboxDataSource {
                 } else if let error = error {
                     print(error)
                     KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
-                        messageString: error.localizedDescription
+                        messageString: error.description
                     )
+
+                    // TODO: Clean up after error debugging
+                    switch error as CallError {
+                    case .routeError(let boxed, let userMessage, let errorSummary, let requestId):
+
+                        let err = boxed.unboxed as Files.UploadError
+                        KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
+                            messageString: "Boxed error: \(err.description)"
+                        )
+
+                    default:
+                        break
+                    }
+
                     completionHandler(nil, DropboxErrors.uploadError(reason: error.description))
                 }
             }

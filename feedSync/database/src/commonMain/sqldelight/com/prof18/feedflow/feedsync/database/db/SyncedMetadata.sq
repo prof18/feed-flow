@@ -23,3 +23,6 @@ SELECT
         ELSE 1
     END AS is_database_empty
 FROM table_counts;
+
+deleteAll:
+DELETE FROM sync_metadata;

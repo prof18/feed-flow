@@ -15,3 +15,6 @@ DELETE FROM synced_feed_item WHERE url_hash = ?;
 
 selectAllSyncedFeedItems:
 SELECT * FROM synced_feed_item;
+
+deleteAll:
+DELETE FROM synced_feed_item;

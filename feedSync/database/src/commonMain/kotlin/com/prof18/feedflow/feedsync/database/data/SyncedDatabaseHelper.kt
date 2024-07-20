@@ -171,6 +171,16 @@ class SyncedDatabaseHelper(
             updateMetadata(SyncTable.SYNCED_FEED_ITEM)
         }
 
+    suspend fun deleteAllData() {
+        val dbRef = getDbRef()
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.syncedFeedItemQueries.deleteAll()
+            dbRef.syncedFeedSourceQueries.deleteAll()
+            dbRef.syncedFeedSourceCategoryQueries.deleteAll()
+            dbRef.syncedMetadataQueries.deleteAll()
+        }
+    }
+
     private fun updateMetadata(table: SyncTable) {
         getDbRef().syncedMetadataQueries.insertMetadata(
             table_name = table.tableName,

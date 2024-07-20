@@ -12,3 +12,6 @@ VALUES (?,?);
 
 delete:
 DELETE FROM synced_feed_source_category WHERE id = ?;
+
+deleteAll:
+DELETE FROM synced_feed_source_category;

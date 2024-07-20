@@ -85,6 +85,7 @@ class DropboxSyncViewModel internal constructor(
                 dropboxSyncUiMutableState.update { DropboxConnectionUiState.Loading }
                 dropboxDataSource.revokeAccess()
                 dropboxSettings.clearDropboxData()
+                feedSyncRepository.deleteAll()
                 dropboxSyncUiMutableState.update { DropboxConnectionUiState.Unlinked }
             } catch (_: DropboxException) {
                 dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)

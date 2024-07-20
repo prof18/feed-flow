@@ -124,4 +124,8 @@ class FeedSyncRepository internal constructor(
             feedSyncMessageQueue.emitResult(feedItemResult)
         }
     }
+
+    internal suspend fun deleteAll() {
+        syncedDatabaseHelper.deleteAllData()
+    }
 }

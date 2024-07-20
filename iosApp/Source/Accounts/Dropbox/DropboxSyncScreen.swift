@@ -45,7 +45,7 @@ struct DropboxSyncScreen: View {
         .task {
             do {
                 let stream = asyncSequence(for: viewModel.dropboxSyncMessageState)
-                for try await message in stream where message  is DropboxSynMessages.Error {
+                for try await message in stream where message is DropboxSynMessages.Error {
                         self.appState.snackbarQueue.append(
                             SnackbarData(
                                 title: feedFlowStrings.dropboxSyncError,

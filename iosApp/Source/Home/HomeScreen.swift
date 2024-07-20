@@ -180,7 +180,7 @@ struct HomeScreen: View {
         .task {
             do {
                 let stream = asyncSequence(for: homeViewModel.syncMessageQueue)
-                for try await message in stream {
+                for try await message in stream where message.isError() {
                     self.appState.snackbarQueue.append(
                         SnackbarData(
                             title: feedFlowStrings.errorAccountSync,

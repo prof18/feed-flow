@@ -39,7 +39,7 @@
     <string name="search_no_data">未匹配到 %s。</string>
     <string name="settings_title_feed">订阅</string>
     <string name="settings_accounts">账户</string>
-    <string name="settings_behaviour_title">性能</string>
+    <string name="settings_behaviour_title">行为</string>
     <string name="settings_help_title">帮助</string>
     <string name="dropbox_connect_button">连接</string>
     <string name="dropbox_disconnect_button">未连接</string>

@@ -248,9 +248,8 @@ class HomeViewModel internal constructor(
         }
     }
 
-    fun markAsReadAndSync(lastVisibleIndex: Int) {
+    fun enqueueBackup() {
         scope.launch {
-            markAsReadOnScroll(lastVisibleIndex)
             feedSyncRepository.enqueueBackup()
         }
     }

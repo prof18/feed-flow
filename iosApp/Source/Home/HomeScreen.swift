@@ -196,7 +196,7 @@ struct HomeScreen: View {
         .onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
             case .background:
-                homeViewModel.markAsReadAndSync(lastVisibleIndex: Int32(indexHolder.getLastReadIndex()))
+                homeViewModel.enqueueBackup()
             default:
                 break
             }

@@ -13,6 +13,11 @@ import UIKit
 
 class DropboxDataSourceIos: DropboxDataSource {
     private var client: DropboxClient?
+    var appState: AppState
+
+    init(appState: AppState) {
+        self.appState = appState
+    }
 
     func setup(apiKey: String) {
         DropboxClientsManager.setupWithAppKey(apiKey)
@@ -107,6 +112,13 @@ class DropboxDataSourceIos: DropboxDataSource {
                     KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
                         messageString: error.description
                     )
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: "Upload error",
+                            subtitle: error.description,
+                            showBanner: true
+                        )
+                    )
 
                     // TODO: Clean up after error debugging
                     switch error as CallError {
@@ -115,6 +127,13 @@ class DropboxDataSourceIos: DropboxDataSource {
                         let err = boxed.unboxed as Files.UploadError
                         KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
                             messageString: "Boxed error: \(err.description)"
+                        )
+                        self.appState.snackbarQueue.append(
+                            SnackbarData(
+                                title: "Boxed Upload error",
+                                subtitle: err.description,
+                                showBanner: true
+                            )
                         )
 
                     default:

@@ -14,7 +14,7 @@ struct FeedFlowApp: App {
     #if !DEBUG
         CrashlyticsKt.setupCrashlytics()
     #endif
-        startKoin()
+        startKoin(appState: appState)
 
         if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
             if let keys = NSDictionary(contentsOfFile: path) {

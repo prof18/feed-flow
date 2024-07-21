@@ -11,7 +11,7 @@
     <string name="open_source_nav_bar">开源许可证</string>
     <string name="report_issue_button">报告错误</string>
     <string name="open_website_button">访问官网</string>
-    <string name="force_feed_refresh">刷新订阅源</string>
+    <string name="force_feed_refresh">同步订阅源</string>
     <string name="import_export_opml">导入 OPML</string>
     <string name="import_export_opml_title">导入和导出</string>
     <string name="wrong_link_report_title">以下订阅源无效，未被添加</string>
@@ -32,7 +32,7 @@
     <string name="action_save">保存</string>
     <string name="about_menu_contribute_translations">参与翻译</string>
     <string name="in_app_browser">应用内置</string>
-    <string name="settings_reader_mode">以阅读模式查看文章</string>
+    <string name="settings_reader_mode">以全文模式查看文章</string>
     <string name="search_placeholder">搜索…</string>
     <string name="search_hint_title">开始输入…</string>
     <string name="search_hint_subtitle">自动显示结果</string>
@@ -44,8 +44,8 @@
     <string name="dropbox_connect_button">连接</string>
     <string name="dropbox_disconnect_button">未连接</string>
     <string name="backup_button">备份</string>
-    <string name="dropbox_sync_common_description">连接 Dropbox 账户以在设备间同步订阅、分类、阅读和标记的文章，数据仅保存在应用的特定文件夹内，FeedFlow 不会访问您的其他文件</string>
-    <string name="dropbox_refresh_progress">正在刷新</string>
+    <string name="dropbox_sync_common_description">连接 Dropbox 账户以在设备间同步订阅、分类、已读和收藏的文章。数据仅保存在应用的特定文件夹内，FeedFlow 不会访问您的其他文件</string>
+    <string name="dropbox_refresh_progress">正在同步</string>
     <string name="no_dropbox_sync_yet">数据未与 Dropbox 同步。请点击“备份”按钮开始同步</string>
     <string name="error_account_sync">抱歉，同步账户数据出错 :(</string>
     <string name="feed_added_message">已订阅 %s</string>
@@ -74,11 +74,11 @@
     <string name="load_file_error_message">无法加载文件</string>
     <string name="feed_error_message">出现错误：%s :(</string>
     <string name="open_source_licenses">开源许可证</string>
-    <string name="about_the_app">FeedFlow 是一款秉承作者个人理念设计的极简 RSS 阅读器。选用您信赖的隐私浏览器在原始网站上查看文章，以享受独立的阅读体验，同时也提供了专注阅读模式。
+    <string name="about_the_app">FeedFlow 是一款秉承作者个人理念设计的极简 RSS 阅读器。选用您信赖的隐私浏览器在原始网站上查看文章，以享受独立、私密的阅读体验。此外，FeedFlow 还提供了专注阅读的全文模式。
 \n支持通过 OPML 文件导入或导出 RSS 订阅。</string>
     <string name="retry_button">重试</string>
     <string name="done_button">确定</string>
-    <string name="feed_add_in_progress_message">正在检查所有订阅源的可用性，耗时取决于订阅源数量，请耐心等待</string>
+    <string name="feed_add_in_progress_message">正在检查所有订阅源的可用性。耗时取决于订阅源数量，请耐心等待</string>
     <string name="database_error">订阅源检索出错。请重试或重启应用 :(</string>
     <string name="invalid_rss_url">您提供的 RSS 订阅链接无效</string>
     <string name="new_release_available_title">FeedFlow 新版本已发布：</string>
@@ -92,15 +92,15 @@
     <string name="drawer_title_read">已读</string>
     <string name="close_menu_button">关闭菜单</string>
     <string name="no_feed_modal_message">尚未订阅任何源。您可手动添加，或从其他 RSS 阅读器导入订阅，亦或连接账户同步数据（功能测试中）。</string>
-    <string name="menu_add_to_bookmark">添加至书签</string>
-    <string name="menu_remove_from_bookmark">从书签移除</string>
-    <string name="drawer_title_bookmarks">书签</string>
+    <string name="menu_add_to_bookmark">添加收藏</string>
+    <string name="menu_remove_from_bookmark">取消收藏</string>
+    <string name="drawer_title_bookmarks">收藏</string>
     <string name="menu_mark_as_read">标记为已读</string>
     <string name="menu_mark_as_unread">标记为未读</string>
-    <string name="menu_open_comments">打开评论</string>
+    <string name="menu_open_comments">开放评论</string>
     <string name="empty_screen_back_to_timeline">返回时间线</string>
     <string name="last_download">最后下载：%s</string>
-    <string name="accounts_description">连接账户以同步设备间的订阅、分类、阅读和标记的文章。
+    <string name="accounts_description">连接账户以同步设备间的订阅、分类、已读和收藏的文章。
 \n
 \n功能测试中，未来将支持更多服务。</string>
     <string name="dropbox_auth_code_hint">授权码</string>
@@ -112,7 +112,7 @@
     <string name="last_upload">最后上传：%s</string>
     <string name="no_feeds_found_message">尚无订阅，请先添加！</string>
     <string name="feed_sync_in_progress">正在同步。完成后自动关闭应用。</string>
-    <string name="bookmarked_articles_empty_screen_message">尚无书签，请先标记！</string>
+    <string name="bookmarked_articles_empty_screen_message">尚无收藏，请先添加！</string>
     <string name="link_copied_success">成功复制链接！</string>
-    <string name="reader_mode_warning">ℹ 阅读模式正在提取文章内容，可能出现小故障或冗余字符。</string>
+    <string name="reader_mode_warning">ℹ 全文模式正在解析文章内容。可能出现故障或冗余字符。</string>
 </resources>

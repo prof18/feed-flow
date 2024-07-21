@@ -29,7 +29,7 @@ class DropboxDataSourceIos: DropboxDataSource {
             switch result {
             case .success(let requestBox):
                 return requestBox
-            case .failure(let error):
+            case .failure:
                 return nil
             }
         }
@@ -103,10 +103,21 @@ class DropboxDataSourceIos: DropboxDataSource {
                         completionHandler(downloadResult, nil)
 
                     } else if let error = error {
-                        print(error)
                         KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
-                            messageString: error.localizedDescription
+                            messageString: error.description
                         )
+
+                        switch error as CallError {
+                        case .routeError(let boxed, _, _, _):
+                            let err = boxed.unboxed as Files.DownloadError
+                            KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
+                                messageString: "Boxed error: \(err.description)"
+                            )
+
+                        default:
+                            break
+                        }
+
                         completionHandler(nil, DropboxErrors.downloadError(reason: error.description))
                     }
                 }
@@ -142,7 +153,7 @@ class DropboxDataSourceIos: DropboxDataSource {
                     )
 
                     switch error as CallError {
-                    case .routeError(let boxed, let userMessage, let errorSummary, let requestId):
+                    case .routeError(let boxed, _, _, _):
                         let err = boxed.unboxed as Files.UploadError
                         KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
                             messageString: "Boxed error: \(err.description)"
@@ -203,6 +214,6 @@ class DropboxDataSourceIos: DropboxDataSource {
     }
 
     private func createClient() -> DropboxClient? {
-        DropboxClientsManager.authorizedClient
+        DropboxClientsManager.authorizedClient ?? DropboxClientsManager.authorizedBackgroundClient
     }
 }

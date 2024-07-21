@@ -229,7 +229,17 @@ private val coreModule = module {
         )
     }
 
-    singleOf(::FeedSyncRepository)
+    single {
+        FeedSyncRepository(
+            syncedDatabaseHelper = get(),
+            feedSyncWorker = get(),
+            settingsHelper = get(),
+            feedSyncAccountRepository = get(),
+            feedSyncMessageQueue = get(),
+            dropboxSettings = get(),
+            logger = getWith("FeedSyncRepository"),
+        )
+    }
 
     factory {
         FeedSyncer(

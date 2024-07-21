@@ -1,6 +1,7 @@
 import SwiftUI
 import shared
 import FirebaseCore
+import SwiftyDropbox
 
 @main
 struct FeedFlowApp: App {
@@ -14,7 +15,7 @@ struct FeedFlowApp: App {
     #if !DEBUG
         CrashlyticsKt.setupCrashlytics()
     #endif
-        startKoin(appState: appState)
+        startKoin()
 
         if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
             if let keys = NSDictionary(contentsOfFile: path) {
@@ -65,6 +66,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     #endif
         return true
     }
+
+    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
+            DropboxClientsManager.handleEventsForBackgroundURLSession(
+                with: identifier,
+                creationInfos: [],
+                completionHandler: completionHandler,
+                requestsToReconnect: { requestResults in
+                    DropboxDataSourceIos.processReconnect(requestResults: requestResults)
+                }
+            )
+        }
 
     private func configureFirebase() {
         #if DEBUG

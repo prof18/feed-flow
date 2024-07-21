@@ -1,10 +1,10 @@
 package com.prof18.feedflow.feedsync.dropbox
 
-import platform.Foundation.NSData
+import platform.Foundation.NSURL
 
 actual class DropboxUploadParam(
     val path: String,
-    val data: NSData,
+    val url: NSURL,
 )
 
 actual class DropboxDownloadParam(

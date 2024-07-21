@@ -5,9 +5,11 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
+import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
+import kotlinx.datetime.Clock
 
 class FeedSyncRepository internal constructor(
     private val syncedDatabaseHelper: SyncedDatabaseHelper,
@@ -15,6 +17,8 @@ class FeedSyncRepository internal constructor(
     private val settingsHelper: SettingsHelper,
     private val feedSyncAccountRepository: FeedSyncAccountsRepository,
     private val feedSyncMessageQueue: FeedSyncMessageQueue,
+    private val dropboxSettings: DropboxSettings,
+    private val logger: Logger,
 ) {
     fun enqueueBackup(forceBackup: Boolean = false) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
@@ -31,6 +35,13 @@ class FeedSyncRepository internal constructor(
                 feedSyncWorker.uploadImmediate()
             }
         }
+    }
+
+    // Used only on iOS when the system performs a background upload
+    fun onDropboxUploadSuccessAfterResume() {
+        dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+        logger.d { "Upload to dropbox successfully from restarted session" }
+        settingsHelper.setIsSyncUploadRequired(false)
     }
 
     internal suspend fun firstSync() {

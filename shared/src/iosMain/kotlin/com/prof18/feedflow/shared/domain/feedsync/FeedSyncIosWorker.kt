@@ -73,14 +73,9 @@ internal class FeedSyncIosWorker(
                 emitErrorMessage()
                 return@withContext
             }
-            val fileData = NSData.dataWithContentsOfURL(databasePath)
-            if (fileData == null) {
-                emitErrorMessage()
-                return@withContext
-            }
             val dropboxUploadParam = DropboxUploadParam(
                 path = "/${getDatabaseName()}.db",
-                data = fileData,
+                url = databasePath
             )
             dropboxDataSource.performUpload(dropboxUploadParam)
             dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())

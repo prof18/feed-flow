@@ -13,14 +13,43 @@ import UIKit
 
 class DropboxDataSourceIos: DropboxDataSource {
     private var client: DropboxClient?
-    var appState: AppState
-
-    init(appState: AppState) {
-        self.appState = appState
-    }
 
     func setup(apiKey: String) {
-        DropboxClientsManager.setupWithAppKey(apiKey)
+        DropboxClientsManager.setupWithAppKey(
+            apiKey,
+            backgroundSessionIdentifier: "feed-flow-drobox-sync-background-identifier",
+            requestsToReconnect: { requestResults in
+                DropboxDataSourceIos.processReconnect(requestResults: requestResults)
+            }
+        )
+    }
+
+    static func processReconnect(requestResults: ([Result<DropboxBaseRequestBox, ReconnectionError>])) {
+        let successfulReturnedRequests = requestResults.compactMap { result -> DropboxBaseRequestBox? in
+            switch result {
+            case .success(let requestBox):
+                return requestBox
+            case .failure(let error):
+                return nil
+            }
+        }
+
+        for request in successfulReturnedRequests {
+            switch request {
+            case .upload(let uploadResponse):
+                uploadResponse.response { _, error in
+                    // handle response
+                    if error != nil {
+                        KotlinDependencies.shared.getFeedSyncRepository().onDropboxUploadSuccessAfterResume()
+                    } else {
+                        print("ERROR: Upload error after resume")
+                    }
+                }
+
+            default:
+                break
+            }
+        }
     }
 
     func startAuthorization(platformAuthHandler: @escaping () -> Void) {
@@ -60,7 +89,7 @@ class DropboxDataSourceIos: DropboxDataSource {
         let directoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let destURL = directoryURL.appendingPathComponent(downloadParam.outputName)
 
-        if let client = client {
+        if let client = DropboxClientsManager.authorizedBackgroundClient {
             client.files.download(path: downloadParam.path, overwrite: true, destination: destURL)
                 .response { response, error in
                     if let response = response {
@@ -94,7 +123,7 @@ class DropboxDataSourceIos: DropboxDataSource {
             client.files.upload(
                 path: uploadParam.path,
                 mode: .overwrite,
-                input: uploadParam.data
+                input: uploadParam.url
             )
             .response { response, error in
                 if let response = response {
@@ -108,32 +137,15 @@ class DropboxDataSourceIos: DropboxDataSource {
                     )
                     completionHandler(uploadResult, nil)
                 } else if let error = error {
-                    print(error)
                     KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
                         messageString: error.description
                     )
-                    self.appState.snackbarQueue.append(
-                        SnackbarData(
-                            title: "Upload error",
-                            subtitle: error.description,
-                            showBanner: true
-                        )
-                    )
 
-                    // TODO: Clean up after error debugging
                     switch error as CallError {
                     case .routeError(let boxed, let userMessage, let errorSummary, let requestId):
-
                         let err = boxed.unboxed as Files.UploadError
                         KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
                             messageString: "Boxed error: \(err.description)"
-                        )
-                        self.appState.snackbarQueue.append(
-                            SnackbarData(
-                                title: "Boxed Upload error",
-                                subtitle: err.description,
-                                showBanner: true
-                            )
                         )
 
                     default:

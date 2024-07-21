@@ -9,8 +9,7 @@
 import Foundation
 import shared
 
-// TODO: Delete after debugging
-func startKoin(appState: AppState) {
+func startKoin() {
     let appEnvironment: AppEnvironment
     #if DEBUG
         appEnvironment = AppEnvironment.Debug()
@@ -24,7 +23,7 @@ func startKoin(appState: AppState) {
         htmlParser: IosHtmlParser(),
         appEnvironment: appEnvironment,
         languageCode: langCode,
-        dropboxDataSource: DropboxDataSourceIos(appState: appState)
+        dropboxDataSource: DropboxDataSourceIos()
     )
     _koin = koinApplication.koin
     _feedFlowStrings = KotlinDependencies.shared.getFeedFlowStrings()

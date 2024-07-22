@@ -58,6 +58,22 @@ struct DropboxSyncScreen: View {
                 self.appState.emitGenericError()
             }
         }
+        .task {
+            do {
+                let stream = asyncSequence(for: viewModel.syncMessageQueue)
+                for try await message in stream where message.isError() {
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.errorAccountSync,
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    )
+                }
+            } catch {
+                self.appState.emitGenericError()
+            }
+        }
     }
 }
 

@@ -76,6 +76,7 @@ internal class FeedRetrieverRepository(
     val currentFeedFilter: StateFlow<FeedFilter> = currentFeedFilterMutableState.asStateFlow()
 
     private var currentPage: Int = 0
+    private var isFeedSyncDone = true
 
     private val knownUrlSuffix = listOf(
         "",
@@ -200,12 +201,15 @@ internal class FeedRetrieverRepository(
                     getFeeds()
                 }
 
+                isFeedSyncDone = false
                 parseFeeds(
                     feedSourceUrls = feedSourceUrls,
                     forceRefresh = forceRefresh,
                 )
 
                 feedSyncRepository.syncFeedItems()
+                isFeedSyncDone = true
+                updateRefreshCount()
 
                 getFeeds()
             }
@@ -398,7 +402,7 @@ internal class FeedRetrieverRepository(
             val refreshedFeedCount = oldUpdate.refreshedFeedCount + 1
             val totalFeedCount = oldUpdate.totalFeedCount
 
-            if (feedToUpdate.isEmpty()) {
+            if (feedToUpdate.isEmpty() && isFeedSyncDone) {
                 FinishedFeedUpdateStatus
             } else {
                 InProgressFeedUpdateStatus(

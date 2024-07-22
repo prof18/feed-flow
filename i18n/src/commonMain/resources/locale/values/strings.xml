@@ -93,7 +93,7 @@
     <string name="reader_mode_warning">ℹ The reader mode tries to get the content of the article. There might be some glitches or unwanted characters.</string>
     <string name="settings_title_feed">Feed</string>
     <string name="settings_accounts">Accounts</string>
-    <string name="accounts_description">Connect an account to sync feed subscriptions, categories, read and bookmarked articles between your devices.\n\nThe functionality is in Beta and more services will be supported in the future.</string>
+    <string name="accounts_description">Connect an account to sync feed subscriptions, categories, read and bookmarked articles between your devices.\n\nThe functionality is in Beta, issues may occur (for example, read articles might not be fully synced). More services will be supported in the future.</string>
     <string name="settings_behaviour_title">Behaviour</string>
     <string name="settings_help_title">Help</string>
     <string name="dropbox_connect_button">Connect</string>

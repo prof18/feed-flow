@@ -11,6 +11,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.getDxCredentialsAsString
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
@@ -30,6 +31,7 @@ class DropboxSyncViewModel internal constructor(
     private val feedSyncRepository: FeedSyncRepository,
     private val dateFormatter: DateFormatter,
     private val feedRetrieverRepository: FeedRetrieverRepository,
+    feedSyncMessageQueue: FeedSyncMessageQueue,
 ) : BaseViewModel() {
 
     private val dropboxSyncUiMutableState = MutableStateFlow<DropboxConnectionUiState>(
@@ -43,6 +45,9 @@ class DropboxSyncViewModel internal constructor(
 
     @NativeCoroutines
     val dropboxSyncMessageState: SharedFlow<DropboxSynMessages> = dropboxSyncMessageMutableState.asSharedFlow()
+
+    @NativeCoroutines
+    val syncMessageQueue = feedSyncMessageQueue.messageQueue
 
     init {
         restoreDropboxAuth()

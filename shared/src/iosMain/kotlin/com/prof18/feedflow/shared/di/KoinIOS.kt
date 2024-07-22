@@ -12,7 +12,6 @@ import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
-import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler

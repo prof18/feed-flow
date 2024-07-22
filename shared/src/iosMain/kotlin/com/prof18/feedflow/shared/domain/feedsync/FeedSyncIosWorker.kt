@@ -27,14 +27,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import platform.Foundation.NSApplicationSupportDirectory
-import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSFileManagerItemReplacementUsingNewMetadataOnly
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
 import platform.Foundation.URLByAppendingPathComponent
-import platform.Foundation.dataWithContentsOfURL
 
 internal class FeedSyncIosWorker(
     private val dispatcherProvider: DispatcherProvider,
@@ -75,7 +73,7 @@ internal class FeedSyncIosWorker(
             }
             val dropboxUploadParam = DropboxUploadParam(
                 path = "/${getDatabaseName()}.db",
-                url = databasePath
+                url = databasePath,
             )
             dropboxDataSource.performUpload(dropboxUploadParam)
             dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())

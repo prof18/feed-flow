@@ -244,9 +244,8 @@ class HomeViewModel internal constructor(
     }
 
     // Used on iOS
-    fun enqueueBackup(lastVisibleIndex: Int) {
+    fun enqueueBackup() {
         scope.launch {
-            markAsReadOnScroll(lastVisibleIndex)
             feedSyncRepository.enqueueBackup()
         }
     }

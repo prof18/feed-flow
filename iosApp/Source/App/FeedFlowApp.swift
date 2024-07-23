@@ -8,8 +8,12 @@ struct FeedFlowApp: App {
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
+    @Environment(\.scenePhase) private var scenePhase: ScenePhase
+
     @StateObject private var appState: AppState = AppState()
     @StateObject private var browserSelector: BrowserSelector = BrowserSelector()
+
+    private var feedSyncTimer: FeedSyncTimer = FeedSyncTimer()
 
     init() {
     #if !DEBUG
@@ -24,7 +28,6 @@ struct FeedFlowApp: App {
                 dropboxDataSource.setup(apiKey: key)
             }
         }
-
     }
 
     var body: some Scene {
@@ -51,6 +54,16 @@ struct FeedFlowApp: App {
                         )
                     }
                 })
+                .onChange(of: scenePhase) { newScenePhase in
+                    switch newScenePhase {
+                    case .active:
+                        feedSyncTimer.scheduleTimer()
+                    case .background:
+                        feedSyncTimer.invalidate()
+                    default:
+                        break
+                    }
+                }
         }
     }
 }

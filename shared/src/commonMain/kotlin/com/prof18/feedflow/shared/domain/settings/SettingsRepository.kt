@@ -1,6 +1,10 @@
 package com.prof18.feedflow.shared.domain.settings
 
 import com.prof18.feedflow.shared.data.SettingsHelper
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class SettingsRepository internal constructor(
     private val settingsHelper: SettingsHelper,
@@ -8,16 +12,20 @@ class SettingsRepository internal constructor(
 
     private var isReaderModeEnabled: Boolean? = null
 
-    fun setMarkFeedAsReadWhenScrolling(value: Boolean) =
+    private val isSyncUploadRequiredMutableFlow = MutableStateFlow(settingsHelper.getIsSyncUploadRequired())
+
+    internal val isSyncUploadRequired: StateFlow<Boolean> = isSyncUploadRequiredMutableFlow.asStateFlow()
+
+    internal fun setMarkFeedAsReadWhenScrolling(value: Boolean) =
         settingsHelper.setMarkFeedAsReadWhenScrolling(value)
 
-    fun isMarkFeedAsReadWhenScrollingEnabled(): Boolean =
+    internal fun isMarkFeedAsReadWhenScrollingEnabled(): Boolean =
         settingsHelper.getMarkFeedAsReadWhenScrolling()
 
-    fun isShowReadArticlesTimelineEnabled(): Boolean =
+    internal fun isShowReadArticlesTimelineEnabled(): Boolean =
         settingsHelper.getShowReadArticlesTimeline()
 
-    fun setShowReadArticlesTimeline(value: Boolean) =
+    internal fun setShowReadArticlesTimeline(value: Boolean) =
         settingsHelper.setShowReadArticlesTimeline(value)
 
     fun isUseReaderModeEnabled(): Boolean {
@@ -30,8 +38,16 @@ class SettingsRepository internal constructor(
         }
     }
 
-    fun setUseReaderMode(value: Boolean) {
+    internal fun setUseReaderMode(value: Boolean) {
         isReaderModeEnabled = value
         settingsHelper.setUseReaderMode(value)
     }
+
+    internal fun setIsSyncUploadRequired(value: Boolean) {
+        isSyncUploadRequiredMutableFlow.update { value }
+        settingsHelper.setIsSyncUploadRequired(value)
+    }
+
+    internal fun getIsSyncUploadRequired(): Boolean =
+        settingsHelper.getIsSyncUploadRequired()
 }

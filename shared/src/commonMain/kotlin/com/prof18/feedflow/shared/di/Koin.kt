@@ -232,11 +232,11 @@ private val coreModule = module {
         FeedSyncRepository(
             syncedDatabaseHelper = get(),
             feedSyncWorker = get(),
-            settingsHelper = get(),
             feedSyncAccountRepository = get(),
             feedSyncMessageQueue = get(),
             dropboxSettings = get(),
             logger = getWith("FeedSyncRepository"),
+            settingsRepository = get(),
         )
     }
 

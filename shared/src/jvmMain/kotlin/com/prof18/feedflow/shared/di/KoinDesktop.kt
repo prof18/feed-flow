@@ -98,7 +98,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("FeedSyncJvmWorker"),
             feedSyncer = get(),
             feedSyncMessageQueue = get(),
-            settingsHelper = get(),
+            settingsRepository = get(),
             dispatcherProvider = get(),
             dropboxSettings = get(),
         )

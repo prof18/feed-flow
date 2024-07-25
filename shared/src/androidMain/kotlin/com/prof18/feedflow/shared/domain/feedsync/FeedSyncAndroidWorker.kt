@@ -15,8 +15,8 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
-import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.model.SyncResult
+import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import java.io.File
@@ -30,9 +30,9 @@ internal class FeedSyncAndroidWorker(
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
     private val feedSyncMessageQueue: FeedSyncMessageQueue,
-    private val settingsHelper: SettingsHelper,
     private val dispatcherProvider: DispatcherProvider,
     private val dropboxSettings: DropboxSettings,
+    private val settingsRepository: SettingsRepository,
 ) : FeedSyncWorker {
 
     override suspend fun uploadImmediate() {
@@ -69,7 +69,7 @@ internal class FeedSyncAndroidWorker(
             dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
             logger.d { "Upload to dropbox successfully" }
             emitSuccessMessage()
-            settingsHelper.setIsSyncUploadRequired(false)
+            settingsRepository.setIsSyncUploadRequired(false)
             return@withContext SyncResult.Success
         } catch (e: Exception) {
             logger.e("Upload to dropbox failed", e)

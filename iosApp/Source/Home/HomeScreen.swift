@@ -46,6 +46,9 @@ struct HomeScreen: View {
     @State
     var currentFeedFilter: FeedFilter = FeedFilter.Timeline()
 
+    @State
+    var showFeedSyncButton: Bool = false
+
     @Binding
     var toggleListScroll: Bool
 
@@ -66,6 +69,7 @@ struct HomeScreen: View {
             toggleListScroll: $toggleListScroll,
             currentFeedFilter: $currentFeedFilter,
             showSettings: $showSettings,
+            showFeedSyncButton: $showFeedSyncButton,
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
@@ -99,6 +103,9 @@ struct HomeScreen: View {
             onBackToTimelineClick: {
                 homeViewModel.onFeedFilterSelected(selectedFeedFilter: FeedFilter.Timeline())
                 selectedDrawerItem = DrawerItem.Timeline()
+            },
+            onFeedSyncClick: {
+                homeViewModel.enqueueBackup()
             }
         )
         .task {
@@ -172,6 +179,16 @@ struct HomeScreen: View {
                 let stream = asyncSequence(for: homeViewModel.currentFeedFilterFlow)
                 for try await state in stream {
                     self.currentFeedFilter = state
+                }
+            } catch {
+                self.appState.emitGenericError()
+            }
+        }
+        .task {
+            do {
+                let stream = asyncSequence(for: homeViewModel.isSyncUploadRequiredFlow)
+                for try await state in stream {
+                    self.showFeedSyncButton = state as? Bool ?? false
                 }
             } catch {
                 self.appState.emitGenericError()

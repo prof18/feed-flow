@@ -61,14 +61,14 @@ class DropboxDataSourceIos: DropboxDataSource {
     }
 
     func saveAuth(stringCredentials: DropboxStringCredentials) {
-        // todo? Necessary here?
+
     }
 
     func restoreAuth(stringCredentials: DropboxStringCredentials) -> DropboxClientStatus {
         if client != nil {
             return DropboxClientStatus.notLinked
         }
-        client = createClient()
+        client = getClient()
         return DropboxClientStatus.linked
     }
 
@@ -89,7 +89,7 @@ class DropboxDataSourceIos: DropboxDataSource {
         let directoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let destURL = directoryURL.appendingPathComponent(downloadParam.outputName)
 
-        if let client = DropboxClientsManager.authorizedBackgroundClient {
+        if let client = getBackgroundClient() {
             client.files.download(path: downloadParam.path, overwrite: true, destination: destURL)
                 .response { response, error in
                     if let response = response {
@@ -130,7 +130,7 @@ class DropboxDataSourceIos: DropboxDataSource {
         uploadParam: DropboxUploadParam,
         completionHandler: @escaping (DropboxUploadResult?, Error?) -> Void
     ) {
-        if let client = client {
+        if let client = getClient() {
             client.files.upload(
                 path: uploadParam.path,
                 mode: .overwrite,
@@ -213,7 +213,11 @@ class DropboxDataSourceIos: DropboxDataSource {
         DropboxClientsManager.handleRedirectURL(url, includeBackgroundClient: false, completion: oauthCompletion)
     }
 
-    private func createClient() -> DropboxClient? {
+    private func getClient() -> DropboxClient? {
         DropboxClientsManager.authorizedClient ?? DropboxClientsManager.authorizedBackgroundClient
+    }
+
+    private func getBackgroundClient() -> DropboxClient? {
+        DropboxClientsManager.authorizedBackgroundClient ?? DropboxClientsManager.authorizedClient
     }
 }

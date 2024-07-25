@@ -64,6 +64,9 @@ class HomeViewModel internal constructor(
     @NativeCoroutinesState
     val currentFeedFilter = feedRetrieverRepository.currentFeedFilter
 
+    @NativeCoroutinesState
+    val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
+
     init {
         scope.launch {
             feedRetrieverRepository.updateFeedFilter(FeedFilter.Timeline)

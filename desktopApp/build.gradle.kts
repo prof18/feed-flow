@@ -170,7 +170,6 @@ tasks.withType(KotlinCompile::class.java) {
     kotlinOptions {
         freeCompilerArgs += listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
         )
     }
 }

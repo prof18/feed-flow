@@ -92,9 +92,9 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("FeedSyncAndroidWorker"),
             feedSyncer = get(),
             feedSyncMessageQueue = get(),
-            settingsHelper = get(),
             dispatcherProvider = get(),
             dropboxSettings = get(),
+            settingsRepository = get(),
         )
     } bind FeedSyncWorker::class
 

@@ -96,7 +96,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedSyncer = get(),
             appEnvironment = appEnvironment,
             dropboxSettings = get(),
-            settingsHelper = get(),
+            settingsRepository = get(),
         )
     }
 

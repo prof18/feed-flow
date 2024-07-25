@@ -6,23 +6,23 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
-import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.model.SyncResult
+import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import kotlinx.datetime.Clock
 
 class FeedSyncRepository internal constructor(
     private val syncedDatabaseHelper: SyncedDatabaseHelper,
     private val feedSyncWorker: FeedSyncWorker,
-    private val settingsHelper: SettingsHelper,
     private val feedSyncAccountRepository: FeedSyncAccountsRepository,
     private val feedSyncMessageQueue: FeedSyncMessageQueue,
     private val dropboxSettings: DropboxSettings,
     private val logger: Logger,
+    private val settingsRepository: SettingsRepository,
 ) {
     fun enqueueBackup(forceBackup: Boolean = false) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            if (forceBackup || settingsHelper.getIsSyncUploadRequired()) {
+            if (forceBackup || settingsRepository.getIsSyncUploadRequired()) {
                 feedSyncWorker.upload()
             }
         }
@@ -31,7 +31,7 @@ class FeedSyncRepository internal constructor(
     @NativeCoroutines
     suspend fun performBackup(forceBackup: Boolean = false) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            if (forceBackup || settingsHelper.getIsSyncUploadRequired()) {
+            if (forceBackup || settingsRepository.getIsSyncUploadRequired()) {
                 feedSyncWorker.uploadImmediate()
             }
         }
@@ -41,7 +41,7 @@ class FeedSyncRepository internal constructor(
     fun onDropboxUploadSuccessAfterResume() {
         dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
         logger.d { "Upload to dropbox successfully from restarted session" }
-        settingsHelper.setIsSyncUploadRequired(false)
+        settingsRepository.setIsSyncUploadRequired(false)
     }
 
     internal suspend fun firstSync() {
@@ -57,61 +57,61 @@ class FeedSyncRepository internal constructor(
         if (feedSyncAccountRepository.isSyncEnabled()) {
             syncedDatabaseHelper.insertSyncedFeedSource(sources)
             syncedDatabaseHelper.insertFeedSourceCategories(categories)
-            settingsHelper.setIsSyncUploadRequired(true)
+            settingsRepository.setIsSyncUploadRequired(true)
         }
     }
 
     internal suspend fun insertSyncedFeedSource(sources: List<FeedSource>) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             syncedDatabaseHelper.insertSyncedFeedSource(sources)
-            settingsHelper.setIsSyncUploadRequired(true)
+            settingsRepository.setIsSyncUploadRequired(true)
         }
     }
 
     internal suspend fun insertFeedSourceCategories(categories: List<FeedSourceCategory>) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             syncedDatabaseHelper.insertFeedSourceCategories(categories)
-            settingsHelper.setIsSyncUploadRequired(true)
+            settingsRepository.setIsSyncUploadRequired(true)
         }
     }
 
     internal suspend fun deleteFeedSource(feedSource: FeedSource) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             syncedDatabaseHelper.deleteFeedSource(feedSource.id)
-            settingsHelper.setIsSyncUploadRequired(true)
+            settingsRepository.setIsSyncUploadRequired(true)
         }
     }
 
     internal suspend fun deleteFeedSourceCategory(categoryId: String) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             syncedDatabaseHelper.deleteFeedSourceCategory(categoryId)
-            settingsHelper.setIsSyncUploadRequired(true)
+            settingsRepository.setIsSyncUploadRequired(true)
         }
     }
 
     internal fun deleteAllFeedSources() {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             syncedDatabaseHelper.deleteAllFeedSources()
-            settingsHelper.setIsSyncUploadRequired(true)
+            settingsRepository.setIsSyncUploadRequired(true)
         }
     }
 
     internal suspend fun updateFeedSourceName(feedSourceId: String, newName: String) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             syncedDatabaseHelper.updateFeedSourceName(feedSourceId, newName)
-            settingsHelper.setIsSyncUploadRequired(true)
+            settingsRepository.setIsSyncUploadRequired(true)
         }
     }
 
     internal suspend fun deleteFeedItems(feedIds: List<FeedItemId>) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             syncedDatabaseHelper.deleteFeedItems(feedIds)
-            settingsHelper.setIsSyncUploadRequired(true)
+            settingsRepository.setIsSyncUploadRequired(true)
         }
     }
 
     internal fun setIsSyncUploadRequired() {
-        settingsHelper.setIsSyncUploadRequired(true)
+        settingsRepository.setIsSyncUploadRequired(true)
     }
 
     internal suspend fun syncFeedSources() {

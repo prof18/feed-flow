@@ -25,6 +25,7 @@ struct HomeContent: View {
     @Binding var toggleListScroll: Bool
     @Binding var currentFeedFilter: FeedFilter
     @Binding var showSettings: Bool
+    @Binding var showFeedSyncButton: Bool
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
@@ -37,6 +38,7 @@ struct HomeContent: View {
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
     let onBackToTimelineClick: () -> Void
+    let onFeedSyncClick: () -> Void
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -75,6 +77,9 @@ struct HomeContent: View {
             .toolbar {
                 makeToolbarHeaderView(proxy: proxy)
                 if !isOnVisionOSDevice() {
+                    if showFeedSyncButton {
+                        makeFeedSynToolbarView()
+                    }
                     makeSearchToolbarView()
                     makeMenuToolbarView(proxy: proxy)
                 }
@@ -135,6 +140,17 @@ struct HomeContent: View {
                     self.indexHolder.refresh()
                 }
                 .accessibilityIdentifier(TestingTag.shared.HOME_TOOLBAR)
+            }
+        }
+    }
+
+    @ToolbarContentBuilder
+    private func makeFeedSynToolbarView() -> some ToolbarContent {
+        ToolbarItem(id: UUID().uuidString, placement: .navigationBarTrailing) {
+            Button {
+                self.onFeedSyncClick()
+            } label: {
+                Image(systemName: "arrow.uturn.up")
             }
         }
     }
@@ -234,6 +250,7 @@ fileprivate extension FeedFilter {
         toggleListScroll: .constant(false),
         currentFeedFilter: .constant(FeedFilter.Timeline()),
         showSettings: .constant(false),
+        showFeedSyncButton: .constant(false),
         onRefresh: {},
         updateReadStatus: { _ in },
         onMarkAllReadClick: {},
@@ -244,7 +261,8 @@ fileprivate extension FeedFilter {
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
-        onBackToTimelineClick: {}
+        onBackToTimelineClick: {},
+        onFeedSyncClick: {}
     )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())
@@ -263,6 +281,7 @@ fileprivate extension FeedFilter {
         toggleListScroll: .constant(false),
         currentFeedFilter: .constant(FeedFilter.Timeline()),
         showSettings: .constant(false),
+        showFeedSyncButton: .constant(false),
         onRefresh: {},
         updateReadStatus: { _ in },
         onMarkAllReadClick: {},
@@ -273,7 +292,8 @@ fileprivate extension FeedFilter {
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
-        onBackToTimelineClick: {}
+        onBackToTimelineClick: {},
+        onFeedSyncClick: {}
     )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())
@@ -292,6 +312,7 @@ fileprivate extension FeedFilter {
         toggleListScroll: .constant(false),
         currentFeedFilter: .constant(FeedFilter.Timeline()),
         showSettings: .constant(false),
+        showFeedSyncButton: .constant(false),
         onRefresh: {},
         updateReadStatus: { _ in },
         onMarkAllReadClick: {},
@@ -302,7 +323,8 @@ fileprivate extension FeedFilter {
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
-        onBackToTimelineClick: {}
+        onBackToTimelineClick: {},
+        onFeedSyncClick: {}
     )
         .environmentObject(HomeListIndexHolder())
         .environmentObject(AppState())

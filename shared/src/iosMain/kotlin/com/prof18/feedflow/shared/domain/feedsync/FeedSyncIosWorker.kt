@@ -10,8 +10,8 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
-import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.model.SyncResult
+import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
@@ -42,7 +42,7 @@ internal class FeedSyncIosWorker(
     private val feedSyncer: FeedSyncer,
     private val appEnvironment: AppEnvironment,
     private val dropboxSettings: DropboxSettings,
-    private val settingsHelper: SettingsHelper,
+    private val settingsRepository: SettingsRepository,
 ) : FeedSyncWorker {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -78,7 +78,7 @@ internal class FeedSyncIosWorker(
             dropboxDataSource.performUpload(dropboxUploadParam)
             dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
             logger.d { "Upload to dropbox successfully" }
-            settingsHelper.setIsSyncUploadRequired(false)
+            settingsRepository.setIsSyncUploadRequired(false)
             emitSuccessMessage()
         } catch (e: Exception) {
             logger.e("Upload to dropbox failed", e)

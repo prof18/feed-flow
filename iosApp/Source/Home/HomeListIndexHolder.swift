@@ -25,6 +25,7 @@ class HomeListIndexHolder: ObservableObject {
     }
 
     func refresh() {
+        self.timer?.invalidate()
         self.isLoading = true
         self.lastReadIndex = 0
     }

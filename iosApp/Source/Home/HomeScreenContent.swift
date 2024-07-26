@@ -133,11 +133,14 @@ struct HomeContent: View {
                     }
                 }
                 .padding(.vertical, Spacing.medium)
-                .onTapGesture(count: 2) {
-                    onRefresh()
+                .onTapGesture(count: 1) {
                     proxy.scrollTo(feedState.first?.id)
+                }
+                .onTapGesture(count: 2) {
                     updateReadStatus(Int32(indexHolder.getLastReadIndex()))
                     self.indexHolder.refresh()
+                    proxy.scrollTo(feedState.first?.id)
+                    onRefresh()
                 }
                 .accessibilityIdentifier(TestingTag.shared.HOME_TOOLBAR)
             }

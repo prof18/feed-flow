@@ -14,6 +14,7 @@ import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
+import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
@@ -111,6 +112,8 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedSyncMessageQueue = get(),
         )
     }
+
+    factory<CurrentOS> { CurrentOS.Ios }
 }
 
 @Suppress("unused") // Called from Swift

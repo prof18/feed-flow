@@ -256,7 +256,6 @@ private val coreModule = module {
 
     singleOf(::FeedSyncMessageQueue)
 
-//    factoryOf(::FeedSyncAccountsRepository)
     factory {
         FeedSyncAccountsRepository(
             dropboxSettings = get(),

@@ -9,6 +9,7 @@ import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
+import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.BaseViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
@@ -103,4 +104,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dropboxSettings = get(),
         )
     }
+
+    factory<CurrentOS> { CurrentOS.Desktop }
 }

@@ -1,7 +1,6 @@
 package com.prof18.feedflow.desktop.accounts
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.screen.Screen
@@ -21,10 +20,6 @@ internal class AccountsScreen : Screen {
         val accountSync by viewModel.accountsState.collectAsState()
 
         val navigator = LocalNavigator.currentOrThrow
-
-        LaunchedEffect(Unit) {
-            viewModel.restoreAccounts()
-        }
 
         AccountsContent(
             syncAccount = accountSync,

@@ -10,6 +10,7 @@ import com.prof18.feedflow.feedsync.dropbox.di.dropboxModule
 import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.accounts.AccountsRepository
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
@@ -250,7 +251,7 @@ private val coreModule = module {
 
     viewModel {
         AccountsViewModel(
-            dropboxSettings = get(),
+            accountsRepository = get(),
         )
     }
 
@@ -261,6 +262,8 @@ private val coreModule = module {
             dropboxSettings = get(),
         )
     }
+
+    singleOf(::AccountsRepository)
 }
 
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module

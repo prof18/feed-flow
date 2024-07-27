@@ -82,6 +82,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dateFormatter = get(),
             feedRetrieverRepository = get(),
             feedSyncMessageQueue = get(),
+            accountsRepository = get(),
         )
     }
 

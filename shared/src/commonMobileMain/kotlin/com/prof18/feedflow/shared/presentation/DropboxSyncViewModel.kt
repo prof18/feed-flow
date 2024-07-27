@@ -10,6 +10,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.getDxCredentialsAsString
 import com.prof18.feedflow.shared.domain.DateFormatter
+import com.prof18.feedflow.shared.domain.accounts.AccountsRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -31,6 +32,7 @@ class DropboxSyncViewModel internal constructor(
     private val feedSyncRepository: FeedSyncRepository,
     private val dateFormatter: DateFormatter,
     private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val accountsRepository: AccountsRepository,
     feedSyncMessageQueue: FeedSyncMessageQueue,
 ) : BaseViewModel() {
 
@@ -65,6 +67,7 @@ class DropboxSyncViewModel internal constructor(
                     )
                 }
                 emitSyncLoading()
+                accountsRepository.setDropboxAccount()
                 feedSyncRepository.firstSync()
                 feedRetrieverRepository.fetchFeeds()
                 emitLastSyncUpdate()
@@ -91,6 +94,7 @@ class DropboxSyncViewModel internal constructor(
                 dropboxDataSource.revokeAccess()
                 dropboxSettings.clearDropboxData()
                 feedSyncRepository.deleteAll()
+                accountsRepository.clearAccount()
                 dropboxSyncUiMutableState.update { DropboxConnectionUiState.Unlinked }
             } catch (_: DropboxException) {
                 dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)

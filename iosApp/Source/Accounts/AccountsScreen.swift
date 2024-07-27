@@ -30,8 +30,6 @@ struct AccountsScreen: View {
             } catch {
                 self.appState.emitGenericError()
             }
-        }.onAppear {
-            viewModel.restoreAccounts()
         }
     }
 }

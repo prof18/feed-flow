@@ -1,24 +1,12 @@
 package com.prof18.feedflow.shared.presentation
 
-import com.prof18.feedflow.core.model.SyncAccounts
-import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
+import com.prof18.feedflow.shared.domain.accounts.AccountsRepository
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
-class AccountsViewModel(
-    private val dropboxSettings: DropboxSettings,
+class AccountsViewModel internal constructor(
+    private val accountsRepository: AccountsRepository,
 ) : BaseViewModel() {
 
-    private val accountsMutableState = MutableStateFlow(SyncAccounts.LOCAL)
-
     @NativeCoroutinesState
-    val accountsState = accountsMutableState.asStateFlow()
-
-    fun restoreAccounts() {
-        val dropboxSettings = dropboxSettings.getDropboxData()
-        if (dropboxSettings != null) {
-            accountsMutableState.value = SyncAccounts.DROPBOX
-        }
-    }
+    val accountsState = accountsRepository.currentAccountState
 }

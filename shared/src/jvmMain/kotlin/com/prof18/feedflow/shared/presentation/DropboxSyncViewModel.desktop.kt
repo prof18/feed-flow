@@ -15,6 +15,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxException
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.shared.domain.DateFormatter
+import com.prof18.feedflow.shared.domain.accounts.AccountsRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,6 +36,7 @@ class DropboxSyncViewModel internal constructor(
     private val feedSyncRepository: FeedSyncRepository,
     private val dateFormatter: DateFormatter,
     private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val accountsRepository: AccountsRepository,
 ) : BaseViewModel() {
 
     private var pkceWebAuth: DbxPKCEWebAuth? = null
@@ -109,6 +111,7 @@ class DropboxSyncViewModel internal constructor(
                     val stringCredentials = DbxCredential.Writer.writeToString(credential)
                     dropboxDataSource.saveAuth(DropboxStringCredentials(stringCredentials))
                     dropboxSettings.setDropboxData(stringCredentials)
+                    accountsRepository.setDropboxAccount()
                     dropboxSyncUiMutableState.update {
                         DropboxConnectionUiState.Linked(
                             syncState = getSyncState(),
@@ -158,6 +161,8 @@ class DropboxSyncViewModel internal constructor(
                 dropboxSyncUiMutableState.update { DropboxConnectionUiState.Loading }
                 dropboxDataSource.revokeAccess()
                 dropboxSettings.clearDropboxData()
+                feedSyncRepository.deleteAll()
+                accountsRepository.clearAccount()
                 dropboxSyncUiMutableState.update { DropboxConnectionUiState.Unlinked }
             } catch (_: DropboxException) {
                 dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)

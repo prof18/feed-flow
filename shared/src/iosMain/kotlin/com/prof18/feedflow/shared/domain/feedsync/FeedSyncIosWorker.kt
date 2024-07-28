@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.feedsync
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
@@ -43,6 +44,7 @@ internal class FeedSyncIosWorker(
     private val appEnvironment: AppEnvironment,
     private val dropboxSettings: DropboxSettings,
     private val settingsRepository: SettingsRepository,
+    private val accountsRepository: AccountsRepository,
 ) : FeedSyncWorker {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -59,8 +61,6 @@ internal class FeedSyncIosWorker(
     }
 
     private suspend fun performUpload() = withContext(dispatcherProvider.io) {
-        restoreDropboxClient()
-
         try {
             feedSyncer.populateSyncDbIfEmpty()
             feedSyncer.updateFeedItemsToSyncDatabase()
@@ -71,13 +71,7 @@ internal class FeedSyncIosWorker(
                 emitErrorMessage()
                 return@withContext
             }
-            val dropboxUploadParam = DropboxUploadParam(
-                path = "/${getDatabaseName()}.db",
-                url = databasePath,
-            )
-            dropboxDataSource.performUpload(dropboxUploadParam)
-            dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
-            logger.d { "Upload to dropbox successfully" }
+            accountSpecificUpload(databasePath)
             settingsRepository.setIsSyncUploadRequired(false)
             emitSuccessMessage()
         } catch (e: Exception) {
@@ -87,24 +81,9 @@ internal class FeedSyncIosWorker(
     }
 
     override suspend fun download(): SyncResult = withContext(dispatcherProvider.io) {
-        val dropboxDownloadParam = DropboxDownloadParam(
-            path = "/${getDatabaseName()}.db",
-            outputName = "${getDatabaseName()}.db",
-        )
-
-        restoreDropboxClient()
-
         return@withContext try {
             feedSyncer.closeDB()
-            val result = dropboxDataSource.performDownload(dropboxDownloadParam)
-            val destinationUrl = result.destinationUrl
-            if (destinationUrl == null) {
-                logger.e { "Error downloading database" }
-                return@withContext SyncResult.Error
-            }
-            replaceDatabase(destinationUrl.url)
-            dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
-            SyncResult.Success
+            accountSpecificDownload()
         } catch (e: Exception) {
             logger.e("Download from dropbox failed", e)
             SyncResult.Error
@@ -204,5 +183,61 @@ internal class FeedSyncIosWorker(
             }
         }
         return false
+    }
+
+    private suspend fun accountSpecificUpload(databasePath: NSURL) =
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.DROPBOX -> {
+                restoreDropboxClient()
+                val dropboxUploadParam = DropboxUploadParam(
+                    path = "/${getDatabaseName()}.db",
+                    url = databasePath,
+                )
+                dropboxDataSource.performUpload(dropboxUploadParam)
+                dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+                logger.d { "Upload to dropbox successfully" }
+            }
+
+            SyncAccounts.ICLOUD -> {
+                // TODO
+                logger.d { "TODO: Upload to iCloud" }
+            }
+
+            SyncAccounts.LOCAL -> {
+                // Do nothing
+            }
+        }
+
+    private suspend fun accountSpecificDownload(): SyncResult {
+        return when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.DROPBOX -> {
+                val dropboxDownloadParam = DropboxDownloadParam(
+                    path = "/${getDatabaseName()}.db",
+                    outputName = "${getDatabaseName()}.db",
+                )
+
+                restoreDropboxClient()
+                val result = dropboxDataSource.performDownload(dropboxDownloadParam)
+                val destinationUrl = result.destinationUrl
+                if (destinationUrl == null) {
+                    logger.e { "Error downloading database" }
+                    return SyncResult.Error
+                }
+                replaceDatabase(destinationUrl.url)
+                dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+                SyncResult.Success
+            }
+
+            SyncAccounts.ICLOUD -> {
+                // TODO
+                logger.d { "TODO: Download from iCloud" }
+                SyncResult.Success
+            }
+
+            SyncAccounts.LOCAL -> {
+                // Do nothing
+                SyncResult.Success
+            }
+        }
     }
 }

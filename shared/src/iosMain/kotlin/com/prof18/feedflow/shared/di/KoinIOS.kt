@@ -23,6 +23,7 @@ import com.prof18.feedflow.shared.presentation.BaseViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
@@ -115,6 +116,15 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     factory<CurrentOS> { CurrentOS.Ios }
+
+    viewModel {
+        ICloudSyncViewModel(
+            iCloudSettings = get(),
+            dateFormatter = get(),
+            accountsRepository = get(),
+            feedSyncMessageQueue = get(),
+        )
+    }
 }
 
 @Suppress("unused") // Called from Swift
@@ -133,4 +143,5 @@ object KotlinDependencies : KoinComponent {
     fun getDropboxDataSource() = getKoin().get<DropboxDataSource>()
     fun getDropboxSyncViewModel() = getKoin().get<DropboxSyncViewModel>()
     fun getFeedSyncRepository() = getKoin().get<FeedSyncRepository>()
+    fun getICloudSyncViewModel() = getKoin().get<ICloudSyncViewModel>()
 }

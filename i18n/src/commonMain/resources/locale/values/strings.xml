@@ -93,23 +93,28 @@
     <string name="reader_mode_warning">ℹ The reader mode tries to get the content of the article. There might be some glitches or unwanted characters.</string>
     <string name="settings_title_feed">Feed</string>
     <string name="settings_accounts">Accounts</string>
-    <string name="accounts_description">Connect an account to sync feed subscriptions, categories, read and bookmarked articles between your devices.\n\nThe functionality is in Beta, issues may occur (for example, read articles might not be fully synced). More services will be supported in the future.</string>
+    <string name="accounts_description">Connect an account to sync feed subscriptions, categories, read and bookmarked articles between your devices.\n\nThe functionality is in Beta, issues may occur (for example, read articles might not be fully synced). More services will be supported in the future.\n\nOnly one account at the same time is supported.</string>
     <string name="settings_behaviour_title">Behaviour</string>
     <string name="settings_help_title">Help</string>
-    <string name="dropbox_connect_button">Connect</string>
-    <string name="dropbox_disconnect_button">Disconnect</string>
+    <string name="account_connect_button">Connect</string>
+    <string name="account_disconnect_button">Disconnect</string>
     <string name="backup_button">Backup</string>
-    <string name="dropbox_sync_common_description">Connect your Dropbox account to sync feed subscriptions, categories, read and bookmarked articles between your devices. The data will be saved in an app-specific folder; FeedFlow won't have any access to any of your files</string>
+    <string name="dropbox_sync_common_description">Connect your Dropbox account to sync feed subscriptions, categories, read and bookmarked articles between your Android, iOS, iPadOS and desktop devices. The data will be saved in an app-specific folder; FeedFlow won't have any access to any of your files</string>
     <string name="dropbox_sync_mobile_description">By clicking on the Connect button you will be redirected on the Dropbox app or website. After connecting the account, you can come back to FeedFlow</string>
     <string name="dropbox_sync_desktop_description">By clicking on the Connect button you will be redirected on the Dropbox website. After connecting the account, copy the authorization code and enter it here in the app</string>
     <string name="dropbox_auth_code_hint">Authorization code</string>
     <string name="dropbox_confirm_button">Confirm</string>
     <string name="dropbox_sync_error">There was an error while connecting to Dropbox. Please try again</string>
-    <string name="dropbox_sync_success">Your dropbox account is successfully connected</string>
+    <string name="dropbox_sync_success">Your Dropbox account is successfully connected</string>
     <string name="last_upload">Last upload: %s</string>
     <string name="last_download">Last download: %s</string>
-    <string name="dropbox_refresh_progress">Refresh in progress</string>
+    <string name="account_refresh_progress">Refresh in progress</string>
     <string name="feed_sync_in_progress">Sync in progress. The app will automatically close when it's done.</string>
     <string name="no_dropbox_sync_yet">Data are not synced yet with Dropbox. Click the backup button to trigger a sync</string>
     <string name="error_account_sync">Sorry, something went wrong while syncing data in your account :(</string>
+    <string name="icloud_sync_description">Connect your iCloud account to sync feed subscriptions, categories, read and bookmarked articles between your iOS and iPadOS devices. The data will be saved in an app-specific folder; FeedFlow won't have any access to any of your files</string>
+    <string name="add_account_button">Add account</string>
+    <string name="icloud_sync_success">Your iCloud account is successfully connected</string>
+    <string name="no_icloud_sync_yet">Data are not synced yet with iCloud. Click the backup button to trigger a sync</string>
+
 </resources>

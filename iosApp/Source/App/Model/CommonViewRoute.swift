@@ -12,4 +12,5 @@ enum CommonViewRoute: Hashable {
     case readerMode(url: URL)
     case search
     case accounts
+    case dropboxSync
 }

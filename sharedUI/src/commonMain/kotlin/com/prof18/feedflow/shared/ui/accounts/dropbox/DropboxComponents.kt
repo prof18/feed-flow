@@ -19,15 +19,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.prof18.feedflow.core.model.DropboxConnectionUiState
-import com.prof18.feedflow.core.model.DropboxSyncUIState
+import com.prof18.feedflow.core.model.AccountConnectionUiState
+import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun DropboxSyncContent(
-    uiState: DropboxConnectionUiState,
+    uiState: AccountConnectionUiState,
     onBackClick: () -> Unit,
     onBackupClick: () -> Unit,
     onDisconnectClick: () -> Unit,
@@ -60,14 +60,14 @@ fun DropboxSyncContent(
                 .padding(bottom = Spacing.regular),
         ) {
             when (uiState) {
-                is DropboxConnectionUiState.Linked -> ConnectedView(
+                is AccountConnectionUiState.Linked -> ConnectedView(
                     uiState = uiState,
                     onBackupClick = onBackupClick,
                     onDisconnectClick = onDisconnectClick,
                 )
 
-                DropboxConnectionUiState.Loading -> LoadingView()
-                DropboxConnectionUiState.Unlinked -> DisconnectedView(
+                AccountConnectionUiState.Loading -> LoadingView()
+                AccountConnectionUiState.Unlinked -> DisconnectedView(
                     customPlatformUI = customPlatformUI,
                 )
             }
@@ -88,7 +88,7 @@ private fun LoadingView() {
 
 @Composable
 private fun ConnectedView(
-    uiState: DropboxConnectionUiState.Linked,
+    uiState: AccountConnectionUiState.Linked,
     onBackupClick: () -> Unit,
     onDisconnectClick: () -> Unit,
 ) {
@@ -100,7 +100,7 @@ private fun ConnectedView(
         )
 
         when (val syncState = uiState.syncState) {
-            DropboxSyncUIState.Loading -> {
+            AccountSyncUIState.Loading -> {
                 Row(
                     modifier = Modifier
                         .padding(
@@ -112,14 +112,14 @@ private fun ConnectedView(
                 ) {
                     CircularProgressIndicator()
                     Text(
-                        text = LocalFeedFlowStrings.current.dropboxRefreshProgress,
+                        text = LocalFeedFlowStrings.current.accountRefreshProgress,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(start = Spacing.small),
                     )
                 }
             }
 
-            DropboxSyncUIState.None -> {
+            AccountSyncUIState.None -> {
                 Text(
                     text = LocalFeedFlowStrings.current.noDropboxSyncYet,
                     style = MaterialTheme.typography.bodySmall,
@@ -129,7 +129,7 @@ private fun ConnectedView(
                 )
             }
 
-            is DropboxSyncUIState.Synced -> {
+            is AccountSyncUIState.Synced -> {
                 val lastUpload = syncState.lastUploadDate
                 if (lastUpload != null) {
                     Text(
@@ -157,15 +157,15 @@ private fun ConnectedView(
         SettingItem(
             modifier = Modifier
                 .padding(top = Spacing.regular),
-            isEnabled = uiState.syncState !is DropboxSyncUIState.Loading,
+            isEnabled = uiState.syncState !is AccountSyncUIState.Loading,
             title = LocalFeedFlowStrings.current.backupButton,
             icon = Icons.Default.FileUpload,
             onClick = onBackupClick,
         )
 
         SettingItem(
-            title = LocalFeedFlowStrings.current.dropboxDisconnectButton,
-            isEnabled = uiState.syncState !is DropboxSyncUIState.Loading,
+            title = LocalFeedFlowStrings.current.accountDisconnectButton,
+            isEnabled = uiState.syncState !is AccountSyncUIState.Loading,
             icon = Icons.Default.LinkOff,
             onClick = onDisconnectClick,
         )

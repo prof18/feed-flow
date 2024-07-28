@@ -95,20 +95,20 @@
     <string name="settings_accounts">Cuentas</string>
     <string name="settings_behaviour_title">Comportamiento</string>
     <string name="settings_help_title">Ayuda</string>
-    <string name="dropbox_disconnect_button">Desconectar</string>
+    <string name="account_disconnect_button">Desconectar</string>
     <string name="backup_button">Copia de seguridad</string>
     <string name="dropbox_auth_code_hint">Código de autorización</string>
     <string name="dropbox_confirm_button">Confirmar</string>
     <string name="dropbox_sync_success">Tu cuenta de Dropbox se ha conectado correctamente</string>
     <string name="last_upload">Última subida: %s</string>
     <string name="last_download">Última descarga: %s</string>
-    <string name="dropbox_refresh_progress">Actualización en curso</string>
+    <string name="account_refresh_progress">Actualización en curso</string>
     <string name="dropbox_sync_common_description">Conecta tu cuenta de Dropbox para sincronizar suscripciones a feeds, categorías, artículos leídos y marcados entre tus dispositivos. Los datos se guardarán en una carpeta específica de la aplicación; FeedFlow no tendrá acceso a ninguno de tus archivos</string>
     <string name="settings_title_feed">Feed</string>
     <string name="accounts_description">Conecta una cuenta para sincronizar suscripciones a feeds, categorías, artículos leídos y marcados entre tus dispositivos.
 \n
 \nLa funcionalidad está en fase Beta y en el futuro se admitirán más servicios.</string>
-    <string name="dropbox_connect_button">Conectar</string>
+    <string name="account_connect_button">Conectar</string>
     <string name="dropbox_sync_mobile_description">Al hacer clic en el botón Conectar, serás redirigido a la aplicación o al sitio web de Dropbox. Después de conectar la cuenta, puedes volver a FeedFlow</string>
     <string name="dropbox_sync_error">Se ha producido un error al conectar con Dropbox. Por favor, inténtalo de nuevo</string>
     <string name="dropbox_sync_desktop_description">Al hacer clic en el botón Conectar, serás redirigido al sitio web de Dropbox. Después de conectar la cuenta, copia el código de autorización e introdúcelo aquí en la aplicación</string>

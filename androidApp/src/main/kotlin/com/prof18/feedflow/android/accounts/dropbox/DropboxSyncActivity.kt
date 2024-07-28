@@ -105,7 +105,7 @@ class DropboxSyncActivity : ComponentActivity() {
 
                             SettingItem(
                                 modifier = Modifier.padding(top = Spacing.regular),
-                                title = LocalFeedFlowStrings.current.dropboxConnectButton,
+                                title = LocalFeedFlowStrings.current.accountConnectButton,
                                 icon = Icons.Default.Link,
                                 onClick = {
                                     isAuthOngoing = true

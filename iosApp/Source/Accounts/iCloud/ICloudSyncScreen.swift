@@ -1,8 +1,8 @@
 //
-//  DropboxSyncScreen.swift
+//  ICloudSyncScreen.swift
 //  FeedFlow
 //
-//  Created by Marco Gomiero on 28/06/24.
+//  Created by Marco Gomiero on 27/07/24.
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
@@ -11,19 +11,19 @@ import SwiftUI
 import shared
 import KMPNativeCoroutinesAsync
 
-struct DropboxSyncScreen: View {
+struct ICloudSyncScreen: View {
     @EnvironmentObject private var appState: AppState
 
     @StateObject
-    private var viewModel: DropboxSyncViewModel = KotlinDependencies.shared.getDropboxSyncViewModel()
+    private var viewModel: ICloudSyncViewModel = KotlinDependencies.shared.getICloudSyncViewModel()
 
     @State private var uiState: AccountConnectionUiState = AccountConnectionUiState.Unlinked()
 
     var body: some View {
-        DropboxSyncScreenContent(
+        ICloudSyncScreenContent(
             connectionState: uiState,
-            onDropboxAuthSuccess: {
-                viewModel.saveDropboxAuth()
+            onConnectClick: {
+                viewModel.setICloudAuth()
             },
             onBackupClick: {
                 viewModel.triggerBackup()
@@ -34,25 +34,9 @@ struct DropboxSyncScreen: View {
         )
         .task {
             do {
-                let stream = asyncSequence(for: viewModel.dropboxConnectionUiStateFlow)
+                let stream = asyncSequence(for: viewModel.iCloudConnectionUiStateFlow)
                 for try await state in stream {
                     self.uiState = state
-                }
-            } catch {
-                self.appState.emitGenericError()
-            }
-        }
-        .task {
-            do {
-                let stream = asyncSequence(for: viewModel.dropboxSyncMessageState)
-                for try await message in stream where message is DropboxSynMessages.Error {
-                        self.appState.snackbarQueue.append(
-                            SnackbarData(
-                                title: feedFlowStrings.dropboxSyncError,
-                                subtitle: nil,
-                                showBanner: true
-                            )
-                        )
                 }
             } catch {
                 self.appState.emitGenericError()

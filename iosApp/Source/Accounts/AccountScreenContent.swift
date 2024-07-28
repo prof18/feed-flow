@@ -11,7 +11,10 @@ import SwiftUI
 import shared
 
 struct AccountsScreenContent: View {
+    @State private var showAddAccountSheet = false
+
     let syncAccount: SyncAccounts
+    let supportedAccounts: [SyncAccounts]
 
     var body: some View {
         Form {
@@ -19,18 +22,39 @@ struct AccountsScreenContent: View {
                 Text(feedFlowStrings.accountsDescription)
             }
 
-            NavigationLink(destination: DropboxSyncScreen()) {
-                HStack {
+            switch syncAccount {
+            case SyncAccounts.dropbox:
+                NavigationLink(destination: DropboxSyncScreen()) {
                     AccountsItem(
                         title: "Dropbox",
-                        icon: "shippingbox"
+                        icon: "shippingbox",
+                        showCheckmark: true
                     )
-
-                    if syncAccount == .dropbox {
-                        Image(systemName: "checkmark")
-                    }
                 }
+
+            case SyncAccounts.icloud:
+                NavigationLink(destination: ICloudSyncScreen()) {
+                    AccountsItem(
+                        title: "iCloud",
+                        icon: "icloud",
+                        showCheckmark: true
+                    )
+                }
+
+            default:
+                EmptyView()
             }
+
+            Button {
+                self.showAddAccountSheet.toggle()
+            } label: {
+                Label(feedFlowStrings.addAccountButton, systemImage: "plus.app")
+            }.disabled(syncAccount != SyncAccounts.local)
+        }
+        .sheet(isPresented: $showAddAccountSheet) {
+            AddAccountScreen(
+                supportedAccounts: supportedAccounts
+            )
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -51,6 +75,7 @@ struct AccountsScreenContent: View {
 private struct AccountsItem: View {
     let title: String
     let icon: String
+    let showCheckmark: Bool
 
     var body: some View {
         HStack {
@@ -58,10 +83,19 @@ private struct AccountsItem: View {
             Text(title)
                 .font(.body)
             Spacer()
+            if showCheckmark {
+                Image(systemName: "checkmark")
+            }
         }
     }
 }
 
 #Preview {
-    AccountsScreenContent(syncAccount: SyncAccounts.dropbox)
+    AccountsScreenContent(
+        syncAccount: SyncAccounts.local,
+        supportedAccounts: [
+            SyncAccounts.dropbox,
+            SyncAccounts.icloud
+        ]
+    )
 }

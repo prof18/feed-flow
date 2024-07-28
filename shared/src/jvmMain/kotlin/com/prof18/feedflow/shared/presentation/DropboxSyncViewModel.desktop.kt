@@ -7,9 +7,9 @@ import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.DbxWebAuth
 import com.dropbox.core.TokenAccessType
 import com.dropbox.core.oauth.DbxCredential
-import com.prof18.feedflow.core.model.DropboxConnectionUiState
+import com.prof18.feedflow.core.model.AccountConnectionUiState
+import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.DropboxSynMessages
-import com.prof18.feedflow.core.model.DropboxSyncUIState
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxException
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
@@ -43,8 +43,8 @@ class DropboxSyncViewModel internal constructor(
     private var appInfo: DbxAppInfo? = null
 
     private val dropboxSyncUiMutableState =
-        MutableStateFlow<DropboxConnectionUiState>(DropboxConnectionUiState.Unlinked)
-    val dropboxConnectionUiState: StateFlow<DropboxConnectionUiState> = dropboxSyncUiMutableState.asStateFlow()
+        MutableStateFlow<AccountConnectionUiState>(AccountConnectionUiState.Unlinked)
+    val dropboxConnectionUiState: StateFlow<AccountConnectionUiState> = dropboxSyncUiMutableState.asStateFlow()
 
     private val dropboxSyncMessageMutableState = MutableSharedFlow<DropboxSynMessages>()
     val dropboxSyncMessageState: SharedFlow<DropboxSynMessages> = dropboxSyncMessageMutableState.asSharedFlow()
@@ -88,7 +88,7 @@ class DropboxSyncViewModel internal constructor(
             } catch (e: Throwable) {
                 logger.e(e) { "Error while trying to auth with Dropbox before getting the code" }
                 dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)
-                dropboxSyncUiMutableState.update { DropboxConnectionUiState.Unlinked }
+                dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
                 return@launch
             }
         }
@@ -97,7 +97,7 @@ class DropboxSyncViewModel internal constructor(
     fun handleDropboxAuthResponse(authorizationCode: String) {
         scope.launch {
             try {
-                dropboxSyncUiMutableState.update { DropboxConnectionUiState.Loading }
+                dropboxSyncUiMutableState.update { AccountConnectionUiState.Loading }
                 val authResult = pkceWebAuth?.finishFromCode(authorizationCode)
                 val appInfo = this@DropboxSyncViewModel.appInfo
                 if (authResult != null && appInfo != null) {
@@ -113,7 +113,7 @@ class DropboxSyncViewModel internal constructor(
                     dropboxSettings.setDropboxData(stringCredentials)
                     accountsRepository.setDropboxAccount()
                     dropboxSyncUiMutableState.update {
-                        DropboxConnectionUiState.Linked(
+                        AccountConnectionUiState.Linked(
                             syncState = getSyncState(),
                         )
                     }
@@ -122,12 +122,12 @@ class DropboxSyncViewModel internal constructor(
                     emitLastSyncUpdate()
                 } else {
                     dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)
-                    dropboxSyncUiMutableState.update { DropboxConnectionUiState.Unlinked }
+                    dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
                 }
             } catch (e: Throwable) {
                 logger.e(e) { "Error while trying to auth with Dropbox after getting the code" }
                 dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)
-                dropboxSyncUiMutableState.update { DropboxConnectionUiState.Unlinked }
+                dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             }
         }
     }
@@ -141,29 +141,29 @@ class DropboxSyncViewModel internal constructor(
     }
 
     private fun restoreDropboxAuth() {
-        dropboxSyncUiMutableState.update { DropboxConnectionUiState.Loading }
+        dropboxSyncUiMutableState.update { AccountConnectionUiState.Loading }
         val stringCredentials = dropboxSettings.getDropboxData()
         if (stringCredentials != null) {
             dropboxDataSource.restoreAuth(DropboxStringCredentials(stringCredentials))
             dropboxSyncUiMutableState.update {
-                DropboxConnectionUiState.Linked(
+                AccountConnectionUiState.Linked(
                     syncState = getSyncState(),
                 )
             }
         } else {
-            dropboxSyncUiMutableState.update { DropboxConnectionUiState.Unlinked }
+            dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
         }
     }
 
     fun disconnect() {
         scope.launch {
             try {
-                dropboxSyncUiMutableState.update { DropboxConnectionUiState.Loading }
+                dropboxSyncUiMutableState.update { AccountConnectionUiState.Loading }
                 dropboxDataSource.revokeAccess()
                 dropboxSettings.clearDropboxData()
                 feedSyncRepository.deleteAll()
                 accountsRepository.clearAccount()
-                dropboxSyncUiMutableState.update { DropboxConnectionUiState.Unlinked }
+                dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             } catch (_: DropboxException) {
                 dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)
             }
@@ -182,9 +182,9 @@ class DropboxSyncViewModel internal constructor(
 
     private fun emitSyncLoading() {
         dropboxSyncUiMutableState.update { oldState ->
-            if (oldState is DropboxConnectionUiState.Linked) {
-                DropboxConnectionUiState.Linked(
-                    syncState = DropboxSyncUIState.Loading,
+            if (oldState is AccountConnectionUiState.Linked) {
+                AccountConnectionUiState.Linked(
+                    syncState = AccountSyncUIState.Loading,
                 )
             } else {
                 oldState
@@ -192,23 +192,23 @@ class DropboxSyncViewModel internal constructor(
         }
     }
 
-    private fun getSyncState(): DropboxSyncUIState {
+    private fun getSyncState(): AccountSyncUIState {
         return when {
             dropboxSettings.getLastDownloadTimestamp() != null || dropboxSettings.getLastUploadTimestamp() != null -> {
-                DropboxSyncUIState.Synced(
+                AccountSyncUIState.Synced(
                     lastDownloadDate = getLastDownloadDate(),
                     lastUploadDate = getLastUploadDate(),
                 )
             }
 
-            else -> DropboxSyncUIState.None
+            else -> AccountSyncUIState.None
         }
     }
 
     private fun emitLastSyncUpdate() {
         dropboxSyncUiMutableState.update { oldState ->
-            if (oldState is DropboxConnectionUiState.Linked) {
-                DropboxConnectionUiState.Linked(
+            if (oldState is AccountConnectionUiState.Linked) {
+                AccountConnectionUiState.Linked(
                     syncState = getSyncState(),
                 )
             } else {

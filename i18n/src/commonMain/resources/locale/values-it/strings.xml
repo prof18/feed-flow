@@ -94,13 +94,13 @@
     <string name="search_hint_title">Inizia a scrivere…</string>
     <string name="settings_behaviour_title">Comportamento</string>
     <string name="settings_help_title">Aiuto</string>
-    <string name="dropbox_connect_button">Connetti</string>
-    <string name="dropbox_disconnect_button">Disconnetti</string>
+    <string name="account_connect_button">Connetti</string>
+    <string name="account_disconnect_button">Disconnetti</string>
     <string name="backup_button">Backup</string>
     <string name="dropbox_sync_desktop_description">Facendo clic sul pulsante Connetti verrai reindirizzato al sito web di Dropbox. Dopo aver collegato l\'account, copia il codice di autorizzazione e inseriscilo qui nell\'app</string>
     <string name="dropbox_sync_error">Si è verificato un errore durante la connessione a Dropbox. Per favore riprova</string>
     <string name="last_upload">Ultimo caricamento: %s</string>
-    <string name="dropbox_refresh_progress">Aggiornamento in corso</string>
+    <string name="account_refresh_progress">Aggiornamento in corso</string>
     <string name="settings_title_feed">Feed</string>
     <string name="settings_accounts">Account</string>
     <string name="accounts_description">Connetti un account per sincronizzare iscrizioni ai feed, categorie, articoli letti e preferiti tra i tuoi dispositivi

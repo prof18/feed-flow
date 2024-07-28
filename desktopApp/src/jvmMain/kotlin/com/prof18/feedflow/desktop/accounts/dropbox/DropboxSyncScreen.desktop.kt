@@ -92,7 +92,7 @@ internal class DropboxSyncScreen : Screen {
 
                     SettingItem(
                         modifier = Modifier.padding(top = Spacing.regular),
-                        title = LocalFeedFlowStrings.current.dropboxConnectButton,
+                        title = LocalFeedFlowStrings.current.accountConnectButton,
                         icon = Icons.Default.Link,
                         onClick = {
                             viewModel.startDropboxAuthFlow()

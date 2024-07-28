@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
 import com.prof18.feedflow.feedsync.dropbox.di.dropboxModule
+import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.HtmlRetriever
@@ -264,6 +265,12 @@ private val coreModule = module {
     }
 
     singleOf(::AccountsRepository)
+
+    factory {
+        ICloudSettings(
+            settings = get(),
+        )
+    }
 }
 
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module

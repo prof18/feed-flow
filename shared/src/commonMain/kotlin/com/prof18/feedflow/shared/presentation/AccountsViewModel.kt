@@ -1,7 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
 import com.prof18.feedflow.core.model.SyncAccounts
-import com.prof18.feedflow.shared.domain.accounts.AccountsRepository
+import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 
 class AccountsViewModel internal constructor(

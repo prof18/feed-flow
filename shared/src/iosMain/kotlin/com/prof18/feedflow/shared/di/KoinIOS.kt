@@ -99,6 +99,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             appEnvironment = appEnvironment,
             dropboxSettings = get(),
             settingsRepository = get(),
+            accountsRepository = get(),
         )
     }
 

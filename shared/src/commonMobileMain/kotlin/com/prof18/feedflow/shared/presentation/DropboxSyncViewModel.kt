@@ -10,8 +10,8 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.getDxCredentialsAsString
 import com.prof18.feedflow.shared.domain.DateFormatter
-import com.prof18.feedflow.shared.domain.accounts.AccountsRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines

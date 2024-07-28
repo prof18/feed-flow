@@ -14,7 +14,7 @@ import kotlinx.datetime.Clock
 class FeedSyncRepository internal constructor(
     private val syncedDatabaseHelper: SyncedDatabaseHelper,
     private val feedSyncWorker: FeedSyncWorker,
-    private val feedSyncAccountRepository: FeedSyncAccountsRepository,
+    private val feedSyncAccountRepository: AccountsRepository,
     private val feedSyncMessageQueue: FeedSyncMessageQueue,
     private val dropboxSettings: DropboxSettings,
     private val logger: Logger,

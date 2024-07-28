@@ -111,7 +111,9 @@ class FeedSyncRepository internal constructor(
     }
 
     internal fun setIsSyncUploadRequired() {
-        settingsRepository.setIsSyncUploadRequired(true)
+        if (feedSyncAccountRepository.isSyncEnabled()) {
+            settingsRepository.setIsSyncUploadRequired(true)
+        }
     }
 
     internal suspend fun syncFeedSources() {

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -322,7 +323,7 @@ private fun FeedsNotAddedList(
                     style = MaterialTheme.typography.labelLarge,
                 )
 
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier,
                     thickness = 0.2.dp,
                     color = Color.Gray,

@@ -1,42 +1,26 @@
 //
-//  DropboxSyncScreenContent.swift
+//  ICloudSyncScreenContent.swift
 //  FeedFlow
 //
-//  Created by Marco Gomiero on 29/06/24.
+//  Created by Marco Gomiero on 28/07/24.
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
 import SwiftUI
 import shared
 
-struct DropboxSyncScreenContent: View {
+struct ICloudSyncScreenContent: View {
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var appState: AppState
 
     var connectionState: AccountConnectionUiState
-    let onDropboxAuthSuccess: () -> Void
+    let onConnectClick: () -> Void
     let onBackupClick: () -> Void
     let onDisconnectClick: () -> Void
 
     var body: some View {
         content
-            .navigationTitle("Dropbox")
-            .onReceive(NotificationCenter.default.publisher(for: .didDropboxSuccess)) { _ in
-                print("Dropbox Success Notification")
-                onDropboxAuthSuccess()
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .didDropboxCancel)) { _ in
-                print("Dropbox Cancel Notification")
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .didDropboxError)) { _ in
-                print("Dropbox Error Notification")
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: feedFlowStrings.dropboxSyncError,
-                        subtitle: nil,
-                        showBanner: true
-                    )
-                )
-            }
+            .navigationTitle("iCloud")
     }
 
     @ViewBuilder
@@ -79,7 +63,7 @@ struct DropboxSyncScreenContent: View {
                         }
 
                     case is AccountSyncUIState.None:
-                        Text(feedFlowStrings.noDropboxSyncYet)
+                        Text(feedFlowStrings.noIcloudSyncYet)
                             .font(.body)
 
                     default:
@@ -114,7 +98,7 @@ struct DropboxSyncScreenContent: View {
     private func makeSyncInfoView(state: AccountConnectionUiState.Linked) -> some View {
         Section {
             VStack(alignment: .leading) {
-                Text(feedFlowStrings.dropboxSyncSuccess)
+                Text(feedFlowStrings.icloudSyncSuccess)
                     .font(.body)
                     .multilineTextAlignment(.leading)
 
@@ -142,19 +126,13 @@ struct DropboxSyncScreenContent: View {
         VStack {
             Form {
                 Section {
-                    VStack(alignment: .leading) {
-                        Text(feedFlowStrings.dropboxSyncCommonDescription)
-                            .font(.body)
-
-                        Text(feedFlowStrings.dropboxSyncMobileDescription)
-                            .font(.body)
-                            .padding(.top, Spacing.regular)
-                    }
+                    Text(feedFlowStrings.icloudSyncDescription)
+                        .font(.body)
                 }
 
                 Button(
                     action: {
-                        DropboxDataSourceIos.startAuth()
+                        self.onConnectClick()
                     },
                     label: {
                         Label(feedFlowStrings.accountConnectButton, systemImage: "link")
@@ -166,41 +144,41 @@ struct DropboxSyncScreenContent: View {
 }
 
 #Preview("Unlinked") {
-    DropboxSyncScreenContent(
+    ICloudSyncScreenContent(
         connectionState: AccountConnectionUiState.Unlinked(),
-        onDropboxAuthSuccess: {},
+        onConnectClick: {},
         onBackupClick: {},
         onDisconnectClick: {}
     )
 }
 
 #Preview("Loading") {
-    DropboxSyncScreenContent(
+    ICloudSyncScreenContent(
         connectionState: AccountConnectionUiState.Linked(syncState: AccountSyncUIState.Loading()),
-        onDropboxAuthSuccess: {},
+        onConnectClick: {},
         onBackupClick: {},
         onDisconnectClick: {}
     )
 }
 
 #Preview("None") {
-    DropboxSyncScreenContent(
+    ICloudSyncScreenContent(
         connectionState: AccountConnectionUiState.Linked(syncState: AccountSyncUIState.None()),
-        onDropboxAuthSuccess: {},
+        onConnectClick: {},
         onBackupClick: {},
         onDisconnectClick: {}
     )
 }
 
 #Preview("Synced") {
-    DropboxSyncScreenContent(
+    ICloudSyncScreenContent(
         connectionState: AccountConnectionUiState.Linked(
             syncState: AccountSyncUIState.Synced(
                 lastDownloadDate: "2024-06-29T10:00:00Z",
                 lastUploadDate: "2024-06-29T10:00:00Z"
             )
         ),
-        onDropboxAuthSuccess: {
+        onConnectClick: {
         },
         onBackupClick: {},
         onDisconnectClick: {}

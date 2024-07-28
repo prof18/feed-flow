@@ -44,6 +44,9 @@
 		CC23293C29D85208005D0E06 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = CC23293B29D85208005D0E06 /* SwiftSoup */; };
 		CC23293F29D85295005D0E06 /* IosHtmlParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC23293E29D85295005D0E06 /* IosHtmlParser.swift */; };
 		CC2DC9302C4FC8A900BFD2B9 /* FeedSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2DC92F2C4FC8A900BFD2B9 /* FeedSyncTimer.swift */; };
+		CC2DC9322C5577E800BFD2B9 /* AddAccountScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2DC9312C5577E800BFD2B9 /* AddAccountScreen.swift */; };
+		CC2DC9372C5595D400BFD2B9 /* ICloudSyncScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2DC9362C5595D400BFD2B9 /* ICloudSyncScreen.swift */; };
+		CC2DC9392C564FF600BFD2B9 /* ICloudSyncScreenContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2DC9382C564FF600BFD2B9 /* ICloudSyncScreenContent.swift */; };
 		CC3F46E32BD1C435005DC259 /* Reeeed in Frameworks */ = {isa = PBXBuildFile; productRef = CC3F46E22BD1C435005DC259 /* Reeeed */; };
 		CC4B803B29D98BB20004A0AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803A29D98BB20004A0AB /* Nuke */; };
 		CC4B803D29D98BB20004A0AB /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803C29D98BB20004A0AB /* NukeUI */; };
@@ -146,6 +149,9 @@
 		CC23293629D83067005D0E06 /* RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCorners.swift; sourceTree = "<group>"; };
 		CC23293E29D85295005D0E06 /* IosHtmlParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosHtmlParser.swift; sourceTree = "<group>"; };
 		CC2DC92F2C4FC8A900BFD2B9 /* FeedSyncTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedSyncTimer.swift; sourceTree = "<group>"; };
+		CC2DC9312C5577E800BFD2B9 /* AddAccountScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountScreen.swift; sourceTree = "<group>"; };
+		CC2DC9362C5595D400BFD2B9 /* ICloudSyncScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncScreen.swift; sourceTree = "<group>"; };
+		CC2DC9382C564FF600BFD2B9 /* ICloudSyncScreenContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncScreenContent.swift; sourceTree = "<group>"; };
 		CC4B804329DA03460004A0AB /* HomeListIndexHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListIndexHolder.swift; sourceTree = "<group>"; };
 		CC5FDB912BD0676A00960A30 /* SFSafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSafariView.swift; sourceTree = "<group>"; };
 		CC5FDB932BD06B9A00960A30 /* BrowserToPresent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserToPresent.swift; sourceTree = "<group>"; };
@@ -290,6 +296,15 @@
 				D9A441CEC08FC0C4A52A89B2 /* SidebarDrawer.swift */,
 			);
 			path = Drawer;
+			sourceTree = "<group>";
+		};
+		CC2DC9332C55903F00BFD2B9 /* iCloud */ = {
+			isa = PBXGroup;
+			children = (
+				CC2DC9362C5595D400BFD2B9 /* ICloudSyncScreen.swift */,
+				CC2DC9382C564FF600BFD2B9 /* ICloudSyncScreenContent.swift */,
+			);
+			path = iCloud;
 			sourceTree = "<group>";
 		};
 		CC323DFD29D21F6500138233 /* Source */ = {
@@ -479,9 +494,11 @@
 		D9A304A1F0C9F2D4F6B0AAA4 /* Accounts */ = {
 			isa = PBXGroup;
 			children = (
+				CC2DC9332C55903F00BFD2B9 /* iCloud */,
 				D9A98B31FBAA20E28DBFD16D /* Dropbox */,
 				CC07994B2C2F41A300067E06 /* AccountsScreen.swift */,
 				CC07994F2C2F4C6D00067E06 /* AccountScreenContent.swift */,
+				CC2DC9312C5577E800BFD2B9 /* AddAccountScreen.swift */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -684,7 +701,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n    #echo \"\"\n    swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n    echo \"\"\n    #swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
 		};
 		CCEA11BF2A6D2C6600C661AC /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -744,6 +761,7 @@
 				CCEB9C5829B33F5A0064D14A /* Koin.swift in Sources */,
 				CC6E681F2A5B1429009F4A3C /* ShareSheet.swift in Sources */,
 				CC6E68392A6C1D9A009F4A3C /* HtmlView.swift in Sources */,
+				CC2DC9392C564FF600BFD2B9 /* ICloudSyncScreenContent.swift in Sources */,
 				CC23293F29D85295005D0E06 /* IosHtmlParser.swift in Sources */,
 				CCA704D129D5A9B600560FA3 /* Colors.swift in Sources */,
 				CC4B804429DA03460004A0AB /* HomeListIndexHolder.swift in Sources */,
@@ -759,10 +777,12 @@
 				CC2DC9302C4FC8A900BFD2B9 /* FeedSyncTimer.swift in Sources */,
 				D9AF86D3ED2582EEAC6C9C85 /* CompactView.swift in Sources */,
 				D9A93B9610F495CF136FCF94 /* ContentView.swift in Sources */,
+				CC2DC9322C5577E800BFD2B9 /* AddAccountScreen.swift in Sources */,
 				D9A462B64B1E5781DA876EB4 /* SidebarDrawer.swift in Sources */,
 				CC0799542C30AB6100067E06 /* CustomNotification.swift in Sources */,
 				CCF21A6E2BD32AB60017F663 /* CommonViewRoute.swift in Sources */,
 				D9A0CA22D2D59CE810DAE8F8 /* FeedFlowApp.swift in Sources */,
+				CC2DC9372C5595D400BFD2B9 /* ICloudSyncScreen.swift in Sources */,
 				D9A98FE9EA6D2538DD9ACB63 /* RegularView.swift in Sources */,
 				D9A10406C09512E42D25B875 /* EmptyFeedView.swift in Sources */,
 				D9A285E3D6CC7292A0F66642 /* FeedItemView.swift in Sources */,

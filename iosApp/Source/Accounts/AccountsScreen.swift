@@ -20,7 +20,8 @@ struct AccountsScreen: View {
 
     var body: some View {
         AccountsScreenContent(
-            syncAccount: syncAccount
+            syncAccount: syncAccount,
+            supportedAccounts: viewModel.getSupportedAccounts()
         ).task {
             do {
                 let stream = asyncSequence(for: viewModel.accountsStateFlow)

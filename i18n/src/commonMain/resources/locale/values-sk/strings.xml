@@ -99,8 +99,8 @@
 \nFunkcia je ešte v Beta verzii, ale v budúcnosti pribudne podpora pre ďalšie služby.</string>
     <string name="settings_behaviour_title">Správanie</string>
     <string name="settings_help_title">Pomoc</string>
-    <string name="dropbox_disconnect_button">Odpojiť</string>
-    <string name="dropbox_connect_button">Prepojiť</string>
+    <string name="account_disconnect_button">Odpojiť</string>
+    <string name="account_connect_button">Prepojiť</string>
     <string name="dropbox_sync_common_description">Prepoj svoj Dropbox účet pre synchronizáciu odberu feedov, kategórií, prečítaných článkov a záložiek medzi zariadeniami. Dáta sa uložia do priečinka špecifického pre aplikáciu. FeedFlow nebude mať prístup k žiadnym tvojim súborom</string>
     <string name="backup_button">Zálohovať</string>
     <string name="dropbox_sync_mobile_description">Kliknutím na tlačidlo Prepojiť budeš presmerovaný do aplikácie alebo na webstránku Dropboxu. Po prepojení účtu sa môžeš vrátiť späť do aplikácie FeedFlow</string>
@@ -111,7 +111,7 @@
     <string name="dropbox_sync_error">Pri pripájaní k Dropboxu sa vyskytla chyba. Skús to prosím znova</string>
     <string name="last_upload">Naposledy nahrané: %s</string>
     <string name="last_download">Naposledy stiahnuté: %s</string>
-    <string name="dropbox_refresh_progress">Prebieha obnovenie</string>
+    <string name="account_refresh_progress">Prebieha obnovenie</string>
     <string name="feed_sync_in_progress">Prebieha synchronizácia. Po dokončení sa aplikácia automaticky zatvorí.</string>
     <string name="no_dropbox_sync_yet">Údaje ešte nie sú synchronizované s Dropboxom. Kliknutím na tlačidlo Zálohovať spustíš synchronizáciu</string>
     <string name="error_account_sync">Ľutujeme, pri synchronizácii údajov v tvojom účte sa vyskytla chyba :(</string>

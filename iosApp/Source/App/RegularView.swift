@@ -103,6 +103,9 @@ struct RegularView: View {
 
                 case .accounts:
                     AccountsScreen()
+
+                case .dropboxSync:
+                    DropboxSyncScreen()
                 }
             }
             .fullScreenCover(item: $browserToOpen) { browserToOpen in

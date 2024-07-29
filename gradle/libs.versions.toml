@@ -1,5 +1,5 @@
 [versions]
-about-libraries = "11.2.1"
+about-libraries = "11.2.2"
 android-compile-sdk = "34"
 android-min-sdk = "26"
 android-target-sdk = "34"

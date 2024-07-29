@@ -4,6 +4,7 @@ import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.domain.DateFormatter
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -20,6 +21,7 @@ class ICloudSyncViewModel internal constructor(
     private val dateFormatter: DateFormatter,
     private val accountsRepository: AccountsRepository,
     private val feedSyncRepository: FeedSyncRepository,
+    private val feedRetrieverRepository: FeedRetrieverRepository,
     feedSyncMessageQueue: FeedSyncMessageQueue,
 ) : BaseViewModel() {
 
@@ -38,20 +40,20 @@ class ICloudSyncViewModel internal constructor(
     }
 
     fun setICloudAuth() {
-        iCloudSettings.setUseICloud(true)
-        accountsRepository.setICloudAccount()
-        iCloudSyncUiMutableState.update {
-            AccountConnectionUiState.Linked(
-                syncState = getSyncState(),
-            )
+        scope.launch {
+            iCloudSettings.setUseICloud(true)
+            accountsRepository.setICloudAccount()
+            iCloudSyncUiMutableState.update {
+                AccountConnectionUiState.Linked(
+                    syncState = getSyncState(),
+                )
+            }
+            emitSyncLoading()
+            accountsRepository.setICloudAccount()
+            feedSyncRepository.firstSync()
+            feedRetrieverRepository.fetchFeeds()
+            emitLastSyncUpdate()
         }
-        /*
-        emitSyncLoading()
-                accountsRepository.setDropboxAccount()
-                feedSyncRepository.firstSync()
-                feedRetrieverRepository.fetchFeeds()
-                emitLastSyncUpdate()
-         */
     }
 
     fun triggerBackup() {
@@ -63,11 +65,12 @@ class ICloudSyncViewModel internal constructor(
     }
 
     fun unlink() {
-        iCloudSettings.setUseICloud(false)
-//        feedSyncRepository.deleteAll()
-        accountsRepository.clearAccount()
-        iCloudSyncUiMutableState.update {
-            AccountConnectionUiState.Unlinked
+        scope.launch {
+            iCloudSyncUiMutableState.update { AccountConnectionUiState.Loading }
+            iCloudSettings.setUseICloud(false)
+            feedSyncRepository.deleteAll()
+            accountsRepository.clearAccount()
+            iCloudSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
         }
     }
 

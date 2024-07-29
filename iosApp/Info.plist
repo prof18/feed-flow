@@ -86,5 +86,17 @@
     </array>
     <key>DropboxApiKey</key>
     <string>$(DROPBOX_API_KEY)</string>
+    <key>NSUbiquitousContainers</key>
+      <dict>
+          <key>iCloud.com.prof18.feedflow</key>
+          <dict>
+              <key>NSUbiquitousContainerIsDocumentScopePublic</key>
+              <true/>
+              <key>NSUbiquitousContainerName</key>
+              <string>FeedFlow</string>
+              <key>NSUbiquitousContainerSupportedFolderLevels</key>
+              <string>Any</string>
+          </dict>
+      </dict>
 </dict>
 </plist>

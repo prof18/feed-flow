@@ -100,6 +100,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dropboxSettings = get(),
             settingsRepository = get(),
             accountsRepository = get(),
+            iCloudSettings = get(),
         )
     }
 
@@ -124,6 +125,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dateFormatter = get(),
             accountsRepository = get(),
             feedSyncMessageQueue = get(),
+            feedSyncRepository = get(),
         )
     }
 }

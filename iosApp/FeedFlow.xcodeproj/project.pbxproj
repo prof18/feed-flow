@@ -168,6 +168,7 @@
 		CCA704D029D5A9B600560FA3 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		CCA704E429D625E200560FA3 /* HomeSheetToShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSheetToShow.swift; sourceTree = "<group>"; };
 		CCA704E629D626D400560FA3 /* FilePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePickerController.swift; sourceTree = "<group>"; };
+		CCD494BA2C56B38500C54C8D /* FeedFlow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FeedFlow.entitlements; sourceTree = "<group>"; };
 		CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CCEB9C5729B33F5A0064D14A /* Koin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Koin.swift; sourceTree = "<group>"; };
 		CCF21A6D2BD32AB60017F663 /* CommonViewRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonViewRoute.swift; sourceTree = "<group>"; };
@@ -231,6 +232,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				CCD494BA2C56B38500C54C8D /* FeedFlow.entitlements */,
 				CC21E74C2BED7F980001F160 /* PrivacyInfo.xcprivacy */,
 				CCA704CD29D5A83D00560FA3 /* Assets */,
 				CC23292D29D62FE2005D0E06 /* Kotlin */,
@@ -953,6 +955,7 @@
 			baseConfigurationReference = CC0799452C29BC5F00067E06 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDebug;
+				CODE_SIGN_ENTITLEMENTS = FeedFlow.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Preview Content\"";
@@ -989,6 +992,7 @@
 			baseConfigurationReference = CC0799452C29BC5F00067E06 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = FeedFlow.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

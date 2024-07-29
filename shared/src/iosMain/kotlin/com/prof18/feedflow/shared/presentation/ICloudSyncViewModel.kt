@@ -6,17 +6,20 @@ import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class ICloudSyncViewModel internal constructor(
     private val iCloudSettings: ICloudSettings,
     private val dateFormatter: DateFormatter,
     private val accountsRepository: AccountsRepository,
+    private val feedSyncRepository: FeedSyncRepository,
     feedSyncMessageQueue: FeedSyncMessageQueue,
 ) : BaseViewModel() {
 
@@ -52,7 +55,11 @@ class ICloudSyncViewModel internal constructor(
     }
 
     fun triggerBackup() {
-        // TODO
+        scope.launch {
+            emitSyncLoading()
+            feedSyncRepository.performBackup(forceBackup = true)
+            emitLastSyncUpdate()
+        }
     }
 
     fun unlink() {
@@ -99,4 +106,28 @@ class ICloudSyncViewModel internal constructor(
         iCloudSettings.getLastDownloadTimestamp()?.let { timestamp ->
             dateFormatter.formatDateForLastRefresh(timestamp)
         }
+
+    private fun emitSyncLoading() {
+        iCloudSyncUiMutableState.update { oldState ->
+            if (oldState is AccountConnectionUiState.Linked) {
+                AccountConnectionUiState.Linked(
+                    syncState = AccountSyncUIState.Loading,
+                )
+            } else {
+                oldState
+            }
+        }
+    }
+
+    private fun emitLastSyncUpdate() {
+        iCloudSyncUiMutableState.update { oldState ->
+            if (oldState is AccountConnectionUiState.Linked) {
+                AccountConnectionUiState.Linked(
+                    syncState = getSyncState(),
+                )
+            } else {
+                oldState
+            }
+        }
+    }
 }

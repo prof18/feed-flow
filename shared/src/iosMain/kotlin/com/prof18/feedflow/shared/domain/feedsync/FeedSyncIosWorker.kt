@@ -11,6 +11,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
+import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.cinterop.BetaInteropApi
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import platform.Foundation.NSApplicationSupportDirectory
+import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSFileManagerItemReplacementUsingNewMetadataOnly
@@ -45,6 +47,7 @@ internal class FeedSyncIosWorker(
     private val dropboxSettings: DropboxSettings,
     private val settingsRepository: SettingsRepository,
     private val accountsRepository: AccountsRepository,
+    private val iCloudSettings: ICloudSettings,
 ) : FeedSyncWorker {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -185,6 +188,7 @@ internal class FeedSyncIosWorker(
         return false
     }
 
+    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
     private suspend fun accountSpecificUpload(databasePath: NSURL) =
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.DROPBOX -> {
@@ -199,8 +203,31 @@ internal class FeedSyncIosWorker(
             }
 
             SyncAccounts.ICLOUD -> {
-                // TODO
-                logger.d { "TODO: Upload to iCloud" }
+                val iCloudUrl = getICloudFolderURL()
+                if (iCloudUrl != null) {
+                    memScoped {
+                        val errorPtr: ObjCObjectVar<NSError?> = alloc()
+
+                        // Copy doesn't override the item, so we need to clear it before.
+                        // An alternative would be checking the existence of the file before and copy or replace.
+                        NSFileManager.defaultManager.removeItemAtURL(
+                            iCloudUrl,
+                            null,
+                        )
+
+                        NSFileManager.defaultManager.copyItemAtURL(
+                            srcURL = databasePath,
+                            toURL = iCloudUrl,
+                            error = errorPtr.ptr,
+                        )
+
+                        if (errorPtr.value != null) {
+                            logger.e { "Error uploading to iCloud: ${errorPtr.value}" }
+                        }
+                    }
+                }
+                iCloudSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+                logger.d { "Upload to iCloud successfully" }
             }
 
             SyncAccounts.LOCAL -> {
@@ -229,9 +256,7 @@ internal class FeedSyncIosWorker(
             }
 
             SyncAccounts.ICLOUD -> {
-                // TODO
-                logger.d { "TODO: Download from iCloud" }
-                SyncResult.Success
+                return iCloudDownload()
             }
 
             SyncAccounts.LOCAL -> {
@@ -239,5 +264,54 @@ internal class FeedSyncIosWorker(
                 SyncResult.Success
             }
         }
+    }
+
+    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+    private fun iCloudDownload(): SyncResult {
+        val iCloudUrl = getICloudFolderURL()
+        val tempUrl = getTemporaryFileUrl()
+        if (iCloudUrl == null || tempUrl == null) {
+            logger.e { "Error downloading database" }
+            return SyncResult.Error
+        }
+        NSFileManager.defaultManager.removeItemAtURL(
+            tempUrl,
+            null,
+        )
+
+        memScoped {
+            val errorPtr: ObjCObjectVar<NSError?> = alloc()
+
+            NSFileManager.defaultManager.copyItemAtURL(
+                srcURL = iCloudUrl,
+                toURL = tempUrl,
+                error = errorPtr.ptr,
+            )
+
+            if (errorPtr.value != null) {
+                logger.e { "Error downloading from iCloud: ${errorPtr.value}" }
+                return SyncResult.Error
+            }
+
+            replaceDatabase(tempUrl)
+            iCloudSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+            logger.d { "Download from iCloud successfully" }
+            return SyncResult.Success
+        }
+    }
+
+    private fun getICloudFolderURL(): NSURL? = NSFileManager.defaultManager
+        .URLForUbiquityContainerIdentifier("iCloud.com.prof18.feedflow")
+        ?.URLByAppendingPathComponent("Documents")
+        ?.URLByAppendingPathComponent(getDatabaseName())
+
+    private fun getTemporaryFileUrl(): NSURL? {
+        val documentsDirectory: NSURL? = NSFileManager.defaultManager.URLsForDirectory(
+            directory = NSDocumentDirectory,
+            inDomains = NSUserDomainMask,
+        ).firstOrNull() as? NSURL?
+        val databaseUrl = documentsDirectory?.URLByAppendingPathComponent(getDatabaseName())
+
+        return databaseUrl
     }
 }

@@ -126,6 +126,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             accountsRepository = get(),
             feedSyncMessageQueue = get(),
             feedSyncRepository = get(),
+            feedRetrieverRepository = get(),
         )
     }
 }

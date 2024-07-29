@@ -27,8 +27,21 @@
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
 	<string>VERSION_NAME</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string></string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(DROPBOX_URL_SCHEME)</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>VERSION_CODE</string>
+	<key>DropboxApiKey</key>
+	<string>$(DROPBOX_API_KEY)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
@@ -39,8 +52,8 @@
 		<string>brave</string>
 		<string>googlechromes</string>
 		<string>firefox-focus</string>
-        <string>dbapi-8-emm</string>
-        <string>dbapi-2</string>
+		<string>dbapi-8-emm</string>
+		<string>dbapi-2</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -48,6 +61,18 @@
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
+	</dict>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.com.prof18.feedflow</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>FeedFlow</string>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>Any</string>
+		</dict>
 	</dict>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
@@ -73,30 +98,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>$(DROPBOX_URL_SCHEME)</string>
-            </array>
-            <key>CFBundleURLName</key>
-            <string></string>
-        </dict>
-    </array>
-    <key>DropboxApiKey</key>
-    <string>$(DROPBOX_API_KEY)</string>
-    <key>NSUbiquitousContainers</key>
-      <dict>
-          <key>iCloud.com.prof18.feedflow</key>
-          <dict>
-              <key>NSUbiquitousContainerIsDocumentScopePublic</key>
-              <true/>
-              <key>NSUbiquitousContainerName</key>
-              <string>FeedFlow</string>
-              <key>NSUbiquitousContainerSupportedFolderLevels</key>
-              <string>Any</string>
-          </dict>
-      </dict>
 </dict>
 </plist>

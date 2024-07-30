@@ -23,7 +23,7 @@ struct AccountsScreenContent: View {
             }
 
             switch syncAccount {
-            case SyncAccounts.dropbox:
+            case .dropbox:
                 NavigationLink(destination: DropboxSyncScreen()) {
                     AccountsItem(
                         title: "Dropbox",
@@ -32,7 +32,7 @@ struct AccountsScreenContent: View {
                     )
                 }
 
-            case SyncAccounts.icloud:
+            case .icloud:
                 NavigationLink(destination: ICloudSyncScreen()) {
                     AccountsItem(
                         title: "iCloud",
@@ -41,7 +41,7 @@ struct AccountsScreenContent: View {
                     )
                 }
 
-            default:
+            case .local:
                 EmptyView()
             }
 

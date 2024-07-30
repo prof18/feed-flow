@@ -25,53 +25,47 @@ struct ImportExportContent: View {
     let onDoneClick: () -> Void
 
     var body: some View {
-        switch feedImportExportState {
-        case is FeedImportExportState.Idle:
+        switch onEnum(of: feedImportExportState) {
+        case .idle:
             idleView
 
-        case is FeedImportExportState.Error:
+        case .error:
             errorView
 
-        case is FeedImportExportState.LoadingImport:
+        case .loadingImport:
             makeLoadingView(message: feedFlowStrings.feedAddInProgressMessage)
 
-        case is FeedImportExportState.LoadingExport:
+        case .loadingExport:
             makeLoadingView(message: feedFlowStrings.exportStartedMessage)
 
-        case is FeedImportExportState.ExportSuccess:
+        case .exportSuccess:
             exportDoneView
 
-        case let state as FeedImportExportState.ImportSuccess:
+        case .importSuccess(let state):
             makeImportDoneView(state: state)
-
-        default:
-            EmptyView()
         }
     }
 
     @ViewBuilder
     var importExportContent: some View {
-        switch feedImportExportState {
-        case is FeedImportExportState.Idle:
+        switch onEnum(of: feedImportExportState) {
+        case .idle:
             idleView
 
-        case is FeedImportExportState.Error:
+        case .error:
             errorView
 
-        case is FeedImportExportState.LoadingImport:
+        case .loadingImport:
             makeLoadingView(message: feedFlowStrings.feedAddInProgressMessage)
 
-        case is FeedImportExportState.LoadingExport:
+        case .loadingExport:
             makeLoadingView(message: feedFlowStrings.exportStartedMessage)
 
-        case is FeedImportExportState.ExportSuccess:
+        case .exportSuccess:
             exportDoneView
 
-        case let state as FeedImportExportState.ImportSuccess:
+        case .importSuccess(let state):
             makeImportDoneView(state: state)
-
-        default:
-            EmptyView()
         }
     }
 
@@ -248,7 +242,7 @@ struct ImportExportContent: View {
 
 #Preview("With error") {
     ImportExportContent(
-        feedImportExportState: .constant(PreviewItemsKt.feedImportSuccessWithErrorState),
+        feedImportExportState: .constant(feedImportSuccessWithErrorState),
         sheetToShow: .constant(nil),
         onExportClick: {},
         onRetryClick: {},
@@ -258,7 +252,7 @@ struct ImportExportContent: View {
 
 #Preview {
     ImportExportContent(
-        feedImportExportState: .constant(PreviewItemsKt.feedImportSuccessState),
+        feedImportExportState: .constant(feedImportSuccessState),
         sheetToShow: .constant(nil),
         onExportClick: {},
         onRetryClick: {},

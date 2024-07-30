@@ -22,7 +22,7 @@ struct AddAccountScreen: View {
                 Section {
                     ForEach(supportedAccounts, id: \.self) { account in
                         switch account {
-                        case SyncAccounts.dropbox:
+                        case .dropbox:
                             Button {
                                 self.dismiss()
                                 self.appState.navigate(route: CommonViewRoute.dropboxSync)
@@ -30,12 +30,12 @@ struct AddAccountScreen: View {
                                 Label("Dropbox", systemImage: "shippingbox")
                             }
 
-                        case SyncAccounts.icloud:
+                        case .icloud:
                             NavigationLink(destination: ICloudSyncScreen()) {
                                 Label("iCloud", systemImage: "icloud")
                             }
 
-                        default:
+                        case .local:
                             EmptyView()
                         }
 

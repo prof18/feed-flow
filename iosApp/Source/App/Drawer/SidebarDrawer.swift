@@ -305,7 +305,7 @@ struct SidebarDrawer: View {
 #Preview {
     SidebarDrawer(
         selectedDrawerItem: .constant(nil),
-        navDrawerState: PreviewItemsKt.navDrawerState,
+        navDrawerState: navDrawerState,
         onFeedFilterSelected: { _ in },
         onMarkAllReadClick: {},
         onDeleteOldFeedClick: {},

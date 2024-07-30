@@ -17,7 +17,7 @@ struct FeedFlowApp: App {
 
     init() {
     #if !DEBUG
-        CrashlyticsKt.setupCrashlytics()
+        setupCrashlytics()
     #endif
         startKoin()
 

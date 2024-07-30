@@ -67,8 +67,8 @@ struct DropboxSyncScreenContent: View {
                 makeSyncInfoView(state: state)
 
                 Section {
-                    switch state.syncState {
-                    case is AccountSyncUIState.Loading:
+                    switch onEnum(of: state.syncState) {
+                    case .loading:
                         HStack {
                             ProgressView()
                                 .padding(.leading, 0)
@@ -78,11 +78,11 @@ struct DropboxSyncScreenContent: View {
                                 .padding(.horizontal, Spacing.regular)
                         }
 
-                    case is AccountSyncUIState.None:
+                    case .none:
                         Text(feedFlowStrings.noDropboxSyncYet)
                             .font(.body)
 
-                    default:
+                    case .synced:
                         EmptyView()
                     }
                 }

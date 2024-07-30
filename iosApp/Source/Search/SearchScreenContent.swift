@@ -30,8 +30,8 @@ struct SearchScreenContent: View {
 
     @ViewBuilder
     func makeSearchContent() -> some View {
-        switch searchState {
-        case is SearchState.EmptyState:
+        switch onEnum(of: searchState) {
+        case .emptyState:
             if #available(iOS 17, *) {
                 ContentUnavailableView(
                     label: {
@@ -51,18 +51,15 @@ struct SearchScreenContent: View {
                 }
             }
 
-        case let state as SearchState.NoDataFound:
+        case .noDataFound(let state):
             if #available(iOS 17, *) {
                 ContentUnavailableView.search(text: state.searchQuery)
             } else {
                 Text(feedFlowStrings.searchNoData(state.searchQuery))
             }
 
-        case let state as SearchState.DataFound:
+        case .dataFound(let state):
             makeSearchFoundContent(state: state)
-
-        default:
-            EmptyView()
         }
     }
 

@@ -1,3 +1,5 @@
+import co.touchlab.skie.configuration.FlowInterop
+import co.touchlab.skie.configuration.SuspendInterop
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
@@ -6,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.native.coroutines)
     alias(libs.plugins.feedflow.detekt)
+    alias(libs.plugins.skie)
 }
 
 kotlin {
@@ -171,5 +174,17 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+
+skie {
+    features {
+        // Enable it later on
+        coroutinesInterop.set(false)
+        group {
+            SuspendInterop.Enabled(false)
+            FlowInterop.Enabled(false)
+        }
     }
 }

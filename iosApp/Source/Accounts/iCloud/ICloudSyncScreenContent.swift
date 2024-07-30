@@ -25,17 +25,15 @@ struct ICloudSyncScreenContent: View {
 
     @ViewBuilder
     private var content: some View {
-        switch connectionState {
-        case is AccountConnectionUiState.Loading:
+        switch onEnum(of: connectionState) {
+        case .loading:
             ProgressView()
 
-        case is AccountConnectionUiState.Unlinked:
+        case .unlinked:
             disconnectedView
 
-        case let state as AccountConnectionUiState.Linked:
+        case .linked(let state):
             makeLinkedScreen(state: state)
-        default:
-            EmptyView()
         }
     }
 
@@ -51,8 +49,8 @@ struct ICloudSyncScreenContent: View {
                 makeSyncInfoView(state: state)
 
                 Section {
-                    switch state.syncState {
-                    case is AccountSyncUIState.Loading:
+                    switch onEnum(of: state.syncState) {
+                    case .loading:
                         HStack {
                             ProgressView()
                                 .padding(.leading, 0)
@@ -62,11 +60,11 @@ struct ICloudSyncScreenContent: View {
                                 .padding(.horizontal, Spacing.regular)
                         }
 
-                    case is AccountSyncUIState.None:
+                    case .none:
                         Text(feedFlowStrings.noIcloudSyncYet)
                             .font(.body)
 
-                    default:
+                    case .synced:
                         EmptyView()
                     }
                 }

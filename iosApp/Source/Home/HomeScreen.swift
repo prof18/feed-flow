@@ -127,8 +127,8 @@ struct HomeScreen: View {
             do {
                 let stream = asyncSequence(for: homeViewModel.errorState)
                 for try await state in stream {
-                    switch state {
-                    case is UIErrorState.DatabaseError:
+                    switch onEnum(of: state) {
+                    case .databaseError:
                         self.appState.snackbarQueue.append(
                             SnackbarData(
                                 title: feedFlowStrings.databaseError,
@@ -137,7 +137,7 @@ struct HomeScreen: View {
                             )
                         )
 
-                    case let state as UIErrorState.FeedErrorState:
+                    case .feedErrorState(let state):
                         self.appState.snackbarQueue.append(
                             SnackbarData(
                                 title: feedFlowStrings.feedErrorMessage(state.feedName),
@@ -145,8 +145,7 @@ struct HomeScreen: View {
                                 showBanner: true
                             )
                         )
-
-                    default:
+                    case .none:
                         break
                     }
                 }

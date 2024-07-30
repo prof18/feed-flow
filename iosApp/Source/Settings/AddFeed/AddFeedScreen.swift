@@ -59,8 +59,8 @@ struct AddFeedScreen: View {
             do {
                 let stream = asyncSequence(for: addFeedViewModel.feedAddedState)
                 for try await state in stream {
-                    switch state {
-                    case let addedState as FeedAddedState.FeedAdded:
+                    switch onEnum(of: state) {
+                    case .feedAdded(let addedState):
                         self.appState.snackbarQueue.append(
                             SnackbarData(
                                 title: feedFlowStrings.feedAddedMessage(addedState.feedName),
@@ -71,26 +71,23 @@ struct AddFeedScreen: View {
                         self.feedURL = ""
                         self.isAddingFeed = false
 
-                    case is FeedAddedState.FeedNotAdded:
+                    case .feedNotAdded:
                         errorMessage = ""
                         showError = false
 
-                    case let errorState as FeedAddedState.Error:
-                        switch errorState {
-                        case is FeedAddedState.ErrorInvalidUrl:
+                    case .error(let errorState):
+                        switch onEnum(of: errorState) {
+                        case .invalidUrl:
                             errorMessage = feedFlowStrings.invalidRssUrl
 
-                        case is FeedAddedState.ErrorInvalidTitleLink:
+                        case .invalidTitleLink:
                             errorMessage = feedFlowStrings.missingTitleAndLink
-
-                        default:
-                            break
                         }
 
                         isAddingFeed = false
                         showError = true
 
-                    default:
+                    case .loading:
                         break
                     }
                 }

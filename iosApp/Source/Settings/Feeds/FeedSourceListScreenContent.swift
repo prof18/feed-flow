@@ -236,7 +236,7 @@ private struct FeedSourceListItem: View {
         feedState: .constant(
             FeedSourceListState(
                 feedSourcesWithoutCategory: [],
-                feedSourcesWithCategory: PreviewItemsKt.feedSourcesState
+                feedSourcesWithCategory: feedSourcesState
             )
         ),
         deleteFeedSource: { _ in },

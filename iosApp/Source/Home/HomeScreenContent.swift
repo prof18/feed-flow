@@ -246,7 +246,7 @@ fileprivate extension FeedFilter {
                 totalFeedCount: Int32(42)
             )
         ),
-        feedState: .constant(PreviewItemsKt.feedItemsForPreview),
+        feedState: .constant(feedItemsForPreview),
         showLoading: .constant(true),
         unreadCount: .constant(42),
         sheetToShow: .constant(nil),
@@ -277,7 +277,7 @@ fileprivate extension FeedFilter {
         loadingState: .constant(
             FinishedFeedUpdateStatus()
         ),
-        feedState: .constant(PreviewItemsKt.feedItemsForPreview),
+        feedState: .constant(feedItemsForPreview),
         showLoading: .constant(false),
         unreadCount: .constant(42),
         sheetToShow: .constant(nil),
@@ -308,7 +308,7 @@ fileprivate extension FeedFilter {
         loadingState: .constant(
             FinishedFeedUpdateStatus()
         ),
-        feedState: .constant(PreviewItemsKt.feedItemsForPreview),
+        feedState: .constant(feedItemsForPreview),
         showLoading: .constant(false),
         unreadCount: .constant(42),
         sheetToShow: .constant(HomeSheetToShow.noFeedSource),

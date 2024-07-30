@@ -112,7 +112,7 @@ struct FeedItemView: View {
 
 #Preview {
     FeedItemView(
-        feedItem: PreviewItemsKt.feedItemsForPreview[2],
+        feedItem: feedItemsForPreview[2],
         index: 0
     )
 }

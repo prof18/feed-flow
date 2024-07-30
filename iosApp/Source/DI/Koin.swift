@@ -19,7 +19,7 @@ func startKoin() {
 
     let langCode = Locale.current.language.languageCode?.identifier ?? "en"
 
-    let koinApplication = KoinIOSKt.doInitKoinIos(
+    let koinApplication = doInitKoinIos(
         htmlParser: IosHtmlParser(),
         appEnvironment: appEnvironment,
         languageCode: langCode,

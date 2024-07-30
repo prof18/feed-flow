@@ -189,7 +189,7 @@ struct FeedListView: View {
 #Preview {
     FeedListView(
         loadingState: FinishedFeedUpdateStatus(),
-        feedState: PreviewItemsKt.feedItemsForPreview,
+        feedState: feedItemsForPreview,
         showLoading: false,
         currentFeedFilter: FeedFilter.Timeline(),
         onReloadClick: {},

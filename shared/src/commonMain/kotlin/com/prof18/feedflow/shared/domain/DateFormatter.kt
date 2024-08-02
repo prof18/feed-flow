@@ -227,6 +227,16 @@ class DateFormatter(
             char(':')
             minute()
         },
+
+        // May 21, 2024
+        Format {
+            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            char(' ')
+            dayOfMonth()
+            char(',')
+            char(' ')
+            year()
+        },
     )
 
     fun getDateMillisFromString(dateString: String): Long? {

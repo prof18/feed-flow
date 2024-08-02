@@ -414,15 +414,15 @@ internal class FeedRetrieverRepository(
     }
 
     private fun String.buildUrl(originalUrl: String) =
-        if (originalUrl.endsWith("/")) {
-            "$originalUrl$this"
-        } else {
-            "$originalUrl/$this"
+        when {
+            this.isEmpty() -> originalUrl
+            originalUrl.endsWith("/") -> "$originalUrl$this"
+            else -> "$originalUrl/$this"
         }
 
     private suspend fun guessLinkAndParseFeed(originalUrl: String): AddResult? {
         for (suffix in knownUrlSuffix) {
-            val actualUrl = suffix.buildUrl(originalUrl)
+            val actualUrl = suffix.buildUrl(originalUrl).trim()
             logger.d { "Trying with actualUrl: $actualUrl" }
             try {
                 val channel = parser.getRssChannel(actualUrl)

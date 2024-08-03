@@ -41,11 +41,11 @@
     <string name="settings_accounts">账户</string>
     <string name="settings_behaviour_title">行为</string>
     <string name="settings_help_title">帮助</string>
-    <string name="dropbox_connect_button">连接</string>
-    <string name="dropbox_disconnect_button">未连接</string>
+    <string name="account_connect_button">连接</string>
+    <string name="account_disconnect_button">未连接</string>
     <string name="backup_button">备份</string>
     <string name="dropbox_sync_common_description">连接 Dropbox 账户以在设备间同步订阅、分类、已读和收藏的文章。数据仅保存在应用的特定文件夹内，FeedFlow 不会访问您的其他文件</string>
-    <string name="dropbox_refresh_progress">正在同步</string>
+    <string name="account_refresh_progress">正在同步</string>
     <string name="no_dropbox_sync_yet">数据未与 Dropbox 同步。请点击“备份”按钮开始同步</string>
     <string name="error_account_sync">抱歉，同步账户数据出错 :(</string>
     <string name="feed_added_message">已订阅 %s</string>

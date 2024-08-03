@@ -48,6 +48,8 @@ import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.coroutines.launch
 import java.awt.Desktop
@@ -123,170 +125,173 @@ fun main() = application {
     var showBackupLoader by remember { mutableStateOf(false) }
 
     FeedFlowTheme {
-        Window(
-            onCloseRequest = {
-                scope.launch {
-                    showBackupLoader = true
-                    feedSyncRepo.performBackup()
-                    exitApplication()
-                }
-            },
-            state = windowState,
-            title = "FeedFlow",
-        ) {
-            val listener = object : WindowFocusListener {
-                override fun windowGainedFocus(e: WindowEvent) {
-                    // Do nothing
-                }
-
-                override fun windowLostFocus(e: WindowEvent) {
+        val lyricist = rememberFeedFlowStrings()
+        ProvideFeedFlowStrings(lyricist) {
+            Window(
+                onCloseRequest = {
                     scope.launch {
+                        showBackupLoader = true
                         feedSyncRepo.performBackup()
+                        exitApplication()
+                    }
+                },
+                state = windowState,
+                title = "FeedFlow",
+            ) {
+                val listener = object : WindowFocusListener {
+                    override fun windowGainedFocus(e: WindowEvent) {
+                        // Do nothing
+                    }
+
+                    override fun windowLostFocus(e: WindowEvent) {
+                        scope.launch {
+                            feedSyncRepo.performBackup()
+                        }
                     }
                 }
-            }
 
-            DisposableEffect(Unit) {
-                window.addWindowFocusListener(listener)
-                onDispose {
-                    window.removeWindowFocusListener(listener)
-                }
-            }
-
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
-            LaunchedEffect(Unit) {
-                messageQueue.messageQueue.collect { message ->
-                    if (message is SyncResult.Error) {
-                        snackbarHostState.showSnackbar(
-                            message = errorMessage,
-                        )
+                DisposableEffect(Unit) {
+                    window.addWindowFocusListener(listener)
+                    onDispose {
+                        window.removeWindowFocusListener(listener)
                     }
                 }
-            }
 
-            if (showBackupLoader) {
-                FeedFlowTheme {
-                    Scaffold {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            CircularProgressIndicator()
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = Spacing.regular),
-                                text = LocalFeedFlowStrings.current.feedSyncInProgress,
+                val snackbarHostState = remember { SnackbarHostState() }
+
+                val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
+                LaunchedEffect(Unit) {
+                    messageQueue.messageQueue.collect { message ->
+                        if (message is SyncResult.Error) {
+                            snackbarHostState.showSnackbar(
+                                message = errorMessage,
                             )
                         }
                     }
                 }
-            } else {
-                CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
-                    val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
-                    val settingsState by settingsViewModel.settingsState.collectAsState()
 
-                    val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
-                    val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
-
-                    val listState = rememberLazyListState()
-
-                    var aboutDialogState by remember { mutableStateOf(false) }
-                    DialogWindow(
-                        title = LocalFeedFlowStrings.current.appName,
-                        visible = aboutDialogState,
-                        onCloseRequest = {
-                            aboutDialogState = false
-                        },
-                    ) {
-                        AboutContent(
-                            versionLabel = LocalFeedFlowStrings.current.aboutAppVersion(version ?: "N/A"),
-                        )
-                    }
-
-                    Navigator(
-                        MainScreen(
-                            frameWindowScope = this,
-                            appEnvironment = appEnvironment,
-                            version = version,
-                            homeViewModel = homeViewModel,
-                            searchViewModel = searchViewModel,
-                            listState = listState,
-                        ),
-                    ) { navigator ->
-                        FeedFlowMenuBar(
-                            showDebugMenu = appEnvironment.isDebug(),
-                            isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
-                            isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
-                            isReaderModeEnabled = settingsState.isReaderModeEnabled,
-                            isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
-                            onRefreshClick = {
-                                scope.launch {
-                                    listState.animateScrollToItem(0)
-                                    homeViewModel.getNewFeeds()
-                                }
-                            },
-                            onMarkAllReadClick = {
-                                homeViewModel.markAllRead()
-                            },
-                            onImportExportClick = {
-                                navigator.push(ImportExportScreen(window))
-                            },
-                            onFeedsListClick = {
-                                navigator.push(FeedSourceListScreen())
-                            },
-                            onClearOldFeedClick = {
-                                homeViewModel.deleteOldFeedItems()
-                            },
-                            onAboutClick = {
-                                aboutDialogState = true
-                            },
-                            onBugReportClick = {
-                                val desktop = Desktop.getDesktop()
-                                val uri = URI.create(
-                                    UserFeedbackReporter.getEmailUrl(
-                                        subject = emailSubject,
-                                        content = emailContent,
-                                    ),
+                if (showBackupLoader) {
+                    FeedFlowTheme {
+                        Scaffold {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                CircularProgressIndicator()
+                                Text(
+                                    modifier = Modifier
+                                        .padding(top = Spacing.regular),
+                                    text = LocalFeedFlowStrings.current.feedSyncInProgress,
                                 )
-                                desktop.mail(uri)
-                            },
-                            onForceRefreshClick = {
-                                scope.launch {
-                                    listState.animateScrollToItem(0)
-                                    homeViewModel.forceFeedRefresh()
-                                }
-                            },
-                            deleteFeeds = {
-                                homeViewModel.deleteAllFeeds()
-                            },
-                            setMarkReadWhenScrolling = { enabled ->
-                                settingsViewModel.updateMarkReadWhenScrolling(enabled)
-                            },
-                            setShowReadItem = { enabled ->
-                                settingsViewModel.updateShowReadItemsOnTimeline(enabled)
-                            },
-                            setReaderMode = { enabled ->
-                                settingsViewModel.updateReaderMode(enabled)
-                            },
-                            setRemoveTitleFromDescription = { enabled ->
-                                settingsViewModel.updateRemoveTitleFromDescription(enabled)
-                            },
-                        )
-
-                        ScaleTransition(navigator)
+                            }
+                        }
                     }
+                } else {
+                    CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
+                        val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
+                        val settingsState by settingsViewModel.settingsState.collectAsState()
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom,
-                    ) {
-                        SnackbarHost(snackbarHostState)
+                        val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
+                        val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
+
+                        val listState = rememberLazyListState()
+
+                        var aboutDialogState by remember { mutableStateOf(false) }
+                        DialogWindow(
+                            title = LocalFeedFlowStrings.current.appName,
+                            visible = aboutDialogState,
+                            onCloseRequest = {
+                                aboutDialogState = false
+                            },
+                        ) {
+                            AboutContent(
+                                versionLabel = LocalFeedFlowStrings.current.aboutAppVersion(version ?: "N/A"),
+                            )
+                        }
+
+                        Navigator(
+                            MainScreen(
+                                frameWindowScope = this,
+                                appEnvironment = appEnvironment,
+                                version = version,
+                                homeViewModel = homeViewModel,
+                                searchViewModel = searchViewModel,
+                                listState = listState,
+                            ),
+                        ) { navigator ->
+                            FeedFlowMenuBar(
+                                showDebugMenu = appEnvironment.isDebug(),
+                                isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
+                                isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
+                                isReaderModeEnabled = settingsState.isReaderModeEnabled,
+                                isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
+                                onRefreshClick = {
+                                    scope.launch {
+                                        listState.animateScrollToItem(0)
+                                        homeViewModel.getNewFeeds()
+                                    }
+                                },
+                                onMarkAllReadClick = {
+                                    homeViewModel.markAllRead()
+                                },
+                                onImportExportClick = {
+                                    navigator.push(ImportExportScreen(window))
+                                },
+                                onFeedsListClick = {
+                                    navigator.push(FeedSourceListScreen())
+                                },
+                                onClearOldFeedClick = {
+                                    homeViewModel.deleteOldFeedItems()
+                                },
+                                onAboutClick = {
+                                    aboutDialogState = true
+                                },
+                                onBugReportClick = {
+                                    val desktop = Desktop.getDesktop()
+                                    val uri = URI.create(
+                                        UserFeedbackReporter.getEmailUrl(
+                                            subject = emailSubject,
+                                            content = emailContent,
+                                        ),
+                                    )
+                                    desktop.mail(uri)
+                                },
+                                onForceRefreshClick = {
+                                    scope.launch {
+                                        listState.animateScrollToItem(0)
+                                        homeViewModel.forceFeedRefresh()
+                                    }
+                                },
+                                deleteFeeds = {
+                                    homeViewModel.deleteAllFeeds()
+                                },
+                                setMarkReadWhenScrolling = { enabled ->
+                                    settingsViewModel.updateMarkReadWhenScrolling(enabled)
+                                },
+                                setShowReadItem = { enabled ->
+                                    settingsViewModel.updateShowReadItemsOnTimeline(enabled)
+                                },
+                                setReaderMode = { enabled ->
+                                    settingsViewModel.updateReaderMode(enabled)
+                                },
+                                setRemoveTitleFromDescription = { enabled ->
+                                    settingsViewModel.updateRemoveTitleFromDescription(enabled)
+                                },
+                            )
+
+                            ScaleTransition(navigator)
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Bottom,
+                        ) {
+                            SnackbarHost(snackbarHostState)
+                        }
                     }
                 }
             }

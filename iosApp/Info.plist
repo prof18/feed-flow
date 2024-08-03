@@ -17,9 +17,12 @@
 		<string>fr</string>
 		<string>hu</string>
 		<string>pl</string>
-		<string>nb-rNO</string>
+		<string>nb_NO</string>
 		<string>de</string>
 		<string>sk</string>
+		<string>zh_CN</string>
+		<string>pt_BR</string>
+		<string>es</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>

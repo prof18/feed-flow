@@ -19,7 +19,6 @@ java {
     }
 }
 
-
 kotlin {
     jvmToolchain {
         vendor = JvmVendorSpec.JETBRAINS
@@ -61,6 +60,10 @@ compose {
     desktop {
         application {
             mainClass = "com.prof18.feedflow.desktop.MainKt"
+
+            // Enable only to test translations
+//            jvmArgs.add("-Duser.language=zh")
+//            jvmArgs.add("-Duser.country=CN")
 
             buildTypes.release.proguard {
                 configurationFiles.from(project.file("compose-desktop.pro"))
@@ -142,6 +145,7 @@ val macExtraPlistKeys: String
           <string>sk</string>
           <string>pt-BR</string>
           <string>es</string>
+          <string>zh-CN</string>
         </array>
     """.trimIndent()
 

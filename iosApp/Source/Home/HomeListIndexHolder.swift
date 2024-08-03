@@ -13,12 +13,23 @@ import shared
 
 class HomeListIndexHolder: ObservableObject {
 
+    let homeViewModel: HomeViewModel?
+
     var isLoading: Bool = false
     var lastAppearedIndex = 0
 
     private var lastReadIndex = 0
     private var timer: Timer?
     private var isClearing = false
+
+    init(homeViewModel: HomeViewModel) {
+        self.homeViewModel = homeViewModel
+    }
+
+    init(fakeHomeViewModel: Bool) {
+        // The variable is just to remind not to declare empty constructors by mistake
+        self.homeViewModel = nil
+    }
 
     func getLastReadIndex() -> Int {
         return lastReadIndex
@@ -48,8 +59,7 @@ class HomeListIndexHolder: ObservableObject {
             timer?.invalidate()
             timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in
                 guard let self else { return }
-                KotlinDependencies.shared.getHomeViewModel()
-                    .markAsReadOnScroll(lastVisibleIndex: Int32(self.getLastReadIndex()))
+                self.homeViewModel?.markAsReadOnScroll(lastVisibleIndex: Int32(self.getLastReadIndex()))
             }
         }
     }

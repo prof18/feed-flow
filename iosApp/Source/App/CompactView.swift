@@ -22,8 +22,6 @@ struct CompactView: View {
 
     @Binding var selectedDrawerItem: DrawerItem?
 
-    @StateObject private var indexHolder = HomeListIndexHolder()
-
     @State var navDrawerState: NavDrawerState = NavDrawerState(
         timeline: [],
         read: [],
@@ -32,12 +30,13 @@ struct CompactView: View {
         feedSourcesWithoutCategory: [],
         feedSourcesByCategory: [:]
     )
-    @State var  scrollUpTrigger: Bool = false
+    @State var scrollUpTrigger: Bool = false
 
     @State private var browserToOpen: BrowserToPresent?
 
     @State var showAddFeedSheet = false
 
+    @StateObject var indexHolder: HomeListIndexHolder
     let homeViewModel: HomeViewModel
 
     var body: some View {

@@ -20,7 +20,7 @@ func startKoin() {
     let currentLocale = Locale.current
     let languageCode = currentLocale.language.languageCode?.identifier
     let regionCode = currentLocale.region?.identifier
-    
+
     let koinApplication = doInitKoinIos(
         htmlParser: IosHtmlParser(),
         appEnvironment: appEnvironment,

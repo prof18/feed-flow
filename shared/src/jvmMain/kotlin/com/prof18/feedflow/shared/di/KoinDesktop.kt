@@ -11,17 +11,13 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
-import com.prof18.feedflow.shared.presentation.BaseViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
-import org.koin.core.definition.Definition
-import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
-import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 import java.util.prefs.Preferences
 
@@ -32,11 +28,6 @@ fun initKoinDesktop(
     appEnvironment = appEnvironment,
     modules = modules + getDatabaseModule(appEnvironment),
 )
-
-internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
-    qualifier: Qualifier?,
-    noinline definition: Definition<T>,
-): KoinDefinition<T> = factory(qualifier, definition)
 
 private fun getDatabaseModule(appEnvironment: AppEnvironment): Module =
     module {

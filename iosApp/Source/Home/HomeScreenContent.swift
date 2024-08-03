@@ -267,7 +267,7 @@ fileprivate extension FeedFilter {
         onBackToTimelineClick: {},
         onFeedSyncClick: {}
     )
-        .environmentObject(HomeListIndexHolder())
+        .environmentObject(HomeListIndexHolder(fakeHomeViewModel: true))
         .environmentObject(AppState())
         .environmentObject(BrowserSelector())
 }
@@ -298,7 +298,7 @@ fileprivate extension FeedFilter {
         onBackToTimelineClick: {},
         onFeedSyncClick: {}
     )
-        .environmentObject(HomeListIndexHolder())
+        .environmentObject(HomeListIndexHolder(fakeHomeViewModel: true))
         .environmentObject(AppState())
         .environmentObject(BrowserSelector())
 }
@@ -329,7 +329,7 @@ fileprivate extension FeedFilter {
         onBackToTimelineClick: {},
         onFeedSyncClick: {}
     )
-        .environmentObject(HomeListIndexHolder())
+        .environmentObject(HomeListIndexHolder(fakeHomeViewModel: true))
         .environmentObject(AppState())
         .environmentObject(BrowserSelector())
 }

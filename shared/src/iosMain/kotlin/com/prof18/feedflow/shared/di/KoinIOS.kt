@@ -19,7 +19,6 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
-import com.prof18.feedflow.shared.presentation.BaseViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -35,11 +34,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
-import org.koin.core.definition.Definition
-import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
 import org.koin.core.parameter.parametersOf
-import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 
 fun initKoinIos(
@@ -67,11 +63,6 @@ fun initKoinIos(
         },
     ),
 )
-
-internal actual inline fun <reified T : BaseViewModel> Module.viewModel(
-    qualifier: Qualifier?,
-    noinline definition: Definition<T>,
-): KoinDefinition<T> = single(qualifier, definition = definition)
 
 @OptIn(ExperimentalSettingsImplementation::class)
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {

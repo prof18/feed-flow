@@ -14,11 +14,27 @@ struct ContentView: View {
 
     @State private var isAppInBackground: Bool = false
 
+    @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline()
+
     var body: some View {
         ZStack {
-            HomeContainer()
+            if appState.sizeClass == .compact {
+                CompactView(
+                    selectedDrawerItem: $selectedDrawerItem,
+                    indexHolder: HomeListIndexHolder(homeViewModel: homeViewModel),
+                    homeViewModel: homeViewModel
+                )
                 .environmentObject(appState)
                 .environmentObject(browserSelector)
+            } else {
+                RegularView(
+                    selectedDrawerItem: $selectedDrawerItem,
+                    indexHolder: HomeListIndexHolder(homeViewModel: homeViewModel),
+                    homeViewModel: homeViewModel
+                )
+                .environmentObject(appState)
+                .environmentObject(browserSelector)
+            }
 
             VStack(spacing: 0) {
 
@@ -48,26 +64,4 @@ struct ContentView: View {
             }
         }
     }
-}
-
-private struct HomeContainer: View {
-
-    @EnvironmentObject var appState: AppState
-
-    @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
-
-    @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline()
-
-    var body: some View {
-        if appState.sizeClass == .compact {
-            CompactView(selectedDrawerItem: $selectedDrawerItem, homeViewModel: homeViewModel)
-        } else {
-            RegularView(selectedDrawerItem: $selectedDrawerItem, homeViewModel: homeViewModel)
-        }
-    }
-}
-
-#Preview {
-    HomeContainer()
-        .environmentObject(AppState())
 }

@@ -6,11 +6,18 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.shared.domain.DateFormatter
 
-internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter) = FeedItem(
+internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter, removeTitleFromDesc: Boolean) = FeedItem(
     id = url_hash,
     url = url,
     title = title,
-    subtitle = subtitle,
+    subtitle = subtitle?.let { desc ->
+        val title = title
+        if (removeTitleFromDesc && title != null) {
+            desc.replace(title, "").replace("  ", "").trim()
+        } else {
+            desc
+        }
+    },
     content = null,
     imageUrl = image_url,
     feedSource = FeedSource(

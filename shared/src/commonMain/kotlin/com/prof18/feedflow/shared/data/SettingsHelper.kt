@@ -35,6 +35,12 @@ internal class SettingsHelper(
 
     fun setIsSyncUploadRequired(value: Boolean) =
         settings.set(SettingsFields.IS_SYNC_UPLOAD_REQUIRED.name, value)
+
+    fun getRemoveTitleFromDescription(): Boolean =
+        settings.getBoolean(SettingsFields.REMOVE_TITLE_FROM_DESCRIPTION.name, false)
+
+    fun setRemoveTitleFromDescription(value: Boolean) =
+        settings.set(SettingsFields.REMOVE_TITLE_FROM_DESCRIPTION.name, value)
 }
 
 internal enum class SettingsFields {
@@ -43,4 +49,5 @@ internal enum class SettingsFields {
     SHOW_READ_ARTICLES_TIMELINE,
     USE_READER_MODE,
     IS_SYNC_UPLOAD_REQUIRED,
+    REMOVE_TITLE_FROM_DESCRIPTION,
 }

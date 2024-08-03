@@ -17,6 +17,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     isMarkReadWhenScrollingEnabled: Boolean,
     isShowReadItemEnabled: Boolean,
     isReaderModeEnabled: Boolean,
+    isRemoveTitleFromDescriptionEnabled: Boolean,
     onRefreshClick: () -> Unit,
     onMarkAllReadClick: () -> Unit,
     onImportExportClick: () -> Unit,
@@ -29,6 +30,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
+    setRemoveTitleFromDescription: (Boolean) -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -108,6 +110,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 text = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
                 checked = isShowReadItemEnabled,
                 onCheckedChange = setShowReadItem,
+            )
+
+            CheckboxItem(
+                text = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
+                checked = isRemoveTitleFromDescriptionEnabled,
+                onCheckedChange = setRemoveTitleFromDescription,
             )
         }
 

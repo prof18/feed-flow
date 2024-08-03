@@ -103,8 +103,9 @@ internal class FeedRetrieverRepository(
                 )
             }
             currentPage = 1
+            val removeTitleFromDesc = settingsHelper.getRemoveTitleFromDescription()
             mutableFeedState.update {
-                feeds.map { it.toFeedItem(dateFormatter) }.toImmutableList()
+                feeds.map { it.toFeedItem(dateFormatter, removeTitleFromDesc) }.toImmutableList()
             }
         } catch (e: Throwable) {
             logger.e(e) { "Something wrong while getting data from Database" }
@@ -129,8 +130,9 @@ internal class FeedRetrieverRepository(
                 )
             }
             currentPage += 1
+            val removeTitleFromDesc = settingsHelper.getRemoveTitleFromDescription()
             mutableFeedState.update { currentItems ->
-                val newList = feeds.map { it.toFeedItem(dateFormatter) }.toImmutableList()
+                val newList = feeds.map { it.toFeedItem(dateFormatter, removeTitleFromDesc) }.toImmutableList()
                 (currentItems + newList).toImmutableList()
             }
         } catch (e: Throwable) {

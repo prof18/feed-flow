@@ -116,5 +116,5 @@
     <string name="add_account_button">Add account</string>
     <string name="icloud_sync_success">Your iCloud account is successfully connected</string>
     <string name="no_icloud_sync_yet">Data are not synced yet with iCloud. Click the backup button to trigger a sync</string>
-
+    <string name="settings_hide_duplicated_title_from_desc">Hide title from article description</string>
 </resources>

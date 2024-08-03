@@ -24,6 +24,7 @@ struct SettingsScreen: View {
     @State private var isMarkReadWhenScrollingEnabled = true
     @State private var isShowReadItemEnabled = false
     @State private var isReaderModeEnabled = false
+    @State private var isRemoveTitleFromDescriptionEnabled = false
 
     var body: some View {
         settingsContent
@@ -34,6 +35,7 @@ struct SettingsScreen: View {
                         self.isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
                         self.isShowReadItemEnabled = state.isShowReadItemsEnabled
                         self.isReaderModeEnabled = state.isReaderModeEnabled
+                        self.isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
                     }
                 } catch {
                     self.appState.emitGenericError()
@@ -46,6 +48,8 @@ struct SettingsScreen: View {
                 settingsViewModel.updateShowReadItemsOnTimeline(value: newValue)
             }.onChange(of: isReaderModeEnabled) { newValue in
                 settingsViewModel.updateReaderMode(value: newValue)
+            }.onChange(of: isRemoveTitleFromDescriptionEnabled) { newValue in
+                settingsViewModel.updateRemoveTitleFromDescription(value: newValue)
             }
     }
 
@@ -132,6 +136,12 @@ struct SettingsScreen: View {
                 Label(feedFlowStrings.settingsToggleShowReadArticles, systemImage: "text.badge.checkmark")
             }.onTapGesture {
                 isShowReadItemEnabled.toggle()
+            }
+
+            Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {
+                Label(feedFlowStrings.settingsHideDuplicatedTitleFromDesc, systemImage: "eye.slash")
+            }.onTapGesture {
+                isRemoveTitleFromDescriptionEnabled.toggle()
             }
         }
     }

@@ -36,15 +36,6 @@ kotlin {
             export(project(":core"))
             export(project(":feedSync:dropbox"))
             export(libs.touchlab.kermit.simple)
-
-            // It should be fixed with Compose MP 1.5, but it seems not
-            it.binaries.forEach { binary ->
-                binary.freeCompilerArgs += listOf(
-                    "-linker-option", "-framework", "-linker-option", "Metal",
-                    "-linker-option", "-framework", "-linker-option", "CoreText",
-                    "-linker-option", "-framework", "-linker-option", "CoreGraphics",
-                )
-            }
         }
     }
 
@@ -121,7 +112,6 @@ kotlin {
             dependsOn(commonMobileMain)
 
             dependencies {
-                implementation(libs.androidx.lifecycle.viewModel.ktx)
                 implementation(libs.koin.android)
                 implementation(libs.crashk.ios)
                 implementation(libs.touchlab.kermit.crashlytics)

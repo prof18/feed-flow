@@ -199,7 +199,7 @@ struct FeedListView: View {
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {}
-    ).environmentObject(HomeListIndexHolder())
+    ).environmentObject(HomeListIndexHolder(fakeHomeViewModel: true))
 }
 
 #Preview {

@@ -269,10 +269,12 @@ private val coreModule = module {
 
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module
 
-internal expect inline fun <reified T : BaseViewModel> Module.viewModel(
+inline fun <reified T : BaseViewModel> Module.viewModel(
     qualifier: Qualifier? = null,
     noinline definition: Definition<T>,
-): KoinDefinition<T>
+): KoinDefinition<T> {
+    return factory(qualifier, definition)
+}
 
 inline fun <reified T> Scope.getWith(vararg params: Any?): T {
     return get(parameters = { parametersOf(*params) })

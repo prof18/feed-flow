@@ -18,8 +18,6 @@ struct RegularView: View {
 
     @Environment(\.openURL) private var openURL
 
-    @StateObject private var indexHolder = HomeListIndexHolder()
-
     @Binding var selectedDrawerItem: DrawerItem?
 
     @State var navDrawerState: NavDrawerState = NavDrawerState(
@@ -36,6 +34,7 @@ struct RegularView: View {
 
     @State var showAddFeedSheet = false
 
+    @StateObject var indexHolder: HomeListIndexHolder
     var drawerItems: [DrawerItem] = []
     let homeViewModel: HomeViewModel
 

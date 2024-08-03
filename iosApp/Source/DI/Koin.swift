@@ -17,12 +17,15 @@ func startKoin() {
         appEnvironment = AppEnvironment.Release()
     #endif
 
-    let langCode = Locale.current.language.languageCode?.identifier ?? "en"
-
+    let currentLocale = Locale.current
+    let languageCode = currentLocale.language.languageCode?.identifier
+    let regionCode = currentLocale.region?.identifier
+    
     let koinApplication = doInitKoinIos(
         htmlParser: IosHtmlParser(),
         appEnvironment: appEnvironment,
-        languageCode: langCode,
+        languageCode: languageCode,
+        regionCode: regionCode,
         dropboxDataSource: DropboxDataSourceIos()
     )
     _koin = koinApplication.koin

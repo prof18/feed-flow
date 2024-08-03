@@ -45,7 +45,8 @@ import org.koin.dsl.module
 fun initKoinIos(
     htmlParser: HtmlParser,
     appEnvironment: AppEnvironment,
-    languageCode: String,
+    languageCode: String?,
+    regionCode: String?,
     dropboxDataSource: DropboxDataSource,
 ): KoinApplication = initKoin(
     appEnvironment = appEnvironment,
@@ -54,7 +55,14 @@ fun initKoinIos(
             factory { htmlParser }
             single { dropboxDataSource }
             single<FeedFlowStrings> {
-                feedFlowStrings[languageCode] ?: EnFeedFlowStrings
+                when {
+                    languageCode == null -> EnFeedFlowStrings
+                    regionCode == null -> feedFlowStrings[languageCode] ?: EnFeedFlowStrings
+                    else -> {
+                        val locale = "${languageCode}_$regionCode"
+                        feedFlowStrings[locale] ?: feedFlowStrings[languageCode] ?: EnFeedFlowStrings
+                    }
+                }
             }
         },
     ),

@@ -103,11 +103,13 @@
     <string name="last_upload">Última subida: %s</string>
     <string name="last_download">Última descarga: %s</string>
     <string name="account_refresh_progress">Actualización en curso</string>
-    <string name="dropbox_sync_common_description">Conecta tu cuenta de Dropbox para sincronizar suscripciones a feeds, categorías, artículos leídos y marcados entre tus dispositivos. Los datos se guardarán en una carpeta específica de la aplicación; FeedFlow no tendrá acceso a ninguno de tus archivos</string>
+    <string name="dropbox_sync_common_description">Introduce tu cuenta de Dropbox para sincronizar las suscripciones a feeds, las categorías y los artículos leídos y marcados como favoritos entre tus dispositivos Android, iOS, iPadOS y de escritorio. Los datos se guardarán en una carpeta específica de la aplicación; FeedFlow no tendrá acceso a ninguno de tus archivos</string>
     <string name="settings_title_feed">Feed</string>
-    <string name="accounts_description">Conecta una cuenta para sincronizar suscripciones a feeds, categorías, artículos leídos y marcados entre tus dispositivos.
+    <string name="accounts_description">Conecta una cuenta para sincronizar sincronizar feeds, categorías y artículos leídos y marcados como favoritos entre tus dispositivos.
 \n
-\nLa funcionalidad está en fase Beta y en el futuro se admitirán más servicios.</string>
+\nLa funcionalidad está en versión beta, por lo que pueden surgir problemas (por ejemplo, es posible que los artículos leídos no se sincronicen por completo). En el futuro, se admitirán más servicios.
+\n
+\nSólo se admite una cuenta al mismo tiempo.</string>
     <string name="account_connect_button">Conectar</string>
     <string name="dropbox_sync_mobile_description">Al hacer clic en el botón Conectar, serás redirigido a la aplicación o al sitio web de Dropbox. Después de conectar la cuenta, puedes volver a FeedFlow</string>
     <string name="dropbox_sync_error">Se ha producido un error al conectar con Dropbox. Por favor, inténtalo de nuevo</string>
@@ -115,4 +117,9 @@
     <string name="no_dropbox_sync_yet">Los datos aún no se han sincronizado con Dropbox. Haz clic en el botón de copia de seguridad para activar una sincronización</string>
     <string name="feed_sync_in_progress">Sincronización en curso. La aplicación se cerrará automáticamente cuando haya terminado.</string>
     <string name="error_account_sync">Lo sentimos, algo ha ido mal al sincronizar los datos de tu cuenta :(</string>
+    <string name="icloud_sync_description">Conecta tu cuenta de iCloud para sincronizar las suscripciones a feeds, las categorías y los artículos leídos y marcados como favoritos entre tus dispositivos iOS y iPadOS. Los datos se guardarán en una carpeta específica de la aplicación; FeedFlow no tendrá acceso a ninguno de tus archivos</string>
+    <string name="add_account_button">Añadir una cuenta</string>
+    <string name="icloud_sync_success">Tu cuenta de iCloud se ha conectado correctamente</string>
+    <string name="no_icloud_sync_yet">Los datos aún no están sincronizados con iCloud. Haz clic en el botón de copia de seguridad para activar la sincronización</string>
+    <string name="settings_hide_duplicated_title_from_desc">Ocultar el título de la descripción del artículo</string>
 </resources>

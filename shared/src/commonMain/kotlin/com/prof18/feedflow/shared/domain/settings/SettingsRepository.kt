@@ -38,6 +38,13 @@ class SettingsRepository internal constructor(
         }
     }
 
+    fun isRemoveTitleFromDescriptionEnabled(): Boolean =
+        settingsHelper.getRemoveTitleFromDescription()
+
+    fun setRemoveTitleFromDescription(value: Boolean) {
+        settingsHelper.setRemoveTitleFromDescription(value)
+    }
+
     internal fun setUseReaderMode(value: Boolean) {
         isReaderModeEnabled = value
         settingsHelper.setUseReaderMode(value)

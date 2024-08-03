@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
+import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.MarkAsUnread
@@ -83,6 +84,7 @@ fun SettingsScreen(
         isMarkReadWhenScrollingEnabled = settingState.isMarkReadWhenScrollingEnabled,
         isShowReadItemEnabled = settingState.isShowReadItemsEnabled,
         isReaderModeEnabled = settingState.isReaderModeEnabled,
+        isRemoveTitleFromDescriptionEnabled = settingState.isRemoveTitleFromDescriptionEnabled,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
@@ -109,6 +111,9 @@ fun SettingsScreen(
         setReaderMode = { enabled ->
             settingsViewModel.updateReaderMode(enabled)
         },
+        setRemoveTitleFromDescription = { enabled ->
+            settingsViewModel.updateRemoveTitleFromDescription(enabled)
+        },
     )
 }
 
@@ -118,6 +123,7 @@ private fun SettingsScreenContent(
     isMarkReadWhenScrollingEnabled: Boolean,
     isShowReadItemEnabled: Boolean,
     isReaderModeEnabled: Boolean,
+    isRemoveTitleFromDescriptionEnabled: Boolean,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelected: (Browser) -> Unit,
@@ -129,6 +135,7 @@ private fun SettingsScreenContent(
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
+    setRemoveTitleFromDescription: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -172,6 +179,8 @@ private fun SettingsScreenContent(
             setShowReadItem = setShowReadItem,
             isReaderModeEnabled = isReaderModeEnabled,
             setReaderMode = setReaderMode,
+            isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
+            setRemoveTitleFromDescription = setRemoveTitleFromDescription,
         )
     }
 }
@@ -181,6 +190,7 @@ private fun SettingsList(
     isMarkReadWhenScrollingEnabled: Boolean,
     isShowReadItemEnabled: Boolean,
     isReaderModeEnabled: Boolean,
+    isRemoveTitleFromDescriptionEnabled: Boolean,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelectionClick: () -> Unit,
@@ -191,10 +201,9 @@ private fun SettingsList(
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
+    setRemoveTitleFromDescription: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     LazyColumn(
         modifier = modifier,
     ) {
@@ -278,6 +287,13 @@ private fun SettingsList(
             ShowReadItemOnTimelineSwitch(
                 isShowReadItemEnabled = isShowReadItemEnabled,
                 setShowReadItem = setShowReadItem,
+            )
+        }
+
+        item {
+            RemoveTitleFromDescSwitch(
+                isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
+                setRemoveTitleFromDescription = setRemoveTitleFromDescription,
             )
         }
 
@@ -423,6 +439,43 @@ private fun ShowReadItemOnTimelineSwitch(
 }
 
 @Composable
+private fun RemoveTitleFromDescSwitch(
+    isRemoveTitleFromDescriptionEnabled: Boolean,
+    setRemoveTitleFromDescription: (Boolean) -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable {
+                setRemoveTitleFromDescription(!isRemoveTitleFromDescriptionEnabled)
+            }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.Outlined.HideSource,
+            contentDescription = null,
+        )
+
+        Text(
+            text = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f),
+        )
+        Switch(
+            interactionSource = interactionSource,
+            checked = isRemoveTitleFromDescriptionEnabled,
+            onCheckedChange = setRemoveTitleFromDescription,
+        )
+    }
+}
+
+@Composable
 private fun SettingsNavBar(navigateBack: () -> Unit) {
     TopAppBar(
         title = {
@@ -454,6 +507,7 @@ private fun SettingsScreenPreview() {
             isMarkReadWhenScrollingEnabled = true,
             isShowReadItemEnabled = false,
             isReaderModeEnabled = false,
+            isRemoveTitleFromDescriptionEnabled = false,
             onFeedListClick = {},
             onAddFeedClick = {},
             onBrowserSelected = {},
@@ -465,6 +519,7 @@ private fun SettingsScreenPreview() {
             setMarkReadWhenScrolling = {},
             setShowReadItem = {},
             setReaderMode = {},
+            setRemoveTitleFromDescription = {},
         )
     }
 }

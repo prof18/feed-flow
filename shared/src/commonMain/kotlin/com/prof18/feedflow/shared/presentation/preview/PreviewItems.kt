@@ -132,7 +132,7 @@ val browsersForPreview = persistentListOf(
 val feedSourcesForPreview = persistentListOf(
     FeedSource(
         id = "0",
-        url = "https://www.site1.com",
+        url = "https://www.site1.site1.site1.site1.site1.site1.site1.site1.site1.site1.com",
         title = "Site 1",
         lastSyncTimestamp = null,
         category = FeedSourceCategory(

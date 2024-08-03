@@ -196,9 +196,10 @@ private struct FeedSourceListItem: View {
         .listRowInsets(
             EdgeInsets(
                 top: .zero,
-                leading: -20,
+                leading: .zero,
                 bottom: .zero,
-                trailing: .zero)
+                trailing: .zero
+            )
         )
         .if(!isRenameEnabled) { view in
             view.contextMenu {

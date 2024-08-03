@@ -25,11 +25,13 @@ class SettingsViewModel internal constructor(
             val isMarkReadEnabled = settingsRepository.isMarkFeedAsReadWhenScrollingEnabled()
             val isShowReadItemsEnabled = settingsRepository.isShowReadArticlesTimelineEnabled()
             val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
+            val isRemoveTitleFromDescriptionEnabled = settingsRepository.isRemoveTitleFromDescriptionEnabled()
             settingsMutableState.update {
                 SettingsState(
                     isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
                     isShowReadItemsEnabled = isShowReadItemsEnabled,
                     isReaderModeEnabled = isReaderModeEnabled,
+                    isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
                 )
             }
         }
@@ -63,6 +65,15 @@ class SettingsViewModel internal constructor(
         settingsMutableState.update {
             it.copy(
                 isReaderModeEnabled = value,
+            )
+        }
+    }
+
+    fun updateRemoveTitleFromDescription(value: Boolean) {
+        settingsRepository.setRemoveTitleFromDescription(value)
+        settingsMutableState.update {
+            it.copy(
+                isRemoveTitleFromDescriptionEnabled = value,
             )
         }
     }

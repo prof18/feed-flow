@@ -222,6 +222,7 @@ fun main() = application {
                             isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
                             isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
                             isReaderModeEnabled = settingsState.isReaderModeEnabled,
+                            isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
                             onRefreshClick = {
                                 scope.launch {
                                     listState.animateScrollToItem(0)
@@ -270,6 +271,9 @@ fun main() = application {
                             },
                             setReaderMode = { enabled ->
                                 settingsViewModel.updateReaderMode(enabled)
+                            },
+                            setRemoveTitleFromDescription = { enabled ->
+                                settingsViewModel.updateRemoveTitleFromDescription(enabled)
                             },
                         )
 

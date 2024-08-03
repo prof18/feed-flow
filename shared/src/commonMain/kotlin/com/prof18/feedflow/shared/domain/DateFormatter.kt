@@ -230,7 +230,13 @@ class DateFormatter(
 
         // May 21, 2024
         Format {
-            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            alternativeParsing(
+                {
+                    monthName(MonthNames.ENGLISH_FULL)
+                },
+            ) {
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+            }
             char(' ')
             dayOfMonth()
             char(',')

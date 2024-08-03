@@ -208,6 +208,7 @@ private val coreModule = module {
         SearchViewModel(
             feedRetrieverRepository = get(),
             dateFormatter = get(),
+            settingsRepository = get(),
         )
     }
 

@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
@@ -23,7 +25,7 @@ class ICloudSyncViewModel internal constructor(
     private val feedSyncRepository: FeedSyncRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
     feedSyncMessageQueue: FeedSyncMessageQueue,
-) : BaseViewModel() {
+) : ViewModel() {
 
     private val iCloudSyncUiMutableState = MutableStateFlow<AccountConnectionUiState>(
         AccountConnectionUiState.Unlinked,
@@ -40,7 +42,7 @@ class ICloudSyncViewModel internal constructor(
     }
 
     fun setICloudAuth() {
-        scope.launch {
+        viewModelScope.launch {
             iCloudSettings.setUseICloud(true)
             accountsRepository.setICloudAccount()
             iCloudSyncUiMutableState.update {
@@ -57,7 +59,7 @@ class ICloudSyncViewModel internal constructor(
     }
 
     fun triggerBackup() {
-        scope.launch {
+        viewModelScope.launch {
             emitSyncLoading()
             feedSyncRepository.performBackup(forceBackup = true)
             emitLastSyncUpdate()
@@ -65,7 +67,7 @@ class ICloudSyncViewModel internal constructor(
     }
 
     fun unlink() {
-        scope.launch {
+        viewModelScope.launch {
             iCloudSyncUiMutableState.update { AccountConnectionUiState.Loading }
             iCloudSettings.setUseICloud(false)
             feedSyncRepository.deleteAll()

@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.di
 
+import androidx.lifecycle.ViewModel
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
@@ -25,7 +26,6 @@ import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.logging.crashReportingLogWriter
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
-import com.prof18.feedflow.shared.presentation.BaseViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
@@ -269,7 +269,7 @@ private val coreModule = module {
 
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module
 
-inline fun <reified T : BaseViewModel> Module.viewModel(
+inline fun <reified T : ViewModel> Module.viewModel(
     qualifier: Qualifier? = null,
     noinline definition: Definition<T>,
 ): KoinDefinition<T> {

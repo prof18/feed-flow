@@ -1,10 +1,11 @@
 package com.prof18.feedflow.desktop.reaadermode
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
-import com.prof18.feedflow.shared.presentation.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -12,7 +13,7 @@ import kotlinx.coroutines.launch
 class ReaderModeViewModel internal constructor(
     private val readerModeExtractor: ReaderModeExtractor,
     private val markdownToHtmlConverter: MarkdownToHtmlConverter,
-) : BaseViewModel() {
+) : ViewModel() {
 
     private val readerModeMutableState: MutableStateFlow<ReaderModeState> = MutableStateFlow(
         ReaderModeState.Loading,
@@ -20,7 +21,7 @@ class ReaderModeViewModel internal constructor(
     val readerModeState = readerModeMutableState.asStateFlow()
 
     fun getReaderModeHtml(urlInfo: FeedItemUrlInfo) {
-        scope.launch {
+        viewModelScope.launch {
             readerModeMutableState.value = ReaderModeState.Loading
             val readerModeData = readerModeExtractor.extractReaderContent(urlInfo)
             if (readerModeData != null) {

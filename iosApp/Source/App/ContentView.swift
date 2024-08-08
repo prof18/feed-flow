@@ -10,7 +10,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase: ScenePhase
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
 
-    @StateObject var homeViewModel = KotlinDependencies.shared.getHomeViewModel()
+    @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(KotlinDependencies.shared.getHomeViewModel())
 
     @State private var isAppInBackground: Bool = false
 
@@ -21,16 +21,16 @@ struct ContentView: View {
             if appState.sizeClass == .compact {
                 CompactView(
                     selectedDrawerItem: $selectedDrawerItem,
-                    indexHolder: HomeListIndexHolder(homeViewModel: homeViewModel),
-                    homeViewModel: homeViewModel
+                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+                    homeViewModel: vmStoreOwner.instance
                 )
                 .environmentObject(appState)
                 .environmentObject(browserSelector)
             } else {
                 RegularView(
                     selectedDrawerItem: $selectedDrawerItem,
-                    indexHolder: HomeListIndexHolder(homeViewModel: homeViewModel),
-                    homeViewModel: homeViewModel
+                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+                    homeViewModel: vmStoreOwner.instance
                 )
                 .environmentObject(appState)
                 .environmentObject(browserSelector)

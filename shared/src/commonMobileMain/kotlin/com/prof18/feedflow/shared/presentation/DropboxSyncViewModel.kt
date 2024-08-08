@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
@@ -34,7 +36,7 @@ class DropboxSyncViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val accountsRepository: AccountsRepository,
     feedSyncMessageQueue: FeedSyncMessageQueue,
-) : BaseViewModel() {
+) : ViewModel() {
 
     private val dropboxSyncUiMutableState = MutableStateFlow<AccountConnectionUiState>(
         AccountConnectionUiState.Unlinked,
@@ -56,7 +58,7 @@ class DropboxSyncViewModel internal constructor(
     }
 
     fun saveDropboxAuth() {
-        scope.launch {
+        viewModelScope.launch {
             try {
                 val stringCredentials = getDxCredentialsAsString()
                 dropboxDataSource.saveAuth(DropboxStringCredentials(stringCredentials))
@@ -80,7 +82,7 @@ class DropboxSyncViewModel internal constructor(
     }
 
     fun triggerBackup() {
-        scope.launch {
+        viewModelScope.launch {
             emitSyncLoading()
             feedSyncRepository.performBackup(forceBackup = true)
             emitLastSyncUpdate()
@@ -88,7 +90,7 @@ class DropboxSyncViewModel internal constructor(
     }
 
     fun unlink() {
-        scope.launch {
+        viewModelScope.launch {
             try {
                 dropboxSyncUiMutableState.update { AccountConnectionUiState.Loading }
                 dropboxDataSource.revokeAccess()

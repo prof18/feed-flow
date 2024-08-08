@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
@@ -20,7 +22,7 @@ import kotlinx.coroutines.launch
 class AddFeedViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val feedManagerRepository: FeedManagerRepository,
-) : BaseViewModel() {
+) : ViewModel() {
 
     private var feedUrl: String = ""
     private var newCategoryName: CategoryName? = null
@@ -39,13 +41,13 @@ class AddFeedViewModel internal constructor(
 
     fun updateFeedUrlTextFieldValue(feedUrlTextFieldValue: String) {
         feedUrl = feedUrlTextFieldValue
-        scope.launch {
+        viewModelScope.launch {
             feedAddedMutableState.emit(FeedAddedState.FeedNotAdded)
         }
     }
 
     fun addFeed() {
-        scope.launch {
+        viewModelScope.launch {
             feedAddedMutableState.emit(FeedAddedState.Loading)
             if (feedUrl.isNotEmpty()) {
                 val url = sanitizeUrl(feedUrl)
@@ -81,14 +83,14 @@ class AddFeedViewModel internal constructor(
     }
 
     fun addNewCategory(categoryName: CategoryName) {
-        scope.launch {
+        viewModelScope.launch {
             newCategoryName = categoryName
             feedManagerRepository.createCategory(categoryName)
         }
     }
 
     fun deleteCategory(categoryId: String) {
-        scope.launch {
+        viewModelScope.launch {
             feedManagerRepository.deleteCategory(categoryId)
         }
     }
@@ -138,7 +140,7 @@ class AddFeedViewModel internal constructor(
         )
 
     private fun initCategories() {
-        scope.launch {
+        viewModelScope.launch {
             feedManagerRepository.observeCategories().collect { categories ->
                 val categoriesWithEmpty = listOf(getEmptyCategory()) + categories.map { feedSourceCategory ->
                     feedSourceCategory.toCategoryItem()

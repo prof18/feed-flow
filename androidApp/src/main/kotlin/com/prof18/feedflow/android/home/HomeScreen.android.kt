@@ -22,8 +22,8 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun HomeScreen(

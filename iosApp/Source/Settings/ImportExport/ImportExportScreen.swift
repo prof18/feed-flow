@@ -16,7 +16,7 @@ struct ImportExportScreen: View {
 
     @EnvironmentObject private var appState: AppState
 
-    @StateObject private var viewModel = KotlinDependencies.shared.getImportExportViewModel()
+    @StateObject private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(KotlinDependencies.shared.getImportExportViewModel())
 
     @State var feedImportExportState: FeedImportExportState = FeedImportExportState.Idle()
     @State var sheetToShow: ImportExportSheetToShow?
@@ -29,18 +29,18 @@ struct ImportExportScreen: View {
                 feedImportExportState: $feedImportExportState,
                 sheetToShow: $sheetToShow,
                 onExportClick: {
-                    viewModel.startExport()
+                    vmStoreOwner.instance.startExport()
                     if let url = getUrlForOpmlExport() {
-                        viewModel.exportFeed(opmlOutput: OpmlOutput(url: url))
+                        vmStoreOwner.instance.exportFeed(opmlOutput: OpmlOutput(url: url))
                     } else {
-                        viewModel.reportExportError()
+                        vmStoreOwner.instance.reportExportError()
                     }
                 },
                 onRetryClick: {
-                    viewModel.clearState()
+                    vmStoreOwner.instance.clearState()
                 },
                 onDoneClick: {
-                    viewModel.clearState()
+                    vmStoreOwner.instance.clearState()
                 }
             )
             .navigationTitle(feedFlowStrings.importExportOpmlTitle)
@@ -59,7 +59,7 @@ struct ImportExportScreen: View {
             }
             .task {
                 do {
-                    let stream = asyncSequence(for: viewModel.importExportStateFlow)
+                    let stream = asyncSequence(for: vmStoreOwner.instance.importExportStateFlow)
                     for try await state in stream {
                         self.feedImportExportState = state
                         if state is FeedImportExportState.ExportSuccess {
@@ -67,8 +67,9 @@ struct ImportExportScreen: View {
                         }
                     }
                 } catch {
-                    self.appState.emitGenericError()
-                }
+                    if !(error is CancellationError) {
+                                        self.appState.emitGenericError()
+                                    }                }
             }
             .sheet(item: $sheetToShow) { item in
                 switch item {
@@ -76,9 +77,9 @@ struct ImportExportScreen: View {
                     FilePickerController { url in
                         do {
                             let data = try Data(contentsOf: url)
-                            viewModel.importFeed(opmlInput: OpmlInput(opmlData: data))
+                            vmStoreOwner.instance.importFeed(opmlInput: OpmlInput(opmlData: data))
                         } catch {
-                            viewModel.reportExportError()
+                            vmStoreOwner.instance.reportExportError()
                             self.appState.snackbarQueue.append(
                                 SnackbarData(
                                     title: feedFlowStrings.loadFileErrorMessage,
@@ -103,7 +104,7 @@ struct ImportExportScreen: View {
     private func getUrlForOpmlExport() -> URL? {
         let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
 
-        let formattedDate = viewModel.getCurrentDateForExport()
+        let formattedDate = vmStoreOwner.instance.getCurrentDateForExport()
         let deviceName = UIDevice.current.name.replacingOccurrences(of: " ", with: "-")
         let fileName = "feedflow-export_\(formattedDate)_\(deviceName).opml".lowercased()
 

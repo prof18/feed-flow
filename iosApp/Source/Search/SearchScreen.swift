@@ -5,7 +5,7 @@ import KMPNativeCoroutinesAsync
 struct SearchScreen: View {
     @EnvironmentObject private var appState: AppState
 
-    @StateObject private var viewModel: SearchViewModel = KotlinDependencies.shared.getSearchViewModel()
+    @StateObject private var vmStoreOwner = VMStoreOwner<SearchViewModel>(KotlinDependencies.shared.getSearchViewModel())
 
     @State var searchText = ""
 
@@ -16,33 +16,35 @@ struct SearchScreen: View {
             searchText: $searchText,
             searchState: $searchState,
             onBookmarkClick: { (feedItemId, isBookmarked) in
-               viewModel.onBookmarkClick(feedItemId: feedItemId, bookmarked: isBookmarked)
+                vmStoreOwner.instance.onBookmarkClick(feedItemId: feedItemId, bookmarked: isBookmarked)
             },
             onReadStatusClick: { (feedItemId, isRead) in
-                viewModel.onReadStatusClick(feedItemId: feedItemId, read: isRead)
+                vmStoreOwner.instance.onReadStatusClick(feedItemId: feedItemId, read: isRead)
             }
         ).onChange(of: searchText) { newValue in
-            viewModel.updateSearchQuery(query: newValue)
+            vmStoreOwner.instance.updateSearchQuery(query: newValue)
         }
         .task {
             do {
-                let stream = asyncSequence(for: viewModel.searchQueryStateFlow)
+                let stream = asyncSequence(for: vmStoreOwner.instance.searchQueryStateFlow)
                 for try await state in stream {
                     self.searchText = state
                 }
             } catch {
-                self.appState.emitGenericError()
-            }
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }            }
         }
         .task {
             do {
-                let stream = asyncSequence(for: viewModel.searchStateFlow)
+                let stream = asyncSequence(for: vmStoreOwner.instance.searchStateFlow)
                 for try await state in stream {
                     self.searchState = state
                 }
             } catch {
-                self.appState.emitGenericError()
-            }
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }            }
         }
     }
 }

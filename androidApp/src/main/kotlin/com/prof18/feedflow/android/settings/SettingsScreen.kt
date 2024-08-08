@@ -53,8 +53,8 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.collections.immutable.ImmutableList
-import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsScreen(

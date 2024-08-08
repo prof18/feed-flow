@@ -36,6 +36,7 @@ kotlin {
             export(project(":core"))
             export(project(":feedSync:dropbox"))
             export(libs.touchlab.kermit.simple)
+            export(libs.androidx.lifecycle.viewModel)
         }
     }
 
@@ -69,6 +70,7 @@ kotlin {
                 api(project(":feedSync:dropbox"))
                 api(libs.touchlab.kermit)
                 api(libs.immutable.collections)
+                api(libs.androidx.lifecycle.viewModel)
             }
         }
 

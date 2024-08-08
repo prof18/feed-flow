@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
+		13B651162C6007C70015D0A1 /* VMStoreOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B651152C6007C70015D0A1 /* VMStoreOwner.swift */; };
 		13C19E852BBC4314006DEEBC /* VisionOsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */; };
 		CC0799422C29B74600067E06 /* SwiftyDropbox in Frameworks */ = {isa = PBXBuildFile; productRef = CC0799412C29B74600067E06 /* SwiftyDropbox */; };
 		CC0799442C29B79100067E06 /* DropboxDataSourceIos.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0799432C29B79100067E06 /* DropboxDataSourceIos.swift */; };
@@ -79,7 +80,6 @@
 		D9A1AA56A6FB676365A8E3BD /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9AAA427983A4204966BE082 /* HomeScreen.swift */; };
 		D9A2236B644940B3ECE8F948 /* HomeScreenContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9AA4DB0169F5B562773A426 /* HomeScreenContent.swift */; };
 		D9A244EB9B97638411512543 /* AboutScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9AE58C6CA27D409EBC34550 /* AboutScreen.swift */; };
-		D9A25AEAD5D262931F7D5981 /* ObservableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A5A601F98358B64277BD86 /* ObservableViewModel.swift */; };
 		D9A285E3D6CC7292A0F66642 /* FeedItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9AB7F2ACB04B0A2EA8E1B5E /* FeedItemView.swift */; };
 		D9A2A68F5B09CA29CEE49B82 /* AddFeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A78ABECE608D906AA099BB /* AddFeedScreen.swift */; };
 		D9A345E5FC78757890C8DCF0 /* NoFeedsSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9AFFFC341FBF4B810914A96 /* NoFeedsSourceView.swift */; };
@@ -128,6 +128,7 @@
 /* Begin PBXFileReference section */
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		13B651152C6007C70015D0A1 /* VMStoreOwner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMStoreOwner.swift; sourceTree = "<group>"; };
 		13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionOsUtils.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* FeedFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -180,7 +181,6 @@
 		D9A28A51D7A0DB55B39E6EB4 /* ImportExportSheetToShow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImportExportSheetToShow.swift; sourceTree = "<group>"; };
 		D9A2FA757D132EFE711DB187 /* LicensesScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LicensesScreen.swift; sourceTree = "<group>"; };
 		D9A441CEC08FC0C4A52A89B2 /* SidebarDrawer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarDrawer.swift; sourceTree = "<group>"; };
-		D9A5A601F98358B64277BD86 /* ObservableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObservableViewModel.swift; sourceTree = "<group>"; };
 		D9A613C1B44B4693DAAD2CFF /* CompactView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompactView.swift; sourceTree = "<group>"; };
 		D9A71C4AEDBFF5F7F6AC9A05 /* ImportExportScreenContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImportExportScreenContent.swift; sourceTree = "<group>"; };
 		D9A78ABECE608D906AA099BB /* AddFeedScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedScreen.swift; sourceTree = "<group>"; };
@@ -285,9 +285,9 @@
 			children = (
 				CC23293E29D85295005D0E06 /* IosHtmlParser.swift */,
 				CC6E68222A629658009F4A3C /* Extensions.swift */,
-				D9A5A601F98358B64277BD86 /* ObservableViewModel.swift */,
 				13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */,
 				CC0799532C30AB6100067E06 /* CustomNotification.swift */,
+				13B651152C6007C70015D0A1 /* VMStoreOwner.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -704,7 +704,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n    echo \"\"\n    #swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n    #echo \"\"\n    swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download with brew install swiftlint\"\nfi\n";
 		};
 		CCEA11BF2A6D2C6600C661AC /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -796,6 +796,7 @@
 				D9A1AA56A6FB676365A8E3BD /* HomeScreen.swift in Sources */,
 				D9A2236B644940B3ECE8F948 /* HomeScreenContent.swift in Sources */,
 				D9AD5632A576F05296E1A187 /* NoFeedsBottomSheet.swift in Sources */,
+				13B651162C6007C70015D0A1 /* VMStoreOwner.swift in Sources */,
 				CC0799522C30171F00067E06 /* DropboxSyncScreenContent.swift in Sources */,
 				D9A244EB9B97638411512543 /* AboutScreen.swift in Sources */,
 				D9A6E6B8D6EF41209D55940D /* LicensesScreen.swift in Sources */,
@@ -809,7 +810,6 @@
 				D9A3A551379CC7112BD3701B /* ImportExportSheetToShow.swift in Sources */,
 				CC0799562C30AE1A00067E06 /* DropboxErrors.swift in Sources */,
 				D9A9F86D21FC3244A992E310 /* SettingsScreen.swift in Sources */,
-				D9A25AEAD5D262931F7D5981 /* ObservableViewModel.swift in Sources */,
 				D9AE9FC8BADEF8EF5E18ECB4 /* ImportExportScreen.swift in Sources */,
 				D9A44732D81A96E09778142D /* SearchScreen.swift in Sources */,
 				D9A6AF3AEF499BA448DCFBB2 /* SearchScreenContent.swift in Sources */,

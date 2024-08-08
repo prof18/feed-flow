@@ -14,8 +14,7 @@ import KMPNativeCoroutinesAsync
 struct ICloudSyncScreen: View {
     @EnvironmentObject private var appState: AppState
 
-    @StateObject
-    private var viewModel: ICloudSyncViewModel = KotlinDependencies.shared.getICloudSyncViewModel()
+    @StateObject private var vmStoreOwner = VMStoreOwner<ICloudSyncViewModel>(KotlinDependencies.shared.getICloudSyncViewModel())
 
     @State private var uiState: AccountConnectionUiState = AccountConnectionUiState.Unlinked()
 
@@ -23,28 +22,30 @@ struct ICloudSyncScreen: View {
         ICloudSyncScreenContent(
             connectionState: uiState,
             onConnectClick: {
-                viewModel.setICloudAuth()
+                vmStoreOwner.instance.setICloudAuth()
             },
             onBackupClick: {
-                viewModel.triggerBackup()
+                vmStoreOwner.instance.triggerBackup()
             },
             onDisconnectClick: {
-                viewModel.unlink()
+                vmStoreOwner.instance.unlink()
             }
         )
         .task {
             do {
-                let stream = asyncSequence(for: viewModel.iCloudConnectionUiStateFlow)
+                let stream = asyncSequence(for: vmStoreOwner.instance.iCloudConnectionUiStateFlow)
                 for try await state in stream {
                     self.uiState = state
                 }
             } catch {
-                self.appState.emitGenericError()
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }
             }
         }
         .task {
             do {
-                let stream = asyncSequence(for: viewModel.syncMessageQueue)
+                let stream = asyncSequence(for: vmStoreOwner.instance.syncMessageQueue)
                 for try await message in stream where message.isError() {
                     self.appState.snackbarQueue.append(
                         SnackbarData(
@@ -55,7 +56,9 @@ struct ICloudSyncScreen: View {
                     )
                 }
             } catch {
-                self.appState.emitGenericError()
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }
             }
         }
     }

@@ -16,7 +16,8 @@ struct AddFeedScreen: View {
 
     @Environment(\.presentationMode) private var presentationMode
 
-    @StateObject private var addFeedViewModel: AddFeedViewModel = KotlinDependencies.shared.getAddFeedViewModel()
+    @StateObject private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(KotlinDependencies.shared.getAddFeedViewModel())
+
     @StateObject private var categorySelectorObserver = CategorySelectorObserver()
 
     @State private var showError = false
@@ -42,22 +43,22 @@ struct AddFeedScreen: View {
                 categorySelectorObserver: categorySelectorObserver,
                 showCloseButton: showCloseButton,
                 updateFeedUrlTextFieldValue: { value in
-                    addFeedViewModel.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
+                    vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
                 },
                 deleteCategory: { categoryId in
-                    addFeedViewModel.deleteCategory(categoryId: categoryId)
+                    vmStoreOwner.instance.deleteCategory(categoryId: categoryId)
                 },
                 addNewCategory: { categoryName in
-                    addFeedViewModel.addNewCategory(categoryName: categoryName)
+                    vmStoreOwner.instance.addNewCategory(categoryName: categoryName)
                 },
                 addFeed: {
-                    addFeedViewModel.addFeed()
+                    vmStoreOwner.instance.addFeed()
                 }
             )
         }
         .task {
             do {
-                let stream = asyncSequence(for: addFeedViewModel.feedAddedState)
+                let stream = asyncSequence(for: vmStoreOwner.instance.feedAddedState)
                 for try await state in stream {
                     switch onEnum(of: state) {
                     case .feedAdded(let addedState):
@@ -92,19 +93,21 @@ struct AddFeedScreen: View {
                     }
                 }
             } catch {
-                self.appState.emitGenericError()
-            }
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }            }
         }
         .task {
             do {
-                let stream = asyncSequence(for: addFeedViewModel.categoriesState)
+                let stream = asyncSequence(for: vmStoreOwner.instance.categoriesState)
                 for try await state in stream {
                     self.categorySelectorObserver.selectedCategory = state.categories.first { $0.isSelected }
                     self.categoryItems = state.categories
                 }
             } catch {
-                self.appState.emitGenericError()
-            }
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }            }
         }
     }
 

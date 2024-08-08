@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
@@ -25,8 +27,8 @@ import kotlin.time.Duration.Companion.milliseconds
 class SearchViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val dateFormatter: DateFormatter,
-    private val settingsRepository: SettingsRepository,
-) : BaseViewModel() {
+    settingsRepository: SettingsRepository,
+) : ViewModel() {
 
     private val searchMutableState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState.EmptyState)
 
@@ -51,7 +53,7 @@ class SearchViewModel internal constructor(
                 } else {
                     clearSearch()
                 }
-            }.launchIn(scope)
+            }.launchIn(viewModelScope)
     }
 
     fun updateSearchQuery(query: String) {
@@ -59,13 +61,13 @@ class SearchViewModel internal constructor(
     }
 
     fun onBookmarkClick(feedItemId: FeedItemId, bookmarked: Boolean) {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
     }
 
     fun onReadStatusClick(feedItemId: FeedItemId, read: Boolean) {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.updateReadStatus(feedItemId, read)
         }
     }
@@ -92,6 +94,6 @@ class SearchViewModel internal constructor(
                     }
                 }
             }
-            .launchIn(scope)
+            .launchIn(viewModelScope)
     }
 }

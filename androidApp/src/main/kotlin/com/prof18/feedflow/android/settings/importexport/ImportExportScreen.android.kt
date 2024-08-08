@@ -19,7 +19,7 @@ import com.prof18.feedflow.shared.presentation.preview.importExportStates
 import com.prof18.feedflow.shared.ui.importexport.ImportExportContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ImportExportScreen(

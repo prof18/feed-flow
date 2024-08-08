@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.model.SettingsState
@@ -13,7 +15,7 @@ import kotlinx.coroutines.launch
 class SettingsViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
-) : BaseViewModel() {
+) : ViewModel() {
 
     private val settingsMutableState = MutableStateFlow(SettingsState())
 
@@ -21,7 +23,7 @@ class SettingsViewModel internal constructor(
     val settingsState: StateFlow<SettingsState> = settingsMutableState.asStateFlow()
 
     init {
-        scope.launch {
+        viewModelScope.launch {
             val isMarkReadEnabled = settingsRepository.isMarkFeedAsReadWhenScrollingEnabled()
             val isShowReadItemsEnabled = settingsRepository.isShowReadArticlesTimelineEnabled()
             val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
@@ -38,7 +40,7 @@ class SettingsViewModel internal constructor(
     }
 
     fun updateMarkReadWhenScrolling(value: Boolean) {
-        scope.launch {
+        viewModelScope.launch {
             settingsRepository.setMarkFeedAsReadWhenScrolling(value)
             settingsMutableState.update {
                 it.copy(
@@ -49,7 +51,7 @@ class SettingsViewModel internal constructor(
     }
 
     fun updateShowReadItemsOnTimeline(value: Boolean) {
-        scope.launch {
+        viewModelScope.launch {
             settingsRepository.setShowReadArticlesTimeline(value)
             settingsMutableState.update {
                 it.copy(

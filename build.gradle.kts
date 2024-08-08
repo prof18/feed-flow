@@ -1,8 +1,3 @@
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_JAVA
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_KOTLIN
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_JAVA
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_KOTLIN
-
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
@@ -12,7 +7,6 @@ plugins {
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.triplet.play) apply false
     alias(libs.plugins.compose.multiplatform) apply false
-    alias(libs.plugins.native.coroutines) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.about.libraries) apply false
     alias(libs.plugins.crashlytics) apply false

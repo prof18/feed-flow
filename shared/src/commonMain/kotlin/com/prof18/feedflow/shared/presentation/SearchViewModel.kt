@@ -9,7 +9,6 @@ import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,13 +30,9 @@ class SearchViewModel internal constructor(
 ) : ViewModel() {
 
     private val searchMutableState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState.EmptyState)
-
-    @NativeCoroutinesState
     val searchState: StateFlow<SearchState> = searchMutableState.asStateFlow()
 
     private val searchQueryMutableState = MutableStateFlow("")
-
-    @NativeCoroutinesState
     val searchQueryState = searchQueryMutableState.asStateFlow()
 
     private val isRemoveTitleFromDescriptionEnabled: Boolean = settingsRepository.isRemoveTitleFromDescriptionEnabled()

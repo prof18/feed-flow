@@ -9,7 +9,6 @@ import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,8 +23,6 @@ class FeedSourceListViewModel internal constructor(
 ) : ViewModel() {
 
     private val feedsMutableState: MutableStateFlow<FeedSourceListState> = MutableStateFlow(FeedSourceListState())
-
-    @NativeCoroutinesState
     val feedSourcesState: StateFlow<FeedSourceListState> = feedsMutableState.asStateFlow()
 
     private var expandedCategories: MutableList<CategoryId> = mutableListOf()

@@ -15,7 +15,10 @@ struct FeedSourceListScreen: View {
     @EnvironmentObject
     private var appState: AppState
 
-    @StateObject private var vmStoreOwner = VMStoreOwner<FeedSourceListViewModel>(KotlinDependencies.shared.getFeedSourceListViewModel())
+    @StateObject
+    private var vmStoreOwner = VMStoreOwner<FeedSourceListViewModel>(
+        KotlinDependencies.shared.getFeedSourceListViewModel()
+    )
 
     @State
     private var feedState: FeedSourceListState = FeedSourceListState(
@@ -34,15 +37,9 @@ struct FeedSourceListScreen: View {
             }
         )
         .task {
-            do {
-                let stream = asyncSequence(for: vmStoreOwner.instance.feedSourcesStateFlow)
-                for try await state in stream {
-                    self.feedState = state
-                }
-            } catch {
-                if !(error is CancellationError) {
-                                    self.appState.emitGenericError()
-                                }            }
+            for await state in vmStoreOwner.instance.feedSourcesState {
+                self.feedState = state
+            }
         }
     }
 }

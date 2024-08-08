@@ -14,7 +14,8 @@ import KMPNativeCoroutinesAsync
 struct AccountsScreen: View {
     @EnvironmentObject private var appState: AppState
 
-    @StateObject private var vmStoreOwner = VMStoreOwner<AccountsViewModel>(KotlinDependencies.shared.getAccountsViewModel())
+    @StateObject
+    private var vmStoreOwner = VMStoreOwner<AccountsViewModel>(KotlinDependencies.shared.getAccountsViewModel())
 
     @State private var syncAccount: SyncAccounts = SyncAccounts.local
 
@@ -23,15 +24,8 @@ struct AccountsScreen: View {
             syncAccount: syncAccount,
             supportedAccounts: vmStoreOwner.instance.getSupportedAccounts()
         ).task {
-            do {
-                let stream = asyncSequence(for: vmStoreOwner.instance.accountsStateFlow)
-                for try await account in stream {
-                    self.syncAccount = account
-                }
-            } catch {
-                if !(error is CancellationError) {
-                                    self.appState.emitGenericError()
-                                }
+            for await state in vmStoreOwner.instance.accountsState {
+                 self.syncAccount = state
             }
         }
     }

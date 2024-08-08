@@ -109,97 +109,58 @@ struct HomeScreen: View {
             }
         )
         .task {
-            do {
-                let stream = asyncSequence(for: homeViewModel.loadingStateFlow)
-                for try await state in stream {
-                    let isLoading = state.isLoading() && state.totalFeedCount != 0
-                    withAnimation {
-                        self.showLoading = isLoading
-                    }
-                    self.indexHolder.isLoading = isLoading
-                    self.loadingState = state
+            for await state in homeViewModel.loadingState {
+                let isLoading = state.isLoading() && state.totalFeedCount != 0
+                withAnimation {
+                    self.showLoading = isLoading
                 }
-            } catch {
-                if !(error is CancellationError) {
-                    self.appState.emitGenericError()
-                }
+                self.indexHolder.isLoading = isLoading
+                self.loadingState = state
             }
         }
         .task {
-            do {
-                let stream = asyncSequence(for: homeViewModel.errorState)
-                for try await state in stream {
-                    switch onEnum(of: state) {
-                    case .databaseError:
-                        self.appState.snackbarQueue.append(
-                            SnackbarData(
-                                title: feedFlowStrings.databaseError,
-                                subtitle: nil,
-                                showBanner: true
-                            )
+            for await state in homeViewModel.errorState {
+                switch onEnum(of: state) {
+                case .databaseError:
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.databaseError,
+                            subtitle: nil,
+                            showBanner: true
                         )
+                    )
 
-                    case .feedErrorState(let state):
-                        self.appState.snackbarQueue.append(
-                            SnackbarData(
-                                title: feedFlowStrings.feedErrorMessage(state.feedName),
-                                subtitle: nil,
-                                showBanner: true
-                            )
+                case .feedErrorState(let state):
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.feedErrorMessage(state.feedName),
+                            subtitle: nil,
+                            showBanner: true
                         )
-                    case .none:
-                        break
-                    }
-                }
-            } catch {
-                if !(error is CancellationError) {
-                                    self.appState.emitGenericError()
-                                }            }
-        }
-        .task {
-            do {
-                let stream = asyncSequence(for: homeViewModel.feedStateFlow)
-                for try await state in stream {
-                    self.feedState = state
-                }
-            } catch {
-                if !(error is CancellationError) {
-                                    self.appState.emitGenericError()
-                                }            }
-        }
-        .task {
-            do {
-                let stream = asyncSequence(for: homeViewModel.unreadCountFlow)
-                for try await state in stream {
-                    self.unreadCount = Int(truncating: state)
-                }
-            } catch {
-                if !(error is CancellationError) {
-                                    self.appState.emitGenericError()
-                                }            }
-        }
-        .task {
-            do {
-                let stream = asyncSequence(for: homeViewModel.currentFeedFilterFlow)
-                for try await state in stream {
-                    self.currentFeedFilter = state
-                }
-            } catch {
-                if !(error is CancellationError) {
-                    self.appState.emitGenericError()
+                    )
+                case .none:
+                    break
                 }
             }
         }
         .task {
-            do {
-                let stream = asyncSequence(for: homeViewModel.isSyncUploadRequiredFlow)
-                for try await state in stream {
-                    self.showFeedSyncButton = state as? Bool ?? false
-                }
-            } catch {
-                if !(error is CancellationError) {
-                    self.appState.emitGenericError()
-                }
+            for await state in homeViewModel.feedState {
+                self.feedState = state
+            }
+        }
+        .task {
+            for await state in homeViewModel.unreadCountFlow {
+                self.unreadCount = Int(truncating: state)
+            }
+        }
+        .task {
+            for await state in homeViewModel.currentFeedFilter {
+                self.currentFeedFilter = state
+            }
+        }
+        .task {
+            for await state in homeViewModel.isSyncUploadRequired {
+                self.showFeedSyncButton = state as? Bool ?? false
             }
         }
         .onChange(of: scenePhase) { newScenePhase in

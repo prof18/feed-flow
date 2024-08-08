@@ -85,7 +85,6 @@ class DropboxDataSourceIos: DropboxDataSource {
         downloadParam: DropboxDownloadParam,
         completionHandler: @escaping (DropboxDownloadResult?, Error?) -> Void
     ) {
-        // TODO: download direclty in the database file?
         let fileManager = FileManager.default
         let directoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let destURL = directoryURL.appendingPathComponent(downloadParam.outputName)

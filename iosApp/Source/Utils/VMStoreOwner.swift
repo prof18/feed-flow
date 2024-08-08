@@ -19,12 +19,14 @@ class VMStoreOwner<VM: ViewModel>: ObservableObject, ViewModelStoreOwner {
     }
 
     // swiftlint:disable force_cast
+    // swiftlint:disable implicit_getter
     var instance: VM {
         get {
             return viewModelStore.get(key: key) as! VM
         }
     }
     // swiftlint:enable force_cast
+    // swiftlint:enable implicit_getter
 
     deinit {
         print("Deinit vm store of \(VM.self)")

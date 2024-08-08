@@ -16,8 +16,6 @@ import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -41,16 +39,11 @@ class DropboxSyncViewModel internal constructor(
     private val dropboxSyncUiMutableState = MutableStateFlow<AccountConnectionUiState>(
         AccountConnectionUiState.Unlinked,
     )
-
-    @NativeCoroutinesState
     val dropboxConnectionUiState: StateFlow<AccountConnectionUiState> = dropboxSyncUiMutableState.asStateFlow()
 
     private val dropboxSyncMessageMutableState = MutableSharedFlow<DropboxSynMessages>()
-
-    @NativeCoroutines
     val dropboxSyncMessageState: SharedFlow<DropboxSynMessages> = dropboxSyncMessageMutableState.asSharedFlow()
 
-    @NativeCoroutines
     val syncMessageQueue = feedSyncMessageQueue.messageQueue
 
     init {

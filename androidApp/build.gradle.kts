@@ -113,8 +113,8 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
-    implementation(libs.koin.compose)
     implementation(libs.koin.workmanager)
+    implementation(libs.koin.composeVM)
 
     implementation(libs.dropbox.core.android)
     implementation(libs.workmanager)

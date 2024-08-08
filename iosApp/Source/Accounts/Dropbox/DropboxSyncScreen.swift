@@ -14,8 +14,7 @@ import KMPNativeCoroutinesAsync
 struct DropboxSyncScreen: View {
     @EnvironmentObject private var appState: AppState
 
-    @StateObject
-    private var viewModel: DropboxSyncViewModel = KotlinDependencies.shared.getDropboxSyncViewModel()
+    @StateObject private var vmStoreOwner = VMStoreOwner<DropboxSyncViewModel>(KotlinDependencies.shared.getDropboxSyncViewModel())
 
     @State private var uiState: AccountConnectionUiState = AccountConnectionUiState.Unlinked()
 
@@ -23,28 +22,30 @@ struct DropboxSyncScreen: View {
         DropboxSyncScreenContent(
             connectionState: uiState,
             onDropboxAuthSuccess: {
-                viewModel.saveDropboxAuth()
+                vmStoreOwner.instance.saveDropboxAuth()
             },
             onBackupClick: {
-                viewModel.triggerBackup()
+                vmStoreOwner.instance.triggerBackup()
             },
             onDisconnectClick: {
-                viewModel.unlink()
+                vmStoreOwner.instance.unlink()
             }
         )
         .task {
             do {
-                let stream = asyncSequence(for: viewModel.dropboxConnectionUiStateFlow)
+                let stream = asyncSequence(for: vmStoreOwner.instance.dropboxConnectionUiStateFlow)
                 for try await state in stream {
                     self.uiState = state
                 }
             } catch {
-                self.appState.emitGenericError()
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }
             }
         }
         .task {
             do {
-                let stream = asyncSequence(for: viewModel.dropboxSyncMessageState)
+                let stream = asyncSequence(for: vmStoreOwner.instance.dropboxSyncMessageState)
                 for try await message in stream where message is DropboxSynMessages.Error {
                         self.appState.snackbarQueue.append(
                             SnackbarData(
@@ -55,12 +56,14 @@ struct DropboxSyncScreen: View {
                         )
                 }
             } catch {
-                self.appState.emitGenericError()
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }
             }
         }
         .task {
             do {
-                let stream = asyncSequence(for: viewModel.syncMessageQueue)
+                let stream = asyncSequence(for: vmStoreOwner.instance.syncMessageQueue)
                 for try await message in stream where message.isError() {
                     self.appState.snackbarQueue.append(
                         SnackbarData(
@@ -71,7 +74,9 @@ struct DropboxSyncScreen: View {
                     )
                 }
             } catch {
-                self.appState.emitGenericError()
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }
             }
         }
     }

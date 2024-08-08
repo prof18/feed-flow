@@ -120,7 +120,9 @@ struct HomeScreen: View {
                     self.loadingState = state
                 }
             } catch {
-                self.appState.emitGenericError()
+                if !(error is CancellationError) {
+                    self.appState.emitGenericError()
+                }
             }
         }
         .task {
@@ -150,8 +152,9 @@ struct HomeScreen: View {
                     }
                 }
             } catch {
-                self.appState.emitGenericError()
-            }
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }            }
         }
         .task {
             do {
@@ -160,8 +163,9 @@ struct HomeScreen: View {
                     self.feedState = state
                 }
             } catch {
-                self.appState.emitGenericError()
-            }
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }            }
         }
         .task {
             do {
@@ -170,8 +174,9 @@ struct HomeScreen: View {
                     self.unreadCount = Int(truncating: state)
                 }
             } catch {
-                self.appState.emitGenericError()
-            }
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }            }
         }
         .task {
             do {
@@ -180,7 +185,9 @@ struct HomeScreen: View {
                     self.currentFeedFilter = state
                 }
             } catch {
-                self.appState.emitGenericError()
+                if !(error is CancellationError) {
+                    self.appState.emitGenericError()
+                }
             }
         }
         .task {
@@ -190,7 +197,9 @@ struct HomeScreen: View {
                     self.showFeedSyncButton = state as? Bool ?? false
                 }
             } catch {
-                self.appState.emitGenericError()
+                if !(error is CancellationError) {
+                    self.appState.emitGenericError()
+                }
             }
         }
         .onChange(of: scenePhase) { newScenePhase in

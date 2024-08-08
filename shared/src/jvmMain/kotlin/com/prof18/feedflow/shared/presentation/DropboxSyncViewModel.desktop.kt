@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.dropbox.core.DbxAppInfo
 import com.dropbox.core.DbxPKCEWebAuth
@@ -37,7 +39,7 @@ class DropboxSyncViewModel internal constructor(
     private val dateFormatter: DateFormatter,
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val accountsRepository: AccountsRepository,
-) : BaseViewModel() {
+) : ViewModel() {
 
     private var pkceWebAuth: DbxPKCEWebAuth? = null
     private var appInfo: DbxAppInfo? = null
@@ -54,7 +56,7 @@ class DropboxSyncViewModel internal constructor(
     }
 
     fun startDropboxAuthFlow() {
-        scope.launch {
+        viewModelScope.launch {
             val properties = Properties()
             val propsFile = DropboxSyncViewModel::class.java.classLoader?.getResourceAsStream("props.properties")
                 ?: InputStream.nullInputStream()
@@ -95,7 +97,7 @@ class DropboxSyncViewModel internal constructor(
     }
 
     fun handleDropboxAuthResponse(authorizationCode: String) {
-        scope.launch {
+        viewModelScope.launch {
             try {
                 dropboxSyncUiMutableState.update { AccountConnectionUiState.Loading }
                 val authResult = pkceWebAuth?.finishFromCode(authorizationCode)
@@ -133,7 +135,7 @@ class DropboxSyncViewModel internal constructor(
     }
 
     fun triggerBackup() {
-        scope.launch {
+        viewModelScope.launch {
             emitSyncLoading()
             feedSyncRepository.performBackup(forceBackup = true)
             emitLastSyncUpdate()
@@ -156,7 +158,7 @@ class DropboxSyncViewModel internal constructor(
     }
 
     fun disconnect() {
-        scope.launch {
+        viewModelScope.launch {
             try {
                 dropboxSyncUiMutableState.update { AccountConnectionUiState.Loading }
                 dropboxDataSource.revokeAccess()

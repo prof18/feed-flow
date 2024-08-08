@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -19,7 +21,7 @@ import kotlinx.coroutines.launch
 class FeedSourceListViewModel internal constructor(
     private val feedManagerRepository: FeedManagerRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
-) : BaseViewModel() {
+) : ViewModel() {
 
     private val feedsMutableState: MutableStateFlow<FeedSourceListState> = MutableStateFlow(FeedSourceListState())
 
@@ -29,7 +31,7 @@ class FeedSourceListViewModel internal constructor(
     private var expandedCategories: MutableList<CategoryId> = mutableListOf()
 
     init {
-        scope.launch {
+        viewModelScope.launch {
             feedManagerRepository.getFeedSources().collect { feeds ->
                 val groupedSources = feeds.groupBy {
                     val id = it.category?.id
@@ -80,7 +82,7 @@ class FeedSourceListViewModel internal constructor(
     }
 
     fun deleteFeedSource(feedSource: FeedSource) {
-        scope.launch {
+        viewModelScope.launch {
             setExpandedCategory()
             feedManagerRepository.deleteFeed(feedSource)
             feedRetrieverRepository.fetchFeeds()
@@ -104,7 +106,7 @@ class FeedSourceListViewModel internal constructor(
     }
 
     fun updateFeedName(feedSource: FeedSource, newName: String) {
-        scope.launch {
+        viewModelScope.launch {
             setExpandedCategory()
             feedManagerRepository.updateFeedSourceName(feedSource.id, newName)
             feedRetrieverRepository.fetchFeeds()

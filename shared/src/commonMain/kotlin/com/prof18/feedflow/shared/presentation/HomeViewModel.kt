@@ -1,5 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerCategory
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
@@ -34,7 +36,7 @@ class HomeViewModel internal constructor(
     private val feedManagerRepository: FeedManagerRepository,
     private val settingsRepository: SettingsRepository,
     private val feedSyncRepository: FeedSyncRepository,
-) : BaseViewModel() {
+) : ViewModel() {
 
     // Loading
     @NativeCoroutinesState
@@ -68,7 +70,7 @@ class HomeViewModel internal constructor(
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
 
     init {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.updateFeedFilter(FeedFilter.Timeline)
             initDrawerData()
             observeErrorState()
@@ -78,7 +80,7 @@ class HomeViewModel internal constructor(
     }
 
     private fun initDrawerData() {
-        scope.launch {
+        viewModelScope.launch {
             feedManagerRepository.observeFeedSourcesByCategory()
                 .combine(feedManagerRepository.observeCategories()) { feedSourceByCategory, categories ->
 
@@ -125,7 +127,7 @@ class HomeViewModel internal constructor(
     }
 
     private fun observeErrorState() {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.errorState
                 .collect { error ->
                     when (error) {
@@ -153,7 +155,7 @@ class HomeViewModel internal constructor(
 
     fun getNewFeeds(isFirstLaunch: Boolean = false) {
         lastUpdateIndex = 0
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.fetchFeeds(isFirstLaunch = isFirstLaunch)
         }
     }
@@ -165,7 +167,7 @@ class HomeViewModel internal constructor(
                 return
             }
 
-            scope.launch {
+            viewModelScope.launch {
                 val urlToUpdates = hashSetOf<FeedItemId>()
                 val items = feedState.value.toMutableList()
                 if (lastVisibleIndex <= lastUpdateIndex) {
@@ -187,20 +189,20 @@ class HomeViewModel internal constructor(
     }
 
     fun requestNewFeedsPage() {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.loadMoreFeeds()
         }
     }
 
     fun markAllRead() {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.markAllFeedAsRead()
             feedRetrieverRepository.fetchFeeds()
         }
     }
 
     fun markAsRead(feedItemId: String) {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.markAsRead(
                 hashSetOf(
                     FeedItemId(feedItemId),
@@ -210,14 +212,14 @@ class HomeViewModel internal constructor(
     }
 
     fun deleteOldFeedItems() {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.deleteOldFeeds()
         }
     }
 
     fun forceFeedRefresh() {
         lastUpdateIndex = 0
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.fetchFeeds(forceRefresh = true)
         }
     }
@@ -227,7 +229,7 @@ class HomeViewModel internal constructor(
     }
 
     fun onFeedFilterSelected(selectedFeedFilter: FeedFilter) {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.clearReadFeeds()
             feedRetrieverRepository.updateFeedFilter(selectedFeedFilter)
             lastUpdateIndex = 0
@@ -235,20 +237,20 @@ class HomeViewModel internal constructor(
     }
 
     fun updateReadStatus(feedItemId: FeedItemId, read: Boolean) {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.updateReadStatus(feedItemId, read)
         }
     }
 
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {
-        scope.launch {
+        viewModelScope.launch {
             feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
     }
 
     // Used on iOS
     fun enqueueBackup() {
-        scope.launch {
+        viewModelScope.launch {
             feedSyncRepository.enqueueBackup()
         }
     }

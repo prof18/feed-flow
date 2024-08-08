@@ -18,8 +18,7 @@ struct SettingsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
-    @StateObject
-    private var settingsViewModel: SettingsViewModel = KotlinDependencies.shared.getSettingsViewModel()
+    @StateObject private var vmStoreOwner = VMStoreOwner<SettingsViewModel>(KotlinDependencies.shared.getSettingsViewModel())
 
     @State private var isMarkReadWhenScrollingEnabled = true
     @State private var isShowReadItemEnabled = false
@@ -30,7 +29,7 @@ struct SettingsScreen: View {
         settingsContent
             .task {
                 do {
-                    let stream = asyncSequence(for: settingsViewModel.settingsStateFlow)
+                    let stream = asyncSequence(for: vmStoreOwner.instance.settingsStateFlow)
                     for try await state in stream {
                         self.isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
                         self.isShowReadItemEnabled = state.isShowReadItemsEnabled
@@ -38,18 +37,19 @@ struct SettingsScreen: View {
                         self.isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
                     }
                 } catch {
-                    self.appState.emitGenericError()
-                }
+                    if !(error is CancellationError) {
+                                        self.appState.emitGenericError()
+                                    }                }
             }
             .onChange(of: isMarkReadWhenScrollingEnabled) { newValue in
-                settingsViewModel.updateMarkReadWhenScrolling(value: newValue)
+                vmStoreOwner.instance.updateMarkReadWhenScrolling(value: newValue)
             }
             .onChange(of: isShowReadItemEnabled) { newValue in
-                settingsViewModel.updateShowReadItemsOnTimeline(value: newValue)
+                vmStoreOwner.instance.updateShowReadItemsOnTimeline(value: newValue)
             }.onChange(of: isReaderModeEnabled) { newValue in
-                settingsViewModel.updateReaderMode(value: newValue)
+                vmStoreOwner.instance.updateReaderMode(value: newValue)
             }.onChange(of: isRemoveTitleFromDescriptionEnabled) { newValue in
-                settingsViewModel.updateRemoveTitleFromDescription(value: newValue)
+                vmStoreOwner.instance.updateRemoveTitleFromDescription(value: newValue)
             }
     }
 

@@ -126,8 +126,9 @@ struct RegularView: View {
                     self.navDrawerState = state
                 }
             } catch {
-                self.appState.emitGenericError()
-            }
+                if !(error is CancellationError) {
+                                    self.appState.emitGenericError()
+                                }            }
         }
     }
 }

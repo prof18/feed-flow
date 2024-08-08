@@ -52,8 +52,8 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import org.koin.android.ext.android.inject
-import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.getKoin
+import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : ComponentActivity() {
 

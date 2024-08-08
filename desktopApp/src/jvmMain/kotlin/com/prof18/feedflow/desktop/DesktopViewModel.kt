@@ -3,14 +3,17 @@ package com.prof18.feedflow.desktop
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import com.prof18.feedflow.shared.presentation.BaseViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.cancel
 
 @Composable
-fun <T : BaseViewModel> desktopViewModel(createViewModel: () -> T): T {
+inline fun <T : ViewModel> desktopViewModel(crossinline createViewModel: () -> T): T {
+    // TODO: Move to Androidx ViewModel constructor when ViewModelStoreOwner will be scoped outside Navigation
     val viewModel = remember { createViewModel() }
     DisposableEffect(Unit) {
         onDispose {
-            viewModel.clear()
+            viewModel.viewModelScope.cancel()
         }
     }
     return viewModel

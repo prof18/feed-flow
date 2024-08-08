@@ -12,15 +12,15 @@ flexmarkHtml2mdConverter = "0.64.8"
 io-coil = "3.0.0-alpha06"
 junit = "4.13.2"
 kermit = "2.0.4"
-koin-bom = "3.5.6"
+koin-bom = "4.0.0-RC1"
 kotlin = "2.0.0"
 multiplatformMarkdownRendererM3 = "0.20.0"
 nav-compose = "2.7.7"
 slf4jNop = "2.0.12"
 turbine = "1.1.0"
-viewModel-ktx = "2.7.0"
-viewModel-compose = "2.7.0"
-lifecycle-runtime-compose = "2.7.0"
+viewModel = "2.8.4"
+viewModel-compose = "2.8.4"
+lifecycle-runtime-compose = "2.8.4"
 org-robolectric = "4.12.2"
 # When updating, check the version of sqlite-jdbc in the following link:
 # https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L70
@@ -65,7 +65,7 @@ skie = "0.8.3"
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
 about-libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "about-libraries" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
-androidx-lifecycle-viewModel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "viewModel-ktx" }
+androidx-lifecycle-viewModel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "viewModel" }
 androidx-lifecycle-viewModel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModel-compose" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-runtime-compose" }
 androidx-navigation-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav-compose" }
@@ -78,6 +78,7 @@ io-gitlab-arturbosch-detekt-formatting = { module = "io.gitlab.arturbosch.detekt
 junit = { module = "junit:junit", version.ref = "junit" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-compose = { module = "io.insert-koin:koin-androidx-compose" }
+koin-composeVM = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-test = { module = "io.insert-koin:koin-test" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

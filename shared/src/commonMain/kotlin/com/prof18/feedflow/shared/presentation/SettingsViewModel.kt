@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.model.SettingsState
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,8 +17,6 @@ class SettingsViewModel internal constructor(
 ) : ViewModel() {
 
     private val settingsMutableState = MutableStateFlow(SettingsState())
-
-    @NativeCoroutinesState
     val settingsState: StateFlow<SettingsState> = settingsMutableState.asStateFlow()
 
     init {

@@ -9,7 +9,6 @@ import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,8 +25,6 @@ class ImportExportViewModel internal constructor(
     private val importerMutableState: MutableStateFlow<FeedImportExportState> = MutableStateFlow(
         FeedImportExportState.Idle,
     )
-
-    @NativeCoroutinesState
     val importExportState = importerMutableState.asStateFlow()
 
     fun importFeed(opmlInput: OpmlInput) {

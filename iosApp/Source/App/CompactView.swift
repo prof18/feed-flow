@@ -120,15 +120,8 @@ struct CompactView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            do {
-                let stream = asyncSequence(for: homeViewModel.navDrawerStateFlow)
-                for try await state in stream {
-                    self.navDrawerState = state
-                }
-            } catch {
-                if !(error is CancellationError) {
-                                    self.appState.emitGenericError()
-                                }
+            for await state in homeViewModel.navDrawerState {
+                self.navDrawerState = state
             }
         }
     }

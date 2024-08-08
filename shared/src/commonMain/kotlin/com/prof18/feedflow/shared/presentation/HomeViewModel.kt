@@ -17,8 +17,6 @@ import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,34 +37,24 @@ class HomeViewModel internal constructor(
 ) : ViewModel() {
 
     // Loading
-    @NativeCoroutinesState
     val loadingState: StateFlow<FeedUpdateStatus> = feedRetrieverRepository.updateState
 
     // Feeds
-    @NativeCoroutinesState
     val feedState: StateFlow<ImmutableList<FeedItem>> = feedRetrieverRepository.feedState
 
-    @NativeCoroutines
     val unreadCountFlow: Flow<Long> = feedRetrieverRepository.getUnreadFeedCountFlow()
 
     // Error
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
-
-    @NativeCoroutines
     val errorState: SharedFlow<UIErrorState?> = mutableUIErrorState.asSharedFlow()
 
     // Drawer State
     private val drawerMutableState = MutableStateFlow(NavDrawerState())
-
-    @NativeCoroutinesState
     val navDrawerState = drawerMutableState.asStateFlow()
 
     private var lastUpdateIndex = 0
 
-    @NativeCoroutinesState
     val currentFeedFilter = feedRetrieverRepository.currentFeedFilter
-
-    @NativeCoroutinesState
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
 
     init {

@@ -10,8 +10,6 @@ import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,11 +28,8 @@ class ICloudSyncViewModel internal constructor(
     private val iCloudSyncUiMutableState = MutableStateFlow<AccountConnectionUiState>(
         AccountConnectionUiState.Unlinked,
     )
-
-    @NativeCoroutinesState
     val iCloudConnectionUiState: StateFlow<AccountConnectionUiState> = iCloudSyncUiMutableState.asStateFlow()
 
-    @NativeCoroutines
     val syncMessageQueue = feedSyncMessageQueue.messageQueue
 
     init {

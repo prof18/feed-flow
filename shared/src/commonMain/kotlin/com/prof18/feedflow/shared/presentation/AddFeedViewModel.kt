@@ -11,7 +11,6 @@ import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.model.AddFeedResponse
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.utils.sanitizeUrl
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -29,10 +28,7 @@ class AddFeedViewModel internal constructor(
     private val feedAddedMutableState: MutableSharedFlow<FeedAddedState> = MutableSharedFlow()
     private val categoriesMutableState: MutableStateFlow<CategoriesState> = MutableStateFlow(CategoriesState())
 
-    @NativeCoroutines
     val feedAddedState = feedAddedMutableState.asSharedFlow()
-
-    @NativeCoroutines
     val categoriesState = categoriesMutableState.asStateFlow()
 
     init {

@@ -18,7 +18,8 @@ struct SettingsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
-    @StateObject private var vmStoreOwner = VMStoreOwner<SettingsViewModel>(KotlinDependencies.shared.getSettingsViewModel())
+    @StateObject
+    private var vmStoreOwner = VMStoreOwner<SettingsViewModel>(KotlinDependencies.shared.getSettingsViewModel())
 
     @State private var isMarkReadWhenScrollingEnabled = true
     @State private var isShowReadItemEnabled = false
@@ -28,18 +29,12 @@ struct SettingsScreen: View {
     var body: some View {
         settingsContent
             .task {
-                do {
-                    let stream = asyncSequence(for: vmStoreOwner.instance.settingsStateFlow)
-                    for try await state in stream {
-                        self.isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
-                        self.isShowReadItemEnabled = state.isShowReadItemsEnabled
-                        self.isReaderModeEnabled = state.isReaderModeEnabled
-                        self.isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
-                    }
-                } catch {
-                    if !(error is CancellationError) {
-                                        self.appState.emitGenericError()
-                                    }                }
+                for await state in vmStoreOwner.instance.settingsState {
+                    self.isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
+                    self.isShowReadItemEnabled = state.isShowReadItemsEnabled
+                    self.isReaderModeEnabled = state.isReaderModeEnabled
+                    self.isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
+                }
             }
             .onChange(of: isMarkReadWhenScrollingEnabled) { newValue in
                 vmStoreOwner.instance.updateMarkReadWhenScrolling(value: newValue)

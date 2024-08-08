@@ -8,7 +8,6 @@ import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import kotlinx.datetime.Clock
 
 class FeedSyncRepository internal constructor(
@@ -28,7 +27,6 @@ class FeedSyncRepository internal constructor(
         }
     }
 
-    @NativeCoroutines
     suspend fun performBackup(forceBackup: Boolean = false) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             if (forceBackup || settingsRepository.getIsSyncUploadRequired()) {

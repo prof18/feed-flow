@@ -5,7 +5,8 @@ import KMPNativeCoroutinesAsync
 struct SearchScreen: View {
     @EnvironmentObject private var appState: AppState
 
-    @StateObject private var vmStoreOwner = VMStoreOwner<SearchViewModel>(KotlinDependencies.shared.getSearchViewModel())
+    @StateObject
+    private var vmStoreOwner = VMStoreOwner<SearchViewModel>(KotlinDependencies.shared.getSearchViewModel())
 
     @State var searchText = ""
 
@@ -25,26 +26,14 @@ struct SearchScreen: View {
             vmStoreOwner.instance.updateSearchQuery(query: newValue)
         }
         .task {
-            do {
-                let stream = asyncSequence(for: vmStoreOwner.instance.searchQueryStateFlow)
-                for try await state in stream {
-                    self.searchText = state
-                }
-            } catch {
-                if !(error is CancellationError) {
-                                    self.appState.emitGenericError()
-                                }            }
+            for await state in vmStoreOwner.instance.searchQueryState {
+                self.searchText = state
+            }
         }
         .task {
-            do {
-                let stream = asyncSequence(for: vmStoreOwner.instance.searchStateFlow)
-                for try await state in stream {
-                    self.searchState = state
-                }
-            } catch {
-                if !(error is CancellationError) {
-                                    self.appState.emitGenericError()
-                                }            }
+            for await state in vmStoreOwner.instance.searchState {
+                self.searchState = state
+            }
         }
     }
 }

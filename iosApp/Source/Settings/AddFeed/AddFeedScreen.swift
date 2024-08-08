@@ -16,7 +16,8 @@ struct AddFeedScreen: View {
 
     @Environment(\.presentationMode) private var presentationMode
 
-    @StateObject private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(KotlinDependencies.shared.getAddFeedViewModel())
+    @StateObject
+    private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(KotlinDependencies.shared.getAddFeedViewModel())
 
     @StateObject private var categorySelectorObserver = CategorySelectorObserver()
 
@@ -57,58 +58,45 @@ struct AddFeedScreen: View {
             )
         }
         .task {
-            do {
-                let stream = asyncSequence(for: vmStoreOwner.instance.feedAddedState)
-                for try await state in stream {
-                    switch onEnum(of: state) {
-                    case .feedAdded(let addedState):
-                        self.appState.snackbarQueue.append(
-                            SnackbarData(
-                                title: feedFlowStrings.feedAddedMessage(addedState.feedName),
-                                subtitle: nil,
-                                showBanner: true
-                            )
+            for await state in vmStoreOwner.instance.feedAddedState {
+                switch onEnum(of: state) {
+                case .feedAdded(let addedState):
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.feedAddedMessage(addedState.feedName),
+                            subtitle: nil,
+                            showBanner: true
                         )
-                        self.feedURL = ""
-                        self.isAddingFeed = false
+                    )
+                    self.feedURL = ""
+                    self.isAddingFeed = false
 
-                    case .feedNotAdded:
-                        errorMessage = ""
-                        showError = false
+                case .feedNotAdded:
+                    errorMessage = ""
+                    showError = false
 
-                    case .error(let errorState):
-                        switch onEnum(of: errorState) {
-                        case .invalidUrl:
-                            errorMessage = feedFlowStrings.invalidRssUrl
+                case .error(let errorState):
+                    switch onEnum(of: errorState) {
+                    case .invalidUrl:
+                        errorMessage = feedFlowStrings.invalidRssUrl
 
-                        case .invalidTitleLink:
-                            errorMessage = feedFlowStrings.missingTitleAndLink
-                        }
-
-                        isAddingFeed = false
-                        showError = true
-
-                    case .loading:
-                        break
+                    case .invalidTitleLink:
+                        errorMessage = feedFlowStrings.missingTitleAndLink
                     }
+
+                    isAddingFeed = false
+                    showError = true
+
+                case .loading:
+                    break
                 }
-            } catch {
-                if !(error is CancellationError) {
-                                    self.appState.emitGenericError()
-                                }            }
+            }
         }
         .task {
-            do {
-                let stream = asyncSequence(for: vmStoreOwner.instance.categoriesState)
-                for try await state in stream {
-                    self.categorySelectorObserver.selectedCategory = state.categories.first { $0.isSelected }
-                    self.categoryItems = state.categories
-                }
-            } catch {
-                if !(error is CancellationError) {
-                                    self.appState.emitGenericError()
-                                }            }
+            for await state in vmStoreOwner.instance.categoriesState {
+                self.categorySelectorObserver.selectedCategory = state.categories.first { $0.isSelected }
+                self.categoryItems = state.categories
+            }
         }
     }
-
 }

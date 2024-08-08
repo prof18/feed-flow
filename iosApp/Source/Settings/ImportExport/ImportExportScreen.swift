@@ -16,7 +16,8 @@ struct ImportExportScreen: View {
 
     @EnvironmentObject private var appState: AppState
 
-    @StateObject private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(KotlinDependencies.shared.getImportExportViewModel())
+    @StateObject
+    private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(KotlinDependencies.shared.getImportExportViewModel())
 
     @State var feedImportExportState: FeedImportExportState = FeedImportExportState.Idle()
     @State var sheetToShow: ImportExportSheetToShow?
@@ -58,18 +59,12 @@ struct ImportExportScreen: View {
                 }
             }
             .task {
-                do {
-                    let stream = asyncSequence(for: vmStoreOwner.instance.importExportStateFlow)
-                    for try await state in stream {
-                        self.feedImportExportState = state
-                        if state is FeedImportExportState.ExportSuccess {
-                            self.sheetToShow = .shareSheet
-                        }
+                for await state in vmStoreOwner.instance.importExportState {
+                    self.feedImportExportState = state
+                    if state is FeedImportExportState.ExportSuccess {
+                        self.sheetToShow = .shareSheet
                     }
-                } catch {
-                    if !(error is CancellationError) {
-                                        self.appState.emitGenericError()
-                                    }                }
+                }
             }
             .sheet(item: $sheetToShow) { item in
                 switch item {

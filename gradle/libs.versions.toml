@@ -37,7 +37,6 @@ compose-multiplatform = "1.6.11"
 # if necessary, download again the native library here
 # https://github.com/java-native-access/jna
 jsystem-theme-detector = "3.6"
-native-coroutines = "1.0.0-ALPHA-31"
 ksp = "2.0.0-1.0.21"
 multiplatform-settings = "1.1.1"
 firebase-bom = "33.1.0"
@@ -154,7 +153,6 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-native-coroutines = { id = "com.rickclephas.kmp.nativecoroutines", version.ref = "native-coroutines" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sql-delight" }
 triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

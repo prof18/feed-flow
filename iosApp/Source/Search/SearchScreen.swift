@@ -1,6 +1,5 @@
 import SwiftUI
 import shared
-import KMPNativeCoroutinesAsync
 
 struct SearchScreen: View {
     @EnvironmentObject private var appState: AppState

@@ -9,7 +9,6 @@
 import Foundation
 import SwiftUI
 import shared
-import KMPNativeCoroutinesAsync
 import Reeeed
 
 struct RegularView: View {

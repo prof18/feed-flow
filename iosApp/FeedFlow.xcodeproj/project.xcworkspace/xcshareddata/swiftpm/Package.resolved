@@ -1,5 +1,5 @@
 {
-  "originHash" : "0590298bd1ee0d7672b51a92c0f29dfe6519ecaef2fe911df0353ccccbbfccf6",
+  "originHash" : "dfe837f41ec6117df1db5fb2e4c398f72de98bbe1a2691621f938eae93b09eba",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -89,15 +89,6 @@
       "state" : {
         "revision" : "2d12673670417654f08f5f90fdd62926dc3a2648",
         "version" : "100.0.0"
-      }
-    },
-    {
-      "identity" : "kmp-nativecoroutines",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/rickclephas/KMP-NativeCoroutines.git",
-      "state" : {
-        "revision" : "7ed036e198a60b3d09e66573d1a1319f08c3cf45",
-        "version" : "1.0.0-ALPHA-31-spm-async"
       }
     },
     {

@@ -8,7 +8,6 @@
 
 import SwiftUI
 import shared
-import KMPNativeCoroutinesAsync
 
 struct SettingsScreen: View {
 

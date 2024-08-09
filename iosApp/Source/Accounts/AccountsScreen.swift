@@ -9,7 +9,6 @@
 import Foundation
 import SwiftUI
 import shared
-import KMPNativeCoroutinesAsync
 
 struct AccountsScreen: View {
     @EnvironmentObject private var appState: AppState

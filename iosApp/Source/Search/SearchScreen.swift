@@ -1,5 +1,5 @@
 import SwiftUI
-import shared
+import FeedFlowKit
 
 struct SearchScreen: View {
     @EnvironmentObject private var appState: AppState

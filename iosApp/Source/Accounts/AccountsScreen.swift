@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import shared
+import FeedFlowKit
 
 struct AccountsScreen: View {
     @EnvironmentObject private var appState: AppState

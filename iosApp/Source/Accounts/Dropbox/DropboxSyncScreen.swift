@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import shared
+import FeedFlowKit
 
 struct DropboxSyncScreen: View {
     @EnvironmentObject private var appState: AppState

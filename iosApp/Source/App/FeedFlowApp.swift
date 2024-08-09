@@ -1,5 +1,5 @@
 import SwiftUI
-import shared
+import FeedFlowKit
 import FirebaseCore
 import SwiftyDropbox
 

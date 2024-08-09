@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import FeedFlowKit
 
 func startKoin() {
     let appEnvironment: AppEnvironment

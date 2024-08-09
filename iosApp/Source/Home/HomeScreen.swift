@@ -7,8 +7,7 @@
 //
 
 import SwiftUI
-import shared
-import OrderedCollections
+import FeedFlowKit
 
 struct HomeScreen: View {
 

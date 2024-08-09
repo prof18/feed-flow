@@ -1,6 +1,6 @@
 import Foundation
 import SwiftUI
-import shared
+import FeedFlowKit
 
 struct SearchScreenContent: View {
     @Environment(\.openURL) private var openURL

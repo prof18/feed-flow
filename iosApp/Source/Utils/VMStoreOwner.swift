@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import FeedFlowKit
 
 class VMStoreOwner<VM: ViewModel>: ObservableObject, ViewModelStoreOwner {
     internal var viewModelStore: ViewModelStore = ViewModelStore()

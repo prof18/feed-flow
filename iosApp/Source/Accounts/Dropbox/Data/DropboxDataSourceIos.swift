@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import FeedFlowKit
 import SwiftyDropbox
 import UIKit
 

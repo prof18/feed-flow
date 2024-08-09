@@ -6,7 +6,6 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import shared
 import SwiftUI
 
 extension View {

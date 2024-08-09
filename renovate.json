@@ -5,12 +5,12 @@
   ],
   "packageRules": [
     {
-      "groupName": "Kotlin, KSP, Compose Compiler and KMP-NativeCoroutines",
+      "groupName": "Kotlin, KSP, SKIE",
       "groupSlug": "kotlin",
       "matchPackageNames": [
         "com.google.devtools.ksp",
         "org.jetbrains.kotlin",
-        "org.jetbrains.compose"
+        "co.touchlab.skie"
       ]
     }
   ]

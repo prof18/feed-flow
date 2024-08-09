@@ -23,6 +23,8 @@
 /* Begin PBXBuildFile section */
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
+		139C09DC2C668E3700A5E3E8 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803F29D9A31E0004A0AB /* Collections */; };
+		139C09DD2C668E3700A5E3E8 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B804129D9A31E0004A0AB /* OrderedCollections */; };
 		13B651162C6007C70015D0A1 /* VMStoreOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B651152C6007C70015D0A1 /* VMStoreOwner.swift */; };
 		13C19E852BBC4314006DEEBC /* VisionOsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C19E842BBC4314006DEEBC /* VisionOsUtils.swift */; };
 		CC0799422C29B74600067E06 /* SwiftyDropbox in Frameworks */ = {isa = PBXBuildFile; productRef = CC0799412C29B74600067E06 /* SwiftyDropbox */; };
@@ -201,12 +203,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC4B804029D9A31E0004A0AB /* Collections in Frameworks */,
+				139C09DD2C668E3700A5E3E8 /* OrderedCollections in Frameworks */,
+				139C09DC2C668E3700A5E3E8 /* Collections in Frameworks */,
 				CC3F46E32BD1C435005DC259 /* Reeeed in Frameworks */,
 				CC4B803D29D98BB20004A0AB /* NukeUI in Frameworks */,
 				CC23293C29D85208005D0E06 /* SwiftSoup in Frameworks */,
 				CCEA11BE2A6D2BA600C661AC /* FirebaseCrashlytics in Frameworks */,
-				CC4B804229D9A31E0004A0AB /* OrderedCollections in Frameworks */,
 				CC4B803B29D98BB20004A0AB /* Nuke in Frameworks */,
 				CC0799422C29B74600067E06 /* SwiftyDropbox in Frameworks */,
 			);
@@ -1114,7 +1116,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = exactVersion;
-				version = 10.29.0;
+				version = 11.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

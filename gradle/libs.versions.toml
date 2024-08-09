@@ -29,7 +29,7 @@ org-robolectric = "4.12.2"
 sql-delight = "2.0.2"
 rss-parser = "6.0.8"
 accompanist = "0.34.0"
-jsoup = "1.17.2"
+jsoup = "1.18.1"
 triplet-play = "3.10.1"
 compose-multiplatform = "1.6.11"
 # When updating, check the version of jna in the following link:

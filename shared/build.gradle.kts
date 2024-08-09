@@ -27,7 +27,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach {
         it.binaries.framework {
-            baseName = "shared"
+            baseName = "FeedFlowKit"
             isStatic = true
 
             export(project(":i18n"))

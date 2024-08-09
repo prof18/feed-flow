@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import shared
+import FeedFlowKit
 
 struct ICloudSyncScreenContent: View {
     @Environment(\.dismiss) private var dismiss

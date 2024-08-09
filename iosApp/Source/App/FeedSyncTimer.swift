@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import shared
+import FeedFlowKit
 
 class FeedSyncTimer {
 

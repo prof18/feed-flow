@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import shared
+import FeedFlowKit
 
 struct AccountsScreenContent: View {
     @State private var showAddAccountSheet = false

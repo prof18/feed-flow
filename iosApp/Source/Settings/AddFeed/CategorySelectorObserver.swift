@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import shared
+import FeedFlowKit
 
 class CategorySelectorObserver: ObservableObject {
     @Published var selectedCategory: CategoriesState.CategoryItem? {

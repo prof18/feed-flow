@@ -8,9 +8,8 @@
 
 import SwiftUI
 import Nuke
-import shared
+import FeedFlowKit
 import NukeUI
-import OrderedCollections
 
 @MainActor
 struct FeedItemView: View {

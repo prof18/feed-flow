@@ -8,8 +8,7 @@
 
 import Foundation
 import SwiftUI
-import shared
-import OrderedCollections
+import FeedFlowKit
 import Reeeed
 
 struct FeedListView: View {

@@ -51,8 +51,6 @@
 		CC3F46E32BD1C435005DC259 /* Reeeed in Frameworks */ = {isa = PBXBuildFile; productRef = CC3F46E22BD1C435005DC259 /* Reeeed */; };
 		CC4B803B29D98BB20004A0AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803A29D98BB20004A0AB /* Nuke */; };
 		CC4B803D29D98BB20004A0AB /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803C29D98BB20004A0AB /* NukeUI */; };
-		CC4B804029D9A31E0004A0AB /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803F29D9A31E0004A0AB /* Collections */; };
-		CC4B804229D9A31E0004A0AB /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B804129D9A31E0004A0AB /* OrderedCollections */; };
 		CC4B804429DA03460004A0AB /* HomeListIndexHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4B804329DA03460004A0AB /* HomeListIndexHolder.swift */; };
 		CC5FDB922BD0676A00960A30 /* SFSafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5FDB912BD0676A00960A30 /* SFSafariView.swift */; };
 		CC5FDB942BD06B9A00960A30 /* BrowserToPresent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5FDB932BD06B9A00960A30 /* BrowserToPresent.swift */; };
@@ -968,7 +966,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					shared,
+					FeedFlowKit,
 					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.prof18.feedflow.dev;
@@ -1006,7 +1004,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					shared,
+					FeedFlowKit,
 					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.prof18.feedflow;

@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import shared
+import FeedFlowKit
 import Reeeed
 
 struct CompactView: View {

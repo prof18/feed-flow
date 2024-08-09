@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import shared
+import FeedFlowKit
 
 struct NoFeedsSourceView: View {
     let onAddFeedClick: () -> Void

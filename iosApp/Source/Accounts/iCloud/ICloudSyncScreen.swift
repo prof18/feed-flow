@@ -15,7 +15,7 @@ struct ICloudSyncScreen: View {
     @EnvironmentObject private var appState: AppState
 
     @StateObject
-    private var vmStoreOwner = VMStoreOwner<ICloudSyncViewModel>(KotlinDependencies.shared.getICloudSyncViewModel())
+    private var vmStoreOwner = VMStoreOwner<ICloudSyncViewModel>(Deps.shared.getICloudSyncViewModel())
 
     @State private var uiState: AccountConnectionUiState = AccountConnectionUiState.Unlinked()
 

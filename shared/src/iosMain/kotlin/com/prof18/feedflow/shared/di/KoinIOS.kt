@@ -131,7 +131,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 }
 
 @Suppress("unused") // Called from Swift
-object KotlinDependencies : KoinComponent {
+object Deps : KoinComponent {
     fun getHomeViewModel() = getKoin().get<HomeViewModel>()
     fun getFeedSourceListViewModel() = getKoin().get<FeedSourceListViewModel>()
     fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()

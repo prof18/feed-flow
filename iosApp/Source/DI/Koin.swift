@@ -29,7 +29,7 @@ func startKoin() {
         dropboxDataSource: DropboxDataSourceIos()
     )
     _koin = koinApplication.koin
-    _feedFlowStrings = KotlinDependencies.shared.getFeedFlowStrings()
+    _feedFlowStrings = Deps.shared.getFeedFlowStrings()
 }
 
 private var _koin: Koin_coreKoin?

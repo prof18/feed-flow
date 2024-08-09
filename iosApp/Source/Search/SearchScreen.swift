@@ -6,7 +6,7 @@ struct SearchScreen: View {
     @EnvironmentObject private var appState: AppState
 
     @StateObject
-    private var vmStoreOwner = VMStoreOwner<SearchViewModel>(KotlinDependencies.shared.getSearchViewModel())
+    private var vmStoreOwner = VMStoreOwner<SearchViewModel>(Deps.shared.getSearchViewModel())
 
     @State var searchText = ""
 

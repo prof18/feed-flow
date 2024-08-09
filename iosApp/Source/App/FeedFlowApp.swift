@@ -24,7 +24,7 @@ struct FeedFlowApp: App {
         if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
             if let keys = NSDictionary(contentsOfFile: path) {
                 let key = keys["DropboxApiKey"] as? String ?? ""
-                let dropboxDataSource = KotlinDependencies.shared.getDropboxDataSource()
+                let dropboxDataSource = Deps.shared.getDropboxDataSource()
                 dropboxDataSource.setup(apiKey: key)
             }
         }
@@ -36,7 +36,7 @@ struct FeedFlowApp: App {
                 .environmentObject(appState)
                 .environmentObject(browserSelector)
                 .onOpenURL(perform: { url in
-                    KotlinDependencies.shared.getDropboxDataSource().handleOAuthResponse {
+                    Deps.shared.getDropboxDataSource().handleOAuthResponse {
                         DropboxDataSourceIos.handleOAuthResponse(
                                 url: url,
                                 onSuccess: {

@@ -17,7 +17,7 @@ struct AddFeedScreen: View {
     @Environment(\.presentationMode) private var presentationMode
 
     @StateObject
-    private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(KotlinDependencies.shared.getAddFeedViewModel())
+    private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(Deps.shared.getAddFeedViewModel())
 
     @StateObject private var categorySelectorObserver = CategorySelectorObserver()
 

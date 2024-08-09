@@ -40,7 +40,7 @@ class DropboxDataSourceIos: DropboxDataSource {
                 uploadResponse.response { _, error in
                     // handle response
                     if error != nil {
-                        KotlinDependencies.shared.getFeedSyncRepository().onDropboxUploadSuccessAfterResume()
+                        Deps.shared.getFeedSyncRepository().onDropboxUploadSuccessAfterResume()
                     } else {
                         print("ERROR: Upload error after resume")
                     }
@@ -103,14 +103,14 @@ class DropboxDataSourceIos: DropboxDataSource {
                         completionHandler(downloadResult, nil)
 
                     } else if let error = error {
-                        KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
+                        Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
                             messageString: error.description
                         )
 
                         switch error as CallError {
                         case .routeError(let boxed, _, _, _):
                             let err = boxed.unboxed as Files.DownloadError
-                            KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
+                            Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
                                 messageString: "Boxed error: \(err.description)"
                             )
 
@@ -148,14 +148,14 @@ class DropboxDataSourceIos: DropboxDataSource {
                     )
                     completionHandler(uploadResult, nil)
                 } else if let error = error {
-                    KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
+                    Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
                         messageString: error.description
                     )
 
                     switch error as CallError {
                     case .routeError(let boxed, _, _, _):
                         let err = boxed.unboxed as Files.UploadError
-                        KotlinDependencies.shared.getLogger(tag: "DropboxDataSourceIos").e(
+                        Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
                             messageString: "Boxed error: \(err.description)"
                         )
 

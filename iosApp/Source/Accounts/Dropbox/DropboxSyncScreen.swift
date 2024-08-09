@@ -15,7 +15,7 @@ struct DropboxSyncScreen: View {
     @EnvironmentObject private var appState: AppState
 
     @StateObject
-    private var vmStoreOwner = VMStoreOwner<DropboxSyncViewModel>(KotlinDependencies.shared.getDropboxSyncViewModel())
+    private var vmStoreOwner = VMStoreOwner<DropboxSyncViewModel>(Deps.shared.getDropboxSyncViewModel())
 
     @State private var uiState: AccountConnectionUiState = AccountConnectionUiState.Unlinked()
 

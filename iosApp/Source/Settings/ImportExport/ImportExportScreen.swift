@@ -17,7 +17,7 @@ struct ImportExportScreen: View {
     @EnvironmentObject private var appState: AppState
 
     @StateObject
-    private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(KotlinDependencies.shared.getImportExportViewModel())
+    private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(Deps.shared.getImportExportViewModel())
 
     @State var feedImportExportState: FeedImportExportState = FeedImportExportState.Idle()
     @State var sheetToShow: ImportExportSheetToShow?

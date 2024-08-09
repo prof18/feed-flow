@@ -10,7 +10,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase: ScenePhase
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
 
-    @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(KotlinDependencies.shared.getHomeViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
 
     @State private var isAppInBackground: Bool = false
 

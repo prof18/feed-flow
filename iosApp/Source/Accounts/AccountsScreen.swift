@@ -15,7 +15,7 @@ struct AccountsScreen: View {
     @EnvironmentObject private var appState: AppState
 
     @StateObject
-    private var vmStoreOwner = VMStoreOwner<AccountsViewModel>(KotlinDependencies.shared.getAccountsViewModel())
+    private var vmStoreOwner = VMStoreOwner<AccountsViewModel>(Deps.shared.getAccountsViewModel())
 
     @State private var syncAccount: SyncAccounts = SyncAccounts.local
 

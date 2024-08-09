@@ -50,8 +50,8 @@ class BrowserSelector: ObservableObject {
         )
     ]
 
-    private let browserSettingsRepository = KotlinDependencies.shared.getBrowserSettingsRepository()
-    private let settingsRepository = KotlinDependencies.shared.getSettingsRepository()
+    private let browserSettingsRepository = Deps.shared.getBrowserSettingsRepository()
+    private let settingsRepository = Deps.shared.getSettingsRepository()
 
     @Published var browsers: [Browser] = []
     @Published var selectedBrowser: Browser? {

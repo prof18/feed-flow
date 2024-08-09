@@ -16,9 +16,7 @@ struct FeedSourceListScreen: View {
     private var appState: AppState
 
     @StateObject
-    private var vmStoreOwner = VMStoreOwner<FeedSourceListViewModel>(
-        KotlinDependencies.shared.getFeedSourceListViewModel()
-    )
+    private var vmStoreOwner = VMStoreOwner<FeedSourceListViewModel>(Deps.shared.getFeedSourceListViewModel())
 
     @State
     private var feedState: FeedSourceListState = FeedSourceListState(

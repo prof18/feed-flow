@@ -16,7 +16,7 @@ class IosHtmlParser: HtmlParser {
             let doc: Document = try SwiftSoup.parse(html)
             return try doc.text()
         } catch {
-            KotlinDependencies.shared.getLogger(tag: "IosHtmlParser")
+            Deps.shared.getLogger(tag: "IosHtmlParser")
                 .e(messageString: "Error during html parsing: \(error)")
             return nil
         }
@@ -29,7 +29,7 @@ class IosHtmlParser: HtmlParser {
             let faviconLink = try doc.select("link[rel~=(?i)^(shortcut|icon)$][href]").first()
             return try faviconLink?.attr("href")
         } catch {
-            KotlinDependencies.shared.getLogger(tag: "IosHtmlParser")
+            Deps.shared.getLogger(tag: "IosHtmlParser")
                 .e(messageString: "Error during getting the favicon: \(error)")
             return nil
         }
@@ -54,7 +54,7 @@ class IosHtmlParser: HtmlParser {
             }
             return nil
         } catch {
-            KotlinDependencies.shared.getLogger(tag: "IosHtmlParser")
+            Deps.shared.getLogger(tag: "IosHtmlParser")
                 .e(messageString: "Error during getting the rss url: \(error)")
             return nil
         }

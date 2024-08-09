@@ -19,7 +19,7 @@ struct SettingsScreen: View {
     @Environment(\.openURL) private var openURL
 
     @StateObject
-    private var vmStoreOwner = VMStoreOwner<SettingsViewModel>(KotlinDependencies.shared.getSettingsViewModel())
+    private var vmStoreOwner = VMStoreOwner<SettingsViewModel>(Deps.shared.getSettingsViewModel())
 
     @State private var isMarkReadWhenScrollingEnabled = true
     @State private var isShowReadItemEnabled = false

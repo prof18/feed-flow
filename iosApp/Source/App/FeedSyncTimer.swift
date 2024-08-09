@@ -16,14 +16,14 @@ class FeedSyncTimer {
     func scheduleTimer() {
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true) { [weak self] _ in
-            KotlinDependencies.shared.getLogger(tag: "FeedSyncTimer").d(messageString: "Sync scheduled")
-            KotlinDependencies.shared.getFeedSyncRepository().enqueueBackup(forceBackup: false)
+            Deps.shared.getLogger(tag: "FeedSyncTimer").d(messageString: "Sync scheduled")
+            Deps.shared.getFeedSyncRepository().enqueueBackup(forceBackup: false)
         }
 
     }
 
     func invalidate() {
-        KotlinDependencies.shared.getLogger(tag: "FeedSyncTimer").d(messageString: "Sync timer invalidated")
+        Deps.shared.getLogger(tag: "FeedSyncTimer").d(messageString: "Sync timer invalidated")
         timer?.invalidate()
     }
 }

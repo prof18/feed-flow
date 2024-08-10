@@ -74,12 +74,12 @@ struct FeedListView: View {
                                 )
                             )
                         },
-                               label: {
+                        label: {
                             FeedItemView(feedItem: feedItem, index: index)
+                                .contentShape(Rectangle())
                         })
                         .buttonStyle(.plain)
                         .id(feedItem.id)
-                        .contentShape(Rectangle())
                         .listRowInsets(EdgeInsets())
                         .hoverEffect()
                         .contextMenu {

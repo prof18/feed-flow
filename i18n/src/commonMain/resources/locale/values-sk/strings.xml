@@ -96,7 +96,9 @@
     <string name="settings_title_feed">Feed</string>
     <string name="accounts_description">Pripoj účet pre synchronizáciu odberu feedov, kategórií, prečítaných článkov a záložiek medzi zariadeniami.
 \n
-\nFunkcia je ešte v Beta verzii, ale v budúcnosti pribudne podpora pre ďalšie služby.</string>
+\nFunkcia je ešte v Beta verzii a môžu sa vyskytnúť problémy (napríklad prečítané články nemusia byť úplne synchronizované). V budúcnosti pribudne podpora pre ďalšie služby.
+\n
+\nPodporovaný je iba jeden účet súčasne.</string>
     <string name="settings_behaviour_title">Správanie</string>
     <string name="settings_help_title">Pomoc</string>
     <string name="account_disconnect_button">Odpojiť</string>
@@ -115,4 +117,9 @@
     <string name="feed_sync_in_progress">Prebieha synchronizácia. Po dokončení sa aplikácia automaticky zatvorí.</string>
     <string name="no_dropbox_sync_yet">Údaje ešte nie sú synchronizované s Dropboxom. Kliknutím na tlačidlo Zálohovať spustíš synchronizáciu</string>
     <string name="error_account_sync">Ľutujeme, pri synchronizácii údajov v tvojom účte sa vyskytla chyba :(</string>
+    <string name="add_account_button">Pridať účet</string>
+    <string name="icloud_sync_success">Tvoj iCloud účet je úspešne pripojený</string>
+    <string name="settings_hide_duplicated_title_from_desc">Skryť názov z popisu článku</string>
+    <string name="no_icloud_sync_yet">Údaje ešte nie sú synchronizované s iCloud. Klikni na tlačidlo zálohovania pre spustenie synchronizácie</string>
+    <string name="icloud_sync_description">Prepoj svoj iCloud účet pre synchronizáciu odberu feedov, kategórií, prečítaných článkov a záložiek medzi tvojimi zariadeniami iOS a iPadOS. Dáta sa uložia do priečinka špecifického pre aplikáciu. FeedFlow nebude mať prístup k žiadnym tvojim súborom</string>
 </resources>

@@ -3,12 +3,14 @@ package com.prof18.feedflow.shared.domain
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.extended.Readability4JExtended
 
 class ReaderModeExtractor internal constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val htmlRetriever: HtmlRetriever,
+    private val settingsRepository: SettingsRepository,
 ) {
     suspend fun extractReaderContent(urlInfo: FeedItemUrlInfo): ReaderModeData? = withContext(dispatcherProvider.io) {
         val html = htmlRetriever.retrieveHtml(urlInfo.url) ?: return@withContext null
@@ -23,6 +25,7 @@ class ReaderModeExtractor internal constructor(
             title = title,
             content = contentWithDocumentsCharsetOrUtf8,
             url = urlInfo.url,
+            fontSize = settingsRepository.getReaderModeFontSize(),
         )
     }
 }

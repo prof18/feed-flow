@@ -29,10 +29,17 @@ struct RegularView: View {
     )
     @State var scrollUpTrigger: Bool = false
     @State var showSettings: Bool = false
-    @State private var browserToOpen: BrowserToPresent?
-
     @State var showAddFeedSheet = false
+    @State var isToggled: Bool = false
 
+    @State private var showFontSizeMenu: Bool = false
+    @State private var fontSize = 16.0
+    @State private var isSliderMoving = false
+    @State private var reset = false
+
+    @StateObject private var vmStoreOwner = VMStoreOwner<ReaderModeViewModel>(Deps.shared.getReaderModeViewModel())
+
+    @State private var browserToOpen: BrowserToPresent?
     @StateObject var indexHolder: HomeListIndexHolder
     var drawerItems: [DrawerItem] = []
     let homeViewModel: HomeViewModel
@@ -85,7 +92,13 @@ struct RegularView: View {
                     ReeeederView(
                         url: url,
                         options: ReeeederViewOptions(
-                            theme: ReaderTheme(),
+                            theme: .init(
+                                additionalCSS: """
+                                    #__reader_container {
+                                        font-size: \(fontSize)px
+                                    }
+                                """
+                            ),
                             onLinkClicked: { url in
                                 if browserSelector.openInAppBrowser() {
                                     browserToOpen = .inAppBrowser(url: url)
@@ -93,8 +106,25 @@ struct RegularView: View {
                                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
                                 }
                             }
-                        )
+                        ),
+                        toolbarContent: {
+                            Button {
+                                if browserSelector.openInAppBrowser() {
+                                    browserToOpen = .inAppBrowser(url: url)
+                                } else {
+                                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
+                                }
+                            } label: {
+                                Image(systemName: "globe")
+                            }
+
+                            ShareLink(item: url) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                            }
+                            fontSizeMenu
+                        }
                     )
+                    .id(reset)
 
                 case .search:
                     SearchScreen()
@@ -121,6 +151,61 @@ struct RegularView: View {
         .task {
             for await state in homeViewModel.navDrawerState {
                 self.navDrawerState = state
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.readerFontSizeState {
+                self.fontSize = Double(truncating: state)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var fontSizeMenu: some View {
+        // TODO: Delete after moving to iOS 17
+        if #available(iOS 16.4, *) {
+            Button {
+                showFontSizeMenu.toggle()
+            } label: {
+                Image(systemName: "textformat.size")
+            }
+            .font(.title3)
+            .popover(isPresented: $showFontSizeMenu) {
+                VStack(alignment: .leading) {
+                    Text(feedFlowStrings.readerModeFontSize)
+
+                    HStack {
+                        Button {
+                            fontSize -= 1.0
+                            self.reset.toggle()
+                            vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                        } label: {
+                            Image(systemName: "minus")
+                        }
+
+                        Slider(
+                            value: $fontSize,
+                            in: 12...40,
+                            onEditingChanged: { isEditing in
+                                if !isEditing {
+                                    self.reset.toggle()
+                                    vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                                }
+                            }
+                        )
+
+                        Button {
+                            fontSize += 1.0
+                            self.reset.toggle()
+                            vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                    }
+                }
+                .frame(width: 250, height: 100)
+                .padding(.horizontal, Spacing.regular)
+                .presentationCompactAdaptation((.popover))
             }
         }
     }

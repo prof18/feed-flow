@@ -232,11 +232,16 @@ class MainActivity : ComponentActivity() {
 
             composable(Screen.ReaderMode.name) {
                 val readerModeState by readerModeViewModel.readerModeState.collectAsStateWithLifecycle()
+                val fontSizeState by readerModeViewModel.readerFontSizeState.collectAsStateWithLifecycle()
 
                 ReaderModeScreen(
                     readerModeState = readerModeState,
+                    fontSize = fontSizeState,
                     navigateBack = {
                         navController.popBackStack()
+                    },
+                    onUpdateFontSize = { newFontSize ->
+                        readerModeViewModel.updateFontSize(newFontSize)
                     },
                 )
             }

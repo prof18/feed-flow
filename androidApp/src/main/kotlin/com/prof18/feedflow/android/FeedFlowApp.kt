@@ -15,8 +15,8 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import com.prof18.feedflow.shared.utils.enableKmpCrashlytics
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.workmanager.koin.workManagerFactory
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 class FeedFlowApp : Application() {
@@ -62,6 +62,7 @@ class FeedFlowApp : Application() {
                     viewModel {
                         ReaderModeViewModel(
                             readerModeExtractor = get(),
+                            settingsRepository = get(),
                         )
                     }
                 },

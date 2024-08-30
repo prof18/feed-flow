@@ -11,6 +11,7 @@ import com.prof18.feedflow.shared.di.initKoinDesktop
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter
 import org.koin.core.Koin
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
 object DI {
@@ -41,12 +42,7 @@ object DI {
                         )
                     }
 
-                    factory {
-                        ReaderModeViewModel(
-                            readerModeExtractor = get(),
-                            markdownToHtmlConverter = get(),
-                        )
-                    }
+                    factoryOf(::ReaderModeViewModel)
 
                     factory {
                         BrowserManager(

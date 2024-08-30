@@ -1,5 +1,5 @@
 {
-  "originHash" : "dfe837f41ec6117df1db5fb2e4c398f72de98bbe1a2691621f938eae93b09eba",
+  "originHash" : "78f2fd386d6da8935ac36d6e045d968acf274645af5783c5acb8cf13d29234d1",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -133,7 +133,7 @@
       "location" : "https://github.com/prof18/reeeed",
       "state" : {
         "branch" : "main",
-        "revision" : "59bf8f2642fc578040e26d05054373953850e621"
+        "revision" : "95d3c38057aeeea87cb72c58c5bd7e31ed5b5f94"
       }
     },
     {

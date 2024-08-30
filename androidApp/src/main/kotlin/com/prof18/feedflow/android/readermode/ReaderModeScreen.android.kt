@@ -29,6 +29,8 @@ import org.koin.compose.koinInject
 @Composable
 internal fun ReaderModeScreen(
     readerModeState: ReaderModeState,
+    fontSize: Int,
+    onUpdateFontSize: (Int) -> Unit,
     navigateBack: () -> Unit,
 ) {
     val browserManager = koinInject<BrowserManager>()
@@ -38,12 +40,22 @@ internal fun ReaderModeScreen(
 
     ReaderModeContent(
         readerModeState = readerModeState,
+        fontSize = fontSize,
         navigateBack = {
             if (navigator.canGoBack) {
                 navigator.navigateBack()
             } else {
                 navigateBack()
             }
+        },
+        onFontSizeChange = { newFontSize ->
+            navigator.evaluateJavaScript(
+                """
+                    document.getElementById("container").style.fontSize = "$newFontSize" + "px";
+                    document.getElementById("container").style.lineHeight = "1.5em";
+                """.trimIndent(),
+            )
+            onUpdateFontSize(newFontSize)
         },
         openInBrowser = { url ->
             browserManager.openUrlWithFavoriteBrowser(url, context)
@@ -93,6 +105,7 @@ private fun ReaderMode(
         colors = colors,
         content = readerModeState.readerModeData.content,
         title = readerModeState.readerModeData.title,
+        fontSize = readerModeState.readerModeData.fontSize,
     )
 
     val jsBridge = rememberWebViewJsBridge()

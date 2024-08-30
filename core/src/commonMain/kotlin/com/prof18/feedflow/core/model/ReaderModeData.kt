@@ -4,4 +4,5 @@ data class ReaderModeData(
     val title: String?,
     val content: String,
     val url: String,
+    val fontSize: Int,
 )

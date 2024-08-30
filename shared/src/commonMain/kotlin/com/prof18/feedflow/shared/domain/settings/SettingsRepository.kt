@@ -45,6 +45,11 @@ class SettingsRepository internal constructor(
         settingsHelper.setRemoveTitleFromDescription(value)
     }
 
+    fun getReaderModeFontSize(): Int =
+        settingsHelper.getReaderModeFontSize()
+
+    fun setReaderModeFontSize(value: Int) = settingsHelper.setReaderModeFontSize(value)
+
     internal fun setUseReaderMode(value: Boolean) {
         isReaderModeEnabled = value
         settingsHelper.setUseReaderMode(value)

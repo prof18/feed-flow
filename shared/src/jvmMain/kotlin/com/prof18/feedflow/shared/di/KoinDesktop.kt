@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 import java.util.prefs.Preferences
 
@@ -65,12 +66,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         PreferencesSettings(preferences)
     }
 
-    factory {
-        ReaderModeExtractor(
-            dispatcherProvider = get(),
-            htmlRetriever = get(),
-        )
-    }
+    factoryOf(::ReaderModeExtractor)
 
     viewModel {
         DropboxSyncViewModel(

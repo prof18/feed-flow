@@ -24,6 +24,7 @@ import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.russhwolf.settings.ExperimentalSettingsImplementation
@@ -128,6 +129,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedRetrieverRepository = get(),
         )
     }
+
+    viewModel {
+        ReaderModeViewModel(
+            settingsRepository = get(),
+        )
+    }
 }
 
 @Suppress("unused") // Called from Swift
@@ -147,4 +154,5 @@ object Deps : KoinComponent {
     fun getDropboxSyncViewModel() = getKoin().get<DropboxSyncViewModel>()
     fun getFeedSyncRepository() = getKoin().get<FeedSyncRepository>()
     fun getICloudSyncViewModel() = getKoin().get<ICloudSyncViewModel>()
+    fun getReaderModeViewModel() = getKoin().get<ReaderModeViewModel>()
 }

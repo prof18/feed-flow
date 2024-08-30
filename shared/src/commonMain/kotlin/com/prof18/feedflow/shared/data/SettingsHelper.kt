@@ -41,6 +41,16 @@ internal class SettingsHelper(
 
     fun setRemoveTitleFromDescription(value: Boolean) =
         settings.set(SettingsFields.REMOVE_TITLE_FROM_DESCRIPTION.name, value)
+
+    fun getReaderModeFontSize(): Int =
+        settings.getInt(SettingsFields.READER_MODE_FONT_SIZE.name, DEFAULT_READER_MODE_FONT_SIZE)
+
+    fun setReaderModeFontSize(value: Int) =
+        settings.set(SettingsFields.READER_MODE_FONT_SIZE.name, value)
+
+    private companion object {
+        const val DEFAULT_READER_MODE_FONT_SIZE = 16
+    }
 }
 
 internal enum class SettingsFields {
@@ -50,4 +60,5 @@ internal enum class SettingsFields {
     USE_READER_MODE,
     IS_SYNC_UPLOAD_REQUIRED,
     REMOVE_TITLE_FROM_DESCRIPTION,
+    READER_MODE_FONT_SIZE,
 }

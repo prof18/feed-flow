@@ -1,17 +1,22 @@
 package com.prof18.feedflow.shared.ui.readermode
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -25,15 +30,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.utils.TestingTag
+import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 fun ReaderModeContent(
     readerModeState: ReaderModeState,
+    fontSize: Int,
     navigateBack: () -> Unit,
     openInBrowser: (String) -> Unit,
     onShareClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onFontSizeChange: (Int) -> Unit,
     snackbarHost: @Composable () -> Unit = {},
     readerModeSuccessView: @Composable (PaddingValues, ReaderModeState.Success) -> Unit,
 ) {
@@ -47,9 +56,11 @@ fun ReaderModeContent(
             ReaderModeToolbar(
                 toolbarTitle = toolbarTitle,
                 readerModeState = readerModeState,
+                fontSize = fontSize,
                 navigateBack = navigateBack,
                 openInBrowser = openInBrowser,
                 onShareClick = onShareClick,
+                onFontSizeChange = onFontSizeChange,
             )
         },
         snackbarHost = snackbarHost,
@@ -86,10 +97,14 @@ fun ReaderModeContent(
 private fun ReaderModeToolbar(
     toolbarTitle: String,
     readerModeState: ReaderModeState,
+    fontSize: Int,
     navigateBack: () -> Unit,
     openInBrowser: (String) -> Unit,
     onShareClick: (String) -> Unit,
+    onFontSizeChange: (Int) -> Unit,
 ) {
+    var showMenu by remember { mutableStateOf(false) }
+
     TopAppBar(
         title = {
             Text(
@@ -133,6 +148,44 @@ private fun ReaderModeToolbar(
                             imageVector = Icons.Default.Share,
                             contentDescription = null,
                         )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            showMenu = true
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.TextFields,
+                            contentDescription = null,
+                        )
+                    }
+
+                    DropdownMenu(
+                        modifier = Modifier
+                            .fillMaxWidth(fraction = 0.8f),
+                        expanded = showMenu,
+                        onDismissRequest = {
+                            showMenu = false
+                        },
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(Spacing.regular)
+                        ) {
+                            Text(
+                                text = LocalFeedFlowStrings.current.readerModeFontSize,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+
+                            SliderWithPlusMinus(
+                                value = fontSize.toFloat(),
+                                onValueChange = {
+                                    onFontSizeChange(it.toInt())
+                                },
+                                valueRange = 12f..40f,
+                                steps = 40,
+                            )
+                        }
                     }
                 }
             }

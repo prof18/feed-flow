@@ -43,6 +43,7 @@ internal data class ReaderModeScreen(
     override fun Content() {
         val readerModeViewModel = desktopViewModel { DI.koin.get<ReaderModeViewModel>() }
         val state by readerModeViewModel.readerModeState.collectAsState()
+        val fontSize by readerModeViewModel.readerFontSizeState.collectAsState()
         val navigator = LocalNavigator.currentOrThrow
 
         LaunchedEffect(feedItemUrlInfo) {
@@ -74,13 +75,19 @@ internal data class ReaderModeScreen(
                     )
                 }
             },
+            fontSize = fontSize,
+            onFontSizeChange = {
+
+
+                readerModeViewModel.updateFontSize(it)
+            },
             readerModeSuccessView = { contentPadding, successState ->
                 Column(
                     modifier = Modifier
                         .padding(contentPadding)
                         .verticalScroll(rememberScrollState()),
 
-                ) {
+                    ) {
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -102,7 +109,8 @@ internal data class ReaderModeScreen(
                             h5 = MaterialTheme.typography.titleMedium,
                             h6 = MaterialTheme.typography.titleMedium,
                             paragraph = MaterialTheme.typography.bodyLarge.copy(
-                                lineHeight = 26.sp,
+                                lineHeight = (fontSize + 15).sp,
+                                fontSize = fontSize.sp,
                             ),
                         ),
                     )

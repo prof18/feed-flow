@@ -23,6 +23,8 @@
 /* Begin PBXBuildFile section */
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
+		138093682C80B47B00E904FF /* Reeeed in Frameworks */ = {isa = PBXBuildFile; productRef = 138093672C80B47B00E904FF /* Reeeed */; };
+		1380936E2C826C9C00E904FF /* Reeeed in Frameworks */ = {isa = PBXBuildFile; productRef = 1380936D2C826C9C00E904FF /* Reeeed */; };
 		139C09DC2C668E3700A5E3E8 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803F29D9A31E0004A0AB /* Collections */; };
 		139C09DD2C668E3700A5E3E8 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B804129D9A31E0004A0AB /* OrderedCollections */; };
 		13B651162C6007C70015D0A1 /* VMStoreOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B651152C6007C70015D0A1 /* VMStoreOwner.swift */; };
@@ -50,7 +52,6 @@
 		CC2DC9322C5577E800BFD2B9 /* AddAccountScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2DC9312C5577E800BFD2B9 /* AddAccountScreen.swift */; };
 		CC2DC9372C5595D400BFD2B9 /* ICloudSyncScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2DC9362C5595D400BFD2B9 /* ICloudSyncScreen.swift */; };
 		CC2DC9392C564FF600BFD2B9 /* ICloudSyncScreenContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2DC9382C564FF600BFD2B9 /* ICloudSyncScreenContent.swift */; };
-		CC3F46E32BD1C435005DC259 /* Reeeed in Frameworks */ = {isa = PBXBuildFile; productRef = CC3F46E22BD1C435005DC259 /* Reeeed */; };
 		CC4B803B29D98BB20004A0AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803A29D98BB20004A0AB /* Nuke */; };
 		CC4B803D29D98BB20004A0AB /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803C29D98BB20004A0AB /* NukeUI */; };
 		CC4B804429DA03460004A0AB /* HomeListIndexHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4B804329DA03460004A0AB /* HomeListIndexHolder.swift */; };
@@ -203,9 +204,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				138093682C80B47B00E904FF /* Reeeed in Frameworks */,
 				139C09DD2C668E3700A5E3E8 /* OrderedCollections in Frameworks */,
 				139C09DC2C668E3700A5E3E8 /* Collections in Frameworks */,
-				CC3F46E32BD1C435005DC259 /* Reeeed in Frameworks */,
+				1380936E2C826C9C00E904FF /* Reeeed in Frameworks */,
 				CC4B803D29D98BB20004A0AB /* NukeUI in Frameworks */,
 				CC23293C29D85208005D0E06 /* SwiftSoup in Frameworks */,
 				CCEA11BE2A6D2BA600C661AC /* FirebaseCrashlytics in Frameworks */,
@@ -557,8 +559,9 @@
 				CC4B803F29D9A31E0004A0AB /* Collections */,
 				CC4B804129D9A31E0004A0AB /* OrderedCollections */,
 				CCEA11BD2A6D2BA600C661AC /* FirebaseCrashlytics */,
-				CC3F46E22BD1C435005DC259 /* Reeeed */,
 				CC0799412C29B74600067E06 /* SwiftyDropbox */,
+				138093672C80B47B00E904FF /* Reeeed */,
+				1380936D2C826C9C00E904FF /* Reeeed */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* FeedFlow.app */;
@@ -608,8 +611,8 @@
 				CC4B803929D98BB20004A0AB /* XCRemoteSwiftPackageReference "Nuke" */,
 				CC4B803E29D9A31E0004A0AB /* XCRemoteSwiftPackageReference "swift-collections" */,
 				CCEA11BC2A6D2BA600C661AC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				CC3F46E12BD1C435005DC259 /* XCRemoteSwiftPackageReference "reeeed" */,
 				CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */,
+				1380936C2C826C9C00E904FF /* XCRemoteSwiftPackageReference "reeeed" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -1071,6 +1074,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1380936C2C826C9C00E904FF /* XCRemoteSwiftPackageReference "reeeed" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/prof18/reeeed";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/dropbox/SwiftyDropbox.git";
@@ -1085,14 +1096,6 @@
 			requirement = {
 				kind = exactVersion;
 				version = 2.7.2;
-			};
-		};
-		CC3F46E12BD1C435005DC259 /* XCRemoteSwiftPackageReference "reeeed" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/prof18/reeeed";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 		CC4B803929D98BB20004A0AB /* XCRemoteSwiftPackageReference "Nuke" */ = {
@@ -1122,6 +1125,15 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		138093672C80B47B00E904FF /* Reeeed */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Reeeed;
+		};
+		1380936D2C826C9C00E904FF /* Reeeed */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1380936C2C826C9C00E904FF /* XCRemoteSwiftPackageReference "reeeed" */;
+			productName = Reeeed;
+		};
 		CC0799412C29B74600067E06 /* SwiftyDropbox */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */;
@@ -1131,11 +1143,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CC23293A29D85208005D0E06 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
 			productName = SwiftSoup;
-		};
-		CC3F46E22BD1C435005DC259 /* Reeeed */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CC3F46E12BD1C435005DC259 /* XCRemoteSwiftPackageReference "reeeed" */;
-			productName = Reeeed;
 		};
 		CC4B803A29D98BB20004A0AB /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

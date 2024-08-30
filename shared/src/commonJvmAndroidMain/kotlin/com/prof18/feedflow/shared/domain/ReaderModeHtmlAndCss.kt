@@ -4,6 +4,7 @@ fun getReaderModeStyledHtml(
     colors: ReaderColors?,
     content: String,
     title: String?,
+    fontSize: Int,
 ): String {
     val titleTag = if (title != null) {
         "<h1>$title</h1>"
@@ -14,11 +15,13 @@ fun getReaderModeStyledHtml(
     return """
     <html lang="en">
     <style>
-      ${readerModeCss(colors)}
+      ${readerModeCss(colors, fontSize)}
     </style>
     <body>
     $titleTag
+    <div id="container">
     $content
+    </div>    
     <script>    
         document.addEventListener("DOMContentLoaded", function () {
            document.querySelectorAll("h1")[1].style.display = 'none';
@@ -43,9 +46,10 @@ fun getReaderModeStyledHtml(
         .trimIndent()
 }
 
-internal fun readerModeCss(colors: ReaderColors?) =
+internal fun readerModeCss(colors: ReaderColors?, fontSize: Int): String {
+    val fontSizeCss = "${fontSize}px"
     // language=css
-    """
+    return """
     h1 {
       font-size: 28px;
       line-height: 1.2;
@@ -63,7 +67,7 @@ internal fun readerModeCss(colors: ReaderColors?) =
       padding-right: 16px;
       ${colors?.let { "color: ${it.textColor};" }}
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      font-size: 16px;
+      font-size: $fontSizeCss;
       line-height: 1.5em;
     }
     figure {
@@ -145,8 +149,8 @@ internal fun readerModeCss(colors: ReaderColors?) =
       height: 250px;
       max-height: 250px;
     }
-
     """.trimIndent()
+}
 
 data class ReaderColors(
     val textColor: String,

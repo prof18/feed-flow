@@ -263,15 +263,15 @@ class DatabaseHelper(
     }
 
     suspend fun updateFeedItemReadAndBookmarked(
-        isRead: Boolean,
-        isBookmarked: Boolean,
-        urlHash: String,
+        syncedFeedItems: List<SyncedFeedItem>,
     ) = dbRef.transactionWithContext(backgroundDispatcher) {
-        dbRef.feedItemQueries.updateFeedItemReadAndBookmarked(
-            is_read = isRead,
-            is_bookmarked = isBookmarked,
-            url_hash = urlHash,
-        )
+        syncedFeedItems.forEach { syncedFeedItem ->
+            dbRef.feedItemQueries.updateFeedItemReadAndBookmarked(
+                is_read = syncedFeedItem.isRead,
+                is_bookmarked = syncedFeedItem.isBookmarked,
+                url_hash = syncedFeedItem.id,
+            )
+        }
     }
 
     suspend fun getFeedItemsForSync(): List<SyncedFeedItem> = withContext(backgroundDispatcher) {

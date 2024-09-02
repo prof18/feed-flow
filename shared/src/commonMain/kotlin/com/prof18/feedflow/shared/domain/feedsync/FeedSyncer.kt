@@ -47,30 +47,26 @@ internal class FeedSyncer(
         }
 
         val appUrlHashes = appDatabaseHelper.getAllFeedSourceIds().toSet()
-
         val syncFeedSources = syncedDatabaseHelper.getAllFeedSources()
-        if (syncFeedSources.isNotEmpty()) {
-            val syncedUrlHashes = mutableSetOf<String>()
 
-            syncFeedSources.forEach { syncedFeedSource ->
-                syncedUrlHashes.add(syncedFeedSource.id)
-                appDatabaseHelper.insertFeedSource(
-                    listOf(
-                        ParsedFeedSource(
-                            id = syncedFeedSource.id,
-                            url = syncedFeedSource.url,
-                            title = syncedFeedSource.title,
-                            category = syncedFeedSource.categoryId?.let {
-                                FeedSourceCategory(
-                                    id = it.value,
-                                    title = "", // not necessary here, the caller doesn't use the name
-                                )
-                            },
-                            logoUrl = syncedFeedSource.logoUrl,
-                        ),
-                    ),
-                )
-            }
+        if (syncFeedSources.isNotEmpty()) {
+            val syncedUrlHashes = syncFeedSources.map { it.id }.toSet()
+            appDatabaseHelper.insertFeedSource(
+                syncFeedSources.map { syncedFeedSource ->
+                    ParsedFeedSource(
+                        id = syncedFeedSource.id,
+                        url = syncedFeedSource.url,
+                        title = syncedFeedSource.title,
+                        category = syncedFeedSource.categoryId?.let {
+                            FeedSourceCategory(
+                                id = it.value,
+                                title = "", // not necessary here, the caller doesn't use the name
+                            )
+                        },
+                        logoUrl = syncedFeedSource.logoUrl,
+                    )
+                },
+            )
 
             val urlHashesToDelete = appUrlHashes - syncedUrlHashes
             logger.d { "appUrlHash: $appUrlHashes" }
@@ -105,19 +101,15 @@ internal class FeedSyncer(
         val syncFeedSourceCategories = syncedDatabaseHelper.getAllFeedSourceCategories()
 
         if (syncFeedSourceCategories.isNotEmpty()) {
-            val syncedIds = mutableSetOf<String>()
-
-            syncFeedSourceCategories.forEach { syncedFeedSourceCategory ->
-                syncedIds.add(syncedFeedSourceCategory.id)
-                appDatabaseHelper.insertCategories(
-                    listOf(
-                        FeedSourceCategory(
-                            id = syncedFeedSourceCategory.id,
-                            title = syncedFeedSourceCategory.title,
-                        ),
-                    ),
-                )
-            }
+            val syncedIds = syncFeedSourceCategories.map { it.id }.toSet()
+            appDatabaseHelper.insertCategories(
+                syncFeedSourceCategories.map { syncedFeedSourceCategory ->
+                    FeedSourceCategory(
+                        id = syncedFeedSourceCategory.id,
+                        title = syncedFeedSourceCategory.title,
+                    )
+                },
+            )
 
             // Sync deletions
             val idsToDelete = appIds - syncedIds
@@ -149,13 +141,9 @@ internal class FeedSyncer(
         val syncFeedItems = syncedDatabaseHelper.getAllFeedItems()
 
         if (syncFeedItems.isNotEmpty()) {
-            syncFeedItems.forEach { syncedFeedItem ->
-                appDatabaseHelper.updateFeedItemReadAndBookmarked(
-                    isRead = syncedFeedItem.isRead,
-                    isBookmarked = syncedFeedItem.isBookmarked,
-                    urlHash = syncedFeedItem.id,
-                )
-            }
+            appDatabaseHelper.updateFeedItemReadAndBookmarked(
+                syncedFeedItems = syncFeedItems,
+            )
         }
 
         val currentTimestamp = Clock.System.now().toEpochMilliseconds()

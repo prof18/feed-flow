@@ -9,6 +9,7 @@ import androidx.compose.ui.window.MenuScope
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
+import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -21,7 +22,6 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onRefreshClick: () -> Unit,
     onMarkAllReadClick: () -> Unit,
     onImportExportClick: () -> Unit,
-    onFeedsListClick: () -> Unit,
     onClearOldFeedClick: () -> Unit,
     onAboutClick: () -> Unit,
     onBugReportClick: () -> Unit,
@@ -76,7 +76,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Item(
                 text = LocalFeedFlowStrings.current.feedsTitle,
                 onClick = {
-                    onFeedsListClick()
+                    navigator.push(FeedSourceListScreen())
                 },
             )
 

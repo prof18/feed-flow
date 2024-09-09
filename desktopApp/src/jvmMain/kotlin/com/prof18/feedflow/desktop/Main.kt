@@ -34,7 +34,6 @@ import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.desktop.about.AboutContent
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.desktop.home.FeedFlowMenuBar
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
@@ -238,9 +237,6 @@ fun main() = application {
                                 },
                                 onImportExportClick = {
                                     navigator.push(ImportExportScreen(window))
-                                },
-                                onFeedsListClick = {
-                                    navigator.push(FeedSourceListScreen())
                                 },
                                 onClearOldFeedClick = {
                                     homeViewModel.deleteOldFeedItems()

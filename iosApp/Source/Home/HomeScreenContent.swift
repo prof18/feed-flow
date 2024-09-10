@@ -262,7 +262,7 @@ fileprivate extension FeedFilter {
     )
         .environment(HomeListIndexHolder(fakeHomeViewModel: true))
         .environment(AppState())
-        .environmentObject(BrowserSelector())
+        .environment(BrowserSelector())
 }
 
 #Preview("HomeContentLoaded") {
@@ -293,7 +293,7 @@ fileprivate extension FeedFilter {
     )
         .environment(HomeListIndexHolder(fakeHomeViewModel: true))
         .environment(AppState())
-        .environmentObject(BrowserSelector())
+        .environment(BrowserSelector())
 }
 
 #Preview("HomeContentSettings") {
@@ -324,5 +324,5 @@ fileprivate extension FeedFilter {
     )
         .environment(HomeListIndexHolder(fakeHomeViewModel: true))
         .environment(AppState())
-        .environmentObject(BrowserSelector())
+        .environment(BrowserSelector())
 }

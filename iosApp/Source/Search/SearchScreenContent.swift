@@ -4,8 +4,7 @@ import FeedFlowKit
 
 struct SearchScreenContent: View {
     @Environment(\.openURL) private var openURL
-
-    @EnvironmentObject private var browserSelector: BrowserSelector
+    @Environment(BrowserSelector.self) private var browserSelector
     @Environment(AppState.self) private var appState
 
     @Binding var searchText: String

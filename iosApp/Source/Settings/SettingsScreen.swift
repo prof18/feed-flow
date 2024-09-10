@@ -12,8 +12,7 @@ import FeedFlowKit
 struct SettingsScreen: View {
 
     @Environment(AppState.self) private var appState
-    @EnvironmentObject private var browserSelector: BrowserSelector
-
+    @Environment(BrowserSelector.self) private var browserSelector
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
@@ -99,6 +98,7 @@ struct SettingsScreen: View {
     @ViewBuilder
     private var behaviourSection: some View {
         Section(feedFlowStrings.settingsBehaviourTitle) {
+            @Bindable var browserSelector = browserSelector
             Picker(
                 selection: $browserSelector.selectedBrowser,
                 content: {
@@ -169,5 +169,5 @@ struct SettingsScreen: View {
 
 #Preview {
     SettingsScreen()
-        .environmentObject(BrowserSelector())
+        .environment(BrowserSelector())
 }

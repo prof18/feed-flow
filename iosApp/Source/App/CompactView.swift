@@ -14,9 +14,7 @@ import Reeeed
 struct CompactView: View {
 
     @Environment(AppState.self) private var appState
-
-    @EnvironmentObject private var browserSelector: BrowserSelector
-
+    @Environment(BrowserSelector.self) private var browserSelector
     @Environment(\.openURL) private var openURL
 
     @Binding var selectedDrawerItem: DrawerItem?

@@ -103,7 +103,7 @@
     <string name="settings_help_title">Pomoc</string>
     <string name="account_disconnect_button">Odpojiť</string>
     <string name="account_connect_button">Prepojiť</string>
-    <string name="dropbox_sync_common_description">Prepoj svoj Dropbox účet pre synchronizáciu odberu feedov, kategórií, prečítaných článkov a záložiek medzi zariadeniami. Dáta sa uložia do priečinka špecifického pre aplikáciu. FeedFlow nebude mať prístup k žiadnym tvojim súborom</string>
+    <string name="dropbox_sync_common_description">Prepoj svoj Dropbox účet pre synchronizáciu odberu feedov, kategórií, prečítaných článkov a záložiek medzi svojimi Android, iOS, iPados a stolnými počítačmi. Dáta sa uložia do priečinka špecifického pre aplikáciu. FeedFlow nebude mať prístup k žiadnym tvojim súborom</string>
     <string name="backup_button">Zálohovať</string>
     <string name="dropbox_sync_mobile_description">Kliknutím na tlačidlo Prepojiť budeš presmerovaný do aplikácie alebo na webstránku Dropboxu. Po prepojení účtu sa môžeš vrátiť späť do aplikácie FeedFlow</string>
     <string name="dropbox_sync_desktop_description">Kliknutím na tlačidlo Prepojiť budeš presmerovaný na webstránku Dropboxu. Po prepojení účtu skopíruj autorizačný kód a vlož ho sem do aplikácie</string>
@@ -122,4 +122,5 @@
     <string name="settings_hide_duplicated_title_from_desc">Skryť názov z popisu článku</string>
     <string name="no_icloud_sync_yet">Údaje ešte nie sú synchronizované s iCloud. Klikni na tlačidlo zálohovania pre spustenie synchronizácie</string>
     <string name="icloud_sync_description">Prepoj svoj iCloud účet pre synchronizáciu odberu feedov, kategórií, prečítaných článkov a záložiek medzi tvojimi zariadeniami iOS a iPadOS. Dáta sa uložia do priečinka špecifického pre aplikáciu. FeedFlow nebude mať prístup k žiadnym tvojim súborom</string>
+    <string name="reader_mode_font_size">Veľkosť písma</string>
 </resources>

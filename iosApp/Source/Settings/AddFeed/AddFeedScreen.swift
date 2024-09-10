@@ -18,7 +18,7 @@ struct AddFeedScreen: View {
     @StateObject
     private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(Deps.shared.getAddFeedViewModel())
 
-    @StateObject private var categorySelectorObserver = CategorySelectorObserver()
+    @State private var categorySelectorObserver = CategorySelectorObserver()
 
     @State private var showError = false
     @State private var errorMessage = ""

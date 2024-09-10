@@ -35,15 +35,15 @@ struct SettingsScreen: View {
                     self.isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
                 }
             }
-            .onChange(of: isMarkReadWhenScrollingEnabled) { newValue in
-                vmStoreOwner.instance.updateMarkReadWhenScrolling(value: newValue)
+            .onChange(of: isMarkReadWhenScrollingEnabled) {
+                vmStoreOwner.instance.updateMarkReadWhenScrolling(value: isMarkReadWhenScrollingEnabled)
             }
-            .onChange(of: isShowReadItemEnabled) { newValue in
-                vmStoreOwner.instance.updateShowReadItemsOnTimeline(value: newValue)
-            }.onChange(of: isReaderModeEnabled) { newValue in
-                vmStoreOwner.instance.updateReaderMode(value: newValue)
-            }.onChange(of: isRemoveTitleFromDescriptionEnabled) { newValue in
-                vmStoreOwner.instance.updateRemoveTitleFromDescription(value: newValue)
+            .onChange(of: isShowReadItemEnabled) {
+                vmStoreOwner.instance.updateShowReadItemsOnTimeline(value: isShowReadItemEnabled)
+            }.onChange(of: isReaderModeEnabled) {
+                vmStoreOwner.instance.updateReaderMode(value: isReaderModeEnabled)
+            }.onChange(of: isRemoveTitleFromDescriptionEnabled) {
+                vmStoreOwner.instance.updateRemoveTitleFromDescription(value: isRemoveTitleFromDescriptionEnabled)
             }
     }
 

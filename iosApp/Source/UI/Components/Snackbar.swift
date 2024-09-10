@@ -52,8 +52,7 @@ struct Snackbar: View {
                     }
                 }
         )
-        .onChange(of: self.messageQueue) { _ in
-
+        .onChange(of: self.messageQueue) {
             if let data = self.messageQueue.first {
                 withAnimation {
                     self.snackbarData = data

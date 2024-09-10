@@ -21,8 +21,8 @@ struct SearchScreen: View {
             onReadStatusClick: { (feedItemId, isRead) in
                 vmStoreOwner.instance.onReadStatusClick(feedItemId: feedItemId, read: isRead)
             }
-        ).onChange(of: searchText) { newValue in
-            vmStoreOwner.instance.updateSearchQuery(query: newValue)
+        ).onChange(of: searchText) {
+            vmStoreOwner.instance.updateSearchQuery(query: searchText)
         }
         .task {
             for await state in vmStoreOwner.instance.searchQueryState {

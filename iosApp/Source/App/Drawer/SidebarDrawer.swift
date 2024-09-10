@@ -39,13 +39,7 @@ struct SidebarDrawer: View {
                 visionOsSection
             }
         }
-        .modify {
-            if #available(iOS 17.0, *) {
-                $0.listStyle(.sidebar)
-            } else {
-                $0.listStyle(.insetGrouped)
-            }
-        }
+        .listStyle(.sidebar)
     }
 
     @ViewBuilder

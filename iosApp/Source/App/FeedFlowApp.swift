@@ -54,8 +54,8 @@ struct FeedFlowApp: App {
                         )
                     }
                 })
-                .onChange(of: scenePhase) { newScenePhase in
-                    switch newScenePhase {
+                .onChange(of: scenePhase) {
+                    switch scenePhase {
                     case .active:
                         feedSyncTimer.scheduleTimer()
                     case .background:

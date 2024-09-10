@@ -18,45 +18,25 @@ struct SearchScreenContent: View {
     let onReadStatusClick: (FeedItemId, Bool) -> Void
 
     var body: some View {
-        // TODO: Move to iOS 17 only
-        if #available(iOS 17, *) {
-            makeSearchContent()
-                .searchable(text: $searchText, isPresented: $isPresented, placement: .toolbar)
-        } else {
-            makeSearchContent()
-                .searchable(text: $searchText)
-        }
+        makeSearchContent()
+            .searchable(text: $searchText, isPresented: $isPresented, placement: .toolbar)
     }
 
     @ViewBuilder
     func makeSearchContent() -> some View {
         switch onEnum(of: searchState) {
         case .emptyState:
-            if #available(iOS 17, *) {
-                ContentUnavailableView(
-                    label: {
-                        Label(feedFlowStrings.searchHintTitle, systemImage: "magnifyingglass")
-                    },
-                    description: {
-                        Text(feedFlowStrings.searchHintSubtitle)
-                    }
-                )
-            } else {
-                VStack {
-                    Text(feedFlowStrings.searchHintTitle)
-                        .font(.title)
-
+            ContentUnavailableView(
+                label: {
+                    Label(feedFlowStrings.searchHintTitle, systemImage: "magnifyingglass")
+                },
+                description: {
                     Text(feedFlowStrings.searchHintSubtitle)
-                        .font(.body)
                 }
-            }
+            )
 
         case .noDataFound(let state):
-            if #available(iOS 17, *) {
-                ContentUnavailableView.search(text: state.searchQuery)
-            } else {
-                Text(feedFlowStrings.searchNoData(state.searchQuery))
-            }
+            ContentUnavailableView.search(text: state.searchQuery)
 
         case .dataFound(let state):
             makeSearchFoundContent(state: state)
@@ -80,8 +60,8 @@ struct SearchScreenContent: View {
                     onReadStatusClick(FeedItemId(id: feedItem.id), true)
                 },
                        label: {
-                           FeedItemView(feedItem: feedItem, index: index)
-                       })
+                    FeedItemView(feedItem: feedItem, index: index)
+                })
                 .buttonStyle(.plain)
                 .id(feedItem.id)
                 .contentShape(Rectangle())

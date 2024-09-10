@@ -15,7 +15,7 @@ class FeedSyncTimer {
 
     func scheduleTimer() {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true) { _ in
             Deps.shared.getLogger(tag: "FeedSyncTimer").d(messageString: "Sync scheduled")
             Deps.shared.getFeedSyncRepository().enqueueBackup(forceBackup: false)
         }

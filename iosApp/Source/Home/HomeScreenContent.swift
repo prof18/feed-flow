@@ -49,14 +49,7 @@ struct HomeContent: View {
                 currentFeedFilter: currentFeedFilter,
                 onReloadClick: onRefresh,
                 onAddFeedClick: {
-                    // It's crashing with "Application tried to present modally
-                    // a view controller that is already being presented" on iOS 16
-                    if #unavailable(iOS 17.0) {
-                        // only runs if <iOS 15
-                        self.sheetToShow = .settings
-                    } else {
-                        self.sheetToShow = .noFeedSource
-                    }
+                    self.sheetToShow = .noFeedSource
                 },
                 requestNewPage: requestNewPage,
                 onItemClick: onItemClick,
@@ -64,10 +57,10 @@ struct HomeContent: View {
                 onReadStatusClick: onReadStatusClick,
                 onBackToTimelineClick: onBackToTimelineClick
             )
-            .onChange(of: toggleListScroll) { _ in
+            .onChange(of: toggleListScroll) {
                 proxy.scrollTo(feedState.first?.id)
             }
-            .onChange(of: showSettings) { _ in
+            .onChange(of: showSettings) {
                 sheetToShow = .settings
             }
             .if(appState.sizeClass == .compact) { view in

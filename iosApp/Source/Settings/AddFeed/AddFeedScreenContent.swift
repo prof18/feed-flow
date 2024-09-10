@@ -78,8 +78,8 @@ struct AddFeedScreenContent: View {
         .background(Color.secondaryBackgroundColor)
         .navigationTitle(feedFlowStrings.addFeed)
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: feedURL) { value in
-            updateFeedUrlTextFieldValue(value)
+        .onChange(of: feedURL) {
+            updateFeedUrlTextFieldValue(feedURL)
         }
         .toolbar {
             if showCloseButton {

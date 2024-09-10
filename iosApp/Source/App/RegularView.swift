@@ -162,51 +162,49 @@ struct RegularView: View {
 
     @ViewBuilder
     private var fontSizeMenu: some View {
-        // TODO: Delete after moving to iOS 17
-        if #available(iOS 16.4, *) {
-            Button {
-                showFontSizeMenu.toggle()
-            } label: {
-                Image(systemName: "textformat.size")
-            }
-            .font(.title3)
-            .popover(isPresented: $showFontSizeMenu) {
-                VStack(alignment: .leading) {
-                    Text(feedFlowStrings.readerModeFontSize)
+        Button {
+            showFontSizeMenu.toggle()
+        } label: {
+            Image(systemName: "textformat.size")
+        }
+        .font(.title3)
+        .popover(isPresented: $showFontSizeMenu) {
+            VStack(alignment: .leading) {
+                Text(feedFlowStrings.readerModeFontSize)
 
-                    HStack {
-                        Button {
-                            fontSize -= 1.0
-                            self.reset.toggle()
-                            vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                        } label: {
-                            Image(systemName: "minus")
-                        }
+                HStack {
+                    Button {
+                        fontSize -= 1.0
+                        self.reset.toggle()
+                        vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                    } label: {
+                        Image(systemName: "minus")
+                    }
 
-                        Slider(
-                            value: $fontSize,
-                            in: 12...40,
-                            onEditingChanged: { isEditing in
-                                if !isEditing {
-                                    self.reset.toggle()
-                                    vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                                }
+                    Slider(
+                        value: $fontSize,
+                        in: 12...40,
+                        onEditingChanged: { isEditing in
+                            if !isEditing {
+                                self.reset.toggle()
+                                vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
                             }
-                        )
-
-                        Button {
-                            fontSize += 1.0
-                            self.reset.toggle()
-                            vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                        } label: {
-                            Image(systemName: "plus")
                         }
+                    )
+
+                    Button {
+                        fontSize += 1.0
+                        self.reset.toggle()
+                        vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                    } label: {
+                        Image(systemName: "plus")
                     }
                 }
-                .frame(width: 250, height: 100)
-                .padding(.horizontal, Spacing.regular)
-                .presentationCompactAdaptation((.popover))
             }
+            .frame(width: 250, height: 100)
+            .padding(.horizontal, Spacing.regular)
+            .presentationCompactAdaptation((.popover))
+
         }
     }
 }

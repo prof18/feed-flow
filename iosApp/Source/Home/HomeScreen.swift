@@ -161,8 +161,8 @@ struct HomeScreen: View {
                 self.showFeedSyncButton = state as? Bool ?? false
             }
         }
-        .onChange(of: scenePhase) { newScenePhase in
-            switch newScenePhase {
+        .onChange(of: scenePhase) {
+            switch scenePhase {
             case .background:
                 homeViewModel.enqueueBackup()
             default:

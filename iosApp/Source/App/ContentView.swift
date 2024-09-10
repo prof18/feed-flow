@@ -47,13 +47,13 @@ struct ContentView: View {
                 appState.sizeClass = horizontalSizeClass
             }
         }
-        .onChange(of: self.horizontalSizeClass) { newSizeClass in
-            if !isAppInBackground && newSizeClass != appState.sizeClass {
-                appState.sizeClass = newSizeClass
+        .onChange(of: self.horizontalSizeClass) {
+            if !isAppInBackground && horizontalSizeClass != appState.sizeClass {
+                appState.sizeClass = horizontalSizeClass
             }
         }
-        .onChange(of: scenePhase) { newScenePhase in
-            switch newScenePhase {
+        .onChange(of: scenePhase) {
+            switch scenePhase {
             case.active:
                 isAppInBackground = false
             case .background:

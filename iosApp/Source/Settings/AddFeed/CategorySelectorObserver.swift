@@ -9,8 +9,8 @@
 import SwiftUI
 import FeedFlowKit
 
-class CategorySelectorObserver: ObservableObject {
-    @Published var selectedCategory: CategoriesState.CategoryItem? {
+@Observable class CategorySelectorObserver {
+    var selectedCategory: CategoriesState.CategoryItem? {
         didSet {
             if let selectedCategory = selectedCategory {
                 selectedCategory.onClick(CategoryId(value: selectedCategory.id))

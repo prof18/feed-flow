@@ -21,7 +21,7 @@ struct AddFeedScreenContent: View {
     @Binding var categoryItems: [CategoriesState.CategoryItem]
     @Binding var isAddingFeed: Bool
 
-    @ObservedObject var categorySelectorObserver: CategorySelectorObserver
+    var categorySelectorObserver: CategorySelectorObserver
 
     let showCloseButton: Bool
     let updateFeedUrlTextFieldValue: (String) -> Void
@@ -54,6 +54,7 @@ struct AddFeedScreenContent: View {
             )
 
             Section(feedFlowStrings.addFeedCategoryTitle) {
+                @Bindable var categorySelectorObserver = categorySelectorObserver
                 Picker(
                     selection: $categorySelectorObserver.selectedCategory,
                     label: Text(feedFlowStrings.addFeedCategoriesTitle)

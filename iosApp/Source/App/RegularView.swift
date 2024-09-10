@@ -40,7 +40,7 @@ struct RegularView: View {
     @StateObject private var vmStoreOwner = VMStoreOwner<ReaderModeViewModel>(Deps.shared.getReaderModeViewModel())
 
     @State private var browserToOpen: BrowserToPresent?
-    @StateObject var indexHolder: HomeListIndexHolder
+    @State var indexHolder: HomeListIndexHolder
     var drawerItems: [DrawerItem] = []
     let homeViewModel: HomeViewModel
 
@@ -83,7 +83,7 @@ struct RegularView: View {
                     selectedDrawerItem: $selectedDrawerItem,
                     homeViewModel: homeViewModel
                 )
-                .environmentObject(indexHolder)
+                .environment(indexHolder)
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: CommonViewRoute.self) { route in

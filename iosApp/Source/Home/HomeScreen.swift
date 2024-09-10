@@ -17,14 +17,9 @@ struct HomeScreen: View {
     @EnvironmentObject
     private var browserSelector: BrowserSelector
 
-    @EnvironmentObject
-    private var indexHolder: HomeListIndexHolder
-
-    @Environment(\.scenePhase)
-    private var scenePhase
-
-    @Environment(\.openURL)
-    private var openURL
+    @Environment(HomeListIndexHolder.self) private var indexHolder
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.openURL) private var openURL
 
     @State
     var loadingState: FeedUpdateStatus?

@@ -14,7 +14,7 @@ import Reeeed
 struct FeedListView: View {
     @Environment(\.openURL) private var openURL
 
-    @EnvironmentObject private var indexHolder: HomeListIndexHolder
+    @Environment(HomeListIndexHolder.self) private var indexHolder
     @EnvironmentObject private var browserSelector: BrowserSelector
 
     @EnvironmentObject private var appState: AppState
@@ -198,7 +198,7 @@ struct FeedListView: View {
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {}
-    ).environmentObject(HomeListIndexHolder(fakeHomeViewModel: true))
+    ).environment(HomeListIndexHolder(fakeHomeViewModel: true))
 }
 
 #Preview {

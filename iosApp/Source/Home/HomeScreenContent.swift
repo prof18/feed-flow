@@ -11,7 +11,7 @@ import FeedFlowKit
 
 struct HomeContent: View {
 
-    @EnvironmentObject private var indexHolder: HomeListIndexHolder
+    @Environment(HomeListIndexHolder.self) private var indexHolder
     @EnvironmentObject private var appState: AppState
 
     @Environment(\.dismiss) private var dismiss
@@ -260,7 +260,7 @@ fileprivate extension FeedFilter {
         onBackToTimelineClick: {},
         onFeedSyncClick: {}
     )
-        .environmentObject(HomeListIndexHolder(fakeHomeViewModel: true))
+        .environment(HomeListIndexHolder(fakeHomeViewModel: true))
         .environmentObject(AppState())
         .environmentObject(BrowserSelector())
 }
@@ -291,7 +291,7 @@ fileprivate extension FeedFilter {
         onBackToTimelineClick: {},
         onFeedSyncClick: {}
     )
-        .environmentObject(HomeListIndexHolder(fakeHomeViewModel: true))
+        .environment(HomeListIndexHolder(fakeHomeViewModel: true))
         .environmentObject(AppState())
         .environmentObject(BrowserSelector())
 }
@@ -322,7 +322,7 @@ fileprivate extension FeedFilter {
         onBackToTimelineClick: {},
         onFeedSyncClick: {}
     )
-        .environmentObject(HomeListIndexHolder(fakeHomeViewModel: true))
+        .environment(HomeListIndexHolder(fakeHomeViewModel: true))
         .environmentObject(AppState())
         .environmentObject(BrowserSelector())
 }

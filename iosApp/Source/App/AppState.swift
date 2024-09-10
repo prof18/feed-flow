@@ -10,13 +10,13 @@ import Foundation
 import Collections
 import SwiftUI
 
-class AppState: ObservableObject {
+@Observable class AppState {
 
-    @Published var snackbarQueue: Deque<SnackbarData> = Deque()
-    @Published var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
-    @Published var regularNavigationPath = NavigationPath()
-    @Published var compatNavigationPath = NavigationPath()
-    @Published var sizeClass: UserInterfaceSizeClass?
+    var snackbarQueue: Deque<SnackbarData> = Deque()
+    var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
+    var regularNavigationPath = NavigationPath()
+    var compatNavigationPath = NavigationPath()
+    var sizeClass: UserInterfaceSizeClass?
 
     init() {
         compatNavigationPath.append(CompactViewRoute.feed)

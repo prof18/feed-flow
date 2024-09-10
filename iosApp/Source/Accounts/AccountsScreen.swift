@@ -11,8 +11,6 @@ import SwiftUI
 import FeedFlowKit
 
 struct AccountsScreen: View {
-    @EnvironmentObject private var appState: AppState
-
     @StateObject
     private var vmStoreOwner = VMStoreOwner<AccountsViewModel>(Deps.shared.getAccountsViewModel())
 

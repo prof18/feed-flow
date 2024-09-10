@@ -12,7 +12,7 @@ import FeedFlowKit
 struct AddAccountScreen: View {
 
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
 
     let supportedAccounts: [SyncAccounts]
 

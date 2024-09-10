@@ -11,7 +11,7 @@ import FeedFlowKit
 
 struct SettingsScreen: View {
 
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
     @EnvironmentObject private var browserSelector: BrowserSelector
 
     @Environment(\.dismiss) private var dismiss

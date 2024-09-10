@@ -10,7 +10,7 @@ struct FeedFlowApp: App {
 
     @Environment(\.scenePhase) private var scenePhase: ScenePhase
 
-    @StateObject private var appState: AppState = AppState()
+    @State private var appState: AppState = AppState()
     @StateObject private var browserSelector: BrowserSelector = BrowserSelector()
 
     private var feedSyncTimer: FeedSyncTimer = FeedSyncTimer()
@@ -33,7 +33,7 @@ struct FeedFlowApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(appState)
+                .environment(appState)
                 .environmentObject(browserSelector)
                 .onOpenURL(perform: { url in
                     Deps.shared.getDropboxDataSource().handleOAuthResponse {

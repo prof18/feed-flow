@@ -11,9 +11,6 @@ import FeedFlowKit
 
 struct FeedSourceListScreen: View {
 
-    @EnvironmentObject
-    private var appState: AppState
-
     @StateObject
     private var vmStoreOwner = VMStoreOwner<FeedSourceListViewModel>(Deps.shared.getFeedSourceListViewModel())
 

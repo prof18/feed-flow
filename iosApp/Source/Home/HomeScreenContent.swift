@@ -12,7 +12,7 @@ import FeedFlowKit
 struct HomeContent: View {
 
     @Environment(HomeListIndexHolder.self) private var indexHolder
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -261,7 +261,7 @@ fileprivate extension FeedFilter {
         onFeedSyncClick: {}
     )
         .environment(HomeListIndexHolder(fakeHomeViewModel: true))
-        .environmentObject(AppState())
+        .environment(AppState())
         .environmentObject(BrowserSelector())
 }
 
@@ -292,7 +292,7 @@ fileprivate extension FeedFilter {
         onFeedSyncClick: {}
     )
         .environment(HomeListIndexHolder(fakeHomeViewModel: true))
-        .environmentObject(AppState())
+        .environment(AppState())
         .environmentObject(BrowserSelector())
 }
 
@@ -323,6 +323,6 @@ fileprivate extension FeedFilter {
         onFeedSyncClick: {}
     )
         .environment(HomeListIndexHolder(fakeHomeViewModel: true))
-        .environmentObject(AppState())
+        .environment(AppState())
         .environmentObject(BrowserSelector())
 }

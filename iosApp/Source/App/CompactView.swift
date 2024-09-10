@@ -13,7 +13,7 @@ import Reeeed
 
 struct CompactView: View {
 
-    @EnvironmentObject var appState: AppState
+    @Environment(AppState.self) private var appState
 
     @EnvironmentObject private var browserSelector: BrowserSelector
 
@@ -46,6 +46,7 @@ struct CompactView: View {
     let homeViewModel: HomeViewModel
 
     var body: some View {
+        @Bindable var appState = appState
         NavigationStack(path: $appState.compatNavigationPath) {
             SidebarDrawer(
                 selectedDrawerItem: $selectedDrawerItem,

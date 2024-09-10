@@ -17,7 +17,7 @@ struct FeedListView: View {
     @Environment(HomeListIndexHolder.self) private var indexHolder
     @EnvironmentObject private var browserSelector: BrowserSelector
 
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
 
     @State private var browserToOpen: BrowserToPresent?
 

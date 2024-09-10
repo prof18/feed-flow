@@ -42,7 +42,7 @@ struct CompactView: View {
 
     @State private var browserToOpen: BrowserToPresent?
 
-    @StateObject var indexHolder: HomeListIndexHolder
+    @State var indexHolder: HomeListIndexHolder
     let homeViewModel: HomeViewModel
 
     var body: some View {
@@ -86,7 +86,7 @@ struct CompactView: View {
                         selectedDrawerItem: $selectedDrawerItem,
                         homeViewModel: homeViewModel
                     )
-                    .environmentObject(indexHolder)
+                    .environment(indexHolder)
                 }
             }
             .navigationDestination(for: CommonViewRoute.self) { route in

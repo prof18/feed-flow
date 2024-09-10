@@ -4,11 +4,10 @@ import FeedFlowKit
 struct ContentView: View {
 
     @Environment(AppState.self) private var appState
-    @EnvironmentObject var browserSelector: BrowserSelector
-
     @Environment(\.scenePhase) private var scenePhase: ScenePhase
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
 
+    @State var browserSelector: BrowserSelector = BrowserSelector()
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
 
     @State private var isAppInBackground: Bool = false
@@ -23,14 +22,14 @@ struct ContentView: View {
                     indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
                     homeViewModel: vmStoreOwner.instance
                 )
-                .environmentObject(browserSelector)
+                .environment(browserSelector)
             } else {
                 RegularView(
                     selectedDrawerItem: $selectedDrawerItem,
                     indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
                     homeViewModel: vmStoreOwner.instance
                 )
-                .environmentObject(browserSelector)
+                .environment(browserSelector)
             }
 
             @Bindable var appState = appState

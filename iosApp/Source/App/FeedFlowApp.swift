@@ -11,7 +11,6 @@ struct FeedFlowApp: App {
     @Environment(\.scenePhase) private var scenePhase: ScenePhase
 
     @State private var appState: AppState = AppState()
-    @StateObject private var browserSelector: BrowserSelector = BrowserSelector()
 
     private var feedSyncTimer: FeedSyncTimer = FeedSyncTimer()
 
@@ -34,7 +33,6 @@ struct FeedFlowApp: App {
         WindowGroup {
             ContentView()
                 .environment(appState)
-                .environmentObject(browserSelector)
                 .onOpenURL(perform: { url in
                     Deps.shared.getDropboxDataSource().handleOAuthResponse {
                         DropboxDataSourceIos.handleOAuthResponse(

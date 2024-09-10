@@ -13,10 +13,8 @@ import Reeeed
 
 struct FeedListView: View {
     @Environment(\.openURL) private var openURL
-
     @Environment(HomeListIndexHolder.self) private var indexHolder
-    @EnvironmentObject private var browserSelector: BrowserSelector
-
+    @Environment(BrowserSelector.self) private var browserSelector
     @Environment(AppState.self) private var appState
 
     @State private var browserToOpen: BrowserToPresent?

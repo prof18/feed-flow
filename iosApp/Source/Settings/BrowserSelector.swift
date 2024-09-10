@@ -10,7 +10,7 @@ import Foundation
 import FeedFlowKit
 import UIKit
 
-class BrowserSelector: ObservableObject {
+@Observable class BrowserSelector {
 
     private let supportedBrowsers = [
         Browser(
@@ -53,8 +53,8 @@ class BrowserSelector: ObservableObject {
     private let browserSettingsRepository = Deps.shared.getBrowserSettingsRepository()
     private let settingsRepository = Deps.shared.getSettingsRepository()
 
-    @Published var browsers: [Browser] = []
-    @Published var selectedBrowser: Browser? {
+    var browsers: [Browser] = []
+    var selectedBrowser: Browser? {
         didSet {
             browserSettingsRepository.setFavouriteBrowser(browser: selectedBrowser!)
         }

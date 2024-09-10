@@ -12,10 +12,7 @@ import FeedFlowKit
 struct HomeScreen: View {
 
     @Environment(AppState.self) private var appState
-
-    @EnvironmentObject
-    private var browserSelector: BrowserSelector
-
+    @Environment(BrowserSelector.self) private var browserSelector
     @Environment(HomeListIndexHolder.self) private var indexHolder
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openURL) private var openURL

@@ -6,7 +6,7 @@ struct SearchScreenContent: View {
     @Environment(\.openURL) private var openURL
 
     @EnvironmentObject private var browserSelector: BrowserSelector
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
 
     @Binding var searchText: String
     @Binding var searchState: SearchState

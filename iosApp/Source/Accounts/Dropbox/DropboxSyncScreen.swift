@@ -11,7 +11,7 @@ import SwiftUI
 import FeedFlowKit
 
 struct DropboxSyncScreen: View {
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
 
     @StateObject
     private var vmStoreOwner = VMStoreOwner<DropboxSyncViewModel>(Deps.shared.getDropboxSyncViewModel())

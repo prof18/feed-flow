@@ -12,7 +12,7 @@ import FeedFlowKit
 import Reeeed
 
 struct RegularView: View {
-    @EnvironmentObject var appState: AppState
+    @Environment(AppState.self) private var appState
     @EnvironmentObject private var browserSelector: BrowserSelector
 
     @Environment(\.openURL) private var openURL
@@ -76,6 +76,7 @@ struct RegularView: View {
             )
             .navigationBarTitleDisplayMode(.inline)
         } detail: {
+            @Bindable var appState = appState
             NavigationStack(path: $appState.regularNavigationPath) {
                 HomeScreen(
                     toggleListScroll: $scrollUpTrigger,

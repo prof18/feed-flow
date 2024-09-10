@@ -2,8 +2,6 @@ import SwiftUI
 import FeedFlowKit
 
 struct SearchScreen: View {
-    @EnvironmentObject private var appState: AppState
-
     @StateObject
     private var vmStoreOwner = VMStoreOwner<SearchViewModel>(Deps.shared.getSearchViewModel())
 

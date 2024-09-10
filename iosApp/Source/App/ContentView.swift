@@ -3,7 +3,7 @@ import FeedFlowKit
 
 struct ContentView: View {
 
-    @EnvironmentObject var appState: AppState
+    @Environment(AppState.self) private var appState
     @EnvironmentObject var browserSelector: BrowserSelector
 
     @Environment(\.scenePhase) private var scenePhase: ScenePhase
@@ -23,7 +23,6 @@ struct ContentView: View {
                     indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
                     homeViewModel: vmStoreOwner.instance
                 )
-                .environmentObject(appState)
                 .environmentObject(browserSelector)
             } else {
                 RegularView(
@@ -31,10 +30,10 @@ struct ContentView: View {
                     indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
                     homeViewModel: vmStoreOwner.instance
                 )
-                .environmentObject(appState)
                 .environmentObject(browserSelector)
             }
 
+            @Bindable var appState = appState
             VStack(spacing: 0) {
 
                 Spacer()

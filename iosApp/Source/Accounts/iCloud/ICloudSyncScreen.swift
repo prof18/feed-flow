@@ -11,7 +11,7 @@ import SwiftUI
 import FeedFlowKit
 
 struct ICloudSyncScreen: View {
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
 
     @StateObject
     private var vmStoreOwner = VMStoreOwner<ICloudSyncViewModel>(Deps.shared.getICloudSyncViewModel())

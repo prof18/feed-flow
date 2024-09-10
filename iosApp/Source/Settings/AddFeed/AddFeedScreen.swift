@@ -11,7 +11,7 @@ import FeedFlowKit
 
 struct AddFeedScreen: View {
 
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
 
     @Environment(\.presentationMode) private var presentationMode
 

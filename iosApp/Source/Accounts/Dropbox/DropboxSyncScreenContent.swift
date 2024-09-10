@@ -10,7 +10,7 @@ import SwiftUI
 import FeedFlowKit
 
 struct DropboxSyncScreenContent: View {
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
 
     var connectionState: AccountConnectionUiState
     let onDropboxAuthSuccess: () -> Void

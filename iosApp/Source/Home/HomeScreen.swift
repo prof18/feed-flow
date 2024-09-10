@@ -11,8 +11,7 @@ import FeedFlowKit
 
 struct HomeScreen: View {
 
-    @EnvironmentObject
-    private var appState: AppState
+    @Environment(AppState.self) private var appState
 
     @EnvironmentObject
     private var browserSelector: BrowserSelector

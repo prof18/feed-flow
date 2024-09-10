@@ -14,8 +14,7 @@ import NukeUI
 // swiftlint:disable type_body_length
 struct SidebarDrawer: View {
 
-    @EnvironmentObject var appState: AppState
-
+    @Environment(AppState.self) private var appState
     @Binding var selectedDrawerItem: DrawerItem?
 
     let navDrawerState: NavDrawerState

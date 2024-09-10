@@ -11,7 +11,6 @@ import FeedFlowKit
 
 struct ICloudSyncScreenContent: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var appState: AppState
 
     var connectionState: AccountConnectionUiState
     let onConnectClick: () -> Void

@@ -13,7 +13,7 @@ struct ImportExportScreen: View {
 
     @Environment(\.presentationMode) private var presentationMode
 
-    @EnvironmentObject private var appState: AppState
+    @Environment(AppState.self) private var appState
 
     @StateObject
     private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(Deps.shared.getImportExportViewModel())

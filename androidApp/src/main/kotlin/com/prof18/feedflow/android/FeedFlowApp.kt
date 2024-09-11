@@ -5,15 +5,13 @@ import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
 import com.prof18.feedflow.android.readermode.ReaderModeViewModel
+import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
-import com.prof18.feedflow.shared.utils.enableKmpCrashlytics
 import org.koin.android.ext.android.inject
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.module.dsl.viewModel
@@ -26,19 +24,28 @@ class FeedFlowApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        val isGooglePlayFlavor = when (BuildConfig.FLAVOR) {
+            "googlePlay" -> true
+            else -> false
+        }
         val appEnvironment = if (BuildConfig.DEBUG) {
             AppEnvironment.Debug
         } else {
             AppEnvironment.Release
         }
+        val appConfig = AppConfig(
+            appEnvironment = appEnvironment,
+            isLoggingEnabled = isGooglePlayFlavor,
+            isDropboxSyncEnabled = isGooglePlayFlavor,
+        )
 
-        if (appEnvironment.isRelease()) {
-            Firebase.crashlytics.setCrashlyticsCollectionEnabled(true)
-            enableKmpCrashlytics()
+        if (isGooglePlayFlavor && appEnvironment.isRelease()) {
+            val crashlyticsHelper = CrashlyticsHelper()
+            crashlyticsHelper.initCrashlytics()
         }
 
         initKoin(
-            appEnvironment = appEnvironment,
+            appConfig = appConfig,
             platformSetup = {
                 workManagerFactory()
             },
@@ -59,6 +66,7 @@ class FeedFlowApp : Application() {
                             debug = appEnvironment.isDebug(),
                         )
                     }
+                    single { appConfig }
                     viewModel {
                         ReaderModeViewModel(
                             readerModeExtractor = get(),

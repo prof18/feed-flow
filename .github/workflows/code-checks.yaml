@@ -69,7 +69,7 @@ jobs:
           mv androidApp/src/release/dummy-google-services.json androidApp/src/release/google-services.json   
 
       - name: Build Android Sample
-        run: ./gradlew :androidApp:assembleDebug
+        run: ./gradlew :androidApp:assembleGooglePlayDebug
 
   build-desktop-app:
     name: Build Desktop App

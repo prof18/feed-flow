@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.settings.components.BrowserSelectionDialog
+import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.Browser
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
@@ -69,6 +70,7 @@ fun SettingsScreen(
 
     val browserManager = koinInject<BrowserManager>()
     val settingsViewModel = koinViewModel<SettingsViewModel>()
+    val appConfig = koinInject<AppConfig>()
 
     val browserListState by browserManager.browserListState.collectAsStateWithLifecycle()
     val settingState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
@@ -85,6 +87,7 @@ fun SettingsScreen(
         isShowReadItemEnabled = settingState.isShowReadItemsEnabled,
         isReaderModeEnabled = settingState.isReaderModeEnabled,
         isRemoveTitleFromDescriptionEnabled = settingState.isRemoveTitleFromDescriptionEnabled,
+        showAccounts = appConfig.isDropboxSyncEnabled,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
@@ -124,6 +127,7 @@ private fun SettingsScreenContent(
     isShowReadItemEnabled: Boolean,
     isReaderModeEnabled: Boolean,
     isRemoveTitleFromDescriptionEnabled: Boolean,
+    showAccounts: Boolean,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelected: (Browser) -> Unit,
@@ -181,6 +185,7 @@ private fun SettingsScreenContent(
             setReaderMode = setReaderMode,
             isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
             setRemoveTitleFromDescription = setRemoveTitleFromDescription,
+            showAccounts = showAccounts,
         )
     }
 }
@@ -191,6 +196,7 @@ private fun SettingsList(
     isShowReadItemEnabled: Boolean,
     isReaderModeEnabled: Boolean,
     isRemoveTitleFromDescriptionEnabled: Boolean,
+    showAccounts: Boolean,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelectionClick: () -> Unit,
@@ -242,12 +248,14 @@ private fun SettingsList(
             )
         }
 
-        item {
-            SettingItem(
-                title = LocalFeedFlowStrings.current.settingsAccounts,
-                icon = Icons.Outlined.Sync,
-                onClick = navigateToAccounts,
-            )
+        if (showAccounts) {
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.settingsAccounts,
+                    icon = Icons.Outlined.Sync,
+                    onClick = navigateToAccounts,
+                )
+            }
         }
 
         item {
@@ -508,6 +516,7 @@ private fun SettingsScreenPreview() {
             isShowReadItemEnabled = false,
             isReaderModeEnabled = false,
             isRemoveTitleFromDescriptionEnabled = false,
+            showAccounts = true,
             onFeedListClick = {},
             onAddFeedClick = {},
             onBrowserSelected = {},

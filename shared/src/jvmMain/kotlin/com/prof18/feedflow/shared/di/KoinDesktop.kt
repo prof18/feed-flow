@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.di
 
 import app.cash.sqldelight.db.SqlDriver
+import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.createDatabaseDriver
@@ -26,7 +27,11 @@ fun initKoinDesktop(
     appEnvironment: AppEnvironment,
     modules: List<Module>,
 ): KoinApplication = initKoin(
-    appEnvironment = appEnvironment,
+    appConfig = AppConfig(
+        appEnvironment = appEnvironment,
+        isLoggingEnabled = true,
+        isDropboxSyncEnabled = true,
+    ),
     modules = modules + getDatabaseModule(appEnvironment),
 )
 

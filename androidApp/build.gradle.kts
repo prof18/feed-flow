@@ -1,3 +1,4 @@
+import java.util.Locale
 import java.util.Properties
 
 plugins {
@@ -22,6 +23,7 @@ val dropboxAppKey: String = local.getProperty("dropbox_key").orEmpty()
 if (dropboxAppKey.isEmpty()) {
     println("Dropbox key not set in keystore.properties. Please add it to the file with the key 'dropbox_key'")
 }
+
 android {
     namespace = "com.prof18.feedflow.android"
     compileSdk = libs.versions.android.compile.sdk.get().toInt()
@@ -80,6 +82,18 @@ android {
             buildConfigField("String", "DROPBOX_APP_KEY", "\"$dropboxAppKey\"")
         }
     }
+
+    flavorDimensions += "version"
+    productFlavors {
+        create("fdroid") {
+            dimension = "version"
+        }
+
+        create("googlePlay") {
+            dimension = "version"
+            isDefault = true
+        }
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -104,8 +118,7 @@ dependencies {
 
     implementation(libs.bundles.compose)
     implementation(libs.bundles.about.libraries)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
+
     implementation(libs.material.window.size)
     implementation(libs.androidx.browser)
     implementation(libs.compose.webview)
@@ -119,6 +132,9 @@ dependencies {
     implementation(libs.dropbox.core.android)
     implementation(libs.workmanager)
     implementation(libs.androidx.lifecycle.process)
+
+    "googlePlayImplementation"(platform(libs.firebase.bom))
+    "googlePlayImplementation"(libs.firebase.crashlytics)
 
     debugImplementation(compose.uiTooling)
 
@@ -145,3 +161,9 @@ fun getVersionName(): String =
         .asText.get()
         .trim()
         .replace("-android", "")
+
+android.applicationVariants.configureEach {
+    val name = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+    val googleTask = tasks.findByName("process${name}GoogleServices")
+    googleTask?.enabled = !name.contains("fdroid")
+}

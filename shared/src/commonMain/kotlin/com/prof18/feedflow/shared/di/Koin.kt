@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
+import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
@@ -47,7 +48,7 @@ import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
 fun initKoin(
-    appEnvironment: AppEnvironment,
+    appConfig: AppConfig,
     modules: List<Module>,
     platformSetup: KoinApplication.() -> Unit = {},
 ): KoinApplication {
@@ -56,18 +57,18 @@ fun initKoin(
             modules +
                 coreModule +
                 dropboxModule +
-                getLoggingModule(appEnvironment) +
-                getPlatformModule(appEnvironment) +
-                getFeedSyncModule(appEnvironment),
+                getLoggingModule(appConfig) +
+                getPlatformModule(appConfig.appEnvironment) +
+                getFeedSyncModule(appConfig.appEnvironment),
         )
         platformSetup()
     }
 }
 
-private fun getLoggingModule(appEnvironment: AppEnvironment): Module =
+private fun getLoggingModule(appConfig: AppConfig): Module =
     module {
         val loggers = mutableListOf(platformLogWriter())
-        if (appEnvironment.isRelease()) {
+        if (appConfig.appEnvironment.isRelease() && appConfig.isLoggingEnabled) {
             loggers.add(crashReportingLogWriter())
         }
 

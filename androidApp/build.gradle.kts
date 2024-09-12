@@ -165,5 +165,5 @@ fun getVersionName(): String =
 android.applicationVariants.configureEach {
     val name = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     val googleTask = tasks.findByName("process${name}GoogleServices")
-    googleTask?.enabled = !name.contains("fdroid")
+    googleTask?.enabled = !name.contains("Fdroid")
 }

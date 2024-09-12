@@ -1,0 +1,6 @@
+- Fix some errors with date formatting
+- Fix an error that could happen when adding a new feed
+- Add a setting to hide the title of the feed if it's duplicated in the description
+- Add Chinese translations
+- Bug fixing and performance improvements
+- Add the possibility of changing the font size in reader mode

@@ -1,0 +1,19 @@
+Suivez vos flux RSS favoris avec FeedFlow, un lecteur de flux RSS minimaliste.
+Profitez d'une expérience de lecture sans encombrement car FeedFlow propose une
+liste minimaliste et ouvre les articles sur leurs sites web respectifs.
+
+Personnalisez votre expérience de navigation en choisissant votre navigateur
+préféré. De cette façon, vous pouvez choisir votre navigateur préféré axé sur la
+protection de la vie privée pour séparer votre expérience de lecture de votre
+navigateur principal.
+
+Votre collection RSS existante peut être facilement importée : FeedFlow offre
+des fonctionnalités complètes et faciles d'importation et d'exportation de
+fichiers OPML.
+
+Concentrez-vous sur votre lecture !
+
+L'application est encore en cours de développement, il est donc possible que
+certaines fonctionnalités soient manquantes ou que des problèmes surviennent.
+N'hésitez pas à nous signaler tout dysfonctionnement ou à nous faire part de vos
+suggestions !

@@ -117,3 +117,4 @@ bin/
 /desktopApp/runtime.provisionprofile
 /website/public/
 /.kotlin/
+/play_config.json

@@ -15,7 +15,6 @@ dependencyResolutionManagement {
         mavenLocal()
         google()
         mavenCentral()
-        maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven {
             url = uri("https://jitpack.io")
             content {

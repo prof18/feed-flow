@@ -17,7 +17,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven {
-            url = URI.create("https://jitpack.io")
+            url = uri("https://jitpack.io")
             content {
                 includeModule("com.github.Dansoftowner", "jSystemThemeDetector")
                 // TODO: Delete when/if https://github.com/adrielcafe/lyricist/pull/45

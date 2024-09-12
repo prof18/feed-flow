@@ -103,7 +103,7 @@ kotlin {
 
             dependencies {
                 implementation(libs.crashk.ios)
-                implementation(libs.touchlab.kermit.crashlytics)
+                implementation(libs.touchlab.kermit.crash)
             }
         }
 
@@ -114,7 +114,7 @@ kotlin {
             dependencies {
                 implementation(libs.koin.android)
                 implementation(libs.crashk.ios)
-                implementation(libs.touchlab.kermit.crashlytics)
+                implementation(libs.touchlab.kermit.crash)
                 implementation(libs.workmanager)
                 implementation(libs.koin.workmanager)
             }

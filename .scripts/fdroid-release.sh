@@ -18,5 +18,5 @@ git commit -a -m "Release for fdroid: $VERSION_NAME"
 git tag "$VERSION_NAME-fdroid"
 git push origin "$VERSION_NAME-fdroid"
 git checkout main
-git branch -d "$VERSION_NAME-fdroid"
+git branch -d "release-fdroid-$VERSION_NAME"
 

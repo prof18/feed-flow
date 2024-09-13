@@ -100,11 +100,6 @@ kotlin {
 
         val commonMobileMain by creating {
             dependsOn(commonMain.get())
-
-            dependencies {
-                implementation(libs.crashk.ios)
-                implementation(libs.touchlab.kermit.crash)
-            }
         }
 
         androidMain {
@@ -113,7 +108,6 @@ kotlin {
 
             dependencies {
                 implementation(libs.koin.android)
-                implementation(libs.crashk.ios)
                 implementation(libs.touchlab.kermit.crash)
                 implementation(libs.workmanager)
                 implementation(libs.koin.workmanager)
@@ -135,6 +129,7 @@ kotlin {
 
             dependencies {
                 api(libs.touchlab.kermit.simple)
+                implementation(libs.touchlab.kermit.crash)
                 implementation(libs.ktor.client.darwin)
             }
         }

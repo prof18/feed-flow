@@ -12,6 +12,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
+import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
@@ -32,6 +33,7 @@ fun initKoinDesktop(
         isLoggingEnabled = true,
         isDropboxSyncEnabled = true,
     ),
+    crashReportingLogWriter = SentryLogWriter(),
     modules = modules + getDatabaseModule(appEnvironment),
 )
 

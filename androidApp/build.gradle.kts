@@ -135,6 +135,7 @@ dependencies {
 
     "googlePlayImplementation"(platform(libs.firebase.bom))
     "googlePlayImplementation"(libs.firebase.crashlytics)
+    "googlePlayImplementation"(libs.touchlab.kermit.crash)
 
     debugImplementation(compose.uiTooling)
 

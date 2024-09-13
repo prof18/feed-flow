@@ -1,7 +1,9 @@
 package com.prof18.feedflow.shared.di
 
 import app.cash.sqldelight.db.SqlDriver
+import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Logger
+import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -40,6 +42,7 @@ import org.koin.core.module.Module
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 
+@OptIn(ExperimentalKermitApi::class)
 fun initKoinIos(
     htmlParser: HtmlParser,
     appEnvironment: AppEnvironment,
@@ -52,6 +55,7 @@ fun initKoinIos(
         isLoggingEnabled = true,
         isDropboxSyncEnabled = true,
     ),
+    crashReportingLogWriter = CrashlyticsLogWriter(),
     modules = listOf(
         module {
             factory { htmlParser }

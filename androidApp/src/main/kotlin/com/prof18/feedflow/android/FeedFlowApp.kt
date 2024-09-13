@@ -39,8 +39,8 @@ class FeedFlowApp : Application() {
             isDropboxSyncEnabled = isGooglePlayFlavor,
         )
 
+        val crashlyticsHelper = CrashlyticsHelper()
         if (isGooglePlayFlavor && appEnvironment.isRelease()) {
-            val crashlyticsHelper = CrashlyticsHelper()
             crashlyticsHelper.initCrashlytics()
         }
 
@@ -49,6 +49,7 @@ class FeedFlowApp : Application() {
             platformSetup = {
                 workManagerFactory()
             },
+            crashReportingLogWriter = crashlyticsHelper.crashReportingLogWriter(),
             modules = listOf(
                 module {
                     single<Context> { this@FeedFlowApp }

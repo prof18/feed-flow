@@ -104,7 +104,7 @@ struct HomeContent: View {
 
     @ToolbarContentBuilder
     private func makeToolbarHeaderView(proxy: ScrollViewProxy) -> some ToolbarContent {
-        ToolbarItem(id: UUID().uuidString, placement: .navigationBarLeading, showsByDefault: true) {
+        ToolbarItem(placement: .navigationBarLeading) {
             HStack {
                 if appState.sizeClass == .compact {
                     Button {
@@ -142,7 +142,7 @@ struct HomeContent: View {
 
     @ToolbarContentBuilder
     private func makeFeedSynToolbarView() -> some ToolbarContent {
-        ToolbarItem(id: UUID().uuidString, placement: .navigationBarTrailing) {
+        ToolbarItem(placement: .navigationBarTrailing) {
             Button {
                 self.onFeedSyncClick()
             } label: {
@@ -153,7 +153,7 @@ struct HomeContent: View {
 
     @ToolbarContentBuilder
     private func makeSearchToolbarView() -> some ToolbarContent {
-        ToolbarItem(id: UUID().uuidString, placement: .navigationBarTrailing) {
+        ToolbarItem(placement: .navigationBarTrailing) {
             Button {
                 self.appState.navigate(
                     route: CommonViewRoute.search
@@ -166,7 +166,7 @@ struct HomeContent: View {
 
     @ToolbarContentBuilder
     private func makeMenuToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
-        ToolbarItem(id: UUID().uuidString, placement: .primaryAction, showsByDefault: true) {
+        ToolbarItem(placement: .primaryAction) {
             Menu {
                 Button {
                     onMarkAllReadClick()

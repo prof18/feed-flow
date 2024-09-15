@@ -1,35 +1,36 @@
-# Title
+# 标题
 
 FeedFlow
 
-## Short desc
+## 简介
 
-Minimalistic RSS Reader
+极简 RSS 阅读器
 
-## Long desc
+## 详情
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+使用极简的 RSS 阅读器 FeedFlow，关注您最喜爱的订阅内容。FeedFlow
+提供了简洁的列表视图，支持在原始网站或全文模式下打开文章，为您打造沉浸式阅读体验。
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+通过选用您信赖的隐私浏览器在原始网站上查看文章，以享受独立、私密的阅读体验。同时，FeedFlow 还支持全文模式，以供沉浸式阅读。
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+FeedFlow 支持通过 OPML 文件导入或导出您的订阅，以增强与其他 RSS 阅读器的互操作性。
 
-Just focus on reading (or scrolling)!
+请全情投入阅读（或滑动浏览）！
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+该应用目前仍在开发中，如果您在使用过程中遇到任何错误或有功能改进建议，请随时向我们反馈！
 
-## Screenshot 1
+## 应用截图 1
 
-All your feeds in your pocket
+全面掌控所有订阅源
 
-## Screenshot 3
+## 应用截图 3
 
-Import your existing collection
+导入您收藏的文章
 
-## Screenshot 4
+## 应用截图 4
 
-Open the articles in your favourite browser
+在您信赖的浏览器中打开文章
 
-## Screenshot 5
+## 应用截图 5
 
-Enjoy a clutter-free reader mode
+享受沉浸式阅读体验

@@ -35,7 +35,8 @@ FeedFlow is available for Android, iOS, and macOS.
 </a>
 </div>
 
-Download the latest macOS version from [GitHub Releases](https://github.com/prof18/feed-flow/releases/latest), or use [Homebrew](https://formulae.brew.sh/cask/feedflow).
+You can also download the latest macOS version from [GitHub Releases](https://github.com/prof18/feed-flow/releases/latest),
+or use [Homebrew](https://formulae.brew.sh/cask/feedflow).
 
 ```bash
 brew install --cask feedflow

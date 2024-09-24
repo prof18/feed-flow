@@ -9,4 +9,8 @@ button2text: Apple Store
 button2Link: https://apps.apple.com/us/app/feedflow-rss-reader/id6447210518
 button3text: macOS
 button3Link: https://github.com/prof18/feed-flow/releases/download/1.0.68-desktop/FeedFlow-1.0.68.dmg
+button4text: Homebrew
+button4Link: https://formulae.brew.sh/cask/feedflow
+button5text: F-Droid
+button5Link: https://f-droid.org/packages/com.prof18.feedflow/
 image: images/hero/hero-image.svg

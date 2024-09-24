@@ -69,7 +69,7 @@
     <string name="import_export_description">FeedFlow supporta l\'importazione e l\'esportazione delle tue iscrizioni con un file OPML, per una migliore interoperabilità con gli altri lettori di feed</string>
     <string name="no_feed_modal_title">Aggiungi un nuovo feed</string>
     <string name="import_export_opml_title">Importa ed esporta</string>
-    <string name="no_feed_modal_message">Sembra che tu non sia ancora iscritto ad alcun feed. Puoi aggiungere manualmente un feed, importare le tue iscrizioni da un altro lettore RSS oppure collegare un account per sincronizzare i dati da un altro dispositivo (questa funzionalità è in beta)</string>
+    <string name="no_feed_modal_message">Sembra che tu non sia ancora iscritto ad alcun feed. Puoi aggiungere manualmente un feed, importare le tue iscrizioni da un altro lettore RSS oppure collegare un account per sincronizzare i dati da un altro dispositivo (questa funzionalità è in beta).</string>
     <string name="empty_screen_back_to_timeline">Torna alla timeline</string>
     <string name="bookmarked_articles_empty_screen_message">Non c\'è nulla qui, tempo di aggiungere qualcosa ai preferiti!</string>
     <string name="read_articles_empty_screen_message">Non c\'è nulla qui, tempo di cominciare a leggere!</string>
@@ -103,9 +103,11 @@
     <string name="account_refresh_progress">Aggiornamento in corso</string>
     <string name="settings_title_feed">Feed</string>
     <string name="settings_accounts">Account</string>
-    <string name="accounts_description">Connetti un account per sincronizzare iscrizioni ai feed, categorie, articoli letti e preferiti tra i tuoi dispositivi
+    <string name="accounts_description">Connetti un account per sincronizzare iscrizioni ai feed, categorie, articoli letti e preferiti tra i tuoi dispositivi.
 \n
-\nQuesta funzionalità è in Beta e più servizi verranno supportati in futuro.</string>
+\nQuesta funzionalità è in Beta possono esserci problemi (per esempio, gli articoli letti potrebbero non essere sincronizzati). Più servizi verranno supportati in futuro.
+\n
+\nSolo un account nello stesso momento è supportato.</string>
     <string name="dropbox_sync_success">Il tuo account Dropbox è stato collegato correttamente</string>
     <string name="dropbox_auth_code_hint">Codice di autorizzazione</string>
     <string name="dropbox_sync_common_description">Collega il tuo account Dropbox per sincronizzare le iscrizioni ai feed, le categorie, gli articoli letti e quelli salvati tra i tuoi dispositivi. I dati verranno salvati in una cartella specifica dell\'app; FeedFlow non avrà accesso a nessun altro file</string>
@@ -115,4 +117,7 @@
     <string name="no_dropbox_sync_yet">I dati non sono ancora sincronizzati con Dropbox. Clicca sul pulsante backup per avviare la sincronizzazione</string>
     <string name="feed_sync_in_progress">Aggiornamento in corso. L\'app si chiuderà automaticamente una volta concluso.</string>
     <string name="error_account_sync">Spiacenti, si è verificato un errore durante la sincronizzazione dei dati nel tuo account :(</string>
+    <string name="add_account_button">Aggiungi account</string>
+    <string name="settings_hide_duplicated_title_from_desc">Nascondi titolo dalla descrizione dell\'articolo</string>
+    <string name="reader_mode_font_size">Dimensione testo</string>
 </resources>

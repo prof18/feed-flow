@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -101,6 +102,7 @@ internal data class ReaderModeScreen(
                         modifier = Modifier
                             .padding(Spacing.regular),
                         content = successState.readerModeData.content,
+                        imageTransformer = Coil3ImageTransformerImpl,
                         typography = markdownTypography(
                             h1 = MaterialTheme.typography.displaySmall,
                             h2 = MaterialTheme.typography.titleLarge,

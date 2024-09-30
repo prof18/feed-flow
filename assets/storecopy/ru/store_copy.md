@@ -1,35 +1,46 @@
-# Title
+# Название
 
 FeedFlow
 
-## Short desc
+## Короткое описание
 
-Minimalistic RSS Reader
+Минималистичная RSS-читалка
 
-## Long desc
+## Полное описание
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+Следите за любимыми RSS-каналами в FeedFlow, минималистичным RSS-ридером.
+Наслаждайтесь чтением без лишних деталей, так как FeedFlow предлагает
+минималистичный список и открывает статьи на их соответствующих веб-сайтах или в
+режиме чтения.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+Настройте свой просмотр, выбрав предпочитаемый браузер. Таким образом, вы можете
+выбрать любой браузер с акцентом на конфиденциальность, отделяя чтение от
+основного браузера. А если вы хотите обойтись без браузера, FeedFlow предлагает
+режим чтения, позволяющий наслаждаться содержимым статей без отвлекающих
+факторов.
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+Переход на FeedFlow не составит труда. Ваша существующая RSS-коллекция может
+быть импортирована с помощью наших полных и удобных возможностей импорта и
+экспорта через OPML-файлы, обеспечивая бесперебойное чтение.
 
-Just focus on reading (or scrolling)!
+Сосредоточьтесь на чтении (илипрокрутке)!
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+Приложение все еще в разработке, поэтому некоторые функции могут быть
+отсутствующими или могут возникнуть проблемы. Пожалуйста, сообщайте о любых
+ошибках или предложениях по функционалу!
 
-## Screenshot 1
+## Снимок экрана 1-й
 
-All your feeds in your pocket
+Все ваши каналы в вашем кармане
 
-## Screenshot 3
+## Снимок экрана 3-й
 
-Import your existing collection
+Импортируйте свою существующую коллекцию
 
-## Screenshot 4
+## Снимок экрана 4-й
 
-Open the articles in your favourite browser
+Открывайте статьи в любимом браузере
 
-## Screenshot 5
+## Снимок экрана 5-й
 
-Enjoy a clutter-free reader mode
+Наслаждайтесь режимом чтения без лишних помех

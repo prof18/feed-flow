@@ -30,13 +30,13 @@
     <string name="about_nav_bar">О приложении</string>
     <string name="report_issue_button">Сообщить о проблеме</string>
     <string name="force_feed_refresh">Строгое обновление каналов</string>
-    <string name="invalid_rss_url">Указанная вами ссылка не является действительным RSS-каналом.</string>
+    <string name="invalid_rss_url">Указанная вами ссылка не является действительным RSS-каналом</string>
     <string name="import_export_opml">Импорт и экспорт OPML</string>
     <string name="import_export_opml_title">Импорт и экспорт</string>
     <string name="retry_button">Снова</string>
     <string name="new_release_available_title">Доступна новая версия FeedFlow:</string>
     <string name="new_release_available_link">Скачать сюда</string>
-    <string name="missing_title_and_link">Произошла ошибка при получении заголовка канала.</string>
+    <string name="missing_title_and_link">Произошла ошибка при получении заголовка канала</string>
     <string name="issue_report_title">Сообщить о проблеме в FeedFlow</string>
     <string name="issue_content_title">Проблема в FeedFlow</string>
     <string name="new_category_hint">Новое имя категории</string>
@@ -65,11 +65,11 @@
     <string name="settings_help_title">Помощь</string>
     <string name="account_connect_button">Подключить</string>
     <string name="backup_button">Резервное копирование</string>
-    <string name="dropbox_sync_mobile_description">Нажав кнопку «Подключить», вы будете перенаправлены в приложение или на сайт Dropbox. После подключения аккаунта вы сможете вернуться в FeedFlow.</string>
+    <string name="dropbox_sync_mobile_description">Нажав кнопку «Подключить», вы будете перенаправлены в приложение или на сайт Dropbox. После подключения аккаунта вы сможете вернуться в FeedFlow</string>
     <string name="dropbox_auth_code_hint">Код авторизации</string>
     <string name="dropbox_confirm_button">Подтвердить</string>
-    <string name="dropbox_sync_error">Произошла ошибка при подключении к Dropbox. Пожалуйста, попробуйте еще раз.</string>
-    <string name="dropbox_sync_success">Ваш аккаунт Dropbox успешно подключен.</string>
+    <string name="dropbox_sync_error">Произошла ошибка при подключении к Dropbox. Пожалуйста, попробуйте еще раз</string>
+    <string name="dropbox_sync_success">Ваш аккаунт Dropbox успешно подключен</string>
     <string name="last_upload">Последняя загрузка: %s</string>
     <string name="last_download">Последнее скачивание: %s</string>
     <string name="account_refresh_progress">Идёт обновление</string>
@@ -77,8 +77,8 @@
     <string name="no_dropbox_sync_yet">Данные еще не синхронизированы с Dropbox. Нажмите кнопку резервного копирования, чтобы начать синхронизацию</string>
     <string name="error_account_sync">Извините, что-то пошло не так при синхронизации данных в вашем аккаунте :(</string>
     <string name="add_account_button">Добавить аккаунт</string>
-    <string name="icloud_sync_success">Ваш аккаунт iCloud успешно подключен.</string>
-    <string name="settings_hide_duplicated_title_from_desc">Скрыть заголовок из описания статьи.</string>
+    <string name="icloud_sync_success">Ваш аккаунт iCloud успешно подключен</string>
+    <string name="settings_hide_duplicated_title_from_desc">Скрыть заголовок из описания статьи</string>
     <string name="reader_mode_font_size">Размер шрифта</string>
     <string name="no_feeds_add_one_message">Нет каналов, пожалуйста, добавьте один</string>
     <string name="no_feeds_found_message">Каналы не найдены. Пожалуйста, добавьте новый канал!</string>
@@ -91,8 +91,8 @@
     <string name="open_source_nav_bar">Лицензии с открытым исходным кодом</string>
     <string name="database_error">Во время получения каналов что-то пошло не так. Пожалуйста, повторите попытку или перезапустите приложение :(</string>
     <string name="done_button">ОК</string>
-    <string name="wrong_link_report_title">Следующие каналы не были добавлены, так как они недействительны.</string>
-    <string name="feed_add_in_progress_message">Пожалуйста, подождите, идет проверка доступности каждого канала. Эта операция может занять некоторое время в зависимости от количества импортируемых каналов.</string>
+    <string name="wrong_link_report_title">Следующие каналы не были добавлены, так как они недействительны</string>
+    <string name="feed_add_in_progress_message">Пожалуйста, подождите, идет проверка доступности каждого канала. Эта операция может занять некоторое время в зависимости от количества импортируемых каналов</string>
     <string name="issue_content_template">Пожалуйста, опишите проблему и предоставьте ссылку на RSS-канал, который вызывает её. Если возможно, приложите снимок экрана и OPML-файл</string>
     <string name="no_category_selected_header">Нет категории</string>
     <string name="no_category">Без категории</string>
@@ -100,7 +100,7 @@
     <string name="settings_app_title">Приложение</string>
     <string name="add_feed_category_title">Категория</string>
     <string name="drawer_title_bookmarks">Закладки</string>
-    <string name="import_export_description">FeedFlow поддерживает импорт и экспорт ваших подписок с помощью OPML-файла, что обеспечивает лучшую совместимость с другими читателями каналов.</string>
+    <string name="import_export_description">FeedFlow поддерживает импорт и экспорт ваших подписок с помощью OPML-файла, что обеспечивает лучшую совместимость с другими читателями каналов</string>
     <string name="settings_toggle_show_read_articles">Показать прочитанные статьи на временной шкале</string>
     <string name="drawer_title_read">Читать</string>
     <string name="menu_open_comments">Открыть комментарии</string>
@@ -117,9 +117,10 @@
 \n
 \nПоддерживается только один аккаунт одновременно.</string>
     <string name="account_disconnect_button">Отключить</string>
-    <string name="dropbox_sync_common_description">Подключите свой аккаунт Dropbox для синхронизации подписок на каналы, категорий, прочитанных и добавленных в закладки статей между вашими устройствами на Android, iOS, iPadOS и ПК. Данные будут сохранены в папке, специфичной для приложения; FeedFlow не будет иметь никакого доступа к каким-либо вашим файлам.</string>
-    <string name="dropbox_sync_desktop_description">Нажав кнопку «Подключить», вы будете перенаправлены на сайт Dropbox. После подключения аккаунта скопируйте код авторизации и введите его здесь в приложении.</string>
+    <string name="dropbox_sync_common_description">Подключите свой аккаунт Dropbox для синхронизации подписок на каналы, категорий, прочитанных и добавленных в закладки статей между вашими устройствами на Android, iOS, iPadOS и ПК. Данные будут сохранены в папке, специфичной для приложения; FeedFlow не будет иметь никакого доступа к каким-либо вашим файлам</string>
+    <string name="dropbox_sync_desktop_description">Нажав кнопку «Подключить», вы будете перенаправлены на сайт Dropbox. После подключения аккаунта скопируйте код авторизации и введите его здесь в приложении</string>
     <string name="no_feed_modal_message">Похоже, что у вас пока нет подписок на каналы. Вы можете вручную добавить канал, импортировать свои подписки из другой RSS-читали или подключить аккаунт для синхронизации данных с другого устройства (эта функция находится в бета-версии).</string>
     <string name="no_icloud_sync_yet">Данные еще не синхронизированы с iCloud. Нажмите кнопку резервного копирования, чтобы начать синхронизацию</string>
-    <string name="about_the_app">FeedFlow — это минималистичный RSS-читалка, основанный на личных мнениях автора. Статьи открываются на своих соответствующих веб-сайтах, и вы можете выбрать предпочитаемый браузер, ориентированный на конфиденциальность, чтобы отделить свой опыт чтения от основного браузера. Если вы хотите избежать браузера, FeedFlow предлагает режим чтения, чтобы наслаждаться содержанием статей без отвлекающих факторов. Вы можете импортировать и экспортировать свою RSS-коллекцию из или в OPML-файла.</string>
+    <string name="about_the_app">FeedFlow — это минималистичный RSS-читалка, основанный на личных мнениях автора. Статьи открываются на своих соответствующих веб-сайтах, и вы можете выбрать предпочитаемый браузер, ориентированный на конфиденциальность, чтобы отделить свой опыт чтения от основного браузера. Если вы хотите избежать браузера, FeedFlow предлагает режим чтения, чтобы наслаждаться содержанием статей без отвлекающих факторов.
+\nВы можете импортировать и экспортировать свою RSS-коллекцию из или в OPML-файла.</string>
 </resources>

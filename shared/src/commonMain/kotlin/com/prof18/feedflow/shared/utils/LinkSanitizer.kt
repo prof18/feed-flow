@@ -3,12 +3,12 @@ package com.prof18.feedflow.shared.utils
 internal fun sanitizeUrl(feedUrl: String): String =
     when {
         feedUrl.startsWith("http:") -> {
-            feedUrl.replace("http:", "https:")
+            feedUrl.trim().replace("http:", "https:")
         }
 
         !feedUrl.startsWith("https://") -> {
-            "https://$feedUrl"
+            "https://${feedUrl.trim()}"
         }
 
-        else -> feedUrl
+        else -> feedUrl.trim()
     }

@@ -23,6 +23,8 @@
 		<string>zh_CN</string>
 		<string>pt_BR</string>
 		<string>es</string>
+		<string>ru</string>
+		<string>et</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>

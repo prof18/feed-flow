@@ -9,7 +9,7 @@ class LinkSanitizerTest {
         "https://www.example.com",
         "http://www.example.com",
         "www.example.com",
-        " www.example.com  "
+        " www.example.com  ",
     )
 
     private val correctLink = "https://www.example.com"

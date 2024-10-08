@@ -5,10 +5,11 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.shared.domain.DateFormatter
+import com.prof18.feedflow.shared.utils.sanitizeUrl
 
 internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter, removeTitleFromDesc: Boolean) = FeedItem(
     id = url_hash,
-    url = url,
+    url = sanitizeUrl(url),
     title = title,
     subtitle = subtitle?.let { desc ->
         val title = title
@@ -48,6 +49,6 @@ internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter, removeTitleFro
         null
     },
     isRead = is_read,
-    commentsUrl = comments_url,
+    commentsUrl = comments_url?.let { sanitizeUrl(it) },
     isBookmarked = is_bookmarked,
 )

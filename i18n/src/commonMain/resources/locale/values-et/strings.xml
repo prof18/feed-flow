@@ -3,7 +3,7 @@
     <string name="feed_url">Uudisvoo võrguaadress</string>
     <string name="feed_url_placeholder">https://minulemmikblogi.ee/feed</string>
     <string name="no_feeds_add_one_message">Uudisvoogusid pole, palun lisa mõni</string>
-    <string name="delete_feed">Delete</string>
+    <string name="delete_feed">Kustuta</string>
     <string name="empty_feed_message">Siin pole enam midagi muud lugeda!</string>
     <string name="refresh_feeds">Uuenda uudisvood</string>
     <string name="no_feeds_found_message">Uudisvoogusid ei leidu. Palun lisa mõni!</string>

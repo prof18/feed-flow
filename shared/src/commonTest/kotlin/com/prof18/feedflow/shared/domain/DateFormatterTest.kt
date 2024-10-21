@@ -38,6 +38,11 @@ class DateFormatterTest {
         "Thu, 22 Jun 2023",
         "Thu 02 May 2024 11:37:00 +0200",
         "May 21, 2024",
+        "30 August 2024",
+        "Sat, 19 Oct 24 15:49:00 +0200",
+        "January 1, 2017",
+        "January 03, 2017",
+        "January 10, 2017"
     )
 
     @Test

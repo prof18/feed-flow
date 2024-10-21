@@ -38,7 +38,11 @@ class DateFormatter(
             char(' ')
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char(' ')
-            year()
+            alternativeParsing({
+                yearTwoDigits(1970)
+            }) {
+                year()
+            }
             char(' ')
             hour()
             char(':')
@@ -243,6 +247,29 @@ class DateFormatter(
             char(' ')
             year()
         },
+
+        // 30 August 2024
+        Format {
+            dayOfMonth()
+            char(' ')
+            monthName(MonthNames.ENGLISH_FULL)
+            char(' ')
+            year()
+        },
+
+        // January 1, 2017
+        Format {
+            monthName(MonthNames.ENGLISH_FULL)
+            char(' ')
+            alternativeParsing({
+                dayOfMonth()
+            }) {
+                dayOfMonth(Padding.NONE)
+            }
+            char(',')
+            char(' ')
+            year()
+        }
     )
 
     fun getDateMillisFromString(dateString: String): Long? {

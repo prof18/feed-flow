@@ -269,7 +269,7 @@ class DateFormatter(
             char(',')
             char(' ')
             year()
-        }
+        },
     )
 
     fun getDateMillisFromString(dateString: String): Long? {

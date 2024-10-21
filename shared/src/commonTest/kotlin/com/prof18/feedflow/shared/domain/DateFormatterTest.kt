@@ -42,7 +42,7 @@ class DateFormatterTest {
         "Sat, 19 Oct 24 15:49:00 +0200",
         "January 1, 2017",
         "January 03, 2017",
-        "January 10, 2017"
+        "January 10, 2017",
     )
 
     @Test

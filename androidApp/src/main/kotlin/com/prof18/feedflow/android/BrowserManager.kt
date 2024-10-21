@@ -110,27 +110,32 @@ class BrowserManager(
         url: String,
         context: Context,
     ) {
-        val browserId = getBrowserPackageName()
-        if (browserId == BrowserIds.IN_APP_BROWSER) {
-            val intent = CustomTabsIntent.Builder()
-                .build()
-            intent.launchUrl(context, Uri.parse(url))
-        } else {
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse(url)
-                getBrowserPackageName()?.let { packageName ->
-                    setPackage(packageName)
-                }
-            }
-            try {
+        try {
+            val browserId = getBrowserPackageName()
+            if (browserId == BrowserIds.IN_APP_BROWSER) {
+                val intent = CustomTabsIntent.Builder()
+                    .build()
+                intent.launchUrl(context, Uri.parse(url))
+            } else {
+                val intent = getFavouriteBrowserIntent(url)
                 context.startActivity(intent)
-            } catch (e: ActivityNotFoundException) {
-                logger.e(e) {
-                    "Favourite browser not valid, open with the default one"
-                }
-                openUrlWithDefaultBrowser(url, context)
+            }
+        } catch (e: ActivityNotFoundException) {
+            logger.e(e) {
+                "Favourite browser not valid, open with the default one"
+            }
+            openUrlWithDefaultBrowser(url, context)
+        }
+    }
+
+    private fun getFavouriteBrowserIntent(url: String): Intent {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(url)
+            getBrowserPackageName()?.let { packageName ->
+                setPackage(packageName)
             }
         }
+        return intent
     }
 
     fun openUrlWithDefaultBrowser(

@@ -106,7 +106,7 @@ class FeedSourceListViewModel internal constructor(
         viewModelScope.launch {
             setExpandedCategory()
             feedManagerRepository.updateFeedSourceName(feedSource.id, newName)
-            feedRetrieverRepository.fetchFeeds()
+            feedRetrieverRepository.getFeeds()
         }
     }
 

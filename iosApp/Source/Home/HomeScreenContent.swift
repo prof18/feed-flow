@@ -116,7 +116,7 @@ struct HomeContent: View {
                 }
 
                 HStack {
-                    Text(currentFeedFilter.getNavBarName())
+                    Text(getNavBarName(feedFilter: currentFeedFilter))
                         .font(.title2)
 
                     if !(currentFeedFilter is FeedFilter.Read) &&
@@ -208,27 +208,45 @@ struct HomeContent: View {
             .accessibilityIdentifier(TestingTag.shared.SETTING_BUTTON)
         }
     }
-}
 
-fileprivate extension FeedFilter {
-    func getNavBarName() -> String {
-        switch self {
-        case let category as FeedFilter.Category:
-            return category.feedCategory.title
+        func getNavBarName(feedFilter: FeedFilter) -> String {
+            let deviceType = getDeviceType()
 
-        case let source as FeedFilter.Source:
-            return source.feedSource.title
+            switch feedFilter {
+            case let category as FeedFilter.Category:
+                switch deviceType {
+                case .ipad:
+                    return category.feedCategory.title.truncate(maxChar: 40)
 
-        case is FeedFilter.Read:
-            return feedFlowStrings.drawerTitleRead
+                case .iphonePortrait:
+                    return category.feedCategory.title.truncate(maxChar: 12)
 
-        case is FeedFilter.Bookmarks:
-            return feedFlowStrings.drawerTitleBookmarks
+                case .iphoneLandscape:
+                    return category.feedCategory.title.truncate(maxChar: 40)
+                }
 
-        default:
-            return feedFlowStrings.appName
+            case let source as FeedFilter.Source:
+                switch deviceType {
+                case .ipad:
+                    return source.feedSource.title.truncate(maxChar: 40)
+
+                case .iphonePortrait:
+                    return source.feedSource.title.truncate(maxChar: 12)
+
+                case .iphoneLandscape:
+                    return source.feedSource.title.truncate(maxChar: 40)
+                }
+
+            case is FeedFilter.Read:
+                return feedFlowStrings.drawerTitleRead
+
+            case is FeedFilter.Bookmarks:
+                return feedFlowStrings.drawerTitleBookmarks
+
+            default:
+                return feedFlowStrings.appName
+            }
         }
-    }
 }
 
 #Preview("HomeContentLoading") {

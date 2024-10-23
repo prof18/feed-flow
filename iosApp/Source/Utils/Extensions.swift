@@ -26,3 +26,12 @@ extension View {
         transform(self)
     }
 }
+
+extension String {
+    func truncate(maxChar: Int) -> String {
+        if self.count <= maxChar {
+            return self
+        }
+        return self.prefix(maxChar) + "..."
+    }
+}

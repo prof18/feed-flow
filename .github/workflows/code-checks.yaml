@@ -125,4 +125,4 @@ jobs:
       - name: Build iOS Sample
         run: |
           cd iosApp
-          xcodebuild -configuration Debug -scheme FeedFlow -sdk iphoneos -destination name='iPhone 14 Pro' build
+          xcodebuild -configuration Debug -scheme FeedFlow -sdk iphoneos -destination name='iPhone 16 Pro' build | xcbeautify --renderer github-actions

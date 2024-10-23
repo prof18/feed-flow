@@ -82,7 +82,7 @@ jobs:
             PRODUCT_BUNDLE_IDENTIFIER="${{ secrets.BUNDLE_ID }}" \
             CODE_SIGN_STYLE="Manual" \
             PROVISIONING_PROFILE_SPECIFIER="${{ secrets.DEV_PROVISIONING_PROFILE_NAME }}" \
-            archive
+            archive | xcbeautify --renderer github-actions
 
       - name: "Generate ExportOptions.plist"
         run: |
@@ -122,7 +122,7 @@ jobs:
             -exportOptionsPlist "${RUNNER_TEMP}/Build/ExportOptions.plist" \
             -archivePath "${RUNNER_TEMP}/Build/Archives/FeedFlow.xcarchive" \
             -exportPath "${RUNNER_TEMP}/Build/Archives/FeedFlow.xcarchive" \
-            PRODUCT_BUNDLE_IDENTIFIER="${{ secrets.BUNDLE_ID }}"
+            PRODUCT_BUNDLE_IDENTIFIER="${{ secrets.BUNDLE_ID }}" | xcbeautify --renderer github-actions
           
           echo "ipa_path=${RUNNER_TEMP}/Build/Archives/FeedFlow.xcarchive/FeedFlow.ipa" >> $GITHUB_ENV
 

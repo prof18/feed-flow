@@ -137,6 +137,10 @@ struct HomeContent: View {
                 }
                 .accessibilityIdentifier(TestingTag.shared.HOME_TOOLBAR)
             }
+            // Without this, the toolbar disappear. But with that, there's a weird animation when opening a sheet
+            .if(UIDevice.current.userInterfaceIdiom == .pad) { view in
+                view.id(UUID())
+            }
         }
     }
 
@@ -147,6 +151,10 @@ struct HomeContent: View {
                 self.onFeedSyncClick()
             } label: {
                 Image(systemName: "arrow.uturn.up")
+            }
+            // Without this, the toolbar disappear. But with that, there's a weird animation when opening a sheet
+            .if(UIDevice.current.userInterfaceIdiom == .pad) { view in
+                view.id(UUID())
             }
         }
     }
@@ -160,6 +168,10 @@ struct HomeContent: View {
                 )
             } label: {
                 Image(systemName: "magnifyingglass")
+            }
+            // Without this, the toolbar disappear. But with that, there's a weird animation when opening a sheet
+            .if(UIDevice.current.userInterfaceIdiom == .pad) { view in
+                view.id(UUID())
             }
         }
     }
@@ -206,6 +218,10 @@ struct HomeContent: View {
                 Image(systemName: "ellipsis.circle")
             }
             .accessibilityIdentifier(TestingTag.shared.SETTING_BUTTON)
+            // Without this, the toolbar disappear. But with that, there's a weird animation when opening a sheet
+            .if(UIDevice.current.userInterfaceIdiom == .pad) { view in
+                view.id(UUID())
+            }
         }
     }
 

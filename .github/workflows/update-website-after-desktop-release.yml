@@ -1,6 +1,7 @@
 name: Update Website after Desktop Release
 
 on:
+  workflow_dispatch: {}
   release:
     types: [released]
 

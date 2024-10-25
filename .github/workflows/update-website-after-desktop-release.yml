@@ -28,7 +28,7 @@ jobs:
           new_link="https://github.com/prof18/feed-flow/releases/download/$VERSION-desktop/FeedFlow-$VERSION.dmg"
           awk -v new_link="$new_link" '/^button3Link:/ {print "button3Link: " new_link; next} 1' "$file_path" > tmpfile && mv tmpfile "$file_path"
         env:
-          VERSION: ${{ steps.path_variables.outputs.VERSION }}
+          VERSION: ${{ env.VERSION }}
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2

@@ -8,6 +8,10 @@ jobs:
   update-website:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Create path variables
         id: path_variables
         run: |

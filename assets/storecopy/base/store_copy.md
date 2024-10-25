@@ -1,10 +1,10 @@
 # Title
 
-FeedFlow
+FeedFlow - RSS Reader
 
 ## Short desc
 
-Minimalistic RSS Reader
+Minimal, fast, uncluttered
 
 ## Long desc
 

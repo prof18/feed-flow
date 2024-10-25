@@ -1,1 +1,1 @@
-Minimalistic RSS Reader
+Minimal, fast, uncluttered

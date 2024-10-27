@@ -108,7 +108,6 @@ kotlin {
 
             dependencies {
                 implementation(libs.koin.android)
-                implementation(libs.touchlab.kermit.crash)
                 implementation(libs.workmanager)
                 implementation(libs.koin.workmanager)
             }

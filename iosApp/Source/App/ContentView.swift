@@ -1,64 +1,72 @@
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct ContentView: View {
 
-    @Environment(AppState.self) private var appState
-    @Environment(\.scenePhase) private var scenePhase: ScenePhase
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
+  @Environment(AppState.self) private var appState
+  @Environment(\.scenePhase) private var scenePhase: ScenePhase
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
 
-    @State var browserSelector: BrowserSelector = BrowserSelector()
-    @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
+  @State var browserSelector: BrowserSelector = BrowserSelector()
+  @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(
+    Deps.shared.getHomeViewModel())
 
-    @State private var isAppInBackground: Bool = false
+  @State private var isAppInBackground: Bool = false
 
-    @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline()
+  @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline()
 
-    var body: some View {
-        ZStack {
-            if appState.sizeClass == .compact {
-                CompactView(
-                    selectedDrawerItem: $selectedDrawerItem,
-                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-                    homeViewModel: vmStoreOwner.instance
-                )
-                .environment(browserSelector)
-            } else {
-                RegularView(
-                    selectedDrawerItem: $selectedDrawerItem,
-                    indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-                    homeViewModel: vmStoreOwner.instance
-                )
-                .environment(browserSelector)
-            }
-
-            @Bindable var appState = appState
-            VStack(spacing: 0) {
-
-                Spacer()
-
-                Snackbar(messageQueue: $appState.snackbarQueue)
-            }
+  var body: some View {
+    ZStack {
+      if appState.sizeClass == .compact {
+        CompactView(
+          selectedDrawerItem: $selectedDrawerItem,
+          indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+          homeViewModel: vmStoreOwner.instance
+        )
+        .environment(browserSelector)
+      } else {
+        if #available(iOS 18.0, *) {
+            IpadTabView(
+              selectedDrawerItem: $selectedDrawerItem,
+              indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+              homeViewModel: vmStoreOwner.instance
+            )
+            .environment(browserSelector)      
+        } else {
+          RegularView(
+            selectedDrawerItem: $selectedDrawerItem,
+            indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+            homeViewModel: vmStoreOwner.instance
+          )
+          .environment(browserSelector)
         }
-        .onAppear {
-            if appState.sizeClass == nil {
-                appState.sizeClass = horizontalSizeClass
-            }
-        }
-        .onChange(of: self.horizontalSizeClass) {
-            if !isAppInBackground && horizontalSizeClass != appState.sizeClass {
-                appState.sizeClass = horizontalSizeClass
-            }
-        }
-        .onChange(of: scenePhase) {
-            switch scenePhase {
-            case.active:
-                isAppInBackground = false
-            case .background:
-                isAppInBackground = true
-            default:
-                break
-            }
-        }
+      }
+
+      @Bindable var appState = appState
+      VStack(spacing: 0) {
+        Spacer()
+        Snackbar(messageQueue: $appState.snackbarQueue)
+      }
     }
+    .onAppear {
+      if appState.sizeClass == nil {
+        appState.sizeClass = horizontalSizeClass
+      }
+    }
+    .onChange(of: self.horizontalSizeClass) {
+      if !isAppInBackground && horizontalSizeClass != appState.sizeClass {
+        appState.sizeClass = horizontalSizeClass
+      }
+    }
+    .onChange(of: scenePhase) {
+      switch scenePhase {
+      case .active:
+        isAppInBackground = false
+      case .background:
+        isAppInBackground = true
+      default:
+        break
+      }
+    }
+  }
 }

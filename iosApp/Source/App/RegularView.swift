@@ -77,7 +77,7 @@ struct RegularView: View {
         } detail: {
             @Bindable var appState = appState
             NavigationStack(path: $appState.regularNavigationPath) {
-                HomeScreen(
+                IphoneHomeScreen(
                     toggleListScroll: $scrollUpTrigger,
                     showSettings: $showSettings,
                     selectedDrawerItem: $selectedDrawerItem,

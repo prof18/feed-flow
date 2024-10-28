@@ -79,7 +79,7 @@ struct CompactView: View {
             .navigationDestination(for: CompactViewRoute.self) { route in
                 switch route {
                 case .feed:
-                    HomeScreen(
+                    IphoneHomeScreen(
                         toggleListScroll: $scrollUpTrigger,
                         showSettings: .constant(false),
                         selectedDrawerItem: $selectedDrawerItem,

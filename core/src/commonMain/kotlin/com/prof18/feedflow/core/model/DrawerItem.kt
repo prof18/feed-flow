@@ -18,22 +18,38 @@ data class NavDrawerState(
 }
 
 sealed class DrawerItem {
-    data object Timeline : DrawerItem()
 
-    data object Read : DrawerItem()
+    abstract fun name(): String
 
-    data object Bookmarks : DrawerItem()
+    data object Timeline : DrawerItem() {
+        override fun name(): String = "Timeline"
+    }
+
+    data object Read : DrawerItem() {
+        override fun name(): String = "Read"
+    }
+
+    data object Bookmarks : DrawerItem() {
+        override fun name(): String = "Bookmarks"
+    }
 
     data class DrawerCategory(
         val category: FeedSourceCategory,
-    ) : DrawerItem()
+    ) : DrawerItem() {
+        override fun name(): String = category.title
+    }
 
     data class DrawerFeedSource(
         val feedSource: FeedSource,
     ) : DrawerItem() {
-
         data class FeedSourceCategoryWrapper(
             val feedSourceCategory: FeedSourceCategory?,
         )
+
+        override fun name(): String = feedSource.title
+    }
+
+    data object Search : DrawerItem() {
+        override fun name(): String = "Search"
     }
 }

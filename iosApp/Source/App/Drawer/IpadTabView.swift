@@ -21,22 +21,13 @@ struct IpadTabView: View {
     feedSourcesWithoutCategory: [],
     feedSourcesByCategory: [:]
   )
+
+  // TODO: is this necessary?
   @State var scrollUpTrigger: Bool = false
   @State var showSettings: Bool = false
   @State var showAddFeedSheet = false
-  @State var isToggled: Bool = false
 
-  @State private var showFontSizeMenu: Bool = false
-  @State private var fontSize = 16.0
-  @State private var isSliderMoving = false
-  @State private var reset = false
-
-  @StateObject private var vmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
-    Deps.shared.getReaderModeViewModel())
-
-  @State private var browserToOpen: BrowserToPresent?
   @State var indexHolder: HomeListIndexHolder
-  var drawerItems: [DrawerItem] = []
   let homeViewModel: HomeViewModel
 
   var body: some View {

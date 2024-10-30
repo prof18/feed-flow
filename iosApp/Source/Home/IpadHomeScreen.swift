@@ -55,6 +55,9 @@ struct IpadHomeScreen: View {
           onBackToTimelineClick: {
             homeViewModel.onFeedFilterSelected(selectedFeedFilter: FeedFilter.Timeline())
             selectedDrawerItem = DrawerItem.Timeline()
+          },
+          onCommentsClick: { commentsUrl in
+            // TODO: add here stuff to open
           }
         )
         .onChange(of: toggleListScroll) {
@@ -174,6 +177,7 @@ struct IpadHomeScreen: View {
   @ToolbarContentBuilder
   private var unreadToolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarLeading) {
+      // TODO: double click to scroll to top
       if !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) {
         Text("\(unreadCount)")
           .font(.body)

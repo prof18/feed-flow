@@ -26,12 +26,12 @@ struct ContentView: View {
         .environment(browserSelector)
       } else {
         if #available(iOS 18.0, *) {
-            IpadTabView(
-              selectedDrawerItem: $selectedDrawerItem,
-              indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-              homeViewModel: vmStoreOwner.instance
-            )
-            .environment(browserSelector)      
+          IpadTabView(
+            selectedDrawerItem: $selectedDrawerItem,
+            indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
+            homeViewModel: vmStoreOwner.instance
+          )
+          .environment(browserSelector)
         } else {
           RegularView(
             selectedDrawerItem: $selectedDrawerItem,

@@ -52,7 +52,7 @@
     <string name="menu_remove_from_bookmark">Убрать из закладок</string>
     <string name="menu_mark_as_read">Пометить как прочитанное</string>
     <string name="menu_mark_as_unread">Пометить как непрочитанное</string>
-    <string name="read_articles_empty_screen_message">Здесь ничего нет, пора начинать читать!</string>
+    <string name="read_articles_empty_screen_message">"Здесь ничего нет. \n   Пора начинать чтение!"</string>
     <string name="empty_screen_back_to_timeline">Назад к временной шкале</string>
     <string name="about_menu_contribute_translations">Помощь в переводе</string>
     <string name="close_menu_button">Закрыть меню</string>
@@ -81,7 +81,7 @@
     <string name="settings_hide_duplicated_title_from_desc">Скрыть заголовок из описания статьи</string>
     <string name="reader_mode_font_size">Размер шрифта</string>
     <string name="no_feeds_add_one_message">Нет каналов, пожалуйста, добавьте один</string>
-    <string name="no_feeds_found_message">Каналы не найдены. Пожалуйста, добавьте новый канал!</string>
+    <string name="no_feeds_found_message">Каналы не найдены. \\nПожалуйста, добавьте новый канал!</string>
     <string name="loading_feed_message">Загрузка каналов %s</string>
     <string name="feeds_export_done_message">Экспорт выполнен</string>
     <string name="settings_title">Настройки</string>
@@ -104,7 +104,7 @@
     <string name="settings_toggle_show_read_articles">Показать прочитанные статьи на временной шкале</string>
     <string name="drawer_title_read">Читать</string>
     <string name="menu_open_comments">Открыть комментарии</string>
-    <string name="bookmarked_articles_empty_screen_message">Здесь ничего нет, пора добавить что-нибудь в закладки!</string>
+    <string name="bookmarked_articles_empty_screen_message">Здесь ничего нет. \\nПора добавить что-нибудь в закладки!</string>
     <string name="rename_feed_source_name_button">Переименовать</string>
     <string name="in_app_browser">Встроенный браузер</string>
     <string name="search_no_data">Нет совпадений для %s.</string>

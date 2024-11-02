@@ -157,6 +157,8 @@ struct IpadTabView: View {
                   makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
                 }
                 .customizationID(drawerItem.customizationID)
+                .defaultVisibility(.hidden, for: .tabBar)
+                .hidden(horizontalSizeClass == .compact)
               }
             }
 

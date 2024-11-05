@@ -43,7 +43,7 @@ class DateFormatterTest {
         "January 1, 2017",
         "January 03, 2017",
         "January 10, 2017",
-        "2023-12-15 00:00:00 UTC"
+        "2023-12-15 00:00:00 UTC",
     )
 
     @Test

@@ -157,6 +157,9 @@ class DateFormatter(
             optional {
                 chars("PST")
             }
+            optional {
+                chars("UTC")
+            }
         },
 
         // "2023-12-13 19:34:30  +0800"
@@ -191,6 +194,27 @@ class DateFormatter(
             }
             optional {
                 offset(UtcOffset.Formats.FOUR_DIGITS)
+            }
+            optional {
+                chars(" ")
+            }
+            optional {
+                chars("EST")
+            }
+            optional {
+                chars("EDT")
+            }
+            optional {
+                chars("CDT")
+            }
+            optional {
+                chars("PDT")
+            }
+            optional {
+                chars("PST")
+            }
+            optional {
+                chars("UTC")
             }
         },
 

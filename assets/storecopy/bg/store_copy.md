@@ -1,35 +1,45 @@
-# Title
+# Заглавие
 
 FeedFlow
 
-## Short desc
+## Кратко описание
 
-Minimalistic RSS Reader
+Минималистичен RSS четец
 
-## Long desc
+## Дълго описание
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+Следвайте любимите си RSS емисии с FeedFlow, минималистичен RSS четец. Насладете
+се на безпроблемно четене, тъй като FeedFlow предлага минималистичен списък и
+отваря статиите на съответните им уебсайтове или в режим на четене.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+Персонализирайте вашето сърфиране, като изберете предпочитания от вас браузър.
+По този начин можете да изберете любимия си браузър, фокусиран върху
+поверителността, за да отделите изживяването си при четене от основния браузър.
+И ако искате да избегнете браузъра, FeedFlow предлага режим на четене, за да се
+наслаждавате на съдържанието на статиите без никакви разсейвания.
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+Преминаването към FeedFlow е лесно. Вашата съществуваща RSS колекция може да
+бъде внесена с нашите пълни и лесни възможности за внасяне и изнасяне чрез OPML
+файлове, осигурявайки безпроблемно изживяване при четене.
 
-Just focus on reading (or scrolling)!
+Просто се съсредоточете върху четенето (или превъртането)!
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+Приложението все още е в процес на разработка, така че някои функции може да
+липсват или да има проблеми. Моля, докладвайте за грешки или предложения за
+функции!
 
-## Screenshot 1
+## Екранна снимка 1
 
-All your feeds in your pocket
+Всички ваши емисии в джоба ви
 
-## Screenshot 3
+## Екранна снимка 3
 
-Import your existing collection
+Внесете съществуващата си колекция
 
-## Screenshot 4
+## Екранна снимка 4
 
-Open the articles in your favourite browser
+Отворете статиите в любимия си браузър
 
-## Screenshot 5
+## Екранна снимка 5
 
-Enjoy a clutter-free reader mode
+Насладете се на режим на четене без излишни неща

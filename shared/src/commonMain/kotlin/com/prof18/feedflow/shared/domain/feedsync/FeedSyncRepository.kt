@@ -44,6 +44,7 @@ class FeedSyncRepository internal constructor(
 
     internal suspend fun firstSync() {
         if (feedSyncAccountRepository.isSyncEnabled()) {
+            logger.d { "run first sync" }
             val result = feedSyncWorker.download()
             if (result is SyncResult.Error) {
                 feedSyncWorker.uploadImmediate()

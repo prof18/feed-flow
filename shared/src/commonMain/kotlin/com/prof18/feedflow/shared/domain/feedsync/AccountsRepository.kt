@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.feedsync
 
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.domain.model.CurrentOS
@@ -12,12 +13,18 @@ internal class AccountsRepository(
     private val currentOS: CurrentOS,
     private val dropboxSettings: DropboxSettings,
     private val icloudSettings: ICloudSettings,
+    private val appConfig: AppConfig,
 ) {
     private val currentAccountMutableState = MutableStateFlow(SyncAccounts.LOCAL)
     val currentAccountState = currentAccountMutableState.asStateFlow()
 
     private val desktopAccounts = listOf(
         SyncAccounts.DROPBOX,
+    )
+
+    private val macOSAccounts = listOf(
+        SyncAccounts.DROPBOX,
+        SyncAccounts.ICLOUD,
     )
 
     private val androidAccounts = listOf(
@@ -35,7 +42,9 @@ internal class AccountsRepository(
 
     fun getValidAccounts() =
         when (currentOS) {
-            CurrentOS.Desktop -> desktopAccounts
+            CurrentOS.Desktop.Linux -> desktopAccounts
+            CurrentOS.Desktop.Mac -> if (appConfig.isIcloudSyncEnabled) macOSAccounts else desktopAccounts
+            CurrentOS.Desktop.Windows -> desktopAccounts
             CurrentOS.Android -> androidAccounts
             CurrentOS.Ios -> iosAccounts
         }
@@ -57,7 +66,7 @@ internal class AccountsRepository(
         if (dropboxSettings != null) {
             return SyncAccounts.DROPBOX
         }
-        if (currentOS == CurrentOS.Ios) {
+        if (currentOS == CurrentOS.Ios || currentOS == CurrentOS.Desktop.Mac) {
             val useICloud = icloudSettings.getUseICloud()
             if (useICloud) {
                 return SyncAccounts.ICLOUD

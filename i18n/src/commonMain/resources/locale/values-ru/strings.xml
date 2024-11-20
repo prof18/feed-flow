@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="icloud_sync_description">Подключите свой аккаунт iCloud для синхронизации подписок на ленты, категорий, прочитанных и добавленных в закладки статей между вашими устройствами iOS и iPadOS. Данные будут сохранены в папке, специфичной для приложения; FeedFlow не будет иметь никакого доступа к каким-либо вашим файлам</string>
     <string name="feed_added_message">Канал %s добавлен</string>
     <string name="feed_url">Ссылка на канал</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>

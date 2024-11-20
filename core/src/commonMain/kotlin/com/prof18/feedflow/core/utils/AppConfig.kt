@@ -4,4 +4,5 @@ data class AppConfig(
     val appEnvironment: AppEnvironment,
     val isLoggingEnabled: Boolean,
     val isDropboxSyncEnabled: Boolean,
+    val isIcloudSyncEnabled: Boolean,
 )

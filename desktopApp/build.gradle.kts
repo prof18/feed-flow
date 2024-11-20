@@ -78,11 +78,17 @@ compose {
 
             val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
 
+            val isMacOS = System.getProperty("os.name").lowercase().contains("mac")
+
             nativeDistributions {
                 outputBaseDir.set(layout.buildDirectory.asFile.get().resolve("release"))
 
-                if (isAppStoreRelease) {
-                    appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
+                if (isMacOS) {
+                    if (isAppStoreRelease) {
+                        appResourcesRootDir.set(project.layout.projectDirectory.dir("resources-sandbox"))
+                    } else {
+                        appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
+                    }
                 }
 
                 modules("java.instrument", "java.sql", "jdk.unsupported")
@@ -184,6 +190,18 @@ val macExtraPlistKeys: String
           <string>gl</string>
           <string>vi</string>
         </array>
+        <key>NSUbiquitousContainers</key>
+        <dict>
+            <key>iCloud.com.prof18.feedflow</key>
+            <dict>
+                <key>NSUbiquitousContainerIsDocumentScopePublic</key>
+                <true/>
+                <key>NSUbiquitousContainerName</key>
+                <string>FeedFlow</string>
+                <key>NSUbiquitousContainerSupportedFolderLevels</key>
+                <string>Any</string>
+            </dict>
+        </dict>
     """.trimIndent()
 
 fun getVersionCode(): Int =

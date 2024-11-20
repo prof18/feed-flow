@@ -31,6 +31,7 @@ import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
@@ -59,7 +60,7 @@ fun initKoin(
     return startKoin {
         modules(
             modules +
-                coreModule +
+                getCoreModule(appConfig) +
                 dropboxModule +
                 getLoggingModule(appConfig, crashReportingLogWriter) +
                 getPlatformModule(appConfig.appEnvironment) +
@@ -94,7 +95,7 @@ private fun getLoggingModule(
         }
     }
 
-private val coreModule = module {
+private fun getCoreModule(appConfig: AppConfig) = module {
     single {
         DatabaseHelper(
             sqlDriver = get(),
@@ -266,7 +267,14 @@ private val coreModule = module {
 
     singleOf(::FeedSyncMessageQueue)
 
-    singleOf(::AccountsRepository)
+    single {
+        AccountsRepository(
+            currentOS = get(),
+            dropboxSettings = get(),
+            icloudSettings = get(),
+            appConfig = appConfig,
+        )
+    }
 
     factoryOf(::FeedCategoryUseCase)
 
@@ -281,6 +289,17 @@ private val coreModule = module {
             categoryUseCase = get(),
             feedManagerRepository = get(),
             feedRetrieverRepository = get(),
+        )
+    }
+
+    viewModel {
+        ICloudSyncViewModel(
+            iCloudSettings = get(),
+            dateFormatter = get(),
+            accountsRepository = get(),
+            feedSyncRepository = get(),
+            feedRetrieverRepository = get(),
+            feedSyncMessageQueue = get(),
         )
     }
 }

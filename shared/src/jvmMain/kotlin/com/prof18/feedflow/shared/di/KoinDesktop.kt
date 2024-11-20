@@ -3,7 +3,9 @@ package com.prof18.feedflow.shared.di
 import app.cash.sqldelight.db.SqlDriver
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
@@ -26,12 +28,14 @@ import java.util.prefs.Preferences
 
 fun initKoinDesktop(
     appEnvironment: AppEnvironment,
+    isICloudEnabled: Boolean,
     modules: List<Module>,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
         isLoggingEnabled = true,
         isDropboxSyncEnabled = true,
+        isIcloudSyncEnabled = isICloudEnabled,
     ),
     crashReportingLogWriter = SentryLogWriter(),
     modules = modules + getDatabaseModule(appEnvironment),
@@ -97,8 +101,16 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             settingsRepository = get(),
             dispatcherProvider = get(),
             dropboxSettings = get(),
+            accountsRepository = get(),
+            iCloudSettings = get(),
         )
     }
 
-    factory<CurrentOS> { CurrentOS.Desktop }
+    factory<CurrentOS> {
+        when (getDesktopOS()) {
+            DesktopOS.MAC -> CurrentOS.Desktop.Mac
+            DesktopOS.WINDOWS -> CurrentOS.Desktop.Windows
+            DesktopOS.LINUX -> CurrentOS.Desktop.Linux
+        }
+    }
 }

@@ -114,7 +114,6 @@
     <string name="import_export_description">Für eine bessere Interoperabilität mit anderen Feed-Readern unterstützt FeedFlow das Importieren und Exportieren deiner Abonnements als OPML-Datei</string>
     <string name="read_articles_empty_screen_message">Hier ist noch nichts, Zeit zum lesen!</string>
     <string name="bookmarked_articles_empty_screen_message">Hier ist noch nichts, Zeit Lesezeichen hinzuzufügen!</string>
-    <string name="icloud_sync_description">Verknüpfe dein iCloud-Konto, um deine Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen iOS- und iPadOS-Geräten zu synchronisieren. Die Daten werden in einem App-spezifischen Ordner gespeichert; FeedFlow hat keinen Zugriff auf deine Dateien</string>
     <string name="no_icloud_sync_yet">Deine Daten sind noch nicht mit iCloud synchronisiert. Drücke den Sicherungs-Knopf um die Synchronisierung zu starten</string>
     <string name="account_refresh_progress">Aktualisierung läuft</string>
     <string name="reader_mode_warning">i Der Lesemodus versucht, an den Artikelinhalt abzurufen. Es kann zu Fehlern oder unerwünschten Zeichen kommen.</string>

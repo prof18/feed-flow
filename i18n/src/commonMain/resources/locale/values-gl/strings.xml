@@ -19,7 +19,6 @@
     <string name="no_dropbox_sync_yet">Aínda non se sincronizaron os datos con Dropbox. Preme no botón de copia de apoio para sincronizar</string>
     <string name="mark_all_read_button">Marcar todo como lido</string>
     <string name="error_account_sync">Lamentámolo, houbo un fallo ao sincronizar os datos da túa conta :(</string>
-    <string name="icloud_sync_description">Conecta coa túa conta iCloud para sincronizar as subscricións a canles, categorías, artigos lidos e marcados entre os teus dispositivos iOS e iPadOS. Os datos vanse gardar nun cartafol específico da app; FeedFlow non ten acceso aos teus ficheiros</string>
     <string name="icloud_sync_success">Accedeuse correctamente á túa conta iCloud</string>
     <string name="feed_url">URL da canle</string>
     <string name="feed_url_placeholder">https://dominio.tld/feed</string>

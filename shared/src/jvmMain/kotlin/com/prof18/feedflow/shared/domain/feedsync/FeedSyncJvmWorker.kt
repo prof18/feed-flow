@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.feedsync
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -11,6 +12,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
+import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +33,8 @@ internal class FeedSyncJvmWorker(
     private val settingsRepository: SettingsRepository,
     private val dispatcherProvider: DispatcherProvider,
     private val dropboxSettings: DropboxSettings,
+    private val accountsRepository: AccountsRepository,
+    private val iCloudSettings: ICloudSettings,
 ) : FeedSyncWorker {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -56,21 +60,13 @@ internal class FeedSyncJvmWorker(
     }
 
     private suspend fun performUpload() = withContext(dispatcherProvider.io) {
-        restoreDropboxClient()
-
         try {
             feedSyncer.populateSyncDbIfEmpty()
             feedSyncer.updateFeedItemsToSyncDatabase()
             feedSyncer.closeDB()
 
-            val dropboxUploadParam = DropboxUploadParam(
-                path = "/${getDatabaseNameWithExtension()}",
-                file = databaseFile,
-            )
+            accountSpecificUpload()
 
-            dropboxDataSource.performUpload(dropboxUploadParam)
-            dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
-            logger.d { "Upload to dropbox successfully" }
             settingsRepository.setIsSyncUploadRequired(false)
             emitSuccessMessage()
         } catch (e: Exception) {
@@ -79,27 +75,117 @@ internal class FeedSyncJvmWorker(
         }
     }
 
+    private suspend fun accountSpecificUpload() =
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.DROPBOX -> {
+                restoreDropboxClient()
+
+                val dropboxUploadParam = DropboxUploadParam(
+                    path = "/${getDatabaseNameWithExtension()}",
+                    file = databaseFile,
+                )
+
+                dropboxDataSource.performUpload(dropboxUploadParam)
+                dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+                logger.d { "Upload to dropbox successfully" }
+            }
+
+            SyncAccounts.ICLOUD -> {
+                val result = ICloudNativeBridge().uploadToICloud(appEnvironment.isDebug())
+                when (UploadResult.fromCode(result)) {
+                    UploadResult.SUCCESS -> {
+                        iCloudSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+                        logger.d { "Upload to iCloud successfully" }
+                    }
+
+                    UploadResult.ICLOUD_FOLDER_URL_NULL -> {
+                        logger.e { "iCloud folder URL is null" }
+                    }
+
+                    UploadResult.UPLOAD_ERROR -> {
+                        logger.e { "Error during iCloud upload" }
+                    }
+
+                    UploadResult.UNKNOWN_ERROR -> {
+                        logger.e { "Unknown error during iCloud upload. Check the enum mapping" }
+                    }
+                }
+            }
+
+            SyncAccounts.LOCAL -> {
+                // Do nothing
+            }
+        }
+
     override suspend fun download(): SyncResult = withContext(dispatcherProvider.io) {
         try {
             databaseFile.delete()
         } catch (_: Exception) {
             // do nothing
         }
-        val dropboxDownloadParam = DropboxDownloadParam(
-            path = "/${getDatabaseNameWithExtension()}",
-            outputStream = FileOutputStream(databaseFile),
-        )
-
-        restoreDropboxClient()
 
         return@withContext try {
             feedSyncer.closeDB()
-            dropboxDataSource.performDownload(dropboxDownloadParam)
-            dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
-            SyncResult.Success
+            accountSpecificDownload()
         } catch (e: Exception) {
             logger.e("Download from dropbox failed", e)
             SyncResult.Error
+        }
+    }
+
+    private suspend fun accountSpecificDownload(): SyncResult {
+        return when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.DROPBOX -> {
+                val dropboxDownloadParam = DropboxDownloadParam(
+                    path = "/${getDatabaseNameWithExtension()}",
+                    outputStream = FileOutputStream(databaseFile),
+                )
+
+                restoreDropboxClient()
+                dropboxDataSource.performDownload(dropboxDownloadParam)
+                dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+                SyncResult.Success
+            }
+            SyncAccounts.ICLOUD -> {
+                val result = ICloudNativeBridge().iCloudDownload(appEnvironment.isDebug())
+                when (DownloadResult.fromCode(result)) {
+                    DownloadResult.SUCCESS -> {
+                        iCloudSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+                        logger.d { "Download from iCloud successfully" }
+                        SyncResult.Success
+                    }
+
+                    DownloadResult.URL_NULL -> {
+                        logger.e { "iCloud URL is null" }
+                        SyncResult.Error
+                    }
+
+                    DownloadResult.TEMP_URL_NULL -> {
+                        logger.e { "Temporary URL is null" }
+                        SyncResult.Error
+                    }
+
+                    DownloadResult.DOWNLOAD_ERROR -> {
+                        logger.e { "Error during iCloud download" }
+                        SyncResult.Error
+                    }
+
+                    DownloadResult.DATABASE_REPLACE_ERROR -> {
+                        logger.e { "Error during database replace" }
+                        SyncResult.Error
+                    }
+
+                    DownloadResult.UNKNOWN_ERROR -> {
+                        logger.e { "Unknown error during iCloud download. Check the enum mapping" }
+                        SyncResult.Error
+                    }
+                }
+            }
+            SyncAccounts.LOCAL -> {
+                // Do nothing
+                logger.d { "current sync account local" }
+                SyncResult.Success
+            }
         }
     }
 

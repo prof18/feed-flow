@@ -31,10 +31,14 @@ import cafe.adriel.voyager.transitions.ScaleTransition
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.about.AboutContent
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.FeedFlowMenuBar
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
+import com.prof18.feedflow.desktop.resources.Res
+import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
@@ -51,16 +55,18 @@ import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import com.prof18.feedflow.desktop.resources.Res
-import com.prof18.feedflow.desktop.resources.icon
+import org.jetbrains.skiko.SkikoProperties.libraryPath
 import java.awt.Desktop
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
+import java.io.File
 import java.io.InputStream
+import java.lang.reflect.Field
 import java.net.URI
 import java.util.Properties
 import javax.swing.UIManager
 
+@Suppress("UnsafeDynamicallyLoadedCode")
 fun main() = application {
     val properties = Properties()
     val propsFile = DI::class.java.classLoader?.getResourceAsStream("props.properties")
@@ -92,9 +98,8 @@ fun main() = application {
     }
 
     val isSandboxed = System.getenv("APP_SANDBOX_CONTAINER_ID") != null
+    val resourcesPath = System.getProperty("compose.application.resources.dir")
     if (isSandboxed) {
-        val resourcesPath = System.getProperty("compose.application.resources.dir")
-
         // jna
         System.setProperty("jna.nounpack", "true")
         System.setProperty("jna.boot.library.path", resourcesPath)
@@ -104,8 +109,22 @@ fun main() = application {
         System.setProperty("org.sqlite.lib.name", "libsqlitejdbc.dylib")
     }
 
+    var isIcloudEnabled = false
+    if (getDesktopOS().isMacOs()) {
+        try {
+            val resourcesDir = System.getProperty("compose.application.resources.dir")
+            val libraryPath = resourcesDir + File.separator + System.mapLibraryName("ikloud")
+            System.load(libraryPath)
+            isIcloudEnabled = true
+        } catch (_: UnsatisfiedLinkError) {
+            System.err.println("Failed to load library. Path: $libraryPath")
+            isIcloudEnabled = false
+        }
+    }
+
     DI.initKoin(
         appEnvironment = appEnvironment,
+        isICloudEnabled = isIcloudEnabled,
     )
 
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())

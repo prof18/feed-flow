@@ -14,3 +14,5 @@ fun getDesktopOS(): DesktopOS {
         else -> DesktopOS.LINUX
     }
 }
+
+fun DesktopOS.isMacOs() = this == DesktopOS.MAC

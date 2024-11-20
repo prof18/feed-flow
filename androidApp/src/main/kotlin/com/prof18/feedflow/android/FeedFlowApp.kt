@@ -37,6 +37,7 @@ class FeedFlowApp : Application() {
             appEnvironment = appEnvironment,
             isLoggingEnabled = isGooglePlayFlavor,
             isDropboxSyncEnabled = isGooglePlayFlavor,
+            isIcloudSyncEnabled = false,
         )
 
         val crashlyticsHelper = CrashlyticsHelper()

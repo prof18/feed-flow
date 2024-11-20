@@ -76,7 +76,6 @@
     <string name="accounts_description">Kết nối tài khoản để đồng bộ hóa các nguồn cấp dữ liệu, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị của bạn.\n\nTính năng này đang trong giai đoạn thử nghiệm, có thể xảy ra sự cố (ví dụ: bài viết đã đọc có thể không được đồng bộ hóa hoàn toàn). Trong tương lai sẽ hỗ trợ nhiều dịch vụ hơn.\n\nChỉ hỗ trợ một tài khoản lúc này.</string>
     <string name="dropbox_sync_desktop_description">Nhấn vào nút Kết nối, bạn sẽ được chuyển hướng đến trang web Dropbox. Sau khi kết nối tài khoản, hãy sao chép và nhập mã xác minh vào đây trong ứng dụng</string>
     <string name="feed_sync_in_progress">Đang làm mới. Ứng dụng sẽ tự đóng khi xong.</string>
-    <string name="icloud_sync_description">Kết nối tài khoản iCloud của bạn để đồng bộ hóa các nguồn cấp dữ liệu, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị iOS và iPadOS. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn</string>
     <string name="no_icloud_sync_yet">Dữ liệu chưa được đồng bộ hóa với iCloud. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
     <string name="settings_toggle_show_read_articles">Hiện các bài viết đã đọc trên dòng thời gian</string>
     <string name="about_button">Giới thiệu</string>

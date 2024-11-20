@@ -55,6 +55,7 @@ fun initKoinIos(
         appEnvironment = appEnvironment,
         isLoggingEnabled = true,
         isDropboxSyncEnabled = true,
+        isIcloudSyncEnabled = true,
     ),
     crashReportingLogWriter = CrashlyticsLogWriter(),
     modules = listOf(
@@ -128,17 +129,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     factory<CurrentOS> { CurrentOS.Ios }
-
-    viewModel {
-        ICloudSyncViewModel(
-            iCloudSettings = get(),
-            dateFormatter = get(),
-            accountsRepository = get(),
-            feedSyncMessageQueue = get(),
-            feedSyncRepository = get(),
-            feedRetrieverRepository = get(),
-        )
-    }
 
     viewModel {
         ReaderModeViewModel(

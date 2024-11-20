@@ -118,7 +118,6 @@
     <string name="link_copied_success">成功复制链接！</string>
     <string name="reader_mode_warning">ℹ 全文模式正在解析文章内容。可能出现故障或冗余字符。</string>
     <string name="reader_mode_font_size">字体大小</string>
-    <string name="icloud_sync_description">连接您的 iCloud 账户，以便在 iOS 和 iPadOS 设备之间同步 Feed 订阅、分类、已读和收藏的文章。数据仅保存在应用的特定文件夹内，FeedFlow 不会访问您的其他文件</string>
     <string name="add_account_button">添加账户</string>
     <string name="icloud_sync_success">成功连接您的 iCloud 账户</string>
     <string name="no_icloud_sync_yet">数据未与 iCloud 同步。请点击“备份”按钮开始同步</string>

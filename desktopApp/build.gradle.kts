@@ -52,6 +52,9 @@ kotlin {
                 implementation(libs.multiplatform.markdown.renderer.coil)
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.transition)
+
+                    implementation("net.java.dev.jna:jna:5.14.0")
+                    implementation("net.java.dev.jna:jna-platform:5.14.0")
             }
         }
     }
@@ -65,6 +68,8 @@ compose {
             // Enable only to test translations
 //            jvmArgs.add("-Duser.language=zh")
 //            jvmArgs.add("-Duser.country=CN")
+
+            jvmArgs("-Djava.library.path=${project.layout.projectDirectory.dir("icloud")}")
 
             buildTypes.release.proguard {
                 configurationFiles.from(project.file("compose-desktop.pro"))

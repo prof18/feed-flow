@@ -35,6 +35,7 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.desktop.about.AboutContent
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.FeedFlowMenuBar
+import com.prof18.feedflow.desktop.icloud.NativeBridge
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.desktop.utils.initSentry
@@ -54,6 +55,7 @@ import kotlinx.coroutines.launch
 import java.awt.Desktop
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
+import java.io.File
 import java.io.InputStream
 import java.net.URI
 import java.util.Properties
@@ -103,6 +105,8 @@ fun main() = application {
         System.setProperty("org.sqlite.lib.name", "libsqlitejdbc.dylib")
     }
 
+    System.loadLibrary("icloud_helper")
+
     DI.initKoin(
         appEnvironment = appEnvironment,
     )
@@ -122,6 +126,18 @@ fun main() = application {
 
     val scope = rememberCoroutineScope()
     var showBackupLoader by remember { mutableStateOf(false) }
+
+    val containerIdentifier = "iCloud.com.prof18.feedflow"
+    val databaseName = "FeedFlowFeedSyncDB-debug"
+
+//    val icloudFolderURL = NativeBridge().getICloudFolderURL(containerIdentifier, databaseName)
+    val icloudFolderURL = NativeBridge().getICloudDirectory()
+
+    if (icloudFolderURL != null) {
+        println("iCloud Folder URL: $icloudFolderURL")
+    } else {
+        println("iCloud is not available.")
+    }
 
     FeedFlowTheme {
         val lyricist = rememberFeedFlowStrings()

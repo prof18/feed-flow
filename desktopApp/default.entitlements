@@ -8,5 +8,17 @@
     <true/>
     <key>com.apple.security.cs.disable-library-validation</key>
     <true/>
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array>
+		<string>iCloud.com.prof18.feedflow</string>
+	</array>
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudDocuments</string>
+	</array>
+	<key>com.apple.developer.ubiquity-container-identifiers</key>
+	<array>
+		<string>iCloud.com.prof18.feedflow</string>
+	</array>
 </dict>
 </plist>

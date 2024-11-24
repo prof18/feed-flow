@@ -112,6 +112,7 @@ bin/
 /iosApp/GoogleService-Info.plist
 /iosApp/GoogleService-Info-dev.plist
 /iosApp/Assets/Config.xcconfig
+/iosApp/Assets/FeedFlow.xcconfig
 /desktopApp/src/jvmMain/resources/props.properties
 /desktopApp/embedded.provisionprofile
 /desktopApp/runtime.provisionprofile

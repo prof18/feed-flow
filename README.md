@@ -42,6 +42,67 @@ or use [Homebrew](https://formulae.brew.sh/cask/feedflow).
 brew install --cask feedflow
 ```
 
+## Building the project 🛠️
+
+To build the project, some setup is required:
+
+### Android
+
+The `google-services.json` is required to build the project. You can generate a fake one with this command:
+
+```bash
+cp config/dummy-google-services.json androidApp/src/debug/google-services.json
+cp config/dummy-google-services.json androidApp/src/release/google-services.json
+```
+
+or use the `fdroid` variant. 
+
+The dropbox sync won't work because the Dropbox API key is not included in the repository. 
+You can generate your own key and add it in the `keystore.properties` file.
+
+```properties
+dropbox_key=your_key
+```
+
+### iOS
+
+Create a copy of the `FeedFlow.xcconfig` file with the following command:
+
+```bash
+cp iosApp/Assets/FeedFlow.xcconfig.template iosApp/Assets/FeedFlow.xcconfig
+```
+
+Fill in the `DEVELOPMENT_TEAM` and `BUNDLE_ID_PREFIX` values. The first is your Apple Team ID. The latter is your domain in reverse notation or what you use as the prefix for your projects.
+
+The `GoogleService-Info.plist` (for release and dev variants) is required to build the project. You can generate a fake one with this command:
+
+```bash
+cp config/dummy-google-service.plist iosApp/GoogleService-Info-dev.plist
+cp config/dummy-google-service.plist iosApp/GoogleService-Info.plist
+```
+
+The dropbox sync won't work because the Dropbox API key is not included in the repository.
+You can generate your own key and add it on the `Config.xcconfig` file. You can generate the file with the following command:
+
+```bash
+cp iosApp/Assets/Config.xcconfig.template iosApp/Assets/Config.xcconfig
+```
+
+### Desktop (macOS)
+
+To run the desktop version, run the following Gradle task:
+
+```bash
+./gradlew desktopApp:run
+```
+
+The dropbox sync won't work because the Dropbox API key is not included in the repository.
+You can generate your own key and add it in the `desktopApp/src/jvmMain/resources/props.properties` file.
+
+```properties
+dropbox_key=your-key
+```
+
 ## Translating 🌍
 
 If you want to help translate FeedFlow, I will be more than happy.

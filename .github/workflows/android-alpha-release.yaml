@@ -36,8 +36,7 @@ jobs:
 
       - name: Create Debug dummy Firebase json
         run: |
-          cp config/dummy-google-services.json androidApp/src/debug/
-          mv androidApp/src/debug/dummy-google-services.json androidApp/src/debug/google-services.json
+          cp config/dummy-google-services.json androidApp/src/debug/google-services.json
 
       - name: Create Firebase json
         run: |

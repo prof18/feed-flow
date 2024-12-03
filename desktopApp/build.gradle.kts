@@ -52,9 +52,6 @@ kotlin {
                 implementation(libs.multiplatform.markdown.renderer.coil)
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.transition)
-
-                    implementation("net.java.dev.jna:jna:5.14.0")
-                    implementation("net.java.dev.jna:jna-platform:5.14.0")
             }
         }
     }
@@ -75,7 +72,9 @@ compose {
                 configurationFiles.from(project.file("compose-desktop.pro"))
             }
 
-            val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
+//            val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
+            // TODO: revert
+            val isAppStoreRelease = false
 
             nativeDistributions {
                 outputBaseDir.set(layout.buildDirectory.asFile.get().resolve("release"))
@@ -155,6 +154,18 @@ val macExtraPlistKeys: String
           <string>ru</string>
           <string>et</string>
         </array>
+        <key>NSUbiquitousContainers</key>
+        <dict>
+            <key>iCloud.com.prof18.feedflow</key>
+            <dict>
+                <key>NSUbiquitousContainerIsDocumentScopePublic</key>
+                <true/>
+                <key>NSUbiquitousContainerName</key>
+                <string>FeedFlow</string>
+                <key>NSUbiquitousContainerSupportedFolderLevels</key>
+                <string>Any</string>
+            </dict>
+        </dict>
     """.trimIndent()
 
 @Suppress("UnstableApiUsage")

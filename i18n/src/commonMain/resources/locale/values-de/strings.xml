@@ -51,8 +51,7 @@
     <string name="import_feed_button">Feed aus OPML importieren</string>
     <string name="app_name">FeedFlow</string>
     <string name="feeds_title">Feeds</string>
-    <string name="about_the_app">FeedFlow ist ein minimalistischer RSS-Reader, der auf den persönlichen Vorstellungen des Autors basiert. Die Artikel werden auf den jeweiligen Websites geöffnet und du kannst deinen Lieblingsbrowser mit Fokus auf Privatsphäre wählen, um dein Leseerlebnis von deinem Hauptbrowser getrennt zu halten.
-\nDie RSS-Sammlung kann aus OPML-Dateien importiert und exportiert werden.</string>
+    <string name="about_the_app">FeedFlow ist ein minimalistischer RSS-Reader, der auf den persönlichen Vorstellungen des Autors basiert. Die Artikel werden auf den jeweiligen Websites geöffnet und du kannst deinen Lieblingsbrowser mit Fokus auf Privatsphäre wählen, um dein Leseerlebnis von deinem Hauptbrowser getrennt zu halten.\nDie RSS-Sammlung kann aus OPML-Dateien importiert und exportiert werden.</string>
     <string name="load_file_error_message">Laden der Datei fehlgeschlagen</string>
     <string name="add_feed">Feed hinzufügen</string>
     <string name="in_app_browser">In-App-Browser</string>
@@ -92,11 +91,31 @@
     <string name="dropbox_auth_code_hint">Berechtigungscode</string>
     <string name="dropbox_confirm_button">Bestätigen</string>
     <string name="dropbox_sync_success">Ihr Dropbox-Konto ist erfolgreich verbunden</string>
-    <string name="toggle_mark_read_when_scrolling">Beim Scrolling als gelesen markieren</string>
+    <string name="toggle_mark_read_when_scrolling">Beim Scrollen als gelesen markieren</string>
     <string name="no_feed_modal_title">Neuen Feed hinzufügen</string>
     <string name="account_connect_button">Verbinden</string>
-    <string name="account_disconnect_button">Unterbrechen</string>
+    <string name="account_disconnect_button">Verknüpfung aufheben</string>
     <string name="add_account_button">Konto hinzufügen</string>
     <string name="icloud_sync_success">Ihr iCloud-Konto ist erfolgreich verbunden</string>
     <string name="settings_hide_duplicated_title_from_desc">Titel aus der Artikelbeschreibung ausblenden</string>
+    <string name="loading_feed_message">Lade Feeds %s</string>
+    <string name="no_feed_modal_message">Wie es aussieht hast du noch keine Feeds abonniert. Du kannst manuell Feeds hinzufügen, deine Abonnements aus einem anderen RSS-Reader importieren, oder ein Konto verknüpfen um die Daten von einem Anderen Gerät zu synchronisieren (Diese Funktionalität ist noch in der Betaphase).</string>
+    <string name="search_hint_title">Fang an zu schreiben…</string>
+    <string name="accounts_description">Verknüpfe ein Konto, um Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen Geräten zu synchronisieren.\n\nDiese Funktionalität befindet sich noch in der Betaphase, es können Fehler auftreten (z.B. werden gelesene Artikel unter Umständen nicht vollständig synchronisiert). Mehr Anbieter werden in Zukunft unterstützt.\n\nEs ist nur die Anmeldung mit einem Konto unterstützt.</string>
+    <string name="dropbox_sync_common_description">Verknüpfe dein Dropbox-Konto, um deine Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen Android-, iOS-, iPadOS- und Desktop-Geräten zu synchronisieren. Die Daten werden in einem App-spezifischen Ordner gespeichert; FeedFlow hat keinen Zugriff auf deine Dateien</string>
+    <string name="dropbox_sync_mobile_description">Beim drücken von \"Verknüpfen\" wirst du auf die Dropbox-App oder -Website weitergeleitet. Nachdem du dein Konto verknüpft hast, kannst du wieder zu FeedFlow zurückkehren</string>
+    <string name="dropbox_sync_desktop_description">Beim drücken von \"Verknüpfen\" wirst du auf die Dropbox-Website weitergeleitet. Nachdem du dein Konto verknüpft hast, kopiere bitte den Autorisierungs-Code und füge ihn in der App ein</string>
+    <string name="dropbox_sync_error">Beim Verbinden mit Dropbox ist ein Fehler aufgetreten. Versuche es bitte erneut</string>
+    <string name="feed_sync_in_progress">Die Synchronisierung läuft gerade. Nach Abschluss der Synchronisierung wird sich die App automatisch schließen.</string>
+    <string name="last_upload">Letzter Upload: %s</string>
+    <string name="last_download">Letzter Download: %s</string>
+    <string name="no_dropbox_sync_yet">Deine Daten sind noch nicht mit Dropbox synchronisiert. Drücke den Sicherungs-Knopf um die Synchronisierung zu starten</string>
+    <string name="error_account_sync">Beim Synchronisieren der Daten mit deinem Konto ist leider ein Fehler aufgetreten :(</string>
+    <string name="import_export_description">Für eine bessere Interoperabilität mit anderen Feed-Readern unterstützt FeedFlow das Importieren und Exportieren deiner Abonnements als OPML-Datei</string>
+    <string name="read_articles_empty_screen_message">Hier ist noch nichts, Zeit zum lesen!</string>
+    <string name="bookmarked_articles_empty_screen_message">Hier ist noch nichts, Zeit Lesezeichen hinzuzufügen!</string>
+    <string name="icloud_sync_description">Verknüpfe dein iCloud-Konto, um deine Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen iOS- und iPadOS-Geräten zu synchronisieren. Die Daten werden in einem App-spezifischen Ordner gespeichert; FeedFlow hat keinen Zugriff auf deine Dateien</string>
+    <string name="no_icloud_sync_yet">Deine Daten sind noch nicht mit iCloud synchronisiert. Drücke den Sicherungs-Knopf um die Synchronisierung zu starten</string>
+    <string name="account_refresh_progress">Aktualisierung läuft</string>
+    <string name="reader_mode_warning">i Der Lesemodus versucht, an den Artikelinhalt abzurufen. Es kann zu Fehlern oder unerwünschten Zeichen kommen.</string>
 </resources>

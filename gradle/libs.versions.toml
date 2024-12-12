@@ -56,7 +56,7 @@ voyager = "1.0.0"
 ktor = "2.3.12"
 dropbox-core = "7.0.0"
 workmanager = "2.9.1"
-lifecycleProcess = "2.8.6"
+lifecycleProcess = "2.8.7"
 android-material3 = "1.3.0"
 skie = "0.9.3"
 

@@ -1,35 +1,45 @@
-# Title
+# Tên
 
 FeedFlow
 
-## Short desc
+## Mô tả ngắn
 
-Minimalistic RSS Reader
+Trình đọc RSS tối giản
 
-## Long desc
+## Mô tả dài
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+Theo dõi các nguồn cấp RSS yêu thích của bạn với FeedFlow, một trình đọc RSS tối
+giản. Tận hưởng trải nghiệm đọc không lộn xộn, vì FeedFlow cung cấp danh sách
+tối giản và mở các bài viết trên các trang web tương ứng hoặc ở chế độ trình
+đọc.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+Tùy chỉnh trải nghiệm duyệt web của bạn bằng cách chọn trình duyệt ưa thích.
+Theo cách này, bạn có thể chọn trình duyệt tập trung vào quyền riêng tư yêu
+thích của mình để tách trải nghiệm đọc của bạn khỏi trình duyệt chính. Và nếu
+bạn muốn tránh trình duyệt, FeedFlow cung cấp chế độ đọc để thưởng thức nội dung
+của các bài viết mà không bị phân tâm.
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+Chuyển sang FeedFlow thật dễ dàng. Bộ sưu tập RSS hiện tại của bạn có thể được
+nhập bằng khả năng nhập/xuất đầy đủ và dễ dàng của chúng tôi thông qua các tệp
+OPML, đảm bảo trải nghiệm đọc liền mạch.
 
-Just focus on reading (or scrolling)!
+Chỉ cần tập trung vào việc đọc (hoặc lướt)!
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+Ứng dụng vẫn đang trong quá trình phát triển, vì vậy một số tính năng có thể bị
+thiếu hoặc có thể có vấn đề. Vui lòng báo lỗi hoặc đề xuất tính năng!
 
-## Screenshot 1
+## Minh họa 1
 
-All your feeds in your pocket
+Tất cả nguồn cấp dữ liệu trong túi của bạn
 
-## Screenshot 3
+## Minh họa 3
 
-Import your existing collection
+Nhập bộ sưu tập hiện có của bạn
 
-## Screenshot 4
+## Minh họa 4
 
-Open the articles in your favourite browser
+Mở bài viết trong trình duyệt yêu thích của bạn
 
-## Screenshot 5
+## Minh họa 5
 
-Enjoy a clutter-free reader mode
+Tận hưởng chế độ đọc không lộn xộn

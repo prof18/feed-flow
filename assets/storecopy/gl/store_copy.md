@@ -1,35 +1,44 @@
-# Title
+# Título
 
 FeedFlow
 
-## Short desc
+## Descr. curta
 
-Minimalistic RSS Reader
+Lector RSS minimalista
 
-## Long desc
+## Descr. longa
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+Sigue as túas canles RSS favoritas con FeedFlow, un Lector RSS minimalista.
+Desfruta dunha experiencia de lectura sen distraccións, FeedFlow mostra unha
+lista e abre os artigos nos seus propios sitios web ou no modo lectura.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+Personaliza a experiencia de lectura elixindo o teu navegador preferido. Deste
+xeito podes seleccionar un navegador con máis controis de privacidade para
+separar as túas lecturas do navegador habitual. Incluso podes evitar o
+navegador, FeedFlow ofréceche un modo lectura para desfrutar do contido dos
+artigos sen distraccións.
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+Migrar os teus datos a FeedFlow é moi doado. Podes importar as túas canles RSS
+grazas ao sistema de importación usando ficheiros OPML, garantizando unha
+experiencia de lectura sen chanzos.
 
-Just focus on reading (or scrolling)!
+Podes centrarte en ler (ou só mirar por enriba)!
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+A app está en desenvolvemento, algunhas características aínda poderían non
+funcionar ben. Informa das incidencias ou suxire novas características!
 
-## Screenshot 1
+## Captura de pantalla 1
 
-All your feeds in your pocket
+As túas canles no peto
 
-## Screenshot 3
+## Captura de pantalla 3
 
-Import your existing collection
+Importa a túa colección de canles
 
-## Screenshot 4
+## Captura de pantalla 4
 
-Open the articles in your favourite browser
+Abre os artigos no navegador favorito
 
-## Screenshot 5
+## Captura de pantalla 5
 
-Enjoy a clutter-free reader mode
+Desfruta do modo lectura sen distraccións

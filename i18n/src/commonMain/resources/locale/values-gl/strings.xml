@@ -79,7 +79,7 @@
     <string name="no_feeds_found_message">Non hai canles. Engade unha nova canle!</string>
     <string name="settings_button">Axustes</string>
     <string name="load_file_error_message">Non se puido cargar o ficheiro</string>
-    <string name="about_the_app">FeedFlow é un Lector RSS minimalista baseado no gusto persoal do autor. Os artigos ábrense nos seus propios sitios web, e podes elexir o teu navegador preferido con controis de privacidade para manter separada a experiencia de lectura do navegador principal. Se queres evitar o navegador FeedFlow ofrece un modo lectura para desfrutar sen distracións do contido dos artigos.\nPodes importar e exportar as túas canles RSS desde, e a, un ficheiro OPML.</string>
+    <string name="about_the_app">FeedFlow é un Lector RSS minimalista baseado no gusto persoal do autor. Os artigos ábrense nos seus propios sitios web, e podes elexir o teu navegador preferido con controis de privacidade para manter separada a experiencia de lectura do navegador principal. Se queres evitar o navegador FeedFlow ofrece un modo lectura para desfrutar sen distraccións do contido dos artigos.\nPodes importar e exportar as túas canles RSS desde, e a, un ficheiro OPML.</string>
     <string name="report_issue_button">Informar de incidencia</string>
     <string name="issue_content_title">Incidencia con FeedFlow</string>
     <string name="open_source_nav_bar">Licenzas de código aberto</string>

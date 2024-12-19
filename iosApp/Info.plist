@@ -25,6 +25,9 @@
 		<string>es</string>
 		<string>ru</string>
 		<string>et</string>
+		<string>gl</string>
+		<string>bg</string>
+		<string>vi</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>

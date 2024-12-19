@@ -2,9 +2,10 @@ package com.prof18.feedflow.android.settings.components
 
 import FeedFlowTheme
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -28,12 +29,12 @@ internal fun BrowserSelectionDialog(
     dismissDialog: () -> Unit,
 ) {
     Dialog(onDismissRequest = dismissDialog) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.background),
         ) {
-            browserList.forEach { browser ->
+            items(browserList) { browser ->
                 Row(
                     Modifier
                         .fillMaxWidth()

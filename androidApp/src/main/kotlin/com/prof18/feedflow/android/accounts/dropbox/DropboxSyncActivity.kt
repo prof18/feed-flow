@@ -4,7 +4,7 @@ import FeedFlowTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -14,15 +14,12 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.core.model.DropboxSynMessages
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
@@ -43,19 +40,10 @@ class DropboxSyncActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
 
         setContent {
             FeedFlowTheme {
-                val systemUiController = rememberSystemUiController()
-                val darkTheme = isSystemInDarkTheme()
-
-                // Update the dark content of the system bars to match the theme
-                DisposableEffect(systemUiController, darkTheme) {
-                    systemUiController.systemBarsDarkContentEnabled = !darkTheme
-                    onDispose {}
-                }
-
                 val snackbarHostState = remember { SnackbarHostState() }
                 val scope = rememberCoroutineScope()
 

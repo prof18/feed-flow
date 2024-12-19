@@ -1,9 +1,9 @@
 [versions]
 about-libraries = "11.2.3"
-android-compile-sdk = "34"
+android-compile-sdk = "35"
 android-min-sdk = "26"
-android-target-sdk = "34"
-android-gradle-plugin = "8.2.2"
+android-target-sdk = "35"
+android-gradle-plugin = "8.7.3"
 activity-compose = "1.9.3"
 androidx-core-ktx = "1.6.1"
 coroutines = "1.9.0"
@@ -28,7 +28,6 @@ org-robolectric = "4.13"
 # https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
 sql-delight = "2.0.2"
 rss-parser = "6.0.8"
-accompanist = "0.34.0"
 jsoup = "1.18.1"
 triplet-play = "3.10.1"
 compose-multiplatform = "1.7.0"
@@ -101,7 +100,6 @@ sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sq
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql-delight" }
 sqldelight-primitive-adapter = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sql-delight" }
 com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref = "rss-parser" }
-accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
@@ -141,8 +139,9 @@ android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", ve
 
 [bundles]
 compose = [
-    "androidx-activity-compose", "androidx-lifecycle-viewModel-compose",
-    "accompanist-systemuicontroller", "androidx-lifecycle-runtime-compose",
+    "androidx-activity-compose",
+    "androidx-lifecycle-viewModel-compose",
+    "androidx-lifecycle-runtime-compose",
     "androidx-navigation-navigation-compose",
 ]
 about-libraries = ["about-libraries-core", "about-libraries-compose"]

@@ -176,8 +176,8 @@ configure<AboutLibrariesExtension> {
 tasks.withType(KotlinCompile::class.java) {
     dependsOn("exportLibraryDefinitions")
 
-    kotlinOptions {
-        freeCompilerArgs += listOf(
+    compilerOptions {
+        freeCompilerArgs = listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
         )
     }

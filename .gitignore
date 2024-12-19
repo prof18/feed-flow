@@ -119,3 +119,4 @@ bin/
 /website/public/
 /.kotlin/
 /play_config.json
+/iosApp/Assets/FeedFlow.xcconfig

@@ -294,6 +294,34 @@ class DateFormatter(
             char(' ')
             year()
         },
+
+
+        // Wed, 18 Dec 2024 17:46:49
+        Format {
+            alternativeParsing({
+                // the day of week may be missing
+            }) {
+                dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
+                chars(", ")
+            }
+            alternativeParsing({
+                dayOfMonth()
+            }) {
+                dayOfMonth(Padding.NONE)
+            }
+            char(' ')
+            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            char(' ')
+            year()
+            char(' ')
+            hour()
+            char(':')
+            minute()
+            optional {
+                char(':')
+                second()
+            }
+        },
     )
 
     fun getDateMillisFromString(dateString: String): Long? {

@@ -44,6 +44,7 @@ class DateFormatterTest {
         "January 03, 2017",
         "January 10, 2017",
         "2023-12-15 00:00:00 UTC",
+        "Wed, 18 Dec 2024 17:46:49",
     )
 
     @Test

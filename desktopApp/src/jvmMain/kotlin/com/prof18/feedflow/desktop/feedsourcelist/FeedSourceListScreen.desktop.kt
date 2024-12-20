@@ -15,6 +15,7 @@ import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceListContent
@@ -58,6 +59,9 @@ class FeedSourceListScreen : Screen {
             navigateBack = {
                 navigator.pop()
             },
+            onEditFeedSourceClick = { feedSource ->
+                navigator.push(EditFeedScreen(feedSource))
+            },
             onRenameFeedSourceClick = { feedSource, newName ->
                 viewModel.updateFeedName(feedSource, newName)
             },
@@ -77,6 +81,7 @@ private fun FeedSourceListContentPreview() {
             onAddFeedClick = {},
             onDeleteFeedClick = {},
             onExpandClicked = {},
+            onEditFeedSourceClick = {},
             navigateBack = {},
             onRenameFeedSourceClick = { _, _ -> },
         )

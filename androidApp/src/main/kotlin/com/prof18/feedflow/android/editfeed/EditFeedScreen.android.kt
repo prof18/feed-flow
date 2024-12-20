@@ -60,7 +60,7 @@ internal fun EditScreen(
 
                 is FeedEditedState.FeedEdited -> {
                     showLoading = false
-                    val message = strings.feedAddedMessage(feedAddedState.feedName)
+                    val message = strings.feedEditedMessage(feedAddedState.feedName)
                     Toast.makeText(context, message, Toast.LENGTH_SHORT)
                         .show()
                     latestNavigateBack()

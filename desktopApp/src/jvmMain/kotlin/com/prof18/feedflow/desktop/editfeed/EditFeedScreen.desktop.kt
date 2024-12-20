@@ -72,7 +72,7 @@ internal data class EditFeedScreen(
 
                     is FeedEditedState.FeedEdited -> {
                         showLoading = false
-                        val message = strings.feedAddedMessage(feedAddedState.feedName)
+                        val message = strings.feedEditedMessage(feedAddedState.feedName)
                         snackbarHostState.showSnackbar(
                             message,
                             duration = SnackbarDuration.Short,

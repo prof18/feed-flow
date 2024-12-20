@@ -23,6 +23,7 @@ import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
+import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
@@ -164,4 +165,5 @@ object Deps : KoinComponent {
     fun getFeedSyncRepository() = getKoin().get<FeedSyncRepository>()
     fun getICloudSyncViewModel() = getKoin().get<ICloudSyncViewModel>()
     fun getReaderModeViewModel() = getKoin().get<ReaderModeViewModel>()
+    fun getEditFeedViewModel() = getKoin().get<EditFeedViewModel>()
 }

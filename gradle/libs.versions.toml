@@ -58,6 +58,7 @@ workmanager = "2.9.1"
 lifecycleProcess = "2.8.6"
 android-material3 = "1.3.0"
 skie = "0.9.3"
+kotlinx-serialization = "1.6.3"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
@@ -136,6 +137,7 @@ detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin",
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle-plugin" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 [bundles]
 compose = [
@@ -164,4 +166,4 @@ org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kot
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 feedflow-library = { id = "com.feedflow.library", version = "unspecified" }
 feedflow-detekt = { id = "com.feedflow.detekt", version = "unspecified" }
-skie = { id = "co.touchlab.skie", version.ref = "skie" } 
+skie = { id = "co.touchlab.skie", version.ref = "skie" }

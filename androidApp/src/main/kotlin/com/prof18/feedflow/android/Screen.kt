@@ -1,14 +1,33 @@
 package com.prof18.feedflow.android
 
-sealed class Screen(val name: String) {
-    data object Home : Screen("home")
-    data object Settings : Screen("setting")
-    data object AddFeed : Screen("add_feed")
-    data object FeedList : Screen("feed_list")
-    data object About : Screen("about")
-    data object Licenses : Screen("licenses")
-    data object ImportExport : Screen("import_export")
-    data object ReaderMode : Screen("reader_mode")
-    data object Search : Screen("search")
-    data object Accounts : Screen("accounts")
-}
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object Home
+
+@Serializable
+data object Settings
+
+@Serializable
+data object AddFeed
+
+@Serializable
+data object FeedList
+
+@Serializable
+data object About
+
+@Serializable
+data object Licenses
+
+@Serializable
+data object ImportExport
+
+@Serializable
+data object ReaderMode
+
+@Serializable
+data object Search
+
+@Serializable
+data object Accounts

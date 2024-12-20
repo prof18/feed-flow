@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.google.services)
     alias(libs.plugins.feedflow.detekt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val local = Properties()
@@ -132,6 +133,7 @@ dependencies {
     implementation(libs.dropbox.core.android)
     implementation(libs.workmanager)
     implementation(libs.androidx.lifecycle.process)
+    implementation(libs.kotlinx.serialization.json)
 
     "googlePlayImplementation"(platform(libs.firebase.bom))
     "googlePlayImplementation"(libs.firebase.crashlytics)

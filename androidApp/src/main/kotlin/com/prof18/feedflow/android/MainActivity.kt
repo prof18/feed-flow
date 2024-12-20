@@ -118,61 +118,61 @@ class MainActivity : ComponentActivity() {
     ) {
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.name,
+            startDestination = Home,
             enterTransition = { fadeIn() + slideIntoContainer(SlideDirection.Start) },
             exitTransition = { fadeOut() + slideOutOfContainer(SlideDirection.Start) },
             popEnterTransition = { fadeIn() + slideIntoContainer(SlideDirection.End) },
             popExitTransition = { fadeOut() + slideOutOfContainer(SlideDirection.End) },
         ) {
-            composable(Screen.Home.name) {
+            composable<Home> {
                 HomeScreen(
                     windowSizeClass = windowSizeClass,
                     onSettingsButtonClicked = {
-                        navController.navigate(Screen.Settings.name)
+                        navController.navigate(Settings)
                     },
                     onAddFeedClick = {
-                        navController.navigate(Screen.AddFeed.name)
+                        navController.navigate(AddFeed)
                     },
                     onImportExportClick = {
-                        navController.navigate(Screen.ImportExport.name)
+                        navController.navigate(ImportExport)
                     },
                     navigateToReaderMode = { url ->
                         readerModeViewModel.getReaderModeHtml(url)
-                        navController.navigate(Screen.ReaderMode.name)
+                        navController.navigate(ReaderMode)
                     },
                     onSearchClick = {
-                        navController.navigate(Screen.Search.name)
+                        navController.navigate(Search)
                     },
                     onAccountsClick = {
-                        navController.navigate(Screen.Accounts.name)
+                        navController.navigate(Accounts)
                     },
                 )
             }
 
-            composable(Screen.Settings.name) {
+            composable<Settings> {
                 SettingsScreen(
                     onFeedListClick = {
-                        navController.navigate(Screen.FeedList.name)
+                        navController.navigate(FeedList)
                     },
                     onAddFeedClick = {
-                        navController.navigate(Screen.AddFeed.name)
+                        navController.navigate(AddFeed)
                     },
                     navigateBack = {
                         navController.popBackStack()
                     },
                     onAboutClick = {
-                        navController.navigate(Screen.About.name)
+                        navController.navigate(About)
                     },
                     navigateToImportExport = {
-                        navController.navigate(Screen.ImportExport.name)
+                        navController.navigate(ImportExport)
                     },
                     navigateToAccounts = {
-                        navController.navigate(Screen.Accounts.name)
+                        navController.navigate(Accounts)
                     },
                 )
             }
 
-            composable(Screen.AddFeed.name) {
+            composable<AddFeed> {
                 AddFeedScreen(
                     navigateBack = {
                         navController.popBackStack()
@@ -180,10 +180,10 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            composable(Screen.FeedList.name) {
+            composable<FeedList> {
                 FeedSourceListScreen(
                     onAddFeedClick = {
-                        navController.navigate(Screen.AddFeed.name)
+                        navController.navigate(AddFeed)
                     },
                     navigateBack = {
                         navController.popBackStack()
@@ -191,18 +191,18 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            composable(Screen.About.name) {
+            composable<About> {
                 AboutScreen(
                     onBackClick = {
                         navController.popBackStack()
                     },
                     navigateToLibrariesScreen = {
-                        navController.navigate(Screen.Licenses.name)
+                        navController.navigate(Licenses)
                     },
                 )
             }
 
-            composable(Screen.Licenses.name) {
+            composable<Licenses> {
                 LicensesScreen(
                     onBackClick = {
                         navController.popBackStack()
@@ -210,7 +210,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            composable(Screen.ImportExport.name) {
+            composable<ImportExport> {
                 ImportExportScreen(
                     navigateBack = {
                         navController.popBackStack()
@@ -218,7 +218,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            composable(Screen.ReaderMode.name) {
+            composable<ReaderMode> {
                 val readerModeState by readerModeViewModel.readerModeState.collectAsStateWithLifecycle()
                 val fontSizeState by readerModeViewModel.readerFontSizeState.collectAsStateWithLifecycle()
 
@@ -234,19 +234,19 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            composable(Screen.Search.name) {
+            composable<Search> {
                 SearchScreen(
                     navigateBack = {
                         navController.popBackStack()
                     },
                     navigateToReaderMode = { urlInfo ->
                         readerModeViewModel.getReaderModeHtml(urlInfo)
-                        navController.navigate(Screen.ReaderMode.name)
+                        navController.navigate(ReaderMode)
                     },
                 )
             }
 
-            composable(Screen.Accounts.name) {
+            composable<Accounts> {
                 AccountsScreen(
                     navigateBack = {
                         navController.popBackStack()

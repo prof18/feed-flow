@@ -1,10 +1,10 @@
 # Pealkiri
 
-FeedFlow
+FeedFlow - RSS-uudisvoogude lugeja
 
 ## Lühikirjeldus
 
-Minimalistlik RSS-uudisvoogude lugeja
+Napp, kiire ja müravaba viis uudiste jälgimiseks
 
 ## Pikk kirjeldus
 

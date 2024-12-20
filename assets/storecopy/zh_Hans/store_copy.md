@@ -1,10 +1,10 @@
 # 标题
 
-FeedFlow
+FeedFlow - RSS 阅读器
 
 ## 简介
 
-极简 RSS 阅读器
+小而美
 
 ## 详情
 

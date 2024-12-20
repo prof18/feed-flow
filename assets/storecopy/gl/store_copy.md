@@ -1,10 +1,10 @@
 # Título
 
-FeedFlow
+FeedFlow - Lector RSS
 
 ## Descr. curta
 
-Lector RSS minimalista
+Simple, rápido, lixeiro
 
 ## Descr. longa
 

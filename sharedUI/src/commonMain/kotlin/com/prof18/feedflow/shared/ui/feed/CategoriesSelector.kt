@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.addfeed
+package com.prof18.feedflow.shared.ui.feed
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring

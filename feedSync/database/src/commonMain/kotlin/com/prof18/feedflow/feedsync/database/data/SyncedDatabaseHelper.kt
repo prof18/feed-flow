@@ -76,6 +76,16 @@ class SyncedDatabaseHelper(
             )
         }
 
+    suspend fun updateFeedSource(feedSource: FeedSource) =
+        getDbRef().transactionWithContext(backgroundDispatcher) {
+            getDbRef().syncedFeedSourceQueries.updateFeedSource(
+                urlHash = feedSource.id,
+                url = feedSource.url,
+                title = feedSource.title,
+                categoryId = feedSource.category?.id,
+            )
+        }
+
     suspend fun getAllFeedSources(): List<SyncedFeedSource> = withContext(backgroundDispatcher) {
         getDbRef().syncedFeedSourceQueries
             .getAllSyncedFeedSources()

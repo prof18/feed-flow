@@ -234,6 +234,16 @@ class DatabaseHelper(
             )
         }
 
+    suspend fun updateFeedSource(feedSource: FeedSource) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.updateFeedSource(
+                urlHash = feedSource.id,
+                url = feedSource.url,
+                title = feedSource.title,
+                categoryId = feedSource.category?.id,
+            )
+        }
+
     fun search(searchQuery: String): Flow<List<Search>> =
         dbRef.feedSearchQueries
             .search(query = searchQuery)

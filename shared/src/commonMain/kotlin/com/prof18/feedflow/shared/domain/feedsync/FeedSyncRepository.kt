@@ -101,6 +101,13 @@ class FeedSyncRepository internal constructor(
         }
     }
 
+    internal suspend fun updateFeedSource(feedSource: FeedSource) {
+        if (feedSyncAccountRepository.isSyncEnabled()) {
+            syncedDatabaseHelper.updateFeedSource(feedSource)
+            settingsRepository.setIsSyncUploadRequired(true)
+        }
+    }
+
     internal suspend fun deleteFeedItems(feedIds: List<FeedItemId>) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             syncedDatabaseHelper.deleteFeedItems(feedIds)

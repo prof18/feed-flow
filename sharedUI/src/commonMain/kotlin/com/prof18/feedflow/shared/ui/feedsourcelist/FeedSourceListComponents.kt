@@ -75,6 +75,7 @@ internal expect fun Modifier.feedSourceMenuClickModifier(
 internal fun FeedSourcesWithCategoryList(
     feedSourceState: FeedSourceListState,
     onExpandClicked: (CategoryId?) -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
     modifier: Modifier = Modifier,
@@ -88,6 +89,7 @@ internal fun FeedSourcesWithCategoryList(
                 feedSources = feedSourceState.feedSourcesWithoutCategory,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onRenameFeedSourceClick = onRenameFeedSourceClick,
+                onEditFeedClick = onEditFeedClick,
             )
         }
 
@@ -136,6 +138,7 @@ internal fun FeedSourcesWithCategoryList(
                     feedSourceState = feedSourceState,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onRenameFeedSourceClick = onRenameFeedSourceClick,
+                    onEditFeedClick = onEditFeedClick,
                 )
             }
         }
@@ -147,6 +150,7 @@ private fun FeedSourcesListWithCategorySelector(
     feedSourceState: FeedSourceState,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
 ) {
     AnimatedVisibility(
         visible = feedSourceState.isExpanded,
@@ -162,6 +166,7 @@ private fun FeedSourcesListWithCategorySelector(
             feedSources = feedSourceState.feedSources,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             onRenameFeedSourceClick = onRenameFeedSourceClick,
+            onEditFeedClick = onEditFeedClick,
         )
     }
 }
@@ -171,6 +176,7 @@ private fun FeedSourcesList(
     feedSources: ImmutableList<FeedSource>,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
 ) {
     Column {
         feedSources.forEachIndexed { index, feedSource ->
@@ -178,6 +184,7 @@ private fun FeedSourcesList(
                 feedSource = feedSource,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onRenameFeedSourceClick = onRenameFeedSourceClick,
+                onEditFeedClick = onEditFeedClick,
             )
 
             if (index < feedSources.size - 1) {
@@ -194,6 +201,7 @@ private fun FeedSourcesList(
 @Composable
 private fun FeedSourceItem(
     feedSource: FeedSource,
+    onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
 ) {
@@ -294,6 +302,7 @@ private fun FeedSourceItem(
                 hideMenu = {
                     showFeedMenu = false
                 },
+                onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 feedSource = feedSource,
                 onRenameFeedSourceClick = {
@@ -361,6 +370,7 @@ private fun FeedSourceContextMenu(
     showFeedMenu: Boolean,
     feedSource: FeedSource,
     hideMenu: () -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource) -> Unit,
 ) {
@@ -370,13 +380,11 @@ private fun FeedSourceContextMenu(
         properties = PopupProperties(),
     ) {
         DropdownMenuItem(
-            modifier = Modifier
-                .tagForTesting(TestingTag.FEED_SOURCE_DELETE_BUTTON),
             text = {
-                Text(LocalFeedFlowStrings.current.deleteFeed)
+                Text(LocalFeedFlowStrings.current.editFeedSourceNameButton)
             },
             onClick = {
-                onDeleteFeedSourceClick(feedSource)
+                onEditFeedClick(feedSource)
                 hideMenu()
             },
         )
@@ -386,6 +394,17 @@ private fun FeedSourceContextMenu(
             },
             onClick = {
                 onRenameFeedSourceClick(feedSource)
+                hideMenu()
+            },
+        )
+        DropdownMenuItem(
+            modifier = Modifier
+                .tagForTesting(TestingTag.FEED_SOURCE_DELETE_BUTTON),
+            text = {
+                Text(LocalFeedFlowStrings.current.deleteFeed)
+            },
+            onClick = {
+                onDeleteFeedSourceClick(feedSource)
                 hideMenu()
             },
         )

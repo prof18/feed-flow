@@ -23,3 +23,8 @@ updateFeedSourceTitle:
 UPDATE synced_feed_source
 SET title = :title
 WHERE url_hash = :urlHash;
+
+updateFeedSource:
+UPDATE synced_feed_source
+SET url = :url, title = :title, category_id = :categoryId
+WHERE url_hash = :urlHash;

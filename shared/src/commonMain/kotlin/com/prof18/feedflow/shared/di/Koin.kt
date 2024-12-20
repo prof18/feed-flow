@@ -19,6 +19,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryUseCase
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -27,6 +28,7 @@ import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
+import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
@@ -41,6 +43,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.Qualifier
@@ -155,7 +158,7 @@ private val coreModule = module {
     viewModel {
         AddFeedViewModel(
             feedRetrieverRepository = get(),
-            feedManagerRepository = get(),
+            categoryUseCase = get(),
         )
     }
 
@@ -265,9 +268,19 @@ private val coreModule = module {
 
     singleOf(::AccountsRepository)
 
+    factoryOf(::FeedCategoryUseCase)
+
     factory {
         ICloudSettings(
             settings = get(),
+        )
+    }
+
+    viewModel {
+        EditFeedViewModel(
+            categoryUseCase = get(),
+            feedManagerRepository = get(),
+            feedRetrieverRepository = get(),
         )
     }
 }

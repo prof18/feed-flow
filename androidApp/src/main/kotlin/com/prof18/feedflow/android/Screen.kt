@@ -31,3 +31,14 @@ data object Search
 
 @Serializable
 data object Accounts
+
+@Serializable
+data class EditFeed(
+    val id: String,
+    val url: String,
+    val title: String,
+    val categoryId: String?,
+    val categoryTitle: String?,
+    val lastSyncTimestamp: Long?,
+    val logoUrl: String?,
+)

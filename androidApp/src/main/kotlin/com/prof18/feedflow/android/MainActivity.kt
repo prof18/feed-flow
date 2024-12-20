@@ -29,11 +29,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import coil3.ImageLoader
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
+import com.prof18.feedflow.android.editfeed.EditScreen
+import com.prof18.feedflow.android.editfeed.toEditFeed
+import com.prof18.feedflow.android.editfeed.toFeedSource
 import com.prof18.feedflow.android.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.android.home.HomeScreen
 import com.prof18.feedflow.android.readermode.ReaderModeScreen
@@ -43,8 +47,10 @@ import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.about.AboutScreen
 import com.prof18.feedflow.android.settings.about.LicensesScreen
 import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.model.SyncResult
+import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
@@ -188,6 +194,9 @@ class MainActivity : ComponentActivity() {
                     navigateBack = {
                         navController.popBackStack()
                     },
+                    onEditFeedClick = { feedSource ->
+                        navController.navigate(feedSource.toEditFeed())
+                    },
                 )
             }
 
@@ -248,6 +257,22 @@ class MainActivity : ComponentActivity() {
 
             composable<Accounts> {
                 AccountsScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<EditFeed> { backstackEntry ->
+                val feedSource: FeedSource = backstackEntry.toRoute<EditFeed>().toFeedSource()
+                val viewModel = koinViewModel<EditFeedViewModel>()
+
+                LaunchedEffect(feedSource) {
+                    viewModel.loadFeedToEdit(feedSource)
+                }
+
+                EditScreen(
+                    viewModel = viewModel,
                     navigateBack = {
                         navController.popBackStack()
                     },

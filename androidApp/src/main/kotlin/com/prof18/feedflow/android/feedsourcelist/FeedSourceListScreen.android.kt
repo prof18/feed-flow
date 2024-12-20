@@ -4,6 +4,7 @@ import FeedFlowTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
@@ -15,6 +16,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun FeedSourceListScreen(
     onAddFeedClick: () -> Unit,
+    onEditFeedClick: (feedSource: FeedSource) -> Unit,
     navigateBack: () -> Unit,
 ) {
     val viewModel = koinViewModel<FeedSourceListViewModel>()
@@ -33,6 +35,7 @@ fun FeedSourceListScreen(
         onRenameFeedSourceClick = { feedSource, newName ->
             viewModel.updateFeedName(feedSource, newName)
         },
+        onEditFeedSourceClick = onEditFeedClick,
     )
 }
 
@@ -50,6 +53,7 @@ private fun FeedSourceListContentPreview() {
             onExpandClicked = {},
             navigateBack = {},
             onRenameFeedSourceClick = { _, _ -> },
+            onEditFeedSourceClick = {},
         )
     }
 }

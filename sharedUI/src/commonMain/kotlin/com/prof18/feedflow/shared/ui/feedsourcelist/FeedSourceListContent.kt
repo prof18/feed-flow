@@ -17,6 +17,7 @@ fun FeedSourceListContent(
     navigateBack: () -> Unit,
     onExpandClicked: (CategoryId?) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
+    onEditFeedSourceClick: (FeedSource) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -42,6 +43,7 @@ fun FeedSourceListContent(
                 onExpandClicked = onExpandClicked,
                 onDeleteFeedSourceClick = onDeleteFeedClick,
                 onRenameFeedSourceClick = onRenameFeedSourceClick,
+                onEditFeedClick = onEditFeedSourceClick,
             )
         }
     }

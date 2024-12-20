@@ -152,4 +152,10 @@ internal class FeedManagerRepository(
         feedSyncRepository.updateFeedSourceName(feedSourceId, newName)
         feedSyncRepository.performBackup()
     }
+
+    suspend fun updateFeedSource(feedSource: FeedSource) {
+        databaseHelper.updateFeedSource(feedSource)
+        feedSyncRepository.updateFeedSource(feedSource)
+        feedSyncRepository.performBackup()
+    }
 }

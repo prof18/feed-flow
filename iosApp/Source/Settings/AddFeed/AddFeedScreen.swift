@@ -13,8 +13,6 @@ struct AddFeedScreen: View {
 
     @Environment(AppState.self) private var appState
 
-    @Environment(\.presentationMode) private var presentationMode
-
     @StateObject
     private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(Deps.shared.getAddFeedViewModel())
 

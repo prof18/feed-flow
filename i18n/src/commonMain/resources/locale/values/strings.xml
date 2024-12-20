@@ -121,4 +121,5 @@
     <string name="edit_feed_source_name_button">Edit</string>
     <string name="edit_feed">Edit feed</string>
     <string name="feed_name">Feed name</string>
+    <string name="feed_edited_message">Feed "%s" updated</string>
 </resources>

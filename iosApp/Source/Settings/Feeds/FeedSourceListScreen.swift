@@ -14,6 +14,8 @@ struct FeedSourceListScreen: View {
     @StateObject
     private var vmStoreOwner = VMStoreOwner<FeedSourceListViewModel>(Deps.shared.getFeedSourceListViewModel())
 
+    @Environment(AppState.self) private var appState
+
     @State
     private var feedState: FeedSourceListState = FeedSourceListState(
         feedSourcesWithoutCategory: [],
@@ -30,6 +32,7 @@ struct FeedSourceListScreen: View {
                 vmStoreOwner.instance.updateFeedName(feedSource: feedSource, newName: newName)
             }
         )
+        .id(appState.redrawAfterFeedSourceEdit)
         .task {
             for await state in vmStoreOwner.instance.feedSourcesState {
                 self.feedState = state

@@ -18,6 +18,8 @@ import SwiftUI
     var compatNavigationPath = NavigationPath()
     var sizeClass: UserInterfaceSizeClass?
 
+    var redrawAfterFeedSourceEdit: Bool = false
+
     init() {
         compatNavigationPath.append(CompactViewRoute.feed)
     }

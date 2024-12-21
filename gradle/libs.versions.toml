@@ -36,7 +36,7 @@ compose-multiplatform = "1.7.3"
 # if necessary, download again the native library here
 # https://github.com/java-native-access/jna
 jsystem-theme-detector = "3.6"
-ksp = "2.0.21-1.0.25"
+ksp = "2.1.0-1.0.29"
 multiplatform-settings = "1.1.1"
 firebase-bom = "33.1.2"
 crashlytics-plugin = "3.0.2"

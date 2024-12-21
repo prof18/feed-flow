@@ -16,6 +16,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
@@ -49,6 +50,7 @@ internal fun HomeScaffold(
     updateReadStatus: (FeedItemId, Boolean) -> Unit,
     onBackToTimelineClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
     modifier: Modifier = Modifier,
     showDrawerMenu: Boolean = false,
     isDrawerMenuOpen: Boolean = false,
@@ -84,6 +86,7 @@ internal fun HomeScaffold(
                 },
                 onDeleteDatabase = onDeleteDatabaseClick,
                 onSearchClick = onSearchClick,
+                onEditFeedClick = onEditFeedClick,
             )
         },
         containerColor = Color.Transparent,
@@ -155,6 +158,7 @@ private fun HomeScaffoldPreview() {
             updateBookmarkStatus = { _, _ -> },
             onBackToTimelineClick = {},
             onSearchClick = {},
+            onEditFeedClick = { },
         )
     }
 }

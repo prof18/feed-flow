@@ -152,6 +152,9 @@ class MainActivity : ComponentActivity() {
                     onAccountsClick = {
                         navController.navigate(Accounts)
                     },
+                    onEditFeedClick = { feedSource ->
+                        navController.navigate(feedSource.toEditFeed())
+                    },
                 )
             }
 

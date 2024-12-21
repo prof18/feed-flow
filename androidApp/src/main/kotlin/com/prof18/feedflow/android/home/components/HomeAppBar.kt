@@ -45,6 +45,7 @@ internal fun HomeAppBar(
     onForceRefreshClick: () -> Unit,
     onDeleteDatabase: () -> Unit,
     onSearchClick: () -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -103,6 +104,7 @@ internal fun HomeAppBar(
 
             HomeAppBarDropdownMenu(
                 showMenu = showMenu,
+                feedFilter = currentFeedFilter,
                 closeMenu = {
                     showMenu = false
                 },
@@ -114,6 +116,10 @@ internal fun HomeAppBar(
                 },
                 onForceRefreshClick = onForceRefreshClick,
                 onDeleteDatabase = onDeleteDatabase,
+                onEditFeedClick = { feedSource ->
+                    showMenu = false
+                    onEditFeedClick(feedSource)
+                },
             )
         },
         modifier = Modifier
@@ -184,6 +190,7 @@ private fun HomeAppBarPreview() {
             onForceRefreshClick = {},
             onDeleteDatabase = {},
             onSearchClick = {},
+            onEditFeedClick = { },
         )
     }
 }
@@ -206,6 +213,7 @@ private fun HomeAppBarSmallPreview() {
             onForceRefreshClick = {},
             onDeleteDatabase = {},
             onSearchClick = {},
+            onEditFeedClick = { },
         )
     }
 }

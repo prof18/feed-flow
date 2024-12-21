@@ -386,6 +386,19 @@ internal class FeedRetrieverRepository(
             searchQuery = query,
         )
 
+    fun updateCurrentFilterName(newName: String) {
+        val currentFilter = currentFeedFilter.value
+        if (currentFilter is FeedFilter.Source) {
+            currentFeedFilterMutableState.update {
+                FeedFilter.Source(
+                    feedSource = currentFilter.feedSource.copy(
+                        title = newName,
+                    ),
+                )
+            }
+        }
+    }
+
     @Suppress("MagicNumber")
     private fun shouldRefreshFeed(
         feedSource: FeedSource,

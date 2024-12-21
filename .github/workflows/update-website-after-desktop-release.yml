@@ -31,7 +31,7 @@ jobs:
           VERSION: ${{ env.VERSION }}
 
       - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+        uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: '0.101.0'
           extended: true

@@ -84,6 +84,9 @@ struct HomeContent: View {
       }
 
     }
+    .onChange(of: appState.redrawAfterFeedSourceEdit) {
+      onRefresh()
+    }
     .onChange(of: scenePhase) {
       if UIDevice.current.userInterfaceIdiom == .pad {
         switch scenePhase {
@@ -115,6 +118,9 @@ struct HomeContent: View {
 
       case .importExport:
         ImportExportScreen(showCloseButton: true)
+
+      case .editFeed(let source):
+        EditFeedScreen(feedSource: source)
       }
     }
   }
@@ -201,6 +207,14 @@ struct HomeContent: View {
           onForceRefreshClick()
         } label: {
           Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
+        }
+
+        if let source = (currentFeedFilter as? FeedFilter.Source)?.feedSource {
+          Button {
+            self.sheetToShow = .editFeed(source)
+          } label: {
+            Label(feedFlowStrings.editFeed, systemImage: "pencil")
+          }
         }
 
         Button {

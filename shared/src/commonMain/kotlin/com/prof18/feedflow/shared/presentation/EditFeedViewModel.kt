@@ -96,6 +96,12 @@ class EditFeedViewModel internal constructor(
                 val newUrl = sanitizeUrl(feedUrlState.value)
                 val previousUrl = originalFeedSource?.url
 
+                val newName = feedNameState.value
+                val previousName = originalFeedSource?.title
+                if (newName != previousName) {
+                    feedRetrieverRepository.updateCurrentFilterName(newName)
+                }
+
                 if (newUrl != previousUrl) {
                     when (val response = feedRetrieverRepository.fetchSingleFeed(newUrl, selectedCategory)) {
                         is AddFeedResponse.FeedFound -> {

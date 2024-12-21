@@ -7,12 +7,14 @@
 //
 
 import Foundation
+import FeedFlowKit
 
-enum HomeSheetToShow: Identifiable {
+enum HomeSheetToShow: Identifiable, Hashable {
     case settings
     case noFeedSource
     case addFeed
     case importExport
+    case editFeed(FeedSource)
 
     var id: Int {
         hashValue

@@ -8,7 +8,9 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuScope
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
+import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -19,6 +21,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     isShowReadItemEnabled: Boolean,
     isReaderModeEnabled: Boolean,
     isRemoveTitleFromDescriptionEnabled: Boolean,
+    feedFilter: FeedFilter,
     onRefreshClick: () -> Unit,
     onMarkAllReadClick: () -> Unit,
     onImportExportClick: () -> Unit,
@@ -72,6 +75,15 @@ fun FrameWindowScope.FeedFlowMenuBar(
 
         Menu(LocalFeedFlowStrings.current.settingsTitleFeed) {
             val navigator = LocalNavigator.currentOrThrow
+
+            if (feedFilter is FeedFilter.Source) {
+                Item(
+                    text = LocalFeedFlowStrings.current.editFeed,
+                    onClick = {
+                        navigator.push(EditFeedScreen(feedFilter.feedSource))
+                    },
+                )
+            }
 
             Item(
                 text = LocalFeedFlowStrings.current.feedsTitle,

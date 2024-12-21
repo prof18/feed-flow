@@ -126,6 +126,9 @@ internal fun HomeScreen(
                         openInBrowser(feedItemUrlInfo.url)
                     }
                 },
+                onDeleteFeedSourceClick = { feedSource ->
+                    homeViewModel.deleteFeedSource(feedSource)
+                },
             )
         }
 
@@ -173,6 +176,9 @@ internal fun HomeScreen(
                         openInBrowser(feedItemUrlInfo.url)
                     }
                 },
+                onDeleteFeedSourceClick = { feedSource ->
+                    homeViewModel.deleteFeedSource(feedSource)
+                },
             )
         }
 
@@ -219,6 +225,9 @@ internal fun HomeScreen(
                     } else {
                         openInBrowser(feedItemUrlInfo.url)
                     }
+                },
+                onDeleteFeedSourceClick = { feedSource ->
+                    homeViewModel.deleteFeedSource(feedSource)
                 },
             )
         }

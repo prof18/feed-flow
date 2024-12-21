@@ -15,11 +15,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.home.components.HomeScreenContent
 import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
@@ -51,11 +55,13 @@ internal fun MediumView(
     onBackToTimelineClick: () -> Unit,
     onSearchClick: () -> Unit,
     openUrl: (FeedItemUrlInfo) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     var isDrawerMenuFullVisible by remember {
         mutableStateOf(true)
     }
     val scope = rememberCoroutineScope()
+    val navigator = LocalNavigator.currentOrThrow
 
     val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
 
@@ -78,6 +84,10 @@ internal fun MediumView(
                             lazyListState.animateScrollToItem(0)
                         }
                     },
+                    onEditFeedClick = { feedSource ->
+                        navigator.push(EditFeedScreen(feedSource))
+                    },
+                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 )
             }
         }
@@ -141,6 +151,7 @@ private fun MediumViewPreview() {
             onBackToTimelineClick = {},
             onSearchClick = {},
             openUrl = {},
+            onDeleteFeedSourceClick = {},
         )
     }
 }

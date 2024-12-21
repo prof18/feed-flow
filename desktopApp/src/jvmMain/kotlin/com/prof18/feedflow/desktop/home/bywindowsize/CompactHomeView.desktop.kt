@@ -9,11 +9,15 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.home.components.HomeScreenContent
 import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
@@ -45,9 +49,11 @@ internal fun CompactView(
     onBackToTimelineClick: () -> Unit,
     onSearchClick: () -> Unit,
     openUrl: (FeedItemUrlInfo) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val navigator = LocalNavigator.currentOrThrow
 
     val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
     if (isDrawerHidden) {
@@ -102,6 +108,10 @@ internal fun CompactView(
                                 lazyListState.animateScrollToItem(0)
                             }
                         },
+                        onEditFeedClick = { feedSource ->
+                            navigator.push(EditFeedScreen(feedSource))
+                        },
+                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     )
                 }
             },
@@ -170,6 +180,7 @@ private fun CompactViewPreview() {
             onBackToTimelineClick = {},
             onSearchClick = {},
             openUrl = {},
+            onDeleteFeedSourceClick = {},
         )
     }
 }

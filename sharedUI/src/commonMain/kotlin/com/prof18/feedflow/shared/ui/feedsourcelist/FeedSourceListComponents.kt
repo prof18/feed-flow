@@ -365,51 +365,7 @@ private fun FeedSourceTitleEdit(
     }
 }
 
-@Composable
-private fun FeedSourceContextMenu(
-    showFeedMenu: Boolean,
-    feedSource: FeedSource,
-    hideMenu: () -> Unit,
-    onEditFeedClick: (FeedSource) -> Unit,
-    onDeleteFeedSourceClick: (FeedSource) -> Unit,
-    onRenameFeedSourceClick: (FeedSource) -> Unit,
-) {
-    DropdownMenu(
-        expanded = showFeedMenu,
-        onDismissRequest = hideMenu,
-        properties = PopupProperties(),
-    ) {
-        DropdownMenuItem(
-            text = {
-                Text(LocalFeedFlowStrings.current.editFeedSourceNameButton)
-            },
-            onClick = {
-                onEditFeedClick(feedSource)
-                hideMenu()
-            },
-        )
-        DropdownMenuItem(
-            text = {
-                Text(LocalFeedFlowStrings.current.renameFeedSourceNameButton)
-            },
-            onClick = {
-                onRenameFeedSourceClick(feedSource)
-                hideMenu()
-            },
-        )
-        DropdownMenuItem(
-            modifier = Modifier
-                .tagForTesting(TestingTag.FEED_SOURCE_DELETE_BUTTON),
-            text = {
-                Text(LocalFeedFlowStrings.current.deleteFeed)
-            },
-            onClick = {
-                onDeleteFeedSourceClick(feedSource)
-                hideMenu()
-            },
-        )
-    }
-}
+
 
 @Composable
 internal fun FeedSourceNavBar(

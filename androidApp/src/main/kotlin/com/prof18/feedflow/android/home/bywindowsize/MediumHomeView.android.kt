@@ -55,6 +55,7 @@ internal fun MediumHomeView(
     onBackToTimelineClick: () -> Unit,
     onSearchClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -83,6 +84,8 @@ internal fun MediumHomeView(
                             listState.animateScrollToItem(0)
                         }
                     },
+                    onEditFeedClick = onEditFeedClick,
+                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 )
             }
         }
@@ -150,6 +153,7 @@ private fun MediumHomeViewPreview() {
             onBackToTimelineClick = {},
             onSearchClick = {},
             onEditFeedClick = { _ -> },
+            onDeleteFeedSourceClick = { _ -> },
         )
     }
 }

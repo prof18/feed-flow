@@ -9,12 +9,17 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Feed
 import androidx.compose.material.icons.automirrored.filled.Label
@@ -23,14 +28,17 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,14 +48,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
+import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
+import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
@@ -60,6 +74,8 @@ fun Drawer(
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     onAddFeedClicked: () -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -118,6 +134,8 @@ fun Drawer(
                     navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
+                    onEditFeedClick = onEditFeedClick,
+                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 )
             }
         }
@@ -266,7 +284,7 @@ private fun DrawerCategoryItem(
 ) {
     NavigationDrawerItem(
         selected = currentFeedFilter is FeedFilter.Category &&
-            drawerCategory.category == currentFeedFilter.feedCategory,
+                drawerCategory.category == currentFeedFilter.feedCategory,
         label = {
             Text(
                 text = drawerCategory.category.title,
@@ -292,6 +310,8 @@ private fun DrawerFeedSourcesByCategories(
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     Column {
         Column {
@@ -310,6 +330,8 @@ private fun DrawerFeedSourcesByCategories(
                     .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                 currentFeedFilter = currentFeedFilter,
                 onFeedFilterSelected = onFeedFilterSelected,
+                onEditFeedClick = onEditFeedClick,
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             )
 
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
@@ -327,6 +349,8 @@ private fun DrawerFeedSourcesByCategories(
                         isCategoryExpanded = !isCategoryExpanded
                     },
                     onFeedFilterSelected = onFeedFilterSelected,
+                    onEditFeedClick = onEditFeedClick,
+                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 )
             }
         }
@@ -341,6 +365,8 @@ private fun DrawerFeedSourceByCategoryItem(
     isCategoryExpanded: Boolean,
     onCategoryExpand: () -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     val categoryTitle = feedSourceCategoryWrapper.feedSourceCategory?.title
     Column(
@@ -391,6 +417,8 @@ private fun DrawerFeedSourceByCategoryItem(
             drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
             onFeedFilterSelected = onFeedFilterSelected,
+            onEditFeedClick = onEditFeedClick,
+            onDeleteFeedSourceClick = onDeleteFeedSourceClick,
         )
     }
 }
@@ -401,6 +429,8 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     AnimatedVisibility(
         visible = isCategoryExpanded,
@@ -416,6 +446,8 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
             drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
             onFeedFilterSelected = onFeedFilterSelected,
+            onEditFeedClick = onEditFeedClick,
+            onDeleteFeedSourceClick = onDeleteFeedSourceClick,
         )
     }
 }
@@ -425,17 +457,33 @@ private fun FeedSourcesList(
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     Column {
         drawerFeedSources.forEach { feedSourceWrapper ->
-            NavigationDrawerItem(
-                selected = currentFeedFilter is FeedFilter.Source &&
-                    currentFeedFilter.feedSource == feedSourceWrapper.feedSource,
+
+            var showFeedMenu by remember {
+                mutableStateOf(
+                    false,
+                )
+            }
+
+            FeedSourceDrawerItem(
                 label = {
                     Text(
                         text = feedSourceWrapper.feedSource.title,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                selected = currentFeedFilter is FeedFilter.Source &&
+                        currentFeedFilter.feedSource == feedSourceWrapper.feedSource,
+                onClick = {
+                    onFeedFilterSelected(
+                        FeedFilter.Source(
+                            feedSource = feedSourceWrapper.feedSource,
+                        ),
                     )
                 },
                 icon = {
@@ -455,14 +503,66 @@ private fun FeedSourcesList(
                 colors = NavigationDrawerItemDefaults.colors(
                     unselectedContainerColor = Color.Transparent,
                 ),
-                onClick = {
-                    onFeedFilterSelected(
-                        FeedFilter.Source(
-                            feedSource = feedSourceWrapper.feedSource,
-                        ),
-                    )
-                },
+                onLongClick = {
+                    showFeedMenu = true
+                }
             )
+
+            FeedSourceContextMenu(
+                showFeedMenu = showFeedMenu,
+                hideMenu = {
+                    showFeedMenu = false
+                },
+                onEditFeedClick = onEditFeedClick,
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                feedSource = feedSourceWrapper.feedSource,
+            )
+        }
+    }
+}
+
+@Composable
+fun FeedSourceDrawerItem(
+    label: @Composable () -> Unit,
+    selected: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: @Composable () -> Unit,
+    colors: NavigationDrawerItemColors = NavigationDrawerItemDefaults.colors(),
+) {
+    Surface(
+        selected = selected,
+        onClick = onClick,
+        modifier =
+            modifier
+                .semantics { role = Role.Tab }
+                .heightIn(min = 56.0.dp)
+                .fillMaxWidth(),
+        shape = CircleShape,
+        color = colors.containerColor(selected).value,
+    ) {
+        Row(
+            Modifier
+                .feedSourceMenuClickModifier(
+                    onClick = {
+                        onClick()
+                    },
+                    onLongClick = {
+                        onLongClick()
+                    },
+                )
+                .padding(start = 16.dp, end = 24.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val iconColor = colors.iconColor(selected).value
+            CompositionLocalProvider(LocalContentColor provides iconColor, content = icon)
+            Spacer(Modifier.width(12.dp))
+
+            Box(Modifier.weight(1f)) {
+                val labelColor = colors.textColor(selected).value
+                CompositionLocalProvider(LocalContentColor provides labelColor, content = label)
+            }
         }
     }
 }

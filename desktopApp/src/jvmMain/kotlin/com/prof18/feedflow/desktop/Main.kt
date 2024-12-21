@@ -210,6 +210,8 @@ fun main() = application {
                             )
                         }
 
+                        val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
+
                         Navigator(
                             MainScreen(
                                 frameWindowScope = this,
@@ -226,6 +228,7 @@ fun main() = application {
                                 isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
                                 isReaderModeEnabled = settingsState.isReaderModeEnabled,
                                 isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
+                                feedFilter = currentFeedFilter,
                                 onRefreshClick = {
                                     scope.launch {
                                         listState.animateScrollToItem(0)

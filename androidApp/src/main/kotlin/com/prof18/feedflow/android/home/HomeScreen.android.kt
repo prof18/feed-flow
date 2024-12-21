@@ -19,6 +19,7 @@ import com.prof18.feedflow.android.home.bywindowsize.MediumHomeView
 import com.prof18.feedflow.android.home.components.NoFeedsBottomSheet
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -34,6 +35,7 @@ internal fun HomeScreen(
     onSearchClick: () -> Unit,
     onAccountsClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
+    onEditFeedClick: (FeedSource) -> Unit,
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
     val browserManager = koinInject<BrowserManager>()
@@ -140,6 +142,7 @@ internal fun HomeScreen(
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
                 onSearchClick = onSearchClick,
+                onEditFeedClick = onEditFeedClick,
             )
         }
 
@@ -199,6 +202,7 @@ internal fun HomeScreen(
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
                 onSearchClick = onSearchClick,
+                onEditFeedClick = onEditFeedClick,
             )
         }
 
@@ -258,6 +262,7 @@ internal fun HomeScreen(
                     homeViewModel.onFeedFilterSelected(FeedFilter.Timeline)
                 },
                 onSearchClick = onSearchClick,
+                onEditFeedClick = onEditFeedClick,
             )
         }
     }

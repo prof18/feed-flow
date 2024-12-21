@@ -14,6 +14,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
@@ -48,6 +49,7 @@ internal fun CompactHomeView(
     updateReadStatus: (FeedItemId, Boolean) -> Unit,
     onBackToTimelineClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -88,6 +90,7 @@ internal fun CompactHomeView(
             updateBookmarkStatus = updateBookmarkStatus,
             onBackToTimelineClick = onBackToTimelineClick,
             onSearchClick = onSearchClick,
+            onEditFeedClick = onEditFeedClick,
         )
     } else {
         ModalNavigationDrawer(
@@ -142,6 +145,7 @@ internal fun CompactHomeView(
                 updateBookmarkStatus = updateBookmarkStatus,
                 onBackToTimelineClick = onBackToTimelineClick,
                 onSearchClick = onSearchClick,
+                onEditFeedClick = onEditFeedClick,
             )
         }
     }
@@ -174,6 +178,7 @@ private fun CompactHomeViewPreview() {
             updateReadStatus = { _, _ -> },
             onBackToTimelineClick = {},
             onSearchClick = {},
+            onEditFeedClick = { },
         )
     }
 }

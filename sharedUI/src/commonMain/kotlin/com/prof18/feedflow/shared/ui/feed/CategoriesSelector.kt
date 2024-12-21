@@ -137,7 +137,6 @@ private fun CategoriesList(
                     Text(
                         text = category.name
                             ?: LocalFeedFlowStrings.current.noCategorySelectedHeader,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
 
                     Spacer(Modifier.weight(1f))

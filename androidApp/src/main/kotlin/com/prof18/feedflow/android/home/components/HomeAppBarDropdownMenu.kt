@@ -4,6 +4,7 @@ import FeedFlowTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
@@ -13,6 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.android.BuildConfig
+import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -21,12 +24,14 @@ import com.prof18.feedflow.shared.ui.utils.tagForTesting
 @Composable
 internal fun HomeAppBarDropdownMenu(
     showMenu: Boolean,
+    feedFilter: FeedFilter,
     closeMenu: () -> Unit,
     onMarkAllReadClicked: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onForceRefreshClick: () -> Unit,
     onDeleteDatabase: () -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
 ) {
     DropdownMenu(
         expanded = showMenu,
@@ -80,6 +85,23 @@ internal fun HomeAppBarDropdownMenu(
             },
         )
 
+        if (feedFilter is FeedFilter.Source) {
+            DropdownMenuItem(
+                onClick = {
+                    onEditFeedClick(feedFilter.feedSource)
+                },
+                text = {
+                    Text(LocalFeedFlowStrings.current.editFeed)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = null,
+                    )
+                },
+            )
+        }
+
         DropdownMenuItem(
             modifier = Modifier
                 .tagForTesting(TestingTag.SETTINGS_MENU),
@@ -122,12 +144,14 @@ private fun SettingsDropdownMenuPreview() {
     FeedFlowTheme {
         HomeAppBarDropdownMenu(
             showMenu = true,
+            feedFilter = FeedFilter.Timeline,
             closeMenu = {},
             onMarkAllReadClicked = {},
             onClearOldArticlesClicked = {},
             onSettingsButtonClicked = {},
             onForceRefreshClick = {},
             onDeleteDatabase = {},
+            onEditFeedClick = {},
         )
     }
 }

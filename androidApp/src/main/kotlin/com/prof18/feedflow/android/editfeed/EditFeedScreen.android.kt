@@ -108,7 +108,7 @@ internal fun EditScreen(
         topAppBar = {
             TopAppBar(
                 title = {
-                    Text(LocalFeedFlowStrings.current.addFeed)
+                    Text(LocalFeedFlowStrings.current.editFeed)
                 },
                 navigationIcon = {
                     IconButton(

@@ -50,6 +50,7 @@ internal fun CompactHomeView(
     onBackToTimelineClick: () -> Unit,
     onSearchClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -107,6 +108,8 @@ internal fun CompactHomeView(
                                 listState.animateScrollToItem(0)
                             }
                         },
+                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                        onEditFeedClick = onEditFeedClick,
                     )
                 }
             },
@@ -179,6 +182,7 @@ private fun CompactHomeViewPreview() {
             onBackToTimelineClick = {},
             onSearchClick = {},
             onEditFeedClick = { },
+            onDeleteFeedSourceClick = { },
         )
     }
 }

@@ -143,6 +143,9 @@ internal fun HomeScreen(
                 },
                 onSearchClick = onSearchClick,
                 onEditFeedClick = onEditFeedClick,
+                onDeleteFeedSourceClick = { feedSource ->
+                    homeViewModel.deleteFeedSource(feedSource)
+                },
             )
         }
 
@@ -203,6 +206,9 @@ internal fun HomeScreen(
                 },
                 onSearchClick = onSearchClick,
                 onEditFeedClick = onEditFeedClick,
+                onDeleteFeedSourceClick = { feedSource ->
+                    homeViewModel.deleteFeedSource(feedSource)
+                },
             )
         }
 
@@ -263,6 +269,9 @@ internal fun HomeScreen(
                 },
                 onSearchClick = onSearchClick,
                 onEditFeedClick = onEditFeedClick,
+                onDeleteFeedSourceClick = { feedSource ->
+                    homeViewModel.deleteFeedSource(feedSource)
+                },
             )
         }
     }

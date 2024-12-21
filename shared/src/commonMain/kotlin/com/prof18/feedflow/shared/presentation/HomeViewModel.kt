@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
@@ -240,6 +241,13 @@ class HomeViewModel internal constructor(
     fun enqueueBackup() {
         viewModelScope.launch {
             feedSyncRepository.enqueueBackup()
+        }
+    }
+
+    fun deleteFeedSource(feedSource: FeedSource) {
+        viewModelScope.launch {
+            feedManagerRepository.deleteFeed(feedSource)
+            feedRetrieverRepository.fetchFeeds()
         }
     }
 }

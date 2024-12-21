@@ -19,7 +19,7 @@ nav-compose = "2.8.3"
 slf4jNop = "2.0.15"
 turbine = "1.1.0"
 viewModel = "2.8.7"
-viewModel-compose = "2.8.6"
+viewModel-compose = "2.8.7"
 lifecycle-runtime-compose = "2.8.7"
 org-robolectric = "4.13"
 # When updating, check the version of sqlite-jdbc in the following link:

@@ -21,7 +21,7 @@ turbine = "1.1.0"
 viewModel = "2.8.7"
 viewModel-compose = "2.8.7"
 lifecycle-runtime-compose = "2.8.7"
-org-robolectric = "4.13"
+org-robolectric = "4.14.1"
 # When updating, check the version of sqlite-jdbc in the following link:
 # https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L70
 # if necessry, dowload again the native library here

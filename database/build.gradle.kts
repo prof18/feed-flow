@@ -16,7 +16,7 @@ kotlin {
 
                 // Because of https://github.com/cashapp/sqldelight/issues/4357
                 // Delete this line when the issue is fixed on Koin side
-                implementation("co.touchlab:stately-common:2.0.7")
+                implementation("co.touchlab:stately-common:2.1.0")
             }
         }
 

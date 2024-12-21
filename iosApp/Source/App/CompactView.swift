@@ -29,6 +29,7 @@ struct CompactView: View {
     )
     @State var scrollUpTrigger: Bool = false
     @State var showAddFeedSheet = false
+    @State var showEditFeedSheet = false
 
     @State var isToggled: Bool = false
     @State private var showFontSizeMenu: Bool = false
@@ -42,6 +43,8 @@ struct CompactView: View {
 
     @State var indexHolder: HomeListIndexHolder
     let homeViewModel: HomeViewModel
+
+    @State private var feedSourceToEdit: FeedSource?
 
     var body: some View {
         @Bindable var appState = appState
@@ -72,9 +75,21 @@ struct CompactView: View {
                 },
                 onAddFeedClick: {
                     showAddFeedSheet.toggle()
+                },
+                onEditFeedClick: { feedSource in
+                    feedSourceToEdit = feedSource
+                    showEditFeedSheet.toggle()
+                },
+                onDeleteFeedClick: { feedSource in
+                    homeViewModel.deleteFeedSource(feedSource: feedSource)
                 }
             ).sheet(isPresented: $showAddFeedSheet) {
                 AddFeedScreen(showCloseButton: true)
+            }
+            .sheet(isPresented: $showEditFeedSheet) {
+                if let feedSource = feedSourceToEdit {
+                    EditFeedScreen(feedSource: feedSource)
+                }
             }
             .navigationDestination(for: CompactViewRoute.self) { route in
                 switch route {

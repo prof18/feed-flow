@@ -44,6 +44,9 @@ struct RegularView: View {
   var drawerItems: [DrawerItem] = []
   let homeViewModel: HomeViewModel
 
+  @State private var showEditFeedSheet = false
+  @State private var feedSourceToEdit: FeedSource?
+
   var body: some View {
     NavigationSplitView {
       SidebarDrawer(
@@ -72,6 +75,13 @@ struct RegularView: View {
         },
         onAddFeedClick: {
           showAddFeedSheet.toggle()
+        },
+        onEditFeedClick: { feedSource in
+          feedSourceToEdit = feedSource
+          showEditFeedSheet.toggle()
+        },
+        onDeleteFeedClick: { feedSource in
+          homeViewModel.deleteFeedSource(feedSource: feedSource)
         }
       )
       .navigationBarTitleDisplayMode(.inline)
@@ -148,6 +158,11 @@ struct RegularView: View {
     }
     .sheet(isPresented: $showAddFeedSheet) {
       AddFeedScreen(showCloseButton: true)
+    }
+    .sheet(isPresented: $showEditFeedSheet) {
+      if let feedSource = feedSourceToEdit {
+        EditFeedScreen(feedSource: feedSource)
+      }
     }
     .navigationSplitViewStyle(.balanced)
     .task {

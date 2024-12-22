@@ -28,7 +28,7 @@ org-robolectric = "4.14.1"
 # https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
 sql-delight = "2.0.2"
 rss-parser = "6.0.8"
-jsoup = "1.18.1"
+jsoup = "1.18.3"
 triplet-play = "3.12.1"
 compose-multiplatform = "1.7.3"
 # When updating, check the version of jna in the following link:

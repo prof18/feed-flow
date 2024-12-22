@@ -118,4 +118,5 @@
     <string name="no_icloud_sync_yet">Deine Daten sind noch nicht mit iCloud synchronisiert. Drücke den Sicherungs-Knopf um die Synchronisierung zu starten</string>
     <string name="account_refresh_progress">Aktualisierung läuft</string>
     <string name="reader_mode_warning">i Der Lesemodus versucht, an den Artikelinhalt abzurufen. Es kann zu Fehlern oder unerwünschten Zeichen kommen.</string>
+    <string name="edit_feed_source_name_button">Bearbeiten</string>
 </resources>

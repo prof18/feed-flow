@@ -369,7 +369,7 @@ internal class FeedRetrieverRepository(
 
                         databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
                     } catch (e: Throwable) {
-                        logger.e(e) { "Something went wrong, skipping: ${feedSource.url}}" }
+                        logger.e { "Error, skip: ${feedSource.url}}. Error: $e" }
                         errorMutableState.update {
                             FeedErrorState(
                                 failingSourceName = feedSource.title,

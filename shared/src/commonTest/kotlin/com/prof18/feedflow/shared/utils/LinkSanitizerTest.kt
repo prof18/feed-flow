@@ -26,4 +26,10 @@ class LinkSanitizerTest {
         val cleanLink = sanitizeUrl("example.com")
         assertEquals("https://example.com", cleanLink)
     }
+
+    @Test
+    fun `The sanitize url works correctly with http links`() {
+        val cleanLink = sanitizeUrl("http://example.com")
+        assertEquals("http://example.com", cleanLink)
+    }
 }

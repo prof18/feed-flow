@@ -123,4 +123,8 @@
     <string name="no_dropbox_sync_yet">Andmed on veel Dropboxiga sünkroniseerimata. Selle käivitamiseks klõpsi nuppu „Varundus“</string>
     <string name="icloud_sync_description">Lisa oma iCloudi kasutajakonto ning sünkroniseeri uudisvoogusid, kategooriaid, lugemise olekuid ja järjehoidjatesse salvestatud artikleid oma iOSi, iPadOSi seadmete vahel. Andmed salvestuvad rakendustekohasesse kausta ning FeedFlowl puudub igasugune ligipääs sinu muudele failidele ja andmetele</string>
     <string name="reader_mode_font_size">Kirjatüübi suurus</string>
+    <string name="edit_feed">Muuda uudisvoogu</string>
+    <string name="edit_feed_source_name_button">Muuda</string>
+    <string name="feed_name">Uudisvoo nimi</string>
+    <string name="feed_edited_message">Uudisvoog on muudetud: %s</string>
 </resources>

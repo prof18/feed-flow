@@ -13,10 +13,6 @@ kotlin {
                 implementation(libs.sqldelight.coroutine.extensions)
                 implementation(libs.sqldelight.primitive.adapter)
                 implementation(libs.touchlab.kermit)
-
-                // Because of https://github.com/cashapp/sqldelight/issues/4357
-                // Delete this line when the issue is fixed on Koin side
-                implementation("co.touchlab:stately-common:2.0.7")
             }
         }
 

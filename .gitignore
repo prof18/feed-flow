@@ -120,4 +120,4 @@ bin/
 /.kotlin/
 /play_config.json
 /iosApp/Assets/FeedFlow.xcconfig
-/build-logic/.kotlin/sessions/kotlin-compiler-18423500844460553761.salive
+/build-logic/.kotlin/

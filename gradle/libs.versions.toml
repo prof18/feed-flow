@@ -17,6 +17,7 @@ kotlin = "2.1.0"
 multiplatformMarkdownRendererM3 = "0.26.0"
 nav-compose = "2.8.5"
 slf4jNop = "2.0.15"
+stately-concurrency = "2.1.0"
 turbine = "1.2.0"
 viewModel = "2.8.7"
 viewModel-compose = "2.8.7"
@@ -89,6 +90,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 multiplatform-markdown-renderer-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "multiplatformMarkdownRendererM3" }
 multiplatform-markdown-renderer-coil = { module = "com.mikepenz:multiplatform-markdown-renderer-coil3", version.ref = "multiplatformMarkdownRendererM3" }
 slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4jNop" }
+stately-concurrency = { module = "co.touchlab:stately-concurrency", version.ref = "stately-concurrency" }
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "kermit" }
 touchlab-kermit-crash = { module = "co.touchlab:kermit-crashlytics", version.ref = "kermit" }

@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class KmpLibraryConventionPlugin : Plugin<Project> {
@@ -18,10 +18,8 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
             }
             configure<KotlinMultiplatformExtension> {
                 androidTarget {
-                    compilations.all {
-                        kotlinOptions {
-                            jvmTarget = JavaVersion.VERSION_17.toString()
-                        }
+                    compilerOptions {
+                        jvmTarget.set(JvmTarget.JVM_17)
                     }
                 }
 
@@ -32,7 +30,6 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                 iosArm64()
                 iosSimulatorArm64()
 
-                @OptIn(ExperimentalKotlinGradlePluginApi::class)
                 compilerOptions {
                     freeCompilerArgs.add("-Xexpect-actual-classes")
                 }

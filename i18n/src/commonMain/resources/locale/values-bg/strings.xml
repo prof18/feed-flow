@@ -118,4 +118,8 @@
     <string name="dropbox_sync_error">Възникна грешка при свързване с Dropbox. Моля, опитайте отново</string>
     <string name="account_refresh_progress">В ход е опресняване</string>
     <string name="last_download">Последно изтегляне: %s</string>
+    <string name="edit_feed_source_name_button">Редактиране</string>
+    <string name="edit_feed">Редактиране на емисия</string>
+    <string name="feed_name">Име на емисията</string>
+    <string name="feed_edited_message">Емисията %s е актуализирана</string>
 </resources>

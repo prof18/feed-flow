@@ -667,7 +667,7 @@
 			repositoryURL = "https://github.com/dropbox/SwiftyDropbox.git";
 			requirement = {
 				kind = exactVersion;
-				version = 10.0.7;
+				version = 10.2.0;
 			};
 		};
 		CC23293A29D85208005D0E06 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
@@ -675,7 +675,7 @@
 			repositoryURL = "https://github.com/scinfu/SwiftSoup";
 			requirement = {
 				kind = exactVersion;
-				version = 2.7.2;
+				version = 2.7.5;
 			};
 		};
 		CC4B803929D98BB20004A0AB /* XCRemoteSwiftPackageReference "Nuke" */ = {
@@ -683,7 +683,7 @@
 			repositoryURL = "https://github.com/kean/Nuke";
 			requirement = {
 				kind = exactVersion;
-				version = 12.5.0;
+				version = 12.8.0;
 			};
 		};
 		CC4B803E29D9A31E0004A0AB /* XCRemoteSwiftPackageReference "swift-collections" */ = {
@@ -691,7 +691,7 @@
 			repositoryURL = "https://github.com/apple/swift-collections.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.0.4;
+				version = 1.1.4;
 			};
 		};
 		CCEA11BC2A6D2BA600C661AC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
@@ -699,7 +699,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = exactVersion;
-				version = 11.0.0;
+				version = 11.6.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

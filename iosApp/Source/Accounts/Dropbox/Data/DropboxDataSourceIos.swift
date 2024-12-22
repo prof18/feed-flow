@@ -36,7 +36,7 @@ class DropboxDataSourceIos: DropboxDataSource {
 
         for request in successfulReturnedRequests {
             switch request {
-            case .upload(let uploadResponse):
+            case .files_upload(let uploadResponse):
                 uploadResponse.response { _, error in
                     // handle response
                     if error != nil {

@@ -20,16 +20,24 @@ The app is still in development, so some features may be missing or there may be
 
 ## Screenshot 1
 
-All your feeds in your pocket
+All your feeds
+in your pocket
 
 ## Screenshot 3
 
-Import your existing collection
+Import your
+existing collection
 
 ## Screenshot 4
 
-Open the articles in your favourite browser
+Open the articles
+in your favourite browser
 
 ## Screenshot 5
 
-Enjoy a clutter-free reader mode
+Enjoy a clutter-free
+reader mode
+
+## Banner image
+
+minimalistic RSS Reader

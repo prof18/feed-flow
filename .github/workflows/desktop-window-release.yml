@@ -55,7 +55,7 @@ jobs:
 
       # TODO: remove, just for testing
       - name: Upload asset
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH }}
           name: ${{ env.RELEASE_NAME }}

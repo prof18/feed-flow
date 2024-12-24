@@ -42,3 +42,7 @@ Abre os artigos no navegador favorito
 ## Captura de pantalla 5
 
 Desfruta do modo lectura sen distraccións
+
+## Imaxe de cabeceira
+
+Lector RSS minimalista

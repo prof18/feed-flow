@@ -39,6 +39,7 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.preview)
                 implementation(compose.materialIconsExtended)
+                implementation(compose.components.resources)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.bundles.about.libraries)
                 implementation(libs.jsoup)
@@ -58,6 +59,11 @@ kotlin {
 }
 
 compose {
+    resources {
+        packageOfResClass = "com.prof18.feedflow.desktop.resources"
+        generateResClass = always
+    }
+
     desktop {
         application {
             mainClass = "com.prof18.feedflow.desktop.MainKt"
@@ -91,7 +97,7 @@ compose {
                 val iconsRoot = project.file("src/jvmMain/resources/icons/")
 
                 windows {
-                    iconFile.set(project.file("icon.ico"))
+                    iconFile.set(iconsRoot.resolve("icon.ico"))
 
                     perUserInstall = true
                     menuGroup = "Marco Gomiero"

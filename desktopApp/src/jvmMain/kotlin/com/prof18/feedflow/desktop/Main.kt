@@ -29,7 +29,6 @@ import androidx.compose.ui.window.rememberWindowState
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import coil3.ImageLoader
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.desktop.about.AboutContent
@@ -51,6 +50,9 @@ import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
+import com.prof18.feedflow.desktop.resources.Res
+import com.prof18.feedflow.desktop.resources.icon
 import java.awt.Desktop
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
@@ -59,7 +61,6 @@ import java.net.URI
 import java.util.Properties
 import javax.swing.UIManager
 
-@OptIn(ExperimentalCoilApi::class)
 fun main() = application {
     val properties = Properties()
     val propsFile = DI::class.java.classLoader?.getResourceAsStream("props.properties")
@@ -125,6 +126,7 @@ fun main() = application {
 
     FeedFlowTheme {
         val lyricist = rememberFeedFlowStrings()
+        val icon = painterResource(Res.drawable.icon)
         ProvideFeedFlowStrings(lyricist) {
             Window(
                 onCloseRequest = {
@@ -136,6 +138,7 @@ fun main() = application {
                 },
                 state = windowState,
                 title = "FeedFlow",
+                icon = icon,
             ) {
                 val listener = object : WindowFocusListener {
                     override fun windowGainedFocus(e: WindowEvent) {

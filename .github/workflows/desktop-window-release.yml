@@ -1,0 +1,79 @@
+name: Desktop Windows Release
+on:
+  workflow_dispatch:
+    { }
+  # TODO: Maybe change to windows
+  push:
+    tags:
+      - '*-desktop'
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+
+      - name: Update Licenses file
+        run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+
+      - name: Create path variables
+        id: path_variables
+        run: |
+          tag=$(git describe --tags --abbrev=0 --match "*-desktop")
+          version=$(echo "$tag" | sed 's/-desktop$//')
+          name="FeedFlow-${version}.msi"
+          path="desktopApp/build/release/main-release/msi/${name}"
+          echo "TAG=$tag" >> $GITHUB_ENV
+          echo "VERSION=$version" >> $GITHUB_ENV
+          echo "RELEASE_PATH=$path" >> $GITHUB_ENV
+          echo "NAME=$name" >> $GITHUB_ENV
+
+      - name: Create Properties file
+        run: |
+          echo "is_release=true" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "sentry_dns=$SENTRY_DNS" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "version=$VERSION" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "dropbox_key=$DROPBOX_API_KEY" >> desktopApp/src/jvmMain/resources/props.properties
+        env:
+          SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+          VERSION: ${{ env.VERSION }}
+          DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+
+      - name: Create DMG
+        run: ./gradlew packageReleaseMsi
+
+      # TODO: remove, just for testing
+      - name: Upload asset
+        uses: actions/upload-artifact@v3
+        with:
+          path: ${{ env.RELEASE_PATH }}
+          name: ${{ env.RELEASE_NAME }}
+
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            **/build/compose/logs/*  
+
+#      - name: Upload binaries to release
+#        uses: svenstaro/upload-release-action@v2
+#        with:
+#          repo_token: ${{ secrets.GITHUB_TOKEN }}
+#          file: ${{ env.RELEASE_PATH }}
+#          tag: ${{ env.TAG }}
+#          overwrite: true
+#          draft: true
+#          body: "Release ${{ env.VERSION }}"

@@ -1,7 +1,9 @@
 package com.prof18.feedflow.desktop.versionchecker
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.desktop.di.DI
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +25,9 @@ internal class NewVersionChecker(
 
     suspend fun notifyIfNewVersionIsAvailable() = withContext(dispatcherProvider.io) {
         val isSandboxed = System.getenv("APP_SANDBOX_CONTAINER_ID") != null
-        if (isSandboxed) {
+        val isNotMacOs = getDesktopOS()
+        // TODO: Add support for Windows and Linux
+        if (isSandboxed || isNotMacOs != DesktopOS.MAC) {
             return@withContext
         }
         try {

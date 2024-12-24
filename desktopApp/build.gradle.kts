@@ -81,7 +81,7 @@ compose {
 
                 modules("java.instrument", "java.sql", "jdk.unsupported")
 
-                targetFormats(TargetFormat.Dmg, TargetFormat.Pkg)
+                targetFormats(TargetFormat.Dmg, TargetFormat.Pkg, TargetFormat.Msi)
                 packageName = "FeedFlow"
                 packageVersion = getVersionName()
 
@@ -89,6 +89,16 @@ compose {
                 copyright = "© 2023 Marco Gomiero. All rights reserved."
 
                 val iconsRoot = project.file("src/jvmMain/resources/icons/")
+
+                windows {
+                    iconFile.set(project.file("icon.ico"))
+
+                    perUserInstall = true
+                    menuGroup = "Marco Gomiero"
+
+                    // upgradeUuid = "UUID"
+                    // https://wixtoolset.org/documentation/manual/v3/howtos/general/generate_guids.html
+                }
 
                 macOS {
                     iconFile.set(iconsRoot.resolve("icon.icns"))

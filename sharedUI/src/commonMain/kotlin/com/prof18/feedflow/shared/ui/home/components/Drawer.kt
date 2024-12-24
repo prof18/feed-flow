@@ -284,7 +284,7 @@ private fun DrawerCategoryItem(
 ) {
     NavigationDrawerItem(
         selected = currentFeedFilter is FeedFilter.Category &&
-                drawerCategory.category == currentFeedFilter.feedCategory,
+            drawerCategory.category == currentFeedFilter.feedCategory,
         label = {
             Text(
                 text = drawerCategory.category.title,
@@ -463,12 +463,6 @@ private fun FeedSourcesList(
     Column {
         drawerFeedSources.forEach { feedSourceWrapper ->
 
-            var showFeedMenu by remember {
-                mutableStateOf(
-                    false,
-                )
-            }
-
             FeedSourceDrawerItem(
                 label = {
                     Text(
@@ -478,7 +472,7 @@ private fun FeedSourcesList(
                     )
                 },
                 selected = currentFeedFilter is FeedFilter.Source &&
-                        currentFeedFilter.feedSource == feedSourceWrapper.feedSource,
+                    currentFeedFilter.feedSource == feedSourceWrapper.feedSource,
                 onClick = {
                     onFeedFilterSelected(
                         FeedFilter.Source(
@@ -503,16 +497,6 @@ private fun FeedSourcesList(
                 colors = NavigationDrawerItemDefaults.colors(
                     unselectedContainerColor = Color.Transparent,
                 ),
-                onLongClick = {
-                    showFeedMenu = true
-                }
-            )
-
-            FeedSourceContextMenu(
-                showFeedMenu = showFeedMenu,
-                hideMenu = {
-                    showFeedMenu = false
-                },
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 feedSource = feedSourceWrapper.feedSource,
@@ -523,22 +507,30 @@ private fun FeedSourcesList(
 
 @Composable
 fun FeedSourceDrawerItem(
+    feedSource: FeedSource,
     label: @Composable () -> Unit,
     selected: Boolean,
     onClick: () -> Unit,
-    onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: @Composable () -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
     colors: NavigationDrawerItemColors = NavigationDrawerItemDefaults.colors(),
 ) {
+    var showFeedMenu by remember {
+        mutableStateOf(
+            false,
+        )
+    }
+
     Surface(
         selected = selected,
         onClick = onClick,
         modifier =
-            modifier
-                .semantics { role = Role.Tab }
-                .heightIn(min = 56.0.dp)
-                .fillMaxWidth(),
+        modifier
+            .semantics { role = Role.Tab }
+            .heightIn(min = 56.0.dp)
+            .fillMaxWidth(),
         shape = CircleShape,
         color = colors.containerColor(selected).value,
     ) {
@@ -549,7 +541,7 @@ fun FeedSourceDrawerItem(
                         onClick()
                     },
                     onLongClick = {
-                        onLongClick()
+                        showFeedMenu = true
                     },
                 )
                 .padding(start = 16.dp, end = 24.dp),
@@ -564,5 +556,15 @@ fun FeedSourceDrawerItem(
                 CompositionLocalProvider(LocalContentColor provides labelColor, content = label)
             }
         }
+
+        FeedSourceContextMenu(
+            showFeedMenu = showFeedMenu,
+            hideMenu = {
+                showFeedMenu = false
+            },
+            onEditFeedClick = onEditFeedClick,
+            onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+            feedSource = feedSource,
+        )
     }
 }

@@ -11,9 +11,8 @@ object AppDataPathBuilder {
         System.getProperty("os.name").contains("windows", true) -> {
             "${System.getProperty("user.home")}\\AppData\\Local\\FeedFlow"
         }
-        else -> {
-            error("This type OS not implemented")
-        }
+        else -> System.getenv("XDG_DATA_HOME")?.let { "$it/FeedFlow" }
+            ?: "${System.getProperty("user.home")}/.local/share/FeedFlow"
     }
 
     fun getAppDataPath(appEnvironment: AppEnvironment): String {

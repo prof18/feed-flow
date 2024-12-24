@@ -87,7 +87,7 @@ compose {
 
                 modules("java.instrument", "java.sql", "jdk.unsupported")
 
-                targetFormats(TargetFormat.Dmg, TargetFormat.Pkg, TargetFormat.Msi)
+                targetFormats(TargetFormat.Dmg, TargetFormat.Pkg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm)
                 packageName = "FeedFlow"
                 packageVersion = getVersionName()
 
@@ -95,6 +95,13 @@ compose {
                 copyright = "© 2023 Marco Gomiero. All rights reserved."
 
                 val iconsRoot = project.file("src/jvmMain/resources/icons/")
+
+                linux {
+                    iconFile.set(iconsRoot.resolve("icon.png"))
+
+                    menuGroup = "Marco Gomiero"
+                    appCategory = "News"
+                }
 
                 windows {
                     iconFile.set(iconsRoot.resolve("icon.ico"))

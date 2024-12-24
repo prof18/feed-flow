@@ -22,6 +22,7 @@ runs:
         cache-encryption-key: ${{ inputs.gradle-cache-encryption-key }}
 
     - name: Setup Gradle Properties
+      if: runner.os != 'Windows'
       shell: bash
       run: |
         echo "org.gradle.jvmargs=-Xms10g -Xmx10g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC" >> ~/.gradle/gradle.properties

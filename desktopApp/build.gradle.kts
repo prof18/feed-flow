@@ -112,8 +112,8 @@ compose {
                     perUserInstall = true
                     menuGroup = "Marco Gomiero"
 
-                    // upgradeUuid = "UUID"
-                    // https://wixtoolset.org/documentation/manual/v3/howtos/general/generate_guids.html
+                    // https://www.guidgen.com/
+                    upgradeUuid = "da94d3fb-a09b-4c3a-84db-c4a68360fd47".uppercase()
                 }
 
                 macOS {

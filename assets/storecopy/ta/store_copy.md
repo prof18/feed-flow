@@ -1,43 +1,51 @@
-# Title
+# தலைப்பு
 
-FeedFlow - RSS Reader
+ஃபீட்ஃப்ளோ - ஆர்எச்எச் ரீடர்
 
-## Short desc
+## குறுகிய டெச்க்
 
-Minimal, fast, uncluttered
+குறைந்தபட்ச, வேகமான, ஒழுங்கற்ற
 
-## Long desc
+## நீண்ட டெச்க்
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+உங்களுக்கு பிடித்த RSS ஊட்டங்களை ஃபீட்ஃப்ளோ, மிகச்சிறிய RSS ரீடர் மூலம்
+பின்பற்றவும். ஃபீட்ஃப்ளோ ஒரு மிகச்சிறிய பட்டியலை வழங்குகிறது மற்றும் அந்தந்த
+வலைத்தளங்களில் அல்லது வாசகர் பயன்முறையில் கட்டுரைகளைத் திறப்பதால், ஒழுங்கீனம்
+இல்லாத வாசிப்பு அனுபவத்தை அனுபவிக்கவும்.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+உங்களுக்கு விருப்பமான உலாவியைத் தேர்ந்தெடுப்பதன் மூலம் உங்கள் உலாவல் அனுபவத்தைத்
+தக்கவைக்கவும். இந்த வழியில், உங்கள் முதன்மையான உலாவியில் இருந்து உங்கள் வாசிப்பு
+அனுபவத்தை பிரிக்க உங்களுக்கு பிடித்த தனியுரிமை-மையப்படுத்தப்பட்ட உலாவியைத்
+தேர்ந்தெடுக்கலாம். நீங்கள் உலாவியைத் தவிர்க்க விரும்பினால், எந்த
+கவனச்சிதறல்களும் இல்லாமல் கட்டுரைகளின் உள்ளடக்கத்தை ரசிக்க ஃபீட்ஃப்ளோ ஒரு வாசகர்
+பயன்முறையை வழங்குகிறது.
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+ஃபீட்ஃப்ளோவுக்கு மாற்றுவது ஒரு தென்றலாகும். உங்கள் தற்போதைய ஆர்எச்எச் சேகரிப்பு
+எங்கள் முழு மற்றும் எளிதான இறக்குமதி மற்றும் ஏற்றுமதி திறன்களுடன் OPML கோப்புகள்
+மூலம் இறக்குமதி செய்யப்படலாம், இது தடையற்ற வாசிப்பு அனுபவத்தை உறுதி செய்கிறது.
 
-Just focus on reading (or scrolling)!
+வாசிப்பதில் (அல்லது ச்க்ரோலிங்) கவனம் செலுத்துங்கள்!
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+பயன்பாடு இன்னும் வளர்ச்சியில் உள்ளது, எனவே சில நற்பொருத்தங்கள் காணவில்லை அல்லது
+சிக்கல்கள் இருக்கலாம். ஏதேனும் பிழைகள் அல்லது அம்ச பரிந்துரைகளைப்
+புகாரளிக்கவும்!
 
-## Screenshot 1
+## திரைக்காட்சி 1
 
-All your feeds
-in your pocket
+உங்கள் பாக்கெட்டில் உங்கள் எல்லா ஊட்டங்களும்
 
-## Screenshot 3
+## திரைக்காட்சி 3
 
-Import your
-existing collection
+உங்கள் இருக்கும் தொகுப்பை இறக்குமதி செய்யுங்கள்
 
-## Screenshot 4
+## திரைக்காட்சி 4
 
-Open the articles
-in your favourite browser
+உங்களுக்கு பிடித்த உலாவியில் கட்டுரைகளைத் திறக்கவும்
 
-## Screenshot 5
+## திரைக்காட்சி 5
 
-Enjoy a clutter-free
-reader mode
+ஒழுங்கீனம் இல்லாத வாசகர் பயன்முறையை அனுபவிக்கவும்
 
-## Banner image
+## பேனர் படம்
 
-minimalistic RSS Reader
+குறைந்தபட்ச ஆர்எச்எச் ரீடர்

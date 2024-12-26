@@ -249,21 +249,25 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-linux.outputs.deb_name }}
+          merge-multiple: true
 
       - name: Download RPM artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-linux.outputs.rpm_name }}
+          merge-multiple: true
 
       - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-windows.outputs.artifact_name }}
+          merge-multiple: true
 
       - name: Download macOS artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-macos.outputs.artifact_name }}
+          merge-multiple: true
 
       - name: Create Release
         uses: softprops/action-gh-release@v1

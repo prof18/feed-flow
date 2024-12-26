@@ -13,8 +13,8 @@ jobs:
     #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: macos-14
     outputs:
-      artifact_name: ${{ steps.set_name.outputs.artifact_name }}
-      release_tag: ${{ steps.get_tag.outputs.tag }}
+      artifact_name: ${{ steps.path_variables.outputs.artifact_name }}
+      release_tag: ${{ steps.path_variables.outputs.tag }}
     timeout-minutes: 40
     permissions:
       contents: write
@@ -89,7 +89,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.set_name.outputs.artifact_name }}
+          name: ${{ steps.path_variables.outputs.artifact_name }}
           path: ${{ env.RELEASE_PATH }}
           retention-days: 1
 
@@ -98,7 +98,7 @@ jobs:
     #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: windows-latest
     outputs:
-      artifact_name: ${{ steps.set_name.outputs.artifact_name }}
+      artifact_name: ${{ steps.path_variables.outputs.artifact_name }}
     timeout-minutes: 40
     permissions:
       contents: write
@@ -149,7 +149,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH }}
-          name: ${{ steps.set_name.outputs.artifact_name }}
+          name: ${{ steps.path_variables.outputs.artifact_name }}
           retention-days: 1
 
       - name: Upload reports
@@ -166,8 +166,8 @@ jobs:
     #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     outputs:
-      deb_name: ${{ steps.set_names.outputs.deb_name }}
-      rpm_name: ${{ steps.set_names.outputs.rpm_name }}
+      deb_name: ${{ steps.path_variables.outputs.deb_name }}
+      rpm_name: ${{ steps.path_variables.outputs.rpm_name }}
     timeout-minutes: 40
     permissions:
       contents: write
@@ -220,14 +220,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH_RPM }}
-          name: ${{ steps.set_names.outputs.rpm_name }}
+          name: ${{ steps.path_variables.outputs.rpm_name }}
           retention-days: 1
 
       - name: Upload DEB
         uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH_DEB }}
-          name: ${{ steps.set_names.outputs.deb_name }}
+          name: ${{ steps.path_variables.outputs.deb_name }}
           retention-days: 1
 
       - name: Upload reports

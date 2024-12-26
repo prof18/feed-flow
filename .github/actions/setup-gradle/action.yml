@@ -18,7 +18,7 @@ runs:
 
     - uses: gradle/actions/setup-gradle@v4
       with:
-        gradle-home-cache-cleanup: true
+        cache-cleanup: true
         cache-encryption-key: ${{ inputs.gradle-cache-encryption-key }}
 
     - name: Setup Gradle Properties

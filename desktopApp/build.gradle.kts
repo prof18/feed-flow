@@ -91,14 +91,17 @@ compose {
                 packageName = "FeedFlow"
                 packageVersion = getVersionName()
 
-                description = "FeedFlow - Read RSS Feed"
-                copyright = "© 2023 Marco Gomiero. All rights reserved."
+                description = "FeedFlow - RSS Reader"
+                copyright = "© 2024 Marco Gomiero. All rights reserved."
+                vendor = "Marco Gomiero"
 
                 val iconsRoot = project.file("src/jvmMain/resources/icons/")
 
                 linux {
+                    packageName = "FeedFlow"
                     iconFile.set(iconsRoot.resolve("icon.png"))
 
+                    rpmLicenseType = "Apache-2.0"
                     menuGroup = "Marco Gomiero"
                     appCategory = "News"
                 }

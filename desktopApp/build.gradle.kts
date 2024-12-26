@@ -98,7 +98,6 @@ compose {
                 val iconsRoot = project.file("src/jvmMain/resources/icons/")
 
                 linux {
-                    packageName = "FeedFlow"
                     iconFile.set(iconsRoot.resolve("icon.png"))
 
                     rpmLicenseType = "Apache-2.0"

@@ -150,13 +150,11 @@ play {
     track.set("internal")
 }
 
-@Suppress("UnstableApiUsage")
 fun getVersionCode(): Int =
     providers.exec {
         commandLine("git", "rev-list", "HEAD", "--first-parent", "--count")
     }.standardOutput.asText.get().trim().toInt()
 
-@Suppress("UnstableApiUsage")
 fun getVersionName(): String =
     providers.exec {
         commandLine("git", "describe", "--tags", "--abbrev=0", "--match", "*-android")

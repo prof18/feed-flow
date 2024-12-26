@@ -267,10 +267,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ${{ needs.build-linux.outputs.deb_name }}/*
-            ${{ needs.build-linux.outputs.rpm_name }}/*
-            ${{ needs.build-windows.outputs.artifact_name }}/*
-            ${{ needs.build-macos.outputs.artifact_name }}/*
+            ${{ needs.build-linux.outputs.deb_name }}
+            ${{ needs.build-linux.outputs.rpm_name }}
+            ${{ needs.build-windows.outputs.artifact_name }}
+            ${{ needs.build-macos.outputs.artifact_name }}
           draft: true
           tag_name: ${{ needs.build-macos.outputs.release_tag }}
         env:

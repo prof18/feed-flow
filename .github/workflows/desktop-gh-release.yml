@@ -244,39 +244,50 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
-      - name: Download DEB artifact
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.build-linux.outputs.deb_name }}
           merge-multiple: true
 
-      - name: Download RPM artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build-linux.outputs.rpm_name }}
-          merge-multiple: true
 
-      - name: Download Windows artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build-windows.outputs.artifact_name }}
-          merge-multiple: true
+#      - name: Download DEB artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: ${{ needs.build-linux.outputs.deb_name }}
+#
+#      - name: Download RPM artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: ${{ needs.build-linux.outputs.rpm_name }}
+#
+#      - name: Download Windows artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: ${{ needs.build-windows.outputs.artifact_name }}
+#
+#      - name: Download macOS artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: ${{ needs.build-macos.outputs.artifact_name }}
 
-      - name: Download macOS artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build-macos.outputs.artifact_name }}
-          merge-multiple: true
+      - name: List artifacts
+        run: ls -R
+#        .:
+#        FeedFlow-1.0.82.dmg
+#        FeedFlow-1.0.82.msi
+#        feedflow-1.0.82-1.x86_64.rpm
+#        feedflow_1.0.82_amd64.deb
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ${{ needs.build-linux.outputs.deb_name }}
-            ${{ needs.build-linux.outputs.rpm_name }}
-            ${{ needs.build-windows.outputs.artifact_name }}
-            ${{ needs.build-macos.outputs.artifact_name }}
+            *.dmg
+            *.msi
+            *.rpm
+            *.deb
           draft: true
           tag_name: ${{ needs.build-macos.outputs.release_tag }}
         env:

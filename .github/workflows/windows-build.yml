@@ -2,17 +2,11 @@ name: Desktop Windows Release
 on:
   workflow_dispatch:
     { }
-  # TODO: Maybe change to windows
-  push:
-    tags:
-      - '*-desktop'
 
 jobs:
-  deploy:
+  windows-build:
     runs-on: windows-latest
     timeout-minutes: 40
-    permissions:
-      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -55,7 +49,6 @@ jobs:
       - name: Create MSI
         run: ./gradlew packageReleaseMsi
 
-      # TODO: remove, just for testing
       - name: Upload asset
         uses: actions/upload-artifact@v4
         with:
@@ -69,13 +62,3 @@ jobs:
           name: reports
           path: |
             **/build/compose/logs/*  
-
-#      - name: Upload binaries to release
-#        uses: svenstaro/upload-release-action@v2
-#        with:
-#          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          file: ${{ env.RELEASE_PATH }}
-#          tag: ${{ env.TAG }}
-#          overwrite: true
-#          draft: true
-#          body: "Release ${{ env.VERSION }}"

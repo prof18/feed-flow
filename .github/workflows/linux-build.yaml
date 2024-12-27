@@ -1,19 +1,12 @@
-name: Desktop Linux Release
+name: Manual Linux Build
 on:
   workflow_dispatch:
     { }
-  # TODO: Maybe change to windows
-  push:
-    tags:
-      - '*-desktop'
-
 
 jobs:
-  deploy:
+  linux-build:
     runs-on: ubuntu-latest
     timeout-minutes: 40
-    permissions:
-      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +17,6 @@ jobs:
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
-
 
       - name: Update Licenses file
         run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
@@ -44,7 +36,6 @@ jobs:
           echo "RELEASE_PATH_RPM=$path_rpm" >> $GITHUB_ENV
           echo "NAME_DEB=$name_deb" >> $GITHUB_ENV
           echo "NAME_RPM=$name_rpm" >> $GITHUB_ENV
-          
 
       - name: Create Properties file
         run: |
@@ -60,14 +51,12 @@ jobs:
       - name: Create RPM & DEB
         run: ./gradlew packageReleaseDeb packageReleaseRpm
 
-      # TODO: remove, just for testing
       - name: Upload RPM
         uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH_RPM }}
           name: ${{ env.NAME_RPM }}
 
-      # TODO: remove, just for testing
       - name: Upload DEB
         uses: actions/upload-artifact@v4
         with:
@@ -81,13 +70,3 @@ jobs:
           name: reports
           path: |
             **/build/compose/logs/*  
-
-#      - name: Upload binaries to release
-#        uses: svenstaro/upload-release-action@v2
-#        with:
-#          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          file: ${{ env.RELEASE_PATH }}
-#          tag: ${{ env.TAG }}
-#          overwrite: true
-#          draft: true
-#          body: "Release ${{ env.VERSION }}"

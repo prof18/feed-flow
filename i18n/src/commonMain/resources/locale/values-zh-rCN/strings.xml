@@ -123,4 +123,8 @@
     <string name="icloud_sync_success">成功连接您的 iCloud 账户</string>
     <string name="no_icloud_sync_yet">数据未与 iCloud 同步。请点击“备份”按钮开始同步</string>
     <string name="settings_hide_duplicated_title_from_desc">隐藏文章描述中的标题</string>
+    <string name="feed_name">订阅源标题</string>
+    <string name="feed_edited_message">订阅源 %s 已更新</string>
+    <string name="edit_feed_source_name_button">编辑</string>
+    <string name="edit_feed">编辑订阅</string>
 </resources>

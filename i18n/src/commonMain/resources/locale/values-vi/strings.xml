@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="add_feed">Thêm nguồn</string>
+    <string name="add_feed">Thêm nguồn cấp</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="empty_feed_message">Ở đây chưa có gì để đọc!</string>
     <string name="refresh_feeds">Làm mới bảng tin</string>
-    <string name="no_feeds_add_one_message">Vui lòng thêm nguồn cấp</string>
+    <string name="no_feeds_add_one_message">Chưa có nguồn cấp, xin hãy thêm</string>
     <string name="app_name">FeedFlow</string>
-    <string name="toggle_mark_read_when_scrolling">Tự động đánh dấu đã đọc khi cuộn qua</string>
+    <string name="toggle_mark_read_when_scrolling">Đánh dấu đã đọc khi vuốt qua</string>
     <string name="drawer_title_bookmarks">Đã lưu</string>
     <string name="export_feeds_button">Xuất nguồn cấp ra OPML</string>
     <string name="about_nav_bar">Giới thiệu</string>
@@ -15,7 +15,7 @@
     <string name="new_category_hint">Tên danh mục mới</string>
     <string name="no_feed_modal_title">Thêm nguồn cấp</string>
     <string name="add_feed_categories_title">Danh mục</string>
-    <string name="no_feed_modal_message">Bạn chưa đăng ký bất kỳ nguồn cấp dữ liệu nào. Bạn có thể thêm nguồn cấp dữ liệu theo cách thủ công, nhập từ trình đọc RSS khác hoặc kết nối tài khoản để đồng bộ hóa dữ liệu từ thiết bị khác (tính năng đang thử nghiệm).</string>
+    <string name="no_feed_modal_message">Bạn chưa đăng ký nguồn cấp dữ liệu nào. Bạn có thể thêm thủ công, nhập từ trình đọc RSS khác hoặc kết nối tài khoản để đồng bộ hóa dữ liệu từ thiết bị khác (tính năng thử nghiệm).</string>
     <string name="account_refresh_progress">Đang làm mới</string>
     <string name="default_browser">Trình duyệt mặc định</string>
     <string name="generic_error_message">Rất tiếc, đã xảy ra lỗi :(</string>
@@ -44,7 +44,7 @@
     <string name="last_upload">Tải lên lần cuối: %s</string>
     <string name="error_account_sync">Đã xảy ra lỗi khi đồng bộ dữ liệu trong tài khoản của bạn :(</string>
     <string name="no_dropbox_sync_yet">Dữ liệu chưa được đồng bộ hóa với Dropbox. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
-    <string name="settings_hide_duplicated_title_from_desc">Ẩn tên trang web khỏi mô tả bài viết</string>
+    <string name="settings_hide_duplicated_title_from_desc">Ẩn tên trang web trên bài viết</string>
     <string name="reader_mode_font_size">Cỡ chữ</string>
     <string name="author_label">Lập trình bằng ❤️ bởi</string>
     <string name="settings_button">Cài đặt</string>
@@ -67,17 +67,17 @@
     <string name="new_release_available_title">FeedFlow đã có phiên bản mới:</string>
     <string name="close_menu_button">Đóng menu</string>
     <string name="settings_app_title">Ứng dụng</string>
-    <string name="about_the_app">FeedFlow là một trình đọc RSS tối giản dựa trên ý kiến cá nhân của tác giả. Các bài viết được mở trên trang web tương ứng của chúng và bạn có thể chọn trình duyệt riêng tư yêu thích của mình để tách biệt trải nghiệm đọc ra khỏi trình duyệt chính. Nếu bạn không thích trình duyệt, FeedFlow cung cấp chế độ đọc trong ứng dụng để thưởng thức nội dung của các bài viết mà không bị phân tâm.\nBạn có thể nhập và xuất bộ sưu tập RSS của mình bằng file OPML.</string>
+    <string name="about_the_app">FeedFlow là một trình đọc RSS tối giản dựa trên ý kiến cá nhân của tác giả. Các bài viết được mở trên trang web tương ứng của chúng bằng trình duyệt riêng tư yêu thích của bạn. Nếu bạn không thích bị phân tâm, FeedFlow có chế độ đọc các bài viết ngay trong ứng dụng.\nBạn có thể nhập và xuất bộ sưu tập RSS của mình bằng file OPML.</string>
     <string name="force_feed_refresh">Tự động làm mới nguồn cấp</string>
     <string name="menu_mark_as_read">Đánh dấu đã đọc</string>
     <string name="menu_open_comments">Đọc bình luận</string>
     <string name="dropbox_confirm_button">Xác nhận</string>
     <string name="search_no_data">Không tìm thấy %s.</string>
-    <string name="accounts_description">Kết nối tài khoản để đồng bộ hóa các nguồn cấp dữ liệu, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị của bạn.\n\nTính năng này đang trong giai đoạn thử nghiệm, có thể xảy ra sự cố (ví dụ: bài viết đã đọc có thể không được đồng bộ hóa hoàn toàn). Trong tương lai sẽ hỗ trợ nhiều dịch vụ hơn.\n\nChỉ hỗ trợ một tài khoản lúc này.</string>
+    <string name="accounts_description">Kết nối tài khoản để đồng bộ hóa các nguồn cấp dữ liệu, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị của bạn.\n\nTính năng này đang trong giai đoạn thử nghiệm, có thể xảy ra sự cố (ví dụ: bài viết đã đọc có thể không được đồng bộ hóa hoàn toàn). Trong tương lai sẽ hỗ trợ nhiều dịch vụ hơn.\n\nHiện chỉ hỗ trợ một tài khoản.</string>
     <string name="dropbox_sync_desktop_description">Nhấn vào nút Kết nối, bạn sẽ được chuyển hướng đến trang web Dropbox. Sau khi kết nối tài khoản, hãy sao chép và nhập mã xác minh vào đây trong ứng dụng</string>
     <string name="feed_sync_in_progress">Đang làm mới. Ứng dụng sẽ tự đóng khi xong.</string>
     <string name="no_icloud_sync_yet">Dữ liệu chưa được đồng bộ hóa với iCloud. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
-    <string name="settings_toggle_show_read_articles">Hiện các bài viết đã đọc trên dòng thời gian</string>
+    <string name="settings_toggle_show_read_articles">Vẫn hiện các bài viết đã đọc</string>
     <string name="about_button">Giới thiệu</string>
     <string name="feed_error_message">Lỗi xảy ra với: %s :(</string>
     <string name="dropbox_sync_common_description">Kết nối tài khoản Dropbox của bạn để đồng bộ hóa các nguồn cấp dữ liệu, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn</string>
@@ -117,4 +117,8 @@
     <string name="menu_remove_from_bookmark">Bỏ lưu bài viết</string>
     <string name="icloud_sync_success">Kết nối tài khoản iCloud thành công</string>
     <string name="dropbox_sync_mobile_description">Nhấn vào nút Kết nối, bạn sẽ được chuyển hướng đến ứng dụng hoặc trang web Dropbox. Sau khi kết nối tài khoản, bạn có thể quay lại FeedFlow</string>
+    <string name="edit_feed_source_name_button">Sửa</string>
+    <string name="feed_name">Tên nguồn cấp</string>
+    <string name="feed_edited_message">Nguồn cấp %s đã được cập nhật</string>
+    <string name="edit_feed">Sửa nguồn cấp</string>
 </resources>

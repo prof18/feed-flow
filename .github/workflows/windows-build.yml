@@ -1,4 +1,4 @@
-name: Desktop Windows Release
+name: Manual Windows Build
 on:
   workflow_dispatch:
     { }

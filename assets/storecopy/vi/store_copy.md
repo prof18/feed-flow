@@ -1,10 +1,10 @@
 # Tên
 
-FeedFlow
+FeedFlow - Trình đọc RSS
 
 ## Mô tả ngắn
 
-Trình đọc RSS tối giản
+Tối giản, nhanh chóng, gọn gàng
 
 ## Mô tả dài
 
@@ -43,3 +43,7 @@ Mở bài viết trong trình duyệt yêu thích của bạn
 ## Minh họa 5
 
 Tận hưởng chế độ đọc không lộn xộn
+
+## Ảnh bìa
+
+Trình đọc RSS tối giản

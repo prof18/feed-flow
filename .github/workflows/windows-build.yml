@@ -27,12 +27,16 @@ jobs:
         run: |
           $tag = $(git describe --tags --abbrev=0 --match "*-desktop")
           $version = $tag -replace '-desktop$', ''
-          $name = "FeedFlow-${version}.msi"
-          $path = "desktopApp/build/release/main-release/msi/${name}"
+          $name_msi = "FeedFlow-${version}.msi"
+          $path_msi = "desktopApp/build/release/main-release/msi/${name}"
+          $name_exe = "FeedFlow-${version}.exe"
+          $path_exe = "desktopApp/build/release/main-release/exe/${name}"
           "TAG=$tag" >> $env:GITHUB_ENV
           "VERSION=$version" >> $env:GITHUB_ENV
-          "RELEASE_PATH=$path" >> $env:GITHUB_ENV
-          "NAME=$name" >> $env:GITHUB_ENV
+          "RELEASE_PATH_MSI=$path_msi" >> $env:GITHUB_ENV
+          "NAME_MSI=$name_msi" >> $env:GITHUB_ENV
+          "RELEASE_PATH_EXE=$path_exe" >> $env:GITHUB_ENV
+          "NAME_EXE=$name_exe" >> $env:GITHUB_ENV
 
       - name: Create Properties file
         shell: pwsh
@@ -47,13 +51,19 @@ jobs:
           DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
 
       - name: Create MSI
-        run: ./gradlew packageReleaseMsi
+        run: ./gradlew packageReleaseMsi packageReleaseExe
 
-      - name: Upload asset
+      - name: Upload asset msi
         uses: actions/upload-artifact@v4
         with:
-          path: ${{ env.RELEASE_PATH }}
-          name: ${{ env.NAME }}
+          path: ${{ env.RELEASE_PATH_MSI }}
+          name: ${{ env.NAME_MSI }}
+
+      - name: Upload asset exe
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ env.RELEASE_PATH_EXE }}
+          name: ${{ env.NAME_EXE }}
 
       - name: Upload reports
         if: failure()

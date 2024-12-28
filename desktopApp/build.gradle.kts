@@ -87,7 +87,14 @@ compose {
 
                 modules("java.instrument", "java.sql", "jdk.unsupported")
 
-                targetFormats(TargetFormat.Dmg, TargetFormat.Pkg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm)
+                targetFormats(
+                    TargetFormat.Dmg,
+                    TargetFormat.Pkg,
+                    TargetFormat.Msi,
+                    TargetFormat.Exe,
+                    TargetFormat.Deb,
+                    TargetFormat.Rpm,
+                )
                 packageName = "FeedFlow"
                 packageVersion = getVersionName()
 

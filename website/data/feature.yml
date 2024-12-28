@@ -3,6 +3,7 @@ enable: true
 title: Just a list.
 description: All you need is a de-cluttered list. Every article opens in the browser of your choice or in a clutter-free reader mode. No more half-available content, multiple clicks to read something. Just focus on reading (or scrolling)!
 description2: Quickly import your existing RSS feeds collection
+description3: Sync your feeds across all your devices with <b>Dropbox</b>, <b>iCloud</b> (only iOS and macOS) and <b>FreshRSS</b>.
 
 Title2nd: Focus on reading.
 description2nd: Enjoy full control - open articles in your favourite privacy-focused browser and keep your reading experience separated from your main browser. Or use the integrated clutter-free reader mode.

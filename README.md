@@ -3,7 +3,7 @@
   <h1>FeedFlow</h1>
 </div>
 
-FeedFlow is a minimalistic RSS Reader that I've built for myself and that's now available on Android, iOS, and macOS.
+FeedFlow is a minimalistic RSS Reader that I've built for myself and that's now available on Android, iOS, macOS, Windows and Linux.
 
 The majority of websites with an RSS feed don't share the article's content because they want you to go on their website. For this reason, FeedFlow always opens the original website, but you can choose the browser that you want (on mobile). For example, you can open an article on DuckDuckGo or Firefox Focus with all the trackers disabled and then just kill all the navigation data. In this way, the reading experience is separated from your main browser instance.
 
@@ -28,6 +28,11 @@ FeedFlow is available for Android, iOS, and macOS.
 <div align="center"><a href="https://apps.apple.com/us/app/feedflow-rss-reader/id6447210518"><img src="assets/appstore/app_store_download.svg" width="200px"/></a></div>
 <div align="center"><a href="https://play.google.com/store/apps/details?id=com.prof18.feedflow"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="230px"/></a></div>
 <div align="center"><a href="https://apps.apple.com/it/app/feedflow-rss-reader/id6447210518"><img src="assets/appstore/mac_store_download.svg" width="200px" /></a></div>
+<div align="center">
+<a href="https://apps.microsoft.com/detail/9N5T1RFBB6V5?mode=direct">
+	<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200"/>
+</a>
+</div>
 <div align="center"><a href="https://f-droid.org/packages/com.prof18.feedflow">
     <img src="https://f-droid.org/badge/get-it-on.png"
     alt="Get it on F-Droid"
@@ -35,8 +40,10 @@ FeedFlow is available for Android, iOS, and macOS.
 </a>
 </div>
 
-You can also download the latest macOS version from [GitHub Releases](https://github.com/prof18/feed-flow/releases/latest),
-or use [Homebrew](https://formulae.brew.sh/cask/feedflow).
+You can get the latest Linux version 
+
+You can also download the latest macOS, Linux and Windows versions from [GitHub Releases](https://github.com/prof18/feed-flow/releases/latest),
+or use [Homebrew](https://formulae.brew.sh/cask/feedflow) for macOS.
 
 ```bash
 brew install --cask feedflow
@@ -88,7 +95,7 @@ You can generate your own key and add it on the `Config.xcconfig` file. You can 
 cp iosApp/Assets/Config.xcconfig.template iosApp/Assets/Config.xcconfig
 ```
 
-### Desktop (macOS)
+### Desktop
 
 To run the desktop version, run the following Gradle task:
 

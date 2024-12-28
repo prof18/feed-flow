@@ -82,7 +82,7 @@
           list-style: none;
           a {
             color: $text-color;
-            text-decoration: none;
+            text-decoration: underline;
             display: block;
             transition: all.5s ease-in-out;
             padding: 10px 0;
@@ -97,6 +97,40 @@
 
           i {
             padding-right: 10px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.downloads-list {
+  .platform-downloads {
+    margin-bottom: 1.5rem;
+    
+    h5 {
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    
+    ul {
+      list-style: none;
+      padding-left: 0;
+      
+      li {
+        
+        a {
+          color: $text-color;
+          text-decoration: underline;
+          transition: color 0.2s ease;
+          @include mobile {
+            font-size: 15px;
+          }
+          
+          &:hover {
+            color: $text-color-dark;
           }
         }
       }

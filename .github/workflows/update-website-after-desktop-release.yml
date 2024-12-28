@@ -23,12 +23,25 @@ jobs:
           echo "VERSION=$version" >> $GITHUB_ENV
 
       - name: Update website
-        run: |
-          file_path="website/data/hero.yml"
-          new_link="https://github.com/prof18/feed-flow/releases/download/$VERSION-desktop/FeedFlow-$VERSION.dmg"
-          awk -v new_link="$new_link" '/^button3Link:/ {print "button3Link: " new_link; next} 1' "$file_path" > tmpfile && mv tmpfile "$file_path"
         env:
           VERSION: ${{ env.VERSION }}
+        run: |
+          # Construct URLs
+          DMG_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-desktop/FeedFlow-${VERSION}.dmg"
+          MSI_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-desktop/FeedFlow-${VERSION}.msi"
+          RPM_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-desktop/feedflow-${VERSION}-1.x86_64.rpm"
+          DEB_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-desktop/feedflow_${VERSION}_amd64.deb"
+          
+          # Update hero.yml
+          sed -i "s|button3Link:.*|button3Link: ${DMG_URL}|" data/hero.yml
+          sed -i "s|button5Link:.*|button5Link: ${RPM_URL}|" data/hero.yml
+          sed -i "s|button6Link:.*|button6Link: ${DEB_URL}|" data/hero.yml
+          
+          # Update downloads.yml
+          sed -i "s|url: \".*\.dmg\"|url: \"${DMG_URL}\"|" data/downloads.yml
+          sed -i "s|url: \".*\.msi\"|url: \"${MSI_URL}\"|" data/downloads.yml
+          sed -i "s|url: \".*\.rpm\"|url: \"${RPM_URL}\"|" data/downloads.yml
+          sed -i "s|url: \".*\.deb\"|url: \"${DEB_URL}\"|" data/downloads.yml
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3

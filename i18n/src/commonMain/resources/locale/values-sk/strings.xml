@@ -122,4 +122,8 @@
     <string name="settings_hide_duplicated_title_from_desc">Skryť názov z popisu článku</string>
     <string name="no_icloud_sync_yet">Údaje ešte nie sú synchronizované s iCloud. Klikni na tlačidlo zálohovania pre spustenie synchronizácie</string>
     <string name="reader_mode_font_size">Veľkosť písma</string>
+    <string name="edit_feed">Upraviť feed</string>
+    <string name="feed_name">Názov feedu</string>
+    <string name="edit_feed_source_name_button">Upraviť</string>
+    <string name="feed_edited_message">Feed %s aktualizovaný</string>
 </resources>

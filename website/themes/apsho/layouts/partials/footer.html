@@ -1,4 +1,4 @@
-<footer class="footer">
+<footer class="footer" id="footer">
   <div class="container">
     <div class="row">
       <div class="col-lg-4 col-md-4">
@@ -6,13 +6,27 @@
           <img src="{{ .Site.Params.logo | absURL }}" alt="logo">
           <p>
             {{ .Site.Params.copyright1 }}
-              </br>
-              {{ replace .Site.Params.copyright2   "{year}" now.Year | safeHTML }}
+            </br>
+            {{ replace .Site.Params.copyright2 "{year}" now.Year | safeHTML }}
           </p>
         </div>
       </div>
       <div class="col-lg-4 col-md-4">
-        
+        <div class="footer-widget">
+          <h4>Downloads</h4>
+          <div class="footer-widget-list downloads-list">
+            {{ range site.Data.downloads.platforms }}
+            <div class="platform-downloads">
+              <h5>{{ .name }}</h5>
+              <ul>
+                {{ range .links }}
+                <li><a href="{{ .url }}">{{ .title }}</a></li>
+                {{ end }}
+              </ul>
+            </div>
+            {{ end }}
+          </div>
+        </div>
       </div>
       <div class="col-lg-4 col-md-4">
         <div class="footer-widget">
@@ -20,8 +34,8 @@
           <div class="footer-widget-list">
             <ul>
               {{ $sitemap := .Site.Menus.sitemap }}
-                {{ range $sitemap }}
-                  <li><a href="{{ .URL | absURL }}">{{ .Name }}</a></li>
+              {{ range $sitemap }}
+              <li><a href="{{ .URL | absURL }}">{{ .Name }}</a></li>
               {{ end }}
             </ul>
           </div>

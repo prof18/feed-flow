@@ -1,0 +1,36 @@
+platforms:
+  - name: Android
+    links:
+      - title: Google Play
+        url: https://play.google.com/store/apps/details?id=com.prof18.feedflow
+      - title: F-Droid
+        url: https://f-droid.org/packages/com.prof18.feedflow/
+
+  - name: iOS
+    links:
+      - title: App Store
+        url: https://apps.apple.com/us/app/feedflow-rss-reader/id6447210518
+
+  - name: macOS
+    links:
+      - title: App Store
+        url: https://apps.apple.com/us/app/feedflow-rss-reader/id6447210518
+      - title: Homebrew
+        url: https://formulae.brew.sh/cask/feedflow
+      - title: Direct Download
+        url: https://github.com/prof18/feed-flow/releases/download/1.0.88-desktop/FeedFlow-1.0.88.dmg
+
+  - name: Windows
+    links:
+      - title: App Store
+        url: https://apps.microsoft.com/detail/9n5t1rfbb6v5
+      - title: Direct Download
+        url: "https://github.com/prof18/feed-flow/releases/download/1.0.88-desktop/FeedFlow-1.0.88.msi"
+
+
+  - name: Linux
+    links:
+      - title: RPM Package
+        url: "https://github.com/prof18/feed-flow/releases/download/1.0.88-desktop/feedflow-1.0.88-1.x86_64.rpm"
+      - title: DEB Package
+        url: "https://github.com/prof18/feed-flow/releases/download/1.0.88-desktop/feedflow_1.0.88_amd64.deb"

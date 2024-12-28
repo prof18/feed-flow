@@ -62,6 +62,23 @@
         }
       }
     }
+
+    &-additional-downloads {
+      font-size: 16px;
+      text-align: center;
+      margin-top: 40px;
+      
+      a {
+        color: $text-color-dark;
+        text-decoration: underline;
+        text-transform: none;
+        transition: opacity 0.3s ease;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
   }
 
   &-image {

@@ -1,10 +1,10 @@
 # Názov
 
-FeedFlow
+FeedFlow - RSS čítačka
 
 ## Krátky popis
 
-Minimalistická RSS čítačka
+Minimálny, rýchly, prehľadný
 
 ## Dlhý popis
 
@@ -41,3 +41,7 @@ Otvor články vo svojom obľúbenom prehliadači
 ## Snímka obrazovky 5
 
 Vychutnaj si nerušené čítanie s režimom čítačky
+
+## Bannerový obrázok
+
+Minimalistická RSS čítačka

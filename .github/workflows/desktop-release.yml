@@ -172,6 +172,8 @@ jobs:
   # Windows Build
   # -------------------------------------- #
   build-windows:
+    # TODO: enable this again
+    if: false
     needs: testflight-deploy
     runs-on: windows-latest
     timeout-minutes: 40
@@ -237,6 +239,8 @@ jobs:
   # Linux Build
   # -------------------------------------- #
   build-linux:
+    # TODO: enable this again
+    if: false
     needs: testflight-deploy
     runs-on: ubuntu-latest
     timeout-minutes: 40
@@ -310,7 +314,9 @@ jobs:
   # Github Release Deploy
   # -------------------------------------- #
   release-github:
-    needs: [build-linux, build-windows, build-macos]
+    # TODO: Restore
+    #needs: [build-linux, build-windows, build-macos]
+    needs: [build-macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -327,11 +333,14 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
+          # TODO: Enable this again
+#          files: |
+#            *.dmg
+#            *.msi
+#            *.rpm
+#            *.deb
           files: |
             *.dmg
-            *.msi
-            *.rpm
-            *.deb
           draft: true
           tag_name: ${{ needs.build-macos.outputs.release_tag }}
         env:

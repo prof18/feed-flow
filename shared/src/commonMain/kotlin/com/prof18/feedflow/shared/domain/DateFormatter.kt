@@ -367,8 +367,20 @@ class DateFormatter(
         )
 
         val isToday = today == localDate
+        val isThisYear = today.year == localDate.year
+
         val dateFormat = if (isToday) {
             LocalDateTime.Format {
+                hour()
+                char(':')
+                minute()
+            }
+        } else if (isThisYear) {
+            LocalDateTime.Format {
+                dayOfMonth()
+                char('/')
+                monthNumber()
+                chars(" - ")
                 hour()
                 char(':')
                 minute()
@@ -378,6 +390,8 @@ class DateFormatter(
                 dayOfMonth()
                 char('/')
                 monthNumber()
+                char('/')
+                year()
                 chars(" - ")
                 hour()
                 char(':')

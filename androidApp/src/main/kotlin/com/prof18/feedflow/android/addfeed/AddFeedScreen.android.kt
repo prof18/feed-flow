@@ -102,7 +102,7 @@ fun AddFeedScreen(
         topAppBar = {
             TopAppBar(
                 title = {
-                    Text(LocalFeedFlowStrings.current.editFeed)
+                    Text(LocalFeedFlowStrings.current.addFeed)
                 },
                 navigationIcon = {
                     IconButton(

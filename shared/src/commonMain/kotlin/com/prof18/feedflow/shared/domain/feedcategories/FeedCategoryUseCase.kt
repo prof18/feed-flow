@@ -49,7 +49,7 @@ internal class FeedCategoryUseCase(
             }
             categoriesMutableState.update {
                 it.copy(
-                    header = selectedCategoryName?.name,
+                    header = this.selectedCategoryName?.name,
                     categories = categoriesWithEmpty,
                 )
             }

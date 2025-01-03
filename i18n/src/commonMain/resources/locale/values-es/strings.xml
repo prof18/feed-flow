@@ -59,7 +59,6 @@
     <string name="feeds_title">Feeds</string>
     <string name="empty_feed_message">¡Nada más que leer aquí!</string>
     <string name="settings_button">Ajustes</string>
-    <string name="clear_old_articles_button">Eliminar entradas antiguas</string>
     <string name="export_feeds_button">Exportar los feeds a OPML</string>
     <string name="show_on_github">Mostrar en Github</string>
     <string name="open_source_licenses">Licencias de código abierto</string>

@@ -68,7 +68,6 @@
     <string name="delete_feed">Изтриване</string>
     <string name="refresh_feeds">Опресняване на емисии</string>
     <string name="no_feeds_found_message">Няма намерени емисии. Моля, добавете нова емисия!</string>
-    <string name="clear_old_articles_button">Изтриване на стари записи</string>
     <string name="settings_button">Настройки</string>
     <string name="import_feed_button">Внесете емисии от OPML</string>
     <string name="feeds_importing_message">Внасяне на емисия</string>

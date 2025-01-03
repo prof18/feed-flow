@@ -27,7 +27,6 @@
     <string name="empty_feed_message">Non hai aquí nada que ler!</string>
     <string name="refresh_feeds">Actualizar as canles</string>
     <string name="app_name">FeedFlow</string>
-    <string name="clear_old_articles_button">Eliminar entradas antigas</string>
     <string name="feeds_importing_message">Importando a canle</string>
     <string name="feeds_export_done_message">Exportación correcta</string>
     <string name="import_feed_button">Importar canle desde OPML</string>

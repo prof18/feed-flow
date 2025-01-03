@@ -58,7 +58,6 @@
     <string name="feeds_import_done_message">导入完成</string>
     <string name="feeds_export_done_message">导出完成</string>
     <string name="mark_all_read_button">全部标记为已读</string>
-    <string name="clear_old_articles_button">清空旧文章</string>
     <string name="read_articles_empty_screen_message">尚无文章，请先阅读！</string>
     <string name="settings_title">设置</string>
     <string name="author_label">❤️ 开发者</string>

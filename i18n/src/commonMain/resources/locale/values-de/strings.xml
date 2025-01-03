@@ -11,7 +11,6 @@
     <string name="feeds_importing_message">Feed importieren</string>
     <string name="invalid_rss_url">Der angegebene Link ist kein gültiger RSS-Feed</string>
     <string name="no_feeds_found_message">Keine Feeds gefunden. Füge bitte einen neuen hinzu!</string>
-    <string name="clear_old_articles_button">Alte Einträge löschen</string>
     <string name="no_feeds_add_one_message">Keine Feeds gefunden. Füge einen hinzu.</string>
     <string name="new_release_available_link">Hier herunterladen</string>
     <string name="refresh_feeds">Feeds aktualisieren</string>

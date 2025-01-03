@@ -10,7 +10,6 @@
     <string name="refresh_feeds">Обновить каналы</string>
     <string name="app_name">FeedFlow</string>
     <string name="mark_all_read_button">Отметить все как прочитано</string>
-    <string name="clear_old_articles_button">Удалить старые записи</string>
     <string name="settings_button">Настройки</string>
     <string name="feeds_importing_message">Импортирование канала</string>
     <string name="feeds_import_done_message">Импорт выполнен</string>

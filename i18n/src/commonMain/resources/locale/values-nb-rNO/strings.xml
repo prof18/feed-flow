@@ -6,7 +6,6 @@
     <string name="feeds_import_done_message">Importert</string>
     <string name="feeds_importing_message">Importerer informasjonskanal</string>
     <string name="no_feeds_found_message">Fant ingen informasjonskanaler. Legg til noe.</string>
-    <string name="clear_old_articles_button">Slett gamle oppføringer</string>
     <string name="no_feeds_add_one_message">Ingen informasjonskanaler. Legg til noe.</string>
     <string name="new_release_available_link">Last ned her</string>
     <string name="refresh_feeds">Gjenoppfrisk informasjonskanaler</string>

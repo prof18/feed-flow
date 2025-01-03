@@ -32,7 +32,6 @@
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="app_name">ஃபீட்ஃப்ளோ</string>
     <string name="mark_all_read_button">அனைத்தையும் படித்தபடி குறிக்கவும்</string>
-    <string name="clear_old_articles_button">பழைய உள்ளீடுகளை நீக்கு</string>
     <string name="settings_button">அமைப்புகள்</string>
     <string name="feeds_importing_message">தீவனத்தை இறக்குமதி செய்கிறது</string>
     <string name="feeds_import_done_message">இறக்குமதி முடிந்தது</string>

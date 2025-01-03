@@ -49,7 +49,6 @@
     <string name="author_label">Lập trình bằng ❤️ bởi</string>
     <string name="settings_button">Cài đặt</string>
     <string name="import_export_opml">Nhập và xuất OPML</string>
-    <string name="clear_old_articles_button">Xóa những mục cũ</string>
     <string name="feeds_title">Nguồn cấp</string>
     <string name="feed_added_message">Đã thêm %s thành công</string>
     <string name="feed_url">URL nguồn cấp</string>

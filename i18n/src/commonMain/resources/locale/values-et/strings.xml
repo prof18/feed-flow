@@ -74,7 +74,6 @@
     <string name="add_feed">Lisa uudisvoog</string>
     <string name="feeds_title">Uudisvood</string>
     <string name="feeds_export_done_message">Eksportimine õnnestus</string>
-    <string name="clear_old_articles_button">Kustuta vanad kirjed</string>
     <string name="browser_selection_button">Brauser</string>
     <string name="export_feeds_button">Ekspordi uudisvoog OPML-faili</string>
     <string name="export_dialog_title">Salvesta OPML-fail</string>

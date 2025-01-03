@@ -120,4 +120,5 @@
     <string name="feed_name">Tên nguồn cấp</string>
     <string name="feed_edited_message">Nguồn cấp %s đã được cập nhật</string>
     <string name="edit_feed">Sửa nguồn cấp</string>
+    <string name="icloud_sync_description">Kết nối tài khoản iCloud của bạn để đồng bộ hóa các nguồn cấp dữ liệu, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị iOS, iPadOS và iPadOS. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn</string>
 </resources>

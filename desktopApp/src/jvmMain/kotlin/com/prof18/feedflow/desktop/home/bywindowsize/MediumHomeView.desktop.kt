@@ -63,13 +63,11 @@ internal fun MediumView(
     val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
 
-    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
-
     Row {
         AnimatedVisibility(
             modifier = Modifier
                 .weight(1f),
-            visible = isDrawerMenuFullVisible && !isDrawerHidden,
+            visible = isDrawerMenuFullVisible,
         ) {
             Scaffold { paddingValues ->
                 Drawer(

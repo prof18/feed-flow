@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
+import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsInfoContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -54,7 +54,13 @@ internal fun NoFeedsDialog(
                     onDismissRequest = onDismissRequest,
                     onAddFeedClick = {
                         onDismissRequest()
-                        navigator.push(FeedSourceListScreen())
+                        navigator.push(
+                            AddFeedFullScreen(
+                                onFeedAdded = {
+                                    onDismissRequest()
+                                },
+                            ),
+                        )
                     },
                     onImportExportClick = {
                         onDismissRequest()
@@ -68,7 +74,7 @@ internal fun NoFeedsDialog(
 
                 CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
                     VerticalScrollbar(
-                        modifier = androidx.compose.ui.Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                        modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
                         adapter = rememberScrollbarAdapter(
                             scrollState = listState,
                         ),

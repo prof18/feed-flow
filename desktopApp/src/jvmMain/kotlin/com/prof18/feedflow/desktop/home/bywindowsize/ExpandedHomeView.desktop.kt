@@ -56,33 +56,28 @@ internal fun ExpandedView(
     val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
 
-    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
-
     Row {
-        AnimatedVisibility(
+        Scaffold(
             modifier = Modifier
                 .weight(1f),
-            visible = !isDrawerHidden,
-        ) {
-            Scaffold { paddingValues ->
-                Drawer(
-                    modifier = Modifier
-                        .padding(paddingValues),
-                    navDrawerState = navDrawerState,
-                    currentFeedFilter = currentFeedFilter,
-                    onAddFeedClicked = onAddFeedClick,
-                    onFeedFilterSelected = { feedFilter ->
-                        onFeedFilterSelected(feedFilter)
-                        scope.launch {
-                            lazyListState.animateScrollToItem(0)
-                        }
-                    },
-                    onEditFeedClick = { feedSource ->
-                        navigator.push(EditFeedScreen(feedSource))
-                    },
-                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                )
-            }
+        ) { paddingValues ->
+            Drawer(
+                modifier = Modifier
+                    .padding(paddingValues),
+                navDrawerState = navDrawerState,
+                currentFeedFilter = currentFeedFilter,
+                onAddFeedClicked = onAddFeedClick,
+                onFeedFilterSelected = { feedFilter ->
+                    onFeedFilterSelected(feedFilter)
+                    scope.launch {
+                        lazyListState.animateScrollToItem(0)
+                    }
+                },
+                onEditFeedClick = { feedSource ->
+                    navigator.push(EditFeedScreen(feedSource))
+                },
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+            )
         }
 
         HomeScreenContent(

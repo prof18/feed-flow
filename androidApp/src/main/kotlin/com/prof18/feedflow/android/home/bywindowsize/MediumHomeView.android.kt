@@ -64,12 +64,11 @@ internal fun MediumHomeView(
         mutableStateOf(true)
     }
 
-    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
     Row {
         AnimatedVisibility(
             modifier = Modifier
                 .weight(1f),
-            visible = isDrawerMenuFullVisible && !isDrawerHidden,
+            visible = isDrawerMenuFullVisible,
         ) {
             Scaffold { paddingValues ->
                 Drawer(
@@ -100,7 +99,7 @@ internal fun MediumHomeView(
             snackbarHostState = snackbarHostState,
             loadingState = feedUpdateStatus,
             feedState = feedItems,
-            showDrawerMenu = feedItems.isNotEmpty(),
+            showDrawerMenu = true,
             isDrawerMenuOpen = isDrawerMenuFullVisible,
             currentFeedFilter = currentFeedFilter,
             onDrawerMenuClick = {

@@ -23,9 +23,10 @@ import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-fun AddFeedScreen(
+fun AddFeedScreenContent(
     onFeedAdded: () -> Unit,
     modifier: Modifier = Modifier,
+    topAppBar: @Composable () -> Unit = {},
 ) {
     var feedUrl by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -102,6 +103,7 @@ fun AddFeedScreen(
             viewModel.deleteCategory(categoryId.value)
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        topAppBar = topAppBar,
     )
 }
 

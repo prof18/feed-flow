@@ -331,7 +331,7 @@ jobs:
         run: ls -R
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           # TODO: Enable this again
 #          files: |

@@ -125,4 +125,5 @@
     <string name="edit_feed_source_name_button">Muuda</string>
     <string name="feed_name">Uudisvoo nimi</string>
     <string name="feed_edited_message">Uudisvoog on muudetud: %s</string>
+    <string name="icloud_sync_description">Lisa oma iCloudi kasutajakonto ning sünkroniseeri uudisvoogusid, kategooriaid, loetud ja järjehoidjatesse salvestatud artikleid oma iOSi, iPadOSi ja macOSi seadmete vahel. Andmed salvestuvad rakendustekohasesse kausta ning FeedFlowl puudub igasugune ligipääs sinu muudele failidele ja andmetele</string>
 </resources>

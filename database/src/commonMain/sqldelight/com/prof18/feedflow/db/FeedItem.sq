@@ -73,7 +73,8 @@ AND is_read = 0;
 
 clearOldItems:
 DELETE FROM feed_item
-WHERE pub_date < :threshold;
+WHERE pub_date < :threshold
+AND is_bookmarked = 0;
 
 selectOldItems:
 SELECT url_hash FROM feed_item

@@ -13,7 +13,7 @@
     <string name="loading_feed_message">Loading feeds %s</string>
     <string name="app_name">FeedFlow</string>
     <string name="mark_all_read_button">Mark all as read</string>
-    <string name="clear_old_articles_button">Delete old entries</string>
+    <string name="clear_old_articles_button">Delete week-old posts</string>
     <string name="settings_button">Settings</string>
     <string name="feeds_importing_message">Importing feed</string>
     <string name="feeds_import_done_message">Import done</string>

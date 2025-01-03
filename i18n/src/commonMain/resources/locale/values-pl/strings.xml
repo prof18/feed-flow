@@ -9,7 +9,6 @@
     <string name="feeds_importing_message">Importowanie kanału</string>
     <string name="invalid_rss_url">Wprowadzony link nie jest kanałem RSS</string>
     <string name="no_feeds_found_message">Nie znaleziono kanałów. Prosimy dodać nowy kanał!</string>
-    <string name="clear_old_articles_button">Usuń stare artykuły</string>
     <string name="no_feeds_add_one_message">Brak kanałów, prosimy o dodanie jednego</string>
     <string name="new_release_available_link">Pobierz tutaj</string>
     <string name="refresh_feeds">Odśwież kanały</string>

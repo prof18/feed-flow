@@ -13,7 +13,6 @@
     <string name="loading_feed_message">Carregando feeds %s</string>
     <string name="app_name">FeedFlow</string>
     <string name="mark_all_read_button">Marca todos como lido</string>
-    <string name="clear_old_articles_button">Deletar entradas antigas</string>
     <string name="settings_button">Configurações</string>
     <string name="feeds_importing_message">Importando feed</string>
     <string name="feeds_import_done_message">Importação concluída</string>

@@ -10,7 +10,6 @@
     <string name="feeds_importing_message">Feed importálása</string>
     <string name="invalid_rss_url">A megadott link nem egy érvényes RSS feedre mutat</string>
     <string name="no_feeds_found_message">Nincs ilyen feed. Adj hozzá újat!</string>
-    <string name="clear_old_articles_button">Régi bejegyzések törlése</string>
     <string name="no_feeds_add_one_message">Nincs feed, vegyél fel legalább egyet</string>
     <string name="new_release_available_link">Letöltés</string>
     <string name="refresh_feeds">Feedek frissítése</string>

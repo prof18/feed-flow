@@ -9,7 +9,6 @@
     <string name="feeds_importing_message">Import du flux</string>
     <string name="invalid_rss_url">Le lien que vous avez fourni n\'est pas un flux RSS valide</string>
     <string name="no_feeds_found_message">Aucun flux trouvé. Veuillez ajouter un nouveau flux !</string>
-    <string name="clear_old_articles_button">Supprimer les anciennes entrées</string>
     <string name="no_feeds_add_one_message">Aucun flux, ajoutez-en un</string>
     <string name="new_release_available_link">Télécharger ici</string>
     <string name="refresh_feeds">Actualiser le flux</string>

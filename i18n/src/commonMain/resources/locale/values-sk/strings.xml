@@ -20,7 +20,6 @@
     <string name="show_on_github">Zobraziť na GitHube</string>
     <string name="browser_selection_button">Prehliadač</string>
     <string name="settings_title">Nastavenia</string>
-    <string name="clear_old_articles_button">Odstrániť staré položky</string>
     <string name="feeds_export_done_message">Export hotový</string>
     <string name="about_button">O aplikácii</string>
     <string name="export_started_message">Generovanie exportu</string>

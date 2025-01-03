@@ -55,30 +55,26 @@ internal fun ExpandedHomeView(
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
-    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
-
     Row {
-        if (!isDrawerHidden) {
-            Scaffold(
+        Scaffold(
+            modifier = Modifier
+                .weight(1f),
+        ) { paddingValues ->
+            Drawer(
                 modifier = Modifier
-                    .weight(1f),
-            ) { paddingValues ->
-                Drawer(
-                    modifier = Modifier
-                        .padding(paddingValues),
-                    navDrawerState = navDrawerState,
-                    currentFeedFilter = currentFeedFilter,
-                    onAddFeedClicked = onAddFeedClick,
-                    onFeedFilterSelected = { feedFilter ->
-                        onFeedFilterSelected(feedFilter)
-                        scope.launch {
-                            listState.animateScrollToItem(0)
-                        }
-                    },
-                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                    onEditFeedClick = onEditFeedClick,
-                )
-            }
+                    .padding(paddingValues),
+                navDrawerState = navDrawerState,
+                currentFeedFilter = currentFeedFilter,
+                onAddFeedClicked = onAddFeedClick,
+                onFeedFilterSelected = { feedFilter ->
+                    onFeedFilterSelected(feedFilter)
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                },
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                onEditFeedClick = onEditFeedClick,
+            )
         }
 
         HomeScaffold(

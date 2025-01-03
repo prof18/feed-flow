@@ -55,8 +55,29 @@ internal fun CompactView(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val navigator = LocalNavigator.currentOrThrow
 
-    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
-    if (isDrawerHidden) {
+    ModalNavigationDrawer(
+        drawerContent = {
+            ModalDrawerSheet {
+                Drawer(
+                    navDrawerState = navDrawerState,
+                    currentFeedFilter = currentFeedFilter,
+                    onAddFeedClicked = onAddFeedClick,
+                    onFeedFilterSelected = { feedFilter ->
+                        onFeedFilterSelected(feedFilter)
+                        scope.launch {
+                            drawerState.close()
+                            lazyListState.animateScrollToItem(0)
+                        }
+                    },
+                    onEditFeedClick = { feedSource ->
+                        navigator.push(EditFeedScreen(feedSource))
+                    },
+                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                )
+            }
+        },
+        drawerState = drawerState,
+    ) {
         HomeScreenContent(
             paddingValues = paddingValues,
             loadingState = loadingState,
@@ -93,67 +114,6 @@ internal fun CompactView(
             onBackToTimelineClick = onBackToTimelineClick,
             onSearchClick = onSearchClick,
         )
-    } else {
-        ModalNavigationDrawer(
-            drawerContent = {
-                ModalDrawerSheet {
-                    Drawer(
-                        navDrawerState = navDrawerState,
-                        currentFeedFilter = currentFeedFilter,
-                        onAddFeedClicked = onAddFeedClick,
-                        onFeedFilterSelected = { feedFilter ->
-                            onFeedFilterSelected(feedFilter)
-                            scope.launch {
-                                drawerState.close()
-                                lazyListState.animateScrollToItem(0)
-                            }
-                        },
-                        onEditFeedClick = { feedSource ->
-                            navigator.push(EditFeedScreen(feedSource))
-                        },
-                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                    )
-                }
-            },
-            drawerState = drawerState,
-        ) {
-            HomeScreenContent(
-                paddingValues = paddingValues,
-                loadingState = loadingState,
-                feedState = feedItems,
-                listState = lazyListState,
-                unReadCount = unReadCount,
-                showDrawerMenu = true,
-                currentFeedFilter = currentFeedFilter,
-                onDrawerMenuClick = {
-                    scope.launch {
-                        if (drawerState.isOpen) {
-                            drawerState.close()
-                        } else {
-                            drawerState.open()
-                        }
-                    }
-                },
-                onRefresh = refreshData,
-                updateReadStatus = markAsReadOnScroll,
-                onFeedItemClick = { feedInfo ->
-                    openInBrowser(feedInfo.url)
-                    markAsRead(FeedItemId(feedInfo.id))
-                },
-                onCommentClick = { feedInfo ->
-                    openInBrowser(feedInfo.url)
-                    markAsRead(FeedItemId(feedInfo.id))
-                },
-                onAddFeedClick = {
-                    onAddFeedClick()
-                },
-                requestMoreItems = requestNewData,
-                onBookmarkClick = onBookmarkClick,
-                onReadStatusClick = onReadStatusClick,
-                onBackToTimelineClick = onBackToTimelineClick,
-                onSearchClick = onSearchClick,
-            )
-        }
     }
 }
 

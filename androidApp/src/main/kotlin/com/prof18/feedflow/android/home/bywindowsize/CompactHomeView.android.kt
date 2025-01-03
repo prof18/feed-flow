@@ -56,8 +56,27 @@ internal fun CompactHomeView(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val listState = rememberLazyListState()
 
-    val isDrawerHidden = currentFeedFilter is FeedFilter.Timeline && feedItems.isEmpty() && navDrawerState.isEmpty()
-    if (isDrawerHidden) {
+    ModalNavigationDrawer(
+        drawerContent = {
+            ModalDrawerSheet {
+                Drawer(
+                    navDrawerState = navDrawerState,
+                    currentFeedFilter = currentFeedFilter,
+                    onAddFeedClicked = onAddFeedClick,
+                    onFeedFilterSelected = { feedFilter ->
+                        onFeedFilterSelected(feedFilter)
+                        scope.launch {
+                            drawerState.close()
+                            listState.animateScrollToItem(0)
+                        }
+                    },
+                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    onEditFeedClick = onEditFeedClick,
+                )
+            }
+        },
+        drawerState = drawerState,
+    ) {
         HomeScaffold(
             unReadCount = unReadCount,
             onSettingsButtonClicked = onSettingsButtonClicked,
@@ -66,7 +85,7 @@ internal fun CompactHomeView(
             snackbarHostState = snackbarHostState,
             loadingState = feedUpdateStatus,
             feedState = feedItems,
-            showDrawerMenu = false,
+            showDrawerMenu = true,
             currentFeedFilter = currentFeedFilter,
             onDrawerMenuClick = {
                 scope.launch {
@@ -78,7 +97,6 @@ internal fun CompactHomeView(
                 }
             },
             onAddFeedClick = onAddFeedClick,
-            onClearOldArticlesClicked = onClearOldArticlesClicked,
             refreshData = refreshData,
             requestNewData = requestNewData,
             forceRefreshData = forceRefreshData,
@@ -86,6 +104,7 @@ internal fun CompactHomeView(
             markAsReadOnScroll = markAsReadOnScroll,
             markAsRead = markAsRead,
             markAllRead = markAllRead,
+            onClearOldArticlesClicked = onClearOldArticlesClicked,
             openUrl = openUrl,
             updateReadStatus = updateReadStatus,
             updateBookmarkStatus = updateBookmarkStatus,
@@ -93,64 +112,6 @@ internal fun CompactHomeView(
             onSearchClick = onSearchClick,
             onEditFeedClick = onEditFeedClick,
         )
-    } else {
-        ModalNavigationDrawer(
-            drawerContent = {
-                ModalDrawerSheet {
-                    Drawer(
-                        navDrawerState = navDrawerState,
-                        currentFeedFilter = currentFeedFilter,
-                        onAddFeedClicked = onAddFeedClick,
-                        onFeedFilterSelected = { feedFilter ->
-                            onFeedFilterSelected(feedFilter)
-                            scope.launch {
-                                drawerState.close()
-                                listState.animateScrollToItem(0)
-                            }
-                        },
-                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                        onEditFeedClick = onEditFeedClick,
-                    )
-                }
-            },
-            drawerState = drawerState,
-        ) {
-            HomeScaffold(
-                unReadCount = unReadCount,
-                onSettingsButtonClicked = onSettingsButtonClicked,
-                scope = scope,
-                listState = listState,
-                snackbarHostState = snackbarHostState,
-                loadingState = feedUpdateStatus,
-                feedState = feedItems,
-                showDrawerMenu = true,
-                currentFeedFilter = currentFeedFilter,
-                onDrawerMenuClick = {
-                    scope.launch {
-                        if (drawerState.isOpen) {
-                            drawerState.close()
-                        } else {
-                            drawerState.open()
-                        }
-                    }
-                },
-                onAddFeedClick = onAddFeedClick,
-                refreshData = refreshData,
-                requestNewData = requestNewData,
-                forceRefreshData = forceRefreshData,
-                onDeleteDatabaseClick = onDeleteDatabaseClick,
-                markAsReadOnScroll = markAsReadOnScroll,
-                markAsRead = markAsRead,
-                markAllRead = markAllRead,
-                onClearOldArticlesClicked = onClearOldArticlesClicked,
-                openUrl = openUrl,
-                updateReadStatus = updateReadStatus,
-                updateBookmarkStatus = updateBookmarkStatus,
-                onBackToTimelineClick = onBackToTimelineClick,
-                onSearchClick = onSearchClick,
-                onEditFeedClick = onEditFeedClick,
-            )
-        }
     }
 }
 

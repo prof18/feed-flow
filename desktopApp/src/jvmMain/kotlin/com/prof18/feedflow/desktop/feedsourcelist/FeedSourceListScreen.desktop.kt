@@ -12,7 +12,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedSourceListState
-import com.prof18.feedflow.desktop.addfeed.AddFeedScreen
+import com.prof18.feedflow.desktop.addfeed.AddFeedScreenContent
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
@@ -34,7 +34,7 @@ class FeedSourceListScreen : Screen {
             visible = dialogState,
             onCloseRequest = { dialogState = false },
         ) {
-            AddFeedScreen(
+            AddFeedScreenContent(
                 onFeedAdded = {
                     dialogState = false
                 },

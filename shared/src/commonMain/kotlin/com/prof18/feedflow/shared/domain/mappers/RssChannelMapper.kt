@@ -26,10 +26,16 @@ internal class RssChannelMapper(
                 null
             }
 
-            val imageUrl = if (rssItem.image?.contains("http:") == true) {
-                rssItem.image?.replace("http:", "https:")
-            } else {
-                rssItem.image
+            val imageUrl = when {
+                rssItem.youtubeItemData?.thumbnailUrl != null -> {
+                    rssItem.youtubeItemData?.thumbnailUrl
+                }
+                rssItem.image?.contains("http:") == true -> {
+                    rssItem.image?.replace("http:", "https:")
+                }
+                else -> {
+                    rssItem.image
+                }
             }
 
             if (url == null) {

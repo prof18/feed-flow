@@ -120,4 +120,6 @@
     <string name="edit_feed_source_name_button">Editar</string>
     <string name="edit_feed">Editar canle</string>
     <string name="feed_name">Nome da canle</string>
+    <string name="clear_old_articles_button">Eliminar artigos anteriores 1 semana</string>
+    <string name="icloud_sync_description">Conecta a túa conta iCloud para sincronizar as subscricións, categorías, artigos lidos e marcados entre os teus dispositivos iOS, iPadOS e macOS. Os datos gárdanse nun cartafol específico para a app; FeedFlow non terá acceso a ningún dos teus ficheiros.</string>
 </resources>

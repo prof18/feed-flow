@@ -41,16 +41,17 @@ import com.prof18.feedflow.android.editfeed.toFeedSource
 import com.prof18.feedflow.android.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.android.home.HomeScreen
 import com.prof18.feedflow.android.readermode.ReaderModeScreen
-import com.prof18.feedflow.android.readermode.ReaderModeViewModel
 import com.prof18.feedflow.android.search.SearchScreen
 import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.about.AboutScreen
 import com.prof18.feedflow.android.settings.about.LicensesScreen
 import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
@@ -242,6 +243,9 @@ class MainActivity : ComponentActivity() {
                     },
                     onUpdateFontSize = { newFontSize ->
                         readerModeViewModel.updateFontSize(newFontSize)
+                    },
+                    onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
+                        readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                     },
                 )
             }

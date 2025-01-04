@@ -25,10 +25,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.openInBrowser
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.readermode.ReaderModeContent
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -78,8 +80,6 @@ internal data class ReaderModeScreen(
             },
             fontSize = fontSize,
             onFontSizeChange = {
-
-
                 readerModeViewModel.updateFontSize(it)
             },
             readerModeSuccessView = { contentPadding, successState ->
@@ -88,7 +88,7 @@ internal data class ReaderModeScreen(
                         .padding(contentPadding)
                         .verticalScroll(rememberScrollState()),
 
-                    ) {
+                ) {
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -117,6 +117,9 @@ internal data class ReaderModeScreen(
                         ),
                     )
                 }
+            },
+            onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
+                readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
             },
         )
     }

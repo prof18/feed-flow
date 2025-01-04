@@ -5,4 +5,5 @@ data class FeedItemUrlInfo(
     val url: String,
     val title: String?,
     val openOnlyOnBrowser: Boolean = false,
+    val isBookmarked: Boolean,
 )

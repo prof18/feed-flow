@@ -16,8 +16,11 @@ import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
+import com.prof18.feedflow.shared.presentation.MarkdownToHtmlConverter
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
+import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
@@ -113,4 +116,13 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             DesktopOS.LINUX -> CurrentOS.Desktop.Linux
         }
     }
+
+    single {
+        MarkdownToHtmlConverter(
+            converter = FlexmarkHtmlConverter.builder().build(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factoryOf(::ReaderModeViewModel)
 }

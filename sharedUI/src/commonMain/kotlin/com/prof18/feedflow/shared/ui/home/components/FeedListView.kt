@@ -144,6 +144,7 @@ internal fun FeedItemView(
                             id = feedItem.id,
                             url = feedItem.url,
                             title = feedItem.title,
+                            isBookmarked = feedItem.isBookmarked,
                         ),
                     )
                 },
@@ -358,6 +359,7 @@ private fun OpenCommentsMenuItem(
                     url = requireNotNull(feedItem.commentsUrl),
                     title = feedItem.title,
                     openOnlyOnBrowser = true,
+                    isBookmarked = feedItem.isBookmarked,
                 ),
             )
             closeMenu()

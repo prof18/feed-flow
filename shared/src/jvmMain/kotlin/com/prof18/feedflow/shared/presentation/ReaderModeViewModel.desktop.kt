@@ -1,10 +1,12 @@
-package com.prof18.feedflow.desktop.reaadermode
+package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +18,7 @@ class ReaderModeViewModel internal constructor(
     private val readerModeExtractor: ReaderModeExtractor,
     private val markdownToHtmlConverter: MarkdownToHtmlConverter,
     private val settingsRepository: SettingsRepository,
+    private val feedRetrieverRepository: FeedRetrieverRepository,
 ) : ViewModel() {
 
     private val readerModeMutableState: MutableStateFlow<ReaderModeState> = MutableStateFlow(
@@ -52,7 +55,11 @@ class ReaderModeViewModel internal constructor(
                     ),
                 )
             } else {
-                readerModeMutableState.value = ReaderModeState.HtmlNotAvailable(urlInfo.url)
+                readerModeMutableState.value = ReaderModeState.HtmlNotAvailable(
+                    url = urlInfo.url,
+                    id = urlInfo.id,
+                    isBookmarked = urlInfo.isBookmarked,
+                )
             }
         }
     }
@@ -60,5 +67,11 @@ class ReaderModeViewModel internal constructor(
     fun updateFontSize(newFontSize: Int) {
         settingsRepository.setReaderModeFontSize(newFontSize)
         readerFontSizeMutableState.update { newFontSize }
+    }
+
+    fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {
+        viewModelScope.launch {
+            feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
+        }
     }
 }

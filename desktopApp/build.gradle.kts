@@ -48,7 +48,6 @@ kotlin {
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
 
-                implementation(libs.flexmark.html2md.converter)
                 implementation(libs.multiplatform.markdown.renderer.m3)
                 implementation(libs.multiplatform.markdown.renderer.coil)
                 implementation(libs.voyager.navigator)

@@ -5,7 +5,6 @@ import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.prof18.feedflow.android.readermode.ReaderModeViewModel
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.shared.di.getWith
@@ -14,7 +13,6 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import org.koin.android.ext.android.inject
 import org.koin.androidx.workmanager.koin.workManagerFactory
-import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 class FeedFlowApp : Application() {
@@ -69,12 +67,6 @@ class FeedFlowApp : Application() {
                         )
                     }
                     single { appConfig }
-                    viewModel {
-                        ReaderModeViewModel(
-                            readerModeExtractor = get(),
-                            settingsRepository = get(),
-                        )
-                    }
                 },
             ),
         )

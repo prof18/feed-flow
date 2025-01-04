@@ -35,6 +35,7 @@ struct RegularView: View {
   @State private var fontSize = 16.0
   @State private var isSliderMoving = false
   @State private var reset = false
+  @State private var isBookmarked = false
 
   @StateObject private var vmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
     Deps.shared.getReaderModeViewModel())
@@ -99,44 +100,66 @@ struct RegularView: View {
       .navigationBarTitleDisplayMode(.inline)
       .navigationDestination(for: CommonViewRoute.self) { route in
         switch route {
-        case .readerMode(let url):
-          ReeeederView(
-            url: url,
-            options: ReeeederViewOptions(
-              theme: .init(
+        case .readerMode(let feedItem):
+          Group {
+            ReeeederView(
+              url: URL(string: feedItem.url)!,
+              options: ReeeederViewOptions(
+                theme: .init(
 
-                additionalCSS: """
-                      #__reader_container {
-                          font-size: \(fontSize)px
-                      }
-                  """
+                  additionalCSS: """
+                        #__reader_container {
+                            font-size: \(fontSize)px
+                        }
+                    """
+                ),
+                onLinkClicked: { url in
+                  if browserSelector.openInAppBrowser() {
+                    browserToOpen = .inAppBrowser(url: url)
+                  } else {
+                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
+                  }
+                }
               ),
-              onLinkClicked: { url in
-                if browserSelector.openInAppBrowser() {
-                  browserToOpen = .inAppBrowser(url: url)
-                } else {
-                  openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
+              toolbarContent: {
+                Button {
+                  isBookmarked.toggle()
+                  vmStoreOwner.instance.updateBookmarkStatus(
+                    feedItemId: FeedItemId(id: feedItem.id),
+                    bookmarked: isBookmarked
+                  )
+                } label: {
+                  if isBookmarked {
+                    Image(systemName: "bookmark.slash")
+                  } else {
+                    Image(systemName: "bookmark")
+                  }
                 }
-              }
-            ),
-            toolbarContent: {
-              Button {
-                if browserSelector.openInAppBrowser() {
-                  browserToOpen = .inAppBrowser(url: url)
-                } else {
-                  openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
-                }
-              } label: {
-                Image(systemName: "globe")
-              }
 
-              ShareLink(item: url) {
-                Label("Share", systemImage: "square.and.arrow.up")
+                ShareLink(item: URL(string: feedItem.url)!) {
+                  Label("Share", systemImage: "square.and.arrow.up")
+                }
+
+                Button {
+                  if browserSelector.openInAppBrowser() {
+                    browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
+                  } else {
+                    openURL(
+                      browserSelector.getUrlForDefaultBrowser(
+                        stringUrl: URL(string: feedItem.url)!.absoluteString))
+                  }
+                } label: {
+                  Image(systemName: "globe")
+                }
+
+                fontSizeMenu
               }
-              fontSizeMenu
+            )
+            .onAppear {
+              isBookmarked = feedItem.isBookmarked
             }
-          )
-          .id(reset)
+            .id(reset)
+          }
 
         case .search:
           SearchScreen()

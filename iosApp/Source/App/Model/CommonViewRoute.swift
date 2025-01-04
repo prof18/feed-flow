@@ -6,11 +6,12 @@
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
+import FeedFlowKit
 import Foundation
 
 enum CommonViewRoute: Hashable {
-    case readerMode(url: URL)
-    case search
-    case accounts
-    case dropboxSync
+  case readerMode(feedItem: FeedItem)
+  case search
+  case accounts
+  case dropboxSync
 }

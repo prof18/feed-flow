@@ -133,6 +133,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     viewModel {
         ReaderModeViewModel(
             settingsRepository = get(),
+            feedRetrieverRepository = get(),
         )
     }
 }

@@ -23,6 +23,7 @@ struct FeedListView: View {
     var feedState: [FeedItem]
     var showLoading: Bool
     let currentFeedFilter: FeedFilter
+    let columnVisibility: NavigationSplitViewVisibility
 
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
@@ -31,6 +32,8 @@ struct FeedListView: View {
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
     let onBackToTimelineClick: () -> Void
+    let onMarkAllAsReadClick: () -> Void
+    let openDrawer: () -> Void
 
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
@@ -39,7 +42,9 @@ struct FeedListView: View {
             EmptyFeedView(
                 currentFeedFilter: currentFeedFilter,
                 onReloadClick: onReloadClick,
-                onBackToTimelineClick: onBackToTimelineClick
+                onBackToTimelineClick: onBackToTimelineClick,
+                openDrawer: openDrawer,
+                columnVisibility: columnVisibility
             )
         } else if feedState.isEmpty {
             VStack(alignment: .center) {
@@ -109,6 +114,16 @@ struct FeedListView: View {
                             if let index = feedState.firstIndex(of: feedItem) {
                                 self.indexHolder.updateReadIndex(index: index)
                             }
+                        }
+                        if index == feedState.count - 1 {
+                            Button(action: {
+                                onMarkAllAsReadClick()
+                            }) {
+                                Text(feedFlowStrings.markAllReadButton)
+                            }
+                            .buttonStyle(.borderless)
+                            .frame(maxWidth: .infinity)
+                            .listRowSeparator(.hidden)
                         }
                     }
                 }
@@ -190,13 +205,16 @@ struct FeedListView: View {
         feedState: feedItemsForPreview,
         showLoading: false,
         currentFeedFilter: FeedFilter.Timeline(),
+        columnVisibility: .all,
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
-        onBackToTimelineClick: {}
+        onBackToTimelineClick: {},
+        onMarkAllAsReadClick: {},
+        openDrawer: {}
     ).environment(HomeListIndexHolder(fakeHomeViewModel: true))
 }
 
@@ -206,13 +224,16 @@ struct FeedListView: View {
         feedState: [],
         showLoading: false,
         currentFeedFilter: FeedFilter.Timeline(),
+        columnVisibility: .all,
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
-        onBackToTimelineClick: {}
+        onBackToTimelineClick: {},
+        onMarkAllAsReadClick: {},
+        openDrawer: {}
     )
 }
 
@@ -222,12 +243,15 @@ struct FeedListView: View {
         feedState: [],
         showLoading: false,
         currentFeedFilter: FeedFilter.Timeline(),
+        columnVisibility: .all,
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},
         onItemClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
-        onBackToTimelineClick: {}
+        onBackToTimelineClick: {},
+        onMarkAllAsReadClick: {},
+        openDrawer: {}
     )
 }

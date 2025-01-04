@@ -37,6 +37,7 @@ internal fun HomeScreenContent(
     requestMoreItems: () -> Unit,
     onBackToTimelineClick: () -> Unit,
     onSearchClick: () -> Unit,
+    markAllAsRead: () -> Unit,
     modifier: Modifier = Modifier,
     showDrawerMenu: Boolean = false,
     isDrawerMenuOpen: Boolean = false,
@@ -65,6 +66,8 @@ internal fun HomeScreenContent(
                 currentFeedFilter = currentFeedFilter,
                 onReloadClick = onRefresh,
                 onBackToTimelineClick = onBackToTimelineClick,
+                onOpenDrawerClick = onDrawerMenuClick,
+                isDrawerVisible = showDrawerMenu,
             )
 
             else -> FeedWithContentView(
@@ -78,6 +81,7 @@ internal fun HomeScreenContent(
                 onReadStatusClick = onReadStatusClick,
                 onCommentClick = onCommentClick,
                 requestMoreItems = requestMoreItems,
+                markAllAsRead = markAllAsRead,
             )
         }
     }
@@ -104,6 +108,7 @@ private fun HomeScreenContentPreview() {
             onCommentClick = {},
             onBackToTimelineClick = {},
             onSearchClick = {},
+            markAllAsRead = {},
         )
     }
 }

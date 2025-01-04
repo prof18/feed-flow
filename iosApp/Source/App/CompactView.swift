@@ -100,7 +100,11 @@ struct CompactView: View {
             toggleListScroll: $scrollUpTrigger,
             showSettings: .constant(false),
             selectedDrawerItem: $selectedDrawerItem,
-            homeViewModel: homeViewModel
+            columnVisibility: .constant(.automatic),
+            homeViewModel: homeViewModel,
+            openDrawer: {
+              // Handle by the view for the compact view
+            }
           )
           .environment(indexHolder)
         }

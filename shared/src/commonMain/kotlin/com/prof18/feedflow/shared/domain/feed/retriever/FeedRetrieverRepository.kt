@@ -35,6 +35,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -175,6 +176,7 @@ internal class FeedRetrieverRepository(
         feedSyncRepository.setIsSyncUploadRequired()
     }
 
+    @Suppress("MagicNumber")
     suspend fun fetchFeeds(
         forceRefresh: Boolean = false,
         isFirstLaunch: Boolean = false,
@@ -211,6 +213,8 @@ internal class FeedRetrieverRepository(
 
                 feedSyncRepository.syncFeedItems()
                 isFeedSyncDone = true
+                // If the sync is skipped quickly, sometimes the loading spinner stays out
+                delay(50)
                 updateRefreshCount()
 
                 getFeeds()
@@ -218,7 +222,7 @@ internal class FeedRetrieverRepository(
         }
     }
 
-    suspend fun markAllFeedAsRead() {
+    suspend fun markAllCurrentFeedAsRead() {
         val currentFilter = currentFeedFilterMutableState.value
         databaseHelper.markAllFeedAsRead(currentFilter)
         feedSyncRepository.setIsSyncUploadRequired()

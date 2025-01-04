@@ -122,4 +122,5 @@
     <string name="edit_feed">Edit feed</string>
     <string name="feed_name">Feed name</string>
     <string name="feed_edited_message">Feed "%s" updated</string>
+    <string name="open_another_feed">Open another feed</string>
 </resources>

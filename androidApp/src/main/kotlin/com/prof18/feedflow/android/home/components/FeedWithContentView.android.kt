@@ -40,6 +40,7 @@ internal fun FeedWithContentView(
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     requestMoreItems: () -> Unit,
     onRefresh: () -> Unit,
+    markAllAsRead: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -80,6 +81,7 @@ internal fun FeedWithContentView(
                     updateReadStatus(index)
                 },
                 requestMoreItems = requestMoreItems,
+                markAllAsRead = markAllAsRead,
             )
         }
     }
@@ -100,6 +102,7 @@ private fun FeedWithContentViewPreview() {
             onCommentClick = {},
             requestMoreItems = {},
             onRefresh = {},
+            markAllAsRead = {},
         )
     }
 }

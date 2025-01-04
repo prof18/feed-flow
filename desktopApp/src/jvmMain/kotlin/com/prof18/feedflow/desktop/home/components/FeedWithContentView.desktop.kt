@@ -44,6 +44,7 @@ internal fun FeedWithContentView(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     requestMoreItems: () -> Unit,
+    markAllAsRead: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -68,6 +69,7 @@ internal fun FeedWithContentView(
                 updateReadStatus = { index ->
                     updateReadStatus(index)
                 },
+                markAllAsRead = markAllAsRead,
             )
 
             VerticalScrollbar(
@@ -112,6 +114,7 @@ private fun FeedWithContentViewPreview() {
             onCommentClick = { },
             requestMoreItems = { },
             paddingValues = PaddingValues(),
+            markAllAsRead = { },
         )
     }
 }

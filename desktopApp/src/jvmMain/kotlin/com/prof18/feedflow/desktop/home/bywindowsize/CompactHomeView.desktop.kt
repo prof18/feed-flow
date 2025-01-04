@@ -50,6 +50,7 @@ internal fun CompactView(
     onSearchClick: () -> Unit,
     openUrl: (FeedItemUrlInfo) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    markAllAsRead: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -113,6 +114,7 @@ internal fun CompactView(
             onReadStatusClick = onReadStatusClick,
             onBackToTimelineClick = onBackToTimelineClick,
             onSearchClick = onSearchClick,
+            markAllAsRead = markAllAsRead
         )
     }
 }
@@ -141,6 +143,7 @@ private fun CompactViewPreview() {
             onSearchClick = {},
             openUrl = {},
             onDeleteFeedSourceClick = {},
+            markAllAsRead = {},
         )
     }
 }

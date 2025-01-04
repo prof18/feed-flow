@@ -185,7 +185,7 @@ class HomeViewModel internal constructor(
 
     fun markAllRead() {
         viewModelScope.launch {
-            feedRetrieverRepository.markAllFeedAsRead()
+            feedRetrieverRepository.markAllCurrentFeedAsRead()
             feedRetrieverRepository.fetchFeeds()
         }
     }

@@ -6,89 +6,118 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct EmptyFeedView: View {
+  @Environment(AppState.self) private var appState
+  @Environment(\.dismiss) private var dismiss
 
-    let currentFeedFilter: FeedFilter
-    let onReloadClick: () -> Void
-    let onBackToTimelineClick: () -> Void
+  let currentFeedFilter: FeedFilter
+  let onReloadClick: () -> Void
+  let onBackToTimelineClick: () -> Void
+  let openDrawer: () -> Void
+  let columnVisibility: NavigationSplitViewVisibility
 
-    var body: some View {
-        VStack {
-            if currentFeedFilter is FeedFilter.Read {
+  var body: some View {
+    VStack {
+      if currentFeedFilter is FeedFilter.Read {
 
-            }
+      }
 
-            Text(currentFeedFilter.getEmptyMessage())
-                .font(.body)
+      Text(currentFeedFilter.getEmptyMessage())
+        .font(.body)
 
-            Button(
-                action: {
-                    if currentFeedFilter is FeedFilter.Bookmarks || currentFeedFilter is FeedFilter.Read {
-                        onBackToTimelineClick()
-                    } else {
-                        onReloadClick()
-                    }
-                },
-                label: {
-                    Text(currentFeedFilter.getButtonText())
-                        .frame(maxWidth: .infinity)
-                }
-            )
-            .buttonStyle(.bordered)
-            .padding(.top, Spacing.regular)
-            .padding(.horizontal, Spacing.medium)
+      Button(
+        action: {
+          if currentFeedFilter is FeedFilter.Bookmarks || currentFeedFilter is FeedFilter.Read {
+            onBackToTimelineClick()
+          } else {
+            onReloadClick()
+          }
+        },
+        label: {
+          Text(currentFeedFilter.getButtonText())
+            .frame(maxWidth: .infinity)
         }
+      )
+      .buttonStyle(.bordered)
+      .padding(.top, Spacing.regular)
+      .padding(.horizontal, Spacing.medium)
+
+      if columnVisibility != .all {
+        Button(
+          action: {
+            if appState.sizeClass == .compact {
+              dismiss()
+            } else {
+              openDrawer()
+            }
+          },
+          label: {
+            Text(feedFlowStrings.openAnotherFeed)
+              .frame(maxWidth: .infinity)
+          }
+        )
+        .buttonStyle(.bordered)
+        .padding(.top, Spacing.regular)
+        .padding(.horizontal, Spacing.medium)
+      }
     }
+  }
 }
 
-fileprivate extension FeedFilter {
-    func getEmptyMessage() -> String {
-        switch self {
-        case is FeedFilter.Read:
-            return feedFlowStrings.readArticlesEmptyScreenMessage
+extension FeedFilter {
+  fileprivate func getEmptyMessage() -> String {
+    switch self {
+    case is FeedFilter.Read:
+      return feedFlowStrings.readArticlesEmptyScreenMessage
 
-        case is FeedFilter.Bookmarks:
-            return feedFlowStrings.bookmarkedArticlesEmptyScreenMessage
+    case is FeedFilter.Bookmarks:
+      return feedFlowStrings.bookmarkedArticlesEmptyScreenMessage
 
-        default:
-            return feedFlowStrings.emptyFeedMessage
-        }
+    default:
+      return feedFlowStrings.emptyFeedMessage
     }
+  }
 
-    func getButtonText() -> String {
-        switch self {
-        case is FeedFilter.Read, is FeedFilter.Bookmarks:
-            return feedFlowStrings.emptyScreenBackToTimeline
+  fileprivate func getButtonText() -> String {
+    switch self {
+    case is FeedFilter.Read, is FeedFilter.Bookmarks:
+      return feedFlowStrings.emptyScreenBackToTimeline
 
-        default:
-            return feedFlowStrings.refreshFeeds
-        }
+    default:
+      return feedFlowStrings.refreshFeeds
     }
+  }
 }
 
 #Preview {
-    EmptyFeedView(
-        currentFeedFilter: FeedFilter.Timeline(),
-        onReloadClick: {},
-        onBackToTimelineClick: {}
-    )
+  EmptyFeedView(
+    currentFeedFilter: FeedFilter.Timeline(),
+    onReloadClick: {},
+    onBackToTimelineClick: {},
+    openDrawer: {},
+    columnVisibility: .all
+  )
 }
 
 #Preview("Bookmarks") {
-    EmptyFeedView(
-        currentFeedFilter: FeedFilter.Bookmarks(),
-        onReloadClick: {},
-        onBackToTimelineClick: {}
-    )
+  EmptyFeedView(
+    currentFeedFilter: FeedFilter.Bookmarks(),
+    onReloadClick: {},
+    onBackToTimelineClick: {},
+    openDrawer: {},
+    columnVisibility: .all
+  )
 }
 
 #Preview("Read") {
-    EmptyFeedView(
-        currentFeedFilter: FeedFilter.Read(),
-        onReloadClick: {},
-        onBackToTimelineClick: {}
-    )
+  EmptyFeedView(
+    currentFeedFilter: FeedFilter.Read(),
+    onReloadClick: {},
+    onBackToTimelineClick: {},
+    openDrawer: {},
+    columnVisibility: .all
+  )
 }

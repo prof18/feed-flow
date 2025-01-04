@@ -19,8 +19,10 @@ import com.prof18.feedflow.shared.ui.utils.tagForTesting
 @Composable
 fun EmptyFeedView(
     currentFeedFilter: FeedFilter,
+    isDrawerVisible: Boolean,
     onReloadClick: () -> Unit,
     onBackToTimelineClick: () -> Unit,
+    onOpenDrawerClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -64,6 +66,16 @@ fun EmptyFeedView(
             onClick = buttonAction,
         ) {
             Text(buttonText)
+        }
+
+        if (isDrawerVisible) {
+            Button(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                onClick = onOpenDrawerClick,
+            ) {
+                Text(LocalFeedFlowStrings.current.openAnotherFeed)
+            }
         }
     }
 }

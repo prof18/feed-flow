@@ -52,6 +52,7 @@ internal fun ExpandedView(
     onSearchClick: () -> Unit,
     openUrl: (FeedItemUrlInfo) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    markAllAsRead: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
@@ -107,6 +108,7 @@ internal fun ExpandedView(
             onReadStatusClick = onReadStatusClick,
             onBackToTimelineClick = onBackToTimelineClick,
             onSearchClick = onSearchClick,
+            markAllAsRead = markAllAsRead
         )
     }
 }
@@ -135,6 +137,7 @@ private fun ExpandedViewPreview() {
             onSearchClick = {},
             openUrl = {},
             onDeleteFeedSourceClick = {},
+            markAllAsRead = {},
         )
     }
 }

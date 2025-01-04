@@ -48,8 +48,10 @@ struct RegularView: View {
   @State private var showEditFeedSheet = false
   @State private var feedSourceToEdit: FeedSource?
 
+  @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
+
   var body: some View {
-    NavigationSplitView {
+    NavigationSplitView(columnVisibility: $columnVisibility) {
       SidebarDrawer(
         selectedDrawerItem: $selectedDrawerItem,
         navDrawerState: navDrawerState,
@@ -93,7 +95,11 @@ struct RegularView: View {
           toggleListScroll: $scrollUpTrigger,
           showSettings: $showSettings,
           selectedDrawerItem: $selectedDrawerItem,
-          homeViewModel: homeViewModel
+          columnVisibility: $columnVisibility,
+          homeViewModel: homeViewModel,
+          openDrawer: {
+            columnVisibility = .all
+          }
         )
         .environment(indexHolder)
       }

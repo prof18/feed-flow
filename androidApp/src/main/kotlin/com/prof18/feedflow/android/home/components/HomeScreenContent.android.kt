@@ -30,6 +30,7 @@ internal fun HomeScreenContent(
     feedState: ImmutableList<FeedItem>,
     listState: LazyListState,
     currentFeedFilter: FeedFilter,
+    isDrawerVisible: Boolean,
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
@@ -38,6 +39,8 @@ internal fun HomeScreenContent(
     onAddFeedClick: () -> Unit,
     requestMoreItems: () -> Unit,
     onBackToTimelineClick: () -> Unit,
+    markAllAsRead: () -> Unit,
+    onOpenDrawerClick: () -> Unit,
     onRefresh: () -> Unit = {},
 ) {
     when {
@@ -58,6 +61,8 @@ internal fun HomeScreenContent(
                 currentFeedFilter = currentFeedFilter,
                 onReloadClick = onRefresh,
                 onBackToTimelineClick = onBackToTimelineClick,
+                onOpenDrawerClick = onOpenDrawerClick,
+                isDrawerVisible = isDrawerVisible,
             )
         }
 
@@ -75,6 +80,7 @@ internal fun HomeScreenContent(
             onReadStatusClick = onReadStatusClick,
             onCommentClick = onCommentClick,
             onRefresh = onRefresh,
+            markAllAsRead = markAllAsRead,
         )
     }
 }
@@ -92,6 +98,7 @@ private fun HomeScreeContentLoadingPreview() {
             feedState = feedItemsForPreview,
             listState = rememberLazyListState(),
             currentFeedFilter = FeedFilter.Timeline,
+            isDrawerVisible = true,
             updateReadStatus = {},
             onFeedItemClick = {},
             onAddFeedClick = {},
@@ -101,6 +108,8 @@ private fun HomeScreeContentLoadingPreview() {
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
             onBackToTimelineClick = {},
+            markAllAsRead = {},
+            onOpenDrawerClick = {},
         )
     }
 }
@@ -115,6 +124,7 @@ private fun HomeScreeContentLoadedPreview() {
             feedState = feedItemsForPreview,
             listState = rememberLazyListState(),
             currentFeedFilter = FeedFilter.Timeline,
+            isDrawerVisible = true,
             updateReadStatus = {},
             onFeedItemClick = {},
             onAddFeedClick = {},
@@ -123,6 +133,8 @@ private fun HomeScreeContentLoadedPreview() {
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
             onBackToTimelineClick = {},
+            markAllAsRead = {},
+            onOpenDrawerClick = {},
         )
     }
 }

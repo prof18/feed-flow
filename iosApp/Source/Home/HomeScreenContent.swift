@@ -27,6 +27,7 @@ struct HomeContent: View {
   @Binding var currentFeedFilter: FeedFilter
   @Binding var showSettings: Bool
   @Binding var showFeedSyncButton: Bool
+  @Binding var columnVisibility: NavigationSplitViewVisibility
 
   @State var isToolbarVisible: Bool = true
 
@@ -42,6 +43,7 @@ struct HomeContent: View {
   let onReadStatusClick: (FeedItemId, Bool) -> Void
   let onBackToTimelineClick: () -> Void
   let onFeedSyncClick: () -> Void
+  let openDrawer: () -> Void
 
   var body: some View {
     ScrollViewReader { proxy in
@@ -50,6 +52,7 @@ struct HomeContent: View {
         feedState: feedState,
         showLoading: showLoading,
         currentFeedFilter: currentFeedFilter,
+        columnVisibility: columnVisibility,
         onReloadClick: onRefresh,
         onAddFeedClick: {
           self.sheetToShow = .noFeedSource
@@ -58,7 +61,9 @@ struct HomeContent: View {
         onItemClick: onItemClick,
         onBookmarkClick: onBookmarkClick,
         onReadStatusClick: onReadStatusClick,
-        onBackToTimelineClick: onBackToTimelineClick
+        onBackToTimelineClick: onBackToTimelineClick,
+        onMarkAllAsReadClick: onMarkAllReadClick,
+        openDrawer: openDrawer
       )
       .onChange(of: toggleListScroll) {
         proxy.scrollTo(feedState.first?.id)
@@ -295,6 +300,7 @@ struct HomeContent: View {
     currentFeedFilter: .constant(FeedFilter.Timeline()),
     showSettings: .constant(false),
     showFeedSyncButton: .constant(false),
+    columnVisibility: .constant(.all),
     onRefresh: {},
     updateReadStatus: { _ in },
     onMarkAllReadClick: {},
@@ -306,7 +312,8 @@ struct HomeContent: View {
     onBookmarkClick: { _, _ in },
     onReadStatusClick: { _, _ in },
     onBackToTimelineClick: {},
-    onFeedSyncClick: {}
+    onFeedSyncClick: {},
+    openDrawer: {}
   )
   .environment(HomeListIndexHolder(fakeHomeViewModel: true))
   .environment(AppState())
@@ -326,6 +333,7 @@ struct HomeContent: View {
     currentFeedFilter: .constant(FeedFilter.Timeline()),
     showSettings: .constant(false),
     showFeedSyncButton: .constant(false),
+    columnVisibility: .constant(.all),
     onRefresh: {},
     updateReadStatus: { _ in },
     onMarkAllReadClick: {},
@@ -337,7 +345,8 @@ struct HomeContent: View {
     onBookmarkClick: { _, _ in },
     onReadStatusClick: { _, _ in },
     onBackToTimelineClick: {},
-    onFeedSyncClick: {}
+    onFeedSyncClick: {},
+    openDrawer: {}
   )
   .environment(HomeListIndexHolder(fakeHomeViewModel: true))
   .environment(AppState())
@@ -357,6 +366,7 @@ struct HomeContent: View {
     currentFeedFilter: .constant(FeedFilter.Timeline()),
     showSettings: .constant(false),
     showFeedSyncButton: .constant(false),
+    columnVisibility: .constant(.all),
     onRefresh: {},
     updateReadStatus: { _ in },
     onMarkAllReadClick: {},
@@ -368,7 +378,8 @@ struct HomeContent: View {
     onBookmarkClick: { _, _ in },
     onReadStatusClick: { _, _ in },
     onBackToTimelineClick: {},
-    onFeedSyncClick: {}
+    onFeedSyncClick: {},
+    openDrawer: {}
   )
   .environment(HomeListIndexHolder(fakeHomeViewModel: true))
   .environment(AppState())

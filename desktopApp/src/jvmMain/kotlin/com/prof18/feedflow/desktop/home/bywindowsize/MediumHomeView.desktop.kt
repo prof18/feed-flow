@@ -56,6 +56,7 @@ internal fun MediumView(
     onSearchClick: () -> Unit,
     openUrl: (FeedItemUrlInfo) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    markAllAsRead: () -> Unit,
 ) {
     var isDrawerMenuFullVisible by remember {
         mutableStateOf(true)
@@ -122,6 +123,7 @@ internal fun MediumView(
             onReadStatusClick = onReadStatusClick,
             onBackToTimelineClick = onBackToTimelineClick,
             onSearchClick = onSearchClick,
+            markAllAsRead = markAllAsRead,
         )
     }
 }
@@ -150,6 +152,7 @@ private fun MediumViewPreview() {
             onSearchClick = {},
             openUrl = {},
             onDeleteFeedSourceClick = {},
+            markAllAsRead = {},
         )
     }
 }

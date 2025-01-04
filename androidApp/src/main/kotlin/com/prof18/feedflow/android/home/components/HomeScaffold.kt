@@ -121,6 +121,9 @@ internal fun HomeScaffold(
             onAddFeedClick = onAddFeedClick,
             requestMoreItems = requestNewData,
             onBackToTimelineClick = onBackToTimelineClick,
+            markAllAsRead = markAllRead,
+            onOpenDrawerClick = onDrawerMenuClick,
+            isDrawerVisible = showDrawerMenu,
         )
     }
 }

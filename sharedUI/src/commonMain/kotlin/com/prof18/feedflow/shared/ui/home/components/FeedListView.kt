@@ -21,13 +21,13 @@ import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -68,6 +68,7 @@ fun FeedList(
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
+    markAllAsRead: () -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
 ) {
@@ -96,6 +97,23 @@ fun FeedList(
                 onBookmarkClick = onBookmarkClick,
                 onReadStatusClick = onReadStatusClick,
             )
+
+            if (index == feedItems.size - 1) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
+                    TextButton(
+                        modifier = Modifier
+                            .padding(top = Spacing.small)
+                            .padding(bottom = Spacing.medium)
+                            .align(Alignment.Center),
+                        onClick = markAllAsRead,
+                    ) {
+                        Text(LocalFeedFlowStrings.current.markAllReadButton)
+                    }
+                }
+            }
         }
     }
 

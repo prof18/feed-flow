@@ -49,7 +49,7 @@ struct SearchScreenContent: View {
                 Button(action: {
                     if browserSelector.openReaderMode() {
                         self.appState.navigate(
-                            route: CommonViewRoute.readerMode(url: URL(string: feedItem.url)!)
+                            route: CommonViewRoute.readerMode(feedItem: feedItem)
                         )
                     } else if browserSelector.openInAppBrowser() {
                         browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)

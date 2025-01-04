@@ -135,6 +135,7 @@ kotlin {
 
             dependencies {
                 implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.flexmark.html2md.converter)
                 api(libs.sentry)
             }
         }

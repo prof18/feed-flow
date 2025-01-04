@@ -56,7 +56,7 @@ struct FeedListView: View {
                         Button(action: {
                             if browserSelector.openReaderMode() {
                                 self.appState.navigate(
-                                    route: CommonViewRoute.readerMode(url: URL(string: feedItem.url)!)
+                                    route: CommonViewRoute.readerMode(feedItem: feedItem)
                                 )
                             } else if  browserSelector.openInAppBrowser() {
                                 browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
@@ -68,7 +68,8 @@ struct FeedListView: View {
                                     id: feedItem.id,
                                     url: feedItem.url,
                                     title: feedItem.title,
-                                    openOnlyOnBrowser: false
+                                    openOnlyOnBrowser: false,
+                                    isBookmarked: feedItem.isBookmarked
                                 )
                             )
                         },

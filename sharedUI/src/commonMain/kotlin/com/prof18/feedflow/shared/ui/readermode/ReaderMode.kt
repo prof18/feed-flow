@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.BookmarkAdd
+import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
@@ -28,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -43,6 +46,7 @@ fun ReaderModeContent(
     onShareClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     onFontSizeChange: (Int) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     snackbarHost: @Composable () -> Unit = {},
     readerModeSuccessView: @Composable (PaddingValues, ReaderModeState.Success) -> Unit,
 ) {
@@ -61,6 +65,7 @@ fun ReaderModeContent(
                 openInBrowser = openInBrowser,
                 onShareClick = onShareClick,
                 onFontSizeChange = onFontSizeChange,
+                onBookmarkClick = onBookmarkClick,
             )
         },
         snackbarHost = snackbarHost,
@@ -102,6 +107,7 @@ private fun ReaderModeToolbar(
     openInBrowser: (String) -> Unit,
     onShareClick: (String) -> Unit,
     onFontSizeChange: (Int) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -127,17 +133,31 @@ private fun ReaderModeToolbar(
         },
         actions = {
             Row {
-                if (readerModeState is ReaderModeState.Success) {
-                    IconButton(
-                        onClick = {
-                            openInBrowser(readerModeState.readerModeData.url)
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Language,
-                            contentDescription = null,
-                        )
+                if (readerModeState is ReaderModeState.HtmlNotAvailable) {
+                    var isBookmarked by remember {
+                        mutableStateOf(readerModeState.isBookmarked)
                     }
+                    BookmarkButton(
+                        isBookmarked = isBookmarked,
+                        onClick = {
+                            isBookmarked = !isBookmarked
+                            onBookmarkClick(FeedItemId(readerModeState.id), isBookmarked)
+                        },
+                    )
+                }
+
+                if (readerModeState is ReaderModeState.Success) {
+                    var isBookmarked by remember {
+                        mutableStateOf(readerModeState.readerModeData.isBookmarked)
+                    }
+
+                    BookmarkButton(
+                        isBookmarked = isBookmarked,
+                        onClick = {
+                            isBookmarked = !isBookmarked
+                            onBookmarkClick(readerModeState.readerModeData.id, isBookmarked)
+                        },
+                    )
 
                     IconButton(
                         onClick = {
@@ -146,6 +166,17 @@ private fun ReaderModeToolbar(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Share,
+                            contentDescription = null,
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            openInBrowser(readerModeState.readerModeData.url)
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Language,
                             contentDescription = null,
                         )
                     }
@@ -170,7 +201,7 @@ private fun ReaderModeToolbar(
                         },
                     ) {
                         Column(
-                            modifier = Modifier.padding(Spacing.regular)
+                            modifier = Modifier.padding(Spacing.regular),
                         ) {
                             Text(
                                 text = LocalFeedFlowStrings.current.readerModeFontSize,
@@ -191,4 +222,23 @@ private fun ReaderModeToolbar(
             }
         },
     )
+}
+
+@Composable
+private fun BookmarkButton(
+    isBookmarked: Boolean,
+    onClick: () -> Unit,
+) {
+    IconButton(
+        onClick = onClick,
+    ) {
+        Icon(
+            imageVector = if (isBookmarked) {
+                Icons.Default.BookmarkRemove
+            } else {
+                Icons.Default.BookmarkAdd
+            },
+            contentDescription = null,
+        )
+    }
 }

@@ -1,4 +1,4 @@
-package com.prof18.feedflow.desktop.reaadermode
+package com.prof18.feedflow.shared.presentation
 
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter

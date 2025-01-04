@@ -20,6 +20,7 @@ import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
@@ -31,6 +32,7 @@ internal fun ReaderModeScreen(
     readerModeState: ReaderModeState,
     fontSize: Int,
     onUpdateFontSize: (Int) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     navigateBack: () -> Unit,
 ) {
     val browserManager = koinInject<BrowserManager>()
@@ -80,6 +82,7 @@ internal fun ReaderModeScreen(
                 navigator = navigator,
             )
         },
+        onBookmarkClick = onBookmarkClick,
     )
 }
 

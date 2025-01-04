@@ -14,6 +14,7 @@ import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -89,4 +91,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     factory<CurrentOS> { CurrentOS.Android }
 
     workerOf(::SyncWorkManager)
+
+    viewModel {
+        ReaderModeViewModel(
+            readerModeExtractor = get(),
+            settingsRepository = get(),
+            feedRetrieverRepository = get(),
+        )
+    }
 }

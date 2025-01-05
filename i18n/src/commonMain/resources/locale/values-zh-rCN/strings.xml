@@ -125,4 +125,7 @@
     <string name="feed_edited_message">订阅源 %s 已更新</string>
     <string name="edit_feed_source_name_button">编辑</string>
     <string name="edit_feed">编辑订阅</string>
+    <string name="clear_old_articles_button">清除一周前文章</string>
+    <string name="icloud_sync_description">连接您的 iCloud 账户，以便在 iOS 和 iPadOS 设备之间同步 Feed 订阅、分类、已读和收藏的文章。数据仅保存在应用的特定文件夹内，FeedFlow 不会访问您的其他文件</string>
+    <string name="open_another_feed">浏览其他订阅</string>
 </resources>

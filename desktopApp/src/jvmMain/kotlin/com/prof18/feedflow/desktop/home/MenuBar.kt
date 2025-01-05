@@ -34,6 +34,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
+    onFeedFontScaleClick: () -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -102,6 +103,11 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onClick = {
                     navigator.push(AccountsScreen())
                 },
+            )
+
+            Item(
+                text = LocalFeedFlowStrings.current.settingsFeedListFontScaleTitle,
+                onClick = onFeedFontScaleClick,
             )
         }
 

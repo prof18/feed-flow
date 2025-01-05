@@ -212,6 +212,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         SettingsViewModel(
             settingsRepository = get(),
             feedRetrieverRepository = get(),
+            fontSizeRepository = get(),
         )
     }
 

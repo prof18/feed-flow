@@ -114,6 +114,30 @@ val feedItemsForPreview = persistentListOf(
         isRead = false,
         isBookmarked = false,
     ),
+    FeedItem(
+        id = "42",
+        url = "https://www.example",
+        title = "Article Title",
+        subtitle = "This is a subtitle",
+        content = null,
+        imageUrl = "",
+        feedSource = FeedSource(
+            id = "1",
+            url = "https://www.ilpost.it",
+            title = "Windows Central - News, Forums, Reviews, Help for Windows",
+            category = FeedSourceCategory(
+                id = "2",
+                title = "Tech",
+            ),
+            lastSyncTimestamp = null,
+            logoUrl = null,
+        ),
+        pubDateMillis = null,
+        dateString = null,
+        commentsUrl = null,
+        isRead = true,
+        isBookmarked = true,
+    ),
 )
 
 val browsersForPreview = persistentListOf(

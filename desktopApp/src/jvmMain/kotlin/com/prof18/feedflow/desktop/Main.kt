@@ -47,6 +47,7 @@ import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
+import com.prof18.feedflow.shared.ui.search.FeedListFontSettings
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -61,7 +62,6 @@ import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
 import java.io.File
 import java.io.InputStream
-import java.lang.reflect.Field
 import java.net.URI
 import java.util.Properties
 import javax.swing.UIManager
@@ -232,6 +232,27 @@ fun main() = application {
                             )
                         }
 
+                        var feedListFontDialogState by remember { mutableStateOf(false) }
+                        val fontSizesState by settingsViewModel.feedFontSizeState.collectAsState()
+                        DialogWindow(
+                            title = LocalFeedFlowStrings.current.settingsFeedListFontScaleTitle,
+                            visible = feedListFontDialogState,
+                            onCloseRequest = {
+                                feedListFontDialogState = false
+                            },
+                        ) {
+                            Scaffold { paddingValues ->
+                                FeedListFontSettings(
+                                    modifier = Modifier
+                                        .padding(paddingValues),
+                                    fontSizes = fontSizesState,
+                                    updateFontScale = { fontScale ->
+                                        settingsViewModel.updateFontScale(fontScale)
+                                    },
+                                )
+                            }
+                        }
+
                         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
 
                         Navigator(
@@ -299,6 +320,9 @@ fun main() = application {
                                 },
                                 setRemoveTitleFromDescription = { enabled ->
                                     settingsViewModel.updateRemoveTitleFromDescription(enabled)
+                                },
+                                onFeedFontScaleClick = {
+                                    feedListFontDialogState = true
                                 },
                             )
 

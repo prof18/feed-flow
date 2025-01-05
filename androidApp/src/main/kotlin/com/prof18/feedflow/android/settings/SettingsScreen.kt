@@ -42,12 +42,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.settings.components.BrowserSelectionDialog
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.Browser
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import com.prof18.feedflow.shared.ui.search.FeedListFontSettings
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -74,6 +76,7 @@ fun SettingsScreen(
 
     val browserListState by browserManager.browserListState.collectAsStateWithLifecycle()
     val settingState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
+    val fontSizesState by settingsViewModel.feedFontSizeState.collectAsStateWithLifecycle()
 
     val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
     val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
@@ -88,6 +91,7 @@ fun SettingsScreen(
         isReaderModeEnabled = settingState.isReaderModeEnabled,
         isRemoveTitleFromDescriptionEnabled = settingState.isRemoveTitleFromDescriptionEnabled,
         showAccounts = appConfig.isDropboxSyncEnabled,
+        fontSizes = fontSizesState,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
@@ -117,6 +121,9 @@ fun SettingsScreen(
         setRemoveTitleFromDescription = { enabled ->
             settingsViewModel.updateRemoveTitleFromDescription(enabled)
         },
+        updateFontScale = { newFontSize ->
+            settingsViewModel.updateFontScale(newFontSize)
+        },
     )
 }
 
@@ -128,6 +135,7 @@ private fun SettingsScreenContent(
     isReaderModeEnabled: Boolean,
     isRemoveTitleFromDescriptionEnabled: Boolean,
     showAccounts: Boolean,
+    fontSizes: FeedFontSizes,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelected: (Browser) -> Unit,
@@ -140,6 +148,7 @@ private fun SettingsScreenContent(
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
+    updateFontScale: (Int) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -165,171 +174,146 @@ private fun SettingsScreenContent(
             )
         }
 
-        SettingsList(
+        LazyColumn(
             modifier = Modifier
                 .padding(paddingValues),
-            onFeedListClick = onFeedListClick,
-            onAddFeedClick = onAddFeedClick,
-            onBrowserSelectionClick = {
-                showBrowserSelection = true
-            },
-            navigateToImportExport = navigateToImportExport,
-            onAboutClick = onAboutClick,
-            onBugReportClick = onBugReportClick,
-            navigateToAccounts = navigateToAccounts,
-            isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
-            setMarkReadWhenScrolling = setMarkReadWhenScrolling,
-            isShowReadItemEnabled = isShowReadItemEnabled,
-            setShowReadItem = setShowReadItem,
-            isReaderModeEnabled = isReaderModeEnabled,
-            setReaderMode = setReaderMode,
-            isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
-            setRemoveTitleFromDescription = setRemoveTitleFromDescription,
-            showAccounts = showAccounts,
-        )
-    }
-}
-
-@Composable
-private fun SettingsList(
-    isMarkReadWhenScrollingEnabled: Boolean,
-    isShowReadItemEnabled: Boolean,
-    isReaderModeEnabled: Boolean,
-    isRemoveTitleFromDescriptionEnabled: Boolean,
-    showAccounts: Boolean,
-    onFeedListClick: () -> Unit,
-    onAddFeedClick: () -> Unit,
-    onBrowserSelectionClick: () -> Unit,
-    navigateToImportExport: () -> Unit,
-    onAboutClick: () -> Unit,
-    onBugReportClick: () -> Unit,
-    navigateToAccounts: () -> Unit,
-    setMarkReadWhenScrolling: (Boolean) -> Unit,
-    setShowReadItem: (Boolean) -> Unit,
-    setReaderMode: (Boolean) -> Unit,
-    setRemoveTitleFromDescription: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyColumn(
-        modifier = modifier,
-    ) {
-        item {
-            Text(
-                text = LocalFeedFlowStrings.current.settingsTitleFeed,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.padding(Spacing.regular),
-            )
-        }
-
-        item {
-            SettingItem(
-                modifier = Modifier
-                    .tagForTesting(TestingTag.SETTINGS_FEED_ITEM),
-                title = LocalFeedFlowStrings.current.feedsTitle,
-                icon = Icons.AutoMirrored.Default.Feed,
-                onClick = onFeedListClick,
-            )
-        }
-
-        item {
-            SettingItem(
-                title = LocalFeedFlowStrings.current.addFeed,
-                icon = Icons.Outlined.AddCircleOutline,
-                onClick = onAddFeedClick,
-            )
-        }
-
-        item {
-            SettingItem(
-                title = LocalFeedFlowStrings.current.importExportOpml,
-                icon = Icons.Outlined.SwapVert,
-                onClick = navigateToImportExport,
-            )
-        }
-
-        if (showAccounts) {
+        ) {
             item {
-                SettingItem(
-                    title = LocalFeedFlowStrings.current.settingsAccounts,
-                    icon = Icons.Outlined.Sync,
-                    onClick = navigateToAccounts,
+                Text(
+                    text = LocalFeedFlowStrings.current.settingsTitleFeed,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(Spacing.regular),
                 )
             }
-        }
 
-        item {
-            Text(
-                text = LocalFeedFlowStrings.current.settingsBehaviourTitle,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.padding(Spacing.regular),
-            )
-        }
+            item {
+                SettingItem(
+                    modifier = Modifier
+                        .tagForTesting(TestingTag.SETTINGS_FEED_ITEM),
+                    title = LocalFeedFlowStrings.current.feedsTitle,
+                    icon = Icons.AutoMirrored.Default.Feed,
+                    onClick = onFeedListClick,
+                )
+            }
 
-        item {
-            SettingItem(
-                modifier = Modifier
-                    .tagForTesting(TestingTag.BROWSER_SELECTOR),
-                title = LocalFeedFlowStrings.current.browserSelectionButton,
-                icon = Icons.Outlined.Language,
-                onClick = onBrowserSelectionClick,
-            )
-        }
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.addFeed,
+                    icon = Icons.Outlined.AddCircleOutline,
+                    onClick = onAddFeedClick,
+                )
+            }
 
-        item {
-            ReaderModeSwitch(
-                setReaderMode = setReaderMode,
-                isReaderModeEnabled = isReaderModeEnabled,
-            )
-        }
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.importExportOpml,
+                    icon = Icons.Outlined.SwapVert,
+                    onClick = navigateToImportExport,
+                )
+            }
 
-        item {
-            MarkReadWhenScrollingSwitch(
-                setMarkReadWhenScrolling = setMarkReadWhenScrolling,
-                isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
-            )
-        }
+            if (showAccounts) {
+                item {
+                    SettingItem(
+                        title = LocalFeedFlowStrings.current.settingsAccounts,
+                        icon = Icons.Outlined.Sync,
+                        onClick = navigateToAccounts,
+                    )
+                }
+            }
 
-        item {
-            ShowReadItemOnTimelineSwitch(
-                isShowReadItemEnabled = isShowReadItemEnabled,
-                setShowReadItem = setShowReadItem,
-            )
-        }
+            item {
+                Text(
+                    text = LocalFeedFlowStrings.current.settingsBehaviourTitle,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(Spacing.regular),
+                )
+            }
 
-        item {
-            RemoveTitleFromDescSwitch(
-                isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
-                setRemoveTitleFromDescription = setRemoveTitleFromDescription,
-            )
-        }
+            item {
+                SettingItem(
+                    modifier = Modifier
+                        .tagForTesting(TestingTag.BROWSER_SELECTOR),
+                    title = LocalFeedFlowStrings.current.browserSelectionButton,
+                    icon = Icons.Outlined.Language,
+                    onClick = {
+                        showBrowserSelection = true
+                    },
+                )
+            }
 
-        item {
-            Text(
-                text = LocalFeedFlowStrings.current.settingsAppTitle,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.padding(Spacing.regular),
-            )
-        }
+            item {
+                ReaderModeSwitch(
+                    setReaderMode = setReaderMode,
+                    isReaderModeEnabled = isReaderModeEnabled,
+                )
+            }
 
-        item {
-            SettingItem(
-                title = LocalFeedFlowStrings.current.reportIssueButton,
-                icon = Icons.Outlined.BugReport,
-                onClick = onBugReportClick,
-            )
-        }
+            item {
+                MarkReadWhenScrollingSwitch(
+                    setMarkReadWhenScrolling = setMarkReadWhenScrolling,
+                    isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
+                )
+            }
 
-        item {
-            SettingItem(
-                modifier = Modifier
-                    .tagForTesting(TestingTag.ABOUT_SETTINGS_ITEM),
-                title = LocalFeedFlowStrings.current.aboutButton,
-                icon = Icons.Outlined.Info,
-                onClick = onAboutClick,
-            )
+            item {
+                ShowReadItemOnTimelineSwitch(
+                    isShowReadItemEnabled = isShowReadItemEnabled,
+                    setShowReadItem = setShowReadItem,
+                )
+            }
+
+            item {
+                RemoveTitleFromDescSwitch(
+                    isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
+                    setRemoveTitleFromDescription = setRemoveTitleFromDescription,
+                )
+            }
+
+            item {
+                Text(
+                    text = LocalFeedFlowStrings.current.settingsFeedListTitle,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(Spacing.regular),
+                )
+            }
+
+            item {
+                FeedListFontSettings(
+                    fontSizes = fontSizes,
+                    updateFontScale = updateFontScale,
+                )
+            }
+
+            item {
+                Text(
+                    text = LocalFeedFlowStrings.current.settingsAppTitle,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(Spacing.regular),
+                )
+            }
+
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.reportIssueButton,
+                    icon = Icons.Outlined.BugReport,
+                    onClick = onBugReportClick,
+                )
+            }
+
+            item {
+                SettingItem(
+                    modifier = Modifier
+                        .tagForTesting(TestingTag.ABOUT_SETTINGS_ITEM),
+                    title = LocalFeedFlowStrings.current.aboutButton,
+                    icon = Icons.Outlined.Info,
+                    onClick = onAboutClick,
+                )
+            }
         }
     }
 }
@@ -517,6 +501,7 @@ private fun SettingsScreenPreview() {
             isReaderModeEnabled = false,
             isRemoveTitleFromDescriptionEnabled = false,
             showAccounts = true,
+            fontSizes = FeedFontSizes(),
             onFeedListClick = {},
             onAddFeedClick = {},
             onBrowserSelected = {},
@@ -529,6 +514,7 @@ private fun SettingsScreenPreview() {
             setShowReadItem = {},
             setReaderMode = {},
             setRemoveTitleFromDescription = {},
+            updateFontScale = {},
         )
     }
 }

@@ -8,6 +8,7 @@ data class FeedFontSizes(
     val feedTitleFontSize: Int = FEED_TITLE_FONT_SIZE,
     val feedDescFontSize: Int = FEED_DESC_FONT_SIZE,
     val feedMetaFontSize: Int = FEED_META_FONT_SIZE,
+    val scaleFactor: Int = feedTitleFontSize - FEED_TITLE_FONT_SIZE,
 )
 
 @Suppress("unused") // Used on iOS

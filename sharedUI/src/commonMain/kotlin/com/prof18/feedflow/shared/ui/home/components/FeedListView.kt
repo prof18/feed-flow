@@ -41,8 +41,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
@@ -191,6 +193,7 @@ internal fun FeedItemView(
                 modifier = Modifier
                     .padding(top = Spacing.small),
                 text = dateString,
+                fontSize = 12.sp,
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -239,6 +242,7 @@ private fun FeedSourceAndUnreadDotRow(
                 .weight(1f)
                 .padding(bottom = Spacing.small),
             text = feedItem.feedSource.title,
+            fontSize = 12.sp,
             style = MaterialTheme.typography.bodySmall,
         )
 
@@ -271,6 +275,8 @@ private fun TitleSubtitleAndImageRow(
             feedItem.title?.let { title ->
                 Text(
                     text = title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
                 )
             }
@@ -287,7 +293,9 @@ private fun TitleSubtitleAndImageRow(
                     text = subtitle,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 14.sp,
+                    lineHeight = 20.0.sp,
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }

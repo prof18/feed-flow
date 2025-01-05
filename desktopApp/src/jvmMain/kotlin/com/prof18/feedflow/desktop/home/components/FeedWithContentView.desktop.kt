@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -36,6 +37,7 @@ import kotlinx.collections.immutable.ImmutableList
 internal fun FeedWithContentView(
     paddingValues: PaddingValues,
     feedState: ImmutableList<FeedItem>,
+    feedFontSizes: FeedFontSizes,
     loadingState: FeedUpdateStatus,
     listState: LazyListState,
     updateReadStatus: (Int) -> Unit,
@@ -61,6 +63,7 @@ internal fun FeedWithContentView(
                 modifier = Modifier,
                 feedItems = feedState,
                 listState = listState,
+                feedFontSize = feedFontSizes,
                 requestMoreItems = requestMoreItems,
                 onFeedItemClick = onFeedItemClick,
                 onBookmarkClick = onBookmarkClick,
@@ -107,6 +110,7 @@ private fun FeedWithContentViewPreview() {
             feedState = feedItemsForPreview,
             loadingState = inProgressFeedUpdateStatus,
             listState = LazyListState(),
+            feedFontSizes = FeedFontSizes(),
             updateReadStatus = { },
             onFeedItemClick = { },
             onBookmarkClick = { _, _ -> },

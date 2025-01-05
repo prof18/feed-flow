@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.desktop.BrowserManager
@@ -27,10 +28,12 @@ internal data class SearchScreen(
 
         val state: SearchState by viewModel.searchState.collectAsState()
         val searchQuery by viewModel.searchQueryState.collectAsState()
+        val feedFontSizes by viewModel.feedFontSizeState.collectAsState()
 
         SearchScreenContent(
             searchState = state,
             searchQuery = searchQuery,
+            feedFontSizes = feedFontSizes,
             updateSearchQuery = { query ->
                 viewModel.updateSearchQuery(query)
             },
@@ -67,6 +70,7 @@ private fun Preview() {
         SearchScreenContent(
             searchState = SearchState.EmptyState,
             searchQuery = "",
+            feedFontSizes = FeedFontSizes(),
             updateSearchQuery = {},
             navigateBack = {},
             onFeedItemClick = {},

@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import com.prof18.feedflow.android.home.components.HomeScaffold
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -32,6 +33,7 @@ internal fun CompactHomeView(
     unReadCount: Long,
     snackbarHostState: SnackbarHostState,
     feedUpdateStatus: FeedUpdateStatus,
+    feedFontSizes: FeedFontSizes,
     currentFeedFilter: FeedFilter,
     onAddFeedClick: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
@@ -85,6 +87,7 @@ internal fun CompactHomeView(
             snackbarHostState = snackbarHostState,
             loadingState = feedUpdateStatus,
             feedState = feedItems,
+            feedFontSizes = feedFontSizes,
             showDrawerMenu = true,
             currentFeedFilter = currentFeedFilter,
             onDrawerMenuClick = {
@@ -125,6 +128,7 @@ private fun CompactHomeViewPreview() {
             unReadCount = 42,
             snackbarHostState = SnackbarHostState(),
             feedUpdateStatus = inProgressFeedUpdateStatus,
+            feedFontSizes = FeedFontSizes(),
             currentFeedFilter = FeedFilter.Timeline,
             onAddFeedClick = {},
             onSettingsButtonClicked = {},

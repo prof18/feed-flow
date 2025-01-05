@@ -43,6 +43,7 @@ internal fun HomeScreen(
     val navDrawerState by homeViewModel.navDrawerState.collectAsState()
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
     val unReadCount by homeViewModel.unreadCountFlow.collectAsState(initial = 0)
+    val feedFontSizes by homeViewModel.feedFontSizeState.collectAsState()
 
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
@@ -91,6 +92,7 @@ internal fun HomeScreen(
                 paddingValues = paddingValues,
                 loadingState = loadingState,
                 lazyListState = listState,
+                feedFontSizes = feedFontSizes,
                 onAddFeedClick = {
                     showDialog = true
                 },
@@ -144,6 +146,7 @@ internal fun HomeScreen(
                 feedItems = feedState,
                 lazyListState = listState,
                 unReadCount = unReadCount,
+                feedFontSizes = feedFontSizes,
                 onAddFeedClick = {
                     showDialog = true
                 },
@@ -197,6 +200,7 @@ internal fun HomeScreen(
                 feedItems = feedState,
                 lazyListState = listState,
                 unReadCount = unReadCount,
+                feedFontSizes = feedFontSizes,
                 onAddFeedClick = {
                     showDialog = true
                 },

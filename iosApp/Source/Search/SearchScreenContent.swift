@@ -9,6 +9,7 @@ struct SearchScreenContent: View {
 
     @Binding var searchText: String
     @Binding var searchState: SearchState
+    @Binding var feedFontSizes: FeedFontSizes
 
     @State private var isPresented = true
     @State private var browserToOpen: BrowserToPresent?
@@ -59,7 +60,7 @@ struct SearchScreenContent: View {
                     onReadStatusClick(FeedItemId(id: feedItem.id), true)
                 },
                        label: {
-                    FeedItemView(feedItem: feedItem, index: index)
+                    FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)
                 })
                 .buttonStyle(.plain)
                 .id(feedItem.id)

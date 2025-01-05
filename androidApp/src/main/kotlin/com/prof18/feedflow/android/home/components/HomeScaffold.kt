@@ -13,6 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -33,6 +34,7 @@ internal fun HomeScaffold(
     snackbarHostState: SnackbarHostState,
     loadingState: FeedUpdateStatus,
     feedState: ImmutableList<FeedItem>,
+    feedFontSizes: FeedFontSizes,
     currentFeedFilter: FeedFilter,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
@@ -99,6 +101,7 @@ internal fun HomeScaffold(
             loadingState = loadingState,
             feedState = feedState,
             listState = listState,
+            feedFontSizes = feedFontSizes,
             currentFeedFilter = currentFeedFilter,
             onRefresh = {
                 refreshData()
@@ -142,6 +145,7 @@ private fun HomeScaffoldPreview() {
                 totalFeedCount = 42,
             ),
             feedState = feedItemsForPreview,
+            feedFontSizes = FeedFontSizes(),
             currentFeedFilter = FeedFilter.Timeline,
             onAddFeedClick = { },
             onSettingsButtonClicked = { },

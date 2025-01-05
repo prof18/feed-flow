@@ -28,6 +28,7 @@ struct HomeContent: View {
   @Binding var showSettings: Bool
   @Binding var showFeedSyncButton: Bool
   @Binding var columnVisibility: NavigationSplitViewVisibility
+  @Binding var feedFontSizes: FeedFontSizes
 
   @State var isToolbarVisible: Bool = true
 
@@ -53,6 +54,7 @@ struct HomeContent: View {
         showLoading: showLoading,
         currentFeedFilter: currentFeedFilter,
         columnVisibility: columnVisibility,
+        feedFontSizes: feedFontSizes,
         onReloadClick: onRefresh,
         onAddFeedClick: {
           self.sheetToShow = .noFeedSource
@@ -301,6 +303,7 @@ struct HomeContent: View {
     showSettings: .constant(false),
     showFeedSyncButton: .constant(false),
     columnVisibility: .constant(.all),
+    feedFontSizes: .constant(defaultFeedFontSizes()),
     onRefresh: {},
     updateReadStatus: { _ in },
     onMarkAllReadClick: {},
@@ -334,6 +337,7 @@ struct HomeContent: View {
     showSettings: .constant(false),
     showFeedSyncButton: .constant(false),
     columnVisibility: .constant(.all),
+    feedFontSizes: .constant(defaultFeedFontSizes()),
     onRefresh: {},
     updateReadStatus: { _ in },
     onMarkAllReadClick: {},
@@ -367,6 +371,7 @@ struct HomeContent: View {
     showSettings: .constant(false),
     showFeedSyncButton: .constant(false),
     columnVisibility: .constant(.all),
+    feedFontSizes: .constant(defaultFeedFontSizes()),
     onRefresh: {},
     updateReadStatus: { _ in },
     onMarkAllReadClick: {},

@@ -16,6 +16,7 @@ struct FeedItemView: View {
 
     let feedItem: FeedItem
     let index: Int
+    let feedFontSizes: FeedFontSizes
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -29,7 +30,7 @@ struct FeedItemView: View {
                 }
 
                 Text(feedItem.feedSource.title)
-                    .font(.system(size: 12))
+                    .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
                     .padding(.top, Spacing.small)
 
                 Spacer()
@@ -49,7 +50,7 @@ struct FeedItemView: View {
 
             if let dateString = feedItem.dateString {
                 Text(dateString)
-                    .font(.system(size: 12))
+                    .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
                     .padding(.bottom, Spacing.small)
             }
         }
@@ -62,14 +63,14 @@ struct FeedItemView: View {
         VStack(alignment: .leading) {
             if let title = feedItem.title {
                 Text(title)
-                    .font(.system(size: 16))
+                    .font(.system(size: CGFloat(feedFontSizes.feedTitleFontSize)))
                     .bold()
             }
 
             if let subtitle = feedItem.subtitle {
                 Text(subtitle)
                     .lineLimit(3)
-                    .font(.system(size: 14))
+                    .font(.system(size: CGFloat(feedFontSizes.feedDescFontSize)))
                     .padding(.top, getPaddingTop(feedItem: feedItem))
             }
         }
@@ -112,6 +113,7 @@ struct FeedItemView: View {
 #Preview {
     FeedItemView(
         feedItem: feedItemsForPreview[2],
-        index: 0
+        index: 0,
+        feedFontSizes: defaultFeedFontSizes()
     )
 }

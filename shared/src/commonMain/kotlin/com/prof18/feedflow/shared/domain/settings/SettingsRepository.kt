@@ -50,6 +50,11 @@ class SettingsRepository internal constructor(
 
     fun setReaderModeFontSize(value: Int) = settingsHelper.setReaderModeFontSize(value)
 
+    fun getFeedListFontScaleFactor(): Int =
+        settingsHelper.getFeedListFontScaleFactor()
+
+    fun setFeedListFontScaleFactor(value: Int) = settingsHelper.setFeedListFontScaleFactor(value)
+
     internal fun setUseReaderMode(value: Boolean) {
         isReaderModeEnabled = value
         settingsHelper.setUseReaderMode(value)

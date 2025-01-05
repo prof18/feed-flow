@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -28,6 +29,7 @@ internal fun HomeScreenContent(
     paddingValues: PaddingValues,
     loadingState: FeedUpdateStatus,
     feedState: ImmutableList<FeedItem>,
+    feedFontSizes: FeedFontSizes,
     listState: LazyListState,
     currentFeedFilter: FeedFilter,
     isDrawerVisible: Boolean,
@@ -72,6 +74,7 @@ internal fun HomeScreenContent(
                 .fillMaxSize(),
             feedUpdateStatus = loadingState,
             feedItems = feedState,
+            feedFontSizes = feedFontSizes,
             lazyListState = listState,
             updateReadStatus = updateReadStatus,
             onFeedItemClick = onFeedItemClick,
@@ -96,6 +99,7 @@ private fun HomeScreeContentLoadingPreview() {
                 totalFeedCount = 42,
             ),
             feedState = feedItemsForPreview,
+            feedFontSizes = FeedFontSizes(),
             listState = rememberLazyListState(),
             currentFeedFilter = FeedFilter.Timeline,
             isDrawerVisible = true,
@@ -122,6 +126,7 @@ private fun HomeScreeContentLoadedPreview() {
             paddingValues = PaddingValues(0.dp),
             loadingState = FinishedFeedUpdateStatus,
             feedState = feedItemsForPreview,
+            feedFontSizes = FeedFontSizes(),
             listState = rememberLazyListState(),
             currentFeedFilter = FeedFilter.Timeline,
             isDrawerVisible = true,

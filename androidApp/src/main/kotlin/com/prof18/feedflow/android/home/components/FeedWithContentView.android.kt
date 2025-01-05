@@ -14,6 +14,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -33,6 +34,7 @@ internal fun FeedWithContentView(
     feedUpdateStatus: FeedUpdateStatus,
     lazyListState: LazyListState,
     feedItems: ImmutableList<FeedItem>,
+    feedFontSizes: FeedFontSizes,
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
@@ -82,6 +84,7 @@ internal fun FeedWithContentView(
                 },
                 requestMoreItems = requestMoreItems,
                 markAllAsRead = markAllAsRead,
+                feedFontSize = feedFontSizes,
             )
         }
     }
@@ -95,6 +98,7 @@ private fun FeedWithContentViewPreview() {
             feedUpdateStatus = inProgressFeedUpdateStatus,
             lazyListState = LazyListState(),
             feedItems = feedItemsForPreview,
+            feedFontSizes = FeedFontSizes(),
             updateReadStatus = {},
             onFeedItemClick = {},
             onBookmarkClick = { _, _ -> },

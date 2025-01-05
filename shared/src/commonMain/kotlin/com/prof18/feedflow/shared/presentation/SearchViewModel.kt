@@ -3,9 +3,11 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.shared.domain.DateFormatter
+import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
@@ -26,6 +28,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class SearchViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val dateFormatter: DateFormatter,
+    private val feedFontSizeRepository: FeedFontSizeRepository,
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
@@ -36,6 +39,8 @@ class SearchViewModel internal constructor(
     val searchQueryState = searchQueryMutableState.asStateFlow()
 
     private val isRemoveTitleFromDescriptionEnabled: Boolean = settingsRepository.isRemoveTitleFromDescriptionEnabled()
+
+    val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 
     init {
         searchQueryMutableState

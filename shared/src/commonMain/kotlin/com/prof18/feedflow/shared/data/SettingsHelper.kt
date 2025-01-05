@@ -48,8 +48,15 @@ internal class SettingsHelper(
     fun setReaderModeFontSize(value: Int) =
         settings.set(SettingsFields.READER_MODE_FONT_SIZE.name, value)
 
+    fun getFeedListFontScaleFactor(): Int =
+        settings.getInt(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, DEFAULT_FEED_LIST_FONT_SCALE_FACTOR)
+
+    fun setFeedListFontScaleFactor(value: Int) =
+        settings.set(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, value)
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
+        const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
     }
 }
 
@@ -61,4 +68,5 @@ internal enum class SettingsFields {
     IS_SYNC_UPLOAD_REQUIRED,
     REMOVE_TITLE_FROM_DESCRIPTION,
     READER_MODE_FONT_SIZE,
+    FEED_LIST_FONT_SCALE_FACTOR,
 }

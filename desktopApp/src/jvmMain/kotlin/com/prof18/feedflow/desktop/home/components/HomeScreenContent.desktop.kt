@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -25,6 +26,7 @@ internal fun HomeScreenContent(
     paddingValues: PaddingValues,
     loadingState: FeedUpdateStatus,
     feedState: ImmutableList<FeedItem>,
+    feedFontSizes: FeedFontSizes,
     listState: LazyListState,
     unReadCount: Long,
     currentFeedFilter: FeedFilter,
@@ -75,6 +77,7 @@ internal fun HomeScreenContent(
                 feedState = feedState,
                 loadingState = loadingState,
                 listState = listState,
+                feedFontSizes = feedFontSizes,
                 updateReadStatus = updateReadStatus,
                 onFeedItemClick = onFeedItemClick,
                 onBookmarkClick = onBookmarkClick,
@@ -96,6 +99,7 @@ private fun HomeScreenContentPreview() {
             loadingState = inProgressFeedUpdateStatus,
             feedState = feedItemsForPreview,
             listState = LazyListState(),
+            feedFontSizes = FeedFontSizes(),
             unReadCount = 42,
             currentFeedFilter = FeedFilter.Timeline,
             onRefresh = {},

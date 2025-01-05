@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -38,6 +39,7 @@ internal fun CompactView(
     paddingValues: PaddingValues,
     loadingState: FeedUpdateStatus,
     lazyListState: LazyListState,
+    feedFontSizes: FeedFontSizes,
     onAddFeedClick: () -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     refreshData: () -> Unit,
@@ -84,6 +86,7 @@ internal fun CompactView(
             loadingState = loadingState,
             feedState = feedItems,
             listState = lazyListState,
+            feedFontSizes = feedFontSizes,
             unReadCount = unReadCount,
             showDrawerMenu = true,
             currentFeedFilter = currentFeedFilter,
@@ -131,6 +134,7 @@ private fun CompactViewPreview() {
             paddingValues = PaddingValues(),
             loadingState = inProgressFeedUpdateStatus,
             lazyListState = LazyListState(),
+            feedFontSizes = FeedFontSizes(),
             onAddFeedClick = {},
             onFeedFilterSelected = {},
             refreshData = {},

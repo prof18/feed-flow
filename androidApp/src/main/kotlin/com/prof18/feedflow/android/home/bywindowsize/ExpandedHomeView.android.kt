@@ -11,6 +11,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.android.home.components.HomeScaffold
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -33,6 +34,7 @@ internal fun ExpandedHomeView(
     unReadCount: Long,
     snackbarHostState: SnackbarHostState,
     feedUpdateStatus: FeedUpdateStatus,
+    feedFontSizes: FeedFontSizes,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
@@ -87,6 +89,7 @@ internal fun ExpandedHomeView(
             snackbarHostState = snackbarHostState,
             loadingState = feedUpdateStatus,
             feedState = feedItems,
+            feedFontSizes = feedFontSizes,
             currentFeedFilter = currentFeedFilter,
             onAddFeedClick = onAddFeedClick,
             refreshData = refreshData,
@@ -118,6 +121,7 @@ private fun ExpandedHomeViewPreview() {
             unReadCount = 42,
             snackbarHostState = SnackbarHostState(),
             feedUpdateStatus = inProgressFeedUpdateStatus,
+            feedFontSizes = FeedFontSizes(),
             currentFeedFilter = FeedFilter.Timeline,
             onSettingsButtonClicked = {},
             onAddFeedClick = {},

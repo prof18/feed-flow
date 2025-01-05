@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.SearchState
@@ -23,7 +24,7 @@ internal fun SearchScreen(
     val viewModel = koinViewModel<SearchViewModel>()
     val browserManager = koinInject<BrowserManager>()
     val state: SearchState by viewModel.searchState.collectAsStateWithLifecycle()
-
+    val feedFontSizes by viewModel.feedFontSizeState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQueryState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
@@ -31,6 +32,7 @@ internal fun SearchScreen(
     SearchScreenContent(
         searchState = state,
         searchQuery = searchQuery,
+        feedFontSizes = feedFontSizes,
         updateSearchQuery = { query ->
             viewModel.updateSearchQuery(query)
         },
@@ -62,6 +64,7 @@ private fun Preview() {
     FeedFlowTheme {
         SearchScreenContent(
             searchState = SearchState.EmptyState,
+            feedFontSizes = FeedFontSizes(),
             searchQuery = "",
             updateSearchQuery = {},
             navigateBack = {},

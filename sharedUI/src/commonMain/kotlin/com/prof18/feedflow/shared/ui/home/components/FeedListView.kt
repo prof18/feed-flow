@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -64,6 +65,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 @Composable
 fun FeedList(
     feedItems: ImmutableList<FeedItem>,
+    feedFontSize: FeedFontSizes,
     updateReadStatus: (Int) -> Unit,
     requestMoreItems: () -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
@@ -98,6 +100,7 @@ fun FeedList(
                 onCommentClick = onCommentClick,
                 onBookmarkClick = onBookmarkClick,
                 onReadStatusClick = onReadStatusClick,
+                feedFontSize = feedFontSize,
             )
 
             if (index == feedItems.size - 1) {
@@ -142,6 +145,7 @@ fun FeedList(
 @Composable
 internal fun FeedItemView(
     feedItem: FeedItem,
+    feedFontSize: FeedFontSizes,
     index: Int,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
@@ -179,13 +183,18 @@ internal fun FeedItemView(
                 mergeDescendants = true,
             ),
     ) {
-        FeedSourceAndUnreadDotRow(feedItem, index)
+        FeedSourceAndUnreadDotRow(
+            feedItem = feedItem,
+            feedFontSize = feedFontSize,
+            index = index,
+        )
 
         TitleSubtitleAndImageRow(
             modifier = Modifier
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth(),
             feedItem = feedItem,
+            feedFontSize = feedFontSize,
         )
 
         feedItem.dateString?.let { dateString ->
@@ -193,7 +202,7 @@ internal fun FeedItemView(
                 modifier = Modifier
                     .padding(top = Spacing.small),
                 text = dateString,
-                fontSize = 12.sp,
+                fontSize = feedFontSize.feedMetaFontSize.sp,
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -221,6 +230,7 @@ internal fun FeedItemView(
 @Composable
 private fun FeedSourceAndUnreadDotRow(
     feedItem: FeedItem,
+    feedFontSize: FeedFontSizes,
     index: Int,
 ) {
     Row(
@@ -242,7 +252,7 @@ private fun FeedSourceAndUnreadDotRow(
                 .weight(1f)
                 .padding(bottom = Spacing.small),
             text = feedItem.feedSource.title,
-            fontSize = 12.sp,
+            fontSize = feedFontSize.feedMetaFontSize.sp,
             style = MaterialTheme.typography.bodySmall,
         )
 
@@ -262,6 +272,7 @@ private fun FeedSourceAndUnreadDotRow(
 @Composable
 private fun TitleSubtitleAndImageRow(
     feedItem: FeedItem,
+    feedFontSize: FeedFontSizes,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -275,7 +286,7 @@ private fun TitleSubtitleAndImageRow(
             feedItem.title?.let { title ->
                 Text(
                     text = title,
-                    fontSize = 16.sp,
+                    fontSize = feedFontSize.feedTitleFontSize.sp,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
                 )
@@ -293,7 +304,7 @@ private fun TitleSubtitleAndImageRow(
                     text = subtitle,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
-                    fontSize = 14.sp,
+                    fontSize = feedFontSize.feedDescFontSize.sp,
                     lineHeight = 20.0.sp,
                     style = MaterialTheme.typography.bodySmall,
                 )

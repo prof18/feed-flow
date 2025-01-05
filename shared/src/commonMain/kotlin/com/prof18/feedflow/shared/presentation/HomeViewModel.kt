@@ -6,10 +6,12 @@ import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerCategory
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -35,6 +37,7 @@ class HomeViewModel internal constructor(
     private val feedManagerRepository: FeedManagerRepository,
     private val settingsRepository: SettingsRepository,
     private val feedSyncRepository: FeedSyncRepository,
+    private val feedFontSizeRepository: FeedFontSizeRepository,
 ) : ViewModel() {
 
     // Loading
@@ -57,6 +60,8 @@ class HomeViewModel internal constructor(
 
     val currentFeedFilter = feedRetrieverRepository.currentFeedFilter
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
+
+    val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 
     init {
         viewModelScope.launch {

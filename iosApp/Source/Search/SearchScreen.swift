@@ -9,10 +9,13 @@ struct SearchScreen: View {
 
     @State var searchState: SearchState = SearchState.EmptyState()
 
+    @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
+
     var body: some View {
         SearchScreenContent(
             searchText: $searchText,
             searchState: $searchState,
+            feedFontSizes: $feedFontSizes,
             onBookmarkClick: { (feedItemId, isBookmarked) in
                 vmStoreOwner.instance.onBookmarkClick(feedItemId: feedItemId, bookmarked: isBookmarked)
             },
@@ -30,6 +33,11 @@ struct SearchScreen: View {
         .task {
             for await state in vmStoreOwner.instance.searchState {
                 self.searchState = state
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.feedFontSizeState {
+                self.feedFontSizes = state
             }
         }
     }

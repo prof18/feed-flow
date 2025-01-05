@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -42,6 +43,7 @@ internal fun MediumView(
     paddingValues: PaddingValues,
     loadingState: FeedUpdateStatus,
     feedItems: ImmutableList<FeedItem>,
+    feedFontSizes: FeedFontSizes,
     lazyListState: LazyListState,
     unReadCount: Long,
     onAddFeedClick: () -> Unit,
@@ -100,6 +102,7 @@ internal fun MediumView(
             showDrawerMenu = true,
             isDrawerMenuOpen = isDrawerMenuFullVisible,
             currentFeedFilter = currentFeedFilter,
+            feedFontSizes = feedFontSizes,
             modifier = Modifier
                 .weight(2f),
             onDrawerMenuClick = {
@@ -140,6 +143,7 @@ private fun MediumViewPreview() {
             paddingValues = PaddingValues(),
             loadingState = inProgressFeedUpdateStatus,
             lazyListState = rememberLazyListState(),
+            feedFontSizes = FeedFontSizes(),
             onAddFeedClick = {},
             onFeedFilterSelected = {},
             refreshData = {},

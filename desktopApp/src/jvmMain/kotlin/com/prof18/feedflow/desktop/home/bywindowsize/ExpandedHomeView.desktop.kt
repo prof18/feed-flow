@@ -1,6 +1,5 @@
 package com.prof18.feedflow.desktop.home.bywindowsize
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,6 +13,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -38,6 +38,7 @@ internal fun ExpandedView(
     paddingValues: PaddingValues,
     loadingState: FeedUpdateStatus,
     feedItems: ImmutableList<FeedItem>,
+    feedFontSizes: FeedFontSizes,
     lazyListState: LazyListState,
     unReadCount: Long,
     onAddFeedClick: () -> Unit,
@@ -86,6 +87,7 @@ internal fun ExpandedView(
             loadingState = loadingState,
             feedState = feedItems,
             listState = lazyListState,
+            feedFontSizes = feedFontSizes,
             unReadCount = unReadCount,
             currentFeedFilter = currentFeedFilter,
             modifier = Modifier
@@ -108,7 +110,7 @@ internal fun ExpandedView(
             onReadStatusClick = onReadStatusClick,
             onBackToTimelineClick = onBackToTimelineClick,
             onSearchClick = onSearchClick,
-            markAllAsRead = markAllAsRead
+            markAllAsRead = markAllAsRead,
         )
     }
 }
@@ -125,6 +127,7 @@ private fun ExpandedViewPreview() {
             paddingValues = PaddingValues(),
             loadingState = inProgressFeedUpdateStatus,
             lazyListState = rememberLazyListState(),
+            feedFontSizes = FeedFontSizes(),
             onAddFeedClick = {},
             onFeedFilterSelected = {},
             refreshData = {},

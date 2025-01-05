@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.android.home.components.HomeScaffold
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -38,6 +39,7 @@ internal fun MediumHomeView(
     unReadCount: Long,
     snackbarHostState: SnackbarHostState,
     feedUpdateStatus: FeedUpdateStatus,
+    feedFontSizes: FeedFontSizes,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
@@ -99,6 +101,7 @@ internal fun MediumHomeView(
             snackbarHostState = snackbarHostState,
             loadingState = feedUpdateStatus,
             feedState = feedItems,
+            feedFontSizes = feedFontSizes,
             showDrawerMenu = true,
             isDrawerMenuOpen = isDrawerMenuFullVisible,
             currentFeedFilter = currentFeedFilter,
@@ -135,6 +138,7 @@ private fun MediumHomeViewPreview() {
             snackbarHostState = SnackbarHostState(),
             feedUpdateStatus = inProgressFeedUpdateStatus,
             currentFeedFilter = FeedFilter.Timeline,
+            feedFontSizes = FeedFontSizes(),
             onSettingsButtonClicked = {},
             onAddFeedClick = {},
             onClearOldArticlesClicked = {},

@@ -24,6 +24,7 @@ struct FeedListView: View {
     var showLoading: Bool
     let currentFeedFilter: FeedFilter
     let columnVisibility: NavigationSplitViewVisibility
+    let feedFontSizes: FeedFontSizes
 
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
@@ -79,7 +80,7 @@ struct FeedListView: View {
                             )
                         },
                         label: {
-                            FeedItemView(feedItem: feedItem, index: index)
+                            FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)
                                 .contentShape(Rectangle())
                         })
                         .buttonStyle(.plain)
@@ -206,6 +207,7 @@ struct FeedListView: View {
         showLoading: false,
         currentFeedFilter: FeedFilter.Timeline(),
         columnVisibility: .all,
+        feedFontSizes: defaultFeedFontSizes(),
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},
@@ -225,6 +227,7 @@ struct FeedListView: View {
         showLoading: false,
         currentFeedFilter: FeedFilter.Timeline(),
         columnVisibility: .all,
+        feedFontSizes: defaultFeedFontSizes(),
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},
@@ -244,6 +247,7 @@ struct FeedListView: View {
         showLoading: false,
         currentFeedFilter: FeedFilter.Timeline(),
         columnVisibility: .all,
+        feedFontSizes: defaultFeedFontSizes(),
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},

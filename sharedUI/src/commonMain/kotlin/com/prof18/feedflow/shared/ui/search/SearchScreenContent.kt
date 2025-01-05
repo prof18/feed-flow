@@ -36,6 +36,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.SearchState
@@ -47,6 +48,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun SearchScreenContent(
     searchState: SearchState,
     searchQuery: String,
+    feedFontSizes: FeedFontSizes,
     updateSearchQuery: (String) -> Unit,
     navigateBack: () -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
@@ -105,6 +107,7 @@ fun SearchScreenContent(
                         itemsIndexed(searchState.items) { index, item ->
                             FeedItemView(
                                 feedItem = item,
+                                feedFontSize = feedFontSizes,
                                 index = index,
                                 onFeedItemClick = onFeedItemClick,
                                 onBookmarkClick = onBookmarkClick,

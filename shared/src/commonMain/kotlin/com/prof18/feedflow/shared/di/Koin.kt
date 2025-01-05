@@ -15,6 +15,7 @@ import com.prof18.feedflow.shared.data.SettingsHelper
 import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
+import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
@@ -153,6 +154,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedManagerRepository = get(),
             settingsRepository = get(),
             feedSyncRepository = get(),
+            feedFontSizeRepository = get(),
         )
     }
 
@@ -218,6 +220,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedRetrieverRepository = get(),
             dateFormatter = get(),
             settingsRepository = get(),
+            feedFontSizeRepository = get(),
         )
     }
 
@@ -302,6 +305,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSyncMessageQueue = get(),
         )
     }
+
+    singleOf(::FeedFontSizeRepository)
 }
 
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module

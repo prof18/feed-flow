@@ -2,6 +2,8 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.model.SettingsState
@@ -14,10 +16,13 @@ import kotlinx.coroutines.launch
 class SettingsViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val fontSizeRepository: FeedFontSizeRepository,
 ) : ViewModel() {
 
     private val settingsMutableState = MutableStateFlow(SettingsState())
     val settingsState: StateFlow<SettingsState> = settingsMutableState.asStateFlow()
+
+    val feedFontSizeState: StateFlow<FeedFontSizes> = fontSizeRepository.feedFontSizeState
 
     init {
         viewModelScope.launch {
@@ -75,5 +80,9 @@ class SettingsViewModel internal constructor(
                 isRemoveTitleFromDescriptionEnabled = value,
             )
         }
+    }
+
+    fun updateFontScale(value: Int) {
+        fontSizeRepository.updateFontScale(value)
     }
 }

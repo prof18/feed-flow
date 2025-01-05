@@ -143,7 +143,7 @@ fun FeedList(
 }
 
 @Composable
-internal fun FeedItemView(
+fun FeedItemView(
     feedItem: FeedItem,
     feedFontSize: FeedFontSizes,
     index: Int,
@@ -289,6 +289,7 @@ private fun TitleSubtitleAndImageRow(
                     fontSize = feedFontSize.feedTitleFontSize.sp,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
+                    lineHeight = (feedFontSize.feedTitleFontSize + 4).sp,
                 )
             }
 
@@ -305,7 +306,7 @@ private fun TitleSubtitleAndImageRow(
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = feedFontSize.feedDescFontSize.sp,
-                    lineHeight = 20.0.sp,
+                    lineHeight = (feedFontSize.feedDescFontSize + 6).sp,
                     style = MaterialTheme.typography.bodySmall,
                 )
             }

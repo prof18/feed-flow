@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.model.plus
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 internal class FeedFontSizeRepository(
     private val settingsRepository: SettingsRepository,
@@ -18,5 +19,12 @@ internal class FeedFontSizeRepository(
     private fun getDefaultFontSize(): FeedFontSizes {
         val scaleFactor = settingsRepository.getFeedListFontScaleFactor()
         return FeedFontSizes() + scaleFactor
+    }
+
+    fun updateFontScale(value: Int) {
+        settingsRepository.setFeedListFontScaleFactor(value)
+        feedFontSizeMutableState.update {
+            FeedFontSizes() + value
+        }
     }
 }

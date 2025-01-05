@@ -102,6 +102,8 @@
 
 -keep class com.prof18.feedflow.desktop.versionchecker.NewVersionState
 
+-keep class com.prof18.feedflow.shared.domain.feedsync.ICloudNativeBridge
+
 
 # Compose Markdown
 

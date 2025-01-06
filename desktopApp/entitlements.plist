@@ -24,5 +24,17 @@
     <string>Q7CUB3RNAK.com.prof18.feedflow</string>
     <key>com.apple.developer.team-identifier</key>
     <string>Q7CUB3RNAK</string>
+    <key>com.apple.developer.icloud-container-identifiers</key>
+    <array>
+        <string>iCloud.com.prof18.feedflow</string>
+    </array>
+    <key>com.apple.developer.icloud-services</key>
+    <array>
+        <string>CloudDocuments</string>
+    </array>
+    <key>com.apple.developer.ubiquity-container-identifiers</key>
+    <array>
+        <string>iCloud.com.prof18.feedflow</string>
+    </array>
 </dict>
 </plist>

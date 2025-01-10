@@ -1,4 +1,9 @@
+- Show the year in the feed if the article is not from this year
+- Add support for YouTube feeds
+- Add support for RDF feeds
+- Add bookmark button on reader mode
+- Improve font size and readability on the feed list
+- Add the possibility of changing the font on the feed list
+- Add a button to mark the feed as read when reaching the bottom of the list
+- Improve the "all read" screen
 - Bug fixes and improvements
-- New Chinese, Estonian, and Russian translations
-- Allow feed on local networks
-- Fix an issue that prevents renaming feeds

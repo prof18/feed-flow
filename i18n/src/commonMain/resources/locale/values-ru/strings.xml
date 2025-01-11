@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feed_added_message">Лента %s добавлена</string>
-    <string name="feed_url">URL-ленты</string>
+    <string name="feed_url">Ссылка на ленту</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="add_feed">Добавить ленту</string>
     <string name="feeds_title">Ленты</string>
@@ -37,7 +37,7 @@
     <string name="missing_title_and_link">Возникла ошибка при получении заголовка ленты</string>
     <string name="issue_report_title">Сообщить о проблеме в FeedFlow</string>
     <string name="issue_content_title">Проблема в FeedFlow</string>
-    <string name="new_category_hint">Новое имя категории</string>
+    <string name="new_category_hint">Новое название категории</string>
     <string name="drawer_title_timeline">События</string>
     <string name="drawer_title_categories">Категории</string>
     <string name="drawer_title_feed_sources">Источники лент</string>
@@ -50,7 +50,7 @@
     <string name="menu_remove_from_bookmark">Убрать из закладок</string>
     <string name="menu_mark_as_read">Отметить как прочитанное</string>
     <string name="menu_mark_as_unread">Отметить как непрочитанное</string>
-    <string name="read_articles_empty_screen_message">Здесь ничего нет. \\nПора начинать чтение!</string>
+    <string name="read_articles_empty_screen_message">Здесь ничего нет. Пора начинать чтение!</string>
     <string name="empty_screen_back_to_timeline">Возврат к событиям</string>
     <string name="about_menu_contribute_translations">Помогите с переводом</string>
     <string name="close_menu_button">Закрыть меню</string>
@@ -98,22 +98,22 @@
     <string name="settings_app_title">Приложение</string>
     <string name="add_feed_category_title">Категория</string>
     <string name="drawer_title_bookmarks">Закладки</string>
-    <string name="import_export_description">FeedFlow поддерживает импорт и экспорт ваших подписок с помощью файла OPML для лучшей совместимости с другими читалками ленты</string>
+    <string name="import_export_description">FeedFlow поддерживает импорт и экспорт ваших подписок с помощью OPML-файла для лучшей совместимости с другими читалками.</string>
     <string name="settings_toggle_show_read_articles">Отображать прочитанные статьи в разделе событий</string>
     <string name="drawer_title_read">Читать</string>
     <string name="menu_open_comments">Открыть комментарии</string>
-    <string name="bookmarked_articles_empty_screen_message">Здесь ничего нет. \\nПора добавить что-нибудь в закладки!</string>
+    <string name="bookmarked_articles_empty_screen_message">Здесь ничего нет. Пора добавить что-нибудь в закладки!</string>
     <string name="rename_feed_source_name_button">Переименовать</string>
     <string name="in_app_browser">Встроенный браузер</string>
     <string name="search_no_data">Нет совпадений для %s.</string>
     <string name="settings_reader_mode">Открыть статьи в режиме чтения</string>
     <string name="link_copied_success">Ссылка успешно скопирована!</string>
     <string name="settings_title_feed">Лента</string>
-    <string name="accounts_description">Подключите аккаунт для синхронизации подписок на ленты, категорий, прочитанных и сохранённых статей между вашими устройствами.\n\nЭта функция находится в бета-версии, могут возникнуть проблемы (например, прочитанные статьи могут не полностью синхронизироваться). В дальнейшем будет поддерживаться больше сервисов.\n\nПоддерживается только один аккаунт одновременно.</string>
+    <string name="accounts_description">Подключите аккаунт для синхронизации подписок на ленты, категорий, прочитанных и сохранённых статей между вашими устройствами.\n\nЭта функция находится в бета-стадии, могут возникнуть проблемы (например, прочитанные статьи могут не полностью синхронизироваться). В дальнейшем будет поддерживаться больше сервисов.\n\nПоддерживается только один аккаунт одновременно.</string>
     <string name="account_disconnect_button">Отключить</string>
     <string name="dropbox_sync_common_description">Подключите свой аккаунт Dropbox для синхронизации подписок на ленты, категорий, прочитанных и добавленных в закладки статей между вашими устройствами на Android, iOS, iPadOS и ПК. Данные будут сохранены в папке, специфичной для приложения; FeedFlow не будет иметь никакого доступа к каким-либо вашим файлам</string>
     <string name="dropbox_sync_desktop_description">Нажав кнопку «Подключить», вы будете перенаправлены на сайт Dropbox. После подключения аккаунта скопируйте код авторизации и введите его здесь в приложении</string>
-    <string name="no_feed_modal_message">Похоже, что у вас пока нет подписок на каналы. Вы можете вручную добавить канал, импортировать свои подписки из другой RSS-читали или подключить аккаунт для синхронизации данных с другого устройства (эта функция находится в бета-версии).</string>
+    <string name="no_feed_modal_message">У вас пока нет подписок на ленты. Вы можете вручную добавить ленту, импортировать свои подписки из другой RSS-читалки или привязать аккаунт, чтобы синхронизировать данные с другого устройства (эта функция в бета-стадии).</string>
     <string name="no_icloud_sync_yet">Данные еще не синхронизированы с iCloud. Нажмите кнопку резервного копирования, чтобы начать синхронизацию</string>
     <string name="about_the_app">FeedFlow — это минималистичная RSS-читалка, основанный на личных мнениях автора. Статьи открываются на своих соответствующих веб-сайтах, и вы можете выбрать предпочитаемый браузер, ориентированный на конфиденциальность, чтобы отделить свой опыт чтения от основного браузера. Если вы хотите избежать браузера, FeedFlow предлагает режим чтения, чтобы наслаждаться содержанием статей без отвлекающих факторов. \nВы можете импортировать и экспортировать свою RSS-коллекцию из или в OPML-файла.</string>
     <string name="settings_font_scale_subtitle_example">Это подзаголовок статьи</string>

@@ -56,6 +56,9 @@ class HomeViewModel internal constructor(
     private val drawerMutableState = MutableStateFlow(NavDrawerState())
     val navDrawerState = drawerMutableState.asStateFlow()
 
+    private val isDeletingMutableState = MutableStateFlow(false)
+    val isDeletingState: StateFlow<Boolean> = isDeletingMutableState.asStateFlow()
+
     private var lastUpdateIndex = 0
 
     val currentFeedFilter = feedRetrieverRepository.currentFeedFilter
@@ -207,7 +210,9 @@ class HomeViewModel internal constructor(
 
     fun deleteOldFeedItems() {
         viewModelScope.launch {
+            isDeletingMutableState.update { true }
             feedRetrieverRepository.deleteOldFeeds()
+            isDeletingMutableState.update { false }
         }
     }
 

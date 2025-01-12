@@ -41,6 +41,9 @@ struct HomeScreen: View {
     @State
     var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
+    @State
+    var isDeletingFeed: Bool = false
+
     @Binding
     var toggleListScroll: Bool
 
@@ -140,6 +143,12 @@ struct HomeScreen: View {
                 case .none:
                     break
                 }
+            }
+        }
+        .deletingFeedDialog(isLoading: isDeletingFeed, message: feedFlowStrings.deletingFeedDialogTitle)
+        .task {
+            for await state in homeViewModel.isDeletingState {
+                self.isDeletingFeed = state as? Bool ?? false
             }
         }
         .task {

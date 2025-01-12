@@ -24,6 +24,7 @@ import com.prof18.feedflow.desktop.utils.WindowSizeClass
 import com.prof18.feedflow.desktop.utils.WindowWidthSizeClass
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
+import com.prof18.feedflow.shared.ui.home.components.DeleteOldFeedDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -44,9 +45,14 @@ internal fun HomeScreen(
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
     val unReadCount by homeViewModel.unreadCountFlow.collectAsState(initial = 0)
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsState()
+    val isDeleting by homeViewModel.isDeletingState.collectAsState()
 
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
+
+    if (isDeleting) {
+        DeleteOldFeedDialog()
+    }
 
     LaunchedEffect(Unit) {
         homeViewModel.errorState.collect { errorState ->

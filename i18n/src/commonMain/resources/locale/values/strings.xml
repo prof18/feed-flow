@@ -129,4 +129,5 @@
     <string name="settings_font_scale_subtitle_example">This is the subtitle of the article</string>
     <string name="settings_font_scale_feed_source_example">Feed Name</string>
     <string name="settings_feed_list_font_scale_title">Feed List Text scale</string>
+    <string name="deleting_feed_dialog_title">Deleting...</string>
 </resources>

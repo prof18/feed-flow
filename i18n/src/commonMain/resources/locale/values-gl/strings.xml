@@ -122,4 +122,11 @@
     <string name="feed_name">Nome da canle</string>
     <string name="clear_old_articles_button">Eliminar artigos anteriores 1 semana</string>
     <string name="icloud_sync_description">Conecta a túa conta iCloud para sincronizar as subscricións, categorías, artigos lidos e marcados entre os teus dispositivos iOS, iPadOS e macOS. Os datos gárdanse nun cartafol específico para a app; FeedFlow non terá acceso a ningún dos teus ficheiros.</string>
+    <string name="settings_feed_list_title">Lista da canle</string>
+    <string name="settings_feed_list_font_scale_title">Escala do texto da lista da canle</string>
+    <string name="settings_font_scale_feed_source_example">Nome da canle</string>
+    <string name="settings_feed_list_scale_title">Escala do texto</string>
+    <string name="settings_font_scale_title_example">Título do artigo</string>
+    <string name="settings_font_scale_subtitle_example">O subtítulo do artigo</string>
+    <string name="open_another_feed">Abrir outra canle</string>
 </resources>

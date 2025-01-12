@@ -125,4 +125,13 @@
     <string name="feed_name">Názov feedu</string>
     <string name="edit_feed_source_name_button">Upraviť</string>
     <string name="feed_edited_message">Feed %s aktualizovaný</string>
+    <string name="settings_font_scale_subtitle_example">Toto je titulok článku</string>
+    <string name="clear_old_articles_button">Odstráňte týždenné príspevky</string>
+    <string name="settings_font_scale_feed_source_example">Názov feedu</string>
+    <string name="settings_feed_list_scale_title">Textová mierka</string>
+    <string name="settings_feed_list_title">Zoznam feedov</string>
+    <string name="settings_font_scale_title_example">Názov článku</string>
+    <string name="settings_feed_list_font_scale_title">Zoznam feedov textová mierka</string>
+    <string name="open_another_feed">Otvoriť ďalší feed</string>
+    <string name="icloud_sync_description">Pripojte sa k nám iCloud účet synchronizovať predplatné krmivo, kategórie, čítať a záložky články medzi iOS, iPadOS a MacOS zariadenia. Údaje budú uložené v priečinku app-specific; FeedFlow nebude mať žiadny prístup k žiadnemu z vašich súborov</string>
 </resources>

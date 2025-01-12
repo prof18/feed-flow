@@ -1,43 +1,46 @@
-# Title
+# כותרת
 
-FeedFlow - RSS Reader
+FeedFlow - קורא RSS
 
-## Short desc
+## תיאור קצר
 
-Minimal, fast, uncluttered
+מינימלי, מהיר, לא עמוס
 
-## Long desc
+## תיאור ארוך
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+עקוב אחר עדכוני ה-RSS האהובים עליך עם FeedFlow, קורא RSS מינימליסטי. תהנה
+מחוויית קריאה נטולת עומס, מכיוון ש- FeedFlow מציע רשימה מינימליסטית ופותח את
+המאמרים באתרי האינטרנט שלהם או במצב קריאה.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+התאם את חווית הגלישה שלך על ידי בחירת הדפדפן המועדף עליך. בדרך זו, אתה יכול
+לבחור את הדפדפן המועדף עליך ממוקד פרטיות כדי להפריד את חווית הקריאה שלך מהדפדפן
+הראשי שלך. ואם תרצה להימנע מהדפדפן, FeedFlow מציעה מצב קריאה ליהנות מתוכן
+המאמרים ללא כל הסחות דעת.
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+המעבר ל-FeedFlow הוא משב רוח. ניתן לייבא את אוסף ה-RSS הקיים שלך עם יכולות
+הייבוא והייצוא המלאות והקלות שלנו באמצעות קבצי OPML, מה שמבטיח חווית קריאה חלקה.
 
-Just focus on reading (or scrolling)!
+פשוט התמקד בקריאה (או בגלילה)!
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+האפליקציה עדיין בפיתוח, כך שחלק מהתכונות עשויות להיות חסרות או שייתכנו בעיות.
+אנא דווח על באגים או הצעות לתכונות!
 
-## Screenshot 1
+## צילום מסך 1
 
-All your feeds
-in your pocket
+כל העידכונים שלך בכיס
 
-## Screenshot 3
+## צילום מסך 3
 
-Import your
-existing collection
+ייבא את האוסף הקיים שלך
 
-## Screenshot 4
+## צילום מסך 4
 
-Open the articles
-in your favourite browser
+פתח את המאמרים בדפדפן המועדף עליך
 
-## Screenshot 5
+## צילום מסך 5
 
-Enjoy a clutter-free
-reader mode
+תהנה ממצב קריאה נטול עומס
 
-## Banner image
+## תמונת באנר
 
-minimalistic RSS Reader
+קורא RSS מינימליסטי

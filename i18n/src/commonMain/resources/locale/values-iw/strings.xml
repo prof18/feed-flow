@@ -1,2 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="show_on_github">הצג ב-GitHub</string>
+    <string name="app_name">FeedFlow</string>
+    <string name="no_feeds_add_one_message">אין עדכונים, אנא הוסף אחד</string>
+    <string name="export_started_message">יצירת ייצוא</string>
+    <string name="feeds_export_done_message">הייצוא הושלם</string>
+    <string name="feeds_title">הזנות</string>
+    <string name="author_label">פותח ב ❤️ על ידי</string>
+    <string name="loading_feed_message">טוען עדכונים %s</string>
+    <string name="about_nav_bar">אודות</string>
+    <string name="export_dialog_title">שמור קובץ OPML</string>
+    <string name="feed_added_message">עדכון %s נוסף</string>
+    <string name="add_feed">הוסף פיד</string>
+    <string name="delete_feed">מחק</string>
+    <string name="generic_error_message">מצטערים, משהו השתבש :(</string>
+    <string name="feed_url">כתובת rss</string>
+    <string name="empty_feed_message">אין מה לקרוא כאן!</string>
+    <string name="refresh_feeds">רענן עדכונים</string>
+    <string name="clear_old_articles_button">מחק פוסטים בני שבוע</string>
+    <string name="settings_button">הגדרות</string>
+    <string name="feeds_import_done_message">הייבוא הושלם</string>
+    <string name="settings_title">הגדרות</string>
+    <string name="import_feed_button">יבא פיד מ-OPML</string>
+    <string name="export_feeds_button">יצוא עדכונים ל-OPML</string>
+    <string name="load_file_error_message">לא ניתן לטעון את הקובץ</string>
+    <string name="default_browser">דפדפן ברירת מחדל</string>
+    <string name="feed_error_message">משהו לא בסדר עם: %s :(</string>
+    <string name="open_source_licenses">רישיונות קוד פתוח</string>
+    <string name="open_website_button">פתח אתר</string>
+    <string name="database_error">משהו השתבש במהלך אחזור העדכונים. אנא נסה שוב או הפעל את האפליקציה מחדש :(</string>
+    <string name="force_feed_refresh">כפה רענון עדכונים</string>
+    <string name="invalid_rss_url">הקישור שסיפקת אינו עדכון RSS חוקי</string>
+    <string name="retry_button">נסה שוב</string>
+    <string name="issue_report_title">דווח על בעיה עם FeedFlow</string>
+    <string name="issue_content_title">בעיה עם FeedFlow</string>
+    <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
+    <string name="no_feeds_found_message">לא נמצאו עדכונים. אנא הוסף עדכון חדש!</string>
+    <string name="mark_all_read_button">סמן הכל כנקרא</string>
+    <string name="feeds_importing_message">מייבא פיד</string>
+    <string name="browser_selection_button">דפדפן</string>
+    <string name="about_button">אודות</string>
+    <string name="import_dialog_title">בחר קובץ OPML</string>
+    <string name="about_the_app">FeedFlow הוא קורא RSS מינימליסטי המבוסס על דעותיו האישיות של המחבר. המאמרים נפתחים באתרי האינטרנט שלהם, ואתה יכול לבחור את הדפדפן המועדף עליך ממוקד פרטיות כדי להפריד את חווית הקריאה שלך מהדפדפן הראשי שלך. אם אתה רוצה להימנע מהדפדפן, FeedFlow מציע מצב קורא ליהנות מתוכן המאמרים ללא כל הסחות דעת.\nאתה יכול לייבא ולייצא את אוסף ה-RSS שלך מקובצי OPML ואליהם.</string>
+    <string name="open_source_nav_bar">רישיונות קוד פתוח</string>
+    <string name="report_issue_button">דווח על בעיה</string>
+    <string name="import_export_opml_title">ייבוא וייצוא</string>
+    <string name="import_export_opml">ייבוא וייצוא של OPML</string>
+    <string name="done_button">בסדר</string>
+    <string name="wrong_link_report_title">העדכונים הבאים לא נוספו כי הם לא חוקיים</string>
+    <string name="new_release_available_title">גרסה חדשה של FeedFlow זמינה:</string>
+    <string name="new_release_available_link">הורד כאן</string>
+    <string name="feed_add_in_progress_message">אנא המתן, כל זמינות עדכונים נבדקת. הפעולה עשויה להימשך זמן מה בהתאם לכמות העדכונים שאתה מייבא</string>
+</resources>

@@ -134,4 +134,5 @@
     <string name="settings_feed_list_title">Uudisvoogude loend</string>
     <string name="settings_font_scale_subtitle_example">See on artikli alapealkiri</string>
     <string name="settings_feed_list_font_scale_title">Uudisvoo nime teksti mõõtkava</string>
+    <string name="deleting_feed_dialog_title">Kustutan...</string>
 </resources>

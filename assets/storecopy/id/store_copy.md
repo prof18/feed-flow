@@ -1,43 +1,49 @@
-# Title
+# Judul
 
-FeedFlow - RSS Reader
+FeedFlow - Pembaca RSS
 
-## Short desc
+## Deskripsi singkat
 
-Minimal, fast, uncluttered
+Minimal, cepat, rapi
 
-## Long desc
+## Penjelasan panjang
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+Ikuti umpan RSS favorit Anda dengan FeedFlow, Pembaca RSS minimalis. Nikmati
+pengalaman membaca yang bebas gangguan, karena FeedFlow menawarkan daftar
+minimalis dan membuka artikel di situs web masing-masing atau dalam mode
+pembaca.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+Sesuaikan pengalaman menjelajah Anda dengan memilih peramban pilihan Anda.
+Dengan cara ini, Anda dapat memilih peramban favorit yang berfokus pada privasi
+untuk memisahkan pengalaman membaca Anda dari peramban utama. Dan jika Anda
+ingin menghindari peramban, FeedFlow menawarkan mode pembaca untuk menikmati
+konten artikel tanpa gangguan apa pun.
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+Transisi ke FeedFlow sangat mudah. Koleksi RSS Anda yang sudah ada dapat diimpor
+dengan kemampuan impor dan ekspor kami yang lengkap dan mudah melalui file OPML,
+yang menjamin pengalaman membaca yang lancar.
 
-Just focus on reading (or scrolling)!
+Fokus saja pada membaca (atau menggulir)!
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+Aplikasi ini masih dalam tahap pengembangan, jadi beberapa fitur mungkin masih
+belum ada atau mungkin ada masalah. Harap laporkan bug atau saran fitur apa pun!
 
-## Screenshot 1
+## Tangkapan layar 1
 
-All your feeds
-in your pocket
+Semua umpan Anda ada di saku Anda
 
-## Screenshot 3
+## Tangkapan layar 3
 
-Import your
-existing collection
+Impor koleksi Anda yang sudah ada
 
-## Screenshot 4
+## Tangkapan layar 4
 
-Open the articles
-in your favourite browser
+Buka artikel di browser favorit Anda
 
-## Screenshot 5
+## Tangkapan layar 5
 
-Enjoy a clutter-free
-reader mode
+Nikmati mode membaca yang bebas kekacauan
 
-## Banner image
+## Gambar spanduk
 
-minimalistic RSS Reader
+Pembaca RSS minimalis

@@ -13,6 +13,7 @@ sealed class FeedImportExportState {
 
     data class ImportSuccess(
         val notValidFeedSources: ImmutableList<ParsedFeedSource>,
+        val feedSourceWithError: ImmutableList<ParsedFeedSource>,
     ) : FeedImportExportState()
 
     data object ExportSuccess : FeedImportExportState()

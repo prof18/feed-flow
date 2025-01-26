@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.domain.DateFormatter
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -19,9 +20,9 @@ import kotlinx.datetime.format.optional
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
-class DateFormatter(
-    val logger: Logger,
-) {
+class DateFormatterImpl(
+    private val logger: Logger,
+) : DateFormatter {
     private val formats = listOf(
         ISO_DATE_TIME_OFFSET,
         RFC_1123,
@@ -323,7 +324,7 @@ class DateFormatter(
         },
     )
 
-    fun getDateMillisFromString(dateString: String): Long? {
+    override fun getDateMillisFromString(dateString: String): Long? {
         var exception: Throwable? = null
         var errorMessage: String? = null
 
@@ -354,7 +355,7 @@ class DateFormatter(
         }
     }
 
-    fun formatDateForFeed(millis: Long): String {
+    override fun formatDateForFeed(millis: Long): String {
         val instant = Instant.fromEpochMilliseconds(millis)
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
 
@@ -402,7 +403,7 @@ class DateFormatter(
         return dateFormat.format(dateTime)
     }
 
-    fun formatDateForLastRefresh(millis: Long): String {
+    override fun formatDateForLastRefresh(millis: Long): String {
         val instant = Instant.fromEpochMilliseconds(millis)
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
 
@@ -423,10 +424,10 @@ class DateFormatter(
         return dateFormat.format(dateTime)
     }
 
-    fun currentTimeMillis(): Long =
+    override fun currentTimeMillis(): Long =
         Clock.System.now().toEpochMilliseconds()
 
-    fun getCurrentDateForExport(): String {
+    override fun getCurrentDateForExport(): String {
         val instant = Clock.System.now()
         val dateTime: LocalDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
         return "${dateTime.dayOfMonth}-${dateTime.monthNumber}-${dateTime.year}"

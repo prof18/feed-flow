@@ -88,9 +88,12 @@ internal fun FeedWithContentView(
 @Composable
 private fun ColumnScope.FeedLoader(loadingState: FeedUpdateStatus) {
     AnimatedVisibility(loadingState.isLoading()) {
-        val feedRefreshCounter = """
-                    ${loadingState.refreshedFeedCount}/${loadingState.totalFeedCount}
-        """.trimIndent()
+        val feedRefreshCounter = if (loadingState.refreshedFeedCount > 0 && loadingState.totalFeedCount > 0) {
+            "${loadingState.refreshedFeedCount}/${loadingState.totalFeedCount}"
+        } else {
+            "..."
+        }
+
         Text(
             modifier = Modifier
                 .fillMaxWidth()

@@ -197,8 +197,10 @@ val importExportStates = listOf(
     FeedImportExportState.ExportSuccess,
     FeedImportExportState.ImportSuccess(
         notValidFeedSources = persistentListOf(),
+        feedSourceWithError = persistentListOf(),
     ),
     FeedImportExportState.ImportSuccess(
+        feedSourceWithError = persistentListOf(),
         notValidFeedSources = persistentListOf(
             ParsedFeedSource(
                 id = "1",
@@ -351,6 +353,7 @@ val navDrawerState = NavDrawerState(
 )
 
 val feedImportSuccessWithErrorState = FeedImportExportState.ImportSuccess(
+    feedSourceWithError = persistentListOf(),
     notValidFeedSources = persistentListOf(
         ParsedFeedSource(
             id = "1",
@@ -370,6 +373,7 @@ val feedImportSuccessWithErrorState = FeedImportExportState.ImportSuccess(
 )
 
 val feedImportSuccessState = FeedImportExportState.ImportSuccess(
+    feedSourceWithError = persistentListOf(),
     notValidFeedSources = persistentListOf(),
 )
 

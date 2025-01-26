@@ -2,7 +2,7 @@ import SwiftUI
 
 struct DeleteOldFeedDialog: ViewModifier {
   let isLoading: Bool
-  let message: String
+  let message: String?
 
   func body(content: Content) -> some View {
     ZStack {
@@ -18,8 +18,10 @@ struct DeleteOldFeedDialog: ViewModifier {
             ProgressView()
               .scaleEffect(1.5)
 
-            Text(message)
-              .multilineTextAlignment(.center)
+            if let message {
+              Text(message)
+                .multilineTextAlignment(.center)
+            }
           }
           .padding(Spacing.medium)
           .background {
@@ -35,7 +37,7 @@ struct DeleteOldFeedDialog: ViewModifier {
 }
 
 extension View {
-  func deletingFeedDialog(isLoading: Bool, message: String) -> some View {
+  func loadingDialog(isLoading: Bool, message: String? = nil) -> some View {
     modifier(DeleteOldFeedDialog(isLoading: isLoading, message: message))
   }
 }

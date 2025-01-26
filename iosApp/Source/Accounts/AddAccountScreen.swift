@@ -27,12 +27,40 @@ struct AddAccountScreen: View {
                                 self.dismiss()
                                 self.appState.navigate(route: CommonViewRoute.dropboxSync)
                             } label: {
-                                Label("Dropbox", systemImage: "shippingbox")
+                                Label {
+                                    Text("Dropbox")
+                                } icon: {
+                                    Image("dropbox")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 32, height: 32)
+                                        .foregroundStyle(.primary)
+                                }
                             }
 
                         case .icloud:
-                            NavigationLink(destination: ICloudSyncScreen()) {
-                                Label("iCloud", systemImage: "icloud")
+                            NavigationLink(destination: ICloudSyncScreen(isFromAddAccount: true)) {
+                                Label {
+                                    Text("iCloud")
+                                } icon: {
+                                    Image(systemName: "icloud")
+                                        .fontWeight(.bold)
+                                }
+                            }
+
+                        case .freshRss:
+                            NavigationLink(destination: FreshRssSyncScreen(isFromAddAccount: true)) {
+                                Label {
+                                    Text("FreshRSS")
+                                } icon: {
+                                    Image("freshrss")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 22, height: 22)
+                                        .foregroundStyle(.primary)
+                                }
                             }
 
                         case .local:

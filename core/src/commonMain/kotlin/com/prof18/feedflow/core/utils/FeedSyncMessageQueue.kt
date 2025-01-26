@@ -1,6 +1,6 @@
-package com.prof18.feedflow.shared.domain.feedsync
+package com.prof18.feedflow.core.utils
 
-import com.prof18.feedflow.shared.domain.model.SyncResult
+import com.prof18.feedflow.core.model.SyncResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -9,7 +9,7 @@ class FeedSyncMessageQueue {
 
     val messageQueue = mutableMessageQueue.asSharedFlow()
 
-    internal suspend fun emitResult(result: SyncResult) {
+    suspend fun emitResult(result: SyncResult) {
         mutableMessageQueue.emit(result)
     }
 }

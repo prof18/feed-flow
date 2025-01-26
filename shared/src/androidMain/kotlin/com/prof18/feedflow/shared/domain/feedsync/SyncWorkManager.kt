@@ -3,7 +3,7 @@ package com.prof18.feedflow.shared.domain.feedsync
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.prof18.feedflow.shared.domain.model.SyncResult
+import com.prof18.feedflow.core.model.SyncResult
 
 class SyncWorkManager internal constructor(
     private val syncWorker: FeedSyncAndroidWorker,

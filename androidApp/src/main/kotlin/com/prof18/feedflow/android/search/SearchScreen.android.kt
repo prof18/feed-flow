@@ -1,8 +1,13 @@
 package com.prof18.feedflow.android.search
 
 import FeedFlowTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
@@ -11,8 +16,10 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.shared.presentation.SearchViewModel
+import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.search.SearchScreenContent
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -28,6 +35,37 @@ internal fun SearchScreen(
     val searchQuery by viewModel.searchQueryState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+
+    val strings = LocalFeedFlowStrings.current
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.errorState.collect { errorState ->
+            when (errorState) {
+                UIErrorState.DatabaseError -> {
+                    snackbarHostState.showSnackbar(
+                        strings.databaseError,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
+
+                is UIErrorState.FeedErrorState -> {
+                    snackbarHostState.showSnackbar(
+                        strings.feedErrorMessage(errorState.feedName),
+                        duration = SnackbarDuration.Short,
+                    )
+                }
+
+                UIErrorState.SyncError -> {
+                    snackbarHostState.showSnackbar(
+                        strings.syncErrorMessage,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
+            }
+        }
+    }
 
     SearchScreenContent(
         searchState = state,
@@ -54,6 +92,9 @@ internal fun SearchScreen(
         onCommentClick = { urlInfo ->
             browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
             viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         },
     )
 }

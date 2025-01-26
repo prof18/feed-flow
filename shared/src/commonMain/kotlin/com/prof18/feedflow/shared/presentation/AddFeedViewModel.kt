@@ -5,9 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryUseCase
-import com.prof18.feedflow.shared.domain.model.AddFeedResponse
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
-import com.prof18.feedflow.shared.utils.sanitizeUrl
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -40,27 +38,12 @@ class AddFeedViewModel internal constructor(
         viewModelScope.launch {
             feedAddedMutableState.emit(FeedAddedState.Loading)
             if (feedUrl.isNotEmpty()) {
-                val url = sanitizeUrl(feedUrl)
                 val categoryName = categoryUseCase.getSelectedCategory()
 
-                when (val feedResponse = feedRetrieverRepository.fetchSingleFeed(url, categoryName)) {
-                    is AddFeedResponse.FeedFound -> {
-                        feedRetrieverRepository.addFeedSource(feedResponse)
-                        feedAddedMutableState.emit(
-                            FeedAddedState.FeedAdded(
-                                feedResponse.parsedFeedSource.title,
-                            ),
-                        )
-                        categoryUseCase.initCategories()
-                    }
-
-                    AddFeedResponse.EmptyFeed -> {
-                        feedAddedMutableState.emit(FeedAddedState.Error.InvalidTitleLink)
-                    }
-
-                    AddFeedResponse.NotRssFeed -> {
-                        feedAddedMutableState.emit(FeedAddedState.Error.InvalidUrl)
-                    }
+                val feedAddedState = feedRetrieverRepository.addFeedSource(feedUrl, categoryName)
+                feedAddedMutableState.emit(feedAddedState)
+                if (feedAddedState is FeedAddedState.FeedAdded) {
+                    categoryUseCase.initCategories()
                 }
             }
         }

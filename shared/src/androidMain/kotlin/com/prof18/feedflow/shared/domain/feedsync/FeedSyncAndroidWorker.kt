@@ -6,8 +6,10 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
@@ -15,7 +17,6 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
-import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -39,8 +40,6 @@ internal class FeedSyncAndroidWorker(
         logger.d { "Start Immediate upload" }
         performUpload()
     }
-
-    // todo: move the sync to a dropbox specific class
 
     override fun upload() {
         logger.d { "Enqueue upload" }

@@ -4,11 +4,12 @@ sealed class FeedAddedState {
     data object FeedNotAdded : FeedAddedState()
     data object Loading : FeedAddedState()
     data class FeedAdded(
-        val feedName: String,
+        val feedName: String? = null,
     ) : FeedAddedState()
 
     sealed class Error : FeedAddedState() {
         data object InvalidUrl : Error()
         data object InvalidTitleLink : Error()
+        data object GenericError : Error()
     }
 }

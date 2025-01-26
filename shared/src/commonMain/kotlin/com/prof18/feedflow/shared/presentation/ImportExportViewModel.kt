@@ -3,8 +3,8 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedImportExportState
-import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
@@ -35,6 +35,7 @@ class ImportExportViewModel internal constructor(
                 importerMutableState.update {
                     FeedImportExportState.ImportSuccess(
                         notValidFeedSources = notValidFeedSources.feedSources.toImmutableList(),
+                        feedSourceWithError = notValidFeedSources.feedSourcesWithError.toImmutableList(),
                     )
                 }
                 feedRetrieverRepository.fetchFeeds()

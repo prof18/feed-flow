@@ -71,8 +71,11 @@ internal fun HomeScreen(
                     )
                 }
 
-                null -> {
-                    // Do nothing
+                UIErrorState.SyncError -> {
+                    snackbarHostState.showSnackbar(
+                        strings.syncErrorMessage,
+                        duration = SnackbarDuration.Short,
+                    )
                 }
             }
         }

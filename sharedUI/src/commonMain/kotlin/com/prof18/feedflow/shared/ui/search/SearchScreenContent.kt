@@ -56,6 +56,7 @@ fun SearchScreenContent(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
+    snackbarHost: @Composable () -> Unit = {},
 ) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue(searchQuery, TextRange(searchQuery.length))) }
 
@@ -68,6 +69,7 @@ fun SearchScreenContent(
 
     Scaffold(
         modifier = modifier,
+        snackbarHost = snackbarHost,
     ) { padding ->
         Column(
             modifier = Modifier.padding(padding),

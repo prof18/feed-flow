@@ -44,6 +44,18 @@ AND (:feedSourceCategoryId IS NULL OR feed_source_category_id = :feedSourceCateg
 ORDER BY pub_date DESC
 LIMIT :pageSize OFFSET :offset;
 
+selectFeedUrlsForFilter:
+SELECT feed_item.url_hash FROM feed_item
+INNER JOIN feed_source
+ON feed_item.feed_source_id == feed_source.url_hash
+LEFT JOIN feed_source_category
+ON feed_source.category_id == feed_source_category.id
+WHERE (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
+AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
+AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId);
+
 updateReadStatus:
 UPDATE feed_item
 SET is_read = :isRead
@@ -87,6 +99,10 @@ deleteAllWithFeedSource:
 DELETE FROM feed_item
 WHERE feed_source_id = :feedSourceId;
 
+deleteAllExcept:
+DELETE FROM feed_item
+WHERE feed_source_id NOT IN :feedSourceId;
+
 updateBookmarkStatus:
 UPDATE feed_item
 SET is_bookmarked = :starred
@@ -104,4 +120,29 @@ selectForSync:
 SELECT url_hash, is_read, is_bookmarked, pub_date
 FROM feed_item
 WHERE is_read = 1 OR is_bookmarked = 1;
+
+updateBookmarked:
+UPDATE feed_item
+SET is_bookmarked = 1
+WHERE url_hash IN :urlHashes;
+
+updateNotBookmarked:
+UPDATE feed_item
+SET is_bookmarked = 0
+WHERE url_hash NOT IN :urlHashes;
+
+updateRead:
+UPDATE feed_item
+SET is_read = 1
+WHERE url_hash NOT IN :urlHashes;
+
+updateUnread:
+UPDATE feed_item
+SET is_read = 0
+WHERE url_hash IN :urlHashes;
+
+updateAllReadStatus:
+UPDATE feed_item
+SET is_read = :isRead
+WHERE url_hash IN :urlHash;
 

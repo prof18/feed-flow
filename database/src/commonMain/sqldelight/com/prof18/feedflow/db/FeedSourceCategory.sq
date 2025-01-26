@@ -19,3 +19,9 @@ DELETE FROM feed_source_category WHERE id = ?;
 
 selectAllIds:
 SELECT id FROM feed_source_category;
+
+deleteAll:
+DELETE FROM feed_source_category;
+
+deleteAllExcept:
+DELETE FROM feed_source_category WHERE id NOT IN :ids;

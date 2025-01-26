@@ -4,9 +4,10 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.SyncResult
+import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
-import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.datetime.Clock
 

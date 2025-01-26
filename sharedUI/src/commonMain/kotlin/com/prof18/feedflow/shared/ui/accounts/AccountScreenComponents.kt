@@ -21,11 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.shared.ui.accounts.icons.Cloud
 import com.prof18.feedflow.shared.ui.accounts.icons.Dropbox
+import com.prof18.feedflow.shared.ui.accounts.icons.FreshRSS
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
@@ -38,6 +38,7 @@ fun AccountsContent(
     modifier: Modifier = Modifier,
     onDropboxCLick: () -> Unit,
     onICloudClick: () -> Unit,
+    onFreshRssClick: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -96,6 +97,7 @@ fun AccountsContent(
                                 SyncAccounts.LOCAL -> {
                                     { }
                                 }
+                                SyncAccounts.FRESH_RSS -> onFreshRssClick
                             },
                         )
 
@@ -120,6 +122,7 @@ private fun SyncAccounts.getTitle() =
         SyncAccounts.DROPBOX -> "Dropbox"
         SyncAccounts.LOCAL -> "Local"
         SyncAccounts.ICLOUD -> "iCloud"
+        SyncAccounts.FRESH_RSS -> "FreshRSS"
     }
 
 private fun SyncAccounts.getIcon() =
@@ -127,6 +130,7 @@ private fun SyncAccounts.getIcon() =
         SyncAccounts.DROPBOX -> Dropbox
         SyncAccounts.ICLOUD -> Cloud
         SyncAccounts.LOCAL -> Dropbox
+        SyncAccounts.FRESH_RSS -> FreshRSS
     }
 
 @Composable

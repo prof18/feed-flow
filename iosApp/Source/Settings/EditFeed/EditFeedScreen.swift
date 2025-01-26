@@ -30,30 +30,41 @@ struct EditFeedScreen: View {
 
   var body: some View {
     NavigationStack {
-      EditFeedScreenContent(
-        feedURL: $feedURL,
-        feedName: $feedName,
-        showError: $showError,
-        errorMessage: $errorMessage,
-        categoryItems: $categoryItems,
-        isAddingFeed: $isAddingFeed,
-        categorySelectorObserver: categorySelectorObserver,
-        updateFeedUrlTextFieldValue: { value in
-          vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
-        },
-        updateFeedNameTextFieldValue: { value in
-          vmStoreOwner.instance.updateFeedNameTextFieldValue(feedNameTextFieldValue: value)
-        },
-        deleteCategory: { categoryId in
-          vmStoreOwner.instance.deleteCategory(categoryId: categoryId)
-        },
-        addNewCategory: { categoryName in
-          vmStoreOwner.instance.addNewCategory(categoryName: categoryName)
-        },
-        addFeed: {
-          vmStoreOwner.instance.editFeed()
+      ZStack {
+        EditFeedScreenContent(
+          feedURL: $feedURL,
+          feedName: $feedName,
+          showError: $showError,
+          errorMessage: $errorMessage,
+          categoryItems: $categoryItems,
+          isAddingFeed: $isAddingFeed,
+          categorySelectorObserver: categorySelectorObserver,
+          updateFeedUrlTextFieldValue: { value in
+            vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
+          },
+          updateFeedNameTextFieldValue: { value in
+            vmStoreOwner.instance.updateFeedNameTextFieldValue(feedNameTextFieldValue: value)
+          },
+          deleteCategory: { categoryId in
+            vmStoreOwner.instance.deleteCategory(categoryId: categoryId)
+          },
+          addNewCategory: { categoryName in
+            vmStoreOwner.instance.addNewCategory(categoryName: categoryName)
+          },
+          addFeed: {
+            vmStoreOwner.instance.editFeed()
+          }
+        )
+
+        @Bindable var appState = appState
+        VStack(spacing: 0) {
+
+          Spacer()
+
+          Snackbar(messageQueue: $appState.snackbarQueue)
         }
-      )
+      }
+
       .onAppear {
         vmStoreOwner.instance.loadFeedToEdit(feedSource: feedSource)
       }
@@ -95,6 +106,9 @@ struct EditFeedScreen: View {
 
             case .invalidTitleLink:
               errorMessage = feedFlowStrings.missingTitleAndLink
+
+            case .genericError:
+              errorMessage = feedFlowStrings.editFeedGenericError
             }
 
             isAddingFeed = false

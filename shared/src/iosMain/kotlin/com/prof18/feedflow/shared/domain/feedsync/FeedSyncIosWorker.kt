@@ -2,8 +2,10 @@ package com.prof18.feedflow.shared.domain.feedsync
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
@@ -12,7 +14,6 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
-import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -229,7 +230,7 @@ internal class FeedSyncIosWorker(
                 logger.d { "Upload to iCloud successfully" }
             }
 
-            SyncAccounts.LOCAL -> {
+            else -> {
                 // Do nothing
             }
         }
@@ -258,7 +259,7 @@ internal class FeedSyncIosWorker(
                 return iCloudDownload()
             }
 
-            SyncAccounts.LOCAL -> {
+            else -> {
                 // Do nothing
                 SyncResult.Success
             }

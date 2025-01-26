@@ -3,7 +3,6 @@ package com.prof18.feedflow.desktop.editfeed
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarDuration
@@ -67,6 +66,7 @@ internal data class EditFeedScreen(
                         errorMessage = when (feedAddedState) {
                             FeedEditedState.Error.InvalidUrl -> strings.invalidRssUrl
                             FeedEditedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                            FeedEditedState.Error.GenericError -> strings.editFeedGenericError
                         }
                     }
 
@@ -100,6 +100,7 @@ internal data class EditFeedScreen(
             errorMessage = errorMessage,
             showLoading = showLoading,
             categoriesState = categoriesState,
+            canEditUrl = viewModel.canEditUrl(),
             onFeedUrlUpdated = { url ->
                 viewModel.updateFeedUrlTextFieldValue(url)
             },
@@ -153,6 +154,7 @@ private fun EditScreenPreview() {
             feedUrl = "https://www.ablog.com/feed",
             showError = false,
             showLoading = false,
+            canEditUrl = true,
             errorMessage = "",
             categoriesState = categoriesExpandedState,
             onFeedUrlUpdated = {},

@@ -140,12 +140,19 @@ struct HomeScreen: View {
                             showBanner: true
                         )
                     )
-                case .none:
-                    break
+
+                case .syncError:
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.syncErrorMessage,
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    )
                 }
             }
         }
-        .deletingFeedDialog(isLoading: isDeletingFeed, message: feedFlowStrings.deletingFeedDialogTitle)
+        .loadingDialog(isLoading: isDeletingFeed, message: feedFlowStrings.deletingFeedDialogTitle)
         .task {
             for await state in homeViewModel.isDeletingState {
                 self.isDeletingFeed = state as? Bool ?? false

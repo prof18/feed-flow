@@ -19,6 +19,7 @@ import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
+import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -49,8 +51,8 @@ class HomeViewModel internal constructor(
     val unreadCountFlow: Flow<Long> = feedRetrieverRepository.getUnreadFeedCountFlow()
 
     // Error
-    private val mutableUIErrorState: MutableSharedFlow<UIErrorState?> = MutableSharedFlow()
-    val errorState: SharedFlow<UIErrorState?> = mutableUIErrorState.asSharedFlow()
+    private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
+    val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
 
     // Drawer State
     private val drawerMutableState = MutableStateFlow(NavDrawerState())
@@ -125,7 +127,7 @@ class HomeViewModel internal constructor(
 
     private fun observeErrorState() {
         viewModelScope.launch {
-            feedRetrieverRepository.errorState
+            merge(feedRetrieverRepository.errorState, feedManagerRepository.errorState)
                 .collect { error ->
                     when (error) {
                         is FeedErrorState -> {
@@ -142,8 +144,10 @@ class HomeViewModel internal constructor(
                             )
                         }
 
-                        null -> {
-                            // Do nothing
+                        is SyncError -> {
+                            mutableUIErrorState.emit(
+                                UIErrorState.SyncError,
+                            )
                         }
                     }
                 }

@@ -49,9 +49,14 @@ internal fun FeedWithContentView(
         modifier = modifier,
     ) {
         AnimatedVisibility(feedUpdateStatus.isLoading()) {
-            val feedRefreshCounter = """
-                    ${feedUpdateStatus.refreshedFeedCount}/${feedUpdateStatus.totalFeedCount}
-            """.trimIndent()
+            val feedRefreshCounter = if (feedUpdateStatus.refreshedFeedCount > 0 &&
+                feedUpdateStatus.totalFeedCount > 0
+            ) {
+                "${feedUpdateStatus.refreshedFeedCount}/${feedUpdateStatus.totalFeedCount}"
+            } else {
+                "..."
+            }
+
             Text(
                 modifier = Modifier
                     .fillMaxWidth()

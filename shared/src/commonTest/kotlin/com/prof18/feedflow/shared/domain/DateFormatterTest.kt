@@ -6,7 +6,7 @@ import kotlin.test.assertNotNull
 
 class DateFormatterTest {
 
-    private val dateFormatter = DateFormatter(testLogger)
+    private val dateFormatter = DateFormatterImpl(testLogger)
 
     private val testInputs = listOf(
         "Wed, 15 May 2019 20:48:02 +0000",

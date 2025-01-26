@@ -5,4 +5,5 @@ sealed class UIErrorState {
     data class FeedErrorState(
         val feedName: String,
     ) : UIErrorState()
+    data object SyncError : UIErrorState()
 }

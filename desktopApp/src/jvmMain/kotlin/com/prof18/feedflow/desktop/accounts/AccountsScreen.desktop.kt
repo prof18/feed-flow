@@ -7,6 +7,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.desktop.accounts.dropbox.DropboxSyncScreen
+import com.prof18.feedflow.desktop.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.desktop.accounts.icloud.ICloudSyncScreen
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
@@ -34,6 +35,9 @@ internal class AccountsScreen : Screen {
             },
             onBackClick = {
                 navigator.pop()
+            },
+            onFreshRssClick = {
+                navigator.push(FreshRssSyncScreen())
             },
         )
     }

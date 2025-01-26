@@ -130,4 +130,18 @@
     <string name="settings_font_scale_feed_source_example">Feed Name</string>
     <string name="settings_feed_list_font_scale_title">Feed List Text scale</string>
     <string name="deleting_feed_dialog_title">Deleting...</string>
+    <string name="add_feed_generic_error">There was an error while adding the feed. Please retry</string>
+    <string name="edit_feed_generic_error">Something went wrong while editing the feed. Please retry.</string>
+    <string name="feed_added_message_without_name">Feed added</string>
+    <string name="sync_error_message">There was an error while syncing the feeds. Please retry.</string>
+    <string name="wrong_credentials_error_message">The credentials are not correct. Please try again.</string>
+    <string name="wrong_url_error_message">The provided link is not correct. Please try again.</string>
+    <string name="link_with_error_report_title">The following feeds were not added because of an error</string>
+    <string name="account_text_field_server_url">Server URL</string>
+    <string name="account_text_field_username">Username</string>
+    <string name="account_text_field_password">Password</string>
+    <string name="account_login">Login</string>
+    <string name="fresh_rss_account_connected">Your FreshRss account is successfully connected</string>
+    <string name="no_fresh_rss_sync_yet">Data are not synced yet</string>
+    <string name="fresh_rss_last_sync">Last sync: %s</string>
 </resources>

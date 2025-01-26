@@ -30,7 +30,9 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
+import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.about.AboutContent
@@ -41,9 +43,7 @@ import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.desktop.utils.initSentry
-import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
-import com.prof18.feedflow.shared.domain.model.SyncResult
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel

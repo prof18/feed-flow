@@ -48,11 +48,17 @@ fun AddFeedScreenContent(
                     errorMessage = when (feedAddedState) {
                         FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
                         FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                        FeedAddedState.Error.GenericError -> strings.addFeedGenericError
                     }
                 }
 
                 is FeedAddedState.FeedAdded -> {
-                    val message = strings.feedAddedMessage(feedAddedState.feedName)
+                    val feedName = feedAddedState.feedName
+                    val message = if (feedName != null) {
+                        strings.feedAddedMessage(feedName)
+                    } else {
+                        strings.feedAddedMessageWithoutName
+                    }
 
                     snackbarHostState.showSnackbar(
                         message,

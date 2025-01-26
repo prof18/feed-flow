@@ -9,6 +9,7 @@ import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.DbxWebAuth
 import com.dropbox.core.TokenAccessType
 import com.dropbox.core.oauth.DbxCredential
+import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.DropboxSynMessages
@@ -16,7 +17,6 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxException
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
-import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository

@@ -4,12 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryUseCase
-import com.prof18.feedflow.shared.domain.model.AddFeedResponse
+import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
-import com.prof18.feedflow.shared.utils.sanitizeUrl
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -19,8 +18,8 @@ import kotlinx.coroutines.launch
 
 class EditFeedViewModel internal constructor(
     private val categoryUseCase: FeedCategoryUseCase,
-    private val feedManagerRepository: FeedManagerRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val accountsRepository: AccountsRepository,
 ) : ViewModel() {
     val categoriesState = categoryUseCase.categoriesState
     private var originalFeedSource: FeedSource? = null
@@ -33,6 +32,9 @@ class EditFeedViewModel internal constructor(
 
     private val feedEditedMutableState: MutableSharedFlow<FeedEditedState> = MutableSharedFlow()
     val feedEditedState = feedEditedMutableState.asSharedFlow()
+
+    fun canEditUrl(): Boolean =
+        accountsRepository.getCurrentSyncAccount() != SyncAccounts.FRESH_RSS
 
     fun updateFeedUrlTextFieldValue(feedUrlTextFieldValue: String) {
         feedUrlMutableState.update { feedUrlTextFieldValue }
@@ -93,38 +95,11 @@ class EditFeedViewModel internal constructor(
             )
 
             if (newFeedSource != null && newFeedSource != originalFeedSource) {
-                val newUrl = sanitizeUrl(feedUrlState.value)
-                val previousUrl = originalFeedSource?.url
-
-                val newName = feedNameState.value
-                val previousName = originalFeedSource?.title
-                if (newName != previousName) {
-                    feedRetrieverRepository.updateCurrentFilterName(newName)
-                }
-
-                if (newUrl != previousUrl) {
-                    when (val response = feedRetrieverRepository.fetchSingleFeed(newUrl, selectedCategory)) {
-                        is AddFeedResponse.FeedFound -> {
-                            feedManagerRepository.updateFeedSource(
-                                newFeedSource.copy(
-                                    url = response.parsedFeedSource.url,
-                                ),
-                            )
-                            feedEditedMutableState.emit(FeedEditedState.FeedEdited(feedNameState.value))
-                        }
-
-                        AddFeedResponse.EmptyFeed -> {
-                            feedEditedMutableState.emit(FeedEditedState.Error.InvalidTitleLink)
-                        }
-
-                        AddFeedResponse.NotRssFeed -> {
-                            feedEditedMutableState.emit(FeedEditedState.Error.InvalidUrl)
-                        }
-                    }
-                } else {
-                    feedManagerRepository.updateFeedSource(newFeedSource)
-                    feedEditedMutableState.emit(FeedEditedState.FeedEdited(feedNameState.value))
-                }
+                val state = feedRetrieverRepository.editFeedSource(
+                    newFeedSource = newFeedSource,
+                    originalFeedSource = originalFeedSource,
+                )
+                feedEditedMutableState.emit(state)
             } else {
                 feedEditedMutableState.emit(FeedEditedState.FeedEdited(feedNameState.value))
             }

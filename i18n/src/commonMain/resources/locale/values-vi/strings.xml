@@ -52,7 +52,7 @@
     <string name="feeds_title">Nguồn cấp</string>
     <string name="feed_added_message">Đã thêm %s thành công</string>
     <string name="feed_url">URL nguồn cấp</string>
-    <string name="loading_feed_message">Đang tải nguồn cấp %s</string>
+    <string name="loading_feed_message">Đang nạp nguồn cấp %s</string>
     <string name="no_feeds_found_message">Không tìm thấy nguồn cấp nào. Hãy thêm mới!</string>
     <string name="feeds_importing_message">Đang nhập nguồn cấp</string>
     <string name="feeds_import_done_message">Nhập xong</string>
@@ -129,4 +129,5 @@
     <string name="clear_old_articles_button">Xóa bài viết cũ hơn một tuần</string>
     <string name="open_another_feed">Mở nguồn cấp khác</string>
     <string name="settings_font_scale_title_example">Tựa đề bài viết</string>
+    <string name="deleting_feed_dialog_title">Đang xóa...</string>
 </resources>

@@ -1,35 +1,48 @@
-# Title
+# Titel
 
-FeedFlow
+FeedFlow - RSS Reader
 
-## Short desc
+## Kurzbeschreibung
 
-Minimalistic RSS Reader
+Schlank, schnell, aufgeräumt
 
-## Long desc
+## Ausführliche Beschreibung
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+Folge deinen bevorzugten RSS-Feed mit FeedFlow, einem schlanken RSS-Reader.
+Genieße ein aufgeräumtes Leseerlebnis, denn FeedFlow zeigt eine kompakte Liste
+und öffnet die Artikel auf ihren jeweiligen Webseiten oder im Lesemodus.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+Passen sie ihr Leseerlebnis mit der Wahl ihres bevorzugten Browsers an. So
+können sie einen auf ihre Privatsphäre optimierten Browser nutzen und das
+Gelesene von ihrem Haupt-Browser trennen. Wenn man auf einen Browser verzichten
+möchte bietet FeedFlow einen Lesemodus an, um die Einträge ohne Ablenkungen
+genießen zu können.
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+Der Wechsel zu FeedFlow ist kinderleicht. Ihre vorhandene RSS-Sammlung kann mit
+den umfassenden Import- und Exportfunktionen über OPML-Dateien übernommen werden
+und sichert damit ein nahtloses Leseerlebnis.
 
-Just focus on reading (or scrolling)!
+Konzentrieren sie sich nur aufs Lesen (oder Blättern)!
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+Die App ist in laufender Entwicklung, somit können einige Funktionen fehlen oder
+Fehler auftreten. Bitte melden sie jeden Fehler oder Verbesserungsvorschläge!
 
 ## Screenshot 1
 
-All your feeds in your pocket
+Alle ihre Feeds in der Tasche
 
 ## Screenshot 3
 
-Import your existing collection
+Import der bestehenden RSS-Sammlung
 
 ## Screenshot 4
 
-Open the articles in your favourite browser
+Artikel im bevorzugten Browser öffnen
 
 ## Screenshot 5
 
-Enjoy a clutter-free reader mode
+Ein aufgeräumtes Leseerlebnis genießen
+
+## Bannerbild
+
+Schlanker RSS-Reader

@@ -1,10 +1,10 @@
 package com.prof18.feedflow.shared.domain.mappers
 
+import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.db.Search
-import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 
 internal fun Search.toFeedItem(dateFormatter: DateFormatter, removeTitleFromDesc: Boolean) = FeedItem(

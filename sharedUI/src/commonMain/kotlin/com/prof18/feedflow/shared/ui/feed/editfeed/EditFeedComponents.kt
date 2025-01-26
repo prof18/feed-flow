@@ -30,6 +30,7 @@ fun EditFeedContent(
     showError: Boolean,
     showLoading: Boolean,
     errorMessage: String,
+    canEditUrl: Boolean,
     categoriesState: CategoriesState,
     onFeedUrlUpdated: (String) -> Unit,
     onFeedNameUpdated: (String) -> Unit,
@@ -62,17 +63,19 @@ fun EditFeedContent(
                 )
             }
 
-            item {
-                FeedUrlTextField(
-                    modifier = Modifier
-                        .padding(top = Spacing.regular)
-                        .fillMaxWidth()
-                        .tagForTesting(TestingTag.FEED_URL_INPUT),
-                    feedUrl = feedUrl,
-                    showError = showError,
-                    errorMessage = errorMessage,
-                    onFeedUrlUpdated = onFeedUrlUpdated,
-                )
+            if (canEditUrl) {
+                item {
+                    FeedUrlTextField(
+                        modifier = Modifier
+                            .padding(top = Spacing.regular)
+                            .fillMaxWidth()
+                            .tagForTesting(TestingTag.FEED_URL_INPUT),
+                        feedUrl = feedUrl,
+                        showError = showError,
+                        errorMessage = errorMessage,
+                        onFeedUrlUpdated = onFeedUrlUpdated,
+                    )
+                }
             }
 
             item {

@@ -1,6 +1,6 @@
 package com.prof18.feedflow.shared.domain.feed
 
-import com.prof18.feedflow.shared.domain.HtmlParser
+import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 
 internal class FeedUrlRetriever(

@@ -31,9 +31,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import coil3.ImageLoader
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.android.accounts.AccountsScreen
+import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
 import com.prof18.feedflow.android.editfeed.EditScreen
 import com.prof18.feedflow.android.editfeed.toEditFeed
@@ -48,8 +48,8 @@ import com.prof18.feedflow.android.settings.about.LicensesScreen
 import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
-import com.prof18.feedflow.shared.domain.model.SyncResult
+import com.prof18.feedflow.core.model.SyncResult
+import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
 
     private val messageQueue by inject<FeedSyncMessageQueue>()
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalCoilApi::class)
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -267,6 +267,9 @@ class MainActivity : ComponentActivity() {
                     navigateBack = {
                         navController.popBackStack()
                     },
+                    navigateToFreshRssSync = {
+                        navController.navigate(FreshRssSync)
+                    },
                 )
             }
 
@@ -280,6 +283,14 @@ class MainActivity : ComponentActivity() {
 
                 EditScreen(
                     viewModel = viewModel,
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<FreshRssSync> {
+                FreshRssSyncScreen(
                     navigateBack = {
                         navController.popBackStack()
                     },

@@ -9,11 +9,19 @@ import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.presentation.model.DatabaseError
+import com.prof18.feedflow.shared.presentation.model.FeedErrorState
+import com.prof18.feedflow.shared.presentation.model.SyncError
+import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -25,9 +33,13 @@ class FeedSourceListViewModel internal constructor(
     private val feedsMutableState: MutableStateFlow<FeedSourceListState> = MutableStateFlow(FeedSourceListState())
     val feedSourcesState: StateFlow<FeedSourceListState> = feedsMutableState.asStateFlow()
 
+    private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
+    val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
+
     private var expandedCategories: MutableList<CategoryId> = mutableListOf()
 
     init {
+        observeErrorState()
         viewModelScope.launch {
             feedManagerRepository.getFeedSources().collect { feeds ->
                 val groupedSources = feeds.groupBy {
@@ -75,6 +87,35 @@ class FeedSourceListViewModel internal constructor(
                     expandedCategories.clear()
                 }
             }
+        }
+    }
+
+    private fun observeErrorState() {
+        viewModelScope.launch {
+            merge(feedRetrieverRepository.errorState, feedManagerRepository.errorState)
+                .collect { error ->
+                    when (error) {
+                        is FeedErrorState -> {
+                            mutableUIErrorState.emit(
+                                UIErrorState.FeedErrorState(
+                                    feedName = error.failingSourceName,
+                                ),
+                            )
+                        }
+
+                        is DatabaseError -> {
+                            mutableUIErrorState.emit(
+                                UIErrorState.DatabaseError,
+                            )
+                        }
+
+                        is SyncError -> {
+                            mutableUIErrorState.emit(
+                                UIErrorState.SyncError,
+                            )
+                        }
+                    }
+                }
         }
     }
 

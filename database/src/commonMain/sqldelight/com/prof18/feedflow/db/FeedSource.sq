@@ -13,6 +13,9 @@ insertFeedSource:
 INSERT OR REPLACE INTO feed_source(url_hash, url, title, category_id, logo_url)
 VALUES (?,?,?,?, ?);
 
+deleteAllExcept:
+DELETE FROM feed_source WHERE url_hash NOT IN :urlHashes;
+
 selectFeedUrls:
 SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url FROM feed_source
 LEFT JOIN feed_source_category
@@ -48,3 +51,12 @@ WHERE url_hash = :urlHash;
 
 selectAllUrlHashes:
 SELECT url_hash FROM feed_source;
+
+deleteAll:
+DELETE FROM feed_source;
+
+selectByCategory:
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url FROM feed_source
+LEFT JOIN feed_source_category
+ON feed_source.category_id = feed_source_category.id
+WHERE feed_source.category_id = :categoryId;

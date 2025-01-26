@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.domain.HtmlParser
 import org.jsoup.Jsoup
 
 internal class JvmHtmlParser(

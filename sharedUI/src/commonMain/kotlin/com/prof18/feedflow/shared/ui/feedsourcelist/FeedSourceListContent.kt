@@ -19,9 +19,11 @@ fun FeedSourceListContent(
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
     onEditFeedSourceClick: (FeedSource) -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHost: @Composable () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,
+        snackbarHost = snackbarHost,
         topBar = {
             FeedSourceNavBar(
                 navigateBack = navigateBack,

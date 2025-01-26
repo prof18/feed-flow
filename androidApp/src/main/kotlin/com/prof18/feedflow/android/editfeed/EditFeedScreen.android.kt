@@ -55,6 +55,7 @@ internal fun EditScreen(
                     errorMessage = when (feedAddedState) {
                         FeedEditedState.Error.InvalidUrl -> strings.invalidRssUrl
                         FeedEditedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                        FeedEditedState.Error.GenericError -> strings.editFeedGenericError
                     }
                 }
 
@@ -87,6 +88,7 @@ internal fun EditScreen(
         errorMessage = errorMessage,
         showLoading = showLoading,
         categoriesState = categoriesState,
+        canEditUrl = viewModel.canEditUrl(),
         onFeedUrlUpdated = { url ->
             viewModel.updateFeedUrlTextFieldValue(url)
         },
@@ -139,6 +141,7 @@ private fun EditScreenPreview() {
             showError = false,
             showLoading = false,
             errorMessage = "",
+            canEditUrl = true,
             categoriesState = categoriesExpandedState,
             onFeedUrlUpdated = {},
             onFeedNameUpdated = {},

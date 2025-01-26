@@ -58,9 +58,16 @@ struct AddFeedScreen: View {
             for await state in vmStoreOwner.instance.feedAddedState {
                 switch onEnum(of: state) {
                 case .feedAdded(let addedState):
+                    let message: String
+                    if let feedName = addedState.feedName {
+                        message = feedFlowStrings.feedAddedMessage(feedName)
+                    } else {
+                        message = feedFlowStrings.feedAddedMessageWithoutName
+                    }
+
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: feedFlowStrings.feedAddedMessage(addedState.feedName),
+                            title: message,
                             subtitle: nil,
                             showBanner: true
                         )
@@ -79,6 +86,9 @@ struct AddFeedScreen: View {
 
                     case .invalidTitleLink:
                         errorMessage = feedFlowStrings.missingTitleAndLink
+
+                    case .genericError:
+                        errorMessage = feedFlowStrings.addFeedGenericError
                     }
 
                     isAddingFeed = false

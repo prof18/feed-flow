@@ -1,24 +1,33 @@
 package com.prof18.feedflow.shared.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.fold
+import com.prof18.feedflow.core.model.isError
+import com.prof18.feedflow.core.model.isSuccess
+import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
+import com.prof18.feedflow.feedsync.greader.GReaderRepository
 import com.prof18.feedflow.shared.data.SettingsHelper
-import com.prof18.feedflow.shared.domain.DateFormatter
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
+import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import com.prof18.feedflow.shared.domain.model.AddFeedResponse
+import com.prof18.feedflow.shared.domain.model.FeedAddedState
+import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
@@ -27,8 +36,10 @@ import com.prof18.feedflow.shared.domain.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.ErrorState
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
+import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.executeWithRetry
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
+import com.prof18.feedflow.shared.utils.sanitizeUrl
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
 import kotlinx.collections.immutable.ImmutableList
@@ -37,9 +48,11 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapLatest
@@ -59,14 +72,16 @@ internal class FeedRetrieverRepository(
     private val rssChannelMapper: RssChannelMapper,
     private val feedUrlRetriever: FeedUrlRetriever,
     private val feedSyncRepository: FeedSyncRepository,
+    private val gReaderRepository: GReaderRepository,
+    private val accountsRepository: AccountsRepository,
 ) {
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
         FinishedFeedUpdateStatus,
     )
     val updateState = updateMutableState.asStateFlow()
 
-    private val errorMutableState: MutableStateFlow<ErrorState?> = MutableStateFlow(null)
-    val errorState = errorMutableState.asStateFlow()
+    private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
+    val errorState = errorMutableState.asSharedFlow()
 
     private val feedToUpdate = hashSetOf<String>()
 
@@ -105,14 +120,15 @@ internal class FeedRetrieverRepository(
             }
             currentPage = 1
             val removeTitleFromDesc = settingsHelper.getRemoveTitleFromDescription()
+            if (feeds.isNotEmpty()) {
+                updateMutableState.update { FinishedFeedUpdateStatus }
+            }
             mutableFeedState.update {
                 feeds.map { it.toFeedItem(dateFormatter, removeTitleFromDesc) }.toImmutableList()
             }
         } catch (e: Throwable) {
             logger.e(e) { "Something wrong while getting data from Database" }
-            errorMutableState.update {
-                DatabaseError
-            }
+            errorMutableState.emit(DatabaseError)
         }
     }
 
@@ -138,9 +154,7 @@ internal class FeedRetrieverRepository(
             }
         } catch (e: Throwable) {
             logger.e(e) { "Something wrong while getting data from Database" }
-            errorMutableState.update {
-                DatabaseError
-            }
+            errorMutableState.emit(DatabaseError)
         }
     }
 
@@ -172,8 +186,19 @@ internal class FeedRetrieverRepository(
                 }
             }.toImmutableList()
         }
-        databaseHelper.markAsRead(itemsToUpdates.toList())
-        feedSyncRepository.setIsSyncUploadRequired()
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                gReaderRepository.updateReadStatus(itemsToUpdates.toList(), isRead = true)
+                    .onErrorSuspend {
+                        errorMutableState.emit(SyncError)
+                    }
+            }
+
+            else -> {
+                databaseHelper.markAsRead(itemsToUpdates.toList())
+                feedSyncRepository.setIsSyncUploadRequired()
+            }
+        }
     }
 
     @Suppress("MagicNumber")
@@ -184,52 +209,93 @@ internal class FeedRetrieverRepository(
         return withContext(dispatcherProvider.io) {
             updateMutableState.update { StartedFeedUpdateStatus }
 
-            feedSyncRepository.syncFeedSources()
+            when {
+                gReaderRepository.isAccountSet() -> fetchFeedsWithGReader()
+                else -> fetchFeedsWithRssParser(forceRefresh, isFirstLaunch)
+            }
+        }
+    }
 
-            val feedSourceUrls = databaseHelper.getFeedSources()
-            feedToUpdate.clear()
-            feedToUpdate.addAll(feedSourceUrls.map { it.url })
-            if (feedSourceUrls.isEmpty()) {
-                updateMutableState.update {
-                    NoFeedSourcesStatus
+    @Suppress("MagicNumber")
+    private suspend fun fetchFeedsWithGReader() {
+        val feedSourceUrls = databaseHelper.getFeedSources()
+        if (feedSourceUrls.isEmpty()) {
+            updateMutableState.update {
+                NoFeedSourcesStatus
+            }
+        } else {
+            gReaderRepository.sync()
+                .onErrorSuspend {
+                    errorMutableState.emit(SyncError)
                 }
-            } else {
-                updateMutableState.emit(
-                    InProgressFeedUpdateStatus(
-                        refreshedFeedCount = 0,
-                        totalFeedCount = feedSourceUrls.size,
-                    ),
-                )
+        }
+        // If the sync is skipped quickly, sometimes the loading spinner stays out
+        delay(50)
+        isFeedSyncDone = true
+        updateRefreshCount()
+        getFeeds()
+    }
 
-                if (!isFirstLaunch) {
-                    getFeeds()
-                }
+    @Suppress("MagicNumber")
+    private suspend fun fetchFeedsWithRssParser(
+        forceRefresh: Boolean = false,
+        isFirstLaunch: Boolean = false,
+    ) {
+        feedSyncRepository.syncFeedSources()
 
-                isFeedSyncDone = false
-                parseFeeds(
-                    feedSourceUrls = feedSourceUrls,
-                    forceRefresh = forceRefresh,
-                )
+        val feedSourceUrls = databaseHelper.getFeedSources()
+        feedToUpdate.clear()
+        feedToUpdate.addAll(feedSourceUrls.map { it.url })
+        if (feedSourceUrls.isEmpty()) {
+            updateMutableState.update {
+                NoFeedSourcesStatus
+            }
+        } else {
+            updateMutableState.emit(
+                InProgressFeedUpdateStatus(
+                    refreshedFeedCount = 0,
+                    totalFeedCount = feedSourceUrls.size,
+                ),
+            )
 
-                feedSyncRepository.syncFeedItems()
-                isFeedSyncDone = true
-                // If the sync is skipped quickly, sometimes the loading spinner stays out
-                delay(50)
-                updateRefreshCount()
-
+            if (!isFirstLaunch) {
                 getFeeds()
             }
+
+            isFeedSyncDone = false
+            parseFeeds(
+                feedSourceUrls = feedSourceUrls,
+                forceRefresh = forceRefresh,
+            )
+
+            feedSyncRepository.syncFeedItems()
+            // If the sync is skipped quickly, sometimes the loading spinner stays out
+            delay(50)
+            isFeedSyncDone = true
+            updateRefreshCount()
+            getFeeds()
         }
     }
 
     suspend fun markAllCurrentFeedAsRead() {
         val currentFilter = currentFeedFilterMutableState.value
-        databaseHelper.markAllFeedAsRead(currentFilter)
-        feedSyncRepository.setIsSyncUploadRequired()
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                gReaderRepository.markAllFeedAsRead(currentFilter)
+                    .onErrorSuspend {
+                        errorMutableState.emit(SyncError)
+                    }
+            }
+
+            else -> {
+                databaseHelper.markAllFeedAsRead(currentFilter)
+                feedSyncRepository.setIsSyncUploadRequired()
+            }
+        }
         getFeeds()
     }
 
-    suspend fun fetchSingleFeed(
+    private suspend fun fetchSingleFeed(
         url: String,
         category: FeedSourceCategory?,
     ): AddFeedResponse = withContext(dispatcherProvider.io) {
@@ -262,35 +328,20 @@ internal class FeedRetrieverRepository(
         }
     }
 
-    suspend fun addFeedSource(feedFound: AddFeedResponse.FeedFound) = withContext(dispatcherProvider.io) {
-        val rssChannel = feedFound.rssChannel
-        val parsedFeedSource = feedFound.parsedFeedSource
-        val currentTimestamp = dateFormatter.currentTimeMillis()
-        val feedSource = FeedSource(
-            id = parsedFeedSource.url.hashCode().toString(),
-            url = parsedFeedSource.url,
-            title = parsedFeedSource.title,
-            lastSyncTimestamp = currentTimestamp,
-            category = parsedFeedSource.category,
-            logoUrl = parsedFeedSource.logoUrl,
-        )
+    suspend fun addFeedSource(feedUrl: String, categoryName: FeedSourceCategory?): FeedAddedState =
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> addFeedSourceForFreshRss(sanitizeUrl(feedUrl), categoryName)
+            else -> addFeedSourceForLocalAccount(sanitizeUrl(feedUrl), categoryName)
+        }
 
-        val feedItems = rssChannelMapper.getFeedItems(
-            rssChannel = rssChannel,
-            feedSource = feedSource,
-        )
-
-        databaseHelper.insertFeedSource(
-            listOf(
-                parsedFeedSource,
-            ),
-        )
-        databaseHelper.insertFeedItems(feedItems, currentTimestamp)
-        feedSyncRepository.insertSyncedFeedSource(listOf(parsedFeedSource.toFeedSource()))
-        feedSyncRepository.performBackup()
-        updateMutableState.update { FinishedFeedUpdateStatus }
-        getFeeds()
-    }
+    suspend fun editFeedSource(
+        newFeedSource: FeedSource,
+        originalFeedSource: FeedSource?,
+    ): FeedEditedState =
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> editFeedSourceForFreshRss(newFeedSource, originalFeedSource)
+            else -> editFeedSourceForLocalAccount(newFeedSource, originalFeedSource)
+        }
 
     @Suppress("MagicNumber")
     suspend fun deleteOldFeeds() {
@@ -318,8 +369,20 @@ internal class FeedRetrieverRepository(
                 }
             }.toImmutableList()
         }
-        databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
-        feedSyncRepository.setIsSyncUploadRequired()
+
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                gReaderRepository.updateBookmarkStatus(feedItemId, isBookmarked)
+                    .onErrorSuspend {
+                        errorMutableState.emit(SyncError)
+                    }
+            }
+
+            else -> {
+                databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
+                feedSyncRepository.setIsSyncUploadRequired()
+            }
+        }
     }
 
     suspend fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) {
@@ -336,8 +399,20 @@ internal class FeedRetrieverRepository(
                 }
             }.toImmutableList()
         }
-        databaseHelper.updateReadStatus(feedItemId, isRead)
-        feedSyncRepository.setIsSyncUploadRequired()
+
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                gReaderRepository.updateReadStatus(listOf(feedItemId), isRead)
+                    .onErrorSuspend {
+                        errorMutableState.emit(SyncError)
+                    }
+            }
+
+            else -> {
+                databaseHelper.updateReadStatus(feedItemId, isRead)
+                feedSyncRepository.setIsSyncUploadRequired()
+            }
+        }
     }
 
     private suspend fun parseFeeds(
@@ -374,11 +449,11 @@ internal class FeedRetrieverRepository(
                         databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
                     } catch (e: Throwable) {
                         logger.e { "Error, skip: ${feedSource.url}}. Error: $e" }
-                        errorMutableState.update {
+                        errorMutableState.emit(
                             FeedErrorState(
                                 failingSourceName = feedSource.title,
-                            )
-                        }
+                            ),
+                        )
                         feedToUpdate.remove(feedSource.url)
                         updateRefreshCount()
                     }
@@ -390,7 +465,7 @@ internal class FeedRetrieverRepository(
             searchQuery = query,
         )
 
-    fun updateCurrentFilterName(newName: String) {
+    private fun updateCurrentFilterName(newName: String) {
         val currentFilter = currentFeedFilter.value
         if (currentFilter is FeedFilter.Source) {
             currentFeedFilterMutableState.update {
@@ -467,6 +542,151 @@ internal class FeedRetrieverRepository(
             // Do nothing
             null
         }
+    }
+
+    private suspend fun addFeedSourceForLocalAccount(
+        feedUrl: String,
+        categoryName: FeedSourceCategory?,
+    ): FeedAddedState {
+        return when (val feedResponse = fetchSingleFeed(feedUrl, categoryName)) {
+            is AddFeedResponse.FeedFound -> {
+                addFeedSource(feedResponse)
+
+                FeedAddedState.FeedAdded(
+                    feedResponse.parsedFeedSource.title,
+                )
+            }
+
+            AddFeedResponse.EmptyFeed -> {
+                FeedAddedState.Error.InvalidTitleLink
+            }
+
+            AddFeedResponse.NotRssFeed -> {
+                FeedAddedState.Error.InvalidUrl
+            }
+        }
+    }
+
+    private suspend fun addFeedSourceForFreshRss(
+        originalUrl: String,
+        categoryName: FeedSourceCategory?,
+    ): FeedAddedState {
+        for (suffix in knownUrlSuffix) {
+            val actualUrl = suffix.buildUrl(originalUrl).trim()
+            logger.d { "Trying with actualUrl: $actualUrl" }
+
+            val addResult = gReaderRepository.addFeedSource(url = actualUrl, categoryName = categoryName)
+            if (addResult.isSuccess()) {
+                return FeedAddedState.FeedAdded()
+            }
+        }
+
+        logger.d { "Trying to get: $originalUrl" }
+        val url = feedUrlRetriever.getFeedUrl(originalUrl) ?: return FeedAddedState.Error.InvalidUrl
+        logger.d { "Found url: $url" }
+
+        val addResult = gReaderRepository.addFeedSource(url = url, categoryName = categoryName)
+        if (addResult.isError()) {
+            return FeedAddedState.Error.GenericError
+        }
+
+        updateMutableState.update { StartedFeedUpdateStatus }
+        gReaderRepository.sync()
+        updateMutableState.update { FinishedFeedUpdateStatus }
+        getFeeds()
+        return FeedAddedState.FeedAdded()
+    }
+
+    private suspend fun editFeedSourceForLocalAccount(
+        newFeedSource: FeedSource,
+        originalFeedSource: FeedSource?,
+    ): FeedEditedState {
+        val newUrl = sanitizeUrl(newFeedSource.url)
+        val previousUrl = originalFeedSource?.url
+
+        val newName = newFeedSource.title
+        val previousName = originalFeedSource?.title
+        if (newName != previousName) {
+            updateCurrentFilterName(newName)
+        }
+
+        return if (newUrl != previousUrl) {
+            when (val response = fetchSingleFeed(newUrl, newFeedSource.category)) {
+                is AddFeedResponse.FeedFound -> {
+                    updateFeedSource(
+                        newFeedSource.copy(
+                            url = response.parsedFeedSource.url,
+                        ),
+                    )
+                    FeedEditedState.FeedEdited(newName)
+                }
+
+                AddFeedResponse.EmptyFeed -> {
+                    FeedEditedState.Error.InvalidTitleLink
+                }
+
+                AddFeedResponse.NotRssFeed -> {
+                    FeedEditedState.Error.InvalidUrl
+                }
+            }
+        } else {
+            updateFeedSource(newFeedSource)
+            FeedEditedState.FeedEdited(newName)
+        }
+    }
+
+    private suspend fun editFeedSourceForFreshRss(
+        newFeedSource: FeedSource,
+        originalFeedSource: FeedSource?,
+    ): FeedEditedState {
+        gReaderRepository.editFeedSource(
+            newFeedSource = newFeedSource,
+            originalFeedSource = originalFeedSource,
+        ).fold(
+            onFailure = {
+                return FeedEditedState.Error.GenericError
+            },
+            onSuccess = {
+                updateCurrentFilterName(newFeedSource.title)
+                return FeedEditedState.FeedEdited(newFeedSource.title)
+            },
+        )
+    }
+
+    private suspend fun addFeedSource(feedFound: AddFeedResponse.FeedFound) = withContext(dispatcherProvider.io) {
+        val rssChannel = feedFound.rssChannel
+        val parsedFeedSource = feedFound.parsedFeedSource
+        val currentTimestamp = dateFormatter.currentTimeMillis()
+        val feedSource = FeedSource(
+            id = parsedFeedSource.url.hashCode().toString(),
+            url = parsedFeedSource.url,
+            title = parsedFeedSource.title,
+            lastSyncTimestamp = currentTimestamp,
+            category = parsedFeedSource.category,
+            logoUrl = parsedFeedSource.logoUrl,
+        )
+
+        val feedItems = rssChannelMapper.getFeedItems(
+            rssChannel = rssChannel,
+            feedSource = feedSource,
+        )
+
+        databaseHelper.insertFeedSource(
+            listOf(
+                parsedFeedSource,
+            ),
+        )
+        databaseHelper.insertFeedItems(feedItems, currentTimestamp)
+        feedSyncRepository.insertSyncedFeedSource(listOf(parsedFeedSource.toFeedSource()))
+        feedSyncRepository.performBackup()
+        updateMutableState.update { FinishedFeedUpdateStatus }
+        getFeeds()
+    }
+
+    private suspend fun updateFeedSource(feedSource: FeedSource) {
+        databaseHelper.updateFeedSource(feedSource)
+        feedSyncRepository.updateFeedSource(feedSource)
+        feedSyncRepository.performBackup()
     }
 
     private data class AddResult(

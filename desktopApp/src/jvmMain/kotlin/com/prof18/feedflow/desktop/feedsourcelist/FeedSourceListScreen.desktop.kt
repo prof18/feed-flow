@@ -1,7 +1,11 @@
 package com.prof18.feedflow.desktop.feedsourcelist
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +21,7 @@ import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
+import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceListContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
@@ -44,6 +49,35 @@ class FeedSourceListScreen : Screen {
         val feedSources by viewModel.feedSourcesState.collectAsState()
 
         val navigator = LocalNavigator.currentOrThrow
+        val strings = LocalFeedFlowStrings.current
+        val snackbarHostState = remember { SnackbarHostState() }
+
+        LaunchedEffect(Unit) {
+            viewModel.errorState.collect { errorState ->
+                when (errorState) {
+                    UIErrorState.DatabaseError -> {
+                        snackbarHostState.showSnackbar(
+                            strings.databaseError,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+
+                    is UIErrorState.FeedErrorState -> {
+                        snackbarHostState.showSnackbar(
+                            strings.feedErrorMessage(errorState.feedName),
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+
+                    UIErrorState.SyncError -> {
+                        snackbarHostState.showSnackbar(
+                            strings.syncErrorMessage,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+                }
+            }
+        }
 
         FeedSourceListContent(
             feedSourceListState = feedSources,
@@ -64,6 +98,9 @@ class FeedSourceListScreen : Screen {
             },
             onRenameFeedSourceClick = { feedSource, newName ->
                 viewModel.updateFeedName(feedSource, newName)
+            },
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
             },
         )
     }

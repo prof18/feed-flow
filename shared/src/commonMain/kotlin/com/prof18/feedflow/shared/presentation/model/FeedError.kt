@@ -7,3 +7,5 @@ internal data class FeedErrorState(
 ) : ErrorState
 
 internal data object DatabaseError : ErrorState
+
+internal data object SyncError : ErrorState

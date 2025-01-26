@@ -1,6 +1,6 @@
 package com.prof18.feedflow.shared.domain.feedsync
 
-import com.prof18.feedflow.shared.domain.model.SyncResult
+import com.prof18.feedflow.core.model.SyncResult
 
 internal interface FeedSyncWorker {
     /**

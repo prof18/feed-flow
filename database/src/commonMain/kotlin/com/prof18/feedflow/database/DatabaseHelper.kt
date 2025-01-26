@@ -131,6 +131,11 @@ class DatabaseHelper(
             dbRef.feedItemQueries.updateReadStatus(urlHash = feedItemId.id, isRead = isRead)
         }
 
+    suspend fun updateReadStatus(feedItemId: List<FeedItemId>, isRead: Boolean) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.updateAllReadStatus(urlHash = feedItemId.map { it.id }, isRead = isRead)
+        }
+
     suspend fun markAllFeedAsRead(feedFilter: FeedFilter) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             when (feedFilter) {
@@ -166,6 +171,24 @@ class DatabaseHelper(
             dbRef.feedSourceQueries.deleteFeedSource(feedSourceId)
             dbRef.feedItemQueries.deleteAllWithFeedSource(feedSourceId)
         }
+
+    suspend fun deleteFeedSourceExcept(feedSourceIds: List<String>) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.deleteAllExcept(feedSourceIds)
+            dbRef.feedItemQueries.deleteAllExcept(feedSourceIds)
+        }
+
+    suspend fun selectAllUrlsForFilter(feedFilter: FeedFilter): List<String> = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries
+            .selectFeedUrlsForFilter(
+                feedSourceId = feedFilter.getFeedSourceId(),
+                feedSourceCategoryId = feedFilter.getCategoryId(),
+                // Marking read things already read does not make sense, that's why the hardcoded false
+                isRead = feedFilter.getIsReadFlag(false),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+            )
+            .executeAsList()
+    }
 
     fun observeFeedSourceCategories(): Flow<List<FeedSourceCategory>> =
         dbRef.feedSourceCategoryQueries.selectAll()
@@ -292,6 +315,51 @@ class DatabaseHelper(
                     id = queryResult.url_hash,
                     isRead = queryResult.is_read,
                     isBookmarked = queryResult.is_bookmarked,
+                )
+            }
+    }
+
+    suspend fun getAllFeedItemUrlHashes(): List<String> = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.selectAllUrlHashes().executeAsList()
+    }
+
+    suspend fun updateFeedItemReadStatus(feedItemId: List<String>) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.updateRead(feedItemId)
+            dbRef.feedItemQueries.updateUnread(feedItemId)
+        }
+
+    suspend fun updateFeedItemBookmarkStatus(feedItemId: List<String>) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.updateBookmarked(feedItemId)
+            dbRef.feedItemQueries.updateNotBookmarked(feedItemId)
+        }
+
+    suspend fun deleteAll() = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.deleteAll()
+        dbRef.feedSourceCategoryQueries.deleteAll()
+        dbRef.feedSourceQueries.deleteAll()
+    }
+
+    suspend fun deleteCategoriesExcept(categoryIds: List<String>) = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.feedSourceCategoryQueries.deleteAllExcept(categoryIds)
+    }
+
+    suspend fun getFeedSourcesByCategory(categoryId: String) = withContext(backgroundDispatcher) {
+        dbRef.feedSourceQueries
+            .selectByCategory(categoryId)
+            .executeAsList()
+            .map { feedSource ->
+                FeedSource(
+                    id = feedSource.url_hash,
+                    url = feedSource.url,
+                    title = feedSource.feed_source_title,
+                    category = FeedSourceCategory(
+                        id = requireNotNull(feedSource.category_id),
+                        title = requireNotNull(feedSource.category_title),
+                    ),
+                    lastSyncTimestamp = feedSource.last_sync_timestamp,
+                    logoUrl = feedSource.feed_source_logo_url,
                 )
             }
     }

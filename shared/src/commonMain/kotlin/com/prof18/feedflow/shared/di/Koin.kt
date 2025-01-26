@@ -5,14 +5,17 @@ import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
+import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
 import com.prof18.feedflow.feedsync.dropbox.di.dropboxModule
+import com.prof18.feedflow.feedsync.greader.di.getGReaderModule
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.SettingsHelper
-import com.prof18.feedflow.shared.domain.DateFormatter
+import com.prof18.feedflow.shared.domain.DateFormatterImpl
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
@@ -22,7 +25,6 @@ import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryUseCase
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
-import com.prof18.feedflow.shared.domain.feedsync.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
@@ -31,6 +33,7 @@ import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
+import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
@@ -63,6 +66,7 @@ fun initKoin(
             modules +
                 getCoreModule(appConfig) +
                 dropboxModule +
+                getGReaderModule(appConfig.appEnvironment) +
                 getLoggingModule(appConfig, crashReportingLogWriter) +
                 getPlatformModule(appConfig.appEnvironment) +
                 getFeedSyncModule(appConfig.appEnvironment),
@@ -118,6 +122,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             logoRetriever = get(),
             dispatcherProvider = get(),
             feedSyncRepository = get(),
+            accountsRepository = get(),
+            gReaderRepository = get(),
         )
     }
 
@@ -133,6 +139,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             rssChannelMapper = get(),
             feedUrlRetriever = get(),
             feedSyncRepository = get(),
+            gReaderRepository = get(),
+            accountsRepository = get(),
         )
     }
 
@@ -142,8 +150,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
-    single {
-        DateFormatter(
+    single<DateFormatter> {
+        DateFormatterImpl(
             logger = getWith("DateFormatter"),
         )
     }
@@ -233,13 +241,9 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     }
 
     single {
-        HttpClient()
-    }
-
-    factory {
         HtmlRetriever(
             logger = getWith("HtmlRetriever"),
-            client = get(),
+            client = HttpClient(),
         )
     }
 
@@ -277,6 +281,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dropboxSettings = get(),
             icloudSettings = get(),
             appConfig = appConfig,
+            gReaderRepository = get(),
         )
     }
 
@@ -291,8 +296,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         EditFeedViewModel(
             categoryUseCase = get(),
-            feedManagerRepository = get(),
             feedRetrieverRepository = get(),
+            accountsRepository = get(),
         )
     }
 
@@ -308,6 +313,15 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     }
 
     singleOf(::FeedFontSizeRepository)
+
+    viewModel {
+        FreshRssSyncViewModel(
+            gReaderRepository = get(),
+            accountsRepository = get(),
+            dateFormatter = get(),
+            retrieverRepository = get(),
+        )
+    }
 }
 
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module

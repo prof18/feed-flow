@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.feedsync
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
+import com.prof18.feedflow.feedsync.greader.GReaderRepository
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,25 +15,30 @@ internal class AccountsRepository(
     private val dropboxSettings: DropboxSettings,
     private val icloudSettings: ICloudSettings,
     private val appConfig: AppConfig,
+    private val gReaderRepository: GReaderRepository,
 ) {
     private val currentAccountMutableState = MutableStateFlow(SyncAccounts.LOCAL)
     val currentAccountState = currentAccountMutableState.asStateFlow()
 
     private val desktopAccounts = listOf(
         SyncAccounts.DROPBOX,
+        SyncAccounts.FRESH_RSS,
     )
 
     private val macOSAccounts = listOf(
         SyncAccounts.DROPBOX,
         SyncAccounts.ICLOUD,
+        SyncAccounts.FRESH_RSS,
     )
 
     private val androidAccounts = listOf(
         SyncAccounts.DROPBOX,
+        SyncAccounts.FRESH_RSS,
     )
 
     private val iosAccounts = listOf(
         SyncAccounts.ICLOUD,
+        SyncAccounts.FRESH_RSS,
         SyncAccounts.DROPBOX,
     )
 
@@ -57,6 +63,10 @@ internal class AccountsRepository(
         currentAccountMutableState.value = SyncAccounts.ICLOUD
     }
 
+    fun setFreshRssAccount() {
+        currentAccountMutableState.value = SyncAccounts.FRESH_RSS
+    }
+
     fun clearAccount() {
         currentAccountMutableState.value = SyncAccounts.LOCAL
     }
@@ -71,6 +81,9 @@ internal class AccountsRepository(
             if (useICloud) {
                 return SyncAccounts.ICLOUD
             }
+        }
+        if (gReaderRepository.isAccountSet()) {
+            return SyncAccounts.FRESH_RSS
         }
         return SyncAccounts.LOCAL
     }

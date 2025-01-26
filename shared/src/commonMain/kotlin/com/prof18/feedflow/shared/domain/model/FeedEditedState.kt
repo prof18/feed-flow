@@ -10,5 +10,6 @@ sealed class FeedEditedState {
     sealed class Error : FeedEditedState() {
         data object InvalidUrl : Error()
         data object InvalidTitleLink : Error()
+        data object GenericError : Error()
     }
 }

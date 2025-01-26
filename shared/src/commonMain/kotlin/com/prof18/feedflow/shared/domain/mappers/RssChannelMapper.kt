@@ -1,10 +1,10 @@
 package com.prof18.feedflow.shared.domain.mappers
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.domain.DateFormatter
-import com.prof18.feedflow.shared.domain.HtmlParser
 import com.prof18.rssparser.model.RssChannel
 
 internal class RssChannelMapper(

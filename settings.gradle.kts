@@ -1,5 +1,3 @@
-import java.net.URI
-
 pluginManagement {
     includeBuild("build-logic")
     repositories {
@@ -49,3 +47,5 @@ include("feedSync:ikloud-macos")
 //        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))
 //    }
 // }
+include("feedSync:greader")
+include("feedSync:networkcore")

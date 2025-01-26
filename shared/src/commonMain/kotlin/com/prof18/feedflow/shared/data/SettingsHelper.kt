@@ -69,4 +69,7 @@ internal enum class SettingsFields {
     REMOVE_TITLE_FROM_DESCRIPTION,
     READER_MODE_FONT_SIZE,
     FEED_LIST_FONT_SCALE_FACTOR,
+    SYNC_PWD,
+    SYNC_USERNAME,
+    SYNC_URL,
 }

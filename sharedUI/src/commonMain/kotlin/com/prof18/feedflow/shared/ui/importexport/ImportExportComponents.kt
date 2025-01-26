@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -97,7 +96,8 @@ fun ImportExportContent(
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize(),
-                    feedSources = feedImportExportState.notValidFeedSources,
+                    feedSourcesInvalid = feedImportExportState.notValidFeedSources,
+                    feedSourceWithError = feedImportExportState.feedSourceWithError,
                     onDoneClick = onDoneClick,
                 )
         }
@@ -238,10 +238,19 @@ private fun ExportDoneView(
 
 @Composable
 private fun ImportDoneView(
-    feedSources: ImmutableList<ParsedFeedSource>,
+    feedSourcesInvalid: ImmutableList<ParsedFeedSource>,
+    feedSourceWithError: ImmutableList<ParsedFeedSource>,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+    val feedSources = feedSourcesInvalid.ifEmpty { feedSourceWithError }
+    val errorMessage = if (feedSourcesInvalid.isNotEmpty()) {
+        LocalFeedFlowStrings.current.wrongLinkReportTitle
+    } else {
+        LocalFeedFlowStrings.current.linkWithErrorReportTitle
+    }
+
     Column(
         modifier = modifier,
     ) {
@@ -272,7 +281,7 @@ private fun ImportDoneView(
                 modifier = Modifier
                     .padding(horizontal = Spacing.regular)
                     .padding(top = Spacing.regular),
-                text = LocalFeedFlowStrings.current.wrongLinkReportTitle,
+                text = errorMessage,
                 style = MaterialTheme.typography.titleMedium,
             )
 

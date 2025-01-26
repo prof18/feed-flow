@@ -4,4 +4,5 @@ enum class SyncAccounts {
     DROPBOX,
     LOCAL,
     ICLOUD,
+    FRESH_RSS,
 }

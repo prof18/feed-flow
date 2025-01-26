@@ -50,13 +50,19 @@ fun AddFeedScreen(
                     errorMessage = when (feedAddedState) {
                         FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
                         FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                        FeedAddedState.Error.GenericError -> strings.addFeedGenericError
                     }
                 }
 
                 is FeedAddedState.FeedAdded -> {
                     feedUrl = ""
                     showLoading = false
-                    val message = strings.feedAddedMessage(feedAddedState.feedName)
+                    val feedName = feedAddedState.feedName
+                    val message = if (feedName != null) {
+                        strings.feedAddedMessage(feedName)
+                    } else {
+                        strings.feedAddedMessageWithoutName
+                    }
                     Toast.makeText(context, message, Toast.LENGTH_SHORT)
                         .show()
                 }

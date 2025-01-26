@@ -5,21 +5,31 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.fold
+import com.prof18.feedflow.core.model.onError
+import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
+import com.prof18.feedflow.feedsync.greader.GReaderRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
+import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.NotValidFeedSources
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
+import com.prof18.feedflow.shared.presentation.model.ErrorState
+import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -33,30 +43,58 @@ internal class FeedManagerRepository(
     private val logoRetriever: FeedSourceLogoRetriever,
     private val dispatcherProvider: DispatcherProvider,
     private val feedSyncRepository: FeedSyncRepository,
+    private val accountsRepository: AccountsRepository,
+    private val gReaderRepository: GReaderRepository,
 ) {
-    suspend fun addFeedsFromFile(opmlInput: OpmlInput): NotValidFeedSources = withContext(dispatcherProvider.io) {
+
+    private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
+    val errorState = errorMutableState.asSharedFlow()
+
+    suspend fun addFeedsFromFile(
+        opmlInput: OpmlInput,
+    ): NotValidFeedSources = withContext(dispatcherProvider.io) {
         val feeds = opmlFeedHandler.generateFeedSources(opmlInput)
         val categories = feeds.mapNotNull { it.category }.distinct()
 
-        val validatedFeeds = validateFeeds(feeds)
+        val feedSourcesWithError = mutableListOf<ParsedFeedSource>()
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                for (feed in feeds) {
+                    gReaderRepository.addFeedSource(
+                        url = feed.url,
+                        categoryName = feed.category,
+                    ).onError {
+                        feedSourcesWithError.add(feed)
+                    }
+                }
+                return@withContext NotValidFeedSources(
+                    feedSources = emptyList(),
+                    feedSourcesWithError = feedSourcesWithError,
+                )
+            }
+            else -> {
+                val validatedFeeds = validateFeeds(feeds)
 
-        val validFeedSources: List<ParsedFeedSource> = validatedFeeds
-            .filter { it.isValid }
-            .map { it.parsedFeedSource }
+                val validFeedSources: List<ParsedFeedSource> = validatedFeeds
+                    .filter { it.isValid }
+                    .map { it.parsedFeedSource }
 
-        val notValidFeedSources = validatedFeeds
-            .filter { !it.isValid }
-            .map { it.parsedFeedSource }
+                val notValidFeedSources = validatedFeeds
+                    .filter { !it.isValid }
+                    .map { it.parsedFeedSource }
 
-        databaseHelper.insertCategories(categories)
-        databaseHelper.insertFeedSource(validFeedSources)
+                databaseHelper.insertCategories(categories)
+                databaseHelper.insertFeedSource(validFeedSources)
 
-        feedSyncRepository.addSourceAndCategories(validFeedSources.map { it.toFeedSource() }, categories)
-        feedSyncRepository.performBackup()
+                feedSyncRepository.addSourceAndCategories(validFeedSources.map { it.toFeedSource() }, categories)
+                feedSyncRepository.performBackup()
 
-        return@withContext NotValidFeedSources(
-            feedSources = notValidFeedSources,
-        )
+                return@withContext NotValidFeedSources(
+                    feedSources = notValidFeedSources,
+                    feedSourcesWithError = emptyList(),
+                )
+            }
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -95,9 +133,20 @@ internal class FeedManagerRepository(
     }
 
     suspend fun deleteFeed(feedSource: FeedSource) {
-        databaseHelper.deleteFeedSource(feedSource.id)
-        feedSyncRepository.deleteFeedSource(feedSource)
-        feedSyncRepository.performBackup()
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                gReaderRepository.deleteFeedSource(feedSource.id)
+                    .onErrorSuspend {
+                        errorMutableState.emit(SyncError)
+                    }
+            }
+
+            else -> {
+                databaseHelper.deleteFeedSource(feedSource.id)
+                feedSyncRepository.deleteFeedSource(feedSource)
+                feedSyncRepository.performBackup()
+            }
+        }
     }
 
     fun observeCategories(): Flow<List<FeedSourceCategory>> =
@@ -107,8 +156,16 @@ internal class FeedManagerRepository(
         databaseHelper.getFeedSourceCategories()
 
     suspend fun createCategory(categoryName: CategoryName) {
+        val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                "user/-/label/${categoryName.name}"
+            }
+
+            else -> categoryName.name.hashCode().toString()
+        }
+
         val category = FeedSourceCategory(
-            id = categoryName.name.hashCode().toString(),
+            id = categoryId,
             title = categoryName.name,
         )
         databaseHelper.insertCategories(
@@ -143,19 +200,41 @@ internal class FeedManagerRepository(
     }
 
     suspend fun deleteCategory(categoryId: String) {
-        databaseHelper.deleteCategory(categoryId)
-        feedSyncRepository.deleteFeedSourceCategory(categoryId)
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                gReaderRepository.deleteCategory(categoryId)
+                    .fold(
+                        onSuccess = {
+                            gReaderRepository.fetchFeedSourcesAndCategories()
+                                .onErrorSuspend {
+                                    errorMutableState.emit(SyncError)
+                                }
+                        },
+                        onFailure = {
+                            errorMutableState.emit(SyncError)
+                        },
+                    )
+            }
+
+            else -> {
+                databaseHelper.deleteCategory(categoryId)
+                feedSyncRepository.deleteFeedSourceCategory(categoryId)
+            }
+        }
     }
 
-    suspend fun updateFeedSourceName(feedSourceId: String, newName: String) {
-        databaseHelper.updateFeedSourceName(feedSourceId, newName)
-        feedSyncRepository.updateFeedSourceName(feedSourceId, newName)
-        feedSyncRepository.performBackup()
-    }
-
-    suspend fun updateFeedSource(feedSource: FeedSource) {
-        databaseHelper.updateFeedSource(feedSource)
-        feedSyncRepository.updateFeedSource(feedSource)
-        feedSyncRepository.performBackup()
-    }
+    suspend fun updateFeedSourceName(feedSourceId: String, newName: String) =
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                gReaderRepository.editFeedSourceName(feedSourceId, newName)
+                    .onErrorSuspend {
+                        errorMutableState.emit(SyncError)
+                    }
+            }
+            else -> {
+                databaseHelper.updateFeedSourceName(feedSourceId, newName)
+                feedSyncRepository.updateFeedSourceName(feedSourceId, newName)
+                feedSyncRepository.performBackup()
+            }
+        }
 }

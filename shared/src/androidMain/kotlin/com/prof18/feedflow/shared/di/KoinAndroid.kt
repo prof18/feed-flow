@@ -2,10 +2,10 @@ package com.prof18.feedflow.shared.di
 
 import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
+import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.createDatabaseDriver
-import com.prof18.feedflow.shared.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker

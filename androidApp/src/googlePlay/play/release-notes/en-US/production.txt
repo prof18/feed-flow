@@ -1,4 +1,4 @@
 - Bug fixes and improvements
-- New Chinese, Estonian, and Russian translations
-- Allow feed on local networks
-- Fix an issue that prevents renaming feeds
+- Add support for syncing FreshRSS
+- Show a loading message when deleting old feeds
+- Translation updates

@@ -39,7 +39,6 @@ import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
-import com.prof18.rssparser.RssParser
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -107,10 +106,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             backgroundDispatcher = Dispatchers.IO,
             logger = getWith("DatabaseHelper"),
         )
-    }
-
-    single {
-        RssParser()
     }
 
     factory {

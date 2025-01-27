@@ -32,6 +32,7 @@ import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
+import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
 import com.russhwolf.settings.Settings
@@ -43,6 +44,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.module.Module
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
+import platform.Foundation.NSURLSession
+import platform.Foundation.NSURLSessionConfiguration
 
 @OptIn(ExperimentalKermitApi::class)
 fun initKoinIos(
@@ -79,6 +82,18 @@ fun initKoinIos(
 
 @OptIn(ExperimentalSettingsImplementation::class)
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
+    single {
+        RssParserBuilder(
+            nsUrlSession = NSURLSession.sessionWithConfiguration(
+                NSURLSessionConfiguration.defaultSessionConfiguration().apply {
+                    HTTPAdditionalHeaders = mapOf(
+                        "User-Agent" to "FeedFlow (RSS Reader; +https://feedflow.dev)",
+                    )
+                },
+            ),
+        ).build()
+    }
+
     single<SqlDriver> {
         createDatabaseDriver(appEnvironment)
     }

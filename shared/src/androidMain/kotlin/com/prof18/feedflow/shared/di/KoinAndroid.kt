@@ -15,10 +15,13 @@ import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.utils.UserAgentInterceptor
+import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import okhttp3.OkHttpClient
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -27,6 +30,15 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
+    single {
+        RssParserBuilder(
+            callFactory = OkHttpClient
+                .Builder()
+                .addInterceptor(UserAgentInterceptor())
+                .build(),
+        ).build()
+    }
+
     single<SqlDriver> {
         createDatabaseDriver(
             context = get(),

@@ -206,7 +206,7 @@ struct ImportExportContent: View {
   }
 
   @ViewBuilder
-  private func makeInvalidFeedSourceView(state: FeedImportExportState.ImportSuccess) -> some View {
+  private func makeErrorFeedSourceView(state: FeedImportExportState.ImportSuccess) -> some View {
     Text(feedFlowStrings.linkWithErrorReportTitle)
       .font(.body)
       .padding(Spacing.regular)
@@ -243,7 +243,7 @@ struct ImportExportContent: View {
   }
 
   @ViewBuilder
-  private func makeErrorFeedSourceView(state: FeedImportExportState.ImportSuccess) -> some View {
+  private func makeInvalidFeedSourceView(state: FeedImportExportState.ImportSuccess) -> some View {
     Text(feedFlowStrings.wrongLinkReportTitle)
       .font(.body)
       .padding(Spacing.regular)

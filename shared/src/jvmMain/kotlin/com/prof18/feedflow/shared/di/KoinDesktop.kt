@@ -18,11 +18,14 @@ import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.MarkdownToHtmlConverter
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.utils.UserAgentInterceptor
+import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import okhttp3.OkHttpClient
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -55,6 +58,15 @@ private fun getDatabaseModule(appEnvironment: AppEnvironment): Module =
     }
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
+    single {
+        RssParserBuilder(
+            callFactory = OkHttpClient
+                .Builder()
+                .addInterceptor(UserAgentInterceptor())
+                .build(),
+        ).build()
+    }
+
     factory {
         OpmlFeedHandler(
             dispatcherProvider = get(),

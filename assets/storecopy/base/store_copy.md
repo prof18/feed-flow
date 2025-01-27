@@ -8,15 +8,35 @@ Minimal, fast, uncluttered
 
 ## Long desc
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic RSS Reader. Enjoy a clutter-free reading experience, as FeedFlow offers a minimalistic list and opens the articles on their respective websites or in reader mode.
+Stay informed your way with FeedFlow, a minimalistic RSS reader that puts you in control of your content timeline.
+Sync across all your devices and enjoy a clean, distraction-free reading experience.
 
-Tailor your browsing experience by choosing your preferred browser. This way, you can select your favorite privacy-focused browser to separate your reading experience from your main browser. And if you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.
+Key Features:
 
-Transitioning to FeedFlow is a breeze. Your existing RSS collection can be imported with our full and easy import and export capabilities through OPML files, ensuring a seamless reading experience.
+- Minimalist Design: Focus on what matters with a clutter-free interface
+- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS) or Dropbox (all platforms)
+- FreshRSS Integration: Connect to your FreshRSS server for advanced feed management
+- Flexible Reading Options: Choose between web view, reader mode, or your preferred browser
+- Privacy-Focused: Select your favorite privacy-focused browser for a separate reading experience
+- Easy Migration: Import and export your RSS feeds via OPML files
 
-Just focus on reading (or scrolling)!
+What Sets FeedFlow Apart:
 
-The app is still in development, so some features may be missing or there may be issues. Please report any bugs or feature suggestions!
+- Clean, intuitive interface that lets you focus on content
+- Multiple sync options to fit your workflow (Beta)
+- Customizable reading experience with reader mode
+- Fast and lightweight
+- Regular updates and active development
+
+Perfect for:
+- News enthusiasts who want control over their information diet
+- Privacy-conscious readers
+- Content creators tracking multiple sources
+- Anyone looking to declutter their digital reading experience
+
+Join thousands of readers who've chosen FeedFlow for a better way to stay informed.
+
+Note: Sync functionality is currently in beta. The experience is continuously improving based on user feedback.
 
 ## Screenshot 1
 

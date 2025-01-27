@@ -130,4 +130,9 @@
     <string name="open_source_licenses">Lisensi sumber terbuka</string>
     <string name="no_feed_modal_message">Sepertinya Anda belum berlangganan feed apa pun. Anda dapat menambahkan feed secara manual, mengimpor langganan dari pembaca RSS lain, atau menghubungkan akun untuk menyinkronkan data dari perangkat lain (fungsi ini masih dalam versi beta).</string>
     <string name="feed_add_in_progress_message">Harap tunggu, ketersediaan setiap feed sedang diperiksa. Operasi ini dapat memakan waktu cukup lama tergantung pada jumlah feed yang Anda impor</string>
+    <string name="edit_feed_generic_error">Terjadi kesalahan saat menyunting feed. Silakan ulangi.</string>
+    <string name="feed_added_message_without_name">Feed ditambahkan</string>
+    <string name="sync_error_message">Terjadi kesalahan saat sinkronisasi feed. Silakan ulangi.</string>
+    <string name="wrong_credentials_error_message">Kredensial salah. Silakan coba lagi.</string>
+    <string name="add_feed_generic_error">Terjadi kesalahan saat menambahkan feed. Silakan ulangi</string>
 </resources>

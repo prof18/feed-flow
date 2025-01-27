@@ -7,3 +7,6 @@ data class FeedItemUrlInfo(
     val openOnlyOnBrowser: Boolean = false,
     val isBookmarked: Boolean,
 )
+
+fun FeedItemUrlInfo.shouldOpenInBrowser(): Boolean =
+    openOnlyOnBrowser || url.contains("type=pdf") || url.contains("youtube.com")

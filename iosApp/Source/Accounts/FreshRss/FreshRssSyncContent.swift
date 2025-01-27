@@ -47,69 +47,84 @@ struct FreshRssSyncContent: View {
     }
   }
 
-  private func disconnectedView() -> some View {
-    Form {
-      Section(
-        content: {
-          TextField(feedFlowStrings.accountTextFieldServerUrl, text: $serverUrl)
-            .textContentType(.URL)
-            .keyboardType(.URL)
-            .disableAutocorrection(true)
-        },
-        header: {
-          Text(feedFlowStrings.accountTextFieldServerUrl)
-        }
-      )
+  private func serverUrlSection() -> some View {
+    Section(
+      content: {
+        TextField(feedFlowStrings.accountTextFieldServerUrl, text: $serverUrl)
+          .textContentType(.URL)
+          .keyboardType(.URL)
+          .disableAutocorrection(true)
+      },
+      header: {
+        Text(feedFlowStrings.accountTextFieldServerUrl)
+      }
+    )
+  }
 
-      Section(
-        content: {
-          TextField(feedFlowStrings.accountTextFieldUsername, text: $username)
-            .textContentType(.username)
-            .disableAutocorrection(true)
-        },
-        header: {
-          Text(feedFlowStrings.accountTextFieldUsername)
-        }
-      )
+  private func usernameSection() -> some View {
+    Section(
+      content: {
+        TextField(feedFlowStrings.accountTextFieldUsername, text: $username)
+          .textContentType(.username)
+          .disableAutocorrection(true)
+      },
+      header: {
+        Text(feedFlowStrings.accountTextFieldUsername)
+      }
+    )
+  }
 
-      Section(
-        content: {
-          HStack {
-            if isPasswordVisible {
-              TextField(feedFlowStrings.accountTextFieldPassword, text: $password)
-                .textContentType(.password)
-            } else {
-              SecureField(feedFlowStrings.accountTextFieldPassword, text: $password)
-                .textContentType(.password)
-            }
+  private func passwordSection() -> some View {
+    Section(
+      content: {
+        HStack {
+          if isPasswordVisible {
+            TextField(feedFlowStrings.accountTextFieldPassword, text: $password)
+              .textContentType(.password)
+          } else {
+            SecureField(feedFlowStrings.accountTextFieldPassword, text: $password)
+              .textContentType(.password)
+          }
 
-            Button(
-              action: { isPasswordVisible.toggle() }
-            ) {
+          Button(
+            action: { isPasswordVisible.toggle() },
+            label: {
               Image(systemName: isPasswordVisible ? "eye.fill" : "eye.slash.fill")
                 .foregroundColor(.gray)
             }
-          }
-        },
-        header: {
-          Text(feedFlowStrings.accountTextFieldPassword)
+          )
         }
-      )
+      },
+      header: {
+        Text(feedFlowStrings.accountTextFieldPassword)
+      }
+    )
+  }
 
-      Section {
-        Button(
-          action: {
-            onLoginClick(serverUrl, username, password)
-          }
-        ) {
+  private func loginButton() -> some View {
+    Section {
+      Button(
+        action: {
+          onLoginClick(serverUrl, username, password)
+        },
+        label: {
           HStack {
             Spacer()
             Text(feedFlowStrings.accountConnectButton)
             Spacer()
           }
         }
-        .disabled(isLoginLoading || serverUrl.isEmpty || username.isEmpty || password.isEmpty)
-      }
+      )
+      .disabled(isLoginLoading || serverUrl.isEmpty || username.isEmpty || password.isEmpty)
+    }
+  }
+
+  private func disconnectedView() -> some View {
+    Form {
+      serverUrlSection()
+      usernameSection()
+      passwordSection()
+      loginButton()
     }
     .scrollContentBackground(.hidden)
     .scrollDismissesKeyboard(.interactively)

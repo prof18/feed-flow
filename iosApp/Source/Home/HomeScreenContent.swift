@@ -249,30 +249,21 @@ struct HomeContent: View {
   func getNavBarName(feedFilter: FeedFilter) -> String {
     let deviceType = getDeviceType()
 
+    func getTruncatedTitle(_ title: String) -> String {
+      switch deviceType {
+      case .iphonePortrait:
+        return title.truncate(maxChar: 12)
+      case .ipad, .iphoneLandscape:
+        return title.truncate(maxChar: 40)
+      }
+    }
+
     switch feedFilter {
     case let category as FeedFilter.Category:
-      switch deviceType {
-      case .ipad:
-        return category.feedCategory.title.truncate(maxChar: 40)
-
-      case .iphonePortrait:
-        return category.feedCategory.title.truncate(maxChar: 12)
-
-      case .iphoneLandscape:
-        return category.feedCategory.title.truncate(maxChar: 40)
-      }
+      return getTruncatedTitle(category.feedCategory.title)
 
     case let source as FeedFilter.Source:
-      switch deviceType {
-      case .ipad:
-        return source.feedSource.title.truncate(maxChar: 40)
-
-      case .iphonePortrait:
-        return source.feedSource.title.truncate(maxChar: 12)
-
-      case .iphoneLandscape:
-        return source.feedSource.title.truncate(maxChar: 40)
-      }
+      return getTruncatedTitle(source.feedSource.title)
 
     case is FeedFilter.Read:
       return feedFlowStrings.drawerTitleRead

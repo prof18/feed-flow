@@ -8,27 +8,36 @@ RSS Reader minimalista
 
 ## Descrizione completa
 
-Segui i tuoi feed RSS preferiti con FeedFlow, un lettore RSS minimalista. Goditi
-un'esperienza di lettura pulita e senza distrazioni, grazie ad una lista
-minimalista e all'apertura degli articoli sui rispettivi siti web o in modalità
-lettura.
+Resta aggiornato a modo tuo con FeedFlow, un lettore RSS minimalista che ti permette di avere il pieno controllo 
+della tua timeline di contenuti.
+Sincronizza tra tutti i tuoi dispositivi e goditi un'esperienza di lettura pulita e senza distrazioni.
 
-Personalizza la tua esperienza di navigazione scegliendo il tuo browser
-preferito. In questo modo, puoi selezionare il tuo browser preferito incentrato
-sulla privacy per separare l'esperienza di lettura dal tuo browser principale. E
-se vuoi evitare il browser, FeedFlow offre una modalità lettura per goderti il
-contenuto degli articoli senza distrazioni.
+Caratteristiche Principali:
 
-Passare a FeedFlow è semplicissimo. La tua raccolta RSS esistente può essere
-importata grazie alla completa e semplice funzionalità di importazione ed
-esportazione tramite file OPML, garantendo un'esperienza di lettura senza
-interruzioni.
+- Design Minimalista: Concentrati su ciò che conta con un'interfaccia essenziale
+- Sincronizzazione Perfetta: Mantieni i tuoi feed sincronizzati tra dispositivi con iCloud (iOS/macOS) o Dropbox (tutte le piattaforme)
+- Integrazione FreshRSS: Connettiti al tuo server FreshRSS per una gestione avanzata dei feed
+- Opzioni di Lettura Flessibili: Scegli tra visualizzazione web, modalità lettura o il tuo browser preferito
+- Attento alla Privacy: Seleziona il tuo browser preferito orientato alla privacy per un'esperienza di lettura separata
+- Migrazione Semplice: Importa ed esporta i tuoi feed RSS tramite file OPML
 
-Concentrati solo sulla lettura!
+Cosa Rende FeedFlow Unico:
 
-L'app è ancora in fase di sviluppo, quindi alcune funzionalità potrebbero
-mancare o potrebbero esserci dei problemi. Segnala qualsiasi bug o suggerimento
-per le funzionalità!
+- Interfaccia pulita e intuitiva che ti permette di concentrarti sui contenuti
+- Molteplici opzioni di sincronizzazione per adattarsi al tuo flusso di lavoro (Beta)
+- Esperienza di lettura personalizzabile con modalità lettura
+- Veloce e leggero
+- Aggiornamenti regolari e sviluppo attivo
+
+Perfetto per:
+- Appassionati di notizie che vogliono controllare la propria dieta informativa
+- Lettori attenti alla privacy
+- Content creator che seguono diverse fonti
+- Chiunque voglia semplificare la propria esperienza di lettura digitale
+
+Unisciti a migliaia di lettori che hanno scelto FeedFlow per rimanere informati in modo migliore.
+
+Nota: La funzionalità di sincronizzazione è attualmente in versione beta. L'esperienza viene continuamente migliorata in base al feedback degli utenti.
 
 ## Screenshot 1
 

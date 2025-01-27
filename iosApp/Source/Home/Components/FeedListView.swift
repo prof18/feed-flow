@@ -61,7 +61,7 @@ struct FeedListView: View {
           ForEach(Array(feedState.enumerated()), id: \.element) { index, feedItem in
             Button(
               action: {
-                if browserSelector.openReaderMode() {
+                  if browserSelector.openReaderMode(link: feedItem.url) {
                   self.appState.navigate(
                     route: CommonViewRoute.readerMode(feedItem: feedItem)
                   )
@@ -122,10 +122,11 @@ struct FeedListView: View {
               Button(
                 action: {
                   onMarkAllAsReadClick()
+                },
+                label: {
+                  Text(feedFlowStrings.markAllReadButton)
                 }
-              ) {
-                Text(feedFlowStrings.markAllReadButton)
-              }
+              )
               .buttonStyle(.borderless)
               .frame(maxWidth: .infinity)
               .listRowSeparator(.hidden)

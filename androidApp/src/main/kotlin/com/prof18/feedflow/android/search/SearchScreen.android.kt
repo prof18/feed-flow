@@ -15,6 +15,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.SearchState
+import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
@@ -76,7 +77,7 @@ internal fun SearchScreen(
         },
         navigateBack = navigateBack,
         onFeedItemClick = { urlInfo ->
-            if (browserManager.openReaderMode() && !urlInfo.openOnlyOnBrowser) {
+            if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
                 navigateToReaderMode(urlInfo)
             } else {
                 browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)

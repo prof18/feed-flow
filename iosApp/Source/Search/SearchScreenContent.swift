@@ -48,7 +48,7 @@ struct SearchScreenContent: View {
         List {
             ForEach(Array(state.items.enumerated()), id: \.element) { index, feedItem in
                 Button(action: {
-                    if browserSelector.openReaderMode() {
+                    if browserSelector.openReaderMode(link: feedItem.url) {
                         self.appState.navigate(
                             route: CommonViewRoute.readerMode(feedItem: feedItem)
                         )

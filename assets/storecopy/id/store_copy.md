@@ -8,25 +8,41 @@ Minimal, cepat, rapi
 
 ## Penjelasan panjang
 
-Ikuti umpan RSS favorit Anda dengan FeedFlow, Pembaca RSS minimalis. Nikmati
-pengalaman membaca yang bebas gangguan, karena FeedFlow menawarkan daftar
-minimalis dan membuka artikel di situs web masing-masing atau dalam mode
-pembaca.
+Stay informed your way with FeedFlow, a minimalistic RSS reader that puts you in
+control of your content timeline. Sync across all your devices and enjoy a
+clean, distraction-free reading experience.
 
-Sesuaikan pengalaman menjelajah Anda dengan memilih peramban pilihan Anda.
-Dengan cara ini, Anda dapat memilih peramban favorit yang berfokus pada privasi
-untuk memisahkan pengalaman membaca Anda dari peramban utama. Dan jika Anda
-ingin menghindari peramban, FeedFlow menawarkan mode pembaca untuk menikmati
-konten artikel tanpa gangguan apa pun.
+Fitur Kunci:
 
-Transisi ke FeedFlow sangat mudah. Koleksi RSS Anda yang sudah ada dapat diimpor
-dengan kemampuan impor dan ekspor kami yang lengkap dan mudah melalui file OPML,
-yang menjamin pengalaman membaca yang lancar.
+- Desain Minimalis: Fokus pada yang penting dengan antarmuka yang bersih
+- Sinkronisasi: Jaga umpan Anda tetap sinkron pada semua perangkat dengan iCloud
+  (iOS/macOS) atau Dropbox (semua platform)
+- Integrasi FreshRSS: Sambungkan ke peladen FreshRSS Anda untuk manajemen umpan
+  tingkat lanjut
+- Opsi Membaca Fleksibel: Pilih antara webview, mode baca, atau peramban pilihan
+  Anda
+- Fokus pada Privasi: Bebas pilih peramban favorit Anda yang fokus pada privasi
+- Mudah Migrasi: Impor dan ekspor umpan RSS Anda via berkas OPML
 
-Fokus saja pada membaca (atau menggulir)!
+Yang Membedakan FeedFlow:
 
-Aplikasi ini masih dalam tahap pengembangan, jadi beberapa fitur mungkin masih
-belum ada atau mungkin ada masalah. Harap laporkan bug atau saran fitur apa pun!
+- Bersih, antarmuka sederhana yang fokus pada konten
+- Beberapa opsi sinkronisasi sesuai dengan kebutuhan Anda (Beta)
+- Personalisasi pengalaman membaca dengan mode baca
+- Ringan dan cepat
+- Pembaruan berkala dan pengembangan yang aktif
+
+Sempurna untuk:
+- Pembaca berita yang ingin kontrol penuh terhadap informasi yang diinginkan
+- Pembaca yang sadar pada privasi
+- Kreator konten yang mengikuti beberapa sumber
+- Siapapun yang ingin menyederhanakan pengalaman membaca digital mereka
+
+Gabung dengan ribuan pembaca yang memilih FeedFlow untuk cara yang lebih baik
+mendapatkan informasi.
+
+Catatan: Fitur sinkronisasi saat ini masih dalam tahap Beta. Akan terus
+dikembangkan sesuai dengan masukan dari pengguna.
 
 ## Tangkapan layar 1
 

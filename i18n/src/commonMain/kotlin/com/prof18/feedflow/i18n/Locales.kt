@@ -28,6 +28,9 @@ val feedFlowStrings: Map<String, FeedFlowStrings> = mapOf(
 
     Locales.Ta to TaFeedFlowStrings,
     "ta-IN" to TaFeedFlowStrings,
+
+    Locales.Iw to IwFeedFlowStrings,
+    "he" to IwFeedFlowStrings,
 )
 
 expect fun String.format(vararg args: Any): String

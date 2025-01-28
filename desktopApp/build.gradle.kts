@@ -189,6 +189,7 @@ val macExtraPlistKeys: String
           <string>gl</string>
           <string>vi</string>
           <string>ta</string>
+          <string>he</string>
         </array>
         <key>NSUbiquitousContainers</key>
         <dict>

@@ -7,7 +7,6 @@ FeedFlow - RSS Reader
 Minimal, fast, uncluttered
 
 ## Long desc
-
 Stay informed your way with FeedFlow, a minimalistic RSS reader that puts you in control of your content timeline.
 Sync across all your devices and enjoy a clean, distraction-free reading experience.
 

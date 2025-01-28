@@ -88,7 +88,7 @@
     <string name="drawer_title_feed_sources">Uudisvoogude allikad</string>
     <string name="add_feed_categories_title">Kategooriad</string>
     <string name="import_export_description">Selleks, et andmeid saaks mugavamalt tõsta erinevate uudisvoogude lugejate vahel, toetab ka FeedFlow sinu tellimuste importimist OPML-failidest ning ka eksportimist sinna</string>
-    <string name="no_feed_modal_message">Tundub, et sa pole veel ühtegi uudisvoogu tellinud. Sa võid uudisvoo lisada käsitsi, importida oma tellimused mõnest teisest RSS-uudisvoogude lugejast või sünkroniseerimaks andmed mõnest muust nutiseadmest saad lisada oma kasutajakonto (viimane on hetkel beetafunktsionaalsuses).</string>
+    <string name="no_feed_modal_message">Sa võid uudisvoo lisada käsitsi, importida oma tellimused mõnest teisest RSS-uudisvoogude lugejast või sünkroniseerimaks andmed mõnest muust nutiseadmest saad lisada oma kasutajakonto (viimane on hetkel beetafunktsionaalsuses).</string>
     <string name="drawer_title_read">Loe</string>
     <string name="settings_toggle_show_read_articles">Näita loetud artikleid ajajoonel</string>
     <string name="menu_add_to_bookmark">Lisa järjehoidjaks</string>
@@ -135,4 +135,18 @@
     <string name="settings_font_scale_subtitle_example">See on artikli alapealkiri</string>
     <string name="settings_feed_list_font_scale_title">Uudisvoo nime teksti mõõtkava</string>
     <string name="deleting_feed_dialog_title">Kustutan...</string>
+    <string name="edit_feed_generic_error">Uudisvoo muutmisel tekkis viga. Palun proovi uuesti.</string>
+    <string name="feed_added_message_without_name">Uudisvoog on lisatud</string>
+    <string name="sync_error_message">Uudisvoogude sünkroniseerimisel tekkis viga. Palun proovi uuesti.</string>
+    <string name="wrong_url_error_message">Lisatud link pole õige. Palun proovi uuesti.</string>
+    <string name="link_with_error_report_title">Järgnevad uudisvood jäid vea tõttu lisamata</string>
+    <string name="account_text_field_password">Salasõna</string>
+    <string name="no_fresh_rss_sync_yet">Andmed on veel sünkroniseerimata</string>
+    <string name="fresh_rss_last_sync">Viimane sünkroniseerimine: %s</string>
+    <string name="add_feed_generic_error">Uudisvoo laadimisel tekkis viga. Palun proovi uuesti</string>
+    <string name="account_text_field_username">Kasutajanimi</string>
+    <string name="wrong_credentials_error_message">Salasõna ja/või kasutajanimi pole õiged. Palun proovi uuesti.</string>
+    <string name="fresh_rss_account_connected">Ühenduse loomine sinu FreshRssi kontoga õnnestus</string>
+    <string name="account_text_field_server_url">Serveri võrguaadress</string>
+    <string name="account_login">Logi sisse</string>
 </resources>

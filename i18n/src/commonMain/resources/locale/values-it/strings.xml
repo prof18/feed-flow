@@ -69,7 +69,7 @@
     <string name="import_export_description">FeedFlow supporta l\'importazione e l\'esportazione delle tue iscrizioni con un file OPML, per una migliore interoperabilità con gli altri lettori di feed</string>
     <string name="no_feed_modal_title">Aggiungi un nuovo feed</string>
     <string name="import_export_opml_title">Importa ed esporta</string>
-    <string name="no_feed_modal_message">Sembra che tu non sia ancora iscritto ad alcun feed. Puoi aggiungere manualmente un feed, importare le tue iscrizioni da un altro lettore RSS oppure collegare un account per sincronizzare i dati da un altro dispositivo (questa funzionalità è in beta).</string>
+    <string name="no_feed_modal_message">Puoi aggiungere manualmente un feed, importare le tue iscrizioni da un altro lettore RSS oppure collegare un account per sincronizzare i dati da un altro dispositivo (questa funzionalità è in beta).</string>
     <string name="empty_screen_back_to_timeline">Torna alla timeline</string>
     <string name="bookmarked_articles_empty_screen_message">Non c\'è nulla qui, tempo di aggiungere qualcosa ai preferiti!</string>
     <string name="read_articles_empty_screen_message">Non c\'è nulla qui, tempo di cominciare a leggere!</string>
@@ -110,7 +110,7 @@
 \nSolo un account nello stesso momento è supportato.</string>
     <string name="dropbox_sync_success">Il tuo account Dropbox è stato collegato correttamente</string>
     <string name="dropbox_auth_code_hint">Codice di autorizzazione</string>
-    <string name="dropbox_sync_common_description">Collega il tuo account Dropbox per sincronizzare le iscrizioni ai feed, le categorie, gli articoli letti e quelli salvati tra i tuoi dispositivi. I dati verranno salvati in una cartella specifica dell\'app; FeedFlow non avrà accesso a nessun altro file</string>
+    <string name="dropbox_sync_common_description">Collega il tuo account Dropbox per sincronizzare le sottoscrizioni dei feed, le categorie, gli articoli letti e preferiti tra i tuoi dispositivi Android, iOS, iPadOS e desktop. I dati verranno salvati in una cartella specifica dell\'app; FeedFlow non avrà accesso a nessuno dei tuoi file</string>
     <string name="dropbox_confirm_button">Conferma</string>
     <string name="dropbox_sync_mobile_description">Facendo clic sul pulsante Connetti verrai reindirizzato all\'app o al sito web di Dropbox. Dopo aver collegato l\'account, puoi tornare a FeedFlow</string>
     <string name="last_download">Ultimo download: %s</string>
@@ -120,4 +120,33 @@
     <string name="add_account_button">Aggiungi account</string>
     <string name="settings_hide_duplicated_title_from_desc">Nascondi titolo dalla descrizione dell\'articolo</string>
     <string name="reader_mode_font_size">Dimensione testo</string>
+    <string name="add_feed_generic_error">Si è verificato un errore durante l\'aggiunta del feed. Si prega di riprovare</string>
+    <string name="feed_added_message_without_name">Feed aggiunto</string>
+    <string name="wrong_credentials_error_message">Le credenziali non sono corrette. Si prega di riprovare.</string>
+    <string name="account_text_field_server_url">URL del server</string>
+    <string name="account_text_field_username">Nome utente</string>
+    <string name="account_text_field_password">Password</string>
+    <string name="account_login">Accedi</string>
+    <string name="fresh_rss_account_connected">Il tuo account FreshRSS è stato collegato con successo</string>
+    <string name="no_fresh_rss_sync_yet">I dati non sono ancora sincronizzati</string>
+    <string name="fresh_rss_last_sync">Ultima sincronizzazione: %s</string>
+    <string name="icloud_sync_success">Il tuo account iCloud è stato collegato con successo</string>
+    <string name="link_with_error_report_title">I seguenti feed non sono stati aggiunti a causa di un errore</string>
+    <string name="no_icloud_sync_yet">I dati non sono ancora sincronizzati con iCloud. Clicca il pulsante backup per avviare una sincronizzazione</string>
+    <string name="icloud_sync_description">Collega il tuo account iCloud per sincronizzare le sottoscrizioni dei feed, le categorie, gli articoli letti e preferiti tra i tuoi dispositivi iOS, iPadOS e macOS. I dati verranno salvati in una cartella specifica dell\'app; FeedFlow non avrà accesso a nessuno dei tuoi file</string>
+    <string name="sync_error_message">Si è verificato un errore durante la sincronizzazione dei feed. Si prega di riprovare.</string>
+    <string name="edit_feed_generic_error">Si è verificato un problema durante la modifica del feed. Si prega di riprovare.</string>
+    <string name="wrong_url_error_message">Il link fornito non è corretto. Si prega di riprovare.</string>
+    <string name="deleting_feed_dialog_title">Eliminazione in corso...</string>
+    <string name="edit_feed_source_name_button">Modifica</string>
+    <string name="edit_feed">Modifica feed</string>
+    <string name="feed_name">Nome del feed</string>
+    <string name="feed_edited_message">Feed %s aggiornato</string>
+    <string name="settings_feed_list_title">Lista dei feed</string>
+    <string name="settings_feed_list_scale_title">Dimensione testo</string>
+    <string name="settings_font_scale_title_example">Titolo dell\'articolo</string>
+    <string name="settings_font_scale_subtitle_example">Questo è il sottotitolo dell\'articolo</string>
+    <string name="settings_font_scale_feed_source_example">Nome del feed</string>
+    <string name="settings_feed_list_font_scale_title">Grandezza testo elenco feed</string>
+    <string name="open_another_feed">Apri un altro feed</string>
 </resources>

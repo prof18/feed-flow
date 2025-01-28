@@ -235,7 +235,7 @@ private fun DrawerAddItem(
         selected = false,
         label = {
             Text(
-                text = "Add Feed",
+                text = LocalFeedFlowStrings.current.addFeed,
             )
         },
         icon = {

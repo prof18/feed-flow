@@ -107,7 +107,7 @@
     <string name="action_save">Gardar</string>
     <string name="no_feed_modal_title">Engadir nova canle</string>
     <string name="settings_toggle_show_read_articles">Mostrar na cronoloxía os artigos lidos</string>
-    <string name="no_feed_modal_message">Semella que aínda non tes subscricións a canles. Podes engadir manualmente unha canle, tamén podes importar as túas subscricións desde outro lector RSS, ou tamén podes sincronizar a conta con outro dispositivo (ferramenta en fase beta).</string>
+    <string name="no_feed_modal_message">Podes engadir manualmente unha canle, tamén podes importar as túas subscricións desde outro lector RSS, ou tamén podes sincronizar a conta con outro dispositivo (ferramenta en fase beta).</string>
     <string name="read_articles_empty_screen_message">Nada por aquí, hora de comezar a ler!</string>
     <string name="settings_reader_mode">Abrir artigos no propio lector</string>
     <string name="search_hint_subtitle">os resultados aparecerán automaticamente</string>
@@ -130,4 +130,18 @@
     <string name="settings_font_scale_subtitle_example">O subtítulo do artigo</string>
     <string name="open_another_feed">Abrir outra canle</string>
     <string name="deleting_feed_dialog_title">Eliminando…</string>
+    <string name="add_feed_generic_error">Algo fallou ao engadir a canle. Volve a intentalo</string>
+    <string name="edit_feed_generic_error">Algo fallou ao editar a canle. Volve a intentalo.</string>
+    <string name="feed_added_message_without_name">Engadiuse a canle</string>
+    <string name="wrong_url_error_message">A ligazón non é correcta. Volve intentalo.</string>
+    <string name="link_with_error_report_title">Non se engadiron as seguintes canles debido a un erro</string>
+    <string name="account_text_field_server_url">URL do servidor</string>
+    <string name="account_text_field_username">Identificador</string>
+    <string name="account_text_field_password">Contrasinal</string>
+    <string name="fresh_rss_account_connected">Conectouse correctamente a túa conta FreshRSS</string>
+    <string name="no_fresh_rss_sync_yet">Aínda non sincronizou</string>
+    <string name="fresh_rss_last_sync">Última sincr: %s</string>
+    <string name="sync_error_message">Algo fallou ao sincronizar as canles. Volve intentalo.</string>
+    <string name="wrong_credentials_error_message">As credenciais non son correctas. Volve intentalo.</string>
+    <string name="account_login">Acceder</string>
 </resources>

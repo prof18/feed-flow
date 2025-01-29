@@ -8,36 +8,40 @@ Napp, kiire ja müravaba viis uudiste jälgimiseks
 
 ## Pikk kirjeldus
 
-Stay informed your way with FeedFlow, a minimalistic RSS reader that puts you in
-control of your content timeline. Sync across all your devices and enjoy a
-clean, distraction-free reading experience.
+Jälgi sinule olulist teavet veebis FeedFlowga, minimalistliku uudisvoogude
+lugejaga, mis annab sulle võimaluse kontrollida, mida sa sind huvitava sisu
+ajajoonel näed. Sünkroniseeri andmeid kõigi oma nutiseadmete vahel ja naudi
+puhast ning müravaba lugemisvõimalust.
 
-Key Features:
+Põhifunktsionaalsused:
 
-- Minimalist Design: Focus on what matters with a clutter-free interface
-- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
-  or Dropbox (all platforms)
-- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
-  management
-- Flexible Reading Options: Choose between web view, reader mode, or your
-  preferred browser
-- Privacy-Focused: Select your favorite privacy-focused browser for a separate
-  reading experience
-- Easy Migration: Import and export your RSS feeds via OPML files
+- Minimalistlik kujundus: müravaba kasutajaliides võimaldab sul keskenduda
+  olulisele
+- Sujuv sünkroniseerimine: sünkroniseeri kõiki oma uudisvoogusid kasi iCloudi
+  (iOS/macOS) või Dropboxi (kõikidel platvormidel) abil
+- FreshRSSi lõiming: kui soovid paljusid lisavõimalusi uudisvoogude haldamiseks,
+  siis lisa liidestus oma FreshRSSi serveriga
+- Paindlikud lugemisvõimalused: sa saad valida veebivaate ja lugemisvaate vahel
+  või hoopis avada artiklid endale sobivas veebibrauseris
+- Privaatsuskeskne: kasuta artiklite lugemiseks oma parimat privaatsuskeskset
+  veebibrauserit
+- Lihtne andmete teisaldamine: impordi ja eksport oma uudisvooguse loendid
+  OPML-failidena
 
-What Sets FeedFlow Apart:
+Mis eristab FeedFlowd teistest sarnastest rakendustest:
 
-- Clean, intuitive interface that lets you focus on content
-- Multiple sync options to fit your workflow (Beta)
-- Customizable reading experience with reader mode
-- Fast and lightweight
-- Regular updates and active development
+- Müravaba ja intuitiivne kasutajaliides, mis võimaldab sul keskenduda sisule
+- Mitu erinevat sünkroniseerimisvõimalust sobitumaks sellega, kuidas sulle
+  meeldib asju teha (beeta)
+- Seadistatav lugemisvaade
+- Kiire ja vähekoormav
+- Sagedased uuendused ja aktiivne arendus
 
-Perfect for:
-- News enthusiasts who want control over their information diet
-- Privacy-conscious readers
-- Content creators tracking multiple sources
-- Anyone looking to declutter their digital reading experience
+Sobib ideaalselt:
+- Uutele huvilistele, kes soovivad leida parimad viise oma infovoo haldamiseks
+- Privaatsusteadlikele lugejatele
+- Sisuloojatele, kes peavad korraga jälgima paljusid allikaid
+- Kõigile, kes soovivad oma loetavast digimeediast müra eemaldada
 
 Liitu tuhandetega, kes kasutada FeedFlow rakendust enda parema informeerituse
 tagamiseks.

@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.DataResult
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -32,10 +33,8 @@ import com.prof18.feedflow.feedsync.greader.domain.SubscriptionEditAction
 import com.prof18.feedflow.feedsync.greader.domain.mapping.ItemContentDTOMapper
 import com.prof18.feedflow.feedsync.greader.domain.mapping.toFeedSource
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.days
@@ -361,7 +360,6 @@ class GReaderRepository internal constructor(
         return Unit.success()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun getItemsContent() {
         val idsFromDb = databaseHelper.getAllFeedItemUrlHashes().toSet()
         val items: Set<String> = with(syncItemHolder.get()) {
@@ -374,12 +372,11 @@ class GReaderRepository internal constructor(
         }
 
         val feedSources = databaseHelper.getFeedSources().toSet()
+        val feedItemsHolder = AtomicReference(emptyList<FeedItem>())
 
-        items
-            .chunked(PAGE_SIZE)
-            .asFlow()
-            .flatMapMerge { itemIds ->
-                suspend {
+        coroutineScope {
+            items.chunked(PAGE_SIZE).map { itemIds ->
+                launch {
                     gReaderClient.getStreamItemsContents(itemIds)
                         .fold(
                             onSuccess = { itemsResponse ->
@@ -392,15 +389,18 @@ class GReaderRepository internal constructor(
                                         feedSource = feedSource,
                                     )
                                 }
-                                databaseHelper.insertFeedItems(feedItems, dateFormatter.currentTimeMillis())
+                                feedItemsHolder.set(feedItemsHolder.get() + feedItems)
+                                logger.d { ">>> Finished chunk: size ${feedItems.size}" }
                             },
                             onFailure = {
                                 feedSyncMessageQueue.emitResult(SyncResult.Error)
                             },
                         )
-                }.asFlow()
+                }
             }
-            .collect()
+        }
+        logger.d { "Inserting into db: size ${feedItemsHolder.get().size}" }
+        databaseHelper.insertFeedItems(feedItemsHolder.get(), dateFormatter.currentTimeMillis())
     }
 
     private fun getAuthToken(responseBody: String): String? =

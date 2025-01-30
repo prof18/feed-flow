@@ -15,7 +15,7 @@
     <string name="new_category_hint">Tên danh mục mới</string>
     <string name="no_feed_modal_title">Thêm nguồn cấp</string>
     <string name="add_feed_categories_title">Danh mục</string>
-    <string name="no_feed_modal_message">Bạn chưa đăng ký nguồn cấp dữ liệu nào. Bạn có thể thêm thủ công, nhập từ trình đọc RSS khác hoặc kết nối tài khoản để đồng bộ hóa dữ liệu từ thiết bị khác (tính năng thử nghiệm).</string>
+    <string name="no_feed_modal_message">Bạn có thể thêm thủ công, nhập từ trình đọc RSS khác hoặc kết nối tài khoản để đồng bộ hóa dữ liệu từ thiết bị khác (tính năng thử nghiệm).</string>
     <string name="account_refresh_progress">Đang làm mới</string>
     <string name="default_browser">Trình duyệt mặc định</string>
     <string name="generic_error_message">Rất tiếc, đã xảy ra lỗi :(</string>
@@ -130,4 +130,18 @@
     <string name="open_another_feed">Mở nguồn cấp khác</string>
     <string name="settings_font_scale_title_example">Tựa đề bài viết</string>
     <string name="deleting_feed_dialog_title">Đang xóa...</string>
+    <string name="add_feed_generic_error">Đã xảy ra lỗi khi thêm nguồn cấp dữ liệu. Vui lòng thử lại</string>
+    <string name="edit_feed_generic_error">Đã xảy ra lỗi khi chỉnh sửa nguồn cấp dữ liệu. Vui lòng thử lại.</string>
+    <string name="feed_added_message_without_name">Đã thêm nguồn cấp dữ liệu</string>
+    <string name="sync_error_message">Đã xảy ra lỗi khi đồng bộ nguồn cấp dữ liệu. Vui lòng thử lại.</string>
+    <string name="wrong_credentials_error_message">Thông tin đăng nhập không đúng. Vui lòng thử lại.</string>
+    <string name="wrong_url_error_message">Liên kết đã cung cấp không đúng. Vui lòng thử lại.</string>
+    <string name="link_with_error_report_title">Các nguồn cấp dữ liệu sau đây không được thêm vào vì có lỗi</string>
+    <string name="account_text_field_server_url">URL Máy chủ</string>
+    <string name="account_text_field_username">Tên người dùng</string>
+    <string name="account_text_field_password">Mật khẩu</string>
+    <string name="account_login">Đăng nhập</string>
+    <string name="no_fresh_rss_sync_yet">Chưa thể đồng bộ dữ liệu</string>
+    <string name="fresh_rss_last_sync">Lần cuối đồng bộ: %s</string>
+    <string name="fresh_rss_account_connected">Tài khoản FreshRSS của bạn đã được kết nối thành công</string>
 </resources>

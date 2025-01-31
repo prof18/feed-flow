@@ -1,63 +1,68 @@
-# Title
+# Заголовок
 
-FeedFlow - RSS Reader
+FeedFlow - читач RSS
 
-## Short desc
+## Короткий опис
 
-Minimal, fast, uncluttered
+Мінімалістично, швидко, без зайвого клопоту
 
-## Long desc
+## Повний опис
 
-Stay informed your way with FeedFlow, a minimalistic RSS reader that puts you in control of your content timeline.
-Sync across all your devices and enjoy a clean, distraction-free reading experience.
+Будьте завжди в курсі подій за допомогою FeedFlow - мінімалістичного читача RSS,
+який дає вам змогу контролювати хронологію вашого контенту. Синхронізуйте на
+всіх своїх пристроях і насолоджуйтеся чистим, не відволікаючим читанням.
 
-Key Features:
+Ключові функції:
 
-- Minimalist Design: Focus on what matters with a clutter-free interface
-- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS) or Dropbox (all platforms)
-- FreshRSS Integration: Connect to your FreshRSS server for advanced feed management
-- Flexible Reading Options: Choose between web view, reader mode, or your preferred browser
-- Privacy-Focused: Select your favorite privacy-focused browser for a separate reading experience
-- Easy Migration: Import and export your RSS feeds via OPML files
+- Мінімалістичний дизайн: Зосередьтеся на головному за допомогою інтерфейсу без
+  зайвих деталей
+- Безшовна синхронізація: Синхронізуйте свої стрічки на різних пристроях за
+  допомогою iCloud (iOS/macOS) або Dropbox (всі платформи)
+- Інтеграція з FreshRSS: Підключіться до сервера FreshRSS для розширеного
+  керування стрічкою новин
+- Гнучкі параметри читання: Вибирайте між вебпереглядом, режимом читання або
+  вашим улюбленим браузером
+- Орієнтовані на конфіденційність: Виберіть свій улюблений браузер, орієнтований
+  на конфіденційність, для відокремленого читання
+- Легка міграція: Імпортуйте та експортуйте RSS-стрічки за допомогою файлів OPML
 
-What Sets FeedFlow Apart:
+Що відрізняє FeedFlow від інших:
 
-- Clean, intuitive interface that lets you focus on content
-- Multiple sync options to fit your workflow (Beta)
-- Customizable reading experience with reader mode
-- Fast and lightweight
-- Regular updates and active development
+- Чистий, інтуїтивно зрозумілий інтерфейс, що дозволяє зосередитися на контенті
+- Кілька варіантів синхронізації відповідно до вашого робочого процесу
+  (Бета-версія)
+- Налаштовуйте досвід читання за допомогою режиму читання
+- Швидкий та легкий
+- Активна розробка з регулярними оновленнями
 
-Perfect for:
-- News enthusiasts who want control over their information diet
-- Privacy-conscious readers
-- Content creators tracking multiple sources
-- Anyone looking to declutter their digital reading experience
+Ідеально для:
+- Любителів новин, які хочуть контролювати свій інформаційний раціон
+- Читачам, які цінують конфіденційність
+- Творцям контенту які відстежують кілька джерел
+- Для тих, хто хоче очистити свій досвід цифрового читання від непотребу
 
-Join thousands of readers who've chosen FeedFlow for a better way to stay informed.
+Приєднуйтесь до тисяч читачів, які обрали FeedFlow для кращого способу
+залишатися в курсі подій.
 
-Note: Sync functionality is currently in beta. The experience is continuously improving based on user feedback.
+Примітка: Функція синхронізації наразі знаходиться в бета-версії. Вона постійно
+вдосконалюється на основі відгуків користувачів.
 
-## Screenshot 1
+## Знімок екрану 1
 
-All your feeds
-in your pocket
+Всі стрічки у вашій кишені
 
-## Screenshot 3
+## Знімок екрану 3
 
-Import your
-existing collection
+Імпортуйте наявну колекцію
 
-## Screenshot 4
+## Знімок екрану 4
 
-Open the articles
-in your favourite browser
+Відкривайте статті у вашому улюбленому переглядачі
 
-## Screenshot 5
+## Знімок екрану 5
 
-Enjoy a clutter-free
-reader mode
+Насолоджуйтесь режимом читання без перешкод
 
-## Banner image
+## Банерне зображення
 
-minimalistic RSS Reader
+мінімалістичний читач RSS

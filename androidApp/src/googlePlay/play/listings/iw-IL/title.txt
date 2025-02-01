@@ -1,1 +1,1 @@
-FeedFlow - קורא RSS
+FeedFlow

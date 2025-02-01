@@ -142,4 +142,6 @@
     <string name="edit_feed_generic_error">Під час редагування стрічки щось пішло не так. Будь ласка, спробуйте ще раз.</string>
     <string name="wrong_credentials_error_message">Облікові дані вказані невірно. Спробуйте ще раз.</string>
     <string name="feed_added_message_without_name">Стрічку додано</string>
+    <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
+    <string name="app_name">FeedFlow</string>
 </resources>

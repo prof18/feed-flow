@@ -1,40 +1,17 @@
-Jälgi sinule olulist teavet veebis FeedFlowga, minimalistliku uudisvoogude
-lugejaga, mis annab sulle võimaluse kontrollida, mida sa sind huvitava sisu
-ajajoonel näed. Sünkroniseeri andmeid kõigi oma nutiseadmete vahel ja naudi
-puhast ning müravaba lugemisvõimalust.
+Jälgi endale olulisi uudiseid FeedFlow'ga, minimalistliku RSS-uudisvoogude
+lugejaga. Sinu kasutuses on napp kasutajaliides, lühida loendiga ning
+võimalusega avada artikli täisvaade veebisaidis või FeedFlow lugemisvaates.
 
-Põhifunktsionaalsused:
+Lisaks saad sa eraldi valid omale meelepärase veebibrauseri ning sellega on sul
+võimalus kasutada oma tavabrauserist erinevat privaatsusteadlikku
+veebibrauserit. Ja kui sa üldse ei taha brauserit kasutada, siis FeedFlowl on
+olemas ka sisseehitatud lugemisvaade, kus puuduvad välised segajad.
 
-- Minimalistlik kujundus: müravaba kasutajaliides võimaldab sul keskenduda
-  olulisele
-- Sujuv sünkroniseerimine: sünkroniseeri kõiki oma uudisvoogusid kasi iCloudi
-  (iOS/macOS) või Dropboxi (kõikidel platvormidel) abil
-- FreshRSSi lõiming: kui soovid paljusid lisavõimalusi uudisvoogude haldamiseks,
-  siis lisa liidestus oma FreshRSSi serveriga
-- Paindlikud lugemisvõimalused: sa saad valida veebivaate ja lugemisvaate vahel
-  või hoopis avada artiklid endale sobivas veebibrauseris
-- Privaatsuskeskne: kasuta artiklite lugemiseks oma parimat privaatsuskeskset
-  veebibrauserit
-- Lihtne andmete teisaldamine: impordi ja eksport oma uudisvooguse loendid
-  OPML-failidena
+FeedFlow kasutuselevõtmine on lihtne. Oma olemasoleva RSS-uudisvoogude kogu saad
+kergesti ning mugavalt importida OPML-failina. Vajadusel saad uudisvoogude
+andmed ka samal viisil eksportida.
 
-Mis eristab FeedFlowd teistest sarnastest rakendustest:
+Lihtsalt keskendu lugemisele (või edasi-tagasi kerimisele)!
 
-- Müravaba ja intuitiivne kasutajaliides, mis võimaldab sul keskenduda sisule
-- Mitu erinevat sünkroniseerimisvõimalust sobitumaks sellega, kuidas sulle
-  meeldib asju teha (beeta)
-- Seadistatav lugemisvaade
-- Kiire ja vähekoormav
-- Sagedased uuendused ja aktiivne arendus
-
-Sobib ideaalselt:
-- Uutele huvilistele, kes soovivad leida parimad viise oma infovoo haldamiseks
-- Privaatsusteadlikele lugejatele
-- Sisuloojatele, kes peavad korraga jälgima paljusid allikaid
-- Kõigile, kes soovivad oma loetavast digimeediast müra eemaldada
-
-Liitu tuhandetega, kes kasutada FeedFlow rakendust enda parema informeerituse
-tagamiseks.
-
-Märkus: Sünkroniseerimise funktsionaalsus on hetkel beetaolekus. Täiendame
-lahenduse kasutatavust sedavõrd, kuivõrd saame kasutajatelt tagasisidet.
+Rakendus on veel arendamisel ning mõnigi funktsionaalsus on veel puudu ja võib
+tekkida vigu. Palun saada meile teave nii vigade kui oma ettepanekute kohta!

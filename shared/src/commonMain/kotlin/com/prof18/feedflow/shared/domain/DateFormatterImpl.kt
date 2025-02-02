@@ -322,6 +322,33 @@ class DateFormatterImpl(
                 second()
             }
         },
+
+        // Thu 18/01/2024 - 13:01
+        Format {
+            alternativeParsing({
+                dayOfWeek(DayOfWeekNames(DayOfWeekNames.ENGLISH_ABBREVIATED.names.map { it.lowercase() }))
+            }) {
+                dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
+            }
+            char(' ')
+            alternativeParsing({
+                dayOfMonth()
+            }) {
+                dayOfMonth(Padding.NONE)
+            }
+            char('/')
+            monthNumber()
+            char('/')
+            year()
+            chars(" - ")
+            hour()
+            char(':')
+            minute()
+            optional {
+                char(':')
+                second()
+            }
+        },
     )
 
     override fun getDateMillisFromString(dateString: String): Long? {

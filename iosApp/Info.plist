@@ -30,6 +30,7 @@
 		<string>vi</string>
 		<string>ta</string>
 		<string>he</string>
+		<string>uk</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>

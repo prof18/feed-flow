@@ -66,7 +66,7 @@
     <string name="new_release_available_title">FeedFlow đã có phiên bản mới:</string>
     <string name="close_menu_button">Đóng menu</string>
     <string name="settings_app_title">Ứng dụng</string>
-    <string name="about_the_app">FeedFlow là một trình đọc RSS tối giản dựa trên ý kiến cá nhân của tác giả. Các bài viết được mở trên trang web tương ứng của chúng bằng trình duyệt riêng tư yêu thích của bạn. Nếu bạn không thích bị phân tâm, FeedFlow có chế độ đọc các bài viết ngay trong ứng dụng.\nBạn có thể nhập và xuất bộ sưu tập RSS của mình bằng file OPML.</string>
+    <string name="about_the_app">FeedFlow là một trình đọc RSS tối giản theo quan điểm riêng của tác giả. Các bài viết được mở trên trang web tương ứng của chúng bằng trình duyệt riêng tư yêu thích của bạn. Nếu bạn không muốn bị phân tâm, FeedFlow có chế độ đọc các bài viết ngay trong ứng dụng.\nBạn có thể nhập và xuất bộ sưu tập RSS của mình bằng file OPML.</string>
     <string name="force_feed_refresh">Tự động làm mới nguồn cấp</string>
     <string name="menu_mark_as_read">Đánh dấu đã đọc</string>
     <string name="menu_open_comments">Đọc bình luận</string>

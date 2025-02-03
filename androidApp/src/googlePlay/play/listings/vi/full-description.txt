@@ -1,19 +1,36 @@
-Theo dõi các nguồn cấp RSS yêu thích của bạn với FeedFlow, một trình đọc RSS tối
-giản. Tận hưởng trải nghiệm đọc không lộn xộn, vì FeedFlow cung cấp danh sách
-tối giản và mở các bài viết trên các trang web tương ứng hoặc ở chế độ trình
-đọc.
+Cập nhật thông tin theo cách của bạn với FeedFlow, trình đọc RSS tối giản giúp
+kiểm soát dòng thời gian nội dung của mình. Đồng bộ hóa trên mọi thiết bị và
+trải nghiệm đọc sạch sẽ, không bị phân tâm.
 
-Tùy chỉnh trải nghiệm duyệt web của bạn bằng cách chọn trình duyệt ưa thích.
-Theo cách này, bạn có thể chọn trình duyệt tập trung vào quyền riêng tư yêu
-thích của mình để tách trải nghiệm đọc của bạn khỏi trình duyệt chính. Và nếu
-bạn muốn tránh trình duyệt, FeedFlow cung cấp chế độ đọc để thưởng thức nội dung
-của các bài viết mà không bị phân tâm.
+Tính năng chính:
 
-Chuyển sang FeedFlow thật dễ dàng. Bộ sưu tập RSS hiện tại của bạn có thể được
-nhập bằng khả năng nhập/xuất đầy đủ và dễ dàng của chúng tôi thông qua các tệp
-OPML, đảm bảo trải nghiệm đọc liền mạch.
+- Thiết kế tối giản: Tập trung vào những gì quan trọng với giao diện gọn gàng
+- Đồng bộ liền mạch: Nguồn cấp dữ liệu của bạn được đồng bộ trên các thiết bị
+  với iCloud (iOS/macOS) hoặc Dropbox (tất cả các nền tảng)
+- Tích hợp FreshRSS: Kết nối với máy chủ FreshRSS của bạn để quản lý nguồn cấp
+  dữ liệu nâng cao
+- Tùy chọn đọc linh hoạt: Chọn giữa chế độ xem web, chế độ đọc hoặc trình duyệt
+  ưa thích của bạn
+- Tập trung vào quyền riêng tư: Chọn trình duyệt yêu thích của bạn để có trải
+  nghiệm đọc riêng biệt
+- Di chuyển dễ dàng: Nhập và xuất nguồn cấp RSS của bạn thông qua các file OPML
 
-Chỉ cần tập trung vào việc đọc (hoặc lướt)!
+Điểm khác biệt của FeedFlow:
 
-Ứng dụng vẫn đang trong quá trình phát triển, vì vậy một số tính năng có thể bị
-thiếu hoặc có thể có vấn đề. Vui lòng báo lỗi hoặc đề xuất tính năng!
+- Giao diện sạch sẽ, trực quan cho phép bạn tập trung vào nội dung
+- Nhiều tùy chọn đồng bộ hóa phù hợp với quy trình làm việc của bạn (Beta)
+- Trải nghiệm đọc có thể tùy chỉnh với chế độ đọc
+- Nhanh và nhẹ
+- Cập nhật thường xuyên và luôn cải tiến
+
+Phù hợp với:
+- Những người đam mê tin tức muốn kiểm soát chế độ tiêu thụ thông tin của họ
+- Độc giả quan tâm đến quyền riêng tư
+- Nhà sáng tạo nội dung theo dõi nhiều nguồn
+- Bất kỳ ai muốn dọn dẹp trải nghiệm đọc kỹ thuật số của mình
+
+Tham gia cùng hàng ngàn độc giả đã chọn FeedFlow để có cách cập nhật thông tin
+tốt hơn.
+
+Lưu ý: Tính năng đồng bộ hiện đang trong giai đoạn thử nghiệm. Trải nghiệm liên
+tục được cải thiện dựa trên phản hồi của người dùng.

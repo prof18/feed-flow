@@ -1,4 +1,1 @@
-- Add support for syncing FreshRSS
-- Show a loading message when deleting old feeds
-- Translation updates
-- Bug fixes and improvements
+- Improve FreshRss sync and fix some bugs

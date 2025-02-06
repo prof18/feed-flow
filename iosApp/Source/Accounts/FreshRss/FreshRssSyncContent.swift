@@ -57,6 +57,11 @@ struct FreshRssSyncContent: View {
       },
       header: {
         Text(feedFlowStrings.accountTextFieldServerUrl)
+      },
+      footer: {
+        Text(feedFlowStrings.freshRssUrlHint("https://mydomain.com/api/greader.php"))
+          .foregroundColor(.gray)
+          .font(.caption)
       }
     )
   }
@@ -97,6 +102,11 @@ struct FreshRssSyncContent: View {
       },
       header: {
         Text(feedFlowStrings.accountTextFieldPassword)
+      },
+      footer: {
+          Text(feedFlowStrings.freshRssPasswordHint)
+          .foregroundColor(.gray)
+          .font(.caption)
       }
     )
   }

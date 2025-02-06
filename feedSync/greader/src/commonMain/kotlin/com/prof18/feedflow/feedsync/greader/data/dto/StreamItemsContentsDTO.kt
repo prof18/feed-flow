@@ -5,4 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal data class StreamItemsContentsDTO(
     val items: List<ItemContentDTO>,
+    val continuation: String? = null,
 )

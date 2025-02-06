@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.prof18.feedflow.core.model.AccountConnectionUiState
@@ -106,6 +107,8 @@ fun DisconnectedView(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -114,6 +117,9 @@ fun DisconnectedView(
     ) {
         OutlinedTextField(
             value = serverUrl,
+            supportingText = {
+                Text(LocalFeedFlowStrings.current.freshRssUrlHint("https://mydomain.com/api/greader.php"))
+            },
             onValueChange = { serverUrl = it },
             label = { Text(LocalFeedFlowStrings.current.accountTextFieldServerUrl) },
             modifier = Modifier
@@ -142,6 +148,9 @@ fun DisconnectedView(
                 .fillMaxWidth()
                 .padding(bottom = Spacing.medium),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            supportingText = {
+                Text(text = LocalFeedFlowStrings.current.freshRssPasswordHint)
+            },
             trailingIcon = {
                 val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -153,6 +162,7 @@ fun DisconnectedView(
 
         Button(
             onClick = {
+                keyboardController?.hide()
                 onLoginClick(serverUrl, username, password)
             },
             modifier = Modifier

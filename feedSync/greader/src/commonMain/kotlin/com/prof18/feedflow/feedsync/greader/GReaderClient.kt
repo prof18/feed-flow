@@ -88,28 +88,6 @@ internal class GReaderClient internal constructor(
         }
     }
 
-    suspend fun getStreamItemsContents(
-        itemIds: List<String>,
-    ): DataResult<StreamItemsContentsDTO> = withContext(dispatcherProvider.io) {
-        withPostToken {
-            executeNetwork<StreamItemsContentsDTO> {
-                val client = getOrCreateHttpClient()
-                client.post(
-                    ReaderResource.Api.Zero.StreamRes.Items.Contents(),
-                ) {
-                    contentType(ContentType.Application.FormUrlEncoded)
-                    val formData = Parameters.build {
-                        appendAll("i", itemIds)
-                        postToken.get()?.let { token ->
-                            append("T", token)
-                        }
-                    }
-                    setBody(FormDataContent(formData))
-                }
-            }
-        }
-    }
-
     suspend fun editTag(
         itemIds: List<String>,
         addTag: Stream? = null,
@@ -199,6 +177,36 @@ internal class GReaderClient internal constructor(
                         setBody(FormDataContent(formData))
                     }
             }
+        }
+    }
+
+    suspend fun getItems(
+        excludeTargets: List<String>?,
+        max: Int,
+        lastModified: Long?,
+        continuation: String?,
+    ): DataResult<StreamItemsContentsDTO> = withContext(dispatcherProvider.io) {
+        executeNetwork {
+            getOrCreateHttpClient()
+                .get(
+                    ReaderResource.Api.Zero.StreamRes.Contents.ReadingList(
+                        xt = excludeTargets,
+                        n = max,
+                        ot = lastModified,
+                        c = continuation,
+                    ),
+                )
+        }
+    }
+
+    suspend fun getStarredItemsContent(
+        continuation: String?,
+        maxNumber: Int,
+        since: Long?,
+    ): DataResult<StreamItemsContentsDTO> = withContext(dispatcherProvider.io) {
+        executeNetwork {
+            getOrCreateHttpClient()
+                .get(ReaderResource.Api.Zero.StreamRes.Contents.Starred(n = maxNumber, ot = since, c = continuation))
         }
     }
 

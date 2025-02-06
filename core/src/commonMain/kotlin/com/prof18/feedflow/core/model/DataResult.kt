@@ -102,6 +102,14 @@ fun <T> DataResult<T>.onSuccess(
     }
 }
 
+suspend fun <T> DataResult<T>.onSuccessSuspend(
+    onSuccess: suspend (T) -> Unit,
+) {
+    if (this is DataResult.Success) {
+        onSuccess(this.data)
+    }
+}
+
 fun <T> List<DataResult<T>>.doOnEveryError(onEveryError: (Failure) -> Unit) {
     this.forEach {
         if (it is DataResult.Error) {

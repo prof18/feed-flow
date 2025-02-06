@@ -51,6 +51,39 @@ class ReaderResource {
             class StreamRes(
                 val parent: Zero = Zero(),
             ) {
+
+                @Resource("contents")
+                class Contents(
+                    val parent: StreamRes = StreamRes(),
+                ) {
+
+                    @Resource("user/-/state/com.google/reading-list")
+                    class ReadingList(
+                        val parent: Contents = Contents(),
+                        // Exclude target
+                        val xt: List<String>? = null,
+                        // Maximum number of items to return.
+                        val n: Int,
+                        // Epoch timestamp. Items older than this timestamp are filtered out.
+                        val ot: Long? = null,
+                        // continuation
+                        val c: String? = null,
+                        val output: String = "json",
+                    )
+
+                    @Resource("user/-/state/com.google/starred")
+                    class Starred(
+                        val parent: Contents = Contents(),
+                        // Maximum number of items to return.
+                        val n: Int,
+                        // Epoch timestamp. Items older than this timestamp are filtered out.
+                        val ot: Long? = null,
+                        // continuation
+                        val c: String? = null,
+                        val output: String = "json",
+                    )
+                }
+
                 @Resource("items")
                 class Items(
                     val parent: StreamRes = StreamRes(),

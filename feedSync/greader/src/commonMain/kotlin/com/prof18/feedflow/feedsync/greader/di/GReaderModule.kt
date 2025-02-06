@@ -11,13 +11,13 @@ import org.koin.dsl.module
 fun getGReaderModule(appEnvironment: AppEnvironment) = module {
     single {
         GReaderRepository(
-            logger = get(parameters = { parametersOf("GReaderRepository") }),
             gReaderClient = GReaderClient(
                 logger = get(parameters = { parametersOf("GReaderClient") }),
                 networkSettings = get(),
                 appEnvironment = appEnvironment,
                 dispatcherProvider = get(),
             ),
+            logger = get(parameters = { parametersOf("GReaderRepository") }),
             networkSettings = get(),
             databaseHelper = get(),
             itemContentDTOMapper = ItemContentDTOMapper(
@@ -26,7 +26,6 @@ fun getGReaderModule(appEnvironment: AppEnvironment) = module {
             ),
             dateFormatter = get(),
             dispatcherProvider = get(),
-            feedSyncMessageQueue = get(),
         )
     }
 

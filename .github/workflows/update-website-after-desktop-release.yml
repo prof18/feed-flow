@@ -33,15 +33,15 @@ jobs:
           DEB_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-desktop/feedflow_${VERSION}_amd64.deb"
           
           # Update hero.yml
-          sed -i "s|button3Link:.*|button3Link: ${DMG_URL}|" data/hero.yml
-          sed -i "s|button5Link:.*|button5Link: ${RPM_URL}|" data/hero.yml
-          sed -i "s|button6Link:.*|button6Link: ${DEB_URL}|" data/hero.yml
+          sed -i "s|button3Link:.*|button3Link: ${DMG_URL}|" website/data/hero.yml
+          sed -i "s|button5Link:.*|button5Link: ${RPM_URL}|" website/data/hero.yml
+          sed -i "s|button6Link:.*|button6Link: ${DEB_URL}|" website/data/hero.yml
           
           # Update downloads.yml
-          sed -i "s|url: \".*\.dmg\"|url: \"${DMG_URL}\"|" data/downloads.yml
-          sed -i "s|url: \".*\.msi\"|url: \"${MSI_URL}\"|" data/downloads.yml
-          sed -i "s|url: \".*\.rpm\"|url: \"${RPM_URL}\"|" data/downloads.yml
-          sed -i "s|url: \".*\.deb\"|url: \"${DEB_URL}\"|" data/downloads.yml
+          sed -i "s|url: \".*\.dmg\"|url: \"${DMG_URL}\"|" website/data/downloads.yml
+          sed -i "s|url: \".*\.msi\"|url: \"${MSI_URL}\"|" website/data/downloads.yml
+          sed -i "s|url: \".*\.rpm\"|url: \"${RPM_URL}\"|" website/data/downloads.yml
+          sed -i "s|url: \".*\.deb\"|url: \"${DEB_URL}\"|" website/data/downloads.yml
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3

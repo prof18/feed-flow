@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryUseCase
@@ -30,6 +31,9 @@ class EditFeedViewModel internal constructor(
     private val feedNameMutableState = MutableStateFlow("")
     val feedNameState = feedNameMutableState.asStateFlow()
 
+    private val linkOpeningPreferenceMutableState = MutableStateFlow(LinkOpeningPreference.DEFAULT)
+    val linkOpeningPreferenceState = linkOpeningPreferenceMutableState.asStateFlow()
+
     private val feedEditedMutableState: MutableSharedFlow<FeedEditedState> = MutableSharedFlow()
     val feedEditedState = feedEditedMutableState.asSharedFlow()
 
@@ -50,12 +54,20 @@ class EditFeedViewModel internal constructor(
         }
     }
 
+    fun updateLinkOpeningPreference(preference: LinkOpeningPreference) {
+        linkOpeningPreferenceMutableState.update { preference }
+        viewModelScope.launch {
+            feedEditedMutableState.emit(FeedEditedState.Idle)
+        }
+    }
+
     fun loadFeedToEdit(feedSource: FeedSource) {
         originalFeedSource = feedSource
 
         viewModelScope.launch {
             feedUrlMutableState.update { feedSource.url }
             feedNameMutableState.update { feedSource.title }
+            linkOpeningPreferenceMutableState.update { feedSource.linkOpeningPreference }
 
             val categoryName = feedSource.category?.title?.let { CategoryName(it) }
             categoryUseCase.initCategories(categoryName)
@@ -92,6 +104,7 @@ class EditFeedViewModel internal constructor(
                 url = feedUrlState.value,
                 title = feedNameState.value,
                 category = selectedCategory,
+                linkOpeningPreference = linkOpeningPreferenceState.value,
             )
 
             if (newFeedSource != null && newFeedSource != originalFeedSource) {

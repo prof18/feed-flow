@@ -12,10 +12,13 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FeedSourceWithPreferences
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Search
+import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.db.SelectFeedUrls
 import com.prof18.feedflow.db.SelectFeeds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -446,6 +449,7 @@ class DatabaseHelper(
             category = category,
             lastSyncTimestamp = feedSource.last_sync_timestamp,
             logoUrl = feedSource.feed_source_logo_url,
+            linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
         )
     }
 

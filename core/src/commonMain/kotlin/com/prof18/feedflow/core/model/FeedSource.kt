@@ -7,4 +7,5 @@ data class FeedSource(
     val category: FeedSourceCategory?,
     val lastSyncTimestamp: Long?,
     val logoUrl: String?,
+    val linkOpeningPreference: LinkOpeningPreference = LinkOpeningPreference.DEFAULT,
 )

@@ -1,4 +1,5 @@
 import kotlin.Int;
+import com.prof18.feedflow.core.model.LinkOpeningPreference;
 
 CREATE TABLE feed_source (
     url_hash TEXT NOT NULL PRIMARY KEY,
@@ -17,9 +18,11 @@ deleteAllExcept:
 DELETE FROM feed_source WHERE url_hash NOT IN :urlHashes;
 
 selectFeedUrls:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
+LEFT JOIN feed_source_preferences
+ON feed_source.url_hash = feed_source_preferences.feed_source_id
 ORDER BY feed_source.title COLLATE NOCASE ASC;
 
 deleteFeedSource:
@@ -56,7 +59,9 @@ deleteAll:
 DELETE FROM feed_source;
 
 selectByCategory:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
+LEFT JOIN feed_source_preferences
+ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE feed_source.category_id = :categoryId;

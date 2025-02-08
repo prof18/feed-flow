@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.bywindowsize.CompactView
@@ -131,10 +132,17 @@ internal fun HomeScreen(
                 },
                 onSearchClick = onSearchClick,
                 openUrl = { feedItemUrlInfo ->
-                    if (browserManager.openReaderMode()) {
-                        navigateToReaderMode(feedItemUrlInfo)
-                    } else {
-                        openInBrowser(feedItemUrlInfo.url)
+                    when (feedItemUrlInfo.linkOpeningPreference) {
+                        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(feedItemUrlInfo)
+                        LinkOpeningPreference.INTERNAL_BROWSER -> openInBrowser(feedItemUrlInfo.url)
+                        LinkOpeningPreference.PREFERRED_BROWSER -> openInBrowser(feedItemUrlInfo.url)
+                        LinkOpeningPreference.DEFAULT -> {
+                            if (browserManager.openReaderMode()) {
+                                navigateToReaderMode(feedItemUrlInfo)
+                            } else {
+                                openInBrowser(feedItemUrlInfo.url)
+                            }
+                        }
                     }
                 },
                 onDeleteFeedSourceClick = { feedSource ->
@@ -185,10 +193,17 @@ internal fun HomeScreen(
                 },
                 onSearchClick = onSearchClick,
                 openUrl = { feedItemUrlInfo ->
-                    if (browserManager.openReaderMode()) {
-                        navigateToReaderMode(feedItemUrlInfo)
-                    } else {
-                        openInBrowser(feedItemUrlInfo.url)
+                    when (feedItemUrlInfo.linkOpeningPreference) {
+                        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(feedItemUrlInfo)
+                        LinkOpeningPreference.INTERNAL_BROWSER -> openInBrowser(feedItemUrlInfo.url)
+                        LinkOpeningPreference.PREFERRED_BROWSER -> openInBrowser(feedItemUrlInfo.url)
+                        LinkOpeningPreference.DEFAULT -> {
+                            if (browserManager.openReaderMode()) {
+                                navigateToReaderMode(feedItemUrlInfo)
+                            } else {
+                                openInBrowser(feedItemUrlInfo.url)
+                            }
+                        }
                     }
                 },
                 onDeleteFeedSourceClick = { feedSource ->
@@ -239,10 +254,17 @@ internal fun HomeScreen(
                 },
                 onSearchClick = onSearchClick,
                 openUrl = { feedItemUrlInfo ->
-                    if (browserManager.openReaderMode()) {
-                        navigateToReaderMode(feedItemUrlInfo)
-                    } else {
-                        openInBrowser(feedItemUrlInfo.url)
+                    when (feedItemUrlInfo.linkOpeningPreference) {
+                        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(feedItemUrlInfo)
+                        LinkOpeningPreference.INTERNAL_BROWSER -> openInBrowser(feedItemUrlInfo.url)
+                        LinkOpeningPreference.PREFERRED_BROWSER -> openInBrowser(feedItemUrlInfo.url)
+                        LinkOpeningPreference.DEFAULT -> {
+                            if (browserManager.openReaderMode()) {
+                                navigateToReaderMode(feedItemUrlInfo)
+                            } else {
+                                openInBrowser(feedItemUrlInfo.url)
+                            }
+                        }
                     }
                 },
                 onDeleteFeedSourceClick = { feedSource ->

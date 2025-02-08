@@ -20,6 +20,7 @@ import com.prof18.feedflow.android.home.components.NoFeedsBottomSheet
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
@@ -202,10 +203,17 @@ internal fun HomeScreen(
                     homeViewModel.onFeedFilterSelected(feedFilter)
                 },
                 openUrl = { urlInfo ->
-                    if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
-                        navigateToReaderMode(urlInfo)
-                    } else {
-                        browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+                    when (urlInfo.linkOpeningPreference) {
+                        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(urlInfo)
+                        LinkOpeningPreference.INTERNAL_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+                        LinkOpeningPreference.PREFERRED_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+                        LinkOpeningPreference.DEFAULT -> {
+                            if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
+                                navigateToReaderMode(urlInfo)
+                            } else {
+                                browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+                            }
+                        }
                     }
                 },
                 updateReadStatus = { feedItemId, isRead ->

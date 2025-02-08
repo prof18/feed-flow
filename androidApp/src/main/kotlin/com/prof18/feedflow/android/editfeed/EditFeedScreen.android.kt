@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.core.utils.TestingTag
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
@@ -35,6 +36,7 @@ internal fun EditScreen(
 ) {
     val feedUrl by viewModel.feedUrlState.collectAsStateWithLifecycle()
     val feedName by viewModel.feedNameState.collectAsStateWithLifecycle()
+    val linkOpeningPreference by viewModel.linkOpeningPreferenceState.collectAsStateWithLifecycle()
     var showLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -89,11 +91,15 @@ internal fun EditScreen(
         showLoading = showLoading,
         categoriesState = categoriesState,
         canEditUrl = viewModel.canEditUrl(),
+        linkOpeningPreference = linkOpeningPreference,
         onFeedUrlUpdated = { url ->
             viewModel.updateFeedUrlTextFieldValue(url)
         },
         onFeedNameUpdated = { name ->
             viewModel.updateFeedNameTextFieldValue(name)
+        },
+        onLinkOpeningPreferenceSelected = { preference ->
+            viewModel.updateLinkOpeningPreference(preference)
         },
         editFeed = {
             viewModel.editFeed()
@@ -143,8 +149,10 @@ private fun EditScreenPreview() {
             errorMessage = "",
             canEditUrl = true,
             categoriesState = categoriesExpandedState,
+            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
             onFeedUrlUpdated = {},
             onFeedNameUpdated = {},
+            onLinkOpeningPreferenceSelected = {},
             editFeed = { },
             onExpandClick = {},
             onAddCategoryClick = {},

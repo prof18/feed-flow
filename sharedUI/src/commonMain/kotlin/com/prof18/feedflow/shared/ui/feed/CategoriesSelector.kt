@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.DeleteOutline
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -95,6 +97,40 @@ private fun CategoriesList(
     onAddCategoryClick: (CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var categoryToDelete by remember { mutableStateOf<CategoryId?>(null) }
+
+    if (showDeleteDialog && categoryToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { 
+                showDeleteDialog = false
+                categoryToDelete = null
+            },
+            title = { Text(LocalFeedFlowStrings.current.deleteCategoryConfirmationTitle) },
+            text = { Text(LocalFeedFlowStrings.current.deleteCategoryConfirmationMessage) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        categoryToDelete?.let { onDeleteCategoryClick(it) }
+                        showDeleteDialog = false
+                        categoryToDelete = null
+                    }
+                ) {
+                    Text(LocalFeedFlowStrings.current.deleteFeed)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { 
+                        showDeleteDialog = false
+                        categoryToDelete = null
+                    }
+                ) {
+                    Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
+                }
+            }
+        )
+    }
     AnimatedVisibility(
         modifier = modifier,
         visible = categoriesState.isExpanded,
@@ -138,7 +174,8 @@ private fun CategoriesList(
                             modifier = Modifier
                                 .tagForTesting("${TestingTag.DELETE_CATEGORY_BUTTON}_${category.name}"),
                             onClick = {
-                                onDeleteCategoryClick(CategoryId(category.id))
+                                showDeleteDialog = true
+                                categoryToDelete = CategoryId(category.id)
                             },
                         ) {
                             Icon(

@@ -14,6 +14,8 @@ struct EditFeedScreenContent: View {
   @Environment(\.presentationMode) private var presentationMode
 
   @State private var newCategory: String = ""
+  @State private var showDeleteCategoryDialog = false
+  @State private var categoryToDelete: String?
 
   @Binding var feedURL: String
   @Binding var feedName: String
@@ -89,11 +91,11 @@ struct EditFeedScreenContent: View {
         }
       }
 
-      Section(feedFlowStrings.feedSourceCategoryTitle) {
+      Section(feedFlowStrings.addFeedCategoryTitle) {
         @Bindable var categorySelectorObserver = categorySelectorObserver
         Picker(
           selection: $categorySelectorObserver.selectedCategory,
-          label: Text(feedFlowStrings.feedSourceCategoryTitle)
+          label: Text(feedFlowStrings.addFeedCategoryTitle)
         ) {
           ForEach(categoryItems, id: \.self.id) { categoryItem in
             let title = categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader
@@ -113,6 +115,19 @@ struct EditFeedScreenContent: View {
     .scrollContentBackground(.hidden)
     .scrollDismissesKeyboard(.interactively)
     .background(Color.secondaryBackgroundColor)
+    .alert(feedFlowStrings.deleteCategoryConfirmationTitle, isPresented: $showDeleteCategoryDialog) {
+      Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) {
+        categoryToDelete = nil
+      }
+      Button(feedFlowStrings.deleteFeed, role: .destructive) {
+        if let id = categoryToDelete {
+          deleteCategory(id)
+        }
+        categoryToDelete = nil
+      }
+    } message: {
+      Text(feedFlowStrings.deleteCategoryConfirmationMessage)
+    }
     .navigationTitle(feedFlowStrings.editFeed)
     .navigationBarTitleDisplayMode(.inline)
     .onChange(of: feedURL) {
@@ -136,7 +151,8 @@ struct EditFeedScreenContent: View {
             Text(name)
             Spacer()
             Button {
-              deleteCategory(categoryItem.id)
+              categoryToDelete = categoryItem.id
+              showDeleteCategoryDialog = true
             } label: {
               Image(systemName: "trash")
                 .tint(.red)

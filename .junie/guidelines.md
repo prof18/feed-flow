@@ -85,5 +85,6 @@ feed-flow/
 - **Code Analysis**: Run Detekt using `./gradlew detekt`
 
 ## Things to consider:
+- Every new string should be added to the `i18n` module and not hardcoded.
 - When adding new strings, the StringsVersion number needs to be bumped.
 - The database migrations are placed in the `sqldelight/com/prof18/feedflow/migrations` folder

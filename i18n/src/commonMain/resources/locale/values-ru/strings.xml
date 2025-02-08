@@ -113,7 +113,7 @@
     <string name="account_disconnect_button">Отключить</string>
     <string name="dropbox_sync_common_description">Подключите свой аккаунт Dropbox для синхронизации подписок на ленты, категорий, прочитанных и добавленных в закладки статей между вашими устройствами на Android, iOS, iPadOS и ПК. Данные будут сохранены в папке, специфичной для приложения; FeedFlow не будет иметь никакого доступа к каким-либо вашим файлам</string>
     <string name="dropbox_sync_desktop_description">Нажав кнопку «Подключить», вы будете перенаправлены на сайт Dropbox. После подключения аккаунта скопируйте код авторизации и введите его здесь в приложении</string>
-    <string name="no_feed_modal_message">У вас пока нет подписок на ленты. Вы можете вручную добавить ленту, импортировать свои подписки из другой RSS-читалки или привязать аккаунт, чтобы синхронизировать данные с другого устройства (эта функция в бета-стадии).</string>
+    <string name="no_feed_modal_message">Вы можете добавить ленту вручную, импортировать свои подписки из другой RSS-читалки или подключить аккаунт для синхронизации данных с другого устройства (эта функция находится в бета-версии).</string>
     <string name="no_icloud_sync_yet">Данные еще не синхронизированы с iCloud. Нажмите кнопку резервного копирования, чтобы начать синхронизацию</string>
     <string name="about_the_app">FeedFlow — это минималистичная RSS-читалка, основанный на личных мнениях автора. Статьи открываются на своих соответствующих веб-сайтах, и вы можете выбрать предпочитаемый браузер, ориентированный на конфиденциальность, чтобы отделить свой опыт чтения от основного браузера. Если вы хотите избежать браузера, FeedFlow предлагает режим чтения, чтобы наслаждаться содержанием статей без отвлекающих факторов. \nВы можете импортировать и экспортировать свою RSS-коллекцию из или в OPML-файла.</string>
     <string name="settings_font_scale_subtitle_example">Это подзаголовок статьи</string>
@@ -129,4 +129,19 @@
     <string name="settings_font_scale_title_example">Заголовок статьи</string>
     <string name="open_another_feed">Открыть другую ленту</string>
     <string name="icloud_sync_description">Подключите свой аккаунт iCloud для синхронизации подписок на ленты, категорий, прочитанных и сохранённых статей между вашими устройствами iOS, iPadOS и macOS. Данные будут сохранены в папке, специфичной для приложения; FeedFlow не будет иметь доступа к вашим файлам</string>
+    <string name="add_feed_generic_error">Произошла ошибка при добавлении ленты. Пожалуйста, попробуйте снова</string>
+    <string name="edit_feed_generic_error">Произошла ошибка при редактировании ленты. Пожалуйста, попробуйте снова.</string>
+    <string name="feed_added_message_without_name">Лента добавлена</string>
+    <string name="sync_error_message">Произошла ошибка при синхронизации лент. Пожалуйста, попробуйте снова.</string>
+    <string name="wrong_credentials_error_message">Учётные данные указаны неверно. Пожалуйста, попробуйте снова.</string>
+    <string name="wrong_url_error_message">Указанная ссылка неверна. Пожалуйста, попробуйте снова.</string>
+    <string name="link_with_error_report_title">Следующие ленты не были добавлены из-за ошибки</string>
+    <string name="account_text_field_server_url">URL-сервера</string>
+    <string name="account_text_field_username">Ваше имя</string>
+    <string name="account_text_field_password">Пароль</string>
+    <string name="account_login">Вход</string>
+    <string name="no_fresh_rss_sync_yet">Данные ещё не синхронизированы</string>
+    <string name="fresh_rss_last_sync">Последняя синхронизация: %s</string>
+    <string name="deleting_feed_dialog_title">Удаление...</string>
+    <string name="fresh_rss_account_connected">Ваш аккаунт FreshRss подключён</string>
 </resources>

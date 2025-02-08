@@ -8,7 +8,6 @@
 
 import FeedFlowKit
 import SwiftUI
-import shared
 
 struct EditFeedScreen: View {
   @Environment(AppState.self) private var appState
@@ -28,7 +27,7 @@ struct EditFeedScreen: View {
   @State private var isAddingFeed: Bool = false
   @State var feedURL = ""
   @State var feedName = ""
-  @State var linkOpeningPreference = LinkOpeningPreference.DEFAULT
+    @State var linkOpeningPreference = LinkOpeningPreference.default
 
   var body: some View {
     NavigationStack {

@@ -8,7 +8,6 @@
 
 import FeedFlowKit
 import SwiftUI
-import shared
 
 struct EditFeedScreenContent: View {
 
@@ -77,24 +76,24 @@ struct EditFeedScreenContent: View {
           label: Text(feedFlowStrings.linkOpeningPreference)
         ) {
           Text(feedFlowStrings.linkOpeningPreferenceDefault)
-            .tag(LinkOpeningPreference.DEFAULT)
+            .tag(LinkOpeningPreference.default)
           Text(feedFlowStrings.linkOpeningPreferenceReaderMode)
-            .tag(LinkOpeningPreference.READER_MODE)
+            .tag(LinkOpeningPreference.readerMode)
           Text(feedFlowStrings.linkOpeningPreferenceInternalBrowser)
-            .tag(LinkOpeningPreference.INTERNAL_BROWSER)
+            .tag(LinkOpeningPreference.internalBrowser)
           Text(feedFlowStrings.linkOpeningPreferencePreferredBrowser)
-            .tag(LinkOpeningPreference.PREFERRED_BROWSER)
+            .tag(LinkOpeningPreference.preferredBrowser)
         }
-        .onChange(of: linkOpeningPreference) { newValue in
-          updateLinkOpeningPreference(newValue)
+        .onChange(of: linkOpeningPreference) {
+          updateLinkOpeningPreference(linkOpeningPreference)
         }
       }
 
-      Section(feedFlowStrings.addFeedCategoryTitle) {
+      Section(feedFlowStrings.feedSourceCategoryTitle) {
         @Bindable var categorySelectorObserver = categorySelectorObserver
         Picker(
           selection: $categorySelectorObserver.selectedCategory,
-          label: Text(feedFlowStrings.addFeedCategoriesTitle)
+          label: Text(feedFlowStrings.feedSourceCategoryTitle)
         ) {
           ForEach(categoryItems, id: \.self.id) { categoryItem in
             let title = categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader

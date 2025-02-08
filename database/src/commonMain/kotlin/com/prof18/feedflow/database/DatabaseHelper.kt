@@ -1,5 +1,6 @@
 package com.prof18.feedflow.database
 
+import app.cash.sqldelight.EnumColumnAdapter
 import app.cash.sqldelight.Transacter
 import app.cash.sqldelight.TransactionWithoutReturn
 import app.cash.sqldelight.coroutines.asFlow
@@ -12,13 +13,12 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.FeedSourceWithPreferences
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.db.FeedFlowDB
-import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.db.Feed_source_preferences
+import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.db.SelectFeedUrls
 import com.prof18.feedflow.db.SelectFeeds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,7 +34,12 @@ class DatabaseHelper(
     private val backgroundDispatcher: CoroutineDispatcher,
     private val logger: Logger,
 ) {
-    private val dbRef: FeedFlowDB = FeedFlowDB(sqlDriver)
+    private val dbRef: FeedFlowDB = FeedFlowDB(
+        sqlDriver,
+        feed_source_preferencesAdapter = Feed_source_preferences.Adapter(
+            link_opening_preferenceAdapter = EnumColumnAdapter(),
+        ),
+    )
 
     suspend fun getFeedSources(): List<FeedSource> = withContext(backgroundDispatcher) {
         dbRef.feedSourceQueries
@@ -343,6 +348,11 @@ class DatabaseHelper(
         dbRef.feedSourceCategoryQueries.deleteAll()
         dbRef.feedSourceQueries.deleteAll()
     }
+
+    suspend fun insertFeedSourcePreference(feedSourceId: String, preference: LinkOpeningPreference) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourcePreferencesQueries.insertPreference(feedSourceId, preference)
+        }
 
     suspend fun deleteCategoriesExcept(categoryIds: List<String>) = dbRef.transactionWithContext(backgroundDispatcher) {
         dbRef.feedSourceCategoryQueries.deleteAllExcept(categoryIds)

@@ -64,7 +64,7 @@ fun AddFeedContent(
             item {
                 CategoriesSelector(
                     modifier = Modifier
-                        .padding(top = Spacing.regular)
+                        .padding(vertical = Spacing.regular)
                         .tagForTesting(TestingTag.CATEGORY_SELECTOR),
                     categoriesState = categoriesState,
                     onExpandClick = onExpandClick,

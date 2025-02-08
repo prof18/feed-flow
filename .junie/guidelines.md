@@ -83,3 +83,7 @@ feed-flow/
 - **Run Desktop App**: `./gradlew desktopApp:run`
 - **Generate Localization**: Check i18n module
 - **Code Analysis**: Run Detekt using `./gradlew detekt`
+
+## Things to consider:
+- When adding new strings, the StringsVersion number needs to be bumped.
+- The database migrations are placed in the `sqldelight/com/prof18/feedflow/migrations` folder

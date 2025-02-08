@@ -169,7 +169,8 @@ struct SettingsScreen: View {
                 title: feedFlowStrings.settingsFontScaleFeedSourceExample,
                 category: nil,
                 lastSyncTimestamp: nil,
-                logoUrl: nil
+                logoUrl: nil,
+                linkOpeningPreference: .default
               ),
               pubDateMillis: nil,
               isRead: false,

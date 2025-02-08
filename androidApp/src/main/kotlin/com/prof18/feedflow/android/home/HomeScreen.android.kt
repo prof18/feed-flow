@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.home
 
+import android.content.Context
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -139,11 +140,7 @@ internal fun HomeScreen(
                     homeViewModel.onFeedFilterSelected(feedFilter)
                 },
                 openUrl = { urlInfo ->
-                    if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
-                        navigateToReaderMode(urlInfo)
-                    } else {
-                        browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
-                    }
+                    openUrl(urlInfo, navigateToReaderMode, browserManager, context)
                 },
                 updateReadStatus = { feedItemId, isRead ->
                     homeViewModel.updateReadStatus(feedItemId, isRead)
@@ -203,18 +200,7 @@ internal fun HomeScreen(
                     homeViewModel.onFeedFilterSelected(feedFilter)
                 },
                 openUrl = { urlInfo ->
-                    when (urlInfo.linkOpeningPreference) {
-                        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(urlInfo)
-                        LinkOpeningPreference.INTERNAL_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
-                        LinkOpeningPreference.PREFERRED_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
-                        LinkOpeningPreference.DEFAULT -> {
-                            if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
-                                navigateToReaderMode(urlInfo)
-                            } else {
-                                browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
-                            }
-                        }
-                    }
+                    openUrl(urlInfo, navigateToReaderMode, browserManager, context)
                 },
                 updateReadStatus = { feedItemId, isRead ->
                     homeViewModel.updateReadStatus(feedItemId, isRead)
@@ -274,11 +260,7 @@ internal fun HomeScreen(
                     homeViewModel.onFeedFilterSelected(feedFilter)
                 },
                 openUrl = { urlInfo ->
-                    if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
-                        navigateToReaderMode(urlInfo)
-                    } else {
-                        browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
-                    }
+                    openUrl(urlInfo, navigateToReaderMode, browserManager, context)
                 },
                 updateReadStatus = { feedItemId, isRead ->
                     homeViewModel.updateReadStatus(feedItemId, isRead)
@@ -295,6 +277,26 @@ internal fun HomeScreen(
                     homeViewModel.deleteFeedSource(feedSource)
                 },
             )
+        }
+    }
+}
+
+private fun openUrl(
+    urlInfo: FeedItemUrlInfo,
+    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
+    browserManager: BrowserManager,
+    context: Context,
+) {
+    when (urlInfo.linkOpeningPreference) {
+        LinkOpeningPreference.READER_MODE -> navigateToReaderMode(urlInfo)
+        LinkOpeningPreference.INTERNAL_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+        LinkOpeningPreference.PREFERRED_BROWSER -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+        LinkOpeningPreference.DEFAULT -> {
+            if (browserManager.openReaderMode() && !urlInfo.shouldOpenInBrowser()) {
+                navigateToReaderMode(urlInfo)
+            } else {
+                browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+            }
         }
     }
 }

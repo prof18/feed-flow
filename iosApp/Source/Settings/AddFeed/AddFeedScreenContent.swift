@@ -57,7 +57,7 @@ struct AddFeedScreenContent: View {
                 @Bindable var categorySelectorObserver = categorySelectorObserver
                 Picker(
                     selection: $categorySelectorObserver.selectedCategory,
-                    label: Text(feedFlowStrings.addFeedCategoriesTitle)
+                    label: Text(feedFlowStrings.feedSourceCategoryTitle)
                 ) {
                     ForEach(categoryItems, id: \.self.id) { categoryItem in
                         let title = categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader

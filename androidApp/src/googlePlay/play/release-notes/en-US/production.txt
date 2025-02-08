@@ -1,1 +1,1 @@
-- Improve FreshRss sync and fix some bugs
+- Add possibility to customize the article opening behavior per feed source

@@ -337,11 +337,16 @@ internal class FeedRetrieverRepository(
     suspend fun editFeedSource(
         newFeedSource: FeedSource,
         originalFeedSource: FeedSource?,
-    ): FeedEditedState =
-        when (accountsRepository.getCurrentSyncAccount()) {
+    ): FeedEditedState {
+        if (newFeedSource.linkOpeningPreference != originalFeedSource?.linkOpeningPreference) {
+            databaseHelper.insertFeedSourcePreference(newFeedSource.id, newFeedSource.linkOpeningPreference)
+            getFeeds()
+        }
+        return when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> editFeedSourceForFreshRss(newFeedSource, originalFeedSource)
             else -> editFeedSourceForLocalAccount(newFeedSource, originalFeedSource)
         }
+    }
 
     @Suppress("MagicNumber")
     suspend fun deleteOldFeeds() {

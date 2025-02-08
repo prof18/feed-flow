@@ -146,9 +146,9 @@
     <string name="fresh_rss_last_sync">Last sync: %s</string>
     <string name="fresh_rss_password_hint">The FreshRSS API password (Settings &gt; Profile)</string>
     <string name="fresh_rss_url_hint">The FreshRSS API endpoint, for example %s</string>
-    <string name="link_opening_preference">Link opening preference</string>
-    <string name="link_opening_preference_default">Use default settings</string>
-    <string name="link_opening_preference_reader_mode">Always use reader mode</string>
-    <string name="link_opening_preference_internal_browser">Always use internal browser</string>
-    <string name="link_opening_preference_preferred_browser">Always use preferred browser</string>
+    <string name="link_opening_preference">Link opening behaviour</string>
+    <string name="link_opening_preference_default">Default</string>
+    <string name="link_opening_preference_reader_mode">Reader mode</string>
+    <string name="link_opening_preference_internal_browser">In-app browser</string>
+    <string name="link_opening_preference_preferred_browser">Favourite browser</string>
 </resources>

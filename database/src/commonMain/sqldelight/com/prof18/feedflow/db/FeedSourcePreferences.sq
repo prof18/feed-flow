@@ -3,7 +3,7 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference;
 
 CREATE TABLE feed_source_preferences (
     feed_source_id TEXT NOT NULL PRIMARY KEY,
-    link_opening_preference TEXT AS LinkOpeningPreference DEFAULT 'DEFAULT',
+    link_opening_preference TEXT AS LinkOpeningPreference NOT NULL DEFAULT 'DEFAULT',
     FOREIGN KEY (feed_source_id) REFERENCES feed_source(url_hash)
 );
 

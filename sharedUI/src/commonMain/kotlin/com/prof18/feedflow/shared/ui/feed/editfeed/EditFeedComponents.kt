@@ -83,24 +83,24 @@ fun EditFeedContent(
             }
 
             item {
-                CategoriesSelector(
-                    modifier = Modifier
-                        .padding(top = Spacing.regular)
-                        .tagForTesting(TestingTag.CATEGORY_SELECTOR),
-                    categoriesState = categoriesState,
-                    onExpandClick = onExpandClick,
-                    onAddCategoryClick = onAddCategoryClick,
-                    onDeleteCategoryClick = onDeleteCategoryClick,
-                )
-            }
-
-            item {
                 LinkOpeningPreferenceSelector(
                     modifier = Modifier
                         .padding(top = Spacing.regular)
                         .fillMaxWidth(),
                     currentPreference = linkOpeningPreference,
                     onPreferenceSelected = onLinkOpeningPreferenceSelected,
+                )
+            }
+
+            item {
+                CategoriesSelector(
+                    modifier = Modifier
+                        .padding(vertical = Spacing.regular)
+                        .tagForTesting(TestingTag.CATEGORY_SELECTOR),
+                    categoriesState = categoriesState,
+                    onExpandClick = onExpandClick,
+                    onAddCategoryClick = onAddCategoryClick,
+                    onDeleteCategoryClick = onDeleteCategoryClick,
                 )
             }
 

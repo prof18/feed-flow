@@ -50,7 +50,9 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.utils.TestingTag
+import com.prof18.feedflow.shared.ui.feed.LinkOpeningPreferenceSelector
 import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -169,6 +171,7 @@ fun FeedItemView(
                             url = feedItem.url,
                             title = feedItem.title,
                             isBookmarked = feedItem.isBookmarked,
+                            linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
                         ),
                     )
                 },
@@ -398,6 +401,7 @@ private fun OpenCommentsMenuItem(
                     title = feedItem.title,
                     openOnlyOnBrowser = true,
                     isBookmarked = feedItem.isBookmarked,
+                    linkOpeningPreference = LinkOpeningPreference.PREFERRED_BROWSER,
                 ),
             )
             closeMenu()

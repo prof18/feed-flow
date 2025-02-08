@@ -4,5 +4,5 @@ enum class LinkOpeningPreference {
     DEFAULT,
     READER_MODE,
     INTERNAL_BROWSER,
-    PREFERRED_BROWSER;
+    PREFERRED_BROWSER,
 }

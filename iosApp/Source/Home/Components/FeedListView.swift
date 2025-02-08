@@ -61,32 +61,32 @@ struct FeedListView: View {
           ForEach(Array(feedState.enumerated()), id: \.element) { index, feedItem in
             Button(
               action: {
-                let urlInfo = FeedItemUrlInfo(
+                  let urlInfo =  FeedItemUrlInfo(
                     id: feedItem.id,
                     url: feedItem.url,
                     title: feedItem.title,
                     openOnlyOnBrowser: false,
                     isBookmarked: feedItem.isBookmarked,
-                    linkOpeningPreference: feedItem.linkOpeningPreference
-                )
+                    linkOpeningPreference: feedItem.feedSource.linkOpeningPreference
+                  )
 
-                switch urlInfo.linkOpeningPreference {
-                case .READER_MODE:
-                    self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
-                case .INTERNAL_BROWSER:
-                    browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
-                case .PREFERRED_BROWSER:
-                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                case .DEFAULT:
-                    if browserSelector.openReaderMode(link: feedItem.url) {
-                        self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
-                    } else if browserSelector.openInAppBrowser() {
-                        browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
-                    } else {
-                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                    }
-                }
-                onItemClick(urlInfo)
+                  switch urlInfo.linkOpeningPreference {
+                  case .readerMode:
+                      self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
+                  case .internalBrowser:
+                      browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
+                  case .preferredBrowser:
+                      openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                  case .default:
+                      if browserSelector.openReaderMode(link: feedItem.url) {
+                          self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
+                      } else if browserSelector.openInAppBrowser() {
+                          browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
+                      } else {
+                          openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                      }
+                  }
+                  onItemClick(urlInfo)
               },
               label: {
                 FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)

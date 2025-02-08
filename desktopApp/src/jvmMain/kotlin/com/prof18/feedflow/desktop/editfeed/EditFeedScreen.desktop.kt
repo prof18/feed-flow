@@ -22,6 +22,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
@@ -47,6 +48,7 @@ internal data class EditFeedScreen(
 
         val feedUrl by viewModel.feedUrlState.collectAsState()
         val feedName by viewModel.feedNameState.collectAsState()
+        val linkOpeningPreference by viewModel.linkOpeningPreferenceState.collectAsState()
         var showLoading by remember { mutableStateOf(false) }
         var errorMessage by remember { mutableStateOf("") }
         var showError by remember { mutableStateOf(false) }
@@ -101,11 +103,15 @@ internal data class EditFeedScreen(
             showLoading = showLoading,
             categoriesState = categoriesState,
             canEditUrl = viewModel.canEditUrl(),
+            linkOpeningPreference = linkOpeningPreference,
             onFeedUrlUpdated = { url ->
                 viewModel.updateFeedUrlTextFieldValue(url)
             },
             onFeedNameUpdated = { name ->
                 viewModel.updateFeedNameTextFieldValue(name)
+            },
+            onLinkOpeningPreferenceSelected = { preference ->
+                viewModel.updateLinkOpeningPreference(preference)
             },
             editFeed = {
                 viewModel.editFeed()
@@ -157,8 +163,10 @@ private fun EditScreenPreview() {
             canEditUrl = true,
             errorMessage = "",
             categoriesState = categoriesExpandedState,
+            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
             onFeedUrlUpdated = {},
             onFeedNameUpdated = {},
+            onLinkOpeningPreferenceSelected = {},
             editFeed = { },
             onExpandClick = {},
             onAddCategoryClick = {},

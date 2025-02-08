@@ -8,6 +8,7 @@
 
 import FeedFlowKit
 import SwiftUI
+import shared
 
 struct EditFeedScreenContent: View {
 
@@ -21,6 +22,7 @@ struct EditFeedScreenContent: View {
   @Binding var errorMessage: String
   @Binding var categoryItems: [CategoriesState.CategoryItem]
   @Binding var isAddingFeed: Bool
+  @Binding var linkOpeningPreference: LinkOpeningPreference
 
   var categorySelectorObserver: CategorySelectorObserver
 
@@ -28,6 +30,7 @@ struct EditFeedScreenContent: View {
   let updateFeedNameTextFieldValue: (String) -> Void
   let deleteCategory: (String) -> Void
   let addNewCategory: (CategoryName) -> Void
+  let updateLinkOpeningPreference: (LinkOpeningPreference) -> Void
   let addFeed: () -> Void
 
   var body: some View {
@@ -67,6 +70,25 @@ struct EditFeedScreenContent: View {
           }
         }
       )
+
+      Section(feedFlowStrings.linkOpeningPreference) {
+        Picker(
+          selection: $linkOpeningPreference,
+          label: Text(feedFlowStrings.linkOpeningPreference)
+        ) {
+          Text(feedFlowStrings.linkOpeningPreferenceDefault)
+            .tag(LinkOpeningPreference.DEFAULT)
+          Text(feedFlowStrings.linkOpeningPreferenceReaderMode)
+            .tag(LinkOpeningPreference.READER_MODE)
+          Text(feedFlowStrings.linkOpeningPreferenceInternalBrowser)
+            .tag(LinkOpeningPreference.INTERNAL_BROWSER)
+          Text(feedFlowStrings.linkOpeningPreferencePreferredBrowser)
+            .tag(LinkOpeningPreference.PREFERRED_BROWSER)
+        }
+        .onChange(of: linkOpeningPreference) { newValue in
+          updateLinkOpeningPreference(newValue)
+        }
+      }
 
       Section(feedFlowStrings.addFeedCategoryTitle) {
         @Bindable var categorySelectorObserver = categorySelectorObserver

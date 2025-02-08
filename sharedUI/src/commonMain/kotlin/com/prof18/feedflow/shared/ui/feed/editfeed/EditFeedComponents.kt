@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.shared.ui.feed.LinkOpeningPreferenceSelector
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.feed.CategoriesSelector
 import com.prof18.feedflow.shared.ui.feed.FeedNameTextField
@@ -32,8 +34,10 @@ fun EditFeedContent(
     errorMessage: String,
     canEditUrl: Boolean,
     categoriesState: CategoriesState,
+    linkOpeningPreference: LinkOpeningPreference,
     onFeedUrlUpdated: (String) -> Unit,
     onFeedNameUpdated: (String) -> Unit,
+    onLinkOpeningPreferenceSelected: (LinkOpeningPreference) -> Unit,
     editFeed: () -> Unit,
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
@@ -87,6 +91,16 @@ fun EditFeedContent(
                     onExpandClick = onExpandClick,
                     onAddCategoryClick = onAddCategoryClick,
                     onDeleteCategoryClick = onDeleteCategoryClick,
+                )
+            }
+
+            item {
+                LinkOpeningPreferenceSelector(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular)
+                        .fillMaxWidth(),
+                    currentPreference = linkOpeningPreference,
+                    onPreferenceSelected = onLinkOpeningPreferenceSelected,
                 )
             }
 

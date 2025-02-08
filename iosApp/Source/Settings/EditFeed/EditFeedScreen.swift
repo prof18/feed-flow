@@ -8,6 +8,7 @@
 
 import FeedFlowKit
 import SwiftUI
+import shared
 
 struct EditFeedScreen: View {
   @Environment(AppState.self) private var appState
@@ -27,6 +28,7 @@ struct EditFeedScreen: View {
   @State private var isAddingFeed: Bool = false
   @State var feedURL = ""
   @State var feedName = ""
+  @State var linkOpeningPreference = LinkOpeningPreference.DEFAULT
 
   var body: some View {
     NavigationStack {
@@ -38,6 +40,7 @@ struct EditFeedScreen: View {
           errorMessage: $errorMessage,
           categoryItems: $categoryItems,
           isAddingFeed: $isAddingFeed,
+          linkOpeningPreference: $linkOpeningPreference,
           categorySelectorObserver: categorySelectorObserver,
           updateFeedUrlTextFieldValue: { value in
             vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
@@ -50,6 +53,9 @@ struct EditFeedScreen: View {
           },
           addNewCategory: { categoryName in
             vmStoreOwner.instance.addNewCategory(categoryName: categoryName)
+          },
+          updateLinkOpeningPreference: { preference in
+            vmStoreOwner.instance.updateLinkOpeningPreference(preference: preference)
           },
           addFeed: {
             vmStoreOwner.instance.editFeed()
@@ -120,6 +126,11 @@ struct EditFeedScreen: View {
         for await state in vmStoreOwner.instance.categoriesState {
           self.categorySelectorObserver.selectedCategory = state.categories.first { $0.isSelected }
           self.categoryItems = state.categories
+        }
+      }
+      .task {
+        for await state in vmStoreOwner.instance.linkOpeningPreferenceState {
+          self.linkOpeningPreference = state
         }
       }
     }

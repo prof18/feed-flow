@@ -151,4 +151,15 @@
     <string name="link_opening_preference_internal_browser">In-App Browser</string>
     <string name="link_opening_preference_preferred_browser">Bevorzugter Browser</string>
     <string name="link_opening_preference_reader_mode">Lesemodus</string>
+    <string name="delete_category_confirmation_title">Kategorie löschen?</string>
+    <string name="delete_category_confirmation_message">Möchten sie diese Kategorie wirklich löschen? Die Feeds in dieser Kategorie werden zu \"Ohne Kategorie\" verschoben.</string>
+    <string name="delete_category_close_button">Schließen</string>
+    <string name="settings_auto_delete">Alte Artikel automatisch löschen</string>
+    <string name="settings_auto_delete_desc">Artikel automatisch löschen, die älter sind als die definierte Periode</string>
+    <string name="settings_auto_delete_period_disabled">Deaktiviert</string>
+    <string name="settings_auto_delete_period_one_week">Eine Woche alt</string>
+    <string name="settings_auto_delete_period_two_weeks">Zwei Wochen alt</string>
+    <string name="settings_auto_delete_period_one_month">Ein Monat alt</string>
+    <string name="feed_url_help_text">Jede Feed-Adresse, Webseite oder Link zum Youtube-Kanal hinzufügen. Der Feed wird, wenn möglich, automatisch erkannt</string>
+    <string name="settings_auto_delete_period">Periode löschen</string>
 </resources>

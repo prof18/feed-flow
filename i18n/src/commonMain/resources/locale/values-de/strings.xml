@@ -100,7 +100,7 @@
     <string name="loading_feed_message">Feeds werden geladen %s</string>
     <string name="no_feed_modal_message">Du kannst manuell Feeds hinzufügen, deine Abonnements aus einem anderen RSS-Reader importieren, oder ein Konto verknüpfen, um die Daten von einem anderen Gerät zu synchronisieren (diese Funktionalität ist noch in der Betaphase).</string>
     <string name="search_hint_title">Fang an zu schreiben…</string>
-    <string name="accounts_description">Verknüpfe ein Konto, um Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen Geräten zu synchronisieren.\n\nDiese Funktionalität befindet sich noch in der Betaphase, es können Fehler auftreten (z.B. werden gelesene Artikel unter Umständen nicht vollständig synchronisiert). Mehr Anbieter werden in Zukunft unterstützt.\n\nEs wird nur die Anmeldung mit jeweils einem Konto unterstützt.</string>
+    <string name="accounts_description">Verknüpfe ein Konto, um Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen Geräten zu synchronisieren.\n\nDiese Funktionalität befindet sich noch in der Betaphase, es können Fehler auftreten (z.B. werden gelesene Artikel unter Umständen nicht vollständig synchronisiert). Weitere Anbieter werden in Zukunft unterstützt werden.\n\nEs wird nur die Anmeldung mit jeweils einem Konto unterstützt.</string>
     <string name="dropbox_sync_common_description">Verknüpfe dein Dropbox-Konto, um deine Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen Android-, iOS-, iPadOS- und Desktop-Geräten zu synchronisieren. Die Daten werden in einem App-spezifischen Ordner gespeichert; FeedFlow hat keinen Zugriff auf deine Dateien</string>
     <string name="dropbox_sync_mobile_description">Beim Drücken von \"Verknüpfen\" wirst du auf die Dropbox-App oder -Website weitergeleitet. Nachdem du dein Konto verknüpft hast, kannst du wieder zu FeedFlow zurückkehren</string>
     <string name="dropbox_sync_desktop_description">Beim Drücken von \"Verknüpfen\" wirst du auf die Dropbox-Website weitergeleitet. Nachdem du dein Konto verknüpft hast, kopiere bitte den Berechtigungscode und füge ihn in der App ein</string>
@@ -112,7 +112,7 @@
     <string name="error_account_sync">Beim Synchronisieren der Daten mit deinem Konto ist leider ein Fehler aufgetreten :(</string>
     <string name="import_export_description">Für eine bessere Interoperabilität mit anderen Feed-Readern unterstützt FeedFlow das Importieren und Exportieren deiner Abonnements als OPML-Datei</string>
     <string name="read_articles_empty_screen_message">Hier ist noch nichts; Zeit, mit dem Lesen zu beginnen!</string>
-    <string name="bookmarked_articles_empty_screen_message">Hier ist noch nichts; Zeit, um Lesezeichen hinzuzufügen!</string>
+    <string name="bookmarked_articles_empty_screen_message">Hier ist noch nichts eingetragen - ein guter Zeitpunkt, um Lesezeichen hinzuzufügen!</string>
     <string name="no_icloud_sync_yet">Deine Daten sind noch nicht mit iCloud synchronisiert. Drücke den Sicherungs-Knopf, um die Synchronisierung zu starten</string>
     <string name="account_refresh_progress">Aktualisierung läuft</string>
     <string name="reader_mode_warning">i Der Lesemodus versucht, den Artikelinhalt abzurufen. Es kann zu Fehlern oder unerwünschten Zeichen kommen.</string>
@@ -144,4 +144,11 @@
     <string name="edit_feed_generic_error">Beim Bearbeiten des Feeds trat ein Fehler auf. Bitte erneut versuchen.</string>
     <string name="add_feed_generic_error">Beim Hinzufügen des Feeds trat ein Fehler auf. Bitte erneut versuchen</string>
     <string name="wrong_url_error_message">Der eingegebene Link ist nicht korrekt. Bitte erneut versuchen.</string>
+    <string name="fresh_rss_password_hint">Passwort für FreshRSS-API (Einstellungen &gt; Profil)</string>
+    <string name="fresh_rss_url_hint">Endpunkt der FreshRSS-API, zum Beispiel %s</string>
+    <string name="link_opening_preference">Verhalten beim Öfffnen des Links</string>
+    <string name="link_opening_preference_default">Vorgabe</string>
+    <string name="link_opening_preference_internal_browser">In-App Browser</string>
+    <string name="link_opening_preference_preferred_browser">Bevorzugter Browser</string>
+    <string name="link_opening_preference_reader_mode">Lesemodus</string>
 </resources>

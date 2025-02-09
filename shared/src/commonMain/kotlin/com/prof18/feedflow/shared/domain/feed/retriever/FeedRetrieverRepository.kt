@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
@@ -59,6 +60,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlin.time.Duration.Companion.days
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedRetrieverRepository(
@@ -233,6 +236,8 @@ internal class FeedRetrieverRepository(
         delay(50)
         isFeedSyncDone = true
         updateRefreshCount()
+        // After fetching new feeds, delete old ones based on user settings
+        cleanOldFeeds()
         getFeeds()
     }
 
@@ -273,6 +278,8 @@ internal class FeedRetrieverRepository(
             delay(50)
             isFeedSyncDone = true
             updateRefreshCount()
+            // After fetching new feeds, delete old ones based on user settings
+            cleanOldFeeds()
             getFeeds()
         }
     }
@@ -348,12 +355,28 @@ internal class FeedRetrieverRepository(
         }
     }
 
-    @Suppress("MagicNumber")
+    private suspend fun cleanOldFeeds() {
+        val deletePeriod = settingsHelper.getAutoDeletePeriod()
+        if (deletePeriod == AutoDeletePeriod.DISABLED) {
+            return
+        }
+
+        val threshold = when (deletePeriod) {
+            AutoDeletePeriod.DISABLED -> return
+            AutoDeletePeriod.ONE_WEEK -> Clock.System.now().minus(7.days).toEpochMilliseconds()
+            AutoDeletePeriod.TWO_WEEKS -> Clock.System.now().minus(14.days).toEpochMilliseconds()
+            AutoDeletePeriod.ONE_MONTH -> Clock.System.now().minus(30.days).toEpochMilliseconds()
+        }
+
+        val oldFeedIds = databaseHelper.getOldFeedItem(threshold)
+        databaseHelper.deleteOldFeedItems(threshold)
+        feedSyncRepository.deleteFeedItems(oldFeedIds)
+        getFeeds()
+    }
+
     suspend fun deleteOldFeeds() {
         // One week
-        // (((1 hour in seconds) * 24 hours) * 7 days)
-        val oneWeekInMillis = (((60 * 60) * 24) * 7) * 1000L
-        val threshold = dateFormatter.currentTimeMillis() - oneWeekInMillis
+        val threshold = Clock.System.now().minus(7.days).toEpochMilliseconds()
         val oldFeedIds = databaseHelper.getOldFeedItem(threshold)
         databaseHelper.deleteOldFeedItems(threshold)
         feedSyncRepository.deleteFeedItems(oldFeedIds)

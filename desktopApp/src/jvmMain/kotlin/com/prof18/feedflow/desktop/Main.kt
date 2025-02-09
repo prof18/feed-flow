@@ -271,6 +271,7 @@ fun main() = application {
                                 isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
                                 isReaderModeEnabled = settingsState.isReaderModeEnabled,
                                 isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
+                                autoDeletePeriod = settingsState.autoDeletePeriod,
                                 feedFilter = currentFeedFilter,
                                 onRefreshClick = {
                                     scope.launch {
@@ -323,6 +324,9 @@ fun main() = application {
                                 },
                                 onFeedFontScaleClick = {
                                     feedListFontDialogState = true
+                                },
+                                onAutoDeletePeriodSelected = { period ->
+                                    settingsViewModel.updateAutoDeletePeriod(period)
                                 },
                             )
 

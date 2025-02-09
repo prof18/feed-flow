@@ -8,6 +8,7 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuScope
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
@@ -21,6 +22,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     isShowReadItemEnabled: Boolean,
     isReaderModeEnabled: Boolean,
     isRemoveTitleFromDescriptionEnabled: Boolean,
+    autoDeletePeriod: AutoDeletePeriod,
     feedFilter: FeedFilter,
     onRefreshClick: () -> Unit,
     onMarkAllReadClick: () -> Unit,
@@ -35,6 +37,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     setReaderMode: (Boolean) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     onFeedFontScaleClick: () -> Unit,
+    onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -135,6 +138,29 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 checked = isRemoveTitleFromDescriptionEnabled,
                 onCheckedChange = setRemoveTitleFromDescription,
             )
+
+            Menu(LocalFeedFlowStrings.current.settingsAutoDelete) {
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodDisabled,
+                    selected = autoDeletePeriod == AutoDeletePeriod.DISABLED,
+                    onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.DISABLED) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneWeek,
+                    selected = autoDeletePeriod == AutoDeletePeriod.ONE_WEEK,
+                    onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_WEEK) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodTwoWeeks,
+                    selected = autoDeletePeriod == AutoDeletePeriod.TWO_WEEKS,
+                    onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.TWO_WEEKS) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneMonth,
+                    selected = autoDeletePeriod == AutoDeletePeriod.ONE_MONTH,
+                    onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_MONTH) },
+                )
+            }
         }
 
         Menu(LocalFeedFlowStrings.current.settingsHelpTitle, mnemonic = 'B') {

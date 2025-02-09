@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
+import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Language
@@ -41,7 +43,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelectionDialog
+import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.TestingTag
@@ -92,6 +96,7 @@ fun SettingsScreen(
         isRemoveTitleFromDescriptionEnabled = settingState.isRemoveTitleFromDescriptionEnabled,
         showAccounts = appConfig.isDropboxSyncEnabled,
         fontSizes = fontSizesState,
+        autoDeletePeriod = settingState.autoDeletePeriod,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
@@ -124,6 +129,9 @@ fun SettingsScreen(
         updateFontScale = { newFontSize ->
             settingsViewModel.updateFontScale(newFontSize)
         },
+        onAutoDeletePeriodSelected = { period ->
+            settingsViewModel.updateAutoDeletePeriod(period)
+        },
     )
 }
 
@@ -136,6 +144,7 @@ private fun SettingsScreenContent(
     isRemoveTitleFromDescriptionEnabled: Boolean,
     showAccounts: Boolean,
     fontSizes: FeedFontSizes,
+    autoDeletePeriod: AutoDeletePeriod,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelected: (Browser) -> Unit,
@@ -149,6 +158,7 @@ private fun SettingsScreenContent(
     setReaderMode: (Boolean) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     updateFontScale: (Int) -> Unit,
+    onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -241,6 +251,13 @@ private fun SettingsScreenContent(
                     onClick = {
                         showBrowserSelection = true
                     },
+                )
+            }
+
+            item {
+                AutoDeletePeriodSelector(
+                    currentPeriod = autoDeletePeriod,
+                    onPeriodSelected = onAutoDeletePeriodSelected,
                 )
             }
 
@@ -431,6 +448,57 @@ private fun ShowReadItemOnTimelineSwitch(
 }
 
 @Composable
+private fun AutoDeletePeriodSelector(
+    currentPeriod: AutoDeletePeriod,
+    onPeriodSelected: (AutoDeletePeriod) -> Unit,
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val strings = LocalFeedFlowStrings.current
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable { showDialog = true }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.Outlined.DeleteSweep,
+            contentDescription = null,
+        )
+
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = strings.settingsAutoDelete,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = when (currentPeriod) {
+                    AutoDeletePeriod.DISABLED -> strings.settingsAutoDeletePeriodDisabled
+                    AutoDeletePeriod.ONE_WEEK -> strings.settingsAutoDeletePeriodOneWeek
+                    AutoDeletePeriod.TWO_WEEKS -> strings.settingsAutoDeletePeriodTwoWeeks
+                    AutoDeletePeriod.ONE_MONTH -> strings.settingsAutoDeletePeriodOneMonth
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+
+    if (showDialog) {
+        AutoDeletePeriodDialog(
+            currentPeriod = currentPeriod,
+            onPeriodSelected = onPeriodSelected,
+            dismissDialog = { showDialog = false },
+        )
+    }
+}
+
+@Composable
 private fun RemoveTitleFromDescSwitch(
     isRemoveTitleFromDescriptionEnabled: Boolean,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
@@ -502,6 +570,7 @@ private fun SettingsScreenPreview() {
             isRemoveTitleFromDescriptionEnabled = false,
             showAccounts = true,
             fontSizes = FeedFontSizes(),
+            autoDeletePeriod = AutoDeletePeriod.DISABLED,
             onFeedListClick = {},
             onAddFeedClick = {},
             onBrowserSelected = {},
@@ -515,6 +584,7 @@ private fun SettingsScreenPreview() {
             setReaderMode = {},
             setRemoveTitleFromDescription = {},
             updateFontScale = {},
+            onAutoDeletePeriodSelected = {},
         )
     }
 }

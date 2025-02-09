@@ -32,48 +32,59 @@ struct AddFeedScreenContent: View {
   let addFeed: () -> Void
 
   var body: some View {
-    Form {
-      Section(
-        content: {
-          TextField(feedFlowStrings.feedUrl, text: $feedURL)
-            .keyboardType(.URL)
-            .textContentType(.URL)
-            .disableAutocorrection(true)
-            .hoverEffect()
-            .accessibilityIdentifier(TestingTag.shared.FEED_URL_INPUT)
-        },
-        header: {
-          Text(feedFlowStrings.feedUrl)
-        },
-        footer: {
-          if showError {
-            Text(errorMessage)
-              .font(.caption)
-              .foregroundColor(.red)
-              .accessibilityIdentifier(TestingTag.shared.INVALID_URL_ERROR_MESSAGE)
-          }
-        }
-      )
 
-      Section(feedFlowStrings.addFeedCategoryTitle) {
-        @Bindable var categorySelectorObserver = categorySelectorObserver
-        Picker(
-          selection: $categorySelectorObserver.selectedCategory,
-          label: Text(feedFlowStrings.addFeedCategoryTitle)
-        ) {
-          ForEach(categoryItems, id: \.self.id) { categoryItem in
-            let title = categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader
-            Text(title)
-              .tag(categoryItem as CategoriesState.CategoryItem?)
-              .accessibilityIdentifier("\(TestingTag.shared.CATEGORY_RADIO_BUTTON)_\(title)")
-          }
-        }
-        .hoverEffect()
-      }
-      .accessibilityIdentifier(TestingTag.shared.CATEGORY_SELECTOR)
+    VStack(alignment: .leading) {
+      Text(feedFlowStrings.feedUrlHelpText)
+        .padding(.horizontal, Spacing.regular)
+        .padding(.top, Spacing.regular)
+        .foregroundColor(.secondary)
 
-      if !categoryItems.isEmpty {
-        categoriesSection
+      Form {
+
+        Section(
+          content: {
+            TextField(feedFlowStrings.feedUrl, text: $feedURL)
+              .keyboardType(.URL)
+              .textContentType(.URL)
+              .disableAutocorrection(true)
+              .hoverEffect()
+              .accessibilityIdentifier(TestingTag.shared.FEED_URL_INPUT)
+          },
+          header: {
+            Text(feedFlowStrings.feedUrl)
+          },
+          footer: {
+            VStack(alignment: .leading, spacing: 8) {
+              if showError {
+                Text(errorMessage)
+                  .font(.caption)
+                  .foregroundColor(.red)
+                  .accessibilityIdentifier(TestingTag.shared.INVALID_URL_ERROR_MESSAGE)
+              }
+            }
+          }
+        )
+
+        Section(feedFlowStrings.addFeedCategoryTitle) {
+          @Bindable var categorySelectorObserver = categorySelectorObserver
+          Picker(
+            selection: $categorySelectorObserver.selectedCategory,
+            label: Text(feedFlowStrings.addFeedCategoryTitle)
+          ) {
+            ForEach(categoryItems, id: \.self.id) { categoryItem in
+              let title = categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader
+              Text(title)
+                .tag(categoryItem as CategoriesState.CategoryItem?)
+                .accessibilityIdentifier("\(TestingTag.shared.CATEGORY_RADIO_BUTTON)_\(title)")
+            }
+          }
+          .hoverEffect()
+        }
+        .accessibilityIdentifier(TestingTag.shared.CATEGORY_SELECTOR)
+
+        if !categoryItems.isEmpty {
+          categoriesSection
+        }
       }
     }
     .scrollContentBackground(.hidden)

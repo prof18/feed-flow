@@ -144,4 +144,11 @@
     <string name="no_fresh_rss_sync_yet">Chưa thể đồng bộ dữ liệu</string>
     <string name="fresh_rss_last_sync">Lần cuối đồng bộ: %s</string>
     <string name="fresh_rss_account_connected">Tài khoản FreshRSS của bạn đã được kết nối thành công</string>
+    <string name="fresh_rss_url_hint">Endpoint FreshRSS API, ví dụ %s</string>
+    <string name="link_opening_preference_reader_mode">Chế độ đọc</string>
+    <string name="link_opening_preference_internal_browser">Mở trong app</string>
+    <string name="link_opening_preference_preferred_browser">Mở bằng trình duyệt</string>
+    <string name="link_opening_preference">Mở liên kết</string>
+    <string name="link_opening_preference_default">Mặc định</string>
+    <string name="fresh_rss_password_hint">Mật khẩu FreshRSS API (Cài đặt &gt; Hồ sơ)</string>
 </resources>

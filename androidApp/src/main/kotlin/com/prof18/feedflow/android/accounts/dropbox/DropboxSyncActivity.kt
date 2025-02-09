@@ -28,6 +28,8 @@ import com.prof18.feedflow.shared.ui.accounts.dropbox.DropboxSyncContent
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -44,69 +46,72 @@ class DropboxSyncActivity : ComponentActivity() {
 
         setContent {
             FeedFlowTheme {
-                val snackbarHostState = remember { SnackbarHostState() }
-                val scope = rememberCoroutineScope()
+                val lyricist = rememberFeedFlowStrings()
+                ProvideFeedFlowStrings(lyricist) {
+                    val snackbarHostState = remember { SnackbarHostState() }
+                    val scope = rememberCoroutineScope()
 
-                val errorMessage = LocalFeedFlowStrings.current.dropboxSyncError
+                    val errorMessage = LocalFeedFlowStrings.current.dropboxSyncError
 
-                LaunchedEffect(Unit) {
-                    viewModel.dropboxSyncMessageState.collect { event ->
-                        when (event) {
-                            DropboxSynMessages.Error -> {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        message = errorMessage,
-                                        duration = SnackbarDuration.Short,
-                                    )
+                    LaunchedEffect(Unit) {
+                        viewModel.dropboxSyncMessageState.collect { event ->
+                            when (event) {
+                                DropboxSynMessages.Error -> {
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            message = errorMessage,
+                                            duration = SnackbarDuration.Short,
+                                        )
+                                    }
                                 }
-                            }
 
-                            is DropboxSynMessages.ProceedToAuth -> {
-                                // no-op
+                                is DropboxSynMessages.ProceedToAuth -> {
+                                    // no-op
+                                }
                             }
                         }
                     }
-                }
 
-                val uiState by viewModel.dropboxConnectionUiState.collectAsStateWithLifecycle()
+                    val uiState by viewModel.dropboxConnectionUiState.collectAsStateWithLifecycle()
 
-                DropboxSyncContent(
-                    uiState = uiState,
-                    onBackClick = {
-                        finish()
-                    },
-                    onBackupClick = {
-                        viewModel.triggerBackup()
-                    },
-                    onDisconnectClick = {
-                        viewModel.unlink()
-                    },
-                    customPlatformUI = {
-                        Column(
-                            modifier = Modifier.padding(top = Spacing.regular),
-                        ) {
-                            Text(
-                                text = LocalFeedFlowStrings.current.dropboxSyncMobileDescription,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(horizontal = Spacing.regular),
-                            )
-
-                            SettingItem(
+                    DropboxSyncContent(
+                        uiState = uiState,
+                        onBackClick = {
+                            finish()
+                        },
+                        onBackupClick = {
+                            viewModel.triggerBackup()
+                        },
+                        onDisconnectClick = {
+                            viewModel.unlink()
+                        },
+                        customPlatformUI = {
+                            Column(
                                 modifier = Modifier.padding(top = Spacing.regular),
-                                title = LocalFeedFlowStrings.current.accountConnectButton,
-                                icon = Icons.Default.Link,
-                                onClick = {
-                                    isAuthOngoing = true
-                                    val apiKey = BuildConfig.DROPBOX_APP_KEY
-                                    startDropboxAuth(this@DropboxSyncActivity, apiKey)
-                                },
-                            )
-                        }
-                    },
-                    snackbarHost = {
-                        SnackbarHost(snackbarHostState)
-                    },
-                )
+                            ) {
+                                Text(
+                                    text = LocalFeedFlowStrings.current.dropboxSyncMobileDescription,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(horizontal = Spacing.regular),
+                                )
+
+                                SettingItem(
+                                    modifier = Modifier.padding(top = Spacing.regular),
+                                    title = LocalFeedFlowStrings.current.accountConnectButton,
+                                    icon = Icons.Default.Link,
+                                    onClick = {
+                                        isAuthOngoing = true
+                                        val apiKey = BuildConfig.DROPBOX_APP_KEY
+                                        startDropboxAuth(this@DropboxSyncActivity, apiKey)
+                                    },
+                                )
+                            }
+                        },
+                        snackbarHost = {
+                            SnackbarHost(snackbarHostState)
+                        },
+                    )
+                }
             }
         }
     }

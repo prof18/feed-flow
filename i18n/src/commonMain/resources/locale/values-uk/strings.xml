@@ -151,4 +151,15 @@
     <string name="link_opening_preference_default">За замовчуванням</string>
     <string name="fresh_rss_url_hint">Кінцева точка API FreshRSS, наприклад %s</string>
     <string name="fresh_rss_password_hint">Пароль FreshRSS API (Налаштування &gt; Профіль)</string>
+    <string name="settings_auto_delete_period_one_month">Один місяць</string>
+    <string name="delete_category_confirmation_title">Видалити категорію?</string>
+    <string name="delete_category_close_button">Закрити</string>
+    <string name="settings_auto_delete">Автоматичне видалення старих статей</string>
+    <string name="settings_auto_delete_desc">Автоматично видаляти статті, старші за вибраний період</string>
+    <string name="settings_auto_delete_period">Видалити період</string>
+    <string name="settings_auto_delete_period_disabled">Вимкнено</string>
+    <string name="settings_auto_delete_period_one_week">Тижневий вік</string>
+    <string name="feed_url_help_text">Додайте будь-який прямий канал, веб-сайт або посилання на канал YouTube. Канал буде виявлено автоматично, коли це можливо</string>
+    <string name="delete_category_confirmation_message">Ви впевнені, що хочете видалити цю категорію? Канали в цій категорії буде переміщено в без категорії.</string>
+    <string name="settings_auto_delete_period_two_weeks">Два тижні</string>
 </resources>

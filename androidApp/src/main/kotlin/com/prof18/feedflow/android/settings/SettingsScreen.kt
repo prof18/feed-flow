@@ -45,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelectionDialog
+import com.prof18.feedflow.android.settings.components.BrowserSelector
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.utils.AppConfig
@@ -165,25 +166,6 @@ private fun SettingsScreenContent(
             SettingsNavBar(navigateBack)
         },
     ) { paddingValues ->
-
-        var showBrowserSelection by remember {
-            mutableStateOf(
-                false,
-            )
-        }
-
-        if (showBrowserSelection) {
-            BrowserSelectionDialog(
-                browserList = browsers,
-                onBrowserSelected = { browser ->
-                    onBrowserSelected(browser)
-                },
-                dismissDialog = {
-                    showBrowserSelection = false
-                },
-            )
-        }
-
         LazyColumn(
             modifier = Modifier
                 .padding(paddingValues),
@@ -243,14 +225,9 @@ private fun SettingsScreenContent(
             }
 
             item {
-                SettingItem(
-                    modifier = Modifier
-                        .tagForTesting(TestingTag.BROWSER_SELECTOR),
-                    title = LocalFeedFlowStrings.current.browserSelectionButton,
-                    icon = Icons.Outlined.Language,
-                    onClick = {
-                        showBrowserSelection = true
-                    },
+                BrowserSelector(
+                    browsers = browsers,
+                    onBrowserSelected = onBrowserSelected,
                 )
             }
 

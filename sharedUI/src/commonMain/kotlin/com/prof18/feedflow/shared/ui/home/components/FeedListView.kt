@@ -46,13 +46,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.utils.TestingTag
-import com.prof18.feedflow.shared.ui.feed.LinkOpeningPreferenceSelector
 import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -68,6 +68,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 fun FeedList(
     feedItems: ImmutableList<FeedItem>,
     feedFontSize: FeedFontSizes,
+    currentFeedFilter: FeedFilter,
     updateReadStatus: (Int) -> Unit,
     requestMoreItems: () -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
@@ -105,7 +106,7 @@ fun FeedList(
                 feedFontSize = feedFontSize,
             )
 
-            if (index == feedItems.size - 1) {
+            if (index == feedItems.size - 1 && currentFeedFilter !is FeedFilter.Read) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(),

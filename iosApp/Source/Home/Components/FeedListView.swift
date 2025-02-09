@@ -127,17 +127,19 @@ struct FeedListView: View {
               }
             }
             if index == feedState.count - 1 {
-              Button(
-                action: {
-                  onMarkAllAsReadClick()
-                },
-                label: {
-                  Text(feedFlowStrings.markAllReadButton)
-                }
-              )
-              .buttonStyle(.borderless)
-              .frame(maxWidth: .infinity)
-              .listRowSeparator(.hidden)
+              if !(currentFeedFilter is FeedFilter.Read) {
+                Button(
+                  action: {
+                    onMarkAllAsReadClick()
+                  },
+                  label: {
+                    Text(feedFlowStrings.markAllReadButton)
+                  }
+                )
+                .buttonStyle(.borderless)
+                .frame(maxWidth: .infinity)
+                .listRowSeparator(.hidden)
+              }
             }
           }
         }

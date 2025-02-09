@@ -74,6 +74,7 @@ internal fun HomeScreenContent(
                 .fillMaxSize(),
             feedUpdateStatus = loadingState,
             feedItems = feedState,
+            currentFeedFilter = currentFeedFilter,
             feedFontSizes = feedFontSizes,
             lazyListState = listState,
             updateReadStatus = updateReadStatus,

@@ -77,6 +77,7 @@ internal fun HomeScreenContent(
                 feedState = feedState,
                 loadingState = loadingState,
                 listState = listState,
+                currentFeedFilter = currentFeedFilter,
                 feedFontSizes = feedFontSizes,
                 updateReadStatus = updateReadStatus,
                 onFeedItemClick = onFeedItemClick,

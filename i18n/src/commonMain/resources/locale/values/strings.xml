@@ -154,4 +154,11 @@
     <string name="delete_category_confirmation_title">Delete category?</string>
     <string name="delete_category_confirmation_message">Are you sure you want to delete this category? The feeds in this category will be moved to "Uncategorized".</string>
     <string name="delete_category_close_button">Close</string>
+    <string name="settings_auto_delete">Auto-delete old articles</string>
+    <string name="settings_auto_delete_desc">Automatically delete articles older than the selected period</string>
+    <string name="settings_auto_delete_period">Delete period</string>
+    <string name="settings_auto_delete_period_disabled">Disabled</string>
+    <string name="settings_auto_delete_period_one_week">One week old</string>
+    <string name="settings_auto_delete_period_two_weeks">Two weeks old</string>
+    <string name="settings_auto_delete_period_one_month">One month old</string>
 </resources>

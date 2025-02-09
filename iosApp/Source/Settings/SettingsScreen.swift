@@ -10,7 +10,6 @@ import FeedFlowKit
 import SwiftUI
 
 struct SettingsScreen: View {
-
   @Environment(AppState.self) private var appState
   @Environment(BrowserSelector.self) private var browserSelector
   @Environment(\.dismiss) private var dismiss
@@ -23,6 +22,7 @@ struct SettingsScreen: View {
   @State private var isShowReadItemEnabled = false
   @State private var isReaderModeEnabled = false
   @State private var isRemoveTitleFromDescriptionEnabled = false
+  @State private var autoDeletePeriod: AutoDeletePeriod = .disabled
   @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
   @State private var scaleFactor = 0.0
 
@@ -30,10 +30,11 @@ struct SettingsScreen: View {
     settingsContent
       .task {
         for await state in vmStoreOwner.instance.settingsState {
-          self.isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
-          self.isShowReadItemEnabled = state.isShowReadItemsEnabled
-          self.isReaderModeEnabled = state.isReaderModeEnabled
-          self.isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
+          isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
+          isShowReadItemEnabled = state.isShowReadItemsEnabled
+          isReaderModeEnabled = state.isReaderModeEnabled
+          isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
+          autoDeletePeriod = state.autoDeletePeriod
         }
       }
       .task {
@@ -47,11 +48,16 @@ struct SettingsScreen: View {
       }
       .onChange(of: isShowReadItemEnabled) {
         vmStoreOwner.instance.updateShowReadItemsOnTimeline(value: isShowReadItemEnabled)
-      }.onChange(of: isReaderModeEnabled) {
+      }
+      .onChange(of: isReaderModeEnabled) {
         vmStoreOwner.instance.updateReaderMode(value: isReaderModeEnabled)
-      }.onChange(of: isRemoveTitleFromDescriptionEnabled) {
+      }
+      .onChange(of: isRemoveTitleFromDescriptionEnabled) {
         vmStoreOwner.instance.updateRemoveTitleFromDescription(
           value: isRemoveTitleFromDescriptionEnabled)
+      }
+      .onChange(of: autoDeletePeriod) {
+        vmStoreOwner.instance.updateAutoDeletePeriod(period: autoDeletePeriod)
       }
   }
 
@@ -120,24 +126,34 @@ struct SettingsScreen: View {
           Label(feedFlowStrings.browserSelectionButton, systemImage: "globe")
         }
       )
-      .hoverEffect()
-      .accessibilityIdentifier(TestingTag.shared.BROWSER_SELECTOR)
+
+      Picker(selection: $autoDeletePeriod) {
+        Text(feedFlowStrings.settingsAutoDeletePeriodDisabled)
+          .tag(AutoDeletePeriod.disabled)
+        Text(feedFlowStrings.settingsAutoDeletePeriodOneWeek)
+          .tag(AutoDeletePeriod.oneWeek)
+        Text(feedFlowStrings.settingsAutoDeletePeriodTwoWeeks)
+          .tag(AutoDeletePeriod.twoWeeks)
+        Text(feedFlowStrings.settingsAutoDeletePeriodOneMonth)
+          .tag(AutoDeletePeriod.oneMonth)
+      } label: {
+        Label(feedFlowStrings.settingsAutoDelete, systemImage: "arrow.3.trianglepath")
+      }
 
       Toggle(isOn: $isReaderModeEnabled) {
-        Label(feedFlowStrings.settingsReaderMode, systemImage: "newspaper")
+        Label(feedFlowStrings.settingsReaderMode, systemImage: "doc.text")
       }.onTapGesture {
         isReaderModeEnabled.toggle()
       }
 
       Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
-        Label(feedFlowStrings.toggleMarkReadWhenScrolling, systemImage: "envelope.open")
+        Label(feedFlowStrings.toggleMarkReadWhenScrolling, systemImage: "scroll")
       }.onTapGesture {
         isMarkReadWhenScrollingEnabled.toggle()
       }
-      .accessibilityIdentifier(TestingTag.shared.MARK_AS_READ_SCROLLING_SWITCH)
 
       Toggle(isOn: $isShowReadItemEnabled) {
-        Label(feedFlowStrings.settingsToggleShowReadArticles, systemImage: "text.badge.checkmark")
+        Label(feedFlowStrings.settingsToggleShowReadArticles, systemImage: "eye")
       }.onTapGesture {
         isShowReadItemEnabled.toggle()
       }
@@ -240,9 +256,4 @@ struct SettingsScreen: View {
       .accessibilityIdentifier(TestingTag.shared.ABOUT_SETTINGS_ITEM)
     }
   }
-}
-
-#Preview {
-  SettingsScreen()
-    .environment(BrowserSelector())
 }

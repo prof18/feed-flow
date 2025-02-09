@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
@@ -30,12 +31,14 @@ class SettingsViewModel internal constructor(
             val isShowReadItemsEnabled = settingsRepository.isShowReadArticlesTimelineEnabled()
             val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
             val isRemoveTitleFromDescriptionEnabled = settingsRepository.isRemoveTitleFromDescriptionEnabled()
+            val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
             settingsMutableState.update {
                 SettingsState(
                     isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
                     isShowReadItemsEnabled = isShowReadItemsEnabled,
                     isReaderModeEnabled = isReaderModeEnabled,
                     isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
+                    autoDeletePeriod = autoDeletePeriod,
                 )
             }
         }
@@ -84,5 +87,16 @@ class SettingsViewModel internal constructor(
 
     fun updateFontScale(value: Int) {
         fontSizeRepository.updateFontScale(value)
+    }
+
+    fun updateAutoDeletePeriod(period: AutoDeletePeriod) {
+        viewModelScope.launch {
+            settingsRepository.setAutoDeletePeriod(period)
+            settingsMutableState.update {
+                it.copy(
+                    autoDeletePeriod = period,
+                )
+            }
+        }
     }
 }

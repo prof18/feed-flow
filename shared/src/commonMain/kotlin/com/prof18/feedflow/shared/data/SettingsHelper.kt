@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.data
 
+import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 
@@ -54,6 +55,13 @@ internal class SettingsHelper(
     fun setFeedListFontScaleFactor(value: Int) =
         settings.set(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, value)
 
+    fun getAutoDeletePeriod(): AutoDeletePeriod =
+        settings.getString(SettingsFields.AUTO_DELETE_PERIOD.name, AutoDeletePeriod.DISABLED.name)
+            .let { AutoDeletePeriod.valueOf(it) }
+
+    fun setAutoDeletePeriod(period: AutoDeletePeriod) =
+        settings.set(SettingsFields.AUTO_DELETE_PERIOD.name, period.name)
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -69,7 +77,5 @@ internal enum class SettingsFields {
     REMOVE_TITLE_FROM_DESCRIPTION,
     READER_MODE_FONT_SIZE,
     FEED_LIST_FONT_SCALE_FACTOR,
-    SYNC_PWD,
-    SYNC_USERNAME,
-    SYNC_URL,
+    AUTO_DELETE_PERIOD,
 }

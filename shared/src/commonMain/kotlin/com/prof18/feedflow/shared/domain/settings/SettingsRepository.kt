@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.domain.settings
 
+import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.shared.data.SettingsHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -67,4 +68,10 @@ class SettingsRepository internal constructor(
 
     internal fun getIsSyncUploadRequired(): Boolean =
         settingsHelper.getIsSyncUploadRequired()
+
+    internal fun getAutoDeletePeriod(): AutoDeletePeriod =
+        settingsHelper.getAutoDeletePeriod()
+
+    internal fun setAutoDeletePeriod(period: AutoDeletePeriod) =
+        settingsHelper.setAutoDeletePeriod(period)
 }

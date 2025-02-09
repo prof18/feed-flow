@@ -149,4 +149,22 @@
     <string name="fresh_rss_account_connected">Ühenduse loomine sinu FreshRssi kontoga õnnestus</string>
     <string name="account_text_field_server_url">Serveri võrguaadress</string>
     <string name="account_login">Logi sisse</string>
+    <string name="fresh_rss_url_hint">FreshRSS API otspunkt, näiteks %s</string>
+    <string name="link_opening_preference">Käitumine lingi avamisel</string>
+    <string name="link_opening_preference_default">Vaikimisi</string>
+    <string name="link_opening_preference_reader_mode">Lugemisvaade</string>
+    <string name="link_opening_preference_internal_browser">Rakendusesisene brauser</string>
+    <string name="link_opening_preference_preferred_browser">Lemmikbrauser</string>
+    <string name="delete_category_confirmation_title">Kas kustutame kategooria?</string>
+    <string name="settings_auto_delete_period">Kustutamise tingimus</string>
+    <string name="settings_auto_delete_period_disabled">Pole kasutusel</string>
+    <string name="settings_auto_delete_period_one_week">Ühe nädala möödumisel</string>
+    <string name="settings_auto_delete_period_two_weeks">Kahe nädala möödumisel</string>
+    <string name="settings_auto_delete_period_one_month">Ühe kuu möödumisel</string>
+    <string name="fresh_rss_password_hint">FreshRSSi API salasõna (Seadistused &gt; Profiil)</string>
+    <string name="feed_url_help_text">Sisestada võid uudisvoo aadressi, veebisaidi võrguaadressi või YouTube\'i kanali lingi. Kui vähegi võimalik, siis tuvastame uudisvoo automaatselt</string>
+    <string name="delete_category_close_button">Sulge</string>
+    <string name="settings_auto_delete">Kustuta vanad artiklid automaatselt</string>
+    <string name="delete_category_confirmation_message">Kas sa oled kindel, et soovid selle kategooria kustutada? Siin leiduvad uudisvood tõstetakse kategooriasse „Kategoriseerimata“.</string>
+    <string name="settings_auto_delete_desc">Kustuta valitud ajavahemiku möödumisel vanad artiklid automaatselt</string>
 </resources>

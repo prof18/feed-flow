@@ -144,4 +144,11 @@
     <string name="feed_added_message_without_name">Стрічку додано</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="app_name">FeedFlow</string>
+    <string name="link_opening_preference">Поведінка відкриття посилання</string>
+    <string name="link_opening_preference_reader_mode">Режим читання</string>
+    <string name="link_opening_preference_internal_browser">Внутрішній браузер</string>
+    <string name="link_opening_preference_preferred_browser">Улюблений браузер</string>
+    <string name="link_opening_preference_default">За замовчуванням</string>
+    <string name="fresh_rss_url_hint">Кінцева точка API FreshRSS, наприклад %s</string>
+    <string name="fresh_rss_password_hint">Пароль FreshRSS API (Налаштування &gt; Профіль)</string>
 </resources>

@@ -151,4 +151,15 @@
     <string name="link_opening_preference">Mở liên kết</string>
     <string name="link_opening_preference_default">Mặc định</string>
     <string name="fresh_rss_password_hint">Mật khẩu FreshRSS API (Cài đặt &gt; Hồ sơ)</string>
+    <string name="delete_category_close_button">Đóng</string>
+    <string name="settings_auto_delete">Tự động xóa những bài cũ</string>
+    <string name="settings_auto_delete_period_disabled">Tắt</string>
+    <string name="delete_category_confirmation_title">Xóa danh mục?</string>
+    <string name="delete_category_confirmation_message">Bạn có chắc muốn xóa danh mục này? Các nguồn cấp dữ liệu trong danh mục này sẽ được chuyển đến Chưa phân loại.</string>
+    <string name="settings_auto_delete_desc">Tự động xóa các bài viết sau khoảng thời gian cụ thể</string>
+    <string name="settings_auto_delete_period">Xóa tự động</string>
+    <string name="settings_auto_delete_period_two_weeks">Hai tuần</string>
+    <string name="feed_url_help_text">Thêm nguồn cấp dữ liệu, trang web hoặc liên kết kênh YouTube bất kỳ. Nguồn cấp dữ liệu sẽ được tự động phát hiện khi có thể</string>
+    <string name="settings_auto_delete_period_one_week">Một tuần</string>
+    <string name="settings_auto_delete_period_one_month">Một tháng</string>
 </resources>

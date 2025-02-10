@@ -144,4 +144,22 @@
     <string name="edit_feed_generic_error">Нещо се обърка при редактирането на емисията. Моля, опитайте отново.</string>
     <string name="account_text_field_username">Потребителско име</string>
     <string name="fresh_rss_last_sync">Последна синхронизация: %s</string>
+    <string name="fresh_rss_password_hint">FreshRSS API парола (Настройки &gt; Профил)</string>
+    <string name="fresh_rss_url_hint">FreshRSS API крайна точка, например %s</string>
+    <string name="link_opening_preference">Поведение при отваряне на връзка</string>
+    <string name="link_opening_preference_default">По подразбиране</string>
+    <string name="link_opening_preference_reader_mode">Режим на четене</string>
+    <string name="link_opening_preference_internal_browser">Вграден браузър</string>
+    <string name="link_opening_preference_preferred_browser">Любим браузър</string>
+    <string name="delete_category_confirmation_title">Изтриване на категория?</string>
+    <string name="delete_category_confirmation_message">Сигурни ли сте, че искате да изтриете тази категория? Каналите в тази категория ще бъдат преместени в Без категория.</string>
+    <string name="delete_category_close_button">Затвори</string>
+    <string name="settings_auto_delete_desc">Автоматично изтриване на статии, по-стари от избрания период</string>
+    <string name="settings_auto_delete_period">Период на изтриване</string>
+    <string name="settings_auto_delete_period_disabled">Деактивиран</string>
+    <string name="settings_auto_delete_period_two_weeks">На две седмици</string>
+    <string name="settings_auto_delete_period_one_week">На една седмица</string>
+    <string name="settings_auto_delete_period_one_month">На един месец</string>
+    <string name="feed_url_help_text">Добавете всяка директна емисия, уебсайт или YouTube канал. Емисията ще бъде открита автоматично, когато е възможно</string>
+    <string name="settings_auto_delete">Автоматично изтриване на стари статии</string>
 </resources>

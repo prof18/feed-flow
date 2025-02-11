@@ -144,4 +144,22 @@
     <string name="sync_error_message">Algo fallou ao sincronizar as canles. Volve intentalo.</string>
     <string name="wrong_credentials_error_message">As credenciais non son correctas. Volve intentalo.</string>
     <string name="account_login">Acceder</string>
+    <string name="fresh_rss_password_hint">Contrasinal da API FreshRSS (Axustes &gt; Perfil)</string>
+    <string name="fresh_rss_url_hint">Punto de acceso á API FreshRSS, ex.: %s</string>
+    <string name="link_opening_preference">Comportamento apertura de ligazóns</string>
+    <string name="link_opening_preference_default">Predeterminado</string>
+    <string name="link_opening_preference_reader_mode">Modo lectura</string>
+    <string name="link_opening_preference_internal_browser">Navegador da app</string>
+    <string name="link_opening_preference_preferred_browser">Navegador favorito</string>
+    <string name="delete_category_confirmation_title">Eliminar categoría?</string>
+    <string name="delete_category_close_button">Pechar</string>
+    <string name="settings_auto_delete">Borrado automático</string>
+    <string name="settings_auto_delete_desc">Elimina automaticamente os artigos anteriores ao período indicado</string>
+    <string name="settings_auto_delete_period">Período para eliminar</string>
+    <string name="settings_auto_delete_period_one_week">Anterior a 1 semana</string>
+    <string name="settings_auto_delete_period_one_month">Anterior a 1 mes</string>
+    <string name="feed_url_help_text">Engade unha canle directa, sitiio web, ou ligazón a canle de YouTube. A canle detectarase automaticamente se é posible</string>
+    <string name="settings_auto_delete_period_two_weeks">Anterior a 2 semanas</string>
+    <string name="delete_category_confirmation_message">Tes certeza de querer eliminar esta categoría? As canles nesta categoría pasarán a Sen Categoría.</string>
+    <string name="settings_auto_delete_period_disabled">Desactivado</string>
 </resources>

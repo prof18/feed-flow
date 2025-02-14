@@ -167,4 +167,6 @@
     <string name="settings_auto_delete">Kustuta vanad artiklid automaatselt</string>
     <string name="delete_category_confirmation_message">Kas sa oled kindel, et soovid selle kategooria kustutada? Siin leiduvad uudisvood tõstetakse kategooriasse „Kategoriseerimata“.</string>
     <string name="settings_auto_delete_desc">Kustuta valitud ajavahemiku möödumisel vanad artiklid automaatselt</string>
+    <string name="settings_hide_description">Peida artikli kirjeldus</string>
+    <string name="settings_hide_images">Peida artikli pilt</string>
 </resources>

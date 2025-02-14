@@ -23,6 +23,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     isReaderModeEnabled: Boolean,
     isRemoveTitleFromDescriptionEnabled: Boolean,
     isHideDescriptionEnabled: Boolean,
+    isHideImagesEnabled: Boolean,
     autoDeletePeriod: AutoDeletePeriod,
     feedFilter: FeedFilter,
     onRefreshClick: () -> Unit,
@@ -38,6 +39,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     setReaderMode: (Boolean) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     setHideDescription: (Boolean) -> Unit,
+    setHideImages: (Boolean) -> Unit,
     onFeedFontScaleClick: () -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
 ) {
@@ -145,6 +147,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 text = LocalFeedFlowStrings.current.settingsHideDescription,
                 checked = isHideDescriptionEnabled,
                 onCheckedChange = setHideDescription,
+            )
+
+            CheckboxItem(
+                text = LocalFeedFlowStrings.current.settingsHideImages,
+                checked = isHideImagesEnabled,
+                onCheckedChange = setHideImages,
             )
 
             Menu(LocalFeedFlowStrings.current.settingsAutoDelete) {

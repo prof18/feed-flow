@@ -273,6 +273,7 @@ fun main() = application {
                                 isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
                                 autoDeletePeriod = settingsState.autoDeletePeriod,
                                 isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
+                                isHideImagesEnabled = settingsState.isHideImagesEnabled,
                                 feedFilter = currentFeedFilter,
                                 onRefreshClick = {
                                     scope.launch {
@@ -331,6 +332,9 @@ fun main() = application {
                                 },
                                 setHideDescription = { enabled ->
                                     settingsViewModel.updateHideDescription(enabled)
+                                },
+                                setHideImages = { enabled ->
+                                    settingsViewModel.updateHideImages(enabled)
                                 },
                             )
 

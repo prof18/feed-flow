@@ -32,6 +32,7 @@ class SettingsViewModel internal constructor(
             val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
             val isRemoveTitleFromDescriptionEnabled = settingsRepository.isRemoveTitleFromDescriptionEnabled()
             val isHideDescriptionEnabled = settingsRepository.isHideDescriptionEnabled()
+            val isHideImagesEnabled = settingsRepository.isHideImagesEnabled()
             val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
             settingsMutableState.update {
                 SettingsState(
@@ -40,6 +41,7 @@ class SettingsViewModel internal constructor(
                     isReaderModeEnabled = isReaderModeEnabled,
                     isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
                     isHideDescriptionEnabled = isHideDescriptionEnabled,
+                    isHideImagesEnabled = isHideImagesEnabled,
                     autoDeletePeriod = autoDeletePeriod,
                 )
             }
@@ -107,6 +109,18 @@ class SettingsViewModel internal constructor(
         settingsMutableState.update {
             it.copy(
                 isHideDescriptionEnabled = value,
+            )
+        }
+        viewModelScope.launch {
+            feedRetrieverRepository.getFeeds()
+        }
+    }
+
+    fun updateHideImages(value: Boolean) {
+        settingsRepository.setHideImages(value)
+        settingsMutableState.update {
+            it.copy(
+                isHideImagesEnabled = value,
             )
         }
         viewModelScope.launch {

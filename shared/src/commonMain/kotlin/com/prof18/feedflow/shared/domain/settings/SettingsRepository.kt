@@ -53,6 +53,13 @@ class SettingsRepository internal constructor(
         settingsHelper.setHideDescription(value)
     }
 
+    fun isHideImagesEnabled(): Boolean =
+        settingsHelper.getHideImages()
+
+    fun setHideImages(value: Boolean) {
+        settingsHelper.setHideImages(value)
+    }
+
     fun getReaderModeFontSize(): Int =
         settingsHelper.getReaderModeFontSize()
 

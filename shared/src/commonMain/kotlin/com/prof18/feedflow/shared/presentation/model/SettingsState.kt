@@ -8,5 +8,6 @@ data class SettingsState(
     val isReaderModeEnabled: Boolean = false,
     val isRemoveTitleFromDescriptionEnabled: Boolean = false,
     val isHideDescriptionEnabled: Boolean = false,
+    val isHideImagesEnabled: Boolean = false,
     val autoDeletePeriod: AutoDeletePeriod = AutoDeletePeriod.DISABLED,
 )

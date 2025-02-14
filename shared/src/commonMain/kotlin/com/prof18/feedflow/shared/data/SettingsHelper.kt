@@ -68,6 +68,12 @@ internal class SettingsHelper(
     fun setAutoDeletePeriod(period: AutoDeletePeriod) =
         settings.set(SettingsFields.AUTO_DELETE_PERIOD.name, period.name)
 
+    fun getHideImages(): Boolean =
+        settings.getBoolean(SettingsFields.HIDE_IMAGES.name, false)
+
+    fun setHideImages(value: Boolean) =
+        settings.set(SettingsFields.HIDE_IMAGES.name, value)
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -85,4 +91,5 @@ internal enum class SettingsFields {
     READER_MODE_FONT_SIZE,
     FEED_LIST_FONT_SCALE_FACTOR,
     AUTO_DELETE_PERIOD,
+    HIDE_IMAGES,
 }

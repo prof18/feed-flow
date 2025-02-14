@@ -23,6 +23,7 @@ struct SettingsScreen: View {
   @State private var isReaderModeEnabled = false
   @State private var isRemoveTitleFromDescriptionEnabled = false
   @State private var isHideDescriptionEnabled = false
+  @State private var isHideImagesEnabled = false
   @State private var autoDeletePeriod: AutoDeletePeriod = .disabled
   @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
   @State private var scaleFactor = 0.0
@@ -36,6 +37,7 @@ struct SettingsScreen: View {
           isReaderModeEnabled = state.isReaderModeEnabled
           isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
           isHideDescriptionEnabled = state.isHideDescriptionEnabled
+          isHideImagesEnabled = state.isHideImagesEnabled
           autoDeletePeriod = state.autoDeletePeriod
         }
       }
@@ -60,6 +62,9 @@ struct SettingsScreen: View {
       }
       .onChange(of: isHideDescriptionEnabled) {
         vmStoreOwner.instance.updateHideDescription(value: isHideDescriptionEnabled)
+      }
+      .onChange(of: isHideImagesEnabled) {
+        vmStoreOwner.instance.updateHideImages(value: isHideImagesEnabled)
       }
       .onChange(of: autoDeletePeriod) {
         vmStoreOwner.instance.updateAutoDeletePeriod(period: autoDeletePeriod)
@@ -173,6 +178,12 @@ struct SettingsScreen: View {
         Label(feedFlowStrings.settingsHideDescription, systemImage: "text.page.slash")
       }.onTapGesture {
         isHideDescriptionEnabled.toggle()
+      }
+
+      Toggle(isOn: $isHideImagesEnabled) {
+        Label(feedFlowStrings.settingsHideImages, systemImage: "square.slash")
+      }.onTapGesture {
+        isHideImagesEnabled.toggle()
       }
     }
   }

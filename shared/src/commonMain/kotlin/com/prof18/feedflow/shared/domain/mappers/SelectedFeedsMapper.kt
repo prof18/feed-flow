@@ -12,6 +12,7 @@ internal fun SelectFeeds.toFeedItem(
     dateFormatter: DateFormatter,
     removeTitleFromDesc: Boolean,
     hideDescription: Boolean,
+    hideImages: Boolean,
 ) = FeedItem(
     id = url_hash,
     url = sanitizeUrl(url),
@@ -25,7 +26,7 @@ internal fun SelectFeeds.toFeedItem(
         }
     }.takeIf { !hideDescription },
     content = null,
-    imageUrl = image_url,
+    imageUrl = image_url.takeIf { !hideImages },
     feedSource = FeedSource(
         id = feed_source_id,
         url = feed_source_url,

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.DeleteSweep
+import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MarkAsUnread
@@ -95,6 +96,7 @@ fun SettingsScreen(
         isReaderModeEnabled = settingState.isReaderModeEnabled,
         isRemoveTitleFromDescriptionEnabled = settingState.isRemoveTitleFromDescriptionEnabled,
         isHideDescriptionEnabled = settingState.isHideDescriptionEnabled,
+        isHideImagesEnabled = settingState.isHideImagesEnabled,
         showAccounts = appConfig.isDropboxSyncEnabled,
         fontSizes = fontSizesState,
         autoDeletePeriod = settingState.autoDeletePeriod,
@@ -130,6 +132,9 @@ fun SettingsScreen(
         setHideDescription = { enabled ->
             settingsViewModel.updateHideDescription(enabled)
         },
+        setHideImages = { enabled ->
+            settingsViewModel.updateHideImages(enabled)
+        },
         updateFontScale = { newFontSize ->
             settingsViewModel.updateFontScale(newFontSize)
         },
@@ -147,6 +152,7 @@ private fun SettingsScreenContent(
     isReaderModeEnabled: Boolean,
     isRemoveTitleFromDescriptionEnabled: Boolean,
     isHideDescriptionEnabled: Boolean,
+    isHideImagesEnabled: Boolean,
     showAccounts: Boolean,
     fontSizes: FeedFontSizes,
     autoDeletePeriod: AutoDeletePeriod,
@@ -163,6 +169,7 @@ private fun SettingsScreenContent(
     setReaderMode: (Boolean) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     setHideDescription: (Boolean) -> Unit,
+    setHideImages: (Boolean) -> Unit,
     updateFontScale: (Int) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
 ) {
@@ -275,6 +282,11 @@ private fun SettingsScreenContent(
                 HideDescriptionSwitch(
                     isHideDescriptionEnabled = isHideDescriptionEnabled,
                     setHideDescription = setHideDescription,
+                )
+
+                HideImagesSwitch(
+                    isHideImagesEnabled = isHideImagesEnabled,
+                    setHideImages = setHideImages,
                 )
             }
 
@@ -562,6 +574,43 @@ private fun HideDescriptionSwitch(
 }
 
 @Composable
+private fun HideImagesSwitch(
+    isHideImagesEnabled: Boolean,
+    setHideImages: (Boolean) -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable {
+                setHideImages(!isHideImagesEnabled)
+            }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.Outlined.HideImage,
+            contentDescription = null,
+        )
+
+        Text(
+            text = LocalFeedFlowStrings.current.settingsHideImages,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f),
+        )
+        Switch(
+            interactionSource = interactionSource,
+            checked = isHideImagesEnabled,
+            onCheckedChange = setHideImages,
+        )
+    }
+}
+
+@Composable
 private fun SettingsNavBar(navigateBack: () -> Unit) {
     TopAppBar(
         title = {
@@ -595,6 +644,7 @@ private fun SettingsScreenPreview() {
             isReaderModeEnabled = false,
             isRemoveTitleFromDescriptionEnabled = false,
             isHideDescriptionEnabled = false,
+            isHideImagesEnabled = false,
             showAccounts = true,
             fontSizes = FeedFontSizes(),
             autoDeletePeriod = AutoDeletePeriod.DISABLED,
@@ -611,6 +661,7 @@ private fun SettingsScreenPreview() {
             setReaderMode = {},
             setRemoveTitleFromDescription = {},
             setHideDescription = {},
+            setHideImages = {},
             updateFontScale = {},
             onAutoDeletePeriodSelected = {},
         )

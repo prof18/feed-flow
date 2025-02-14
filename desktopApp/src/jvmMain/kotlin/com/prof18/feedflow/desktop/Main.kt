@@ -272,6 +272,7 @@ fun main() = application {
                                 isReaderModeEnabled = settingsState.isReaderModeEnabled,
                                 isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
                                 autoDeletePeriod = settingsState.autoDeletePeriod,
+                                isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
                                 feedFilter = currentFeedFilter,
                                 onRefreshClick = {
                                     scope.launch {
@@ -327,6 +328,9 @@ fun main() = application {
                                 },
                                 onAutoDeletePeriodSelected = { period ->
                                     settingsViewModel.updateAutoDeletePeriod(period)
+                                },
+                                setHideDescription = { enabled ->
+                                    settingsViewModel.updateHideDescription(enabled)
                                 },
                             )
 

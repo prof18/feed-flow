@@ -43,6 +43,12 @@ internal class SettingsHelper(
     fun setRemoveTitleFromDescription(value: Boolean) =
         settings.set(SettingsFields.REMOVE_TITLE_FROM_DESCRIPTION.name, value)
 
+    fun getHideDescription(): Boolean =
+        settings.getBoolean(SettingsFields.HIDE_DESCRIPTION.name, false)
+
+    fun setHideDescription(value: Boolean) =
+        settings.set(SettingsFields.HIDE_DESCRIPTION.name, value)
+
     fun getReaderModeFontSize(): Int =
         settings.getInt(SettingsFields.READER_MODE_FONT_SIZE.name, DEFAULT_READER_MODE_FONT_SIZE)
 
@@ -75,6 +81,7 @@ internal enum class SettingsFields {
     USE_READER_MODE,
     IS_SYNC_UPLOAD_REQUIRED,
     REMOVE_TITLE_FROM_DESCRIPTION,
+    HIDE_DESCRIPTION,
     READER_MODE_FONT_SIZE,
     FEED_LIST_FONT_SCALE_FACTOR,
     AUTO_DELETE_PERIOD,

@@ -7,5 +7,6 @@ data class SettingsState(
     val isShowReadItemsEnabled: Boolean = false,
     val isReaderModeEnabled: Boolean = false,
     val isRemoveTitleFromDescriptionEnabled: Boolean = false,
+    val isHideDescriptionEnabled: Boolean = false,
     val autoDeletePeriod: AutoDeletePeriod = AutoDeletePeriod.DISABLED,
 )

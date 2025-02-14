@@ -8,7 +8,11 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 
-internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter, removeTitleFromDesc: Boolean) = FeedItem(
+internal fun SelectFeeds.toFeedItem(
+    dateFormatter: DateFormatter,
+    removeTitleFromDesc: Boolean,
+    hideDescription: Boolean,
+) = FeedItem(
     id = url_hash,
     url = sanitizeUrl(url),
     title = title,
@@ -19,7 +23,7 @@ internal fun SelectFeeds.toFeedItem(dateFormatter: DateFormatter, removeTitleFro
         } else {
             desc
         }
-    },
+    }.takeIf { !hideDescription },
     content = null,
     imageUrl = image_url,
     feedSource = FeedSource(

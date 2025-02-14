@@ -31,6 +31,7 @@ class SettingsViewModel internal constructor(
             val isShowReadItemsEnabled = settingsRepository.isShowReadArticlesTimelineEnabled()
             val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
             val isRemoveTitleFromDescriptionEnabled = settingsRepository.isRemoveTitleFromDescriptionEnabled()
+            val isHideDescriptionEnabled = settingsRepository.isHideDescriptionEnabled()
             val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
             settingsMutableState.update {
                 SettingsState(
@@ -38,6 +39,7 @@ class SettingsViewModel internal constructor(
                     isShowReadItemsEnabled = isShowReadItemsEnabled,
                     isReaderModeEnabled = isReaderModeEnabled,
                     isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
+                    isHideDescriptionEnabled = isHideDescriptionEnabled,
                     autoDeletePeriod = autoDeletePeriod,
                 )
             }
@@ -97,6 +99,18 @@ class SettingsViewModel internal constructor(
                     autoDeletePeriod = period,
                 )
             }
+        }
+    }
+
+    fun updateHideDescription(value: Boolean) {
+        settingsRepository.setHideDescription(value)
+        settingsMutableState.update {
+            it.copy(
+                isHideDescriptionEnabled = value,
+            )
+        }
+        viewModelScope.launch {
+            feedRetrieverRepository.getFeeds()
         }
     }
 }

@@ -46,6 +46,13 @@ class SettingsRepository internal constructor(
         settingsHelper.setRemoveTitleFromDescription(value)
     }
 
+    fun isHideDescriptionEnabled(): Boolean =
+        settingsHelper.getHideDescription()
+
+    fun setHideDescription(value: Boolean) {
+        settingsHelper.setHideDescription(value)
+    }
+
     fun getReaderModeFontSize(): Int =
         settingsHelper.getReaderModeFontSize()
 

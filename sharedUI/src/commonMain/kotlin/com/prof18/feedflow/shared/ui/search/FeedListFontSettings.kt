@@ -70,6 +70,7 @@ fun FeedListFontSettings(
                     ),
                     feedFontSize = fontSizes,
                     index = 0,
+                    disableClick = true,
                     onFeedItemClick = {},
                     onBookmarkClick = { _, _ -> },
                     onReadStatusClick = { _, _ -> },

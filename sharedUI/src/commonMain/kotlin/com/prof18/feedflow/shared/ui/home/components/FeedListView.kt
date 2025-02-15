@@ -150,6 +150,7 @@ fun FeedItemView(
     feedItem: FeedItem,
     feedFontSize: FeedFontSizes,
     index: Int,
+    disableClick: Boolean = false,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
@@ -164,20 +165,26 @@ fun FeedItemView(
 
     Column(
         modifier = modifier
-            .feedSourceMenuClickModifier(
-                onClick = {
-                    onFeedItemClick(
-                        FeedItemUrlInfo(
-                            id = feedItem.id,
-                            url = feedItem.url,
-                            title = feedItem.title,
-                            isBookmarked = feedItem.isBookmarked,
-                            linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
-                        ),
+            .then(
+                if (disableClick) {
+                    Modifier
+                } else {
+                    Modifier.feedSourceMenuClickModifier(
+                        onClick = {
+                            onFeedItemClick(
+                                FeedItemUrlInfo(
+                                    id = feedItem.id,
+                                    url = feedItem.url,
+                                    title = feedItem.title,
+                                    isBookmarked = feedItem.isBookmarked,
+                                    linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
+                                ),
+                            )
+                        },
+                        onLongClick = {
+                            showItemMenu = true
+                        },
                     )
-                },
-                onLongClick = {
-                    showItemMenu = true
                 },
             )
             .padding(horizontal = Spacing.regular)

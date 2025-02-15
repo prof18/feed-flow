@@ -162,4 +162,6 @@
     <string name="settings_auto_delete_period_two_weeks">Anterior a 2 semanas</string>
     <string name="delete_category_confirmation_message">Tes certeza de querer eliminar esta categoría? As canles nesta categoría pasarán a Sen Categoría.</string>
     <string name="settings_auto_delete_period_disabled">Desactivado</string>
+    <string name="settings_hide_description">Ocultar descrición do artigo</string>
+    <string name="settings_hide_images">Ocultar imaxe do artigo</string>
 </resources>

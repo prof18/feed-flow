@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.fold
@@ -374,8 +375,14 @@ internal class FeedRetrieverRepository(
         newFeedSource: FeedSource,
         originalFeedSource: FeedSource?,
     ): FeedEditedState {
-        if (newFeedSource.linkOpeningPreference != originalFeedSource?.linkOpeningPreference) {
-            databaseHelper.insertFeedSourcePreference(newFeedSource.id, newFeedSource.linkOpeningPreference)
+        if (newFeedSource.linkOpeningPreference != originalFeedSource?.linkOpeningPreference ||
+            newFeedSource.isHiddenFromTimeline != originalFeedSource.isHiddenFromTimeline
+        ) {
+            databaseHelper.insertFeedSourcePreference(
+                feedSourceId = newFeedSource.id,
+                preference = newFeedSource.linkOpeningPreference,
+                isHidden = newFeedSource.isHiddenFromTimeline,
+            )
             getFeeds()
         }
         return when (accountsRepository.getCurrentSyncAccount()) {
@@ -673,6 +680,7 @@ internal class FeedRetrieverRepository(
                     updateFeedSource(
                         newFeedSource.copy(
                             url = response.parsedFeedSource.url,
+                            isHiddenFromTimeline = newFeedSource.isHiddenFromTimeline,
                         ),
                     )
                     FeedEditedState.FeedEdited(newName)
@@ -721,6 +729,8 @@ internal class FeedRetrieverRepository(
             lastSyncTimestamp = currentTimestamp,
             category = parsedFeedSource.category,
             logoUrl = parsedFeedSource.logoUrl,
+            isHiddenFromTimeline = false,
+            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
         )
 
         val feedItems = rssChannelMapper.getFeedItems(

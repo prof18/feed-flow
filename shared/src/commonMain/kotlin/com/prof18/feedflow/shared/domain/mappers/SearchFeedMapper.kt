@@ -4,6 +4,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 
@@ -37,6 +38,8 @@ internal fun Search.toFeedItem(dateFormatter: DateFormatter, removeTitleFromDesc
         },
         lastSyncTimestamp = feed_source_last_sync_timestamp,
         logoUrl = feed_source_logo_url,
+        linkOpeningPreference = feed_source_link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+        isHiddenFromTimeline = false,
     ),
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {

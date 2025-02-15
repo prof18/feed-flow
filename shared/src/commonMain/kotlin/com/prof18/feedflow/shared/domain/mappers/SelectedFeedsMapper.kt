@@ -44,6 +44,7 @@ internal fun SelectFeeds.toFeedItem(
         lastSyncTimestamp = feed_source_last_sync_timestamp,
         logoUrl = feed_source_logo_url,
         linkOpeningPreference = feed_source_link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+        isHiddenFromTimeline = feed_source_is_hidden ?: false,
     ),
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {

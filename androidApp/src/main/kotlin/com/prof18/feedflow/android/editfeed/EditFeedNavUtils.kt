@@ -19,6 +19,8 @@ internal fun EditFeed.toFeedSource(): FeedSource {
         },
         lastSyncTimestamp = lastSyncTimestamp,
         logoUrl = logoUrl,
+        linkOpeningPreference = linkOpeningPreference,
+        isHiddenFromTimeline = isHidden,
     )
 }
 
@@ -31,5 +33,7 @@ internal fun FeedSource.toEditFeed(): EditFeed {
         categoryTitle = category?.title,
         lastSyncTimestamp = lastSyncTimestamp,
         logoUrl = logoUrl,
+        linkOpeningPreference = linkOpeningPreference,
+        isHidden = isHiddenFromTimeline,
     )
 }

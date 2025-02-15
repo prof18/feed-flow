@@ -11,6 +11,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceState
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.shared.domain.model.Browser
@@ -35,6 +36,8 @@ val feedItemsForPreview = persistentListOf(
             ),
             lastSyncTimestamp = null,
             logoUrl = null,
+            isHiddenFromTimeline = false,
+            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
         ),
         pubDateMillis = null,
         dateString = null,
@@ -59,6 +62,8 @@ val feedItemsForPreview = persistentListOf(
                 title = "Tech",
             ),
             logoUrl = null,
+            isHiddenFromTimeline = false,
+            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
         ),
         pubDateMillis = 1675890077000,
         dateString = "12/02 - 16:22",
@@ -83,6 +88,8 @@ val feedItemsForPreview = persistentListOf(
                 title = "Tech",
             ),
             logoUrl = null,
+            isHiddenFromTimeline = false,
+            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
         ),
         pubDateMillis = 0,
         dateString = "12/12 - 9:22",
@@ -107,6 +114,8 @@ val feedItemsForPreview = persistentListOf(
                 title = "Tech",
             ),
             logoUrl = null,
+            isHiddenFromTimeline = false,
+            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
         ),
         pubDateMillis = 0,
         dateString = "12/12 - 9:22",
@@ -131,6 +140,8 @@ val feedItemsForPreview = persistentListOf(
             ),
             lastSyncTimestamp = null,
             logoUrl = null,
+            isHiddenFromTimeline = false,
+            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
         ),
         pubDateMillis = null,
         dateString = null,
@@ -164,6 +175,8 @@ val feedSourcesForPreview = persistentListOf(
             title = "Tech",
         ),
         logoUrl = null,
+        isHiddenFromTimeline = false,
+        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
     ),
     FeedSource(
         id = "1",
@@ -175,6 +188,8 @@ val feedSourcesForPreview = persistentListOf(
             title = "News",
         ),
         logoUrl = null,
+        isHiddenFromTimeline = false,
+        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
     ),
     FeedSource(
         id = "2",
@@ -186,6 +201,8 @@ val feedSourcesForPreview = persistentListOf(
             title = "Tech",
         ),
         logoUrl = null,
+        isHiddenFromTimeline = false,
+        linkOpeningPreference = LinkOpeningPreference.DEFAULT,
     ),
 )
 
@@ -334,6 +351,8 @@ val navDrawerState = NavDrawerState(
                         title = "Tech",
                     ),
                     logoUrl = null,
+                    isHiddenFromTimeline = false,
+                    linkOpeningPreference = LinkOpeningPreference.DEFAULT,
                 ),
                 unreadCount = 42,
             ),
@@ -348,6 +367,8 @@ val navDrawerState = NavDrawerState(
                         title = "News",
                     ),
                     logoUrl = null,
+                    isHiddenFromTimeline = false,
+                    linkOpeningPreference = LinkOpeningPreference.DEFAULT,
                 ),
                 unreadCount = 42,
             ),

@@ -24,6 +24,7 @@ struct EditFeedScreenContent: View {
   @Binding var categoryItems: [CategoriesState.CategoryItem]
   @Binding var isAddingFeed: Bool
   @Binding var linkOpeningPreference: LinkOpeningPreference
+  @Binding var isHidden: Bool
 
   var categorySelectorObserver: CategorySelectorObserver
 
@@ -32,6 +33,7 @@ struct EditFeedScreenContent: View {
   let deleteCategory: (String) -> Void
   let addNewCategory: (CategoryName) -> Void
   let updateLinkOpeningPreference: (LinkOpeningPreference) -> Void
+  let onHiddenToggled: (Bool) -> Void
   let addFeed: () -> Void
 
   var body: some View {
@@ -88,6 +90,15 @@ struct EditFeedScreenContent: View {
         }
         .onChange(of: linkOpeningPreference) {
           updateLinkOpeningPreference(linkOpeningPreference)
+        }
+      }
+
+      Section {
+        Toggle(isOn: $isHidden) {
+            Text(feedFlowStrings.hideFeedFromTimelineDescription)
+        }
+        .onChange(of: isHidden) {
+          onHiddenToggled(isHidden)
         }
       }
 

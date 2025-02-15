@@ -94,6 +94,7 @@ class DatabaseHelper(
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isRead = feedFilter.getIsReadFlag(showReadItems),
                 isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
                 pageSize = pageSize,
                 offset = offset,
             )
@@ -215,6 +216,7 @@ class DatabaseHelper(
                 // Marking read things already read does not make sense, that's why the hardcoded false
                 isRead = feedFilter.getIsReadFlag(false),
                 isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             )
             .executeAsList()
     }
@@ -274,6 +276,7 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 bookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             )
             .asFlow()
             .catch {
@@ -384,10 +387,13 @@ class DatabaseHelper(
         dbRef.feedSourceQueries.deleteAll()
     }
 
-    suspend fun insertFeedSourcePreference(feedSourceId: String, preference: LinkOpeningPreference) =
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedSourcePreferencesQueries.insertPreference(feedSourceId, preference)
-        }
+    suspend fun insertFeedSourcePreference(
+        feedSourceId: String,
+        preference: LinkOpeningPreference,
+        isHidden: Boolean,
+    ) = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.feedSourcePreferencesQueries.insertPreference(feedSourceId, preference, isHidden)
+    }
 
     suspend fun deleteCategoriesExcept(categoryIds: List<String>) = dbRef.transactionWithContext(backgroundDispatcher) {
         dbRef.feedSourceCategoryQueries.deleteAllExcept(categoryIds)
@@ -408,6 +414,8 @@ class DatabaseHelper(
                     ),
                     lastSyncTimestamp = feedSource.last_sync_timestamp,
                     logoUrl = feedSource.feed_source_logo_url,
+                    isHiddenFromTimeline = feedSource.is_hidden ?: false,
+                    linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
                 )
             }
     }
@@ -465,6 +473,18 @@ class DatabaseHelper(
         }
     }
 
+    private fun FeedFilter.getIsHiddenFromTimelineFlag(): Long? {
+        return when (this) {
+            is FeedFilter.Timeline -> 0
+
+            is FeedFilter.Bookmarks,
+            is FeedFilter.Category,
+            is FeedFilter.Source,
+            FeedFilter.Read,
+            -> null
+        }
+    }
+
     private fun FeedFilter.getBookmarkFlag(): Boolean? {
         return when (this) {
             is FeedFilter.Bookmarks -> true
@@ -495,6 +515,7 @@ class DatabaseHelper(
             lastSyncTimestamp = feedSource.last_sync_timestamp,
             logoUrl = feedSource.feed_source_logo_url,
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+            isHiddenFromTimeline = feedSource.is_hidden ?: false,
         )
     }
 
@@ -516,6 +537,7 @@ class DatabaseHelper(
             lastSyncTimestamp = feedSource.last_sync_timestamp,
             logoUrl = feedSource.feed_source_logo_url,
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+            isHiddenFromTimeline = feedSource.is_hidden ?: false,
         )
     }
 

@@ -1,6 +1,7 @@
 package com.prof18.feedflow.feedsync.database.domain
 
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 
 fun ParsedFeedSource.toFeedSource() = FeedSource(
@@ -10,4 +11,6 @@ fun ParsedFeedSource.toFeedSource() = FeedSource(
     category = this.category,
     lastSyncTimestamp = null,
     logoUrl = this.logoUrl,
+    linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+    isHiddenFromTimeline = false,
 )

@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -176,6 +177,8 @@ private fun HomeAppBarPreview() {
                     category = null,
                     lastSyncTimestamp = null,
                     logoUrl = null,
+                    linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+                    isHiddenFromTimeline = false,
                 ),
             ),
             showDrawerMenu = true,

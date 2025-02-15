@@ -27,7 +27,8 @@ struct EditFeedScreen: View {
   @State private var isAddingFeed: Bool = false
   @State var feedURL = ""
   @State var feedName = ""
-    @State var linkOpeningPreference = LinkOpeningPreference.default
+  @State var linkOpeningPreference = LinkOpeningPreference.default
+  @State var isHidden = false
 
   var body: some View {
     NavigationStack {
@@ -40,6 +41,7 @@ struct EditFeedScreen: View {
           categoryItems: $categoryItems,
           isAddingFeed: $isAddingFeed,
           linkOpeningPreference: $linkOpeningPreference,
+          isHidden: $isHidden,
           categorySelectorObserver: categorySelectorObserver,
           updateFeedUrlTextFieldValue: { value in
             vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
@@ -55,6 +57,9 @@ struct EditFeedScreen: View {
           },
           updateLinkOpeningPreference: { preference in
             vmStoreOwner.instance.updateLinkOpeningPreference(preference: preference)
+          },
+          onHiddenToggled: { hidden in
+            vmStoreOwner.instance.updateIsHidden(isHidden: hidden)
           },
           addFeed: {
             vmStoreOwner.instance.editFeed()
@@ -130,6 +135,11 @@ struct EditFeedScreen: View {
       .task {
         for await state in vmStoreOwner.instance.linkOpeningPreferenceState {
           self.linkOpeningPreference = state
+        }
+      }
+      .task {
+        for await state in vmStoreOwner.instance.isHiddenState {
+          self.isHidden = state as? Bool ?? false
         }
       }
     }

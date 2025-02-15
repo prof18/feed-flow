@@ -25,14 +25,17 @@ INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
 ON feed_source.category_id == feed_source_category.id
+LEFT JOIN feed_source_preferences
+ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE is_read = 0
 AND (:bookmarked IS NULL OR is_bookmarked = :bookmarked)
 AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
-AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
-AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCategoryId);
+AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCategoryId)
+AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden);
 
 selectFeeds:
-SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, comments_url, is_read, is_bookmarked, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.id AS feed_source_category_id, feed_source_category.title AS feed_source_category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference AS feed_source_link_opening_preference FROM feed_item
+SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, comments_url, is_read, is_bookmarked, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.id AS feed_source_category_id, feed_source_category.title AS feed_source_category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference AS feed_source_link_opening_preference, feed_source_preferences.is_hidden AS feed_source_is_hidden FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
@@ -44,6 +47,7 @@ AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
 AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
 AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId)
+AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
 ORDER BY pub_date DESC
 LIMIT :pageSize OFFSET :offset;
 
@@ -53,11 +57,14 @@ INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
 ON feed_source.category_id == feed_source_category.id
+LEFT JOIN feed_source_preferences
+ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE (:isRead IS NULL OR is_read = :isRead)
 AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
 AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
 AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
-AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId);
+AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId)
+AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden);
 
 updateReadStatus:
 UPDATE feed_item

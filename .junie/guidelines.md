@@ -88,3 +88,4 @@ feed-flow/
 - Every new string should be added to the `i18n` module and not hardcoded. The translated strings are not used with the xml key but with the Kotlin generated value 
 - When adding new strings, the StringsVersion number needs to be bumped.
 - The database migrations are placed in the `sqldelight/com/prof18/feedflow/migrations` folder
+- Avoid putting default values in the functions

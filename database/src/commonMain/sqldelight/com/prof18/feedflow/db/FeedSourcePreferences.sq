@@ -1,15 +1,16 @@
-import kotlin.Int;
+import kotlin.Boolean;
 import com.prof18.feedflow.core.model.LinkOpeningPreference;
 
 CREATE TABLE feed_source_preferences (
     feed_source_id TEXT NOT NULL PRIMARY KEY,
     link_opening_preference TEXT AS LinkOpeningPreference NOT NULL DEFAULT 'DEFAULT',
+    is_hidden INTEGER AS Boolean NOT NULL DEFAULT 0,
     FOREIGN KEY (feed_source_id) REFERENCES feed_source(url_hash)
 );
 
 insertPreference:
-INSERT OR REPLACE INTO feed_source_preferences(feed_source_id, link_opening_preference)
-VALUES (?, ?);
+INSERT OR REPLACE INTO feed_source_preferences(feed_source_id, link_opening_preference, is_hidden)
+VALUES (?, ?, ?);
 
 getPreference:
 SELECT * FROM feed_source_preferences WHERE feed_source_id = ?;

@@ -164,4 +164,5 @@
     <string name="settings_auto_delete_period_two_weeks">Two weeks old</string>
     <string name="settings_auto_delete_period_one_month">One month old</string>
     <string name="feed_url_help_text">Add any direct feed, website, or YouTube channel link. The feed will be detected automatically when possible</string>
+    <string name="hide_feed_from_timeline_description">Hide this feed's articles from the timeline</string>
 </resources>

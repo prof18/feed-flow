@@ -49,6 +49,15 @@ struct SidebarDrawer: View {
       HStack {
         Label(feedFlowStrings.drawerTitleTimeline, systemImage: "newspaper")
         Spacer()
+        if let timelineItem = drawerItem as? DrawerItem.Timeline,
+           timelineItem.unreadCount > 0 {
+          Text("\(timelineItem.unreadCount)")
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 8)
+            .background(Color.secondary.opacity(0.2))
+            .clipShape(Capsule())
+        }
       }
       .contentShape(Rectangle())
       .onTapGesture {
@@ -79,6 +88,15 @@ struct SidebarDrawer: View {
       HStack {
         Label(feedFlowStrings.drawerTitleBookmarks, systemImage: "bookmark.square")
         Spacer()
+        if let bookmarksItem = drawerItem as? DrawerItem.Bookmarks,
+           bookmarksItem.unreadCount > 0 {
+          Text("\(bookmarksItem.unreadCount)")
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 8)
+            .background(Color.secondary.opacity(0.2))
+            .clipShape(Capsule())
+        }
       }
       .contentShape(Rectangle())
       .onTapGesture {
@@ -98,6 +116,14 @@ struct SidebarDrawer: View {
               HStack {
                 Label(categoryItem.category.title, systemImage: "tag")
                 Spacer()
+                if categoryItem.unreadCount > 0 {
+                  Text("\(categoryItem.unreadCount)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 8)
+                    .background(Color.secondary.opacity(0.2))
+                    .clipShape(Capsule())
+                }
               }
               .contentShape(Rectangle())
               .onTapGesture {
@@ -198,30 +224,13 @@ struct SidebarDrawer: View {
   @ViewBuilder
   private func makeFeedSourceDrawerItem(drawerItem: DrawerItem.DrawerFeedSource) -> some View {
     HStack {
-      if let imageUrl = drawerItem.feedSource.logoUrl {
-        LazyImage(url: URL(string: imageUrl)) { state in
-          if let image = state.image {
-            image
-              .resizable()
-              .scaledToFill()
-              .frame(width: 24, height: 24)
-              .cornerRadius(16)
-              .clipped()
-          } else {
-            Image(systemName: "square.stack.3d.up")
-          }
-        }
-      } else {
-        Image(systemName: "square.stack.3d.up")
-      }
+      makeFeedSourceIcon(logoUrl: drawerItem.feedSource.logoUrl)
 
-      Text(drawerItem.feedSource.title)
-        .lineLimit(2)
-        .font(.system(size: 16))
-        .padding(.bottom, 2)
-        .padding(.leading, Spacing.small)
+      makeFeedSourceTitle(title: drawerItem.feedSource.title)
 
       Spacer()
+
+      makeUnreadCountBadge(count: drawerItem.unreadCount)
     }
     .contentShape(Rectangle())
     .onTapGesture {
@@ -229,25 +238,71 @@ struct SidebarDrawer: View {
       self.onFeedFilterSelected(FeedFilter.Source(feedSource: drawerItem.feedSource))
     }
     .contextMenu {
-        Button {
-          onEditFeedClick(drawerItem.feedSource)
-        } label: {
-          Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
-        }
+      makeFeedSourceContextMenu(feedSource: drawerItem.feedSource)
+    }
+  }
 
-        Button {
-          onDeleteFeedClick(drawerItem.feedSource)
-        } label: {
-          Label(feedFlowStrings.deleteFeed, systemImage: "trash")
+  @ViewBuilder
+  private func makeFeedSourceIcon(logoUrl: String?) -> some View {
+    if let imageUrl = logoUrl {
+      LazyImage(url: URL(string: imageUrl)) { state in
+        if let image = state.image {
+          image
+            .resizable()
+            .scaledToFill()
+            .frame(width: 24, height: 24)
+            .cornerRadius(16)
+            .clipped()
+        } else {
+          Image(systemName: "square.stack.3d.up")
         }
+      }
+    } else {
+      Image(systemName: "square.stack.3d.up")
+    }
+  }
 
-        if isOnVisionOSDevice() {
-          Button {
-            // No-op so it will close itslef
-          } label: {
-            Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
-          }
-        }
+  @ViewBuilder
+  private func makeFeedSourceTitle(title: String) -> some View {
+    Text(title)
+      .lineLimit(2)
+      .font(.system(size: 16))
+      .padding(.bottom, 2)
+      .padding(.leading, Spacing.small)
+  }
+
+  @ViewBuilder
+  private func makeUnreadCountBadge(count: Int64) -> some View {
+    if count > 0 {
+      Text("\(count)")
+        .font(.caption)
+        .foregroundColor(.secondary)
+        .padding(.horizontal, 8)
+        .background(Color.secondary.opacity(0.2))
+        .clipShape(Capsule())
+    }
+  }
+
+  @ViewBuilder
+  private func makeFeedSourceContextMenu(feedSource: FeedSource) -> some View {
+    Button {
+      onEditFeedClick(feedSource)
+    } label: {
+      Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
+    }
+
+    Button {
+      onDeleteFeedClick(feedSource)
+    } label: {
+      Label(feedFlowStrings.deleteFeed, systemImage: "trash")
+    }
+
+    if isOnVisionOSDevice() {
+      Button {
+        // No-op so it will close itslef
+      } label: {
+        Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
+      }
     }
   }
 

@@ -63,6 +63,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.days
 
+@Suppress("LargeClass")
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedRetrieverRepository(
     private val parser: RssParser,
@@ -192,6 +193,16 @@ internal class FeedRetrieverRepository(
                 feedFilter = feedFilter,
             )
         }
+
+    fun getUnreadBookmarksCountFlow(): Flow<Long> =
+        databaseHelper.getUnreadFeedCountFlow(
+            feedFilter = FeedFilter.Bookmarks,
+        )
+
+    fun getUnreadTimelineCountFlow(): Flow<Long> =
+        databaseHelper.getUnreadFeedCountFlow(
+            feedFilter = FeedFilter.Timeline,
+        )
 
     suspend fun clearReadFeeds() {
         getFeeds()

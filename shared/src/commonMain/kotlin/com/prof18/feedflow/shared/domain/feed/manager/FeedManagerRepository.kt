@@ -2,8 +2,10 @@ package com.prof18.feedflow.shared.domain.feed.manager
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.fold
@@ -152,8 +154,8 @@ internal class FeedManagerRepository(
     fun observeCategories(): Flow<List<FeedSourceCategory>> =
         databaseHelper.observeFeedSourceCategories()
 
-    suspend fun getCategories(): List<FeedSourceCategory> =
-        databaseHelper.getFeedSourceCategories()
+    fun observeCategoriesWithUnreadCount(): Flow<List<CategoryWithUnreadCount>> =
+        databaseHelper.observeCategoriesWithUnreadCount()
 
     suspend fun createCategory(categoryName: CategoryName) {
         val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
@@ -180,10 +182,10 @@ internal class FeedManagerRepository(
         feedSyncRepository.deleteAllFeedSources()
     }
 
-    fun observeFeedSourcesByCategory(): Flow<Map<FeedSourceCategory?, List<FeedSource>>> =
-        databaseHelper.getFeedSourcesFlow()
+    fun observeFeedSourcesByCategoryWithUnreadCount(): Flow<Map<FeedSourceCategory?, List<FeedSourceWithUnreadCount>>> =
+        databaseHelper.getFeedSourcesWithUnreadCountFlow()
             .map { feedSources ->
-                val sourcesByCategory = feedSources.groupBy { it.category }
+                val sourcesByCategory = feedSources.groupBy { it.feedSource.category }
                 val sortedKeys = sourcesByCategory.keys.sortedBy { it?.title }
                 sortedKeys.associateWith {
                     sourcesByCategory[it] ?: emptyList()

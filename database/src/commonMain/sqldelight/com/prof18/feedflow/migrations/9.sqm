@@ -1,0 +1,34 @@
+CREATE VIEW category_with_unread AS
+SELECT
+    feed_source_category.id,
+    feed_source_category.title,
+    (
+        SELECT COUNT(*)
+        FROM feed_item
+        INNER JOIN feed_source ON feed_item.feed_source_id == feed_source.url_hash
+        WHERE feed_source.category_id == feed_source_category.id
+        AND feed_item.is_read == 0
+    ) AS unread_count
+FROM feed_source_category;
+
+CREATE VIEW feed_source_unread_count AS
+SELECT
+    feed_source.url_hash AS url_hash,
+    feed_source.title AS feed_source_title,
+    feed_source.url,
+    feed_source.logo_url AS feed_source_logo_url,
+    feed_source.category_id,
+    feed_source.last_sync_timestamp,
+    feed_source_category.title AS category_title,
+    feed_source_preferences.link_opening_preference,
+    (
+        SELECT COUNT(*)
+        FROM feed_item
+        WHERE feed_item.feed_source_id == feed_source.url_hash
+        AND feed_item.is_read == 0
+    ) AS unread_count
+FROM feed_source
+LEFT JOIN feed_source_category
+ON feed_source.category_id = feed_source_category.id
+LEFT JOIN feed_source_preferences
+ON feed_source.url_hash = feed_source_preferences.feed_source_id;

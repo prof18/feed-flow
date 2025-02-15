@@ -8,16 +8,19 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrDefault
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_source_preferences
+import com.prof18.feedflow.db.GetFeedSourcesWithUnreadCount
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.db.SelectFeedUrls
 import com.prof18.feedflow.db.SelectFeeds
@@ -58,6 +61,24 @@ class DatabaseHelper(
             .mapToList(backgroundDispatcher)
             .map { feedSources ->
                 feedSources.map(::transformToFeedSource)
+            }
+            .flowOn(backgroundDispatcher)
+
+    fun getFeedSourcesWithUnreadCountFlow(): Flow<List<FeedSourceWithUnreadCount>> =
+        dbRef.viewQueries
+            .getFeedSourcesWithUnreadCount()
+            .asFlow()
+            .catch {
+                logger.e(it) { "Something wrong while getting data from Database" }
+            }
+            .mapToList(backgroundDispatcher)
+            .map { feedSources ->
+                feedSources.map { source ->
+                    FeedSourceWithUnreadCount(
+                        feedSource = transformToFeedSourceWithCount(source),
+                        unreadCount = source.unread_count,
+                    )
+                }
             }
             .flowOn(backgroundDispatcher)
 
@@ -212,6 +233,23 @@ class DatabaseHelper(
             }
             .flowOn(backgroundDispatcher)
 
+    fun observeCategoriesWithUnreadCount(): Flow<List<CategoryWithUnreadCount>> =
+        dbRef.viewQueries.getCategoriesWithUnreadCount()
+            .asFlow()
+            .mapToList(backgroundDispatcher)
+            .map { categories ->
+                categories.map { category ->
+                    CategoryWithUnreadCount(
+                        category = FeedSourceCategory(
+                            id = category.id,
+                            title = category.title,
+                        ),
+                        unreadCount = category.unread_count,
+                    )
+                }
+            }
+            .flowOn(backgroundDispatcher)
+
     suspend fun getFeedSourceCategories(): List<FeedSourceCategory> =
         withContext(backgroundDispatcher) {
             dbRef.feedSourceCategoryQueries.selectAll()
@@ -235,6 +273,7 @@ class DatabaseHelper(
             .countUnreadFeeds(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
+                bookmarked = feedFilter.getBookmarkFlag(),
             )
             .asFlow()
             .catch {
@@ -325,10 +364,6 @@ class DatabaseHelper(
                     isBookmarked = queryResult.is_bookmarked,
                 )
             }
-    }
-
-    suspend fun getAllFeedItemUrlHashes(): List<String> = withContext(backgroundDispatcher) {
-        dbRef.feedItemQueries.selectAllUrlHashes().executeAsList()
     }
 
     suspend fun updateFeedItemReadStatus(feedItemId: List<String>) =
@@ -443,6 +478,27 @@ class DatabaseHelper(
     }
 
     private fun transformToFeedSource(feedSource: SelectFeedUrls): FeedSource {
+        val category = if (feedSource.category_title != null && feedSource.category_id != null) {
+            FeedSourceCategory(
+                id = requireNotNull(feedSource.category_id),
+                title = requireNotNull(feedSource.category_title),
+            )
+        } else {
+            null
+        }
+
+        return FeedSource(
+            id = feedSource.url_hash,
+            url = feedSource.url,
+            title = feedSource.feed_source_title,
+            category = category,
+            lastSyncTimestamp = feedSource.last_sync_timestamp,
+            logoUrl = feedSource.feed_source_logo_url,
+            linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+        )
+    }
+
+    private fun transformToFeedSourceWithCount(feedSource: GetFeedSourcesWithUnreadCount): FeedSource {
         val category = if (feedSource.category_title != null && feedSource.category_id != null) {
             FeedSourceCategory(
                 id = requireNotNull(feedSource.category_id),

@@ -69,59 +69,65 @@ class HomeViewModel internal constructor(
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 
     init {
+        observeErrorState()
         viewModelScope.launch {
             feedRetrieverRepository.updateFeedFilter(FeedFilter.Timeline)
             initDrawerData()
-            observeErrorState()
             feedRetrieverRepository.getFeeds()
             getNewFeeds(isFirstLaunch = true)
         }
     }
 
-    private fun initDrawerData() {
-        viewModelScope.launch {
-            feedManagerRepository.observeFeedSourcesByCategory()
-                .combine(feedManagerRepository.observeCategories()) { feedSourceByCategory, categories ->
+    private suspend fun initDrawerData() {
+        combine(
+            feedManagerRepository.observeFeedSourcesByCategoryWithUnreadCount(),
+            feedManagerRepository.observeCategoriesWithUnreadCount(),
+            feedRetrieverRepository.getUnreadTimelineCountFlow(),
+            feedRetrieverRepository.getUnreadBookmarksCountFlow(),
+        ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, bookmarksCount ->
+            val containsOnlyNullKey = feedSourceByCategoryWithCount.keys.all { it == null }
 
-                    val containsOnlyNullKey = feedSourceByCategory.keys.all { it == null }
-
-                    val feedSourcesWithoutCategory = feedSourceByCategory[null]
-                        ?.map { feedSource ->
-                            DrawerFeedSource(
-                                feedSource = feedSource,
-                            )
-                        } ?: listOf()
-
-                    NavDrawerState(
-                        timeline = listOf(DrawerItem.Timeline),
-                        read = listOf(DrawerItem.Read),
-                        bookmarks = listOf(DrawerItem.Bookmarks),
-                        categories = categories.map { category ->
-                            DrawerCategory(category = category)
-                        },
-                        feedSourcesWithoutCategory = if (containsOnlyNullKey) {
-                            feedSourcesWithoutCategory
-                        } else {
-                            listOf()
-                        },
-                        feedSourcesByCategory = if (containsOnlyNullKey) {
-                            mapOf()
-                        } else {
-                            feedSourceByCategory.map { (category, feedSources) ->
-                                val categoryWrapper = DrawerFeedSource.FeedSourceCategoryWrapper(
-                                    feedSourceCategory = category,
-                                )
-                                categoryWrapper to feedSources.map { feedSource ->
-                                    DrawerFeedSource(
-                                        feedSource = feedSource,
-                                    )
-                                }
-                            }.toMap()
-                        },
+            val feedSourcesWithoutCategory = feedSourceByCategoryWithCount[null]
+                ?.map { feedSourceWithCount ->
+                    DrawerFeedSource(
+                        feedSource = feedSourceWithCount.feedSource,
+                        unreadCount = feedSourceWithCount.unreadCount,
                     )
-                }.collect { navDrawerState ->
-                    drawerMutableState.update { navDrawerState }
-                }
+                } ?: listOf()
+
+            NavDrawerState(
+                timeline = listOf(DrawerItem.Timeline(unreadCount = timelineCount)),
+                read = listOf(DrawerItem.Read),
+                bookmarks = listOf(DrawerItem.Bookmarks(unreadCount = bookmarksCount)),
+                categories = categoriesWithCount.map { categoryWithCount ->
+                    DrawerCategory(
+                        category = categoryWithCount.category,
+                        unreadCount = categoryWithCount.unreadCount,
+                    )
+                },
+                feedSourcesWithoutCategory = if (containsOnlyNullKey) {
+                    feedSourcesWithoutCategory
+                } else {
+                    listOf()
+                },
+                feedSourcesByCategory = if (containsOnlyNullKey) {
+                    mapOf()
+                } else {
+                    feedSourceByCategoryWithCount.map { (category, feedSources) ->
+                        val categoryWrapper = DrawerFeedSource.FeedSourceCategoryWrapper(
+                            feedSourceCategory = category,
+                        )
+                        categoryWrapper to feedSources.map { feedSourceWithCount ->
+                            DrawerFeedSource(
+                                feedSource = feedSourceWithCount.feedSource,
+                                unreadCount = feedSourceWithCount.unreadCount,
+                            )
+                        }
+                    }.toMap()
+                },
+            )
+        }.collect { navDrawerState ->
+            drawerMutableState.update { navDrawerState }
         }
     }
 

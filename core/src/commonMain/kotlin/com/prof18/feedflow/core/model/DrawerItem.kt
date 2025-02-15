@@ -18,18 +18,24 @@ data class NavDrawerState(
 }
 
 sealed class DrawerItem {
-    data object Timeline : DrawerItem()
+    data class Timeline(
+        val unreadCount: Long,
+    ) : DrawerItem()
 
     data object Read : DrawerItem()
 
-    data object Bookmarks : DrawerItem()
+    data class Bookmarks(
+        val unreadCount: Long,
+    ) : DrawerItem()
 
     data class DrawerCategory(
         val category: FeedSourceCategory,
+        val unreadCount: Long,
     ) : DrawerItem()
 
     data class DrawerFeedSource(
         val feedSource: FeedSource,
+        val unreadCount: Long,
     ) : DrawerItem() {
 
         data class FeedSourceCategoryWrapper(

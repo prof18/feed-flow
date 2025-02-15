@@ -162,4 +162,6 @@
     <string name="feed_url_help_text">Додайте будь-який прямий канал, веб-сайт або посилання на канал YouTube. Канал буде виявлено автоматично, коли це можливо</string>
     <string name="delete_category_confirmation_message">Ви впевнені, що хочете видалити цю категорію? Канали в цій категорії буде переміщено в без категорії.</string>
     <string name="settings_auto_delete_period_two_weeks">Два тижні</string>
+    <string name="settings_hide_description">Сховати опис статті</string>
+    <string name="settings_hide_images">Приховати зображення статті</string>
 </resources>

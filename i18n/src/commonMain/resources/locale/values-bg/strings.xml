@@ -156,10 +156,12 @@
     <string name="delete_category_close_button">Затвори</string>
     <string name="settings_auto_delete_desc">Автоматично изтриване на статии, по-стари от избрания период</string>
     <string name="settings_auto_delete_period">Период на изтриване</string>
-    <string name="settings_auto_delete_period_disabled">Деактивиран</string>
+    <string name="settings_auto_delete_period_disabled">Деактивирано</string>
     <string name="settings_auto_delete_period_two_weeks">На две седмици</string>
     <string name="settings_auto_delete_period_one_week">На една седмица</string>
     <string name="settings_auto_delete_period_one_month">На един месец</string>
     <string name="feed_url_help_text">Добавете всяка директна емисия, уебсайт или YouTube канал. Емисията ще бъде открита автоматично, когато е възможно</string>
     <string name="settings_auto_delete">Автоматично изтриване на стари статии</string>
+    <string name="settings_hide_images">Скриване на изображението на статията</string>
+    <string name="settings_hide_description">Скриване на описанието на статията</string>
 </resources>

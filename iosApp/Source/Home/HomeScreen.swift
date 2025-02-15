@@ -103,7 +103,6 @@ struct HomeScreen: View {
             },
             onBackToTimelineClick: {
                 homeViewModel.onFeedFilterSelected(selectedFeedFilter: FeedFilter.Timeline())
-                selectedDrawerItem = DrawerItem.Timeline()
             },
             onFeedSyncClick: {
                 homeViewModel.enqueueBackup()

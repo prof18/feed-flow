@@ -297,7 +297,7 @@ val inProgressFeedUpdateStatus = InProgressFeedUpdateStatus(
 )
 
 val navDrawerState = NavDrawerState(
-    timeline = listOf(DrawerItem.Timeline),
+    timeline = listOf(DrawerItem.Timeline(42)),
     read = listOf(DrawerItem.Read),
     categories = listOf(
         DrawerItem.DrawerCategory(
@@ -305,12 +305,14 @@ val navDrawerState = NavDrawerState(
                 id = "9398",
                 title = "News",
             ),
+            unreadCount = 42,
         ),
         DrawerItem.DrawerCategory(
             category = FeedSourceCategory(
                 id = "9398",
                 title = "Basket",
             ),
+            unreadCount = 42,
         ),
     ),
     feedSourcesWithoutCategory = listOf(),
@@ -333,6 +335,7 @@ val navDrawerState = NavDrawerState(
                     ),
                     logoUrl = null,
                 ),
+                unreadCount = 42,
             ),
             DrawerItem.DrawerFeedSource(
                 feedSource = FeedSource(
@@ -346,6 +349,7 @@ val navDrawerState = NavDrawerState(
                     ),
                     logoUrl = null,
                 ),
+                unreadCount = 42,
             ),
         ),
     ),

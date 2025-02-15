@@ -26,6 +26,7 @@ ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
 ON feed_source.category_id == feed_source_category.id
 WHERE is_read = 0
+AND (:bookmarked IS NULL OR is_bookmarked = :bookmarked)
 AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
 AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCategoryId);

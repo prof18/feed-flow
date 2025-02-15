@@ -12,7 +12,7 @@ struct ContentView: View {
 
     @State private var isAppInBackground: Bool = false
 
-    @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline()
+    @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline(unreadCount: 0)
 
     var body: some View {
         ZStack {

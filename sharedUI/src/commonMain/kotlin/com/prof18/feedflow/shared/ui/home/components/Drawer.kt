@@ -89,6 +89,8 @@ fun Drawer(
             DrawerTimelineItem(
                 currentFeedFilter = currentFeedFilter,
                 onFeedFilterSelected = onFeedFilterSelected,
+                drawerItem = navDrawerState.timeline.filterIsInstance<DrawerItem.Timeline>().firstOrNull()
+                    ?: DrawerItem.Timeline(unreadCount = 0),
             )
         }
 
@@ -103,6 +105,8 @@ fun Drawer(
             DrawerBookmarksItem(
                 currentFeedFilter = currentFeedFilter,
                 onFeedFilterSelected = onFeedFilterSelected,
+                drawerItem = navDrawerState.bookmarks.filterIsInstance<DrawerItem.Bookmarks>().firstOrNull()
+                    ?: DrawerItem.Bookmarks(unreadCount = 0),
             )
         }
 
@@ -156,9 +160,20 @@ private fun DrawerDivider() {
 private fun DrawerTimelineItem(
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    drawerItem: DrawerItem.Timeline,
 ) {
     NavigationDrawerItem(
         selected = currentFeedFilter is FeedFilter.Timeline,
+        badge = if (drawerItem.unreadCount > 0) {
+            {
+                Text(
+                    text = drawerItem.unreadCount.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
+        } else {
+            null
+        },
         label = {
             Text(
                 text = LocalFeedFlowStrings.current.drawerTitleTimeline,
@@ -206,6 +221,7 @@ private fun DrawerReadItem(
 private fun DrawerBookmarksItem(
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    drawerItem: DrawerItem.Bookmarks,
 ) {
     NavigationDrawerItem(
         selected = currentFeedFilter is FeedFilter.Bookmarks,
@@ -213,6 +229,16 @@ private fun DrawerBookmarksItem(
             Text(
                 text = LocalFeedFlowStrings.current.drawerTitleBookmarks,
             )
+        },
+        badge = if (drawerItem.unreadCount > 0) {
+            {
+                Text(
+                    text = drawerItem.unreadCount.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
+        } else {
+            null
         },
         icon = {
             Icon(
@@ -289,6 +315,16 @@ private fun DrawerCategoryItem(
             Text(
                 text = drawerCategory.category.title,
             )
+        },
+        badge = if (drawerCategory.unreadCount > 0) {
+            {
+                Text(
+                    text = drawerCategory.unreadCount.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
+        } else {
+            null
         },
         icon = {
             Icon(
@@ -500,6 +536,7 @@ private fun FeedSourcesList(
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 feedSource = feedSourceWrapper.feedSource,
+                unreadCount = feedSourceWrapper.unreadCount,
             )
         }
     }
@@ -516,6 +553,7 @@ fun FeedSourceDrawerItem(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     colors: NavigationDrawerItemColors = NavigationDrawerItemDefaults.colors(),
+    unreadCount: Long,
 ) {
     var showFeedMenu by remember {
         mutableStateOf(
@@ -546,14 +584,28 @@ fun FeedSourceDrawerItem(
                 )
                 .padding(start = 16.dp, end = 24.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            val iconColor = colors.iconColor(selected).value
-            CompositionLocalProvider(LocalContentColor provides iconColor, content = icon)
-            Spacer(Modifier.width(12.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f),
+            ) {
+                val iconColor = colors.iconColor(selected).value
+                CompositionLocalProvider(LocalContentColor provides iconColor, content = icon)
+                Spacer(Modifier.width(12.dp))
 
-            Box(Modifier.weight(1f)) {
-                val labelColor = colors.textColor(selected).value
-                CompositionLocalProvider(LocalContentColor provides labelColor, content = label)
+                Box(Modifier.weight(1f)) {
+                    val labelColor = colors.textColor(selected).value
+                    CompositionLocalProvider(LocalContentColor provides labelColor, content = label)
+                }
+            }
+
+            if (unreadCount > 0) {
+                Text(
+                    text = unreadCount.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = colors.textColor(selected).value,
+                )
             }
         }
 

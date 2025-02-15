@@ -162,4 +162,6 @@
     <string name="feed_url_help_text">Thêm nguồn cấp dữ liệu, trang web hoặc liên kết kênh YouTube bất kỳ. Nguồn cấp dữ liệu sẽ được tự động phát hiện khi có thể</string>
     <string name="settings_auto_delete_period_one_week">Một tuần</string>
     <string name="settings_auto_delete_period_one_month">Một tháng</string>
+    <string name="settings_hide_images">Ẩn ảnh thumbnail bài viết</string>
+    <string name="settings_hide_description">Ẩn mô tả bài viết</string>
 </resources>

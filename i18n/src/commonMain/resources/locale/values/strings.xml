@@ -165,4 +165,8 @@
     <string name="settings_auto_delete_period_one_month">One month old</string>
     <string name="feed_url_help_text">Add any direct feed, website, or YouTube channel link. The feed will be detected automatically when possible</string>
     <string name="hide_feed_from_timeline_description">Hide this feed's articles from the timeline</string>
+    <string name="pin_feed_source_description">Pin this feed</string>
+    <string name="drawer_title_pinned_feeds">Pinned Feed Sources</string>
+    <string name="menu_add_to_pinned">Pin</string>
+    <string name="menu_remove_from_pinned">Unpin</string>
 </resources>

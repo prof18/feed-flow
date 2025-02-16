@@ -50,6 +50,7 @@ internal data class EditFeedScreen(
         val feedName by viewModel.feedNameState.collectAsState()
         val linkOpeningPreference by viewModel.linkOpeningPreferenceState.collectAsState()
         val isHidden by viewModel.isHiddenFromTimelineState.collectAsState()
+        val isPinned by viewModel.isPinnedState.collectAsState()
         var showLoading by remember { mutableStateOf(false) }
         var errorMessage by remember { mutableStateOf("") }
         var showError by remember { mutableStateOf(false) }
@@ -118,6 +119,10 @@ internal data class EditFeedScreen(
             onHiddenToggled = { hidden ->
                 viewModel.updateIsHiddenFromTimeline(hidden)
             },
+            isPinned = isPinned,
+            onPinnedToggled = { pinned ->
+                viewModel.updateIsPinned(pinned)
+            },
             editFeed = {
                 viewModel.editFeed()
             },
@@ -171,6 +176,8 @@ private fun EditScreenPreview() {
             linkOpeningPreference = LinkOpeningPreference.DEFAULT,
             isHidden = false,
             onHiddenToggled = {},
+            isPinned = false,
+            onPinnedToggled = {},
             onFeedUrlUpdated = {},
             onFeedNameUpdated = {},
             onLinkOpeningPreferenceSelected = {},

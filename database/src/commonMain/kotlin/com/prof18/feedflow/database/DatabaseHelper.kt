@@ -391,8 +391,14 @@ class DatabaseHelper(
         feedSourceId: String,
         preference: LinkOpeningPreference,
         isHidden: Boolean,
+        isPinned: Boolean,
     ) = dbRef.transactionWithContext(backgroundDispatcher) {
-        dbRef.feedSourcePreferencesQueries.insertPreference(feedSourceId, preference, isHidden)
+        dbRef.feedSourcePreferencesQueries.insertPreference(
+            feed_source_id = feedSourceId,
+            link_opening_preference = preference,
+            is_hidden = isHidden,
+            is_pinned = isPinned
+        )
     }
 
     suspend fun deleteCategoriesExcept(categoryIds: List<String>) = dbRef.transactionWithContext(backgroundDispatcher) {
@@ -416,6 +422,7 @@ class DatabaseHelper(
                     logoUrl = feedSource.feed_source_logo_url,
                     isHiddenFromTimeline = feedSource.is_hidden ?: false,
                     linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+                    isPinned = feedSource.is_pinned ?: false,
                 )
             }
     }
@@ -516,6 +523,7 @@ class DatabaseHelper(
             logoUrl = feedSource.feed_source_logo_url,
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
+            isPinned = feedSource.is_pinned ?: false,
         )
     }
 
@@ -538,6 +546,7 @@ class DatabaseHelper(
             logoUrl = feedSource.feed_source_logo_url,
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
+            isPinned = feedSource.is_pinned ?: false,
         )
     }
 

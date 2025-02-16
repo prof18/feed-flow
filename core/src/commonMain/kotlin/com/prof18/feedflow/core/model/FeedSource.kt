@@ -9,4 +9,5 @@ data class FeedSource(
     val logoUrl: String?,
     val linkOpeningPreference: LinkOpeningPreference,
     val isHiddenFromTimeline: Boolean,
+    val isPinned: Boolean,
 )

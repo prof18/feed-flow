@@ -24,6 +24,7 @@ struct CompactView: View {
     read: [],
     bookmarks: [],
     categories: [],
+    pinnedFeedSources: [],
     feedSourcesWithoutCategory: [],
     feedSourcesByCategory: [:]
   )

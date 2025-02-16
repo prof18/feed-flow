@@ -89,6 +89,8 @@ class HomeViewModel internal constructor(
         ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, bookmarksCount ->
             val containsOnlyNullKey = feedSourceByCategoryWithCount.keys.all { it == null }
 
+            val pinnedFeedSources = feedSourceByCategoryWithCount.values.flatten().filter { it.feedSource.isPinned }
+
             val feedSourcesWithoutCategory = feedSourceByCategoryWithCount[null]
                 ?.map { feedSourceWithCount ->
                     DrawerFeedSource(
@@ -105,6 +107,12 @@ class HomeViewModel internal constructor(
                     DrawerCategory(
                         category = categoryWithCount.category,
                         unreadCount = categoryWithCount.unreadCount,
+                    )
+                },
+                pinnedFeedSources = pinnedFeedSources.map { feedSourceWithCount ->
+                    DrawerFeedSource(
+                        feedSource = feedSourceWithCount.feedSource,
+                        unreadCount = feedSourceWithCount.unreadCount,
                     )
                 },
                 feedSourcesWithoutCategory = if (containsOnlyNullKey) {

@@ -209,7 +209,8 @@ struct SettingsScreen: View {
                 lastSyncTimestamp: nil,
                 logoUrl: nil,
                 linkOpeningPreference: .default,
-                isHiddenFromTimeline: false
+                isHiddenFromTimeline: false,
+                isPinned: false
               ),
               pubDateMillis: nil,
               isRead: false,

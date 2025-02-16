@@ -375,13 +375,12 @@ internal class FeedRetrieverRepository(
         newFeedSource: FeedSource,
         originalFeedSource: FeedSource?,
     ): FeedEditedState {
-        if (newFeedSource.linkOpeningPreference != originalFeedSource?.linkOpeningPreference ||
-            newFeedSource.isHiddenFromTimeline != originalFeedSource.isHiddenFromTimeline
-        ) {
+        if (newFeedSource != originalFeedSource) {
             databaseHelper.insertFeedSourcePreference(
                 feedSourceId = newFeedSource.id,
                 preference = newFeedSource.linkOpeningPreference,
                 isHidden = newFeedSource.isHiddenFromTimeline,
+                isPinned = newFeedSource.isPinned,
             )
             getFeeds()
         }
@@ -731,6 +730,7 @@ internal class FeedRetrieverRepository(
             logoUrl = parsedFeedSource.logoUrl,
             isHiddenFromTimeline = false,
             linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            isPinned = false,
         )
 
         val feedItems = rssChannelMapper.getFeedItems(

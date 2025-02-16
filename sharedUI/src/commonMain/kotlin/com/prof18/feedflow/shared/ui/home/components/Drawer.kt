@@ -116,6 +116,33 @@ fun Drawer(
             )
         }
 
+        if (navDrawerState.pinnedFeedSources.isNotEmpty()) {
+            item {
+                DrawerDivider()
+            }
+
+            item {
+                Column {
+                    Text(
+                        modifier = Modifier
+                            .padding(start = Spacing.regular)
+                            .padding(bottom = Spacing.regular),
+                        text = LocalFeedFlowStrings.current.drawerTitlePinnedFeeds,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+
+                    FeedSourcesList(
+                        drawerFeedSources = navDrawerState.pinnedFeedSources
+                            .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
+                        currentFeedFilter = currentFeedFilter,
+                        onFeedFilterSelected = onFeedFilterSelected,
+                        onEditFeedClick = onEditFeedClick,
+                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    )
+                }
+            }
+        }
+
         if (navDrawerState.categories.isNotEmpty()) {
             item {
                 DrawerDivider()
@@ -602,6 +629,7 @@ fun FeedSourceDrawerItem(
 
             if (unreadCount > 0) {
                 Text(
+                    modifier = Modifier.padding(start = Spacing.small),
                     text = unreadCount.toString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = colors.textColor(selected).value,

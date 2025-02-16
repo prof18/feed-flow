@@ -61,6 +61,7 @@ fun FeedListFontSettings(
                             logoUrl = null,
                             linkOpeningPreference = LinkOpeningPreference.DEFAULT,
                             isHiddenFromTimeline = false,
+                            isPinned = false,
                         ),
                         pubDateMillis = null,
                         dateString = "01/01",

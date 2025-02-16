@@ -7,6 +7,7 @@ data class NavDrawerState(
     val read: List<DrawerItem> = emptyList(),
     val bookmarks: List<DrawerItem> = emptyList(),
     val categories: List<DrawerItem> = emptyList(),
+    val pinnedFeedSources: List<DrawerItem> = emptyList(),
     val feedSourcesWithoutCategory: List<DrawerItem> = emptyList(),
     val feedSourcesByCategory: Map<FeedSourceCategoryWrapper, List<DrawerItem>> = mapOf(),
 ) {

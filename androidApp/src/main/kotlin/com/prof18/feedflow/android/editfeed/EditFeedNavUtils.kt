@@ -21,6 +21,7 @@ internal fun EditFeed.toFeedSource(): FeedSource {
         logoUrl = logoUrl,
         linkOpeningPreference = linkOpeningPreference,
         isHiddenFromTimeline = isHidden,
+        isPinned = isPinned,
     )
 }
 
@@ -35,5 +36,6 @@ internal fun FeedSource.toEditFeed(): EditFeed {
         logoUrl = logoUrl,
         linkOpeningPreference = linkOpeningPreference,
         isHidden = isHiddenFromTimeline,
+        isPinned = isPinned
     )
 }

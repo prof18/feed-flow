@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerCategory
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
@@ -70,11 +71,12 @@ class HomeViewModel internal constructor(
 
     init {
         observeErrorState()
+        getNewFeeds(isFirstLaunch = true)
         viewModelScope.launch {
             feedRetrieverRepository.updateFeedFilter(FeedFilter.Timeline)
             initDrawerData()
             feedRetrieverRepository.getFeeds()
-            getNewFeeds(isFirstLaunch = true)
+            Logger.d { ">>>> Caaling init HomeVM" }
         }
     }
 
@@ -161,6 +163,7 @@ class HomeViewModel internal constructor(
     }
 
     fun getNewFeeds(isFirstLaunch: Boolean = false) {
+        Logger.d { ">>>> GET NEW FEEDS" }
         lastUpdateIndex = 0
         viewModelScope.launch {
             feedRetrieverRepository.fetchFeeds(isFirstLaunch = isFirstLaunch)

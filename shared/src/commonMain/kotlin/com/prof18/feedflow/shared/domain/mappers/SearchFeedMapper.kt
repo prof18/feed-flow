@@ -40,6 +40,7 @@ internal fun Search.toFeedItem(dateFormatter: DateFormatter, removeTitleFromDesc
         logoUrl = feed_source_logo_url,
         linkOpeningPreference = feed_source_link_opening_preference ?: LinkOpeningPreference.DEFAULT,
         isHiddenFromTimeline = false,
+        isPinned = false,
     ),
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {

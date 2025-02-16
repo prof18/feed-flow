@@ -13,4 +13,5 @@ fun ParsedFeedSource.toFeedSource() = FeedSource(
     logoUrl = this.logoUrl,
     linkOpeningPreference = LinkOpeningPreference.DEFAULT,
     isHiddenFromTimeline = false,
+    isPinned = false,
 )

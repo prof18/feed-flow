@@ -39,10 +39,12 @@ fun EditFeedContent(
     categoriesState: CategoriesState,
     linkOpeningPreference: LinkOpeningPreference,
     isHidden: Boolean,
+    isPinned: Boolean,
     onFeedUrlUpdated: (String) -> Unit,
     onFeedNameUpdated: (String) -> Unit,
     onLinkOpeningPreferenceSelected: (LinkOpeningPreference) -> Unit,
     onHiddenToggled: (Boolean) -> Unit,
+    onPinnedToggled: (Boolean) -> Unit,
     editFeed: () -> Unit,
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
@@ -111,6 +113,25 @@ fun EditFeedContent(
                     Switch(
                         checked = isHidden,
                         onCheckedChange = onHiddenToggled,
+                        modifier = Modifier.padding(start = Spacing.regular)
+                    )
+                }
+            }
+
+            item {
+                Row(
+                    modifier = modifier
+                        .padding(top = Spacing.regular),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = LocalFeedFlowStrings.current.pinFeedSourceDescription,
+                        modifier = Modifier.padding(top = Spacing.xsmall)
+                            .weight(1f)
+                    )
+                    Switch(
+                        checked = isPinned,
+                        onCheckedChange = onPinnedToggled,
                         modifier = Modifier.padding(start = Spacing.regular)
                     )
                 }

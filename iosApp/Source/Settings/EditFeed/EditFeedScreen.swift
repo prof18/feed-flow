@@ -29,6 +29,7 @@ struct EditFeedScreen: View {
   @State var feedName = ""
   @State var linkOpeningPreference = LinkOpeningPreference.default
   @State var isHidden = false
+  @State var isPinned = false
 
   var body: some View {
     NavigationStack {
@@ -42,6 +43,7 @@ struct EditFeedScreen: View {
           isAddingFeed: $isAddingFeed,
           linkOpeningPreference: $linkOpeningPreference,
           isHidden: $isHidden,
+          isPinned: $isPinned,
           categorySelectorObserver: categorySelectorObserver,
           updateFeedUrlTextFieldValue: { value in
             vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
@@ -59,7 +61,10 @@ struct EditFeedScreen: View {
             vmStoreOwner.instance.updateLinkOpeningPreference(preference: preference)
           },
           onHiddenToggled: { hidden in
-            vmStoreOwner.instance.updateIsHidden(isHidden: hidden)
+            vmStoreOwner.instance.updateIsHiddenFromTimeline(isHidden: hidden)
+          },
+          onPinnedToggled: { pinned in
+            vmStoreOwner.instance.updateIsPinned(isPinned: pinned)
           },
           addFeed: {
             vmStoreOwner.instance.editFeed()
@@ -68,13 +73,10 @@ struct EditFeedScreen: View {
 
         @Bindable var appState = appState
         VStack(spacing: 0) {
-
           Spacer()
-
           Snackbar(messageQueue: $appState.snackbarQueue)
         }
       }
-
       .onAppear {
         vmStoreOwner.instance.loadFeedToEdit(feedSource: feedSource)
       }
@@ -138,8 +140,13 @@ struct EditFeedScreen: View {
         }
       }
       .task {
-        for await state in vmStoreOwner.instance.isHiddenState {
+        for await state in vmStoreOwner.instance.isHiddenFromTimelineState {
           self.isHidden = state as? Bool ?? false
+        }
+      }
+      .task {
+        for await state in vmStoreOwner.instance.isPinnedState {
+          self.isPinned = state as? Bool ?? false
         }
       }
     }

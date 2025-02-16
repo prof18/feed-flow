@@ -23,6 +23,7 @@ struct RegularView: View {
     read: [],
     bookmarks: [],
     categories: [],
+    pinnedFeedSources: [],
     feedSourcesWithoutCategory: [],
     feedSourcesByCategory: [:]
   )

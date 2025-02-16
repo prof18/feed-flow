@@ -33,6 +33,9 @@ struct SidebarDrawer: View {
       timelineSection
       readSection
       bookmarksSection
+      if !navDrawerState.pinnedFeedSources.isEmpty {
+        pinnedFeedSourcesSection
+      }
       categoriesSection
       feedSourcesWithoutCategorySection
       feedSourcesWithCategorySection
@@ -104,6 +107,21 @@ struct SidebarDrawer: View {
         self.onFeedFilterSelected(FeedFilter.Bookmarks())
       }
     }
+  }
+
+  private var pinnedFeedSourcesSection: some View {
+    Section(
+      content: {
+        ForEach(navDrawerState.pinnedFeedSources, id: \.self) { drawerItem in
+          if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
+            makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
+          }
+        }
+      },
+      header: {
+        Text(feedFlowStrings.drawerTitlePinnedFeeds)
+      }
+    )
   }
 
   @ViewBuilder

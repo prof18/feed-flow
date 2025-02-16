@@ -25,6 +25,7 @@ struct EditFeedScreenContent: View {
   @Binding var isAddingFeed: Bool
   @Binding var linkOpeningPreference: LinkOpeningPreference
   @Binding var isHidden: Bool
+  @Binding var isPinned: Bool
 
   var categorySelectorObserver: CategorySelectorObserver
 
@@ -34,6 +35,7 @@ struct EditFeedScreenContent: View {
   let addNewCategory: (CategoryName) -> Void
   let updateLinkOpeningPreference: (LinkOpeningPreference) -> Void
   let onHiddenToggled: (Bool) -> Void
+  let onPinnedToggled: (Bool) -> Void
   let addFeed: () -> Void
 
   var body: some View {
@@ -99,6 +101,13 @@ struct EditFeedScreenContent: View {
         }
         .onChange(of: isHidden) {
           onHiddenToggled(isHidden)
+        }
+
+        Toggle(isOn: $isPinned) {
+            Text(feedFlowStrings.pinFeedSourceDescription)
+        }
+        .onChange(of: isPinned) {
+          onPinnedToggled(isPinned)
         }
       }
 

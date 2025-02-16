@@ -45,6 +45,7 @@ internal fun SelectFeeds.toFeedItem(
         logoUrl = feed_source_logo_url,
         linkOpeningPreference = feed_source_link_opening_preference ?: LinkOpeningPreference.DEFAULT,
         isHiddenFromTimeline = feed_source_is_hidden ?: false,
+        isPinned = feed_source_is_pinned ?: false,
     ),
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {

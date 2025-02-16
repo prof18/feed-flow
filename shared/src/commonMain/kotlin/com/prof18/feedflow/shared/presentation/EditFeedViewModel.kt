@@ -37,6 +37,9 @@ class EditFeedViewModel internal constructor(
     private val isHiddenFromTimelineMutableState = MutableStateFlow(false)
     val isHiddenFromTimelineState = isHiddenFromTimelineMutableState.asStateFlow()
 
+    private val isPinnedMutableState = MutableStateFlow(false)
+    val isPinnedState = isPinnedMutableState.asStateFlow()
+
     private val feedEditedMutableState: MutableSharedFlow<FeedEditedState> = MutableSharedFlow()
     val feedEditedState = feedEditedMutableState.asSharedFlow()
 
@@ -71,6 +74,13 @@ class EditFeedViewModel internal constructor(
         }
     }
 
+    fun updateIsPinned(isPinned: Boolean) {
+        isPinnedMutableState.update { isPinned }
+        viewModelScope.launch {
+            feedEditedMutableState.emit(FeedEditedState.Idle)
+        }
+    }
+
     fun loadFeedToEdit(feedSource: FeedSource) {
         originalFeedSource = feedSource
 
@@ -79,6 +89,7 @@ class EditFeedViewModel internal constructor(
             feedNameMutableState.update { feedSource.title }
             linkOpeningPreferenceMutableState.update { feedSource.linkOpeningPreference }
             isHiddenFromTimelineMutableState.update { feedSource.isHiddenFromTimeline }
+            isPinnedMutableState.update { feedSource.isPinned }
 
             val categoryName = feedSource.category?.title?.let { CategoryName(it) }
             categoryUseCase.initCategories(categoryName)
@@ -117,6 +128,7 @@ class EditFeedViewModel internal constructor(
                 category = selectedCategory,
                 linkOpeningPreference = linkOpeningPreferenceState.value,
                 isHiddenFromTimeline = isHiddenFromTimelineState.value,
+                isPinned = isPinnedState.value,
             )
 
             if (newFeedSource != null && newFeedSource != originalFeedSource) {

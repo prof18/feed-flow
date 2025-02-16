@@ -18,7 +18,7 @@ deleteAllExcept:
 DELETE FROM feed_source WHERE url_hash NOT IN :urlHashes;
 
 selectFeedUrls:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
@@ -59,7 +59,7 @@ deleteAll:
 DELETE FROM feed_source;
 
 selectByCategory:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences

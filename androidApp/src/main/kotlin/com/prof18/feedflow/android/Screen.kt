@@ -47,4 +47,5 @@ data class EditFeed(
     val logoUrl: String?,
     val linkOpeningPreference: LinkOpeningPreference,
     val isHidden: Boolean,
+    val isPinned: Boolean,
 )

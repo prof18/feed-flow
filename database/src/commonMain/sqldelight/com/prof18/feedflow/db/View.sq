@@ -9,6 +9,7 @@ SELECT
     feed_source_category.title AS category_title,
     feed_source_preferences.link_opening_preference,
     feed_source_preferences.is_hidden,
+    feed_source_preferences.is_pinned,
     (
         SELECT COUNT(*)
         FROM feed_item
@@ -42,6 +43,6 @@ ORDER BY title COLLATE NOCASE ASC;
 
 
 getFeedSourcesWithUnreadCount:
-SELECT url_hash, feed_source_title, url, feed_source_logo_url, category_id, category_title, last_sync_timestamp, link_opening_preference, is_hidden, unread_count
+SELECT url_hash, feed_source_title, url, feed_source_logo_url, category_id, category_title, last_sync_timestamp, link_opening_preference, is_hidden, is_pinned, unread_count
 FROM feed_source_unread_count
 ORDER BY feed_source_title COLLATE NOCASE ASC;

@@ -179,6 +179,7 @@ private fun HomeAppBarPreview() {
                     logoUrl = null,
                     linkOpeningPreference = LinkOpeningPreference.DEFAULT,
                     isHiddenFromTimeline = false,
+                    isPinned = false,
                 ),
             ),
             showDrawerMenu = true,

@@ -169,4 +169,5 @@
     <string name="drawer_title_pinned_feeds">Pinned Feed Sources</string>
     <string name="menu_add_to_pinned">Pin</string>
     <string name="menu_remove_from_pinned">Unpin</string>
+    <string name="feed_list_appearance">Feed list appearance</string>
 </resources>

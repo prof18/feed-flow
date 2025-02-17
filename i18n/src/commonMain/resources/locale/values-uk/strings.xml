@@ -163,4 +163,10 @@
     <string name="settings_auto_delete_period_two_weeks">Два тижні</string>
     <string name="settings_hide_description">Сховати опис статті</string>
     <string name="settings_hide_images">Приховати зображення статті</string>
+    <string name="drawer_title_pinned_feeds">Закріплені джерела каналів</string>
+    <string name="pin_feed_source_description">Закріпити цей канал</string>
+    <string name="menu_remove_from_pinned">Відкріпити</string>
+    <string name="menu_add_to_pinned">Закріпити</string>
+    <string name="hide_feed_from_timeline_description">Приховати статті цієї стрічки на часовій шкалі</string>
+    <string name="feed_list_appearance">Зовнішній вигляд списку каналів</string>
 </resources>

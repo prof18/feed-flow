@@ -53,6 +53,7 @@ internal fun CompactHomeView(
     onSearchClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -74,6 +75,7 @@ internal fun CompactHomeView(
                     },
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onEditFeedClick = onEditFeedClick,
+                    onPinFeedClick = onPinFeedClick,
                 )
             }
         },
@@ -148,6 +150,7 @@ private fun CompactHomeViewPreview() {
             onSearchClick = {},
             onEditFeedClick = { },
             onDeleteFeedSourceClick = { },
+            onPinFeedClick = { },
         )
     }
 }

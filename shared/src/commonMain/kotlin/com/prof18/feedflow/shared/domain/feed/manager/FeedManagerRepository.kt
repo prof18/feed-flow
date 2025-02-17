@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.fold
@@ -239,4 +240,18 @@ internal class FeedManagerRepository(
                 feedSyncRepository.performBackup()
             }
         }
+
+    suspend fun insertFeedSourcePreference(
+        feedSourceId: String,
+        preference: LinkOpeningPreference,
+        isHidden: Boolean,
+        isPinned: Boolean,
+    ) = withContext(dispatcherProvider.io) {
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = feedSourceId,
+            preference = preference,
+            isHidden = isHidden,
+            isPinned = isPinned,
+        )
+    }
 }

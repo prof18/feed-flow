@@ -12,6 +12,7 @@ import SwiftUI
 
 @MainActor
 // swiftlint:disable type_body_length
+// swiftlint:disable file_length
 struct SidebarDrawer: View {
 
   @Environment(AppState.self) private var appState
@@ -27,6 +28,7 @@ struct SidebarDrawer: View {
   let onAddFeedClick: () -> Void
   let onEditFeedClick: (FeedSource) -> Void
   let onDeleteFeedClick: (FeedSource) -> Void
+  let onPinFeedClick: (FeedSource) -> Void
 
   var body: some View {
     List(selection: $selectedDrawerItem) {
@@ -310,6 +312,15 @@ struct SidebarDrawer: View {
     }
 
     Button {
+      onPinFeedClick(feedSource)
+    } label: {
+      Label(
+        feedSource.isPinned ? feedFlowStrings.menuRemoveFromPinned : feedFlowStrings.menuAddToPinned,
+        systemImage: feedSource.isPinned ? "pin.slash" : "pin"
+      )
+    }
+
+    Button {
       onDeleteFeedClick(feedSource)
     } label: {
       Label(feedFlowStrings.deleteFeed, systemImage: "trash")
@@ -389,6 +400,7 @@ struct SidebarDrawer: View {
   }
 }
 // swiftlint:enable type_body_length
+// swiftlint:enable file_length
 
 #Preview {
   SidebarDrawer(
@@ -402,6 +414,7 @@ struct SidebarDrawer: View {
     onShowSettingsClick: {},
     onAddFeedClick: {},
     onEditFeedClick: { _ in },
-    onDeleteFeedClick: { _ in }
+    onDeleteFeedClick: { _ in },
+    onPinFeedClick: { _ in }
   )
 }

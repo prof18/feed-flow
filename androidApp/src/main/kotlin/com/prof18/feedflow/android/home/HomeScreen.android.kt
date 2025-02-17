@@ -156,6 +156,9 @@ internal fun HomeScreen(
                 onDeleteFeedSourceClick = { feedSource ->
                     homeViewModel.deleteFeedSource(feedSource)
                 },
+                onPinFeedClick = { feedSource ->
+                    homeViewModel.toggleFeedPin(feedSource)
+                },
             )
         }
 
@@ -216,6 +219,9 @@ internal fun HomeScreen(
                 onDeleteFeedSourceClick = { feedSource ->
                     homeViewModel.deleteFeedSource(feedSource)
                 },
+                onPinFeedClick = { feedSource ->
+                    homeViewModel.toggleFeedPin(feedSource)
+                },
             )
         }
 
@@ -275,6 +281,9 @@ internal fun HomeScreen(
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = { feedSource ->
                     homeViewModel.deleteFeedSource(feedSource)
+                },
+                onPinFeedClick = { feedSource ->
+                    homeViewModel.toggleFeedPin(feedSource)
                 },
             )
         }

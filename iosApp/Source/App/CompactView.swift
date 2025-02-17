@@ -85,6 +85,9 @@ struct CompactView: View {
         },
         onDeleteFeedClick: { feedSource in
           homeViewModel.deleteFeedSource(feedSource: feedSource)
+        },
+        onPinFeedClick: { feedSource in
+          homeViewModel.toggleFeedPin(feedSource: feedSource)
         }
       ).sheet(isPresented: $showAddFeedSheet) {
         AddFeedScreen(showCloseButton: true)

@@ -76,6 +76,9 @@ fun FeedSourceListScreen(
             viewModel.updateFeedName(feedSource, newName)
         },
         onEditFeedSourceClick = onEditFeedClick,
+        onPinFeedClick = { feedSource ->
+            viewModel.toggleFeedPin(feedSource)
+        },
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         },
@@ -97,6 +100,7 @@ private fun FeedSourceListContentPreview() {
             navigateBack = {},
             onRenameFeedSourceClick = { _, _ -> },
             onEditFeedSourceClick = {},
+            onPinFeedClick = {},
         )
     }
 }

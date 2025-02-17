@@ -36,6 +36,6 @@ internal fun FeedSource.toEditFeed(): EditFeed {
         logoUrl = logoUrl,
         linkOpeningPreference = linkOpeningPreference,
         isHidden = isHiddenFromTimeline,
-        isPinned = isPinned
+        isPinned = isPinned,
     )
 }

@@ -18,6 +18,7 @@ fun FeedSourceListContent(
     onExpandClicked: (CategoryId?) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
     onEditFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
     modifier: Modifier = Modifier,
     snackbarHost: @Composable () -> Unit = {},
 ) {
@@ -46,6 +47,7 @@ fun FeedSourceListContent(
                 onDeleteFeedSourceClick = onDeleteFeedClick,
                 onRenameFeedSourceClick = onRenameFeedSourceClick,
                 onEditFeedClick = onEditFeedSourceClick,
+                onPinFeedClick = onPinFeedClick,
             )
         }
     }

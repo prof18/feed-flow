@@ -66,7 +66,7 @@
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="feed_url">URL адрес на емисия</string>
     <string name="delete_feed">Изтриване</string>
-    <string name="refresh_feeds">Опресняване на емисии</string>
+    <string name="refresh_feeds">Обновяване на емисии</string>
     <string name="no_feeds_found_message">Няма намерени емисии. Моля, добавете нова емисия!</string>
     <string name="settings_button">Настройки</string>
     <string name="import_feed_button">Внесете емисии от OPML</string>
@@ -79,7 +79,7 @@
     <string name="generic_error_message">Съжаляваме, нещо се обърка :(</string>
     <string name="about_the_app">FeedFlow е минималистичен RSS четец, базиран на личното мнение на автора. Статиите се отварят на съответните им уебсайтове и можете да изберете любимия си браузър с фокус върху неприкосновеността на личния живот, за да отделите четенето от основния си браузър. Ако искате да избегнете браузъра, FeedFlow предлага режим на четене, за да се насладите на съдържанието на статиите без никакви разсейващи елементи.\nМожете да внасяте и изнасяте вашата RSS колекция от и в OPML файлове.</string>
     <string name="database_error">Нещо се обърка по време на извличането на емисиите. Моля, опитайте отново или рестартирайте приложението :(</string>
-    <string name="force_feed_refresh">Принудително опресняване на емисии</string>
+    <string name="force_feed_refresh">Принудително обновяване на емисии</string>
     <string name="drawer_title_feed_sources">Източници на емисия</string>
     <string name="issue_content_template">Моля, опишете проблема и дайте връзка към RSS канала, който причинява проблемите. Ако можете, моля, прикачете екранна снимка и OPML файла</string>
     <string name="invalid_rss_url">Предоставената от вас връзка не е валидна RSS емисия</string>
@@ -114,7 +114,7 @@
     <string name="icloud_sync_success">Вашият iCloud профил е свързан успешно</string>
     <string name="no_icloud_sync_yet">Данните все още не са синхронизирани с iCloud. Щракнете върху бутона за архивиране, за да задействате синхронизиране</string>
     <string name="dropbox_sync_error">Възникна грешка при свързване с Dropbox. Моля, опитайте отново</string>
-    <string name="account_refresh_progress">В ход е опресняване</string>
+    <string name="account_refresh_progress">В ход е обновяване</string>
     <string name="last_download">Последно изтегляне: %s</string>
     <string name="edit_feed_source_name_button">Редактиране</string>
     <string name="edit_feed">Редактиране на емисия</string>

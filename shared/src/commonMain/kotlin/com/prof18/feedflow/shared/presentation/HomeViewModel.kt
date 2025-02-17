@@ -268,6 +268,17 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun toggleFeedPin(feedSource: FeedSource) {
+        viewModelScope.launch {
+            feedManagerRepository.insertFeedSourcePreference(
+                feedSourceId = feedSource.id,
+                preference = feedSource.linkOpeningPreference,
+                isHidden = feedSource.isHiddenFromTimeline,
+                isPinned = !feedSource.isPinned,
+            )
+        }
+    }
+
     // Used on iOS
     fun enqueueBackup() {
         viewModelScope.launch {

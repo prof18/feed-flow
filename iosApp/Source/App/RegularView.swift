@@ -86,6 +86,9 @@ struct RegularView: View {
         },
         onDeleteFeedClick: { feedSource in
           homeViewModel.deleteFeedSource(feedSource: feedSource)
+        },
+        onPinFeedClick: { feedSource in
+            homeViewModel.toggleFeedPin(feedSource: feedSource)
         }
       )
       .navigationBarTitleDisplayMode(.inline)

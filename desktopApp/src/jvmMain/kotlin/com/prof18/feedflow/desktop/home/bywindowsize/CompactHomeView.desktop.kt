@@ -52,6 +52,7 @@ internal fun CompactView(
     onSearchClick: () -> Unit,
     openUrl: (FeedItemUrlInfo) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
     markAllAsRead: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -76,6 +77,7 @@ internal fun CompactView(
                         navigator.push(EditFeedScreen(feedSource))
                     },
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    onPinFeedClick = onPinFeedClick,
                 )
             }
         },
@@ -147,6 +149,7 @@ private fun CompactViewPreview() {
             onSearchClick = {},
             openUrl = {},
             onDeleteFeedSourceClick = {},
+            onPinFeedClick = {},
             markAllAsRead = {},
         )
     }

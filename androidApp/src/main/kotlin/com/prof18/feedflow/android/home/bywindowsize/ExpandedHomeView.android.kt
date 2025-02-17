@@ -53,6 +53,7 @@ internal fun ExpandedHomeView(
     onSearchClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -76,6 +77,7 @@ internal fun ExpandedHomeView(
                 },
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onEditFeedClick = onEditFeedClick,
+                onPinFeedClick = onPinFeedClick,
             )
         }
 
@@ -141,6 +143,7 @@ private fun ExpandedHomeViewPreview() {
             onSearchClick = {},
             onEditFeedClick = { _ -> },
             onDeleteFeedSourceClick = { _ -> },
+            onPinFeedClick = { _ -> },
         )
     }
 }

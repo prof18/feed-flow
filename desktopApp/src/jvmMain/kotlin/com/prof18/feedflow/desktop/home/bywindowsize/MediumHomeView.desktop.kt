@@ -58,6 +58,7 @@ internal fun MediumView(
     onSearchClick: () -> Unit,
     openUrl: (FeedItemUrlInfo) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
     markAllAsRead: () -> Unit,
 ) {
     var isDrawerMenuFullVisible by remember {
@@ -89,6 +90,7 @@ internal fun MediumView(
                         navigator.push(EditFeedScreen(feedSource))
                     },
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    onPinFeedClick = onPinFeedClick,
                 )
             }
         }
@@ -156,6 +158,7 @@ private fun MediumViewPreview() {
             onSearchClick = {},
             openUrl = {},
             onDeleteFeedSourceClick = {},
+            onPinFeedClick = {},
             markAllAsRead = {},
         )
     }

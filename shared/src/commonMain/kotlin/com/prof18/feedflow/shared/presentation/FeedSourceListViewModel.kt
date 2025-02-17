@@ -158,4 +158,15 @@ class FeedSourceListViewModel internal constructor(
             it.categoryId
         }.toMutableList()
     }
+
+    fun toggleFeedPin(feedSource: FeedSource) {
+        viewModelScope.launch {
+            feedManagerRepository.insertFeedSourcePreference(
+                feedSourceId = feedSource.id,
+                preference = feedSource.linkOpeningPreference,
+                isHidden = feedSource.isHiddenFromTimeline,
+                isPinned = !feedSource.isPinned,
+            )
+        }
+    }
 }

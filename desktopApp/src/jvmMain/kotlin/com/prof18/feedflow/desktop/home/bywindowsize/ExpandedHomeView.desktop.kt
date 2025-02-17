@@ -53,6 +53,7 @@ internal fun ExpandedView(
     onSearchClick: () -> Unit,
     openUrl: (FeedItemUrlInfo) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
     markAllAsRead: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -79,6 +80,7 @@ internal fun ExpandedView(
                     navigator.push(EditFeedScreen(feedSource))
                 },
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                onPinFeedClick = onPinFeedClick,
             )
         }
 
@@ -140,6 +142,7 @@ private fun ExpandedViewPreview() {
             onSearchClick = {},
             openUrl = {},
             onDeleteFeedSourceClick = {},
+            onPinFeedClick = {},
             markAllAsRead = {},
         )
     }

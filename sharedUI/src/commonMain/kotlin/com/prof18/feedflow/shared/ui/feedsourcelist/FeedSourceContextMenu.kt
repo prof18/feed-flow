@@ -19,12 +19,29 @@ internal fun FeedSourceContextMenu(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: ((FeedSource) -> Unit)? = null,
+    onPinFeedClick: (FeedSource) -> Unit,
 ) {
     DropdownMenu(
         expanded = showFeedMenu,
         onDismissRequest = hideMenu,
         properties = PopupProperties(),
     ) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    if (feedSource.isPinned) {
+                        LocalFeedFlowStrings.current.menuRemoveFromPinned
+                    } else {
+                        LocalFeedFlowStrings.current.menuAddToPinned
+                    },
+                )
+            },
+            onClick = {
+                onPinFeedClick(feedSource)
+                hideMenu()
+            },
+        )
+
         DropdownMenuItem(
             text = {
                 Text(LocalFeedFlowStrings.current.editFeedSourceNameButton)

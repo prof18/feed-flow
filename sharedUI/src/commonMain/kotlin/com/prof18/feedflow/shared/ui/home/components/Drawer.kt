@@ -76,6 +76,7 @@ fun Drawer(
     onAddFeedClicked: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -138,6 +139,7 @@ fun Drawer(
                         onFeedFilterSelected = onFeedFilterSelected,
                         onEditFeedClick = onEditFeedClick,
                         onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                        onPinFeedClick = onPinFeedClick,
                     )
                 }
             }
@@ -167,6 +169,7 @@ fun Drawer(
                     onFeedFilterSelected = onFeedFilterSelected,
                     onEditFeedClick = onEditFeedClick,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    onPinFeedClick = onPinFeedClick,
                 )
             }
         }
@@ -375,6 +378,7 @@ private fun DrawerFeedSourcesByCategories(
     onFeedFilterSelected: (FeedFilter) -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
 ) {
     Column {
         Column {
@@ -395,6 +399,7 @@ private fun DrawerFeedSourcesByCategories(
                 onFeedFilterSelected = onFeedFilterSelected,
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                onPinFeedClick = onPinFeedClick,
             )
 
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
@@ -414,6 +419,7 @@ private fun DrawerFeedSourcesByCategories(
                     onFeedFilterSelected = onFeedFilterSelected,
                     onEditFeedClick = onEditFeedClick,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    onPinFeedClick = onPinFeedClick,
                 )
             }
         }
@@ -430,6 +436,7 @@ private fun DrawerFeedSourceByCategoryItem(
     onFeedFilterSelected: (FeedFilter) -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
 ) {
     val categoryTitle = feedSourceCategoryWrapper.feedSourceCategory?.title
     Column(
@@ -482,6 +489,7 @@ private fun DrawerFeedSourceByCategoryItem(
             onFeedFilterSelected = onFeedFilterSelected,
             onEditFeedClick = onEditFeedClick,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+            onPinFeedClick = onPinFeedClick,
         )
     }
 }
@@ -494,6 +502,7 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
     onFeedFilterSelected: (FeedFilter) -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
 ) {
     AnimatedVisibility(
         visible = isCategoryExpanded,
@@ -511,6 +520,7 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
             onFeedFilterSelected = onFeedFilterSelected,
             onEditFeedClick = onEditFeedClick,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+            onPinFeedClick = onPinFeedClick,
         )
     }
 }
@@ -522,6 +532,7 @@ private fun FeedSourcesList(
     onFeedFilterSelected: (FeedFilter) -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
 ) {
     Column {
         drawerFeedSources.forEach { feedSourceWrapper ->
@@ -562,6 +573,7 @@ private fun FeedSourcesList(
                 ),
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                onPinFeedClick = onPinFeedClick,
                 feedSource = feedSourceWrapper.feedSource,
                 unreadCount = feedSourceWrapper.unreadCount,
             )
@@ -579,6 +591,7 @@ fun FeedSourceDrawerItem(
     icon: @Composable () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
     colors: NavigationDrawerItemColors = NavigationDrawerItemDefaults.colors(),
     unreadCount: Long,
 ) {
@@ -645,6 +658,7 @@ fun FeedSourceDrawerItem(
             onEditFeedClick = onEditFeedClick,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             feedSource = feedSource,
+            onPinFeedClick = onPinFeedClick,
         )
     }
 }

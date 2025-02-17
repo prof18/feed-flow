@@ -58,6 +58,7 @@ internal fun MediumHomeView(
     onSearchClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -87,6 +88,7 @@ internal fun MediumHomeView(
                     },
                     onEditFeedClick = onEditFeedClick,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    onPinFeedClick = onPinFeedClick,
                 )
             }
         }
@@ -157,6 +159,7 @@ private fun MediumHomeViewPreview() {
             onSearchClick = {},
             onEditFeedClick = { _ -> },
             onDeleteFeedSourceClick = { _ -> },
+            onPinFeedClick = { _ -> },
         )
     }
 }

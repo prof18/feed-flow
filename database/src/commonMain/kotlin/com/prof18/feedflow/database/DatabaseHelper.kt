@@ -397,7 +397,7 @@ class DatabaseHelper(
             feed_source_id = feedSourceId,
             link_opening_preference = preference,
             is_hidden = isHidden,
-            is_pinned = isPinned
+            is_pinned = isPinned,
         )
     }
 

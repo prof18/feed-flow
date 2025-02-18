@@ -163,4 +163,10 @@
     <string name="settings_auto_delete_period_disabled">Desactivado</string>
     <string name="settings_hide_description">Ocultar descrición do artigo</string>
     <string name="settings_hide_images">Ocultar imaxe do artigo</string>
+    <string name="drawer_title_pinned_feeds">Canles fixadas</string>
+    <string name="menu_add_to_pinned">Fixar</string>
+    <string name="menu_remove_from_pinned">Soltar</string>
+    <string name="feed_list_appearance">Aparencia da lista de canles</string>
+    <string name="pin_feed_source_description">Fixar esta canle</string>
+    <string name="hide_feed_from_timeline_description">Ocultar os artigos desta canle na cronoloxía</string>
 </resources>

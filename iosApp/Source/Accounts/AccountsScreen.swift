@@ -6,15 +6,15 @@
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
+import FeedFlowKit
 import Foundation
 import SwiftUI
-import FeedFlowKit
 
 struct AccountsScreen: View {
     @StateObject
     private var vmStoreOwner = VMStoreOwner<AccountsViewModel>(Deps.shared.getAccountsViewModel())
 
-    @State private var syncAccount: SyncAccounts = SyncAccounts.local
+    @State private var syncAccount: SyncAccounts = .local
 
     var body: some View {
         AccountsScreenContent(
@@ -22,7 +22,7 @@ struct AccountsScreen: View {
             supportedAccounts: vmStoreOwner.instance.getSupportedAccounts()
         ).task {
             for await state in vmStoreOwner.instance.accountsState {
-                 self.syncAccount = state
+                self.syncAccount = state
             }
         }
     }

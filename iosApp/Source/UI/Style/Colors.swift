@@ -9,7 +9,6 @@
 import SwiftUI
 
 extension Color {
-
     static let downArrowCircleColor = Color("DownArrowCircleColor")
     static let downArrowColor = Color("DownArrowColor")
     static let errorColor = Color("ErrorRed")

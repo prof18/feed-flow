@@ -11,99 +11,99 @@ import Foundation
 import SwiftUI
 
 struct AccountsScreenContent: View {
-  @State private var showAddAccountSheet = false
+    @State private var showAddAccountSheet = false
 
-  let syncAccount: SyncAccounts
-  let supportedAccounts: [SyncAccounts]
+    let syncAccount: SyncAccounts
+    let supportedAccounts: [SyncAccounts]
 
-  var body: some View {
-    Form {
-      Section {
-        Text(feedFlowStrings.accountsDescription)
-      }
+    var body: some View {
+        Form {
+            Section {
+                Text(feedFlowStrings.accountsDescription)
+            }
 
-      switch syncAccount {
-      case .dropbox:
-        NavigationLink(destination: DropboxSyncScreen()) {
-          HStack {
-            Image("dropbox")
-              .renderingMode(.template)
-              .resizable()
-              .scaledToFit()
-              .frame(width: 32, height: 32)
-              .foregroundStyle(.primary)
-            Text("Dropbox")
-              .font(.body)
-            Spacer()
-            Image(systemName: "checkmark")
-          }
+            switch syncAccount {
+            case .dropbox:
+                NavigationLink(destination: DropboxSyncScreen()) {
+                    HStack {
+                        Image("dropbox")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 32, height: 32)
+                            .foregroundStyle(.primary)
+                        Text("Dropbox")
+                            .font(.body)
+                        Spacer()
+                        Image(systemName: "checkmark")
+                    }
+                }
+
+            case .icloud:
+                NavigationLink(destination: ICloudSyncScreen(isFromAddAccount: false)) {
+                    HStack {
+                        Image(systemName: "icloud")
+                            .fontWeight(.bold)
+                        Text("iCloud")
+                            .font(.body)
+                        Spacer()
+                        Image(systemName: "checkmark")
+                    }
+                }
+
+            case .freshRss:
+                NavigationLink(destination: FreshRssSyncScreen(isFromAddAccount: false)) {
+                    HStack {
+                        Image("freshrss")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
+                            .foregroundStyle(.primary)
+                        Text("FreshRSS")
+                            .font(.body)
+                        Spacer()
+                        Image(systemName: "checkmark")
+                    }
+                }
+
+            case .local:
+                EmptyView()
+            }
+
+            Button {
+                self.showAddAccountSheet.toggle()
+            } label: {
+                Label(feedFlowStrings.addAccountButton, systemImage: "plus.app")
+            }.disabled(syncAccount != SyncAccounts.local)
         }
-
-      case .icloud:
-        NavigationLink(destination: ICloudSyncScreen(isFromAddAccount: false)) {
-          HStack {
-            Image(systemName: "icloud")
-              .fontWeight(.bold)
-            Text("iCloud")
-              .font(.body)
-            Spacer()
-            Image(systemName: "checkmark")
-          }
+        .sheet(isPresented: $showAddAccountSheet) {
+            AddAccountScreen(
+                supportedAccounts: supportedAccounts
+            )
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack {
+                    Text(feedFlowStrings.settingsAccounts)
+                        .font(.headline)
 
-      case .freshRss:
-        NavigationLink(destination: FreshRssSyncScreen(isFromAddAccount: false)) {
-          HStack {
-            Image("freshrss")
-              .renderingMode(.template)
-              .resizable()
-              .scaledToFit()
-              .frame(width: 22, height: 22)
-              .foregroundStyle(.primary)
-            Text("FreshRSS")
-              .font(.body)
-            Spacer()
-            Image(systemName: "checkmark")
-          }
+                    Text("BETA")
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                }
+            }
         }
-
-      case .local:
-        EmptyView()
-      }
-
-      Button {
-        self.showAddAccountSheet.toggle()
-      } label: {
-        Label(feedFlowStrings.addAccountButton, systemImage: "plus.app")
-      }.disabled(syncAccount != SyncAccounts.local)
     }
-    .sheet(isPresented: $showAddAccountSheet) {
-      AddAccountScreen(
-        supportedAccounts: supportedAccounts
-      )
-    }
-    .navigationBarTitleDisplayMode(.inline)
-    .toolbar {
-      ToolbarItem(placement: .principal) {
-        HStack {
-          Text(feedFlowStrings.settingsAccounts)
-            .font(.headline)
-
-          Text("BETA")
-            .font(.footnote)
-            .foregroundColor(.gray)
-        }
-      }
-    }
-  }
 }
 
 #Preview {
-  AccountsScreenContent(
-    syncAccount: SyncAccounts.local,
-    supportedAccounts: [
-      SyncAccounts.dropbox,
-      SyncAccounts.icloud
-    ]
-  )
+    AccountsScreenContent(
+        syncAccount: SyncAccounts.local,
+        supportedAccounts: [
+            SyncAccounts.dropbox,
+            SyncAccounts.icloud
+        ]
+    )
 }

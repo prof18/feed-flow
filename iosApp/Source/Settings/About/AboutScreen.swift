@@ -1,17 +1,16 @@
 //
-//  About.swift
+//  AboutScreen.swift
 //  FeedFlow
 //
 //  Created by Marco Gomiero on 22/07/23.
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
+import FeedFlowKit
 import Foundation
 import SwiftUI
-import FeedFlowKit
 
 struct AboutScreen: View {
-
     @Environment(\.openURL) private var openURL
 
     // swiftlint:disable line_length
@@ -28,7 +27,7 @@ struct AboutScreen: View {
                         .accessibilityIdentifier(TestingTag.shared.ABOUT_TOOLBAR)
 
                     NavigationLink(destination: LicensesScreen()) {
-                        Label(feedFlowStrings.openSourceLicenses, systemImage: "shield" )
+                        Label(feedFlowStrings.openSourceLicenses, systemImage: "shield")
                     }
 
                     Button(

@@ -6,8 +6,8 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct NoFeedsSourceView: View {
     let onAddFeedClick: () -> Void

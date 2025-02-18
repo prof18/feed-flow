@@ -6,11 +6,10 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct ImportExportScreen: View {
-
     @Environment(\.presentationMode) private var presentationMode
 
     @Environment(AppState.self) private var appState
@@ -18,7 +17,7 @@ struct ImportExportScreen: View {
     @StateObject
     private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(Deps.shared.getImportExportViewModel())
 
-    @State var feedImportExportState: FeedImportExportState = FeedImportExportState.Idle()
+    @State var feedImportExportState: FeedImportExportState = .Idle()
     @State var sheetToShow: ImportExportSheetToShow?
 
     var showCloseButton: Bool = false
@@ -92,7 +91,6 @@ struct ImportExportScreen: View {
                 }
             }
         }
-
     }
 
     private func getUrlForOpmlExport() -> URL? {

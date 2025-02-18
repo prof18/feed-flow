@@ -1,13 +1,12 @@
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct ContentView: View {
-
     @Environment(AppState.self) private var appState
     @Environment(\.scenePhase) private var scenePhase: ScenePhase
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
 
-    @State var browserSelector: BrowserSelector = BrowserSelector()
+    @State var browserSelector: BrowserSelector = .init()
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
 
     @State private var isAppInBackground: Bool = false
@@ -34,7 +33,6 @@ struct ContentView: View {
 
             @Bindable var appState = appState
             VStack(spacing: 0) {
-
                 Spacer()
 
                 Snackbar(messageQueue: $appState.snackbarQueue)
@@ -45,14 +43,14 @@ struct ContentView: View {
                 appState.sizeClass = horizontalSizeClass
             }
         }
-        .onChange(of: self.horizontalSizeClass) {
+        .onChange(of: horizontalSizeClass) {
             if !isAppInBackground && horizontalSizeClass != appState.sizeClass {
                 appState.sizeClass = horizontalSizeClass
             }
         }
         .onChange(of: scenePhase) {
             switch scenePhase {
-            case.active:
+            case .active:
                 isAppInBackground = false
             case .background:
                 isAppInBackground = true

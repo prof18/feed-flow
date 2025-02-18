@@ -14,25 +14,24 @@ struct SnackbarData: Equatable {
     var showSnackbar: Bool
 
     init() {
-        self.title = ""
-        self.subtitle = nil
-        self.showSnackbar = false
+        title = ""
+        subtitle = nil
+        showSnackbar = false
     }
 
     init(title: String, subtitle: String?, showBanner: Bool) {
         self.title = title
         self.subtitle = subtitle
-        self.showSnackbar = showBanner
+        showSnackbar = showBanner
     }
 
     static func == (lhs: SnackbarData, rhs: SnackbarData) -> Bool {
         return lhs.subtitle == rhs.subtitle && lhs.title == rhs.title
     }
-
 }
 
 extension SnackbarData {
     func isEmpty() -> Bool {
-        return self.title == "" && self.subtitle == nil  && self.showSnackbar == false
+        return title == "" && subtitle == nil && showSnackbar == false
     }
 }

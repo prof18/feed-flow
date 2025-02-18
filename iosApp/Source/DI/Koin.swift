@@ -6,8 +6,8 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import Foundation
 import FeedFlowKit
+import Foundation
 
 func startKoin() {
     let appEnvironment: AppEnvironment

@@ -6,8 +6,8 @@
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct ICloudSyncScreenContent: View {
     @Environment(\.dismiss) private var dismiss
@@ -31,7 +31,7 @@ struct ICloudSyncScreenContent: View {
         case .unlinked:
             disconnectedView
 
-        case .linked(let state):
+        case let .linked(state):
             makeLinkedScreen(state: state)
         }
     }
@@ -175,8 +175,7 @@ struct ICloudSyncScreenContent: View {
                 lastUploadDate: "2024-06-29T10:00:00Z"
             )
         ),
-        onConnectClick: {
-        },
+        onConnectClick: {},
         onBackupClick: {},
         onDisconnectClick: {}
     )

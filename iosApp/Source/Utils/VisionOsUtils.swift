@@ -1,5 +1,5 @@
 //
-//  VisionOs.swift
+//  VisionOsUtils.swift
 //  FeedFlow
 //
 //  Created by Marco Gomiero on 02.04.24.
@@ -9,6 +9,6 @@
 import Foundation
 
 func isOnVisionOSDevice() -> Bool {
-    let  isOnVisionOSDevice = NSClassFromString("UIWindowSceneGeometryPreferencesVision") != nil
+    let isOnVisionOSDevice = NSClassFromString("UIWindowSceneGeometryPreferencesVision") != nil
     return isOnVisionOSDevice
 }

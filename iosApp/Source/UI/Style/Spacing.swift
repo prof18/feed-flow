@@ -1,5 +1,5 @@
 //
-//  AppMargins.swift
+//  Spacing.swift
 //  FeedFlow
 //
 //  Created by Marco Gomiero on 29/03/23.
@@ -10,7 +10,7 @@ import Foundation
 
 import SwiftUI
 
-struct Spacing {
+enum Spacing {
     static var xxsmall: CGFloat = 2.0
     static var xsmall: CGFloat = 4.0
     static var small: CGFloat = 8.0

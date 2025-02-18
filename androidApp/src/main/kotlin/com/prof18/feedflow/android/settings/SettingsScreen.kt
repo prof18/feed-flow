@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,11 +20,8 @@ import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.DeleteSweep
-import androidx.compose.material.icons.outlined.HideImage
-import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MarkAsUnread
-import androidx.compose.material.icons.outlined.SubtitlesOff
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
@@ -55,6 +53,9 @@ import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.search.FeedListFontSettings
+import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
+import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
+import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -272,25 +273,6 @@ private fun SettingsScreenContent(
             }
 
             item {
-                RemoveTitleFromDescSwitch(
-                    isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
-                    setRemoveTitleFromDescription = setRemoveTitleFromDescription,
-                )
-            }
-
-            item {
-                HideDescriptionSwitch(
-                    isHideDescriptionEnabled = isHideDescriptionEnabled,
-                    setHideDescription = setHideDescription,
-                )
-
-                HideImagesSwitch(
-                    isHideImagesEnabled = isHideImagesEnabled,
-                    setHideImages = setHideImages,
-                )
-            }
-
-            item {
                 Text(
                     text = LocalFeedFlowStrings.current.settingsFeedListTitle,
                     style = MaterialTheme.typography.labelMedium,
@@ -301,8 +283,33 @@ private fun SettingsScreenContent(
 
             item {
                 FeedListFontSettings(
+                    isHideDescriptionEnabled = isHideDescriptionEnabled,
+                    isHideImagesEnabled = isHideImagesEnabled,
                     fontSizes = fontSizes,
                     updateFontScale = updateFontScale,
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.padding(top = Spacing.regular))
+
+                HideDescriptionSwitch(
+                    isHideDescriptionEnabled = isHideDescriptionEnabled,
+                    setHideDescription = setHideDescription,
+                )
+            }
+
+            item {
+                HideImagesSwitch(
+                    isHideImagesEnabled = isHideImagesEnabled,
+                    setHideImages = setHideImages,
+                )
+            }
+
+            item {
+                RemoveTitleFromDescSwitch(
+                    isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
+                    setRemoveTitleFromDescription = setRemoveTitleFromDescription,
                 )
             }
 
@@ -495,117 +502,6 @@ private fun AutoDeletePeriodSelector(
             currentPeriod = currentPeriod,
             onPeriodSelected = onPeriodSelected,
             dismissDialog = { showDialog = false },
-        )
-    }
-}
-
-@Composable
-private fun RemoveTitleFromDescSwitch(
-    isRemoveTitleFromDescriptionEnabled: Boolean,
-    setRemoveTitleFromDescription: (Boolean) -> Unit,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable {
-                setRemoveTitleFromDescription(!isRemoveTitleFromDescriptionEnabled)
-            }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.Outlined.HideSource,
-            contentDescription = null,
-        )
-
-        Text(
-            text = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .weight(1f),
-        )
-        Switch(
-            interactionSource = interactionSource,
-            checked = isRemoveTitleFromDescriptionEnabled,
-            onCheckedChange = setRemoveTitleFromDescription,
-        )
-    }
-}
-
-@Composable
-private fun HideDescriptionSwitch(
-    isHideDescriptionEnabled: Boolean,
-    setHideDescription: (Boolean) -> Unit,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable {
-                setHideDescription(!isHideDescriptionEnabled)
-            }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.Outlined.SubtitlesOff,
-            contentDescription = null,
-        )
-
-        Text(
-            text = LocalFeedFlowStrings.current.settingsHideDescription,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .weight(1f),
-        )
-        Switch(
-            interactionSource = interactionSource,
-            checked = isHideDescriptionEnabled,
-            onCheckedChange = setHideDescription,
-        )
-    }
-}
-
-@Composable
-private fun HideImagesSwitch(
-    isHideImagesEnabled: Boolean,
-    setHideImages: (Boolean) -> Unit,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable {
-                setHideImages(!isHideImagesEnabled)
-            }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.Outlined.HideImage,
-            contentDescription = null,
-        )
-
-        Text(
-            text = LocalFeedFlowStrings.current.settingsHideImages,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .weight(1f),
-        )
-        Switch(
-            interactionSource = interactionSource,
-            checked = isHideImagesEnabled,
-            onCheckedChange = setHideImages,
         )
     }
 }

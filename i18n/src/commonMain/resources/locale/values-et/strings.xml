@@ -133,7 +133,6 @@
     <string name="settings_font_scale_feed_source_example">Uudisvoo nimi</string>
     <string name="settings_feed_list_title">Uudisvoogude loend</string>
     <string name="settings_font_scale_subtitle_example">See on artikli alapealkiri</string>
-    <string name="settings_feed_list_font_scale_title">Uudisvoo nime teksti mõõtkava</string>
     <string name="deleting_feed_dialog_title">Kustutan...</string>
     <string name="edit_feed_generic_error">Uudisvoo muutmisel tekkis viga. Palun proovi uuesti.</string>
     <string name="feed_added_message_without_name">Uudisvoog on lisatud</string>

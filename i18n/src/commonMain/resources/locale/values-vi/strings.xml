@@ -123,7 +123,6 @@
     <string name="icloud_sync_description">Kết nối tài khoản iCloud của bạn để đồng bộ hóa các nguồn cấp dữ liệu, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị iOS, iPadOS và iPadOS. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn</string>
     <string name="settings_feed_list_scale_title">Cỡ chữ</string>
     <string name="settings_font_scale_feed_source_example">Tên nguồn cấp</string>
-    <string name="settings_feed_list_font_scale_title">Cỡ chữ danh sách nguồn cấp</string>
     <string name="settings_feed_list_title">Danh sách nguồn cấp</string>
     <string name="settings_font_scale_subtitle_example">Đây là phụ đề của bài viết</string>
     <string name="clear_old_articles_button">Xóa bài viết cũ hơn một tuần</string>

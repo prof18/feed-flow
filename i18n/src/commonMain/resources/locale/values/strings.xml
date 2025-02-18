@@ -130,7 +130,6 @@
     <string name="settings_font_scale_title_example">Article Title</string>
     <string name="settings_font_scale_subtitle_example">This is the subtitle of the article</string>
     <string name="settings_font_scale_feed_source_example">Feed Name</string>
-    <string name="settings_feed_list_font_scale_title">Feed List Text scale</string>
     <string name="deleting_feed_dialog_title">Deleting...</string>
     <string name="add_feed_generic_error">There was an error while adding the feed. Please retry</string>
     <string name="edit_feed_generic_error">Something went wrong while editing the feed. Please retry.</string>

@@ -1,31 +1,21 @@
 package com.prof18.feedflow.desktop
 
 import androidx.compose.foundation.LocalScrollbarStyle
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.DialogWindow
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.*
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import coil3.ImageLoader
@@ -48,6 +38,9 @@ import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.ui.search.FeedListFontSettings
+import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
+import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
+import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -63,7 +56,7 @@ import java.awt.event.WindowFocusListener
 import java.io.File
 import java.io.InputStream
 import java.net.URI
-import java.util.Properties
+import java.util.*
 import javax.swing.UIManager
 
 @Suppress("UnsafeDynamicallyLoadedCode")
@@ -234,22 +227,63 @@ fun main() = application {
 
                         var feedListFontDialogState by remember { mutableStateOf(false) }
                         val fontSizesState by settingsViewModel.feedFontSizeState.collectAsState()
+
+                        val dialogState = rememberDialogState(
+                            size = DpSize(500.dp, 550.dp),
+                        )
                         DialogWindow(
-                            title = LocalFeedFlowStrings.current.settingsFeedListFontScaleTitle,
+                            state = dialogState,
+                            title = LocalFeedFlowStrings.current.feedListAppearance,
                             visible = feedListFontDialogState,
                             onCloseRequest = {
                                 feedListFontDialogState = false
                             },
                         ) {
                             Scaffold { paddingValues ->
-                                FeedListFontSettings(
+                                val scrollableState = rememberScrollState()
+                                Column(
                                     modifier = Modifier
-                                        .padding(paddingValues),
-                                    fontSizes = fontSizesState,
-                                    updateFontScale = { fontScale ->
-                                        settingsViewModel.updateFontScale(fontScale)
-                                    },
-                                )
+                                        .verticalScroll(scrollableState),
+                                ) {
+                                    FeedListFontSettings(
+                                        fontSizes = fontSizesState,
+                                        modifier = Modifier
+                                            .padding(paddingValues),
+                                        updateFontScale = { fontScale ->
+                                            settingsViewModel.updateFontScale(fontScale)
+                                        },
+                                        isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
+                                        isHideImagesEnabled = settingsState.isHideImagesEnabled,
+                                    )
+
+                                    Spacer(modifier = Modifier.padding(top = Spacing.regular))
+
+                                    HideDescriptionSwitch(
+                                        isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
+                                        setHideDescription = {
+                                            settingsViewModel.updateHideDescription(
+                                                !settingsState.isHideDescriptionEnabled,
+                                            )
+                                        },
+                                    )
+
+                                    HideImagesSwitch(
+                                        isHideImagesEnabled = settingsState.isHideImagesEnabled,
+                                        setHideImages = {
+                                            settingsViewModel.updateHideImages(!settingsState.isHideImagesEnabled)
+                                        },
+                                    )
+
+                                    RemoveTitleFromDescSwitch(
+                                        isRemoveTitleFromDescriptionEnabled =
+                                        settingsState.isRemoveTitleFromDescriptionEnabled,
+                                        setRemoveTitleFromDescription = {
+                                            settingsViewModel.updateRemoveTitleFromDescription(
+                                                !settingsState.isRemoveTitleFromDescriptionEnabled,
+                                            )
+                                        },
+                                    )
+                                }
                             }
                         }
 
@@ -270,10 +304,7 @@ fun main() = application {
                                 isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
                                 isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
                                 isReaderModeEnabled = settingsState.isReaderModeEnabled,
-                                isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
                                 autoDeletePeriod = settingsState.autoDeletePeriod,
-                                isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
-                                isHideImagesEnabled = settingsState.isHideImagesEnabled,
                                 feedFilter = currentFeedFilter,
                                 onRefreshClick = {
                                     scope.launch {
@@ -321,20 +352,11 @@ fun main() = application {
                                 setReaderMode = { enabled ->
                                     settingsViewModel.updateReaderMode(enabled)
                                 },
-                                setRemoveTitleFromDescription = { enabled ->
-                                    settingsViewModel.updateRemoveTitleFromDescription(enabled)
-                                },
                                 onFeedFontScaleClick = {
                                     feedListFontDialogState = true
                                 },
                                 onAutoDeletePeriodSelected = { period ->
                                     settingsViewModel.updateAutoDeletePeriod(period)
-                                },
-                                setHideDescription = { enabled ->
-                                    settingsViewModel.updateHideDescription(enabled)
-                                },
-                                setHideImages = { enabled ->
-                                    settingsViewModel.updateHideImages(enabled)
                                 },
                             )
 

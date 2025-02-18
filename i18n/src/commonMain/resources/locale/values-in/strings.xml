@@ -120,7 +120,6 @@
     <string name="settings_font_scale_title_example">Judul Artikel</string>
     <string name="settings_font_scale_subtitle_example">Ini adalah subjudul artikelnya</string>
     <string name="settings_font_scale_feed_source_example">Nama umpan</string>
-    <string name="settings_feed_list_font_scale_title">Skala Teks Daftar Umpan</string>
     <string name="deleting_feed_dialog_title">Menghapus...</string>
     <string name="no_feeds_add_one_message">Tidak ada umpan, silakan tambahkan</string>
     <string name="clear_old_articles_button">Hapus postingan yang sudah berumur seminggu</string>

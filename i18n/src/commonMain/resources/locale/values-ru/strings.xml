@@ -119,7 +119,6 @@
     <string name="settings_font_scale_subtitle_example">Это подзаголовок статьи</string>
     <string name="feed_edited_message">Лента %s обновлена</string>
     <string name="settings_feed_list_scale_title">Масштаб текста</string>
-    <string name="settings_feed_list_font_scale_title">Масштаб текста списка лент</string>
     <string name="settings_font_scale_feed_source_example">Название ленты</string>
     <string name="clear_old_articles_button">Удалить посты старше недели</string>
     <string name="edit_feed_source_name_button">Изменить</string>

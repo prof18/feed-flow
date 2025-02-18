@@ -163,4 +163,10 @@
     <string name="settings_auto_delete_period_one_month">Một tháng</string>
     <string name="settings_hide_images">Ẩn ảnh thumbnail bài viết</string>
     <string name="settings_hide_description">Ẩn mô tả bài viết</string>
+    <string name="hide_feed_from_timeline_description">Ẩn bài viết của nguồn cấp này khỏi bảng tin</string>
+    <string name="pin_feed_source_description">Ghim nguồn cấp này</string>
+    <string name="drawer_title_pinned_feeds">Những nguồn cấp đã ghim</string>
+    <string name="menu_add_to_pinned">Ghim</string>
+    <string name="feed_list_appearance">Giao diện danh sách nguồn cấp</string>
+    <string name="menu_remove_from_pinned">Bỏ ghim</string>
 </resources>

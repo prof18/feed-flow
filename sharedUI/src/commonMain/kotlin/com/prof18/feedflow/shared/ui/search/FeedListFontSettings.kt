@@ -26,6 +26,8 @@ fun FeedListFontSettings(
     fontSizes: FeedFontSizes,
     modifier: Modifier = Modifier,
     updateFontScale: (Int) -> Unit,
+    isHideDescriptionEnabled: Boolean,
+    isHideImagesEnabled: Boolean,
 ) {
     val color = if (isSystemInDarkTheme()) {
         Color(0xFF333439)
@@ -49,9 +51,13 @@ fun FeedListFontSettings(
                         id = "1",
                         url = "https://www.example.com",
                         title = LocalFeedFlowStrings.current.settingsFontScaleTitleExample,
-                        subtitle = LocalFeedFlowStrings.current.settingsFontScaleSubtitleExample,
+                        subtitle =  if (isHideDescriptionEnabled) {
+                            null
+                        } else {
+                            LocalFeedFlowStrings.current.settingsFontScaleSubtitleExample
+                        },
                         content = null,
-                        imageUrl = "https://lipsum.app/200x200",
+                        imageUrl = if (isHideImagesEnabled) null else "https://lipsum.app/200x200",
                         feedSource = FeedSource(
                             id = "1",
                             url = "https://www.example.it",

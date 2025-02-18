@@ -91,7 +91,6 @@
     <string name="open_another_feed">פתח עדכון אחר</string>
     <string name="settings_feed_list_title">רשימת עידכונים</string>
     <string name="settings_feed_list_scale_title">סולם טקסט</string>
-    <string name="settings_feed_list_font_scale_title">סולם טקסט של רשימת הפידים</string>
     <string name="settings_app_title">אפליקציה</string>
     <string name="drawer_title_timeline">ציר זמן</string>
     <string name="backup_button">גיבוי</string>

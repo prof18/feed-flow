@@ -28,6 +28,9 @@ struct SettingsScreen: View {
   @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
   @State private var scaleFactor = 0.0
 
+  @State private var imageUrl: String? = "https://lipsum.app/200x200"
+  @State private var articleDescription: String? = feedFlowStrings.settingsFontScaleSubtitleExample
+
   var body: some View {
     settingsContent
       .task {
@@ -62,9 +65,19 @@ struct SettingsScreen: View {
       }
       .onChange(of: isHideDescriptionEnabled) {
         vmStoreOwner.instance.updateHideDescription(value: isHideDescriptionEnabled)
+        if isHideDescriptionEnabled {
+          articleDescription = nil
+        } else {
+          articleDescription = feedFlowStrings.settingsFontScaleSubtitleExample
+        }
       }
       .onChange(of: isHideImagesEnabled) {
         vmStoreOwner.instance.updateHideImages(value: isHideImagesEnabled)
+        if isHideImagesEnabled {
+          imageUrl = nil
+        } else {
+          imageUrl = "https://lipsum.app/200x200"
+        }
       }
       .onChange(of: autoDeletePeriod) {
         vmStoreOwner.instance.updateAutoDeletePeriod(period: autoDeletePeriod)
@@ -74,10 +87,27 @@ struct SettingsScreen: View {
   private var settingsContent: some View {
     NavigationStack {
       Form {
-        feedSection
-        behaviourSection
-        feedFontSizesSection
-        appSection
+        FeedSection(dismiss: dismiss, appState: appState)
+        BehaviourSection(
+          browserSelector: browserSelector,
+          autoDeletePeriod: $autoDeletePeriod,
+          isReaderModeEnabled: $isReaderModeEnabled,
+          isMarkReadWhenScrollingEnabled: $isMarkReadWhenScrollingEnabled,
+          isShowReadItemEnabled: $isShowReadItemEnabled
+        )
+        FeedFontSection(
+          feedFontSizes: feedFontSizes,
+          imageUrl: imageUrl,
+          articleDescription: articleDescription,
+          scaleFactor: $scaleFactor,
+          isHideDescriptionEnabled: $isHideDescriptionEnabled,
+          isHideImagesEnabled: $isHideImagesEnabled,
+          isRemoveTitleFromDescriptionEnabled: $isRemoveTitleFromDescriptionEnabled,
+          onScaleFactorChange: { newValue in
+            vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
+          }
+        )
+        AppSection(openURL: openURL)
       }
       .scrollContentBackground(.hidden)
       .toolbar {
@@ -88,16 +118,18 @@ struct SettingsScreen: View {
         }
         .accessibilityIdentifier(TestingTag.shared.BACK_BUTTON)
       }
-      .navigationTitle(
-        Text(feedFlowStrings.settingsTitle)
-      )
+      .navigationTitle(Text(feedFlowStrings.settingsTitle))
       .navigationBarTitleDisplayMode(.inline)
       .background(Color.secondaryBackgroundColor)
     }
   }
+}
 
-  @ViewBuilder
-  private var feedSection: some View {
+private struct FeedSection: View {
+  let dismiss: DismissAction
+  let appState: AppState
+
+  var body: some View {
     Section(feedFlowStrings.settingsTitleFeed) {
       NavigationLink(destination: FeedSourceListScreen()) {
         Label(feedFlowStrings.feedsTitle, systemImage: "list.bullet.rectangle.portrait")
@@ -113,18 +145,24 @@ struct SettingsScreen: View {
       }
 
       Button {
-        self.dismiss()
+        dismiss()
         appState.navigate(route: CommonViewRoute.accounts)
       } label: {
         Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
       }
     }
   }
+}
 
-  @ViewBuilder
-  private var behaviourSection: some View {
+private struct BehaviourSection: View {
+  @Bindable var browserSelector: BrowserSelector
+  @Binding var autoDeletePeriod: AutoDeletePeriod
+  @Binding var isReaderModeEnabled: Bool
+  @Binding var isMarkReadWhenScrollingEnabled: Bool
+  @Binding var isShowReadItemEnabled: Bool
+
+  var body: some View {
     Section(feedFlowStrings.settingsBehaviourTitle) {
-      @Bindable var browserSelector = browserSelector
       Picker(
         selection: $browserSelector.selectedBrowser,
         content: {
@@ -168,28 +206,21 @@ struct SettingsScreen: View {
         isShowReadItemEnabled.toggle()
       }
 
-      Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {
-        Label(feedFlowStrings.settingsHideDuplicatedTitleFromDesc, systemImage: "eye.slash")
-      }.onTapGesture {
-        isRemoveTitleFromDescriptionEnabled.toggle()
-      }
-
-      Toggle(isOn: $isHideDescriptionEnabled) {
-        Label(feedFlowStrings.settingsHideDescription, systemImage: "text.page.slash")
-      }.onTapGesture {
-        isHideDescriptionEnabled.toggle()
-      }
-
-      Toggle(isOn: $isHideImagesEnabled) {
-        Label(feedFlowStrings.settingsHideImages, systemImage: "square.slash")
-      }.onTapGesture {
-        isHideImagesEnabled.toggle()
-      }
     }
   }
+}
 
-  @ViewBuilder
-  private var feedFontSizesSection: some View {
+private struct FeedFontSection: View {
+  let feedFontSizes: FeedFontSizes
+  let imageUrl: String?
+  let articleDescription: String?
+  @Binding var scaleFactor: Double
+  @Binding var isHideDescriptionEnabled: Bool
+  @Binding var isHideImagesEnabled: Bool
+  @Binding var isRemoveTitleFromDescriptionEnabled: Bool
+  let onScaleFactorChange: (Double) -> Void
+
+  var body: some View {
     Section(feedFlowStrings.settingsFeedListTitle) {
       VStack(alignment: .leading) {
         VStack {
@@ -198,9 +229,9 @@ struct SettingsScreen: View {
               id: "1",
               url: "https://www.example.com",
               title: feedFlowStrings.settingsFontScaleTitleExample,
-              subtitle: feedFlowStrings.settingsFontScaleSubtitleExample,
+              subtitle: articleDescription,
               content: nil,
-              imageUrl: "https://lipsum.app/200x200",
+              imageUrl: imageUrl,
               feedSource: FeedSource(
                 id: "1",
                 url: "https://www.example.it",
@@ -242,7 +273,7 @@ struct SettingsScreen: View {
               get: { scaleFactor },
               set: { newValue in
                 scaleFactor = newValue
-                vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
+                onScaleFactorChange(newValue)
               }
             ),
             in: -4...16,
@@ -251,12 +282,33 @@ struct SettingsScreen: View {
 
           Image(systemName: "plus")
         }
+      }.padding(.bottom, Spacing.regular)
+
+      Toggle(isOn: $isHideDescriptionEnabled) {
+        Label(feedFlowStrings.settingsHideDescription, systemImage: "text.page.slash")
+      }.onTapGesture {
+        isHideDescriptionEnabled.toggle()
+      }
+
+      Toggle(isOn: $isHideImagesEnabled) {
+        Label(feedFlowStrings.settingsHideImages, systemImage: "square.slash")
+      }.onTapGesture {
+        isHideImagesEnabled.toggle()
+      }
+
+      Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {
+        Label(feedFlowStrings.settingsHideDuplicatedTitleFromDesc, systemImage: "eye.slash")
+      }.onTapGesture {
+        isRemoveTitleFromDescriptionEnabled.toggle()
       }
     }
   }
+}
 
-  @ViewBuilder
-  private var appSection: some View {
+private struct AppSection: View {
+  let openURL: OpenURLAction
+
+  var body: some View {
     Section(feedFlowStrings.settingsAppTitle) {
       Button(
         action: {
@@ -266,7 +318,7 @@ struct SettingsScreen: View {
           if let url = URL(
             string: UserFeedbackReporter.shared.getEmailUrl(subject: subject, content: content)
           ) {
-            self.openURL(url)
+            openURL(url)
           }
         },
         label: {

@@ -137,7 +137,6 @@
     <string name="dropbox_sync_common_description">Під\'єднайте свій обліковий запис Dropbox, щоб синхронізувати підписки на стрічки, категорії, прочитані статті та закладки між пристроями Android, iOS, iPadOS і настільними пристроями. Дані зберігатимуться у спеціальній теці програми; FeedFlow не матиме доступу до жодного з ваших файлів</string>
     <string name="wrong_url_error_message">Надане посилання некоректне. Спробуйте ще раз.</string>
     <string name="no_icloud_sync_yet">Дані ще не синхронізовано з iCloud. Натисніть кнопку резервного копіювання, щоб запустити синхронізацію</string>
-    <string name="settings_feed_list_font_scale_title">Масштабування тексту списку стрічок</string>
     <string name="add_feed_generic_error">Виникла помилка при додаванні стрічки. Будь ласка, спробуйте ще раз</string>
     <string name="edit_feed_generic_error">Під час редагування стрічки щось пішло не так. Будь ласка, спробуйте ще раз.</string>
     <string name="wrong_credentials_error_message">Облікові дані вказані невірно. Спробуйте ще раз.</string>

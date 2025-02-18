@@ -128,7 +128,6 @@
     <string name="settings_font_scale_title_example">Заглавие на статия</string>
     <string name="settings_font_scale_subtitle_example">Това е подзаглавието на статията</string>
     <string name="settings_font_scale_feed_source_example">Име на емисия</string>
-    <string name="settings_feed_list_font_scale_title">Текстов размер на списък с емисии</string>
     <string name="deleting_feed_dialog_title">Изтриване...</string>
     <string name="add_feed_generic_error">Имаше грешка при добавянето на емисията. Моля, опитайте се отново</string>
     <string name="feed_added_message_without_name">Емисията е добавена</string>

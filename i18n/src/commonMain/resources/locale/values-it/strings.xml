@@ -147,6 +147,5 @@
     <string name="settings_font_scale_title_example">Titolo dell\'articolo</string>
     <string name="settings_font_scale_subtitle_example">Questo è il sottotitolo dell\'articolo</string>
     <string name="settings_font_scale_feed_source_example">Nome del feed</string>
-    <string name="settings_feed_list_font_scale_title">Grandezza testo elenco feed</string>
     <string name="open_another_feed">Apri un altro feed</string>
 </resources>

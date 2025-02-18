@@ -163,4 +163,10 @@
     <string name="settings_auto_delete">Автоматично изтриване на стари статии</string>
     <string name="settings_hide_images">Скриване на изображението на статията</string>
     <string name="settings_hide_description">Скриване на описанието на статията</string>
+    <string name="hide_feed_from_timeline_description">Скрийте статиите на тази емисия от времевата линия</string>
+    <string name="pin_feed_source_description">Закачи тази емисия</string>
+    <string name="menu_add_to_pinned">Закачи</string>
+    <string name="menu_remove_from_pinned">Откачи</string>
+    <string name="drawer_title_pinned_feeds">Закачени източници на емисии</string>
+    <string name="feed_list_appearance">Външен вид на списъка с емисии</string>
 </resources>

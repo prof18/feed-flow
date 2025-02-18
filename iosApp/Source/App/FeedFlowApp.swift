@@ -1,23 +1,22 @@
-import SwiftUI
 import FeedFlowKit
 import FirebaseCore
+import SwiftUI
 import SwiftyDropbox
 
 @main
 struct FeedFlowApp: App {
-
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
     @Environment(\.scenePhase) private var scenePhase: ScenePhase
 
-    @State private var appState: AppState = AppState()
+    @State private var appState: AppState = .init()
 
-    private var feedSyncTimer: FeedSyncTimer = FeedSyncTimer()
+    private var feedSyncTimer: FeedSyncTimer = .init()
 
     init() {
-    #if !DEBUG
-        setupCrashlytics()
-    #endif
+        #if !DEBUG
+            setupCrashlytics()
+        #endif
         startKoin()
 
         if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
@@ -36,19 +35,19 @@ struct FeedFlowApp: App {
                 .onOpenURL(perform: { url in
                     Deps.shared.getDropboxDataSource().handleOAuthResponse {
                         DropboxDataSourceIos.handleOAuthResponse(
-                                url: url,
-                                onSuccess: {
-                                    print("Success! User is logged into DropboxClientsManager.")
-                                    NotificationCenter.default.post(name: .didDropboxSuccess, object: nil)
-                                },
-                                onCancel: {
-                                    print("Authorization flow was manually canceled by user!")
-                                    NotificationCenter.default.post(name: .didDropboxCancel, object: nil)
-                                },
-                                onError: {
-                                    print("Error")
-                                    NotificationCenter.default.post(name: .didDropboxError, object: nil)
-                                }
+                            url: url,
+                            onSuccess: {
+                                print("Success! User is logged into DropboxClientsManager.")
+                                NotificationCenter.default.post(name: .didDropboxSuccess, object: nil)
+                            },
+                            onCancel: {
+                                print("Authorization flow was manually canceled by user!")
+                                NotificationCenter.default.post(name: .didDropboxCancel, object: nil)
+                            },
+                            onError: {
+                                print("Error")
+                                NotificationCenter.default.post(name: .didDropboxError, object: nil)
+                            }
                         )
                     }
                 })
@@ -68,30 +67,29 @@ struct FeedFlowApp: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+        _: UIApplication,
+        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-
-    #if !DEBUG
-        configureFirebase()
-    #endif
+        #if !DEBUG
+            configureFirebase()
+        #endif
         return true
     }
 
     func application(
-        _ application: UIApplication,
+        _: UIApplication,
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {
-            DropboxClientsManager.handleEventsForBackgroundURLSession(
-                with: identifier,
-                creationInfos: [],
-                completionHandler: completionHandler,
-                requestsToReconnect: { requestResults in
-                    DropboxDataSourceIos.processReconnect(requestResults: requestResults)
-                }
-            )
-        }
+        DropboxClientsManager.handleEventsForBackgroundURLSession(
+            with: identifier,
+            creationInfos: [],
+            completionHandler: completionHandler,
+            requestsToReconnect: { requestResults in
+                DropboxDataSourceIos.processReconnect(requestResults: requestResults)
+            }
+        )
+    }
 
     private func configureFirebase() {
         #if DEBUG

@@ -6,9 +6,9 @@
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
+import FeedFlowKit
 import Foundation
 import SwiftUI
-import FeedFlowKit
 
 struct DropboxSyncScreen: View {
     @Environment(AppState.self) private var appState
@@ -16,7 +16,7 @@ struct DropboxSyncScreen: View {
     @StateObject
     private var vmStoreOwner = VMStoreOwner<DropboxSyncViewModel>(Deps.shared.getDropboxSyncViewModel())
 
-    @State private var uiState: AccountConnectionUiState = AccountConnectionUiState.Unlinked()
+    @State private var uiState: AccountConnectionUiState = .Unlinked()
 
     var body: some View {
         DropboxSyncScreenContent(

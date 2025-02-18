@@ -29,9 +29,9 @@ extension View {
 
 extension String {
     func truncate(maxChar: Int) -> String {
-        if self.count <= maxChar {
+        if count <= maxChar {
             return self
         }
-        return self.prefix(maxChar) + "..."
+        return prefix(maxChar) + "..."
     }
 }

@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct RoundedCorner: Shape {
-
     var radius: CGFloat = .infinity
     var corners: UIRectCorner = .allCorners
 

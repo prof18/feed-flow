@@ -6,11 +6,10 @@
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct AddAccountScreen: View {
-
     @Environment(\.dismiss) private var dismiss
     @Environment(AppState.self) private var appState
 
@@ -66,7 +65,6 @@ struct AddAccountScreen: View {
                         case .local:
                             EmptyView()
                         }
-
                     }
                 }
             }

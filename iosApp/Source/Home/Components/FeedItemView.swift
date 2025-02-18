@@ -1,19 +1,18 @@
 //
-//  FeedListView.swift
+//  FeedItemView.swift
 //  FeedFlow
 //
 //  Created by Marco Gomiero on 30/03/23.
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import SwiftUI
-import Nuke
 import FeedFlowKit
+import Nuke
 import NukeUI
+import SwiftUI
 
 @MainActor
 struct FeedItemView: View {
-
     let feedItem: FeedItem
     let index: Int
     let feedFontSizes: FeedFontSizes

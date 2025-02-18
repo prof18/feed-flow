@@ -1,16 +1,15 @@
 //
-//  SwiftUIView.swift
+//  AddFeedScreen.swift
 //  FeedFlow
 //
 //  Created by Marco Gomiero on 01/04/23.
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct AddFeedScreen: View {
-
     @Environment(AppState.self) private var appState
 
     @StateObject
@@ -57,7 +56,7 @@ struct AddFeedScreen: View {
         .task {
             for await state in vmStoreOwner.instance.feedAddedState {
                 switch onEnum(of: state) {
-                case .feedAdded(let addedState):
+                case let .feedAdded(addedState):
                     let message: String
                     if let feedName = addedState.feedName {
                         message = feedFlowStrings.feedAddedMessage(feedName)
@@ -79,7 +78,7 @@ struct AddFeedScreen: View {
                     errorMessage = ""
                     showError = false
 
-                case .error(let errorState):
+                case let .error(errorState):
                     switch onEnum(of: errorState) {
                     case .invalidUrl:
                         errorMessage = feedFlowStrings.invalidRssUrl

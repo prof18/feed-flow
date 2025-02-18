@@ -6,11 +6,10 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import Foundation
 import FeedFlowKit
+import Foundation
 
 @Observable class HomeListIndexHolder {
-
     @ObservationIgnored
     let homeViewModel: HomeViewModel?
 
@@ -28,9 +27,9 @@ import FeedFlowKit
         self.homeViewModel = homeViewModel
     }
 
-    init(fakeHomeViewModel: Bool) {
+    init(fakeHomeViewModel _: Bool) {
         // The variable is just to remind not to declare empty constructors by mistake
-        self.homeViewModel = nil
+        homeViewModel = nil
     }
 
     func getLastReadIndex() -> Int {
@@ -38,13 +37,13 @@ import FeedFlowKit
     }
 
     func refresh() {
-        self.timer?.invalidate()
-        self.isLoading = true
-        self.lastReadIndex = 0
+        timer?.invalidate()
+        isLoading = true
+        lastReadIndex = 0
     }
 
     func clear() {
-        self.lastReadIndex = 0
+        lastReadIndex = 0
         timer?.invalidate()
         isClearing = true
 
@@ -56,7 +55,7 @@ import FeedFlowKit
     }
 
     func updateReadIndex(index: Int) {
-        if !isClearing && !self.isLoading && index < lastAppearedIndex && index > lastReadIndex {
+        if !isClearing, !isLoading, index < lastAppearedIndex, index > lastReadIndex {
             lastReadIndex = index
             timer?.invalidate()
             timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in

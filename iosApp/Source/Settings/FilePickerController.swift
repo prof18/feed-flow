@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import SwiftUI
 import MobileCoreServices
+import SwiftUI
 import UniformTypeIdentifiers
 
 struct FilePickerController: UIViewControllerRepresentable {
@@ -19,8 +19,8 @@ struct FilePickerController: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(
-        _ uiViewController: UIDocumentPickerViewController,
-        context: UIViewControllerRepresentableContext<FilePickerController>
+        _: UIDocumentPickerViewController,
+        context _: UIViewControllerRepresentableContext<FilePickerController>
     ) {
         // Update the controller
     }
@@ -37,14 +37,13 @@ struct FilePickerController: UIViewControllerRepresentable {
         var parent: FilePickerController
 
         init(_ pickerController: FilePickerController) {
-            self.parent = pickerController
+            parent = pickerController
         }
 
-        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            self.parent.callback(urls[0])
+        func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            parent.callback(urls[0])
         }
 
-        func documentPickerWasCancelled() {
-        }
+        func documentPickerWasCancelled() {}
     }
 }

@@ -6,12 +6,11 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import Foundation
 import Collections
+import Foundation
 import SwiftUI
 
 @Observable class AppState {
-
     var snackbarQueue: Deque<SnackbarData> = Deque()
     var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
     var regularNavigationPath = NavigationPath()

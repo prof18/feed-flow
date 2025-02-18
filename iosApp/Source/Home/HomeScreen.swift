@@ -6,11 +6,10 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct HomeScreen: View {
-
     @Environment(AppState.self) private var appState
     @Environment(BrowserSelector.self) private var browserSelector
     @Environment(HomeListIndexHolder.self) private var indexHolder
@@ -33,7 +32,7 @@ struct HomeScreen: View {
     var unreadCount = 0
 
     @State
-    var currentFeedFilter: FeedFilter = FeedFilter.Timeline()
+    var currentFeedFilter: FeedFilter = .Timeline()
 
     @State
     var showFeedSyncButton: Bool = false
@@ -131,7 +130,7 @@ struct HomeScreen: View {
                         )
                     )
 
-                case .feedErrorState(let state):
+                case let .feedErrorState(state):
                     self.appState.snackbarQueue.append(
                         SnackbarData(
                             title: feedFlowStrings.feedErrorMessage(state.feedName),

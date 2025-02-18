@@ -1,6 +1,6 @@
+import FeedFlowKit
 import Foundation
 import SwiftUI
-import FeedFlowKit
 
 struct SearchScreenContent: View {
     @Environment(\.openURL) private var openURL
@@ -35,10 +35,10 @@ struct SearchScreenContent: View {
                 }
             )
 
-        case .noDataFound(let state):
+        case let .noDataFound(state):
             ContentUnavailableView.search(text: state.searchQuery)
 
-        case .dataFound(let state):
+        case let .dataFound(state):
             makeSearchFoundContent(state: state)
         }
     }
@@ -48,47 +48,47 @@ struct SearchScreenContent: View {
         List {
             ForEach(Array(state.items.enumerated()), id: \.element) { index, feedItem in
                 Button(action: {
-                    if browserSelector.openReaderMode(link: feedItem.url) {
-                        self.appState.navigate(
-                            route: CommonViewRoute.readerMode(feedItem: feedItem)
-                        )
-                    } else if browserSelector.openInAppBrowser() {
-                        browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
-                    } else {
-                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                    }
-                    onReadStatusClick(FeedItemId(id: feedItem.id), true)
-                },
+                           if browserSelector.openReaderMode(link: feedItem.url) {
+                               self.appState.navigate(
+                                   route: CommonViewRoute.readerMode(feedItem: feedItem)
+                               )
+                           } else if browserSelector.openInAppBrowser() {
+                               browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
+                           } else {
+                               openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                           }
+                           onReadStatusClick(FeedItemId(id: feedItem.id), true)
+                       },
                        label: {
-                    FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)
-                })
-                .buttonStyle(.plain)
-                .id(feedItem.id)
-                .contentShape(Rectangle())
-                .listRowInsets(EdgeInsets())
-                .hoverEffect()
-                .contextMenu {
-                    VStack {
-                        makeReadUnreadButton(feedItem: feedItem)
-                        makeBookmarkButton(feedItem: feedItem)
-                        makeCommentsButton(feedItem: feedItem)
-                        if isOnVisionOSDevice() {
-                            if isOnVisionOSDevice() {
-                                Button {
-                                    // No-op so it will close itslef
-                                } label: {
-                                    Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
-                                }
-                            }
-                        }
-                    }
-                }
+                           FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)
+                       })
+                       .buttonStyle(.plain)
+                       .id(feedItem.id)
+                       .contentShape(Rectangle())
+                       .listRowInsets(EdgeInsets())
+                       .hoverEffect()
+                       .contextMenu {
+                           VStack {
+                               makeReadUnreadButton(feedItem: feedItem)
+                               makeBookmarkButton(feedItem: feedItem)
+                               makeCommentsButton(feedItem: feedItem)
+                               if isOnVisionOSDevice() {
+                                   if isOnVisionOSDevice() {
+                                       Button {
+                                           // No-op so it will close itslef
+                                       } label: {
+                                           Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
+                                       }
+                                   }
+                               }
+                           }
+                       }
             }
         }
         .listStyle(PlainListStyle())
         .fullScreenCover(item: $browserToOpen) { browserToOpen in
             switch browserToOpen {
-            case .inAppBrowser(let url):
+            case let .inAppBrowser(url):
                 SFSafariView(url: url)
                     .ignoresSafeArea()
             }

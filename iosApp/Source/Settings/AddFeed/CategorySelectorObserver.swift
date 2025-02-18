@@ -6,8 +6,8 @@
 //  Copyright © 2024. All rights reserved.
 //
 
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 @Observable class CategorySelectorObserver {
     var selectedCategory: CategoriesState.CategoryItem? {

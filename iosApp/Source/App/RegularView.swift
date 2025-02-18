@@ -12,249 +12,247 @@ import Reeeed
 import SwiftUI
 
 struct RegularView: View {
-  @Environment(AppState.self) private var appState
-  @Environment(BrowserSelector.self) private var browserSelector
-  @Environment(\.openURL) private var openURL
+    @Environment(AppState.self) private var appState
+    @Environment(BrowserSelector.self) private var browserSelector
+    @Environment(\.openURL) private var openURL
 
-  @Binding var selectedDrawerItem: DrawerItem?
+    @Binding var selectedDrawerItem: DrawerItem?
 
-  @State var navDrawerState: NavDrawerState = NavDrawerState(
-    timeline: [],
-    read: [],
-    bookmarks: [],
-    categories: [],
-    pinnedFeedSources: [],
-    feedSourcesWithoutCategory: [],
-    feedSourcesByCategory: [:]
-  )
-  @State var scrollUpTrigger: Bool = false
-  @State var showSettings: Bool = false
-  @State var showAddFeedSheet = false
-  @State var isToggled: Bool = false
+    @State var navDrawerState: NavDrawerState = .init(
+        timeline: [],
+        read: [],
+        bookmarks: [],
+        categories: [],
+        pinnedFeedSources: [],
+        feedSourcesWithoutCategory: [],
+        feedSourcesByCategory: [:]
+    )
+    @State var scrollUpTrigger: Bool = false
+    @State var showSettings: Bool = false
+    @State var showAddFeedSheet = false
+    @State var isToggled: Bool = false
 
-  @State private var showFontSizeMenu: Bool = false
-  @State private var fontSize = 16.0
-  @State private var isSliderMoving = false
-  @State private var reset = false
-  @State private var isBookmarked = false
+    @State private var showFontSizeMenu: Bool = false
+    @State private var fontSize = 16.0
+    @State private var isSliderMoving = false
+    @State private var reset = false
+    @State private var isBookmarked = false
 
-  @StateObject private var vmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
-    Deps.shared.getReaderModeViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
+        Deps.shared.getReaderModeViewModel())
 
-  @State private var browserToOpen: BrowserToPresent?
-  @State var indexHolder: HomeListIndexHolder
-  var drawerItems: [DrawerItem] = []
-  let homeViewModel: HomeViewModel
+    @State private var browserToOpen: BrowserToPresent?
+    @State var indexHolder: HomeListIndexHolder
+    var drawerItems: [DrawerItem] = []
+    let homeViewModel: HomeViewModel
 
-  @State private var showEditFeedSheet = false
-  @State private var feedSourceToEdit: FeedSource?
+    @State private var showEditFeedSheet = false
+    @State private var feedSourceToEdit: FeedSource?
 
-  @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
+    @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
-  var body: some View {
-    NavigationSplitView(columnVisibility: $columnVisibility) {
-      SidebarDrawer(
-        selectedDrawerItem: $selectedDrawerItem,
-        navDrawerState: navDrawerState,
-        onFeedFilterSelected: { feedFilter in
-          indexHolder.clear()
-          scrollUpTrigger.toggle()
-          homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
-        },
-        onMarkAllReadClick: {
-          homeViewModel.markAllRead()
-        },
-        onDeleteOldFeedClick: {
-          homeViewModel.deleteOldFeedItems()
-        },
-        onForceRefreshClick: {
-          scrollUpTrigger.toggle()
-          homeViewModel.forceFeedRefresh()
-        },
-        deleteAllFeeds: {
-          homeViewModel.deleteAllFeeds()
-        },
-        onShowSettingsClick: {
-          showSettings.toggle()
-        },
-        onAddFeedClick: {
-          showAddFeedSheet.toggle()
-        },
-        onEditFeedClick: { feedSource in
-          feedSourceToEdit = feedSource
-          showEditFeedSheet.toggle()
-        },
-        onDeleteFeedClick: { feedSource in
-          homeViewModel.deleteFeedSource(feedSource: feedSource)
-        },
-        onPinFeedClick: { feedSource in
-            homeViewModel.toggleFeedPin(feedSource: feedSource)
-        }
-      )
-      .navigationBarTitleDisplayMode(.inline)
-    } detail: {
-      @Bindable var appState = appState
-      NavigationStack(path: $appState.regularNavigationPath) {
-        HomeScreen(
-          toggleListScroll: $scrollUpTrigger,
-          showSettings: $showSettings,
-          selectedDrawerItem: $selectedDrawerItem,
-          columnVisibility: $columnVisibility,
-          homeViewModel: homeViewModel,
-          openDrawer: {
-            columnVisibility = .all
-          }
-        )
-        .environment(indexHolder)
-      }
-      .navigationBarTitleDisplayMode(.inline)
-      .navigationDestination(for: CommonViewRoute.self) { route in
-        switch route {
-        case .readerMode(let feedItem):
-          Group {
-            ReeeederView(
-              url: URL(string: feedItem.url)!,
-              options: ReeeederViewOptions(
-                theme: .init(
-
-                  additionalCSS: """
-                        #__reader_container {
-                            font-size: \(fontSize)px
-                        }
-                    """
-                ),
-                onLinkClicked: { url in
-                  if browserSelector.openInAppBrowser() {
-                    browserToOpen = .inAppBrowser(url: url)
-                  } else {
-                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
-                  }
+    var body: some View {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
+            SidebarDrawer(
+                selectedDrawerItem: $selectedDrawerItem,
+                navDrawerState: navDrawerState,
+                onFeedFilterSelected: { feedFilter in
+                    indexHolder.clear()
+                    scrollUpTrigger.toggle()
+                    homeViewModel.onFeedFilterSelected(selectedFeedFilter: feedFilter)
+                },
+                onMarkAllReadClick: {
+                    homeViewModel.markAllRead()
+                },
+                onDeleteOldFeedClick: {
+                    homeViewModel.deleteOldFeedItems()
+                },
+                onForceRefreshClick: {
+                    scrollUpTrigger.toggle()
+                    homeViewModel.forceFeedRefresh()
+                },
+                deleteAllFeeds: {
+                    homeViewModel.deleteAllFeeds()
+                },
+                onShowSettingsClick: {
+                    showSettings.toggle()
+                },
+                onAddFeedClick: {
+                    showAddFeedSheet.toggle()
+                },
+                onEditFeedClick: { feedSource in
+                    feedSourceToEdit = feedSource
+                    showEditFeedSheet.toggle()
+                },
+                onDeleteFeedClick: { feedSource in
+                    homeViewModel.deleteFeedSource(feedSource: feedSource)
+                },
+                onPinFeedClick: { feedSource in
+                    homeViewModel.toggleFeedPin(feedSource: feedSource)
                 }
-              ),
-              toolbarContent: {
-                Button {
-                  isBookmarked.toggle()
-                  vmStoreOwner.instance.updateBookmarkStatus(
-                    feedItemId: FeedItemId(id: feedItem.id),
-                    bookmarked: isBookmarked
-                  )
-                } label: {
-                  if isBookmarked {
-                    Image(systemName: "bookmark.slash")
-                  } else {
-                    Image(systemName: "bookmark")
-                  }
-                }
-
-                ShareLink(item: URL(string: feedItem.url)!) {
-                  Label("Share", systemImage: "square.and.arrow.up")
-                }
-
-                Button {
-                  if browserSelector.openInAppBrowser() {
-                    browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
-                  } else {
-                    openURL(
-                      browserSelector.getUrlForDefaultBrowser(
-                        stringUrl: URL(string: feedItem.url)!.absoluteString))
-                  }
-                } label: {
-                  Image(systemName: "globe")
-                }
-
-                fontSizeMenu
-              }
             )
-            .onAppear {
-              isBookmarked = feedItem.isBookmarked
+            .navigationBarTitleDisplayMode(.inline)
+        } detail: {
+            @Bindable var appState = appState
+            NavigationStack(path: $appState.regularNavigationPath) {
+                HomeScreen(
+                    toggleListScroll: $scrollUpTrigger,
+                    showSettings: $showSettings,
+                    selectedDrawerItem: $selectedDrawerItem,
+                    columnVisibility: $columnVisibility,
+                    homeViewModel: homeViewModel,
+                    openDrawer: {
+                        columnVisibility = .all
+                    }
+                )
+                .environment(indexHolder)
             }
-            .id(reset)
-          }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: CommonViewRoute.self) { route in
+                switch route {
+                case let .readerMode(feedItem):
+                    Group {
+                        ReeeederView(
+                            url: URL(string: feedItem.url)!,
+                            options: ReeeederViewOptions(
+                                theme: .init(
+                                    additionalCSS: """
+                                        #__reader_container {
+                                            font-size: \(fontSize)px
+                                        }
+                                    """
+                                ),
+                                onLinkClicked: { url in
+                                    if browserSelector.openInAppBrowser() {
+                                        browserToOpen = .inAppBrowser(url: url)
+                                    } else {
+                                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
+                                    }
+                                }
+                            ),
+                            toolbarContent: {
+                                Button {
+                                    isBookmarked.toggle()
+                                    vmStoreOwner.instance.updateBookmarkStatus(
+                                        feedItemId: FeedItemId(id: feedItem.id),
+                                        bookmarked: isBookmarked
+                                    )
+                                } label: {
+                                    if isBookmarked {
+                                        Image(systemName: "bookmark.slash")
+                                    } else {
+                                        Image(systemName: "bookmark")
+                                    }
+                                }
 
-        case .search:
-          SearchScreen()
+                                ShareLink(item: URL(string: feedItem.url)!) {
+                                    Label("Share", systemImage: "square.and.arrow.up")
+                                }
 
-        case .accounts:
-          AccountsScreen()
+                                Button {
+                                    if browserSelector.openInAppBrowser() {
+                                        browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
+                                    } else {
+                                        openURL(
+                                            browserSelector.getUrlForDefaultBrowser(
+                                                stringUrl: URL(string: feedItem.url)!.absoluteString))
+                                    }
+                                } label: {
+                                    Image(systemName: "globe")
+                                }
 
-        case .dropboxSync:
-          DropboxSyncScreen()
-        }
-      }
-      .fullScreenCover(item: $browserToOpen) { browserToOpen in
-        switch browserToOpen {
-        case .inAppBrowser(let url):
-          SFSafariView(url: url)
-            .ignoresSafeArea()
-        }
-      }
-    }
-    .sheet(isPresented: $showAddFeedSheet) {
-      AddFeedScreen(showCloseButton: true)
-    }
-    .sheet(isPresented: $showEditFeedSheet) {
-      if let feedSource = feedSourceToEdit {
-        EditFeedScreen(feedSource: feedSource)
-      }
-    }
-    .navigationSplitViewStyle(.balanced)
-    .task {
-      for await state in homeViewModel.navDrawerState {
-        self.navDrawerState = state
-      }
-    }
-    .task {
-      for await state in vmStoreOwner.instance.readerFontSizeState {
-        self.fontSize = Double(truncating: state)
-      }
-    }
-  }
+                                fontSizeMenu
+                            }
+                        )
+                        .onAppear {
+                            isBookmarked = feedItem.isBookmarked
+                        }
+                        .id(reset)
+                    }
 
-  @ViewBuilder
-  private var fontSizeMenu: some View {
-    Button {
-      showFontSizeMenu.toggle()
-    } label: {
-      Image(systemName: "textformat.size")
-    }
-    .font(.title3)
-    .popover(isPresented: $showFontSizeMenu) {
-      VStack(alignment: .leading) {
-        Text(feedFlowStrings.readerModeFontSize)
+                case .search:
+                    SearchScreen()
 
-        HStack {
-          Button {
-            fontSize -= 1.0
-            self.reset.toggle()
-            vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-          } label: {
-            Image(systemName: "minus")
-          }
+                case .accounts:
+                    AccountsScreen()
 
-          Slider(
-            value: $fontSize,
-            in: 12...40,
-            onEditingChanged: { isEditing in
-              if !isEditing {
-                self.reset.toggle()
-                vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-              }
+                case .dropboxSync:
+                    DropboxSyncScreen()
+                }
             }
-          )
-
-          Button {
-            fontSize += 1.0
-            self.reset.toggle()
-            vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-          } label: {
-            Image(systemName: "plus")
-          }
+            .fullScreenCover(item: $browserToOpen) { browserToOpen in
+                switch browserToOpen {
+                case let .inAppBrowser(url):
+                    SFSafariView(url: url)
+                        .ignoresSafeArea()
+                }
+            }
         }
-      }
-      .frame(width: 250, height: 100)
-      .padding(.horizontal, Spacing.regular)
-      .presentationCompactAdaptation((.popover))
-
+        .sheet(isPresented: $showAddFeedSheet) {
+            AddFeedScreen(showCloseButton: true)
+        }
+        .sheet(isPresented: $showEditFeedSheet) {
+            if let feedSource = feedSourceToEdit {
+                EditFeedScreen(feedSource: feedSource)
+            }
+        }
+        .navigationSplitViewStyle(.balanced)
+        .task {
+            for await state in homeViewModel.navDrawerState {
+                self.navDrawerState = state
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.readerFontSizeState {
+                self.fontSize = Double(truncating: state)
+            }
+        }
     }
-  }
+
+    @ViewBuilder
+    private var fontSizeMenu: some View {
+        Button {
+            showFontSizeMenu.toggle()
+        } label: {
+            Image(systemName: "textformat.size")
+        }
+        .font(.title3)
+        .popover(isPresented: $showFontSizeMenu) {
+            VStack(alignment: .leading) {
+                Text(feedFlowStrings.readerModeFontSize)
+
+                HStack {
+                    Button {
+                        fontSize -= 1.0
+                        self.reset.toggle()
+                        vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                    } label: {
+                        Image(systemName: "minus")
+                    }
+
+                    Slider(
+                        value: $fontSize,
+                        in: 12 ... 40,
+                        onEditingChanged: { isEditing in
+                            if !isEditing {
+                                self.reset.toggle()
+                                vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                            }
+                        }
+                    )
+
+                    Button {
+                        fontSize += 1.0
+                        self.reset.toggle()
+                        vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+            .frame(width: 250, height: 100)
+            .padding(.horizontal, Spacing.regular)
+            .presentationCompactAdaptation((.popover))
+        }
+    }
 }

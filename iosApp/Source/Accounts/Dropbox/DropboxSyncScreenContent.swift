@@ -6,8 +6,8 @@
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct DropboxSyncScreenContent: View {
     @Environment(AppState.self) private var appState
@@ -50,6 +50,7 @@ struct DropboxSyncScreenContent: View {
 
         case let state as AccountConnectionUiState.Linked:
             makeLinkedScreen(state: state)
+
         default:
             EmptyView()
         }
@@ -200,8 +201,7 @@ struct DropboxSyncScreenContent: View {
                 lastUploadDate: "2024-06-29T10:00:00Z"
             )
         ),
-        onDropboxAuthSuccess: {
-        },
+        onDropboxAuthSuccess: {},
         onBackupClick: {},
         onDisconnectClick: {}
     )

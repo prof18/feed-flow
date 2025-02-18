@@ -6,8 +6,8 @@
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
-import Foundation
 import FeedFlowKit
+import Foundation
 import SwiftyDropbox
 import UIKit
 
@@ -24,10 +24,10 @@ class DropboxDataSourceIos: DropboxDataSource {
         )
     }
 
-    static func processReconnect(requestResults: ([Result<DropboxBaseRequestBox, ReconnectionError>])) {
+    static func processReconnect(requestResults: [Result<DropboxBaseRequestBox, ReconnectionError>]) {
         let successfulReturnedRequests = requestResults.compactMap { result -> DropboxBaseRequestBox? in
             switch result {
-            case .success(let requestBox):
+            case let .success(requestBox):
                 return requestBox
             case .failure:
                 return nil
@@ -36,7 +36,7 @@ class DropboxDataSourceIos: DropboxDataSource {
 
         for request in successfulReturnedRequests {
             switch request {
-            case .files_upload(let uploadResponse):
+            case let .files_upload(uploadResponse):
                 uploadResponse.response { _, error in
                     // handle response
                     if error != nil {
@@ -60,11 +60,9 @@ class DropboxDataSourceIos: DropboxDataSource {
         platformOAuthResponseHandler()
     }
 
-    func saveAuth(stringCredentials: DropboxStringCredentials) {
+    func saveAuth(stringCredentials _: DropboxStringCredentials) {}
 
-    }
-
-    func restoreAuth(stringCredentials: DropboxStringCredentials) -> DropboxClientStatus {
+    func restoreAuth(stringCredentials _: DropboxStringCredentials) -> DropboxClientStatus {
         if client != nil {
             return DropboxClientStatus.notLinked
         }
@@ -108,7 +106,7 @@ class DropboxDataSourceIos: DropboxDataSource {
                         )
 
                         switch error as CallError {
-                        case .routeError(let boxed, _, _, _):
+                        case let .routeError(boxed, _, _, _):
                             let err = boxed.unboxed as Files.DownloadError
                             Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
                                 messageString: "Boxed error: \(err.description)"
@@ -153,7 +151,7 @@ class DropboxDataSourceIos: DropboxDataSource {
                     )
 
                     switch error as CallError {
-                    case .routeError(let boxed, _, _, _):
+                    case let .routeError(boxed, _, _, _):
                         let err = boxed.unboxed as Files.UploadError
                         Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
                             messageString: "Boxed error: \(err.description)"
@@ -204,7 +202,7 @@ class DropboxDataSourceIos: DropboxDataSource {
                 case .cancel:
                     print("Authorization flow was manually canceled by user!")
                     onCancel()
-                case .error(_, let description):
+                case let .error(_, description):
                     print("Error during dropbox auth:: \(String(describing: description))")
                     onError()
                 }

@@ -6,11 +6,10 @@
 //  Copyright © 2024. All rights reserved.
 //
 
-import SwiftUI
 import FeedFlowKit
+import SwiftUI
 
 struct NoFeedsBottomSheet: View {
-
     @Environment(\.presentationMode) private var presentationMode
     @Environment(AppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
@@ -68,7 +67,8 @@ struct NoFeedsBottomSheet: View {
                 }
             }
         }
-        .presentationDetents([.fraction(0.6)])    }
+        .presentationDetents([.fraction(0.6)])
+    }
 }
 
 #Preview {

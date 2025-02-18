@@ -6,11 +6,10 @@
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
-import Foundation
 import FeedFlowKit
+import Foundation
 
 class FeedSyncTimer {
-
     private var timer: Timer?
 
     func scheduleTimer() {
@@ -19,7 +18,6 @@ class FeedSyncTimer {
             Deps.shared.getLogger(tag: "FeedSyncTimer").d(messageString: "Sync scheduled")
             Deps.shared.getFeedSyncRepository().enqueueBackup(forceBackup: false)
         }
-
     }
 
     func invalidate() {

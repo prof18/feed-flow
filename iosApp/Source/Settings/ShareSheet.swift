@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct ShareSheet: UIViewControllerRepresentable {
-
     typealias Callback = (
         _ activityType: UIActivity.ActivityType?,
         _ completed: Bool,
@@ -22,7 +21,7 @@ struct ShareSheet: UIViewControllerRepresentable {
     let onSelectedCallback: Callback?
 
     func makeUIViewController(
-        context: UIViewControllerRepresentableContext<ShareSheet>
+        context _: UIViewControllerRepresentableContext<ShareSheet>
     ) -> UIActivityViewController {
         let controller = UIActivityViewController(
             activityItems: activityItems,
@@ -33,7 +32,7 @@ struct ShareSheet: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(
-        _ uiViewController: UIActivityViewController,
-        context: UIViewControllerRepresentableContext<ShareSheet>) {
-        }
+        _: UIActivityViewController,
+        context _: UIViewControllerRepresentableContext<ShareSheet>
+    ) {}
 }

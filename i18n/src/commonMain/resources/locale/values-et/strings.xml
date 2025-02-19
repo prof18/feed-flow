@@ -129,7 +129,7 @@
     <string name="clear_old_articles_button">Kustuta nädalavanused kirjed</string>
     <string name="open_another_feed">Ava muu uudisvoog</string>
     <string name="settings_feed_list_scale_title">Teksti mõõtkava</string>
-    <string name="settings_font_scale_title_example">Artikli tekst</string>
+    <string name="settings_font_scale_title_example">Artikli pealkiri</string>
     <string name="settings_font_scale_feed_source_example">Uudisvoo nimi</string>
     <string name="settings_feed_list_title">Uudisvoogude loend</string>
     <string name="settings_font_scale_subtitle_example">See on artikli alapealkiri</string>

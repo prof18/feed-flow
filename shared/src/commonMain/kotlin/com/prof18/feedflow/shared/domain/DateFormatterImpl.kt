@@ -37,7 +37,11 @@ class DateFormatterImpl(
             }
             dayOfMonth(Padding.NONE)
             char(' ')
-            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            alternativeParsing({
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+            }) {
+                monthName(MonthNames.ENGLISH_FULL)
+            }
             char(' ')
             alternativeParsing({
                 yearTwoDigits(1970)
@@ -348,6 +352,114 @@ class DateFormatterImpl(
                 char(':')
                 second()
             }
+        },
+
+        // mar, 14 gen 2025 13:46:12 GMT
+        Format {
+            dayOfWeek(DayOfWeekNames(DayOfWeekNames.ENGLISH_ABBREVIATED.names.map { it.lowercase() }))
+            chars(", ")
+
+            alternativeParsing({
+                dayOfMonth()
+            }) {
+                dayOfMonth(Padding.NONE)
+            }
+            char(' ')
+            alternativeParsing({
+                monthName(MonthNames(MonthNames.ENGLISH_ABBREVIATED.names.map { it.lowercase() }))
+            }) {
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+            }
+            char(' ')
+            year()
+            char(' ')
+            hour()
+            char(':')
+            minute()
+            optional {
+                char(':')
+                second()
+            }
+            chars(" ")
+            optional {
+                chars("EST")
+            }
+            optional {
+                chars("GMT")
+            }
+            optional {
+                chars("EDT")
+            }
+            optional {
+                chars("CDT")
+            }
+            optional {
+                chars("PDT")
+            }
+            optional {
+                chars("PST")
+            }
+            optional {
+                chars("UTC")
+            }
+        },
+
+        // Feb 19, 2025 00:49 GMT
+        Format {
+            alternativeParsing({
+                monthName(MonthNames(MonthNames.ENGLISH_ABBREVIATED.names.map { it.lowercase() }))
+            }) {
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+            }
+            char(' ')
+            dayOfMonth()
+            chars(", ")
+            year()
+            char(' ')
+            hour()
+            char(':')
+            minute()
+            optional {
+                char(':')
+                second()
+            }
+            chars(" ")
+            optional {
+                chars("EST")
+            }
+            optional {
+                chars("GMT")
+            }
+            optional {
+                chars("EDT")
+            }
+            optional {
+                chars("CDT")
+            }
+            optional {
+                chars("PDT")
+            }
+            optional {
+                chars("PST")
+            }
+            optional {
+                chars("UTC")
+            }
+        },
+
+        // 02/18/25 20:39:28
+        Format {
+            monthNumber()
+            char('/')
+            dayOfMonth()
+            char('/')
+            yearTwoDigits(1990)
+            char(' ')
+            hour()
+            char(':')
+            minute()
+            char(':')
+            second()
         },
     )
 

@@ -171,7 +171,6 @@ class HomeViewModel internal constructor(
     }
 
     fun getNewFeeds(isFirstLaunch: Boolean = false) {
-        Logger.d { ">>>> GET NEW FEEDS" }
         lastUpdateIndex = 0
         viewModelScope.launch {
             feedRetrieverRepository.fetchFeeds(isFirstLaunch = isFirstLaunch)

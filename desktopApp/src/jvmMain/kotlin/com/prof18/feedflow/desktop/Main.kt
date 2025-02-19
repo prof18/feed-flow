@@ -212,12 +212,16 @@ fun main() = application {
 
                         val listState = rememberLazyListState()
 
-                        var aboutDialogState by remember { mutableStateOf(false) }
+                        var aboutDialogVisibility by remember { mutableStateOf(false) }
+                        val aboutDialogState = rememberDialogState(
+                            size = DpSize(500.dp, 500.dp),
+                        )
                         DialogWindow(
+                            state = aboutDialogState,
                             title = LocalFeedFlowStrings.current.appName,
-                            visible = aboutDialogState,
+                            visible = aboutDialogVisibility,
                             onCloseRequest = {
-                                aboutDialogState = false
+                                aboutDialogVisibility = false
                             },
                         ) {
                             AboutContent(
@@ -322,7 +326,7 @@ fun main() = application {
                                     homeViewModel.deleteOldFeedItems()
                                 },
                                 onAboutClick = {
-                                    aboutDialogState = true
+                                    aboutDialogVisibility = true
                                 },
                                 onBugReportClick = {
                                     val desktop = Desktop.getDesktop()

@@ -1,1 +1,6 @@
-- Add possibility to customize the article opening behavior per feed source
+- Customize where to open the article from each feed source
+- Add settings to automatically delete old feeds
+- Add settings to hide image and description on feed list
+- Show the unread count in the drawer
+- Add possibility of pinning a feed in the drawer
+- Bug fixes and improvements

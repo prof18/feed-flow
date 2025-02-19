@@ -370,9 +370,13 @@ class DatabaseHelper(
     }
 
     suspend fun updateFeedItemReadStatus(feedItemId: List<String>) =
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedItemQueries.updateRead(feedItemId)
-            dbRef.feedItemQueries.updateUnread(feedItemId)
+        try {
+            dbRef.transactionWithContext(backgroundDispatcher) {
+                dbRef.feedItemQueries.updateRead(feedItemId)
+                dbRef.feedItemQueries.updateUnread(feedItemId)
+            }
+        } catch (e: Exception) {
+            logger.e(e) { "Error while updating read status with FreshRSS" }
         }
 
     suspend fun updateFeedItemBookmarkStatus(feedItemId: List<String>) =

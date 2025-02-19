@@ -15,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
+import androidx.compose.ui.window.rememberDialogState
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
@@ -33,8 +35,12 @@ internal fun NoFeedsDialog(
 ) {
     val dialogTitle = LocalFeedFlowStrings.current.noFeedModalTitle
     val navigator = LocalNavigator.currentOrThrow
+    val dialogState = rememberDialogState(
+        size = DpSize(400.dp, 400.dp),
+    )
 
     DialogWindow(
+        state = dialogState,
         title = dialogTitle,
         visible = showDialog,
         onCloseRequest = onDismissRequest,

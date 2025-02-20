@@ -21,4 +21,4 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.*
 -dontwarn org.slf4j.impl.StaticLoggerBinder
 
--keep class com.prof18.feedflow.core.model.LinkOpeningPreference.** { *; }
+-keep class com.prof18.feedflow.core.model.LinkOpeningPreference

@@ -286,16 +286,16 @@ internal class FeedRetrieverRepository(
                 NoFeedSourcesStatus
             }
         } else {
+            if (!isFirstLaunch) {
+                getFeeds()
+            }
+
             updateMutableState.emit(
                 InProgressFeedUpdateStatus(
                     refreshedFeedCount = 0,
                     totalFeedCount = feedSourceUrls.size,
                 ),
             )
-
-            if (!isFirstLaunch) {
-                getFeeds()
-            }
 
             isFeedSyncDone = false
             parseFeeds(

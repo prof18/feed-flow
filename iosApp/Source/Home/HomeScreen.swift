@@ -110,7 +110,7 @@ struct HomeScreen: View {
         )
         .task {
             for await state in homeViewModel.loadingState {
-                let isLoading = state.isLoading() && state.totalFeedCount != 0
+                let isLoading = state.isLoading()
                 withAnimation {
                     self.showLoading = isLoading
                 }

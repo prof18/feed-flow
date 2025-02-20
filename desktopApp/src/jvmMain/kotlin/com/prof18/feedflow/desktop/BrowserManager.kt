@@ -1,6 +1,6 @@
 package com.prof18.feedflow.desktop
 
-import com.prof18.feedflow.shared.domain.settings.SettingsRepository
+import com.prof18.feedflow.shared.data.SettingsRepository
 import java.awt.Desktop
 import java.net.URI
 

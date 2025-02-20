@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,12 +27,12 @@ class SettingsViewModel internal constructor(
 
     init {
         viewModelScope.launch {
-            val isMarkReadEnabled = settingsRepository.isMarkFeedAsReadWhenScrollingEnabled()
-            val isShowReadItemsEnabled = settingsRepository.isShowReadArticlesTimelineEnabled()
+            val isMarkReadEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
+            val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
             val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
-            val isRemoveTitleFromDescriptionEnabled = settingsRepository.isRemoveTitleFromDescriptionEnabled()
-            val isHideDescriptionEnabled = settingsRepository.isHideDescriptionEnabled()
-            val isHideImagesEnabled = settingsRepository.isHideImagesEnabled()
+            val isRemoveTitleFromDescriptionEnabled = settingsRepository.getRemoveTitleFromDescription()
+            val isHideDescriptionEnabled = settingsRepository.getHideDescription()
+            val isHideImagesEnabled = settingsRepository.getHideImages()
             val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
             settingsMutableState.update {
                 SettingsState(

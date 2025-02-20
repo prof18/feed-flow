@@ -12,12 +12,12 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
-import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
@@ -178,7 +178,7 @@ class HomeViewModel internal constructor(
     }
 
     fun markAsReadOnScroll(lastVisibleIndex: Int) {
-        if (settingsRepository.isMarkFeedAsReadWhenScrollingEnabled()) {
+        if (settingsRepository.getMarkFeedAsReadWhenScrolling()) {
             // To avoid issues
             if (loadingState.value.isLoading()) {
                 return

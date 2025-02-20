@@ -14,7 +14,7 @@ import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
 import com.prof18.feedflow.feedsync.dropbox.di.dropboxModule
 import com.prof18.feedflow.feedsync.greader.di.getGReaderModule
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
-import com.prof18.feedflow.shared.data.SettingsHelper
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DateFormatterImpl
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
@@ -28,7 +28,6 @@ import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
-import com.prof18.feedflow.shared.domain.settings.SettingsRepository
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
@@ -129,19 +128,13 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dispatcherProvider = get(),
             logger = getWith("FeedRetrieverRepositoryImpl"),
             dateFormatter = get(),
-            settingsHelper = get(),
+            settingsRepository = get(),
             feedSourceLogoRetriever = get(),
             rssChannelMapper = get(),
             feedUrlRetriever = get(),
             feedSyncRepository = get(),
             gReaderRepository = get(),
             accountsRepository = get(),
-        )
-    }
-
-    single {
-        SettingsRepository(
-            settingsHelper = get(),
         )
     }
 
@@ -175,8 +168,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
-    factory {
-        SettingsHelper(
+    single {
+        SettingsRepository(
             settings = get(),
         )
     }
@@ -192,7 +185,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     factory {
         BrowserSettingsRepository(
-            settingsHelper = get(),
+            settingsRepository = get(),
         )
     }
 

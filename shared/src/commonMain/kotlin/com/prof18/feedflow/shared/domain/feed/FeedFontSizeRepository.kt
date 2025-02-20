@@ -2,7 +2,7 @@ package com.prof18.feedflow.shared.domain.feed
 
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.plus
-import com.prof18.feedflow.shared.domain.settings.SettingsRepository
+import com.prof18.feedflow.shared.data.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

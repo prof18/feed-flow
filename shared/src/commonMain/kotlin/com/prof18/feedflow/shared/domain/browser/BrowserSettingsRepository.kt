@@ -1,15 +1,15 @@
 package com.prof18.feedflow.shared.domain.browser
 
-import com.prof18.feedflow.shared.data.SettingsHelper
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.model.Browser
 
 class BrowserSettingsRepository internal constructor(
-    private val settingsHelper: SettingsHelper,
+    private val settingsRepository: SettingsRepository,
 ) {
     fun getFavouriteBrowserId(): String? =
-        settingsHelper.getFavouriteBrowserId()
+        settingsRepository.getFavouriteBrowserId()
 
     fun setFavouriteBrowser(browser: Browser) {
-        settingsHelper.saveFavouriteBrowserId(browser.id)
+        settingsRepository.saveFavouriteBrowserId(browser.id)
     }
 }

@@ -17,7 +17,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
-import com.prof18.feedflow.shared.domain.settings.SettingsRepository
+import com.prof18.feedflow.shared.data.SettingsRepository
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import java.io.File

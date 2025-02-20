@@ -3,39 +3,59 @@ package com.prof18.feedflow.shared.data
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
-internal class SettingsHelper(
+class SettingsRepository(
     private val settings: Settings,
 ) {
+    private var isReaderModeEnabled: Boolean? = null
+
+    private val isSyncUploadRequiredMutableFlow = MutableStateFlow(getIsSyncUploadRequired())
+    val isSyncUploadRequired: StateFlow<Boolean> = isSyncUploadRequiredMutableFlow.asStateFlow()
+
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
     fun saveFavouriteBrowserId(browserId: String) =
         settings.set(SettingsFields.FAVOURITE_BROWSER_ID.name, browserId)
 
-    fun getMarkFeedAsReadWhenScrolling(): Boolean =
+    internal fun getMarkFeedAsReadWhenScrolling(): Boolean =
         settings.getBoolean(SettingsFields.MARK_FEED_AS_READ_WHEN_SCROLLING.name, true)
 
-    fun setMarkFeedAsReadWhenScrolling(value: Boolean) =
+    internal fun setMarkFeedAsReadWhenScrolling(value: Boolean) =
         settings.set(SettingsFields.MARK_FEED_AS_READ_WHEN_SCROLLING.name, value)
 
-    fun getShowReadArticlesTimeline(): Boolean =
+    internal fun getShowReadArticlesTimeline(): Boolean =
         settings.getBoolean(SettingsFields.SHOW_READ_ARTICLES_TIMELINE.name, false)
 
-    fun setShowReadArticlesTimeline(value: Boolean) =
+    internal fun setShowReadArticlesTimeline(value: Boolean) =
         settings.set(SettingsFields.SHOW_READ_ARTICLES_TIMELINE.name, value)
 
-    fun getUseReaderMode(): Boolean =
-        settings.getBoolean(SettingsFields.USE_READER_MODE.name, false)
+    fun isUseReaderModeEnabled(): Boolean {
+        if (isReaderModeEnabled != null) {
+            return requireNotNull(isReaderModeEnabled)
+        } else {
+            val value = settings.getBoolean(SettingsFields.USE_READER_MODE.name, false)
+            isReaderModeEnabled = value
+            return value
+        }
+    }
 
-    fun setUseReaderMode(value: Boolean) =
-        settings.set(SettingsFields.USE_READER_MODE.name, value)
+    internal fun setUseReaderMode(value: Boolean) {
+        isReaderModeEnabled = value
+        settings[SettingsFields.USE_READER_MODE.name] = value
+    }
 
-    fun getIsSyncUploadRequired(): Boolean =
+    internal fun getIsSyncUploadRequired(): Boolean =
         settings.getBoolean(SettingsFields.IS_SYNC_UPLOAD_REQUIRED.name, false)
 
-    fun setIsSyncUploadRequired(value: Boolean) =
-        settings.set(SettingsFields.IS_SYNC_UPLOAD_REQUIRED.name, value)
+    internal fun setIsSyncUploadRequired(value: Boolean) {
+        isSyncUploadRequiredMutableFlow.update { value }
+        settings[SettingsFields.IS_SYNC_UPLOAD_REQUIRED.name] = value
+    }
 
     fun getRemoveTitleFromDescription(): Boolean =
         settings.getBoolean(SettingsFields.REMOVE_TITLE_FROM_DESCRIPTION.name, false)
@@ -61,11 +81,11 @@ internal class SettingsHelper(
     fun setFeedListFontScaleFactor(value: Int) =
         settings.set(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, value)
 
-    fun getAutoDeletePeriod(): AutoDeletePeriod =
+    internal fun getAutoDeletePeriod(): AutoDeletePeriod =
         settings.getString(SettingsFields.AUTO_DELETE_PERIOD.name, AutoDeletePeriod.DISABLED.name)
             .let { AutoDeletePeriod.valueOf(it) }
 
-    fun setAutoDeletePeriod(period: AutoDeletePeriod) =
+    internal fun setAutoDeletePeriod(period: AutoDeletePeriod) =
         settings.set(SettingsFields.AUTO_DELETE_PERIOD.name, period.name)
 
     fun getHideImages(): Boolean =

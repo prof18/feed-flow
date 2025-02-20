@@ -20,7 +20,7 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.feedsync.greader.GReaderRepository
-import com.prof18.feedflow.shared.data.SettingsHelper
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
@@ -72,7 +72,7 @@ internal class FeedRetrieverRepository(
     private val dispatcherProvider: DispatcherProvider,
     private val logger: Logger,
     private val dateFormatter: DateFormatter,
-    private val settingsHelper: SettingsHelper,
+    private val settingsRepository: SettingsRepository,
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
     private val rssChannelMapper: RssChannelMapper,
     private val feedUrlRetriever: FeedUrlRetriever,
@@ -120,13 +120,13 @@ internal class FeedRetrieverRepository(
                     feedFilter = currentFeedFilterMutableState.value,
                     pageSize = PAGE_SIZE,
                     offset = 0,
-                    showReadItems = settingsHelper.getShowReadArticlesTimeline(),
+                    showReadItems = settingsRepository.getShowReadArticlesTimeline(),
                 )
             }
             currentPage = 1
-            val removeTitleFromDesc = settingsHelper.getRemoveTitleFromDescription()
-            val hideDesc = settingsHelper.getHideDescription()
-            val hideImages = settingsHelper.getHideImages()
+            val removeTitleFromDesc = settingsRepository.getRemoveTitleFromDescription()
+            val hideDesc = settingsRepository.getHideDescription()
+            val hideImages = settingsRepository.getHideImages()
             if (feeds.isNotEmpty()) {
                 updateMutableState.update { FinishedFeedUpdateStatus }
             }
@@ -157,13 +157,13 @@ internal class FeedRetrieverRepository(
                     feedFilter = currentFeedFilterMutableState.value,
                     pageSize = PAGE_SIZE,
                     offset = currentPage * PAGE_SIZE,
-                    showReadItems = settingsHelper.getShowReadArticlesTimeline(),
+                    showReadItems = settingsRepository.getShowReadArticlesTimeline(),
                 )
             }
             currentPage += 1
-            val removeTitleFromDesc = settingsHelper.getRemoveTitleFromDescription()
-            val hideDesc = settingsHelper.getHideDescription()
-            val hideImages = settingsHelper.getHideImages()
+            val removeTitleFromDesc = settingsRepository.getRemoveTitleFromDescription()
+            val hideDesc = settingsRepository.getHideDescription()
+            val hideImages = settingsRepository.getHideImages()
             mutableFeedState.update { currentItems ->
                 val newList = feeds.map {
                     it.toFeedItem(
@@ -391,7 +391,7 @@ internal class FeedRetrieverRepository(
     }
 
     private suspend fun cleanOldFeeds() {
-        val deletePeriod = settingsHelper.getAutoDeletePeriod()
+        val deletePeriod = settingsRepository.getAutoDeletePeriod()
         if (deletePeriod == AutoDeletePeriod.DISABLED) {
             return
         }

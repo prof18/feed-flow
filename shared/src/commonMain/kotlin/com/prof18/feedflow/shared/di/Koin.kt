@@ -23,6 +23,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedImportExportRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
@@ -116,7 +117,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dispatcherProvider = get(),
             logger = getWith("FeedRetrieverRepositoryImpl"),
             dateFormatter = get(),
-            settingsRepository = get(),
             feedSourceLogoRetriever = get(),
             rssChannelMapper = get(),
             feedUrlRetriever = get(),
@@ -142,6 +142,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedFontSizeRepository = get(),
             feedCategoryRepository = get(),
             feedStateRepository = get(),
+            feedFetcherRepository = get(),
         )
     }
 
@@ -157,6 +158,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSourcesRepository = get(),
             feedRetrieverRepository = get(),
             feedStateRepository = get(),
+            feedFetcherRepository = get(),
         )
     }
 
@@ -169,7 +171,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         ImportExportViewModel(
             feedImportExportRepository = get(),
-            feedRetrieverRepository = get(),
+            feedFetcherRepository = get(),
             logger = getWith("ImportExportViewModel"),
             dateFormatter = get(),
         )
@@ -287,7 +289,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dateFormatter = get(),
             accountsRepository = get(),
             feedSyncRepository = get(),
-            feedRetrieverRepository = get(),
+            feedFetcherRepository = get(),
             feedSyncMessageQueue = get(),
         )
     }
@@ -325,6 +327,21 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             settingsRepository = get(),
             dateFormatter = get(),
             logger = getWith("FeedStateRepository"),
+        )
+    }
+
+    factory {
+        FeedFetcherRepository(
+            dispatcherProvider = get(),
+            feedStateRepository = get(),
+            gReaderRepository = get(),
+            databaseHelper = get(),
+            feedSyncRepository = get(),
+            settingsRepository = get(),
+            logger = getWith("FeedFetcherRepository"),
+            rssParser = get(),
+            rssChannelMapper = get(),
+            dateFormatter = get(),
         )
     }
 }

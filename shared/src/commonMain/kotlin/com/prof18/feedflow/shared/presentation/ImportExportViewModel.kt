@@ -6,7 +6,7 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.shared.domain.feed.FeedImportExportRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
 import kotlinx.collections.immutable.toImmutableList
@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ImportExportViewModel internal constructor(
-    private val feedRetrieverRepository: FeedRetrieverRepository,
     private val logger: Logger,
     private val dateFormatter: DateFormatter,
     private val feedImportExportRepository: FeedImportExportRepository,
+    private val feedFetcherRepository: FeedFetcherRepository,
 ) : ViewModel() {
 
     private val importerMutableState: MutableStateFlow<FeedImportExportState> = MutableStateFlow(
@@ -38,7 +38,7 @@ class ImportExportViewModel internal constructor(
                         feedSourceWithError = notValidFeedSources.feedSourcesWithError.toImmutableList(),
                     )
                 }
-                feedRetrieverRepository.fetchFeeds()
+                feedFetcherRepository.fetchFeeds()
             } catch (e: Throwable) {
                 logger.e(e) { "Error while importing feed" }
                 importerMutableState.update { FeedImportExportState.Error }

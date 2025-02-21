@@ -2,9 +2,6 @@ package com.prof18.feedflow.shared.domain.feed.retriever
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
-import com.prof18.feedflow.core.model.AutoDeletePeriod
-import com.prof18.feedflow.core.model.FeedFilter
-import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -20,79 +17,45 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.feedsync.greader.GReaderRepository
-import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
-import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import com.prof18.feedflow.shared.domain.model.AddFeedResponse
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
-import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.FinishedFeedUpdateStatus
-import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
-import com.prof18.feedflow.shared.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.domain.model.StartedFeedUpdateStatus
-import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.ErrorState
-import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
-import com.prof18.feedflow.shared.utils.executeWithRetry
-import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.days
 
-@Suppress("LargeClass")
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedRetrieverRepository(
     private val parser: RssParser,
     private val databaseHelper: DatabaseHelper,
     private val dispatcherProvider: DispatcherProvider,
     private val logger: Logger,
     private val dateFormatter: DateFormatter,
-    private val settingsRepository: SettingsRepository,
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
     private val rssChannelMapper: RssChannelMapper,
     private val feedUrlRetriever: FeedUrlRetriever,
     private val feedSyncRepository: FeedSyncRepository,
     private val gReaderRepository: GReaderRepository,
     private val accountsRepository: AccountsRepository,
-    private val feedStateRepository: FeedStateRepository
+    private val feedStateRepository: FeedStateRepository,
 ) {
-    private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
-        FinishedFeedUpdateStatus,
-    )
-    val updateState = updateMutableState.asStateFlow()
 
     private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
     val errorState = errorMutableState.asSharedFlow()
-
-    private val feedToUpdate = hashSetOf<String>()
-
-    private var currentPage: Int = 0
-    private var isFeedSyncDone = true
 
     private val knownUrlSuffix = listOf(
         "",
@@ -125,88 +88,8 @@ internal class FeedRetrieverRepository(
         }
     }
 
-    @Suppress("MagicNumber")
-    suspend fun fetchFeeds(
-        forceRefresh: Boolean = false,
-        isFirstLaunch: Boolean = false,
-    ) {
-        return withContext(dispatcherProvider.io) {
-            updateMutableState.update { StartedFeedUpdateStatus }
-
-            when {
-                gReaderRepository.isAccountSet() -> fetchFeedsWithGReader()
-                else -> fetchFeedsWithRssParser(forceRefresh, isFirstLaunch)
-            }
-        }
-    }
-
-    @Suppress("MagicNumber")
-    private suspend fun fetchFeedsWithGReader() {
-        val feedSourceUrls = databaseHelper.getFeedSources()
-        if (feedSourceUrls.isEmpty()) {
-            updateMutableState.update {
-                NoFeedSourcesStatus
-            }
-        } else {
-            gReaderRepository.sync()
-                .onErrorSuspend {
-                    errorMutableState.emit(SyncError)
-                }
-        }
-        // If the sync is skipped quickly, sometimes the loading spinner stays out
-        delay(50)
-        isFeedSyncDone = true
-        updateRefreshCount()
-        // After fetching new feeds, delete old ones based on user settings
-        cleanOldFeeds()
-        feedStateRepository.getFeeds()
-    }
-
-    @Suppress("MagicNumber")
-    private suspend fun fetchFeedsWithRssParser(
-        forceRefresh: Boolean = false,
-        isFirstLaunch: Boolean = false,
-    ) {
-        feedSyncRepository.syncFeedSources()
-
-        val feedSourceUrls = databaseHelper.getFeedSources()
-        feedToUpdate.clear()
-        feedToUpdate.addAll(feedSourceUrls.map { it.url })
-        if (feedSourceUrls.isEmpty()) {
-            updateMutableState.update {
-                NoFeedSourcesStatus
-            }
-        } else {
-            if (!isFirstLaunch) {
-                feedStateRepository.getFeeds()
-            }
-
-            updateMutableState.emit(
-                InProgressFeedUpdateStatus(
-                    refreshedFeedCount = 0,
-                    totalFeedCount = feedSourceUrls.size,
-                ),
-            )
-
-            isFeedSyncDone = false
-            parseFeeds(
-                feedSourceUrls = feedSourceUrls,
-                forceRefresh = forceRefresh,
-            )
-
-            feedSyncRepository.syncFeedItems()
-            // If the sync is skipped quickly, sometimes the loading spinner stays out
-            delay(50)
-            isFeedSyncDone = true
-            updateRefreshCount()
-            // After fetching new feeds, delete old ones based on user settings
-            cleanOldFeeds()
-            feedStateRepository.getFeeds()
-        }
-    }
-
     suspend fun markAllCurrentFeedAsRead() {
-        val currentFilter =feedStateRepository.getCurrentFeedFilter()
+        val currentFilter = feedStateRepository.getCurrentFeedFilter()
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.markAllFeedAsRead(currentFilter)
@@ -281,25 +164,6 @@ internal class FeedRetrieverRepository(
         }
     }
 
-    private suspend fun cleanOldFeeds() {
-        val deletePeriod = settingsRepository.getAutoDeletePeriod()
-        if (deletePeriod == AutoDeletePeriod.DISABLED) {
-            return
-        }
-
-        val threshold = when (deletePeriod) {
-            AutoDeletePeriod.DISABLED -> return
-            AutoDeletePeriod.ONE_WEEK -> Clock.System.now().minus(7.days).toEpochMilliseconds()
-            AutoDeletePeriod.TWO_WEEKS -> Clock.System.now().minus(14.days).toEpochMilliseconds()
-            AutoDeletePeriod.ONE_MONTH -> Clock.System.now().minus(30.days).toEpochMilliseconds()
-        }
-
-        val oldFeedIds = databaseHelper.getOldFeedItem(threshold)
-        databaseHelper.deleteOldFeedItems(threshold)
-        feedSyncRepository.deleteFeedItems(oldFeedIds)
-        feedStateRepository.getFeeds()
-    }
-
     suspend fun deleteOldFeeds() {
         // One week
         val threshold = Clock.System.now().minus(7.days).toEpochMilliseconds()
@@ -345,86 +209,10 @@ internal class FeedRetrieverRepository(
         }
     }
 
-    private suspend fun parseFeeds(
-        feedSourceUrls: List<FeedSource>,
-        forceRefresh: Boolean,
-    ) =
-        feedSourceUrls
-            .mapNotNull { feedSource ->
-                val shouldRefresh = shouldRefreshFeed(feedSource, forceRefresh)
-                if (shouldRefresh) {
-                    feedSource
-                } else {
-                    logger.d { "One hour is not passed, skipping: ${feedSource.url}}" }
-                    feedToUpdate.remove(feedSource.url)
-                    updateRefreshCount()
-                    null
-                }
-            }
-            .asFlow()
-            .flatMapMerge(concurrency = getNumberOfConcurrentParsingRequests()) { feedSource ->
-                suspend {
-                    logger.d { "-> Getting ${feedSource.url}" }
-                    try {
-                        val rssChannel = parser.getRssChannel(feedSource.url)
-                        logger.d { "<- Got back ${rssChannel.title}" }
-                        feedToUpdate.remove(feedSource.url)
-                        updateRefreshCount()
-
-                        val items = rssChannelMapper.getFeedItems(
-                            rssChannel = rssChannel,
-                            feedSource = feedSource,
-                        )
-
-                        databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
-                    } catch (e: Throwable) {
-                        logger.e { "Error, skip: ${feedSource.url}}. Error: $e" }
-                        errorMutableState.emit(
-                            FeedErrorState(
-                                failingSourceName = feedSource.title,
-                            ),
-                        )
-                        feedToUpdate.remove(feedSource.url)
-                        updateRefreshCount()
-                    }
-                }.asFlow()
-            }.collect()
-
     fun search(query: String): Flow<List<Search>> =
         databaseHelper.search(
             searchQuery = query,
         )
-
-
-
-    @Suppress("MagicNumber")
-    private fun shouldRefreshFeed(
-        feedSource: FeedSource,
-        forceRefresh: Boolean,
-    ): Boolean {
-        val lastSyncTimestamp = feedSource.lastSyncTimestamp
-        val oneHourInMillis = (60 * 60) * 1000
-        val currentTime = dateFormatter.currentTimeMillis()
-        return forceRefresh ||
-            lastSyncTimestamp == null ||
-            currentTime - lastSyncTimestamp >= oneHourInMillis
-    }
-
-    private fun updateRefreshCount() {
-        updateMutableState.update { oldUpdate ->
-            val refreshedFeedCount = oldUpdate.refreshedFeedCount + 1
-            val totalFeedCount = oldUpdate.totalFeedCount
-
-            if (feedToUpdate.isEmpty() && isFeedSyncDone) {
-                FinishedFeedUpdateStatus
-            } else {
-                InProgressFeedUpdateStatus(
-                    refreshedFeedCount = refreshedFeedCount,
-                    totalFeedCount = totalFeedCount,
-                )
-            }
-        }
-    }
 
     private fun String.buildUrl(originalUrl: String) =
         when {
@@ -509,9 +297,9 @@ internal class FeedRetrieverRepository(
             return FeedAddedState.Error.GenericError
         }
 
-        updateMutableState.update { StartedFeedUpdateStatus }
+        feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
         gReaderRepository.sync()
-        updateMutableState.update { FinishedFeedUpdateStatus }
+        feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
         feedStateRepository.getFeeds()
         return FeedAddedState.FeedAdded()
     }
@@ -602,7 +390,7 @@ internal class FeedRetrieverRepository(
         databaseHelper.insertFeedItems(feedItems, currentTimestamp)
         feedSyncRepository.insertSyncedFeedSource(listOf(parsedFeedSource.toFeedSource()))
         feedSyncRepository.performBackup()
-        updateMutableState.update { FinishedFeedUpdateStatus }
+        feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
         feedStateRepository.getFeeds()
     }
 

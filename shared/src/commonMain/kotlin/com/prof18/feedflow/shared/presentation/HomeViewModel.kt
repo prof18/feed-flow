@@ -15,6 +15,7 @@ import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
@@ -45,10 +46,11 @@ class HomeViewModel internal constructor(
     private val feedFontSizeRepository: FeedFontSizeRepository,
     private val feedCategoryRepository: FeedCategoryRepository,
     private val feedStateRepository: FeedStateRepository,
+    private val feedFetcherRepository: FeedFetcherRepository,
 ) : ViewModel() {
 
     // Loading
-    val loadingState: StateFlow<FeedUpdateStatus> = feedRetrieverRepository.updateState
+    val loadingState: StateFlow<FeedUpdateStatus> = feedStateRepository.updateState
 
     // Feeds
     val feedState: StateFlow<ImmutableList<FeedItem>> = feedStateRepository.feedState
@@ -176,7 +178,7 @@ class HomeViewModel internal constructor(
     fun getNewFeeds(isFirstLaunch: Boolean = false) {
         lastUpdateIndex = 0
         viewModelScope.launch {
-            feedRetrieverRepository.fetchFeeds(isFirstLaunch = isFirstLaunch)
+            feedFetcherRepository.fetchFeeds(isFirstLaunch = isFirstLaunch)
         }
     }
 
@@ -217,7 +219,7 @@ class HomeViewModel internal constructor(
     fun markAllRead() {
         viewModelScope.launch {
             feedRetrieverRepository.markAllCurrentFeedAsRead()
-            feedRetrieverRepository.fetchFeeds()
+            feedFetcherRepository.fetchFeeds()
         }
     }
 
@@ -242,7 +244,7 @@ class HomeViewModel internal constructor(
     fun forceFeedRefresh() {
         lastUpdateIndex = 0
         viewModelScope.launch {
-            feedRetrieverRepository.fetchFeeds(forceRefresh = true)
+            feedFetcherRepository.fetchFeeds(forceRefresh = true)
         }
     }
 
@@ -291,7 +293,7 @@ class HomeViewModel internal constructor(
     fun deleteFeedSource(feedSource: FeedSource) {
         viewModelScope.launch {
             feedSourcesRepository.deleteFeed(feedSource)
-            feedRetrieverRepository.fetchFeeds()
+            feedFetcherRepository.fetchFeeds()
         }
     }
 }

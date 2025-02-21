@@ -7,7 +7,7 @@ import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,7 @@ class ICloudSyncViewModel internal constructor(
     private val dateFormatter: DateFormatter,
     private val accountsRepository: AccountsRepository,
     private val feedSyncRepository: FeedSyncRepository,
-    private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val feedFetcherRepository: FeedFetcherRepository,
     feedSyncMessageQueue: FeedSyncMessageQueue,
 ) : ViewModel() {
 
@@ -48,7 +48,7 @@ class ICloudSyncViewModel internal constructor(
             emitSyncLoading()
             accountsRepository.setICloudAccount()
             feedSyncRepository.firstSync()
-            feedRetrieverRepository.fetchFeeds()
+            feedFetcherRepository.fetchFeeds()
             emitLastSyncUpdate()
         }
     }

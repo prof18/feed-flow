@@ -101,7 +101,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dropboxDataSource = get(),
             feedSyncRepository = get(),
             dateFormatter = get(),
-            feedRetrieverRepository = get(),
+            feedActionsRepository = get(),
             accountsRepository = get(),
             feedFetcherRepository = get(),
         )

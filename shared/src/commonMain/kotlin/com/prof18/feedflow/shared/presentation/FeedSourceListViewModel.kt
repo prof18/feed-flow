@@ -8,9 +8,8 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedFetcherRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
+import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
@@ -23,13 +22,11 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedSourceListViewModel internal constructor(
     private val feedSourcesRepository: FeedSourcesRepository,
-    private val feedRetrieverRepository: FeedRetrieverRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedFetcherRepository: FeedFetcherRepository,
 ) : ViewModel() {

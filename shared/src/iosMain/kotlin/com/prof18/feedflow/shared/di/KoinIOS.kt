@@ -138,7 +138,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dropboxDataSource = get(),
             feedSyncRepository = get(),
             dateFormatter = get(),
-            feedRetrieverRepository = get(),
+            feedFetcherRepository = get(),
             feedSyncMessageQueue = get(),
             accountsRepository = get(),
         )
@@ -149,7 +149,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     viewModel {
         ReaderModeViewModel(
             settingsRepository = get(),
-            feedRetrieverRepository = get(),
+            feedActionsRepository = get(),
         )
     }
 }

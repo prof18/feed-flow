@@ -17,8 +17,8 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxException
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedFetcherRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
+import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,7 +38,7 @@ class DropboxSyncViewModel internal constructor(
     private val dropboxDataSource: DropboxDataSource,
     private val feedSyncRepository: FeedSyncRepository,
     private val dateFormatter: DateFormatter,
-    private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val feedActionsRepository: FeedActionsRepository,
     private val accountsRepository: AccountsRepository,
     private val feedFetcherRepository: FeedFetcherRepository,
 ) : ViewModel() {

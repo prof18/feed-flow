@@ -13,7 +13,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxException
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.getDxCredentialsAsString
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,8 +31,8 @@ class DropboxSyncViewModel internal constructor(
     private val dropboxDataSource: DropboxDataSource,
     private val feedSyncRepository: FeedSyncRepository,
     private val dateFormatter: DateFormatter,
-    private val feedRetrieverRepository: FeedRetrieverRepository,
     private val accountsRepository: AccountsRepository,
+    private val feedFetcherRepository: FeedFetcherRepository,
     feedSyncMessageQueue: FeedSyncMessageQueue,
 ) : ViewModel() {
 
@@ -64,7 +64,7 @@ class DropboxSyncViewModel internal constructor(
                 emitSyncLoading()
                 accountsRepository.setDropboxAccount()
                 feedSyncRepository.firstSync()
-                feedRetrieverRepository.fetchFeeds()
+                feedFetcherRepository.fetchFeeds()
                 emitLastSyncUpdate()
             } catch (e: Throwable) {
                 logger.e(e) { "Error while trying to auth with Dropbox after getting the code" }

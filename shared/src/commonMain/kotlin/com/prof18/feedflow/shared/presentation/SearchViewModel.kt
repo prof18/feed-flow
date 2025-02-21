@@ -9,8 +9,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
+import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
@@ -34,7 +34,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 class SearchViewModel internal constructor(
-    private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val feedActionsRepository: FeedActionsRepository,
     private val dateFormatter: DateFormatter,
     private val feedFontSizeRepository: FeedFontSizeRepository,
     private val feedStateRepository: FeedStateRepository,
@@ -100,13 +100,13 @@ class SearchViewModel internal constructor(
 
     fun onBookmarkClick(feedItemId: FeedItemId, bookmarked: Boolean) {
         viewModelScope.launch {
-            feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
+            feedActionsRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
     }
 
     fun onReadStatusClick(feedItemId: FeedItemId, read: Boolean) {
         viewModelScope.launch {
-            feedRetrieverRepository.updateReadStatus(feedItemId, read)
+            feedActionsRepository.updateReadStatus(feedItemId, read)
         }
     }
 
@@ -115,7 +115,7 @@ class SearchViewModel internal constructor(
     }
 
     private fun search(query: String) {
-        feedRetrieverRepository
+        feedActionsRepository
             .search(query)
             .onEach { foundFeed ->
                 searchMutableState.update {

@@ -19,11 +19,12 @@ import com.prof18.feedflow.shared.domain.DateFormatterImpl
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
-import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
-import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedImportExportRepository
+import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
+import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -122,6 +123,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSyncRepository = get(),
             gReaderRepository = get(),
             accountsRepository = get(),
+            feedStateRepository = get(),
         )
     }
 
@@ -139,6 +141,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSyncRepository = get(),
             feedFontSizeRepository = get(),
             feedCategoryRepository = get(),
+            feedStateRepository = get(),
         )
     }
 
@@ -153,6 +156,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         FeedSourceListViewModel(
             feedSourcesRepository = get(),
             feedRetrieverRepository = get(),
+            feedStateRepository = get(),
         )
     }
 
@@ -195,8 +199,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         SettingsViewModel(
             settingsRepository = get(),
-            feedRetrieverRepository = get(),
             fontSizeRepository = get(),
+            feedStateRepository = get(),
         )
     }
 
@@ -295,7 +299,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             gReaderRepository = get(),
             accountsRepository = get(),
             dateFormatter = get(),
-            retrieverRepository = get(),
+            feedStateRepository = get(),
         )
     }
 
@@ -314,6 +318,15 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     }
 
     factoryOf(::FeedSourcesRepository)
+
+    single {
+        FeedStateRepository(
+            databaseHelper = get(),
+            settingsRepository = get(),
+            dateFormatter = get(),
+            logger = getWith("FeedStateRepository"),
+        )
+    }
 }
 
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module

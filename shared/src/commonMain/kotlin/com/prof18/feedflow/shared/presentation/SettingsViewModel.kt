@@ -6,7 +6,7 @@ import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
 
 class SettingsViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
-    private val feedRetrieverRepository: FeedRetrieverRepository,
     private val fontSizeRepository: FeedFontSizeRepository,
+    private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
 
     private val settingsMutableState = MutableStateFlow(SettingsState())
@@ -67,7 +67,7 @@ class SettingsViewModel internal constructor(
                     isShowReadItemsEnabled = value,
                 )
             }
-            feedRetrieverRepository.getFeeds()
+            feedStateRepository.getFeeds()
         }
     }
 
@@ -112,7 +112,7 @@ class SettingsViewModel internal constructor(
             )
         }
         viewModelScope.launch {
-            feedRetrieverRepository.getFeeds()
+            feedStateRepository.getFeeds()
         }
     }
 
@@ -124,7 +124,7 @@ class SettingsViewModel internal constructor(
             )
         }
         viewModelScope.launch {
-            feedRetrieverRepository.getFeeds()
+            feedStateRepository.getFeeds()
         }
     }
 }

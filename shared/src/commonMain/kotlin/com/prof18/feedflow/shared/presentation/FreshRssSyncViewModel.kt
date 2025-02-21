@@ -8,7 +8,7 @@ import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.Failure
 import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.feedsync.greader.GReaderRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,7 @@ class FreshRssSyncViewModel internal constructor(
     private val gReaderRepository: GReaderRepository,
     private val accountsRepository: AccountsRepository,
     private val dateFormatter: DateFormatter,
-    private val retrieverRepository: FeedRetrieverRepository,
+    private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
 
     private val uiMutableState: MutableStateFlow<AccountConnectionUiState> = MutableStateFlow(
@@ -79,7 +79,7 @@ class FreshRssSyncViewModel internal constructor(
                             },
                             onSuccess = {
                                 loginLoadingMutableState.update { false }
-                                retrieverRepository.getFeeds()
+                                feedStateRepository.getFeeds()
                                 uiMutableState.update {
                                     AccountConnectionUiState.Linked(
                                         syncState = getSyncState(),
@@ -116,7 +116,7 @@ class FreshRssSyncViewModel internal constructor(
             uiMutableState.update { AccountConnectionUiState.Loading }
             gReaderRepository.disconnect()
             accountsRepository.clearAccount()
-            retrieverRepository.getFeeds()
+            feedStateRepository.getFeeds()
             uiMutableState.update { AccountConnectionUiState.Unlinked }
         }
     }

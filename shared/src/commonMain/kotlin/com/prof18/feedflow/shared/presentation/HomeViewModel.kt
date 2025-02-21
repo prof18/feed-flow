@@ -16,6 +16,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
@@ -43,15 +44,16 @@ class HomeViewModel internal constructor(
     private val feedSyncRepository: FeedSyncRepository,
     private val feedFontSizeRepository: FeedFontSizeRepository,
     private val feedCategoryRepository: FeedCategoryRepository,
+    private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
 
     // Loading
     val loadingState: StateFlow<FeedUpdateStatus> = feedRetrieverRepository.updateState
 
     // Feeds
-    val feedState: StateFlow<ImmutableList<FeedItem>> = feedRetrieverRepository.feedState
+    val feedState: StateFlow<ImmutableList<FeedItem>> = feedStateRepository.feedState
 
-    val unreadCountFlow: Flow<Long> = feedRetrieverRepository.getUnreadFeedCountFlow()
+    val unreadCountFlow: Flow<Long> = feedStateRepository.getUnreadFeedCountFlow()
 
     // Error
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
@@ -66,7 +68,7 @@ class HomeViewModel internal constructor(
 
     private var lastUpdateIndex = 0
 
-    val currentFeedFilter = feedRetrieverRepository.currentFeedFilter
+    val currentFeedFilter = feedStateRepository.currentFeedFilter
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
@@ -75,10 +77,9 @@ class HomeViewModel internal constructor(
         observeErrorState()
         getNewFeeds(isFirstLaunch = true)
         viewModelScope.launch {
-            feedRetrieverRepository.updateFeedFilter(FeedFilter.Timeline)
+            feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
             initDrawerData()
-            feedRetrieverRepository.getFeeds()
-            Logger.d { ">>>> Caaling init HomeVM" }
+            feedStateRepository.getFeeds()
         }
     }
 
@@ -86,8 +87,8 @@ class HomeViewModel internal constructor(
         combine(
             feedSourcesRepository.observeFeedSourcesByCategoryWithUnreadCount(),
             feedCategoryRepository.observeCategoriesWithUnreadCount(),
-            feedRetrieverRepository.getUnreadTimelineCountFlow(),
-            feedRetrieverRepository.getUnreadBookmarksCountFlow(),
+            feedStateRepository.getUnreadTimelineCountFlow(),
+            feedStateRepository.getUnreadBookmarksCountFlow(),
         ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, bookmarksCount ->
             val containsOnlyNullKey = feedSourceByCategoryWithCount.keys.all { it == null }
 
@@ -209,7 +210,7 @@ class HomeViewModel internal constructor(
 
     fun requestNewFeedsPage() {
         viewModelScope.launch {
-            feedRetrieverRepository.loadMoreFeeds()
+            feedStateRepository.loadMoreFeeds()
         }
     }
 
@@ -251,8 +252,8 @@ class HomeViewModel internal constructor(
 
     fun onFeedFilterSelected(selectedFeedFilter: FeedFilter) {
         viewModelScope.launch {
-            feedRetrieverRepository.clearReadFeeds()
-            feedRetrieverRepository.updateFeedFilter(selectedFeedFilter)
+            feedStateRepository.getFeeds()
+            feedStateRepository.updateFeedFilter(selectedFeedFilter)
             lastUpdateIndex = 0
         }
     }

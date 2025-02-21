@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 class FeedSourceListViewModel internal constructor(
     private val feedSourcesRepository: FeedSourcesRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
 
     private val feedsMutableState: MutableStateFlow<FeedSourceListState> = MutableStateFlow(FeedSourceListState())
@@ -147,7 +149,7 @@ class FeedSourceListViewModel internal constructor(
         viewModelScope.launch {
             setExpandedCategory()
             feedSourcesRepository.updateFeedSourceName(feedSource.id, newName)
-            feedRetrieverRepository.getFeeds()
+            feedStateRepository.getFeeds()
         }
     }
 

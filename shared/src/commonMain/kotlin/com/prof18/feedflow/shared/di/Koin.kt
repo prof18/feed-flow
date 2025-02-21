@@ -21,8 +21,8 @@ import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
-import com.prof18.feedflow.shared.domain.feed.manager.FeedImportExportRepository
-import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.shared.domain.feed.FeedImportExportRepository
+import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
@@ -108,16 +108,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
-    factory {
-        FeedManagerRepository(
-            databaseHelper = get(),
-            dispatcherProvider = get(),
-            feedSyncRepository = get(),
-            accountsRepository = get(),
-            gReaderRepository = get(),
-        )
-    }
-
     single {
         FeedRetrieverRepository(
             parser = get(),
@@ -144,7 +134,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         HomeViewModel(
             feedRetrieverRepository = get(),
-            feedManagerRepository = get(),
+            feedSourcesRepository = get(),
             settingsRepository = get(),
             feedSyncRepository = get(),
             feedFontSizeRepository = get(),
@@ -161,7 +151,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     viewModel {
         FeedSourceListViewModel(
-            feedManagerRepository = get(),
+            feedSourcesRepository = get(),
             feedRetrieverRepository = get(),
         )
     }
@@ -322,6 +312,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             opmlFeedHandler = get(),
         )
     }
+
+    factoryOf(::FeedSourcesRepository)
 }
 
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module

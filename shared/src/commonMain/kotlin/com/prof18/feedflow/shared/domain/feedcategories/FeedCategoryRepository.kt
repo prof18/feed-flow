@@ -10,15 +10,10 @@ import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.greader.GReaderRepository
-import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
-import com.prof18.feedflow.shared.presentation.model.ErrorState
-import com.prof18.feedflow.shared.presentation.model.SyncError
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 
 internal class FeedCategoryRepository(

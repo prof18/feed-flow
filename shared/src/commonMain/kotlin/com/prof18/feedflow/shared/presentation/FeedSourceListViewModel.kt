@@ -7,7 +7,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
-import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedSourceListViewModel internal constructor(
-    private val feedManagerRepository: FeedManagerRepository,
+    private val feedSourcesRepository: FeedSourcesRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
 ) : ViewModel() {
 
@@ -41,7 +41,7 @@ class FeedSourceListViewModel internal constructor(
     init {
         observeErrorState()
         viewModelScope.launch {
-            feedManagerRepository.getFeedSources().collect { feeds ->
+            feedSourcesRepository.getFeedSources().collect { feeds ->
                 val groupedSources = feeds.groupBy {
                     val id = it.category?.id
                     val name = it.category?.title
@@ -92,7 +92,7 @@ class FeedSourceListViewModel internal constructor(
 
     private fun observeErrorState() {
         viewModelScope.launch {
-            merge(feedRetrieverRepository.errorState, feedManagerRepository.errorState)
+            merge(feedRetrieverRepository.errorState, feedSourcesRepository.errorState)
                 .collect { error ->
                     when (error) {
                         is FeedErrorState -> {
@@ -122,7 +122,7 @@ class FeedSourceListViewModel internal constructor(
     fun deleteFeedSource(feedSource: FeedSource) {
         viewModelScope.launch {
             setExpandedCategory()
-            feedManagerRepository.deleteFeed(feedSource)
+            feedSourcesRepository.deleteFeed(feedSource)
             feedRetrieverRepository.fetchFeeds()
         }
     }
@@ -146,7 +146,7 @@ class FeedSourceListViewModel internal constructor(
     fun updateFeedName(feedSource: FeedSource, newName: String) {
         viewModelScope.launch {
             setExpandedCategory()
-            feedManagerRepository.updateFeedSourceName(feedSource.id, newName)
+            feedSourcesRepository.updateFeedSourceName(feedSource.id, newName)
             feedRetrieverRepository.getFeeds()
         }
     }
@@ -161,7 +161,7 @@ class FeedSourceListViewModel internal constructor(
 
     fun toggleFeedPin(feedSource: FeedSource) {
         viewModelScope.launch {
-            feedManagerRepository.insertFeedSourcePreference(
+            feedSourcesRepository.insertFeedSourcePreference(
                 feedSourceId = feedSource.id,
                 preference = feedSource.linkOpeningPreference,
                 isHidden = feedSource.isHiddenFromTimeline,

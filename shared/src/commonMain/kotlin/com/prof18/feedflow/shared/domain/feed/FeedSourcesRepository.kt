@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.domain.feed.manager
+package com.prof18.feedflow.shared.domain.feed
 
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -19,12 +19,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-internal class FeedManagerRepository(
+internal class FeedSourcesRepository(
     private val databaseHelper: DatabaseHelper,
-    private val dispatcherProvider: DispatcherProvider,
-    private val feedSyncRepository: FeedSyncRepository,
     private val accountsRepository: AccountsRepository,
+    private val feedSyncRepository: FeedSyncRepository,
     private val gReaderRepository: GReaderRepository,
+    private val dispatcherProvider: DispatcherProvider,
 ) {
 
     private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
@@ -32,7 +32,6 @@ internal class FeedManagerRepository(
 
     fun getFeedSources(): Flow<List<FeedSource>> =
         databaseHelper.getFeedSourcesFlow()
-
 
     suspend fun deleteFeed(feedSource: FeedSource) {
         when (accountsRepository.getCurrentSyncAccount()) {
@@ -51,7 +50,6 @@ internal class FeedManagerRepository(
         }
     }
 
-
     fun deleteAllFeeds() {
         databaseHelper.deleteAllFeeds()
         feedSyncRepository.deleteAllFeedSources()
@@ -66,8 +64,6 @@ internal class FeedManagerRepository(
                     sourcesByCategory[it] ?: emptyList()
                 }
             }
-
-
 
     suspend fun updateFeedSourceName(feedSourceId: String, newName: String) =
         when (accountsRepository.getCurrentSyncAccount()) {

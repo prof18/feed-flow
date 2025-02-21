@@ -79,6 +79,7 @@ internal class FeedRetrieverRepository(
     private val feedSyncRepository: FeedSyncRepository,
     private val gReaderRepository: GReaderRepository,
     private val accountsRepository: AccountsRepository,
+    private val feedStateRepository: FeedStateRepository
 ) {
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
         FinishedFeedUpdateStatus,
@@ -89,12 +90,6 @@ internal class FeedRetrieverRepository(
     val errorState = errorMutableState.asSharedFlow()
 
     private val feedToUpdate = hashSetOf<String>()
-
-    private val mutableFeedState: MutableStateFlow<ImmutableList<FeedItem>> = MutableStateFlow(persistentListOf())
-    val feedState = mutableFeedState.asStateFlow()
-
-    private val currentFeedFilterMutableState: MutableStateFlow<FeedFilter> = MutableStateFlow(FeedFilter.Timeline)
-    val currentFeedFilter: StateFlow<FeedFilter> = currentFeedFilterMutableState.asStateFlow()
 
     private var currentPage: Int = 0
     private var isFeedSyncDone = true
@@ -113,112 +108,8 @@ internal class FeedRetrieverRepository(
         "index.json",
     )
 
-    suspend fun getFeeds() {
-        try {
-            val feeds = executeWithRetry {
-                databaseHelper.getFeedItems(
-                    feedFilter = currentFeedFilterMutableState.value,
-                    pageSize = PAGE_SIZE,
-                    offset = 0,
-                    showReadItems = settingsRepository.getShowReadArticlesTimeline(),
-                )
-            }
-            currentPage = 1
-            val removeTitleFromDesc = settingsRepository.getRemoveTitleFromDescription()
-            val hideDesc = settingsRepository.getHideDescription()
-            val hideImages = settingsRepository.getHideImages()
-            if (feeds.isNotEmpty()) {
-                updateMutableState.update { FinishedFeedUpdateStatus }
-            }
-            mutableFeedState.update {
-                feeds.map {
-                    it.toFeedItem(
-                        dateFormatter = dateFormatter,
-                        removeTitleFromDesc = removeTitleFromDesc,
-                        hideDescription = hideDesc,
-                        hideImages = hideImages,
-                    )
-                }.toImmutableList()
-            }
-        } catch (e: Throwable) {
-            logger.e(e) { "Something wrong while getting data from Database" }
-            errorMutableState.emit(DatabaseError)
-        }
-    }
-
-    suspend fun loadMoreFeeds() {
-        // Stop loading if there are no more items
-        if (mutableFeedState.value.size % PAGE_SIZE != 0L) {
-            return
-        }
-        try {
-            val feeds = executeWithRetry {
-                databaseHelper.getFeedItems(
-                    feedFilter = currentFeedFilterMutableState.value,
-                    pageSize = PAGE_SIZE,
-                    offset = currentPage * PAGE_SIZE,
-                    showReadItems = settingsRepository.getShowReadArticlesTimeline(),
-                )
-            }
-            currentPage += 1
-            val removeTitleFromDesc = settingsRepository.getRemoveTitleFromDescription()
-            val hideDesc = settingsRepository.getHideDescription()
-            val hideImages = settingsRepository.getHideImages()
-            mutableFeedState.update { currentItems ->
-                val newList = feeds.map {
-                    it.toFeedItem(
-                        dateFormatter,
-                        removeTitleFromDesc,
-                        hideDesc,
-                        hideImages,
-                    )
-                }.toImmutableList()
-                (currentItems + newList).toImmutableList()
-            }
-        } catch (e: Throwable) {
-            logger.e(e) { "Something wrong while getting data from Database" }
-            errorMutableState.emit(DatabaseError)
-        }
-    }
-
-    suspend fun updateFeedFilter(feedFilter: FeedFilter) {
-        currentFeedFilterMutableState.update {
-            feedFilter
-        }
-        getFeeds()
-    }
-
-    fun getUnreadFeedCountFlow(): Flow<Long> =
-        currentFeedFilter.flatMapLatest { feedFilter ->
-            databaseHelper.getUnreadFeedCountFlow(
-                feedFilter = feedFilter,
-            )
-        }
-
-    fun getUnreadBookmarksCountFlow(): Flow<Long> =
-        databaseHelper.getUnreadFeedCountFlow(
-            feedFilter = FeedFilter.Bookmarks,
-        )
-
-    fun getUnreadTimelineCountFlow(): Flow<Long> =
-        databaseHelper.getUnreadFeedCountFlow(
-            feedFilter = FeedFilter.Timeline,
-        )
-
-    suspend fun clearReadFeeds() {
-        getFeeds()
-    }
-
     suspend fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
-        mutableFeedState.update { currentItems ->
-            currentItems.map { feedItem ->
-                if (FeedItemId(feedItem.id) in itemsToUpdates) {
-                    feedItem.copy(isRead = true)
-                } else {
-                    feedItem
-                }
-            }.toImmutableList()
-        }
+        feedStateRepository.markAsRead(itemsToUpdates)
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.updateReadStatus(itemsToUpdates.toList(), isRead = true)
@@ -268,7 +159,7 @@ internal class FeedRetrieverRepository(
         updateRefreshCount()
         // After fetching new feeds, delete old ones based on user settings
         cleanOldFeeds()
-        getFeeds()
+        feedStateRepository.getFeeds()
     }
 
     @Suppress("MagicNumber")
@@ -287,7 +178,7 @@ internal class FeedRetrieverRepository(
             }
         } else {
             if (!isFirstLaunch) {
-                getFeeds()
+                feedStateRepository.getFeeds()
             }
 
             updateMutableState.emit(
@@ -310,12 +201,12 @@ internal class FeedRetrieverRepository(
             updateRefreshCount()
             // After fetching new feeds, delete old ones based on user settings
             cleanOldFeeds()
-            getFeeds()
+            feedStateRepository.getFeeds()
         }
     }
 
     suspend fun markAllCurrentFeedAsRead() {
-        val currentFilter = currentFeedFilterMutableState.value
+        val currentFilter =feedStateRepository.getCurrentFeedFilter()
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.markAllFeedAsRead(currentFilter)
@@ -329,7 +220,7 @@ internal class FeedRetrieverRepository(
                 feedSyncRepository.setIsSyncUploadRequired()
             }
         }
-        getFeeds()
+        feedStateRepository.getFeeds()
     }
 
     private suspend fun fetchSingleFeed(
@@ -382,7 +273,7 @@ internal class FeedRetrieverRepository(
                 isHidden = newFeedSource.isHiddenFromTimeline,
                 isPinned = newFeedSource.isPinned,
             )
-            getFeeds()
+            feedStateRepository.getFeeds()
         }
         return when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> editFeedSourceForFreshRss(newFeedSource, originalFeedSource)
@@ -406,7 +297,7 @@ internal class FeedRetrieverRepository(
         val oldFeedIds = databaseHelper.getOldFeedItem(threshold)
         databaseHelper.deleteOldFeedItems(threshold)
         feedSyncRepository.deleteFeedItems(oldFeedIds)
-        getFeeds()
+        feedStateRepository.getFeeds()
     }
 
     suspend fun deleteOldFeeds() {
@@ -415,23 +306,11 @@ internal class FeedRetrieverRepository(
         val oldFeedIds = databaseHelper.getOldFeedItem(threshold)
         databaseHelper.deleteOldFeedItems(threshold)
         feedSyncRepository.deleteFeedItems(oldFeedIds)
-        getFeeds()
+        feedStateRepository.getFeeds()
     }
 
     suspend fun updateBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) {
-        mutableFeedState.update { currentItems ->
-            currentItems.mapNotNull { feedItem ->
-                if (feedItem.id == feedItemId.id) {
-                    if (currentFeedFilter.value == FeedFilter.Bookmarks && !isBookmarked) {
-                        null
-                    } else {
-                        feedItem.copy(isBookmarked = isBookmarked)
-                    }
-                } else {
-                    feedItem
-                }
-            }.toImmutableList()
-        }
+        feedStateRepository.updateBookmarkStatus(feedItemId, isBookmarked)
 
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
@@ -449,19 +328,7 @@ internal class FeedRetrieverRepository(
     }
 
     suspend fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) {
-        mutableFeedState.update { currentItems ->
-            currentItems.mapNotNull { feedItem ->
-                if (feedItem.id == feedItemId.id) {
-                    if (currentFeedFilter.value == FeedFilter.Read && !isRead) {
-                        null
-                    } else {
-                        feedItem.copy(isRead = isRead)
-                    }
-                } else {
-                    feedItem
-                }
-            }.toImmutableList()
-        }
+        feedStateRepository.updateReadStatus(feedItemId, isRead)
 
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
@@ -528,18 +395,7 @@ internal class FeedRetrieverRepository(
             searchQuery = query,
         )
 
-    private fun updateCurrentFilterName(newName: String) {
-        val currentFilter = currentFeedFilter.value
-        if (currentFilter is FeedFilter.Source) {
-            currentFeedFilterMutableState.update {
-                FeedFilter.Source(
-                    feedSource = currentFilter.feedSource.copy(
-                        title = newName,
-                    ),
-                )
-            }
-        }
-    }
+
 
     @Suppress("MagicNumber")
     private fun shouldRefreshFeed(
@@ -656,7 +512,7 @@ internal class FeedRetrieverRepository(
         updateMutableState.update { StartedFeedUpdateStatus }
         gReaderRepository.sync()
         updateMutableState.update { FinishedFeedUpdateStatus }
-        getFeeds()
+        feedStateRepository.getFeeds()
         return FeedAddedState.FeedAdded()
     }
 
@@ -670,7 +526,7 @@ internal class FeedRetrieverRepository(
         val newName = newFeedSource.title
         val previousName = originalFeedSource?.title
         if (newName != previousName) {
-            updateCurrentFilterName(newName)
+            feedStateRepository.updateCurrentFilterName(newName)
         }
 
         return if (newUrl != previousUrl) {
@@ -711,7 +567,7 @@ internal class FeedRetrieverRepository(
                 return FeedEditedState.Error.GenericError
             },
             onSuccess = {
-                updateCurrentFilterName(newFeedSource.title)
+                feedStateRepository.updateCurrentFilterName(newFeedSource.title)
                 return FeedEditedState.FeedEdited(newFeedSource.title)
             },
         )
@@ -747,7 +603,7 @@ internal class FeedRetrieverRepository(
         feedSyncRepository.insertSyncedFeedSource(listOf(parsedFeedSource.toFeedSource()))
         feedSyncRepository.performBackup()
         updateMutableState.update { FinishedFeedUpdateStatus }
-        getFeeds()
+        feedStateRepository.getFeeds()
     }
 
     private suspend fun updateFeedSource(feedSource: FeedSource) {
@@ -760,8 +616,4 @@ internal class FeedRetrieverRepository(
         val channel: RssChannel,
         val usedUrl: String,
     )
-
-    private companion object {
-        private const val PAGE_SIZE = 40L
-    }
 }

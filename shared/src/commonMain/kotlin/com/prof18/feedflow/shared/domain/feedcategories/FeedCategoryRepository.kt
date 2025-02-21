@@ -3,17 +3,36 @@ package com.prof18.feedflow.shared.domain.feedcategories
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.fold
+import com.prof18.feedflow.core.model.onErrorSuspend
+import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.greader.GReaderRepository
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.presentation.model.ErrorState
+import com.prof18.feedflow.shared.presentation.model.SyncError
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 
-internal class FeedCategoryUseCase(
-    private val feedManagerRepository: FeedManagerRepository,
+internal class FeedCategoryRepository(
+    private val databaseHelper: DatabaseHelper,
+    private val accountsRepository: AccountsRepository,
+    private val feedSyncRepository: FeedSyncRepository,
+    private val gReaderRepository: GReaderRepository,
 ) {
     private val categoriesMutableState: MutableStateFlow<CategoriesState> = MutableStateFlow(CategoriesState())
     val categoriesState = categoriesMutableState
     private var selectedCategoryName: CategoryName? = null
+
+//    private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
+//    val errorState = errorMutableState.asSharedFlow()
 
     fun onExpandCategoryClick() {
         categoriesMutableState.update { state ->
@@ -34,16 +53,39 @@ internal class FeedCategoryUseCase(
 
     suspend fun addNewCategory(categoryName: CategoryName) {
         selectedCategoryName = categoryName
-        feedManagerRepository.createCategory(categoryName)
+        createCategory(categoryName)
     }
 
     suspend fun deleteCategory(categoryId: String) {
-        feedManagerRepository.deleteCategory(categoryId)
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                gReaderRepository.deleteCategory(categoryId)
+                    .fold(
+                        onSuccess = {
+                            gReaderRepository.fetchFeedSourcesAndCategories()
+                                .onErrorSuspend {
+                                    // TODO: handle error?
+//                                    errorMutableState.emit(SyncError)
+                                }
+                        },
+                        onFailure = {
+                            // TODO: handle error?
+//                            errorMutableState.emit(SyncError)
+                        },
+                    )
+            }
+
+            else -> {
+                databaseHelper.deleteCategory(categoryId)
+                feedSyncRepository.deleteFeedSourceCategory(categoryId)
+            }
+        }
     }
+
 
     suspend fun initCategories(selectedCategoryName: CategoryName? = null) {
         this.selectedCategoryName = selectedCategoryName
-        feedManagerRepository.observeCategories().collect { categories ->
+        observeCategories().collect { categories ->
             val categoriesWithEmpty = listOf(getEmptyCategory()) + categories.map { feedSourceCategory ->
                 feedSourceCategory.toCategoryItem()
             }
@@ -54,6 +96,32 @@ internal class FeedCategoryUseCase(
                 )
             }
         }
+    }
+
+    fun observeCategories(): Flow<List<FeedSourceCategory>> =
+        databaseHelper.observeFeedSourceCategories()
+
+    fun observeCategoriesWithUnreadCount(): Flow<List<CategoryWithUnreadCount>> =
+        databaseHelper.observeCategoriesWithUnreadCount()
+
+    suspend fun createCategory(categoryName: CategoryName) {
+        val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                "user/-/label/${categoryName.name}"
+            }
+
+            else -> categoryName.name.hashCode().toString()
+        }
+
+        val category = FeedSourceCategory(
+            id = categoryId,
+            title = categoryName.name,
+        )
+        databaseHelper.insertCategories(
+            listOf(category),
+        )
+
+        feedSyncRepository.insertFeedSourceCategories(listOf(category))
     }
 
     private fun onCategorySelected(categoryId: CategoryId) {

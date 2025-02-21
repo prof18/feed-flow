@@ -7,7 +7,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryUseCase
+import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class EditFeedViewModel internal constructor(
-    private val categoryUseCase: FeedCategoryUseCase,
+    private val categoryUseCase: FeedCategoryRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val accountsRepository: AccountsRepository,
 ) : ViewModel() {

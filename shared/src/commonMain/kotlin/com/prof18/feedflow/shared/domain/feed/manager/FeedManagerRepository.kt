@@ -152,31 +152,6 @@ internal class FeedManagerRepository(
         }
     }
 
-    fun observeCategories(): Flow<List<FeedSourceCategory>> =
-        databaseHelper.observeFeedSourceCategories()
-
-    fun observeCategoriesWithUnreadCount(): Flow<List<CategoryWithUnreadCount>> =
-        databaseHelper.observeCategoriesWithUnreadCount()
-
-    suspend fun createCategory(categoryName: CategoryName) {
-        val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
-                "user/-/label/${categoryName.name}"
-            }
-
-            else -> categoryName.name.hashCode().toString()
-        }
-
-        val category = FeedSourceCategory(
-            id = categoryId,
-            title = categoryName.name,
-        )
-        databaseHelper.insertCategories(
-            listOf(category),
-        )
-
-        feedSyncRepository.insertFeedSourceCategories(listOf(category))
-    }
 
     fun deleteAllFeeds() {
         databaseHelper.deleteAllFeeds()
@@ -202,29 +177,6 @@ internal class FeedManagerRepository(
         }
     }
 
-    suspend fun deleteCategory(categoryId: String) {
-        when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
-                gReaderRepository.deleteCategory(categoryId)
-                    .fold(
-                        onSuccess = {
-                            gReaderRepository.fetchFeedSourcesAndCategories()
-                                .onErrorSuspend {
-                                    errorMutableState.emit(SyncError)
-                                }
-                        },
-                        onFailure = {
-                            errorMutableState.emit(SyncError)
-                        },
-                    )
-            }
-
-            else -> {
-                databaseHelper.deleteCategory(categoryId)
-                feedSyncRepository.deleteFeedSourceCategory(categoryId)
-            }
-        }
-    }
 
     suspend fun updateFeedSourceName(feedSourceId: String, newName: String) =
         when (accountsRepository.getCurrentSyncAccount()) {

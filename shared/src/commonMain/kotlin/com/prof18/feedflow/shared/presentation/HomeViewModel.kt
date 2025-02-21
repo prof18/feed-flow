@@ -16,6 +16,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
@@ -41,6 +42,7 @@ class HomeViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val feedSyncRepository: FeedSyncRepository,
     private val feedFontSizeRepository: FeedFontSizeRepository,
+    private val feedCategoryRepository: FeedCategoryRepository,
 ) : ViewModel() {
 
     // Loading
@@ -83,7 +85,7 @@ class HomeViewModel internal constructor(
     private suspend fun initDrawerData() {
         combine(
             feedManagerRepository.observeFeedSourcesByCategoryWithUnreadCount(),
-            feedManagerRepository.observeCategoriesWithUnreadCount(),
+            feedCategoryRepository.observeCategoriesWithUnreadCount(),
             feedRetrieverRepository.getUnreadTimelineCountFlow(),
             feedRetrieverRepository.getUnreadBookmarksCountFlow(),
         ) { feedSourceByCategoryWithCount, categoriesWithCount, timelineCount, bookmarksCount ->

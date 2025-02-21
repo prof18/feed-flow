@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryUseCase
+import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class AddFeedViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
-    private val categoryUseCase: FeedCategoryUseCase,
+    private val categoryUseCase: FeedCategoryRepository,
 ) : ViewModel() {
 
     private var feedUrl: String = ""

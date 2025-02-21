@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class ReaderModeViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
-    private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val feedActionsRepository: FeedActionsRepository,
 ) : ViewModel() {
 
     private val readerFontSizeMutableState: MutableStateFlow<Int> = MutableStateFlow(
@@ -27,7 +27,7 @@ class ReaderModeViewModel internal constructor(
 
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {
         viewModelScope.launch {
-            feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
+            feedActionsRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
     }
 }

@@ -7,7 +7,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +18,7 @@ class ReaderModeViewModel internal constructor(
     private val readerModeExtractor: ReaderModeExtractor,
     private val markdownToHtmlConverter: MarkdownToHtmlConverter,
     private val settingsRepository: SettingsRepository,
-    private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val feedActionsRepository: FeedActionsRepository,
 ) : ViewModel() {
 
     private val readerModeMutableState: MutableStateFlow<ReaderModeState> = MutableStateFlow(
@@ -71,7 +71,7 @@ class ReaderModeViewModel internal constructor(
 
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {
         viewModelScope.launch {
-            feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
+            feedActionsRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
     }
 }

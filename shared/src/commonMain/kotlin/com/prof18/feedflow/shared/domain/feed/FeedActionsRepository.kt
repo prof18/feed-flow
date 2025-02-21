@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.domain.feed.retriever
+package com.prof18.feedflow.shared.domain.feed
 
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SyncAccounts
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.days
 
-internal class FeedRetrieverRepository(
+internal class FeedActionsRepository(
     private val databaseHelper: DatabaseHelper,
     private val feedSyncRepository: FeedSyncRepository,
     private val gReaderRepository: GReaderRepository,

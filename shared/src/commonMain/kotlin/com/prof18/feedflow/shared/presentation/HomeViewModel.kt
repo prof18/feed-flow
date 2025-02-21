@@ -2,7 +2,6 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerCategory
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
@@ -15,9 +14,9 @@ import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedFetcherRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
+import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
+import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
@@ -34,12 +33,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel internal constructor(
-    private val feedRetrieverRepository: FeedRetrieverRepository,
+    private val feedActionsRepository: FeedActionsRepository,
     private val feedSourcesRepository: FeedSourcesRepository,
     private val settingsRepository: SettingsRepository,
     private val feedSyncRepository: FeedSyncRepository,
@@ -204,7 +202,7 @@ class HomeViewModel internal constructor(
                         )
                     }
                 }
-                feedRetrieverRepository.markAsRead(urlToUpdates)
+                feedActionsRepository.markAsRead(urlToUpdates)
                 lastUpdateIndex = lastVisibleIndex
             }
         }
@@ -218,14 +216,14 @@ class HomeViewModel internal constructor(
 
     fun markAllRead() {
         viewModelScope.launch {
-            feedRetrieverRepository.markAllCurrentFeedAsRead()
+            feedActionsRepository.markAllCurrentFeedAsRead()
             feedFetcherRepository.fetchFeeds()
         }
     }
 
     fun markAsRead(feedItemId: String) {
         viewModelScope.launch {
-            feedRetrieverRepository.markAsRead(
+            feedActionsRepository.markAsRead(
                 hashSetOf(
                     FeedItemId(feedItemId),
                 ),
@@ -236,7 +234,7 @@ class HomeViewModel internal constructor(
     fun deleteOldFeedItems() {
         viewModelScope.launch {
             isDeletingMutableState.update { true }
-            feedRetrieverRepository.deleteOldFeeds()
+            feedActionsRepository.deleteOldFeeds()
             isDeletingMutableState.update { false }
         }
     }
@@ -262,13 +260,13 @@ class HomeViewModel internal constructor(
 
     fun updateReadStatus(feedItemId: FeedItemId, read: Boolean) {
         viewModelScope.launch {
-            feedRetrieverRepository.updateReadStatus(feedItemId, read)
+            feedActionsRepository.updateReadStatus(feedItemId, read)
         }
     }
 
     fun updateBookmarkStatus(feedItemId: FeedItemId, bookmarked: Boolean) {
         viewModelScope.launch {
-            feedRetrieverRepository.updateBookmarkStatus(feedItemId, bookmarked)
+            feedActionsRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
     }
 

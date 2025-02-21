@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.domain.feed.retriever
+package com.prof18.feedflow.shared.domain.feed
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter

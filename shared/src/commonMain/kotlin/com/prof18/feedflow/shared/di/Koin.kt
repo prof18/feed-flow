@@ -23,9 +23,9 @@ import com.prof18.feedflow.shared.domain.feed.FeedImportExportRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedFetcherRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
+import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
+import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -111,7 +111,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     }
 
     single {
-        FeedRetrieverRepository(
+        FeedActionsRepository(
             databaseHelper = get(),
             feedSyncRepository = get(),
             gReaderRepository = get(),
@@ -128,7 +128,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     viewModel {
         HomeViewModel(
-            feedRetrieverRepository = get(),
+            feedActionsRepository = get(),
             feedSourcesRepository = get(),
             settingsRepository = get(),
             feedSyncRepository = get(),
@@ -149,7 +149,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         FeedSourceListViewModel(
             feedSourcesRepository = get(),
-            feedRetrieverRepository = get(),
             feedStateRepository = get(),
             feedFetcherRepository = get(),
         )
@@ -201,7 +200,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     viewModel {
         SearchViewModel(
-            feedRetrieverRepository = get(),
+            feedActionsRepository = get(),
             dateFormatter = get(),
             settingsRepository = get(),
             feedFontSizeRepository = get(),

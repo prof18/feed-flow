@@ -23,7 +23,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
-import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryUseCase
+import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
@@ -151,6 +151,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             settingsRepository = get(),
             feedSyncRepository = get(),
             feedFontSizeRepository = get(),
+            feedCategoryRepository = get(),
         )
     }
 
@@ -273,7 +274,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
-    factoryOf(::FeedCategoryUseCase)
+    factoryOf(::FeedCategoryRepository)
 
     factory {
         ICloudSettings(

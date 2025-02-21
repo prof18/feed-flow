@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedImportExportState
-import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.shared.domain.feed.manager.FeedImportExportRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ImportExportViewModel internal constructor(
-    private val feedManagerRepository: FeedManagerRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val logger: Logger,
     private val dateFormatter: DateFormatter,
+    private val feedImportExportRepository: FeedImportExportRepository,
 ) : ViewModel() {
 
     private val importerMutableState: MutableStateFlow<FeedImportExportState> = MutableStateFlow(
@@ -31,7 +31,7 @@ class ImportExportViewModel internal constructor(
         viewModelScope.launch {
             importerMutableState.update { FeedImportExportState.LoadingImport }
             try {
-                val notValidFeedSources = feedManagerRepository.addFeedsFromFile(opmlInput)
+                val notValidFeedSources = feedImportExportRepository.addFeedsFromFile(opmlInput)
                 importerMutableState.update {
                     FeedImportExportState.ImportSuccess(
                         notValidFeedSources = notValidFeedSources.feedSources.toImmutableList(),
@@ -50,7 +50,7 @@ class ImportExportViewModel internal constructor(
         viewModelScope.launch {
             importerMutableState.update { FeedImportExportState.LoadingImport }
             try {
-                feedManagerRepository.exportFeedsAsOpml(opmlOutput)
+                feedImportExportRepository.exportFeedsAsOpml(opmlOutput)
                 importerMutableState.update { FeedImportExportState.ExportSuccess }
             } catch (e: Throwable) {
                 logger.e(e) { "Error while exporting feed" }

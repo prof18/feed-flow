@@ -21,6 +21,7 @@ import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
+import com.prof18.feedflow.shared.domain.feed.manager.FeedImportExportRepository
 import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
@@ -110,10 +111,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     factory {
         FeedManagerRepository(
             databaseHelper = get(),
-            opmlFeedHandler = get(),
-            rssParser = get(),
-            logger = getWith("FeedManagerRepositoryImpl"),
-            logoRetriever = get(),
             dispatcherProvider = get(),
             feedSyncRepository = get(),
             accountsRepository = get(),
@@ -177,7 +174,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     viewModel {
         ImportExportViewModel(
-            feedManagerRepository = get(),
+            feedImportExportRepository = get(),
             feedRetrieverRepository = get(),
             logger = getWith("ImportExportViewModel"),
             dateFormatter = get(),
@@ -309,6 +306,20 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             accountsRepository = get(),
             dateFormatter = get(),
             retrieverRepository = get(),
+        )
+    }
+
+    factory {
+        FeedImportExportRepository(
+            dispatcherProvider = get(),
+            feedSyncRepository = get(),
+            accountsRepository = get(),
+            gReaderRepository = get(),
+            logger = getWith("FeedImportExportRepository"),
+            logoRetriever = get(),
+            rssParser = get(),
+            databaseHelper = get(),
+            opmlFeedHandler = get(),
         )
     }
 }

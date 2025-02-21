@@ -112,14 +112,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     single {
         FeedRetrieverRepository(
-            parser = get(),
             databaseHelper = get(),
-            dispatcherProvider = get(),
-            logger = getWith("FeedRetrieverRepositoryImpl"),
-            dateFormatter = get(),
-            feedSourceLogoRetriever = get(),
-            rssChannelMapper = get(),
-            feedUrlRetriever = get(),
             feedSyncRepository = get(),
             gReaderRepository = get(),
             accountsRepository = get(),
@@ -148,7 +141,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     viewModel {
         AddFeedViewModel(
-            feedRetrieverRepository = get(),
+            feedSourcesRepository = get(),
             categoryUseCase = get(),
         )
     }
@@ -212,6 +205,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dateFormatter = get(),
             settingsRepository = get(),
             feedFontSizeRepository = get(),
+            feedStateRepository = get(),
         )
     }
 
@@ -278,7 +272,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         EditFeedViewModel(
             categoryUseCase = get(),
-            feedRetrieverRepository = get(),
+            feedSourcesRepository = get(),
             accountsRepository = get(),
         )
     }
@@ -319,7 +313,23 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
-    factoryOf(::FeedSourcesRepository)
+
+    factory {
+        FeedSourcesRepository(
+            databaseHelper = get(),
+            accountsRepository = get(),
+            feedSyncRepository = get(),
+            gReaderRepository = get(),
+            dispatcherProvider = get(),
+            logger = getWith("FeedSourcesRepository"),
+            feedStateRepository = get(),
+            feedUrlRetriever = get(),
+            feedSourceLogoRetriever = get(),
+            parser = get(),
+            dateFormatter = get(),
+            rssChannelMapper = get(),
+        )
+    }
 
     single {
         FeedStateRepository(

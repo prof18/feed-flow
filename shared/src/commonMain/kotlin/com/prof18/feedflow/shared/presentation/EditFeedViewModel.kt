@@ -6,7 +6,7 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncAccounts
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
@@ -19,8 +19,8 @@ import kotlinx.coroutines.launch
 
 class EditFeedViewModel internal constructor(
     private val categoryUseCase: FeedCategoryRepository,
-    private val feedRetrieverRepository: FeedRetrieverRepository,
     private val accountsRepository: AccountsRepository,
+    private val feedSourcesRepository: FeedSourcesRepository,
 ) : ViewModel() {
     val categoriesState = categoryUseCase.categoriesState
     private var originalFeedSource: FeedSource? = null
@@ -132,7 +132,7 @@ class EditFeedViewModel internal constructor(
             )
 
             if (newFeedSource != null && newFeedSource != originalFeedSource) {
-                val state = feedRetrieverRepository.editFeedSource(
+                val state = feedSourcesRepository.editFeedSource(
                     newFeedSource = newFeedSource,
                     originalFeedSource = originalFeedSource,
                 )

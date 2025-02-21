@@ -3,7 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryName
-import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class AddFeedViewModel internal constructor(
-    private val feedRetrieverRepository: FeedRetrieverRepository,
     private val categoryUseCase: FeedCategoryRepository,
+    private val feedSourcesRepository: FeedSourcesRepository,
 ) : ViewModel() {
 
     private var feedUrl: String = ""
@@ -40,7 +40,7 @@ class AddFeedViewModel internal constructor(
             if (feedUrl.isNotEmpty()) {
                 val categoryName = categoryUseCase.getSelectedCategory()
 
-                val feedAddedState = feedRetrieverRepository.addFeedSource(feedUrl, categoryName)
+                val feedAddedState = feedSourcesRepository.addFeedSource(feedUrl, categoryName)
                 feedAddedMutableState.emit(feedAddedState)
                 if (feedAddedState is FeedAddedState.FeedAdded) {
                     categoryUseCase.initCategories()

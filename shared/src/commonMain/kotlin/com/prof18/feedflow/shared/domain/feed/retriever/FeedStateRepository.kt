@@ -16,6 +16,7 @@ import com.prof18.feedflow.shared.utils.executeWithRetry
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,15 +26,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 
-// TODO: this should be a singleton
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedStateRepository(
     private val databaseHelper: DatabaseHelper,
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
     private val dateFormatter: DateFormatter,
 ) {
-
-    // TODO: call this on HomeViewModel and SearchViewModel
     private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
     val errorState = errorMutableState.asSharedFlow()
 
@@ -67,10 +66,9 @@ internal class FeedStateRepository(
             val hideDesc = settingsRepository.getHideDescription()
             val hideImages = settingsRepository.getHideImages()
 
-            // TODO: check why doing that.
-//            if (feeds.isNotEmpty()) {
-//                updateMutableState.update { FinishedFeedUpdateStatus }
-//            }
+            if (feeds.isNotEmpty()) {
+                updateMutableState.update { FinishedFeedUpdateStatus }
+            }
             mutableFeedState.update {
                 feeds.map {
                     it.toFeedItem(

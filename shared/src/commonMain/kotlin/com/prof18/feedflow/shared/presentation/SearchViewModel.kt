@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
@@ -36,6 +37,7 @@ class SearchViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val dateFormatter: DateFormatter,
     private val feedFontSizeRepository: FeedFontSizeRepository,
+    private val feedStateRepository: FeedStateRepository,
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
@@ -66,7 +68,7 @@ class SearchViewModel internal constructor(
             }.launchIn(viewModelScope)
 
         viewModelScope.launch {
-            feedRetrieverRepository.errorState.collect { error ->
+            feedStateRepository.errorState.collect { error ->
                 when (error) {
                     is FeedErrorState -> {
                         mutableUIErrorState.emit(

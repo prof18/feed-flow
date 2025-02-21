@@ -96,7 +96,7 @@ class FeedSourceListViewModel internal constructor(
 
     private fun observeErrorState() {
         viewModelScope.launch {
-            merge(feedRetrieverRepository.errorState, feedSourcesRepository.errorState)
+            feedStateRepository.errorState
                 .collect { error ->
                     when (error) {
                         is FeedErrorState -> {

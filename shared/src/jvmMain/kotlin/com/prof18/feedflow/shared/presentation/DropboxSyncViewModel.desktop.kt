@@ -17,6 +17,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxException
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -39,6 +40,7 @@ class DropboxSyncViewModel internal constructor(
     private val dateFormatter: DateFormatter,
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val accountsRepository: AccountsRepository,
+    private val feedFetcherRepository: FeedFetcherRepository,
 ) : ViewModel() {
 
     private var pkceWebAuth: DbxPKCEWebAuth? = null
@@ -120,7 +122,7 @@ class DropboxSyncViewModel internal constructor(
                         )
                     }
                     emitSyncLoading()
-                    feedRetrieverRepository.fetchFeeds()
+                    feedFetcherRepository.fetchFeeds()
                     emitLastSyncUpdate()
                 } else {
                     dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)

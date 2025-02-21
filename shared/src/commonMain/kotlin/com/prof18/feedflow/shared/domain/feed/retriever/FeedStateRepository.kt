@@ -8,6 +8,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
+import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
+import com.prof18.feedflow.shared.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.ErrorState
 import com.prof18.feedflow.shared.utils.executeWithRetry
@@ -34,6 +36,11 @@ internal class FeedStateRepository(
     // TODO: call this on HomeViewModel and SearchViewModel
     private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
     val errorState = errorMutableState.asSharedFlow()
+
+    private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
+        FinishedFeedUpdateStatus,
+    )
+    val updateState = updateMutableState.asStateFlow()
 
 
     private val mutableFeedState: MutableStateFlow<ImmutableList<FeedItem>> = MutableStateFlow(persistentListOf())
@@ -199,6 +206,16 @@ internal class FeedStateRepository(
                 }
             }.toImmutableList()
         }
+    }
+
+    fun emitUpdateStatus(status: FeedUpdateStatus) {
+        updateMutableState.update {
+            status
+        }
+    }
+
+    suspend fun emitErrorState(errorState: ErrorState) {
+        errorMutableState.emit(errorState)
     }
 
     private companion object {

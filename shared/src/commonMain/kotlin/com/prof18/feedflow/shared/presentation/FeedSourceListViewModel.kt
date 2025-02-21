@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
+import com.prof18.feedflow.shared.domain.feed.retriever.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
@@ -30,6 +31,7 @@ class FeedSourceListViewModel internal constructor(
     private val feedSourcesRepository: FeedSourcesRepository,
     private val feedRetrieverRepository: FeedRetrieverRepository,
     private val feedStateRepository: FeedStateRepository,
+    private val feedFetcherRepository: FeedFetcherRepository,
 ) : ViewModel() {
 
     private val feedsMutableState: MutableStateFlow<FeedSourceListState> = MutableStateFlow(FeedSourceListState())
@@ -125,7 +127,7 @@ class FeedSourceListViewModel internal constructor(
         viewModelScope.launch {
             setExpandedCategory()
             feedSourcesRepository.deleteFeed(feedSource)
-            feedRetrieverRepository.fetchFeeds()
+            feedFetcherRepository.fetchFeeds()
         }
     }
 

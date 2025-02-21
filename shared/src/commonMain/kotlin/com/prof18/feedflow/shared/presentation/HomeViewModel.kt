@@ -14,7 +14,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
-import com.prof18.feedflow.shared.domain.feed.manager.FeedManagerRepository
+import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.retriever.FeedRetrieverRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel internal constructor(
     private val feedRetrieverRepository: FeedRetrieverRepository,
-    private val feedManagerRepository: FeedManagerRepository,
+    private val feedSourcesRepository: FeedSourcesRepository,
     private val settingsRepository: SettingsRepository,
     private val feedSyncRepository: FeedSyncRepository,
     private val feedFontSizeRepository: FeedFontSizeRepository,
@@ -84,7 +84,7 @@ class HomeViewModel internal constructor(
 
     private suspend fun initDrawerData() {
         combine(
-            feedManagerRepository.observeFeedSourcesByCategoryWithUnreadCount(),
+            feedSourcesRepository.observeFeedSourcesByCategoryWithUnreadCount(),
             feedCategoryRepository.observeCategoriesWithUnreadCount(),
             feedRetrieverRepository.getUnreadTimelineCountFlow(),
             feedRetrieverRepository.getUnreadBookmarksCountFlow(),
@@ -145,7 +145,7 @@ class HomeViewModel internal constructor(
 
     private fun observeErrorState() {
         viewModelScope.launch {
-            merge(feedRetrieverRepository.errorState, feedManagerRepository.errorState)
+            merge(feedRetrieverRepository.errorState, feedSourcesRepository.errorState)
                 .collect { error ->
                     when (error) {
                         is FeedErrorState -> {
@@ -246,7 +246,7 @@ class HomeViewModel internal constructor(
     }
 
     fun deleteAllFeeds() {
-        feedManagerRepository.deleteAllFeeds()
+        feedSourcesRepository.deleteAllFeeds()
     }
 
     fun onFeedFilterSelected(selectedFeedFilter: FeedFilter) {
@@ -271,7 +271,7 @@ class HomeViewModel internal constructor(
 
     fun toggleFeedPin(feedSource: FeedSource) {
         viewModelScope.launch {
-            feedManagerRepository.insertFeedSourcePreference(
+            feedSourcesRepository.insertFeedSourcePreference(
                 feedSourceId = feedSource.id,
                 preference = feedSource.linkOpeningPreference,
                 isHidden = feedSource.isHiddenFromTimeline,
@@ -289,7 +289,7 @@ class HomeViewModel internal constructor(
 
     fun deleteFeedSource(feedSource: FeedSource) {
         viewModelScope.launch {
-            feedManagerRepository.deleteFeed(feedSource)
+            feedSourcesRepository.deleteFeed(feedSource)
             feedRetrieverRepository.fetchFeeds()
         }
     }

@@ -22,7 +22,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
@@ -48,9 +48,7 @@ internal data class EditFeedScreen(
 
         val feedUrl by viewModel.feedUrlState.collectAsState()
         val feedName by viewModel.feedNameState.collectAsState()
-        val linkOpeningPreference by viewModel.linkOpeningPreferenceState.collectAsState()
-        val isHidden by viewModel.isHiddenFromTimelineState.collectAsState()
-        val isPinned by viewModel.isPinnedState.collectAsState()
+        val feedSourceSettings by viewModel.feedSourceSettingsState.collectAsState()
         var showLoading by remember { mutableStateOf(false) }
         var errorMessage by remember { mutableStateOf("") }
         var showError by remember { mutableStateOf(false) }
@@ -101,11 +99,11 @@ internal data class EditFeedScreen(
             feedUrl = feedUrl,
             feedName = feedName,
             showError = showError,
-            errorMessage = errorMessage,
             showLoading = showLoading,
-            categoriesState = categoriesState,
+            errorMessage = errorMessage,
             canEditUrl = viewModel.canEditUrl(),
-            linkOpeningPreference = linkOpeningPreference,
+            categoriesState = categoriesState,
+            feedSourceSettings = feedSourceSettings,
             onFeedUrlUpdated = { url ->
                 viewModel.updateFeedUrlTextFieldValue(url)
             },
@@ -115,11 +113,9 @@ internal data class EditFeedScreen(
             onLinkOpeningPreferenceSelected = { preference ->
                 viewModel.updateLinkOpeningPreference(preference)
             },
-            isHidden = isHidden,
             onHiddenToggled = { hidden ->
                 viewModel.updateIsHiddenFromTimeline(hidden)
             },
-            isPinned = isPinned,
             onPinnedToggled = { pinned ->
                 viewModel.updateIsPinned(pinned)
             },
@@ -166,21 +162,19 @@ internal data class EditFeedScreen(
 private fun EditScreenPreview() {
     FeedFlowTheme {
         EditFeedContent(
-            feedName = "Feed Name",
             feedUrl = "https://www.ablog.com/feed",
+            feedName = "Feed Name",
             showError = false,
             showLoading = false,
-            canEditUrl = true,
             errorMessage = "",
+            canEditUrl = true,
             categoriesState = categoriesExpandedState,
-            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
-            isHidden = false,
-            onHiddenToggled = {},
-            isPinned = false,
-            onPinnedToggled = {},
+            feedSourceSettings = FeedSourceSettings(),
             onFeedUrlUpdated = {},
             onFeedNameUpdated = {},
             onLinkOpeningPreferenceSelected = {},
+            onHiddenToggled = {},
+            onPinnedToggled = {},
             editFeed = { },
             onExpandClick = {},
             onAddCategoryClick = {},

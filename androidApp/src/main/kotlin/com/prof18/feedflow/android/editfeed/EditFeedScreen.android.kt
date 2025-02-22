@@ -18,7 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
@@ -36,9 +36,7 @@ internal fun EditScreen(
 ) {
     val feedUrl by viewModel.feedUrlState.collectAsStateWithLifecycle()
     val feedName by viewModel.feedNameState.collectAsStateWithLifecycle()
-    val linkOpeningPreference by viewModel.linkOpeningPreferenceState.collectAsStateWithLifecycle()
-    val isHidden by viewModel.isHiddenFromTimelineState.collectAsStateWithLifecycle()
-    val isPinned by viewModel.isPinnedState.collectAsStateWithLifecycle()
+    val feedSourceSettings by viewModel.feedSourceSettingsState.collectAsStateWithLifecycle()
     var showLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -93,7 +91,7 @@ internal fun EditScreen(
         showLoading = showLoading,
         categoriesState = categoriesState,
         canEditUrl = viewModel.canEditUrl(),
-        linkOpeningPreference = linkOpeningPreference,
+        feedSourceSettings = feedSourceSettings,
         onFeedUrlUpdated = { url ->
             viewModel.updateFeedUrlTextFieldValue(url)
         },
@@ -103,11 +101,9 @@ internal fun EditScreen(
         onLinkOpeningPreferenceSelected = { preference ->
             viewModel.updateLinkOpeningPreference(preference)
         },
-        isHidden = isHidden,
         onHiddenToggled = { hidden ->
             viewModel.updateIsHiddenFromTimeline(hidden)
         },
-        isPinned = isPinned,
         onPinnedToggled = { pinned ->
             viewModel.updateIsPinned(pinned)
         },
@@ -152,20 +148,18 @@ internal fun EditScreen(
 private fun EditScreenPreview() {
     FeedFlowTheme {
         EditFeedContent(
-            feedName = "Feed Name",
             feedUrl = "https://www.ablog.com/feed",
+            feedName = "Feed Name",
             showError = false,
             showLoading = false,
             errorMessage = "",
             canEditUrl = true,
             categoriesState = categoriesExpandedState,
-            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+            feedSourceSettings = FeedSourceSettings(),
             onFeedUrlUpdated = {},
             onFeedNameUpdated = {},
             onLinkOpeningPreferenceSelected = {},
-            isHidden = false,
             onHiddenToggled = {},
-            isPinned = false,
             onPinnedToggled = {},
             editFeed = { },
             onExpandClick = {},

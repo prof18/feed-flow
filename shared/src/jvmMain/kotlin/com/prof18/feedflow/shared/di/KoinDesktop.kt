@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.database.createDatabaseDriver
+import com.prof18.feedflow.shared.data.MigrateSettings
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
@@ -89,7 +90,18 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     single<Settings> {
         val preferences = Preferences.userRoot()
-        PreferencesSettings(preferences)
+        val nodeName = if (appEnvironment.isRelease()) {
+            "feedflow"
+        } else {
+            "feedflow-dev"
+        }
+        if (!preferences.nodeExists(nodeName)) {
+            MigrateSettings(
+                oldSettings = PreferencesSettings(preferences),
+                newSettings = PreferencesSettings(preferences.node(nodeName)),
+            ).migrate()
+        }
+        PreferencesSettings(preferences.node(nodeName))
     }
 
     factoryOf(::ReaderModeExtractor)

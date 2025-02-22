@@ -42,7 +42,6 @@ internal class FeedFetcherRepository(
     private val dateFormatter: DateFormatter,
 ) {
     private val feedToUpdate = hashSetOf<String>()
-
     private var isFeedSyncDone = true
 
     @Suppress("MagicNumber")
@@ -58,7 +57,6 @@ internal class FeedFetcherRepository(
             }
         }
     }
-
 
     @Suppress("MagicNumber")
     private suspend fun fetchFeedsWithGReader() {

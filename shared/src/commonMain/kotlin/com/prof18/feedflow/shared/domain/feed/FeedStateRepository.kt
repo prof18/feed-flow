@@ -41,7 +41,6 @@ internal class FeedStateRepository(
     )
     val updateState = updateMutableState.asStateFlow()
 
-
     private val mutableFeedState: MutableStateFlow<ImmutableList<FeedItem>> = MutableStateFlow(persistentListOf())
     val feedState = mutableFeedState.asStateFlow()
 
@@ -49,7 +48,6 @@ internal class FeedStateRepository(
     val currentFeedFilter: StateFlow<FeedFilter> = currentFeedFilterMutableState.asStateFlow()
 
     private var currentPage: Int = 0
-
 
     suspend fun getFeeds() {
         try {
@@ -126,8 +124,6 @@ internal class FeedStateRepository(
         }
         getFeeds()
     }
-
-
 
     fun getUnreadFeedCountFlow(): Flow<Long> =
         currentFeedFilter.flatMapLatest { feedFilter ->
@@ -219,5 +215,4 @@ internal class FeedStateRepository(
     private companion object {
         private const val PAGE_SIZE = 40L
     }
-
 }

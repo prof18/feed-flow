@@ -10,8 +10,10 @@ import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.greader.GReaderRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.presentation.model.SyncError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,13 +23,11 @@ internal class FeedCategoryRepository(
     private val accountsRepository: AccountsRepository,
     private val feedSyncRepository: FeedSyncRepository,
     private val gReaderRepository: GReaderRepository,
+    private val feedStateRepository: FeedStateRepository,
 ) {
     private val categoriesMutableState: MutableStateFlow<CategoriesState> = MutableStateFlow(CategoriesState())
     val categoriesState = categoriesMutableState
     private var selectedCategoryName: CategoryName? = null
-
-//    private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
-//    val errorState = errorMutableState.asSharedFlow()
 
     fun onExpandCategoryClick() {
         categoriesMutableState.update { state ->
@@ -59,13 +59,11 @@ internal class FeedCategoryRepository(
                         onSuccess = {
                             gReaderRepository.fetchFeedSourcesAndCategories()
                                 .onErrorSuspend {
-                                    // TODO: handle error?
-//                                    errorMutableState.emit(SyncError)
+                                    feedStateRepository.emitErrorState(SyncError)
                                 }
                         },
                         onFailure = {
-                            // TODO: handle error?
-//                            errorMutableState.emit(SyncError)
+                            feedStateRepository.emitErrorState(SyncError)
                         },
                     )
             }
@@ -76,7 +74,6 @@ internal class FeedCategoryRepository(
             }
         }
     }
-
 
     suspend fun initCategories(selectedCategoryName: CategoryName? = null) {
         this.selectedCategoryName = selectedCategoryName

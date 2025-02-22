@@ -130,6 +130,25 @@ internal class FeedSourcesRepository(
             else -> addFeedSourceForLocalAccount(sanitizeUrl(feedUrl), categoryName)
         }
 
+    suspend fun editFeedSource(
+        newFeedSource: FeedSource,
+        originalFeedSource: FeedSource?,
+    ): FeedEditedState {
+        if (newFeedSource != originalFeedSource) {
+            databaseHelper.insertFeedSourcePreference(
+                feedSourceId = newFeedSource.id,
+                preference = newFeedSource.linkOpeningPreference,
+                isHidden = newFeedSource.isHiddenFromTimeline,
+                isPinned = newFeedSource.isPinned,
+            )
+            feedStateRepository.getFeeds()
+        }
+        return when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> editFeedSourceForFreshRss(newFeedSource, originalFeedSource)
+            else -> editFeedSourceForLocalAccount(newFeedSource, originalFeedSource)
+        }
+    }
+
     private suspend fun addFeedSourceForLocalAccount(
         feedUrl: String,
         categoryName: FeedSourceCategory?,
@@ -213,25 +232,6 @@ internal class FeedSourcesRepository(
             )
         } else {
             return@withContext AddFeedResponse.EmptyFeed
-        }
-    }
-
-    suspend fun editFeedSource(
-        newFeedSource: FeedSource,
-        originalFeedSource: FeedSource?,
-    ): FeedEditedState {
-        if (newFeedSource != originalFeedSource) {
-            databaseHelper.insertFeedSourcePreference(
-                feedSourceId = newFeedSource.id,
-                preference = newFeedSource.linkOpeningPreference,
-                isHidden = newFeedSource.isHiddenFromTimeline,
-                isPinned = newFeedSource.isPinned,
-            )
-            feedStateRepository.getFeeds()
-        }
-        return when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> editFeedSourceForFreshRss(newFeedSource, originalFeedSource)
-            else -> editFeedSourceForLocalAccount(newFeedSource, originalFeedSource)
         }
     }
 

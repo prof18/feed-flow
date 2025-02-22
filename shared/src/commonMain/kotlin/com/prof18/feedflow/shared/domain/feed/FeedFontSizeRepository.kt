@@ -16,15 +16,15 @@ internal class FeedFontSizeRepository(
     )
     val feedFontSizeState = feedFontSizeMutableState.asStateFlow()
 
-    private fun getDefaultFontSize(): FeedFontSizes {
-        val scaleFactor = settingsRepository.getFeedListFontScaleFactor()
-        return FeedFontSizes() + scaleFactor
-    }
-
     fun updateFontScale(value: Int) {
         settingsRepository.setFeedListFontScaleFactor(value)
         feedFontSizeMutableState.update {
             FeedFontSizes() + value
         }
+    }
+
+    private fun getDefaultFontSize(): FeedFontSizes {
+        val scaleFactor = settingsRepository.getFeedListFontScaleFactor()
+        return FeedFontSizes() + scaleFactor
     }
 }

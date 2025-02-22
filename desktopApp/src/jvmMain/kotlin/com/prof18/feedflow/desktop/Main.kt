@@ -305,10 +305,7 @@ fun main() = application {
                         ) { navigator ->
                             FeedFlowMenuBar(
                                 showDebugMenu = appEnvironment.isDebug(),
-                                isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
-                                isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
-                                isReaderModeEnabled = settingsState.isReaderModeEnabled,
-                                autoDeletePeriod = settingsState.autoDeletePeriod,
+                                settingsState = settingsState,
                                 feedFilter = currentFeedFilter,
                                 onRefreshClick = {
                                     scope.launch {

@@ -50,6 +50,7 @@ import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.Browser
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
+import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.search.FeedListFontSettings
@@ -92,15 +93,9 @@ fun SettingsScreen(
         browsers = browserListState,
         onFeedListClick = onFeedListClick,
         onAddFeedClick = onAddFeedClick,
-        isMarkReadWhenScrollingEnabled = settingState.isMarkReadWhenScrollingEnabled,
-        isShowReadItemEnabled = settingState.isShowReadItemsEnabled,
-        isReaderModeEnabled = settingState.isReaderModeEnabled,
-        isRemoveTitleFromDescriptionEnabled = settingState.isRemoveTitleFromDescriptionEnabled,
-        isHideDescriptionEnabled = settingState.isHideDescriptionEnabled,
-        isHideImagesEnabled = settingState.isHideImagesEnabled,
+        settingsState = settingState,
         showAccounts = appConfig.isDropboxSyncEnabled,
         fontSizes = fontSizesState,
-        autoDeletePeriod = settingState.autoDeletePeriod,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
@@ -148,15 +143,9 @@ fun SettingsScreen(
 @Composable
 private fun SettingsScreenContent(
     browsers: ImmutableList<Browser>,
-    isMarkReadWhenScrollingEnabled: Boolean,
-    isShowReadItemEnabled: Boolean,
-    isReaderModeEnabled: Boolean,
-    isRemoveTitleFromDescriptionEnabled: Boolean,
-    isHideDescriptionEnabled: Boolean,
-    isHideImagesEnabled: Boolean,
+    settingsState: SettingsState,
     showAccounts: Boolean,
     fontSizes: FeedFontSizes,
-    autoDeletePeriod: AutoDeletePeriod,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelected: (Browser) -> Unit,
@@ -246,7 +235,7 @@ private fun SettingsScreenContent(
 
             item {
                 AutoDeletePeriodSelector(
-                    currentPeriod = autoDeletePeriod,
+                    currentPeriod = settingsState.autoDeletePeriod,
                     onPeriodSelected = onAutoDeletePeriodSelected,
                 )
             }
@@ -254,20 +243,20 @@ private fun SettingsScreenContent(
             item {
                 ReaderModeSwitch(
                     setReaderMode = setReaderMode,
-                    isReaderModeEnabled = isReaderModeEnabled,
+                    isReaderModeEnabled = settingsState.isReaderModeEnabled,
                 )
             }
 
             item {
                 MarkReadWhenScrollingSwitch(
                     setMarkReadWhenScrolling = setMarkReadWhenScrolling,
-                    isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
+                    isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
                 )
             }
 
             item {
                 ShowReadItemOnTimelineSwitch(
-                    isShowReadItemEnabled = isShowReadItemEnabled,
+                    isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
                     setShowReadItem = setShowReadItem,
                 )
             }
@@ -283,8 +272,8 @@ private fun SettingsScreenContent(
 
             item {
                 FeedListFontSettings(
-                    isHideDescriptionEnabled = isHideDescriptionEnabled,
-                    isHideImagesEnabled = isHideImagesEnabled,
+                    isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
+                    isHideImagesEnabled = settingsState.isHideImagesEnabled,
                     fontSizes = fontSizes,
                     updateFontScale = updateFontScale,
                 )
@@ -294,21 +283,21 @@ private fun SettingsScreenContent(
                 Spacer(modifier = Modifier.padding(top = Spacing.regular))
 
                 HideDescriptionSwitch(
-                    isHideDescriptionEnabled = isHideDescriptionEnabled,
+                    isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
                     setHideDescription = setHideDescription,
                 )
             }
 
             item {
                 HideImagesSwitch(
-                    isHideImagesEnabled = isHideImagesEnabled,
+                    isHideImagesEnabled = settingsState.isHideImagesEnabled,
                     setHideImages = setHideImages,
                 )
             }
 
             item {
                 RemoveTitleFromDescSwitch(
-                    isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
+                    isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
                     setRemoveTitleFromDescription = setRemoveTitleFromDescription,
                 )
             }
@@ -535,15 +524,8 @@ private fun SettingsScreenPreview() {
     FeedFlowTheme {
         SettingsScreenContent(
             browsers = browsersForPreview,
-            isMarkReadWhenScrollingEnabled = true,
-            isShowReadItemEnabled = false,
-            isReaderModeEnabled = false,
-            isRemoveTitleFromDescriptionEnabled = false,
-            isHideDescriptionEnabled = false,
-            isHideImagesEnabled = false,
             showAccounts = true,
             fontSizes = FeedFontSizes(),
-            autoDeletePeriod = AutoDeletePeriod.DISABLED,
             onFeedListClick = {},
             onAddFeedClick = {},
             onBrowserSelected = {},
@@ -560,6 +542,7 @@ private fun SettingsScreenPreview() {
             setHideImages = {},
             updateFontScale = {},
             onAutoDeletePeriodSelected = {},
+            settingsState = SettingsState(),
         )
     }
 }

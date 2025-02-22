@@ -13,16 +13,14 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
+import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun FrameWindowScope.FeedFlowMenuBar(
     showDebugMenu: Boolean,
-    isMarkReadWhenScrollingEnabled: Boolean,
-    isShowReadItemEnabled: Boolean,
-    isReaderModeEnabled: Boolean,
-    autoDeletePeriod: AutoDeletePeriod,
     feedFilter: FeedFilter,
+    settingsState: SettingsState,
     onRefreshClick: () -> Unit,
     onMarkAllReadClick: () -> Unit,
     onImportExportClick: () -> Unit,
@@ -115,41 +113,41 @@ fun FrameWindowScope.FeedFlowMenuBar(
         Menu(LocalFeedFlowStrings.current.settingsBehaviourTitle, mnemonic = 'B') {
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.settingsReaderMode,
-                checked = isReaderModeEnabled,
+                checked = settingsState.isReaderModeEnabled,
                 onCheckedChange = setReaderMode,
             )
 
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.toggleMarkReadWhenScrolling,
-                checked = isMarkReadWhenScrollingEnabled,
+                checked = settingsState.isMarkReadWhenScrollingEnabled,
                 onCheckedChange = setMarkReadWhenScrolling,
             )
 
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
-                checked = isShowReadItemEnabled,
+                checked = settingsState.isShowReadItemsEnabled,
                 onCheckedChange = setShowReadItem,
             )
 
             Menu(LocalFeedFlowStrings.current.settingsAutoDelete) {
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodDisabled,
-                    selected = autoDeletePeriod == AutoDeletePeriod.DISABLED,
+                    selected = settingsState.autoDeletePeriod == AutoDeletePeriod.DISABLED,
                     onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.DISABLED) },
                 )
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneWeek,
-                    selected = autoDeletePeriod == AutoDeletePeriod.ONE_WEEK,
+                    selected = settingsState.autoDeletePeriod == AutoDeletePeriod.ONE_WEEK,
                     onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_WEEK) },
                 )
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodTwoWeeks,
-                    selected = autoDeletePeriod == AutoDeletePeriod.TWO_WEEKS,
+                    selected = settingsState.autoDeletePeriod == AutoDeletePeriod.TWO_WEEKS,
                     onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.TWO_WEEKS) },
                 )
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneMonth,
-                    selected = autoDeletePeriod == AutoDeletePeriod.ONE_MONTH,
+                    selected = settingsState.autoDeletePeriod == AutoDeletePeriod.ONE_MONTH,
                     onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_MONTH) },
                 )
             }

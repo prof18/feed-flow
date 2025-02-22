@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MarkAsUnread
+import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
@@ -42,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.CrashlyticsHelper
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelector
 import com.prof18.feedflow.core.model.AutoDeletePeriod
@@ -76,7 +78,6 @@ fun SettingsScreen(
     navigateToAccounts: () -> Unit,
 ) {
     val context = LocalContext.current
-
     val browserManager = koinInject<BrowserManager>()
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val appConfig = koinInject<AppConfig>()
@@ -101,6 +102,7 @@ fun SettingsScreen(
         },
         navigateBack = navigateBack,
         onAboutClick = onAboutClick,
+        showCrashReporting = appConfig.isLoggingEnabled,
         onBugReportClick = {
             val uri = Uri.parse(
                 UserFeedbackReporter.getEmailUrl(
@@ -137,6 +139,12 @@ fun SettingsScreen(
         onAutoDeletePeriodSelected = { period ->
             settingsViewModel.updateAutoDeletePeriod(period)
         },
+        onCrashReportingEnabled = { enabled ->
+            settingsViewModel.updateCrashReporting(enabled)
+            if (appConfig.isLoggingEnabled) {
+                CrashlyticsHelper.setCollectionEnabled(enabled)
+            }
+        },
     )
 }
 
@@ -146,6 +154,7 @@ private fun SettingsScreenContent(
     settingsState: SettingsState,
     showAccounts: Boolean,
     fontSizes: FeedFontSizes,
+    showCrashReporting: Boolean,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
     onBrowserSelected: (Browser) -> Unit,
@@ -162,6 +171,7 @@ private fun SettingsScreenContent(
     setHideImages: (Boolean) -> Unit,
     updateFontScale: (Int) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
+    onCrashReportingEnabled: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -317,6 +327,38 @@ private fun SettingsScreenContent(
                     icon = Icons.Outlined.BugReport,
                     onClick = onBugReportClick,
                 )
+            }
+
+            if (showCrashReporting) {
+                item {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable {
+                                onCrashReportingEnabled(!settingsState.isCrashReportingEnabled)
+                            }
+                            .fillMaxWidth()
+                            .padding(vertical = Spacing.xsmall)
+                            .padding(horizontal = Spacing.regular),
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+                    ) {
+                        Icon(
+                            Icons.Outlined.Report,
+                            contentDescription = null,
+                        )
+
+                        Text(
+                            text = LocalFeedFlowStrings.current.settingsCrashReporting,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Switch(
+                            checked = settingsState.isCrashReportingEnabled,
+                            onCheckedChange = onCrashReportingEnabled,
+                            interactionSource = remember { MutableInteractionSource() },
+                        )
+                    }
+                }
             }
 
             item {
@@ -524,6 +566,7 @@ private fun SettingsScreenPreview() {
     FeedFlowTheme {
         SettingsScreenContent(
             browsers = browsersForPreview,
+            settingsState = SettingsState(),
             showAccounts = true,
             fontSizes = FeedFontSizes(),
             onFeedListClick = {},
@@ -542,7 +585,8 @@ private fun SettingsScreenPreview() {
             setHideImages = {},
             updateFontScale = {},
             onAutoDeletePeriodSelected = {},
-            settingsState = SettingsState(),
+            onCrashReportingEnabled = {},
+            showCrashReporting = true,
         )
     }
 }

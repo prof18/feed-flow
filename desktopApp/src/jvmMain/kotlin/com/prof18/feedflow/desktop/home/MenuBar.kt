@@ -34,6 +34,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     setReaderMode: (Boolean) -> Unit,
     onFeedFontScaleClick: () -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
+    setCrashReportingEnabled: (Boolean) -> Unit,
 ) {
     MenuBar {
         Menu("File", mnemonic = 'F') {
@@ -157,6 +158,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Item(
                 text = LocalFeedFlowStrings.current.reportIssueButton,
                 onClick = onBugReportClick,
+            )
+
+            CheckboxItem(
+                text = LocalFeedFlowStrings.current.settingsCrashReporting,
+                checked = settingsState.isCrashReportingEnabled,
+                onCheckedChange = setCrashReportingEnabled
             )
 
             Item(

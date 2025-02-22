@@ -40,7 +40,7 @@ fun initKoinDesktop(
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
-        isLoggingEnabled = true,
+        isLoggingEnabled = appEnvironment.isRelease(),
         isDropboxSyncEnabled = true,
         isIcloudSyncEnabled = isICloudEnabled,
     ),

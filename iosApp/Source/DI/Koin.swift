@@ -21,20 +21,14 @@ func startKoin() {
     let languageCode = currentLocale.language.languageCode?.identifier
     let regionCode = currentLocale.region?.identifier
 
-    let koinApplication = doInitKoinIos(
+    _ = doInitKoinIos(
         htmlParser: IosHtmlParser(),
         appEnvironment: appEnvironment,
         languageCode: languageCode,
         regionCode: regionCode,
         dropboxDataSource: DropboxDataSourceIos()
     )
-    _koin = koinApplication.koin
     _feedFlowStrings = Deps.shared.getFeedFlowStrings()
-}
-
-private var _koin: Koin_coreKoin?
-var koin: Koin_coreKoin {
-    return _koin!
 }
 
 private var _feedFlowStrings: FeedFlowStrings?

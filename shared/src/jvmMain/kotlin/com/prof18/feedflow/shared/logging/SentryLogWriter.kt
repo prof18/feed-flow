@@ -26,11 +26,13 @@ class SentryLogWriter(
     override fun isLoggable(tag: String, severity: Severity): Boolean = severity >= minSeverity
 
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
-        Sentry.captureMessage(
-            messageStringFormatter.formatMessage(severity, Tag(tag), Message(message)),
-        )
-        if (throwable != null && minCrashSeverity != null && severity >= minCrashSeverity) {
-            Sentry.captureException(throwable)
+        if (Sentry.isEnabled()) {
+            Sentry.captureMessage(
+                messageStringFormatter.formatMessage(severity, Tag(tag), Message(message)),
+            )
+            if (throwable != null && minCrashSeverity != null && severity >= minCrashSeverity) {
+                Sentry.captureException(throwable)
+            }
         }
     }
 }

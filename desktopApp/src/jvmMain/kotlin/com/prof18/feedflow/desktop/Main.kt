@@ -32,7 +32,9 @@ import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
+import com.prof18.feedflow.desktop.utils.disableSentry
 import com.prof18.feedflow.desktop.utils.initSentry
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -83,13 +85,6 @@ fun main() = application {
         AppEnvironment.Debug
     }
 
-    if (appEnvironment.isRelease() && sentryDns != null && version != null) {
-        initSentry(
-            dns = sentryDns,
-            version = version,
-        )
-    }
-
     val isSandboxed = System.getenv("APP_SANDBOX_CONTAINER_ID") != null
     val resourcesPath = System.getProperty("compose.application.resources.dir")
     if (isSandboxed) {
@@ -119,6 +114,15 @@ fun main() = application {
         appEnvironment = appEnvironment,
         isICloudEnabled = isIcloudEnabled,
     )
+
+    val isCrashReportEnabled = DI.koin.get<SettingsRepository>().getCrashReportingEnabled()
+
+    if (appEnvironment.isRelease() && sentryDns != null && version != null && isCrashReportEnabled) {
+        initSentry(
+            dns = sentryDns,
+            version = version,
+        )
+    }
 
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
@@ -358,6 +362,19 @@ fun main() = application {
                                 },
                                 onAutoDeletePeriodSelected = { period ->
                                     settingsViewModel.updateAutoDeletePeriod(period)
+                                },
+                                setCrashReportingEnabled = { enabled ->
+                                    settingsViewModel.updateCrashReporting(enabled)
+                                    if (enabled) {
+                                        if (appEnvironment.isRelease() && sentryDns != null && version != null) {
+                                            initSentry(
+                                                dns = sentryDns,
+                                                version = version,
+                                            )
+                                        }
+                                    } else {
+                                        disableSentry()
+                                    }
                                 },
                             )
 

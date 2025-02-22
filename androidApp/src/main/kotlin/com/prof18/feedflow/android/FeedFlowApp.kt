@@ -7,10 +7,12 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.dsl.module
@@ -38,9 +40,8 @@ class FeedFlowApp : Application() {
             isIcloudSyncEnabled = false,
         )
 
-        val crashlyticsHelper = CrashlyticsHelper()
         if (isGooglePlayFlavor && appEnvironment.isRelease()) {
-            crashlyticsHelper.initCrashlytics()
+            CrashlyticsHelper.initCrashlytics()
         }
 
         initKoin(
@@ -48,7 +49,7 @@ class FeedFlowApp : Application() {
             platformSetup = {
                 workManagerFactory()
             },
-            crashReportingLogWriter = crashlyticsHelper.crashReportingLogWriter(),
+            crashReportingLogWriter = CrashlyticsHelper.crashReportingLogWriter(),
             modules = listOf(
                 module {
                     single<Context> { this@FeedFlowApp }
@@ -70,6 +71,12 @@ class FeedFlowApp : Application() {
                 },
             ),
         )
+
+        if (isGooglePlayFlavor && appEnvironment.isRelease()) {
+            CrashlyticsHelper.setCollectionEnabled(
+                enabled = getKoin().get<SettingsRepository>().getCrashReportingEnabled(),
+            )
+        }
 
         with(ProcessLifecycleOwner.get()) {
             lifecycle.addObserver(

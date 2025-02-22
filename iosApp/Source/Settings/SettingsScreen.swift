@@ -7,6 +7,7 @@
 //
 
 import FeedFlowKit
+import FirebaseCrashlytics
 import SwiftUI
 
 struct SettingsScreen: View {
@@ -25,11 +26,13 @@ struct SettingsScreen: View {
     @State private var isHideDescriptionEnabled = false
     @State private var isHideImagesEnabled = false
     @State private var autoDeletePeriod: AutoDeletePeriod = .disabled
+    @State private var isCrashReportingEnabled = true
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor = 0.0
 
     @State private var imageUrl: String? = "https://lipsum.app/200x200"
-    @State private var articleDescription: String? = feedFlowStrings.settingsFontScaleSubtitleExample
+    @State private var articleDescription: String? = feedFlowStrings
+        .settingsFontScaleSubtitleExample
 
     var body: some View {
         settingsContent
@@ -42,6 +45,7 @@ struct SettingsScreen: View {
                     isHideDescriptionEnabled = state.isHideDescriptionEnabled
                     isHideImagesEnabled = state.isHideImagesEnabled
                     autoDeletePeriod = state.autoDeletePeriod
+                    isCrashReportingEnabled = state.isCrashReportingEnabled
                 }
             }
             .task {
@@ -51,7 +55,8 @@ struct SettingsScreen: View {
                 }
             }
             .onChange(of: isMarkReadWhenScrollingEnabled) {
-                vmStoreOwner.instance.updateMarkReadWhenScrolling(value: isMarkReadWhenScrollingEnabled)
+                vmStoreOwner.instance.updateMarkReadWhenScrolling(
+                    value: isMarkReadWhenScrollingEnabled)
             }
             .onChange(of: isShowReadItemEnabled) {
                 vmStoreOwner.instance.updateShowReadItemsOnTimeline(value: isShowReadItemEnabled)
@@ -82,6 +87,12 @@ struct SettingsScreen: View {
             .onChange(of: autoDeletePeriod) {
                 vmStoreOwner.instance.updateAutoDeletePeriod(period: autoDeletePeriod)
             }
+            .onChange(of: isCrashReportingEnabled) {
+                vmStoreOwner.instance.updateCrashReporting(value: isCrashReportingEnabled)
+                #if !DEBUG
+                    Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(isCrashReportingEnabled)
+                #endif
+            }
     }
 
     private var settingsContent: some View {
@@ -107,7 +118,7 @@ struct SettingsScreen: View {
                         vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
                     }
                 )
-                AppSection(openURL: openURL)
+                AppSection(openURL: openURL, isCrashReportingEnabled: $isCrashReportingEnabled)
             }
             .scrollContentBackground(.hidden)
             .toolbar {
@@ -306,6 +317,7 @@ private struct FeedFontSection: View {
 
 private struct AppSection: View {
     let openURL: OpenURLAction
+    @Binding var isCrashReportingEnabled: Bool
 
     var body: some View {
         Section(feedFlowStrings.settingsAppTitle) {
@@ -315,7 +327,9 @@ private struct AppSection: View {
                     let content = feedFlowStrings.issueContentTemplate
 
                     if let url = URL(
-                        string: UserFeedbackReporter.shared.getEmailUrl(subject: subject, content: content)
+                        string: UserFeedbackReporter.shared.getEmailUrl(
+                            subject: subject, content: content
+                        )
                     ) {
                         openURL(url)
                     }
@@ -324,6 +338,15 @@ private struct AppSection: View {
                     Label(feedFlowStrings.reportIssueButton, systemImage: "ladybug")
                 }
             )
+
+            Toggle(isOn: $isCrashReportingEnabled) {
+                Label(
+                    feedFlowStrings.settingsCrashReporting,
+                    systemImage: "exclamationmark.bubble.fill"
+                )
+            }.onTapGesture {
+                isCrashReportingEnabled.toggle()
+            }
 
             NavigationLink(destination: AboutScreen()) {
                 Label(feedFlowStrings.aboutButton, systemImage: "info.circle")

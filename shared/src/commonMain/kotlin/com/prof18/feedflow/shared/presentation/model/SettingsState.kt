@@ -10,4 +10,5 @@ data class SettingsState(
     val isHideDescriptionEnabled: Boolean = false,
     val isHideImagesEnabled: Boolean = false,
     val autoDeletePeriod: AutoDeletePeriod = AutoDeletePeriod.DISABLED,
+    val isCrashReportingEnabled: Boolean = true,
 )

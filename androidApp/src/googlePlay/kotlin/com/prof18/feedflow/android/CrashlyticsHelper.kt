@@ -7,10 +7,13 @@ import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 
-class CrashlyticsHelper {
+object CrashlyticsHelper {
     fun initCrashlytics() {
-        Firebase.crashlytics.setCrashlyticsCollectionEnabled(true)
         enableCrashlytics()
+    }
+
+    fun setCollectionEnabled(enabled: Boolean) {
+        Firebase.crashlytics.isCrashlyticsCollectionEnabled = enabled
     }
 
     @OptIn(ExperimentalKermitApi::class)

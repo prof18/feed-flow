@@ -94,6 +94,12 @@ class SettingsRepository(
     fun setHideImages(value: Boolean) =
         settings.set(SettingsFields.HIDE_IMAGES.name, value)
 
+    fun getCrashReportingEnabled(): Boolean =
+        settings.getBoolean(SettingsFields.CRASH_REPORTING_ENABLED.name, true)
+
+    fun setCrashReportingEnabled(value: Boolean) =
+        settings.set(SettingsFields.CRASH_REPORTING_ENABLED.name, value)
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -112,4 +118,5 @@ internal enum class SettingsFields {
     FEED_LIST_FONT_SCALE_FACTOR,
     AUTO_DELETE_PERIOD,
     HIDE_IMAGES,
+    CRASH_REPORTING_ENABLED,
 }

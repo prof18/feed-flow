@@ -96,6 +96,7 @@
     <string name="accounts_description">Connect an account to sync feed subscriptions, categories, read and bookmarked articles between your devices.\n\nThe functionality is in Beta, issues may occur (for example, read articles might not be fully synced). More services will be supported in the future.\n\nOnly one account at the same time is supported.</string>
     <string name="settings_behaviour_title">Behaviour</string>
     <string name="settings_help_title">Help</string>
+    <string name="settings_crash_reporting">Send anonymous crash reports</string>
     <string name="account_connect_button">Connect</string>
     <string name="account_disconnect_button">Disconnect</string>
     <string name="backup_button">Backup</string>

@@ -34,6 +34,7 @@ class SettingsViewModel internal constructor(
             val isHideDescriptionEnabled = settingsRepository.getHideDescription()
             val isHideImagesEnabled = settingsRepository.getHideImages()
             val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
+            val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
             settingsMutableState.update {
                 SettingsState(
                     isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
@@ -43,6 +44,7 @@ class SettingsViewModel internal constructor(
                     isHideDescriptionEnabled = isHideDescriptionEnabled,
                     isHideImagesEnabled = isHideImagesEnabled,
                     autoDeletePeriod = autoDeletePeriod,
+                    isCrashReportingEnabled = isCrashReportingEnabled,
                 )
             }
         }
@@ -125,6 +127,15 @@ class SettingsViewModel internal constructor(
         }
         viewModelScope.launch {
             feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateCrashReporting(value: Boolean) {
+        settingsRepository.setCrashReportingEnabled(value)
+        settingsMutableState.update {
+            it.copy(
+                isCrashReportingEnabled = value,
+            )
         }
     }
 }

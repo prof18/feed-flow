@@ -1,5 +1,6 @@
 import FeedFlowKit
 import FirebaseCore
+import FirebaseCrashlytics
 import SwiftUI
 import SwiftyDropbox
 
@@ -18,6 +19,10 @@ struct FeedFlowApp: App {
             setupCrashlytics()
         #endif
         startKoin()
+        #if !DEBUG
+            let isCrashReportEnabled = Deps.shared.getSettingsRepository().getCrashReportingEnabled()
+            Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(isCrashReportEnabled)
+        #endif
 
         if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
             if let keys = NSDictionary(contentsOfFile: path) {

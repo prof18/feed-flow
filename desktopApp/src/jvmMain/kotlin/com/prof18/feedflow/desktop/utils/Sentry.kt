@@ -17,3 +17,7 @@ fun initSentry(
         )
     }
 }
+
+fun disableSentry() {
+    Sentry.close()
+}

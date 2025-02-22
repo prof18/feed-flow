@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.feed.CategoriesSelector
@@ -37,9 +38,7 @@ fun EditFeedContent(
     errorMessage: String,
     canEditUrl: Boolean,
     categoriesState: CategoriesState,
-    linkOpeningPreference: LinkOpeningPreference,
-    isHidden: Boolean,
-    isPinned: Boolean,
+    feedSourceSettings: FeedSourceSettings,
     onFeedUrlUpdated: (String) -> Unit,
     onFeedNameUpdated: (String) -> Unit,
     onLinkOpeningPreferenceSelected: (LinkOpeningPreference) -> Unit,
@@ -94,7 +93,7 @@ fun EditFeedContent(
                     modifier = Modifier
                         .padding(top = Spacing.regular)
                         .fillMaxWidth(),
-                    currentPreference = linkOpeningPreference,
+                    currentPreference = feedSourceSettings.linkOpeningPreference,
                     onPreferenceSelected = onLinkOpeningPreferenceSelected,
                 )
             }
@@ -108,12 +107,12 @@ fun EditFeedContent(
                     Text(
                         text = LocalFeedFlowStrings.current.hideFeedFromTimelineDescription,
                         modifier = Modifier.padding(top = Spacing.xsmall)
-                            .weight(1f)
+                            .weight(1f),
                     )
                     Switch(
-                        checked = isHidden,
+                        checked = feedSourceSettings.isHiddenFromTimeline,
                         onCheckedChange = onHiddenToggled,
-                        modifier = Modifier.padding(start = Spacing.regular)
+                        modifier = Modifier.padding(start = Spacing.regular),
                     )
                 }
             }
@@ -127,12 +126,12 @@ fun EditFeedContent(
                     Text(
                         text = LocalFeedFlowStrings.current.pinFeedSourceDescription,
                         modifier = Modifier.padding(top = Spacing.xsmall)
-                            .weight(1f)
+                            .weight(1f),
                     )
                     Switch(
-                        checked = isPinned,
+                        checked = feedSourceSettings.isPinned,
                         onCheckedChange = onPinnedToggled,
-                        modifier = Modifier.padding(start = Spacing.regular)
+                        modifier = Modifier.padding(start = Spacing.regular),
                     )
                 }
             }

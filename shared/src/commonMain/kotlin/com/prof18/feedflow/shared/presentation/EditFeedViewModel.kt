@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
@@ -31,14 +32,8 @@ class EditFeedViewModel internal constructor(
     private val feedNameMutableState = MutableStateFlow("")
     val feedNameState = feedNameMutableState.asStateFlow()
 
-    private val linkOpeningPreferenceMutableState = MutableStateFlow(LinkOpeningPreference.DEFAULT)
-    val linkOpeningPreferenceState = linkOpeningPreferenceMutableState.asStateFlow()
-
-    private val isHiddenFromTimelineMutableState = MutableStateFlow(false)
-    val isHiddenFromTimelineState = isHiddenFromTimelineMutableState.asStateFlow()
-
-    private val isPinnedMutableState = MutableStateFlow(false)
-    val isPinnedState = isPinnedMutableState.asStateFlow()
+    private val feedSourceSettingsMutableState = MutableStateFlow(FeedSourceSettings())
+    val feedSourceSettingsState = feedSourceSettingsMutableState.asStateFlow()
 
     private val feedEditedMutableState: MutableSharedFlow<FeedEditedState> = MutableSharedFlow()
     val feedEditedState = feedEditedMutableState.asSharedFlow()
@@ -61,21 +56,27 @@ class EditFeedViewModel internal constructor(
     }
 
     fun updateLinkOpeningPreference(preference: LinkOpeningPreference) {
-        linkOpeningPreferenceMutableState.update { preference }
+        feedSourceSettingsMutableState.update { oldValue ->
+            oldValue.copy(linkOpeningPreference = preference)
+        }
         viewModelScope.launch {
             feedEditedMutableState.emit(FeedEditedState.Idle)
         }
     }
 
     fun updateIsHiddenFromTimeline(isHidden: Boolean) {
-        isHiddenFromTimelineMutableState.update { isHidden }
+        feedSourceSettingsMutableState.update { oldValue ->
+            oldValue.copy(isHiddenFromTimeline = isHidden)
+        }
         viewModelScope.launch {
             feedEditedMutableState.emit(FeedEditedState.Idle)
         }
     }
 
     fun updateIsPinned(isPinned: Boolean) {
-        isPinnedMutableState.update { isPinned }
+        feedSourceSettingsMutableState.update { oldValue ->
+            oldValue.copy(isPinned = isPinned)
+        }
         viewModelScope.launch {
             feedEditedMutableState.emit(FeedEditedState.Idle)
         }
@@ -87,9 +88,13 @@ class EditFeedViewModel internal constructor(
         viewModelScope.launch {
             feedUrlMutableState.update { feedSource.url }
             feedNameMutableState.update { feedSource.title }
-            linkOpeningPreferenceMutableState.update { feedSource.linkOpeningPreference }
-            isHiddenFromTimelineMutableState.update { feedSource.isHiddenFromTimeline }
-            isPinnedMutableState.update { feedSource.isPinned }
+            feedSourceSettingsMutableState.update {
+                FeedSourceSettings(
+                    linkOpeningPreference = feedSource.linkOpeningPreference,
+                    isHiddenFromTimeline = feedSource.isHiddenFromTimeline,
+                    isPinned = feedSource.isPinned,
+                )
+            }
 
             val categoryName = feedSource.category?.title?.let { CategoryName(it) }
             categoryUseCase.initCategories(categoryName)
@@ -126,9 +131,9 @@ class EditFeedViewModel internal constructor(
                 url = feedUrlState.value,
                 title = feedNameState.value,
                 category = selectedCategory,
-                linkOpeningPreference = linkOpeningPreferenceState.value,
-                isHiddenFromTimeline = isHiddenFromTimelineState.value,
-                isPinned = isPinnedState.value,
+                linkOpeningPreference = feedSourceSettingsState.value.linkOpeningPreference,
+                isHiddenFromTimeline = feedSourceSettingsState.value.isHiddenFromTimeline,
+                isPinned = feedSourceSettingsState.value.isPinned,
             )
 
             if (newFeedSource != null && newFeedSource != originalFeedSource) {

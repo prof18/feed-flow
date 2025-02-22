@@ -135,18 +135,10 @@ struct EditFeedScreen: View {
                 }
             }
             .task {
-                for await state in vmStoreOwner.instance.linkOpeningPreferenceState {
-                    self.linkOpeningPreference = state
-                }
-            }
-            .task {
-                for await state in vmStoreOwner.instance.isHiddenFromTimelineState {
-                    self.isHidden = state as? Bool ?? false
-                }
-            }
-            .task {
-                for await state in vmStoreOwner.instance.isPinnedState {
-                    self.isPinned = state as? Bool ?? false
+                for await state in vmStoreOwner.instance.feedSourceSettingsState {
+                    self.linkOpeningPreference = state.linkOpeningPreference
+                    self.isHidden = state.isHiddenFromTimeline
+                    self.isPinned = state.isPinned
                 }
             }
         }

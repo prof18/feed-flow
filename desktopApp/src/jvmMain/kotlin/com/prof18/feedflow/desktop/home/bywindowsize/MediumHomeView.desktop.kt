@@ -63,6 +63,7 @@ internal fun MediumView(
     onPinFeedClick: (FeedSource) -> Unit,
     markAllAsRead: () -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     var isDrawerMenuFullVisible by remember {
         mutableStateOf(true)
@@ -95,6 +96,7 @@ internal fun MediumView(
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onPinFeedClick = onPinFeedClick,
                     onEditCategoryClick = onEditCategoryClick,
+                    onDeleteCategoryClick = onDeleteCategoryClick,
                 )
             }
         }
@@ -165,6 +167,7 @@ private fun MediumViewPreview() {
             onPinFeedClick = {},
             markAllAsRead = {},
             onEditCategoryClick = { _, _ -> },
+            onDeleteCategoryClick = { },
         )
     }
 }

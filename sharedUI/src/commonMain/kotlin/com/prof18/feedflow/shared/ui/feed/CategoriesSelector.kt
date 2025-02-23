@@ -49,6 +49,7 @@ import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
+import com.prof18.feedflow.shared.ui.components.DeleteCategoryDialog
 import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
 
 @Composable
@@ -107,37 +108,17 @@ private fun CategoriesList(
     var categoryToDelete by remember { mutableStateOf<CategoryId?>(null) }
     var categoryToEdit by remember { mutableStateOf<CategoriesState.CategoryItem?>(null) }
 
-    if (showDeleteDialog && categoryToDelete != null) {
-        AlertDialog(
-            onDismissRequest = { 
-                showDeleteDialog = false
-                categoryToDelete = null
-            },
-            title = { Text(LocalFeedFlowStrings.current.deleteCategoryConfirmationTitle) },
-            text = { Text(LocalFeedFlowStrings.current.deleteCategoryConfirmationMessage) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        categoryToDelete?.let { onDeleteCategoryClick(it) }
-                        showDeleteDialog = false
-                        categoryToDelete = null
-                    }
-                ) {
-                    Text(LocalFeedFlowStrings.current.deleteFeed)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { 
-                        showDeleteDialog = false
-                        categoryToDelete = null
-                    }
-                ) {
-                    Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
-                }
-            }
-        )
-    }
+    DeleteCategoryDialog(
+        showDialog = showDeleteDialog && categoryToDelete != null,
+        categoryId = categoryToDelete ?: CategoryId(""),
+        onDismiss = {
+            showDeleteDialog = false
+            categoryToDelete = null
+        },
+        onDeleteCategory = { categoryId ->
+            onDeleteCategoryClick(categoryId)
+        }
+    )
 
     EditCategoryDialog(
         showDialog = categoryToEdit != null,

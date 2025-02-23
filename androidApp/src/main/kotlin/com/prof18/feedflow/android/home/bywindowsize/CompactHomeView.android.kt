@@ -57,6 +57,7 @@ internal fun CompactHomeView(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -80,6 +81,7 @@ internal fun CompactHomeView(
                     onEditFeedClick = onEditFeedClick,
                     onPinFeedClick = onPinFeedClick,
                     onEditCategoryClick = onEditCategoryClick,
+                    onDeleteCategoryClick = onDeleteCategoryClick,
                 )
             }
         },
@@ -156,6 +158,7 @@ private fun CompactHomeViewPreview() {
             onDeleteFeedSourceClick = { },
             onPinFeedClick = { },
             onEditCategoryClick = { _, _ -> },
+            onDeleteCategoryClick = { },
         )
     }
 }

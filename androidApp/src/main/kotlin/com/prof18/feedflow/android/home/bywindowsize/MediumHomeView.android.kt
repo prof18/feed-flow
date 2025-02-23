@@ -62,6 +62,7 @@ internal fun MediumHomeView(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -93,6 +94,7 @@ internal fun MediumHomeView(
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onPinFeedClick = onPinFeedClick,
                     onEditCategoryClick = onEditCategoryClick,
+                    onDeleteCategoryClick = onDeleteCategoryClick,
                 )
             }
         }
@@ -165,6 +167,7 @@ private fun MediumHomeViewPreview() {
             onDeleteFeedSourceClick = { _ -> },
             onPinFeedClick = { _ -> },
             onEditCategoryClick = { _, _ -> },
+            onDeleteCategoryClick = { },
         )
     }
 }

@@ -96,7 +96,8 @@ struct RegularView: View {
                 onUpdateCategoryName: { categoryId, categoryName in
                     homeViewModel.updateCategoryName(
                         categoryId: CategoryId(value: categoryId),
-                        newName: CategoryName(name: categoryName))
+                        newName: CategoryName(name: categoryName)
+                    )
                 }
             )
             .navigationBarTitleDisplayMode(.inline)

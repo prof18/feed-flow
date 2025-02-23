@@ -57,6 +57,7 @@ internal fun CompactView(
     onPinFeedClick: (FeedSource) -> Unit,
     markAllAsRead: () -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -82,6 +83,7 @@ internal fun CompactView(
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onPinFeedClick = onPinFeedClick,
                     onEditCategoryClick = onEditCategoryClick,
+                    onDeleteCategoryClick = onDeleteCategoryClick,
                 )
             }
         },
@@ -156,6 +158,7 @@ private fun CompactViewPreview() {
             onPinFeedClick = {},
             markAllAsRead = {},
             onEditCategoryClick = { _, _ -> },
+            onDeleteCategoryClick = { },
         )
     }
 }

@@ -292,7 +292,7 @@ class GReaderRepository internal constructor(
         databaseHelper.updateCategoryNameAndId(
             oldId = categoryId.value,
             newId = newCategoryId,
-            newName = newName.name
+            newName = newName.name,
         )
         return Unit.success()
     }

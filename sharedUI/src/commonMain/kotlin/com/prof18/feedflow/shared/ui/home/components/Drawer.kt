@@ -82,6 +82,7 @@ fun Drawer(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -161,6 +162,7 @@ fun Drawer(
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
                     onEditCategoryClick = onEditCategoryClick,
+                    onDeleteCategoryClick = onDeleteCategoryClick,
                 )
             }
         }
@@ -319,6 +321,7 @@ private fun DrawerCategoriesSection(
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     Column {
         Text(
@@ -335,6 +338,7 @@ private fun DrawerCategoriesSection(
                 drawerCategory = category as DrawerItem.DrawerCategory,
                 onFeedFilterSelected = onFeedFilterSelected,
                 onEditCategoryClick = onEditCategoryClick,
+                onDeleteCategoryClick = onDeleteCategoryClick,
             )
         }
     }
@@ -346,6 +350,7 @@ private fun DrawerCategoryItem(
     drawerCategory: DrawerItem.DrawerCategory,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     val colors = NavigationDrawerItemDefaults.colors(
         unselectedContainerColor = Color.Transparent,
@@ -426,10 +431,12 @@ private fun DrawerCategoryItem(
         CategoryContextMenu(
             showMenu = showMenu,
             hideMenu = { showMenu = false },
+            categoryId = CategoryId(drawerCategory.category.id),
             onEditCategoryClick = {
                 showMenu = false
                 showEditDialog = true
             },
+            onDeleteCategoryClick = onDeleteCategoryClick,
         )
     }
 

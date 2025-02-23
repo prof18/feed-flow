@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.DeleteOutline
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.IntSize
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -54,6 +56,7 @@ internal fun CategoriesSelector(
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ExposedDropdownMenuBox(
@@ -83,6 +86,7 @@ internal fun CategoriesSelector(
                 categoriesState = categoriesState,
                 onAddCategoryClick = onAddCategoryClick,
                 onDeleteCategoryClick = onDeleteCategoryClick,
+                onEditCategoryClick = onEditCategoryClick,
                 modifier = Modifier
                     .padding(top = Spacing.small),
             )
@@ -96,9 +100,12 @@ private fun CategoriesList(
     categoriesState: CategoriesState,
     onAddCategoryClick: (CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     var categoryToDelete by remember { mutableStateOf<CategoryId?>(null) }
+    var categoryToEdit by remember { mutableStateOf<CategoriesState.CategoryItem?>(null) }
+    var editedCategoryName by remember { mutableStateOf("") }
 
     if (showDeleteDialog && categoryToDelete != null) {
         AlertDialog(
@@ -124,6 +131,53 @@ private fun CategoriesList(
                     onClick = { 
                         showDeleteDialog = false
                         categoryToDelete = null
+                    }
+                ) {
+                    Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
+                }
+            }
+        )
+    }
+
+    if (categoryToEdit != null) {
+        AlertDialog(
+            onDismissRequest = {
+                categoryToEdit = null
+                editedCategoryName = ""
+            },
+            title = { Text(LocalFeedFlowStrings.current.editCategory) },
+            text = {
+                OutlinedTextField(
+                    value = editedCategoryName,
+                    onValueChange = { editedCategoryName = it },
+                    label = { Text(LocalFeedFlowStrings.current.categoryName) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = editedCategoryName.isNotBlank(),
+                    onClick = {
+                        if (editedCategoryName.isNotBlank()) {
+                            categoryToEdit?.let {
+                                onEditCategoryClick(CategoryId(it.id), CategoryName(editedCategoryName)) }
+                        }
+                        categoryToEdit = null
+                        editedCategoryName = ""
+                    }
+                ) {
+                    Text(LocalFeedFlowStrings.current.actionSave)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        categoryToEdit = null
+                        editedCategoryName = ""
                     }
                 ) {
                     Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
@@ -169,19 +223,32 @@ private fun CategoriesList(
 
                     Spacer(Modifier.weight(1f))
 
-                    if (category.name != null) {
-                        IconButton(
-                            modifier = Modifier
-                                .tagForTesting("${TestingTag.DELETE_CATEGORY_BUTTON}_${category.name}"),
-                            onClick = {
-                                showDeleteDialog = true
-                                categoryToDelete = CategoryId(category.id)
-                            },
-                        ) {
-                            Icon(
-                                Icons.Outlined.DeleteOutline,
-                                contentDescription = null,
-                            )
+                    val categoryName = category.name
+                    if (categoryName != null) {
+                        Row {
+                            IconButton(
+                                onClick = {
+                                    categoryToEdit = category
+                                    editedCategoryName = categoryName
+                                },
+                            ) {
+                                Icon(
+                                    Icons.Outlined.Edit,
+                                    contentDescription = null,
+                                )
+                            }
+
+                            IconButton(
+                                onClick = {
+                                    showDeleteDialog = true
+                                    categoryToDelete = CategoryId(category.id)
+                                },
+                            ) {
+                                Icon(
+                                    Icons.Outlined.DeleteOutline,
+                                    contentDescription = null,
+                                )
+                            }
                         }
                     }
                 }

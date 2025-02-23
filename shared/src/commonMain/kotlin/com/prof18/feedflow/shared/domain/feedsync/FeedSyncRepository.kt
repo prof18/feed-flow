@@ -75,6 +75,16 @@ class FeedSyncRepository internal constructor(
         }
     }
 
+    internal suspend fun updateCategory(category: FeedSourceCategory) {
+        if (feedSyncAccountRepository.isSyncEnabled()) {
+            syncedDatabaseHelper.updateCategoryName(
+                categoryId = category.id,
+                newName = category.title,
+            )
+            settingsRepository.setIsSyncUploadRequired(true)
+        }
+    }
+
     internal suspend fun deleteFeedSource(feedSource: FeedSource) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
             syncedDatabaseHelper.deleteFeedSource(feedSource.id)

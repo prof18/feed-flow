@@ -291,6 +291,17 @@ class DatabaseHelper(
             dbRef.feedSourceCategoryQueries.delete(id = id)
         }
 
+    suspend fun updateCategoryName(id: String, newName: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceCategoryQueries.updateCategoryName(title = newName, id = id)
+        }
+
+    suspend fun updateCategoryNameAndId(oldId: String, newId: String, newName: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceCategoryQueries.updateCategoryNameAndId(title = newName, newId = newId, oldId = oldId)
+            dbRef.feedSourceQueries.updateCategoryId(newCategoryId = newId, oldCategoryId = oldId)
+        }
+
     suspend fun updateBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedItemQueries.updateBookmarkStatus(

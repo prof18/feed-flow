@@ -105,6 +105,9 @@ fun AddFeedScreen(
         onDeleteCategoryClick = { categoryId ->
             viewModel.deleteCategory(categoryId.value)
         },
+        onEditCategoryClick = { categoryId, newName ->
+            viewModel.editCategory(categoryId, newName)
+        },
         topAppBar = {
             TopAppBar(
                 title = {
@@ -144,6 +147,7 @@ private fun AddScreenContentPreview() {
             onExpandClick = {},
             onAddCategoryClick = {},
             onDeleteCategoryClick = {},
+            onEditCategoryClick = { _, _ -> },
             topAppBar = {
                 TopAppBar(
                     title = {

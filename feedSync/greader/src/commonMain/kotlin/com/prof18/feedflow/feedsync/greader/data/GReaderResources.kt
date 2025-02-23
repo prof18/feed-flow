@@ -1,4 +1,4 @@
-package com.prof18.feedflow.feedsync.greader
+package com.prof18.feedflow.feedsync.greader.data
 
 import io.ktor.resources.Resource
 
@@ -119,6 +119,11 @@ class ReaderResource {
             class EditTag(
                 val parent: Zero = Zero(),
                 val output: String = "json",
+            )
+
+            @Resource("rename-tag")
+            class RenameTag(
+                val parent: Zero = Zero(),
             )
 
             @Resource("disable-tag")

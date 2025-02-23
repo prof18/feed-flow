@@ -14,7 +14,10 @@ struct AddFeedScreenContent: View {
 
     @State private var newCategory: String = ""
     @State private var showDeleteCategoryDialog = false
+    @State private var showEditCategoryDialog = false
     @State private var categoryToDelete: String?
+    @State private var categoryToEdit: String?
+    @State private var editedCategoryName: String = ""
 
     @Binding var feedURL: String
     @Binding var showError: Bool
@@ -29,6 +32,7 @@ struct AddFeedScreenContent: View {
     let deleteCategory: (String) -> Void
     let addNewCategory: (CategoryName) -> Void
     let addFeed: () -> Void
+    let updateCategoryName: (String, String) -> Void
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -56,7 +60,8 @@ struct AddFeedScreenContent: View {
                                 Text(errorMessage)
                                     .font(.caption)
                                     .foregroundColor(.red)
-                                    .accessibilityIdentifier(TestingTag.shared.INVALID_URL_ERROR_MESSAGE)
+                                    .accessibilityIdentifier(
+                                        TestingTag.shared.INVALID_URL_ERROR_MESSAGE)
                             }
                         }
                     }
@@ -69,10 +74,12 @@ struct AddFeedScreenContent: View {
                         label: Text(feedFlowStrings.addFeedCategoryTitle)
                     ) {
                         ForEach(categoryItems, id: \.self.id) { categoryItem in
-                            let title = categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader
+                            let title =
+                                categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader
                             Text(title)
                                 .tag(categoryItem as CategoriesState.CategoryItem?)
-                                .accessibilityIdentifier("\(TestingTag.shared.CATEGORY_RADIO_BUTTON)_\(title)")
+                                .accessibilityIdentifier(
+                                    "\(TestingTag.shared.CATEGORY_RADIO_BUTTON)_\(title)")
                         }
                     }
                     .hoverEffect()
@@ -87,7 +94,9 @@ struct AddFeedScreenContent: View {
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
         .background(Color.secondaryBackgroundColor)
-        .alert(feedFlowStrings.deleteCategoryConfirmationTitle, isPresented: $showDeleteCategoryDialog) {
+        .alert(
+            feedFlowStrings.deleteCategoryConfirmationTitle, isPresented: $showDeleteCategoryDialog
+        ) {
             Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) {
                 categoryToDelete = nil
             }
@@ -99,6 +108,23 @@ struct AddFeedScreenContent: View {
             }
         } message: {
             Text(feedFlowStrings.deleteCategoryConfirmationMessage)
+        }
+        .alert(feedFlowStrings.editCategory, isPresented: $showEditCategoryDialog) {
+            TextField(feedFlowStrings.categoryName, text: $editedCategoryName)
+
+            Button(feedFlowStrings.actionSave, role: .none) {
+                if !editedCategoryName.isEmpty, let id = categoryToEdit {
+                    updateCategoryName(id, editedCategoryName)
+                }
+                categoryToEdit = nil
+                editedCategoryName = ""
+            }
+            .disabled(editedCategoryName.isEmpty)
+
+            Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) {
+                categoryToEdit = nil
+                editedCategoryName = ""
+            }
         }
         .navigationTitle(feedFlowStrings.addFeed)
         .navigationBarTitleDisplayMode(.inline)
@@ -127,19 +153,23 @@ struct AddFeedScreenContent: View {
         Section(feedFlowStrings.addFeedCategoriesTitle) {
             ForEach(categoryItems, id: \.self.id) { categoryItem in
                 if let name = categoryItem.name {
-                    HStack {
-                        Text(name)
-                        Spacer()
-                        Button {
-                            self.categoryToDelete = categoryItem.id
-                            showDeleteCategoryDialog = true
-                        } label: {
-                            Image(systemName: "trash")
-                                .tint(.red)
-                                .hoverEffect()
+                    Text(name)
+                        .contextMenu {
+                            Button {
+                                editedCategoryName = name
+                                categoryToEdit = categoryItem.id
+                                showEditCategoryDialog = true
+                            } label: {
+                                Label(feedFlowStrings.editCategory, systemImage: "pencil")
+                            }
+
+                            Button(role: .destructive) {
+                                categoryToDelete = categoryItem.id
+                                showDeleteCategoryDialog = true
+                            } label: {
+                                Label(feedFlowStrings.deleteFeed, systemImage: "trash")
+                            }
                         }
-                        .accessibilityIdentifier("\(TestingTag.shared.DELETE_CATEGORY_BUTTON)_\(name)")
-                    }
                 }
             }
 
@@ -197,7 +227,8 @@ struct AddFeedScreenContent: View {
         updateFeedUrlTextFieldValue: { _ in },
         deleteCategory: { _ in },
         addNewCategory: { _ in },
-        addFeed: {}
+        addFeed: {},
+        updateCategoryName: { _, _ in }
     )
 }
 
@@ -213,6 +244,7 @@ struct AddFeedScreenContent: View {
         updateFeedUrlTextFieldValue: { _ in },
         deleteCategory: { _ in },
         addNewCategory: { _ in },
-        addFeed: {}
+        addFeed: {},
+        updateCategoryName: { _, _ in }
     )
 }

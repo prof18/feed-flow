@@ -7,7 +7,7 @@ import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.Failure
 import com.prof18.feedflow.core.model.fold
-import com.prof18.feedflow.feedsync.greader.GReaderRepository
+import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import kotlinx.coroutines.flow.MutableSharedFlow

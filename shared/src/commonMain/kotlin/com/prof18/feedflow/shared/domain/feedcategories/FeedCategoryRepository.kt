@@ -9,7 +9,7 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.database.DatabaseHelper
-import com.prof18.feedflow.feedsync.greader.GReaderRepository
+import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -71,6 +71,26 @@ internal class FeedCategoryRepository(
             else -> {
                 databaseHelper.deleteCategory(categoryId)
                 feedSyncRepository.deleteFeedSourceCategory(categoryId)
+            }
+        }
+    }
+
+    suspend fun updateCategoryName(categoryId: CategoryId, newName: CategoryName) {
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                gReaderRepository.editCategoryName(categoryId, newName)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError)
+                    }
+            }
+
+            else -> {
+                databaseHelper.updateCategoryName(categoryId.value, newName.name)
+                val category = FeedSourceCategory(
+                    id = categoryId.value,
+                    title = newName.name,
+                )
+                feedSyncRepository.updateCategory(category)
             }
         }
     }

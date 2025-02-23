@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
@@ -114,6 +115,12 @@ class EditFeedViewModel internal constructor(
     fun addNewCategory(categoryName: CategoryName) {
         viewModelScope.launch {
             categoryUseCase.addNewCategory(categoryName)
+        }
+    }
+
+    fun editCategory(categoryId: CategoryId, newName: CategoryName) {
+        viewModelScope.launch {
+            categoryUseCase.updateCategoryName(categoryId, newName)
         }
     }
 

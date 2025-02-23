@@ -35,6 +35,7 @@ fun AddFeedContent(
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     modifier: Modifier = Modifier,
     snackbarHost: @Composable () -> Unit = {},
     topAppBar: @Composable () -> Unit = {},
@@ -79,6 +80,7 @@ fun AddFeedContent(
                     onExpandClick = onExpandClick,
                     onAddCategoryClick = onAddCategoryClick,
                     onDeleteCategoryClick = onDeleteCategoryClick,
+                    onEditCategoryClick = onEditCategoryClick,
                 )
             }
 

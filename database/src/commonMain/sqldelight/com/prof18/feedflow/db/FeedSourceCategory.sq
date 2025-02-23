@@ -25,3 +25,13 @@ DELETE FROM feed_source_category;
 
 deleteAllExcept:
 DELETE FROM feed_source_category WHERE id NOT IN :ids;
+
+updateCategoryName:
+UPDATE feed_source_category
+SET title = ?
+WHERE id = ?;
+
+updateCategoryNameAndId:
+UPDATE feed_source_category
+SET title = ?, id = :newId
+WHERE id = :oldId;

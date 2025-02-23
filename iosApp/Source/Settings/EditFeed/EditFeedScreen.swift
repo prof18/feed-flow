@@ -68,6 +68,9 @@ struct EditFeedScreen: View {
                     },
                     addFeed: {
                         vmStoreOwner.instance.editFeed()
+                    },
+                    updateCategoryName: { categoryId, categoryName in
+                        vmStoreOwner.instance.editCategory(categoryId: CategoryId(value: categoryId), newName: CategoryName(name: categoryName))
                     }
                 )
 

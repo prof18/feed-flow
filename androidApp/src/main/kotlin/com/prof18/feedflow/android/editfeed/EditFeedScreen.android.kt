@@ -119,6 +119,9 @@ internal fun EditScreen(
         onDeleteCategoryClick = { categoryId ->
             viewModel.deleteCategory(categoryId.value)
         },
+        onEditCategoryClick = { categoryId, newName ->
+            viewModel.editCategory(categoryId, newName)
+        },
         topAppBar = {
             TopAppBar(
                 title = {
@@ -165,6 +168,7 @@ private fun EditScreenPreview() {
             onExpandClick = {},
             onAddCategoryClick = {},
             onDeleteCategoryClick = {},
+            onEditCategoryClick = { _, _ -> },
             topAppBar = {
                 TopAppBar(
                     title = {

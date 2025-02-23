@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
+import com.prof18.feedflow.core.utils.getAppGroupDatabasePath
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
@@ -29,7 +30,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
-import platform.Foundation.NSApplicationSupportDirectory
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
@@ -140,26 +140,9 @@ internal class FeedSyncIosWorker(
         }
     }
 
-    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    private fun getDatabaseUrl(): NSURL? {
-        memScoped {
-            val errorPtr: ObjCObjectVar<NSError?> = alloc()
-            val documentsDirectory = NSFileManager.defaultManager.URLForDirectory(
-                directory = NSApplicationSupportDirectory,
-                inDomain = NSUserDomainMask,
-                appropriateForURL = null,
-                create = true,
-                error = errorPtr.ptr,
-            )
-            val databaseUrl = documentsDirectory?.URLByAppendingPathComponent("databases/${getDatabaseName()}")
-
-            if (errorPtr.value != null) {
-                logger.e { "Error getting database URL: ${errorPtr.value}" }
-                return null
-            }
-            return databaseUrl
-        }
-    }
+    private fun getDatabaseUrl(): NSURL? =
+        NSURL.fileURLWithPath(getAppGroupDatabasePath())
+            .URLByAppendingPathComponent(getDatabaseName())
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
     private fun replaceDatabase(url: NSURL): Boolean {

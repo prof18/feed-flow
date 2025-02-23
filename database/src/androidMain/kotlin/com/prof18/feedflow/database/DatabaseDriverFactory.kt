@@ -11,9 +11,9 @@ fun createDatabaseDriver(context: Context, appEnvironment: AppEnvironment): SqlD
         schema = FeedFlowDB.Schema,
         context = context,
         name = if (appEnvironment.isDebug()) {
-            DatabaseHelper.DATABASE_NAME_DEBUG
+            DatabaseHelper.APP_DATABASE_NAME_DEBUG
         } else {
-            DatabaseHelper.DATABASE_NAME_PROD
+            DatabaseHelper.APP_DATABASE_NAME_PROD
         },
     )
 }

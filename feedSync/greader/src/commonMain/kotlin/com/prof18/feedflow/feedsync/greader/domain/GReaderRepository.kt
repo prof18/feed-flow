@@ -1,8 +1,10 @@
-package com.prof18.feedflow.feedsync.greader
+package com.prof18.feedflow.feedsync.greader.domain
 
 import arrow.fx.coroutines.parZip
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.DataResult
 import com.prof18.feedflow.core.model.FeedFilter
@@ -21,11 +23,10 @@ import com.prof18.feedflow.core.model.requireSuccess
 import com.prof18.feedflow.core.model.success
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.greader.data.GReaderClient
 import com.prof18.feedflow.feedsync.greader.data.dto.ItemContentDTO
 import com.prof18.feedflow.feedsync.greader.data.dto.ItemDTO
 import com.prof18.feedflow.feedsync.greader.data.dto.StreamItemsContentsDTO
-import com.prof18.feedflow.feedsync.greader.domain.Stream
-import com.prof18.feedflow.feedsync.greader.domain.SubscriptionEditAction
 import com.prof18.feedflow.feedsync.greader.domain.mapping.ItemContentDTOMapper
 import com.prof18.feedflow.feedsync.greader.domain.mapping.toFeedSource
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
@@ -276,6 +277,23 @@ class GReaderRepository internal constructor(
         }
 
         databaseHelper.updateFeedSourceName(feedSourceId, newName)
+        return Unit.success()
+    }
+
+    suspend fun editCategoryName(categoryId: CategoryId, newName: CategoryName): DataResult<Unit> {
+        val newCategoryId = "user/-/label/${newName.name}"
+        val result = gReaderClient.renameTag(
+            old = categoryId.value,
+            new = newCategoryId,
+        )
+        if (result.isError()) {
+            return result
+        }
+        databaseHelper.updateCategoryNameAndId(
+            oldId = categoryId.value,
+            newId = newCategoryId,
+            newName = newName.name
+        )
         return Unit.success()
     }
 

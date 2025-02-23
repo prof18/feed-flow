@@ -118,6 +118,14 @@ class SyncedDatabaseHelper(
             updateMetadata(SyncTable.SYNCED_FEED_SOURCE_CATEGORY)
         }
 
+    suspend fun updateCategoryName(categoryId: String, newName: String) =
+        getDbRef().transactionWithContext(backgroundDispatcher) {
+            getDbRef().syncedFeedSourceCategoryQueries.updateCategoryName(
+                title = newName,
+                id = categoryId,
+            )
+        }
+
     suspend fun getAllFeedSourceCategories(): List<FeedSourceCategory> = withContext(backgroundDispatcher) {
         getDbRef().syncedFeedSourceCategoryQueries
             .getAllFeedSourceCategories()

@@ -108,6 +108,9 @@ fun AddFeedScreenContent(
         onDeleteCategoryClick = { categoryId ->
             viewModel.deleteCategory(categoryId.value)
         },
+        onEditCategoryClick = { categoryId, newName ->
+            viewModel.editCategory(categoryId, newName)
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topAppBar = topAppBar,
     )
@@ -129,6 +132,7 @@ private fun AddScreenContentPreview() {
             onExpandClick = {},
             onAddCategoryClick = {},
             onDeleteCategoryClick = {},
+            onEditCategoryClick = { _, _ -> },
         )
     }
 }

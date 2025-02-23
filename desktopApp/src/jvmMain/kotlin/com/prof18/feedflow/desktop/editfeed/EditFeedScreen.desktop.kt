@@ -131,6 +131,9 @@ internal data class EditFeedScreen(
             onDeleteCategoryClick = { categoryId ->
                 viewModel.deleteCategory(categoryId.value)
             },
+            onEditCategoryClick = { categoryId, newName ->
+                viewModel.editCategory(categoryId, newName)
+            },
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topAppBar = {
                 TopAppBar(
@@ -179,6 +182,7 @@ private fun EditScreenPreview() {
             onExpandClick = {},
             onAddCategoryClick = {},
             onDeleteCategoryClick = {},
+            onEditCategoryClick = { _, _ -> },
             topAppBar = {
                 TopAppBar(
                     title = {

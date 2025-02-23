@@ -10,6 +10,11 @@ insertOrIgnoreFeedSourceCategory:
 INSERT OR IGNORE INTO synced_feed_source_category(id, title)
 VALUES (?,?);
 
+updateCategoryName:
+UPDATE synced_feed_source_category
+SET title = ?
+WHERE id = ?;
+
 delete:
 DELETE FROM synced_feed_source_category WHERE id = ?;
 

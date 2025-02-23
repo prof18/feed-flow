@@ -50,6 +50,11 @@ struct AddFeedScreen: View {
                 },
                 addFeed: {
                     vmStoreOwner.instance.addFeed()
+                },
+                updateCategoryName: { categoryId, categoryName in
+                    vmStoreOwner.instance.editCategory(
+                        categoryId: CategoryId(value: categoryId),
+                        newName: CategoryName(name: categoryName))
                 }
             )
         }
@@ -100,7 +105,9 @@ struct AddFeedScreen: View {
         }
         .task {
             for await state in vmStoreOwner.instance.categoriesState {
-                self.categorySelectorObserver.selectedCategory = state.categories.first { $0.isSelected }
+                self.categorySelectorObserver.selectedCategory = state.categories.first {
+                    $0.isSelected
+                }
                 self.categoryItems = state.categories
             }
         }

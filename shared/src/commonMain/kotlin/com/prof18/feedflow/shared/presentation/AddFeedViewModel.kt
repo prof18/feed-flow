@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
@@ -62,6 +63,12 @@ class AddFeedViewModel internal constructor(
     fun deleteCategory(categoryId: String) {
         viewModelScope.launch {
             categoryUseCase.deleteCategory(categoryId)
+        }
+    }
+
+    fun editCategory(categoryId: CategoryId, newName: CategoryName) {
+        viewModelScope.launch {
+            categoryUseCase.updateCategoryName(categoryId, newName)
         }
     }
 }

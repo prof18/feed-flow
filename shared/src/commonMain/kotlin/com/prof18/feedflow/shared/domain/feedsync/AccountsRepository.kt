@@ -3,7 +3,7 @@ package com.prof18.feedflow.shared.domain.feedsync
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
-import com.prof18.feedflow.feedsync.greader.GReaderRepository
+import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,8 +1,8 @@
 package com.prof18.feedflow.feedsync.greader.di
 
 import com.prof18.feedflow.core.utils.AppEnvironment
-import com.prof18.feedflow.feedsync.greader.GReaderClient
-import com.prof18.feedflow.feedsync.greader.GReaderRepository
+import com.prof18.feedflow.feedsync.greader.data.GReaderClient
+import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.feedsync.greader.domain.mapping.ItemContentDTOMapper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import org.koin.core.parameter.parametersOf

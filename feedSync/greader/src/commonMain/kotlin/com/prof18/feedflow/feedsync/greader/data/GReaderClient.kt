@@ -1,4 +1,4 @@
-package com.prof18.feedflow.feedsync.greader
+package com.prof18.feedflow.feedsync.greader.data
 
 import co.touchlab.kermit.Logger
 import co.touchlab.stately.concurrency.AtomicReference
@@ -105,6 +105,28 @@ internal class GReaderClient internal constructor(
                             }
                             addTag?.let { append("a", it.id) }
                             removeTag?.let { append("r", it.id) }
+                        }
+                        setBody(FormDataContent(formData))
+                    }
+            }
+        }
+    }
+
+    suspend fun renameTag(
+        old: String,
+        new: String,
+    ): DataResult<Unit> = withContext(dispatcherProvider.io) {
+        withPostToken {
+            executeNetwork {
+                getOrCreateHttpClient()
+                    .post(ReaderResource.Api.Zero.RenameTag()) {
+                        contentType(ContentType.Application.FormUrlEncoded)
+                        val formData = Parameters.build {
+                            append("s", old)
+                            append("dest", new)
+                            postToken.get()?.let { token ->
+                                append("T", token)
+                            }
                         }
                         setBody(FormDataContent(formData))
                     }

@@ -169,4 +169,7 @@
     <string name="menu_add_to_pinned">Закріпити</string>
     <string name="hide_feed_from_timeline_description">Приховати статті цієї стрічки на часовій шкалі</string>
     <string name="feed_list_appearance">Зовнішній вигляд списку каналів</string>
+    <string name="category_name">Назва категорії</string>
+    <string name="settings_crash_reporting">Надсилайте анонімні звіти про збої</string>
+    <string name="edit_category">Редагувати назву категорії</string>
 </resources>

@@ -565,9 +565,9 @@ class DatabaseHelper(
         )
     }
 
-    internal companion object {
-        const val DB_FILE_NAME_WITH_EXTENSION = "FeedFlow.db"
-        const val DATABASE_NAME_PROD = "FeedFlowDB"
-        const val DATABASE_NAME_DEBUG = "FeedFlowDB-debug"
+    companion object {
+        internal const val DB_FILE_NAME_WITH_EXTENSION = "FeedFlow.db"
+        const val APP_DATABASE_NAME_PROD = "FeedFlowDB"
+        const val APP_DATABASE_NAME_DEBUG = "FeedFlowDB-debug"
     }
 }

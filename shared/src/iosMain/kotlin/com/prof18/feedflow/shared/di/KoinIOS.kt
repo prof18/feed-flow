@@ -7,7 +7,9 @@ import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DatabaseFileMigration
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
@@ -95,6 +97,13 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single<SqlDriver> {
+        DatabaseFileMigration(
+            databaseName = if (appEnvironment.isDebug()) {
+                DatabaseHelper.APP_DATABASE_NAME_DEBUG
+            } else {
+                DatabaseHelper.APP_DATABASE_NAME_PROD
+            },
+        ).migrate()
         createDatabaseDriver(appEnvironment)
     }
 

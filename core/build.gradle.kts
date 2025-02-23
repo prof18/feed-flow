@@ -11,6 +11,7 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(libs.immutable.collections)
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.touchlab.kermit)
             }
         }
     }

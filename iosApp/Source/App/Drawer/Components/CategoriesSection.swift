@@ -52,7 +52,7 @@ struct CategoriesSection: View {
                                     categoryToEdit = categoryItem.category.id
                                     showEditCategoryDialog = true
                                 } label: {
-                                    Label(feedFlowStrings.editCategory, systemImage: "pencil")
+                                    Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
                                 }
 
                                 Button(role: .destructive) {

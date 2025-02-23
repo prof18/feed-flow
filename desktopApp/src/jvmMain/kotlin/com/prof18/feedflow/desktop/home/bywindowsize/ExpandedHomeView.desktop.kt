@@ -58,6 +58,7 @@ internal fun ExpandedView(
     onPinFeedClick: (FeedSource) -> Unit,
     markAllAsRead: () -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
@@ -85,6 +86,7 @@ internal fun ExpandedView(
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onPinFeedClick = onPinFeedClick,
                 onEditCategoryClick = onEditCategoryClick,
+                onDeleteCategoryClick = onDeleteCategoryClick,
             )
         }
 
@@ -149,6 +151,7 @@ private fun ExpandedViewPreview() {
             onPinFeedClick = {},
             markAllAsRead = {},
             onEditCategoryClick = { _, _ -> },
+            onDeleteCategoryClick = { },
         )
     }
 }

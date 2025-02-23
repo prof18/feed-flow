@@ -138,35 +138,20 @@ struct EditFeedScreenContent: View {
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
         .background(Color.secondaryBackgroundColor)
-        .alert(feedFlowStrings.deleteCategoryConfirmationTitle, isPresented: $showDeleteCategoryDialog) {
-            Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) {
-                categoryToDelete = nil
-            }
-            Button(feedFlowStrings.deleteFeed, role: .destructive) {
-                if let id = categoryToDelete {
-                    deleteCategory(id)
-                }
-                categoryToDelete = nil
-            }
-        } message: {
-            Text(feedFlowStrings.deleteCategoryConfirmationMessage)
+        .overlay {
+            DeleteCategoryDialog(
+                isPresented: $showDeleteCategoryDialog,
+                categoryToDelete: $categoryToDelete,
+                onDelete: deleteCategory
+            )
         }
-        .alert(feedFlowStrings.editCategory, isPresented: $showEditCategoryDialog) {
-            TextField(feedFlowStrings.categoryName, text: $editedCategoryName)
-
-            Button(feedFlowStrings.actionSave, role: .none) {
-                if !editedCategoryName.isEmpty, let id = categoryToEdit {
-                    updateCategoryName(id, editedCategoryName)
-                }
-                categoryToEdit = nil
-                editedCategoryName = ""
-            }
-            .disabled(editedCategoryName.isEmpty)
-
-            Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) {
-                categoryToEdit = nil
-                editedCategoryName = ""
-            }
+        .overlay {
+            EditCategoryDialog(
+                isPresented: $showEditCategoryDialog,
+                categoryToEdit: $categoryToEdit,
+                editedCategoryName: $editedCategoryName,
+                onSave: updateCategoryName
+            )
         }
         .navigationTitle(feedFlowStrings.editFeed)
         .navigationBarTitleDisplayMode(.inline)

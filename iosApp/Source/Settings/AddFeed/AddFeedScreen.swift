@@ -54,7 +54,8 @@ struct AddFeedScreen: View {
                 updateCategoryName: { categoryId, categoryName in
                     vmStoreOwner.instance.editCategory(
                         categoryId: CategoryId(value: categoryId),
-                        newName: CategoryName(name: categoryName))
+                        newName: CategoryName(name: categoryName)
+                    )
                 }
             )
         }

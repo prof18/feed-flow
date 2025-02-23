@@ -157,6 +157,9 @@ internal fun HomeScreen(
                 onEditCategoryClick = { categoryId, newName ->
                     homeViewModel.updateCategoryName(categoryId, newName)
                 },
+                onDeleteCategoryClick = { categoryId ->
+                    homeViewModel.deleteCategory(categoryId)
+                },
             )
         }
 
@@ -224,6 +227,9 @@ internal fun HomeScreen(
                 onEditCategoryClick = { categoryId, newName ->
                     homeViewModel.updateCategoryName(categoryId, newName)
                 },
+                onDeleteCategoryClick = { categoryId ->
+                    homeViewModel.deleteCategory(categoryId)
+                },
             )
         }
 
@@ -290,6 +296,9 @@ internal fun HomeScreen(
                 },
                 onEditCategoryClick = { categoryId, newName ->
                     homeViewModel.updateCategoryName(categoryId, newName)
+                },
+                onDeleteCategoryClick = { categoryId ->
+                    homeViewModel.deleteCategory(categoryId)
                 },
             )
         }

@@ -154,6 +154,9 @@ internal fun HomeScreen(
                 markAllAsRead = {
                     homeViewModel.markAllRead()
                 },
+                onEditCategoryClick = { categoryId, newName ->
+                    homeViewModel.updateCategoryName(categoryId, newName)
+                },
             )
         }
 
@@ -218,6 +221,9 @@ internal fun HomeScreen(
                 markAllAsRead = {
                     homeViewModel.markAllRead()
                 },
+                onEditCategoryClick = { categoryId, newName ->
+                    homeViewModel.updateCategoryName(categoryId, newName)
+                },
             )
         }
 
@@ -281,6 +287,9 @@ internal fun HomeScreen(
                 },
                 markAllAsRead = {
                     homeViewModel.markAllRead()
+                },
+                onEditCategoryClick = { categoryId, newName ->
+                    homeViewModel.updateCategoryName(categoryId, newName)
                 },
             )
         }

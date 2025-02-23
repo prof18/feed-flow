@@ -159,6 +159,9 @@ internal fun HomeScreen(
                 onPinFeedClick = { feedSource ->
                     homeViewModel.toggleFeedPin(feedSource)
                 },
+                onEditCategoryClick = { categoryId, newName ->
+                    homeViewModel.updateCategoryName(categoryId, newName)
+                },
             )
         }
 
@@ -222,6 +225,9 @@ internal fun HomeScreen(
                 onPinFeedClick = { feedSource ->
                     homeViewModel.toggleFeedPin(feedSource)
                 },
+                onEditCategoryClick = { categoryId, newName ->
+                    homeViewModel.updateCategoryName(categoryId, newName)
+                },
             )
         }
 
@@ -284,6 +290,9 @@ internal fun HomeScreen(
                 },
                 onPinFeedClick = { feedSource ->
                     homeViewModel.toggleFeedPin(feedSource)
+                },
+                onEditCategoryClick = { categoryId, newName ->
+                    homeViewModel.updateCategoryName(categoryId, newName)
                 },
             )
         }

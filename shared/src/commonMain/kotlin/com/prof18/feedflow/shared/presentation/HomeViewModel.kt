@@ -2,6 +2,8 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerCategory
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource
@@ -292,6 +294,19 @@ class HomeViewModel internal constructor(
         viewModelScope.launch {
             feedSourcesRepository.deleteFeed(feedSource)
             feedFetcherRepository.fetchFeeds()
+        }
+    }
+
+    fun updateCategoryName(categoryId: CategoryId, newName: CategoryName) {
+        viewModelScope.launch {
+            feedCategoryRepository.updateCategoryName(categoryId, newName)
+        }
+    }
+
+    fun deleteCategory(categoryId: CategoryId) {
+        viewModelScope.launch {
+            feedCategoryRepository.deleteCategory(categoryId.value)
+            feedStateRepository.getFeeds()
         }
     }
 }

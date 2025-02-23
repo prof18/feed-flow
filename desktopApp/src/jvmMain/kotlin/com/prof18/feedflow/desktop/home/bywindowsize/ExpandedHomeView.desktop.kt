@@ -12,6 +12,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -55,6 +57,7 @@ internal fun ExpandedView(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     markAllAsRead: () -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
@@ -81,6 +84,7 @@ internal fun ExpandedView(
                 },
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onPinFeedClick = onPinFeedClick,
+                onEditCategoryClick = onEditCategoryClick,
             )
         }
 
@@ -144,6 +148,7 @@ private fun ExpandedViewPreview() {
             onDeleteFeedSourceClick = {},
             onPinFeedClick = {},
             markAllAsRead = {},
+            onEditCategoryClick = { _, _ -> },
         )
     }
 }

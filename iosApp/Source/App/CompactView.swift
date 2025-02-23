@@ -87,6 +87,14 @@ struct CompactView: View {
                 },
                 onPinFeedClick: { feedSource in
                     homeViewModel.toggleFeedPin(feedSource: feedSource)
+                },
+                onDeleteCategory: { categoryId in
+                    homeViewModel.deleteCategory(categoryId: CategoryId(value: categoryId))
+                },
+                onUpdateCategoryName: { categoryId, categoryName in
+                    homeViewModel.updateCategoryName(
+                        categoryId: CategoryId(value: categoryId),
+                        newName: CategoryName(name: categoryName))
                 }
             ).sheet(isPresented: $showAddFeedSheet) {
                 AddFeedScreen(showCloseButton: true)

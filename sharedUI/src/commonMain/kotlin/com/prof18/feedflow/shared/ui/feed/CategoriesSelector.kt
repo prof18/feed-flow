@@ -49,6 +49,7 @@ import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
+import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
 
 @Composable
 internal fun CategoriesSelector(
@@ -105,7 +106,6 @@ private fun CategoriesList(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var categoryToDelete by remember { mutableStateOf<CategoryId?>(null) }
     var categoryToEdit by remember { mutableStateOf<CategoriesState.CategoryItem?>(null) }
-    var editedCategoryName by remember { mutableStateOf("") }
 
     if (showDeleteDialog && categoryToDelete != null) {
         AlertDialog(
@@ -139,52 +139,17 @@ private fun CategoriesList(
         )
     }
 
-    if (categoryToEdit != null) {
-        AlertDialog(
-            onDismissRequest = {
-                categoryToEdit = null
-                editedCategoryName = ""
-            },
-            title = { Text(LocalFeedFlowStrings.current.editCategory) },
-            text = {
-                OutlinedTextField(
-                    value = editedCategoryName,
-                    onValueChange = { editedCategoryName = it },
-                    label = { Text(LocalFeedFlowStrings.current.categoryName) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    enabled = editedCategoryName.isNotBlank(),
-                    onClick = {
-                        if (editedCategoryName.isNotBlank()) {
-                            categoryToEdit?.let {
-                                onEditCategoryClick(CategoryId(it.id), CategoryName(editedCategoryName)) }
-                        }
-                        categoryToEdit = null
-                        editedCategoryName = ""
-                    }
-                ) {
-                    Text(LocalFeedFlowStrings.current.actionSave)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        categoryToEdit = null
-                        editedCategoryName = ""
-                    }
-                ) {
-                    Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
-                }
-            }
-        )
-    }
+    EditCategoryDialog(
+        showDialog = categoryToEdit != null,
+        categoryId = categoryToEdit?.let { CategoryId(it.id) } ?: CategoryId(""),
+        initialCategoryName = categoryToEdit?.name ?: "",
+        onDismiss = {
+            categoryToEdit = null
+        },
+        onEditCategory = { categoryId, newName ->
+            onEditCategoryClick(categoryId, newName)
+        }
+    )
     AnimatedVisibility(
         modifier = modifier,
         visible = categoriesState.isExpanded,
@@ -229,7 +194,6 @@ private fun CategoriesList(
                             IconButton(
                                 onClick = {
                                     categoryToEdit = category
-                                    editedCategoryName = categoryName
                                 },
                             ) {
                                 Icon(

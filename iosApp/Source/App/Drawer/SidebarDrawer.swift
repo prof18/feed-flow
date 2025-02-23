@@ -26,6 +26,8 @@ struct SidebarDrawer: View {
     let onEditFeedClick: (FeedSource) -> Void
     let onDeleteFeedClick: (FeedSource) -> Void
     let onPinFeedClick: (FeedSource) -> Void
+    let onDeleteCategory: (String) -> Void
+    let onUpdateCategoryName: (String, String) -> Void
 
     var body: some View {
         List(selection: $selectedDrawerItem) {
@@ -54,7 +56,9 @@ struct SidebarDrawer: View {
             CategoriesSection(
                 categories: navDrawerState.categories,
                 onSelect: { self.selectedDrawerItem = $0 },
-                onFeedFilterSelected: onFeedFilterSelected
+                onFeedFilterSelected: onFeedFilterSelected,
+                onDeleteCategory: onDeleteCategory,
+                onUpdateCategoryName: onUpdateCategoryName
             )
 
             feedSourcesWithoutCategorySection
@@ -256,6 +260,8 @@ struct SidebarDrawer: View {
         onAddFeedClick: {},
         onEditFeedClick: { _ in },
         onDeleteFeedClick: { _ in },
-        onPinFeedClick: { _ in }
+        onPinFeedClick: { _ in },
+        onDeleteCategory: { _ in },
+        onUpdateCategoryName: { _, _ in }
     )
 }

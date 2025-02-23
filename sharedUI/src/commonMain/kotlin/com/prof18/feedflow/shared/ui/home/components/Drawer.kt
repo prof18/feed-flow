@@ -42,6 +42,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,11 +55,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.utils.TestingTag
+import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
 import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
@@ -77,6 +81,7 @@ fun Drawer(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -155,6 +160,7 @@ fun Drawer(
                     navDrawerState = navDrawerState,
                     currentFeedFilter = currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
+                    onEditCategoryClick = onEditCategoryClick,
                 )
             }
         }
@@ -312,6 +318,7 @@ private fun DrawerCategoriesSection(
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
 ) {
     Column {
         Text(
@@ -327,6 +334,7 @@ private fun DrawerCategoriesSection(
                 currentFeedFilter = currentFeedFilter,
                 drawerCategory = category as DrawerItem.DrawerCategory,
                 onFeedFilterSelected = onFeedFilterSelected,
+                onEditCategoryClick = onEditCategoryClick,
             )
         }
     }
@@ -337,37 +345,100 @@ private fun DrawerCategoryItem(
     currentFeedFilter: FeedFilter,
     drawerCategory: DrawerItem.DrawerCategory,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
 ) {
-    NavigationDrawerItem(
-        selected = currentFeedFilter is FeedFilter.Category &&
-            drawerCategory.category == currentFeedFilter.feedCategory,
-        label = {
-            Text(
-                text = drawerCategory.category.title,
-            )
-        },
-        badge = if (drawerCategory.unreadCount > 0) {
-            {
-                Text(
-                    text = drawerCategory.unreadCount.toString(),
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
-        } else {
-            null
-        },
-        icon = {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.Label,
-                contentDescription = null,
-            )
-        },
-        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+    val colors = NavigationDrawerItemDefaults.colors(
+        unselectedContainerColor = Color.Transparent,
+    )
+
+    var showEditDialog by rememberSaveable { mutableStateOf(false) }
+    var showMenu by rememberSaveable { mutableStateOf(false) }
+
+    val selected = currentFeedFilter is FeedFilter.Category &&
+        drawerCategory.category == currentFeedFilter.feedCategory
+
+    Surface(
+        selected = selected,
         onClick = {
             onFeedFilterSelected(
                 FeedFilter.Category(feedCategory = drawerCategory.category),
             )
         },
+        modifier =
+        Modifier
+            .semantics { role = Role.Tab }
+            .heightIn(min = 56.0.dp)
+            .fillMaxWidth(),
+        shape = CircleShape,
+        color = colors.containerColor(selected).value,
+    ) {
+        Row(
+            Modifier
+                .feedSourceMenuClickModifier(
+                    onClick = {
+                        onFeedFilterSelected(
+                            FeedFilter.Category(feedCategory = drawerCategory.category),
+                        )
+                    },
+                    onLongClick = {
+                        showMenu = true
+                    },
+                )
+                .padding(start = 16.dp, end = 24.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f),
+            ) {
+                val iconColor = colors.iconColor(selected).value
+                CompositionLocalProvider(LocalContentColor provides iconColor) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Label,
+                        contentDescription = null,
+                    )
+                }
+                Spacer(Modifier.width(12.dp))
+
+                Box(Modifier.weight(1f)) {
+                    val labelColor = colors.textColor(selected).value
+                    CompositionLocalProvider(LocalContentColor provides labelColor) {
+                        Text(
+                            text = drawerCategory.category.title,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+            }
+
+            if (drawerCategory.unreadCount > 0) {
+                Text(
+                    modifier = Modifier.padding(start = Spacing.small),
+                    text = drawerCategory.unreadCount.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = colors.textColor(selected).value,
+                )
+            }
+        }
+
+        CategoryContextMenu(
+            showMenu = showMenu,
+            hideMenu = { showMenu = false },
+            onEditCategoryClick = {
+                showMenu = false
+                showEditDialog = true
+            },
+        )
+    }
+
+    EditCategoryDialog(
+        showDialog = showEditDialog,
+        categoryId = CategoryId(drawerCategory.category.id),
+        initialCategoryName = drawerCategory.category.title,
+        onDismiss = { showEditDialog = false },
+        onEditCategory = onEditCategoryClick,
     )
 }
 

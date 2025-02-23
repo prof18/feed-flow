@@ -10,6 +10,8 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import com.prof18.feedflow.android.home.components.HomeScaffold
+import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -54,6 +56,7 @@ internal fun CompactHomeView(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -76,6 +79,7 @@ internal fun CompactHomeView(
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onEditFeedClick = onEditFeedClick,
                     onPinFeedClick = onPinFeedClick,
+                    onEditCategoryClick = onEditCategoryClick,
                 )
             }
         },
@@ -151,6 +155,7 @@ private fun CompactHomeViewPreview() {
             onEditFeedClick = { },
             onDeleteFeedSourceClick = { },
             onPinFeedClick = { },
+            onEditCategoryClick = { _, _ -> },
         )
     }
 }

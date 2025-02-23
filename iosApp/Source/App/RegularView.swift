@@ -89,6 +89,14 @@ struct RegularView: View {
                 },
                 onPinFeedClick: { feedSource in
                     homeViewModel.toggleFeedPin(feedSource: feedSource)
+                },
+                onDeleteCategory: { categoryId in
+                    homeViewModel.deleteCategory(categoryId: CategoryId(value: categoryId))
+                },
+                onUpdateCategoryName: { categoryId, categoryName in
+                    homeViewModel.updateCategoryName(
+                        categoryId: CategoryId(value: categoryId),
+                        newName: CategoryName(name: categoryName))
                 }
             )
             .navigationBarTitleDisplayMode(.inline)

@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.android.home.components.HomeScaffold
+import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -54,6 +56,7 @@ internal fun ExpandedHomeView(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -78,6 +81,7 @@ internal fun ExpandedHomeView(
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onEditFeedClick = onEditFeedClick,
                 onPinFeedClick = onPinFeedClick,
+                onEditCategoryClick = onEditCategoryClick,
             )
         }
 
@@ -144,6 +148,7 @@ private fun ExpandedHomeViewPreview() {
             onEditFeedClick = { _ -> },
             onDeleteFeedSourceClick = { _ -> },
             onPinFeedClick = { _ -> },
+            onEditCategoryClick = { _, _ -> },
         )
     }
 }

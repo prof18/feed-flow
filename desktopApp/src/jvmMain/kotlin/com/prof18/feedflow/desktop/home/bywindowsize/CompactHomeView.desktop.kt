@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -54,6 +56,7 @@ internal fun CompactView(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     markAllAsRead: () -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -78,6 +81,7 @@ internal fun CompactView(
                     },
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onPinFeedClick = onPinFeedClick,
+                    onEditCategoryClick = onEditCategoryClick,
                 )
             }
         },
@@ -151,6 +155,7 @@ private fun CompactViewPreview() {
             onDeleteFeedSourceClick = {},
             onPinFeedClick = {},
             markAllAsRead = {},
+            onEditCategoryClick = { _, _ -> },
         )
     }
 }

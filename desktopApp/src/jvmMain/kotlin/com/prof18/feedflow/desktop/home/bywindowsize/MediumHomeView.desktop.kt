@@ -17,6 +17,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.core.model.CategoryId
+import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -60,6 +62,7 @@ internal fun MediumView(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     markAllAsRead: () -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
 ) {
     var isDrawerMenuFullVisible by remember {
         mutableStateOf(true)
@@ -91,6 +94,7 @@ internal fun MediumView(
                     },
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onPinFeedClick = onPinFeedClick,
+                    onEditCategoryClick = onEditCategoryClick,
                 )
             }
         }
@@ -160,6 +164,7 @@ private fun MediumViewPreview() {
             onDeleteFeedSourceClick = {},
             onPinFeedClick = {},
             markAllAsRead = {},
+            onEditCategoryClick = { _, _ -> },
         )
     }
 }

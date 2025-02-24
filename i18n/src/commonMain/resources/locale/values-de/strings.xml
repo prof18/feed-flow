@@ -169,4 +169,7 @@
     <string name="drawer_title_pinned_feeds">Quellen der gepinnten Feeds</string>
     <string name="hide_feed_from_timeline_description">Artikel dieses Feeds in der Zeitleiste ausblenden</string>
     <string name="pin_feed_source_description">Feed anpinnen</string>
+    <string name="category_name">Kategorienname</string>
+    <string name="edit_category">Kategorienname bearbeiten</string>
+    <string name="settings_crash_reporting">Anonyme Absturzberichte senden</string>
 </resources>

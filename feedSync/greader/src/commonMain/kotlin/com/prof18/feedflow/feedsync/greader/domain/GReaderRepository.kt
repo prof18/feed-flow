@@ -12,7 +12,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.NetworkFailure
-import com.prof18.feedflow.core.model.anySuccess
+import com.prof18.feedflow.core.model.allSuccess
 import com.prof18.feedflow.core.model.error
 import com.prof18.feedflow.core.model.firstError
 import com.prof18.feedflow.core.model.isError
@@ -110,7 +110,7 @@ class GReaderRepository internal constructor(
         ) { starredItemsResult, unreadItemsResult ->
             val results = starredItemsResult + unreadItemsResult
 
-            if (results.anySuccess()) {
+            if (results.allSuccess()) {
                 databaseHelper.updateFeedItemReadStatus(
                     unreadItemsResult.requireSuccess().map { it.getHexID() },
                 )

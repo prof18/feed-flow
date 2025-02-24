@@ -123,16 +123,8 @@ fun <T> List<DataResult<T>>.firstError() =
         .map { it.failure }
         .firstOrNull()
 
-fun <T> List<DataResult<T>>.anySuccess(): Boolean {
-    return any { it is DataResult.Success }
-}
-
 fun <T> List<DataResult<T>>.allSuccess(): Boolean {
     return all { it is DataResult.Success }
-}
-
-fun <T> List<DataResult<T>>.anyError(): Boolean {
-    return any { it is DataResult.Error }
 }
 
 fun <T> List<DataResult<T>>.allErrors(): Boolean {

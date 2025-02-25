@@ -169,4 +169,7 @@
     <string name="feed_list_appearance">Aparencia da lista de canles</string>
     <string name="pin_feed_source_description">Fixar esta canle</string>
     <string name="hide_feed_from_timeline_description">Ocultar os artigos desta canle na cronoloxía</string>
+    <string name="settings_crash_reporting">Enviar informes anónimos sobre fallos</string>
+    <string name="category_name">Nome da categoría</string>
+    <string name="edit_category">Editar nome da categoría</string>
 </resources>

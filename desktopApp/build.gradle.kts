@@ -124,7 +124,7 @@ compose {
                     menuGroup = "Marco Gomiero"
 
                     // https://www.guidgen.com/
-                    upgradeUuid = "d79d2253-22e9-40e9-866f-93e73731be19".uppercase()
+                    upgradeUuid = "28deb721-e263-4ca3-9442-49b43b073ed8".uppercase()
                 }
 
                 macOS {

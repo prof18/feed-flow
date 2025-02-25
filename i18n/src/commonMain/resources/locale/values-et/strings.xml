@@ -174,4 +174,7 @@
     <string name="feed_list_appearance">Uudisvoogude loendi välimus</string>
     <string name="drawer_title_pinned_feeds">Esiletõstetud uudisvoogude allikad</string>
     <string name="pin_feed_source_description">Tõsta see uudisvoog esile</string>
+    <string name="settings_crash_reporting">Saada arendajale anonüümseid krahhiaruandeid</string>
+    <string name="category_name">Kategooria nimi</string>
+    <string name="edit_category">Muuda kategooria nime</string>
 </resources>

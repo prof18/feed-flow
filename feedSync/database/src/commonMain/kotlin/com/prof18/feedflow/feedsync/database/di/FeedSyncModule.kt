@@ -12,7 +12,7 @@ internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module
 internal val commonModule = module {
     single {
         SyncedDatabaseHelper(
-            backgroundDispatcher = Dispatchers.IO,
+            backgroundDispatcher = Dispatchers.IO.limitedParallelism(1),
         )
     }
 }

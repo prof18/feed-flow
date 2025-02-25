@@ -103,7 +103,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     single {
         DatabaseHelper(
             sqlDriver = get(),
-            backgroundDispatcher = Dispatchers.IO,
+            backgroundDispatcher = Dispatchers.IO.limitedParallelism(1),
             logger = getWith("DatabaseHelper"),
         )
     }

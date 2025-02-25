@@ -169,4 +169,7 @@
     <string name="menu_add_to_pinned">Ghim</string>
     <string name="feed_list_appearance">Giao diện danh sách nguồn cấp</string>
     <string name="menu_remove_from_pinned">Bỏ ghim</string>
+    <string name="settings_crash_reporting">Gửi báo cáo crash ẩn danh</string>
+    <string name="category_name">Tên danh mục</string>
+    <string name="edit_category">Sửa tên danh mục</string>
 </resources>

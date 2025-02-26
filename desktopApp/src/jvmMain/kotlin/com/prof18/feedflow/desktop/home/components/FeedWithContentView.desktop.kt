@@ -33,6 +33,8 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 
 @Composable
 internal fun FeedWithContentView(
@@ -66,6 +68,8 @@ internal fun FeedWithContentView(
                 feedItems = feedState,
                 listState = listState,
                 feedFontSize = feedFontSizes,
+                shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuCopyLinkComments,
+                shareMenuLabel = LocalFeedFlowStrings.current.menuCopyLink,
                 currentFeedFilter = currentFeedFilter,
                 requestMoreItems = requestMoreItems,
                 onFeedItemClick = onFeedItemClick,
@@ -76,6 +80,10 @@ internal fun FeedWithContentView(
                     updateReadStatus(index)
                 },
                 markAllAsRead = markAllAsRead,
+                onShareClick = { urlTitle ->
+                    val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                    clipboard.setContents(StringSelection(urlTitle.url), null)
+                }
             )
 
             VerticalScrollbar(

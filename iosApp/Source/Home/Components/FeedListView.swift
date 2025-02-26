@@ -102,6 +102,10 @@ struct FeedListView: View {
                                 makeReadUnreadButton(feedItem: feedItem)
                                 makeBookmarkButton(feedItem: feedItem)
                                 makeCommentsButton(feedItem: feedItem)
+                                makeShareButton(feedItem: feedItem)
+                                if let commentUrl = feedItem.commentsUrl {
+                                    makeShareCommentsButton(commentsUrl: commentUrl)
+                                }
                                 if isOnVisionOSDevice() {
                                     if isOnVisionOSDevice() {
                                         Button {
@@ -197,6 +201,27 @@ struct FeedListView: View {
                 Label(feedFlowStrings.menuOpenComments, systemImage: "bubble.left.and.bubble.right")
             }
         }
+    }
+
+    @ViewBuilder
+    private func makeShareButton(feedItem: FeedItem) -> some View {
+        ShareLink(
+            item: URL(string: feedItem.url)!,
+            message: Text(feedItem.title ?? ""),
+            label: {
+                Label(feedFlowStrings.menuShare, systemImage: "square.and.arrow.up")
+            }
+        )
+    }
+
+    @ViewBuilder
+    private func makeShareCommentsButton(commentsUrl: String) -> some View {
+        ShareLink(
+            item: URL(string: commentsUrl)!,
+            label: {
+                Label(feedFlowStrings.menuShareComments, systemImage: "square.and.arrow.up.on.square")
+            }
+        )
     }
 
     @ViewBuilder

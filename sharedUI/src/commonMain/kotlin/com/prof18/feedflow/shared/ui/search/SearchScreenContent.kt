@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.shared.ui.home.components.FeedItemView
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -49,6 +50,8 @@ fun SearchScreenContent(
     searchState: SearchState,
     searchQuery: String,
     feedFontSizes: FeedFontSizes,
+    shareMenuLabel: String,
+    shareCommentsMenuLabel: String,
     updateSearchQuery: (String) -> Unit,
     navigateBack: () -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
@@ -56,6 +59,7 @@ fun SearchScreenContent(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
     snackbarHost: @Composable () -> Unit = {},
 ) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue(searchQuery, TextRange(searchQuery.length))) }
@@ -111,10 +115,13 @@ fun SearchScreenContent(
                                 feedItem = item,
                                 feedFontSize = feedFontSizes,
                                 index = index,
+                                shareCommentsMenuLabel = shareCommentsMenuLabel,
+                                shareMenuLabel = shareMenuLabel,
                                 onFeedItemClick = onFeedItemClick,
                                 onBookmarkClick = onBookmarkClick,
                                 onReadStatusClick = onReadStatusClick,
                                 onCommentClick = onCommentClick,
+                                onShareClick = onShareClick,
                             )
                         }
                     }

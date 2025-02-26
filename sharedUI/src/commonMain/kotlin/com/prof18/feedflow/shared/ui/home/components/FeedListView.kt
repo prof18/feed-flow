@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -51,6 +52,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
@@ -69,6 +71,8 @@ fun FeedList(
     feedItems: ImmutableList<FeedItem>,
     feedFontSize: FeedFontSizes,
     currentFeedFilter: FeedFilter,
+    shareMenuLabel: String,
+    shareCommentsMenuLabel: String,
     updateReadStatus: (Int) -> Unit,
     requestMoreItems: () -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
@@ -76,6 +80,7 @@ fun FeedList(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     markAllAsRead: () -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
 ) {
@@ -99,11 +104,14 @@ fun FeedList(
             FeedItemView(
                 feedItem = item,
                 index = index,
+                shareMenuLabel = shareMenuLabel,
+                shareCommentsMenuLabel = shareCommentsMenuLabel,
                 onFeedItemClick = onFeedItemClick,
                 onCommentClick = onCommentClick,
                 onBookmarkClick = onBookmarkClick,
                 onReadStatusClick = onReadStatusClick,
                 feedFontSize = feedFontSize,
+                onShareClick = onShareClick,
             )
 
             if (index == feedItems.size - 1 && currentFeedFilter !is FeedFilter.Read) {
@@ -151,10 +159,13 @@ fun FeedItemView(
     feedFontSize: FeedFontSizes,
     index: Int,
     disableClick: Boolean = false,
+    shareMenuLabel: String,
+    shareCommentsMenuLabel: String,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showItemMenu by remember {
@@ -231,9 +242,12 @@ fun FeedItemView(
                 showItemMenu = false
             },
             feedItem = feedItem,
+            shareMenuLabel = shareMenuLabel,
+            shareCommentsMenuLabel = shareCommentsMenuLabel,
             onBookmarkClick = onBookmarkClick,
             onReadStatusClick = onReadStatusClick,
             onCommentClick = onCommentClick,
+            onShareClick = onShareClick,
         )
     }
 }
@@ -351,10 +365,13 @@ private fun UnreadDot(
 private fun FeedItemContextMenu(
     showMenu: Boolean,
     feedItem: FeedItem,
+    shareMenuLabel: String,
+    shareCommentsMenuLabel: String,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     closeMenu: () -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
 ) {
     DropdownMenu(
         expanded = showMenu,
@@ -380,7 +397,85 @@ private fun FeedItemContextMenu(
                 onCommentClick = onCommentClick,
             )
         }
+
+        ShareMenuItem(
+            feedItem = feedItem,
+            shareMenuLabel = shareMenuLabel,
+            onShareClick = onShareClick,
+            closeMenu = closeMenu,
+        )
+
+        if (feedItem.commentsUrl != null) {
+            ShareCommentsMenuItem(
+                feedItem = feedItem,
+                shareCommentsMenuLabel = shareCommentsMenuLabel,
+                onShareClick = onShareClick,
+                closeMenu = closeMenu,
+            )
+        }
     }
+}
+
+@Composable
+private fun ShareMenuItem(
+    feedItem: FeedItem,
+    shareMenuLabel: String,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = shareMenuLabel,
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            onShareClick(
+                FeedItemUrlTitle(
+                    title = feedItem.title,
+                    url = feedItem.url,
+                ),
+            )
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun ShareCommentsMenuItem(
+    feedItem: FeedItem,
+    shareCommentsMenuLabel: String,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = shareCommentsMenuLabel,
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = ShareCommentsIcon,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            onShareClick(
+                FeedItemUrlTitle(
+                    title = feedItem.title,
+                    url = requireNotNull(feedItem.commentsUrl),
+                ),
+            )
+            closeMenu()
+        },
+    )
 }
 
 @Composable

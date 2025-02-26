@@ -24,6 +24,8 @@ import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.search.SearchScreenContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 
 internal data class SearchScreen(
     private val viewModel: SearchViewModel,
@@ -71,6 +73,8 @@ internal data class SearchScreen(
             searchState = state,
             searchQuery = searchQuery,
             feedFontSizes = feedFontSizes,
+            shareMenuLabel = strings.menuCopyLink,
+            shareCommentsMenuLabel = strings.menuCopyLinkComments,
             updateSearchQuery = { query ->
                 viewModel.updateSearchQuery(query)
             },
@@ -99,6 +103,10 @@ internal data class SearchScreen(
             snackbarHost = {
                 SnackbarHost(snackbarHostState)
             },
+            onShareClick = { titleAndUrl ->
+                val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                clipboard.setContents(StringSelection(titleAndUrl.url), null)
+            },
         )
     }
 }
@@ -111,12 +119,15 @@ private fun Preview() {
             searchState = SearchState.EmptyState,
             searchQuery = "",
             feedFontSizes = FeedFontSizes(),
+            shareMenuLabel = "Share",
+            shareCommentsMenuLabel = "Share comments",
             updateSearchQuery = {},
             navigateBack = {},
             onFeedItemClick = {},
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
             onCommentClick = {},
+            onShareClick = { _ -> },
         )
     }
 }

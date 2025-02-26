@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -72,6 +73,8 @@ internal fun SearchScreen(
         searchState = state,
         searchQuery = searchQuery,
         feedFontSizes = feedFontSizes,
+        shareMenuLabel = strings.menuShare,
+        shareCommentsMenuLabel = strings.menuShareComments,
         updateSearchQuery = { query ->
             viewModel.updateSearchQuery(query)
         },
@@ -97,6 +100,12 @@ internal fun SearchScreen(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         },
+        onShareClick = { titleAndUrl ->
+            context.openShareSheet(
+                title = titleAndUrl.title,
+                url = titleAndUrl.url,
+            )
+        },
     )
 }
 
@@ -107,6 +116,8 @@ private fun Preview() {
         SearchScreenContent(
             searchState = SearchState.EmptyState,
             feedFontSizes = FeedFontSizes(),
+            shareCommentsMenuLabel = "Share Comments",
+            shareMenuLabel = "Share",
             searchQuery = "",
             updateSearchQuery = {},
             navigateBack = {},
@@ -114,6 +125,7 @@ private fun Preview() {
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
             onCommentClick = {},
+            onShareClick = { _ -> },
         )
     }
 }

@@ -1,6 +1,5 @@
 package com.prof18.feedflow.android.readermode
 
-import android.content.Intent
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,6 +19,7 @@ import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
@@ -63,14 +63,10 @@ internal fun ReaderModeScreen(
             browserManager.openUrlWithFavoriteBrowser(url, context)
         },
         onShareClick = { url ->
-            // share
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.setType("text/plain")
-            shareIntent.putExtra(
-                Intent.EXTRA_TEXT,
-                url,
+            context.openShareSheet(
+                title = null,
+                url = url,
             )
-            context.startActivity(Intent.createChooser(shareIntent, ""))
         },
         readerModeSuccessView = { contentPadding, state ->
             ReaderMode(

@@ -13,7 +13,9 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -71,6 +73,7 @@ internal fun FeedWithContentView(
         }
 
         val state = rememberPullToRefreshState()
+        val context = LocalContext.current
 
         PullToRefreshBox(
             modifier = Modifier.fillMaxSize(),
@@ -83,6 +86,8 @@ internal fun FeedWithContentView(
                 feedItems = feedItems,
                 listState = lazyListState,
                 currentFeedFilter = currentFeedFilter,
+                shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuShareComments,
+                shareMenuLabel = LocalFeedFlowStrings.current.menuShare,
                 onFeedItemClick = onFeedItemClick,
                 onBookmarkClick = onBookmarkClick,
                 onReadStatusClick = onReadStatusClick,
@@ -93,6 +98,12 @@ internal fun FeedWithContentView(
                 requestMoreItems = requestMoreItems,
                 markAllAsRead = markAllAsRead,
                 feedFontSize = feedFontSizes,
+                onShareClick = { titleAndUrl ->
+                    context.openShareSheet(
+                        title = titleAndUrl.title,
+                        url = titleAndUrl.url,
+                    )
+                },
             )
         }
     }

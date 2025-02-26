@@ -77,6 +77,10 @@
     <string name="menu_mark_as_read">Mark as read</string>
     <string name="menu_mark_as_unread">Mark as unread</string>
     <string name="menu_open_comments">Open comments</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_share_comments">Share comments</string>
+    <string name="menu_copy_link">Copy link</string>
+    <string name="menu_copy_link_comments">Copy comments link</string>
     <string name="read_articles_empty_screen_message">Nothing here, time to start reading!</string>
     <string name="bookmarked_articles_empty_screen_message">Nothing here, time to bookmark something!</string>
     <string name="empty_screen_back_to_timeline">Back to timeline</string>

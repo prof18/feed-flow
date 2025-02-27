@@ -52,6 +52,7 @@ class DateFormatterTest {
         "Feb 19, 2025 00:49 GMT",
         "2 February 2025 23:01:17 GMT",
         "02/18/25 20:39:28",
+        "2022/09/22",
     )
 
     @Test

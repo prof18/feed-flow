@@ -41,11 +41,11 @@ include(":feedSync:database")
 include("feedSync:dropbox")
 include("feedSync:icloud")
 include("feedSync:ikloud-macos")
+include("feedSync:greader")
+include("feedSync:networkcore")
 
-// includeBuild("../../Android/RSS-Parser") {
+// includeBuild("../RSS-Parser") {
 //    dependencySubstitution {
 //        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))
 //    }
 // }
-include("feedSync:greader")
-include("feedSync:networkcore")

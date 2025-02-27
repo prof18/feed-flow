@@ -240,11 +240,28 @@ class DateFormatterImpl(
         },
 
         // 2024-05-04
+        // 2022/09/22
         Format {
             year()
-            char('-')
+            alternativeParsing({
+                char('-')
+            }) {
+                char('/')
+            }
             monthNumber()
-            char('-')
+            alternativeParsing({
+                char('-')
+            }) {
+                char('/')
+            }
+            dayOfMonth()
+        },
+
+        Format {
+            year()
+            char('/')
+            monthNumber()
+            char('/')
             dayOfMonth()
         },
 

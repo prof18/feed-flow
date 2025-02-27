@@ -14,7 +14,7 @@ internal class HtmlRetriever(
             val response = client.get(url)
             return response.bodyAsText()
         } catch (e: Throwable) {
-            logger.e(e) { "Unable to retrieve HTML, skipping" }
+            logger.d(e) { "Unable to retrieve HTML, skipping" }
             return null
         }
     }

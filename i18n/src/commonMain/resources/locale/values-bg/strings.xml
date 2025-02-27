@@ -121,7 +121,7 @@
     <string name="feed_name">Име на емисията</string>
     <string name="feed_edited_message">Емисията %s е актуализирана</string>
     <string name="icloud_sync_description">Свържете своя iCloud профил, за да синхронизирате абонаменти за емисии, категории, прочетени и маркирани статии между вашите iOS, iPadOS и macOS устройства. Данните ще бъдат запазени в папка, специфична за приложението; FeedFlow няма да има достъп до нито един от вашите файлове</string>
-    <string name="clear_old_articles_button">Изтрийте седмични публикации</string>
+    <string name="clear_old_articles_button">Изтриване на седмични публикации</string>
     <string name="open_another_feed">Отворете друга емисия</string>
     <string name="settings_feed_list_title">Списък с емисии</string>
     <string name="settings_feed_list_scale_title">Размер на текста</string>

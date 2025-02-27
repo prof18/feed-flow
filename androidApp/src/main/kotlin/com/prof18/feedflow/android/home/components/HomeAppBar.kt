@@ -86,7 +86,7 @@ internal fun HomeAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = null,
+                    contentDescription = "Search",
                 )
             }
 
@@ -99,7 +99,7 @@ internal fun HomeAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
-                    contentDescription = null,
+                    contentDescription = "Settings",
                 )
             }
 
@@ -159,7 +159,7 @@ private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
             } else {
                 Icons.Default.Menu
             },
-            contentDescription = null,
+            contentDescription = "Drawer menu",
         )
     }
 }

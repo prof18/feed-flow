@@ -169,4 +169,7 @@
     <string name="settings_auto_delete_period_one_month">Месячной давности</string>
     <string name="settings_hide_description">Скрыть описание статьи</string>
     <string name="settings_hide_images">Скрыть картинку статьи</string>
+    <string name="category_name">Название категории</string>
+    <string name="settings_crash_reporting">Отправлять анонимные отчеты об ошибках</string>
+    <string name="edit_category">Изменить название категории</string>
 </resources>

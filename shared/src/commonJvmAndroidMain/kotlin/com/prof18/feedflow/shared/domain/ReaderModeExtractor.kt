@@ -16,16 +16,16 @@ class ReaderModeExtractor internal constructor(
     suspend fun extractReaderContent(urlInfo: FeedItemUrlInfo): ReaderModeData? = withContext(dispatcherProvider.io) {
         val html = htmlRetriever.retrieveHtml(urlInfo.url) ?: return@withContext null
 
-        val readability4J = Readability4JExtended(urlInfo.url, html)
-        val article = readability4J.parse()
-
-        val title = article.title ?: urlInfo.title
-        val contentWithDocumentsCharsetOrUtf8 = article.contentWithDocumentsCharsetOrUtf8 ?: return@withContext null
+//        val readability4J = Readability4JExtended(urlInfo.url, html)
+//        val article = readability4J.parse()
+//
+//        val title = article.title ?: urlInfo.title
+//        val contentWithDocumentsCharsetOrUtf8 = article.contentWithDocumentsCharsetOrUtf8 ?: return@withContext null
 
         return@withContext ReaderModeData(
             id = FeedItemId(urlInfo.id),
-            title = title,
-            content = contentWithDocumentsCharsetOrUtf8,
+            title = "title",
+            content = html,
             url = urlInfo.url,
             fontSize = settingsRepository.getReaderModeFontSize(),
             isBookmarked = urlInfo.isBookmarked,

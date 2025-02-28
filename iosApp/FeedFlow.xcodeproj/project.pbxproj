@@ -641,7 +641,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/prof18/reeeed";
 			requirement = {
-				branch = main;
+				branch = readability;
 				kind = branch;
 			};
 		};

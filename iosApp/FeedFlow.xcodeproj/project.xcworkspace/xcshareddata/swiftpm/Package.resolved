@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/prof18/reeeed",
       "state" : {
-        "branch" : "main",
-        "revision" : "95d3c38057aeeea87cb72c58c5bd7e31ed5b5f94"
+        "branch" : "readability",
+        "revision" : "9fb07398187f1840f3572ac6dfe1809c53f08811"
       }
     },
     {

@@ -23,6 +23,22 @@ val opml = """
     </opml>
 """.trimIndent()
 
+val opmlWithMalformedXml = """
+    <?xml version=1.0 encoding=UTF-8?>
+    <opml version="1.0">
+        <head>
+            <title>Test malformed OPML</title>
+        </head>
+        <body>
+            <outline text="Tech" title="Tech">
+                <outline type="rss" text="Test & Demo" title="Test & Demo" xmlUrl="https://test.com/rss" htmlUrl="https://test.com"/>
+                <outline type="rss" text="Unclosed tag example" title="Unclosed tag example" xmlUrl="https://test2.com/rss" htmlUrl="https://test2.com"/>
+                <outline type="rss" text="Special chars test" title="Special chars test" xmlUrl="https://test3.com/rss" htmlUrl="https://test3.com"/>
+            </outline>
+        </body>
+    </opml>
+""".trimIndent()
+
 val opmlWithText = """
     <?xml version="1.0" encoding="UTF-8"?>
     <opml xmlns:rssowl="http://www.rssowl.org" version="1.1">

@@ -4,12 +4,14 @@ package com.prof18.feedflow.shared.domain.opml
 
 import com.prof18.feedflow.shared.TestDispatcherProvider
 import com.prof18.feedflow.shared.opml
+import com.prof18.feedflow.shared.opmlWithMalformedXml
 import com.prof18.feedflow.shared.opmlWithText
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class OPMLFeedParserTest {
 
@@ -72,6 +74,39 @@ class OPMLFeedParserTest {
         assertEquals("Il Post", feedSources[5].title)
         assertEquals("https://feeds.ilpost.it/ilpost", feedSources[5].url)
         assertEquals("News", feedSources[5].category?.title)
+    }
+
+    @Test
+    fun `Malformed OPML is parsed correctly`() = runTest {
+        val file = File.createTempFile("malformed-", ".tmp").apply {
+            deleteOnExit()
+            writeText(opmlWithMalformedXml)
+        }
+
+        val opmlInput = OpmlInput(file = file)
+        val feedSources = parser.generateFeedSources(opmlInput)
+
+        assertEquals(3, feedSources.size)
+        assertEquals("Test & Demo", feedSources[0].title)
+        assertEquals("Unclosed tag example", feedSources[1].title)
+        assertEquals("Special chars test", feedSources[2].title)
+    }
+
+    @Test
+    fun `Invalid XML throws OpmlParsingException`() = runTest {
+        val file = File.createTempFile("invalid-", ".tmp").apply {
+            deleteOnExit()
+            writeText("This is not XML at all")
+        }
+
+        val opmlInput = OpmlInput(file = file)
+
+        try {
+            parser.generateFeedSources(opmlInput)
+            fail("Expected OpmlParsingException to be thrown")
+        } catch (e: OpmlParsingException) {
+            assertTrue(e.message?.contains("Failed to parse OPML file") == true)
+        }
     }
 
     @Test

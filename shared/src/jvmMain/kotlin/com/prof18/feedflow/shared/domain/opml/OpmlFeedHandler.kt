@@ -14,17 +14,36 @@ import java.io.StringReader
 import javax.xml.parsers.SAXParserFactory
 import javax.xml.stream.XMLOutputFactory
 
+class OpmlParsingException(message: String, cause: Throwable? = null) : Exception(message, cause)
+
 internal actual class OpmlFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {
     actual suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.io) {
             val feed = opmlInput.file.readText()
-            val parser = SAXParserFactory.newInstance().newSAXParser()
-            val handler = SaxFeedHandler()
-            parser.parse(InputSource(StringReader(feed)), handler)
 
-            return@withContext handler.getFeedSource()
+            try {
+                // Remove any existing XML declaration
+                val xmlContent = feed.replace(Regex("<\\?xml.*?\\?>"), "")
+
+                // Add a proper XML declaration
+                val sanitizedFeed = """<?xml version="1.0" encoding="UTF-8"?>
+                    |$xmlContent
+                """.trimMargin()
+                    .replace("&(?![a-zA-Z]+;|#[0-9]+;)".toRegex(), "&amp;") // Fix unescaped &
+                    .replace("[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]".toRegex(), "") // Remove control chars
+
+                val factory = SAXParserFactory.newInstance()
+                factory.isNamespaceAware = true
+                factory.isValidating = false
+                val parser = factory.newSAXParser()
+                val handler = SaxFeedHandler()
+                parser.parse(InputSource(StringReader(sanitizedFeed)), handler)
+                return@withContext handler.getFeedSource()
+            } catch (e: Exception) {
+                throw OpmlParsingException("Failed to parse OPML file: ${e.message}", e)
+            }
         }
 
     actual suspend fun exportFeed(

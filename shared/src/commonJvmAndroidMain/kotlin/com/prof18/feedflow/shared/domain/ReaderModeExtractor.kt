@@ -20,7 +20,9 @@ class ReaderModeExtractor internal constructor(
         val article = readability4J.parse()
 
         val title = article.title ?: urlInfo.title
-        val contentWithDocumentsCharsetOrUtf8 = article.contentWithDocumentsCharsetOrUtf8 ?: return@withContext null
+        val contentWithDocumentsCharsetOrUtf8 = article.contentWithDocumentsCharsetOrUtf8
+            ?.replace(Regex("https?://.*?placeholder\\.png"), "")
+            ?: return@withContext null
 
         return@withContext ReaderModeData(
             id = FeedItemId(urlInfo.id),

@@ -100,6 +100,12 @@ class SettingsRepository(
     fun setCrashReportingEnabled(value: Boolean) =
         settings.set(SettingsFields.CRASH_REPORTING_ENABLED.name, value)
 
+    fun getLastFeedSyncTimestamp(): Long =
+        settings.getLong(SettingsFields.LAST_FEED_SYNC_TIMESTAMP.name, 0L)
+
+    fun setLastFeedSyncTimestamp(timestamp: Long) =
+        settings.set(SettingsFields.LAST_FEED_SYNC_TIMESTAMP.name, timestamp)
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -119,4 +125,6 @@ internal enum class SettingsFields {
     AUTO_DELETE_PERIOD,
     HIDE_IMAGES,
     CRASH_REPORTING_ENABLED,
+    LAST_FEED_SYNC_TIMESTAMP,
+    IS_FIRST_APP_LAUNCH,
 }

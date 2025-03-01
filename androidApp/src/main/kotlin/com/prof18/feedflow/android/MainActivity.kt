@@ -51,17 +51,20 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
+import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.getKoin
 import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
     private val messageQueue by inject<FeedSyncMessageQueue>()
+    private val homeViewModel by viewModel<HomeViewModel>()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,6 +120,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        homeViewModel.loadFeeds()
+    }
+
     @Composable
     private fun FeedFlowNavigation(
         windowSizeClass: WindowSizeClass,
@@ -133,6 +141,7 @@ class MainActivity : ComponentActivity() {
         ) {
             composable<Home> {
                 HomeScreen(
+                    homeViewModel = homeViewModel,
                     windowSizeClass = windowSizeClass,
                     onSettingsButtonClicked = {
                         navController.navigate(Settings)

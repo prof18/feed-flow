@@ -47,14 +47,14 @@ internal class FeedFetcherRepository(
     @Suppress("MagicNumber")
     suspend fun fetchFeeds(
         forceRefresh: Boolean = false,
-        isFirstLaunch: Boolean = false,
     ) {
         return withContext(dispatcherProvider.io) {
             feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
             when {
                 gReaderRepository.isAccountSet() -> fetchFeedsWithGReader()
-                else -> fetchFeedsWithRssParser(forceRefresh, isFirstLaunch)
+                else -> fetchFeedsWithRssParser(forceRefresh)
             }
+            settingsRepository.setLastFeedSyncTimestamp(dateFormatter.currentTimeMillis())
         }
     }
 
@@ -81,7 +81,6 @@ internal class FeedFetcherRepository(
     @Suppress("MagicNumber")
     private suspend fun fetchFeedsWithRssParser(
         forceRefresh: Boolean = false,
-        isFirstLaunch: Boolean = false,
     ) {
         feedSyncRepository.syncFeedSources()
 
@@ -91,10 +90,6 @@ internal class FeedFetcherRepository(
         if (feedSourceUrls.isEmpty()) {
             feedStateRepository.emitUpdateStatus(NoFeedSourcesStatus)
         } else {
-            if (!isFirstLaunch) {
-                feedStateRepository.getFeeds()
-            }
-
             feedStateRepository.emitUpdateStatus(
                 InProgressFeedUpdateStatus(
                     refreshedFeedCount = 0,

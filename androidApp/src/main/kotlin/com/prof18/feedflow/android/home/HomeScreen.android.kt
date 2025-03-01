@@ -28,11 +28,11 @@ import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.home.components.DeleteOldFeedDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.koinInject
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun HomeScreen(
     windowSizeClass: WindowSizeClass,
+    homeViewModel: HomeViewModel,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
@@ -41,7 +41,6 @@ internal fun HomeScreen(
     onImportExportClick: () -> Unit = {},
     onEditFeedClick: (FeedSource) -> Unit,
 ) {
-    val homeViewModel = koinViewModel<HomeViewModel>()
     val browserManager = koinInject<BrowserManager>()
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()

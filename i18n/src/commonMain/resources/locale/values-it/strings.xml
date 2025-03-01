@@ -177,4 +177,10 @@
     <string name="settings_crash_reporting">Invia segnalazioni di crash anonime</string>
     <string name="category_name">Nome categoria</string>
     <string name="edit_category">Modifica nome categoria</string>
+    <string name="menu_share">Condividi</string>
+    <string name="menu_copy_link_comments">Copia link ai commenti</string>
+    <string name="menu_share_comments">Condividi link ai commenti</string>
+    <string name="menu_copy_link">Copia link</string>
+    <string name="error_feed_add">Si è verificato un errore durante l\'aggiunta del feed</string>
+    <string name="adding_feed">Aggiunta feed...</string>
 </resources>

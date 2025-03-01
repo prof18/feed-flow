@@ -177,4 +177,5 @@
     <string name="category_name">Category name</string>
     <string name="edit_category">Edit category name</string>
     <string name="adding_feed">Adding feed...</string>
+    <string name="error_feed_add">Something went wrong while adding the feed</string>
 </resources>

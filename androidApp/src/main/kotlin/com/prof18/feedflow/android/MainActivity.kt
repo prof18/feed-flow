@@ -75,27 +75,26 @@ class MainActivity : ComponentActivity() {
         setContent {
             val koin = getKoin()
             setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
-
             val readerModeViewModel: ReaderModeViewModel = koinViewModel()
 
             val windowSize = calculateWindowSizeClass(this@MainActivity)
             val snackbarHostState = remember { SnackbarHostState() }
 
-            val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
-            LaunchedEffect(Unit) {
-                messageQueue.messageQueue.collect { message ->
-                    if (message is SyncResult.Error) {
-                        snackbarHostState.showSnackbar(
-                            message = errorMessage,
-                        )
-                    }
-                }
-            }
-
             FeedFlowTheme {
                 val navController = rememberNavController()
                 val lyricist = rememberFeedFlowStrings()
                 ProvideFeedFlowStrings(lyricist) {
+                    val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
+                    LaunchedEffect(Unit) {
+                        messageQueue.messageQueue.collect { message ->
+                            if (message is SyncResult.Error) {
+                                snackbarHostState.showSnackbar(
+                                    message = errorMessage,
+                                )
+                            }
+                        }
+                    }
+
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background,

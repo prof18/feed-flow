@@ -174,4 +174,7 @@
     <string name="settings_hide_description">Nascondi descrizione articolo</string>
     <string name="fresh_rss_password_hint">L\'API password di FreshRSS (Impostazioni &gt; Profilo)</string>
     <string name="fresh_rss_url_hint">L\'indirizzo dell\'API di FreshRSS, ad esempio %s</string>
+    <string name="settings_crash_reporting">Invia segnalazioni di crash anonime</string>
+    <string name="category_name">Nome categoria</string>
+    <string name="edit_category">Modifica nome categoria</string>
 </resources>

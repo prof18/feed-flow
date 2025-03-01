@@ -55,6 +55,18 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:theme="@style/Theme.Transparent"
+            android:name=".addfeed.AddFeedExtensionActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+        </activity>
+
+
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />

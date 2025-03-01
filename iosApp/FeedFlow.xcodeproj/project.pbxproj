@@ -110,6 +110,7 @@
 				Accounts/Dropbox/Data/DropboxDataSourceIos.swift,
 				Accounts/Dropbox/Data/DropboxErrors.swift,
 				DI/Koin.swift,
+				UI/Style/Spacing.swift,
 				Utils/IosHtmlParser.swift,
 				Utils/VMStoreOwner.swift,
 			);

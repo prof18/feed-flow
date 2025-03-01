@@ -176,15 +176,20 @@ class DropboxDataSourceIos: DropboxDataSource {
             includeGrantedScopes: false
         )
 
-        DropboxClientsManager.authorizeFromControllerV2(
-            UIApplication.shared,
-            controller: nil,
-            loadingStatusDelegate: nil,
-            openURL: { url in
-                UIApplication.shared.open(url)
-            },
-            scopeRequest: scopeRequest
-        )
+        #if APP_EXTENSION
+            // no-op
+            print("Dropbox authorization is not supported in app extensions")
+        #else
+            DropboxClientsManager.authorizeFromControllerV2(
+                UIApplication.shared,
+                controller: nil,
+                loadingStatusDelegate: nil,
+                openURL: { url in
+                    UIApplication.shared.open(url)
+                },
+                scopeRequest: scopeRequest
+            )
+        #endif
     }
 
     static func handleOAuthResponse(

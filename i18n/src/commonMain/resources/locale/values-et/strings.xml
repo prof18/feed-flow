@@ -177,4 +177,10 @@
     <string name="settings_crash_reporting">Saada arendajale anonüümseid krahhiaruandeid</string>
     <string name="category_name">Kategooria nimi</string>
     <string name="edit_category">Muuda kategooria nime</string>
+    <string name="menu_share_comments">Jaga kommentaare</string>
+    <string name="menu_copy_link">Kopeeri link</string>
+    <string name="adding_feed">Lisame uudisvoogu...</string>
+    <string name="error_feed_add">Midagi läks uudisvoo lisamisel viltu</string>
+    <string name="menu_share">Jaga</string>
+    <string name="menu_copy_link_comments">Kopeeri kommentaaride link</string>
 </resources>

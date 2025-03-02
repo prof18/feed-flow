@@ -5,7 +5,7 @@
     <string name="feed_add_in_progress_message">Bitte warte, die Verfügbarkeit aller Feeds wird geprüft. Der Vorgang kann eine Weile dauern, je nach der Anzahl der Feeds, die importiert werden</string>
     <string name="drawer_title_timeline">Zeitleiste</string>
     <string name="force_feed_refresh">Aktualisieren der Feeds erzwingen</string>
-    <string name="database_error">Beim Abrufen der Feeds ist irgendetwas schief gelaufen. Bitte versuche es erneut oder starte die App neu :(</string>
+    <string name="database_error">Beim Abrufen der Feeds gab es ein Problem. Bitte versuche es erneut oder starte die App neu :(</string>
     <string name="no_category">Ohne Kategorie</string>
     <string name="import_dialog_title">OPML-Datei auswählen</string>
     <string name="feeds_importing_message">Feed importieren</string>
@@ -79,7 +79,7 @@
     <string name="settings_app_title">App</string>
     <string name="menu_open_comments">Kommentare öffnen</string>
     <string name="settings_reader_mode">Artikel im Lesemodus öffnen</string>
-    <string name="feed_error_message">Es gibt einen Fehler mit %s :(</string>
+    <string name="feed_error_message">Es gibt ein Problem mit %s :(</string>
     <string name="reader_mode_font_size">Schriftgröße</string>
     <string name="search_hint_subtitle">die Ergebnisse werden automatisch angezeigt</string>
     <string name="settings_title_feed">Feed</string>
@@ -109,7 +109,7 @@
     <string name="last_upload">Letzter Upload: %s</string>
     <string name="last_download">Letzter Download: %s</string>
     <string name="no_dropbox_sync_yet">Deine Daten sind noch nicht mit Dropbox synchronisiert. Drücke den Sicherungs-Knopf, um die Synchronisierung zu starten</string>
-    <string name="error_account_sync">Beim Synchronisieren der Daten mit deinem Konto ist leider ein Fehler aufgetreten :(</string>
+    <string name="error_account_sync">Beim Synchronisieren der Daten mit deinem Konto ist leider ein Problem aufgetreten :(</string>
     <string name="import_export_description">Für eine bessere Interoperabilität mit anderen Feed-Readern unterstützt FeedFlow das Importieren und Exportieren deiner Abonnements als OPML-Datei</string>
     <string name="read_articles_empty_screen_message">Hier ist noch nichts; Zeit, mit dem Lesen zu beginnen!</string>
     <string name="bookmarked_articles_empty_screen_message">Hier ist noch nichts eingetragen - ein guter Zeitpunkt, um Lesezeichen hinzuzufügen!</string>
@@ -172,4 +172,10 @@
     <string name="category_name">Kategorienname</string>
     <string name="edit_category">Kategorienname bearbeiten</string>
     <string name="settings_crash_reporting">Anonyme Absturzberichte senden</string>
+    <string name="menu_share">Teilen</string>
+    <string name="menu_share_comments">Kommentare teilen</string>
+    <string name="menu_copy_link">Link kopieren</string>
+    <string name="menu_copy_link_comments">Kommentarlink kopieren</string>
+    <string name="adding_feed">Feed wird hinzugefügt...</string>
+    <string name="error_feed_add">Beim Hinzufügen des Feeds gab es ein Problem</string>
 </resources>

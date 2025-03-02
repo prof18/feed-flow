@@ -1,2 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="about_app_version">Versija: %s</string>
+    <string name="about_menu_contribute_translations">Palīdziet iztulkot</string>
+    <string name="about_button">Par</string>
+    <string name="default_browser">Noklusējuma pārlūks</string>
+    <string name="delete_feed">Dzēst</string>
+    <string name="app_name">FeedFlow</string>
+    <string name="mark_all_read_button">Atzīmēt visu kā lasītu</string>
+    <string name="clear_old_articles_button">Dzēst ziņas, kas vecākas par nedēļu</string>
+    <string name="settings_button">Iestatījumi</string>
+    <string name="feeds_import_done_message">Importēšana pabeigta</string>
+    <string name="feeds_export_done_message">Eksportēšana pabeigta</string>
+    <string name="settings_title">Iestatījumi</string>
+    <string name="browser_selection_button">Pārlūks</string>
+    <string name="export_dialog_title">Saglabāt OPML failu</string>
+    <string name="load_file_error_message">Nevar ielādēt failu</string>
+    <string name="author_label">Ar ❤️ izstrādāja</string>
+    <string name="about_nav_bar">Par</string>
+    <string name="report_issue_button">Ziņot par problēmu</string>
+    <string name="import_export_opml_title">Importēt un eksportēt</string>
+    <string name="retry_button">Mēģināt vēlreiz</string>
+    <string name="new_release_available_title">Ir pieejama jauna FeedFlow versija:</string>
+    <string name="new_release_available_link">Lejupielādēt var šeit</string>
+    <string name="no_category_selected_header">Nav kategorijas</string>
+    <string name="new_category_hint">Jaunās kategorijas nosaukums</string>
+    <string name="no_category">Nekategorizēts</string>
+    <string name="add_feed_category_title">Kategorija</string>
+    <string name="settings_behaviour_title">Uzvedība</string>
+    <string name="delete_category_confirmation_title">Dzēst kategoriju?</string>
+    <string name="delete_category_close_button">Aizvērt</string>
+    <string name="empty_feed_message">Šeit vairs nav ko lasīt!</string>
+    <string name="import_dialog_title">Atlasiet OPML failu</string>
+    <string name="generic_error_message">Piedodiet, kaut kas nogāja greizi :(</string>
+    <string name="open_website_button">Atvērt mājaslapu</string>
+    <string name="import_export_opml">Importēt un eksportēt OPML failu</string>
+    <string name="issue_report_title">Ziņot par FeedFlow problēmu</string>
+    <string name="about_the_app">FeedFlow ir minimālismā dizainēts RSS lasītājs, kura pamatā ir autora personīgās idejas un vīzija. Raksti tiek atvērti to attiecīgajās vietnēs, un jūs varat izvēlēties savu iecienītāko privātuma pārlūku, lai atdalītu savu lasīšanas pieredzi atsevišķi no galvenā pārlūka. Ja vēlaties izvairīties no pārlūka izmantošanas, FeedFlow piedāvā lasīšanas režīmu, kas ļauj baudīt rakstu saturu bez kaitinošiem uzmanības novēršanas elementiem.\nKā arī varat importēt un eksportēt savu esošo RSS kolekciju no un uz OPML failiem.</string>
+</resources>

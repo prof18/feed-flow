@@ -96,7 +96,7 @@
     <string name="reader_mode_font_size">Розмір шрифту</string>
     <string name="edit_feed_source_name_button">Редагувати</string>
     <string name="edit_feed">Редагувати стрічку</string>
-    <string name="feed_name">Назва стрічки</string>
+    <string name="feed_name">Назва каналу</string>
     <string name="feed_edited_message">Стрічку %s оновлено</string>
     <string name="open_another_feed">Відкрийте іншу стрічку</string>
     <string name="settings_feed_list_title">Список стрічок</string>
@@ -172,4 +172,10 @@
     <string name="category_name">Назва категорії</string>
     <string name="settings_crash_reporting">Надсилайте анонімні звіти про збої</string>
     <string name="edit_category">Редагувати назву категорії</string>
+    <string name="error_feed_add">Під час додавання каналу сталася помилка</string>
+    <string name="menu_share">Поділіться</string>
+    <string name="menu_share_comments">Поділіться коментарями</string>
+    <string name="menu_copy_link">Копіювати посилання</string>
+    <string name="menu_copy_link_comments">Копіювати посилання на коментарі</string>
+    <string name="adding_feed">Додавання каналу...</string>
 </resources>

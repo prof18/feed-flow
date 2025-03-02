@@ -2,12 +2,12 @@
 <resources>
     <string name="add_feed">Добавете емисия</string>
     <string name="feeds_title">Емисии</string>
-    <string name="no_feeds_add_one_message">Няма емисии моля, добавете една</string>
+    <string name="no_feeds_add_one_message">Няма емисии. Моля, добавете една</string>
     <string name="empty_feed_message">Няма какво друго да се чете тук!</string>
-    <string name="loading_feed_message">Зареждат се емисии %s</string>
+    <string name="loading_feed_message">Зареждане на емисии %s</string>
     <string name="app_name">FeedFlow</string>
-    <string name="mark_all_read_button">Маркирайте всички като прочетени</string>
-    <string name="feeds_import_done_message">Внасянето е завършено</string>
+    <string name="mark_all_read_button">Маркирайте всичко като прочетено</string>
+    <string name="feeds_import_done_message">Внасянето завърши</string>
     <string name="settings_title">Настройки</string>
     <string name="browser_selection_button">Браузър</string>
     <string name="export_feeds_button">Изнесете емисии в OPML</string>
@@ -71,7 +71,7 @@
     <string name="settings_button">Настройки</string>
     <string name="import_feed_button">Внесете емисии от OPML</string>
     <string name="feeds_importing_message">Внасяне на емисия</string>
-    <string name="feeds_export_done_message">Изнасянето е завършено</string>
+    <string name="feeds_export_done_message">Изнасянето завърши</string>
     <string name="import_dialog_title">Изберете OPML файл</string>
     <string name="export_dialog_title">Запазете OPML файл</string>
     <string name="export_started_message">Създаване на изнасяне</string>
@@ -118,7 +118,7 @@
     <string name="last_download">Последно изтегляне: %s</string>
     <string name="edit_feed_source_name_button">Редактиране</string>
     <string name="edit_feed">Редактиране на емисия</string>
-    <string name="feed_name">Име на емисията</string>
+    <string name="feed_name">Име на емисия</string>
     <string name="feed_edited_message">Емисията %s е актуализирана</string>
     <string name="icloud_sync_description">Свържете своя iCloud профил, за да синхронизирате абонаменти за емисии, категории, прочетени и маркирани статии между вашите iOS, iPadOS и macOS устройства. Данните ще бъдат запазени в папка, специфична за приложението; FeedFlow няма да има достъп до нито един от вашите файлове</string>
     <string name="clear_old_articles_button">Изтриване на седмични публикации</string>
@@ -127,7 +127,7 @@
     <string name="settings_feed_list_scale_title">Размер на текста</string>
     <string name="settings_font_scale_title_example">Заглавие на статия</string>
     <string name="settings_font_scale_subtitle_example">Това е подзаглавието на статията</string>
-    <string name="settings_font_scale_feed_source_example">Име на емисия</string>
+    <string name="settings_font_scale_feed_source_example">Име на емисията</string>
     <string name="deleting_feed_dialog_title">Изтриване...</string>
     <string name="add_feed_generic_error">Имаше грешка при добавянето на емисията. Моля, опитайте се отново</string>
     <string name="feed_added_message_without_name">Емисията е добавена</string>
@@ -172,4 +172,10 @@
     <string name="settings_crash_reporting">Изпращане на анонимни доклади за сривове</string>
     <string name="category_name">Име на категория</string>
     <string name="edit_category">Редактиране на име на категория</string>
+    <string name="menu_share">Споделете</string>
+    <string name="menu_share_comments">Споделете коментари</string>
+    <string name="menu_copy_link_comments">Копиране на връзката за коментари</string>
+    <string name="adding_feed">Добавяне на емисия...</string>
+    <string name="menu_copy_link">Копиране на връзката</string>
+    <string name="error_feed_add">Нещо се обърка при добавянето на емисията</string>
 </resources>

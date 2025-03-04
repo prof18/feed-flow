@@ -44,7 +44,7 @@
     <string name="account_connect_button">连接</string>
     <string name="account_disconnect_button">未连接</string>
     <string name="backup_button">备份</string>
-    <string name="dropbox_sync_common_description">连接 Dropbox 账号，在 Android、iOS、iPadOS 和桌面设备之间同步订阅内容、类别、已读和收藏的文章。数据将保存在应用特定的文件夹中，FeedFlow 无法访问您的任何文件</string>
+    <string name="dropbox_sync_common_description">连接 Dropbox 账号，在 Android、iOS、iPadOS 和桌面设备之间同步订阅内容、类别、已读和收藏的文章。数据将保存在应用特定的文件夹中，FeedFlow 不会访问您的任何文件</string>
     <string name="account_refresh_progress">正在同步</string>
     <string name="no_dropbox_sync_yet">数据未与 Dropbox 同步。请点击“备份”按钮开始同步</string>
     <string name="error_account_sync">抱歉，在同步您账号中的数据时出了点问题 :(</string>
@@ -122,7 +122,7 @@
     <string name="edit_feed_source_name_button">编辑</string>
     <string name="edit_feed">编辑订阅</string>
     <string name="clear_old_articles_button">清除一周前文章</string>
-    <string name="icloud_sync_description">连接 iCloud 账号，在 iOS、iPadOS 和 macOS 设备之间同步订阅内容、类别、已读和收藏的文章。数据将保存在应用特定的文件夹中，FeedFlow 无法访问您的任何文件</string>
+    <string name="icloud_sync_description">连接 iCloud 账号，在 iOS、iPadOS 和 macOS 设备之间同步订阅内容、类别、已读和收藏的文章。数据将保存在应用特定的文件夹中，FeedFlow 不会访问您的任何文件</string>
     <string name="open_another_feed">浏览其他订阅</string>
     <string name="menu_share">分享</string>
     <string name="menu_share_comments">分享评论</string>
@@ -149,4 +149,8 @@
     <string name="settings_font_scale_title_example">文章标题</string>
     <string name="settings_font_scale_feed_source_example">订阅源名称</string>
     <string name="settings_hide_description">隐藏文章描述</string>
+    <string name="no_fresh_rss_sync_yet">数据尚未同步</string>
+    <string name="fresh_rss_last_sync">最后同步：%s</string>
+    <string name="fresh_rss_password_hint">FreshRSS API 密码（设置 &gt; 配置）</string>
+    <string name="fresh_rss_url_hint">FreshRSS API 端点，例如 %s</string>
 </resources>

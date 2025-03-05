@@ -17,6 +17,7 @@ import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
+import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
@@ -24,6 +25,7 @@ import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
+import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
@@ -161,6 +163,13 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedActionsRepository = get(),
         )
     }
+
+    viewModel {
+        DeeplinkFeedViewModel(
+            widgetRepository = get(),
+            feedActionsRepository = get(),
+        )
+    }
 }
 
 @Suppress("unused") // Called from Swift
@@ -183,4 +192,6 @@ object Deps : KoinComponent {
     fun getReaderModeViewModel() = getKoin().get<ReaderModeViewModel>()
     fun getEditFeedViewModel() = getKoin().get<EditFeedViewModel>()
     fun getFreshRssSyncViewModel() = getKoin().get<FreshRssSyncViewModel>()
+    fun getFeedWidgetRepository() = getKoin().get<FeedWidgetRepository>()
+    fun getDeeplinkFeedViewModel() = getKoin().get<DeeplinkFeedViewModel>()
 }

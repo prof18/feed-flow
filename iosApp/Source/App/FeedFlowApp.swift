@@ -3,13 +3,12 @@ import FirebaseCore
 import FirebaseCrashlytics
 import SwiftUI
 import SwiftyDropbox
+import WidgetKit
 
 @main
 struct FeedFlowApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
-
     @Environment(\.scenePhase) private var scenePhase: ScenePhase
-
     @State private var appState: AppState = .init()
 
     private var feedSyncTimer: FeedSyncTimer = .init()
@@ -20,7 +19,8 @@ struct FeedFlowApp: App {
         #endif
         startKoin()
         #if !DEBUG
-            let isCrashReportEnabled = Deps.shared.getSettingsRepository().getCrashReportingEnabled()
+            let isCrashReportEnabled = Deps.shared.getSettingsRepository()
+                .getCrashReportingEnabled()
             Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(isCrashReportEnabled)
         #endif
 
@@ -38,22 +38,32 @@ struct FeedFlowApp: App {
             ContentView()
                 .environment(appState)
                 .onOpenURL(perform: { url in
-                    Deps.shared.getDropboxDataSource().handleOAuthResponse {
-                        DropboxDataSourceIos.handleOAuthResponse(
-                            url: url,
-                            onSuccess: {
-                                print("Success! User is logged into DropboxClientsManager.")
-                                NotificationCenter.default.post(name: .didDropboxSuccess, object: nil)
-                            },
-                            onCancel: {
-                                print("Authorization flow was manually canceled by user!")
-                                NotificationCenter.default.post(name: .didDropboxCancel, object: nil)
-                            },
-                            onError: {
-                                print("Error")
-                                NotificationCenter.default.post(name: .didDropboxError, object: nil)
-                            }
-                        )
+                    if url.scheme == "feedflow" {
+                        handleFeedFlowURL(url)
+                    } else {
+                        Deps.shared.getDropboxDataSource().handleOAuthResponse {
+                            DropboxDataSourceIos.handleOAuthResponse(
+                                url: url,
+                                onSuccess: {
+                                    print("Success! User is logged into DropboxClientsManager.")
+                                    NotificationCenter.default.post(
+                                        name: .didDropboxSuccess, object: nil
+                                    )
+                                },
+                                onCancel: {
+                                    print("Authorization flow was manually canceled by user!")
+                                    NotificationCenter.default.post(
+                                        name: .didDropboxCancel, object: nil
+                                    )
+                                },
+                                onError: {
+                                    print("Error")
+                                    NotificationCenter.default.post(
+                                        name: .didDropboxError, object: nil
+                                    )
+                                }
+                            )
+                        }
                     }
                 })
                 .onChange(of: scenePhase) {
@@ -62,11 +72,20 @@ struct FeedFlowApp: App {
                         feedSyncTimer.scheduleTimer()
                     case .background:
                         feedSyncTimer.invalidate()
+                        WidgetCenter.shared.reloadAllTimelines()
                     default:
                         break
                     }
                 }
         }
+    }
+
+    private func handleFeedFlowURL(_ url: URL) {
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        let path = components?.path ?? ""
+
+        let feedId = path.replacing("/", with: "")
+        appState.navigate(route: CommonViewRoute.deepLinkFeed(feedId))
     }
 }
 

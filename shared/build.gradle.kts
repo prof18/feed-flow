@@ -27,6 +27,7 @@ kotlin {
         it.binaries.framework {
             baseName = "FeedFlowKit"
             isStatic = true
+            binaryOption("bundleId", "com.prof18.feedflow.FeedFlowKit")
 
             export(project(":i18n"))
             export(project(":core"))
@@ -60,6 +61,7 @@ kotlin {
                 implementation(libs.multiplatform.settings)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.ktor.client.core)
+                implementation(libs.skie.annotation)
 
                 api(project(":core"))
                 api(project(":i18n"))

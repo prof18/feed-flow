@@ -32,15 +32,6 @@ struct RegularView: View {
     @State var showAddFeedSheet = false
     @State var isToggled: Bool = false
 
-    @State private var showFontSizeMenu: Bool = false
-    @State private var fontSize = 16.0
-    @State private var isSliderMoving = false
-    @State private var reset = false
-    @State private var isBookmarked = false
-
-    @StateObject private var vmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
-        Deps.shared.getReaderModeViewModel())
-
     @State private var browserToOpen: BrowserToPresent?
     @State var indexHolder: HomeListIndexHolder
     var drawerItems: [DrawerItem] = []
@@ -120,64 +111,16 @@ struct RegularView: View {
             .navigationDestination(for: CommonViewRoute.self) { route in
                 switch route {
                 case let .readerMode(feedItem):
-                    Group {
-                        ReeeederView(
-                            url: URL(string: feedItem.url)!,
-                            options: ReeeederViewOptions(
-                                theme: .init(
-                                    additionalCSS: """
-                                        #__reader_container {
-                                            font-size: \(fontSize)px
-                                        }
-                                    """
-                                ),
-                                onLinkClicked: { url in
-                                    if browserSelector.openInAppBrowser() {
-                                        browserToOpen = .inAppBrowser(url: url)
-                                    } else {
-                                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
-                                    }
-                                }
-                            ),
-                            toolbarContent: {
-                                Button {
-                                    isBookmarked.toggle()
-                                    vmStoreOwner.instance.updateBookmarkStatus(
-                                        feedItemId: FeedItemId(id: feedItem.id),
-                                        bookmarked: isBookmarked
-                                    )
-                                } label: {
-                                    if isBookmarked {
-                                        Image(systemName: "bookmark.slash")
-                                    } else {
-                                        Image(systemName: "bookmark")
-                                    }
-                                }
-
-                                ShareLink(item: URL(string: feedItem.url)!) {
-                                    Label("Share", systemImage: "square.and.arrow.up")
-                                }
-
-                                Button {
-                                    if browserSelector.openInAppBrowser() {
-                                        browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
-                                    } else {
-                                        openURL(
-                                            browserSelector.getUrlForDefaultBrowser(
-                                                stringUrl: URL(string: feedItem.url)!.absoluteString))
-                                    }
-                                } label: {
-                                    Image(systemName: "globe")
-                                }
-
-                                fontSizeMenu
-                            }
+                    ReaderModeScreen(
+                        feedItemUrlInfo: FeedItemUrlInfo(
+                            id: feedItem.id,
+                            url: feedItem.url,
+                            title: feedItem.title,
+                            openOnlyOnBrowser: false,
+                            isBookmarked: feedItem.isBookmarked,
+                            linkOpeningPreference: feedItem.feedSource.linkOpeningPreference
                         )
-                        .onAppear {
-                            isBookmarked = feedItem.isBookmarked
-                        }
-                        .id(reset)
-                    }
+                    )
 
                 case .search:
                     SearchScreen()
@@ -187,6 +130,9 @@ struct RegularView: View {
 
                 case .dropboxSync:
                     DropboxSyncScreen()
+
+                case let .deepLinkFeed(feedId):
+                    DeepLinkFeedScreen(feedId: feedId)
                 }
             }
             .fullScreenCover(item: $browserToOpen) { browserToOpen in
@@ -210,58 +156,6 @@ struct RegularView: View {
             for await state in homeViewModel.navDrawerState {
                 self.navDrawerState = state
             }
-        }
-        .task {
-            for await state in vmStoreOwner.instance.readerFontSizeState {
-                self.fontSize = Double(truncating: state)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var fontSizeMenu: some View {
-        Button {
-            showFontSizeMenu.toggle()
-        } label: {
-            Image(systemName: "textformat.size")
-        }
-        .font(.title3)
-        .popover(isPresented: $showFontSizeMenu) {
-            VStack(alignment: .leading) {
-                Text(feedFlowStrings.readerModeFontSize)
-
-                HStack {
-                    Button {
-                        fontSize -= 1.0
-                        self.reset.toggle()
-                        vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                    } label: {
-                        Image(systemName: "minus")
-                    }
-
-                    Slider(
-                        value: $fontSize,
-                        in: 12 ... 40,
-                        onEditingChanged: { isEditing in
-                            if !isEditing {
-                                self.reset.toggle()
-                                vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                            }
-                        }
-                    )
-
-                    Button {
-                        fontSize += 1.0
-                        self.reset.toggle()
-                        vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                }
-            }
-            .frame(width: 250, height: 100)
-            .padding(.horizontal, Spacing.regular)
-            .presentationCompactAdaptation((.popover))
         }
     }
 }

@@ -26,6 +26,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
+import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -352,6 +353,16 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             rssParser = get(),
             rssChannelMapper = get(),
             dateFormatter = get(),
+        )
+    }
+
+    factory {
+        FeedWidgetRepository(
+            databaseHelper = get(),
+            dateFormatter = get(),
+            fetcherRepository = get(),
+            settingsRepository = get(),
+            logger = getWith("FeedWidgetRepository"),
         )
     }
 }

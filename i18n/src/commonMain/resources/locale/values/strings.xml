@@ -178,4 +178,6 @@
     <string name="edit_category">Edit category name</string>
     <string name="adding_feed">Adding feed...</string>
     <string name="error_feed_add">Something went wrong while adding the feed</string>
+    <string name="widget_check_feed_sources">Make sure to have some feed sources added</string>
+    <string name="widget_latest_items">Most Recent</string>
 </resources>

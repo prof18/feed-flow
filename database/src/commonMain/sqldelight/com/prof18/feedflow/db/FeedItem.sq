@@ -155,3 +155,14 @@ updateAllReadStatus:
 UPDATE feed_item
 SET is_read = :isRead
 WHERE url_hash IN :urlHash;
+
+getFeedUrl:
+SELECT feed_item.url_hash, feed_item.url, feed_item.title, is_bookmarked, feed_source_preferences.link_opening_preference AS feed_source_link_opening_preference FROM feed_item
+INNER JOIN feed_source
+ON feed_item.feed_source_id == feed_source.url_hash
+LEFT JOIN feed_source_category
+ON feed_source.category_id == feed_source_category.id
+LEFT JOIN feed_source_preferences
+ON feed_source.url_hash = feed_source_preferences.feed_source_id
+WHERE feed_item.url_hash == :urlHash;
+

@@ -12,6 +12,7 @@ import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
@@ -438,6 +439,20 @@ class DatabaseHelper(
                     isHiddenFromTimeline = feedSource.is_hidden ?: false,
                     linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
                     isPinned = feedSource.is_pinned ?: false,
+                )
+            }
+    }
+
+    suspend fun getFeedItemUrlInfo(feedId: String): FeedItemUrlInfo? = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries
+            .getFeedUrl(feedId)
+            .executeAsOneOrNull()?.let { url ->
+                FeedItemUrlInfo(
+                    id = url.url_hash,
+                    url = url.url,
+                    title = url.title,
+                    isBookmarked = url.is_bookmarked,
+                    linkOpeningPreference = url.feed_source_link_opening_preference ?: LinkOpeningPreference.DEFAULT,
                 )
             }
     }

@@ -117,7 +117,7 @@
     <string name="account_refresh_progress">Aktualisierung läuft</string>
     <string name="reader_mode_warning">i Der Lesemodus versucht, den Artikelinhalt abzurufen. Es kann zu Fehlern oder unerwünschten Zeichen kommen.</string>
     <string name="edit_feed_source_name_button">Bearbeiten</string>
-    <string name="clear_old_articles_button">Einträge nach einer Woche löschen</string>
+    <string name="clear_old_articles_button">1 Woche alte Einträge löschen</string>
     <string name="deleting_feed_dialog_title">Löschvorgang läuft ...</string>
     <string name="edit_feed">Feed bearbeiten</string>
     <string name="feed_name">Name des Feeds</string>
@@ -125,7 +125,7 @@
     <string name="settings_feed_list_title">Feed-Liste</string>
     <string name="settings_feed_list_scale_title">Textgröße</string>
     <string name="settings_font_scale_title_example">Titel des Artikels</string>
-    <string name="settings_font_scale_subtitle_example">Das ist der Untertitel des Artikels</string>
+    <string name="settings_font_scale_subtitle_example">Untertitel des Artikels</string>
     <string name="settings_font_scale_feed_source_example">Name des Feeds</string>
     <string name="icloud_sync_description">Verknüpfe dein iCloud-Konto, um deine Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen iOS-, iPadOS- und macOS-Geräten zu synchronisieren. Die Daten werden in einem App-spezifischen Ordner gespeichert; FeedFlow hat keinen Zugriff auf deine Dateien</string>
     <string name="open_another_feed">Einen anderen Feed öffnen</string>

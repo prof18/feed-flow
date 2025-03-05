@@ -172,4 +172,10 @@
     <string name="settings_crash_reporting">Gửi báo cáo crash ẩn danh</string>
     <string name="category_name">Tên danh mục</string>
     <string name="edit_category">Sửa tên danh mục</string>
+    <string name="error_feed_add">Xảy ra lỗi trong khi thêm nguồn cấp</string>
+    <string name="menu_share">Chia sẻ</string>
+    <string name="menu_share_comments">Chia sẻ bình luận</string>
+    <string name="adding_feed">Đang thêm nguồn cấp...</string>
+    <string name="menu_copy_link_comments">Sao chép liên kết bình luận</string>
+    <string name="menu_copy_link">Sao chép liên kết</string>
 </resources>

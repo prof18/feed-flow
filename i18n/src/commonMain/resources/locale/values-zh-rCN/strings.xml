@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_url">订阅 URL</string>
+    <string name="feed_url">订阅源 URL</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
-    <string name="no_feeds_add_one_message">尚无订阅，请先添加</string>
-    <string name="refresh_feeds">同步订阅源</string>
+    <string name="no_feeds_add_one_message">没有订阅源，请添加</string>
+    <string name="refresh_feeds">刷新订阅</string>
     <string name="loading_feed_message">正在加载 %s</string>
     <string name="app_name">FeedFlow</string>
     <string name="show_on_github">在 Github 浏览</string>
     <string name="about_nav_bar">关于</string>
-    <string name="open_source_nav_bar">开源许可证</string>
+    <string name="open_source_nav_bar">开放源代码许可</string>
     <string name="report_issue_button">报告错误</string>
     <string name="open_website_button">访问官网</string>
     <string name="force_feed_refresh">同步订阅源</string>
@@ -21,14 +21,14 @@
     <string name="missing_title_and_link">获取订阅源标题出错</string>
     <string name="new_release_available_link">立即下载</string>
     <string name="drawer_title_timeline">时间线</string>
-    <string name="drawer_title_categories">分类</string>
+    <string name="drawer_title_categories">类别</string>
     <string name="drawer_title_feed_sources">订阅源</string>
     <string name="toggle_mark_read_when_scrolling">随滚动标记为已读</string>
     <string name="action_done">完成</string>
     <string name="settings_app_title">应用</string>
     <string name="about_app_version">应用版本：%s</string>
-    <string name="add_feed_category_title">分类</string>
-    <string name="add_feed_categories_title">分类</string>
+    <string name="add_feed_category_title">类别</string>
+    <string name="add_feed_categories_title">类别</string>
     <string name="action_save">保存</string>
     <string name="about_menu_contribute_translations">参与翻译</string>
     <string name="in_app_browser">应用内置</string>
@@ -48,8 +48,8 @@
     <string name="account_refresh_progress">正在同步</string>
     <string name="no_dropbox_sync_yet">数据未与 Dropbox 同步。请点击“备份”按钮开始同步</string>
     <string name="error_account_sync">抱歉，在同步您账号中的数据时出了点问题 :(</string>
-    <string name="feed_added_message">已订阅 %s</string>
-    <string name="add_feed">添加订阅</string>
+    <string name="feed_added_message">订阅源 %s 已添加</string>
+    <string name="add_feed">添加订阅源</string>
     <string name="feeds_title">订阅源</string>
     <string name="delete_feed">删除</string>
     <string name="settings_button">设置</string>
@@ -72,7 +72,7 @@
     <string name="export_started_message">正在导出</string>
     <string name="load_file_error_message">无法加载文件</string>
     <string name="feed_error_message">出现错误：%s :(</string>
-    <string name="open_source_licenses">开源许可证</string>
+    <string name="open_source_licenses">开放源代码许可</string>
     <string name="about_the_app">FeedFlow 是一款秉承作者个人理念设计的极简 RSS 阅读器。通过选用您信赖的隐私浏览器在原始网站上查看文章，以享受独立、私密的阅读体验。同时，FeedFlow 还支持全文模式，以供沉浸式阅读。
 \n支持通过 OPML 文件导入或导出 RSS 订阅。</string>
     <string name="retry_button">重试</string>
@@ -81,8 +81,8 @@
     <string name="database_error">订阅源检索出错。请重试或重启应用 :(</string>
     <string name="invalid_rss_url">您提供的 RSS 订阅链接无效</string>
     <string name="new_release_available_title">FeedFlow 新版本已发布：</string>
-    <string name="no_category_selected_header">未分类</string>
-    <string name="new_category_hint">新建分类</string>
+    <string name="no_category_selected_header">无类别</string>
+    <string name="new_category_hint">新类别名称</string>
     <string name="no_category">未分类</string>
     <string name="import_export_description">FeedFlow 支持通过 OPML 文件导入或导出您的订阅，以增强与其他 RSS 阅读器的互操作性</string>
     <string name="no_feed_modal_title">添加新订阅</string>
@@ -107,7 +107,7 @@
     <string name="dropbox_sync_success">已成功连接您的 Dropbox 账号</string>
     <string name="dropbox_sync_error">连接到 Dropbox 时出错，请重试</string>
     <string name="last_upload">最后上传：%s</string>
-    <string name="no_feeds_found_message">尚无订阅，请先添加！</string>
+    <string name="no_feeds_found_message">未找到订阅源，请添加新订阅源！</string>
     <string name="feed_sync_in_progress">正在同步。完成后自动关闭应用。</string>
     <string name="bookmarked_articles_empty_screen_message">尚无收藏，请先添加！</string>
     <string name="link_copied_success">成功复制链接！</string>
@@ -153,4 +153,8 @@
     <string name="fresh_rss_last_sync">最后同步：%s</string>
     <string name="fresh_rss_password_hint">FreshRSS API 密码（设置 &gt; 配置）</string>
     <string name="fresh_rss_url_hint">FreshRSS API 端点，例如 %s</string>
+    <string name="link_opening_preference_internal_browser">应用内浏览器</string>
+    <string name="link_opening_preference_reader_mode">阅读器模式</string>
+    <string name="link_opening_preference_default">默认</string>
+    <string name="link_opening_preference">链接打开行为</string>
 </resources>

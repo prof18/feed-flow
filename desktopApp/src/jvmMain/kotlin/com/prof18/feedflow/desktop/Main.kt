@@ -129,6 +129,7 @@ fun main() = application {
     DI.initKoin(
         appEnvironment = appEnvironment,
         isICloudEnabled = isIcloudEnabled,
+        version = version ?: "",
     )
 
     val isCrashReportEnabled = DI.koin.get<SettingsRepository>().getCrashReportingEnabled()

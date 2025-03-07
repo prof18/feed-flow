@@ -47,6 +47,7 @@ class FeedFlowApp : Application() {
             isLoggingEnabled = isGooglePlayFlavor,
             isDropboxSyncEnabled = isGooglePlayFlavor,
             isIcloudSyncEnabled = false,
+            appVersion = BuildConfig.VERSION_NAME,
         )
 
         if (isGooglePlayFlavor && appEnvironment.isRelease()) {

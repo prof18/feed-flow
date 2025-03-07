@@ -11,10 +11,11 @@ import org.koin.dsl.module
 object DI {
     lateinit var koin: Koin
 
-    fun initKoin(appEnvironment: AppEnvironment, isICloudEnabled: Boolean) {
+    fun initKoin(appEnvironment: AppEnvironment, isICloudEnabled: Boolean, version: String) {
         koin = initKoinDesktop(
             appEnvironment = appEnvironment,
             isICloudEnabled = isICloudEnabled,
+            version = version,
             modules = listOf(
                 module {
                     single {

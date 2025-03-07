@@ -26,7 +26,8 @@ func startKoin() {
         appEnvironment: appEnvironment,
         languageCode: languageCode,
         regionCode: regionCode,
-        dropboxDataSource: DropboxDataSourceIos()
+        dropboxDataSource: DropboxDataSourceIos(),
+        appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     )
     _feedFlowStrings = Deps.shared.getFeedFlowStrings()
 }

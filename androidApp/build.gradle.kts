@@ -136,6 +136,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material)
+    implementation(libs.play.review)
 
     "googlePlayImplementation"(platform(libs.firebase.bom))
     "googlePlayImplementation"(libs.firebase.crashlytics)

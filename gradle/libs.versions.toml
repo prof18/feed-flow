@@ -62,7 +62,7 @@ skie = "0.10.1"
 kotlinx-serialization = "1.7.3"
 arrow = "2.0.0"
 glance = "1.1.1"
-
+play-review = "2.0.2"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
@@ -151,6 +151,7 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow" }
 glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+play-review = { module = "com.google.android.play:review-ktx", version.ref = "play-review" }
 
 [bundles]
 compose = [

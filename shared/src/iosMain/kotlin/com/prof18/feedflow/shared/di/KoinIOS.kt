@@ -34,6 +34,7 @@ import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.rssparser.RssParserBuilder
@@ -58,12 +59,14 @@ fun initKoinIos(
     languageCode: String?,
     regionCode: String?,
     dropboxDataSource: DropboxDataSource,
+    appVersion: String,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
         isLoggingEnabled = true,
         isDropboxSyncEnabled = true,
         isIcloudSyncEnabled = true,
+        appVersion = appVersion,
     ),
     crashReportingLogWriter = CrashlyticsLogWriter(),
     modules = listOf(
@@ -187,4 +190,5 @@ object Deps : KoinComponent {
     fun getFreshRssSyncViewModel() = getKoin().get<FreshRssSyncViewModel>()
     fun getFeedWidgetRepository() = getKoin().get<FeedWidgetRepository>()
     fun getDeeplinkFeedViewModel() = getKoin().get<DeeplinkFeedViewModel>()
+    fun getReviewViewModel() = getKoin().get<ReviewViewModel>()
 }

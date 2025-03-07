@@ -14,6 +14,7 @@ import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
 import com.prof18.feedflow.feedsync.dropbox.di.dropboxModule
 import com.prof18.feedflow.feedsync.greader.di.getGReaderModule
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
+import com.prof18.feedflow.shared.data.ReviewRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DateFormatterImpl
 import com.prof18.feedflow.shared.domain.HtmlRetriever
@@ -41,6 +42,7 @@ import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
+import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import io.ktor.client.HttpClient
@@ -164,6 +166,14 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
+    factory {
+        ReviewRepository(
+            settingsRepository = get(),
+            databaseHelper = get(),
+            appConfig = appConfig,
+        )
+    }
+
     viewModel {
         ImportExportViewModel(
             feedImportExportRepository = get(),
@@ -199,6 +209,12 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             settingsRepository = get(),
             fontSizeRepository = get(),
             feedStateRepository = get(),
+        )
+    }
+
+    viewModel {
+        ReviewViewModel(
+            reviewRepository = get(),
         )
     }
 

@@ -46,11 +46,14 @@ import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.CrashlyticsHelper
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelector
+import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.TestingTag
+import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.Browser
+import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
@@ -77,9 +80,10 @@ fun SettingsScreen(
     navigateToImportExport: () -> Unit,
     navigateToAccounts: () -> Unit,
 ) {
+    val settingsViewModel = koinViewModel<SettingsViewModel>()
+    val feedDownloadWorkerEnqueuer = koinInject<FeedDownloadWorkerEnqueuer>()
     val context = LocalContext.current
     val browserManager = koinInject<BrowserManager>()
-    val settingsViewModel = koinViewModel<SettingsViewModel>()
     val appConfig = koinInject<AppConfig>()
 
     val browserListState by browserManager.browserListState.collectAsStateWithLifecycle()
@@ -139,6 +143,10 @@ fun SettingsScreen(
         onAutoDeletePeriodSelected = { period ->
             settingsViewModel.updateAutoDeletePeriod(period)
         },
+        onSyncPeriodSelected = { period ->
+            settingsViewModel.updateSyncPeriod(period)
+            feedDownloadWorkerEnqueuer.updateWorker(period)
+        },
         onCrashReportingEnabled = { enabled ->
             settingsViewModel.updateCrashReporting(enabled)
             if (appConfig.isLoggingEnabled) {
@@ -171,6 +179,7 @@ private fun SettingsScreenContent(
     setHideImages: (Boolean) -> Unit,
     updateFontScale: (Int) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
+    onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onCrashReportingEnabled: (Boolean) -> Unit,
 ) {
     Scaffold(
@@ -240,6 +249,13 @@ private fun SettingsScreenContent(
                 BrowserSelector(
                     browsers = browsers,
                     onBrowserSelected = onBrowserSelected,
+                )
+            }
+
+            item {
+                SyncPeriodSelector(
+                    currentPeriod = settingsState.syncPeriod,
+                    onPeriodSelected = onSyncPeriodSelected,
                 )
             }
 
@@ -487,6 +503,58 @@ private fun ShowReadItemOnTimelineSwitch(
 }
 
 @Composable
+private fun SyncPeriodSelector(
+    currentPeriod: SyncPeriod,
+    onPeriodSelected: (SyncPeriod) -> Unit,
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val strings = LocalFeedFlowStrings.current
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable { showDialog = true }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.Outlined.Sync,
+            contentDescription = null,
+        )
+
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = strings.settingsSyncPeriod,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = when (currentPeriod) {
+                    SyncPeriod.NEVER -> strings.settingsSyncPeriodNever
+                    SyncPeriod.ONE_HOUR -> strings.settingsSyncPeriodOneHour
+                    SyncPeriod.TWO_HOURS -> strings.settingsSyncPeriodTwoHours
+                    SyncPeriod.SIX_HOURS -> strings.settingsSyncPeriodSixHours
+                    SyncPeriod.TWELVE_HOURS -> strings.settingsSyncPeriodTwelveHours
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+
+    if (showDialog) {
+        SyncPeriodDialog(
+            currentPeriod = currentPeriod,
+            onPeriodSelected = onPeriodSelected,
+            dismissDialog = { showDialog = false },
+        )
+    }
+}
+
+@Composable
 private fun AutoDeletePeriodSelector(
     currentPeriod: AutoDeletePeriod,
     onPeriodSelected: (AutoDeletePeriod) -> Unit,
@@ -586,6 +654,7 @@ private fun SettingsScreenPreview() {
             updateFontScale = {},
             onAutoDeletePeriodSelected = {},
             onCrashReportingEnabled = {},
+            onSyncPeriodSelected = {},
             showCrashReporting = true,
         )
     }

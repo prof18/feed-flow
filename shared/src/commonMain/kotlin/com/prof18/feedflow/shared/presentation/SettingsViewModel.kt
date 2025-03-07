@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
+import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +36,7 @@ class SettingsViewModel internal constructor(
             val isHideImagesEnabled = settingsRepository.getHideImages()
             val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
             val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
+            val syncPeriod = settingsRepository.getSyncPeriod()
             settingsMutableState.update {
                 SettingsState(
                     isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
@@ -45,6 +47,7 @@ class SettingsViewModel internal constructor(
                     isHideImagesEnabled = isHideImagesEnabled,
                     autoDeletePeriod = autoDeletePeriod,
                     isCrashReportingEnabled = isCrashReportingEnabled,
+                    syncPeriod = syncPeriod,
                 )
             }
         }
@@ -136,6 +139,17 @@ class SettingsViewModel internal constructor(
             it.copy(
                 isCrashReportingEnabled = value,
             )
+        }
+    }
+
+    fun updateSyncPeriod(period: SyncPeriod) {
+        viewModelScope.launch {
+            settingsRepository.setSyncPeriod(period)
+            settingsMutableState.update {
+                it.copy(
+                    syncPeriod = period,
+                )
+            }
         }
     }
 }

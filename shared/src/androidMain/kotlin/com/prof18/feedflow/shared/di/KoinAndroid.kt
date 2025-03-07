@@ -6,6 +6,8 @@ import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.createDatabaseDriver
+import com.prof18.feedflow.shared.domain.FeedDownloadWorker
+import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
@@ -109,6 +111,15 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             readerModeExtractor = get(),
             settingsRepository = get(),
             feedActionsRepository = get(),
+        )
+    }
+
+    workerOf(::FeedDownloadWorker)
+
+    single {
+        FeedDownloadWorkerEnqueuer(
+            settingsRepository = get(),
+            context = get(),
         )
     }
 }

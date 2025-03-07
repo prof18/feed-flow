@@ -163,13 +163,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedActionsRepository = get(),
         )
     }
-
-    viewModel {
-        DeeplinkFeedViewModel(
-            widgetRepository = get(),
-            feedActionsRepository = get(),
-        )
-    }
 }
 
 @Suppress("unused") // Called from Swift

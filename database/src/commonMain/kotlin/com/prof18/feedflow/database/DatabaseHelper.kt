@@ -102,6 +102,22 @@ class DatabaseHelper(
             .executeAsList()
     }
 
+    fun getFeedWidgetItems(
+        pageSize: Long,
+    ): Flow<List<SelectFeeds>> =
+        dbRef.feedItemQueries
+            .selectFeeds(
+                feedSourceId = null,
+                feedSourceCategoryId = null,
+                isRead = false,
+                isBookmarked = null,
+                isHidden = 0,
+                pageSize = pageSize,
+                offset = 0,
+            )
+            .asFlow()
+            .mapToList(backgroundDispatcher)
+
     suspend fun insertCategories(categories: List<FeedSourceCategory>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             categories.forEach { category ->

@@ -29,6 +29,8 @@ import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import kotlinx.coroutines.delay
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.time.Duration.Companion.seconds
@@ -40,82 +42,85 @@ class AddFeedExtensionActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            var showLoading by remember { mutableStateOf(true) }
-            var message by remember { mutableStateOf("") }
-            val strings = LocalFeedFlowStrings.current
+            val lyricist = rememberFeedFlowStrings()
+            ProvideFeedFlowStrings(lyricist) {
+                var showLoading by remember { mutableStateOf(true) }
+                var message by remember { mutableStateOf("") }
+                val strings = LocalFeedFlowStrings.current
 
-            LaunchedEffect(Unit) {
-                viewModel.feedAddedState.collect { feedAddedState ->
-                    when (feedAddedState) {
-                        is FeedAddedState.Error -> {
-                            showLoading = false
-                            message = when (feedAddedState) {
-                                FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
-                                FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
-                                FeedAddedState.Error.GenericError -> strings.addFeedGenericError
+                LaunchedEffect(Unit) {
+                    viewModel.feedAddedState.collect { feedAddedState ->
+                        when (feedAddedState) {
+                            is FeedAddedState.Error -> {
+                                showLoading = false
+                                message = when (feedAddedState) {
+                                    FeedAddedState.Error.InvalidUrl -> strings.invalidRssUrl
+                                    FeedAddedState.Error.InvalidTitleLink -> strings.missingTitleAndLink
+                                    FeedAddedState.Error.GenericError -> strings.addFeedGenericError
+                                }
+                                delay(2.seconds)
+                                finish()
                             }
-                            delay(2.seconds)
-                            finish()
-                        }
 
-                        is FeedAddedState.FeedAdded -> {
-                            showLoading = false
-                            val feedName = feedAddedState.feedName
-                            message = if (feedName != null) {
-                                strings.feedAddedMessage(feedName)
-                            } else {
-                                strings.feedAddedMessageWithoutName
+                            is FeedAddedState.FeedAdded -> {
+                                showLoading = false
+                                val feedName = feedAddedState.feedName
+                                message = if (feedName != null) {
+                                    strings.feedAddedMessage(feedName)
+                                } else {
+                                    strings.feedAddedMessageWithoutName
+                                }
+                                delay(2.seconds)
+                                finish()
                             }
-                            delay(2.seconds)
-                            finish()
-                        }
 
-                        FeedAddedState.FeedNotAdded -> {
-                        }
+                            FeedAddedState.FeedNotAdded -> {
+                            }
 
-                        FeedAddedState.Loading -> {
-                            showLoading = true
+                            FeedAddedState.Loading -> {
+                                showLoading = true
+                            }
                         }
                     }
                 }
-            }
 
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .clickable { finish() },
-            ) {
-                Row(
+                Box(
                     Modifier
-                        .align(Center)
-                        .matchParentSize()
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.background)
-                        .fillMaxWidth()
-                        .padding(start = Spacing.medium),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .fillMaxSize()
+                        .clickable { finish() },
                 ) {
-                    if (showLoading) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            CircularProgressIndicator()
+                    Row(
+                        Modifier
+                            .align(Center)
+                            .matchParentSize()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.background)
+                            .fillMaxWidth()
+                            .padding(start = Spacing.medium),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        if (showLoading) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                CircularProgressIndicator()
+                                Text(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(Spacing.regular),
+                                    text = LocalFeedFlowStrings.current.addingFeed,
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
+                            }
+                        } else {
                             Text(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(Spacing.regular),
-                                text = LocalFeedFlowStrings.current.addingFeed,
+                                text = message,
                                 style = MaterialTheme.typography.titleMedium,
                             )
                         }
-                    } else {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(Spacing.regular),
-                            text = message,
-                            style = MaterialTheme.typography.titleMedium,
-                        )
                     }
                 }
             }
@@ -129,6 +134,7 @@ class AddFeedExtensionActivity : ComponentActivity() {
                             addFeed(url)
                         }
                     }
+
                     intent.type?.startsWith("text/html") == true -> {
                         intent.getStringExtra(Intent.EXTRA_HTML_TEXT)?.let { url ->
                             addFeed(url)

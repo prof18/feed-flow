@@ -1,6 +1,7 @@
 package com.prof18.feedflow.android
 
 import FeedFlowTheme
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,12 +30,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
+import com.prof18.feedflow.android.deeplink.DeepLinkScreen
 import com.prof18.feedflow.android.editfeed.EditScreen
 import com.prof18.feedflow.android.editfeed.toEditFeed
 import com.prof18.feedflow.android.editfeed.toFeedSource
@@ -301,6 +304,32 @@ class MainActivity : ComponentActivity() {
                 FreshRssSyncScreen(
                     navigateBack = {
                         navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<DeepLinkScreen>(
+                deepLinks = listOf(
+                    navDeepLink {
+                        action = Intent.ACTION_VIEW
+                        uriPattern = "feedflow://feed/{feedId}"
+                    },
+                ),
+            ) { backStackEntry ->
+                val route = backStackEntry.toRoute<DeepLinkScreen>()
+
+                DeepLinkScreen(
+                    feedId = route.feedId,
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                    navigateToReaderMode = { feedItemUrl ->
+                        readerModeViewModel.getReaderModeHtml(feedItemUrl)
+                        navController.navigate(ReaderMode) {
+                            popUpTo<DeepLinkScreen> {
+                                inclusive = true
+                            }
+                        }
                     },
                 )
             }

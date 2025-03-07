@@ -49,3 +49,8 @@ data class EditFeed(
     val isHidden: Boolean,
     val isPinned: Boolean,
 )
+
+@Serializable
+data class DeepLinkScreen(
+    val feedId: String,
+)

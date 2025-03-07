@@ -28,6 +28,14 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="feedflow"
+                      android:host="feed" />
+            </intent-filter>
+
         </activity>
 
         <activity android:name=".accounts.dropbox.DropboxSyncActivity" />
@@ -66,7 +74,6 @@
             </intent-filter>
         </activity>
 
-
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
@@ -85,5 +92,19 @@
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
+
+        <receiver
+            android:name=".widget.FeedFlowWidgetReceiver"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/feedflow_widget_info" />
+        </receiver>
+
     </application>
 </manifest> 

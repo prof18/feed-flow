@@ -2,16 +2,21 @@ package com.prof18.feedflow.android
 
 import android.app.Application
 import android.content.Context
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.coroutineScope
+import com.prof18.feedflow.android.widget.FeedFlowWidget
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
+import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.workmanager.koin.workManagerFactory
@@ -20,6 +25,7 @@ import org.koin.dsl.module
 class FeedFlowApp : Application() {
 
     private val feedSyncRepo by inject<FeedSyncRepository>()
+    private val widgetRepository by inject<FeedWidgetRepository>()
 
     override fun onCreate() {
         super.onCreate()
@@ -84,6 +90,12 @@ class FeedFlowApp : Application() {
                     override fun onStop(owner: LifecycleOwner) {
                         super.onStop(owner)
                         feedSyncRepo.enqueueBackup()
+                        lifecycle.coroutineScope.launch {
+                            GlanceAppWidgetManager(context = this@FeedFlowApp).getGlanceIds(FeedFlowWidget::class.java)
+                                .forEach { id ->
+                                    FeedFlowWidget(widgetRepository).update(this@FeedFlowApp, id)
+                                }
+                        }
                     }
                 },
             )

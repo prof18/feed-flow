@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.presentation
+package com.prof18.feedflow.shared.presentation.model
 
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 

@@ -134,6 +134,8 @@ dependencies {
     implementation(libs.workmanager)
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.glance.appwidget)
+    implementation(libs.glance.material)
 
     "googlePlayImplementation"(platform(libs.firebase.bom))
     "googlePlayImplementation"(libs.firebase.crashlytics)

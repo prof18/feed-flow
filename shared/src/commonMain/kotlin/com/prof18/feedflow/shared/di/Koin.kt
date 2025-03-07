@@ -34,6 +34,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
+import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
@@ -363,6 +364,13 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             fetcherRepository = get(),
             settingsRepository = get(),
             logger = getWith("FeedWidgetRepository"),
+        )
+    }
+
+    viewModel {
+        DeeplinkFeedViewModel(
+            widgetRepository = get(),
+            feedActionsRepository = get(),
         )
     }
 }

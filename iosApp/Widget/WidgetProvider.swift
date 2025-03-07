@@ -28,7 +28,7 @@ struct Provider: TimelineProvider {
     func getSnapshot(in _: Context, completion: @escaping (WidgetEntry) -> Void) {
         Task {
             do {
-                let feedItems = try await Deps.shared.getFeedWidgetRepository().getFeedItems()
+                let feedItems = try await Deps.shared.getFeedWidgetRepository().getFeedItems(pageSize: 6)
                 let entry = WidgetEntry(
                     date: Date(),
                     feedItems: feedItems,
@@ -59,8 +59,7 @@ struct Provider: TimelineProvider {
     func getTimeline(in _: Context, completion: @escaping (Timeline<WidgetEntry>) -> Void) {
         Task {
             do {
-                try await Deps.shared.getFeedWidgetRepository().fetchFeeds()
-                let feedItems = try await Deps.shared.getFeedWidgetRepository().getFeedItems()
+                let feedItems = try await Deps.shared.getFeedWidgetRepository().getFeedItems(pageSize: 6)
 
                 let currentDate = Date()
                 let refreshDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!

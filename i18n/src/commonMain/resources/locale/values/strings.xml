@@ -167,6 +167,13 @@
     <string name="settings_auto_delete_period_one_week">One week old</string>
     <string name="settings_auto_delete_period_two_weeks">Two weeks old</string>
     <string name="settings_auto_delete_period_one_month">One month old</string>
+    <string name="settings_sync_period">Background sync frequency</string>
+    <string name="settings_sync_period_desc">Choose how often to check for new articles in the background</string>
+    <string name="settings_sync_period_never">Never</string>
+    <string name="settings_sync_period_one_hour">Every hour</string>
+    <string name="settings_sync_period_two_hours">Every 2 hours</string>
+    <string name="settings_sync_period_six_hours">Every 6 hours</string>
+    <string name="settings_sync_period_twelve_hours">Every 12 hours</string>
     <string name="feed_url_help_text">Add any direct feed, website, or YouTube channel link. The feed will be detected automatically when possible</string>
     <string name="hide_feed_from_timeline_description">Hide this feed's articles from the timeline</string>
     <string name="pin_feed_source_description">Pin this feed</string>

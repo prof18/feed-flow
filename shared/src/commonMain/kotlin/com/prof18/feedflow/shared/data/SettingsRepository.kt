@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -106,6 +107,19 @@ class SettingsRepository(
     fun setLastFeedSyncTimestamp(timestamp: Long) =
         settings.set(SettingsFields.LAST_FEED_SYNC_TIMESTAMP.name, timestamp)
 
+    fun isFirstAppLaunch(): Boolean =
+        settings.getBoolean(SettingsFields.IS_FIRST_APP_LAUNCH.name, true)
+
+    fun setIsFirstAppLaunch(value: Boolean) =
+        settings.set(SettingsFields.IS_FIRST_APP_LAUNCH.name, value)
+
+    fun getSyncPeriod(): SyncPeriod =
+        settings.getString(SettingsFields.SYNC_PERIOD.name, SyncPeriod.ONE_HOUR.name)
+            .let { SyncPeriod.valueOf(it) }
+
+    fun setSyncPeriod(period: SyncPeriod) =
+        settings.set(SettingsFields.SYNC_PERIOD.name, period.name)
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -127,4 +141,5 @@ internal enum class SettingsFields {
     CRASH_REPORTING_ENABLED,
     LAST_FEED_SYNC_TIMESTAMP,
     IS_FIRST_APP_LAUNCH,
+    SYNC_PERIOD,
 }

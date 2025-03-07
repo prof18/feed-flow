@@ -183,4 +183,13 @@
     <string name="menu_copy_link">Copia link</string>
     <string name="error_feed_add">Si è verificato un errore durante l\'aggiunta del feed</string>
     <string name="adding_feed">Aggiunta feed...</string>
+    <string name="settings_sync_period_desc">Imposta la frequenza di controllo dei nuovi articoli in background</string>
+    <string name="widget_check_feed_sources">Assicurati di aver aggiunto dei feed</string>
+    <string name="widget_latest_items">Più recenti</string>
+    <string name="settings_sync_period_never">Mai</string>
+    <string name="settings_sync_period">Frequenza di sincronizzazione in background</string>
+    <string name="settings_sync_period_six_hours">Ogni 6 ore</string>
+    <string name="settings_sync_period_twelve_hours">Ogni 12 ore</string>
+    <string name="settings_sync_period_one_hour">Ogni ora</string>
+    <string name="settings_sync_period_two_hours">Ogni 2 ore</string>
 </resources>

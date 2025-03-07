@@ -1,4 +1,5 @@
 import FeedFlowKit
+import StoreKit
 import SwiftUI
 
 struct ContentView: View {
@@ -8,6 +9,7 @@ struct ContentView: View {
 
     @State var browserSelector: BrowserSelector = .init()
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
+    @StateObject private var reviewVmStoreOwner = VMStoreOwner<ReviewViewModel>(Deps.shared.getReviewViewModel())
 
     @State private var isAppInBackground: Bool = false
 
@@ -57,6 +59,18 @@ struct ContentView: View {
                 isAppInBackground = true
             default:
                 break
+            }
+        }
+        .task {
+            for await state in reviewVmStoreOwner.instance.canShowReviewDialog {
+                let showReview = state as? Bool ?? false
+                if showReview {
+                    guard let currentScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+                        return
+                    }
+                    AppStore.requestReview(in: currentScene)
+                    reviewVmStoreOwner.instance.onReviewShown()
+                }
             }
         }
     }

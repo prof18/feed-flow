@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
 
 class SettingsRepository(
     private val settings: Settings,
@@ -120,6 +121,40 @@ class SettingsRepository(
     fun setSyncPeriod(period: SyncPeriod) =
         settings.set(SettingsFields.SYNC_PERIOD.name, period.name)
 
+    fun getFirstInstallationDate(): Long {
+        val currentValue = settings.getLongOrNull(SettingsFields.FIRST_INSTALLATION_DATE.name)
+        return if (currentValue == null) {
+            val now = Clock.System.now().toEpochMilliseconds()
+            setFirstInstallationDate(now)
+            now
+        } else {
+            currentValue
+        }
+    }
+
+    private fun setFirstInstallationDate(timestamp: Long) =
+        settings.set(SettingsFields.FIRST_INSTALLATION_DATE.name, timestamp)
+
+    fun getReviewRequestCount(): Int =
+        settings.getInt(SettingsFields.REVIEW_REQUEST_COUNT.name, 0)
+
+    fun incrementReviewRequestCount() {
+        val currentCount = getReviewRequestCount()
+        settings[SettingsFields.REVIEW_REQUEST_COUNT.name] = currentCount + 1
+    }
+
+    fun getLastReviewRequestDate(): Long =
+        settings.getLong(SettingsFields.LAST_REVIEW_REQUEST_DATE.name, 0L)
+
+    fun setLastReviewRequestDate(timestamp: Long) =
+        settings.set(SettingsFields.LAST_REVIEW_REQUEST_DATE.name, timestamp)
+
+    fun getLastReviewVersion(): String? =
+        settings.getStringOrNull(SettingsFields.LAST_REVIEW_VERSION.name)
+
+    fun setLastReviewVersion(version: String) =
+        settings.set(SettingsFields.LAST_REVIEW_VERSION.name, version)
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -142,4 +177,8 @@ internal enum class SettingsFields {
     LAST_FEED_SYNC_TIMESTAMP,
     IS_FIRST_APP_LAUNCH,
     SYNC_PERIOD,
+    FIRST_INSTALLATION_DATE,
+    REVIEW_REQUEST_COUNT,
+    LAST_REVIEW_REQUEST_DATE,
+    LAST_REVIEW_VERSION,
 }

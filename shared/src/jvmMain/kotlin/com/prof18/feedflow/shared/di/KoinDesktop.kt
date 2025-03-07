@@ -36,6 +36,7 @@ import java.util.prefs.Preferences
 fun initKoinDesktop(
     appEnvironment: AppEnvironment,
     isICloudEnabled: Boolean,
+    version: String,
     modules: List<Module>,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
@@ -43,6 +44,7 @@ fun initKoinDesktop(
         isLoggingEnabled = appEnvironment.isRelease(),
         isDropboxSyncEnabled = true,
         isIcloudSyncEnabled = isICloudEnabled,
+        appVersion = version,
     ),
     crashReportingLogWriter = SentryLogWriter(),
     modules = modules + getDatabaseModule(appEnvironment),

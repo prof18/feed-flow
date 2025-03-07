@@ -25,7 +25,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,6 +37,7 @@ import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
@@ -56,9 +60,11 @@ import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.getKoin
@@ -68,12 +74,35 @@ class MainActivity : ComponentActivity() {
 
     private val messageQueue by inject<FeedSyncMessageQueue>()
     private val homeViewModel by viewModel<HomeViewModel>()
+    private val reviewViewModel by viewModel<ReviewViewModel>()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
+
+        if (BuildConfig.FLAVOR == "googlePlay") {
+            lifecycleScope.launch {
+                lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                    reviewViewModel.canShowReviewDialog.collect { showReview ->
+                        if (showReview) {
+                            val manager = ReviewManagerFactory.create(this@MainActivity)
+                            val request = manager.requestReviewFlow()
+                            request.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    val reviewInfo = task.result
+                                    val flow = manager.launchReviewFlow(this@MainActivity, reviewInfo)
+                                    flow.addOnCompleteListener { _ ->
+                                        reviewViewModel.onReviewShown()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         setContent {
             val koin = getKoin()

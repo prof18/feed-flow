@@ -73,8 +73,7 @@
     <string name="load_file_error_message">无法加载文件</string>
     <string name="feed_error_message">%s 出了点问题 :(</string>
     <string name="open_source_licenses">开放源代码许可</string>
-    <string name="about_the_app">FeedFlow 是一款秉承作者个人理念设计的极简 RSS 阅读器。通过选用您信赖的隐私浏览器在原始网站上查看文章，以享受独立、私密的阅读体验。同时，FeedFlow 还支持全文模式，以供沉浸式阅读。
-\n支持通过 OPML 文件导入或导出 RSS 订阅。</string>
+    <string name="about_the_app">FeedFlow 是一款秉承作者个人理念设计的简约 RSS 阅读器。文章在原始网站上打开，您可以选用您信赖的隐私浏览器，与日常浏览互不干扰。另外，FeedFlow 还提供阅读模式，畅享沉浸式阅读体验。\n您可以从 OPML 文件导入或导出您的 RSS 收藏。</string>
     <string name="retry_button">重试</string>
     <string name="done_button">确定</string>
     <string name="feed_add_in_progress_message">请稍候，正在检查每个订阅的可用性。此操作可能需要一段时间，具体取决于您导入的订阅数量</string>

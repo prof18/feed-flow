@@ -2,6 +2,7 @@ package com.prof18.feedflow.android.deeplink
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -37,7 +38,7 @@ internal fun DeepLinkScreen(
     val context = LocalContext.current
     val state by viewModel.deeplinkFeedState.collectAsStateWithLifecycle()
 
-    Scaffold {
+    Scaffold { padding ->
         when (state) {
             DeeplinkFeedState.Error -> {
                 navigateBack()
@@ -46,7 +47,8 @@ internal fun DeepLinkScreen(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .padding(padding),
                 ) {
                     CircularProgressIndicator()
                 }

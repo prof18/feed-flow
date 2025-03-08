@@ -63,9 +63,11 @@ jobs:
           # Create directory for MSIX output
           New-Item -ItemType Directory -Force -Path "desktopApp/build/release/main-release/msix"
           
-          # Download and install MSIX Packaging Tool
-          Invoke-WebRequest -Uri "https://aka.ms/msixpackagingtool" -OutFile "MSIXPackagingTool.msixbundle"
-          Add-AppxPackage -Path "MSIXPackagingTool.msixbundle"
+          # Install MSIX Packaging Tool using WinGet
+          winget install "MSIX Packaging Tool" --accept-source-agreements --accept-package-agreements
+          
+          # Wait a bit for the installation to complete
+          Start-Sleep -Seconds 10
 
       - name: Prepare MSIX conversion template
         shell: pwsh

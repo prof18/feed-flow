@@ -7,11 +7,7 @@
     android:minWidth="256dp"
     android:minResizeHeight="128dp"
     android:minResizeWidth="256dp"
+    android:configure="com.prof18.feedflow.android.widget.WidgetConfigurationActivity"
     android:previewImage="@drawable/widget_preview"
     android:initialLayout="@layout/glance_default_loading_layout">
 </appwidget-provider>
-
-<!--
- TODO: Add preview
-     android:previewImage="@drawable/widget_preview"
--->

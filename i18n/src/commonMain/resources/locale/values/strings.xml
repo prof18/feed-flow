@@ -187,4 +187,7 @@
     <string name="error_feed_add">Something went wrong while adding the feed</string>
     <string name="widget_check_feed_sources">Make sure to have some feed sources added</string>
     <string name="widget_latest_items">Most Recent</string>
+    <string name="widget_configuration_title">Widget Configuration</string>
+    <string name="widget_configuration_description">Choose how often to check for new articles in the background and update the widget.</string>
+    <string name="widget_configuration_confirm">Add Widget</string>
 </resources>

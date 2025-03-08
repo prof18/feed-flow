@@ -27,6 +27,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 internal fun SyncPeriodDialog(
     currentPeriod: SyncPeriod,
     onPeriodSelected: (SyncPeriod) -> Unit,
+    showNeverSync: Boolean = true,
     dismissDialog: () -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -45,15 +46,17 @@ internal fun SyncPeriodDialog(
             )
 
             LazyColumn {
-                item {
-                    PeriodOption(
-                        text = strings.settingsSyncPeriodNever,
-                        selected = currentPeriod == SyncPeriod.NEVER,
-                        onClick = {
-                            onPeriodSelected(SyncPeriod.NEVER)
-                            dismissDialog()
-                        },
-                    )
+                if (showNeverSync) {
+                    item {
+                        PeriodOption(
+                            text = strings.settingsSyncPeriodNever,
+                            selected = currentPeriod == SyncPeriod.NEVER,
+                            onClick = {
+                                onPeriodSelected(SyncPeriod.NEVER)
+                                dismissDialog()
+                            },
+                        )
+                    }
                 }
                 item {
                     PeriodOption(

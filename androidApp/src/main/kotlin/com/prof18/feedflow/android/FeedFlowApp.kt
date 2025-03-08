@@ -8,11 +8,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.coroutineScope
 import com.prof18.feedflow.android.widget.FeedFlowWidget
+import com.prof18.feedflow.android.widget.WidgetConfigurationViewModel
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
+import com.prof18.feedflow.shared.di.viewModel
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -73,7 +75,7 @@ class FeedFlowApp : Application() {
                     }
                     single {
                         coilImageLoader(
-                            context = this@FeedFlowApp,
+                            context = get(),
                             debug = appEnvironment.isDebug(),
                         )
                     }
@@ -85,6 +87,12 @@ class FeedFlowApp : Application() {
                                     FeedFlowWidget(widgetRepository).update(this@FeedFlowApp, id)
                                 }
                         }
+                    }
+                    viewModel {
+                        WidgetConfigurationViewModel(
+                            settingsRepository = get(),
+                            feedDownloadWorkerEnqueuer = get(),
+                        )
                     }
                 },
             ),

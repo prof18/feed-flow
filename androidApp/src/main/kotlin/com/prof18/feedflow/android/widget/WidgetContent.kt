@@ -119,23 +119,17 @@ internal fun Content(feedItems: ImmutableList<FeedItem>) {
                             modifier = modifier
                                 .padding(end = Spacing.regular),
                         ) {
+                            val fontStyle = TextStyle(
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 12.sp,
+                                color = (GlanceTheme.colors.onSurface),
+                            )
+
                             Row {
-                                val fontStyle = TextStyle(
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 12.sp,
-                                    color = (GlanceTheme.colors.onSurface),
-                                )
                                 Text(
                                     text = feedItem.feedSource.title,
                                     style = fontStyle,
                                 )
-                                feedItem.dateString?.let { dateString ->
-                                    Text(
-                                        text = "  •  ",
-                                        style = fontStyle,
-                                    )
-                                    Text(text = dateString, style = fontStyle)
-                                }
                             }
                             Text(
                                 text = feedItem.title.orEmpty(),
@@ -146,10 +140,18 @@ internal fun Content(feedItems: ImmutableList<FeedItem>) {
                                     color = (GlanceTheme.colors.onSurface),
                                 ),
                             )
+
+                            feedItem.dateString?.let { dateString ->
+                                Text(
+                                    modifier = GlanceModifier.padding(top = Spacing.xsmall),
+                                    text = dateString,
+                                    style = fontStyle,
+                                )
+                            }
                         }
 
                         feedItem.imageUrl?.let { imageUrl ->
-                            FeedItemImage(imageUrl, modifier)
+                            FeedItemImage(imageUrl)
                         }
                     }
                 }

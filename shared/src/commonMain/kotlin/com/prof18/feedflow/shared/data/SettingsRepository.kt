@@ -115,7 +115,7 @@ class SettingsRepository(
         settings.set(SettingsFields.IS_FIRST_APP_LAUNCH.name, value)
 
     fun getSyncPeriod(): SyncPeriod =
-        settings.getString(SettingsFields.SYNC_PERIOD.name, SyncPeriod.ONE_HOUR.name)
+        settings.getString(SettingsFields.SYNC_PERIOD.name, SyncPeriod.NEVER.name)
             .let { SyncPeriod.valueOf(it) }
 
     fun setSyncPeriod(period: SyncPeriod) =

@@ -57,23 +57,32 @@ jobs:
       - name: Create MSI
         run: ./gradlew packageReleaseMsi packageReleaseExe
 
-      - name: Install MSIX Packaging Tool
+      - name: Install MSIX Packaging Tool and Dependencies
         shell: pwsh
         run: |
           # Create directory for MSIX output
           New-Item -ItemType Directory -Force -Path "desktopApp/build/release/main-release/msix"
           
-          # Get WinGet Path and install MSIX Packaging Tool
-          $wingetPath = "$env:LOCALAPPDATA\Microsoft\WindowsApps\winget.exe"
-          if (-not (Test-Path $wingetPath)) {
-              Write-Host "WinGet not found in expected location. Trying alternative installation..."
-              Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
-          }
+          # Download and install FOD (Feature on Demand) package for Windows 11
+          Write-Host "Downloading MSIX Packaging Tool Driver FOD..."
+          $fodUrl = "https://download.microsoft.com/download/6/c/7/6c7d654b-580b-40d4-8502-f8d435ca125a/Msix-PackagingTool-Driver-Package%7E31bf3856ad364e35%7Eamd64%7E%7E1.cab"
+          $fodPath = "MSIXPackagingToolDriver.cab"
+          Invoke-WebRequest -Uri $fodUrl -OutFile $fodPath
           
-          # Install MSIX Packaging Tool using WinGet
-          & $wingetPath install --exact --id "Microsoft.MSIXPackagingTool" --accept-source-agreements --accept-package-agreements --silent
+          Write-Host "Installing MSIX Packaging Tool Driver FOD..."
+          $dismPath = "$env:SystemRoot\System32\dism.exe"
+          & $dismPath /Online /Add-Package /PackagePath:$fodPath
           
-          # Wait a bit for the installation to complete
+          # Download MSIX Packaging Tool
+          Write-Host "Downloading MSIX Packaging Tool..."
+          $msixToolUrl = "https://download.microsoft.com/download/e/2/e/e2e923b2-7a3a-4730-969d-ab37001fbb5e/MSIXPackagingtoolv1.2024.405.0.msixbundle"
+          $msixToolPath = "MSIXPackagingTool.msixbundle"
+          Invoke-WebRequest -Uri $msixToolUrl -OutFile $msixToolPath
+          
+          Write-Host "Installing MSIX Packaging Tool..."
+          & $dismPath /Online /Add-ProvisionedAppxPackage /PackagePath:$msixToolPath /SkipLicense
+          
+          Write-Host "Waiting for installation to complete..."
           Start-Sleep -Seconds 10
 
       - name: Prepare MSIX conversion template

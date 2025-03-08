@@ -178,4 +178,13 @@
     <string name="adding_feed">Đang thêm nguồn cấp...</string>
     <string name="menu_copy_link_comments">Sao chép liên kết bình luận</string>
     <string name="menu_copy_link">Sao chép liên kết</string>
+    <string name="settings_sync_period_never">Không bao giờ</string>
+    <string name="settings_sync_period_six_hours">Mỗi 6 giờ</string>
+    <string name="widget_check_feed_sources">Hãy đảm bảo đã thêm nguồn cấp dữ liệu</string>
+    <string name="widget_latest_items">Gần Đây</string>
+    <string name="settings_sync_period_desc">Chọn tần suất kiểm tra các bài viết mới trong nền</string>
+    <string name="settings_sync_period_one_hour">Một giờ</string>
+    <string name="settings_sync_period">Tần số đồng bộ nền</string>
+    <string name="settings_sync_period_two_hours">Mỗi 2 giờ</string>
+    <string name="settings_sync_period_twelve_hours">Mỗi 12 giờ</string>
 </resources>

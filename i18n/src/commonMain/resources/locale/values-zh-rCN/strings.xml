@@ -187,4 +187,7 @@
     <string name="settings_sync_period_never">永不</string>
     <string name="settings_sync_period_two_hours">每 2 小时</string>
     <string name="settings_sync_period_desc">选择在后台检查新文章的频率</string>
+    <string name="widget_configuration_title">微件配置</string>
+    <string name="widget_configuration_confirm">添加微件</string>
+    <string name="widget_configuration_description">选择在后台检查新文章和更新微件的频率。</string>
 </resources>

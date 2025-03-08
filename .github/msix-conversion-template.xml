@@ -11,8 +11,8 @@
     GenerateCommandLineFile="true"
     AllowPromptForPassword="false" 
 	  EnforceMicrosoftStoreVersioningRequirements="false"
-    v2:ServerPortNumber="1599"
-    v5:AddPackageIntegrity="false" />        
+    V2:ServerPortNumber="1599"
+    V5:AddPackageIntegrity="false" />        
   <PrepareComputer 
     DisableWindowsSearchService="true"
     DisableWindowsUpdateService="true" />
@@ -27,25 +27,7 @@
     PackageDisplayName="FeedFlow - RSS Reader" 
     PublisherName="[PublisherName]" 
     PublisherDisplayName="Marco Gomiero" 
-    Version="[AppVersion]" >
-    <Resources>
-      <Resource Language="en-us" />
-      <Resource Language="de" />
-      <Resource Language="es" />
-      <Resource Language="et" />
-      <Resource Language="fr" />
-      <Resource Language="gl" />
-      <Resource Language="he" />
-      <Resource Language="it" />
-      <Resource Language="pl" />
-      <Resource Language="pt-br" />
-      <Resource Language="ru" />
-      <Resource Language="sk" />
-      <Resource Language="ta" />
-      <Resource Language="uk" />
-      <Resource Language="vi" />
-      <Resource Language="zh-cn" />
-    </Resources>   
+    Version="[AppVersion]" > 
     <Capabilities>
       <Capability Name="runFullTrust" />
       <Capability Name="internetClient" />

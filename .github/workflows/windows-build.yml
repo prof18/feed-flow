@@ -63,8 +63,15 @@ jobs:
           # Create directory for MSIX output
           New-Item -ItemType Directory -Force -Path "desktopApp/build/release/main-release/msix"
           
+          # Get WinGet Path and install MSIX Packaging Tool
+          $wingetPath = "$env:LOCALAPPDATA\Microsoft\WindowsApps\winget.exe"
+          if (-not (Test-Path $wingetPath)) {
+              Write-Host "WinGet not found in expected location. Trying alternative installation..."
+              Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
+          }
+          
           # Install MSIX Packaging Tool using WinGet
-          winget install "MSIX Packaging Tool" --accept-source-agreements --accept-package-agreements
+          & $wingetPath install --exact --id "Microsoft.MSIXPackagingTool" --accept-source-agreements --accept-package-agreements --silent
           
           # Wait a bit for the installation to complete
           Start-Sleep -Seconds 10

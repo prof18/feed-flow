@@ -92,7 +92,7 @@ jobs:
           $templateContent = $templateContent.Replace("[MSIPath]", "${{ env.RELEASE_PATH_MSI }}")
           $templateContent = $templateContent.Replace("[MSIXOutputPath]", "${{ env.RELEASE_PATH_MSIX }}")
           $templateContent = $templateContent.Replace("[AppVersion]", "${{ env.VERSION }}")
-          $templateContent = $templateContent.Replace("[PublisherDisplayName]", "${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}")
+          $templateContent = $templateContent.Replace("[PublisherName]", "${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}")
           $templateContent | Set-Content -Path "msix-conversion-config.xml"
 
       - name: Convert MSI to MSIX

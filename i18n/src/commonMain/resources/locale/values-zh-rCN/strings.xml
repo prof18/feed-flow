@@ -6,18 +6,18 @@
     <string name="refresh_feeds">刷新订阅</string>
     <string name="loading_feed_message">正在加载订阅 %s</string>
     <string name="app_name">FeedFlow</string>
-    <string name="show_on_github">在 Github 浏览</string>
+    <string name="show_on_github">在 GitHub 查看</string>
     <string name="about_nav_bar">关于</string>
     <string name="open_source_nav_bar">开放源代码许可</string>
-    <string name="report_issue_button">报告错误</string>
-    <string name="open_website_button">访问官网</string>
+    <string name="report_issue_button">报告问题</string>
+    <string name="open_website_button">打开官网</string>
     <string name="force_feed_refresh">强制刷新订阅</string>
     <string name="import_export_opml">导入和导出 OPML</string>
     <string name="import_export_opml_title">导入和导出</string>
-    <string name="wrong_link_report_title">未添加以下订阅，因为它们无效</string>
+    <string name="wrong_link_report_title">以下订阅源无效，无法添加‌‌</string>
     <string name="issue_report_title">报告 FeedFlow 的问题</string>
-    <string name="issue_content_title">FeedFlow 错误</string>
-    <string name="issue_content_template">请提供详细的错误描述、RSS 订阅链接、相关屏幕截图和 OPML 文件</string>
+    <string name="issue_content_title">FeedFlow 的问题</string>
+    <string name="issue_content_template">请描述问题，并提供导致问题的 RSS 订阅链接。如果可以，请附上截图和 OPML 文件</string>
     <string name="missing_title_and_link">获取订阅标题时出错</string>
     <string name="new_release_available_link">在此下载</string>
     <string name="drawer_title_timeline">时间线</string>
@@ -95,7 +95,7 @@
     <string name="drawer_title_bookmarks">收藏</string>
     <string name="menu_mark_as_read">标记为已读</string>
     <string name="menu_mark_as_unread">标记为未读</string>
-    <string name="menu_open_comments">开放评论</string>
+    <string name="menu_open_comments">打开评论</string>
     <string name="empty_screen_back_to_timeline">返回时间线</string>
     <string name="last_download">最后下载：%s</string>
     <string name="accounts_description">连接账号以在设备之间同步订阅内容、类别、已读和收藏的文章。\n\n此功能处于测试阶段，可能会出现问题（例如，已读文章可能无法完全同步）。未来将支持更多服务。\n\n仅支持一个账号同时登录。</string>
@@ -110,7 +110,7 @@
     <string name="feed_sync_in_progress">正在同步。完成后，应用将自动关闭。</string>
     <string name="bookmarked_articles_empty_screen_message">尚无收藏，请先添加！</string>
     <string name="link_copied_success">链接复制成功！</string>
-    <string name="reader_mode_warning">ℹ 阅读模式会尝试获取文章内容，可能有一些故障或不需要的字符。</string>
+    <string name="reader_mode_warning">ℹ 阅读模式会尝试获取文章内容，可能存在解析异常或冗余字符。</string>
     <string name="reader_mode_font_size">字体大小</string>
     <string name="add_account_button">添加账号</string>
     <string name="icloud_sync_success">已成功连接您的 iCloud 账号</string>
@@ -157,7 +157,7 @@
     <string name="link_opening_preference_default">默认</string>
     <string name="link_opening_preference">链接打开行为</string>
     <string name="delete_category_close_button">关闭</string>
-    <string name="link_opening_preference_preferred_browser">默认浏览器应用</string>
+    <string name="link_opening_preference_preferred_browser">首选浏览器</string>
     <string name="delete_category_confirmation_title">删除类别？</string>
     <string name="settings_auto_delete">自动删除旧文章</string>
     <string name="delete_category_confirmation_message">是否确定要删除此类别？此类别中的订阅将移至未分类。</string>
@@ -178,4 +178,13 @@
     <string name="feed_url_help_text">添加任何直接订阅、网站或 YouTube 频道链接。如果可能，将自动检测订阅</string>
     <string name="hide_feed_from_timeline_description">从时间线隐藏此订阅的文章</string>
     <string name="feed_list_appearance">订阅列表外观</string>
+    <string name="settings_sync_period">后台同步频率</string>
+    <string name="settings_sync_period_one_hour">每小时</string>
+    <string name="settings_sync_period_twelve_hours">每 12 小时</string>
+    <string name="widget_check_feed_sources">请确保添加了一些订阅源</string>
+    <string name="widget_latest_items">最新</string>
+    <string name="settings_sync_period_six_hours">每 6 小时</string>
+    <string name="settings_sync_period_never">永不</string>
+    <string name="settings_sync_period_two_hours">每 2 小时</string>
+    <string name="settings_sync_period_desc">选择在后台检查新文章的频率</string>
 </resources>

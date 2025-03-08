@@ -55,7 +55,7 @@
     <string name="account_disconnect_button">Прекъснете връзката</string>
     <string name="backup_button">Архивиране</string>
     <string name="dropbox_sync_mobile_description">Като щракнете върху бутона Свързване, ще бъдете пренасочени към приложението или уебсайта на Dropbox. След като свържете профила, можете да се върнете към FeedFlow</string>
-    <string name="dropbox_auth_code_hint">Код за оторизация</string>
+    <string name="dropbox_auth_code_hint">Код за удостоверяване</string>
     <string name="dropbox_confirm_button">Потвърдете</string>
     <string name="dropbox_sync_success">Вашият профил в Dropbox е свързан успешно</string>
     <string name="last_upload">Последно качване: %s</string>
@@ -151,7 +151,7 @@
     <string name="link_opening_preference_internal_browser">Вграден браузър</string>
     <string name="link_opening_preference_preferred_browser">Любим браузър</string>
     <string name="delete_category_confirmation_title">Изтриване на категория?</string>
-    <string name="delete_category_confirmation_message">Сигурни ли сте, че искате да изтриете тази категория? Каналите в тази категория ще бъдат преместени в Без категория.</string>
+    <string name="delete_category_confirmation_message">Сигурни ли сте, че искате да изтриете тази категория? Емисиите в тази категория ще бъдат преместени в Без категория.</string>
     <string name="delete_category_close_button">Затвори</string>
     <string name="settings_auto_delete_desc">Автоматично изтриване на статии, по-стари от избрания период</string>
     <string name="settings_auto_delete_period">Период на изтриване</string>
@@ -159,11 +159,11 @@
     <string name="settings_auto_delete_period_two_weeks">На две седмици</string>
     <string name="settings_auto_delete_period_one_week">На една седмица</string>
     <string name="settings_auto_delete_period_one_month">На един месец</string>
-    <string name="feed_url_help_text">Добавете всяка директна емисия, уебсайт или YouTube канал. Емисията ще бъде открита автоматично, когато е възможно</string>
+    <string name="feed_url_help_text">Добавете всяка директна емисия, уебсайт или връзка към YouTube канала. Емисията ще бъде открита автоматично, когато е възможно</string>
     <string name="settings_auto_delete">Автоматично изтриване на стари статии</string>
     <string name="settings_hide_images">Скриване на изображението на статията</string>
     <string name="settings_hide_description">Скриване на описанието на статията</string>
-    <string name="hide_feed_from_timeline_description">Скрийте статиите на тази емисия от времевата линия</string>
+    <string name="hide_feed_from_timeline_description">Скрийте статиите на тези емисии от времевата линия</string>
     <string name="pin_feed_source_description">Закачи тази емисия</string>
     <string name="menu_add_to_pinned">Закачи</string>
     <string name="menu_remove_from_pinned">Откачи</string>
@@ -178,4 +178,13 @@
     <string name="adding_feed">Добавяне на емисия...</string>
     <string name="menu_copy_link">Копиране на връзката</string>
     <string name="error_feed_add">Нещо се обърка при добавянето на емисията</string>
+    <string name="settings_sync_period_desc">Изберете колко често да проверявате за нови статии във фонов режим</string>
+    <string name="settings_sync_period">Честота на синхронизиране във фонов режим</string>
+    <string name="settings_sync_period_two_hours">На всеки 2 часа</string>
+    <string name="widget_latest_items">Най-нови</string>
+    <string name="settings_sync_period_twelve_hours">На всеки 12 часа</string>
+    <string name="settings_sync_period_never">Никога</string>
+    <string name="settings_sync_period_one_hour">На всеки час</string>
+    <string name="settings_sync_period_six_hours">На всеки 6 часа</string>
+    <string name="widget_check_feed_sources">Уверете се, че сте добавили някои източници на емисии</string>
 </resources>

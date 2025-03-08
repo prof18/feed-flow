@@ -14,7 +14,7 @@
     PublisherName="[PublisherName]" 
     PublisherDisplayName="[PublisherDisplayName]" 
     Version="[AppVersion]" 
-    PackageDescription="FeedFlow">
+    p4:PackageDescription="FeedFlow">
     <Resources>
       <Resource Language="en-us" />
       <Resource Language="de" />

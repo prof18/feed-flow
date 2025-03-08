@@ -98,6 +98,11 @@ jobs:
       - name: Convert MSI to MSIX
         shell: pwsh
         run: |
+          # Verify paths before conversion
+          Write-Host "Current directory: $(Get-Location)"
+          Write-Host "MSI exists: $(Test-Path '${{ env.RELEASE_PATH_MSI }}')"
+          Write-Host "Template exists: $(Test-Path 'msix-conversion-config.xml')"
+          
           # Run the conversion using the command line interface
           MsixPackagingTool.exe create-package --template "msix-conversion-config.xml" -v
 

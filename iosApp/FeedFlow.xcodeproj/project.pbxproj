@@ -661,6 +661,8 @@
 /* Begin XCBuildConfiguration section */
 		13929EA62D7345F0003752AE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = CC6B8A692CCE8B8800847E7F /* Assets */;
+			baseConfigurationReferenceRelativePath = FeedFlow.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -697,6 +699,8 @@
 		};
 		13929EA72D7345F0003752AE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = CC6B8A692CCE8B8800847E7F /* Assets */;
+			baseConfigurationReferenceRelativePath = "FeedFlow-release.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -733,6 +737,8 @@
 		};
 		13A571F72D747F0700F0FFB0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = CC6B8A692CCE8B8800847E7F /* Assets */;
+			baseConfigurationReferenceRelativePath = FeedFlow.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -773,6 +779,8 @@
 		};
 		13A571F82D747F0700F0FFB0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = CC6B8A692CCE8B8800847E7F /* Assets */;
+			baseConfigurationReferenceRelativePath = "FeedFlow-release.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

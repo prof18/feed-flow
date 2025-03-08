@@ -18,6 +18,8 @@
     <string>VERSION_NAME</string>
     <key>CFBundleVersion</key>
     <string>VERSION_CODE</string>
+    <key>CFBundleDisplayName</key>
+    <string>FeedFlow Widget</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

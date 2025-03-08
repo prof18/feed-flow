@@ -28,15 +28,19 @@ jobs:
           $tag = $(git describe --tags --abbrev=0 --match "*-desktop")
           $version = $tag -replace '-desktop$', ''
           $name_msi = "FeedFlow-${version}.msi"
-          $path_msi = "desktopApp/build/release/main-release/msi/${name}"
+          $path_msi = "desktopApp/build/release/main-release/msi/${name_msi}"
           $name_exe = "FeedFlow-${version}.exe"
-          $path_exe = "desktopApp/build/release/main-release/exe/${name}"
+          $path_exe = "desktopApp/build/release/main-release/exe/${name_exe}"
+          $name_msix = "FeedFlow-${version}.msix"
+          $path_msix = "desktopApp/build/release/main-release/msix/${name_msix}"
           "TAG=$tag" >> $env:GITHUB_ENV
           "VERSION=$version" >> $env:GITHUB_ENV
           "RELEASE_PATH_MSI=$path_msi" >> $env:GITHUB_ENV
           "NAME_MSI=$name_msi" >> $env:GITHUB_ENV
           "RELEASE_PATH_EXE=$path_exe" >> $env:GITHUB_ENV
           "NAME_EXE=$name_exe" >> $env:GITHUB_ENV
+          "RELEASE_PATH_MSIX=$path_msix" >> $env:GITHUB_ENV
+          "NAME_MSIX=$name_msix" >> $env:GITHUB_ENV
 
       - name: Create Properties file
         shell: pwsh
@@ -53,6 +57,31 @@ jobs:
       - name: Create MSI
         run: ./gradlew packageReleaseMsi packageReleaseExe
 
+      - name: Install MSIX Packaging Tool
+        shell: pwsh
+        run: |
+          # Create directory for MSIX output
+          New-Item -ItemType Directory -Force -Path "desktopApp/build/release/main-release/msix"
+          
+          # Download and install MSIX Packaging Tool
+          Invoke-WebRequest -Uri "https://aka.ms/msixpackagingtool" -OutFile "MSIXPackagingTool.msixbundle"
+          Add-AppxPackage -Path "MSIXPackagingTool.msixbundle"
+
+      - name: Prepare MSIX conversion template
+        shell: pwsh
+        run: |
+          $templateContent = Get-Content -Path ".github/msix-conversion-template.xml" -Raw
+          $templateContent = $templateContent.Replace("[MSIPath]", "${{ env.RELEASE_PATH_MSI }}")
+          $templateContent = $templateContent.Replace("[MSIXOutputPath]", "${{ env.RELEASE_PATH_MSIX }}")
+          $templateContent = $templateContent.Replace("[AppVersion]", "${{ env.VERSION }}")
+          $templateContent = $templateContent.Replace("[PublisherDisplayName]", "${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}")          $templateContent | Set-Content -Path "msix-conversion-config.xml"
+
+      - name: Convert MSI to MSIX
+        shell: pwsh
+        run: |
+          # Run the conversion using the command line interface
+          MsixPackagingTool.exe create-package --template "msix-conversion-config.xml" -v
+
       - name: Upload asset msi
         uses: actions/upload-artifact@v4
         with:
@@ -64,6 +93,12 @@ jobs:
         with:
           path: ${{ env.RELEASE_PATH_EXE }}
           name: ${{ env.NAME_EXE }}
+          
+      - name: Upload asset msix
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ env.RELEASE_PATH_MSIX }}
+          name: ${{ env.NAME_MSIX }}
 
       - name: Upload reports
         if: failure()
@@ -71,4 +106,4 @@ jobs:
         with:
           name: reports
           path: |
-            **/build/compose/logs/*  
+            **/build/compose/logs/*

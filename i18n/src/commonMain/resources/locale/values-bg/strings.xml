@@ -187,4 +187,7 @@
     <string name="settings_sync_period_one_hour">На всеки час</string>
     <string name="settings_sync_period_six_hours">На всеки 6 часа</string>
     <string name="widget_check_feed_sources">Уверете се, че сте добавили някои източници на емисии</string>
+    <string name="widget_configuration_confirm">Добавяне на приспособление</string>
+    <string name="widget_configuration_title">Конфигурация на приспособление</string>
+    <string name="widget_configuration_description">Изберете колко често да проверявате за нови статии на заден план и да актуализирате приспособлението.</string>
 </resources>

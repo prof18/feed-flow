@@ -350,10 +350,10 @@
 				7555FF77242A565900829871 /* Sources */,
 				7555FF78242A565900829871 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
+				13929EA82D7345F0003752AE /* Embed Foundation Extensions */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
 				CCEA11BF2A6D2C6600C661AC /* Crashlytics */,
 				CCEA11C12A6D454C00C661AC /* Crashlytics KMP */,
-				13929EA82D7345F0003752AE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);

@@ -197,11 +197,14 @@ jobs:
           $version = $tag -replace '-desktop$', ''
           $name = "FeedFlow-${version}.msi"
           $path = "desktopApp/build/release/main-release/msi/${name}"
+          $name_msix = "FeedFlow-${version}.msix"
+          $path_msix = "desktopApp/build/release/main-release/msix/${name_msix}"
           "TAG=$tag" >> $env:GITHUB_ENV
           "VERSION=$version" >> $env:GITHUB_ENV
           "RELEASE_PATH=$path" >> $env:GITHUB_ENV
           "ARTIFACT_NAME=$name" >> $env:GITHUB_ENV
-
+          "RELEASE_PATH_MSIX=$path_msix" >> $env:GITHUB_ENV
+          "NAME_MSIX=$name_msix" >> $env:GITHUB_ENV
 
       - name: Create Properties file
         shell: pwsh
@@ -218,12 +221,80 @@ jobs:
       - name: Create MSI
         run: ./gradlew packageReleaseMsi
 
+      - name: Install MSIX Packaging Tool and Dependencies
+        shell: pwsh
+        run: |
+          # Create directory for MSIX output
+          New-Item -ItemType Directory -Force -Path "desktopApp/build/release/main-release/msix"
+          
+          # Download and install FOD (Feature on Demand) package for Windows 11
+          Write-Host "Downloading MSIX Packaging Tool Driver FOD..."
+          $fodUrl = "https://download.microsoft.com/download/6/c/7/6c7d654b-580b-40d4-8502-f8d435ca125a/Msix-PackagingTool-Driver-Package%7E31bf3856ad364e35%7Eamd64%7E%7E1.cab"
+          $fodPath = "MSIXPackagingToolDriver.cab"
+          Invoke-WebRequest -Uri $fodUrl -OutFile $fodPath
+          
+          Write-Host "Installing MSIX Packaging Tool Driver FOD..."
+          $dismPath = "$env:SystemRoot\System32\dism.exe"
+          & $dismPath /Online /Add-Package /PackagePath:$fodPath
+          
+          # Download MSIX Packaging Tool
+          Write-Host "Downloading MSIX Packaging Tool..."
+          $msixToolUrl = "https://download.microsoft.com/download/e/2/e/e2e923b2-7a3a-4730-969d-ab37001fbb5e/MSIXPackagingtoolv1.2024.405.0.msixbundle"
+          $msixToolPath = "MSIXPackagingTool.msixbundle"
+          Invoke-WebRequest -Uri $msixToolUrl -OutFile $msixToolPath
+          
+          Write-Host "Installing MSIX Packaging Tool..."
+          & $dismPath /Online /Add-ProvisionedAppxPackage /PackagePath:$msixToolPath /SkipLicense
+
+      - name: Prepare MSIX conversion template
+        shell: pwsh
+        run: |
+          # Convert paths to absolute Windows paths
+          $workspaceRoot = $pwd.Path
+          Write-Host "`nConverting paths to absolute Windows paths:"
+          Write-Host "Workspace root: $workspaceRoot"
+          
+          $absoluteMsiPath = Join-Path $workspaceRoot $env:RELEASE_PATH_MSI
+          $absoluteMsixPath = Join-Path $workspaceRoot $env:RELEASE_PATH_MSIX
+          
+          # Ensure paths use Windows format
+          $absoluteMsiPath = $absoluteMsiPath.Replace('/', '\')
+          $absoluteMsixPath = $absoluteMsixPath.Replace('/', '\')
+          
+          Write-Host "Absolute MSI path: $absoluteMsiPath"
+          Write-Host "Absolute MSIX path: $absoluteMsixPath"
+          
+          # Read and store content
+          $templateContent = Get-Content -Path ".github/msix-conversion-template.xml" -Raw
+          
+          # Do replacements with absolute paths
+          $templateContent = $templateContent.Replace("[MSIPath]", $absoluteMsiPath)
+          $templateContent = $templateContent.Replace("[MSIXOutputPath]", $absoluteMsixPath)
+          $templateContent = $templateContent.Replace("[AppVersion]", "${{ env.VERSION }}.0")
+          $templateContent = $templateContent.Replace("[PublisherName]", "${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}")
+          
+          Write-Host "`nWriting template to msix-conversion-config.xml"
+          $templateContent | Set-Content -Path "msix-conversion-config.xml" -NoNewline
+
+      - name: Convert MSI to MSIX
+        shell: pwsh
+        run: |
+          Write-Host "`nStarting MSIX conversion..."
+          MsixPackagingTool.exe create-package --template "msix-conversion-config.xml" -v
+
       - name: Upload asset
         uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH }}
           name: ${{ env.ARTIFACT_NAME }}
           retention-days: 1
+
+      - name: Upload asset msix
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ env.RELEASE_PATH_MSIX }}
+          name: ${{ env.NAME_MSIX }}
+          retention-days: 7
 
       - name: Upload reports
         if: failure()

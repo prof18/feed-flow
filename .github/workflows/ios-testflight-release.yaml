@@ -62,6 +62,22 @@ jobs:
           api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
           api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
 
+      - name: download provisioning profiles for widget
+        uses: apple-actions/download-provisioning-profiles@v3
+        with:
+          bundle-id: ${{ secrets.BUNDLE_ID }}.ShareExtension
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
+          api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+
+      - name: download provisioning profiles for widget
+        uses: apple-actions/download-provisioning-profiles@v3
+        with:
+          bundle-id: ${{ secrets.BUNDLE_ID }}.Widget
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
+          api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+
       - name: build archive
         run: |
           cd iosApp

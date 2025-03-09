@@ -17,9 +17,9 @@ class FeedDownloadWorker internal constructor(
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         feedFetcherRepository.fetchFeeds()
+        widgetUpdater.update()
         val errors = feedStateRepository.updateState.lastOrNull()
         return if (errors == null) {
-            widgetUpdater.update()
             Result.success()
         } else {
             Result.retry()

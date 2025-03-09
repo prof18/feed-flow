@@ -81,9 +81,9 @@ jobs:
             "PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*][config=Release][target=ShareExtension]=${{ secrets.BUNDLE_ID }}.ShareExtension" \
             "PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*][config=Release][target=WidgetExtension]=${{ secrets.BUNDLE_ID }}.Widget" \
             CODE_SIGN_STYLE="Manual" \
-            PROVISIONING_PROFILE_SPECIFIER="${{ secrets.DEV_PROVISIONING_PROFILE_NAME }}" \
-            "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*][config=Release][target=ShareExtension]=${{ secrets.DEV_PROVISIONING_PROFILE_NAME }}" \
-            "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*][config=Release][target=WidgetExtension]=${{ secrets.DEV_PROVISIONING_PROFILE_NAME }}" \
+            PROVISIONING_PROFILE_SPECIFIER="FeedFlowGHActionDevProvisioning" \
+            "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*][config=Release][target=ShareExtension]=FeedFlowShareExtensionGHActionDevProvisioning" \
+            "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*][config=Release][target=WidgetExtension]=FeedFlowWidgetGHActionDevProvisioning" \
             archive | xcbeautify --renderer github-actions
 
       - name: "Generate ExportOptions.plist"
@@ -110,11 +110,11 @@ jobs:
               <key>provisioningProfiles</key>
               <dict>
                 <key>${{ secrets.BUNDLE_ID }}</key>
-                <string>${{ secrets.DIST_PROVISIONING_PROFILE_NAME }}</string>
+                <string>FeedFlowGHActionDistributionProvisioning</string>
                 <key>${{ secrets.BUNDLE_ID }}.ShareExtension</key>
-                <string>${{ secrets.DIST_PROVISIONING_PROFILE_NAME }}</string>
+                <string>FeedFlowShareExtGHActionDistributionProvisioning</string>
                 <key>${{ secrets.BUNDLE_ID }}.Widget</key>
-                <string>${{ secrets.DIST_PROVISIONING_PROFILE_NAME }}</string>
+                <string>FeedFlowWidgetGHActionDistributionProvisioning</string>
               </dict>
             </dict>
           </plist>

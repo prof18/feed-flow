@@ -32,7 +32,7 @@ jobs:
           $name_exe = "FeedFlow-${version}.exe"
           $path_exe = "desktopApp/build/release/main-release/exe/${name_exe}"
           $name_msix = "FeedFlow-${version}.msix"
-          $path_msix = "desktopApp/build/release/main-release/msix/${name_msix}"
+          $path_msix = "desktopApp/build/release/main-release/msi/${name_msix}"
           "TAG=$tag" >> $env:GITHUB_ENV
           "VERSION=$version" >> $env:GITHUB_ENV
           "RELEASE_PATH_MSI=$path_msi" >> $env:GITHUB_ENV
@@ -88,22 +88,93 @@ jobs:
       - name: Prepare MSIX conversion template
         shell: pwsh
         run: |
+          Write-Host "Reading template file..."
+          Write-Host "Template file path: $((Resolve-Path '.github/msix-conversion-template.xml').Path)"
+          
+          # Print raw file content with line numbers
+          Write-Host "`nTemplate file content (with line numbers):"
+          Write-Host "======================================"
+          $lineNumber = 1
+          Get-Content -Path ".github/msix-conversion-template.xml" | ForEach-Object { 
+              Write-Host ("{0,4}: {1}" -f $lineNumber, $_)
+              $lineNumber++
+          }
+          Write-Host "======================================"
+          
+          # Print file details
+          $fileInfo = Get-Item ".github/msix-conversion-template.xml"
+          Write-Host "`nFile details:"
+          Write-Host "- Last Write Time: $($fileInfo.LastWriteTime)"
+          Write-Host "- File Size: $($fileInfo.Length) bytes"
+          Write-Host "- Attributes: $($fileInfo.Attributes)"
+          
+          # Read and store content
           $templateContent = Get-Content -Path ".github/msix-conversion-template.xml" -Raw
+          
+          Write-Host "`nReplacing placeholders with values:"
+          Write-Host "- MSI Path: ${{ env.RELEASE_PATH_MSI }}"
+          Write-Host "- MSIX Output Path: ${{ env.RELEASE_PATH_MSIX }}"
+          Write-Host "- App Version: ${{ env.VERSION }}.0"
+          Write-Host "- Publisher Name: ${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}"
+          
+          # Do replacements
           $templateContent = $templateContent.Replace("[MSIPath]", "${{ env.RELEASE_PATH_MSI }}")
           $templateContent = $templateContent.Replace("[MSIXOutputPath]", "${{ env.RELEASE_PATH_MSIX }}")
           $templateContent = $templateContent.Replace("[AppVersion]", "${{ env.VERSION }}.0")
           $templateContent = $templateContent.Replace("[PublisherName]", "${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}")
-          $templateContent | Set-Content -Path "msix-conversion-config.xml"
+          
+          Write-Host "`nFinal template content after replacements (with line numbers):"
+          Write-Host "======================================"
+          $lineNumber = 1
+          $templateContent -split "`n" | ForEach-Object {
+              Write-Host ("{0,4}: {1}" -f $lineNumber, $_)
+              $lineNumber++
+          }
+          Write-Host "======================================"
+          
+          Write-Host "`nWriting template to msix-conversion-config.xml"
+          $templateContent | Set-Content -Path "msix-conversion-config.xml" -NoNewline
+          
+          Write-Host "`nVerifying written file:"
+          Write-Host "- File exists: $(Test-Path 'msix-conversion-config.xml')"          
 
       - name: Convert MSI to MSIX
         shell: pwsh
         run: |
-          # Verify paths before conversion
+          # Verify paths and environment before conversion
+          Write-Host "`nEnvironment Check:"
+          Write-Host "=================="
           Write-Host "Current directory: $(Get-Location)"
+          Write-Host "MSI path: ${{ env.RELEASE_PATH_MSI }}"
           Write-Host "MSI exists: $(Test-Path '${{ env.RELEASE_PATH_MSI }}')"
-          Write-Host "Template exists: $(Test-Path 'msix-conversion-config.xml')"
+          if (Test-Path '${{ env.RELEASE_PATH_MSI }}') {
+              Write-Host "MSI file details:"
+              Get-Item '${{ env.RELEASE_PATH_MSI }}' | Select-Object Length, LastWriteTime, Attributes | Format-List
+          }
           
-          # Run the conversion using the command line interface
+          Write-Host "`nTemplate Check:"
+          Write-Host "=================="
+          Write-Host "Template exists: $(Test-Path 'msix-conversion-config.xml')"
+          if (Test-Path 'msix-conversion-config.xml') {
+              Write-Host "Template file details:"
+              Get-Item 'msix-conversion-config.xml' | Select-Object Length, LastWriteTime, Attributes | Format-List
+          }
+          
+          Write-Host "`nMSIX Output Check:"
+          Write-Host "=================="
+          $msixDir = Split-Path '${{ env.RELEASE_PATH_MSIX }}' -Parent
+          Write-Host "MSIX output directory: $msixDir"
+          Write-Host "Directory exists: $(Test-Path $msixDir)"
+          if (Test-Path $msixDir) {
+              Write-Host "Directory contents:"
+              Get-ChildItem $msixDir | Format-Table Name, Length, LastWriteTime
+          }
+          
+          Write-Host "`nEnvironment Variables:"
+          Write-Host "===================="
+          Get-ChildItem Env: | Where-Object { $_.Name -like '*RELEASE*' -or $_.Name -like '*VERSION*' -or $_.Name -like '*TAG*' } | Format-Table -AutoSize
+          
+          Write-Host "`nStarting MSIX conversion..."
           MsixPackagingTool.exe create-package --template "msix-conversion-config.xml" -v
 
       - name: Upload asset msi

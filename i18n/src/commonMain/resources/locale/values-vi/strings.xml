@@ -187,4 +187,7 @@
     <string name="settings_sync_period">Tần số đồng bộ nền</string>
     <string name="settings_sync_period_two_hours">Mỗi 2 giờ</string>
     <string name="settings_sync_period_twelve_hours">Mỗi 12 giờ</string>
+    <string name="widget_configuration_title">Thiết lập Widget</string>
+    <string name="widget_configuration_description">Chọn tần suất kiểm tra bài viết mới ở chế độ nền và cập nhật tiện ích.</string>
+    <string name="widget_configuration_confirm">Thêm Widget</string>
 </resources>

@@ -70,7 +70,6 @@ jobs:
             -scheme "FeedFlow" \
             -configuration "Release" \
             -sdk "iphoneos" \
-            -parallelizeTargets \
             -showBuildTimingSummary \
             -disableAutomaticPackageResolution \
             -derivedDataPath "${RUNNER_TEMP}/Build/DerivedData" \
@@ -79,8 +78,12 @@ jobs:
             -destination "generic/platform=iOS" \
             DEVELOPMENT_TEAM="${{ secrets.APPSTORE_TEAM_ID }}" \
             PRODUCT_BUNDLE_IDENTIFIER="${{ secrets.BUNDLE_ID }}" \
+            "PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*][config=Release][target=ShareExtension]=${{ secrets.BUNDLE_ID }}.ShareExtension" \
+            "PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*][config=Release][target=WidgetExtension]=${{ secrets.BUNDLE_ID }}.Widget" \
             CODE_SIGN_STYLE="Manual" \
             PROVISIONING_PROFILE_SPECIFIER="${{ secrets.DEV_PROVISIONING_PROFILE_NAME }}" \
+            "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*][config=Release][target=ShareExtension]=${{ secrets.DEV_PROVISIONING_PROFILE_NAME }}" \
+            "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*][config=Release][target=WidgetExtension]=${{ secrets.DEV_PROVISIONING_PROFILE_NAME }}" \
             archive | xcbeautify --renderer github-actions
 
       - name: "Generate ExportOptions.plist"
@@ -107,6 +110,10 @@ jobs:
               <key>provisioningProfiles</key>
               <dict>
                 <key>${{ secrets.BUNDLE_ID }}</key>
+                <string>${{ secrets.DIST_PROVISIONING_PROFILE_NAME }}</string>
+                <key>${{ secrets.BUNDLE_ID }}.ShareExtension</key>
+                <string>${{ secrets.DIST_PROVISIONING_PROFILE_NAME }}</string>
+                <key>${{ secrets.BUNDLE_ID }}.Widget</key>
                 <string>${{ secrets.DIST_PROVISIONING_PROFILE_NAME }}</string>
               </dict>
             </dict>

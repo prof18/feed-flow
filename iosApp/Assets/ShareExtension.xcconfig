@@ -1,0 +1,9 @@
+//
+//  ShareExtension.xcconfig
+//  FeedFlow
+//
+//  Created by Marco Gomiero on 09/03/25.
+//  Copyright © 2025 FeedFlow. All rights reserved.
+//
+PRODUCT_BUNDLE_IDENTIFIER = com.prof18.feedflow.ShareExtension
+PROVISIONING_PROFILE_SPECIFIER = FeedFlowShareExtensionGHActionDevProvisioning

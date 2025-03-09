@@ -73,13 +73,7 @@ dropbox_key=your_key
 
 ### iOS
 
-Create a copy of the `FeedFlow.xcconfig` file with the following command:
-
-```bash
-cp iosApp/Assets/FeedFlow.xcconfig.template iosApp/Assets/FeedFlow.xcconfig
-```
-
-Fill in the `DEVELOPMENT_TEAM` and `BUNDLE_ID_PREFIX` values. The first is your Apple Team ID. The latter is your domain in reverse notation or what you use as the prefix for your projects.
+To fully build the project, you need to change the `BUNDLE_ID` values. 
 
 The `GoogleService-Info.plist` (for release and dev variants) is required to build the project. You can generate a fake one with this command:
 

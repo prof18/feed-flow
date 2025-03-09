@@ -93,7 +93,9 @@ jobs:
             -resultBundlePath "${RUNNER_TEMP}/Build/Artifacts/FeedFlow.xcresult" \
             -destination "generic/platform=iOS" \
             DEVELOPMENT_TEAM="${{ secrets.APPSTORE_TEAM_ID }}" \
+            PRODUCT_BUNDLE_IDENTIFIER="${{ secrets.BUNDLE_ID }}" \
             CODE_SIGN_STYLE="Manual" \
+            PROVISIONING_PROFILE_SPECIFIER="FeedFlowGHActionDevProvisioning" \
             archive | xcbeautify --renderer github-actions
 
       - name: "Generate ExportOptions.plist"

@@ -32,7 +32,7 @@ jobs:
           $name_exe = "FeedFlow-${version}.exe"
           $path_exe = "desktopApp/build/release/main-release/exe/${name_exe}"
           $name_msix = "FeedFlow-${version}.msix"
-          $path_msix = "desktopApp/build/release/main-release/msi/${name_msix}"
+          $path_msix = "desktopApp/build/release/main-release/msix/${name_msix}"
           "TAG=$tag" >> $env:GITHUB_ENV
           "VERSION=$version" >> $env:GITHUB_ENV
           "RELEASE_PATH_MSI=$path_msi" >> $env:GITHUB_ENV
@@ -88,9 +88,6 @@ jobs:
       - name: Prepare MSIX conversion template
         shell: pwsh
         run: |
-          Write-Host "Reading template file..."
-          Write-Host "Template file path: $((Resolve-Path '.github/msix-conversion-template.xml').Path)"
-          
           # Convert paths to absolute Windows paths
           $workspaceRoot = $pwd.Path
           Write-Host "`nConverting paths to absolute Windows paths:"
@@ -106,31 +103,8 @@ jobs:
           Write-Host "Absolute MSI path: $absoluteMsiPath"
           Write-Host "Absolute MSIX path: $absoluteMsixPath"
           
-          # Print raw file content with line numbers
-          Write-Host "`nTemplate file content (with line numbers):"
-          Write-Host "======================================"
-          $lineNumber = 1
-          Get-Content -Path ".github/msix-conversion-template.xml" | ForEach-Object { 
-              Write-Host ("{0,4}: {1}" -f $lineNumber, $_)
-              $lineNumber++
-          }
-          Write-Host "======================================"
-          
-          # Print file details
-          $fileInfo = Get-Item ".github/msix-conversion-template.xml"
-          Write-Host "`nFile details:"
-          Write-Host "- Last Write Time: $($fileInfo.LastWriteTime)"
-          Write-Host "- File Size: $($fileInfo.Length) bytes"
-          Write-Host "- Attributes: $($fileInfo.Attributes)"
-          
           # Read and store content
           $templateContent = Get-Content -Path ".github/msix-conversion-template.xml" -Raw
-          
-          Write-Host "`nReplacing placeholders with absolute paths:"
-          Write-Host "- MSI Path: $absoluteMsiPath"
-          Write-Host "- MSIX Output Path: $absoluteMsixPath"
-          Write-Host "- App Version: ${{ env.VERSION }}.0"
-          Write-Host "- Publisher Name: ${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}"
           
           # Do replacements with absolute paths
           $templateContent = $templateContent.Replace("[MSIPath]", $absoluteMsiPath)
@@ -138,96 +112,12 @@ jobs:
           $templateContent = $templateContent.Replace("[AppVersion]", "${{ env.VERSION }}.0")
           $templateContent = $templateContent.Replace("[PublisherName]", "${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}")
           
-          Write-Host "`nFinal template content after replacements (with line numbers):"
-          Write-Host "======================================"
-          $lineNumber = 1
-          $templateContent -split "`n" | ForEach-Object {
-              Write-Host ("{0,4}: {1}" -f $lineNumber, $_)
-              $lineNumber++
-          }
-          Write-Host "======================================"
-          
           Write-Host "`nWriting template to msix-conversion-config.xml"
           $templateContent | Set-Content -Path "msix-conversion-config.xml" -NoNewline
           
-          Write-Host "`nVerifying written file:"
-          Write-Host "- File exists: $(Test-Path 'msix-conversion-config.xml')"
-          Write-Host "- File size: $((Get-Item 'msix-conversion-config.xml').Length) bytes"
-          
-          # Verify paths in the generated config
-          Write-Host "`nVerifying paths in generated config:"
-          Write-Host "- MSI file exists: $(Test-Path $absoluteMsiPath)"
-          Write-Host "- MSI directory exists: $(Test-Path (Split-Path $absoluteMsiPath))"
-          Write-Host "- MSIX directory exists: $(Test-Path (Split-Path $absoluteMsixPath))"
-          
-          # Print directory contents
-          Write-Host "`nMSI directory contents:"
-          Get-ChildItem (Split-Path $absoluteMsiPath) | Format-Table Name, Length, LastWriteTime
-          
-          Write-Host "`nMSIX directory contents:"
-          Get-ChildItem (Split-Path $absoluteMsixPath) | Format-Table Name, Length, LastWriteTime
-          
-          # Validate XML
-          Write-Host "`nValidating XML structure..."
-          try {
-              [xml]$xml = Get-Content 'msix-conversion-config.xml'
-              Write-Host "XML validation successful"
-              
-              # Print important XML nodes
-              Write-Host "`nImportant XML nodes:"
-              Write-Host "SaveLocation PackagePath: $($xml.MsixPackagingToolTemplate.SaveLocation.PackagePath)"
-              Write-Host "Installer Path: $($xml.MsixPackagingToolTemplate.Installer.Path)"
-              Write-Host "Installer InstallLocation: $($xml.MsixPackagingToolTemplate.Installer.InstallLocation)"
-          } catch {
-              Write-Host "XML validation failed: $_"
-              throw
-          }
-
       - name: Convert MSI to MSIX
         shell: pwsh
         run: |
-          # Additional environment information
-          Write-Host "`nSystem Information:"
-          Write-Host "=================="
-          Write-Host "PowerShell Version: $($PSVersionTable.PSVersion)"
-          Write-Host "OS Version: $([System.Environment]::OSVersion.Version)"
-          Write-Host "Current User: $([System.Security.Principal.WindowsIdentity]::GetCurrent().Name)"
-          Write-Host "Current Directory: $pwd"
-          
-          # Verify paths and environment before conversion
-          Write-Host "`nEnvironment Check:"
-          Write-Host "=================="
-          $workspaceRoot = $pwd.Path
-          $absoluteMsiPath = Join-Path $workspaceRoot $env:RELEASE_PATH_MSI
-          $absoluteMsixPath = Join-Path $workspaceRoot $env:RELEASE_PATH_MSIX
-          
-          Write-Host "Absolute MSI Path: $absoluteMsiPath"
-          Write-Host "MSI exists: $(Test-Path $absoluteMsiPath)"
-          if (Test-Path $absoluteMsiPath) {
-              Write-Host "MSI file details:"
-              Get-Item $absoluteMsiPath | Select-Object FullName, Length, LastWriteTime, Attributes | Format-List
-          }
-          
-          Write-Host "`nTemplate Check:"
-          Write-Host "=================="
-          Write-Host "Template exists: $(Test-Path 'msix-conversion-config.xml')"
-          if (Test-Path 'msix-conversion-config.xml') {
-              Write-Host "Template file details:"
-              Get-Item 'msix-conversion-config.xml' | Select-Object FullName, Length, LastWriteTime, Attributes | Format-List
-              Write-Host "`nTemplate content:"
-              Get-Content 'msix-conversion-config.xml'
-          }
-          
-          Write-Host "`nMSIX Output Check:"
-          Write-Host "=================="
-          $msixDir = Split-Path $absoluteMsixPath -Parent
-          Write-Host "MSIX output directory: $msixDir"
-          Write-Host "Directory exists: $(Test-Path $msixDir)"
-          if (Test-Path $msixDir) {
-              Write-Host "Directory contents:"
-              Get-ChildItem $msixDir | Format-Table FullName, Length, LastWriteTime
-          }
-          
           Write-Host "`nStarting MSIX conversion..."
           MsixPackagingTool.exe create-package --template "msix-conversion-config.xml" -v
 

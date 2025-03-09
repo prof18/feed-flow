@@ -20,8 +20,7 @@
     PackagePath="[MSIXOutputPath]" />
   <Installer 
     Path="[MSIPath]"
-    Arguments="/quiet"
-    InstallLocation="C:\Program Files\FeedFlow" />
+    InstallLocation="" />
   <PackageInformation 
     PackageName="MarcoGomiero.FeedFlowRSSReader" 
     PackageDisplayName="FeedFlow - RSS Reader" 

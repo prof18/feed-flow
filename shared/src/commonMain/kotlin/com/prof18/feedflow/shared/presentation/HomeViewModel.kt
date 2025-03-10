@@ -252,7 +252,9 @@ class HomeViewModel internal constructor(
     }
 
     fun deleteAllFeeds() {
-        feedSourcesRepository.deleteAllFeeds()
+        viewModelScope.launch {
+            feedSourcesRepository.deleteAllFeeds()
+        }
     }
 
     fun onFeedFilterSelected(selectedFeedFilter: FeedFilter) {
@@ -318,7 +320,7 @@ class HomeViewModel internal constructor(
         val lastForegroundTimestamp = settingsRepository.getLastFeedSyncTimestamp()
         val oneHourInMillis = 60 * 60 * 1000L
         val currentTimestamp = dateFormatter.currentTimeMillis()
-
+        getNewFeeds()
         if ((currentTimestamp - lastForegroundTimestamp) >= oneHourInMillis) {
             getNewFeeds()
         } else {

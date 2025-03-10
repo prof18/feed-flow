@@ -117,10 +117,6 @@ jobs:
         run: |
           cp config/dummy-config.xcconfig iosApp/Assets/Config.xcconfig
 
-      - name: Create FeedFlow xcconfig
-        run: |
-          cp iosApp/Assets/FeedFlow-release.xcconfig iosApp/Assets/FeedFlow.xcconfig
-
       - name: Build iOS Sample
         run: |
           cd iosApp

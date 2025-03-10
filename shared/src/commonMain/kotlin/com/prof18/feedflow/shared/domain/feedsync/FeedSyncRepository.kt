@@ -55,75 +55,95 @@ class FeedSyncRepository internal constructor(
 
     internal suspend fun addSourceAndCategories(sources: List<FeedSource>, categories: List<FeedSourceCategory>) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.insertSyncedFeedSource(sources)
-            syncedDatabaseHelper.insertFeedSourceCategories(categories)
-            settingsRepository.setIsSyncUploadRequired(true)
+            withErrorHandling {
+                syncedDatabaseHelper.insertSyncedFeedSource(sources)
+                syncedDatabaseHelper.insertFeedSourceCategories(categories)
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
         }
     }
 
     internal suspend fun insertSyncedFeedSource(sources: List<FeedSource>) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.insertSyncedFeedSource(sources)
-            settingsRepository.setIsSyncUploadRequired(true)
+            withErrorHandling {
+                syncedDatabaseHelper.insertSyncedFeedSource(sources)
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
         }
     }
 
     internal suspend fun insertFeedSourceCategories(categories: List<FeedSourceCategory>) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.insertFeedSourceCategories(categories)
-            settingsRepository.setIsSyncUploadRequired(true)
+            withErrorHandling {
+                syncedDatabaseHelper.insertFeedSourceCategories(categories)
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
         }
     }
 
     internal suspend fun updateCategory(category: FeedSourceCategory) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.updateCategoryName(
-                categoryId = category.id,
-                newName = category.title,
-            )
-            settingsRepository.setIsSyncUploadRequired(true)
+            withErrorHandling {
+                syncedDatabaseHelper.updateCategoryName(
+                    categoryId = category.id,
+                    newName = category.title,
+                )
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
         }
     }
 
     internal suspend fun deleteFeedSource(feedSource: FeedSource) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.deleteFeedSource(feedSource.id)
-            settingsRepository.setIsSyncUploadRequired(true)
+            withErrorHandling {
+                syncedDatabaseHelper.deleteFeedSource(feedSource.id)
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
         }
     }
 
     internal suspend fun deleteFeedSourceCategory(categoryId: String) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.deleteFeedSourceCategory(categoryId)
-            settingsRepository.setIsSyncUploadRequired(true)
+            withErrorHandling {
+                syncedDatabaseHelper.deleteFeedSourceCategory(categoryId)
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
         }
     }
 
-    internal fun deleteAllFeedSources() {
+    internal suspend fun deleteAllFeedSources() {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.deleteAllFeedSources()
-            settingsRepository.setIsSyncUploadRequired(true)
+            withErrorHandling {
+                syncedDatabaseHelper.deleteAllFeedSources()
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
         }
     }
 
     internal suspend fun updateFeedSourceName(feedSourceId: String, newName: String) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.updateFeedSourceName(feedSourceId, newName)
-            settingsRepository.setIsSyncUploadRequired(true)
+            withErrorHandling {
+                syncedDatabaseHelper.updateFeedSourceName(feedSourceId, newName)
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
         }
     }
 
     internal suspend fun updateFeedSource(feedSource: FeedSource) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.updateFeedSource(feedSource)
-            settingsRepository.setIsSyncUploadRequired(true)
+            withErrorHandling {
+                syncedDatabaseHelper.updateFeedSource(feedSource)
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
         }
     }
 
     internal suspend fun deleteFeedItems(feedIds: List<FeedItemId>) {
         if (feedSyncAccountRepository.isSyncEnabled()) {
-            syncedDatabaseHelper.deleteFeedItems(feedIds)
-            settingsRepository.setIsSyncUploadRequired(true)
+            withErrorHandling {
+                syncedDatabaseHelper.deleteFeedItems(feedIds)
+                settingsRepository.setIsSyncUploadRequired(true)
+            }
         }
     }
 
@@ -157,5 +177,15 @@ class FeedSyncRepository internal constructor(
 
     internal suspend fun deleteAll() {
         syncedDatabaseHelper.deleteAllData()
+    }
+
+    private suspend fun withErrorHandling(
+        body: suspend () -> Unit,
+    ) {
+        try {
+            body()
+        } catch (e: Exception) {
+            logger.e(e) { "Error during feed sync" }
+        }
     }
 }

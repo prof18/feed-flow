@@ -80,7 +80,7 @@ internal class FeedSourcesRepository(
         }
     }
 
-    fun deleteAllFeeds() {
+    suspend fun deleteAllFeeds() {
         databaseHelper.deleteAllFeeds()
         feedSyncRepository.deleteAllFeedSources()
     }

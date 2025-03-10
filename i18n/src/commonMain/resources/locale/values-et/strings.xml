@@ -183,4 +183,16 @@
     <string name="error_feed_add">Midagi läks uudisvoo lisamisel viltu</string>
     <string name="menu_share">Jaga</string>
     <string name="menu_copy_link_comments">Kopeeri kommentaaride link</string>
+    <string name="settings_sync_period">Taustal sünkroniseerimise sagedus</string>
+    <string name="settings_sync_period_desc">Vali uute artiklite taustal kontrollimise sagedus</string>
+    <string name="settings_sync_period_one_hour">Kord tunnis</string>
+    <string name="settings_sync_period_two_hours">Kord kahe tunni jooksul</string>
+    <string name="settings_sync_period_six_hours">Kord kuue tunni jooksul</string>
+    <string name="widget_check_feed_sources">Palun kontrolli, et sul oleks mõned uudisvoogude allikad lisatud</string>
+    <string name="widget_latest_items">Viimatised</string>
+    <string name="widget_configuration_confirm">Lisa vidin</string>
+    <string name="widget_configuration_title">Vidinate seadistus</string>
+    <string name="settings_sync_period_twelve_hours">Kord kaheteist tunni jooksul</string>
+    <string name="settings_sync_period_never">Mitte kunagi</string>
+    <string name="widget_configuration_description">Vali uute artiklite taustal kontrollimise ning järgneva vidinas kuvatavate andmete uuenduse sagedus.</string>
 </resources>

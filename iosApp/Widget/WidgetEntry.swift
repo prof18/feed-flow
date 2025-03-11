@@ -10,7 +10,7 @@ import WidgetKit
 
 struct WidgetEntry: TimelineEntry {
     let date: Date
-    let feedItems: [FeedItem]
+    let feedItems: [FeedItemWidget]
     let widgetTitle: String
     let widgetEmptyScreenTitle: String
     let widgetEmptyScreenContent: String

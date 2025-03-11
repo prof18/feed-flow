@@ -44,7 +44,7 @@ struct WidgetEntryView: View {
         }
     }
 
-    private func regularWidgetView(items: [FeedItem]) -> some View {
+    private func regularWidgetView(items: [FeedItemWidget]) -> some View {
         return VStack(alignment: .leading, spacing: Spacing.small) {
             Text(entry.widgetTitle)
                 .font(.headline)
@@ -55,7 +55,7 @@ struct WidgetEntryView: View {
                     destination: URL(string: "feedflow://feed/\(item.id)") ?? URL(
                         string: "feedflow://")!
                 ) {
-                    WidgetFeedItemView(feedItem: item)
+                    WidgetFeedItemView(feedItem: item, lineLimit: widgetFamily == .systemMedium ? 1 : 2)
                 }
                 .buttonStyle(PlainButtonStyle())
 
@@ -67,7 +67,7 @@ struct WidgetEntryView: View {
         .padding(.bottom, Spacing.small)
     }
 
-    private func extraLargeWidgetGridView(items: [FeedItem]) -> some View {
+    private func extraLargeWidgetGridView(items: [FeedItemWidget]) -> some View {
         let columns = [
             GridItem(.flexible(), spacing: Spacing.medium),
             GridItem(.flexible(), spacing: Spacing.medium)
@@ -85,7 +85,7 @@ struct WidgetEntryView: View {
                         destination: URL(string: "feedflow://feed/\(item.id)") ?? URL(
                             string: "feedflow://")!
                     ) {
-                        WidgetFeedItemView(feedItem: item)
+                        WidgetFeedItemView(feedItem: item, lineLimit: 2)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(PlainButtonStyle())
@@ -95,13 +95,13 @@ struct WidgetEntryView: View {
         }
     }
 
-    private func smallWidgetFeedItemView(_ feedItem: FeedItem) -> some View {
+    private func smallWidgetFeedItemView(_ feedItem: FeedItemWidget) -> some View {
         Link(
             destination: URL(string: "feedflow://feed/\(feedItem.id)") ?? URL(
                 string: "feedflow://")!
         ) {
             VStack(alignment: .leading, spacing: Spacing.xsmall) {
-                Text(feedItem.feedSource.title)
+                Text(feedItem.feedSourceTitle)
                     .font(.caption2)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
@@ -114,14 +114,6 @@ struct WidgetEntryView: View {
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                         .foregroundColor(.primary)
-                        .padding(.top, Spacing.xsmall)
-                }
-
-                if let dateString = feedItem.dateString {
-                    Text(dateString)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
                         .padding(.top, Spacing.xsmall)
                 }
             }

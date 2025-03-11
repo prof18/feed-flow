@@ -377,9 +377,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         FeedWidgetRepository(
             databaseHelper = get(),
             dateFormatter = get(),
-            fetcherRepository = get(),
-            settingsRepository = get(),
-            logger = getWith("FeedWidgetRepository"),
         )
     }
 

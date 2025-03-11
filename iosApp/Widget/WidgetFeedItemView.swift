@@ -11,34 +11,21 @@ import SwiftUI
 import WidgetKit
 
 struct WidgetFeedItemView: View {
-    let feedItem: FeedItem
+    let feedItem: FeedItemWidget
+    let lineLimit: Int
 
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                HStack {
-                    Text(feedItem.feedSource.title)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-
-                    if let dateString = feedItem.dateString {
-                        Text("•")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-
-                        Text(dateString)
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
-                }
+                Text(feedItem.feedSourceTitle)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
 
                 if let title = feedItem.title {
                     Text(title)
                         .font(.subheadline)
-                        .lineLimit(2)
+                        .lineLimit(lineLimit)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                         .foregroundColor(.primary)

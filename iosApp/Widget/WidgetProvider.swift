@@ -12,10 +12,9 @@ import WidgetKit
 
 struct Provider: TimelineProvider {
     let feedFlowStrings: WidgetStrings
-    let feedItems: [FeedItemWidget]
+    let appEnvironment: AppEnvironment
 
     init() {
-        let appEnvironment: AppEnvironment
         #if DEBUG
             appEnvironment = AppEnvironment.Debug()
         #else
@@ -26,7 +25,6 @@ struct Provider: TimelineProvider {
         let languageCode = currentLocale.language.languageCode?.identifier
         let regionCode = currentLocale.region?.identifier
 
-        feedItems = getFeedItems(appEnvironment: appEnvironment)
         feedFlowStrings = getWidgetStrings(languageCode: languageCode, regionCode: regionCode)
     }
 
@@ -43,7 +41,7 @@ struct Provider: TimelineProvider {
     func getSnapshot(in _: Context, completion: @escaping (WidgetEntry) -> Void) {
         let entry = WidgetEntry(
             date: Date(),
-            feedItems: feedItems,
+            feedItems: getFeedItems(appEnvironment: appEnvironment),
             widgetTitle: feedFlowStrings.widgetTitle,
             widgetEmptyScreenTitle: feedFlowStrings.widgetEmptyScreenTitle,
             widgetEmptyScreenContent: feedFlowStrings.widgetEmptyScreenContent
@@ -56,7 +54,7 @@ struct Provider: TimelineProvider {
         let refreshDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
         let entry = WidgetEntry(
             date: currentDate,
-            feedItems: feedItems,
+            feedItems: getFeedItems(appEnvironment: appEnvironment),
             widgetTitle: feedFlowStrings.widgetTitle,
             widgetEmptyScreenTitle: feedFlowStrings.widgetEmptyScreenTitle,
             widgetEmptyScreenContent: feedFlowStrings.widgetEmptyScreenContent

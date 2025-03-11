@@ -320,7 +320,6 @@ class HomeViewModel internal constructor(
         val lastForegroundTimestamp = settingsRepository.getLastFeedSyncTimestamp()
         val oneHourInMillis = 60 * 60 * 1000L
         val currentTimestamp = dateFormatter.currentTimeMillis()
-        getNewFeeds()
         if ((currentTimestamp - lastForegroundTimestamp) >= oneHourInMillis) {
             getNewFeeds()
         } else {

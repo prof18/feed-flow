@@ -31,6 +31,8 @@ struct WidgetFeedItemView: View {
                         .foregroundColor(.primary)
                 }
             }
+            
+            Spacer()
         }
     }
 }

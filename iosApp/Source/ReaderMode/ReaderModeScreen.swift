@@ -89,6 +89,7 @@ struct ReaderModeScreen: View {
         .task {
             for await state in vmStoreOwner.instance.readerFontSizeState {
                 self.fontSize = Double(truncating: state)
+                self.reset.toggle()
             }
         }
     }
@@ -108,7 +109,6 @@ struct ReaderModeScreen: View {
                 HStack {
                     Button {
                         fontSize -= 1.0
-                        self.reset.toggle()
                         vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
                     } label: {
                         Image(systemName: "minus")
@@ -119,7 +119,6 @@ struct ReaderModeScreen: View {
                         in: 12 ... 40,
                         onEditingChanged: { isEditing in
                             if !isEditing {
-                                self.reset.toggle()
                                 vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
                             }
                         }
@@ -127,7 +126,6 @@ struct ReaderModeScreen: View {
 
                     Button {
                         fontSize += 1.0
-                        self.reset.toggle()
                         vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
                     } label: {
                         Image(systemName: "plus")

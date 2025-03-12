@@ -178,4 +178,16 @@
     <string name="menu_copy_link_comments">Kommentarlink kopieren</string>
     <string name="adding_feed">Feed wird hinzugefügt...</string>
     <string name="error_feed_add">Beim Hinzufügen des Feeds gab es ein Problem</string>
+    <string name="settings_sync_period">Häufigkeit der Hintergrund-Synchronisation</string>
+    <string name="settings_sync_period_desc">Wie oft soll im Hintergrund auf neue Nachrichten geprüft werden</string>
+    <string name="settings_sync_period_never">Niemals</string>
+    <string name="settings_sync_period_one_hour">Stündlich</string>
+    <string name="settings_sync_period_six_hours">Alle 6 Stunden</string>
+    <string name="settings_sync_period_two_hours">Alle 2 Stunden</string>
+    <string name="settings_sync_period_twelve_hours">Alle 12 Stunden</string>
+    <string name="widget_check_feed_sources">Stellen sie sicher, dass Feed-Quellen hinzugefügt wurden</string>
+    <string name="widget_latest_items">Aktuellesten</string>
+    <string name="widget_configuration_title">Widget-Konfiguration</string>
+    <string name="widget_configuration_confirm">Widget hinzufügen</string>
+    <string name="widget_configuration_description">Wie oft soll im Hintergrund auf neue Nachrichten geprüft und das Widget aktualisiert werden.</string>
 </resources>

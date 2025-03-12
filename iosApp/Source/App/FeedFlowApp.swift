@@ -85,6 +85,7 @@ struct FeedFlowApp: App {
                 let repo = Deps.shared.getFeedFetcherRepository()
                 try await repo.fetchFeeds(forceRefresh: false)
                 WidgetCenter.shared.reloadAllTimelines()
+                scheduleAppRefresh()
             } catch {
                 print("Background feed sync failed: \(error)")
             }

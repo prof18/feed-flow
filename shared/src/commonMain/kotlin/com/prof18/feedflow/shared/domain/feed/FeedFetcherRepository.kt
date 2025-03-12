@@ -29,7 +29,7 @@ import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.days
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class FeedFetcherRepository(
+class FeedFetcherRepository internal constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val feedStateRepository: FeedStateRepository,
     private val gReaderRepository: GReaderRepository,

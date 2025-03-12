@@ -31,23 +31,6 @@ struct WidgetFeedItemView: View {
                         .foregroundColor(.primary)
                 }
             }
-
-            Spacer()
-
-            if let imageUrl = feedItem.imageUrl, !imageUrl.isEmpty {
-                if URL(string: imageUrl) != nil {
-                    Image(uiImage: imageUrl.loadImageFromCache() ?? UIImage())
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 30, height: 30)
-                        .cornerRadius(Spacing.small)
-                        .clipped()
-                } else {
-                    Color(.systemBackground)
-                        .frame(width: 30, height: 30)
-                        .cornerRadius(Spacing.small)
-                }
-            }
         }
     }
 }

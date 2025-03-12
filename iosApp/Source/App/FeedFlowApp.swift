@@ -1,3 +1,4 @@
+import BackgroundTasks
 import FeedFlowKit
 import FirebaseCore
 import FirebaseCrashlytics
@@ -72,11 +73,21 @@ struct FeedFlowApp: App {
                         feedSyncTimer.scheduleTimer()
                     case .background:
                         feedSyncTimer.invalidate()
+                        scheduleAppRefresh()
                         WidgetCenter.shared.reloadAllTimelines()
                     default:
                         break
                     }
                 }
+        }
+        .backgroundTask(.appRefresh("com.prof18.feedflow.articlesync")) {
+            do {
+                let repo = Deps.shared.getFeedFetcherRepository()
+                try await repo.fetchFeeds(forceRefresh: false)
+                WidgetCenter.shared.reloadAllTimelines()
+            } catch {
+                print("Background feed sync failed: \(error)")
+            }
         }
     }
 
@@ -87,6 +98,14 @@ struct FeedFlowApp: App {
         let feedId = path.replacing("/", with: "")
         appState.navigate(route: CommonViewRoute.deepLinkFeed(feedId))
     }
+}
+
+func scheduleAppRefresh() {
+    let request = BGProcessingTaskRequest(identifier: "com.prof18.feedflow.articlesync")
+    // Schedule for 2 hours from now
+    request.earliestBeginDate = .now.addingTimeInterval(2 * 3600)
+    request.requiresNetworkConnectivity = true
+    try? BGTaskScheduler.shared.submit(request)
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {

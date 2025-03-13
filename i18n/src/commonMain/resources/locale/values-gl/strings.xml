@@ -187,4 +187,7 @@
     <string name="settings_sync_period_twelve_hours">Cada 12 horas</string>
     <string name="widget_check_feed_sources">Comproba que engadiches algunhas canles</string>
     <string name="widget_latest_items">Máis recente</string>
+    <string name="widget_configuration_description">Elixe a frecuencia coa que comprobar en segundo plano se hai novos artigos e actualizar o trebello.</string>
+    <string name="widget_configuration_title">Configuración do trebello</string>
+    <string name="widget_configuration_confirm">Engadir trebello</string>
 </resources>

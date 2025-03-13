@@ -17,6 +17,7 @@ actual val dropboxModule = module {
     factory {
         DropboxSettings(
             settings = get(),
+            logger = get(parameters = { parametersOf("DropboxSettings") }),
         )
     }
 }

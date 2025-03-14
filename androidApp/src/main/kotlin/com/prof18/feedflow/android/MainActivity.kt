@@ -35,8 +35,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import coil3.ImageLoader
-import coil3.compose.setSingletonImageLoaderFactory
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
@@ -67,7 +65,6 @@ import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.compose.getKoin
 import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : ComponentActivity() {
@@ -105,8 +102,6 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val koin = getKoin()
-            setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
             val readerModeViewModel: ReaderModeViewModel = koinViewModel()
 
             val windowSize = calculateWindowSizeClass(this@MainActivity)

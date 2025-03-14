@@ -7,6 +7,9 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.coroutineScope
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
 import com.prof18.feedflow.android.widget.FeedFlowWidget
 import com.prof18.feedflow.android.widget.WidgetConfigurationViewModel
 import com.prof18.feedflow.core.utils.AppConfig
@@ -26,7 +29,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.dsl.module
 
-class FeedFlowApp : Application() {
+class FeedFlowApp : Application(), SingletonImageLoader.Factory {
 
     private val feedSyncRepo by inject<FeedSyncRepository>()
     private val widgetRepository by inject<FeedWidgetRepository>()
@@ -73,12 +76,6 @@ class FeedFlowApp : Application() {
                             settingsRepository = get(),
                         )
                     }
-                    single {
-                        coilImageLoader(
-                            context = get(),
-                            debug = appEnvironment.isDebug(),
-                        )
-                    }
                     single { appConfig }
                     factory<WidgetUpdater> {
                         WidgetUpdater {
@@ -122,5 +119,17 @@ class FeedFlowApp : Application() {
                 },
             )
         }
+    }
+
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
+        val appEnvironment = if (BuildConfig.DEBUG) {
+            AppEnvironment.Debug
+        } else {
+            AppEnvironment.Release
+        }
+        return coilImageLoader(
+            context = this@FeedFlowApp,
+            debug = appEnvironment.isDebug(),
+        )
     }
 }

@@ -15,6 +15,8 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
+import com.prof18.feedflow.shared.data.KeychainSettingsMigration
+import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
@@ -38,9 +40,11 @@ import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.rssparser.RssParserBuilder
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
 import com.russhwolf.settings.Settings
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -51,6 +55,7 @@ import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 import platform.Foundation.NSURLSession
 import platform.Foundation.NSURLSessionConfiguration
+import kotlin.experimental.ExperimentalNativeApi
 
 @OptIn(ExperimentalKermitApi::class)
 fun initKoinIos(
@@ -127,7 +132,13 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single<Settings> {
-        KeychainSettings(service = "FeedFlow")
+        val oldSettings = KeychainSettings(service = "FeedFlow")
+        val newSettings = KeychainSettingsWrapper.settings
+        KeychainSettingsMigration(
+            oldSettings = oldSettings,
+            newSettings = newSettings,
+        ).performMigrationIfNeeded()
+        newSettings
     }
 
     factory<FeedSyncWorker> {

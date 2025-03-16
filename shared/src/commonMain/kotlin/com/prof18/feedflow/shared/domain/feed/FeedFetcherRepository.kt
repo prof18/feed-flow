@@ -126,7 +126,7 @@ class FeedFetcherRepository internal constructor(
         } else {
             feedStateRepository.emitUpdateStatus(
                 InProgressFeedUpdateStatus(
-                    refreshedFeedCount = refreshedFeedCount,
+                    refreshedFeedCount = refreshedFeedCount.coerceAtMost(totalFeedCount),
                     totalFeedCount = totalFeedCount,
                 ),
             )

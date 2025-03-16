@@ -165,6 +165,12 @@ class DateFormatterImpl(
             optional {
                 chars("UTC")
             }
+            optional {
+                chars("CET")
+            }
+            optional {
+                chars("GMT")
+            }
         },
 
         // "2023-12-13 19:34:30  +0800"
@@ -220,6 +226,12 @@ class DateFormatterImpl(
             }
             optional {
                 chars("UTC")
+            }
+            optional {
+                chars("CET")
+            }
+            optional {
+                chars("GMT")
             }
         },
 
@@ -419,6 +431,9 @@ class DateFormatterImpl(
             optional {
                 chars("UTC")
             }
+            optional {
+                chars("CET")
+            }
         },
 
         // Feb 19, 2025 00:49 GMT
@@ -462,6 +477,9 @@ class DateFormatterImpl(
             optional {
                 chars("UTC")
             }
+            optional {
+                chars("CET")
+            }
         },
 
         // 02/18/25 20:39:28
@@ -477,6 +495,15 @@ class DateFormatterImpl(
             minute()
             char(':')
             second()
+        },
+
+        // "14.03.2025
+        Format {
+            dayOfMonth()
+            char('.')
+            monthNumber()
+            char('.')
+            year()
         },
     )
 

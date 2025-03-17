@@ -14,11 +14,8 @@ class FeedDownloadWorkerEnqueuer internal constructor(
     private val settingsRepository: SettingsRepository,
     private val context: Context,
 ) {
-    fun enqueueForTheFirstTime() {
-        if (settingsRepository.isFirstAppLaunch()) {
-            enqueue()
-            settingsRepository.setIsFirstAppLaunch(false)
-        }
+    fun enqueueWork() {
+        updateWorker(settingsRepository.getSyncPeriod())
     }
 
     fun updateWorker(syncPeriod: SyncPeriod) =
@@ -32,7 +29,7 @@ class FeedDownloadWorkerEnqueuer internal constructor(
         }
 
     private fun cancel() {
-        WorkManager.getInstance(context).cancelAllWorkByTag(WORKER_TAG)
+        WorkManager.getInstance(context).cancelUniqueWork(WORKER_TAG)
     }
 
     private fun enqueue(hours: Long = 1) {

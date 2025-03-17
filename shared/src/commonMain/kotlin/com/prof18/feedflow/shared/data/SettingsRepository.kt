@@ -108,12 +108,6 @@ class SettingsRepository(
     fun setLastFeedSyncTimestamp(timestamp: Long) =
         settings.set(SettingsFields.LAST_FEED_SYNC_TIMESTAMP.name, timestamp)
 
-    fun isFirstAppLaunch(): Boolean =
-        settings.getBoolean(SettingsFields.IS_FIRST_APP_LAUNCH.name, true)
-
-    fun setIsFirstAppLaunch(value: Boolean) =
-        settings.set(SettingsFields.IS_FIRST_APP_LAUNCH.name, value)
-
     fun getSyncPeriod(): SyncPeriod =
         settings.getString(SettingsFields.SYNC_PERIOD.name, SyncPeriod.NEVER.name)
             .let { SyncPeriod.valueOf(it) }
@@ -175,7 +169,6 @@ internal enum class SettingsFields {
     HIDE_IMAGES,
     CRASH_REPORTING_ENABLED,
     LAST_FEED_SYNC_TIMESTAMP,
-    IS_FIRST_APP_LAUNCH,
     SYNC_PERIOD,
     FIRST_INSTALLATION_DATE,
     REVIEW_REQUEST_COUNT,

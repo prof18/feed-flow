@@ -101,7 +101,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
             )
         }
 
-        feedDownloadWorkerEnqueuer.enqueueForTheFirstTime()
+        feedDownloadWorkerEnqueuer.enqueueWork()
 
         with(ProcessLifecycleOwner.get()) {
             lifecycle.addObserver(

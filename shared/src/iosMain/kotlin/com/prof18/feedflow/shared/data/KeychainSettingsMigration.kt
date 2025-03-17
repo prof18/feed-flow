@@ -116,12 +116,6 @@ class KeychainSettingsMigration(
             oldSettings.remove(SettingsFields.LAST_FEED_SYNC_TIMESTAMP.name)
         }
 
-        oldSettings.getBooleanOrNull(SettingsFields.IS_FIRST_APP_LAUNCH.name)?.let {
-            newSettings[SettingsFields.IS_FIRST_APP_LAUNCH.name] = it
-        }.also {
-            oldSettings.remove(SettingsFields.IS_FIRST_APP_LAUNCH.name)
-        }
-
         oldSettings.getStringOrNull(SettingsFields.SYNC_PERIOD.name)?.let {
             newSettings[SettingsFields.SYNC_PERIOD.name] = it
         }.also {

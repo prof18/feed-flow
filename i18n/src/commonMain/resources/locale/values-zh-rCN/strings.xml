@@ -23,7 +23,7 @@
     <string name="drawer_title_timeline">时间线</string>
     <string name="drawer_title_categories">类别</string>
     <string name="drawer_title_feed_sources">订阅源</string>
-    <string name="toggle_mark_read_when_scrolling">滚动时标记为已读</string>
+    <string name="toggle_mark_read_when_scrolling">滚动时自动标记为已读</string>
     <string name="action_done">完成</string>
     <string name="settings_app_title">应用</string>
     <string name="about_app_version">应用版本：%s</string>
@@ -142,7 +142,7 @@
     <string name="account_text_field_username">用户名</string>
     <string name="account_text_field_password">密码</string>
     <string name="account_login">登录</string>
-    <string name="fresh_rss_account_connected">已成功连接您的 FreshRss 账号</string>
+    <string name="fresh_rss_account_connected">已成功连接您的 FreshRSS 账号</string>
     <string name="settings_feed_list_title">订阅列表</string>
     <string name="settings_feed_list_scale_title">文本比例</string>
     <string name="settings_font_scale_title_example">文章标题</string>
@@ -150,7 +150,7 @@
     <string name="settings_hide_description">隐藏文章描述</string>
     <string name="no_fresh_rss_sync_yet">数据尚未同步</string>
     <string name="fresh_rss_last_sync">最后同步：%s</string>
-    <string name="fresh_rss_password_hint">FreshRSS API 密码（设置 &gt; 配置）</string>
+    <string name="fresh_rss_password_hint">FreshRSS API 密码（设置 &gt; 账号）</string>
     <string name="fresh_rss_url_hint">FreshRSS API 端点，例如 %s</string>
     <string name="link_opening_preference_internal_browser">应用内浏览器</string>
     <string name="link_opening_preference_reader_mode">阅读模式</string>

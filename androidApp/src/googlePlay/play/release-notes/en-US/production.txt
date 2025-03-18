@@ -1,6 +1,6 @@
-- Customize where to open the article from each feed source
-- Add settings to automatically delete old feeds
-- Add settings to hide image and description on feed list
-- Show the unread count in the drawer
-- Add possibility of pinning a feed in the drawer
+- Automatic reload of feed if an hour has passed
+- Add the possibility for sharing article links from the list
+- Add widget
+- Add background sync of articles.
+- Add the possibility of sharing a link to FeedFlow to add a feed.
 - Bug fixes and improvements

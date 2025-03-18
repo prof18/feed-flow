@@ -257,7 +257,7 @@ jobs:
           Write-Host "`nConverting paths to absolute Windows paths:"
           Write-Host "Workspace root: $workspaceRoot"
           
-          $absoluteMsiPath = Join-Path $workspaceRoot $env:RELEASE_PATH_MSI
+          $absoluteMsiPath = Join-Path $workspaceRoot $env:RELEASE_PATH
           $absoluteMsixPath = Join-Path $workspaceRoot $env:RELEASE_PATH_MSIX
           
           # Ensure paths use Windows format

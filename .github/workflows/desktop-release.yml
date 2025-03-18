@@ -245,6 +245,9 @@ jobs:
           
           Write-Host "Installing MSIX Packaging Tool..."
           & $dismPath /Online /Add-ProvisionedAppxPackage /PackagePath:$msixToolPath /SkipLicense
+          
+          Write-Host "Waiting for installation to complete..."
+          Start-Sleep -Seconds 10
 
       - name: Prepare MSIX conversion template
         shell: pwsh

@@ -285,6 +285,67 @@ jobs:
           Write-Host "`nStarting MSIX conversion..."
           MsixPackagingTool.exe create-package --template "msix-conversion-config.xml" -v
 
+      - name: Update MSIX Manifest
+        shell: pwsh
+        run: |
+          Write-Host "`nUpdating MSIX manifest..."
+          # Create a temporary directory for extraction
+          $tempDir = "temp_msix_extract"
+          New-Item -ItemType Directory -Force -Path $tempDir
+          
+          # Extract the MSIX package using makeappx
+          Write-Host "`nUnpacking MSIX package..."
+          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/makeappx.exe' unpack /p $env:RELEASE_PATH_MSIX /d $tempDir
+          
+          # Read the manifest and print the content for debugging
+          $manifestPath = Join-Path $tempDir "AppxManifest.xml"
+          Write-Host "`nOriginal manifest contents:"
+          Get-Content $manifestPath
+          
+          $manifestContent = Get-Content $manifestPath -Raw
+          
+          # Update TargetDeviceFamily version numbers
+          $newTargetDeviceFamily = '<TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.1" />'
+          $pattern = '<TargetDeviceFamily Name="Windows.Desktop" MinVersion="[^"]*" MaxVersionTested="[^"]*" />'
+          $manifestContent = [regex]::Replace($manifestContent, $pattern, $newTargetDeviceFamily)
+          
+          # Update Resources section
+          $newResources = Get-Content -Path ".github/msix-resources-template.xml" -Raw
+          $pattern = '<Resources>[ ]*<Resource Language="en-us" />[ ]*</Resources>'
+          $manifestContent = [regex]::Replace($manifestContent, $pattern, $newResources)
+          
+          # Write the updated manifest and print the content for debugging
+          $manifestContent | Set-Content $manifestPath -NoNewline
+          
+          Write-Host "`nUpdated manifest contents:"
+          Get-Content $manifestPath
+          
+          # Create a new MSIX package with the updated manifest using makeappx
+          Write-Host "`nRepackaging MSIX with updated manifest..."
+          $tempMsixPath = Join-Path $tempDir "temp.msix"
+          
+          # Ensure we're in the correct directory for repackaging
+          Push-Location $tempDir
+          try {
+            & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/makeappx.exe' pack /d . /p "temp.msix"
+          }
+          finally {
+            Pop-Location
+          }
+          
+          # Delete the original MSIX and move the new one
+          Write-Host "`nReplacing original MSIX with updated package..."
+          if (Test-Path $env:RELEASE_PATH_MSIX) {
+            Remove-Item -Path $env:RELEASE_PATH_MSIX -Force
+          }
+          Move-Item -Path $tempMsixPath -Destination $env:RELEASE_PATH_MSIX -Force
+          
+          # Clean up
+          Remove-Item -Path $tempDir -Recurse -Force
+          
+          Write-Host "`nManifest updated successfully"
+  
+
       - name: Upload asset
         uses: actions/upload-artifact@v4
         with:

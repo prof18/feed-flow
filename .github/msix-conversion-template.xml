@@ -4,15 +4,21 @@
     xmlns:V2="http://schemas.microsoft.com/msix/msixpackagingtool/template/1904"
     xmlns:V3="http://schemas.microsoft.com/msix/msixpackagingtool/template/1907"
     xmlns:V4="http://schemas.microsoft.com/msix/msixpackagingtool/template/1910"
-    xmlns:V5="http://schemas.microsoft.com/msix/msixpackagingtool/template/2001">
+    xmlns:V5="http://schemas.microsoft.com/msix/msixpackagingtool/template/2001"
+    >
+    
   <Settings
     AllowTelemetry="false"
     ApplyAllPrepareComputerFixes="false"
     GenerateCommandLineFile="true"
     AllowPromptForPassword="false" 
-	  EnforceMicrosoftStoreVersioningRequirements="false"
+    p4:EnforceMicrosoftStoreRequirements="false"
     V2:ServerPortNumber="1599"
-    V5:AddPackageIntegrity="false" />        
+    V5:AddPackageIntegrity="false"
+    p7:SupportedWindowsVersionForMsixCore="None"
+    xmlns:p7="http://schemas.microsoft.com/msix/msixpackagingtool/template/2004"
+    xmlns:p4="http://schemas.microsoft.com/msix/msixpackagingtool/template/2007"
+  />        
   <PrepareComputer 
     DisableWindowsSearchService="true"
     DisableWindowsUpdateService="true" />

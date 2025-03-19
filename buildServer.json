@@ -12,8 +12,8 @@
 	"argv": [
 		"/opt/homebrew/bin/xcode-build-server"
 	],
-	"workspace": "/Users/mg/Workspace/KMP/feed-flow/iosApp/FeedFlow.xcodeproj/project.xcworkspace",
-	"build_root": "/Users/mg/Library/Developer/Xcode/DerivedData/FeedFlow-cagabdbfcojzpkffdnoytlcldreu",
+	"workspace": "/Users/mg/Workspace/feed-flow/iosApp/FeedFlow.xcodeproj/project.xcworkspace",
+	"build_root": "/Users/mg/Library/Developer/Xcode/DerivedData/FeedFlow-fmpvobonslyhpwfiprzqthaalbaj",
 	"scheme": "FeedFlow",
 	"kind": "xcode"
 }

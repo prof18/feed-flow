@@ -37,5 +37,6 @@
       <Capability Name="runFullTrust" />
       <Capability Name="internetClient" />
     </Capabilities>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.1" />
   </PackageInformation>
 </MsixPackagingToolTemplate>

@@ -121,6 +121,67 @@ jobs:
           Write-Host "`nStarting MSIX conversion..."
           MsixPackagingTool.exe create-package --template "msix-conversion-config.xml" -v
 
+      - name: Update MSIX Manifest
+        shell: pwsh
+        run: |
+          Write-Host "`nUpdating MSIX manifest..."
+          # Create a temporary directory for extraction
+          $tempDir = "temp_msix_extract"
+          New-Item -ItemType Directory -Force -Path $tempDir
+          
+          # Extract the MSIX package
+          Expand-Archive -Path $env:RELEASE_PATH_MSIX -DestinationPath $tempDir -Force
+          
+          # Read the manifest
+          $manifestPath = Join-Path $tempDir "AppxManifest.xml"
+          Write-Host "`nOriginal manifest contents:"
+          Get-Content $manifestPath
+          
+          $manifestContent = Get-Content $manifestPath -Raw
+          
+          # Add TargetDeviceFamily if it doesn't exist
+          if (-not $manifestContent.Contains("<Dependencies>")) {
+            $manifestContent = $manifestContent.Replace("</Package>", "  <Dependencies>`n    <TargetDeviceFamily Name=`"Windows.Desktop`" MinVersion=`"10.0.17763.0`" MaxVersionTested=`"10.0.22000.1`" />`n  </Dependencies>`n</Package>")
+          }
+          
+          # Write the updated manifest
+          $manifestContent | Set-Content $manifestPath -NoNewline
+          
+          Write-Host "`nUpdated manifest contents:"
+          Get-Content $manifestPath
+          
+          # Create a new MSIX package with the updated manifest
+          Write-Host "`nRepackaging MSIX with updated manifest..."
+          $tempMsixPath = Join-Path $tempDir "temp.msix"
+          MsixPackagingTool.exe create-package --manifest $manifestPath --output $tempMsixPath
+          
+          # Replace the original MSIX with the updated one
+          Move-Item -Path $tempMsixPath -Destination $env:RELEASE_PATH_MSIX -Force
+          
+          # Clean up
+          Remove-Item -Path $tempDir -Recurse -Force
+          
+          Write-Host "`nManifest updated successfully"
+
+      - name: Verify MSIX Manifest
+        shell: pwsh
+        run: |
+          Write-Host "`nVerifying MSIX manifest..."
+          # Create a temporary directory for extraction
+          $tempDir = "temp_msix_extract"
+          New-Item -ItemType Directory -Force -Path $tempDir
+          
+          # Extract the MSIX package
+          Expand-Archive -Path $env:RELEASE_PATH_MSIX -DestinationPath $tempDir -Force
+          
+          # Read and display the manifest
+          $manifestPath = Join-Path $tempDir "AppxManifest.xml"
+          Write-Host "`nManifest contents:"
+          Get-Content $manifestPath
+          
+          # Clean up
+          Remove-Item -Path $tempDir -Recurse -Force
+
       - name: Upload asset msi
         uses: actions/upload-artifact@v4
         with:

@@ -13,6 +13,14 @@
         "org.jetbrains.kotlin",
         "co.touchlab.skie"
       ]
+    },
+    {
+      "matchPackageNames": [
+        "com.feedflow.detekt:com.feedflow.detekt.gradle.plugin",
+        "com.feedflow.library:com.feedflow.library.gradle.plugin",
+        "com.github.prof18:lyricist"
+      ],
+      "enabled": false
     }
   ]
 }

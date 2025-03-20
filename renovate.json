@@ -3,6 +3,7 @@
   "extends": [
     "config:recommended"
   ],
+  "rangeStrategy": "bump",
   "packageRules": [
     {
       "groupName": "Kotlin, KSP, SKIE",

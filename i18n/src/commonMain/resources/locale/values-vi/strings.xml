@@ -184,7 +184,7 @@
     <string name="widget_latest_items">Gần Đây</string>
     <string name="settings_sync_period_desc">Chọn tần suất kiểm tra các bài viết mới trong nền</string>
     <string name="settings_sync_period_one_hour">Một giờ</string>
-    <string name="settings_sync_period">Tần số đồng bộ nền</string>
+    <string name="settings_sync_period">Tần suất đồng bộ nền</string>
     <string name="settings_sync_period_two_hours">Mỗi 2 giờ</string>
     <string name="settings_sync_period_twelve_hours">Mỗi 12 giờ</string>
     <string name="widget_configuration_title">Thiết lập Widget</string>

@@ -125,7 +125,7 @@
     <string name="settings_feed_list_title">Feed-Liste</string>
     <string name="settings_feed_list_scale_title">Textgröße</string>
     <string name="settings_font_scale_title_example">Titel des Artikels</string>
-    <string name="settings_font_scale_subtitle_example">Untertitel des Artikels</string>
+    <string name="settings_font_scale_subtitle_example">Artikelbeschreibung</string>
     <string name="settings_font_scale_feed_source_example">Name des Feeds</string>
     <string name="icloud_sync_description">Verknüpfe dein iCloud-Konto, um deine Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen iOS-, iPadOS- und macOS-Geräten zu synchronisieren. Die Daten werden in einem App-spezifischen Ordner gespeichert; FeedFlow hat keinen Zugriff auf deine Dateien</string>
     <string name="open_another_feed">Einen anderen Feed öffnen</string>

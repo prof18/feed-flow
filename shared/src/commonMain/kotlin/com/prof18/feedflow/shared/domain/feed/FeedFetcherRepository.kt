@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.feed
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -172,7 +173,9 @@ class FeedFetcherRepository internal constructor(
     private suspend fun parseFeeds(
         feedSourceUrls: List<FeedSource>,
         forceRefresh: Boolean,
-    ) =
+    ) {
+        val allFeedItems = mutableListOf<FeedItem>()
+
         feedSourceUrls
             .mapNotNull { feedSource ->
                 val shouldRefresh = shouldRefreshFeed(feedSource, forceRefresh)
@@ -194,13 +197,10 @@ class FeedFetcherRepository internal constructor(
                         logger.d { "<- Got back ${rssChannel.title}" }
                         feedToUpdate.remove(feedSource.url)
                         updateRefreshCount()
-
-                        val items = rssChannelMapper.getFeedItems(
+                        rssChannelMapper.getFeedItems(
                             rssChannel = rssChannel,
                             feedSource = feedSource,
                         )
-
-                        databaseHelper.insertFeedItems(items, dateFormatter.currentTimeMillis())
                     } catch (e: Throwable) {
                         logger.e { "Error, skip: ${feedSource.url}}. Error: $e" }
                         feedStateRepository.emitErrorState(
@@ -210,7 +210,21 @@ class FeedFetcherRepository internal constructor(
                         )
                         feedToUpdate.remove(feedSource.url)
                         updateRefreshCount()
+                        null
                     }
                 }.asFlow()
-            }.collect()
+            }
+            .collect { items ->
+                logger.d { "Collected ${items?.size} items" }
+                items?.let { feedItems -> allFeedItems.addAll(feedItems) }
+            }
+
+        if (allFeedItems.isNotEmpty()) {
+            logger.d { "Inserting ${allFeedItems.size} items into database" }
+            databaseHelper.insertFeedItems(
+                feedItems = allFeedItems,
+                lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+            )
+        }
+    }
 }

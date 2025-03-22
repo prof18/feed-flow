@@ -102,12 +102,6 @@ class SettingsRepository(
     fun setCrashReportingEnabled(value: Boolean) =
         settings.set(SettingsFields.CRASH_REPORTING_ENABLED.name, value)
 
-    fun getLastFeedSyncTimestamp(): Long =
-        settings.getLong(SettingsFields.LAST_FEED_SYNC_TIMESTAMP.name, 0L)
-
-    fun setLastFeedSyncTimestamp(timestamp: Long) =
-        settings.set(SettingsFields.LAST_FEED_SYNC_TIMESTAMP.name, timestamp)
-
     fun getSyncPeriod(): SyncPeriod =
         settings.getString(SettingsFields.SYNC_PERIOD.name, SyncPeriod.NEVER.name)
             .let { SyncPeriod.valueOf(it) }
@@ -168,7 +162,6 @@ internal enum class SettingsFields {
     AUTO_DELETE_PERIOD,
     HIDE_IMAGES,
     CRASH_REPORTING_ENABLED,
-    LAST_FEED_SYNC_TIMESTAMP,
     SYNC_PERIOD,
     FIRST_INSTALLATION_DATE,
     REVIEW_REQUEST_COUNT,

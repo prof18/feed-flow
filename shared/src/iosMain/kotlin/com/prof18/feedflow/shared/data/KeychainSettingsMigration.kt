@@ -110,12 +110,6 @@ class KeychainSettingsMigration(
             oldSettings.remove(SettingsFields.CRASH_REPORTING_ENABLED.name)
         }
 
-        oldSettings.getLongOrNull(SettingsFields.LAST_FEED_SYNC_TIMESTAMP.name)?.let {
-            newSettings[SettingsFields.LAST_FEED_SYNC_TIMESTAMP.name] = it
-        }.also {
-            oldSettings.remove(SettingsFields.LAST_FEED_SYNC_TIMESTAMP.name)
-        }
-
         oldSettings.getStringOrNull(SettingsFields.SYNC_PERIOD.name)?.let {
             newSettings[SettingsFields.SYNC_PERIOD.name] = it
         }.also {

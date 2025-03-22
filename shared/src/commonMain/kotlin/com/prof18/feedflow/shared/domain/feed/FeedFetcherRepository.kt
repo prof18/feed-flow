@@ -112,9 +112,9 @@ class FeedFetcherRepository internal constructor(
             // If the sync is skipped quickly, sometimes the loading spinner stays out
             delay(50)
             isFeedSyncDone = true
-            updateRefreshCount()
             // After fetching new feeds, delete old ones based on user settings
             cleanOldFeeds()
+            updateRefreshCount()
             feedStateRepository.getFeeds()
         }
     }

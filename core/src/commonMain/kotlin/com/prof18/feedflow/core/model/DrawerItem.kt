@@ -1,15 +1,19 @@
 package com.prof18.feedflow.core.model
 
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 
 data class NavDrawerState(
-    val timeline: List<DrawerItem> = emptyList(),
-    val read: List<DrawerItem> = emptyList(),
-    val bookmarks: List<DrawerItem> = emptyList(),
-    val categories: List<DrawerItem> = emptyList(),
-    val pinnedFeedSources: List<DrawerItem> = emptyList(),
-    val feedSourcesWithoutCategory: List<DrawerItem> = emptyList(),
-    val feedSourcesByCategory: Map<FeedSourceCategoryWrapper, List<DrawerItem>> = mapOf(),
+    val timeline: ImmutableList<DrawerItem> = persistentListOf(),
+    val read: ImmutableList<DrawerItem> = persistentListOf(),
+    val bookmarks: ImmutableList<DrawerItem> = persistentListOf(),
+    val categories: ImmutableList<DrawerItem> = persistentListOf(),
+    val pinnedFeedSources: ImmutableList<DrawerItem> = persistentListOf(),
+    val feedSourcesWithoutCategory: ImmutableList<DrawerItem> = persistentListOf(),
+    val feedSourcesByCategory: ImmutableMap<FeedSourceCategoryWrapper, List<DrawerItem>> = persistentMapOf(),
 ) {
     fun isEmpty(): Boolean =
         categories.isEmpty() && feedSourcesByCategory.isEmpty()

@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.shared.domain.model.Browser
 import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 
 val feedItemsForPreview = persistentListOf(
     FeedItem(
@@ -322,9 +323,9 @@ val inProgressFeedUpdateStatus = InProgressFeedUpdateStatus(
 )
 
 val navDrawerState = NavDrawerState(
-    timeline = listOf(DrawerItem.Timeline(42)),
-    read = listOf(DrawerItem.Read),
-    categories = listOf(
+    timeline = persistentListOf(DrawerItem.Timeline(42)),
+    read = persistentListOf(DrawerItem.Read),
+    categories = persistentListOf(
         DrawerItem.DrawerCategory(
             category = FeedSourceCategory(
                 id = "9398",
@@ -340,14 +341,14 @@ val navDrawerState = NavDrawerState(
             unreadCount = 42,
         ),
     ),
-    feedSourcesWithoutCategory = listOf(),
-    feedSourcesByCategory = mapOf(
+    feedSourcesWithoutCategory = persistentListOf(),
+    feedSourcesByCategory = persistentMapOf(
         DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(
             feedSourceCategory = FeedSourceCategory(
                 id = "9398",
                 title = "News",
             ),
-        ) to listOf(
+        ) to persistentListOf(
             DrawerItem.DrawerFeedSource(
                 feedSource = FeedSource(
                     id = "0",

@@ -27,6 +27,10 @@ import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -102,31 +106,31 @@ class HomeViewModel internal constructor(
                         feedSource = feedSourceWithCount.feedSource,
                         unreadCount = feedSourceWithCount.unreadCount,
                     )
-                } ?: listOf()
+                }?.toImmutableList() ?: persistentListOf()
 
             NavDrawerState(
-                timeline = listOf(DrawerItem.Timeline(unreadCount = timelineCount)),
-                read = listOf(DrawerItem.Read),
-                bookmarks = listOf(DrawerItem.Bookmarks(unreadCount = bookmarksCount)),
+                timeline = persistentListOf(DrawerItem.Timeline(unreadCount = timelineCount)),
+                read = persistentListOf(DrawerItem.Read),
+                bookmarks = persistentListOf(DrawerItem.Bookmarks(unreadCount = bookmarksCount)),
                 categories = categoriesWithCount.map { categoryWithCount ->
                     DrawerCategory(
                         category = categoryWithCount.category,
                         unreadCount = categoryWithCount.unreadCount,
                     )
-                },
+                }.toImmutableList(),
                 pinnedFeedSources = pinnedFeedSources.map { feedSourceWithCount ->
                     DrawerFeedSource(
                         feedSource = feedSourceWithCount.feedSource,
                         unreadCount = feedSourceWithCount.unreadCount,
                     )
-                },
+                }.toImmutableList(),
                 feedSourcesWithoutCategory = if (containsOnlyNullKey) {
                     feedSourcesWithoutCategory
                 } else {
-                    listOf()
+                    persistentListOf()
                 },
                 feedSourcesByCategory = if (containsOnlyNullKey) {
-                    mapOf()
+                    persistentMapOf()
                 } else {
                     feedSourceByCategoryWithCount.map { (category, feedSources) ->
                         val categoryWrapper = DrawerFeedSource.FeedSourceCategoryWrapper(
@@ -138,7 +142,7 @@ class HomeViewModel internal constructor(
                                 unreadCount = feedSourceWithCount.unreadCount,
                             )
                         }
-                    }.toMap()
+                    }.toMap().toPersistentMap()
                 },
             )
         }.collect { navDrawerState ->

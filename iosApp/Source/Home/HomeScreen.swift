@@ -71,7 +71,7 @@ struct HomeScreen: View {
             columnVisibility: $columnVisibility,
             feedFontSizes: $feedFontSizes,
             onRefresh: {
-                homeViewModel.getNewFeeds()
+                homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
             updateReadStatus: { index in
                 homeViewModel.markAsReadOnScroll(lastVisibleIndex: index)

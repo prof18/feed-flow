@@ -2,8 +2,6 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
-import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.DrawerItem
@@ -49,8 +47,6 @@ class HomeViewModel internal constructor(
     private val feedCategoryRepository: FeedCategoryRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedFetcherRepository: FeedFetcherRepository,
-    private val dateFormatter: DateFormatter,
-    private val logger: Logger,
 ) : ViewModel() {
 
     // Loading
@@ -81,6 +77,7 @@ class HomeViewModel internal constructor(
 
     init {
         observeErrorState()
+        getNewFeeds(isFirstLaunch = true)
         viewModelScope.launch {
             feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
             initDrawerData()
@@ -178,10 +175,10 @@ class HomeViewModel internal constructor(
         }
     }
 
-    fun getNewFeeds() {
+    fun getNewFeeds(isFirstLaunch: Boolean = false) {
         lastUpdateIndex = 0
         viewModelScope.launch {
-            feedFetcherRepository.fetchFeeds()
+            feedFetcherRepository.fetchFeeds(isFirstLaunch = isFirstLaunch)
         }
     }
 
@@ -312,18 +309,6 @@ class HomeViewModel internal constructor(
         viewModelScope.launch {
             feedCategoryRepository.deleteCategory(categoryId.value)
             feedStateRepository.getFeeds()
-        }
-    }
-
-    @Suppress("MagicNumber")
-    fun loadFeeds() {
-        val lastForegroundTimestamp = settingsRepository.getLastFeedSyncTimestamp()
-        val oneHourInMillis = 60 * 60 * 1000L
-        val currentTimestamp = dateFormatter.currentTimeMillis()
-        if ((currentTimestamp - lastForegroundTimestamp) >= oneHourInMillis) {
-            getNewFeeds()
-        } else {
-            logger.d { "An hour is not passed, skipping automatic refresh" }
         }
     }
 }

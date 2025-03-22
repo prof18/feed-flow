@@ -156,7 +156,6 @@ fun main() = application {
 
     val scope = rememberCoroutineScope()
     var showBackupLoader by remember { mutableStateOf(false) }
-    homeViewModel.loadFeeds()
 
     FeedFlowTheme {
         val lyricist = rememberFeedFlowStrings()

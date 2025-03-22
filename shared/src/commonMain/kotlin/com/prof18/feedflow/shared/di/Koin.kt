@@ -140,8 +140,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedCategoryRepository = get(),
             feedStateRepository = get(),
             feedFetcherRepository = get(),
-            dateFormatter = get(),
-            logger = getWith("HomeViewModel"),
         )
     }
 

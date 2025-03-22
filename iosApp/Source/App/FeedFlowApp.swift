@@ -83,7 +83,7 @@ struct FeedFlowApp: App {
         .backgroundTask(.appRefresh("com.prof18.feedflow.articlesync")) {
             do {
                 let repo = Deps.shared.getFeedFetcherRepository()
-                try await repo.fetchFeeds(forceRefresh: false)
+                try await repo.fetchFeeds(forceRefresh: false, isFirstLaunch: false)
                 WidgetCenter.shared.reloadAllTimelines()
                 scheduleAppRefresh()
             } catch {

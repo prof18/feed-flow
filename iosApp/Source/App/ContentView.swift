@@ -54,7 +54,6 @@ struct ContentView: View {
             switch scenePhase {
             case .active:
                 isAppInBackground = false
-                vmStoreOwner.instance.loadFeeds()
             case .background:
                 isAppInBackground = true
             default:

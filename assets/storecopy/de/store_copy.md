@@ -7,7 +7,6 @@ FeedFlow - RSS Reader
 Schlank, schnell, aufgeräumt
 
 ## Ausführliche Beschreibung
-
 Bleiben Sie auf ihre Art informiert - mit dem schlanken RSS-Reader FeedFlow, der
 ihnen die Kontrolle über die Zeitleisteninhalte gibt. Synchronisieren sie über
 alle ihre Geräte und geniessen sie ein sauberes Leseerlebnis ohne Ablenkung.
@@ -16,14 +15,14 @@ Schlüsselfunktionen:
 
 - Schlankes Design: Fokussieren sie auf das Wesentliche mit einem aufgeräumten
   Interface
-- Nahtloses Synchronisation: Bleiben sie Synchron mit ihren Geräten mit
-  iCloud(iOS/macOS) oder Dropbox(alle Plattformen)
+- Nahtlose Synchronisation: Bleiben sie synchron mit ihren Geräten mit iCloud
+  (iOS/macOS) oder Dropbox (alle Plattformen)
 - Integration von FreshRSS: Verbinden sie sich mit ihrem FreshRSS Server für
   erweiterte Feed-Verwaltung
 - Flexible Leseoptionen: Wählen sie zwischen Webanzeige, Lesemodus oder ihrem
   bevorzugtem Browser
-- Privatsphäre im Fokus: Wählen sie ihren bevorzugten Browser für das am
-  Datenschutz orientiertes, eigenes Leseerlebnis
+- Privatsphäre im Fokus: Wählen sie ihren bevorzugten Browser für am Datenschutz
+  orientiertes, eigenes Leseerlebnis
 - Leichter Wechsel: Import und Export ihrer RSS-Feeds mit OPML-Dateien
 
 Was FeedFlow hervorhebt:

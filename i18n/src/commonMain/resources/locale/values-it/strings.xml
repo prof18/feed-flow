@@ -194,4 +194,5 @@
     <string name="settings_sync_period_two_hours">Ogni 2 ore</string>
     <string name="widget_configuration_description">Scegli la frequenza di controllo dei nuovi articoli in background e di aggiornamento del widget.</string>
     <string name="widget_configuration_title">Configurazione widget</string>
+    <string name="widget_configuration_confirm">Aggiungi Widget</string>
 </resources>

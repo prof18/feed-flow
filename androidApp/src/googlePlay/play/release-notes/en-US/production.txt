@@ -1,4 +1,3 @@
-- Automatic reload of feed if an hour has passed
 - Add the possibility for sharing article links from the list
 - Add widget
 - Add background sync of articles.

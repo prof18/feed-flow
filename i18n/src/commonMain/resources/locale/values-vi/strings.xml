@@ -151,7 +151,7 @@
     <string name="link_opening_preference_default">Mặc định</string>
     <string name="fresh_rss_password_hint">Mật khẩu FreshRSS API (Cài đặt &gt; Hồ sơ)</string>
     <string name="delete_category_close_button">Đóng</string>
-    <string name="settings_auto_delete">Tự động xóa những bài viết cũ</string>
+    <string name="settings_auto_delete">Tự động xóa bài viết cũ</string>
     <string name="settings_auto_delete_period_disabled">Tắt</string>
     <string name="delete_category_confirmation_title">Xóa danh mục?</string>
     <string name="delete_category_confirmation_message">Bạn có chắc muốn xóa danh mục này? Các nguồn cấp dữ liệu trong danh mục này sẽ được chuyển đến Chưa phân loại.</string>
@@ -165,7 +165,7 @@
     <string name="settings_hide_description">Ẩn mô tả bài viết</string>
     <string name="hide_feed_from_timeline_description">Ẩn bài viết của nguồn cấp này khỏi bảng tin</string>
     <string name="pin_feed_source_description">Ghim nguồn cấp này</string>
-    <string name="drawer_title_pinned_feeds">Những nguồn cấp đã ghim</string>
+    <string name="drawer_title_pinned_feeds">Nguồn cấp đã ghim</string>
     <string name="menu_add_to_pinned">Ghim</string>
     <string name="feed_list_appearance">Giao diện danh sách nguồn cấp</string>
     <string name="menu_remove_from_pinned">Bỏ ghim</string>
@@ -178,12 +178,12 @@
     <string name="adding_feed">Đang thêm nguồn cấp...</string>
     <string name="menu_copy_link_comments">Sao chép liên kết bình luận</string>
     <string name="menu_copy_link">Sao chép liên kết</string>
-    <string name="settings_sync_period_never">Không bao giờ</string>
+    <string name="settings_sync_period_never">Không dùng</string>
     <string name="settings_sync_period_six_hours">Mỗi 6 giờ</string>
     <string name="widget_check_feed_sources">Hãy đảm bảo đã thêm nguồn cấp dữ liệu</string>
     <string name="widget_latest_items">Gần Đây</string>
     <string name="settings_sync_period_desc">Chọn tần suất kiểm tra các bài viết mới trong nền</string>
-    <string name="settings_sync_period_one_hour">Một giờ</string>
+    <string name="settings_sync_period_one_hour">Mỗi giờ</string>
     <string name="settings_sync_period">Tần suất đồng bộ nền</string>
     <string name="settings_sync_period_two_hours">Mỗi 2 giờ</string>
     <string name="settings_sync_period_twelve_hours">Mỗi 12 giờ</string>

@@ -32,8 +32,8 @@ android {
         applicationId = "com.prof18.feedflow"
         minSdk = libs.versions.android.min.sdk.get().toInt()
         targetSdk = libs.versions.android.target.sdk.get().toInt()
-        versionCode = getVersionCode()
-        versionName = getVersionName()
+        versionCode = 1290
+        versionName = "1.1.2"
 
         addManifestPlaceholders(
             mapOf(

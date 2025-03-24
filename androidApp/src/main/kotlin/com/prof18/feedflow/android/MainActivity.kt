@@ -35,7 +35,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import com.google.android.play.core.review.ReviewManagerFactory
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
@@ -82,17 +81,12 @@ class MainActivity : ComponentActivity() {
                 lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                     reviewViewModel.canShowReviewDialog.collect { showReview ->
                         if (showReview) {
-                            val manager = ReviewManagerFactory.create(this@MainActivity)
-                            val request = manager.requestReviewFlow()
-                            request.addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    val reviewInfo = task.result
-                                    val flow = manager.launchReviewFlow(this@MainActivity, reviewInfo)
-                                    flow.addOnCompleteListener { _ ->
-                                        reviewViewModel.onReviewShown()
-                                    }
-                                }
-                            }
+                            PlayReviewManager.triggerReviewFlow(
+                                this@MainActivity,
+                                onReviewDone = {
+                                    reviewViewModel.onReviewShown()
+                                },
+                            )
                         }
                     }
                 }

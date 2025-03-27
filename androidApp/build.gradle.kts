@@ -95,6 +95,10 @@ android {
             isDefault = true
         }
     }
+
+    aboutLibraries {
+        excludeFields = arrayOf("generated")
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

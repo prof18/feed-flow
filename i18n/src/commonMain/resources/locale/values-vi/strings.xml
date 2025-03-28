@@ -19,7 +19,7 @@
     <string name="account_refresh_progress">Đang làm mới</string>
     <string name="default_browser">Trình duyệt mặc định</string>
     <string name="generic_error_message">Rất tiếc, đã xảy ra lỗi :(</string>
-    <string name="feeds_export_done_message">Xuất xong</string>
+    <string name="feeds_export_done_message">Đã xuất xong</string>
     <string name="import_feed_button">Nhập nguồn cấp từ OPML</string>
     <string name="read_articles_empty_screen_message">Không có gì ở đây, đến lúc bắt đầu đọc rồi!</string>
     <string name="drawer_title_feed_sources">Danh sách nguồn cấp</string>
@@ -55,7 +55,7 @@
     <string name="loading_feed_message">Đang nạp nguồn cấp %s</string>
     <string name="no_feeds_found_message">Không tìm thấy nguồn cấp nào. Hãy thêm mới!</string>
     <string name="feeds_importing_message">Đang nhập nguồn cấp</string>
-    <string name="feeds_import_done_message">Nhập xong</string>
+    <string name="feeds_import_done_message">Đã nhập xong</string>
     <string name="settings_title">Cài đặt</string>
     <string name="export_dialog_title">Lưu file OPML</string>
     <string name="export_started_message">Đang xuất file</string>

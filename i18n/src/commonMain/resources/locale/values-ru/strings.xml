@@ -172,4 +172,22 @@
     <string name="category_name">Название категории</string>
     <string name="settings_crash_reporting">Отправлять анонимные отчеты об ошибках</string>
     <string name="edit_category">Изменить название категории</string>
+    <string name="menu_share">Поделиться</string>
+    <string name="menu_share_comments">Поделиться комментариями</string>
+    <string name="menu_copy_link">Копировать ссылку</string>
+    <string name="menu_copy_link_comments">Копировать ссылку на комментарии</string>
+    <string name="adding_feed">Добавление ленты...</string>
+    <string name="error_feed_add">Произошла ошибка при добавлении ленты</string>
+    <string name="settings_sync_period">Частота фоновой синхронизации</string>
+    <string name="settings_sync_period_desc">Выберите, как часто проверять наличие новых статей в фоновом режиме</string>
+    <string name="settings_sync_period_never">Никогда</string>
+    <string name="settings_sync_period_one_hour">Каждый час</string>
+    <string name="settings_sync_period_two_hours">Каждые два часа</string>
+    <string name="settings_sync_period_six_hours">Каждые шесть часов</string>
+    <string name="settings_sync_period_twelve_hours">Каждые двенадцать часов</string>
+    <string name="widget_check_feed_sources">Убедитесь, что добавлены некоторые источники ленты</string>
+    <string name="widget_latest_items">Самые ранние</string>
+    <string name="widget_configuration_confirm">Добавить виджет</string>
+    <string name="widget_configuration_title">Конфигурация виджета</string>
+    <string name="widget_configuration_description">Выберите, как часто проверять наличие новых статей в фоновом режиме и обновлять виджет.</string>
 </resources>

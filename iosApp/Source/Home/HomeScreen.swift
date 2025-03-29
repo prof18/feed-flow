@@ -92,8 +92,6 @@ struct HomeScreen: View {
                 homeViewModel.requestNewFeedsPage()
             },
             onItemClick: { feedItemClickedInfo in
-                // TODO: remove after test
-                fatalError("Testing crash2w23")
                 homeViewModel.markAsRead(feedItemId: feedItemClickedInfo.id)
             },
             onBookmarkClick: { feedItemId, isBookmarked in

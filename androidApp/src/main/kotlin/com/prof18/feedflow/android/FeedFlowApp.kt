@@ -14,7 +14,6 @@ import com.prof18.feedflow.android.widget.FeedFlowWidget
 import com.prof18.feedflow.android.widget.WidgetConfigurationViewModel
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
-import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
 import com.prof18.feedflow.shared.di.viewModel
@@ -24,7 +23,6 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.dsl.module
@@ -94,12 +92,6 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                 },
             ),
         )
-
-        if (isGooglePlayFlavor && appEnvironment.isRelease()) {
-            CrashlyticsHelper.setCollectionEnabled(
-                enabled = getKoin().get<SettingsRepository>().getCrashReportingEnabled(),
-            )
-        }
 
         feedDownloadWorkerEnqueuer.enqueueWork()
 

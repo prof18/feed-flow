@@ -17,10 +17,14 @@ class ReaderModeExtractor internal constructor(
         val html = htmlRetriever.retrieveHtml(urlInfo.url) ?: return@withContext null
 
         val readability4J = Readability4JExtended(urlInfo.url, html)
-        val article = readability4J.parse()
+        val article = try {
+            readability4J.parse()
+        } catch (_: Throwable) {
+            null
+        }
 
-        val title = article.title ?: urlInfo.title
-        val contentWithDocumentsCharsetOrUtf8 = article.contentWithDocumentsCharsetOrUtf8
+        val title = article?.title ?: urlInfo.title
+        val contentWithDocumentsCharsetOrUtf8 = article?.contentWithDocumentsCharsetOrUtf8
             ?.replace(Regex("https?://.*?placeholder\\.png"), "")
             ?: return@withContext null
 

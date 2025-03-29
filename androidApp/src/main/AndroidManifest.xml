@@ -99,10 +99,6 @@
                 tools:node="remove"/>
         </provider>
 
-        <meta-data
-            android:name="firebase_crashlytics_collection_enabled"
-            android:value="false"/>
-
         <receiver
             android:name=".widget.FeedFlowWidgetReceiver"
             android:exported="true">

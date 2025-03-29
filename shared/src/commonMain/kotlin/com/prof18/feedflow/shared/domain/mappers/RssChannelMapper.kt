@@ -39,7 +39,7 @@ internal class RssChannelMapper(
             }
 
             if (url == null) {
-                logger.d { "Skipping: ${rssItem.title}" }
+                logger.i { "Skipping item of ${rssChannel.link}, article link is null" }
                 null
             } else {
                 FeedItem(

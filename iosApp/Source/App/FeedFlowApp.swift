@@ -143,9 +143,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure(options: options)
         #if !DEBUG
             setupCrashlytics()
-            let isCrashReportEnabled = Deps.shared.getSettingsRepository()
-                .getCrashReportingEnabled()
-            Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(isCrashReportEnabled)
         #endif
     }
 }

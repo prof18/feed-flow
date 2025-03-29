@@ -15,15 +15,7 @@ struct FeedFlowApp: App {
     private var feedSyncTimer: FeedSyncTimer = .init()
 
     init() {
-        #if !DEBUG
-            setupCrashlytics()
-        #endif
         startKoin()
-        #if !DEBUG
-            let isCrashReportEnabled = Deps.shared.getSettingsRepository()
-                .getCrashReportingEnabled()
-            Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(isCrashReportEnabled)
-        #endif
 
         if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
             if let keys = NSDictionary(contentsOfFile: path) {
@@ -149,5 +141,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return
         }
         FirebaseApp.configure(options: options)
+        #if !DEBUG
+            setupCrashlytics()
+            let isCrashReportEnabled = Deps.shared.getSettingsRepository()
+                .getCrashReportingEnabled()
+            Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(isCrashReportEnabled)
+        #endif
     }
 }

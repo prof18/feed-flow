@@ -17,33 +17,33 @@ Fonctionnalités clés :
   épurée
 - Synchronisation fluide : gardez vos flux synchronisés entre vos appareils avec
   iCloud (IOS/macOS) ou Dropbox (toutes plateformes)
-- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
-  management
-- Flexible Reading Options: Choose between web view, reader mode, or your
-  preferred browser
-- Privacy-Focused: Select your favorite privacy-focused browser for a separate
-  reading experience
-- Easy Migration: Import and export your RSS feeds via OPML files
+- Intégration de FreshRSS : connectez-vous à votre serveur FreshRSS pour une
+  gestion avancée des flux
+- Options de lecture flexibles : choisissez entre la vue web, le mode lecture,
+  ou votre navigateur préféré
+- Centré sur la vie privée : sélectionnez votre navigateur respectueux de votre
+  vie privée pour une expérience de lecture séparée
+- Migration facile : importez et exportez vos flux RSS grâce aux fichiers OPML
 
-What Sets FeedFlow Apart:
+Ce qui différencie FeedFlow :
 
-- Clean, intuitive interface that lets you focus on content
-- Multiple sync options to fit your workflow (Beta)
-- Customizable reading experience with reader mode
-- Fast and lightweight
-- Regular updates and active development
+- Propre, interface intuitive vous laissant vous concentrer sur le contenu
+- Plusieurs options de synchronisation pour correspondre à votre workflow (Beta)
+- Expérience de lecture personnalisable avec le mode lecture
+- Rapide et léger
+- Mises-à-jour régulières et développement actif
 
-Perfect for:
-- News enthusiasts who want control over their information diet
-- Privacy-conscious readers
-- Content creators tracking multiple sources
-- Anyone looking to declutter their digital reading experience
+Parfait pour :
+- Les amateurs de nouvelles qui veulent contrôler leur régime d’information
+- Les lecteurs soucieux de leur vie privée
+- Les créateurs de contenu trackant de multiples sources
+- Toute personne cherchant à épurer leur expérience de lecture numérique
 
-Join thousands of readers who've chosen FeedFlow for a better way to stay
-informed.
+Rejoignez des milliers de lecteurs qui ont choisi FeedFlox afin de mieux rester
+informés.
 
-Note: Sync functionality is currently in beta. The experience is continuously
-improving based on user feedback.
+Note : la synchronisation est actuellement en beta. L'expérience s'améliore
+continuellement grâce aux retours utilisateurs.
 
 ## Capture d'écran 1
 
@@ -57,10 +57,10 @@ Importez votre collection existante
 
 Ouvrez les articles dans votre navigateur préféré
 
-## Screenshot 5
+## Capture d'écran 5
 
-Enjoy a clutter-free reader mode
+Profitez d'un mode lecture épuré
 
-## Banner image
+## Image de bannière
 
-minimalistic RSS Reader
+Lecteur RSS minimaliste

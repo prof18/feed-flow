@@ -190,4 +190,5 @@
     <string name="widget_configuration_title">Widget-Konfiguration</string>
     <string name="widget_configuration_confirm">Widget hinzufügen</string>
     <string name="widget_configuration_description">Wie oft soll im Hintergrund auf neue Nachrichten geprüft und das Widget aktualisiert werden.</string>
+    <string name="file_menu">Datei</string>
 </resources>

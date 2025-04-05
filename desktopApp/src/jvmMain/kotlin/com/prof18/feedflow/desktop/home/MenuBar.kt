@@ -37,7 +37,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     setCrashReportingEnabled: (Boolean) -> Unit,
 ) {
     MenuBar {
-        Menu("File", mnemonic = 'F') {
+        Menu(LocalFeedFlowStrings.current.fileMenu, mnemonic = 'F') {
             Item(
                 text = LocalFeedFlowStrings.current.refreshFeeds,
                 onClick = {

@@ -72,16 +72,6 @@ struct FeedFlowApp: App {
                     }
                 }
         }
-        .backgroundTask(.appRefresh("com.prof18.feedflow.articlesync")) {
-            do {
-                let repo = Deps.shared.getFeedFetcherRepository()
-                try await repo.fetchFeeds(forceRefresh: false, isFirstLaunch: false)
-                WidgetCenter.shared.reloadAllTimelines()
-                scheduleAppRefresh()
-            } catch {
-                print("Background feed sync failed: \(error)")
-            }
-        }
     }
 
     private func handleFeedFlowURL(_ url: URL) {
@@ -109,6 +99,30 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         #if !DEBUG
             configureFirebase()
         #endif
+
+        BGTaskScheduler.shared.register(
+            forTaskWithIdentifier: "com.prof18.feedflow.articlesync",
+            using: nil
+        ) { task in
+            scheduleAppRefresh()
+
+            let backgroundTask = Task {
+                do {
+                    let repo = Deps.shared.getFeedFetcherRepository()
+                    try await repo.fetchFeeds(forceRefresh: false, isFirstLaunch: false)
+                    WidgetCenter.shared.reloadAllTimelines()
+                    task.setTaskCompleted(success: true)
+                } catch {
+                    task.setTaskCompleted(success: false)
+                }
+            }
+
+            task.expirationHandler = {
+                backgroundTask.cancel()
+                task.setTaskCompleted(success: false)
+            }
+        }
+
         return true
     }
 

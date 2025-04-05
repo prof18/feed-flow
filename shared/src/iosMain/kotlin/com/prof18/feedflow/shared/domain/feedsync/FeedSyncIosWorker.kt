@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.feedsync
 
 import co.touchlab.kermit.Logger
+import co.touchlab.sqliter.interop.SQLiteException
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.AppEnvironment
@@ -63,6 +64,7 @@ internal class FeedSyncIosWorker(
         performUpload()
     }
 
+    @OptIn(ExperimentalForeignApi::class)
     private suspend fun performUpload() = withContext(dispatcherProvider.io) {
         try {
             feedSyncer.populateSyncDbIfEmpty()
@@ -77,6 +79,16 @@ internal class FeedSyncIosWorker(
             accountSpecificUpload(databasePath)
             settingsRepository.setIsSyncUploadRequired(false)
             emitSuccessMessage()
+        } catch (_: SQLiteException) {
+            try {
+                feedSyncer.closeDB()
+                getDatabaseUrl()?.let { path ->
+                    NSFileManager.defaultManager.removeItemAtURL(path, null)
+                    feedSyncer.populateSyncDbIfEmpty()
+                }
+            } catch (_: Exception) {
+                // best effort
+            }
         } catch (e: Exception) {
             logger.e("Upload to dropbox failed", e)
             emitErrorMessage()

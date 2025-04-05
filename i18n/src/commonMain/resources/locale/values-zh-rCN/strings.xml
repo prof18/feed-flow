@@ -190,4 +190,5 @@
     <string name="widget_configuration_title">微件配置</string>
     <string name="widget_configuration_confirm">添加微件</string>
     <string name="widget_configuration_description">选择在后台检查新文章和更新微件的频率。</string>
+    <string name="file_menu">文件</string>
 </resources>

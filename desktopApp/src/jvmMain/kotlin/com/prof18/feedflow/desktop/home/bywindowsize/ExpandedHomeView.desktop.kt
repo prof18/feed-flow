@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.CategoryId
@@ -23,7 +24,6 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.home.components.HomeScreenContent
-import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -62,6 +62,7 @@ internal fun ExpandedView(
 ) {
     val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
+    val uriHandler = LocalUriHandler.current
 
     Row {
         Scaffold(
@@ -107,7 +108,7 @@ internal fun ExpandedView(
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onCommentClick = { feedInfo ->
-                openInBrowser(feedInfo.url)
+                uriHandler.openUri(feedInfo.url)
                 markAsRead(FeedItemId(feedInfo.id))
             },
             onAddFeedClick = {

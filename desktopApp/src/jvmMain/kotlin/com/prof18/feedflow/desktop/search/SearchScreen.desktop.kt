@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalUriHandler
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -17,7 +18,6 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
@@ -39,6 +39,7 @@ internal data class SearchScreen(
         val searchQuery by viewModel.searchQueryState.collectAsState()
         val feedFontSizes by viewModel.feedFontSizeState.collectAsState()
         val strings = LocalFeedFlowStrings.current
+        val uriHandler = LocalUriHandler.current
 
         val snackbarHostState = remember { SnackbarHostState() }
 
@@ -86,7 +87,7 @@ internal data class SearchScreen(
                 if (browserManager.openReaderMode()) {
                     navigator.push(ReaderModeScreen(urlInfo))
                 } else {
-                    openInBrowser(urlInfo.url)
+                    uriHandler.openUri(urlInfo.url)
                 }
                 viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
             },
@@ -97,7 +98,7 @@ internal data class SearchScreen(
                 viewModel.onReadStatusClick(feedItemId, isRead)
             },
             onCommentClick = { urlInfo ->
-                openInBrowser(urlInfo.url)
+                uriHandler.openUri(urlInfo.url)
                 viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
             },
             snackbarHost = {

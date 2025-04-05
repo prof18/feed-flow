@@ -24,12 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.TRANSLATION_WEBSITE
-import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.shared.ui.about.AboutButtonItem
 import com.prof18.feedflow.shared.ui.about.AboutTextItem
@@ -58,6 +58,7 @@ fun AboutContent(
                 )
             } else {
                 val listState = rememberLazyListState()
+                val uriHandler = LocalUriHandler.current
 
                 Column(
                     modifier = Modifier
@@ -90,7 +91,7 @@ fun AboutContent(
                     AuthorText(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         nameClicked = {
-                            openInBrowser(MG_WEBSITE)
+                            uriHandler.openUri(MG_WEBSITE)
                         },
                     )
                 }
@@ -105,6 +106,7 @@ private fun SettingsItemList(
     versionLabel: String,
     showLicensesScreen: () -> Unit,
 ) {
+    val uriHandler = LocalUriHandler.current
     LazyColumn(
         modifier = Modifier,
         state = listState,
@@ -118,7 +120,7 @@ private fun SettingsItemList(
         item {
             AboutButtonItem(
                 onClick = {
-                    openInBrowser(FEED_FLOW_WEBSITE)
+                    uriHandler.openUri(FEED_FLOW_WEBSITE)
                 },
                 buttonText = LocalFeedFlowStrings.current.openWebsiteButton,
             )
@@ -127,7 +129,7 @@ private fun SettingsItemList(
         item {
             AboutButtonItem(
                 onClick = {
-                    openInBrowser(TRANSLATION_WEBSITE)
+                    uriHandler.openUri(TRANSLATION_WEBSITE)
                 },
                 buttonText = LocalFeedFlowStrings.current.aboutMenuContributeTranslations,
             )

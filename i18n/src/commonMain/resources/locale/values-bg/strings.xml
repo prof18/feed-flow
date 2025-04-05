@@ -190,4 +190,5 @@
     <string name="widget_configuration_confirm">Добавяне на приспособление</string>
     <string name="widget_configuration_title">Конфигурация на приспособление</string>
     <string name="widget_configuration_description">Изберете колко често да проверявате за нови статии на заден план и да актуализирате приспособлението.</string>
+    <string name="file_menu">Файл</string>
 </resources>

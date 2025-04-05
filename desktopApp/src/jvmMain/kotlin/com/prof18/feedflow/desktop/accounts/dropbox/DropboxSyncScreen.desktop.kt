@@ -21,13 +21,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.DropboxSynMessages
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.ui.accounts.dropbox.DropboxSyncContent
 import com.prof18.feedflow.shared.ui.settings.SettingItem
@@ -45,6 +45,7 @@ internal class DropboxSyncScreen : Screen {
 
         val snackbarHostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
+        val uriHandler = LocalUriHandler.current
 
         val errorMessage = LocalFeedFlowStrings.current.dropboxSyncError
 
@@ -61,7 +62,7 @@ internal class DropboxSyncScreen : Screen {
                     }
 
                     is DropboxSynMessages.ProceedToAuth -> {
-                        openInBrowser(event.authorizeUrl)
+                        uriHandler.openUri(event.authorizeUrl)
                     }
                 }
             }

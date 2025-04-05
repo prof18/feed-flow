@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalUriHandler
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.LinkOpeningPreference
@@ -20,7 +21,6 @@ import com.prof18.feedflow.desktop.home.bywindowsize.CompactView
 import com.prof18.feedflow.desktop.home.bywindowsize.ExpandedView
 import com.prof18.feedflow.desktop.home.bywindowsize.MediumView
 import com.prof18.feedflow.desktop.home.components.NoFeedsDialog
-import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.desktop.utils.WindowSizeClass
 import com.prof18.feedflow.desktop.utils.WindowWidthSizeClass
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -50,6 +50,7 @@ internal fun HomeScreen(
 
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
+    val uriHandler = LocalUriHandler.current
 
     if (isDeleting) {
         DeleteOldFeedDialog()
@@ -134,13 +135,13 @@ internal fun HomeScreen(
                 openUrl = { feedItemUrlInfo ->
                     when (feedItemUrlInfo.linkOpeningPreference) {
                         LinkOpeningPreference.READER_MODE -> navigateToReaderMode(feedItemUrlInfo)
-                        LinkOpeningPreference.INTERNAL_BROWSER -> openInBrowser(feedItemUrlInfo.url)
-                        LinkOpeningPreference.PREFERRED_BROWSER -> openInBrowser(feedItemUrlInfo.url)
+                        LinkOpeningPreference.INTERNAL_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
+                        LinkOpeningPreference.PREFERRED_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
                         LinkOpeningPreference.DEFAULT -> {
                             if (browserManager.openReaderMode()) {
                                 navigateToReaderMode(feedItemUrlInfo)
                             } else {
-                                openInBrowser(feedItemUrlInfo.url)
+                                uriHandler.openUri(feedItemUrlInfo.url)
                             }
                         }
                     }
@@ -204,13 +205,13 @@ internal fun HomeScreen(
                 openUrl = { feedItemUrlInfo ->
                     when (feedItemUrlInfo.linkOpeningPreference) {
                         LinkOpeningPreference.READER_MODE -> navigateToReaderMode(feedItemUrlInfo)
-                        LinkOpeningPreference.INTERNAL_BROWSER -> openInBrowser(feedItemUrlInfo.url)
-                        LinkOpeningPreference.PREFERRED_BROWSER -> openInBrowser(feedItemUrlInfo.url)
+                        LinkOpeningPreference.INTERNAL_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
+                        LinkOpeningPreference.PREFERRED_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
                         LinkOpeningPreference.DEFAULT -> {
                             if (browserManager.openReaderMode()) {
                                 navigateToReaderMode(feedItemUrlInfo)
                             } else {
-                                openInBrowser(feedItemUrlInfo.url)
+                                uriHandler.openUri(feedItemUrlInfo.url)
                             }
                         }
                     }
@@ -274,13 +275,13 @@ internal fun HomeScreen(
                 openUrl = { feedItemUrlInfo ->
                     when (feedItemUrlInfo.linkOpeningPreference) {
                         LinkOpeningPreference.READER_MODE -> navigateToReaderMode(feedItemUrlInfo)
-                        LinkOpeningPreference.INTERNAL_BROWSER -> openInBrowser(feedItemUrlInfo.url)
-                        LinkOpeningPreference.PREFERRED_BROWSER -> openInBrowser(feedItemUrlInfo.url)
+                        LinkOpeningPreference.INTERNAL_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
+                        LinkOpeningPreference.PREFERRED_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
                         LinkOpeningPreference.DEFAULT -> {
                             if (browserManager.openReaderMode()) {
                                 navigateToReaderMode(feedItemUrlInfo)
                             } else {
-                                openInBrowser(feedItemUrlInfo.url)
+                                uriHandler.openUri(feedItemUrlInfo.url)
                             }
                         }
                     }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
@@ -29,7 +30,6 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.openInBrowser
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.readermode.ReaderModeContent
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -41,7 +41,6 @@ import java.awt.datatransfer.StringSelection
 internal data class ReaderModeScreen(
     private val feedItemUrlInfo: FeedItemUrlInfo,
 ) : Screen {
-
     @Composable
     override fun Content() {
         val readerModeViewModel = desktopViewModel { DI.koin.get<ReaderModeViewModel>() }
@@ -57,6 +56,7 @@ internal data class ReaderModeScreen(
         val scope = rememberCoroutineScope()
 
         val message = LocalFeedFlowStrings.current.linkCopiedSuccess
+        val uriHandler = LocalUriHandler.current
 
         ReaderModeContent(
             readerModeState = state,
@@ -65,7 +65,7 @@ internal data class ReaderModeScreen(
             },
             snackbarHost = { SnackbarHost(snackbarHostState) },
             openInBrowser = { url ->
-                openInBrowser(url)
+                uriHandler.openUri(url)
             },
             onShareClick = { url ->
                 val clipboard = Toolkit.getDefaultToolkit().systemClipboard

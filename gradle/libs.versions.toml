@@ -1,183 +1,169 @@
 [versions]
 about-libraries = "11.2.3"
+activity-compose = "1.9.3"
 android-compile-sdk = "35"
+android-gradle-plugin = "8.2.2"
 android-min-sdk = "26"
 android-target-sdk = "35"
-android-gradle-plugin = "8.2.2"
-activity-compose = "1.9.3"
+androidx-browser = "1.8.0"
 androidx-core-ktx = "1.6.1"
-coroutines = "1.10.1"
-detekt = "1.23.7"
-flexmarkHtml2mdConverter = "0.64.8"
-io-coil = "3.0.4"
-junit = "4.13.2"
-kermit = "2.0.5"
-koin-bom = "4.0.1"
-kotlin = "2.1.10"
-multiplatformMarkdownRendererM3 = "0.29.0"
-nav-compose = "2.8.5"
-slf4jNop = "2.0.16"
-stately-concurrency = "2.1.0"
-turbine = "1.2.0"
-viewModel = "2.8.7"
-viewModel-compose = "2.8.7"
-lifecycle-runtime-compose = "2.8.7"
-org-robolectric = "4.14.1"
-# When updating, check the version of sqlite-jdbc in the following link:
-# https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L70
-# if necessry, dowload again the native library here
-# https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
-sql-delight = "2.0.2"
-rss-parser = "6.0.10"
-jsoup = "1.18.3"
-triplet-play = "3.12.1"
+arrow = "2.0.0"
 compose-multiplatform = "1.7.3"
+compose-webview = "1.9.40"
+coroutines = "1.10.1"
+crashk-ios = "0.9.0"
+crashlytics-plugin = "3.0.2"
+detekt = "1.23.7"
+detekt-compose-rules = "0.4.22"
+dropbox-core = "7.0.0"
+firebase-bom = "33.7.0"
+flexmarkHtml2mdConverter = "0.64.8"
+glance = "1.1.1"
+google-services = "4.4.2"
+immutable-collections = "0.3.8"
+io-coil = "3.0.4"
+jsoup = "1.18.3"
 # When updating, check the version of jna in the following link:
 # https://github.com/Dansoftowner/jSystemThemeDetector/blob/master/build.gradle
 # if necessary, download again the native library here and uzip the jar: unzip jna-5.15.0/dist/darwin-aarch64.jar
 # https://github.com/java-native-access/jna
 jsystem-theme-detector = "3.9.1"
-ksp = "2.1.10-1.0.29"
-multiplatform-settings = "1.3.0"
-firebase-bom = "33.7.0"
-crashlytics-plugin = "3.0.2"
-google-services = "4.4.2"
-crashk-ios = "0.9.0"
-sentry = "7.20.0"
-material-window-size = "1.3.1"
-immutable-collections = "0.3.8"
-detekt-compose-rules = "0.4.22"
-lyricist = "1.6.2"
+junit = "4.13.2"
+kermit = "2.0.5"
+koin-bom = "4.0.1"
+kotlin = "2.1.10"
 kotlinx-date-time = "0.6.1"
-androidx-browser = "1.8.0"
-readability4j = "1.0.8"
-compose-webview = "1.9.40"
-voyager = "1.0.1"
-ktor = "3.0.3"
-dropbox-core = "7.0.0"
-workmanager = "2.10.0"
-lifecycleProcess = "2.8.7"
-android-material3 = "1.3.1"
-skie = "0.10.1"
 kotlinx-serialization = "1.7.3"
-arrow = "2.0.0"
-glance = "1.1.1"
+ksp = "2.1.10-1.0.29"
+ktor = "3.0.3"
+lifecycle = "2.8.5"
+lyricist = "1.6.2"
+material-window-size = "1.3.1"
+multiplatform-settings = "1.3.0"
+multiplatformMarkdownRendererM3 = "0.29.0"
+nav-compose = "2.8.9"
+org-robolectric = "4.14.1"
 play-review = "2.0.2"
+readability4j = "1.0.8"
+rss-parser = "6.0.10"
+sentry = "7.20.0"
+skie = "0.10.1"
+slf4jNop = "2.0.16"
+# When updating, check the version of sqlite-jdbc in the following link:
+# https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L70
+# if necessry, dowload again the native library here
+# https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
+sql-delight = "2.0.2"
+stately-concurrency = "2.1.0"
+triplet-play = "3.12.1"
+turbine = "1.2.0"
+voyager = "1.0.1"
+workmanager = "2.10.0"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
 about-libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "about-libraries" }
+android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle-plugin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
-androidx-lifecycle-viewModel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "viewModel" }
-androidx-lifecycle-viewModel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModel-compose" }
-androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-runtime-compose" }
+androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-lifecycle-viewModel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
+androidx-lifecycle-viewModel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-navigation-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav-compose" }
 androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-core-ktx" }
-cashapp-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow" }
+com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref = "rss-parser" }
+compose-webview = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "compose-webview" }
+crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
+detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
+detekt-compose-rules = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose-rules" }
+detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
+dropbox-core = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropbox-core" }
+dropbox-core-android = { module = "com.dropbox.core:dropbox-android-sdk", version.ref = "dropbox-core" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 flexmark-html2md-converter = { module = "com.vladsch.flexmark:flexmark-html2md-converter", version.ref = "flexmarkHtml2mdConverter" }
+glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
 io-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "io-coil" }
 io-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "io-coil" }
 io-gitlab-arturbosch-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 junit = { module = "junit:junit", version.ref = "junit" }
 koin-android = { module = "io.insert-koin:koin-android" }
-koin-compose = { module = "io.insert-koin:koin-androidx-compose" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 koin-composeVM = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-test = { module = "io.insert-koin:koin-test" }
+koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-multiplatform-markdown-renderer-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "multiplatformMarkdownRendererM3" }
-multiplatform-markdown-renderer-coil = { module = "com.mikepenz:multiplatform-markdown-renderer-coil3", version.ref = "multiplatformMarkdownRendererM3" }
-slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4jNop" }
-stately-concurrency = { module = "co.touchlab:stately-concurrency", version.ref = "stately-concurrency" }
-touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
-touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "kermit" }
-touchlab-kermit-crash = { module = "co.touchlab:kermit-crashlytics", version.ref = "kermit" }
-touchlab-kermit-test = { module = "co.touchlab:kermit-test", version.ref = "kermit" }
-org-robolectric = { module = "org.robolectric:robolectric", version.ref = "org-robolectric" }
-sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sql-delight" }
-sqldelight-coroutine-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sql-delight" }
-sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sql-delight" }
-sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sql-delight" }
-sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql-delight" }
-sqldelight-primitive-adapter = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sql-delight" }
-com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref = "rss-parser" }
-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
-jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
-multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
-crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
-sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
-material-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material-window-size" }
-immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
-koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
-detekt-compose-rules = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose-rules" }
+kotlinx-date-time = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-resources = { module = "io.ktor:ktor-client-resources", version.ref = "ktor" }
+ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 lyricist = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" }
 # TODO: Delete when/if https://github.com/adrielcafe/lyricist/pull/45
 #  and https://github.com/adrielcafe/lyricist/pull/46 gets merged
 #lyricist-processorXml = { module = "cafe.adriel.lyricist:lyricist-processor-xml", version.ref = "lyricist" }
 lyricist-processorXml = { module = "com.github.prof18:lyricist", version = "e305b936c3" }
-kotlinx-date-time = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-date-time" }
-androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
+material-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material-window-size" }
+multiplatform-markdown-renderer-coil = { module = "com.mikepenz:multiplatform-markdown-renderer-coil3", version.ref = "multiplatformMarkdownRendererM3" }
+multiplatform-markdown-renderer-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "multiplatformMarkdownRendererM3" }
+multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
+org-robolectric = { module = "org.robolectric:robolectric", version.ref = "org-robolectric" }
+play-review = { module = "com.google.android.play:review-ktx", version.ref = "play-review" }
 readability4j = { module = "net.dankito.readability4j:readability4j", version.ref = "readability4j" }
-compose-webview = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "compose-webview" }
+sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
+skie-annotation = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
+slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4jNop" }
+sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sql-delight" }
+sqldelight-coroutine-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sql-delight" }
+sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sql-delight" }
+sqldelight-primitive-adapter = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sql-delight" }
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sql-delight" }
+sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql-delight" }
+stately-concurrency = { module = "co.touchlab:stately-concurrency", version.ref = "stately-concurrency" }
+touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+touchlab-kermit-crash = { module = "co.touchlab:kermit-crashlytics", version.ref = "kermit" }
+touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "kermit" }
+touchlab-kermit-test = { module = "co.touchlab:kermit-test", version.ref = "kermit" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-transition = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
-ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
-dropbox-core = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropbox-core" }
-dropbox-core-android = { module = "com.dropbox.core:dropbox-android-sdk", version.ref = "dropbox-core" }
 workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "workmanager" }
-koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
-androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
-# TODO: delete once the PullToRefreshBox is added to Compose Multiplatform
-androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "android-material3" }
-detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
-kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
-android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle-plugin" }
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
-skie-annotation = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
-ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
-ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-ktor-resources = { module = "io.ktor:ktor-client-resources", version.ref = "ktor" }
-ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
-arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow" }
-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
-glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
-play-review = { module = "com.google.android.play:review-ktx", version.ref = "play-review" }
 
 [bundles]
-compose = [
-    "androidx-activity-compose",
-    "androidx-lifecycle-viewModel-compose",
-    "androidx-lifecycle-runtime-compose",
-    "androidx-navigation-navigation-compose",
-]
 about-libraries = ["about-libraries-core", "about-libraries-compose"]
 
 [plugins]
+about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "about-libraries" }
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+feedflow-detekt = { id = "com.feedflow.detekt", version = "unspecified" }
+feedflow-library = { id = "com.feedflow.library", version = "unspecified" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+skie = { id = "co.touchlab.skie", version.ref = "skie" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sql-delight" }
 triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
-compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "about-libraries" }
-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
-google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
-org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-feedflow-library = { id = "com.feedflow.library", version = "unspecified" }
-feedflow-detekt = { id = "com.feedflow.detekt", version = "unspecified" }
-skie = { id = "co.touchlab.skie", version.ref = "skie" }

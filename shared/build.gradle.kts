@@ -129,6 +129,7 @@ kotlin {
             dependencies {
                 api(libs.touchlab.kermit.simple)
                 implementation(libs.touchlab.kermit.crash)
+                implementation(libs.crashk.ios)
                 implementation(libs.ktor.client.darwin)
             }
         }

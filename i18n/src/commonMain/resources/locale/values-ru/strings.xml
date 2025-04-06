@@ -190,4 +190,5 @@
     <string name="widget_configuration_confirm">Добавить виджет</string>
     <string name="widget_configuration_title">Конфигурация виджета</string>
     <string name="widget_configuration_description">Выберите, как часто проверять наличие новых статей в фоновом режиме и обновлять виджет.</string>
+    <string name="file_menu">Файл</string>
 </resources>

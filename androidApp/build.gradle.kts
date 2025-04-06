@@ -119,9 +119,12 @@ dependencies {
     implementation(compose.materialIconsExtended)
     implementation(compose.ui)
     implementation(compose.uiTooling)
-    implementation(libs.androidx.material3)
 
-    implementation(libs.bundles.compose)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewModel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.navigation.navigation.compose)
+
     implementation(libs.bundles.about.libraries)
 
     implementation(libs.material.window.size)

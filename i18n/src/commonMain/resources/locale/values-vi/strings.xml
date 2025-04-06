@@ -190,4 +190,5 @@
     <string name="widget_configuration_title">Thiết lập Widget</string>
     <string name="widget_configuration_description">Chọn tần suất kiểm tra bài viết mới ở chế độ nền và cập nhật tiện ích.</string>
     <string name="widget_configuration_confirm">Thêm Widget</string>
+    <string name="file_menu">File</string>
 </resources>

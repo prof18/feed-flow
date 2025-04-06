@@ -195,4 +195,5 @@
     <string name="settings_sync_period_twelve_hours">Kord kaheteist tunni jooksul</string>
     <string name="settings_sync_period_never">Mitte kunagi</string>
     <string name="widget_configuration_description">Vali uute artiklite taustal kontrollimise ning järgneva vidinas kuvatavate andmete uuenduse sagedus.</string>
+    <string name="file_menu">Fail</string>
 </resources>

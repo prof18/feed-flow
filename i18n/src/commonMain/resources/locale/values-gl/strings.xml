@@ -190,4 +190,5 @@
     <string name="widget_configuration_description">Elixe a frecuencia coa que comprobar en segundo plano se hai novos artigos e actualizar o trebello.</string>
     <string name="widget_configuration_title">Configuración do trebello</string>
     <string name="widget_configuration_confirm">Engadir trebello</string>
+    <string name="file_menu">Ficheiro</string>
 </resources>

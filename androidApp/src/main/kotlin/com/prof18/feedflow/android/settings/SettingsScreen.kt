@@ -99,7 +99,6 @@ fun SettingsScreen(
         onFeedListClick = onFeedListClick,
         onAddFeedClick = onAddFeedClick,
         settingsState = settingState,
-        showAccounts = appConfig.isDropboxSyncEnabled,
         fontSizes = fontSizesState,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
@@ -160,7 +159,6 @@ fun SettingsScreen(
 private fun SettingsScreenContent(
     browsers: ImmutableList<Browser>,
     settingsState: SettingsState,
-    showAccounts: Boolean,
     fontSizes: FeedFontSizes,
     showCrashReporting: Boolean,
     onFeedListClick: () -> Unit,
@@ -226,14 +224,12 @@ private fun SettingsScreenContent(
                 )
             }
 
-            if (showAccounts) {
-                item {
-                    SettingItem(
-                        title = LocalFeedFlowStrings.current.settingsAccounts,
-                        icon = Icons.Outlined.Sync,
-                        onClick = navigateToAccounts,
-                    )
-                }
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.settingsAccounts,
+                    icon = Icons.Outlined.Sync,
+                    onClick = navigateToAccounts,
+                )
             }
 
             item {
@@ -635,7 +631,6 @@ private fun SettingsScreenPreview() {
         SettingsScreenContent(
             browsers = browsersForPreview,
             settingsState = SettingsState(),
-            showAccounts = true,
             fontSizes = FeedFontSizes(),
             onFeedListClick = {},
             onAddFeedClick = {},

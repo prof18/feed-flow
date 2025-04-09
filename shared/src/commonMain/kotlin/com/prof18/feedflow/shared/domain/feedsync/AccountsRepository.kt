@@ -36,6 +36,10 @@ internal class AccountsRepository(
         SyncAccounts.FRESH_RSS,
     )
 
+    private val androidAccountsNoDropbox = listOf(
+        SyncAccounts.FRESH_RSS,
+    )
+
     private val iosAccounts = listOf(
         SyncAccounts.ICLOUD,
         SyncAccounts.FRESH_RSS,
@@ -51,7 +55,7 @@ internal class AccountsRepository(
             CurrentOS.Desktop.Linux -> desktopAccounts
             CurrentOS.Desktop.Mac -> if (appConfig.isIcloudSyncEnabled) macOSAccounts else desktopAccounts
             CurrentOS.Desktop.Windows -> desktopAccounts
-            CurrentOS.Android -> androidAccounts
+            CurrentOS.Android -> if (appConfig.isDropboxSyncEnabled) androidAccounts else androidAccountsNoDropbox
             CurrentOS.Ios -> iosAccounts
         }
 

@@ -530,10 +530,13 @@ private fun SyncPeriodSelector(
             Text(
                 text = when (currentPeriod) {
                     SyncPeriod.NEVER -> strings.settingsSyncPeriodNever
+                    SyncPeriod.FIFTEEN_MINUTES -> strings.settingsSyncPeriodFifteenMinutes
+                    SyncPeriod.THIRTY_MINUTES -> strings.settingsSyncPeriodThirtyMinutes
                     SyncPeriod.ONE_HOUR -> strings.settingsSyncPeriodOneHour
                     SyncPeriod.TWO_HOURS -> strings.settingsSyncPeriodTwoHours
                     SyncPeriod.SIX_HOURS -> strings.settingsSyncPeriodSixHours
                     SyncPeriod.TWELVE_HOURS -> strings.settingsSyncPeriodTwelveHours
+                    SyncPeriod.ONE_DAY -> strings.settingsSyncPeriodOneDay
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

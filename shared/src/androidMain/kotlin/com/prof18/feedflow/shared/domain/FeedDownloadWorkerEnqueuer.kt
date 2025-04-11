@@ -8,7 +8,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
-import java.util.concurrent.TimeUnit.HOURS
+import java.util.concurrent.TimeUnit.MINUTES
 
 class FeedDownloadWorkerEnqueuer internal constructor(
     private val settingsRepository: SettingsRepository,
@@ -21,19 +21,22 @@ class FeedDownloadWorkerEnqueuer internal constructor(
     fun updateWorker(syncPeriod: SyncPeriod) =
         when (syncPeriod) {
             SyncPeriod.NEVER -> cancel()
+            SyncPeriod.FIFTEEN_MINUTES,
+            SyncPeriod.THIRTY_MINUTES,
             SyncPeriod.ONE_HOUR,
             SyncPeriod.TWO_HOURS,
             SyncPeriod.SIX_HOURS,
             SyncPeriod.TWELVE_HOURS,
-            -> enqueue(syncPeriod.hours)
+            SyncPeriod.ONE_DAY,
+            -> enqueue(syncPeriod.minutes)
         }
 
     private fun cancel() {
         WorkManager.getInstance(context).cancelUniqueWork(WORKER_TAG)
     }
 
-    private fun enqueue(hours: Long = 1) {
-        val instructions = PeriodicWorkRequestBuilder<FeedDownloadWorker>(hours, HOURS)
+    private fun enqueue(minutes: Long = 1) {
+        val instructions = PeriodicWorkRequestBuilder<FeedDownloadWorker>(minutes, MINUTES)
             .addTag(WORKER_TAG)
             .setConstraints(
                 Constraints.Builder()

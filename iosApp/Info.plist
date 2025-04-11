@@ -35,6 +35,8 @@
 		<string>ta</string>
 		<string>he</string>
 		<string>uk</string>
+		<string>ja</string>
+		<string>cs</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>

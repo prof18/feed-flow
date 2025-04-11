@@ -191,6 +191,8 @@ val macExtraPlistKeys: String
           <string>ta</string>
           <string>he</string>
           <string>uk</string>
+          <string>ja</string>
+          <string>cs</string>
         </array>
         <key>NSUbiquitousContainers</key>
         <dict>

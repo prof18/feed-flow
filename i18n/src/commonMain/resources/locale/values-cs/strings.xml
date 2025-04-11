@@ -18,7 +18,7 @@
     <string name="refresh_feeds">Aktualizovat zdroje</string>
     <string name="no_feeds_found_message">Nebyly nalezeny žádné zdroje. Přidejte nový zdroj!</string>
     <string name="feed_added_message">Zdroj %s přidán</string>
-    <string name="app_name">Čeština</string>
+    <string name="app_name">FeedFlow</string>
     <string name="clear_old_articles_button">Odstranit příspěvky týdenního stáří</string>
     <string name="settings_button">Možnosti</string>
     <string name="feeds_importing_message">Importování zdroje</string>

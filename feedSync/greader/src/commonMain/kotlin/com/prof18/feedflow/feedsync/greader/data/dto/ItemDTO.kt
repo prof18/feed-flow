@@ -27,7 +27,7 @@ internal data class ItemContentDTO(
     @Serializable
     data class Origin(
         val streamId: String,
-        val htmlUrl: String,
+        val htmlUrl: String?,
         val title: String,
     )
 

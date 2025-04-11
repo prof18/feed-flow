@@ -1,11 +1,7 @@
 package com.prof18.feedflow.desktop
 
 import androidx.compose.foundation.LocalScrollbarStyle
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,24 +10,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogWindow
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberDialogState
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.window.*
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import coil3.ImageLoader
@@ -45,6 +29,7 @@ import com.prof18.feedflow.desktop.about.AboutContent
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.FeedFlowMenuBar
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
+import com.prof18.feedflow.desktop.macosreview.MacosReviewBridge
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
@@ -53,6 +38,7 @@ import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.HomeViewModel
+import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.ui.search.FeedListFontSettings
@@ -156,6 +142,22 @@ fun main() = application {
 
     val scope = rememberCoroutineScope()
     var showBackupLoader by remember { mutableStateOf(false) }
+
+    val reviewViewModel = desktopViewModel { DI.koin.get<ReviewViewModel>() }
+    if (getDesktopOS().isMacOs() && isSandboxed) {
+        val canShowReview by reviewViewModel.canShowReviewDialog.collectAsState()
+        if (canShowReview) {
+            try {
+                val resourcesDir = System.getProperty("compose.application.resources.dir")
+                val libraryPath = resourcesDir + File.separator + System.mapLibraryName("kreview")
+                System.load(libraryPath)
+                MacosReviewBridge().triggerAppStoreReview()
+            } catch (_: Throwable) {
+                // best effort
+            }
+        }
+    }
+
 
     FeedFlowTheme {
         val lyricist = rememberFeedFlowStrings()

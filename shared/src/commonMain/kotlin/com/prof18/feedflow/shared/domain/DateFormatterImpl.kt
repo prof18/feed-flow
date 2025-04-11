@@ -139,7 +139,11 @@ class DateFormatterImpl(
             char(' ')
             year()
             char(' ')
-            hour()
+            alternativeParsing({
+                hour()
+            }) {
+                hour(padding = Padding.NONE)
+            }
             char(':')
             minute()
             optional {

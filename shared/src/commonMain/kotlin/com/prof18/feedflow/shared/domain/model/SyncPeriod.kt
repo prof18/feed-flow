@@ -1,10 +1,13 @@
 package com.prof18.feedflow.shared.domain.model
 
 @Suppress("MagicNumber")
-enum class SyncPeriod(val hours: Long) {
+enum class SyncPeriod(val minutes: Long) {
     NEVER(-1),
-    ONE_HOUR(1),
-    TWO_HOURS(2),
-    SIX_HOURS(6),
-    TWELVE_HOURS(12),
+    FIFTEEN_MINUTES(15),
+    THIRTY_MINUTES(30),
+    ONE_HOUR(60),
+    TWO_HOURS(120),
+    SIX_HOURS(360),
+    TWELVE_HOURS(720),
+    ONE_DAY(1440),
 }

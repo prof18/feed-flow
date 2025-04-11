@@ -130,10 +130,13 @@ private fun WidgetConfigurationScreen(
                     )
                     Text(
                         text = when (syncPeriod) {
+                            SyncPeriod.FIFTEEN_MINUTES -> strings.settingsSyncPeriodFifteenMinutes
+                            SyncPeriod.THIRTY_MINUTES -> strings.settingsSyncPeriodThirtyMinutes
                             SyncPeriod.ONE_HOUR -> strings.settingsSyncPeriodOneHour
                             SyncPeriod.TWO_HOURS -> strings.settingsSyncPeriodTwoHours
                             SyncPeriod.SIX_HOURS -> strings.settingsSyncPeriodSixHours
                             SyncPeriod.TWELVE_HOURS -> strings.settingsSyncPeriodTwelveHours
+                            SyncPeriod.ONE_DAY -> strings.settingsSyncPeriodOneDay
                             SyncPeriod.NEVER -> "" // This is never shown here
                         },
                         style = MaterialTheme.typography.bodyMedium,

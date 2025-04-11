@@ -60,6 +60,26 @@ internal fun SyncPeriodDialog(
                 }
                 item {
                     PeriodOption(
+                        text = strings.settingsSyncPeriodFifteenMinutes,
+                        selected = currentPeriod == SyncPeriod.FIFTEEN_MINUTES,
+                        onClick = {
+                            onPeriodSelected(SyncPeriod.FIFTEEN_MINUTES)
+                            dismissDialog()
+                        },
+                    )
+                }
+                item {
+                    PeriodOption(
+                        text = strings.settingsSyncPeriodThirtyMinutes,
+                        selected = currentPeriod == SyncPeriod.THIRTY_MINUTES,
+                        onClick = {
+                            onPeriodSelected(SyncPeriod.THIRTY_MINUTES)
+                            dismissDialog()
+                        },
+                    )
+                }
+                item {
+                    PeriodOption(
                         text = strings.settingsSyncPeriodOneHour,
                         selected = currentPeriod == SyncPeriod.ONE_HOUR,
                         onClick = {
@@ -94,6 +114,16 @@ internal fun SyncPeriodDialog(
                         selected = currentPeriod == SyncPeriod.TWELVE_HOURS,
                         onClick = {
                             onPeriodSelected(SyncPeriod.TWELVE_HOURS)
+                            dismissDialog()
+                        },
+                    )
+                }
+                item {
+                    PeriodOption(
+                        text = strings.settingsSyncPeriodOneDay,
+                        selected = currentPeriod == SyncPeriod.ONE_DAY,
+                        onClick = {
+                            onPeriodSelected(SyncPeriod.ONE_DAY)
                             dismissDialog()
                         },
                     )

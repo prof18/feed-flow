@@ -49,3 +49,4 @@ include("feedSync:networkcore")
 //        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))
 //    }
 // }
+include("desktopApp:kreview-macos")

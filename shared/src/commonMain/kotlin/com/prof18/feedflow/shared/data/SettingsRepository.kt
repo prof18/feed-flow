@@ -1,6 +1,9 @@
 package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
@@ -17,6 +20,14 @@ class SettingsRepository(
 
     private val isSyncUploadRequiredMutableFlow = MutableStateFlow(getIsSyncUploadRequired())
     val isSyncUploadRequired: StateFlow<Boolean> = isSyncUploadRequiredMutableFlow.asStateFlow()
+
+    private val swipeActionsMutableFlow = MutableStateFlow(
+        SwipeActions(
+            leftSwipeAction = getSwipeAction(SwipeDirection.LEFT),
+            rightSwipeAction = getSwipeAction(SwipeDirection.RIGHT),
+        ),
+    )
+    val swipeActions: StateFlow<SwipeActions> = swipeActionsMutableFlow.asStateFlow()
 
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
@@ -143,6 +154,31 @@ class SettingsRepository(
     fun setLastReviewVersion(version: String) =
         settings.set(SettingsFields.LAST_REVIEW_VERSION.name, version)
 
+    fun getSwipeAction(direction: SwipeDirection): SwipeActionType {
+        val fieldName = when (direction) {
+            SwipeDirection.LEFT -> SettingsFields.LEFT_SWIPE_ACTION.name
+            SwipeDirection.RIGHT -> SettingsFields.RIGHT_SWIPE_ACTION.name
+        }
+        return settings.getString(fieldName, SwipeActionType.NONE.name)
+            .let { SwipeActionType.valueOf(it) }
+    }
+
+    fun setSwipeAction(direction: SwipeDirection, action: SwipeActionType) {
+        val fieldName = when (direction) {
+            SwipeDirection.LEFT -> SettingsFields.LEFT_SWIPE_ACTION.name
+            SwipeDirection.RIGHT -> SettingsFields.RIGHT_SWIPE_ACTION.name
+        }
+        settings[fieldName] = action.name
+
+        // Update the flow with the new swipe actions
+        swipeActionsMutableFlow.update { currentSwipeActions ->
+            when (direction) {
+                SwipeDirection.LEFT -> currentSwipeActions.copy(leftSwipeAction = action)
+                SwipeDirection.RIGHT -> currentSwipeActions.copy(rightSwipeAction = action)
+            }
+        }
+    }
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -168,4 +204,6 @@ internal enum class SettingsFields {
     LAST_REVIEW_REQUEST_DATE,
     LAST_REVIEW_VERSION,
     IS_KEYCHAIN_MIGRATION_DONE,
+    LEFT_SWIPE_ACTION,
+    RIGHT_SWIPE_ACTION,
 }

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -37,6 +39,8 @@ class SettingsViewModel internal constructor(
             val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
             val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
             val syncPeriod = settingsRepository.getSyncPeriod()
+            val leftSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.LEFT)
+            val rightSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.RIGHT)
             settingsMutableState.update {
                 SettingsState(
                     isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
@@ -48,6 +52,8 @@ class SettingsViewModel internal constructor(
                     autoDeletePeriod = autoDeletePeriod,
                     isCrashReportingEnabled = isCrashReportingEnabled,
                     syncPeriod = syncPeriod,
+                    leftSwipeActionType = leftSwipeAction,
+                    rightSwipeActionType = rightSwipeAction,
                 )
             }
         }
@@ -149,6 +155,18 @@ class SettingsViewModel internal constructor(
                 it.copy(
                     syncPeriod = period,
                 )
+            }
+        }
+    }
+
+    fun updateSwipeAction(direction: SwipeDirection, action: SwipeActionType) {
+        viewModelScope.launch {
+            settingsRepository.setSwipeAction(direction, action)
+            settingsMutableState.update {
+                when (direction) {
+                    SwipeDirection.LEFT -> it.copy(leftSwipeActionType = action)
+                    SwipeDirection.RIGHT -> it.copy(rightSwipeActionType = action)
+                }
             }
         }
     }

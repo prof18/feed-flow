@@ -25,6 +25,8 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -44,6 +46,7 @@ internal fun FeedWithContentView(
     loadingState: FeedUpdateStatus,
     listState: LazyListState,
     currentFeedFilter: FeedFilter,
+    swipeActions: SwipeActions,
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
@@ -71,6 +74,7 @@ internal fun FeedWithContentView(
                 shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuCopyLinkComments,
                 shareMenuLabel = LocalFeedFlowStrings.current.menuCopyLink,
                 currentFeedFilter = currentFeedFilter,
+                swipeActions = swipeActions,
                 requestMoreItems = requestMoreItems,
                 onFeedItemClick = onFeedItemClick,
                 onBookmarkClick = onBookmarkClick,
@@ -126,6 +130,10 @@ private fun FeedWithContentViewPreview() {
             listState = LazyListState(),
             feedFontSizes = FeedFontSizes(),
             currentFeedFilter = FeedFilter.Timeline,
+            swipeActions = SwipeActions(
+                leftSwipeAction = SwipeActionType.NONE,
+                rightSwipeAction = SwipeActionType.NONE
+            ),
             updateReadStatus = { },
             onFeedItemClick = { },
             onBookmarkClick = { _, _ -> },

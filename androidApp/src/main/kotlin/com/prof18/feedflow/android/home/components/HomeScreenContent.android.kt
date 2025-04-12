@@ -14,6 +14,8 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
@@ -32,6 +34,7 @@ internal fun HomeScreenContent(
     feedFontSizes: FeedFontSizes,
     listState: LazyListState,
     currentFeedFilter: FeedFilter,
+    swipeActions: SwipeActions,
     isDrawerVisible: Boolean,
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
@@ -76,6 +79,7 @@ internal fun HomeScreenContent(
             feedItems = feedState,
             currentFeedFilter = currentFeedFilter,
             feedFontSizes = feedFontSizes,
+            swipeActions = swipeActions,
             lazyListState = listState,
             updateReadStatus = updateReadStatus,
             onFeedItemClick = onFeedItemClick,
@@ -103,6 +107,10 @@ private fun HomeScreeContentLoadingPreview() {
             feedFontSizes = FeedFontSizes(),
             listState = rememberLazyListState(),
             currentFeedFilter = FeedFilter.Timeline,
+            swipeActions = SwipeActions(
+                leftSwipeAction = SwipeActionType.NONE,
+                rightSwipeAction = SwipeActionType.NONE,
+            ),
             isDrawerVisible = true,
             updateReadStatus = {},
             onFeedItemClick = {},
@@ -130,6 +138,10 @@ private fun HomeScreeContentLoadedPreview() {
             feedFontSizes = FeedFontSizes(),
             listState = rememberLazyListState(),
             currentFeedFilter = FeedFilter.Timeline,
+            swipeActions = SwipeActions(
+                leftSwipeAction = SwipeActionType.NONE,
+                rightSwipeAction = SwipeActionType.NONE,
+            ),
             isDrawerVisible = true,
             updateReadStatus = {},
             onFeedItemClick = {},

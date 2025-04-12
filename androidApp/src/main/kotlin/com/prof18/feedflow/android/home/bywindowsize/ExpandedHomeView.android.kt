@@ -19,6 +19,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -37,6 +39,7 @@ internal fun ExpandedHomeView(
     snackbarHostState: SnackbarHostState,
     feedUpdateStatus: FeedUpdateStatus,
     feedFontSizes: FeedFontSizes,
+    swipeActions: SwipeActions,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
@@ -99,6 +102,7 @@ internal fun ExpandedHomeView(
             feedState = feedItems,
             feedFontSizes = feedFontSizes,
             currentFeedFilter = currentFeedFilter,
+            swipeActions = swipeActions,
             onAddFeedClick = onAddFeedClick,
             refreshData = refreshData,
             requestNewData = requestNewData,
@@ -131,6 +135,10 @@ private fun ExpandedHomeViewPreview() {
             feedUpdateStatus = inProgressFeedUpdateStatus,
             feedFontSizes = FeedFontSizes(),
             currentFeedFilter = FeedFilter.Timeline,
+            swipeActions = SwipeActions(
+                leftSwipeAction = SwipeActionType.NONE,
+                rightSwipeAction = SwipeActionType.NONE,
+            ),
             onSettingsButtonClicked = {},
             onAddFeedClick = {},
             onClearOldArticlesClicked = {},

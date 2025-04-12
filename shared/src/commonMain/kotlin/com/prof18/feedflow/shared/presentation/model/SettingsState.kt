@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.presentation.model
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 
 data class SettingsState(
@@ -13,4 +14,6 @@ data class SettingsState(
     val autoDeletePeriod: AutoDeletePeriod = AutoDeletePeriod.DISABLED,
     val isCrashReportingEnabled: Boolean = true,
     val syncPeriod: SyncPeriod = SyncPeriod.ONE_HOUR,
+    val leftSwipeActionType: SwipeActionType = SwipeActionType.NONE,
+    val rightSwipeActionType: SwipeActionType = SwipeActionType.NONE,
 )

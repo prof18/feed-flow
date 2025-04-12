@@ -48,6 +48,7 @@ kotlin {
                 implementation(compose.preview)
                 implementation(compose.materialIconsExtended)
                 implementation(libs.immutable.collections)
+                implementation(libs.saket.swipe)
             }
         }
 

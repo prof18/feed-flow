@@ -19,6 +19,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -37,6 +39,7 @@ internal fun CompactHomeView(
     feedUpdateStatus: FeedUpdateStatus,
     feedFontSizes: FeedFontSizes,
     currentFeedFilter: FeedFilter,
+    swipeActions: SwipeActions,
     onAddFeedClick: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
@@ -98,6 +101,7 @@ internal fun CompactHomeView(
             feedFontSizes = feedFontSizes,
             showDrawerMenu = true,
             currentFeedFilter = currentFeedFilter,
+            swipeActions = swipeActions,
             onDrawerMenuClick = {
                 scope.launch {
                     if (drawerState.isOpen) {
@@ -138,6 +142,10 @@ private fun CompactHomeViewPreview() {
             feedUpdateStatus = inProgressFeedUpdateStatus,
             feedFontSizes = FeedFontSizes(),
             currentFeedFilter = FeedFilter.Timeline,
+            swipeActions = SwipeActions(
+                leftSwipeAction = SwipeActionType.NONE,
+                rightSwipeAction = SwipeActionType.NONE,
+            ),
             onAddFeedClick = {},
             onSettingsButtonClicked = {},
             onClearOldArticlesClicked = {},

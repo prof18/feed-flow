@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,11 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActionType.NONE
+import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_BOOKMARK_STATUS
+import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_READ_STATUS
+import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -63,6 +69,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import me.saket.swipe.SwipeAction
+import me.saket.swipe.SwipeableActionsBox
 
 @Suppress("MagicNumber")
 @OptIn(FlowPreview::class)
@@ -73,6 +81,7 @@ fun FeedList(
     currentFeedFilter: FeedFilter,
     shareMenuLabel: String,
     shareCommentsMenuLabel: String,
+    swipeActions: SwipeActions,
     updateReadStatus: (Int) -> Unit,
     requestMoreItems: () -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
@@ -101,18 +110,50 @@ fun FeedList(
         itemsIndexed(
             items = feedItems,
         ) { index, item ->
-            FeedItemView(
+
+            val swipeToRight = swipeActions.rightSwipeAction.toSwipeAction(
                 feedItem = item,
-                index = index,
-                shareMenuLabel = shareMenuLabel,
-                shareCommentsMenuLabel = shareCommentsMenuLabel,
-                onFeedItemClick = onFeedItemClick,
-                onCommentClick = onCommentClick,
                 onBookmarkClick = onBookmarkClick,
                 onReadStatusClick = onReadStatusClick,
-                feedFontSize = feedFontSize,
-                onShareClick = onShareClick,
             )
+            val swipeToLeft = swipeActions.leftSwipeAction.toSwipeAction(
+                feedItem = item,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
+            )
+
+            if (swipeToRight == null && swipeToLeft == null) {
+                FeedItemView(
+                    feedItem = item,
+                    index = index,
+                    shareMenuLabel = shareMenuLabel,
+                    shareCommentsMenuLabel = shareCommentsMenuLabel,
+                    onFeedItemClick = onFeedItemClick,
+                    onCommentClick = onCommentClick,
+                    onBookmarkClick = onBookmarkClick,
+                    onReadStatusClick = onReadStatusClick,
+                    feedFontSize = feedFontSize,
+                    onShareClick = onShareClick,
+                )
+            } else {
+                SwipeableActionsBox(
+                    startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
+                    endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
+                ) {
+                    FeedItemView(
+                        feedItem = item,
+                        index = index,
+                        shareMenuLabel = shareMenuLabel,
+                        shareCommentsMenuLabel = shareCommentsMenuLabel,
+                        onFeedItemClick = onFeedItemClick,
+                        onCommentClick = onCommentClick,
+                        onBookmarkClick = onBookmarkClick,
+                        onReadStatusClick = onReadStatusClick,
+                        feedFontSize = feedFontSize,
+                        onShareClick = onShareClick,
+                    )
+                }
+            }
 
             if (index == feedItems.size - 1 && currentFeedFilter !is FeedFilter.Read) {
                 Box(
@@ -589,3 +630,45 @@ private fun ChangeReadStatusMenuItem(
         },
     )
 }
+
+@Composable
+private fun SwipeActionType.toSwipeAction(
+    feedItem: FeedItem,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+): SwipeAction? =
+    when (this) {
+        TOGGLE_READ_STATUS -> SwipeAction(
+            icon = rememberVectorPainter(
+                image = if (feedItem.isRead) {
+                    Icons.Default.MarkEmailUnread
+                } else {
+                    Icons.Default.MarkEmailRead
+                },
+            ),
+            background = MaterialTheme.colorScheme.surfaceContainerHighest,
+            onSwipe = {
+                onReadStatusClick(
+                    FeedItemId(feedItem.id),
+                    !feedItem.isRead,
+                )
+            },
+        )
+        TOGGLE_BOOKMARK_STATUS -> SwipeAction(
+            icon = rememberVectorPainter(
+                image = if (feedItem.isBookmarked) {
+                    Icons.Default.BookmarkRemove
+                } else {
+                    Icons.Default.BookmarkAdd
+                },
+            ),
+            background = MaterialTheme.colorScheme.surfaceContainerHighest,
+            onSwipe = {
+                onBookmarkClick(
+                    FeedItemId(feedItem.id),
+                    !feedItem.isBookmarked,
+                )
+            },
+        )
+        NONE -> null
+    }

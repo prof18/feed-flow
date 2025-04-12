@@ -16,6 +16,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.shared.ui.home.components.FeedItemView
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.style.Spacing

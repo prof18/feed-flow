@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.bywindowsize.CompactView
@@ -47,6 +48,7 @@ internal fun HomeScreen(
     val unReadCount by homeViewModel.unreadCountFlow.collectAsState(initial = 0)
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsState()
     val isDeleting by homeViewModel.isDeletingState.collectAsState()
+    val swipeActions by homeViewModel.swipeActions.collectAsState()
 
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
@@ -104,6 +106,7 @@ internal fun HomeScreen(
                 loadingState = loadingState,
                 lazyListState = listState,
                 feedFontSizes = feedFontSizes,
+                swipeActions = swipeActions,
                 onAddFeedClick = {
                     showDialog = true
                 },
@@ -174,6 +177,7 @@ internal fun HomeScreen(
                 lazyListState = listState,
                 unReadCount = unReadCount,
                 feedFontSizes = feedFontSizes,
+                swipeActions = swipeActions,
                 onAddFeedClick = {
                     showDialog = true
                 },
@@ -244,6 +248,7 @@ internal fun HomeScreen(
                 lazyListState = listState,
                 unReadCount = unReadCount,
                 feedFontSizes = feedFontSizes,
+                swipeActions = swipeActions,
                 onAddFeedClick = {
                     showDialog = true
                 },

@@ -24,6 +24,8 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.SwapVert
+import androidx.compose.material.icons.outlined.SwipeLeft
+import androidx.compose.material.icons.outlined.SwipeRight
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,9 +48,12 @@ import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.CrashlyticsHelper
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelector
+import com.prof18.feedflow.android.settings.components.SwipeActionDialog
 import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
@@ -152,6 +157,9 @@ fun SettingsScreen(
                 CrashlyticsHelper.setCollectionEnabled(enabled)
             }
         },
+        onSwipeActionSelected = { direction, action ->
+            settingsViewModel.updateSwipeAction(direction, action)
+        },
     )
 }
 
@@ -179,6 +187,7 @@ private fun SettingsScreenContent(
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onCrashReportingEnabled: (Boolean) -> Unit,
+    onSwipeActionSelected: (SwipeDirection, SwipeActionType) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -321,6 +330,26 @@ private fun SettingsScreenContent(
                 RemoveTitleFromDescSwitch(
                     isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
                     setRemoveTitleFromDescription = setRemoveTitleFromDescription,
+                )
+            }
+
+            item {
+                SwipeActionSelector(
+                    direction = SwipeDirection.LEFT,
+                    currentAction = settingsState.leftSwipeActionType,
+                    onActionSelected = { action ->
+                        onSwipeActionSelected(SwipeDirection.LEFT, action)
+                    },
+                )
+            }
+
+            item {
+                SwipeActionSelector(
+                    direction = SwipeDirection.RIGHT,
+                    currentAction = settingsState.rightSwipeActionType,
+                    onActionSelected = { action ->
+                        onSwipeActionSelected(SwipeDirection.RIGHT, action)
+                    },
                 )
             }
 
@@ -554,6 +583,66 @@ private fun SyncPeriodSelector(
 }
 
 @Composable
+private fun SwipeActionSelector(
+    direction: SwipeDirection,
+    currentAction: SwipeActionType,
+    onActionSelected: (SwipeActionType) -> Unit,
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val strings = LocalFeedFlowStrings.current
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable { showDialog = true }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            if (direction == SwipeDirection.LEFT) {
+                Icons.Outlined.SwipeLeft
+            } else {
+                Icons.Outlined.SwipeRight
+            },
+            contentDescription = null,
+        )
+
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = if (direction == SwipeDirection.LEFT) {
+                    strings.settingsLeftSwipeAction
+                } else {
+                    strings.settingsRightSwipeAction
+                },
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = when (currentAction) {
+                    SwipeActionType.TOGGLE_READ_STATUS -> strings.settingsSwipeActionToggleRead
+                    SwipeActionType.TOGGLE_BOOKMARK_STATUS -> strings.settingsSwipeActionToggleBookmark
+                    SwipeActionType.NONE -> strings.settingsSwipeActionNone
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+
+    if (showDialog) {
+        SwipeActionDialog(
+            direction = direction,
+            currentAction = currentAction,
+            onActionSelected = onActionSelected,
+            dismissDialog = { showDialog = false },
+        )
+    }
+}
+
+@Composable
 private fun AutoDeletePeriodSelector(
     currentPeriod: AutoDeletePeriod,
     onPeriodSelected: (AutoDeletePeriod) -> Unit,
@@ -653,6 +742,7 @@ private fun SettingsScreenPreview() {
             onAutoDeletePeriodSelected = {},
             onCrashReportingEnabled = {},
             onSyncPeriodSelected = {},
+            onSwipeActionSelected = { _, _ -> },
             showCrashReporting = true,
         )
     }

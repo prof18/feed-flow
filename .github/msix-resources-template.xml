@@ -15,4 +15,6 @@
   <Resource Language="uk" />
   <Resource Language="vi" />
   <Resource Language="zh-cn" />
-</Resources> 
+  <Resource Language="jp" />
+  <Resource Language="cs" />
+</Resources>

@@ -12,6 +12,8 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
@@ -30,6 +32,7 @@ internal fun HomeScreenContent(
     listState: LazyListState,
     unReadCount: Long,
     currentFeedFilter: FeedFilter,
+    swipeActions: SwipeActions,
     updateReadStatus: (Int) -> Unit,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
@@ -79,6 +82,7 @@ internal fun HomeScreenContent(
                 listState = listState,
                 currentFeedFilter = currentFeedFilter,
                 feedFontSizes = feedFontSizes,
+                swipeActions = swipeActions,
                 updateReadStatus = updateReadStatus,
                 onFeedItemClick = onFeedItemClick,
                 onBookmarkClick = onBookmarkClick,
@@ -103,6 +107,10 @@ private fun HomeScreenContentPreview() {
             feedFontSizes = FeedFontSizes(),
             unReadCount = 42,
             currentFeedFilter = FeedFilter.Timeline,
+            swipeActions = SwipeActions(
+                leftSwipeAction = SwipeActionType.NONE,
+                rightSwipeAction = SwipeActionType.NONE
+            ),
             onRefresh = {},
             updateReadStatus = {},
             onFeedItemClick = {},

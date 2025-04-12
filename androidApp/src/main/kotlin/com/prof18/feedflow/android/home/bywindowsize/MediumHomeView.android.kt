@@ -24,6 +24,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -42,6 +44,7 @@ internal fun MediumHomeView(
     snackbarHostState: SnackbarHostState,
     feedUpdateStatus: FeedUpdateStatus,
     feedFontSizes: FeedFontSizes,
+    swipeActions: SwipeActions,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
@@ -113,6 +116,7 @@ internal fun MediumHomeView(
             showDrawerMenu = true,
             isDrawerMenuOpen = isDrawerMenuFullVisible,
             currentFeedFilter = currentFeedFilter,
+            swipeActions = swipeActions,
             onDrawerMenuClick = {
                 isDrawerMenuFullVisible = !isDrawerMenuFullVisible
             },
@@ -146,6 +150,10 @@ private fun MediumHomeViewPreview() {
             snackbarHostState = SnackbarHostState(),
             feedUpdateStatus = inProgressFeedUpdateStatus,
             currentFeedFilter = FeedFilter.Timeline,
+            swipeActions = SwipeActions(
+                leftSwipeAction = SwipeActionType.NONE,
+                rightSwipeAction = SwipeActionType.NONE,
+            ),
             feedFontSizes = FeedFontSizes(),
             onSettingsButtonClicked = {},
             onAddFeedClick = {},

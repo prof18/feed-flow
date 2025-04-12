@@ -51,6 +51,7 @@ internal fun HomeScreen(
     val unReadCount by homeViewModel.unreadCountFlow.collectAsStateWithLifecycle(initialValue = 0)
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsStateWithLifecycle()
     val isDeleting by homeViewModel.isDeletingState.collectAsStateWithLifecycle()
+    val swipeActions by homeViewModel.swipeActions.collectAsStateWithLifecycle()
 
     if (isDeleting) {
         DeleteOldFeedDialog()
@@ -109,6 +110,7 @@ internal fun HomeScreen(
                 feedUpdateStatus = loadingState,
                 currentFeedFilter = currentFeedFilter,
                 feedFontSizes = feedFontSizes,
+                swipeActions = swipeActions,
                 onAddFeedClick = {
                     showBottomSheet = true
                 },
@@ -178,6 +180,7 @@ internal fun HomeScreen(
                 snackbarHostState = snackbarHostState,
                 feedUpdateStatus = loadingState,
                 feedFontSizes = feedFontSizes,
+                swipeActions = swipeActions,
                 onAddFeedClick = {
                     showBottomSheet = true
                 },
@@ -247,6 +250,7 @@ internal fun HomeScreen(
                 snackbarHostState = snackbarHostState,
                 feedUpdateStatus = loadingState,
                 feedFontSizes = feedFontSizes,
+                swipeActions = swipeActions,
                 onAddFeedClick = {
                     showBottomSheet = true
                 },

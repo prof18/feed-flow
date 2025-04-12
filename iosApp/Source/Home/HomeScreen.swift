@@ -43,6 +43,9 @@ struct HomeScreen: View {
     @State
     var isDeletingFeed: Bool = false
 
+    @State
+    var swipeActions: SwipeActions = .init(leftSwipeAction: .none, rightSwipeAction: .none)
+
     @Binding
     var toggleListScroll: Bool
 
@@ -70,6 +73,7 @@ struct HomeScreen: View {
             showFeedSyncButton: $showFeedSyncButton,
             columnVisibility: $columnVisibility,
             feedFontSizes: $feedFontSizes,
+            swipeActions: $swipeActions,
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
@@ -179,6 +183,11 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.feedFontSizeState {
                 self.feedFontSizes = state
+            }
+        }
+        .task {
+            for await state in homeViewModel.swipeActions {
+                self.swipeActions = state
             }
         }
         .onChange(of: scenePhase) {

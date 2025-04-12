@@ -10,6 +10,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
@@ -34,6 +36,8 @@ fun FrameWindowScope.FeedFlowMenuBar(
     setReaderMode: (Boolean) -> Unit,
     onFeedFontScaleClick: () -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
+    onLeftSwipeActionSelected: (SwipeActionType) -> Unit,
+    onRightSwipeActionSelected: (SwipeActionType) -> Unit,
     setCrashReportingEnabled: (Boolean) -> Unit,
 ) {
     MenuBar {
@@ -150,6 +154,42 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneMonth,
                     selected = settingsState.autoDeletePeriod == AutoDeletePeriod.ONE_MONTH,
                     onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_MONTH) },
+                )
+            }
+
+            Menu(LocalFeedFlowStrings.current.settingsLeftSwipeAction) {
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsSwipeActionNone,
+                    selected = settingsState.leftSwipeActionType == SwipeActionType.NONE,
+                    onClick = { onLeftSwipeActionSelected(SwipeActionType.NONE) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsSwipeActionToggleRead,
+                    selected = settingsState.leftSwipeActionType == SwipeActionType.TOGGLE_READ_STATUS,
+                    onClick = { onLeftSwipeActionSelected(SwipeActionType.TOGGLE_READ_STATUS) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsSwipeActionToggleBookmark,
+                    selected = settingsState.leftSwipeActionType == SwipeActionType.TOGGLE_BOOKMARK_STATUS,
+                    onClick = { onLeftSwipeActionSelected(SwipeActionType.TOGGLE_BOOKMARK_STATUS) },
+                )
+            }
+
+            Menu(LocalFeedFlowStrings.current.settingsRightSwipeAction) {
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsSwipeActionNone,
+                    selected = settingsState.rightSwipeActionType == SwipeActionType.NONE,
+                    onClick = { onRightSwipeActionSelected(SwipeActionType.NONE) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsSwipeActionToggleRead,
+                    selected = settingsState.rightSwipeActionType == SwipeActionType.TOGGLE_READ_STATUS,
+                    onClick = { onRightSwipeActionSelected(SwipeActionType.TOGGLE_READ_STATUS) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsSwipeActionToggleBookmark,
+                    selected = settingsState.rightSwipeActionType == SwipeActionType.TOGGLE_BOOKMARK_STATUS,
+                    onClick = { onRightSwipeActionSelected(SwipeActionType.TOGGLE_BOOKMARK_STATUS) },
                 )
             }
         }

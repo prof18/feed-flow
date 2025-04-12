@@ -21,6 +21,8 @@ import cafe.adriel.voyager.transitions.ScaleTransition
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.core.model.SyncResult
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
@@ -381,6 +383,12 @@ fun main() = application {
                                 },
                                 onAutoDeletePeriodSelected = { period ->
                                     settingsViewModel.updateAutoDeletePeriod(period)
+                                },
+                                onLeftSwipeActionSelected = { action ->
+                                    settingsViewModel.updateSwipeAction(SwipeDirection.LEFT, action)
+                                },
+                                onRightSwipeActionSelected = { action ->
+                                    settingsViewModel.updateSwipeAction(SwipeDirection.RIGHT, action)
                                 },
                                 setCrashReportingEnabled = { enabled ->
                                     settingsViewModel.updateCrashReporting(enabled)

@@ -27,6 +27,8 @@ struct SettingsScreen: View {
     @State private var isHideImagesEnabled = false
     @State private var autoDeletePeriod: AutoDeletePeriod = .disabled
     @State private var isCrashReportingEnabled = true
+    @State private var leftSwipeActionType: SwipeActionType = .none
+    @State private var rightSwipeActionType: SwipeActionType = .none
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor = 0.0
 
@@ -46,6 +48,8 @@ struct SettingsScreen: View {
                     isHideImagesEnabled = state.isHideImagesEnabled
                     autoDeletePeriod = state.autoDeletePeriod
                     isCrashReportingEnabled = state.isCrashReportingEnabled
+                    leftSwipeActionType = state.leftSwipeActionType
+                    rightSwipeActionType = state.rightSwipeActionType
                 }
             }
             .task {
@@ -93,6 +97,12 @@ struct SettingsScreen: View {
                     Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(isCrashReportingEnabled)
                 #endif
             }
+            .onChange(of: leftSwipeActionType) {
+                vmStoreOwner.instance.updateSwipeAction(direction: .left, action: leftSwipeActionType)
+            }
+            .onChange(of: rightSwipeActionType) {
+                vmStoreOwner.instance.updateSwipeAction(direction: .right, action: rightSwipeActionType)
+            }
     }
 
     private var settingsContent: some View {
@@ -114,6 +124,8 @@ struct SettingsScreen: View {
                     isHideDescriptionEnabled: $isHideDescriptionEnabled,
                     isHideImagesEnabled: $isHideImagesEnabled,
                     isRemoveTitleFromDescriptionEnabled: $isRemoveTitleFromDescriptionEnabled,
+                    leftSwipeAction: $leftSwipeActionType,
+                    rightSwipeAction: $rightSwipeActionType,
                     onScaleFactorChange: { newValue in
                         vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
                     }
@@ -228,6 +240,8 @@ private struct FeedFontSection: View {
     @Binding var isHideDescriptionEnabled: Bool
     @Binding var isHideImagesEnabled: Bool
     @Binding var isRemoveTitleFromDescriptionEnabled: Bool
+    @Binding var leftSwipeAction: SwipeActionType
+    @Binding var rightSwipeAction: SwipeActionType
     let onScaleFactorChange: (Double) -> Void
 
     var body: some View {
@@ -310,6 +324,28 @@ private struct FeedFontSection: View {
                 Label(feedFlowStrings.settingsHideDuplicatedTitleFromDesc, systemImage: "eye.slash")
             }.onTapGesture {
                 isRemoveTitleFromDescriptionEnabled.toggle()
+            }
+
+            Picker(selection: $leftSwipeAction) {
+                Text(feedFlowStrings.settingsSwipeActionToggleRead)
+                    .tag(SwipeActionType.toggleReadStatus)
+                Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
+                    .tag(SwipeActionType.toggleBookmarkStatus)
+                Text(feedFlowStrings.settingsSwipeActionNone)
+                    .tag(SwipeActionType.none)
+            } label: {
+                Label(feedFlowStrings.settingsLeftSwipeAction, systemImage: "arrow.left.to.line")
+            }
+
+            Picker(selection: $rightSwipeAction) {
+                Text(feedFlowStrings.settingsSwipeActionToggleRead)
+                    .tag(SwipeActionType.toggleReadStatus)
+                Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
+                    .tag(SwipeActionType.toggleBookmarkStatus)
+                Text(feedFlowStrings.settingsSwipeActionNone)
+                    .tag(SwipeActionType.none)
+            } label: {
+                Label(feedFlowStrings.settingsRightSwipeAction, systemImage: "arrow.right.to.line")
             }
         }
     }

@@ -18,6 +18,8 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
@@ -36,6 +38,7 @@ internal fun HomeScaffold(
     feedState: ImmutableList<FeedItem>,
     feedFontSizes: FeedFontSizes,
     currentFeedFilter: FeedFilter,
+    swipeActions: SwipeActions,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
     onDrawerMenuClick: () -> Unit,
@@ -103,6 +106,7 @@ internal fun HomeScaffold(
             listState = listState,
             feedFontSizes = feedFontSizes,
             currentFeedFilter = currentFeedFilter,
+            swipeActions = swipeActions,
             onRefresh = {
                 refreshData()
             },
@@ -147,6 +151,10 @@ private fun HomeScaffoldPreview() {
             feedState = feedItemsForPreview,
             feedFontSizes = FeedFontSizes(),
             currentFeedFilter = FeedFilter.Timeline,
+            swipeActions = SwipeActions(
+                leftSwipeAction = SwipeActionType.NONE,
+                rightSwipeAction = SwipeActionType.NONE,
+            ),
             onAddFeedClick = { },
             onSettingsButtonClicked = { },
             onClearOldArticlesClicked = { },

@@ -191,4 +191,12 @@
     <string name="widget_configuration_description">Chọn tần suất kiểm tra bài viết mới ở chế độ nền và cập nhật tiện ích.</string>
     <string name="widget_configuration_confirm">Thêm Widget</string>
     <string name="file_menu">File</string>
+    <string name="settings_sync_period_thirty_minutes">Mỗi 30 phút</string>
+    <string name="settings_sync_period_one_day">Mỗi ngày</string>
+    <string name="settings_left_swipe_action">Vuốt trái</string>
+    <string name="settings_right_swipe_action">Vuốt phải</string>
+    <string name="settings_swipe_action_toggle_read">Chuyển đổi đọc</string>
+    <string name="settings_swipe_action_none">Không dùng</string>
+    <string name="settings_sync_period_fifteen_minutes">Mỗi 15 phút</string>
+    <string name="settings_swipe_action_toggle_bookmark">Chuyển đổi lưu</string>
 </resources>

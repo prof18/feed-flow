@@ -4,7 +4,7 @@
     <string name="feed_url_placeholder">https://meinwunschblog.com/feed</string>
     <string name="feed_add_in_progress_message">Bitte warte, die Verfügbarkeit aller Feeds wird geprüft. Der Vorgang kann eine Weile dauern, je nach der Anzahl der Feeds, die importiert werden</string>
     <string name="drawer_title_timeline">Zeitleiste</string>
-    <string name="force_feed_refresh">Feeds aktualisieren</string>
+    <string name="force_feed_refresh">Feeds auffrischen erzwingen</string>
     <string name="database_error">Beim Abrufen der Feeds gab es ein Problem. Bitte versuche es erneut oder starte die App neu :(</string>
     <string name="no_category">Ohne Kategorie</string>
     <string name="import_dialog_title">OPML-Datei auswählen</string>
@@ -13,7 +13,7 @@
     <string name="no_feeds_found_message">Keine Feeds gefunden. Füge bitte einen neuen hinzu!</string>
     <string name="no_feeds_add_one_message">Keine Feeds gefunden, bitte füge einen hinzu</string>
     <string name="new_release_available_link">Hier herunterladen</string>
-    <string name="refresh_feeds">Feeds aktualisieren</string>
+    <string name="refresh_feeds">Feeds auffrischen</string>
     <string name="done_button">OK</string>
     <string name="issue_content_template">Bitte beschreibe den Fehler und gib einen Link zu dem RSS-Feed an, der den Fehler verursacht. Wenn möglich, hänge bitte einen Screenshot und die OPML-Datei an</string>
     <string name="about_button">Über</string>
@@ -191,4 +191,12 @@
     <string name="widget_configuration_confirm">Widget hinzufügen</string>
     <string name="widget_configuration_description">Wie oft soll im Hintergrund auf neue Nachrichten geprüft und das Widget aktualisiert werden.</string>
     <string name="file_menu">Datei</string>
+    <string name="settings_swipe_action_toggle_bookmark">Lesezeichen umschalten</string>
+    <string name="settings_swipe_action_none">Deaktiviert</string>
+    <string name="settings_sync_period_fifteen_minutes">Alle 15 Minuten</string>
+    <string name="settings_left_swipe_action">Nach links wischen</string>
+    <string name="settings_right_swipe_action">Nach rechts wischen</string>
+    <string name="settings_swipe_action_toggle_read">Lesen umschalten</string>
+    <string name="settings_sync_period_one_day">Jeden Tag</string>
+    <string name="settings_sync_period_thirty_minutes">Alle 30 Minuten</string>
 </resources>

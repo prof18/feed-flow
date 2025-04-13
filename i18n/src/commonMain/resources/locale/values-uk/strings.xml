@@ -191,4 +191,12 @@
     <string name="widget_configuration_description">Виберіть, як часто перевіряти наявність нових статей у фоновому режимі та оновлювати віджет.</string>
     <string name="widget_configuration_confirm">Додати віджет</string>
     <string name="file_menu">Файл</string>
+    <string name="settings_left_swipe_action">Свайп ліворуч</string>
+    <string name="settings_swipe_action_toggle_read">Перемкнути читання</string>
+    <string name="settings_swipe_action_toggle_bookmark">Перемкнути закладку</string>
+    <string name="settings_sync_period_fifteen_minutes">Кожні 15 хвилин</string>
+    <string name="settings_sync_period_thirty_minutes">Кожні 30 хвилин</string>
+    <string name="settings_sync_period_one_day">Кожен день</string>
+    <string name="settings_right_swipe_action">Свайп праворуч</string>
+    <string name="settings_swipe_action_none">Вимкнено</string>
 </resources>

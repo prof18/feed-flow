@@ -191,4 +191,12 @@
     <string name="widget_configuration_confirm">添加微件</string>
     <string name="widget_configuration_description">选择在后台检查新文章和更新微件的频率。</string>
     <string name="file_menu">文件</string>
+    <string name="settings_sync_period_fifteen_minutes">每 15 分钟</string>
+    <string name="settings_sync_period_thirty_minutes">每 30 分钟</string>
+    <string name="settings_sync_period_one_day">每天</string>
+    <string name="settings_left_swipe_action">向左滑动</string>
+    <string name="settings_right_swipe_action">向右滑动</string>
+    <string name="settings_swipe_action_toggle_read">切换已读</string>
+    <string name="settings_swipe_action_toggle_bookmark">切换收藏</string>
+    <string name="settings_swipe_action_none">已禁用</string>
 </resources>

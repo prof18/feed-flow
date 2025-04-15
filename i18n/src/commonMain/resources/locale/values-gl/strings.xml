@@ -191,4 +191,12 @@
     <string name="widget_configuration_title">Configuración do trebello</string>
     <string name="widget_configuration_confirm">Engadir trebello</string>
     <string name="file_menu">Ficheiro</string>
+    <string name="settings_sync_period_fifteen_minutes">Cada 15 minutos</string>
+    <string name="settings_sync_period_thirty_minutes">Cada 30 minutos</string>
+    <string name="settings_sync_period_one_day">Cada día</string>
+    <string name="settings_left_swipe_action">Desprazar á esquerda</string>
+    <string name="settings_right_swipe_action">Desprazar á dereita</string>
+    <string name="settings_swipe_action_toggle_read">Cambiar estado</string>
+    <string name="settings_swipe_action_toggle_bookmark">Cambio no marcador</string>
+    <string name="settings_swipe_action_none">Desactivado</string>
 </resources>

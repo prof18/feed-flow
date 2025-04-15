@@ -191,4 +191,12 @@
     <string name="widget_configuration_title">Конфигурация на приспособление</string>
     <string name="widget_configuration_description">Изберете колко често да проверявате за нови статии на заден план и да актуализирате приспособлението.</string>
     <string name="file_menu">Файл</string>
+    <string name="settings_right_swipe_action">Плъзнете надясно</string>
+    <string name="settings_swipe_action_toggle_bookmark">Превключване към отметка</string>
+    <string name="settings_swipe_action_none">Забранено</string>
+    <string name="settings_sync_period_fifteen_minutes">На всеки 15 минути</string>
+    <string name="settings_sync_period_thirty_minutes">На всеки 30 минути</string>
+    <string name="settings_sync_period_one_day">Всеки ден</string>
+    <string name="settings_left_swipe_action">Плъзнете наляво</string>
+    <string name="settings_swipe_action_toggle_read">Превключване към прочетено</string>
 </resources>

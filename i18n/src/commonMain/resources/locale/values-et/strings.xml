@@ -196,4 +196,12 @@
     <string name="settings_sync_period_never">Mitte kunagi</string>
     <string name="widget_configuration_description">Vali uute artiklite taustal kontrollimise ning järgneva vidinas kuvatavate andmete uuenduse sagedus.</string>
     <string name="file_menu">Fail</string>
+    <string name="settings_sync_period_thirty_minutes">Iga 30 minuti järel</string>
+    <string name="settings_sync_period_one_day">Kord päevas</string>
+    <string name="settings_sync_period_fifteen_minutes">Iga 15 minuti järel</string>
+    <string name="settings_left_swipe_action">Vasakule viipamine</string>
+    <string name="settings_right_swipe_action">Paremale viipamine</string>
+    <string name="settings_swipe_action_toggle_read">Lülita loetuks märkimine sisse/välja</string>
+    <string name="settings_swipe_action_toggle_bookmark">Lülita järjehoidjaks märkimine sisse/välja</string>
+    <string name="settings_swipe_action_none">Pole kasutusel</string>
 </resources>

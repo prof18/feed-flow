@@ -16,6 +16,7 @@ import com.prof18.feedflow.shared.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.domain.model.StartedFeedUpdateStatus
+import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
@@ -23,7 +24,6 @@ import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -41,6 +41,9 @@ class FeedFetcherRepository internal constructor(
     private val rssParser: RssParser,
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
+
+    // todo: remove after testing
+    private val notifier: Notifier,
 ) {
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
@@ -49,13 +52,41 @@ class FeedFetcherRepository internal constructor(
     suspend fun fetchFeeds(
         forceRefresh: Boolean = false,
         isFirstLaunch: Boolean = false,
+        isFetchingFromBackground: Boolean = false,
     ) {
         return withContext(dispatcherProvider.io) {
+            logger.d { ">>> ARONNE" }
             feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
             when {
-                gReaderRepository.isAccountSet() -> fetchFeedsWithGReader()
-                else -> fetchFeedsWithRssParser(forceRefresh, isFirstLaunch)
+                gReaderRepository.isAccountSet() -> {
+                    fetchFeedsWithGReader()
+
+                    logger.d { "AAAA" }
+                    val itemsToNotify = databaseHelper.getFeedSourceToNotify()
+                    notifier.showNewArticlesNotification(itemsToNotify)
+                    databaseHelper.markFeedItemsAsNotified()
+
+                    // TODO: restore after testing
+//            if (!isFetchingFromBackground) {
+//                databaseHelper.markFeedItemsAsNotified()
+//            }
+                }
+                else -> {
+                    fetchFeedsWithRssParser(forceRefresh, isFirstLaunch)
+
+                    logger.d { "AAAA" }
+                    val itemsToNotify = databaseHelper.getFeedSourceToNotify()
+                    notifier.showNewArticlesNotification(itemsToNotify)
+                    databaseHelper.markFeedItemsAsNotified()
+
+                    // TODO: restore after testing
+//            if (!isFetchingFromBackground) {
+//                databaseHelper.markFeedItemsAsNotified()
+//            }
+                }
             }
+
+
         }
     }
 

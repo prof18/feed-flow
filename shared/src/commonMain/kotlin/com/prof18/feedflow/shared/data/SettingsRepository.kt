@@ -29,6 +29,9 @@ class SettingsRepository(
     )
     val swipeActions: StateFlow<SwipeActions> = swipeActionsMutableFlow.asStateFlow()
 
+    private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
+    val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
+
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
@@ -117,8 +120,10 @@ class SettingsRepository(
         settings.getString(SettingsFields.SYNC_PERIOD.name, SyncPeriod.NEVER.name)
             .let { SyncPeriod.valueOf(it) }
 
-    fun setSyncPeriod(period: SyncPeriod) =
-        settings.set(SettingsFields.SYNC_PERIOD.name, period.name)
+    fun setSyncPeriod(period: SyncPeriod) {
+        settings[SettingsFields.SYNC_PERIOD.name] = period.name
+        syncPeriodMutableFlow.update { period }
+    }
 
     fun getFirstInstallationDate(): Long {
         val currentValue = settings.getLongOrNull(SettingsFields.FIRST_INSTALLATION_DATE.name)
@@ -170,7 +175,6 @@ class SettingsRepository(
         }
         settings[fieldName] = action.name
 
-        // Update the flow with the new swipe actions
         swipeActionsMutableFlow.update { currentSwipeActions ->
             when (direction) {
                 SwipeDirection.LEFT -> currentSwipeActions.copy(leftSwipeAction = action)

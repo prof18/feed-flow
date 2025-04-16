@@ -199,4 +199,20 @@
     <string name="settings_swipe_action_toggle_read">Toggle read</string>
     <string name="settings_swipe_action_toggle_bookmark">Toggle bookmark</string>
     <string name="settings_swipe_action_none">Disabled</string>
+    <string name="settings_notification_no_feed">Looks like you haven't added any feeds yet. Add some to start receiving notifications!</string>
+    <string name="settings_notification_check_period">Notification check frequency</string>
+    <string name="settings_notification_check_period_desc">Choose how often to check for new article notifications</string>
+    <string name="settings_title_notifications">Notifications</string>
+    <string name="settings_notifications_enable_all_title">Enable All Notifications</string>
+    <string name="notification_channel_description">Notifications for new articles in your feeds</string>
+    <string name="settings_notifications_permission_status_title">Permission Status</string>
+    <string name="settings_notifications_permission_status_granted">Granted</string>
+    <string name="settings_notifications_permission_status_denied">Denied</string>
+    <string name="settings_notifications_permission_request_button">Request Permission</string>
+    <string name="new_articles_notification_title">New articles available</string>
+    <string name="notification_channel_name">New Articles</string>
+    <string name="notification_channel_description">Notifications for new articles in your feeds</string>
+    <string name="new_articles_notification_content">New articles from "%s"</string>
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_warning_reliability">Notifications are checked on your device, but may not always occur reliably due to system limitations.</string>
 </resources>

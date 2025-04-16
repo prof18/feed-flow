@@ -10,4 +10,5 @@ data class FeedSource(
     val linkOpeningPreference: LinkOpeningPreference,
     val isHiddenFromTimeline: Boolean,
     val isPinned: Boolean,
+    val isNotificationEnabled: Boolean,
 )

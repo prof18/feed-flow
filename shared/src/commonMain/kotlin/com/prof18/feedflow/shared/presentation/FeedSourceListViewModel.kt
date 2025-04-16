@@ -167,6 +167,7 @@ class FeedSourceListViewModel internal constructor(
                 preference = feedSource.linkOpeningPreference,
                 isHidden = feedSource.isHiddenFromTimeline,
                 isPinned = !feedSource.isPinned,
+                isNotificationEnabled = feedSource.isNotificationEnabled,
             )
         }
     }

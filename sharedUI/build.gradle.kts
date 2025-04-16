@@ -49,6 +49,7 @@ kotlin {
                 implementation(compose.materialIconsExtended)
                 implementation(libs.immutable.collections)
                 implementation(libs.saket.swipe)
+                implementation(libs.components.ui.tooling.preview)
             }
         }
 
@@ -74,3 +75,7 @@ android {
     }
 }
 
+// Android preview support
+dependencies {
+    debugImplementation(compose.uiTooling)
+}

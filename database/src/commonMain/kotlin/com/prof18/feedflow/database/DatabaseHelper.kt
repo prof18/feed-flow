@@ -15,6 +15,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
@@ -23,6 +24,7 @@ import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.db.GetFeedSourcesWithUnreadCount
 import com.prof18.feedflow.db.Search
+import com.prof18.feedflow.db.SelectFeedSourceById
 import com.prof18.feedflow.db.SelectFeedUrls
 import com.prof18.feedflow.db.SelectFeeds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -51,6 +53,16 @@ class DatabaseHelper(
             .executeAsList()
             .map(::transformToFeedSource)
     }
+
+    suspend fun getFeedSource(feedSourceId: String): FeedSource? =
+        withContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries
+                .selectFeedSourceById(feedSourceId)
+                .executeAsOneOrNull()
+                ?.let { feedSource ->
+                    transformToFeedSource(feedSource)
+                }
+        }
 
     fun getFeedSourcesFlow(): Flow<List<FeedSource>> =
         dbRef.feedSourceQueries
@@ -424,12 +436,14 @@ class DatabaseHelper(
         preference: LinkOpeningPreference,
         isHidden: Boolean,
         isPinned: Boolean,
+        isNotificationEnabled: Boolean,
     ) = dbRef.transactionWithContext(backgroundDispatcher) {
         dbRef.feedSourcePreferencesQueries.insertPreference(
             feed_source_id = feedSourceId,
             link_opening_preference = preference,
             is_hidden = isHidden,
             is_pinned = isPinned,
+            notifications_enabled = isNotificationEnabled,
         )
     }
 
@@ -455,6 +469,7 @@ class DatabaseHelper(
                     isHiddenFromTimeline = feedSource.is_hidden ?: false,
                     linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
                     isPinned = feedSource.is_pinned ?: false,
+                    isNotificationEnabled = feedSource.notifications_enabled ?: false,
                 )
             }
     }
@@ -472,6 +487,61 @@ class DatabaseHelper(
                 )
             }
     }
+
+    suspend fun updateNotificationEnabledStatus(feedSourceId: String, enabled: Boolean) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            val feedSourcePreference = dbRef.feedSourcePreferencesQueries
+                .getPreference(feedSourceId)
+                .executeAsOneOrNull()
+            if (feedSourcePreference == null) {
+                dbRef.feedSourcePreferencesQueries.insertNotificationEnabledPreference(
+                    feed_source_id = feedSourceId,
+                    notifications_enabled = enabled,
+                )
+            } else {
+                dbRef.feedSourcePreferencesQueries.updateNotificationEnabledStatus(
+                    feedSourceId = feedSourceId,
+                    enabled = enabled,
+                )
+            }
+        }
+
+    suspend fun updateAllNotificationsEnabledStatus(enabled: Boolean) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            val feedSources = dbRef.feedSourceQueries.selectAllUrlHashes().executeAsList()
+            feedSources.forEach { feedSourceId ->
+                val feedSourcePreference = dbRef.feedSourcePreferencesQueries
+                    .getPreference(feedSourceId)
+                    .executeAsOneOrNull()
+                if (feedSourcePreference == null) {
+                    dbRef.feedSourcePreferencesQueries.insertNotificationEnabledPreference(
+                        feed_source_id = feedSourceId,
+                        notifications_enabled = enabled,
+                    )
+                } else {
+                    dbRef.feedSourcePreferencesQueries.updateNotificationEnabledStatus(
+                        feedSourceId = feedSourceId,
+                        enabled = enabled,
+                    )
+                }
+            }
+        }
+
+    suspend fun getFeedSourceToNotify(): List<FeedSourceToNotify> = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.selectFeedSourceToNotify()
+            .executeAsList()
+            .map { item ->
+                FeedSourceToNotify(
+                    feedSourceId = item.feed_source_id,
+                    feedSourceTitle = item.feed_source_title,
+                )
+            }
+    }
+
+    suspend fun markFeedItemsAsNotified() =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.markFeedItemsNotified()
+        }
 
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
@@ -570,6 +640,31 @@ class DatabaseHelper(
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
+            isNotificationEnabled = feedSource.notifications_enabled ?: false,
+        )
+    }
+
+    private fun transformToFeedSource(feedSource: SelectFeedSourceById): FeedSource {
+        val category = if (feedSource.category_title != null && feedSource.category_id != null) {
+            FeedSourceCategory(
+                id = requireNotNull(feedSource.category_id),
+                title = requireNotNull(feedSource.category_title),
+            )
+        } else {
+            null
+        }
+
+        return FeedSource(
+            id = feedSource.url_hash,
+            url = feedSource.url,
+            title = feedSource.feed_source_title,
+            category = category,
+            lastSyncTimestamp = feedSource.last_sync_timestamp,
+            logoUrl = feedSource.feed_source_logo_url,
+            linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+            isHiddenFromTimeline = feedSource.is_hidden ?: false,
+            isPinned = feedSource.is_pinned ?: false,
+            isNotificationEnabled = feedSource.notifications_enabled ?: false,
         )
     }
 
@@ -593,6 +688,7 @@ class DatabaseHelper(
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
+            isNotificationEnabled = feedSource.notifications_enabled ?: false,
         )
     }
 

@@ -260,9 +260,15 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun updateFeedSourceFilter(feedSourceId: String) {
+        viewModelScope.launch {
+            feedStateRepository.updateFeedSourceFilter(feedSourceId)
+            lastUpdateIndex = 0
+        }
+    }
+
     fun onFeedFilterSelected(selectedFeedFilter: FeedFilter) {
         viewModelScope.launch {
-            feedStateRepository.getFeeds()
             feedStateRepository.updateFeedFilter(selectedFeedFilter)
             lastUpdateIndex = 0
         }
@@ -287,6 +293,7 @@ class HomeViewModel internal constructor(
                 preference = feedSource.linkOpeningPreference,
                 isHidden = feedSource.isHiddenFromTimeline,
                 isPinned = !feedSource.isPinned,
+                isNotificationEnabled = feedSource.isNotificationEnabled,
             )
         }
     }

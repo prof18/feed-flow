@@ -41,6 +41,7 @@ internal fun Search.toFeedItem(dateFormatter: DateFormatter, removeTitleFromDesc
         linkOpeningPreference = feed_source_link_opening_preference ?: LinkOpeningPreference.DEFAULT,
         isHiddenFromTimeline = false,
         isPinned = false,
+        isNotificationEnabled = false,
     ),
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {

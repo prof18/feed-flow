@@ -14,4 +14,5 @@ fun ParsedFeedSource.toFeedSource() = FeedSource(
     linkOpeningPreference = LinkOpeningPreference.DEFAULT,
     isHiddenFromTimeline = false,
     isPinned = false,
+    isNotificationEnabled = false,
 )

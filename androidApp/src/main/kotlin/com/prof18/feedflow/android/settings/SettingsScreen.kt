@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MarkAsUnread
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.SwipeLeft
@@ -84,6 +85,7 @@ fun SettingsScreen(
     onAboutClick: () -> Unit,
     navigateToImportExport: () -> Unit,
     navigateToAccounts: () -> Unit,
+    navigateToNotifications: () -> Unit,
 ) {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val feedDownloadWorkerEnqueuer = koinInject<FeedDownloadWorkerEnqueuer>()
@@ -101,16 +103,16 @@ fun SettingsScreen(
 
     SettingsScreenContent(
         browsers = browserListState,
-        onFeedListClick = onFeedListClick,
-        onAddFeedClick = onAddFeedClick,
         settingsState = settingState,
         fontSizes = fontSizesState,
+        showCrashReporting = appConfig.isLoggingEnabled,
+        onFeedListClick = onFeedListClick,
+        onAddFeedClick = onAddFeedClick,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
         navigateBack = navigateBack,
         onAboutClick = onAboutClick,
-        showCrashReporting = appConfig.isLoggingEnabled,
         onBugReportClick = {
             val uri = Uri.parse(
                 UserFeedbackReporter.getEmailUrl(
@@ -160,6 +162,7 @@ fun SettingsScreen(
         onSwipeActionSelected = { direction, action ->
             settingsViewModel.updateSwipeAction(direction, action)
         },
+        navigateToNotifications = navigateToNotifications,
     )
 }
 
@@ -188,6 +191,7 @@ private fun SettingsScreenContent(
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onCrashReportingEnabled: (Boolean) -> Unit,
     onSwipeActionSelected: (SwipeDirection, SwipeActionType) -> Unit,
+    navigateToNotifications: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -261,6 +265,14 @@ private fun SettingsScreenContent(
                 SyncPeriodSelector(
                     currentPeriod = settingsState.syncPeriod,
                     onPeriodSelected = onSyncPeriodSelected,
+                )
+            }
+
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.settingsNotificationsTitle,
+                    icon = Icons.Outlined.Notifications,
+                    onClick = navigateToNotifications,
                 )
             }
 
@@ -724,6 +736,7 @@ private fun SettingsScreenPreview() {
             browsers = browsersForPreview,
             settingsState = SettingsState(),
             fontSizes = FeedFontSizes(),
+            showCrashReporting = true,
             onFeedListClick = {},
             onAddFeedClick = {},
             onBrowserSelected = {},
@@ -740,10 +753,10 @@ private fun SettingsScreenPreview() {
             setHideImages = {},
             updateFontScale = {},
             onAutoDeletePeriodSelected = {},
-            onCrashReportingEnabled = {},
             onSyncPeriodSelected = {},
+            onCrashReportingEnabled = {},
             onSwipeActionSelected = { _, _ -> },
-            showCrashReporting = true,
+            navigateToNotifications = {},
         )
     }
 }

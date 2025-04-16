@@ -1,5 +1,4 @@
 import kotlin.Boolean;
-import kotlin.Int;
 
 CREATE TABLE feed_item (
     url_hash TEXT NOT NULL PRIMARY KEY,
@@ -12,7 +11,8 @@ CREATE TABLE feed_item (
     is_read INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_bookmarked INTEGER AS Boolean NOT NULL DEFAULT 0,
     pub_date INTEGER,
-    comments_url TEXT
+    comments_url TEXT,
+    notification_sent INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
 insertFeedItem:
@@ -35,7 +35,7 @@ AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCateg
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden);
 
 selectFeeds:
-SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, comments_url, is_read, is_bookmarked, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.id AS feed_source_category_id, feed_source_category.title AS feed_source_category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference AS feed_source_link_opening_preference, feed_source_preferences.is_hidden AS feed_source_is_hidden, feed_source_preferences.is_pinned AS feed_source_is_pinned FROM feed_item
+SELECT feed_item.url_hash, feed_item.url, feed_item.title, subtitle, image_url, pub_date, comments_url, is_read, is_bookmarked, notification_sent, feed_source.title AS feed_source_title, feed_source.url_hash AS feed_source_id, feed_source.url AS feed_source_url, feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp, feed_source_category.id AS feed_source_category_id, feed_source_category.title AS feed_source_category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference AS feed_source_link_opening_preference, feed_source_preferences.is_hidden AS feed_source_is_hidden, feed_source_preferences.is_pinned AS feed_source_is_pinned, feed_source_preferences.notifications_enabled AS feed_source_notifications_enabled FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
@@ -173,3 +173,18 @@ ON feed_item.feed_source_id == feed_source.url_hash
 WHERE is_read = 0
 ORDER BY pub_date DESC
 LIMIT :pageSize;
+
+selectFeedSourceToNotify:
+SELECT feed_source.title AS feed_source_title,
+       feed_source.url_hash AS feed_source_id
+FROM feed_item
+INNER JOIN feed_source ON feed_item.feed_source_id == feed_source.url_hash
+LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
+WHERE feed_source_preferences.notifications_enabled = 1
+AND feed_item.notification_sent = 0
+GROUP BY feed_source.url_hash
+ORDER BY pub_date DESC;
+
+markFeedItemsNotified:
+UPDATE feed_item
+SET notification_sent = 1;

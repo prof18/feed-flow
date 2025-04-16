@@ -10,6 +10,7 @@ import androidx.lifecycle.coroutineScope
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import com.prof18.feedflow.android.notifications.AndroidNotifier
 import com.prof18.feedflow.android.widget.FeedFlowWidget
 import com.prof18.feedflow.android.widget.WidgetConfigurationViewModel
 import com.prof18.feedflow.core.utils.AppConfig
@@ -20,10 +21,12 @@ import com.prof18.feedflow.shared.di.viewModel
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.dsl.module
 
@@ -88,6 +91,9 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                             settingsRepository = get(),
                             feedDownloadWorkerEnqueuer = get(),
                         )
+                    }
+                    single<Notifier> {
+                        AndroidNotifier(context = androidContext())
                     }
                 },
             ),

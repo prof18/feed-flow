@@ -33,6 +33,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun HomeScreen(
     windowSizeClass: WindowSizeClass,
+    feedSourceIdToSelect: String?,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
@@ -84,6 +85,12 @@ internal fun HomeScreen(
                     )
                 }
             }
+        }
+    }
+
+    LaunchedEffect(feedSourceIdToSelect) {
+        if (feedSourceIdToSelect != null) {
+            homeViewModel.updateFeedSourceFilter(feedSourceIdToSelect)
         }
     }
 

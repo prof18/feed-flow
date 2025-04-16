@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
@@ -50,6 +51,7 @@ import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.about.AboutScreen
 import com.prof18.feedflow.android.settings.about.LicensesScreen
 import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
+import com.prof18.feedflow.android.settings.notifications.NotificationsSettingsScreen
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SyncResult
@@ -146,15 +148,27 @@ class MainActivity : ComponentActivity() {
     ) {
         NavHost(
             navController = navController,
-            startDestination = Home,
+            startDestination = Home(),
             enterTransition = { fadeIn() + slideIntoContainer(SlideDirection.Start) },
             exitTransition = { fadeOut() + slideOutOfContainer(SlideDirection.Start) },
             popEnterTransition = { fadeIn() + slideIntoContainer(SlideDirection.End) },
             popExitTransition = { fadeOut() + slideOutOfContainer(SlideDirection.End) },
         ) {
-            composable<Home> {
+            composable<Home>(
+                deepLinks = listOf(
+                    navDeepLink {
+                        action = Intent.ACTION_VIEW
+                        uriPattern = "feedflow://feedsourcefilter/{feedSourceId}"
+                    },
+                ),
+            ) { backStackEntry ->
+                val route = backStackEntry.toRoute<Home>()
+
+                Logger.d { "GOT FEEDSOURCE: ${route.feedSourceId}" }
+
                 HomeScreen(
                     windowSizeClass = windowSizeClass,
+                    feedSourceIdToSelect = route.feedSourceId,
                     onSettingsButtonClicked = {
                         navController.navigate(Settings)
                     },
@@ -199,6 +213,9 @@ class MainActivity : ComponentActivity() {
                     },
                     navigateToAccounts = {
                         navController.navigate(Accounts)
+                    },
+                    navigateToNotifications = {
+                        navController.navigate(Notifications)
                     },
                 )
             }
@@ -340,6 +357,14 @@ class MainActivity : ComponentActivity() {
                                 inclusive = true
                             }
                         }
+                    },
+                )
+            }
+
+            composable<Notifications> {
+                NotificationsSettingsScreen(
+                    navigateBack = {
+                        navController.popBackStack()
                     },
                 )
             }

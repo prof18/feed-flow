@@ -30,31 +30,32 @@ class SettingsViewModel internal constructor(
 
     init {
         viewModelScope.launch {
-            val isMarkReadEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
-            val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
-            val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
-            val isRemoveTitleFromDescriptionEnabled = settingsRepository.getRemoveTitleFromDescription()
-            val isHideDescriptionEnabled = settingsRepository.getHideDescription()
-            val isHideImagesEnabled = settingsRepository.getHideImages()
-            val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
-            val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
-            val syncPeriod = settingsRepository.getSyncPeriod()
-            val leftSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.LEFT)
-            val rightSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.RIGHT)
-            settingsMutableState.update {
-                SettingsState(
-                    isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
-                    isShowReadItemsEnabled = isShowReadItemsEnabled,
-                    isReaderModeEnabled = isReaderModeEnabled,
-                    isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
-                    isHideDescriptionEnabled = isHideDescriptionEnabled,
-                    isHideImagesEnabled = isHideImagesEnabled,
-                    autoDeletePeriod = autoDeletePeriod,
-                    isCrashReportingEnabled = isCrashReportingEnabled,
-                    syncPeriod = syncPeriod,
-                    leftSwipeActionType = leftSwipeAction,
-                    rightSwipeActionType = rightSwipeAction,
-                )
+            settingsRepository.syncPeriodFlow.collect { syncPeriod ->
+                val isMarkReadEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
+                val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
+                val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
+                val isRemoveTitleFromDescriptionEnabled = settingsRepository.getRemoveTitleFromDescription()
+                val isHideDescriptionEnabled = settingsRepository.getHideDescription()
+                val isHideImagesEnabled = settingsRepository.getHideImages()
+                val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
+                val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
+                val leftSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.LEFT)
+                val rightSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.RIGHT)
+                settingsMutableState.update {
+                    SettingsState(
+                        isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
+                        isShowReadItemsEnabled = isShowReadItemsEnabled,
+                        isReaderModeEnabled = isReaderModeEnabled,
+                        isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
+                        isHideDescriptionEnabled = isHideDescriptionEnabled,
+                        isHideImagesEnabled = isHideImagesEnabled,
+                        autoDeletePeriod = autoDeletePeriod,
+                        isCrashReportingEnabled = isCrashReportingEnabled,
+                        syncPeriod = syncPeriod,
+                        leftSwipeActionType = leftSwipeAction,
+                        rightSwipeActionType = rightSwipeAction,
+                    )
+                }
             }
         }
     }
@@ -151,11 +152,6 @@ class SettingsViewModel internal constructor(
     fun updateSyncPeriod(period: SyncPeriod) {
         viewModelScope.launch {
             settingsRepository.setSyncPeriod(period)
-            settingsMutableState.update {
-                it.copy(
-                    syncPeriod = period,
-                )
-            }
         }
     }
 

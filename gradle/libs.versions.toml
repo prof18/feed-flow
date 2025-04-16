@@ -1,6 +1,6 @@
 [versions]
 about-libraries = "11.2.3"
-activity-compose = "1.9.3"
+activity-compose = "1.10.1"
 android-compile-sdk = "35"
 android-gradle-plugin = "8.2.2"
 android-min-sdk = "26"
@@ -76,6 +76,7 @@ androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "and
 arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow" }
 com-prof18-rss-parser = { module = "com.prof18.rssparser:rssparser", version.ref = "rss-parser" }
 compose-webview = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "compose-webview" }
+components-ui-tooling-preview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "compose-multiplatform" }
 crashk-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashk-ios" }
 detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 detekt-compose-rules = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose-rules" }

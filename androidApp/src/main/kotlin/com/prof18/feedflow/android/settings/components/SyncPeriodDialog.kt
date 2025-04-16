@@ -25,6 +25,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun SyncPeriodDialog(
+    description: String = LocalFeedFlowStrings.current.settingsSyncPeriodDesc,
     currentPeriod: SyncPeriod,
     onPeriodSelected: (SyncPeriod) -> Unit,
     showNeverSync: Boolean = true,
@@ -39,7 +40,7 @@ internal fun SyncPeriodDialog(
                 .padding(Spacing.regular),
         ) {
             Text(
-                text = strings.settingsSyncPeriodDesc,
+                text = description,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = Spacing.regular),

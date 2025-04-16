@@ -115,12 +115,14 @@ internal class FeedSourcesRepository(
         preference: LinkOpeningPreference,
         isHidden: Boolean,
         isPinned: Boolean,
+        isNotificationEnabled: Boolean,
     ) = withContext(dispatcherProvider.io) {
         databaseHelper.insertFeedSourcePreference(
             feedSourceId = feedSourceId,
             preference = preference,
             isHidden = isHidden,
             isPinned = isPinned,
+            isNotificationEnabled = isNotificationEnabled,
         )
     }
 
@@ -140,6 +142,7 @@ internal class FeedSourcesRepository(
                 preference = newFeedSource.linkOpeningPreference,
                 isHidden = newFeedSource.isHiddenFromTimeline,
                 isPinned = newFeedSource.isPinned,
+                isNotificationEnabled = newFeedSource.isNotificationEnabled,
             )
             feedStateRepository.getFeeds()
         }
@@ -306,6 +309,7 @@ internal class FeedSourcesRepository(
             isHiddenFromTimeline = false,
             linkOpeningPreference = LinkOpeningPreference.DEFAULT,
             isPinned = false,
+            isNotificationEnabled = false,
         )
 
         val feedItems = rssChannelMapper.getFeedItems(

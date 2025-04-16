@@ -4,7 +4,9 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object Home
+data class Home(
+    val feedSourceId: String? = null,
+)
 
 @Serializable
 data object Settings
@@ -54,3 +56,6 @@ data class EditFeed(
 data class DeepLinkScreen(
     val feedId: String,
 )
+
+@Serializable
+internal data object Notifications

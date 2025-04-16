@@ -180,6 +180,7 @@ private fun HomeAppBarPreview() {
                     linkOpeningPreference = LinkOpeningPreference.DEFAULT,
                     isHiddenFromTimeline = false,
                     isPinned = false,
+                    isNotificationEnabled = false,
                 ),
             ),
             showDrawerMenu = true,

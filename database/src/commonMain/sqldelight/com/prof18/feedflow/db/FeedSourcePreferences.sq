@@ -6,12 +6,17 @@ CREATE TABLE feed_source_preferences (
     link_opening_preference TEXT AS LinkOpeningPreference NOT NULL DEFAULT 'DEFAULT',
     is_hidden INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_pinned INTEGER AS Boolean NOT NULL DEFAULT 0,
+    notifications_enabled INTEGER AS Boolean NOT NULL DEFAULT 0,
     FOREIGN KEY (feed_source_id) REFERENCES feed_source(url_hash)
 );
 
 insertPreference:
-INSERT OR REPLACE INTO feed_source_preferences(feed_source_id, link_opening_preference, is_hidden, is_pinned)
-VALUES (?, ?, ?, ?);
+INSERT OR REPLACE INTO feed_source_preferences(feed_source_id, link_opening_preference, is_hidden, is_pinned, notifications_enabled)
+VALUES (?, ?, ?, ?, ?);
+
+insertNotificationEnabledPreference:
+INSERT OR REPLACE INTO feed_source_preferences(feed_source_id, notifications_enabled)
+VALUES (?, ?);
 
 getPreference:
 SELECT * FROM feed_source_preferences WHERE feed_source_id = ?;
@@ -23,7 +28,12 @@ deleteAllPreferences:
 DELETE FROM feed_source_preferences;
 
 getFeedSourceWithPreference:
-SELECT feed_source.*, feed_source_preferences.link_opening_preference, feed_source_preferences.is_pinned
+SELECT feed_source.*, feed_source_preferences.link_opening_preference, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled
 FROM feed_source
 LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
 ORDER BY feed_source.title COLLATE NOCASE ASC;
+
+updateNotificationEnabledStatus:
+UPDATE feed_source_preferences
+SET notifications_enabled = :enabled
+WHERE feed_source_id = :feedSourceId;

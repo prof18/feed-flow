@@ -24,6 +24,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.model.CurrentOS
+import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
@@ -35,6 +36,7 @@ import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
+import com.prof18.feedflow.shared.presentation.NotificationsViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -62,6 +64,7 @@ fun initKoinIos(
     regionCode: String?,
     dropboxDataSource: DropboxDataSource,
     appVersion: String,
+    notifier: Notifier,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
@@ -75,6 +78,7 @@ fun initKoinIos(
         module {
             factory { htmlParser }
             single { dropboxDataSource }
+            single { notifier }
             single<FeedFlowStrings> {
                 when {
                     languageCode == null -> EnFeedFlowStrings
@@ -199,4 +203,6 @@ object Deps : KoinComponent {
     fun getDeeplinkFeedViewModel() = getKoin().get<DeeplinkFeedViewModel>()
     fun getReviewViewModel() = getKoin().get<ReviewViewModel>()
     fun getFeedFetcherRepository() = getKoin().get<FeedFetcherRepository>()
+    fun getNotificationsViewModel() = getKoin().get<NotificationsViewModel>()
+    fun getNotifier() = getKoin().get<Notifier>()
 }

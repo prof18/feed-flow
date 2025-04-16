@@ -4,6 +4,7 @@ import coil3.PlatformContext
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.shared.di.initKoinDesktop
+import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.ui.utils.coilImageLoader
 import org.koin.core.Koin
 import org.koin.dsl.module
@@ -29,6 +30,10 @@ object DI {
                         BrowserManager(
                             settingsRepository = get(),
                         )
+                    }
+
+                    single<Notifier> {
+                        Notifier {}
                     }
                 },
             ),

@@ -16,7 +16,7 @@ struct FeedListView: View {
     @Environment(HomeListIndexHolder.self) private var indexHolder
     @Environment(BrowserSelector.self) private var browserSelector
     @Environment(AppState.self) private var appState
-    
+
     var loadingState: FeedUpdateStatus?
     var feedState: [FeedItem]
     var showLoading: Bool
@@ -24,7 +24,7 @@ struct FeedListView: View {
     let columnVisibility: NavigationSplitViewVisibility
     let feedFontSizes: FeedFontSizes
     let swipeActions: SwipeActions
-    
+
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
     let requestNewPage: () -> Void
@@ -34,7 +34,7 @@ struct FeedListView: View {
     let onBackToTimelineClick: () -> Void
     let onMarkAllAsReadClick: () -> Void
     let openDrawer: () -> Void
-    
+
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
             NoFeedsSourceView(onAddFeedClick: onAddFeedClick)
@@ -105,255 +105,6 @@ struct FeedListView: View {
         }
     }
 }
-
-
-private struct FeedItemRowView: View {
-    @Environment(\.openURL) private var openURL
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(AppState.self) private var appState
-    
-    @State private var browserToOpen: BrowserToPresent?
-    
-    let feedItem: FeedItem
-    let index: Int
-    let feedFontSizes: FeedFontSizes
-    let swipeActions: SwipeActions
-    let onItemClick: (FeedItemUrlInfo) -> Void
-    let onBookmarkClick: (FeedItemId, Bool) -> Void
-    let onReadStatusClick: (FeedItemId, Bool) -> Void
-    
-    var body: some View {
-        Button(
-            action: {
-                let urlInfo = FeedItemUrlInfo(
-                    id: feedItem.id,
-                    url: feedItem.url,
-                    title: feedItem.title,
-                    openOnlyOnBrowser: false,
-                    isBookmarked: feedItem.isBookmarked,
-                    linkOpeningPreference: feedItem.feedSource.linkOpeningPreference
-                )
-                
-                switch urlInfo.linkOpeningPreference {
-                case .readerMode:
-                    self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
-                case .internalBrowser:
-                    browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
-                case .preferredBrowser:
-                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                case .default:
-                    if browserSelector.openReaderMode(link: feedItem.url) {
-                        self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
-                    } else if browserSelector.openInAppBrowser() {
-                        browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
-                    } else {
-                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                    }
-                }
-                onItemClick(urlInfo)
-            },
-            label: {
-                FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)
-                    .contentShape(Rectangle())
-            }
-        )
-        .buttonStyle(.plain)
-        .id(feedItem.id)
-        .listRowInsets(EdgeInsets())
-        .hoverEffect()
-        .if(swipeActions.leftSwipeAction != .none) { view in
-            view.swipeActions(edge: .trailing) {
-                switch swipeActions.leftSwipeAction {
-                case .toggleReadStatus:
-                    Button {
-                        onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead)
-                    } label: {
-                        if feedItem.isRead {
-                            Image(systemName: "envelope.badge")
-                        } else {
-                            Image(systemName: "envelope.open")
-                        }
-                    }
-                case .toggleBookmarkStatus:
-                    Button {
-                        onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked)
-                    } label: {
-                        if feedItem.isBookmarked {
-                            Image(systemName: "bookmark.slash")
-                        } else {
-                            Image(systemName: "bookmark")
-                        }
-                    }
-                case .none:
-                    EmptyView()
-                @unknown default:
-                    EmptyView()
-                }
-            }
-        }
-        .if(swipeActions.rightSwipeAction != .none) { view in
-            view.swipeActions(edge: .leading) {
-                switch swipeActions.rightSwipeAction {
-                case .toggleReadStatus:
-                    Button {
-                        onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead)
-                    } label: {
-                        if feedItem.isRead {
-                            Image(systemName: "envelope.badge")
-                        } else {
-                            Image(systemName: "envelope.open")
-                        }
-                    }
-                case .toggleBookmarkStatus:
-                    Button {
-                        onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked)
-                    } label: {
-                        if feedItem.isBookmarked {
-                            Image(systemName: "bookmark.slash")
-                        } else {
-                            Image(systemName: "bookmark")
-                        }
-                    }
-                case .none:
-                    EmptyView()
-                @unknown default:
-                    EmptyView()
-                }
-            }
-        }
-        .contextMenu {
-            FeedItemContextMenu(
-                feedItem: feedItem,
-                browserToOpen: $browserToOpen,
-                onBookmarkClick: onBookmarkClick,
-                onReadStatusClick: onReadStatusClick
-            )
-        }
-        .fullScreenCover(item: $browserToOpen) { browserToOpen in
-            switch browserToOpen {
-            case let .inAppBrowser(url):
-                SFSafariView(url: url)
-                    .ignoresSafeArea()
-            }
-        }
-    }
-}
-
-private struct FeedItemContextMenu: View {
-    @Environment(\.openURL) private var openURL
-    @Environment(BrowserSelector.self) private var browserSelector
-    
-    let feedItem: FeedItem
-    @Binding var browserToOpen: BrowserToPresent?
-    let onBookmarkClick: (FeedItemId, Bool) -> Void
-    let onReadStatusClick: (FeedItemId, Bool) -> Void
-    
-    var body: some View {
-        VStack {
-            makeReadUnreadButton(feedItem: feedItem)
-            makeBookmarkButton(feedItem: feedItem)
-            makeCommentsButton(feedItem: feedItem)
-            makeShareButton(feedItem: feedItem)
-            if let commentUrl = feedItem.commentsUrl {
-                makeShareCommentsButton(commentsUrl: commentUrl)
-            }
-            if isOnVisionOSDevice() {
-                Button {
-                    // No-op so it will close itself
-                } label: {
-                    Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
-                }
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private func makeReadUnreadButton(feedItem: FeedItem) -> some View {
-        Button {
-            onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead)
-        } label: {
-            if feedItem.isRead {
-                Label(feedFlowStrings.menuMarkAsUnread, systemImage: "envelope.badge")
-            } else {
-                Label(feedFlowStrings.menuMarkAsRead, systemImage: "envelope.open")
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private func makeBookmarkButton(feedItem: FeedItem) -> some View {
-        Button {
-            onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked)
-        } label: {
-            if feedItem.isBookmarked {
-                Label(feedFlowStrings.menuRemoveFromBookmark, systemImage: "bookmark.slash")
-            } else {
-                Label(feedFlowStrings.menuAddToBookmark, systemImage: "bookmark")
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private func makeCommentsButton(feedItem: FeedItem) -> some View {
-        if let commentsUrl = feedItem.commentsUrl {
-            Button {
-                if browserSelector.openInAppBrowser() {
-                    browserToOpen = .inAppBrowser(url: URL(string: commentsUrl)!)
-                } else {
-                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
-                }
-            } label: {
-                Label(feedFlowStrings.menuOpenComments, systemImage: "bubble.left.and.bubble.right")
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private func makeShareButton(feedItem: FeedItem) -> some View {
-        ShareLink(
-            item: URL(string: feedItem.url)!,
-            message: Text(feedItem.title ?? ""),
-            label: {
-                Label(feedFlowStrings.menuShare, systemImage: "square.and.arrow.up")
-            }
-        )
-    }
-    
-    @ViewBuilder
-    private func makeShareCommentsButton(commentsUrl: String) -> some View {
-        ShareLink(
-            item: URL(string: commentsUrl)!,
-            label: {
-                Label(feedFlowStrings.menuShareComments, systemImage: "square.and.arrow.up.on.square")
-            }
-        )
-    }
-}
-
-private struct LoadingHeaderView: View {
-    let loadingState: FeedUpdateStatus?
-    let showLoading: Bool
-    
-    var body: some View {
-        if let feedCount = loadingState?.refreshedFeedCount,
-           let totalFeedCount = loadingState?.totalFeedCount {
-            if showLoading {
-                if feedCount > 0 && totalFeedCount > 0 {
-                    let feedRefreshCounter = "\(feedCount)/\(totalFeedCount)"
-                    
-                    Text(feedFlowStrings.loadingFeedMessage(feedRefreshCounter))
-                        .font(.body)
-                        .accessibilityIdentifier(TestingTag.shared.LOADING_BAR)
-                } else {
-                    Text(feedFlowStrings.loadingFeedMessage("..."))
-                        .font(.body)
-                        .accessibilityIdentifier(TestingTag.shared.LOADING_BAR)
-                }
-            }
-        }
-    }
-}
-
 
 #Preview {
     FeedListView(

@@ -2,6 +2,6 @@ package com.prof18.feedflow.shared.domain.notification
 
 import com.prof18.feedflow.core.model.FeedSourceToNotify
 
-interface Notifier {
+fun interface Notifier {
     fun showNewArticlesNotification(feedSourcesToNotify: List<FeedSourceToNotify>)
 }

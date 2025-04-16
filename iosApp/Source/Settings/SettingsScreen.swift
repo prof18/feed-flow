@@ -198,6 +198,10 @@ private struct BehaviourSection: View {
                 }
             )
 
+            NavigationLink(destination: NotificationsSettingsScreen()) {
+                Label(feedFlowStrings.settingsNotificationsTitle, systemImage: "bell")
+            }
+
             Picker(selection: $autoDeletePeriod) {
                 Text(feedFlowStrings.settingsAutoDeletePeriodDisabled)
                     .tag(AutoDeletePeriod.disabled)
@@ -265,7 +269,8 @@ private struct FeedFontSection: View {
                                 logoUrl: nil,
                                 linkOpeningPreference: .default,
                                 isHiddenFromTimeline: false,
-                                isPinned: false
+                                isPinned: false,
+                                isNotificationEnabled: false
                             ),
                             pubDateMillis: nil,
                             isRead: false,

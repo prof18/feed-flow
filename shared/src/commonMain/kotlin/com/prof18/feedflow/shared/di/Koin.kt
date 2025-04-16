@@ -369,8 +369,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             rssParser = get(),
             rssChannelMapper = get(),
             dateFormatter = get(),
-
-            notifier = get(),
         )
     }
 

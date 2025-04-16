@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class NotificationsViewModel internal constructor(
     private val databaseHelper: DatabaseHelper,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val notificationSettingsMutableStateFlow = MutableStateFlow(

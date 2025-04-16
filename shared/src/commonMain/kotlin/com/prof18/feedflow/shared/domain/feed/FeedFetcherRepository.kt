@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
@@ -16,7 +17,6 @@ import com.prof18.feedflow.shared.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.shared.domain.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.domain.model.StartedFeedUpdateStatus
-import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
@@ -41,9 +41,6 @@ class FeedFetcherRepository internal constructor(
     private val rssParser: RssParser,
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
-
-    // todo: remove after testing
-    private val notifier: Notifier,
 ) {
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
@@ -60,35 +57,27 @@ class FeedFetcherRepository internal constructor(
             when {
                 gReaderRepository.isAccountSet() -> {
                     fetchFeedsWithGReader()
-
-                    logger.d { "AAAA" }
-                    val itemsToNotify = databaseHelper.getFeedSourceToNotify()
-                    notifier.showNewArticlesNotification(itemsToNotify)
-                    databaseHelper.markFeedItemsAsNotified()
-
-                    // TODO: restore after testing
-//            if (!isFetchingFromBackground) {
-//                databaseHelper.markFeedItemsAsNotified()
-//            }
+                    if (!isFetchingFromBackground) {
+                        databaseHelper.markFeedItemsAsNotified()
+                    }
                 }
                 else -> {
                     fetchFeedsWithRssParser(forceRefresh, isFirstLaunch)
-
-                    logger.d { "AAAA" }
-                    val itemsToNotify = databaseHelper.getFeedSourceToNotify()
-                    notifier.showNewArticlesNotification(itemsToNotify)
-                    databaseHelper.markFeedItemsAsNotified()
-
-                    // TODO: restore after testing
-//            if (!isFetchingFromBackground) {
-//                databaseHelper.markFeedItemsAsNotified()
-//            }
+                    if (!isFetchingFromBackground) {
+                        databaseHelper.markFeedItemsAsNotified()
+                    }
                 }
             }
-
-
         }
     }
+
+    @Suppress("unused") // Used on iOS
+    suspend fun getFeedSourceToNotify(): List<FeedSourceToNotify> =
+        databaseHelper.getFeedSourceToNotify()
+
+    @Suppress("unused") // Used on iOS
+    suspend fun markItemsAsNotified() =
+        databaseHelper.markFeedItemsAsNotified()
 
     @Suppress("MagicNumber")
     private suspend fun fetchFeedsWithGReader() {

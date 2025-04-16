@@ -25,10 +25,10 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun SyncPeriodDialog(
-    description: String = LocalFeedFlowStrings.current.settingsSyncPeriodDesc,
     currentPeriod: SyncPeriod,
     onPeriodSelected: (SyncPeriod) -> Unit,
     showNeverSync: Boolean = true,
+    description: String = LocalFeedFlowStrings.current.settingsSyncPeriodDesc,
     dismissDialog: () -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current

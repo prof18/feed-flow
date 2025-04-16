@@ -91,7 +91,7 @@ func scheduleAppRefresh() {
     try? BGTaskScheduler.shared.submit(request)
 }
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -99,6 +99,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         #if !DEBUG
             configureFirebase()
         #endif
+
+        UNUserNotificationCenter.current().delegate = self
 
         BGTaskScheduler.shared.register(
             forTaskWithIdentifier: "com.prof18.feedflow.articlesync",
@@ -109,8 +111,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             let backgroundTask = Task {
                 do {
                     let repo = Deps.shared.getFeedFetcherRepository()
-                    try await repo.fetchFeeds(forceRefresh: false, isFirstLaunch: false)
+                    try await repo.fetchFeeds(forceRefresh: false, isFirstLaunch: false, isFetchingFromBackground: true)
                     WidgetCenter.shared.reloadAllTimelines()
+                    if let feedSourceToNotify = try? await repo.getFeedSourceToNotify() {
+                        Deps.shared.getNotifier().showNewArticlesNotification(feedSourcesToNotify: feedSourceToNotify)
+                    }
+                    try? await repo.markItemsAsNotified()
                     task.setTaskCompleted(success: true)
                 } catch {
                     task.setTaskCompleted(success: false)
@@ -158,5 +164,22 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         #if !DEBUG
             setupCrashlytics()
         #endif
+    }
+
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let userInfo = response.notification.request.content.userInfo
+
+        if let feedSourceId = userInfo["feedSourceId"] as? String {
+            NotificationCenter.default.post(
+                name: .didReceiveNotificationDeepLink,
+                object: nil,
+                userInfo: ["feedSourceId": feedSourceId]
+            )
+        }
+        completionHandler()
     }
 }

@@ -215,4 +215,6 @@
     <string name="new_articles_notification_content">New articles from "%s"</string>
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_notifications_warning_reliability">Notifications are checked on your device, but may not always occur reliably due to system limitations.</string>
+    <string name="settings_open_settings">Open Settings</string>
+    <string name="settings_notifications_settings_instructions">Please enable notifications for this app in the iOS Settings.</string>
 </resources>

@@ -145,6 +145,7 @@
 				DI/Koin.swift,
 				UI/Style/Spacing.swift,
 				Utils/IosHtmlParser.swift,
+				Utils/IOSNotifier.swift,
 				Utils/VMStoreOwner.swift,
 			);
 			target = 13929E982D7345F0003752AE /* ShareExtension */;
@@ -164,6 +165,7 @@
 				DI/Koin.swift,
 				UI/Style/Spacing.swift,
 				Utils/IosHtmlParser.swift,
+				Utils/IOSNotifier.swift,
 			);
 			target = 13A571E42D747F0600F0FFB0 /* WidgetExtension */;
 		};

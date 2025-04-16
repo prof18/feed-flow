@@ -22,6 +22,7 @@ internal fun EditFeed.toFeedSource(): FeedSource {
         linkOpeningPreference = linkOpeningPreference,
         isHiddenFromTimeline = isHidden,
         isPinned = isPinned,
+        isNotificationEnabled = false,
     )
 }
 

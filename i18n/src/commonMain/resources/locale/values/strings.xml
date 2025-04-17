@@ -211,7 +211,6 @@
     <string name="settings_notifications_permission_request_button">Request Permission</string>
     <string name="new_articles_notification_title">New articles available</string>
     <string name="notification_channel_name">New Articles</string>
-    <string name="notification_channel_description">Notifications for new articles in your feeds</string>
     <string name="new_articles_notification_content">New articles from "%s"</string>
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_notifications_warning_reliability">Notifications are checked on your device, but may not always occur reliably due to system limitations.</string>

@@ -216,4 +216,8 @@
     <string name="settings_notification_check_period_desc">Виберіть, як часто перевіряти сповіщення про нові статті</string>
     <string name="settings_notifications_warning_reliability">Сповіщення перевіряються на вашому пристрої, але можуть не завжди надходити надійно через системні обмеження.</string>
     <string name="settings_notifications_settings_instructions">Увімкніть сповіщення для цієї програми в налаштуваннях iOS.</string>
+    <string name="date_format_american">Місяць/День</string>
+    <string name="marking_all_read_dialog_title">Позначення всіх як прочитаних...</string>
+    <string name="date_format_title">Формат дати</string>
+    <string name="date_format_normal">День/Місяць</string>
 </resources>

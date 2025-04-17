@@ -3,6 +3,7 @@ package com.prof18.feedflow.android.editfeed
 import com.prof18.feedflow.android.EditFeed
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 
 internal fun EditFeed.toFeedSource(): FeedSource {
     return FeedSource(
@@ -19,7 +20,7 @@ internal fun EditFeed.toFeedSource(): FeedSource {
         },
         lastSyncTimestamp = lastSyncTimestamp,
         logoUrl = logoUrl,
-        linkOpeningPreference = linkOpeningPreference,
+        linkOpeningPreference = LinkOpeningPreference.valueOf(linkOpeningPreference),
         isHiddenFromTimeline = isHidden,
         isPinned = isPinned,
         isNotificationEnabled = false,
@@ -35,7 +36,7 @@ internal fun FeedSource.toEditFeed(): EditFeed {
         categoryTitle = category?.title,
         lastSyncTimestamp = lastSyncTimestamp,
         logoUrl = logoUrl,
-        linkOpeningPreference = linkOpeningPreference,
+        linkOpeningPreference = linkOpeningPreference.name,
         isHidden = isHiddenFromTimeline,
         isPinned = isPinned,
     )

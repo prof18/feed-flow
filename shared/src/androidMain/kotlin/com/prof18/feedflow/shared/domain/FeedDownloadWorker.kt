@@ -8,7 +8,6 @@ import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
 import kotlinx.coroutines.delay
-import org.koin.core.component.KoinComponent
 import kotlin.time.Duration.Companion.minutes
 
 class FeedDownloadWorker internal constructor(
@@ -18,7 +17,7 @@ class FeedDownloadWorker internal constructor(
     private val notifier: Notifier,
     appContext: Context,
     workerParams: WorkerParameters,
-) : CoroutineWorker(appContext, workerParams), KoinComponent {
+) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         return try {
             feedFetcherRepository.fetchFeeds(isFetchingFromBackground = true)

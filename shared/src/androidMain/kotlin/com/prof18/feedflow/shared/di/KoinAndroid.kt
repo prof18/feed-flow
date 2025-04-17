@@ -24,6 +24,7 @@ import com.russhwolf.settings.SharedPreferencesSettings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
+import org.koin.androidx.workmanager.dsl.worker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -114,7 +115,16 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    workerOf(::FeedDownloadWorker)
+    worker {
+        FeedDownloadWorker(
+            feedFetcherRepository = get(),
+            widgetUpdater = get(),
+            databaseHelper = get(),
+            notifier = get(),
+            appContext = get(),
+            workerParams = get(),
+        )
+    }
 
     single {
         FeedDownloadWorkerEnqueuer(

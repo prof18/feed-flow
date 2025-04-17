@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -183,6 +184,13 @@ class SettingsRepository(
         }
     }
 
+    fun getDateFormat(): DateFormat =
+        settings.getString(SettingsFields.DATE_FORMAT.name, DateFormat.NORMAL.name)
+            .let { DateFormat.valueOf(it) }
+
+    fun setDateFormat(format: DateFormat) =
+        settings.set(SettingsFields.DATE_FORMAT.name, format.name)
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -210,4 +218,5 @@ internal enum class SettingsFields {
     IS_KEYCHAIN_MIGRATION_DONE,
     LEFT_SWIPE_ACTION,
     RIGHT_SWIPE_ACTION,
+    DATE_FORMAT,
 }

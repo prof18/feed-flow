@@ -29,6 +29,7 @@ struct SettingsScreen: View {
     @State private var isCrashReportingEnabled = true
     @State private var leftSwipeActionType: SwipeActionType = .none
     @State private var rightSwipeActionType: SwipeActionType = .none
+    @State private var dateFormat: DateFormat = .normal
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor = 0.0
 
@@ -50,6 +51,7 @@ struct SettingsScreen: View {
                     isCrashReportingEnabled = state.isCrashReportingEnabled
                     leftSwipeActionType = state.leftSwipeActionType
                     rightSwipeActionType = state.rightSwipeActionType
+                    dateFormat = state.dateFormat
                 }
             }
             .task {
@@ -103,6 +105,9 @@ struct SettingsScreen: View {
             .onChange(of: rightSwipeActionType) {
                 vmStoreOwner.instance.updateSwipeAction(direction: .right, action: rightSwipeActionType)
             }
+            .onChange(of: dateFormat) {
+                vmStoreOwner.instance.updateDateFormat(format: dateFormat)
+            }
     }
 
     private var settingsContent: some View {
@@ -126,6 +131,7 @@ struct SettingsScreen: View {
                     isRemoveTitleFromDescriptionEnabled: $isRemoveTitleFromDescriptionEnabled,
                     leftSwipeAction: $leftSwipeActionType,
                     rightSwipeAction: $rightSwipeActionType,
+                    dateFormat: $dateFormat,
                     onScaleFactorChange: { newValue in
                         vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
                     }
@@ -231,126 +237,6 @@ private struct BehaviourSection: View {
                 Label(feedFlowStrings.settingsToggleShowReadArticles, systemImage: "eye")
             }.onTapGesture {
                 isShowReadItemEnabled.toggle()
-            }
-        }
-    }
-}
-
-private struct FeedFontSection: View {
-    let feedFontSizes: FeedFontSizes
-    let imageUrl: String?
-    let articleDescription: String?
-    @Binding var scaleFactor: Double
-    @Binding var isHideDescriptionEnabled: Bool
-    @Binding var isHideImagesEnabled: Bool
-    @Binding var isRemoveTitleFromDescriptionEnabled: Bool
-    @Binding var leftSwipeAction: SwipeActionType
-    @Binding var rightSwipeAction: SwipeActionType
-    let onScaleFactorChange: (Double) -> Void
-
-    var body: some View {
-        Section(feedFlowStrings.settingsFeedListTitle) {
-            VStack(alignment: .leading) {
-                VStack {
-                    FeedItemView(
-                        feedItem: FeedItem(
-                            id: "1",
-                            url: "https://www.example.com",
-                            title: feedFlowStrings.settingsFontScaleTitleExample,
-                            subtitle: articleDescription,
-                            content: nil,
-                            imageUrl: imageUrl,
-                            feedSource: FeedSource(
-                                id: "1",
-                                url: "https://www.example.it",
-                                title: feedFlowStrings.settingsFontScaleFeedSourceExample,
-                                category: nil,
-                                lastSyncTimestamp: nil,
-                                logoUrl: nil,
-                                linkOpeningPreference: .default,
-                                isHiddenFromTimeline: false,
-                                isPinned: false,
-                                isNotificationEnabled: false
-                            ),
-                            pubDateMillis: nil,
-                            isRead: false,
-                            dateString: "01/01",
-                            commentsUrl: nil,
-                            isBookmarked: false
-                        ),
-                        index: 0,
-                        feedFontSizes: feedFontSizes
-                    )
-                    .background(Color.secondaryBackgroundColor)
-                    .padding(Spacing.small)
-                    .padding(.top, Spacing.small)
-                    .cornerRadius(Spacing.small)
-                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-                }
-
-                Text(feedFlowStrings.settingsFeedListScaleTitle)
-                    .padding(.top)
-
-                // 16 default
-                // 12 min ( -4 )
-                // 32 max ( +16 )
-                HStack {
-                    Image(systemName: "minus")
-
-                    Slider(
-                        value: Binding(
-                            get: { scaleFactor },
-                            set: { newValue in
-                                scaleFactor = newValue
-                                onScaleFactorChange(newValue)
-                            }
-                        ),
-                        in: -4 ... 16,
-                        step: 1.0
-                    )
-
-                    Image(systemName: "plus")
-                }
-            }.padding(.bottom, Spacing.regular)
-
-            Toggle(isOn: $isHideDescriptionEnabled) {
-                Label(feedFlowStrings.settingsHideDescription, systemImage: "text.page.slash")
-            }.onTapGesture {
-                isHideDescriptionEnabled.toggle()
-            }
-
-            Toggle(isOn: $isHideImagesEnabled) {
-                Label(feedFlowStrings.settingsHideImages, systemImage: "square.slash")
-            }.onTapGesture {
-                isHideImagesEnabled.toggle()
-            }
-
-            Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {
-                Label(feedFlowStrings.settingsHideDuplicatedTitleFromDesc, systemImage: "eye.slash")
-            }.onTapGesture {
-                isRemoveTitleFromDescriptionEnabled.toggle()
-            }
-
-            Picker(selection: $leftSwipeAction) {
-                Text(feedFlowStrings.settingsSwipeActionToggleRead)
-                    .tag(SwipeActionType.toggleReadStatus)
-                Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
-                    .tag(SwipeActionType.toggleBookmarkStatus)
-                Text(feedFlowStrings.settingsSwipeActionNone)
-                    .tag(SwipeActionType.none)
-            } label: {
-                Label(feedFlowStrings.settingsLeftSwipeAction, systemImage: "arrow.left.to.line")
-            }
-
-            Picker(selection: $rightSwipeAction) {
-                Text(feedFlowStrings.settingsSwipeActionToggleRead)
-                    .tag(SwipeActionType.toggleReadStatus)
-                Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
-                    .tag(SwipeActionType.toggleBookmarkStatus)
-                Text(feedFlowStrings.settingsSwipeActionNone)
-                    .tag(SwipeActionType.none)
-            } label: {
-                Label(feedFlowStrings.settingsRightSwipeAction, systemImage: "arrow.right.to.line")
             }
         }
     }

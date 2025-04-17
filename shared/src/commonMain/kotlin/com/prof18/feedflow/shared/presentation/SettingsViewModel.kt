@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -41,6 +42,7 @@ class SettingsViewModel internal constructor(
                 val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
                 val leftSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.LEFT)
                 val rightSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.RIGHT)
+                val dateFormat = settingsRepository.getDateFormat()
                 settingsMutableState.update {
                     SettingsState(
                         isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
@@ -54,6 +56,7 @@ class SettingsViewModel internal constructor(
                         syncPeriod = syncPeriod,
                         leftSwipeActionType = leftSwipeAction,
                         rightSwipeActionType = rightSwipeAction,
+                        dateFormat = dateFormat,
                     )
                 }
             }
@@ -164,6 +167,16 @@ class SettingsViewModel internal constructor(
                     SwipeDirection.RIGHT -> it.copy(rightSwipeActionType = action)
                 }
             }
+        }
+    }
+
+    fun updateDateFormat(format: DateFormat) {
+        viewModelScope.launch {
+            settingsRepository.setDateFormat(format)
+            settingsMutableState.update {
+                it.copy(dateFormat = format)
+            }
+            feedStateRepository.getFeeds()
         }
     }
 }

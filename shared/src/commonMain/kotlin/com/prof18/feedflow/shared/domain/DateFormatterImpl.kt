@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.DateFormat
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -452,7 +453,7 @@ class DateFormatterImpl(
         }
     }
 
-    override fun formatDateForFeed(millis: Long): String {
+    override fun formatDateForFeed(millis: Long, dateFormat: DateFormat): String {
         val instant = Instant.fromEpochMilliseconds(millis)
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
 
@@ -467,37 +468,52 @@ class DateFormatterImpl(
         val isToday = today == localDate
         val isThisYear = today.year == localDate.year
 
-        val dateFormat = if (isToday) {
-            LocalDateTime.Format {
-                hour()
-                char(':')
-                minute()
+        val dateFormat = when {
+            isToday -> {
+                LocalDateTime.Format {
+                    hour()
+                    char(':')
+                    minute()
+                }
             }
-        } else if (isThisYear) {
-            LocalDateTime.Format {
-                dayOfMonth()
-                char('/')
-                monthNumber()
-                chars(" - ")
-                hour()
-                char(':')
-                minute()
+            isThisYear -> {
+                LocalDateTime.Format {
+                    dayAndMonth(dateFormat)
+                    chars(" - ")
+                    hour()
+                    char(':')
+                    minute()
+                }
             }
-        } else {
-            LocalDateTime.Format {
-                dayOfMonth()
-                char('/')
-                monthNumber()
-                char('/')
-                year()
-                chars(" - ")
-                hour()
-                char(':')
-                minute()
+            else -> {
+                LocalDateTime.Format {
+                    dayAndMonth(dateFormat)
+                    char('/')
+                    year()
+                    chars(" - ")
+                    hour()
+                    char(':')
+                    minute()
+                }
             }
         }
 
         return dateFormat.format(dateTime)
+    }
+
+    private fun DateTimeFormatBuilder.WithDateTime.dayAndMonth(dateFormat: DateFormat) {
+        when (dateFormat) {
+            DateFormat.NORMAL -> {
+                dayOfMonth()
+                char('/')
+                monthNumber()
+            }
+            DateFormat.AMERICAN -> {
+                monthNumber()
+                char('/')
+                dayOfMonth()
+            }
+        }
     }
 
     private fun DateTimeFormatBuilder.WithDateTimeComponents.timeZones() {

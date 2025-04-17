@@ -2,6 +2,7 @@ package com.prof18.feedflow.feedsync.greader.domain.mapping
 
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
+import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.feedsync.greader.data.dto.ItemContentDTO
@@ -26,7 +27,11 @@ internal class ItemContentDTOMapper(
             feedSource = feedSource,
             pubDateMillis = itemContentDTO.published * 1000,
             isRead = itemContentDTO.read,
-            dateString = dateFormatter.formatDateForFeed(itemContentDTO.published),
+            dateString = dateFormatter.formatDateForFeed(
+                millis = itemContentDTO.published,
+                // The object here is just used to save on db, and the display date is not saved
+                dateFormat = DateFormat.NORMAL,
+            ),
             commentsUrl = null,
             isBookmarked = itemContentDTO.starred,
         )

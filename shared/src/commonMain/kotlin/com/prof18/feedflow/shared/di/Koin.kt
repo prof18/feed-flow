@@ -345,6 +345,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             parser = get(),
             dateFormatter = get(),
             rssChannelMapper = get(),
+            settingsRepository = get(),
         )
     }
 
@@ -376,6 +377,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         FeedWidgetRepository(
             databaseHelper = get(),
             dateFormatter = get(),
+            settingsRepository = get(),
         )
     }
 

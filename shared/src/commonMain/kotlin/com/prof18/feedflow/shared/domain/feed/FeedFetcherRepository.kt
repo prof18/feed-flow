@@ -52,7 +52,6 @@ class FeedFetcherRepository internal constructor(
         isFetchingFromBackground: Boolean = false,
     ) {
         return withContext(dispatcherProvider.io) {
-            logger.d { ">>> ARONNE" }
             feedStateRepository.emitUpdateStatus(StartedFeedUpdateStatus)
             when {
                 gReaderRepository.isAccountSet() -> {

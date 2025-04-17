@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.rssparser.model.RssChannel
+import io.ktor.http.parseUrl
 
 internal class RssChannelMapper(
     private val dateFormatter: DateFormatter,
@@ -18,7 +19,14 @@ internal class RssChannelMapper(
     fun getFeedItems(rssChannel: RssChannel, feedSource: FeedSource, dateFormat: DateFormat): List<FeedItem> =
         rssChannel.items.mapNotNull { rssItem ->
             val title = rssItem.title
-            val url = rssItem.link
+            val url = rssItem.link ?: run {
+                val parsedUrl = parseUrl(rssItem.guid.orEmpty())
+                return@run if (parsedUrl != null) {
+                    rssItem.guid
+                } else {
+                    null
+                }
+            }
             val pubDate = rssItem.pubDate
 
             val dateMillis = if (pubDate != null) {

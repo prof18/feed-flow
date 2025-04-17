@@ -14,8 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalUriHandler
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.LinkOpeningPreference
-import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.bywindowsize.CompactView
@@ -26,7 +26,7 @@ import com.prof18.feedflow.desktop.utils.WindowSizeClass
 import com.prof18.feedflow.desktop.utils.WindowWidthSizeClass
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.ui.home.components.DeleteOldFeedDialog
+import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -47,15 +47,15 @@ internal fun HomeScreen(
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
     val unReadCount by homeViewModel.unreadCountFlow.collectAsState(initial = 0)
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsState()
-    val isDeleting by homeViewModel.isDeletingState.collectAsState()
     val swipeActions by homeViewModel.swipeActions.collectAsState()
+    val feedOperation by homeViewModel.feedOperationState.collectAsState()
 
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
     val uriHandler = LocalUriHandler.current
 
-    if (isDeleting) {
-        DeleteOldFeedDialog()
+    if (feedOperation != FeedOperation.None) {
+        LoadingOperationDialog(feedOperation)
     }
 
     LaunchedEffect(Unit) {

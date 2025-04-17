@@ -509,7 +509,7 @@ class DateFormatterImpl(
             { chars("PDT") },
             { chars("PST") },
             { chars("UTC") },
-            { chars("CET") }
+            { chars("CET") },
         ) {}
     }
 

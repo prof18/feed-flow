@@ -11,6 +11,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActions
@@ -70,8 +71,8 @@ class HomeViewModel internal constructor(
     private val drawerMutableState = MutableStateFlow(NavDrawerState())
     val navDrawerState = drawerMutableState.asStateFlow()
 
-    private val isDeletingMutableState = MutableStateFlow(false)
-    val isDeletingState: StateFlow<Boolean> = isDeletingMutableState.asStateFlow()
+    private val feedOperationMutableState = MutableStateFlow<FeedOperation>(FeedOperation.None)
+    val feedOperationState: StateFlow<FeedOperation> = feedOperationMutableState.asStateFlow()
 
     private var lastUpdateIndex = 0
 
@@ -224,8 +225,10 @@ class HomeViewModel internal constructor(
 
     fun markAllRead() {
         viewModelScope.launch {
+            feedOperationMutableState.update { FeedOperation.MarkingAllRead }
             feedActionsRepository.markAllCurrentFeedAsRead()
             feedFetcherRepository.fetchFeeds()
+            feedOperationMutableState.update { FeedOperation.None }
         }
     }
 
@@ -241,9 +244,9 @@ class HomeViewModel internal constructor(
 
     fun deleteOldFeedItems() {
         viewModelScope.launch {
-            isDeletingMutableState.update { true }
+            feedOperationMutableState.update { FeedOperation.Deleting }
             feedActionsRepository.deleteOldFeeds()
-            isDeletingMutableState.update { false }
+            feedOperationMutableState.update { FeedOperation.None }
         }
     }
 

@@ -23,4 +23,4 @@ struct LoadingHeaderView: View {
             }
         }
     }
-} 
+}

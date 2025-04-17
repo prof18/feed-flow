@@ -1,7 +1,11 @@
 package com.prof18.feedflow.desktop
 
 import androidx.compose.foundation.LocalScrollbarStyle
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,19 +14,30 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
+import androidx.compose.ui.window.DialogWindow
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberDialogState
+import androidx.compose.ui.window.rememberWindowState
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
-import com.prof18.feedflow.core.model.SyncResult
-import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
+import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
@@ -43,10 +58,12 @@ import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
-import com.prof18.feedflow.shared.ui.search.FeedListFontSettings
+import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
+import com.prof18.feedflow.shared.ui.settings.FeedListFontSettings
 import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
 import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
 import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
+import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -160,7 +177,6 @@ fun main() = application {
         }
     }
 
-
     FeedFlowTheme {
         val lyricist = rememberFeedFlowStrings()
         val icon = painterResource(Res.drawable.icon)
@@ -258,7 +274,7 @@ fun main() = application {
                         val fontSizesState by settingsViewModel.feedFontSizeState.collectAsState()
 
                         val dialogState = rememberDialogState(
-                            size = DpSize(500.dp, 550.dp),
+                            size = DpSize(500.dp, 720.dp),
                         )
                         DialogWindow(
                             state = dialogState,
@@ -283,6 +299,7 @@ fun main() = application {
                                         },
                                         isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
                                         isHideImagesEnabled = settingsState.isHideImagesEnabled,
+                                        dateFormat = settingsState.dateFormat,
                                     )
 
                                     Spacer(modifier = Modifier.padding(top = Spacing.regular))
@@ -310,6 +327,29 @@ fun main() = application {
                                             settingsViewModel.updateRemoveTitleFromDescription(
                                                 !settingsState.isRemoveTitleFromDescriptionEnabled,
                                             )
+                                        },
+                                    )
+
+                                    DateFormatSelector(
+                                        currentFormat = settingsState.dateFormat,
+                                        onFormatSelected = { format ->
+                                            settingsViewModel.updateDateFormat(format)
+                                        },
+                                    )
+
+                                    SwipeActionSelector(
+                                        direction = SwipeDirection.LEFT,
+                                        currentAction = settingsState.leftSwipeActionType,
+                                        onActionSelected = { action ->
+                                            settingsViewModel.updateSwipeAction(SwipeDirection.LEFT, action)
+                                        },
+                                    )
+
+                                    SwipeActionSelector(
+                                        direction = SwipeDirection.RIGHT,
+                                        currentAction = settingsState.rightSwipeActionType,
+                                        onActionSelected = { action ->
+                                            settingsViewModel.updateSwipeAction(SwipeDirection.RIGHT, action)
                                         },
                                     )
                                 }
@@ -383,12 +423,6 @@ fun main() = application {
                                 },
                                 onAutoDeletePeriodSelected = { period ->
                                     settingsViewModel.updateAutoDeletePeriod(period)
-                                },
-                                onLeftSwipeActionSelected = { action ->
-                                    settingsViewModel.updateSwipeAction(SwipeDirection.LEFT, action)
-                                },
-                                onRightSwipeActionSelected = { action ->
-                                    settingsViewModel.updateSwipeAction(SwipeDirection.RIGHT, action)
                                 },
                                 setCrashReportingEnabled = { enabled ->
                                     settingsViewModel.updateCrashReporting(enabled)

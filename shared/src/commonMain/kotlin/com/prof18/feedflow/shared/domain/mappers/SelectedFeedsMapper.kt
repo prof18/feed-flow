@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.mappers
 
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -13,6 +14,7 @@ internal fun SelectFeeds.toFeedItem(
     removeTitleFromDesc: Boolean,
     hideDescription: Boolean,
     hideImages: Boolean,
+    dateFormat: DateFormat,
 ) = FeedItem(
     id = url_hash,
     url = sanitizeUrl(url),
@@ -53,7 +55,8 @@ internal fun SelectFeeds.toFeedItem(
         @Suppress("RedundantRequireNotNullCall")
         // It's required because the variables come from another module
         dateFormatter.formatDateForFeed(
-            requireNotNull(pub_date),
+            millis = requireNotNull(pub_date),
+            dateFormat = dateFormat,
         )
     } else {
         null

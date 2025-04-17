@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.domain.mappers
 
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
@@ -8,7 +9,11 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 
-internal fun Search.toFeedItem(dateFormatter: DateFormatter, removeTitleFromDesc: Boolean) = FeedItem(
+internal fun Search.toFeedItem(
+    dateFormatter: DateFormatter,
+    removeTitleFromDesc: Boolean,
+    dateFormat: DateFormat,
+) = FeedItem(
     id = url_hash,
     url = sanitizeUrl(url),
     title = title,
@@ -49,6 +54,7 @@ internal fun Search.toFeedItem(dateFormatter: DateFormatter, removeTitleFromDesc
         // It's required because the variables come from another module
         dateFormatter.formatDateForFeed(
             requireNotNull(pub_date),
+            dateFormat = dateFormat,
         )
     } else {
         null

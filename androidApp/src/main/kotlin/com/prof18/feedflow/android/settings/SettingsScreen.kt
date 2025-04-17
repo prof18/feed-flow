@@ -2,7 +2,6 @@ package com.prof18.feedflow.android.settings
 
 import FeedFlowTheme
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -25,8 +24,6 @@ import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.SwapVert
-import androidx.compose.material.icons.outlined.SwipeLeft
-import androidx.compose.material.icons.outlined.SwipeRight
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,14 +41,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.CrashlyticsHelper
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelector
-import com.prof18.feedflow.android.settings.components.SwipeActionDialog
 import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -64,11 +62,13 @@ import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
-import com.prof18.feedflow.shared.ui.search.FeedListFontSettings
+import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
+import com.prof18.feedflow.shared.ui.settings.FeedListFontSettings
 import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
 import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
 import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
 import com.prof18.feedflow.shared.ui.settings.SettingItem
+import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.tagForTesting
@@ -114,12 +114,10 @@ fun SettingsScreen(
         navigateBack = navigateBack,
         onAboutClick = onAboutClick,
         onBugReportClick = {
-            val uri = Uri.parse(
-                UserFeedbackReporter.getEmailUrl(
-                    subject = emailSubject,
-                    content = emailContent,
-                ),
-            )
+            val uri = UserFeedbackReporter.getEmailUrl(
+                subject = emailSubject,
+                content = emailContent,
+            ).toUri()
             val emailIntent = Intent(Intent.ACTION_SENDTO, uri)
             context.startActivity(Intent.createChooser(emailIntent, chooserTitle))
         },
@@ -162,6 +160,9 @@ fun SettingsScreen(
         onSwipeActionSelected = { direction, action ->
             settingsViewModel.updateSwipeAction(direction, action)
         },
+        onDateFormatSelected = { format ->
+            settingsViewModel.updateDateFormat(format)
+        },
         navigateToNotifications = navigateToNotifications,
     )
 }
@@ -191,6 +192,7 @@ private fun SettingsScreenContent(
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onCrashReportingEnabled: (Boolean) -> Unit,
     onSwipeActionSelected: (SwipeDirection, SwipeActionType) -> Unit,
+    onDateFormatSelected: (DateFormat) -> Unit,
     navigateToNotifications: () -> Unit,
 ) {
     Scaffold(
@@ -319,6 +321,7 @@ private fun SettingsScreenContent(
                     isHideImagesEnabled = settingsState.isHideImagesEnabled,
                     fontSizes = fontSizes,
                     updateFontScale = updateFontScale,
+                    dateFormat = settingsState.dateFormat,
                 )
             }
 
@@ -342,6 +345,13 @@ private fun SettingsScreenContent(
                 RemoveTitleFromDescSwitch(
                     isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
                     setRemoveTitleFromDescription = setRemoveTitleFromDescription,
+                )
+            }
+
+            item {
+                DateFormatSelector(
+                    currentFormat = settingsState.dateFormat,
+                    onFormatSelected = onDateFormatSelected,
                 )
             }
 
@@ -595,66 +605,6 @@ private fun SyncPeriodSelector(
 }
 
 @Composable
-private fun SwipeActionSelector(
-    direction: SwipeDirection,
-    currentAction: SwipeActionType,
-    onActionSelected: (SwipeActionType) -> Unit,
-) {
-    var showDialog by remember { mutableStateOf(false) }
-    val strings = LocalFeedFlowStrings.current
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable { showDialog = true }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            if (direction == SwipeDirection.LEFT) {
-                Icons.Outlined.SwipeLeft
-            } else {
-                Icons.Outlined.SwipeRight
-            },
-            contentDescription = null,
-        )
-
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
-            Text(
-                text = if (direction == SwipeDirection.LEFT) {
-                    strings.settingsLeftSwipeAction
-                } else {
-                    strings.settingsRightSwipeAction
-                },
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Text(
-                text = when (currentAction) {
-                    SwipeActionType.TOGGLE_READ_STATUS -> strings.settingsSwipeActionToggleRead
-                    SwipeActionType.TOGGLE_BOOKMARK_STATUS -> strings.settingsSwipeActionToggleBookmark
-                    SwipeActionType.NONE -> strings.settingsSwipeActionNone
-                },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-
-    if (showDialog) {
-        SwipeActionDialog(
-            direction = direction,
-            currentAction = currentAction,
-            onActionSelected = onActionSelected,
-            dismissDialog = { showDialog = false },
-        )
-    }
-}
-
-@Composable
 private fun AutoDeletePeriodSelector(
     currentPeriod: AutoDeletePeriod,
     onPeriodSelected: (AutoDeletePeriod) -> Unit,
@@ -756,6 +706,7 @@ private fun SettingsScreenPreview() {
             onSyncPeriodSelected = {},
             onCrashReportingEnabled = {},
             onSwipeActionSelected = { _, _ -> },
+            onDateFormatSelected = {},
             navigateToNotifications = {},
         )
     }

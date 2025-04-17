@@ -63,6 +63,7 @@ internal class FeedStateRepository(
             val removeTitleFromDesc = settingsRepository.getRemoveTitleFromDescription()
             val hideDesc = settingsRepository.getHideDescription()
             val hideImages = settingsRepository.getHideImages()
+            val dateFormat = settingsRepository.getDateFormat()
 
             if (feeds.isNotEmpty()) {
                 updateMutableState.update { FinishedFeedUpdateStatus }
@@ -74,6 +75,7 @@ internal class FeedStateRepository(
                         removeTitleFromDesc = removeTitleFromDesc,
                         hideDescription = hideDesc,
                         hideImages = hideImages,
+                        dateFormat = dateFormat,
                     )
                 }.toImmutableList()
             }
@@ -101,13 +103,15 @@ internal class FeedStateRepository(
             val removeTitleFromDesc = settingsRepository.getRemoveTitleFromDescription()
             val hideDesc = settingsRepository.getHideDescription()
             val hideImages = settingsRepository.getHideImages()
+            val dateFormat = settingsRepository.getDateFormat()
             mutableFeedState.update { currentItems ->
                 val newList = feeds.map {
                     it.toFeedItem(
-                        dateFormatter,
-                        removeTitleFromDesc,
-                        hideDesc,
-                        hideImages,
+                        dateFormatter = dateFormatter,
+                        removeTitleFromDesc = removeTitleFromDesc,
+                        hideDescription = hideDesc,
+                        hideImages = hideImages,
+                        dateFormat = dateFormat,
                     )
                 }.toImmutableList()
                 (currentItems + newList).toImmutableList()

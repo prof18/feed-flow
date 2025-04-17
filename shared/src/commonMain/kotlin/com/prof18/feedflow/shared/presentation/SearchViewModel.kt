@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
@@ -38,7 +39,7 @@ class SearchViewModel internal constructor(
     private val dateFormatter: DateFormatter,
     private val feedFontSizeRepository: FeedFontSizeRepository,
     private val feedStateRepository: FeedStateRepository,
-    settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val searchMutableState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState.EmptyState)
@@ -51,6 +52,7 @@ class SearchViewModel internal constructor(
     val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
 
     private val isRemoveTitleFromDescriptionEnabled: Boolean = settingsRepository.getRemoveTitleFromDescription()
+    private val dateFormat: DateFormat = settingsRepository.getDateFormat()
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 
@@ -126,7 +128,11 @@ class SearchViewModel internal constructor(
                     } else {
                         SearchState.DataFound(
                             foundFeed.map { feedItem ->
-                                feedItem.toFeedItem(dateFormatter, isRemoveTitleFromDescriptionEnabled)
+                                feedItem.toFeedItem(
+                                    dateFormatter = dateFormatter,
+                                    removeTitleFromDesc = isRemoveTitleFromDescriptionEnabled,
+                                    dateFormat = dateFormat,
+                                )
                             }.toImmutableList(),
                         )
                     }

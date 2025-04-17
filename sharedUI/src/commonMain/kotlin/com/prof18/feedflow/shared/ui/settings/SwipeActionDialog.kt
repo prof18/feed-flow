@@ -1,7 +1,8 @@
-package com.prof18.feedflow.android.settings.components
+package com.prof18.feedflow.shared.ui.settings
 
-import FeedFlowTheme
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,10 +10,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.SwipeLeft
+import androidx.compose.material.icons.outlined.SwipeRight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,12 +29,72 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-internal fun SwipeActionDialog(
+fun SwipeActionSelector(
+    direction: SwipeDirection,
+    currentAction: SwipeActionType,
+    onActionSelected: (SwipeActionType) -> Unit,
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val strings = LocalFeedFlowStrings.current
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable { showDialog = true }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            if (direction == SwipeDirection.LEFT) {
+                Icons.Outlined.SwipeLeft
+            } else {
+                Icons.Outlined.SwipeRight
+            },
+            contentDescription = null,
+        )
+
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = if (direction == SwipeDirection.LEFT) {
+                    strings.settingsLeftSwipeAction
+                } else {
+                    strings.settingsRightSwipeAction
+                },
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = when (currentAction) {
+                    SwipeActionType.TOGGLE_READ_STATUS -> strings.settingsSwipeActionToggleRead
+                    SwipeActionType.TOGGLE_BOOKMARK_STATUS -> strings.settingsSwipeActionToggleBookmark
+                    SwipeActionType.NONE -> strings.settingsSwipeActionNone
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+
+    if (showDialog) {
+        SwipeActionDialog(
+            direction = direction,
+            currentAction = currentAction,
+            onActionSelected = onActionSelected,
+            dismissDialog = { showDialog = false },
+        )
+    }
+}
+
+@Composable
+private fun SwipeActionDialog(
     direction: SwipeDirection,
     currentAction: SwipeActionType,
     onActionSelected: (SwipeActionType) -> Unit,
@@ -111,15 +180,13 @@ private fun ActionOption(
     }
 }
 
-@PreviewPhone
+@Preview
 @Composable
 private fun SwipeActionDialogPreview() {
-    FeedFlowTheme {
-        SwipeActionDialog(
-            direction = SwipeDirection.LEFT,
-            currentAction = SwipeActionType.TOGGLE_READ_STATUS,
-            onActionSelected = {},
-            dismissDialog = {},
-        )
-    }
+    SwipeActionDialog(
+        direction = SwipeDirection.LEFT,
+        currentAction = SwipeActionType.TOGGLE_READ_STATUS,
+        onActionSelected = {},
+        dismissDialog = {},
+    )
 }

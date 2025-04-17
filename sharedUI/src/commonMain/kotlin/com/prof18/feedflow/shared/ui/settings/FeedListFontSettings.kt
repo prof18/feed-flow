@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.search
+package com.prof18.feedflow.shared.ui.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
@@ -25,9 +26,10 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun FeedListFontSettings(
     fontSizes: FeedFontSizes,
     modifier: Modifier = Modifier,
-    updateFontScale: (Int) -> Unit,
     isHideDescriptionEnabled: Boolean,
     isHideImagesEnabled: Boolean,
+    dateFormat: DateFormat,
+    updateFontScale: (Int) -> Unit,
 ) {
     val color = if (isSystemInDarkTheme()) {
         Color(0xFF333439)
@@ -71,7 +73,10 @@ fun FeedListFontSettings(
                             isNotificationEnabled = false,
                         ),
                         pubDateMillis = null,
-                        dateString = "01/01",
+                        dateString = when(dateFormat) {
+                            DateFormat.NORMAL -> "25/12"
+                            DateFormat.AMERICAN -> "12/25"
+                        },
                         commentsUrl = null,
                         isRead = false,
                         isBookmarked = false,

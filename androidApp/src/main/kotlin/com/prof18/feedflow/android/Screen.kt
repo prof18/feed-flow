@@ -1,6 +1,5 @@
 package com.prof18.feedflow.android
 
-import com.prof18.feedflow.core.model.LinkOpeningPreference
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -47,7 +46,7 @@ data class EditFeed(
     val categoryTitle: String?,
     val lastSyncTimestamp: Long?,
     val logoUrl: String?,
-    val linkOpeningPreference: LinkOpeningPreference,
+    val linkOpeningPreference: String,
     val isHidden: Boolean,
     val isPinned: Boolean,
 )

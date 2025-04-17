@@ -199,4 +199,21 @@
     <string name="settings_sync_period_one_day">Кожен день</string>
     <string name="settings_right_swipe_action">Свайп праворуч</string>
     <string name="settings_swipe_action_none">Вимкнено</string>
+    <string name="settings_notification_no_feed">Схоже, ви ще не додали жодного каналу. Додайте кілька, щоб почати отримувати сповіщення!</string>
+    <string name="settings_notifications_enable_all_title">Увімкнути всі сповіщення</string>
+    <string name="notification_channel_description">Сповіщення про нові статті у ваших стрічках</string>
+    <string name="settings_notifications_permission_status_title">Статус дозволу</string>
+    <string name="settings_notifications_permission_status_granted">Зрозуміло</string>
+    <string name="settings_notifications_permission_status_denied">Відмовлено</string>
+    <string name="settings_notifications_permission_request_button">Запит на дозвіл</string>
+    <string name="new_articles_notification_title">Доступні нові статті</string>
+    <string name="notification_channel_name">Нові статті</string>
+    <string name="new_articles_notification_content">Нові статті від %s</string>
+    <string name="settings_notifications_title">Сповіщення</string>
+    <string name="settings_open_settings">Відкрийте налаштування</string>
+    <string name="settings_title_notifications">Сповіщення</string>
+    <string name="settings_notification_check_period">Частота перевірки повідомлень</string>
+    <string name="settings_notification_check_period_desc">Виберіть, як часто перевіряти сповіщення про нові статті</string>
+    <string name="settings_notifications_warning_reliability">Сповіщення перевіряються на вашому пристрої, але можуть не завжди надходити надійно через системні обмеження.</string>
+    <string name="settings_notifications_settings_instructions">Увімкніть сповіщення для цієї програми в налаштуваннях iOS.</string>
 </resources>

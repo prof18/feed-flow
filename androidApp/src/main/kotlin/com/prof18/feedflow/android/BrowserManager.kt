@@ -13,7 +13,6 @@ import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.model.Browser
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -25,7 +24,6 @@ import java.util.*
 
 class BrowserManager(
     private val context: Context,
-    private val browserSettingsRepository: BrowserSettingsRepository,
     private val settingsRepository: SettingsRepository,
     private val logger: Logger,
 ) {
@@ -43,7 +41,7 @@ class BrowserManager(
         settingsRepository.isUseReaderModeEnabled()
 
     fun setFavouriteBrowser(browser: Browser) {
-        browserSettingsRepository.setFavouriteBrowser(browser)
+        settingsRepository.saveFavouriteBrowserId(browser.id)
         browserListMutableState.update { browserList ->
             val newList = browserList.toMutableList()
             newList.replaceAll {
@@ -59,7 +57,7 @@ class BrowserManager(
     }
 
     private fun populateBrowserList() {
-        val favouriteBrowserId = browserSettingsRepository.getFavouriteBrowserId()
+        val favouriteBrowserId = settingsRepository.getFavouriteBrowserId()
 
         val intent = Intent(Intent(Intent.ACTION_VIEW)).apply {
             data = Uri.parse("https://www.example.com")

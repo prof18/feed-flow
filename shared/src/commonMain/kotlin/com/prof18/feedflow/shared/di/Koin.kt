@@ -18,7 +18,6 @@ import com.prof18.feedflow.shared.data.ReviewRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DateFormatterImpl
 import com.prof18.feedflow.shared.domain.HtmlRetriever
-import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
@@ -179,12 +178,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedFetcherRepository = get(),
             logger = getWith("ImportExportViewModel"),
             dateFormatter = get(),
-        )
-    }
-
-    factory {
-        BrowserSettingsRepository(
-            settingsRepository = get(),
         )
     }
 

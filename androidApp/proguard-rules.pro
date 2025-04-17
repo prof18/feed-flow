@@ -21,4 +21,13 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.*
 -dontwarn org.slf4j.impl.StaticLoggerBinder
 
--keep class com.prof18.feedflow.core.model.LinkOpeningPreference
+# Keep LinkOpeningPreference enum and its serialization
+-keep class com.prof18.feedflow.core.model.LinkOpeningPreference { *; }
+-keepclassmembers class com.prof18.feedflow.core.model.LinkOpeningPreference { *; }
+-keepclassmembers class * {
+    @kotlinx.serialization.Serializable <fields>;
+}
+
+# Keep the DateTimeComponents class and all its members
+# TODO: remove when https://github.com/Kotlin/kotlinx-datetime/issues/519 is closed
+-keep class kotlinx.datetime.format.DateTimeComponents { *; }

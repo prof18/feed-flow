@@ -18,7 +18,6 @@ import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.KeychainSettingsMigration
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.browser.BrowserSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -185,7 +184,6 @@ object Deps : KoinComponent {
     fun getHomeViewModel() = getKoin().get<HomeViewModel>()
     fun getFeedSourceListViewModel() = getKoin().get<FeedSourceListViewModel>()
     fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()
-    fun getBrowserSettingsRepository() = getKoin().get<BrowserSettingsRepository>()
     fun getLogger(tag: String? = null) = getKoin().get<Logger> { parametersOf(tag) }
     fun getImportExportViewModel() = getKoin().get<ImportExportViewModel>()
     fun getSettingsViewModel() = getKoin().get<SettingsViewModel>()

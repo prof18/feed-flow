@@ -49,18 +49,20 @@ import UIKit
         )
     ]
 
-    private let browserSettingsRepository = Deps.shared.getBrowserSettingsRepository()
     private let settingsRepository = Deps.shared.getSettingsRepository()
 
     var browsers: [Browser] = []
     var selectedBrowser: Browser? {
         didSet {
-            browserSettingsRepository.setFavouriteBrowser(browser: selectedBrowser!)
+            if let browserId = selectedBrowser?.id {
+                settingsRepository.saveFavouriteBrowserId(browserId: browserId)
+            }
+            
         }
     }
 
     init() {
-        let favouriteBrowser = browserSettingsRepository.getFavouriteBrowserId()
+        let favouriteBrowser = settingsRepository.getFavouriteBrowserId()
 
         var isInAppBrowserFavourite = false
         if favouriteBrowser == nil {

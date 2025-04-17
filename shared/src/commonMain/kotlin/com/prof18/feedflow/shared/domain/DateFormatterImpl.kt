@@ -135,7 +135,11 @@ class DateFormatterImpl(
                 dayOfMonth(Padding.NONE)
             }
             char(' ')
-            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            alternativeParsing({
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+            }) {
+                monthName(MonthNames.ENGLISH_FULL)
+            }
             char(' ')
             year()
             char(' ')
@@ -174,6 +178,9 @@ class DateFormatterImpl(
             }
             optional {
                 chars("GMT")
+            }
+            optional {
+                chars("CDT")
             }
         },
 
@@ -236,6 +243,9 @@ class DateFormatterImpl(
             }
             optional {
                 chars("GMT")
+            }
+            optional {
+                chars("CDT")
             }
         },
 
@@ -438,6 +448,9 @@ class DateFormatterImpl(
             optional {
                 chars("CET")
             }
+            optional {
+                chars("CDT")
+            }
         },
 
         // Feb 19, 2025 00:49 GMT
@@ -483,6 +496,9 @@ class DateFormatterImpl(
             }
             optional {
                 chars("CET")
+            }
+            optional {
+                chars("CDT")
             }
         },
 

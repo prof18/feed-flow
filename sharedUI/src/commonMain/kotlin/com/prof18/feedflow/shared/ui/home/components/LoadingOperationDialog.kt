@@ -13,11 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-fun DeleteOldFeedDialog() {
+fun LoadingOperationDialog(
+    feedOperation: FeedOperation,
+) {
     Dialog(
         onDismissRequest = { },
         properties = DialogProperties(
@@ -31,7 +34,7 @@ fun DeleteOldFeedDialog() {
                 .wrapContentHeight(),
             shape = MaterialTheme.shapes.medium,
             color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 8.dp
+            tonalElevation = 8.dp,
         ) {
             Row(
                 modifier = Modifier
@@ -42,7 +45,11 @@ fun DeleteOldFeedDialog() {
                 Text(
                     modifier = Modifier
                         .padding(start = Spacing.regular),
-                    text = LocalFeedFlowStrings.current.deletingFeedDialogTitle,
+                    text = when (feedOperation) {
+                        FeedOperation.Deleting -> LocalFeedFlowStrings.current.deletingFeedDialogTitle
+                        FeedOperation.MarkingAllRead -> LocalFeedFlowStrings.current.markingAllReadDialogTitle
+                        FeedOperation.None -> ""
+                    },
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }

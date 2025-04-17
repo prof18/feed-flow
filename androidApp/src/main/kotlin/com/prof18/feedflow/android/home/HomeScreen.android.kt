@@ -20,12 +20,13 @@ import com.prof18.feedflow.android.home.bywindowsize.MediumHomeView
 import com.prof18.feedflow.android.home.components.NoFeedsBottomSheet
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
-import com.prof18.feedflow.shared.ui.home.components.DeleteOldFeedDialog
+import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -51,16 +52,17 @@ internal fun HomeScreen(
     val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsStateWithLifecycle()
     val unReadCount by homeViewModel.unreadCountFlow.collectAsStateWithLifecycle(initialValue = 0)
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsStateWithLifecycle()
-    val isDeleting by homeViewModel.isDeletingState.collectAsStateWithLifecycle()
     val swipeActions by homeViewModel.swipeActions.collectAsStateWithLifecycle()
-
-    if (isDeleting) {
-        DeleteOldFeedDialog()
-    }
+    val feedOperation by homeViewModel.feedOperationState.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val strings = LocalFeedFlowStrings.current
+
+    if (feedOperation != FeedOperation.None) {
+        LoadingOperationDialog(feedOperation)
+    }
+
     LaunchedEffect(Unit) {
         homeViewModel.errorState.collect { errorState ->
             when (errorState) {

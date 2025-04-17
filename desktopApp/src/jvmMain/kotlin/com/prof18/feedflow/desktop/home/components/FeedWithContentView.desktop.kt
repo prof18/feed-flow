@@ -25,8 +25,9 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
-import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -35,8 +36,6 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
-import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
 
 @Composable
 internal fun FeedWithContentView(
@@ -85,8 +84,7 @@ internal fun FeedWithContentView(
                 },
                 markAllAsRead = markAllAsRead,
                 onShareClick = { urlTitle ->
-                    val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-                    clipboard.setContents(StringSelection(urlTitle.url), null)
+                    copyToClipboard(urlTitle.url)
                 }
             )
 

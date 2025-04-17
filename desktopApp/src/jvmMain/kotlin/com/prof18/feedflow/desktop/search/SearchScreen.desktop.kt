@@ -19,6 +19,7 @@ import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
+import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.search.SearchScreenContent
@@ -105,8 +106,7 @@ internal data class SearchScreen(
                 SnackbarHost(snackbarHostState)
             },
             onShareClick = { titleAndUrl ->
-                val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-                clipboard.setContents(StringSelection(titleAndUrl.url), null)
+                copyToClipboard(titleAndUrl.url)
             },
         )
     }

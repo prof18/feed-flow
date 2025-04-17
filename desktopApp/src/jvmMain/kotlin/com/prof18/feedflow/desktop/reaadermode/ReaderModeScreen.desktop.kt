@@ -30,13 +30,12 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.readermode.ReaderModeContent
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
-import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
 
 internal data class ReaderModeScreen(
     private val feedItemUrlInfo: FeedItemUrlInfo,
@@ -68,14 +67,14 @@ internal data class ReaderModeScreen(
                 uriHandler.openUri(url)
             },
             onShareClick = { url ->
-                val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-                clipboard.setContents(StringSelection(url), null)
-
-                scope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = message,
-                        duration = SnackbarDuration.Short,
-                    )
+                val result = copyToClipboard(url)
+                if (result) {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = message,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
                 }
             },
             fontSize = fontSize,

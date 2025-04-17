@@ -199,4 +199,21 @@
     <string name="settings_sync_period_one_day">Всеки ден</string>
     <string name="settings_left_swipe_action">Плъзнете наляво</string>
     <string name="settings_swipe_action_toggle_read">Превключване към прочетено</string>
+    <string name="settings_notifications_title">Известия</string>
+    <string name="settings_notification_no_feed">Изглежда, че все още не сте добавили емисии. Добавете няколко, за да започнете да получавате известия!</string>
+    <string name="settings_notification_check_period_desc">Изберете колко често да проверявате за известия за нови статии</string>
+    <string name="settings_title_notifications">Известия</string>
+    <string name="settings_notifications_permission_status_title">Състояние на разрешението</string>
+    <string name="settings_notifications_permission_status_granted">Предоставено</string>
+    <string name="settings_notifications_permission_status_denied">Отказано</string>
+    <string name="settings_notifications_permission_request_button">Искане на разрешение</string>
+    <string name="notification_channel_name">Нови статии</string>
+    <string name="new_articles_notification_title">Налични нови статии</string>
+    <string name="settings_open_settings">Отвори Настройки</string>
+    <string name="settings_notifications_settings_instructions">Моля, активирайте известията за това приложение в настройките на iOS.</string>
+    <string name="settings_notifications_warning_reliability">Известията се проверяват на вашето устройство, но може не винаги да се появяват надеждно поради системни ограничения.</string>
+    <string name="settings_notifications_enable_all_title">Активиране на всички известия</string>
+    <string name="settings_notification_check_period">Честота на проверка на известията</string>
+    <string name="notification_channel_description">Известия за нови статии във вашите емисии</string>
+    <string name="new_articles_notification_content">Нови статии от %s</string>
 </resources>

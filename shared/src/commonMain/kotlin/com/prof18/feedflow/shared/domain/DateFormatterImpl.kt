@@ -11,6 +11,7 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.format.DateTimeComponents.Companion.Format
 import kotlinx.datetime.format.DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET
 import kotlinx.datetime.format.DateTimeComponents.Formats.RFC_1123
+import kotlinx.datetime.format.DateTimeFormatBuilder
 import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
@@ -155,33 +156,7 @@ class DateFormatterImpl(
                 second()
             }
             chars(" ")
-            optional {
-                chars("EST")
-            }
-            optional {
-                chars("EDT")
-            }
-            optional {
-                chars("CDT")
-            }
-            optional {
-                chars("PDT")
-            }
-            optional {
-                chars("PST")
-            }
-            optional {
-                chars("UTC")
-            }
-            optional {
-                chars("CET")
-            }
-            optional {
-                chars("GMT")
-            }
-            optional {
-                chars("CDT")
-            }
+            timeZones()
         },
 
         // "2023-12-13 19:34:30  +0800"
@@ -217,36 +192,7 @@ class DateFormatterImpl(
             optional {
                 offset(UtcOffset.Formats.FOUR_DIGITS)
             }
-            optional {
-                chars(" ")
-            }
-            optional {
-                chars("EST")
-            }
-            optional {
-                chars("EDT")
-            }
-            optional {
-                chars("CDT")
-            }
-            optional {
-                chars("PDT")
-            }
-            optional {
-                chars("PST")
-            }
-            optional {
-                chars("UTC")
-            }
-            optional {
-                chars("CET")
-            }
-            optional {
-                chars("GMT")
-            }
-            optional {
-                chars("CDT")
-            }
+            timeZones()
         },
 
         // 01 Jan 2014
@@ -424,33 +370,7 @@ class DateFormatterImpl(
                 second()
             }
             chars(" ")
-            optional {
-                chars("EST")
-            }
-            optional {
-                chars("GMT")
-            }
-            optional {
-                chars("EDT")
-            }
-            optional {
-                chars("CDT")
-            }
-            optional {
-                chars("PDT")
-            }
-            optional {
-                chars("PST")
-            }
-            optional {
-                chars("UTC")
-            }
-            optional {
-                chars("CET")
-            }
-            optional {
-                chars("CDT")
-            }
+            timeZones()
         },
 
         // Feb 19, 2025 00:49 GMT
@@ -473,33 +393,7 @@ class DateFormatterImpl(
                 second()
             }
             chars(" ")
-            optional {
-                chars("EST")
-            }
-            optional {
-                chars("GMT")
-            }
-            optional {
-                chars("EDT")
-            }
-            optional {
-                chars("CDT")
-            }
-            optional {
-                chars("PDT")
-            }
-            optional {
-                chars("PST")
-            }
-            optional {
-                chars("UTC")
-            }
-            optional {
-                chars("CET")
-            }
-            optional {
-                chars("CDT")
-            }
+            timeZones()
         },
 
         // 02/18/25 20:39:28
@@ -604,6 +498,19 @@ class DateFormatterImpl(
         }
 
         return dateFormat.format(dateTime)
+    }
+
+    private fun DateTimeFormatBuilder.WithDateTimeComponents.timeZones() {
+        alternativeParsing(
+            { chars("EST") },
+            { chars("GMT") },
+            { chars("EDT") },
+            { chars("CDT") },
+            { chars("PDT") },
+            { chars("PST") },
+            { chars("UTC") },
+            { chars("CET") }
+        ) {}
     }
 
     override fun formatDateForLastRefresh(millis: Long): String {

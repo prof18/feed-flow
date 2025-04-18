@@ -22,10 +22,9 @@
 
 /* Begin PBXBuildFile section */
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
+		132B595E2DB28E8D0005D0D7 /* Reader in Frameworks */ = {isa = PBXBuildFile; productRef = 132B595D2DB28E8D0005D0D7 /* Reader */; };
 		1378B0432D735968004E9424 /* SwiftyDropbox in Frameworks */ = {isa = PBXBuildFile; productRef = 1378B0422D735968004E9424 /* SwiftyDropbox */; };
 		1378B0452D735977004E9424 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 1378B0442D735977004E9424 /* SwiftSoup */; };
-		138093682C80B47B00E904FF /* Reeeed in Frameworks */ = {isa = PBXBuildFile; productRef = 138093672C80B47B00E904FF /* Reeeed */; };
-		1380936E2C826C9C00E904FF /* Reeeed in Frameworks */ = {isa = PBXBuildFile; productRef = 1380936D2C826C9C00E904FF /* Reeeed */; };
 		13929EA32D7345F0003752AE /* ShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 13929E992D7345F0003752AE /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		13929EB52D734E6E003752AE /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 13929EB42D734E6E003752AE /* FirebaseCrashlytics */; };
 		13929EB72D734E95003752AE /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 13929EB62D734E95003752AE /* FirebaseCrashlytics */; };
@@ -114,6 +113,7 @@
 
 /* Begin PBXFileReference section */
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		132B595C2DB28E500005D0D7 /* Reader */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Reader; sourceTree = "<group>"; };
 		13929E992D7345F0003752AE /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		13A571E52D747F0600F0FFB0 /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		13A571E62D747F0600F0FFB0 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -206,10 +206,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				138093682C80B47B00E904FF /* Reeeed in Frameworks */,
 				139C09DD2C668E3700A5E3E8 /* OrderedCollections in Frameworks */,
+				132B595E2DB28E8D0005D0D7 /* Reader in Frameworks */,
 				139C09DC2C668E3700A5E3E8 /* Collections in Frameworks */,
-				1380936E2C826C9C00E904FF /* Reeeed in Frameworks */,
 				CC4B803D29D98BB20004A0AB /* NukeUI in Frameworks */,
 				CC23293C29D85208005D0E06 /* SwiftSoup in Frameworks */,
 				13929EB52D734E6E003752AE /* FirebaseCrashlytics in Frameworks */,
@@ -229,9 +228,18 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		132B595B2DB28E3A0005D0D7 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				132B595C2DB28E500005D0D7 /* Reader */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				132B595B2DB28E3A0005D0D7 /* Packages */,
 				13A5720A2D748E7100F0FFB0 /* WidgetExtension.entitlements */,
 				CCD494BA2C56B38500C54C8D /* FeedFlow.entitlements */,
 				CC21E74C2BED7F980001F160 /* PrivacyInfo.xcprivacy */,
@@ -376,9 +384,8 @@
 				CC4B803F29D9A31E0004A0AB /* Collections */,
 				CC4B804129D9A31E0004A0AB /* OrderedCollections */,
 				CC0799412C29B74600067E06 /* SwiftyDropbox */,
-				138093672C80B47B00E904FF /* Reeeed */,
-				1380936D2C826C9C00E904FF /* Reeeed */,
 				13929EB42D734E6E003752AE /* FirebaseCrashlytics */,
+				132B595D2DB28E8D0005D0D7 /* Reader */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* FeedFlow.app */;
@@ -444,7 +451,6 @@
 				CC4B803929D98BB20004A0AB /* XCRemoteSwiftPackageReference "Nuke" */,
 				CC4B803E29D9A31E0004A0AB /* XCRemoteSwiftPackageReference "swift-collections" */,
 				CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */,
-				1380936C2C826C9C00E904FF /* XCRemoteSwiftPackageReference "reeeed" */,
 				13929EB32D734E6E003752AE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
@@ -1115,14 +1121,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		1380936C2C826C9C00E904FF /* XCRemoteSwiftPackageReference "reeeed" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/prof18/reeeed";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		13929EB32D734E6E003752AE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -1166,6 +1164,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		132B595D2DB28E8D0005D0D7 /* Reader */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Reader;
+		};
 		1378B0422D735968004E9424 /* SwiftyDropbox */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */;
@@ -1175,15 +1177,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CC23293A29D85208005D0E06 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
 			productName = SwiftSoup;
-		};
-		138093672C80B47B00E904FF /* Reeeed */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Reeeed;
-		};
-		1380936D2C826C9C00E904FF /* Reeeed */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1380936C2C826C9C00E904FF /* XCRemoteSwiftPackageReference "reeeed" */;
-			productName = Reeeed;
 		};
 		13929EB42D734E6E003752AE /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;

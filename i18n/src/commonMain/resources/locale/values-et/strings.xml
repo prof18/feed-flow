@@ -209,4 +209,20 @@
     <string name="settings_notifications_enable_all_title">Võta kõik teavitused kasutusele</string>
     <string name="settings_notification_no_feed">Tundub, et sa pole veel ühtegi uudisvoogu lisanud. Teavituste saamiseks palun lisa mõni!</string>
     <string name="settings_notification_check_period_desc">Palun vali, kui tihti soovid teavituste jaoks kontrollida uute artiklite olemasolu</string>
+    <string name="notification_channel_description">Sinu uudisvoogudes leiduvate uute artiklite teavitus</string>
+    <string name="settings_notifications_permission_status_title">Õiguste olek</string>
+    <string name="settings_notifications_permission_status_granted">Lubatud</string>
+    <string name="settings_notifications_permission_status_denied">Keelatud</string>
+    <string name="settings_notifications_permission_request_button">Küsi õigusi</string>
+    <string name="new_articles_notification_title">Saadaval on uusi artikleid</string>
+    <string name="notification_channel_name">Uued artiklid</string>
+    <string name="settings_notifications_settings_instructions">Palun lülita iOS-i seadistustest selle rakenduse teavitused sisse.</string>
+    <string name="date_format_american">Kuu/Päev</string>
+    <string name="new_articles_notification_content">Uued artiklid: %s</string>
+    <string name="settings_notifications_title">Teavitused</string>
+    <string name="settings_open_settings">Ava seadistused</string>
+    <string name="date_format_title">Kuupäeva vorming</string>
+    <string name="settings_notifications_warning_reliability">Teavitused toimivad sinu nutiseadmes, kuid süsteemi piirangute tõttu ei pruugi alati olla nähtavad.</string>
+    <string name="marking_all_read_dialog_title">Märgin kõiki loetuks...</string>
+    <string name="date_format_normal">Päev/Kuu</string>
 </resources>

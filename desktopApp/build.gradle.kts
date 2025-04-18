@@ -222,7 +222,9 @@ fun getVersionName(): String =
         .replace("-desktop", "")
 
 configure<AboutLibrariesExtension> {
-    registerAndroidTasks = false
+    android {
+        registerAndroidTasks = false
+    }
 }
 
 tasks.withType(KotlinCompile::class.java) {

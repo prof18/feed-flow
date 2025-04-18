@@ -6,7 +6,7 @@
     <string name="empty_feed_message">Няма какво друго да се чете тук!</string>
     <string name="loading_feed_message">Зареждане на емисии %s</string>
     <string name="app_name">FeedFlow</string>
-    <string name="mark_all_read_button">Маркирайте всичко като прочетено</string>
+    <string name="mark_all_read_button">Маркирайте всички като прочетени</string>
     <string name="feeds_import_done_message">Внасянето завърши</string>
     <string name="settings_title">Настройки</string>
     <string name="browser_selection_button">Браузър</string>
@@ -216,4 +216,8 @@
     <string name="settings_notification_check_period">Честота на проверка на известията</string>
     <string name="notification_channel_description">Известия за нови статии във вашите емисии</string>
     <string name="new_articles_notification_content">Нови статии от %s</string>
+    <string name="marking_all_read_dialog_title">Маркиране на всички като прочетени...</string>
+    <string name="date_format_normal">Ден/Месец</string>
+    <string name="date_format_title">Формат на дата</string>
+    <string name="date_format_american">Месец/Ден</string>
 </resources>

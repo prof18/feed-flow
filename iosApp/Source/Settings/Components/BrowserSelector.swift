@@ -57,7 +57,6 @@ import UIKit
             if let browserId = selectedBrowser?.id {
                 settingsRepository.saveFavouriteBrowserId(browserId: browserId)
             }
-            
         }
     }
 

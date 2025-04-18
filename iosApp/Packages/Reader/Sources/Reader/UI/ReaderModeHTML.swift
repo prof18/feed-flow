@@ -1,9 +1,9 @@
 import Foundation
-import SwiftSoup
 import Fuzi
+import SwiftSoup
 
-extension Reader {
-    public static func wrapHTMLInReaderStyling(html: String, title: String, baseURL: URL?, author: String?, heroImage: URL?, includeExitReaderButton: Bool = true, theme: ReaderTheme = .init(), date: Date? = nil) -> String {
+public extension Reader {
+    static func wrapHTMLInReaderStyling(html: String, title: String, baseURL: URL?, author: String?, heroImage: URL?, includeExitReaderButton _: Bool = true, theme: ReaderTheme = .init(), date: Date? = nil) -> String {
         let escapedTitle = Entities.escape(title.byStrippingSiteNameFromPageTitle)
         let logger = Reader.logger
 
@@ -23,8 +23,7 @@ extension Reader {
                         let safeURL = Entities.escape(heroImage.absoluteString)
                         return "<img class='__hero' src=\"\(safeURL)\" />"
                     }
-                }
-                catch {
+                } catch {
                     logger.error("\(error)")
                 }
             }
@@ -68,171 +67,171 @@ extension Reader {
 //        }()
 
         let wrapped = """
-<!DOCTYPE html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>\(escapedTitle)</title>
-<style>
+        <!DOCTYPE html>
+        <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>\(escapedTitle)</title>
+        <style>
 
-html, body {
-    margin: 0;
-}
+        html, body {
+            margin: 0;
+        }
 
-body {
-    color: \(fgLight);
-    background-color: \(bgLight);
-    overflow-wrap: break-word;
-    font: -apple-system-body;
-}
+        body {
+            color: \(fgLight);
+            background-color: \(bgLight);
+            overflow-wrap: break-word;
+            font: -apple-system-body;
+        }
 
-.__hero {
-    display: block;
-    width: 100%;
-    height: 50vw;
-    max-height: 300px;
-    object-fit: cover;
-    overflow: hidden;
-    border-radius: 7px;
-}
+        .__hero {
+            display: block;
+            width: 100%;
+            height: 50vw;
+            max-height: 300px;
+            object-fit: cover;
+            overflow: hidden;
+            border-radius: 7px;
+        }
 
-#__content {
-    line-height: 1.5;
-    overflow-x: hidden;
-}
+        #__content {
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
 
-@media screen and (min-width: 650px) {
-    #__content {  line-height: 1.5; }
-}
+        @media screen and (min-width: 650px) {
+            #__content {  line-height: 1.5; }
+        }
 
-h1, h2, h3, h4, h5, h6 {
-    line-height: 1.2;
-    font-family: -apple-system;
-    font-weight: 800;
-}
+        h1, h2, h3, h4, h5, h6 {
+            line-height: 1.2;
+            font-family: -apple-system;
+            font-weight: 800;
+        }
 
-img, iframe, object, video {
-    max-width: 100%;
-    height: auto;
-    border-radius: 7px;
-}
+        img, iframe, object, video {
+            max-width: 100%;
+            height: auto;
+            border-radius: 7px;
+        }
 
-pre {
-    max-width: 100%;
-    overflow-x: auto;
-}
+        pre {
+            max-width: 100%;
+            overflow-x: auto;
+        }
 
-table {
-    display: block;
-    max-width: 100%;
-    overflow-x: auto;
-}
+        table {
+            display: block;
+            max-width: 100%;
+            overflow-x: auto;
+        }
 
-a:link {
-    color: \(linkLight);
-}
+        a:link {
+            color: \(linkLight);
+        }
 
-figure {
-    margin-left: 0;
-    margin-right: 0;
-}
+        figure {
+            margin-left: 0;
+            margin-right: 0;
+        }
 
-figcaption, cite {
-    opacity: 0.5;
-    font-size: small;
-}
+        figcaption, cite {
+            opacity: 0.5;
+            font-size: small;
+        }
 
-.__subtitle {
-    font-weight: bold;
-    vertical-align: baseline;
-    opacity: 0.5;
-}
+        .__subtitle {
+            font-weight: bold;
+            vertical-align: baseline;
+            opacity: 0.5;
+        }
 
-.__subtitle .__icon {
-    width: 1.2em;
-    height: 1.2em;
-    object-fit: cover;
-    overflow: hidden;
-    border-radius: 3px;
-    margin-right: 0.3em;
-    position: relative;
-    top: 0.3em;
-}
+        .__subtitle .__icon {
+            width: 1.2em;
+            height: 1.2em;
+            object-fit: cover;
+            overflow: hidden;
+            border-radius: 3px;
+            margin-right: 0.3em;
+            position: relative;
+            top: 0.3em;
+        }
 
-.__subtitle .__separator {
-    opacity: 0.5;
-}
+        .__subtitle .__separator {
+            opacity: 0.5;
+        }
 
-#__content {
-    padding: 1.5em;
-    margin: auto;
-    margin-top: 5px;
-    max-width: 700px;
-}
+        #__content {
+            padding: 1.5em;
+            margin: auto;
+            margin-top: 5px;
+            max-width: 700px;
+        }
 
-@media (prefers-color-scheme: dark) {
-    body {
-        color: \(fgDark);
-        background-color: \(bgDark);
-    }
-    a:link { color: \(linkDark); }
-}
+        @media (prefers-color-scheme: dark) {
+            body {
+                color: \(fgDark);
+                background-color: \(bgDark);
+            }
+            a:link { color: \(linkDark); }
+        }
 
-#__footer {
-    margin-bottom: 4em;
-    margin-top: 2em;
-}
+        #__footer {
+            margin-bottom: 4em;
+            margin-top: 2em;
+        }
 
-#__footer > .label {
-    font-size: small;
-    opacity: 0.5;
-    text-align: center;
-    margin-bottom: 0.66em;
-    font-weight: 500;
-}
+        #__footer > .label {
+            font-size: small;
+            opacity: 0.5;
+            text-align: center;
+            margin-bottom: 0.66em;
+            font-weight: 500;
+        }
 
-#__footer > button {
-    padding: 0.5em;
-    text-align: center;
-    background-color: \(bg2Light);
-    font-weight: 500;
-    color: \(fg2Light);
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    font-size: 1em;
-    border: none;
-    border-radius: 0.5em;
-}
+        #__footer > button {
+            padding: 0.5em;
+            text-align: center;
+            background-color: \(bg2Light);
+            font-weight: 500;
+            color: \(fg2Light);
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            font-size: 1em;
+            border: none;
+            border-radius: 0.5em;
+        }
 
-@media (prefers-color-scheme: dark) {
-    #__footer > button {
-        background-color: \(bg2Dark);
-        color: \(fg2Dark);
-    }
-}
+        @media (prefers-color-scheme: dark) {
+            #__footer > button {
+                background-color: \(bg2Dark);
+                color: \(fg2Dark);
+            }
+        }
 
-\(theme.additionalCSS ?? "")
+        \(theme.additionalCSS ?? "")
 
-</style>
-<body>
-<div id='__content' style='opacity: 0'>
-    \(heroHTML)
-    
-    <h1>\(escapedTitle)</h1>
-        \(subtitle)
-    <div id="__reader_container">\(html)</div>
-</div>
+        </style>
+        <body>
+        <div id='__content' style='opacity: 0'>
+            \(heroHTML)
 
-<script>
-    setTimeout(() => {
-        document.getElementById('__content').style.opacity = 1;
-    }, 100);
-</script>
+            <h1>\(escapedTitle)</h1>
+                \(subtitle)
+            <div id="__reader_container">\(html)</div>
+        </div>
 
-</body>
-"""
+        <script>
+            setTimeout(() => {
+                document.getElementById('__content').style.opacity = 1;
+            }, 100);
+        </script>
+
+        </body>
+        """
         return wrapped
     }
 }
@@ -285,8 +284,9 @@ extension Fuzi.XMLElement {
             try child.traverse(block)
         }
     }
+
     var estLineCount: Int {
-        if let tag = self.tag?.lowercased() {
+        if let tag = tag?.lowercased() {
             switch tag {
             case "video", "embed": return 5
             case "h1", "h2", "h3", "h4", "h5", "h6", "p", "li":
@@ -308,7 +308,7 @@ extension DateFormatter {
     }()
 }
 
-//extension SwiftSoup.Node {
+// extension SwiftSoup.Node {
 //    func traverseElements(_ block: @escaping (Element) -> Void) throws {
 //        let visitor = BlockNodeVisitor(headCallback: { (node, _depth) in
 //            if let el = node as? Element {
@@ -317,9 +317,9 @@ extension DateFormatter {
 //        }, tailCallback: nil)
 //        try traverse(visitor)
 //    }
-//}
+// }
 //
-//private struct BlockNodeVisitor: NodeVisitor {
+// private struct BlockNodeVisitor: NodeVisitor {
 //    var headCallback: ((Node, Int) -> Void)?
 //    var tailCallback: ((Node, Int) -> Void)?
 //
@@ -330,4 +330,4 @@ extension DateFormatter {
 //    func tail(_ node: Node, _ depth: Int) throws {
 //        tailCallback?(node, depth)
 //    }
-//}
+// }

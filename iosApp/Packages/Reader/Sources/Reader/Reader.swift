@@ -9,6 +9,7 @@ struct PrintLogger: Logger {
     func info(_ string: String) {
         print("[Reader] ℹ️ \(string)")
     }
+
     func error(_ string: String) {
         print("[Reader] 🚨 \(string)")
     }
@@ -25,7 +26,7 @@ public enum Reader {
     }
 
     public static func extractArticleContent(url: URL, html: String, extractor: Extractor = .mercury) async throws -> ExtractedContent {
-        return try await withCheckedThrowingContinuation({ continuation in
+        return try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
                 switch extractor {
                 case .mercury:
@@ -38,7 +39,7 @@ public enum Reader {
                     }
                 }
             }
-        })
+        }
     }
 
     public struct FetchAndExtractionResult {
@@ -52,9 +53,9 @@ public enum Reader {
         }
     }
 
-    public static func fetchAndExtractContent(fromURL url: URL, theme: ReaderTheme = .init(), extractor: Extractor = .mercury) async throws -> FetchAndExtractionResult {
+    public static func fetchAndExtractContent(fromURL url: URL, theme: ReaderTheme = .init(), extractor _: Extractor = .mercury) async throws -> FetchAndExtractionResult {
         DispatchQueue.main.async { Reader.warmup() }
-        
+
         let (data, response) = try await URLSession.shared.data(from: url)
         guard let html = String(data: data, encoding: .utf8) else {
             throw ExtractionError.DataIsNotString

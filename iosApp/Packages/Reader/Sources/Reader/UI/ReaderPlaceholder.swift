@@ -1,5 +1,5 @@
-import SwiftUI
 import Foundation
+import SwiftUI
 
 public struct ReaderPlaceholder: View {
     var theme: ReaderTheme
@@ -7,9 +7,9 @@ public struct ReaderPlaceholder: View {
     public init(theme: ReaderTheme = .init()) {
         self.theme = theme
     }
-    
+
     public var body: some View {
-        GeometryReader { geo in
+        GeometryReader { _ in
             VStack(alignment: .leading, spacing: baseFontSize) {
                 Color(theme.foreground2)
                     .cornerRadius(7)
@@ -72,11 +72,11 @@ private struct ShimmerMask: ViewModifier {
     }
 }
 
-//struct ReaderPlaceholder_Previews: PreviewProvider {
+// struct ReaderPlaceholder_Previews: PreviewProvider {
 //    static var previews: some View {
 //        ReaderPlaceholder()
 //            .background(Color("Background2"))
 //            .frame(width: 375)
 //    }
-//}
+// }
 //

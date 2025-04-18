@@ -1,6 +1,6 @@
 import Foundation
-import SwiftSoup
 import Fuzi
+import SwiftSoup
 
 public struct SiteMetadata: Equatable, Codable {
     public var url: URL
@@ -53,7 +53,7 @@ private extension Fuzi.HTMLDocument {
     func favicon(baseURL: URL) -> URL? {
         for item in css("link") {
             if let rel = item.attr("rel", namespace: nil),
-               (rel == "icon" || rel == "shortcut icon"),
+               rel == "icon" || rel == "shortcut icon",
                let val = item.attr("href", namespace: nil),
                let resolved = URL(string: val, relativeTo: baseURL) {
                 return resolved

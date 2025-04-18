@@ -18,11 +18,11 @@ class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
         readyState = .initializing
         let mercuryJS = try! String(contentsOf: Bundle.module.url(forResource: "mercury.web", withExtension: "js")!)
         let html = """
-<body>
-    <script>\(mercuryJS)</script>
-    <script>alert('ok')</script>
-</body>
-"""
+        <body>
+            <script>\(mercuryJS)</script>
+            <script>alert('ok')</script>
+        </body>
+        """
         webview.loadHTMLString(html, baseURL: nil)
     }
 
@@ -71,10 +71,10 @@ class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
 
             self.webview.callAsyncJavaScript(script, arguments: [:], in: nil, in: .page) { result in
                 switch result {
-                case .failure(let err):
+                case let .failure(err):
                     Reader.logger.error("Failed to extract: \(err)")
                     callback(nil)
-                case .success(let resultOpt):
+                case let .success(resultOpt):
                     Reader.logger.info("Successfully extracted")
                     let content = self.parse(dict: resultOpt as? [String: Any])
                     if let content, content.plainText.count >= 200 {
@@ -87,7 +87,7 @@ class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
         }
     }
 
-    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo) async {
+    func webView(_: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame _: WKFrameInfo) async {
         if message == "ok" {
             DispatchQueue.main.async {
                 self.readyState = .ready
@@ -96,9 +96,9 @@ class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
         }
     }
 
-    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+    func webViewWebContentProcessDidTerminate(_: WKWebView) {
         Reader.logger.info("Web process did terminate")
-        self.readyState = .none
+        readyState = .none
     }
 
     private func parse(dict: [String: Any]?) -> ExtractedContent? {

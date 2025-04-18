@@ -1,72 +1,59 @@
 import Foundation
 
-public protocol Logger {
-    func info(_ string: String)
-    func error(_ string: String)
-}
+enum Reader {
+    static var logger: Logger = PrintLogger()
 
-struct PrintLogger: Logger {
-    func info(_ string: String) {
-        print("[Reader] ℹ️ \(string)")
+    static func warmup() {
+        MercuryExtractor.shared.warmUp()
     }
 
-    func error(_ string: String) {
-        print("[Reader] 🚨 \(string)")
-    }
-}
-
-public enum Reader {
-    public static var logger: Logger = PrintLogger()
-
-    public static func warmup(extractor: Extractor = .mercury) {
-        switch extractor {
-        case .mercury:
-            MercuryExtractor.shared.warmUp()
-        }
-    }
-
-    public static func extractArticleContent(url: URL, html: String, extractor: Extractor = .mercury) async throws -> ExtractedContent {
+    static func extractArticleContent(
+        url: URL,
+        html: String
+    ) async throws -> ExtractedContent {
         return try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
-                switch extractor {
-                case .mercury:
-                    MercuryExtractor.shared.extract(html: html, url: url) { contentOpt in
-                        if let content = contentOpt {
-                            continuation.resume(returning: content)
-                        } else {
-                            continuation.resume(throwing: ExtractionError.FailedToExtract)
-                        }
+                MercuryExtractor.shared.extract(html: html, url: url) { contentOpt in
+                    if let content = contentOpt {
+                        continuation.resume(returning: content)
+                    } else {
+                        continuation.resume(throwing: ExtractionError.failedToExtract)
                     }
                 }
             }
         }
     }
 
-    public struct FetchAndExtractionResult {
-        public var metadata: SiteMetadata?
-        public var extracted: ExtractedContent
-        public var styledHTML: String
-        public var baseURL: URL
-
-        public var title: String? {
-            extracted.title?.nilIfEmpty ?? metadata?.title?.nilIfEmpty
-        }
-    }
-
-    public static func fetchAndExtractContent(fromURL url: URL, theme: ReaderTheme = .init(), extractor _: Extractor = .mercury) async throws -> FetchAndExtractionResult {
+    static func fetchAndExtractContent(
+        fromURL url: URL,
+        additionalCSS: String?
+    ) async throws -> FetchAndExtractionResult {
         DispatchQueue.main.async { Reader.warmup() }
 
         let (data, response) = try await URLSession.shared.data(from: url)
-        guard let html = String(data: data, encoding: .utf8) else {
-            throw ExtractionError.DataIsNotString
-        }
+        let html = String(decoding: data, as: UTF8.self)
         let baseURL = response.url ?? url
         let content = try await Reader.extractArticleContent(url: baseURL, html: html)
         guard let extractedHTML = content.content else {
-            throw ExtractionError.MissingExtractionData
+            throw ExtractionError.missingExtractionData
         }
-        let extractedMetadata = try? await SiteMetadata.extractMetadata(fromHTML: html, baseURL: baseURL)
-        let styledHTML = Reader.wrapHTMLInReaderStyling(html: extractedHTML, title: content.title ?? extractedMetadata?.title ?? "", baseURL: baseURL, author: content.author, heroImage: extractedMetadata?.heroImage, includeExitReaderButton: true, theme: theme, date: content.datePublished)
-        return .init(metadata: extractedMetadata, extracted: content, styledHTML: styledHTML, baseURL: baseURL)
+        let extractedMetadata = try? await SiteMetadata.extractMetadata(
+            fromHTML: html, baseURL: baseURL
+        )
+        let styledHTML = Reader.wrapHTMLInReaderStyling(
+            html: extractedHTML,
+            title: content.title ?? extractedMetadata?.title ?? "",
+            baseURL: baseURL,
+            heroImage: extractedMetadata?.heroImage,
+            additionalCSS: additionalCSS,
+            includeExitReaderButton: true,
+            direction: content.direction
+        )
+        return FetchAndExtractionResult(
+            metadata: extractedMetadata,
+            extracted: content,
+            styledHTML: styledHTML,
+            baseURL: baseURL
+        )
     }
 }

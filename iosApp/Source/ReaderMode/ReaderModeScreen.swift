@@ -23,13 +23,11 @@ struct ReaderModeScreen: View {
         ReaderView(
             url: URL(string: feedItemUrlInfo.url)!,
             options: ReaderViewOptions(
-                theme: .init(
-                    additionalCSS: """
-                        #__reader_container {
-                            font-size: \(fontSize)px
-                        }
-                    """
-                ),
+                additionalCSS: """
+                    #__reader_container {
+                        font-size: \(fontSize)px
+                    }
+                """,
                 onLinkClicked: { url in
                     if browserSelector.openInAppBrowser() {
                         browserToOpen = .inAppBrowser(url: url)

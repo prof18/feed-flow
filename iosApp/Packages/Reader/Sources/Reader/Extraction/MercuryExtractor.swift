@@ -3,42 +3,9 @@ import WebKit
 
 class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
     static let shared = MercuryExtractor()
-
     let webview = WKWebView()
 
-    override init() {
-        super.init()
-        webview.uiDelegate = self
-        webview.navigationDelegate = self
-    }
-
-    private func initializeJS() {
-        guard readyState == .none else { return }
-        Reader.logger.info("Initializing...")
-        readyState = .initializing
-        let mercuryJS = try! String(contentsOf: Bundle.module.url(forResource: "mercury.web", withExtension: "js")!)
-        let html = """
-        <body>
-            <script>\(mercuryJS)</script>
-            <script>alert('ok')</script>
-        </body>
-        """
-        webview.loadHTMLString(html, baseURL: nil)
-    }
-
-    func warmUp() {
-        // do nothing -- the real warmup is done in init
-        initializeJS()
-    }
-
-    typealias ReadyBlock = () -> Void
-    private var pendingReadyBlocks = [ReadyBlock]()
-
-    private enum ReadyState {
-        case none
-        case initializing
-        case ready
-    }
+    private var pendingReadyBlocks = [() -> Void]()
 
     private var readyState = ReadyState.none {
         didSet {
@@ -51,23 +18,20 @@ class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
         }
     }
 
-    private func waitUntilReady(_ callback: @escaping ReadyBlock) {
-        switch readyState {
-        case .ready: callback()
-        case .none:
-            pendingReadyBlocks.append(callback)
-            initializeJS()
-        case .initializing:
-            pendingReadyBlocks.append(callback)
-        }
+    override init() {
+        super.init()
+        webview.uiDelegate = self
+        webview.navigationDelegate = self
     }
 
-    typealias Callback = (ExtractedContent?) -> Void
+    func warmUp() {
+        initializeJS()
+    }
 
-    // TODO: queue up simultaneous requests?
-    func extract(html: String, url: URL, callback: @escaping Callback) {
+    func extract(html: String, url: URL, callback: @escaping (ExtractedContent?) -> Void) {
         waitUntilReady {
-            let script = "return await Mercury.parse(\(url.absoluteString.asJSString), {html: \(html.asJSString)})"
+            let script =
+                "return await Mercury.parse(\(url.absoluteString.asJSString), {html: \(html.asJSString)})"
 
             self.webview.callAsyncJavaScript(script, arguments: [:], in: nil, in: .page) { result in
                 switch result {
@@ -87,7 +51,11 @@ class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
         }
     }
 
-    func webView(_: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame _: WKFrameInfo) async {
+    func webView(
+        _: WKWebView,
+        runJavaScriptAlertPanelWithMessage message: String,
+        initiatedByFrame _: WKFrameInfo
+    ) async {
         if message == "ok" {
             DispatchQueue.main.async {
                 self.readyState = .ready
@@ -101,14 +69,48 @@ class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
         readyState = .none
     }
 
+    private func initializeJS() {
+        guard readyState == .none else { return }
+        Reader.logger.info("Initializing...")
+        readyState = .initializing
+        let mercuryJS = try? String(
+            contentsOf: Bundle.module.url(forResource: "mercury.web", withExtension: "js")!
+        )
+        let html = """
+        <body>
+            <script>\(mercuryJS ?? "")</script>
+            <script>alert('ok')</script>
+        </body>
+        """
+        webview.loadHTMLString(html, baseURL: nil)
+    }
+
     private func parse(dict: [String: Any]?) -> ExtractedContent? {
         guard let result = dict else { return nil }
         let content = ExtractedContent(
             content: result["content"] as? String,
             author: result["author"] as? String,
             title: result["title"] as? String,
-            excerpt: result["excerpt"] as? String
+            excerpt: result["excerpt"] as? String,
+            direction: result["direction"] as? String
         )
         return content
     }
+
+    private func waitUntilReady(_ callback: @escaping () -> Void) {
+        switch readyState {
+        case .ready: callback()
+        case .none:
+            pendingReadyBlocks.append(callback)
+            initializeJS()
+        case .initializing:
+            pendingReadyBlocks.append(callback)
+        }
+    }
+}
+
+private enum ReadyState {
+    case none
+    case initializing
+    case ready
 }

@@ -1,5 +1,4 @@
 {
-  "originHash" : "dfe837f41ec6117df1db5fb2e4c398f72de98bbe1a2691621f938eae93b09eba",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -128,15 +127,6 @@
       }
     },
     {
-      "identity" : "reeeed",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/prof18/reeeed",
-      "state" : {
-        "branch" : "main",
-        "revision" : "95d3c38057aeeea87cb72c58c5bd7e31ed5b5f94"
-      }
-    },
-    {
       "identity" : "swift-collections",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
@@ -173,5 +163,5 @@
       }
     }
   ],
-  "version" : 3
+  "version" : 2
 }

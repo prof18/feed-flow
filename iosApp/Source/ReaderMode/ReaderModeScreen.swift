@@ -1,6 +1,6 @@
 import FeedFlowKit
 import Foundation
-import Reeeed
+import Reader
 import SwiftUI
 
 struct ReaderModeScreen: View {
@@ -20,9 +20,9 @@ struct ReaderModeScreen: View {
     let feedItemUrlInfo: FeedItemUrlInfo
 
     var body: some View {
-        ReeeederView(
+        ReaderView(
             url: URL(string: feedItemUrlInfo.url)!,
-            options: ReeeederViewOptions(
+            options: ReaderViewOptions(
                 theme: .init(
                     additionalCSS: """
                         #__reader_container {

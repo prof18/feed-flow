@@ -8,7 +8,7 @@
 
 import FeedFlowKit
 import Foundation
-import Reeeed
+import Reader
 import SwiftUI
 
 struct FeedListView: View {

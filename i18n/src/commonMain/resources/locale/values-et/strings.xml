@@ -204,4 +204,9 @@
     <string name="settings_swipe_action_toggle_read">Lülita loetuks märkimine sisse/välja</string>
     <string name="settings_swipe_action_toggle_bookmark">Lülita järjehoidjaks märkimine sisse/välja</string>
     <string name="settings_swipe_action_none">Pole kasutusel</string>
+    <string name="settings_notification_check_period">Teavituste kontrollimise sagedus</string>
+    <string name="settings_title_notifications">Teavitused</string>
+    <string name="settings_notifications_enable_all_title">Võta kõik teavitused kasutusele</string>
+    <string name="settings_notification_no_feed">Tundub, et sa pole veel ühtegi uudisvoogu lisanud. Teavituste saamiseks palun lisa mõni!</string>
+    <string name="settings_notification_check_period_desc">Palun vali, kui tihti soovid teavituste jaoks kontrollida uute artiklite olemasolu</string>
 </resources>

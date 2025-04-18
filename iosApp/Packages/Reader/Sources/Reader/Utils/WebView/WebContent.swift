@@ -1,6 +1,6 @@
+import Combine
 import Foundation
 import WebKit
-import Combine
 
 class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject {
     fileprivate let webview: WKWebView
@@ -8,6 +8,7 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     private var subscriptions = Set<AnyCancellable>()
 
     // MARK: - API
+
     struct Info: Equatable, Codable {
         var url: URL?
         var title: String?
@@ -30,10 +31,10 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     init(transparent: Bool = false, allowsInlinePlayback: Bool = false, autoplayAllowed: Bool = false) {
         let config = WKWebViewConfiguration()
         #if os(iOS)
-        config.allowsInlineMediaPlayback = allowsInlinePlayback
-        if autoplayAllowed {
-            config.mediaTypesRequiringUserActionForPlayback = []
-        }
+            config.allowsInlineMediaPlayback = allowsInlinePlayback
+            if autoplayAllowed {
+                config.mediaTypesRequiringUserActionForPlayback = []
+            }
         #endif
         webview = WKWebView(frame: .zero, configuration: config)
         webview.allowsBackForwardNavigationGestures = true
@@ -62,14 +63,13 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
             self?.info.isLoading = val.newValue ?? false
         }))
 
-#if os(macOS)
+        #if os(macOS)
         // no op
         #else
-        webview.scrollView.backgroundColor = nil
-        NotificationCenter.default.addObserver(self, selector: #selector(appDidForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+            webview.scrollView.backgroundColor = nil
+            NotificationCenter.default.addObserver(self, selector: #selector(appDidForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         #endif
         updateTransparency()
-
     }
 
     var transparent: Bool = false {
@@ -82,15 +82,15 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
         #if os(macOS)
         // TODO: Implement transparency on macOS
         #else
-        webview.backgroundColor = transparent ? nil : UINSColor.white
-        webview.isOpaque = !transparent
+            webview.backgroundColor = transparent ? nil : UINSColor.white
+            webview.isOpaque = !transparent
         #endif
     }
 
     #if os(macOS)
-    var view: NSView { webview }
+        var view: NSView { webview }
     #else
-    var view: UIView { webview }
+        var view: UIView { webview }
     #endif
 
     func goBack() {
@@ -120,6 +120,7 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     }
 
     // MARK: - Lifecycle
+
     @objc private func appDidForeground() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             if self.waitingForRepopulationAfterProcessTerminate, let block = self.populateBlock {
@@ -130,30 +131,32 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     }
 
     // MARK: - WKNavigationDelegate
-    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+
+    func webView(_: WKWebView, didCommit _: WKNavigation!) {
         needsMetadataRefresh()
     }
 
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    func webView(_: WKWebView, didFinish _: WKNavigation!) {
         needsMetadataRefresh()
     }
 
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    func webView(_: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if navigationAction.targetFrame?.isMainFrame ?? true,
-            let block = shouldBlockNavigation,
-            block(navigationAction) {
+           let block = shouldBlockNavigation,
+           block(navigationAction) {
             decisionHandler(.cancel)
             return
         }
         decisionHandler(.allow)
     }
 
-    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+    func webViewWebContentProcessDidTerminate(_: WKWebView) {
         waitingForRepopulationAfterProcessTerminate = true
     }
 
     // MARK: - WKUIDelegate
-    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+
+    func webView(_: WKWebView, createWebViewWith _: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures _: WKWindowFeatures) -> WKWebView? {
         // Load in same window:
         if let url = navigationAction.request.url {
             webview.load(.init(url: url))
@@ -162,6 +165,7 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     }
 
     // MARK: - Metadata
+
     private func needsMetadataRefresh() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             self.refreshMetadataNow()
@@ -169,6 +173,6 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     }
 
     private func refreshMetadataNow() {
-        self.info = .init(url: webview.url, title: webview.title, canGoBack: webview.canGoBack, canGoForward: webview.canGoForward)
+        info = .init(url: webview.url, title: webview.title, canGoBack: webview.canGoBack, canGoForward: webview.canGoForward)
     }
 }

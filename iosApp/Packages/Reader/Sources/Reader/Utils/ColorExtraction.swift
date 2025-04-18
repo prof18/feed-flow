@@ -3,11 +3,13 @@
 import SwiftUI
 
 #if os(macOS)
-import AppKit
-//typealias UINSColor = NSColor
+    import AppKit
+
+// typealias UINSColor = NSColor
 #else
-import UIKit
-//typealias UINSColor = UIColor
+    import UIKit
+
+    // typealias UINSColor = UIColor
 #endif
 
 extension UINSColor {
@@ -16,21 +18,21 @@ extension UINSColor {
         var g: CGFloat = 0
         var b: CGFloat = 0
         var o: CGFloat = 0
-#if os(macOS)
-        usingColorSpace(.deviceRGB)!.getRed(&r, green: &g, blue: &b, alpha: &o)
-#else
-        guard getRed(&r, green: &g, blue: &b, alpha: &o) else {
-            // You can handle the failure here as you want
-            return (0, 0, 0, 0)
-        }
-#endif
+        #if os(macOS)
+            usingColorSpace(.deviceRGB)!.getRed(&r, green: &g, blue: &b, alpha: &o)
+        #else
+            guard getRed(&r, green: &g, blue: &b, alpha: &o) else {
+                // You can handle the failure here as you want
+                return (0, 0, 0, 0)
+            }
+        #endif
         return (r, g, b, o)
     }
 
     // From https://stackoverflow.com/questions/26341008/how-to-convert-uicolor-to-hex-and-display-in-nslog
     var hexString: String {
         let (red, green, blue, _) = components
-        let hexString = String.init(format: "#%02lX%02lX%02lX", lroundf(Float(red * 255)), lroundf(Float(green * 255)), lroundf(Float(blue * 255)))
+        let hexString = String(format: "#%02lX%02lX%02lX", lroundf(Float(red * 255)), lroundf(Float(green * 255)), lroundf(Float(blue * 255)))
         return hexString
     }
 
@@ -48,13 +50,13 @@ extension UINSColor {
 }
 
 private func withColorScheme(dark: Bool /* otherwise light */, block: () -> Void) {
-#if os(macOS)
-    NSAppearance(named: dark ? .darkAqua : .aqua)!.performAsCurrentDrawingAppearance {
-        block()
-    }
-#else
-    UITraitCollection(userInterfaceStyle: dark ? .dark : .light).performAsCurrent {
-        block()
-    }
-#endif
+    #if os(macOS)
+        NSAppearance(named: dark ? .darkAqua : .aqua)!.performAsCurrentDrawingAppearance {
+            block()
+        }
+    #else
+        UITraitCollection(userInterfaceStyle: dark ? .dark : .light).performAsCurrent {
+            block()
+        }
+    #endif
 }

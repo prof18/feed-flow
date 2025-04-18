@@ -1,6 +1,6 @@
 import Foundation
-import WebKit
 import Fuzi
+import WebKit
 
 public enum ExtractionError: Error {
     case DataIsNotString
@@ -21,6 +21,7 @@ extension ExtractedContent {
     public var datePublished: Date? {
         date_published.flatMap { Self.dateParser.date(from: $0) }
     }
+
     static let dateParser = ISO8601DateFormatter()
 
     var plainText: String {

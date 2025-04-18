@@ -1,11 +1,13 @@
 import SwiftUI
 
 #if os(macOS)
-import AppKit
-public typealias UINSColor = NSColor
+    import AppKit
+
+    public typealias UINSColor = NSColor
 #else
-import UIKit
-public typealias UINSColor = UIColor
+    import UIKit
+
+    public typealias UINSColor = UIColor
 #endif
 
 public struct ReaderTheme {
@@ -34,15 +36,15 @@ public struct ReaderTheme {
 }
 
 public extension UINSColor {
-#if os(macOS)
-    static let reader_Primary = NSColor.labelColor
-    static let reader_Secondary = NSColor.secondaryLabelColor
-    static let reader_Background = NSColor.textBackgroundColor
-    static let reader_Background2 = NSColor.windowBackgroundColor
-#else
-    static let reader_Primary = UIColor.label
-    static let reader_Secondary = UIColor.secondaryLabel
-    static let reader_Background = UIColor.systemBackground
-    static let reader_Background2 = UIColor.secondarySystemBackground
-#endif
+    #if os(macOS)
+        static let reader_Primary = NSColor.labelColor
+        static let reader_Secondary = NSColor.secondaryLabelColor
+        static let reader_Background = NSColor.textBackgroundColor
+        static let reader_Background2 = NSColor.windowBackgroundColor
+    #else
+        static let reader_Primary = UIColor.label
+        static let reader_Secondary = UIColor.secondaryLabel
+        static let reader_Background = UIColor.systemBackground
+        static let reader_Background2 = UIColor.secondarySystemBackground
+    #endif
 }

@@ -1,9 +1,9 @@
 import Foundation
-import SwiftUI
 import Fuzi
+import SwiftUI
 
-extension HTMLDocument {
-    public convenience init(stringSAFE: String) throws {
+public extension HTMLDocument {
+    convenience init(stringSAFE: String) throws {
         try self.init(data: Data(stringSAFE.utf8))
     }
 }
@@ -16,7 +16,7 @@ extension String {
 
     var byStrippingSiteNameFromPageTitle: String {
         for separator in [" | ", " – ", " — ", " - "] {
-            if self.contains(separator), let firstComponent = components(separatedBy: separator).first, firstComponent != "" {
+            if contains(separator), let firstComponent = components(separatedBy: separator).first, firstComponent != "" {
                 return firstComponent.byStrippingSiteNameFromPageTitle
             }
         }
@@ -44,12 +44,12 @@ extension URL {
 
 extension View {
     func onAppearOrChange<T: Equatable>(_ value: T, perform: @escaping (T) -> Void) -> some View {
-        self.onAppear(perform: { perform(value) }).onChange(of: value, perform: perform)
+        onAppear(perform: { perform(value) }).onChange(of: value, perform: perform)
     }
 }
 
 func assertNotOnMainThread() {
     #if DEBUG
-    assert(!Thread.isMainThread)
+        assert(!Thread.isMainThread)
     #endif
 }

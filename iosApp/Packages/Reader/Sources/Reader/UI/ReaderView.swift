@@ -21,11 +21,13 @@ public struct ReaderView<ToolbarView: View>: View {
     }
 
     // MARK: - Implementation
+
     enum Status: Equatable {
         case fetching
         case failedToExtractContent
         case extractedContent(html: String, baseURL: URL, title: String?)
     }
+
     @State private var status = Status.fetching
     @State private var titleFromFallbackWebView: String?
 
@@ -56,7 +58,7 @@ public struct ReaderView<ToolbarView: View>: View {
             EmptyView()
         case .failedToExtractContent:
             FallbackWebView(url: url, onLinkClicked: onLinkClicked, title: $titleFromFallbackWebView)
-        case .extractedContent(let html, let baseURL, _):
+        case let .extractedContent(html, baseURL, _):
             ReaderWebView(baseURL: baseURL, html: html, onLinkClicked: onLinkClicked)
         }
     }
@@ -78,7 +80,7 @@ public struct ReaderView<ToolbarView: View>: View {
             return nil
         case .failedToExtractContent:
             return titleFromFallbackWebView
-        case .extractedContent(_, _, let title):
+        case let .extractedContent(_, _, title):
             return title
         }
     }
@@ -155,7 +157,7 @@ private struct ReaderWebView: View {
     private func setupLinkHandler() {
         content.shouldBlockNavigation = { action -> Bool in
             if let url = action.request.url,
-                url == .exitReaderModeLink || action.navigationType == .linkActivated {
+               url == .exitReaderModeLink || action.navigationType == .linkActivated {
                 onLinkClicked?(url)
                 return true
             }
@@ -163,4 +165,3 @@ private struct ReaderWebView: View {
         }
     }
 }
-

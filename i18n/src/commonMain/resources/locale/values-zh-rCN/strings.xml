@@ -216,4 +216,8 @@
     <string name="settings_notification_check_period_desc">选择检查新文章通知的频率</string>
     <string name="settings_notifications_title">通知</string>
     <string name="new_articles_notification_content">来自 %s 的新文章</string>
+    <string name="date_format_american">月/日</string>
+    <string name="date_format_title">日期格式</string>
+    <string name="date_format_normal">日/月</string>
+    <string name="marking_all_read_dialog_title">正在全部标记为已读…</string>
 </resources>

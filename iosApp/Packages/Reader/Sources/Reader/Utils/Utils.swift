@@ -10,13 +10,19 @@ public extension HTMLDocument {
 
 extension String {
     var asJSString: String {
-        let data = try! JSONSerialization.data(withJSONObject: self, options: .fragmentsAllowed)
-        return String(data: data, encoding: .utf8)!
+        do {
+            let data = try JSONSerialization.data(withJSONObject: self, options: .fragmentsAllowed)
+            return String(decoding: data, as: UTF8.self)
+        } catch {
+            return ""
+        }
     }
 
     var byStrippingSiteNameFromPageTitle: String {
         for separator in [" | ", " – ", " — ", " - "] {
-            if contains(separator), let firstComponent = components(separatedBy: separator).first, firstComponent != "" {
+            if contains(separator),
+               let firstComponent = components(separatedBy: separator).first,
+               firstComponent != "" {
                 return firstComponent.byStrippingSiteNameFromPageTitle
             }
         }
@@ -46,10 +52,4 @@ extension View {
     func onAppearOrChange<T: Equatable>(_ value: T, perform: @escaping (T) -> Void) -> some View {
         onAppear(perform: { perform(value) }).onChange(of: value, perform: perform)
     }
-}
-
-func assertNotOnMainThread() {
-    #if DEBUG
-        assert(!Thread.isMainThread)
-    #endif
 }

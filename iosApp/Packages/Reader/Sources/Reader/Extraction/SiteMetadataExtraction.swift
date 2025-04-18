@@ -2,7 +2,7 @@ import Foundation
 import Fuzi
 import SwiftSoup
 
-public struct SiteMetadata: Equatable, Codable {
+struct SiteMetadata: Equatable, Codable {
     public var url: URL
     public var title: String?
     public var description: String?
@@ -11,17 +11,21 @@ public struct SiteMetadata: Equatable, Codable {
 
     private struct MetadataParseError: Error {}
 
-    public static func extractMetadata(fromHTML html: String, baseURL: URL) async throws -> SiteMetadata {
+    public static func extractMetadata(fromHTML html: String, baseURL: URL) async throws
+        -> SiteMetadata {
         try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.metadataExtractorQueue.async {
                 do {
                     let doc = try HTMLDocument(stringSAFE: html)
-                    var md = SiteMetadata(url: baseURL)
-                    md.title = doc.ogTitle ?? doc.title
-                    md.heroImage = doc.ogImage(baseURL: baseURL)
-                    md.description = doc.metaDescription?.nilIfEmpty
-                    md.favicon = doc.favicon(baseURL: baseURL) ?? baseURL.inferredFaviconURL
-                    continuation.resume(returning: md)
+
+                    let metadata = SiteMetadata(
+                        url: baseURL,
+                        title: doc.ogTitle ?? doc.title,
+                        description: doc.metaDescription?.nilIfEmpty,
+                        heroImage: doc.ogImage(baseURL: baseURL),
+                        favicon: doc.favicon(baseURL: baseURL) ?? baseURL.inferredFaviconURL
+                    )
+                    continuation.resume(returning: metadata)
                 } catch {
                     continuation.resume(throwing: error)
                 }
@@ -31,7 +35,11 @@ public struct SiteMetadata: Equatable, Codable {
 }
 
 private extension DispatchQueue {
-    static let metadataExtractorQueue = DispatchQueue(label: "MetadataExtractor", qos: .default, attributes: .concurrent)
+    static let metadataExtractorQueue = DispatchQueue(
+        label: "MetadataExtractor",
+        qos: .default,
+        attributes: .concurrent
+    )
 }
 
 private extension Fuzi.HTMLDocument {
@@ -39,9 +47,13 @@ private extension Fuzi.HTMLDocument {
         return css(selector).first?.attr(attribute, namespace: nil)
     }
 
-    var metaDescription: String? { getAttribute(selector: "meta[name='description']", attribute: "content") }
+    var metaDescription: String? {
+        getAttribute(selector: "meta[name='description']", attribute: "content")
+    }
 
-    var ogTitle: String? { getAttribute(selector: "meta[property='og:title']", attribute: "content") }
+    var ogTitle: String? {
+        getAttribute(selector: "meta[property='og:title']", attribute: "content")
+    }
 
     func ogImage(baseURL: URL) -> URL? {
         if let link = getAttribute(selector: "meta[property='og:image']", attribute: "content") {

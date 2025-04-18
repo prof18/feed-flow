@@ -1,17 +1,11 @@
 import Foundation
 import SwiftUI
 
-public struct ReaderPlaceholder: View {
-    var theme: ReaderTheme
-
-    public init(theme: ReaderTheme = .init()) {
-        self.theme = theme
-    }
-
+struct ReaderPlaceholder: View {
     public var body: some View {
         GeometryReader { _ in
             VStack(alignment: .leading, spacing: baseFontSize) {
-                Color(theme.foreground2)
+                Color(ReaderTheme.foreground2)
                     .cornerRadius(7)
                     .opacity(0.3)
                     .padding(.top, 5)
@@ -23,9 +17,22 @@ public struct ReaderPlaceholder: View {
                     .opacity(0.5)
                     .font(.system(size: baseFontSize * 0.833))
 
-                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce at tortor justo. Donec nec sapien at nunc ullamcorper mattis vel at enim. Ut sollicitudin sed dui a consectetur. Pellentesque eu convallis quam, id accumsan felis. Nunc ornare condimentum lectus, non tristique massa sodales eu. Vivamus tincidunt eget ex et dignissim. In consectetur turpis sit amet pretium volutpat.")
+                Text(
+                    """
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce at tortor justo.
+                    Donec nec sapien at nunc ullamcorper mattis vel at enim. Ut sollicitudin sed dui a consectetur.
+                    Pellentesque eu convallis quam, id accumsan felis. Nunc ornare condimentum lectus,
+                    non tristique massa sodales eu. Vivamus tincidunt eget ex et dignissim.
+                    In consectetur turpis sit amet pretium volutpat.
+                    """)
 
-                Text("Nulla rhoncus nibh vitae arcu pellentesque congue. Nullam tempor cursus sem eget vehicula. Nulla sit amet enim eu eros finibus suscipit faucibus vel orci. Pellentesque id mollis lorem, id euismod est. Nullam in sapien purus. Nulla sed tellus augue. Mauris aliquet suscipit lectus.")
+                Text(
+                    """
+                    Nulla rhoncus nibh vitae arcu pellentesque congue. Nullam tempor cursus sem eget vehicula.
+                    Nulla sit amet enim eu eros finibus suscipit faucibus vel orci. Pellentesque id mollis lorem,
+                    id euismod est. Nullam in sapien purus. Nulla sed tellus augue. Mauris aliquet suscipit lectus.
+                    """
+                )
             }
             .font(.system(size: baseFontSize))
             .multilineTextAlignment(.leading)
@@ -37,7 +44,7 @@ public struct ReaderPlaceholder: View {
         }
         .modifier(ShimmerMask())
         .padding(baseFontSize * 1.5)
-        .background(Color(theme.background).edgesIgnoringSafeArea(.all))
+        .background(Color(ReaderTheme.background).edgesIgnoringSafeArea(.all))
     }
 
     private var baseFontSize: CGFloat { 19 }
@@ -52,7 +59,10 @@ private struct ShimmerMask: ViewModifier {
     func body(content: Content) -> some View {
         content
             .mask {
-                LinearGradient(colors: [Color.black, Color.black.opacity(0), Color.black], startPoint: startPoint, endPoint: endPoint)
+                LinearGradient(
+                    colors: [Color.black, Color.black.opacity(0), Color.black],
+                    startPoint: startPoint, endPoint: endPoint
+                )
             }
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
@@ -71,12 +81,3 @@ private struct ShimmerMask: ViewModifier {
         .init(x: startPoint.x + 1, y: 0)
     }
 }
-
-// struct ReaderPlaceholder_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ReaderPlaceholder()
-//            .background(Color("Background2"))
-//            .frame(width: 375)
-//    }
-// }
-//

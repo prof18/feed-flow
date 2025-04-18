@@ -111,7 +111,8 @@ import UIKit
         let url: String
         if let selectedBrowser {
             if selectedBrowser.id == "googlechromes://" {
-                url = "\(selectedBrowser.id)\(stringUrl.replacingOccurrences(of: "https://", with: ""))"
+                url =
+                    "\(selectedBrowser.id)\(stringUrl.replacingOccurrences(of: "https://", with: ""))"
             } else if selectedBrowser.id == BrowserIds.shared.IN_APP_BROWSER {
                 url = stringUrl
             } else {

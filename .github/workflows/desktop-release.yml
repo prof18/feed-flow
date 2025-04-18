@@ -23,7 +23,7 @@ jobs:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
       - name: Import Mac App Distribution and Installer certificate
-        uses: apple-actions/import-codesign-certs@v3
+        uses: apple-actions/import-codesign-certs@v5
         with:
           p12-file-base64: ${{ secrets.MAC_APP_DISTRIBUTION_INSTALLER_CERTIFICATE }}
           p12-password: ${{ secrets.MAC_APP_DISTRIBUTION_INSTALLER_CERTIFICATE_PWD }}
@@ -108,7 +108,7 @@ jobs:
 
       # Developer ID Application
       - name: Import signing certificate
-        uses: apple-actions/import-codesign-certs@v3
+        uses: apple-actions/import-codesign-certs@v5
         with:
           p12-file-base64: ${{ secrets.SIGNING_CERTIFICATE_P12_DATA_MACOS }}
           p12-password: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD_MACOS }}

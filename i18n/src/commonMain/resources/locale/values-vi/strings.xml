@@ -199,4 +199,25 @@
     <string name="settings_swipe_action_none">Không dùng</string>
     <string name="settings_sync_period_fifteen_minutes">Mỗi 15 phút</string>
     <string name="settings_swipe_action_toggle_bookmark">Chuyển đổi lưu</string>
+    <string name="settings_notification_no_feed">Có vẻ như bạn chưa thêm bất kỳ nguồn cấp dữ liệu nào. Hãy thêm nguồn cấp dữ liệu để bắt đầu nhận thông báo!</string>
+    <string name="settings_notification_check_period">Tuần suất kiểm tra thông báo</string>
+    <string name="settings_notification_check_period_desc">Chọn tần suất kiểm tra thông báo bài viết mới</string>
+    <string name="settings_title_notifications">Thông báo</string>
+    <string name="settings_notifications_enable_all_title">Bật tất cả thông báo</string>
+    <string name="notification_channel_description">Thông báo bài viết mới trên bảng tin</string>
+    <string name="settings_notifications_permission_status_title">Trạng thái cấp quyền</string>
+    <string name="settings_notifications_permission_status_granted">Đã cho phép</string>
+    <string name="settings_notifications_permission_status_denied">Đã từ chối</string>
+    <string name="settings_notifications_permission_request_button">Quyền yêu cầu</string>
+    <string name="new_articles_notification_title">Có bài viết mới</string>
+    <string name="notification_channel_name">Những bài viết mới</string>
+    <string name="new_articles_notification_content">Bài viết mới từ %s</string>
+    <string name="settings_open_settings">Mở cài đặt</string>
+    <string name="settings_notifications_title">Thông báo</string>
+    <string name="settings_notifications_warning_reliability">Thông báo được kiểm tra trên thiết bị của bạn nhưng không phải lúc nào cũng diễn ra đáng tin cậy do hạn chế của hệ thống.</string>
+    <string name="settings_notifications_settings_instructions">Vui lòng bật thông báo app trong cài đặt iOS.</string>
+    <string name="marking_all_read_dialog_title">Đánh dấu đã đọc tất cả...</string>
+    <string name="date_format_title">Định dạng ngày</string>
+    <string name="date_format_normal">Ngày/Tháng</string>
+    <string name="date_format_american">Tháng/Ngày</string>
 </resources>

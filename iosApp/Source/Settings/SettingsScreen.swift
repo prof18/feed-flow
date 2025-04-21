@@ -32,6 +32,7 @@ struct SettingsScreen: View {
     @State private var dateFormat: DateFormat = .normal
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor = 0.0
+    @State private var isExperimentalParsingEnabled = false
 
     @State private var imageUrl: String? = "https://lipsum.app/200x200"
     @State private var articleDescription: String? = feedFlowStrings
@@ -52,6 +53,7 @@ struct SettingsScreen: View {
                     leftSwipeActionType = state.leftSwipeActionType
                     rightSwipeActionType = state.rightSwipeActionType
                     dateFormat = state.dateFormat
+                    isExperimentalParsingEnabled = state.isExperimentalParsingEnabled
                 }
             }
             .task {
@@ -96,17 +98,25 @@ struct SettingsScreen: View {
             .onChange(of: isCrashReportingEnabled) {
                 vmStoreOwner.instance.updateCrashReporting(value: isCrashReportingEnabled)
                 #if !DEBUG
-                    Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(isCrashReportingEnabled)
+                    Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(
+                        isCrashReportingEnabled)
                 #endif
             }
             .onChange(of: leftSwipeActionType) {
-                vmStoreOwner.instance.updateSwipeAction(direction: .left, action: leftSwipeActionType)
+                vmStoreOwner.instance.updateSwipeAction(
+                    direction: .left, action: leftSwipeActionType
+                )
             }
             .onChange(of: rightSwipeActionType) {
-                vmStoreOwner.instance.updateSwipeAction(direction: .right, action: rightSwipeActionType)
+                vmStoreOwner.instance.updateSwipeAction(
+                    direction: .right, action: rightSwipeActionType
+                )
             }
             .onChange(of: dateFormat) {
                 vmStoreOwner.instance.updateDateFormat(format: dateFormat)
+            }
+            .onChange(of: isExperimentalParsingEnabled) {
+                vmStoreOwner.instance.updateExperimentalParsing(value: isExperimentalParsingEnabled)
             }
     }
 
@@ -118,6 +128,8 @@ struct SettingsScreen: View {
                     browserSelector: browserSelector,
                     autoDeletePeriod: $autoDeletePeriod,
                     isReaderModeEnabled: $isReaderModeEnabled,
+                    isExperimentalParsingEnabled: $isExperimentalParsingEnabled,
+
                     isMarkReadWhenScrollingEnabled: $isMarkReadWhenScrollingEnabled,
                     isShowReadItemEnabled: $isShowReadItemEnabled
                 )
@@ -187,6 +199,8 @@ private struct BehaviourSection: View {
     @Bindable var browserSelector: BrowserSelector
     @Binding var autoDeletePeriod: AutoDeletePeriod
     @Binding var isReaderModeEnabled: Bool
+    @Binding var isExperimentalParsingEnabled: Bool
+
     @Binding var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isShowReadItemEnabled: Bool
 
@@ -225,6 +239,12 @@ private struct BehaviourSection: View {
                 Label(feedFlowStrings.settingsReaderMode, systemImage: "doc.text")
             }.onTapGesture {
                 isReaderModeEnabled.toggle()
+            }
+
+            Toggle(isOn: $isExperimentalParsingEnabled) {
+                Label(feedFlowStrings.settingsExperimentalParsing, systemImage: "hammer")
+            }.onTapGesture {
+                isExperimentalParsingEnabled.toggle()
             }
 
             Toggle(isOn: $isMarkReadWhenScrollingEnabled) {

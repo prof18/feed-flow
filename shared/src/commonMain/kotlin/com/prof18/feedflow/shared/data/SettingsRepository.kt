@@ -33,6 +33,11 @@ class SettingsRepository(
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
 
+    private val isExperimentalParsingEnabledMutableFlow = MutableStateFlow(
+        isExperimentalParsingEnabled(),
+    )
+    val isExperimentalParsingEnabled: StateFlow<Boolean> = isExperimentalParsingEnabledMutableFlow.asStateFlow()
+
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
@@ -69,8 +74,10 @@ class SettingsRepository(
     fun isExperimentalParsingEnabled(): Boolean =
         settings.getBoolean(SettingsFields.USE_EXPERIMENTAL_PARSING.name, false)
 
-    fun setExperimentalParsing(value: Boolean) =
-        settings.set(SettingsFields.USE_EXPERIMENTAL_PARSING.name, value)
+    fun setExperimentalParsing(value: Boolean) {
+        settings[SettingsFields.USE_EXPERIMENTAL_PARSING.name] = value
+        isExperimentalParsingEnabledMutableFlow.update { value }
+    }
 
     internal fun getIsSyncUploadRequired(): Boolean =
         settings.getBoolean(SettingsFields.IS_SYNC_UPLOAD_REQUIRED.name, false)

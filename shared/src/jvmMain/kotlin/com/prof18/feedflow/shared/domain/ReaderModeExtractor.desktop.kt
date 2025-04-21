@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain
 
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.ReaderExtractor
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -35,6 +36,7 @@ class ReaderModeExtractor internal constructor(
             fontSize = settingsRepository.getReaderModeFontSize(),
             isBookmarked = urlInfo.isBookmarked,
             heroImageUrl = null,
+            extractor = ReaderExtractor.POSTLIGHT,
         )
     }
 }

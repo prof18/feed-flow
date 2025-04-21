@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain
 
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.ReaderExtractor
 import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -17,6 +18,11 @@ class ReaderModeExtractor internal constructor(
     suspend fun extractReaderContent(urlInfo: FeedItemUrlInfo): ReaderModeData? = withContext(dispatcherProvider.io) {
         val html = htmlRetriever.retrieveHtml(urlInfo.url) ?: return@withContext null
 
+        val extractor = if (settingsRepository.isExperimentalParsingEnabled()) {
+            ReaderExtractor.DEFUDDLE
+        } else {
+            ReaderExtractor.POSTLIGHT
+        }
         val doc = Jsoup.parse(html)
         val ogImage = getOgImage(doc, urlInfo.url)
         if (ogImage != null) {
@@ -35,6 +41,7 @@ class ReaderModeExtractor internal constructor(
             isBookmarked = urlInfo.isBookmarked,
             heroImageUrl = ogImage,
             title = null,
+            extractor = extractor,
         )
     }
 

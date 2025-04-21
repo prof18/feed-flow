@@ -9,7 +9,14 @@ import SwiftUI
 public struct ReaderViewOptions {
     public var additionalCSS: String?
     public var onLinkClicked: ((URL) -> Void)?
-    public init(additionalCSS _: String? = nil, onLinkClicked: ((URL) -> Void)? = nil) {
+    public var readerExtractor: ReaderExtractorType
+
+    public init(
+        additionalCSS _: String? = nil,
+        onLinkClicked: ((URL) -> Void)? = nil,
+        readerExtractor: ReaderExtractorType
+    ) {
         self.onLinkClicked = onLinkClicked
+        self.readerExtractor = readerExtractor
     }
 }

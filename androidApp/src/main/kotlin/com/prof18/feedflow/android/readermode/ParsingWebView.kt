@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.prof18.feedflow.android.R
+import com.prof18.feedflow.core.model.ReaderExtractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -27,6 +28,7 @@ import java.io.InputStreamReader
 fun ParsingWebView(
     articleLink: String,
     articleContent: String,
+    readerExtractor: ReaderExtractor,
     contentLoaded: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -35,12 +37,15 @@ fun ParsingWebView(
 
     LaunchedEffect(articleLink) {
         html = withContext(Dispatchers.Default) {
-            val mercuryJS = readRawResource(context, R.raw.mercury)
+            val js = when (readerExtractor) {
+                ReaderExtractor.POSTLIGHT -> readRawResource(context, R.raw.mercury)
+                ReaderExtractor.DEFUDDLE -> readRawResource(context, R.raw.defuddle)
+            }
             """
             <html dir='auto'>
             <head>
               <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-              <script>$mercuryJS</script>
+              <script>$js</script>
             </head>
             <body />
             </html>
@@ -61,20 +66,42 @@ fun ParsingWebView(
             val content = articleContent.asJSString
             object : WebViewClient() {
                 override fun onPageFinished(view: WebView, url: String) {
-                    val script =
-                        """
-                            const link = $linkUrl;
-                            const htmlContent = $content;
-                            Mercury.parse(link, {html: htmlContent})
-                                .then(
-                                    function(result) {
-                                        let finalResult = JSON.stringify(result);
-                                        window.ReaderJSInterface.onContentParsed(finalResult);
-                                    }
-                                )
-                        """.trimIndent()
+                    val parsingScript = when (readerExtractor) {
+                        ReaderExtractor.POSTLIGHT -> {
+                            //language=JavaScript
+                            """
+                                const link = $linkUrl;
+                                const htmlContent = $content;
+                                Mercury.parse(link, {html: htmlContent})
+                                    .then(
+                                        function(result) {
+                                            let finalResult = JSON.stringify(result);
+                                            window.ReaderJSInterface.onContentParsed(finalResult);
+                                        }
+                                    )
+                            """.trimIndent()
+                        }
+                        ReaderExtractor.DEFUDDLE -> {
+                            //language=JavaScript
+                            """
+                                const link = $linkUrl;
+                                const htmlContent = $content;
+                                
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(htmlContent, 'text/html');
+                                
+                                const defuddle = new Defuddle(doc, {
+                                     url: link
+                                 });
 
-                    view.evaluateJavascript(script, null)
+                                const result = defuddle.parse();
+                                
+                                let finalResult = JSON.stringify(result);
+                                window.ReaderJSInterface.onContentParsed(finalResult);
+                            """.trimIndent()
+                        }
+                    }
+                    view.evaluateJavascript(parsingScript, null)
                 }
             }
         }

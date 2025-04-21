@@ -5,7 +5,6 @@
 //  Created by Marco Gomiero on 18/04/25.
 //
 
-// TODO: Replace with Shared Logger
 protocol Logger {
     func info(_ string: String)
     func error(_ string: String)

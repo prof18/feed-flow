@@ -22,7 +22,7 @@ public struct ReaderView<ToolbarView: View>: View {
     }
 
     public init(
-        url: URL, options: ReaderViewOptions = .init(),
+        url: URL, options: ReaderViewOptions,
         @ViewBuilder toolbarContent: @escaping () -> ToolbarView
     ) {
         self.url = url
@@ -34,7 +34,6 @@ public struct ReaderView<ToolbarView: View>: View {
         Color(ReaderTheme.background)
             .overlay(content)
             .overlay(loader)
-            .navigationTitle(title ?? url.hostWithoutWWW)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 toolbarContent()
@@ -42,7 +41,9 @@ public struct ReaderView<ToolbarView: View>: View {
             .task {
                 do {
                     let result = try await Reader.fetchAndExtractContent(
-                        fromURL: url, additionalCSS: options.additionalCSS
+                        fromURL: url,
+                        additionalCSS: options.additionalCSS,
+                        readerExtractor: options.readerExtractor
                     )
                     self.status = .extractedContent(
                         html: result.styledHTML,

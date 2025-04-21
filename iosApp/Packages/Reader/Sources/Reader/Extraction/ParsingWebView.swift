@@ -1,8 +1,15 @@
+//
+//  ParsingWebView.swift
+//  Reader
+//
+//  Created by Marco Gomiero on 21/04/25.
+//
+
 import Foundation
 import WebKit
 
-class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
-    static let shared = MercuryExtractor()
+class ParsingWebView: NSObject, WKUIDelegate, WKNavigationDelegate {
+    static let shared = ParsingWebView()
     let webview = WKWebView()
 
     private var pendingReadyBlocks = [() -> Void]()
@@ -30,22 +37,25 @@ class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
 
     func extract(html: String, url: URL, callback: @escaping (ExtractedContent?) -> Void) {
         waitUntilReady {
-            let script =
-                "return await Mercury.parse(\(url.absoluteString.asJSString), {html: \(html.asJSString)})"
+            let script = """
+                new Defuddle(
+                    new DOMParser().parseFromString(\(html.asJSString), 'text/html'),
+                    { url: \(url.absoluteString.asJSString) }
+                ).parse();
+            """
 
-            self.webview.callAsyncJavaScript(script, arguments: [:], in: nil, in: .page) { result in
-                switch result {
-                case let .failure(err):
-                    Reader.logger.error("Failed to extract: \(err)")
+            self.webview.evaluateJavaScript(script) { result, error in
+                if let error = error {
+                    Reader.logger.error("Failed to extract: \(error)")
                     callback(nil)
-                case let .success(resultOpt):
-                    Reader.logger.info("Successfully extracted")
-                    let content = self.parse(dict: resultOpt as? [String: Any])
-                    if let content, content.plainText.count >= 200 {
-                        callback(content)
-                    } else {
-                        callback(nil)
-                    }
+                    return
+                }
+                Reader.logger.info("Successfully extracted")
+                let content = self.parse(dict: result as? [String: Any])
+                if let content, content.plainText.count >= 200 {
+                    callback(content)
+                } else {
+                    callback(nil)
                 }
             }
         }
@@ -73,12 +83,12 @@ class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
         guard readyState == .none else { return }
         Reader.logger.info("Initializing...")
         readyState = .initializing
-        let mercuryJS = try? String(
-            contentsOf: Bundle.module.url(forResource: "mercury.web", withExtension: "js")!
+        let defuddleJS = try? String(
+            contentsOf: Bundle.module.url(forResource: "defuddle", withExtension: "js")!
         )
         let html = """
         <body>
-            <script>\(mercuryJS ?? "")</script>
+            <script>\(defuddleJS ?? "")</script>
             <script>alert('ok')</script>
         </body>
         """
@@ -89,9 +99,7 @@ class MercuryExtractor: NSObject, WKUIDelegate, WKNavigationDelegate {
         guard let result = dict else { return nil }
         let content = ExtractedContent(
             content: result["content"] as? String,
-            author: result["author"] as? String,
-            title: result["title"] as? String,
-            excerpt: result["excerpt"] as? String
+            title: result["title"] as? String
         )
         return content
     }

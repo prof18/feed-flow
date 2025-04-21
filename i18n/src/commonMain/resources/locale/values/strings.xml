@@ -221,4 +221,5 @@
     <string name="date_format_title">Date format</string>
     <string name="date_format_normal">Day/Month</string>
     <string name="date_format_american">Month/Day</string>
+    <string name="settings_experimental_parsing">Use experimental engine for reader mode</string>
 </resources>

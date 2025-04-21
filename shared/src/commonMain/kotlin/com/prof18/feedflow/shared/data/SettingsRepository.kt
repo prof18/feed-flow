@@ -66,6 +66,12 @@ class SettingsRepository(
         settings[SettingsFields.USE_READER_MODE.name] = value
     }
 
+    fun isExperimentalParsingEnabled(): Boolean =
+        settings.getBoolean(SettingsFields.USE_EXPERIMENTAL_PARSING.name, false)
+
+    fun setExperimentalParsing(value: Boolean) =
+        settings.set(SettingsFields.USE_EXPERIMENTAL_PARSING.name, value)
+
     internal fun getIsSyncUploadRequired(): Boolean =
         settings.getBoolean(SettingsFields.IS_SYNC_UPLOAD_REQUIRED.name, false)
 
@@ -202,6 +208,7 @@ internal enum class SettingsFields {
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,
     USE_READER_MODE,
+    USE_EXPERIMENTAL_PARSING,
     IS_SYNC_UPLOAD_REQUIRED,
     REMOVE_TITLE_FROM_DESCRIPTION,
     HIDE_DESCRIPTION,

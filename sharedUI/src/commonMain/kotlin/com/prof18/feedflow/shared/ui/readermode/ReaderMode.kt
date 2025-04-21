@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.core.utils.TestingTag
@@ -50,15 +49,10 @@ fun ReaderModeContent(
     snackbarHost: @Composable () -> Unit = {},
     readerModeSuccessView: @Composable (PaddingValues, ReaderModeState.Success) -> Unit,
 ) {
-    var toolbarTitle by remember {
-        mutableStateOf("")
-    }
-
     Scaffold(
         modifier = modifier,
         topBar = {
             ReaderModeToolbar(
-                toolbarTitle = toolbarTitle,
                 readerModeState = readerModeState,
                 fontSize = fontSize,
                 navigateBack = navigateBack,
@@ -88,7 +82,6 @@ fun ReaderModeContent(
             }
 
             is ReaderModeState.Success -> {
-                toolbarTitle = readerModeState.readerModeData.title ?: ""
                 readerModeSuccessView(
                     contentPadding,
                     readerModeState,
@@ -100,7 +93,6 @@ fun ReaderModeContent(
 
 @Composable
 private fun ReaderModeToolbar(
-    toolbarTitle: String,
     readerModeState: ReaderModeState,
     fontSize: Int,
     navigateBack: () -> Unit,
@@ -112,13 +104,7 @@ private fun ReaderModeToolbar(
     var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
-        title = {
-            Text(
-                text = toolbarTitle,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
+        title = {},
         navigationIcon = {
             IconButton(
                 modifier = Modifier

@@ -1,4 +1,6 @@
-package com.prof18.feedflow.shared.domain
+package com.prof18.feedflow.shared.presentation
+
+import com.prof18.feedflow.shared.domain.ReaderColors
 
 fun getReaderModeStyledHtml(
     colors: ReaderColors?,
@@ -151,8 +153,3 @@ internal fun readerModeCss(colors: ReaderColors?, fontSize: Int): String {
     }
     """.trimIndent()
 }
-
-data class ReaderColors(
-    val textColor: String,
-    val linkColor: String,
-)

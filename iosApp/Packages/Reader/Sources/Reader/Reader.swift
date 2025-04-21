@@ -46,8 +46,7 @@ enum Reader {
             baseURL: baseURL,
             heroImage: extractedMetadata?.heroImage,
             additionalCSS: additionalCSS,
-            includeExitReaderButton: true,
-            direction: content.direction
+            includeExitReaderButton: true
         )
         return FetchAndExtractionResult(
             metadata: extractedMetadata,

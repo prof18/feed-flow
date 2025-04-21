@@ -23,18 +23,18 @@ class ReaderModeExtractor internal constructor(
             null
         }
 
-        val title = article?.title ?: urlInfo.title
         val contentWithDocumentsCharsetOrUtf8 = article?.contentWithDocumentsCharsetOrUtf8
             ?.replace(Regex("https?://.*?placeholder\\.png"), "")
             ?: return@withContext null
 
         return@withContext ReaderModeData(
             id = FeedItemId(urlInfo.id),
-            title = title,
+            title = article.title ?: urlInfo.title,
             content = contentWithDocumentsCharsetOrUtf8,
             url = urlInfo.url,
             fontSize = settingsRepository.getReaderModeFontSize(),
             isBookmarked = urlInfo.isBookmarked,
+            heroImageUrl = null,
         )
     }
 }

@@ -1,16 +1,24 @@
 package com.prof18.feedflow.android.readermode
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import co.touchlab.kermit.Logger
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
@@ -25,6 +33,8 @@ import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.ui.readermode.ReaderModeContent
+import org.json.JSONException
+import org.json.JSONObject
 import org.koin.compose.koinInject
 
 @Composable
@@ -53,8 +63,8 @@ internal fun ReaderModeScreen(
         onFontSizeChange = { newFontSize ->
             navigator.evaluateJavaScript(
                 """
-                    document.getElementById("container").style.fontSize = "$newFontSize" + "px";
-                    document.getElementById("container").style.lineHeight = "1.5em";
+                    document.getElementById("__reader_container").style.fontSize = "$newFontSize" + "px";
+                    document.getElementById("__reader_container").style.lineHeight = "1.5em";
                 """.trimIndent(),
             )
             onUpdateFontSize(newFontSize)
@@ -93,6 +103,13 @@ private fun ReaderMode(
     val bodyColor = MaterialTheme.colorScheme.onSurface.toArgb().toHexString().substring(2)
     val linkColor = MaterialTheme.colorScheme.primary.toArgb().toHexString().substring(2)
 
+    var isContentReady by remember {
+        mutableStateOf(false)
+    }
+    var finalContents: String? by remember {
+        mutableStateOf(null)
+    }
+
     val colors = ReaderColors(
         textColor = "#$bodyColor",
         linkColor = "#$linkColor",
@@ -100,40 +117,74 @@ private fun ReaderMode(
 
     val latestOpenInBrowser by rememberUpdatedState(openInBrowser)
 
-    val content = getReaderModeStyledHtml(
-        colors = colors,
-        content = readerModeState.readerModeData.content,
-        title = readerModeState.readerModeData.title,
-        fontSize = readerModeState.readerModeData.fontSize,
-    )
+    Column {
+        ParsingWebView(
+            modifier = Modifier.requiredSize(0.dp),
+            articleLink = readerModeState.readerModeData.url,
+            articleContent = readerModeState.readerModeData.content,
+            contentLoaded = { result ->
+                Logger.d { "Parsed article" }
+                Logger.d { result }
+                val jsonResult = JSONObject(result)
 
-    val jsBridge = rememberWebViewJsBridge()
-    LaunchedEffect(jsBridge) {
-        jsBridge.register(
-            object : IJsMessageHandler {
-                override fun handle(
-                    message: JsMessage,
-                    navigator: WebViewNavigator?,
-                    callback: (String) -> Unit,
-                ) {
-                    if (message.params.isNotBlank()) {
-                        latestOpenInBrowser(message.params)
-                    }
-                }
+                val finalHTML = getReaderModeStyledHtml(
+                    articleLink = readerModeState.readerModeData.url,
+                    colors = colors,
+                    content = jsonResult.getStringOrNull("content").orEmpty(),
+                    title = jsonResult.getStringOrNull("title"),
+                    fontSize = readerModeState.readerModeData.fontSize,
+                    heroImageUrl = readerModeState.readerModeData.heroImageUrl,
+                )
 
-                override fun methodName(): String = "urlInterceptor"
+                finalContents = finalHTML
+                isContentReady = true
             },
         )
+
+        if (isContentReady) {
+            val jsBridge = rememberWebViewJsBridge()
+            DisposableEffect(jsBridge) {
+                jsBridge.register(
+                    object : IJsMessageHandler {
+                        override fun handle(
+                            message: JsMessage,
+                            navigator: WebViewNavigator?,
+                            callback: (String) -> Unit,
+                        ) {
+                            if (message.params.isNotBlank()) {
+                                latestOpenInBrowser(message.params)
+                            }
+                        }
+
+                        override fun methodName(): String = "urlInterceptor"
+                    },
+                )
+
+                onDispose { jsBridge.clear() }
+            }
+
+            val webViewState = rememberWebViewStateWithHTMLData(finalContents.orEmpty())
+            webViewState.webSettings.apply {
+                this.supportZoom = false
+            }
+
+            WebView(
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .fillMaxSize(),
+                state = webViewState,
+                navigator = navigator,
+                webViewJsBridge = jsBridge,
+            )
+        } else {
+            CircularProgressIndicator()
+        }
     }
-
-    val state = rememberWebViewStateWithHTMLData(content)
-
-    WebView(
-        modifier = Modifier
-            .padding(contentPadding)
-            .fillMaxSize(),
-        state = state,
-        navigator = navigator,
-        webViewJsBridge = jsBridge,
-    )
 }
+
+private fun JSONObject.getStringOrNull(key: String): String? =
+    try {
+        getString(key)
+    } catch (_: JSONException) {
+        null
+    }

@@ -10,8 +10,7 @@ extension Reader {
         baseURL: URL?,
         heroImage: URL?,
         additionalCSS: String?,
-        includeExitReaderButton _: Bool = true,
-        direction: String?
+        includeExitReaderButton _: Bool = true
     ) -> String {
         let escapedTitle = Entities.escape(title.byStrippingSiteNameFromPageTitle)
         let logger = Reader.logger
@@ -55,16 +54,9 @@ extension Reader {
             if partsHTML.count == 0 { return "" }
             return "<p class='__subtitle'>\(partsHTML.joined())</p>"
         }()
-        
-        let directionBody: String
-        if let dir = direction {
-            directionBody = "dir=\"\(dir)\""
-        } else {
-            directionBody = ""
-        }
 
         let wrapped = """
-            <!DOCTYPE html>
+            <!DOCTYPE html dir='auto'>
             <head>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <title>\(escapedTitle)</title>
@@ -211,10 +203,8 @@ extension Reader {
 
             \(additionalCSS ?? "")
         
-            
-
             </style>
-            <body \(directionBody)>
+            <body>
             <div id='__content' style='opacity: 0'>
                 \(heroHTML)
 

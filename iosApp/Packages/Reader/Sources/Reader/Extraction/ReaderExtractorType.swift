@@ -1,4 +1,4 @@
-public enum ReaderExtractorType {
+public enum ReaderExtractorType: Sendable {
     case postlight
     case defuddle
 }

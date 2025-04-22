@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
@@ -23,6 +24,7 @@ class EditFeedViewModel internal constructor(
     private val categoryUseCase: FeedCategoryRepository,
     private val accountsRepository: AccountsRepository,
     private val feedSourcesRepository: FeedSourcesRepository,
+    private val databaseHelper: DatabaseHelper,
 ) : ViewModel() {
     val categoriesState = categoryUseCase.categoriesState
     private var originalFeedSource: FeedSource? = null
@@ -38,6 +40,15 @@ class EditFeedViewModel internal constructor(
 
     private val feedEditedMutableState: MutableSharedFlow<FeedEditedState> = MutableSharedFlow()
     val feedEditedState = feedEditedMutableState.asSharedFlow()
+
+    private val showNotificationToggleMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val showNotificationToggleState = showNotificationToggleMutableState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            showNotificationToggleMutableState.update { databaseHelper.areNotificationsEnabled() }
+        }
+    }
 
     fun canEditUrl(): Boolean =
         accountsRepository.getCurrentSyncAccount() != SyncAccounts.FRESH_RSS
@@ -83,6 +94,15 @@ class EditFeedViewModel internal constructor(
         }
     }
 
+    fun updateIsNotificationEnabled(isNotificationEnabled: Boolean) {
+        feedSourceSettingsMutableState.update { oldValue ->
+            oldValue.copy(isNotificationEnabled = isNotificationEnabled)
+        }
+        viewModelScope.launch {
+            feedEditedMutableState.emit(FeedEditedState.Idle)
+        }
+    }
+
     fun loadFeedToEdit(feedSource: FeedSource) {
         originalFeedSource = feedSource
 
@@ -94,6 +114,7 @@ class EditFeedViewModel internal constructor(
                     linkOpeningPreference = feedSource.linkOpeningPreference,
                     isHiddenFromTimeline = feedSource.isHiddenFromTimeline,
                     isPinned = feedSource.isPinned,
+                    isNotificationEnabled = feedSource.isNotificationEnabled,
                 )
             }
 
@@ -141,6 +162,7 @@ class EditFeedViewModel internal constructor(
                 linkOpeningPreference = feedSourceSettingsState.value.linkOpeningPreference,
                 isHiddenFromTimeline = feedSourceSettingsState.value.isHiddenFromTimeline,
                 isPinned = feedSourceSettingsState.value.isPinned,
+                isNotificationEnabled = feedSourceSettingsState.value.isNotificationEnabled,
             )
 
             if (newFeedSource != null && newFeedSource != originalFeedSource) {

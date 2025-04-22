@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import WebKit
+@preconcurrency import WebKit
 
 class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject {
     fileprivate let webview: WKWebView

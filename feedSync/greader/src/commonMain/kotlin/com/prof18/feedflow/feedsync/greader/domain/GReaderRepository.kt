@@ -221,7 +221,11 @@ class GReaderRepository internal constructor(
                 Unit.success()
             }
 
-    suspend fun addFeedSource(url: String, categoryName: FeedSourceCategory?): DataResult<Unit> {
+    suspend fun addFeedSource(
+        url: String,
+        categoryName: FeedSourceCategory?,
+        isNotificationEnabled: Boolean,
+    ): DataResult<Unit> {
         val result = gReaderClient.addSubscription(url)
         if (result.isError()) {
             return result
@@ -230,6 +234,8 @@ class GReaderRepository internal constructor(
         val feedSourceDTO = result.requireSuccess()
         feedSourceDTO.streamId ?: return DataNotFound.error()
         feedSourceDTO.query ?: return DataNotFound.error()
+
+        databaseHelper.updateNotificationEnabledStatus(feedSourceDTO.streamId, isNotificationEnabled)
 
         val categoryResult = gReaderClient.editSubscription(
             feedSourceId = feedSourceDTO.streamId,

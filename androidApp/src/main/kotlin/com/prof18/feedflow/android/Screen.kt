@@ -49,6 +49,7 @@ data class EditFeed(
     val linkOpeningPreference: String,
     val isHidden: Boolean,
     val isPinned: Boolean,
+    val isNotificationEnabled: Boolean,
 )
 
 @Serializable

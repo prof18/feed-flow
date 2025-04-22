@@ -84,6 +84,8 @@ fun AddFeedScreenContent(
     }
 
     val categoriesState by viewModel.categoriesState.collectAsState()
+    val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
+    val isNotificationEnabled by viewModel.isNotificationEnabledState.collectAsState()
 
     AddFeedContent(
         modifier = modifier,
@@ -111,6 +113,11 @@ fun AddFeedScreenContent(
         onEditCategoryClick = { categoryId, newName ->
             viewModel.editCategory(categoryId, newName)
         },
+        showNotificationToggle = showNotificationToggle,
+        isNotificationEnabled = isNotificationEnabled,
+        onNotificationToggleChanged = { enabled ->
+            viewModel.updateNotificationStatus(enabled)
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topAppBar = topAppBar,
     )
@@ -133,6 +140,9 @@ private fun AddScreenContentPreview() {
             onAddCategoryClick = {},
             onDeleteCategoryClick = {},
             onEditCategoryClick = { _, _ -> },
+            showNotificationToggle = true,
+            isNotificationEnabled = false,
+            onNotificationToggleChanged = {},
         )
     }
 }

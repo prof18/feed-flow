@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,8 @@ internal fun EditScreen(
 
     val context = LocalContext.current
     val strings = LocalFeedFlowStrings.current
+
+    val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
 
     val latestNavigateBack by rememberUpdatedState(navigateBack)
 
@@ -107,6 +110,10 @@ internal fun EditScreen(
         onPinnedToggled = { pinned ->
             viewModel.updateIsPinned(pinned)
         },
+        showNotificationToggle = showNotificationToggle,
+        onNotificationToggleChanged = { isNotificationEnabled ->
+            viewModel.updateIsNotificationEnabled(isNotificationEnabled)
+        },
         editFeed = {
             viewModel.editFeed()
         },
@@ -164,6 +171,8 @@ private fun EditScreenPreview() {
             onLinkOpeningPreferenceSelected = {},
             onHiddenToggled = {},
             onPinnedToggled = {},
+            showNotificationToggle = true,
+            onNotificationToggleChanged = {},
             editFeed = { },
             onExpandClick = {},
             onAddCategoryClick = {},

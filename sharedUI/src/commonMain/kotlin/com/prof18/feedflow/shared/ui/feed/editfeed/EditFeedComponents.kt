@@ -44,6 +44,8 @@ fun EditFeedContent(
     onLinkOpeningPreferenceSelected: (LinkOpeningPreference) -> Unit,
     onHiddenToggled: (Boolean) -> Unit,
     onPinnedToggled: (Boolean) -> Unit,
+    onNotificationToggleChanged: (Boolean) -> Unit = {},
+    showNotificationToggle: Boolean = false,
     editFeed: () -> Unit,
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
@@ -134,6 +136,27 @@ fun EditFeedContent(
                         onCheckedChange = onPinnedToggled,
                         modifier = Modifier.padding(start = Spacing.regular),
                     )
+                }
+            }
+
+            item {
+                if (showNotificationToggle) {
+                    Row(
+                        modifier = modifier
+                            .padding(top = Spacing.regular),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
+                            modifier = Modifier.padding(top = Spacing.xsmall)
+                                .weight(1f),
+                        )
+                        Switch(
+                            checked = feedSourceSettings.isNotificationEnabled,
+                            onCheckedChange = onNotificationToggleChanged,
+                            modifier = Modifier.padding(start = Spacing.regular),
+                        )
+                    }
                 }
             }
 

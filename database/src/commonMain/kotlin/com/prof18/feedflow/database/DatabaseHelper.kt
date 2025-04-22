@@ -543,6 +543,12 @@ class DatabaseHelper(
             dbRef.feedItemQueries.markFeedItemsNotified()
         }
 
+    suspend fun areNotificationsEnabled(): Boolean = withContext(backgroundDispatcher) {
+        dbRef.feedSourcePreferencesQueries
+            .areNotificationsEnabled()
+            .executeAsOne()
+    }
+
     private suspend fun Transacter.transactionWithContext(
         coroutineContext: CoroutineContext,
         noEnclosing: Boolean = false,

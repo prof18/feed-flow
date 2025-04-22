@@ -55,6 +55,7 @@ internal data class EditFeedScreen(
 
         val categoriesState by viewModel.categoriesState.collectAsState()
         val snackbarHostState = remember { SnackbarHostState() }
+        val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
 
         val strings = LocalFeedFlowStrings.current
         val navigator = LocalNavigator.currentOrThrow
@@ -119,6 +120,10 @@ internal data class EditFeedScreen(
             onPinnedToggled = { pinned ->
                 viewModel.updateIsPinned(pinned)
             },
+            showNotificationToggle = showNotificationToggle,
+            onNotificationToggleChanged = { isNotificationEnabled ->
+                viewModel.updateIsNotificationEnabled(isNotificationEnabled)
+            },
             editFeed = {
                 viewModel.editFeed()
             },
@@ -178,6 +183,8 @@ private fun EditScreenPreview() {
             onLinkOpeningPreferenceSelected = {},
             onHiddenToggled = {},
             onPinnedToggled = {},
+            showNotificationToggle = true,
+            onNotificationToggleChanged = {},
             editFeed = { },
             onExpandClick = {},
             onAddCategoryClick = {},

@@ -128,10 +128,18 @@ internal class FeedSourcesRepository(
         )
     }
 
-    suspend fun addFeedSource(feedUrl: String, categoryName: FeedSourceCategory?): FeedAddedState =
+    suspend fun addFeedSource(
+        feedUrl: String,
+        categoryName: FeedSourceCategory?,
+        isNotificationEnabled: Boolean,
+    ): FeedAddedState =
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> addFeedSourceForFreshRss(sanitizeUrl(feedUrl), categoryName)
-            else -> addFeedSourceForLocalAccount(sanitizeUrl(feedUrl), categoryName)
+            SyncAccounts.FRESH_RSS -> addFeedSourceForFreshRss(
+                sanitizeUrl(feedUrl),
+                categoryName,
+                isNotificationEnabled,
+            )
+            else -> addFeedSourceForLocalAccount(sanitizeUrl(feedUrl), categoryName, isNotificationEnabled)
         }
 
     suspend fun editFeedSource(
@@ -157,10 +165,11 @@ internal class FeedSourcesRepository(
     private suspend fun addFeedSourceForLocalAccount(
         feedUrl: String,
         categoryName: FeedSourceCategory?,
+        isNotificationEnabled: Boolean,
     ): FeedAddedState {
         return when (val feedResponse = fetchSingleFeed(feedUrl, categoryName)) {
             is AddFeedResponse.FeedFound -> {
-                addFeedSource(feedResponse)
+                addFeedSource(feedResponse, isNotificationEnabled)
 
                 FeedAddedState.FeedAdded(
                     feedResponse.parsedFeedSource.title,
@@ -180,12 +189,17 @@ internal class FeedSourcesRepository(
     private suspend fun addFeedSourceForFreshRss(
         originalUrl: String,
         categoryName: FeedSourceCategory?,
+        isNotificationEnabled: Boolean,
     ): FeedAddedState {
         for (suffix in knownUrlSuffix) {
             val actualUrl = suffix.buildUrl(originalUrl).trim()
             logger.d { "Trying with actualUrl: $actualUrl" }
 
-            val addResult = gReaderRepository.addFeedSource(url = actualUrl, categoryName = categoryName)
+            val addResult = gReaderRepository.addFeedSource(
+                url = actualUrl,
+                categoryName = categoryName,
+                isNotificationEnabled = isNotificationEnabled,
+            )
             if (addResult.isSuccess()) {
                 return FeedAddedState.FeedAdded()
             }
@@ -195,7 +209,11 @@ internal class FeedSourcesRepository(
         val url = feedUrlRetriever.getFeedUrl(originalUrl) ?: return FeedAddedState.Error.InvalidUrl
         logger.d { "Found url: $url" }
 
-        val addResult = gReaderRepository.addFeedSource(url = url, categoryName = categoryName)
+        val addResult = gReaderRepository.addFeedSource(
+            url = url,
+            categoryName = categoryName,
+            isNotificationEnabled = isNotificationEnabled,
+        )
         if (addResult.isError()) {
             return FeedAddedState.Error.GenericError
         }
@@ -297,7 +315,12 @@ internal class FeedSourcesRepository(
         )
     }
 
-    private suspend fun addFeedSource(feedFound: AddFeedResponse.FeedFound) = withContext(dispatcherProvider.io) {
+    private suspend fun addFeedSource(
+        feedFound: AddFeedResponse.FeedFound,
+        isNotificationEnabled: Boolean,
+    ) = withContext(
+        dispatcherProvider.io,
+    ) {
         val rssChannel = feedFound.rssChannel
         val parsedFeedSource = feedFound.parsedFeedSource
         val currentTimestamp = dateFormatter.currentTimeMillis()
@@ -312,7 +335,7 @@ internal class FeedSourcesRepository(
             isHiddenFromTimeline = false,
             linkOpeningPreference = LinkOpeningPreference.DEFAULT,
             isPinned = false,
-            isNotificationEnabled = false,
+            isNotificationEnabled = isNotificationEnabled,
         )
 
         val feedItems = rssChannelMapper.getFeedItems(
@@ -326,6 +349,7 @@ internal class FeedSourcesRepository(
                 parsedFeedSource,
             ),
         )
+        databaseHelper.updateNotificationEnabledStatus(feedSource.id, isNotificationEnabled)
         databaseHelper.insertFeedItems(feedItems, currentTimestamp)
         feedSyncRepository.insertSyncedFeedSource(listOf(parsedFeedSource.toFeedSource()))
         feedSyncRepository.performBackup()

@@ -21,6 +21,8 @@ struct AddFeedScreen: View {
     @State private var errorMessage = ""
     @State private var categoryItems: [CategoriesState.CategoryItem] = []
     @State private var isAddingFeed: Bool = false
+    @State private var showNotificationToggle: Bool = false
+    @State private var isNotificationEnabled: Bool = false
     @State var feedURL = ""
 
     var showCloseButton: Bool
@@ -56,6 +58,11 @@ struct AddFeedScreen: View {
                         categoryId: CategoryId(value: categoryId),
                         newName: CategoryName(name: categoryName)
                     )
+                },
+                showNotificationToggle: showNotificationToggle,
+                isNotificationEnabled: isNotificationEnabled,
+                onNotificationToggleChanged: { enabled in
+                    vmStoreOwner.instance.updateNotificationStatus(status: enabled)
                 }
             )
         }
@@ -110,6 +117,16 @@ struct AddFeedScreen: View {
                     $0.isSelected
                 }
                 self.categoryItems = state.categories
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.showNotificationToggleState {
+                self.showNotificationToggle = state as? Bool ?? false
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.isNotificationEnabledState {
+                self.isNotificationEnabled = state as? Bool ?? false
             }
         }
     }

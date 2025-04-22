@@ -36,7 +36,7 @@ class SettingsRepository(
     private val isExperimentalParsingEnabledMutableFlow = MutableStateFlow(
         isExperimentalParsingEnabled(),
     )
-    val isExperimentalParsingEnabled: StateFlow<Boolean> = isExperimentalParsingEnabledMutableFlow.asStateFlow()
+    val isExperimentalParsingEnabledFlow: StateFlow<Boolean> = isExperimentalParsingEnabledMutableFlow.asStateFlow()
 
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)

@@ -37,3 +37,9 @@ updateNotificationEnabledStatus:
 UPDATE feed_source_preferences
 SET notifications_enabled = :enabled
 WHERE feed_source_id = :feedSourceId;
+
+areNotificationsEnabled:
+SELECT EXISTS(
+    SELECT 1 FROM feed_source_preferences 
+    WHERE notifications_enabled = 1
+);

@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,9 @@ fun AddFeedScreen(
 
     val context = LocalContext.current
     val strings = LocalFeedFlowStrings.current
+
+    val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
+    val isNotificationEnabled by viewModel.isNotificationEnabledState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.feedAddedState.collect { feedAddedState ->
@@ -108,6 +112,11 @@ fun AddFeedScreen(
         onEditCategoryClick = { categoryId, newName ->
             viewModel.editCategory(categoryId, newName)
         },
+        showNotificationToggle = showNotificationToggle,
+        isNotificationEnabled = isNotificationEnabled,
+        onNotificationToggleChanged = { enabled ->
+            viewModel.updateNotificationStatus(enabled)
+        },
         topAppBar = {
             TopAppBar(
                 title = {
@@ -148,6 +157,9 @@ private fun AddScreenContentPreview() {
             onAddCategoryClick = {},
             onDeleteCategoryClick = {},
             onEditCategoryClick = { _, _ -> },
+            showNotificationToggle = true,
+            isNotificationEnabled = false,
+            onNotificationToggleChanged = {},
             topAppBar = {
                 TopAppBar(
                     title = {

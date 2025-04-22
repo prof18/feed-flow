@@ -23,7 +23,7 @@ internal fun EditFeed.toFeedSource(): FeedSource {
         linkOpeningPreference = LinkOpeningPreference.valueOf(linkOpeningPreference),
         isHiddenFromTimeline = isHidden,
         isPinned = isPinned,
-        isNotificationEnabled = false,
+        isNotificationEnabled = isNotificationEnabled,
     )
 }
 
@@ -39,5 +39,6 @@ internal fun FeedSource.toEditFeed(): EditFeed {
         linkOpeningPreference = linkOpeningPreference.name,
         isHidden = isHiddenFromTimeline,
         isPinned = isPinned,
+        isNotificationEnabled = isNotificationEnabled,
     )
 }

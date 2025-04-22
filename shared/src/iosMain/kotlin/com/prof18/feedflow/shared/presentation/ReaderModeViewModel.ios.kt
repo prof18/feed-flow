@@ -26,7 +26,7 @@ class ReaderModeViewModel internal constructor(
     val readerFontSizeState = readerFontSizeMutableState.asStateFlow()
 
     val readerExtractorState: StateFlow<ReaderExtractor?> = settingsRepository
-        .isExperimentalParsingEnabled.map { isEnabled ->
+        .isExperimentalParsingEnabledFlow.map { isEnabled ->
             if (isEnabled) {
                 ReaderExtractor.DEFUDDLE
             } else {

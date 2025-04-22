@@ -47,6 +47,7 @@ internal class FeedImportExportRepository(
                     gReaderRepository.addFeedSource(
                         url = feed.url,
                         categoryName = feed.category,
+                        isNotificationEnabled = false,
                     ).onError {
                         feedSourcesWithError.add(feed)
                     }

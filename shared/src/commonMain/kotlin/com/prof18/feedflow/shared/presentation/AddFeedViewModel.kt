@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class AddFeedViewModel internal constructor(
-    private val categoryUseCase: FeedCategoryRepository,
+    private val categoryRepository: FeedCategoryRepository,
     private val feedSourcesRepository: FeedSourcesRepository,
 ) : ViewModel() {
 
@@ -20,11 +20,11 @@ class AddFeedViewModel internal constructor(
     private val feedAddedMutableState: MutableSharedFlow<FeedAddedState> = MutableSharedFlow()
 
     val feedAddedState = feedAddedMutableState.asSharedFlow()
-    val categoriesState = categoryUseCase.categoriesState
+    val categoriesState = categoryRepository.categoriesState
 
     init {
         viewModelScope.launch {
-            categoryUseCase.initCategories()
+            categoryRepository.initCategories()
         }
     }
 
@@ -39,36 +39,36 @@ class AddFeedViewModel internal constructor(
         viewModelScope.launch {
             feedAddedMutableState.emit(FeedAddedState.Loading)
             if (feedUrl.isNotEmpty()) {
-                val categoryName = categoryUseCase.getSelectedCategory()
+                val categoryName = categoryRepository.getSelectedCategory()
 
                 val feedAddedState = feedSourcesRepository.addFeedSource(feedUrl, categoryName)
                 feedAddedMutableState.emit(feedAddedState)
                 if (feedAddedState is FeedAddedState.FeedAdded) {
-                    categoryUseCase.initCategories()
+                    categoryRepository.initCategories()
                 }
             }
         }
     }
 
     fun onExpandCategoryClick() {
-        categoryUseCase.onExpandCategoryClick()
+        categoryRepository.onExpandCategoryClick()
     }
 
     fun addNewCategory(categoryName: CategoryName) {
         viewModelScope.launch {
-            categoryUseCase.addNewCategory(categoryName)
+            categoryRepository.addNewCategory(categoryName)
         }
     }
 
     fun deleteCategory(categoryId: String) {
         viewModelScope.launch {
-            categoryUseCase.deleteCategory(categoryId)
+            categoryRepository.deleteCategory(categoryId)
         }
     }
 
     fun editCategory(categoryId: CategoryId, newName: CategoryName) {
         viewModelScope.launch {
-            categoryUseCase.updateCategoryName(categoryId, newName)
+            categoryRepository.updateCategoryName(categoryId, newName)
         }
     }
 }

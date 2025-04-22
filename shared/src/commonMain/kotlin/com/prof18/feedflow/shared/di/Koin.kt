@@ -146,7 +146,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         AddFeedViewModel(
             feedSourcesRepository = get(),
-            categoryUseCase = get(),
+            categoryRepository = get(),
         )
     }
 

@@ -1,5 +1,5 @@
-- Add the possibility for sharing article links from the list
-- Add widget
-- Add background sync of articles.
-- Add the possibility of sharing a link to FeedFlow to add a feed.
+- Add notifications support for new articles
+- Add a new experimental engine for the reader mode (please try and leave feedback!)
+- Add possibility to change date format (from day/month to month/day)
+- Add swipe for mark as read or bookmark an article
 - Bug fixes and improvements

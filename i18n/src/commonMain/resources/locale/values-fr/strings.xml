@@ -194,4 +194,5 @@
     <string name="settings_sync_period_fifteen_minutes">Toutes les 15 minutes</string>
     <string name="settings_sync_period_thirty_minutes">Toutes les 30 minutes</string>
     <string name="settings_sync_period_one_day">Tous les jours</string>
+    <string name="file_menu">Fichier</string>
 </resources>

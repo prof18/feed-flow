@@ -191,4 +191,7 @@
     <string name="account_login">Se connecter</string>
     <string name="category_name">Nom de la catégorie</string>
     <string name="fresh_rss_account_connected">Votre compte FreshRss a été connecté avec succès</string>
+    <string name="settings_sync_period_fifteen_minutes">Toutes les 15 minutes</string>
+    <string name="settings_sync_period_thirty_minutes">Toutes les 30 minutes</string>
+    <string name="settings_sync_period_one_day">Tous les jours</string>
 </resources>

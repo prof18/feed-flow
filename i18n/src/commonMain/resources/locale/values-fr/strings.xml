@@ -209,4 +209,10 @@
     <string name="settings_left_swipe_action">Balayage vers la gauche</string>
     <string name="settings_right_swipe_action">Balayage vers la droite</string>
     <string name="settings_swipe_action_none">Désactivé</string>
+    <string name="new_articles_notification_title">Nouveaux articles disponibles</string>
+    <string name="marking_all_read_dialog_title">Marquer tout comme lu...</string>
+    <string name="date_format_title">Format de date</string>
+    <string name="date_format_normal">Jour/Mois</string>
+    <string name="date_format_american">Mois/Jour</string>
+    <string name="enable_notifications_for_feed">Activer les notifications pour les nouveaux articles</string>
 </resources>

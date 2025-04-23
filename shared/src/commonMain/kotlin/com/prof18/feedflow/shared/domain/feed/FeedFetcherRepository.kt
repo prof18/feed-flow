@@ -181,12 +181,29 @@ class FeedFetcherRepository internal constructor(
         feedSource: FeedSource,
         forceRefresh: Boolean,
     ): Boolean {
+        val isOpenRssFeed = feedSource.url.contains("openrss.org", ignoreCase = true)
+
+        if (forceRefresh && !isOpenRssFeed) {
+            return true
+        }
+
         val lastSyncTimestamp = feedSource.lastSyncTimestamp
-        val oneHourInMillis = (60 * 60) * 1000
+        if (lastSyncTimestamp == null) {
+            return true
+        }
+
         val currentTime = dateFormatter.currentTimeMillis()
-        return forceRefresh ||
-            lastSyncTimestamp == null ||
-            currentTime - lastSyncTimestamp >= oneHourInMillis
+        val timeDifference = currentTime - lastSyncTimestamp
+
+        val refreshThresholdInMillis = if (isOpenRssFeed) {
+            // 6 hours for openrss.org feeds
+            (6 * 60 * 60) * 1000L
+        } else {
+            // 1 hour for other feeds
+            (60 * 60) * 1000L
+        }
+
+        return timeDifference >= refreshThresholdInMillis
     }
 
     private suspend fun parseFeeds(

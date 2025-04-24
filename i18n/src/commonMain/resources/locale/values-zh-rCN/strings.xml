@@ -220,4 +220,6 @@
     <string name="date_format_title">日期格式</string>
     <string name="date_format_normal">日/月</string>
     <string name="marking_all_read_dialog_title">正在全部标记为已读…</string>
+    <string name="enable_notifications_for_feed">启用新文章通知</string>
+    <string name="settings_experimental_parsing">为阅读模式使用实验性引擎</string>
 </resources>

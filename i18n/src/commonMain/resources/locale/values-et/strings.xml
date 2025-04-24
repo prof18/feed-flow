@@ -225,4 +225,6 @@
     <string name="settings_notifications_warning_reliability">Teavitused toimivad sinu nutiseadmes, kuid süsteemi piirangute tõttu ei pruugi alati olla nähtavad.</string>
     <string name="marking_all_read_dialog_title">Märgin kõiki loetuks...</string>
     <string name="date_format_normal">Päev/Kuu</string>
+    <string name="settings_experimental_parsing">Kasuta lugemisvaates katselist renderdusmootorit</string>
+    <string name="enable_notifications_for_feed">Lülita sisse teavitamine uutest artiklitest</string>
 </resources>

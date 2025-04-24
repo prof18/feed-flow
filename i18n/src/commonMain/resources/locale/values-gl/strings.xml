@@ -199,4 +199,27 @@
     <string name="settings_swipe_action_toggle_read">Cambiar estado</string>
     <string name="settings_swipe_action_toggle_bookmark">Cambio no marcador</string>
     <string name="settings_swipe_action_none">Desactivado</string>
+    <string name="settings_notification_no_feed">Semella que aínda non engadiches ningunha canle. Engade algunha para comezar a recibir notificacións!</string>
+    <string name="settings_notification_check_period">Frecuencia para comprobar notificacións</string>
+    <string name="settings_notification_check_period_desc">Escolle con que frecuencia se comprobará se hai novos artigos</string>
+    <string name="settings_title_notifications">Notificacións</string>
+    <string name="settings_notifications_enable_all_title">Activar Todas as notificacións</string>
+    <string name="notification_channel_description">Notificacións para novos artigos nas túas canles</string>
+    <string name="settings_notifications_permission_status_title">Estado dos permisos</string>
+    <string name="settings_notifications_permission_status_granted">Concedido</string>
+    <string name="settings_notifications_permission_status_denied">Rexeitado</string>
+    <string name="settings_notifications_permission_request_button">Solicitar permiso</string>
+    <string name="new_articles_notification_title">Hai novos artigos</string>
+    <string name="notification_channel_name">Novos artigos</string>
+    <string name="new_articles_notification_content">Novos artigos en %s</string>
+    <string name="settings_notifications_title">Notificacións</string>
+    <string name="settings_notifications_warning_reliability">As notificacións compróbanse no teu dispositivos, pero poderían fallar debido a limitacións do sistema.</string>
+    <string name="settings_open_settings">Abrir Axustes</string>
+    <string name="settings_notifications_settings_instructions">Por favor activa as notificacións para a app nos Axustes de iOS.</string>
+    <string name="marking_all_read_dialog_title">Marcando todo como lido…</string>
+    <string name="date_format_title">Formato da data</string>
+    <string name="date_format_normal">Día/Mes</string>
+    <string name="date_format_american">Mes/Día</string>
+    <string name="enable_notifications_for_feed">Activar notificación para os novos artigos</string>
+    <string name="settings_experimental_parsing">Usar motor experimental no modo lectura</string>
 </resources>

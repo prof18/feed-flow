@@ -220,4 +220,6 @@
     <string name="marking_all_read_dialog_title">Позначення всіх як прочитаних...</string>
     <string name="date_format_title">Формат дати</string>
     <string name="date_format_normal">День/Місяць</string>
+    <string name="settings_experimental_parsing">Використовуйте експериментальний механізм для режиму читання</string>
+    <string name="enable_notifications_for_feed">Увімкнути сповіщення про нові статті</string>
 </resources>

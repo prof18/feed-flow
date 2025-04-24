@@ -29,12 +29,11 @@ import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.home.components.LoadingOperationDialog
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.koinInject
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun HomeScreen(
     windowSizeClass: WindowSizeClass,
-    feedSourceIdToSelect: String?,
+    homeViewModel: HomeViewModel,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
@@ -44,7 +43,6 @@ internal fun HomeScreen(
     onEditFeedClick: (FeedSource) -> Unit,
 ) {
     val browserManager = koinInject<BrowserManager>()
-    val homeViewModel = koinViewModel<HomeViewModel>()
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
@@ -87,12 +85,6 @@ internal fun HomeScreen(
                     )
                 }
             }
-        }
-    }
-
-    LaunchedEffect(feedSourceIdToSelect) {
-        if (feedSourceIdToSelect != null) {
-            homeViewModel.updateFeedSourceFilter(feedSourceIdToSelect)
         }
     }
 

@@ -35,7 +35,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import co.touchlab.kermit.Logger
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
@@ -57,6 +56,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
+import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -163,12 +163,24 @@ class MainActivity : ComponentActivity() {
                 ),
             ) { backStackEntry ->
                 val route = backStackEntry.toRoute<Home>()
+                val homeViewModel = koinViewModel<HomeViewModel>()
 
-                Logger.d { "GOT FEEDSOURCE: ${route.feedSourceId}" }
+                val savedStateHandle = backStackEntry.savedStateHandle
+
+                LaunchedEffect(Unit) {
+                    val isConsumed = savedStateHandle.get<Boolean>("deepLinkConsumed") ?: false
+                    if (!isConsumed) {
+                        val feedId: String? = route.feedSourceId
+                        if (!feedId.isNullOrEmpty()) {
+                            homeViewModel.updateFeedSourceFilter(feedId)
+                            savedStateHandle["deepLinkConsumed"] = true
+                        }
+                    }
+                }
 
                 HomeScreen(
                     windowSizeClass = windowSizeClass,
-                    feedSourceIdToSelect = route.feedSourceId,
+                    homeViewModel = homeViewModel,
                     onSettingsButtonClicked = {
                         navController.navigate(Settings)
                     },

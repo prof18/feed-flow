@@ -220,4 +220,6 @@
     <string name="date_format_title">Định dạng ngày</string>
     <string name="date_format_normal">Ngày/Tháng</string>
     <string name="date_format_american">Tháng/Ngày</string>
+    <string name="settings_experimental_parsing">Dùng engine thử nghiệm cho chế độ đọc</string>
+    <string name="enable_notifications_for_feed">Bật thông báo cho bài viết mới</string>
 </resources>

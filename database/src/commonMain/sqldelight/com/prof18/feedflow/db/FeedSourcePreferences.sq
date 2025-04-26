@@ -7,7 +7,7 @@ CREATE TABLE feed_source_preferences (
     is_hidden INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_pinned INTEGER AS Boolean NOT NULL DEFAULT 0,
     notifications_enabled INTEGER AS Boolean NOT NULL DEFAULT 0,
-    FOREIGN KEY (feed_source_id) REFERENCES feed_source(url_hash)
+    FOREIGN KEY (feed_source_id) REFERENCES feed_source(url_hash) ON DELETE CASCADE
 );
 
 insertPreference:

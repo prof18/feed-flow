@@ -12,10 +12,11 @@ public struct ReaderViewOptions {
     public var readerExtractor: ReaderExtractorType
 
     public init(
-        additionalCSS _: String? = nil,
+        additionalCSS: String,
         onLinkClicked: ((URL) -> Void)? = nil,
         readerExtractor: ReaderExtractorType
     ) {
+        self.additionalCSS = additionalCSS
         self.onLinkClicked = onLinkClicked
         self.readerExtractor = readerExtractor
     }

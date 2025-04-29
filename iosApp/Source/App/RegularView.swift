@@ -32,7 +32,6 @@ struct RegularView: View {
     @State var showAddFeedSheet = false
     @State var isToggled: Bool = false
 
-    @State private var browserToOpen: BrowserToPresent?
     @State var indexHolder: HomeListIndexHolder
     var drawerItems: [DrawerItem] = []
     let homeViewModel: HomeViewModel
@@ -133,13 +132,6 @@ struct RegularView: View {
 
                 case let .deepLinkFeed(feedId):
                     DeepLinkFeedScreen(feedId: feedId)
-                }
-            }
-            .fullScreenCover(item: $browserToOpen) { browserToOpen in
-                switch browserToOpen {
-                case let .inAppBrowser(url):
-                    SFSafariView(url: url)
-                        .ignoresSafeArea()
                 }
             }
         }

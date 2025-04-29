@@ -30,7 +30,6 @@ struct CompactView: View {
     @State var scrollUpTrigger: Bool = false
     @State var showAddFeedSheet = false
     @State var showEditFeedSheet = false
-    @State private var browserToOpen: BrowserToPresent?
 
     @State var indexHolder: HomeListIndexHolder
     let homeViewModel: HomeViewModel
@@ -135,13 +134,6 @@ struct CompactView: View {
 
                 case let .deepLinkFeed(feedId):
                     DeepLinkFeedScreen(feedId: feedId)
-                }
-            }
-            .fullScreenCover(item: $browserToOpen) { browserToOpen in
-                switch browserToOpen {
-                case let .inAppBrowser(url):
-                    SFSafariView(url: url)
-                        .ignoresSafeArea()
                 }
             }
         }

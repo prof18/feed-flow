@@ -1,6 +1,8 @@
 package com.prof18.feedflow.shared.domain.feedsync
 
 import android.content.Context
+import androidx.work.Constraints
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
@@ -46,6 +48,11 @@ internal class FeedSyncAndroidWorker(
         val uploadWorkRequest: WorkRequest =
             OneTimeWorkRequestBuilder<SyncWorkManager>()
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build(),
+                )
                 .build()
 
         WorkManager.getInstance(context).enqueue(uploadWorkRequest)

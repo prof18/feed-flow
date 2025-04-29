@@ -132,6 +132,11 @@ struct RegularView: View {
 
                 case let .deepLinkFeed(feedId):
                     DeepLinkFeedScreen(feedId: feedId)
+
+                case let .inAppBrowser(url):
+                    SFSafariView(url: url)
+                        .ignoresSafeArea()
+                        .navigationBarBackButtonHidden(true)
                 }
             }
         }

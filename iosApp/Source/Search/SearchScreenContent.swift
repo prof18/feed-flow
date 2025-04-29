@@ -12,7 +12,6 @@ struct SearchScreenContent: View {
     @Binding var feedFontSizes: FeedFontSizes
 
     @State private var isPresented = true
-    @State private var browserToOpen: BrowserToPresent?
 
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
@@ -53,7 +52,7 @@ struct SearchScreenContent: View {
                                    route: CommonViewRoute.readerMode(feedItem: feedItem)
                                )
                            } else if browserSelector.openInAppBrowser() {
-                               browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
+                               appState.navigate(route: CommonViewRoute.inAppBrowser(url: URL(string: feedItem.url)!))
                            } else {
                                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                            }
@@ -86,13 +85,6 @@ struct SearchScreenContent: View {
             }
         }
         .listStyle(PlainListStyle())
-        .fullScreenCover(item: $browserToOpen) { browserToOpen in
-            switch browserToOpen {
-            case let .inAppBrowser(url):
-                SFSafariView(url: url)
-                    .ignoresSafeArea()
-            }
-        }
     }
 
     @ViewBuilder
@@ -126,7 +118,7 @@ struct SearchScreenContent: View {
         if let commentsUrl = feedItem.commentsUrl {
             Button {
                 if browserSelector.openInAppBrowser() {
-                    browserToOpen = .inAppBrowser(url: URL(string: commentsUrl)!)
+                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: URL(string: commentsUrl)!))
                 } else {
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
                 }

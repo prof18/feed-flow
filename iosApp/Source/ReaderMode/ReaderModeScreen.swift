@@ -6,13 +6,13 @@ import SwiftUI
 struct ReaderModeScreen: View {
     @Environment(BrowserSelector.self) private var browserSelector
     @Environment(\.openURL) private var openURL
+    @Environment(AppState.self) private var appState
 
     @State private var showFontSizeMenu: Bool = false
     @State private var fontSize = 16.0
     @State private var isSliderMoving = false
     @State private var reset = false
     @State private var isBookmarked = false
-    @State private var browserToOpen: BrowserToPresent?
     @State private var readerExtractor: ReaderExtractorType?
 
     @StateObject private var vmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
@@ -35,7 +35,7 @@ struct ReaderModeScreen: View {
                         """,
                         onLinkClicked: { url in
                             if browserSelector.openInAppBrowser() {
-                                browserToOpen = .inAppBrowser(url: url)
+                                appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
                             } else {
                                 openURL(
                                     browserSelector.getUrlForDefaultBrowser(
@@ -68,7 +68,9 @@ struct ReaderModeScreen: View {
 
                         Button {
                             if browserSelector.openInAppBrowser() {
-                                browserToOpen = .inAppBrowser(url: URL(string: feedItemUrlInfo.url)!)
+                                appState.navigate(
+                                    route: CommonViewRoute.inAppBrowser(url: URL(string: feedItemUrlInfo.url)!)
+                                )
                             } else {
                                 openURL(
                                     browserSelector.getUrlForDefaultBrowser(
@@ -85,13 +87,6 @@ struct ReaderModeScreen: View {
                     isBookmarked = feedItemUrlInfo.isBookmarked
                 }
                 .id(reset)
-                .fullScreenCover(item: $browserToOpen) { browserToOpen in
-                    switch browserToOpen {
-                    case let .inAppBrowser(url):
-                        SFSafariView(url: url)
-                            .ignoresSafeArea()
-                    }
-                }
                 .task {
                     for await state in vmStoreOwner.instance.readerFontSizeState {
                         self.fontSize = Double(truncating: state)

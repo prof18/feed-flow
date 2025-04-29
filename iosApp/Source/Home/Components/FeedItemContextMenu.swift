@@ -5,9 +5,9 @@ import SwiftUI
 struct FeedItemContextMenu: View {
     @Environment(\.openURL) private var openURL
     @Environment(BrowserSelector.self) private var browserSelector
+    @Environment(AppState.self) private var appState
 
     let feedItem: FeedItem
-    @Binding var browserToOpen: BrowserToPresent?
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
 
@@ -61,7 +61,7 @@ struct FeedItemContextMenu: View {
         if let commentsUrl = feedItem.commentsUrl {
             Button {
                 if browserSelector.openInAppBrowser() {
-                    browserToOpen = .inAppBrowser(url: URL(string: commentsUrl)!)
+                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: URL(string: commentsUrl)!))
                 } else {
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
                 }

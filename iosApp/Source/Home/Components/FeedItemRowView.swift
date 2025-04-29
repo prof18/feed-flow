@@ -7,8 +7,6 @@ struct FeedItemRowView: View {
     @Environment(BrowserSelector.self) private var browserSelector
     @Environment(AppState.self) private var appState
 
-    @State private var browserToOpen: BrowserToPresent?
-
     let feedItem: FeedItem
     let index: Int
     let feedFontSizes: FeedFontSizes
@@ -29,18 +27,27 @@ struct FeedItemRowView: View {
                     linkOpeningPreference: feedItem.feedSource.linkOpeningPreference
                 )
 
+                guard let url = URL(string: feedItem.url) else {
+                    // Handle invalid URL error appropriately
+                    print("Invalid URL for feed item: \(feedItem.id)")
+                    onItemClick(urlInfo) // Still call onItemClick if needed
+                    return
+                }
+
                 switch urlInfo.linkOpeningPreference {
                 case .readerMode:
                     self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
                 case .internalBrowser:
-                    browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
+                    // Navigate instead of presenting modally
+                    self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
                 case .preferredBrowser:
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                 case .default:
                     if browserSelector.openReaderMode(link: feedItem.url) {
                         self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
                     } else if browserSelector.openInAppBrowser() {
-                        browserToOpen = .inAppBrowser(url: URL(string: feedItem.url)!)
+                        // Navigate instead of presenting modally
+                        self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
                     } else {
                         openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                     }
@@ -119,17 +126,9 @@ struct FeedItemRowView: View {
         .contextMenu {
             FeedItemContextMenu(
                 feedItem: feedItem,
-                browserToOpen: $browserToOpen,
                 onBookmarkClick: onBookmarkClick,
                 onReadStatusClick: onReadStatusClick
             )
-        }
-        .fullScreenCover(item: $browserToOpen) { browserToOpen in
-            switch browserToOpen {
-            case let .inAppBrowser(url):
-                SFSafariView(url: url)
-                    .ignoresSafeArea()
-            }
         }
     }
 }

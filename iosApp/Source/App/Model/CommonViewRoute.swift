@@ -15,4 +15,5 @@ enum CommonViewRoute: Hashable {
     case accounts
     case dropboxSync
     case deepLinkFeed(String)
+    case inAppBrowser(url: URL)
 }

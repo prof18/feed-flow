@@ -13,8 +13,6 @@ kotlin {
                         Callable { File(javaHome, "include") },
                         Callable { File(javaHome, "include/darwin") },
                     )
-                    compilerOpts("-I/path")
-                    definitionFile.set(project.file("src/nativeInterop/cinterop/jni.def"))
                 }
             }
         }

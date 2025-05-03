@@ -58,6 +58,8 @@ class DateFormatterTest {
         "Thu, 13 Mar 2025 21:45:09 CET",
         "Wed, 26 Mar 2025 9:46:58 PDT",
         "Sat, 29 March 2025 06:00:00 CDT",
+        "Mon, 05 Aug 2024 16:14:10 CST",
+        "30-Apr-2025 07:00:00",
     )
 
     @Test

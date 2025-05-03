@@ -420,6 +420,21 @@ class DateFormatterImpl(
             char('.')
             year()
         },
+
+        // 30-Apr-2025 07:00:00
+        Format {
+            dayOfMonth()
+            char('-')
+            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            char('-')
+            year()
+            char(' ')
+            hour()
+            char(':')
+            minute()
+            char(':')
+            second()
+        },
     )
 
     override fun getDateMillisFromString(dateString: String): Long? {
@@ -526,6 +541,7 @@ class DateFormatterImpl(
             { chars("PST") },
             { chars("UTC") },
             { chars("CET") },
+            { chars("CST") },
         ) {}
     }
 

@@ -2,7 +2,7 @@
 
 FeedFlow - RSS lasītājs
 
-## Īssais apraksts
+## Īsais apraksts
 
 Minimālistisks, ātrs, vienkāršs
 
@@ -19,15 +19,16 @@ Galvenās funkcijas:
   or Dropbox (all platforms)
 - FreshRSS integrācija: izveidojiet savienojumu ar savu FreshRSS serveri, lai
   veiktu uzlabotu plūsmu pārvaldību
-- Flexible Reading Options: Choose between web view, reader mode, or your
-  preferred browser
-- Privacy-Focused: Select your favorite privacy-focused browser for a separate
-  reading experience
-- Easy Migration: Import and export your RSS feeds via OPML files
+- Elastīgi lasīšanas varianti: variet atlasīt tīmekļa skatu, lasīšanas režīmu
+  vai savu vēlamo pārlūku
+- Uz konfidencialitāti vērsts: variet atlasīt savu iecienītāko privātuma
+  pārlūku, lai iegūtu personisku lasīšanas pieredzi
+- Vienkārši pāriet uz citu RSS lietotni: variet ievietot un izgūt RSS ziņu
+  plūsmas ar OPML datnēm
 
-What Sets FeedFlow Apart:
+Ar ko FeedFlow pārāks pār citiem:
 
-- Clean, intuitive interface that lets you focus on content
+- Tīrs, intuitīvs saskarnes dizains, kas ļauj koncentrēties uz saturu
 - Multiple sync options to fit your workflow (Beta)
 - Customizable reading experience with reader mode
 - Fast and lightweight

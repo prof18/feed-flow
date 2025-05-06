@@ -2,7 +2,7 @@
 <resources>
     <string name="about_app_version">Versija: %s</string>
     <string name="about_menu_contribute_translations">Palīdziet iztulkot</string>
-    <string name="about_button">Par</string>
+    <string name="about_button">Par lietotni</string>
     <string name="default_browser">Noklusējuma pārlūks</string>
     <string name="delete_feed">Dzēst</string>
     <string name="app_name">FeedFlow</string>
@@ -12,7 +12,7 @@
     <string name="feeds_import_done_message">Ievietošana pabeigta</string>
     <string name="feeds_export_done_message">Izgūšana pabeigta</string>
     <string name="settings_title">Iestatījumi</string>
-    <string name="browser_selection_button">Pārlūks</string>
+    <string name="browser_selection_button">Lietotnes pārlūks</string>
     <string name="export_dialog_title">Saglabāt OPML datni</string>
     <string name="load_file_error_message">Nevar ielādēt datni</string>
     <string name="author_label">Ar ❤️ izstrādāja</string>
@@ -35,7 +35,7 @@
     <string name="open_website_button">Atvērt mājaslapu</string>
     <string name="import_export_opml">Ievietot un izgūt OPML datni</string>
     <string name="issue_report_title">Ziņot par FeedFlow problēmu</string>
-    <string name="about_the_app">FeedFlow ir minimālismā dizainēts RSS lasītājs, kura pamatā ir autora personīgās idejas un vīzija. Raksti tiek atvērti to attiecīgajās vietnēs, un jūs variet atlasīt savu iecienītāko privātuma pārlūku, lai atdalītu savu lasīšanas pieredzi atsevišķi no galvenā pārlūka. Ja nevēlaties izmantot pārlūku, FeedFlow piedāvā lasīšanas režīmu, kas ļauj baudīt rakstu saturu bez kaitinošiem uzmanības novēršanas elementiem.\nKā arī variet ievietot un izgūt savu esošo RSS kolekciju no un uz OPML datni.</string>
+    <string name="about_the_app">FeedFlow ir minimālismā dizainēts RSS lasītājs, kura pamatā ir autora personīgās idejas un vīzija. Raksti tiek atvērti to attiecīgajās vietnēs, un jūs variet atlasīt savu iecienītāko privātuma pārlūku, lai atdalītu savu lasīšanas pieredzi atsevišķi no galvenā pārlūka. Ja nevēlaties izmantot pārlūku, FeedFlow piedāvā lasīšanas režīmu, kas ļauj baudīt rakstu saturu bez kaitinošiem, uzmanības novērsošiem elementiem.\nKā arī variet ievietot un izgūt savu esošo RSS kolekciju no un uz OPML datni.</string>
     <string name="file_menu">Datne</string>
     <string name="feed_added_message">Pievienota %s ziņu plūsma</string>
     <string name="feed_url">Ziņu plūsmas URL</string>
@@ -64,4 +64,22 @@
     <string name="feed_name">Ziņu plūsmas nosaukums</string>
     <string name="settings_font_scale_title_example">Raksta nosaukums</string>
     <string name="fresh_rss_password_hint">FreshRSS API parole (Iestatījumi &gt; Profils)</string>
+    <string name="settings_toggle_show_read_articles">Rādīt izlasītos rakstus notikumu sadaļā (laika skalā)</string>
+    <string name="open_source_licenses">Atvērtā pirmkoda licences</string>
+    <string name="open_another_feed">Atvērt citu ziņu plūsmu</string>
+    <string name="show_on_github">Skatīt GitHub</string>
+    <string name="open_source_nav_bar">Atvērtā pirmkoda licences</string>
+    <string name="drawer_title_bookmarks">Grāmatzīmes</string>
+    <string name="menu_remove_from_bookmark">Noņemt no grāmatzīmēm</string>
+    <string name="menu_add_to_bookmark">Pievienot grāmatzīmēm</string>
+    <string name="menu_open_comments">Atvērt komentārus</string>
+    <string name="in_app_browser">Lietotnes pārlūkā</string>
+    <string name="link_copied_success">Saite veiksmīgi nokopēta!</string>
+    <string name="search_placeholder">Meklēt…</string>
+    <string name="settings_reader_mode">Atvērt rakstus lasīšanas režīmā</string>
+    <string name="feed_sync_in_progress">Pašlaik notiek sinhronizācija. Lietotne pēc tās pabeigšanas tiks automātiski aizvērta.</string>
+    <string name="link_opening_preference_reader_mode">Lasīšanas režīms</string>
+    <string name="link_opening_preference_internal_browser">Lietotnes pārlūkā</string>
+    <string name="link_opening_preference">Saiti atvērt</string>
+    <string name="link_opening_preference_preferred_browser">Iecienītākajā pārlūkā</string>
 </resources>

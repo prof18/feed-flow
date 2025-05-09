@@ -133,28 +133,82 @@ jobs:
           Write-Host "`nUnpacking MSIX package..."
           & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/makeappx.exe' unpack /p $env:RELEASE_PATH_MSIX /d $tempDir
           
-          # Read the manifest and print the content for debugging
           $manifestPath = Join-Path $tempDir "AppxManifest.xml"
           Write-Host "`nOriginal manifest contents:"
-          Get-Content $manifestPath
+          Get-Content $manifestPath # Log original content for debugging
+
+          # Load manifest as XML for robust editing
+          $xmlDoc = New-Object System.Xml.XmlDocument
+          $xmlDoc.Load($manifestPath) # Use Load method for XmlDocument
+
+          # Setup NamespaceManager for XPath queries
+          $nsManager = New-Object System.Xml.XmlNamespaceManager($xmlDoc.NameTable)
+          $nsManager.AddNamespace("pkg", "http://schemas.microsoft.com/appx/manifest/foundation/windows10") # Default namespace
+          $nsManager.AddNamespace("uap", "http://schemas.microsoft.com/appx/manifest/uap/windows10")
+          $nsManager.AddNamespace("desktop7", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/7")
+          $nsManager.AddNamespace("rescap", "http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities")
+
+          # 1. Remove desktop7:Shortcut extension
+          $applicationNode = $xmlDoc.SelectSingleNode("/pkg:Package/pkg:Applications/pkg:Application", $nsManager)
+          if ($applicationNode) {
+              $extensionsNode = $applicationNode.SelectSingleNode("pkg:Extensions", $nsManager)
+              if ($extensionsNode) {
+                  $shortcutExtensionNode = $extensionsNode.SelectSingleNode("desktop7:Extension[@Category='windows.shortcut']", $nsManager)
+                  
+                  if ($shortcutExtensionNode) {
+                      Write-Host "Removing desktop7:Shortcut extension..."
+                      $extensionsNode.RemoveChild($shortcutExtensionNode) | Out-Null
+                  }
+
+                  # If the <Extensions> node becomes empty, remove it too
+                  if (-not $extensionsNode.HasChildNodes) {
+                      $applicationNode.RemoveChild($extensionsNode) | Out-Null
+                      Write-Host "Removed empty Extensions node."
+                  }
+              }
+          }
+
+          # 2. Update TargetDeviceFamily version numbers
+          $targetDeviceFamilyNode = $xmlDoc.SelectSingleNode("/pkg:Package/pkg:Dependencies/pkg:TargetDeviceFamily[@Name='Windows.Desktop']", $nsManager)
+          if ($targetDeviceFamilyNode) {
+              Write-Host "Updating TargetDeviceFamily MinVersion to 10.0.17763.0 and MaxVersionTested to 10.0.22000.1..."
+              $targetDeviceFamilyNode.SetAttribute("MinVersion", "10.0.17763.0")
+              $targetDeviceFamilyNode.SetAttribute("MaxVersionTested", "10.0.22000.1")
+          } else {
+              Write-Warning "TargetDeviceFamily node with Name='Windows.Desktop' not found!"
+          }
+
+          # 3. Update Resources section
+          $packageNode = $xmlDoc.SelectSingleNode("/pkg:Package", $nsManager)
+          $currentResourcesNode = $packageNode.SelectSingleNode("pkg:Resources", $nsManager)
+          if ($currentResourcesNode) {
+              Write-Host "Replacing Resources node with content from .github/msix-resources-template.xml..."
+              $newResourcesFileContent = Get-Content -Path ".github/msix-resources-template.xml" -Raw
+              
+              $newResourcesDoc = New-Object System.Xml.XmlDocument
+              try {
+                  $newResourcesDoc.LoadXml($newResourcesFileContent) # Load the string content from file
+                  $newResourcesRootNode = $newResourcesDoc.DocumentElement # This should be the <Resources> node
+                  
+                  if ($newResourcesRootNode -and $newResourcesRootNode.Name -eq "Resources") {
+                      $importedNewResourcesNode = $xmlDoc.ImportNode($newResourcesRootNode, $true)
+                      $packageNode.ReplaceChild($importedNewResourcesNode, $currentResourcesNode) | Out-Null
+                      Write-Host "Successfully replaced Resources node."
+                  } else {
+                      Write-Warning "The root element in .github/msix-resources-template.xml is not <Resources> or file is empty/invalid."
+                  }
+              } catch {
+                  Write-Error "Failed to parse .github/msix-resources-template.xml as XML: $($_.Exception.Message)"
+              }
+          } else {
+              Write-Warning "Could not find the <Resources> node in the original manifest to replace."
+          }
           
-          $manifestContent = Get-Content $manifestPath -Raw
-          
-          # Update TargetDeviceFamily version numbers
-          $newTargetDeviceFamily = '<TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.1" />'
-          $pattern = '<TargetDeviceFamily Name="Windows.Desktop" MinVersion="[^"]*" MaxVersionTested="[^"]*" />'
-          $manifestContent = [regex]::Replace($manifestContent, $pattern, $newTargetDeviceFamily)
-          
-          # Update Resources section
-          $newResources = Get-Content -Path ".github/msix-resources-template.xml" -Raw
-          $pattern = '<Resources>[ ]*<Resource Language="en-us" />[ ]*</Resources>'
-          $manifestContent = [regex]::Replace($manifestContent, $pattern, $newResources)
-          
-          # Write the updated manifest and print the content for debugging
-          $manifestContent | Set-Content $manifestPath -NoNewline
+          # Write the updated manifest back to file
+          $xmlDoc.Save($manifestPath) 
           
           Write-Host "`nUpdated manifest contents:"
-          Get-Content $manifestPath
+          Get-Content $manifestPath # Log updated content
           
           # Create a new MSIX package with the updated manifest using makeappx
           Write-Host "`nRepackaging MSIX with updated manifest..."

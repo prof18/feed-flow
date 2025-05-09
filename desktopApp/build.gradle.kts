@@ -123,7 +123,6 @@ compose {
                     perUserInstall = true
                     menuGroup = "Marco Gomiero"
 
-                    // https://www.guidgen.com/
                     upgradeUuid = "2a997274-d04e-40ae-b912-8f86970bd181".uppercase()
                 }
 

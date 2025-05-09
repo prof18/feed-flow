@@ -178,30 +178,40 @@ jobs:
               Write-Warning "TargetDeviceFamily node with Name='Windows.Desktop' not found!"
           }
 
-          # 3. Update Resources section
+          # 3. Update Resources section - ensuring it's AFTER Dependencies
           $packageNode = $xmlDoc.SelectSingleNode("/pkg:Package", $nsManager)
+          $dependenciesNode = $packageNode.SelectSingleNode("pkg:Dependencies", $nsManager)
+          
+          # Remove existing Resources node if it exists
           $currentResourcesNode = $packageNode.SelectSingleNode("pkg:Resources", $nsManager)
           if ($currentResourcesNode) {
-              Write-Host "Replacing Resources node with content from .github/msix-resources-template.xml..."
-              $newResourcesFileContent = Get-Content -Path ".github/msix-resources-template.xml" -Raw
+              Write-Host "Removing existing Resources node..."
+              $packageNode.RemoveChild($currentResourcesNode) | Out-Null
+          }
+
+          Write-Host "Adding new Resources node from .github/msix-resources-template.xml..."
+          $newResourcesFileContent = Get-Content -Path ".github/msix-resources-template.xml" -Raw
+          $newResourcesDoc = New-Object System.Xml.XmlDocument
+          try {
+              $newResourcesDoc.LoadXml($newResourcesFileContent)
+              $newResourcesRootNode = $newResourcesDoc.DocumentElement
               
-              $newResourcesDoc = New-Object System.Xml.XmlDocument
-              try {
-                  $newResourcesDoc.LoadXml($newResourcesFileContent) # Load the string content from file
-                  $newResourcesRootNode = $newResourcesDoc.DocumentElement # This should be the <Resources> node
-                  
-                  if ($newResourcesRootNode -and $newResourcesRootNode.Name -eq "Resources") {
-                      $importedNewResourcesNode = $xmlDoc.ImportNode($newResourcesRootNode, $true)
-                      $packageNode.ReplaceChild($importedNewResourcesNode, $currentResourcesNode) | Out-Null
-                      Write-Host "Successfully replaced Resources node."
+              if ($newResourcesRootNode -and $newResourcesRootNode.Name -eq "Resources") {
+                  $importedNewResourcesNode = $xmlDoc.ImportNode($newResourcesRootNode, $true)
+                  if ($dependenciesNode) {
+                      # Insert after Dependencies
+                      $packageNode.InsertAfter($importedNewResourcesNode, $dependenciesNode) | Out-Null
+                      Write-Host "Successfully inserted new Resources node after Dependencies."
                   } else {
-                      Write-Warning "The root element in .github/msix-resources-template.xml is not <Resources> or file is empty/invalid."
+                      # Fallback: Append to Package if Dependencies not found (should not happen in a valid manifest)
+                      $packageNode.AppendChild($importedNewResourcesNode) | Out-Null
+                      Write-Warning "Dependencies node not found. Appended Resources node to Package."
                   }
-              } catch {
-                  Write-Error "Failed to parse .github/msix-resources-template.xml as XML: $($_.Exception.Message)"
+              } else {
+                  Write-Warning "The root element in .github/msix-resources-template.xml is not <Resources> or file is empty/invalid."
               }
-          } else {
-              Write-Warning "Could not find the <Resources> node in the original manifest to replace."
+          } catch {
+              Write-Error "Failed to parse .github/msix-resources-template.xml as XML: $($_.Exception.Message)"
           }
           
           # Write the updated manifest back to file

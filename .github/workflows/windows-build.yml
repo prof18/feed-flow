@@ -190,28 +190,26 @@ jobs:
           }
 
           Write-Host "Adding new Resources node from .github/msix-resources-template.xml..."
-          $newResourcesFileContent = Get-Content -Path ".github/msix-resources-template.xml" -Raw
-          $newResourcesDoc = New-Object System.Xml.XmlDocument
-          try {
-              $newResourcesDoc.LoadXml($newResourcesFileContent)
-              $newResourcesRootNode = $newResourcesDoc.DocumentElement
-              
-              if ($newResourcesRootNode -and $newResourcesRootNode.Name -eq "Resources") {
-                  $importedNewResourcesNode = $xmlDoc.ImportNode($newResourcesRootNode, $true)
-                  if ($dependenciesNode) {
-                      # Insert after Dependencies
-                      $packageNode.InsertAfter($importedNewResourcesNode, $dependenciesNode) | Out-Null
-                      Write-Host "Successfully inserted new Resources node after Dependencies."
-                  } else {
-                      # Fallback: Append to Package if Dependencies not found (should not happen in a valid manifest)
-                      $packageNode.AppendChild($importedNewResourcesNode) | Out-Null
-                      Write-Warning "Dependencies node not found. Appended Resources node to Package."
-                  }
-              } else {
-                  Write-Warning "The root element in .github/msix-resources-template.xml is not <Resources> or file is empty/invalid."
-              }
-          } catch {
-              Write-Error "Failed to parse .github/msix-resources-template.xml as XML: $($_.Exception.Message)"
+          # Create new resources node directly in the document
+          $resourcesNode = $xmlDoc.CreateElement("Resources", "http://schemas.microsoft.com/appx/manifest/foundation/windows10")
+          
+          # Load resources from template file
+          [xml]$resourcesTemplate = Get-Content -Path ".github/msix-resources-template.xml"
+          
+          # Add each Resource element from template
+          foreach ($resource in $resourcesTemplate.Resources.Resource) {
+              $newResource = $xmlDoc.CreateElement("Resource", "http://schemas.microsoft.com/appx/manifest/foundation/windows10")
+              $newResource.SetAttribute("Language", $resource.Language)
+              $resourcesNode.AppendChild($newResource) | Out-Null
+          }
+          
+          # Insert the new Resources node after Dependencies
+          if ($dependenciesNode) {
+              $packageNode.InsertAfter($resourcesNode, $dependenciesNode) | Out-Null
+              Write-Host "Successfully inserted new Resources node after Dependencies."
+          } else {
+              $packageNode.AppendChild($resourcesNode) | Out-Null
+              Write-Warning "Dependencies node not found. Appended Resources node to Package."
           }
           
           # Write the updated manifest back to file

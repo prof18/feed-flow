@@ -34,6 +34,7 @@ import androidx.compose.ui.window.rememberDialogState
 import androidx.compose.ui.window.rememberWindowState
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
+import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -53,6 +54,7 @@ import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.desktop.utils.disableSentry
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
@@ -185,8 +187,14 @@ fun main() = application {
                 onCloseRequest = {
                     scope.launch {
                         showBackupLoader = true
-                        feedSyncRepo.performBackup()
-                        exitApplication()
+                        try {
+                            feedSyncRepo.performBackup()
+                            DI.koin.get<DatabaseCloser>().close()
+                        } catch (e: Exception) {
+                            DI.koin.get<Logger>().e("Error during cleanup", e)
+                        } finally {
+                            exitApplication()
+                        }
                     }
                 },
                 state = windowState,

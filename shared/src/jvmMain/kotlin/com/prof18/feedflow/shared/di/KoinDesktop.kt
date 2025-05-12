@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.data.MigrateSettings
+import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
@@ -151,4 +152,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     factoryOf(::ReaderModeViewModel)
+
+    factoryOf(::DatabaseCloser)
 }

@@ -18,7 +18,12 @@ fun createDatabaseDriver(
 
     val databasePath = File(appPath, "/${DatabaseHelper.DB_FILE_NAME_WITH_EXTENSION}")
 
-    val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY + databasePath.absolutePath, Properties())
+    val properties = Properties().apply {
+        setProperty("journal_mode", "WAL")
+        setProperty("synchronous", "NORMAL")
+        setProperty("busy_timeout", "5000")
+    }
+    val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY + databasePath.absolutePath, properties)
 
     val sqlCursor = driver.executeQuery(
         null,

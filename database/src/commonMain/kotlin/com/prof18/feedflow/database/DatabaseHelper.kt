@@ -36,7 +36,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 class DatabaseHelper(
-    sqlDriver: SqlDriver,
+    private val sqlDriver: SqlDriver,
     private val backgroundDispatcher: CoroutineDispatcher,
     private val logger: Logger,
 ) {
@@ -46,6 +46,10 @@ class DatabaseHelper(
             link_opening_preferenceAdapter = EnumColumnAdapter(),
         ),
     )
+
+    fun close() {
+        sqlDriver.close()
+    }
 
     suspend fun getFeedSources(): List<FeedSource> = withContext(backgroundDispatcher) {
         dbRef.feedSourceQueries

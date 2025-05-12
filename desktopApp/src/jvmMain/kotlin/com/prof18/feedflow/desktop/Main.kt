@@ -164,20 +164,20 @@ fun main() = application {
     val scope = rememberCoroutineScope()
     var showBackupLoader by remember { mutableStateOf(false) }
 
-    val reviewViewModel = desktopViewModel { DI.koin.get<ReviewViewModel>() }
-    if (getDesktopOS().isMacOs() && isSandboxed) {
-        val canShowReview by reviewViewModel.canShowReviewDialog.collectAsState()
-        if (canShowReview) {
-            try {
-                val resourcesDir = System.getProperty("compose.application.resources.dir")
-                val libraryPath = resourcesDir + File.separator + System.mapLibraryName("kreview")
-                System.load(libraryPath)
-                MacosReviewBridge().triggerAppStoreReview()
-            } catch (_: Throwable) {
-                // best effort
-            }
-        }
-    }
+//    val reviewViewModel = desktopViewModel { DI.koin.get<ReviewViewModel>() }
+//    if (getDesktopOS().isMacOs() && isSandboxed) {
+//        val canShowReview by reviewViewModel.canShowReviewDialog.collectAsState()
+//        if (canShowReview) {
+//            try {
+//                val resourcesDir = System.getProperty("compose.application.resources.dir")
+//                val libraryPath = resourcesDir + File.separator + System.mapLibraryName("kreview")
+//                System.load(libraryPath)
+//                MacosReviewBridge().triggerAppStoreReview()
+//            } catch (_: Throwable) {
+//                // best effort
+//            }
+//        }
+//    }
 
     FeedFlowTheme {
         val lyricist = rememberFeedFlowStrings()

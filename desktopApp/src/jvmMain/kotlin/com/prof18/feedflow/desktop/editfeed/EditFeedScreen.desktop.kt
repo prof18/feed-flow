@@ -17,13 +17,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
@@ -32,7 +30,6 @@ import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
 import com.prof18.feedflow.shared.ui.feed.editfeed.EditFeedContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 internal data class EditFeedScreen(
     private val feedSource: FeedSource,
@@ -147,8 +144,6 @@ internal data class EditFeedScreen(
                     },
                     navigationIcon = {
                         IconButton(
-                            modifier = Modifier
-                                .tagForTesting(TestingTag.BACK_BUTTON),
                             onClick = {
                                 navigator.pop()
                             },

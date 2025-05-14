@@ -20,14 +20,12 @@ import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.LinkOpeningPreference
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.feed.CategoriesSelector
 import com.prof18.feedflow.shared.ui.feed.FeedNameTextField
 import com.prof18.feedflow.shared.ui.feed.FeedUrlTextField
 import com.prof18.feedflow.shared.ui.feed.LinkOpeningPreferenceSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 fun EditFeedContent(
@@ -69,8 +67,7 @@ fun EditFeedContent(
                 FeedNameTextField(
                     modifier = Modifier
                         .padding(top = Spacing.regular)
-                        .fillMaxWidth()
-                        .tagForTesting(TestingTag.FEED_URL_INPUT),
+                        .fillMaxWidth(),
                     feedName = feedName,
                     onFeedNameUpdated = onFeedNameUpdated,
                 )
@@ -81,8 +78,7 @@ fun EditFeedContent(
                     FeedUrlTextField(
                         modifier = Modifier
                             .padding(top = Spacing.regular)
-                            .fillMaxWidth()
-                            .tagForTesting(TestingTag.FEED_URL_INPUT),
+                            .fillMaxWidth(),
                         feedUrl = feedUrl,
                         showError = showError,
                         errorMessage = errorMessage,
@@ -163,8 +159,7 @@ fun EditFeedContent(
             item {
                 CategoriesSelector(
                     modifier = Modifier
-                        .padding(vertical = Spacing.regular)
-                        .tagForTesting(TestingTag.CATEGORY_SELECTOR),
+                        .padding(vertical = Spacing.regular),
                     categoriesState = categoriesState,
                     onExpandClick = onExpandClick,
                     onAddCategoryClick = onAddCategoryClick,

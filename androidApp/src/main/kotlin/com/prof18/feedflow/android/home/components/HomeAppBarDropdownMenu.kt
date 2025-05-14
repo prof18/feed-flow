@@ -12,14 +12,11 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 internal fun HomeAppBarDropdownMenu(
@@ -103,8 +100,6 @@ internal fun HomeAppBarDropdownMenu(
         }
 
         DropdownMenuItem(
-            modifier = Modifier
-                .tagForTesting(TestingTag.SETTINGS_MENU),
             onClick = {
                 onSettingsButtonClicked()
             },

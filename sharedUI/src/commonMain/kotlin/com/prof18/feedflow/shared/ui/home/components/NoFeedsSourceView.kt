@@ -10,10 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 fun NoFeedsSourceView(
@@ -32,8 +30,7 @@ fun NoFeedsSourceView(
         )
         Button(
             modifier = Modifier
-                .padding(top = Spacing.regular)
-                .tagForTesting(TestingTag.HOME_SCREEN_ADD_FEED_BUTTON),
+                .padding(top = Spacing.regular),
             onClick = {
                 onAddFeedClick()
             },

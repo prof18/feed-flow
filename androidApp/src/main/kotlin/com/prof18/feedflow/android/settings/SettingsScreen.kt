@@ -41,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
@@ -55,7 +54,6 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.utils.AppConfig
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.Browser
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
@@ -72,7 +70,6 @@ import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.compose.koinInject
@@ -220,8 +217,6 @@ private fun SettingsScreenContent(
 
             item {
                 SettingItem(
-                    modifier = Modifier
-                        .tagForTesting(TestingTag.SETTINGS_FEED_ITEM),
                     title = LocalFeedFlowStrings.current.feedsTitle,
                     icon = Icons.AutoMirrored.Default.Feed,
                     onClick = onFeedListClick,
@@ -438,8 +433,6 @@ private fun SettingsScreenContent(
 
             item {
                 SettingItem(
-                    modifier = Modifier
-                        .tagForTesting(TestingTag.ABOUT_SETTINGS_ITEM),
                     title = LocalFeedFlowStrings.current.aboutButton,
                     icon = Icons.Outlined.Info,
                     onClick = onAboutClick,
@@ -538,8 +531,7 @@ private fun MarkReadWhenScrollingSwitch(
             }
             .fillMaxWidth()
             .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular)
-            .tagForTesting(TestingTag.MARK_AS_READ_SCROLLING_SWITCH),
+            .padding(horizontal = Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
         Icon(
@@ -712,8 +704,6 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
         },
         navigationIcon = {
             IconButton(
-                modifier = Modifier
-                    .testTag(TestingTag.BACK_BUTTON_FEED_SETTINGS),
                 onClick = {
                     navigateBack()
                 },

@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -29,7 +28,6 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,13 +42,10 @@ import androidx.compose.ui.unit.IntSize
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
-import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.utils.TestingTag
-import com.prof18.feedflow.shared.ui.style.Spacing
-import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import com.prof18.feedflow.shared.ui.components.DeleteCategoryDialog
 import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
+import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun CategoriesSelector(
@@ -157,8 +152,7 @@ private fun CategoriesList(
                     RadioButton(
                         modifier = Modifier
                             .padding(vertical = Spacing.small)
-                            .padding(end = Spacing.small)
-                            .tagForTesting("${TestingTag.CATEGORY_RADIO_BUTTON}_${category.name}"),
+                            .padding(end = Spacing.small),
                         selected = category.isSelected,
                         onClick = null,
                     )
@@ -229,8 +223,7 @@ internal fun NewCategoryComposer(
     ) {
         OutlinedTextField(
             modifier = Modifier
-                .weight(1f)
-                .tagForTesting(TestingTag.CATEGORY_TEXT_INPUT),
+                .weight(1f),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -252,8 +245,6 @@ internal fun NewCategoryComposer(
             },
             trailingIcon = {
                 IconButton(
-                    modifier = Modifier
-                        .tagForTesting(TestingTag.ADD_CATEGORY_BUTTON),
                     onClick = {
                         onAddClick(CategoryName(name = categoryName))
                         categoryName = ""

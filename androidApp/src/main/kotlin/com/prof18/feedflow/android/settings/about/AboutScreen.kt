@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.BuildConfig
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.TRANSLATION_WEBSITE
@@ -31,7 +30,6 @@ import com.prof18.feedflow.shared.ui.about.AuthorText
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import org.koin.compose.koinInject
 
 @Composable
@@ -77,15 +75,11 @@ private fun AboutScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier
-                    .tagForTesting(TestingTag.ABOUT_TOOLBAR),
                 title = {
                     Text(LocalFeedFlowStrings.current.aboutNavBar)
                 },
                 navigationIcon = {
                     IconButton(
-                        modifier = Modifier
-                            .tagForTesting(TestingTag.BACK_BUTTON_FEED_SETTINGS),
                         onClick = {
                             navigateBack()
                         },

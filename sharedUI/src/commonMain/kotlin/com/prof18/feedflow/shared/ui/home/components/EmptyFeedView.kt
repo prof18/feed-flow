@@ -13,10 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.prof18.feedflow.core.model.FeedFilter
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 fun EmptyFeedView(
@@ -42,8 +40,7 @@ fun EmptyFeedView(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Spacing.regular)
-                .tagForTesting(TestingTag.NO_ITEMS_MESSAGE),
+                .padding(horizontal = Spacing.regular),
             text = emptyMessage,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium,
@@ -66,8 +63,7 @@ fun EmptyFeedView(
 
         Button(
             modifier = Modifier
-                .padding(top = Spacing.regular)
-                .tagForTesting(TestingTag.REFRESH_FEEDS_BUTTON),
+                .padding(top = Spacing.regular),
             onClick = buttonAction,
         ) {
             Text(buttonText)

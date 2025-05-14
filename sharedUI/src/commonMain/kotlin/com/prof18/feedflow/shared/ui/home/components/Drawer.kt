@@ -61,14 +61,12 @@ import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
 import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -516,10 +514,10 @@ private fun DrawerFeedSourceByCategoryItem(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
 ) {
-    val categoryTitle = feedSourceCategoryWrapper.feedSourceCategory?.title
     Column(
         modifier = Modifier
-            .tagForTesting("${TestingTag.FEED_SOURCE_SELECTOR}_$categoryTitle"),
+            .heightIn(min = 56.0.dp)
+            .fillMaxWidth(),
     ) {
         @Suppress("MagicNumber")
         val degrees by animateFloatAsState(

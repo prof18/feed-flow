@@ -7,13 +7,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 internal data class AddFeedFullScreen(
     private val onFeedAdded: () -> Unit,
@@ -32,8 +29,6 @@ internal data class AddFeedFullScreen(
                     },
                     navigationIcon = {
                         IconButton(
-                            modifier = Modifier
-                                .tagForTesting(TestingTag.BACK_BUTTON),
                             onClick = {
                                 navigator.pop()
                             },

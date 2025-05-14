@@ -8,10 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 fun NoFeedsInfoContent(
@@ -37,8 +35,7 @@ fun NoFeedsInfoContent(
         Text(
             modifier = Modifier
                 .padding(vertical = Spacing.regular)
-                .padding(horizontal = Spacing.regular)
-                .tagForTesting(TestingTag.NO_FEED_BOTTOM_SHEET_MESSAGE),
+                .padding(horizontal = Spacing.regular),
             text = LocalFeedFlowStrings.current.noFeedModalMessage,
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -46,8 +43,7 @@ fun NoFeedsInfoContent(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Spacing.regular)
-                .tagForTesting(TestingTag.NO_FEED_BOTTOM_SHEET_ADD_BUTTON),
+                .padding(horizontal = Spacing.regular),
             onClick = {
                 onDismissRequest()
                 onAddFeedClick()
@@ -60,8 +56,7 @@ fun NoFeedsInfoContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = Spacing.regular)
-                .padding(horizontal = Spacing.regular)
-                .tagForTesting(TestingTag.NO_FEED_BOTTOM_SHEET_IMPORT_BUTTON),
+                .padding(horizontal = Spacing.regular),
             onClick = {
                 onDismissRequest()
                 onImportExportClick()

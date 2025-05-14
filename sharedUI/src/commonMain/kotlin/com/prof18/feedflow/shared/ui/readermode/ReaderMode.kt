@@ -31,10 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 fun ReaderModeContent(
@@ -107,8 +105,6 @@ private fun ReaderModeToolbar(
         title = {},
         navigationIcon = {
             IconButton(
-                modifier = Modifier
-                    .tagForTesting(TestingTag.BACK_BUTTON),
                 onClick = navigateBack,
             ) {
                 Icon(

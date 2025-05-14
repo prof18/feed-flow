@@ -60,11 +60,9 @@ import com.prof18.feedflow.core.model.SwipeActionType.NONE
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_BOOKMARK_STATUS
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_READ_STATUS
 import com.prof18.feedflow.core.model.SwipeActions
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -240,11 +238,7 @@ fun FeedItemView(
                 },
             )
             .padding(horizontal = Spacing.regular)
-            .padding(vertical = Spacing.small)
-            .tagForTesting(
-                tag = "${TestingTag.FEED_ITEM}_$index",
-                mergeDescendants = true,
-            ),
+            .padding(vertical = Spacing.small),
     ) {
         FeedSourceAndUnreadDotRow(
             feedItem = feedItem,
@@ -308,8 +302,7 @@ private fun FeedSourceAndUnreadDotRow(
                     .padding(
                         bottom = Spacing.small,
                         end = Spacing.small,
-                    )
-                    .tagForTesting("${TestingTag.UNREAD_DOT}_$index"),
+                    ),
             )
         }
 
@@ -397,8 +390,7 @@ private fun UnreadDot(
         modifier = modifier
             .size(10.dp)
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary)
-            .tagForTesting(TestingTag.UNREAD_DOT),
+            .background(MaterialTheme.colorScheme.primary),
     )
 }
 

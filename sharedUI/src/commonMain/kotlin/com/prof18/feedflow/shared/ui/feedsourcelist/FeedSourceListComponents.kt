@@ -27,8 +27,6 @@ import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,16 +52,13 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import kotlinx.collections.immutable.ImmutableList
 
 internal expect fun Modifier.feedSourceMenuClickModifier(
@@ -96,10 +91,7 @@ internal fun FeedSourcesWithCategoryList(
         }
 
         items(feedSourceState.feedSourcesWithCategory) { feedSourceState ->
-            Column(
-                modifier = Modifier
-                    .tagForTesting(TestingTag.FEED_SOURCE_SELECTOR),
-            ) {
+            Column {
                 @Suppress("MagicNumber")
                 val degrees by animateFloatAsState(
                     if (feedSourceState.isExpanded) {
@@ -360,8 +352,6 @@ private fun FeedSourceTitleEdit(
         )
 
         IconButton(
-            modifier = Modifier
-                .tagForTesting(TestingTag.ADD_CATEGORY_BUTTON),
             onClick = {
                 onRenameFeedSourceClick()
             },
@@ -374,8 +364,6 @@ private fun FeedSourceTitleEdit(
     }
 }
 
-
-
 @Composable
 internal fun FeedSourceNavBar(
     navigateBack: () -> Unit,
@@ -387,8 +375,6 @@ internal fun FeedSourceNavBar(
         },
         navigationIcon = {
             IconButton(
-                modifier = Modifier
-                    .tagForTesting(TestingTag.BACK_BUTTON_FEED_SOURCES),
                 onClick = {
                     navigateBack()
                 },
@@ -423,8 +409,7 @@ internal fun NoFeedSourcesView(
     ) {
         Text(
             modifier = Modifier
-                .padding(Spacing.regular)
-                .tagForTesting(TestingTag.NO_FEED_SOURCE_MESSAGE),
+                .padding(Spacing.regular),
             text = LocalFeedFlowStrings.current.noFeedsAddOneMessage,
         )
     }

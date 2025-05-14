@@ -20,12 +20,10 @@ import androidx.compose.ui.graphics.Color
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.feed.CategoriesSelector
 import com.prof18.feedflow.shared.ui.feed.FeedUrlTextField
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 fun AddFeedContent(
@@ -69,8 +67,7 @@ fun AddFeedContent(
                 FeedUrlTextField(
                     modifier = Modifier
                         .padding(top = Spacing.regular)
-                        .fillMaxWidth()
-                        .tagForTesting(TestingTag.FEED_URL_INPUT),
+                        .fillMaxWidth(),
                     feedUrl = feedUrl,
                     showError = showError,
                     errorMessage = errorMessage,
@@ -81,8 +78,7 @@ fun AddFeedContent(
             item {
                 CategoriesSelector(
                     modifier = Modifier
-                        .padding(vertical = Spacing.regular)
-                        .tagForTesting(TestingTag.CATEGORY_SELECTOR),
+                        .padding(vertical = Spacing.regular),
                     categoriesState = categoriesState,
                     onExpandClick = onExpandClick,
                     onAddCategoryClick = onAddCategoryClick,
@@ -118,8 +114,7 @@ fun AddFeedContent(
                     modifier = Modifier
                         .padding(top = Spacing.small)
                         .padding(bottom = Spacing.regular)
-                        .fillMaxWidth()
-                        .tagForTesting(TestingTag.ADD_FEED_BUTTON),
+                        .fillMaxWidth(),
                     enabled = feedUrl.isNotBlank() && !showLoading,
                     onClick = addFeed,
                 ) {

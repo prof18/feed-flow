@@ -143,7 +143,6 @@ struct HomeContent: View {
                     } label: {
                         Image(systemName: "sidebar.left")
                     }
-                    .accessibilityIdentifier(TestingTag.shared.DRAWER_MENU_BUTTON)
                 }
 
                 HStack {
@@ -165,7 +164,6 @@ struct HomeContent: View {
                     proxy.scrollTo(feedState.first?.id)
                     onRefresh()
                 }
-                .accessibilityIdentifier(TestingTag.shared.HOME_TOOLBAR)
             }
         }
     }
@@ -230,7 +228,6 @@ struct HomeContent: View {
                 } label: {
                     Label(feedFlowStrings.settingsButton, systemImage: "gear")
                 }
-                .accessibilityLabel(TestingTag.shared.SETTINGS_MENU)
 
                 #if DEBUG
                     Button {
@@ -243,7 +240,6 @@ struct HomeContent: View {
             } label: {
                 Image(systemName: "ellipsis.circle")
             }
-            .accessibilityIdentifier(TestingTag.shared.SETTING_BUTTON)
         }
     }
 

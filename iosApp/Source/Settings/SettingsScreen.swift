@@ -157,7 +157,6 @@ struct SettingsScreen: View {
                 } label: {
                     Text(feedFlowStrings.actionDone).bold()
                 }
-                .accessibilityIdentifier(TestingTag.shared.BACK_BUTTON)
             }
             .navigationTitle(Text(feedFlowStrings.settingsTitle))
             .navigationBarTitleDisplayMode(.inline)
@@ -175,7 +174,6 @@ private struct FeedSection: View {
             NavigationLink(destination: FeedSourceListScreen()) {
                 Label(feedFlowStrings.feedsTitle, systemImage: "list.bullet.rectangle.portrait")
             }
-            .accessibilityIdentifier(TestingTag.shared.SETTINGS_FEED_ITEM)
 
             NavigationLink(destination: AddFeedScreen()) {
                 Label(feedFlowStrings.addFeed, systemImage: "plus.app")
@@ -298,7 +296,6 @@ private struct AppSection: View {
             NavigationLink(destination: AboutScreen()) {
                 Label(feedFlowStrings.aboutButton, systemImage: "info.circle")
             }
-            .accessibilityIdentifier(TestingTag.shared.ABOUT_SETTINGS_ITEM)
         }
     }
 }

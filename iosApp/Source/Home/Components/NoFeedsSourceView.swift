@@ -29,7 +29,6 @@ struct NoFeedsSourceView: View {
             .buttonStyle(.bordered)
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.medium)
-            .accessibilityIdentifier(TestingTag.shared.HOME_SCREEN_ADD_FEED_BUTTON)
         }
     }
 }

@@ -122,9 +122,7 @@ private fun NotificationSettingsScreenContent(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            navigateBack()
-                        },
+                        onClick = onNavigateBack,
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,

@@ -24,7 +24,6 @@ struct AboutScreen: View {
                     Text(feedFlowStrings.aboutTheApp)
                         .padding(.vertical, Spacing.small)
                         .font(.system(size: 16))
-                        .accessibilityIdentifier(TestingTag.shared.ABOUT_TOOLBAR)
 
                     NavigationLink(destination: LicensesScreen()) {
                         Label(feedFlowStrings.openSourceLicenses, systemImage: "shield")

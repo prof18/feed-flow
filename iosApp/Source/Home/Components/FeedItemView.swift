@@ -25,7 +25,6 @@ struct FeedItemView: View {
                         .fill(Color.accentColor)
                         .frame(width: 10, height: 10)
                         .padding(.top, Spacing.small)
-                        .accessibilityIdentifier("\(TestingTag.shared.UNREAD_DOT)_\(index)")
                 }
 
                 Text(feedItem.feedSource.title)
@@ -45,7 +44,7 @@ struct FeedItemView: View {
             HStack {
                 titleAndSubtitleCell.frame(maxHeight: .infinity)
                 feedItemImage
-            }.accessibilityIdentifier("\(TestingTag.shared.FEED_ITEM)_\(index)")
+            }
 
             if let dateString = feedItem.dateString {
                 Text(dateString)

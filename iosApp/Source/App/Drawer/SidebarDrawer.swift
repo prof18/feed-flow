@@ -122,7 +122,7 @@ struct SidebarDrawer: View {
                         makeCategoryDropdown(
                             drawerItems: navDrawerState.feedSourcesByCategory[categoryWrapper] ?? [],
                             title: title
-                        ).accessibilityIdentifier("\(TestingTag.shared.FEED_SOURCE_SELECTOR)_\(title)")
+                        )
                     }
                 },
                 header: {

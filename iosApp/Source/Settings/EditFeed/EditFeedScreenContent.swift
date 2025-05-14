@@ -67,7 +67,6 @@ struct EditFeedScreenContent: View {
                         .textContentType(.URL)
                         .disableAutocorrection(true)
                         .hoverEffect()
-                        .accessibilityIdentifier(TestingTag.shared.FEED_URL_INPUT)
                 },
                 header: {
                     Text(feedFlowStrings.feedUrl)
@@ -77,7 +76,6 @@ struct EditFeedScreenContent: View {
                         Text(errorMessage)
                             .font(.caption)
                             .foregroundColor(.red)
-                            .accessibilityIdentifier(TestingTag.shared.INVALID_URL_ERROR_MESSAGE)
                     }
                 }
             )
@@ -136,12 +134,10 @@ struct EditFeedScreenContent: View {
                         let title = categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader
                         Text(title)
                             .tag(categoryItem as CategoriesState.CategoryItem?)
-                            .accessibilityIdentifier("\(TestingTag.shared.CATEGORY_RADIO_BUTTON)_\(title)")
                     }
                 }
                 .hoverEffect()
             }
-            .accessibilityIdentifier(TestingTag.shared.CATEGORY_SELECTOR)
 
             if !categoryItems.isEmpty {
                 categoriesSection
@@ -211,21 +207,17 @@ struct EditFeedScreenContent: View {
                         newCategory = ""
                     }
                     .hoverEffect()
-                    .accessibilityIdentifier(TestingTag.shared.CATEGORY_TEXT_INPUT)
+            }
 
-                Spacer()
-
-                if !newCategory.isEmpty {
-                    Button {
-                        addNewCategory(CategoryName(name: newCategory))
-                        newCategory = ""
-                    } label: {
-                        Image(systemName: "checkmark.circle.fill")
-                            .tint(.green)
-                    }
-                    .hoverEffect()
-                    .accessibilityIdentifier(TestingTag.shared.ADD_CATEGORY_BUTTON)
+            if !newCategory.isEmpty {
+                Button {
+                    addNewCategory(CategoryName(name: newCategory))
+                    newCategory = ""
+                } label: {
+                    Image(systemName: "checkmark.circle.fill")
+                        .tint(.green)
                 }
+                .hoverEffect()
             }
         }
     }
@@ -242,6 +234,5 @@ struct EditFeedScreenContent: View {
             }
         }
         .disabled(feedURL.isEmpty)
-        .accessibilityIdentifier(TestingTag.shared.ADD_FEED_BUTTON)
     }
 }

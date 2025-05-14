@@ -26,7 +26,6 @@ struct NoFeedsBottomSheet: View {
                     Text(feedFlowStrings.noFeedModalMessage)
                         .font(.body)
                         .multilineTextAlignment(.leading)
-                        .accessibilityIdentifier(TestingTag.shared.NO_FEED_BOTTOM_SHEET_MESSAGE)
                 }
 
                 Section {
@@ -35,14 +34,12 @@ struct NoFeedsBottomSheet: View {
                     } label: {
                         Label(feedFlowStrings.addFeed, systemImage: "plus.app")
                     }
-                    .accessibilityIdentifier(TestingTag.shared.NO_FEED_BOTTOM_SHEET_ADD_BUTTON)
 
                     Button {
                         onImportExportClick()
                     } label: {
                         Label(feedFlowStrings.importExportOpml, systemImage: "arrow.up.arrow.down")
                     }
-                    .accessibilityIdentifier(TestingTag.shared.NO_FEED_BOTTOM_SHEET_IMPORT_BUTTON)
 
                     Button {
                         self.dismiss()

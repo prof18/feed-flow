@@ -84,7 +84,6 @@ struct ImportExportContent: View {
                         Label(feedFlowStrings.importFeedButton, systemImage: "arrow.down.doc")
                     }
                 )
-                .accessibilityIdentifier(TestingTag.shared.IMPORT_FEED_OPML_BUTTON)
 
                 Button(
                     action: onExportClick,
@@ -182,7 +181,6 @@ struct ImportExportContent: View {
         Text(feedFlowStrings.feedsImportDoneMessage)
             .font(.body)
             .multilineTextAlignment(.center)
-            .accessibilityIdentifier(TestingTag.shared.IMPORT_DONE_MESSAGE)
 
         Button(
             action: {
@@ -198,9 +196,6 @@ struct ImportExportContent: View {
         .buttonStyle(.bordered)
         .padding(.top, Spacing.regular)
         .padding(.horizontal, Spacing.medium)
-        .accessibilityIdentifier(TestingTag.shared.IMPORT_DONE_BUTTON)
-
-        Spacer()
     }
 
     @ViewBuilder

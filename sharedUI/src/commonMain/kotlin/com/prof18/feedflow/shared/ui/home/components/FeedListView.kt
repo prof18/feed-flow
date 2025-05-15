@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkAdd
@@ -22,6 +23,8 @@ import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -52,6 +55,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.LinkOpeningPreference
@@ -78,6 +82,7 @@ import me.saket.swipe.SwipeableActionsBox
 fun FeedList(
     feedItems: ImmutableList<FeedItem>,
     feedFontSize: FeedFontSizes,
+    feedItemType: FeedItemType,
     currentFeedFilter: FeedFilter,
     shareMenuLabel: String,
     shareCommentsMenuLabel: String,
@@ -123,24 +128,8 @@ fun FeedList(
             )
 
             if (swipeToRight == null && swipeToLeft == null) {
-                FeedItemView(
-                    feedItem = item,
-                    index = index,
-                    shareMenuLabel = shareMenuLabel,
-                    shareCommentsMenuLabel = shareCommentsMenuLabel,
-                    onFeedItemClick = onFeedItemClick,
-                    onCommentClick = onCommentClick,
-                    onBookmarkClick = onBookmarkClick,
-                    onReadStatusClick = onReadStatusClick,
-                    feedFontSize = feedFontSize,
-                    onShareClick = onShareClick,
-                )
-            } else {
-                SwipeableActionsBox(
-                    startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
-                    endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
-                ) {
-                    FeedItemView(
+                when (feedItemType) {
+                    FeedItemType.LIST_TILE -> FeedItemView(
                         feedItem = item,
                         index = index,
                         shareMenuLabel = shareMenuLabel,
@@ -152,6 +141,51 @@ fun FeedList(
                         feedFontSize = feedFontSize,
                         onShareClick = onShareClick,
                     )
+                    FeedItemType.CARD -> FeedItemCard(
+                        feedItem = item,
+                        index = index,
+                        shareMenuLabel = shareMenuLabel,
+                        shareCommentsMenuLabel = shareCommentsMenuLabel,
+                        onFeedItemClick = onFeedItemClick,
+                        onCommentClick = onCommentClick,
+                        onBookmarkClick = onBookmarkClick,
+                        onReadStatusClick = onReadStatusClick,
+                        feedFontSize = feedFontSize,
+                        onShareClick = onShareClick,
+                    )
+                }
+            } else {
+                SwipeableActionsBox(
+                    startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
+                    endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
+                ) {
+                    when (feedItemType) {
+                        FeedItemType.LIST_TILE ->FeedItemView(
+                            feedItem = item,
+                            index = index,
+                            shareMenuLabel = shareMenuLabel,
+                            shareCommentsMenuLabel = shareCommentsMenuLabel,
+                            onFeedItemClick = onFeedItemClick,
+                            onCommentClick = onCommentClick,
+                            onBookmarkClick = onBookmarkClick,
+                            onReadStatusClick = onReadStatusClick,
+                            feedFontSize = feedFontSize,
+                            onShareClick = onShareClick,
+                        )
+                        FeedItemType.CARD -> FeedItemCard(
+                            feedItem = item,
+                            index = index,
+                            shareMenuLabel = shareMenuLabel,
+                            shareCommentsMenuLabel = shareCommentsMenuLabel,
+                            onFeedItemClick = onFeedItemClick,
+                            onCommentClick = onCommentClick,
+                            onBookmarkClick = onBookmarkClick,
+                            onReadStatusClick = onReadStatusClick,
+                            feedFontSize = feedFontSize,
+                            onShareClick = onShareClick,
+                        )
+                    }
+
                 }
             }
 
@@ -290,6 +324,103 @@ fun FeedItemView(
             onCommentClick = onCommentClick,
             onShareClick = onShareClick,
         )
+    }
+}
+
+@Composable
+fun FeedItemCard(
+    feedItem: FeedItem,
+    feedFontSize: FeedFontSizes,
+    index: Int,
+    disableClick: Boolean = false,
+    shareMenuLabel: String,
+    shareCommentsMenuLabel: String,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var showItemMenu by remember {
+        mutableStateOf(
+            false,
+        )
+    }
+
+    Card (
+        modifier.padding(8.dp),
+        shape = RoundedCornerShape(30.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .then(
+                    if (disableClick) {
+                        Modifier
+                    } else {
+                        Modifier.feedSourceMenuClickModifier(
+                            onClick = {
+                                onFeedItemClick(
+                                    FeedItemUrlInfo(
+                                        id = feedItem.id,
+                                        url = feedItem.url,
+                                        title = feedItem.title,
+                                        isBookmarked = feedItem.isBookmarked,
+                                        linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
+                                    ),
+                                )
+                            },
+                            onLongClick = {
+                                showItemMenu = true
+                            },
+                        )
+                    },
+                )
+                .padding(horizontal = Spacing.regular)
+                .padding(vertical = Spacing.regular)
+                .tagForTesting(
+                    tag = "${TestingTag.FEED_ITEM}_$index",
+                    mergeDescendants = true,
+                ),
+        ) {
+            FeedSourceAndUnreadDotRow(
+                feedItem = feedItem,
+                feedFontSize = feedFontSize,
+                index = index,
+            )
+
+            TitleSubtitleAndImageRow(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth(),
+                feedItem = feedItem,
+                feedFontSize = feedFontSize,
+            )
+
+            feedItem.dateString?.let { dateString ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.small),
+                    text = dateString,
+                    fontSize = feedFontSize.feedMetaFontSize.sp,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+
+            FeedItemContextMenu(
+                showMenu = showItemMenu,
+                closeMenu = {
+                    showItemMenu = false
+                },
+                feedItem = feedItem,
+                shareMenuLabel = shareMenuLabel,
+                shareCommentsMenuLabel = shareCommentsMenuLabel,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
+                onCommentClick = onCommentClick,
+                onShareClick = onShareClick,
+            )
+        }
     }
 }
 

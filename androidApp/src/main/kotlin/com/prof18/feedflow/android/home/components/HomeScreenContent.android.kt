@@ -13,6 +13,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
@@ -32,6 +33,7 @@ internal fun HomeScreenContent(
     loadingState: FeedUpdateStatus,
     feedState: ImmutableList<FeedItem>,
     feedFontSizes: FeedFontSizes,
+    feedItemType: FeedItemType,
     listState: LazyListState,
     currentFeedFilter: FeedFilter,
     swipeActions: SwipeActions,
@@ -89,6 +91,7 @@ internal fun HomeScreenContent(
             onCommentClick = onCommentClick,
             onRefresh = onRefresh,
             markAllAsRead = markAllAsRead,
+            feedItemType = feedItemType
         )
     }
 }
@@ -105,6 +108,7 @@ private fun HomeScreeContentLoadingPreview() {
             ),
             feedState = feedItemsForPreview,
             feedFontSizes = FeedFontSizes(),
+            feedItemType = FeedItemType.LIST_TILE,
             listState = rememberLazyListState(),
             currentFeedFilter = FeedFilter.Timeline,
             swipeActions = SwipeActions(
@@ -136,6 +140,7 @@ private fun HomeScreeContentLoadedPreview() {
             loadingState = FinishedFeedUpdateStatus,
             feedState = feedItemsForPreview,
             feedFontSizes = FeedFontSizes(),
+            feedItemType = FeedItemType.LIST_TILE,
             listState = rememberLazyListState(),
             currentFeedFilter = FeedFilter.Timeline,
             swipeActions = SwipeActions(

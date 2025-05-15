@@ -19,6 +19,7 @@ import com.prof18.feedflow.android.home.bywindowsize.ExpandedHomeView
 import com.prof18.feedflow.android.home.bywindowsize.MediumHomeView
 import com.prof18.feedflow.android.home.components.NoFeedsBottomSheet
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
@@ -52,6 +53,7 @@ internal fun HomeScreen(
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsStateWithLifecycle()
     val swipeActions by homeViewModel.swipeActions.collectAsStateWithLifecycle()
     val feedOperation by homeViewModel.feedOperationState.collectAsStateWithLifecycle()
+    val feedItemType by homeViewModel.feedItemType.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -111,6 +113,7 @@ internal fun HomeScreen(
                 feedUpdateStatus = loadingState,
                 currentFeedFilter = currentFeedFilter,
                 feedFontSizes = feedFontSizes,
+                feedItemType = feedItemType,
                 swipeActions = swipeActions,
                 onAddFeedClick = {
                     showBottomSheet = true
@@ -181,6 +184,7 @@ internal fun HomeScreen(
                 snackbarHostState = snackbarHostState,
                 feedUpdateStatus = loadingState,
                 feedFontSizes = feedFontSizes,
+                feedItemType = feedItemType,
                 swipeActions = swipeActions,
                 onAddFeedClick = {
                     showBottomSheet = true
@@ -251,6 +255,7 @@ internal fun HomeScreen(
                 snackbarHostState = snackbarHostState,
                 feedUpdateStatus = loadingState,
                 feedFontSizes = feedFontSizes,
+                feedItemType = feedItemType,
                 swipeActions = swipeActions,
                 onAddFeedClick = {
                     showBottomSheet = true

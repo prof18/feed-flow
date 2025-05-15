@@ -15,8 +15,10 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.shared.ui.home.components.FeedItemCard
 import com.prof18.feedflow.shared.ui.home.components.FeedItemView
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -26,72 +28,112 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun FeedListFontSettings(
     fontSizes: FeedFontSizes,
     modifier: Modifier = Modifier,
+    feedItemType: FeedItemType,
     isHideDescriptionEnabled: Boolean,
     isHideImagesEnabled: Boolean,
     dateFormat: DateFormat,
     updateFontScale: (Int) -> Unit,
 ) {
-    val color = if (isSystemInDarkTheme()) {
-        Color(0xFF333439)
-    } else {
-        Color(0xFFE2E2E9)
-    }
     Column {
         Box(
             modifier = modifier
-                .background(color)
+                .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(Spacing.medium),
         ) {
-            Surface(
-                tonalElevation = 8.dp,
-                shadowElevation = 8.dp,
-            ) {
-                FeedItemView(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background),
-                    feedItem = FeedItem(
-                        id = "1",
-                        url = "https://www.example.com",
-                        title = LocalFeedFlowStrings.current.settingsFontScaleTitleExample,
-                        subtitle = if (isHideDescriptionEnabled) {
-                            null
-                        } else {
-                            LocalFeedFlowStrings.current.settingsFontScaleSubtitleExample
-                        },
-                        content = null,
-                        imageUrl = if (isHideImagesEnabled) null else "https://lipsum.app/200x200",
-                        feedSource = FeedSource(
+
+                when (feedItemType) {
+                    FeedItemType.LIST_TILE -> FeedItemView(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background),
+                        feedItem = FeedItem(
                             id = "1",
-                            url = "https://www.example.it",
-                            title = LocalFeedFlowStrings.current.settingsFontScaleFeedSourceExample,
-                            category = null,
-                            lastSyncTimestamp = null,
-                            logoUrl = null,
-                            linkOpeningPreference = LinkOpeningPreference.DEFAULT,
-                            isHiddenFromTimeline = false,
-                            isPinned = false,
-                            isNotificationEnabled = false,
+                            url = "https://www.example.com",
+                            title = LocalFeedFlowStrings.current.settingsFontScaleTitleExample,
+                            subtitle = if (isHideDescriptionEnabled) {
+                                null
+                            } else {
+                                LocalFeedFlowStrings.current.settingsFontScaleSubtitleExample
+                            },
+                            content = null,
+                            imageUrl = if (isHideImagesEnabled) null else "https://lipsum.app/200x200",
+                            feedSource = FeedSource(
+                                id = "1",
+                                url = "https://www.example.it",
+                                title = LocalFeedFlowStrings.current.settingsFontScaleFeedSourceExample,
+                                category = null,
+                                lastSyncTimestamp = null,
+                                logoUrl = null,
+                                linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+                                isHiddenFromTimeline = false,
+                                isPinned = false,
+                                isNotificationEnabled = false,
+                            ),
+                            pubDateMillis = null,
+                            dateString = when(dateFormat) {
+                                DateFormat.NORMAL -> "25/12"
+                                DateFormat.AMERICAN -> "12/25"
+                            },
+                            commentsUrl = null,
+                            isRead = false,
+                            isBookmarked = false,
                         ),
-                        pubDateMillis = null,
-                        dateString = when(dateFormat) {
-                            DateFormat.NORMAL -> "25/12"
-                            DateFormat.AMERICAN -> "12/25"
-                        },
-                        commentsUrl = null,
-                        isRead = false,
-                        isBookmarked = false,
-                    ),
-                    feedFontSize = fontSizes,
-                    shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuShareComments,
-                    shareMenuLabel = LocalFeedFlowStrings.current.menuShare,
-                    index = 0,
-                    disableClick = true,
-                    onFeedItemClick = {},
-                    onBookmarkClick = { _, _ -> },
-                    onReadStatusClick = { _, _ -> },
-                    onCommentClick = {},
-                    onShareClick = {},
-                )
+                        feedFontSize = fontSizes,
+                        shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuShareComments,
+                        shareMenuLabel = LocalFeedFlowStrings.current.menuShare,
+                        index = 0,
+                        disableClick = true,
+                        onFeedItemClick = {},
+                        onBookmarkClick = { _, _ -> },
+                        onReadStatusClick = { _, _ -> },
+                        onCommentClick = {},
+                        onShareClick = {},
+                    )
+                    FeedItemType.CARD -> FeedItemCard(
+                        feedItem = FeedItem(
+                            id = "1",
+                            url = "https://www.example.com",
+                            title = LocalFeedFlowStrings.current.settingsFontScaleTitleExample,
+                            subtitle = if (isHideDescriptionEnabled) {
+                                null
+                            } else {
+                                LocalFeedFlowStrings.current.settingsFontScaleSubtitleExample
+                            },
+                            content = null,
+                            imageUrl = if (isHideImagesEnabled) null else "https://lipsum.app/200x200",
+                            feedSource = FeedSource(
+                                id = "1",
+                                url = "https://www.example.it",
+                                title = LocalFeedFlowStrings.current.settingsFontScaleFeedSourceExample,
+                                category = null,
+                                lastSyncTimestamp = null,
+                                logoUrl = null,
+                                linkOpeningPreference = LinkOpeningPreference.DEFAULT,
+                                isHiddenFromTimeline = false,
+                                isPinned = false,
+                                isNotificationEnabled = false,
+                            ),
+                            pubDateMillis = null,
+                            dateString = when(dateFormat) {
+                                DateFormat.NORMAL -> "25/12"
+                                DateFormat.AMERICAN -> "12/25"
+                            },
+                            commentsUrl = null,
+                            isRead = false,
+                            isBookmarked = false,
+                        ),
+                        feedFontSize = fontSizes,
+                        shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuShareComments,
+                        shareMenuLabel = LocalFeedFlowStrings.current.menuShare,
+                        index = 0,
+                        disableClick = true,
+                        onFeedItemClick = {},
+                        onBookmarkClick = { _, _ -> },
+                        onReadStatusClick = { _, _ -> },
+                        onCommentClick = {},
+                        onShareClick = {},
+                    )
+
+
             }
         }
 

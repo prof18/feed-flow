@@ -2,17 +2,18 @@ package com.prof18.feedflow.shared.ui.about
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.withLink
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -63,36 +64,27 @@ private fun AnnotatedClickableText(
     val annotatedText = buildAnnotatedString {
         append(LocalFeedFlowStrings.current.authorLabel)
 
-        pushStringAnnotation(
-            tag = "URL",
-            annotation = MG_WEBSITE,
-        )
-        withStyle(
-            style = SpanStyle(
-                color = Color.Blue,
-                fontWeight = FontWeight.Bold,
-            ),
+        withLink(
+            LinkAnnotation.Clickable(
+                tag = MG_WEBSITE,
+                styles = TextLinkStyles(
+                    style = SpanStyle(
+                        color = Color.Blue,
+                        fontWeight = FontWeight.Bold,
+                    )
+                ),
+                linkInteractionListener = { onTextClick() }
+            )
         ) {
             append(" Marco Gomiero")
         }
-
-        pop()
     }
 
-    ClickableText(
+    Text(
         modifier = modifier,
         text = annotatedText,
         style = MaterialTheme.typography.bodyMedium.copy(
             color = MaterialTheme.colorScheme.onBackground,
         ),
-        onClick = { offset ->
-            annotatedText.getStringAnnotations(
-                tag = "URL",
-                start = offset,
-                end = offset,
-            ).firstOrNull()?.let {
-                onTextClick()
-            }
-        },
     )
 }

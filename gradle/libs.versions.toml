@@ -57,7 +57,6 @@ slf4jNop = "2.0.17"
 sql-delight = "2.0.2"
 stately-concurrency = "2.1.0"
 triplet-play = "3.12.1"
-turbine = "1.2.0"
 voyager = "1.0.1"
 workmanager = "2.10.1"
 
@@ -91,7 +90,6 @@ glance-material = { group = "androidx.glance", name = "glance-material3", versio
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
 io-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "io-coil" }
 io-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "io-coil" }
-io-gitlab-arturbosch-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 junit = { module = "junit:junit", version.ref = "junit" }

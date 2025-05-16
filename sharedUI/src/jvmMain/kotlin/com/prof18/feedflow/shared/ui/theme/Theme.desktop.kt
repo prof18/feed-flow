@@ -12,6 +12,7 @@ import com.prof18.feedflow.shared.ui.style.DarkColorScheme
 import com.prof18.feedflow.shared.ui.style.LightColorScheme
 import org.jetbrains.skiko.SystemTheme
 import org.jetbrains.skiko.currentSystemTheme
+import java.util.function.Consumer
 
 @Composable
 fun FeedFlowTheme(
@@ -36,7 +37,7 @@ fun rememberDesktopDarkTheme(): Boolean {
     }
 
     DisposableEffect(Unit) {
-        val darkThemeListener: (Boolean) -> Unit = {
+        val darkThemeListener = Consumer<Boolean> {
             darkTheme = it
         }
 

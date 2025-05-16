@@ -25,8 +25,6 @@ import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.search.SearchScreenContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
 
 internal data class SearchScreen(
     private val viewModel: SearchViewModel,

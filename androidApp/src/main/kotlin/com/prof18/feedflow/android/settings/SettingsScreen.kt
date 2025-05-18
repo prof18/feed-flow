@@ -170,7 +170,7 @@ fun SettingsScreen(
             settingsViewModel.updateDateFormat(format)
         },
         navigateToNotifications = navigateToNotifications,
-        setFeedItem =  {feedItemType ->
+        setFeedItem = { feedItemType ->
             settingsViewModel.updateFeedItemType(feedItemType)
         }
     )
@@ -204,7 +204,7 @@ private fun SettingsScreenContent(
     onSwipeActionSelected: (SwipeDirection, SwipeActionType) -> Unit,
     onDateFormatSelected: (DateFormat) -> Unit,
     navigateToNotifications: () -> Unit,
-    setFeedItem: (FeedItemType) -> Unit
+    setFeedItem: (FeedItemType) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -340,7 +340,7 @@ private fun SettingsScreenContent(
                     fontSizes = fontSizes,
                     updateFontScale = updateFontScale,
                     dateFormat = settingsState.dateFormat,
-                    feedItemType = settingsState.feedItemType
+                    feedItemType = settingsState.feedItemType,
                 )
             }
 
@@ -348,7 +348,7 @@ private fun SettingsScreenContent(
                 Spacer(modifier = Modifier.padding(top = Spacing.regular))
                 FeedItemSelector(
                     feedItemType = settingsState.feedItemType,
-                    onFormatSelected = setFeedItem
+                    onFormatSelected = setFeedItem,
                 )
             }
 
@@ -772,7 +772,7 @@ private fun SettingsScreenPreview() {
             onDateFormatSelected = {},
             navigateToNotifications = {},
             setExperimentalParsing = {},
-            setFeedItem = {}
+            setFeedItem = {},
         )
     }
 }

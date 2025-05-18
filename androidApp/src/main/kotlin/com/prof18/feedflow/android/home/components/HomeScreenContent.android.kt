@@ -91,7 +91,7 @@ internal fun HomeScreenContent(
             onCommentClick = onCommentClick,
             onRefresh = onRefresh,
             markAllAsRead = markAllAsRead,
-            feedItemType = feedItemType
+            feedItemType = feedItemType,
         )
     }
 }

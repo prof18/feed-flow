@@ -31,9 +31,7 @@ class SettingsRepository(
     )
     val swipeActions: StateFlow<SwipeActions> = swipeActionsMutableFlow.asStateFlow()
 
-    private val feedItemTypeMutableFlow = MutableStateFlow(
-        getFeedItemType()
-    )
+    private val feedItemTypeMutableFlow = MutableStateFlow(getFeedItemType())
     val feedItemType: StateFlow<FeedItemType> = feedItemTypeMutableFlow.asStateFlow()
 
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
@@ -42,7 +40,8 @@ class SettingsRepository(
     private val isExperimentalParsingEnabledMutableFlow = MutableStateFlow(
         isExperimentalParsingEnabled(),
     )
-    val isExperimentalParsingEnabledFlow: StateFlow<Boolean> = isExperimentalParsingEnabledMutableFlow.asStateFlow()
+    val isExperimentalParsingEnabledFlow: StateFlow<Boolean> =
+        isExperimentalParsingEnabledMutableFlow.asStateFlow()
 
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
@@ -111,8 +110,10 @@ class SettingsRepository(
     fun setReaderModeFontSize(value: Int) =
         settings.set(SettingsFields.READER_MODE_FONT_SIZE.name, value)
 
-    fun getFeedListFontScaleFactor(): Int =
-        settings.getInt(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, DEFAULT_FEED_LIST_FONT_SCALE_FACTOR)
+    fun getFeedListFontScaleFactor(): Int = settings.getInt(
+        SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name,
+        DEFAULT_FEED_LIST_FONT_SCALE_FACTOR
+    )
 
     fun setFeedListFontScaleFactor(value: Int) =
         settings.set(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, value)
@@ -212,7 +213,7 @@ class SettingsRepository(
 
     fun getFeedItemType(): FeedItemType =
         settings.getString(SettingsFields.FEED_ITEM_TYPE.name, FeedItemType.LIST_TILE.name)
-            .let { FeedItemType.valueOf(it)}
+            .let { FeedItemType.valueOf(it) }
 
     fun setFeedItemType(feedItemType: FeedItemType) {
         settings[SettingsFields.FEED_ITEM_TYPE.name] = feedItemType.name
@@ -249,5 +250,5 @@ internal enum class SettingsFields {
     LEFT_SWIPE_ACTION,
     RIGHT_SWIPE_ACTION,
     DATE_FORMAT,
-    FEED_ITEM_TYPE
+    FEED_ITEM_TYPE,
 }

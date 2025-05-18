@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.RssFeed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +46,7 @@ fun FeedItemSelector(feedItemType: FeedItemType, onFormatSelected: (FeedItemType
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
         Icon(
-            Icons.Outlined.RssFeed,
+            imageVector = Icons.Outlined.RssFeed,
             contentDescription = null,
         )
 
@@ -92,7 +91,7 @@ private fun FeedItemTypeSelectionDialog(
         ) {
             items(FeedItemType.entries) { feedItemType ->
                 Row(
-                    Modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .selectable(
                             selected = feedItemType == currentFeedItemType,

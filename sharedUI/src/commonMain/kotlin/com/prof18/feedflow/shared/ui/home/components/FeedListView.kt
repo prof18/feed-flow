@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -141,6 +140,7 @@ fun FeedList(
                         feedFontSize = feedFontSize,
                         onShareClick = onShareClick,
                     )
+
                     FeedItemType.CARD -> FeedItemCard(
                         feedItem = item,
                         index = index,
@@ -160,7 +160,7 @@ fun FeedList(
                     endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
                 ) {
                     when (feedItemType) {
-                        FeedItemType.LIST_TILE ->FeedItemView(
+                        FeedItemType.LIST_TILE -> FeedItemView(
                             feedItem = item,
                             index = index,
                             shareMenuLabel = shareMenuLabel,
@@ -172,6 +172,7 @@ fun FeedList(
                             feedFontSize = feedFontSize,
                             onShareClick = onShareClick,
                         )
+
                         FeedItemType.CARD -> FeedItemCard(
                             feedItem = item,
                             index = index,
@@ -332,7 +333,6 @@ fun FeedItemCard(
     feedItem: FeedItem,
     feedFontSize: FeedFontSizes,
     index: Int,
-    disableClick: Boolean = false,
     shareMenuLabel: String,
     shareCommentsMenuLabel: String,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
@@ -341,15 +341,12 @@ fun FeedItemCard(
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
     modifier: Modifier = Modifier,
+    disableClick: Boolean = false,
 ) {
-    var showItemMenu by remember {
-        mutableStateOf(
-            false,
-        )
-    }
+    var showItemMenu by remember { mutableStateOf(false) }
 
-    Card (
-        modifier.padding(8.dp),
+    Card(
+        modifier = modifier.padding(8.dp),
         shape = RoundedCornerShape(30.dp)
     ) {
         Column(
@@ -785,6 +782,7 @@ private fun SwipeActionType.toSwipeAction(
                 )
             },
         )
+
         TOGGLE_BOOKMARK_STATUS -> SwipeAction(
             icon = rememberVectorPainter(
                 image = if (feedItem.isBookmarked) {
@@ -801,5 +799,6 @@ private fun SwipeActionType.toSwipeAction(
                 )
             },
         )
+
         NONE -> null
     }

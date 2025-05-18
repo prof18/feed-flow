@@ -37,7 +37,8 @@ class SettingsViewModel internal constructor(
                 val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
                 val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
                 val isExperimentalParsingEnabled = settingsRepository.isExperimentalParsingEnabled()
-                val isRemoveTitleFromDescriptionEnabled = settingsRepository.getRemoveTitleFromDescription()
+                val isRemoveTitleFromDescriptionEnabled =
+                    settingsRepository.getRemoveTitleFromDescription()
                 val isHideDescriptionEnabled = settingsRepository.getHideDescription()
                 val isHideImagesEnabled = settingsRepository.getHideImages()
                 val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
@@ -61,7 +62,7 @@ class SettingsViewModel internal constructor(
                         leftSwipeActionType = leftSwipeAction,
                         rightSwipeActionType = rightSwipeAction,
                         dateFormat = dateFormat,
-                        feedItemType = feedItemType
+                        feedItemType = feedItemType,
                     )
                 }
             }

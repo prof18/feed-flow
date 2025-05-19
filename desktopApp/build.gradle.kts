@@ -9,8 +9,12 @@ plugins {
     alias(libs.plugins.about.libraries)
 }
 
+apply(from = "../versioning.gradle.kts")
+
+val appVersionName: () -> String by extra
+val appVersionCode: () -> Int by extra
+
 group = "com.prof18"
-version = "1.0-SNAPSHOT"
 
 java {
     toolchain {
@@ -101,7 +105,7 @@ compose {
                     TargetFormat.Rpm,
                 )
                 packageName = "FeedFlow"
-                packageVersion = getVersionName()
+                packageVersion = appVersionName()
 
                 description = "FeedFlow - RSS Reader"
                 copyright = "© 2024 Marco Gomiero. All rights reserved."
@@ -131,6 +135,8 @@ compose {
 
                     packageName = "FeedFlow"
                     bundleID = "com.prof18.feedflow"
+
+                    packageBuildVersion = appVersionCode().toString()
 
                     appStore = isAppStoreRelease
 
@@ -206,19 +212,6 @@ val macExtraPlistKeys: String
             </dict>
         </dict>
     """.trimIndent()
-
-fun getVersionCode(): Int =
-    providers.exec {
-        commandLine("git", "rev-list", "HEAD", "--first-parent", "--count")
-    }.standardOutput.asText.get().trim().toInt()
-
-fun getVersionName(): String =
-    providers.exec {
-        commandLine("git", "describe", "--tags", "--abbrev=0", "--match", "*-desktop")
-    }.standardOutput
-        .asText.get()
-        .trim()
-        .replace("-desktop", "")
 
 configure<AboutLibrariesExtension> {
     android {

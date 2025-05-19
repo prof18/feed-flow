@@ -82,7 +82,6 @@ jobs:
             **/build/compose/logs/*  
 
       - name: Upload RPM
-        if: ${{ inputs.create_github_release }}
         uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH_RPM }}
@@ -90,7 +89,6 @@ jobs:
           retention-days: 1
 
       - name: Upload DEB
-        if: ${{ inputs.create_github_release }}
         uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH_DEB }}

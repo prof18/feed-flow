@@ -32,7 +32,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: macos-14
+    runs-on: macos-latest
     outputs:
       release_path: ${{ steps.path_variables.outputs.release_path }}
       artifact_name: ${{ steps.path_variables.outputs.artifact_name }}

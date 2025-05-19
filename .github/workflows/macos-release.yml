@@ -22,7 +22,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 40
     outputs:
       release_path: ${{ steps.path_variables.outputs.release_path }}
@@ -101,7 +101,6 @@ jobs:
           RELEASE_PATH: ${{ env.RELEASE_PATH }}
 
       - name: Upload asset
-        if: ${{ inputs.create_github_release }}
         uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH }}

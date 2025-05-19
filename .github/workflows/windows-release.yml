@@ -48,9 +48,9 @@ jobs:
         id: path_variables
         shell: pwsh
         run: |
-          $name = "FeedFlow-${VERSION}.msi"
+          $name = "FeedFlow-$env:VERSION.msi"
           $path = "desktopApp/build/release/main-release/msi/${name}"
-          $name_msix = "FeedFlow-${VERSION}.msix"
+          $name_msix = "FeedFlow-$env:VERSION.msix"
           $path_msix = "desktopApp/build/release/main-release/msix/${name_msix}"
           "release_path=$path" >> $env:GITHUB_OUTPUT
           "artifact_name=$name" >> $env:GITHUB_OUTPUT
@@ -274,7 +274,6 @@ jobs:
             **/build/compose/logs/*  
 
       - name: Upload MSI asset
-        if: ${{ inputs.create_github_release }}
         uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH }}
@@ -282,7 +281,6 @@ jobs:
           retention-days: 7
 
       - name: Upload MSIX asset
-        if: ${{ inputs.create_github_release }}
         uses: actions/upload-artifact@v4
         with:
           path: ${{ env.RELEASE_PATH_MSIX }}

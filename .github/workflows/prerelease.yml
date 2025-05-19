@@ -1,0 +1,93 @@
+name: Prerelease
+
+on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'Platforms to build for'
+        required: true
+        type: choice
+        options:
+          - all
+          - android
+          - ios
+          - windows
+          - linux
+          - macos
+        default: 'all'
+
+jobs:
+  android:
+    if: ${{ inputs.platforms == 'all' || inputs.platforms == 'android' }}
+    uses: ./.github/workflows/android-release.yml
+    secrets:
+      GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSPHRASE: ${{ secrets.KEYSTORE_PASSPHRASE }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
+      DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+      FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
+      PLAY_CONFIG: ${{ secrets.PLAY_CONFIG }}
+
+  ios:
+    if: ${{ inputs.platforms == 'all' || inputs.platforms == 'ios' }}
+    uses: ./.github/workflows/ios-release.yml
+    secrets:
+      GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+      DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+      FIREBASE_PLIST: ${{ secrets.FIREBASE_PLIST }}
+      CERTIFICATES_P12: ${{ secrets.CERTIFICATES_P12 }}
+      CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
+      BUNDLE_ID: ${{ secrets.BUNDLE_ID }}
+      APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+      APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+      APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+      APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
+
+  windows:
+    if: ${{ inputs.platforms == 'all' || inputs.platforms == 'windows' }}
+    uses: ./.github/workflows/windows-release.yml
+    secrets:
+      GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+      DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+      SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+      MSIX_PUBLISHER_DISPLAY_NAME: ${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}
+
+  linux:
+    if: ${{ inputs.platforms == 'all' || inputs.platforms == 'linux' }}
+    uses: ./.github/workflows/linux-release.yml
+    secrets:
+      GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+      DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+      SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+
+  macos-testflight:
+    uses: ./.github/workflows/macos-testflight-release.yml
+    secrets:
+      GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+      DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+      SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+      MAC_APP_DISTRIBUTION_INSTALLER_CERTIFICATE: ${{ secrets.MAC_APP_DISTRIBUTION_INSTALLER_CERTIFICATE }}
+      MAC_APP_DISTRIBUTION_INSTALLER_CERTIFICATE_PWD: ${{ secrets.MAC_APP_DISTRIBUTION_INSTALLER_CERTIFICATE_PWD }}
+      EMBEDDED_PROVISION: ${{ secrets.EMBEDDED_PROVISION }}
+      RUNTIME_PROVISION: ${{ secrets.RUNTIME_PROVISION }}
+      APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+      APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+      APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+      APPLE_ID_NOTARIZATION: ${{ secrets.APPLE_ID_NOTARIZATION }}
+      NOTARIZATION_PWD: ${{ secrets.NOTARIZATION_PWD }}
+      APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
+
+  macos:
+    uses: ./.github/workflows/macos-release.yml
+    secrets:
+      GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+      DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+      SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+      SIGNING_CERTIFICATE_P12_DATA_MACOS: ${{ secrets.SIGNING_CERTIFICATE_P12_DATA_MACOS }}
+      SIGNING_CERTIFICATE_PASSWORD_MACOS: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD_MACOS }}
+      APPLE_ID_NOTARIZATION: ${{ secrets.APPLE_ID_NOTARIZATION }}
+      NOTARIZATION_PWD: ${{ secrets.NOTARIZATION_PWD }}
+      APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}

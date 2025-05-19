@@ -2,8 +2,8 @@ name: Update Website after Desktop Release
 
 on:
   workflow_dispatch: {}
-  release:
-    types: [released]
+  # release:
+  #   types: [released]
 
 jobs:
   update-website:
@@ -12,25 +12,24 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Create path variables
         id: path_variables
         run: |
-          tag=$(git describe --tags --abbrev=0 --match "*-desktop")
-          version=$(echo "$tag" | sed 's/-desktop$//')
-          echo "VERSION=$version" >> $GITHUB_ENV
+          MAJOR=$(grep "MAJOR=" version.properties | cut -d'=' -f2)
+          MINOR=$(grep "MINOR=" version.properties | cut -d'=' -f2)
+          PATCH=$(grep "PATCH=" version.properties | cut -d'=' -f2)
+          echo "VERSION=$MAJOR.$MINOR.$PATCH" >> $GITHUB_ENV
 
       - name: Update website
         env:
           VERSION: ${{ env.VERSION }}
         run: |
           # Construct URLs
-          DMG_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-desktop/FeedFlow-${VERSION}.dmg"
-          MSI_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-desktop/FeedFlow-${VERSION}.msi"
-          RPM_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-desktop/feedflow-${VERSION}-1.x86_64.rpm"
-          DEB_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-desktop/feedflow_${VERSION}_amd64.deb"
+          DMG_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-all/FeedFlow-${VERSION}.dmg"
+          MSI_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-all/FeedFlow-${VERSION}.msi"
+          RPM_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-all/feedflow-${VERSION}-1.x86_64.rpm"
+          DEB_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-all/feedflow_${VERSION}_amd64.deb"
           
           # Update hero.yml
           sed -i "s|button3Link:.*|button3Link: ${DMG_URL}|" website/data/hero.yml

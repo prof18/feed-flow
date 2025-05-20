@@ -54,6 +54,8 @@ jobs:
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
       - name: Create dummy Firebase json
         run: |
@@ -72,6 +74,8 @@ jobs:
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
       - name: Build Desktop App
         run: ./gradlew :desktopApp:packageDistributionForCurrentOS
@@ -97,6 +101,8 @@ jobs:
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
       - name: Create Dummy Firebase Plist
         run: |

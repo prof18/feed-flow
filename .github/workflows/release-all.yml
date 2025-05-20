@@ -25,6 +25,55 @@ jobs:
       FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
       PLAY_CONFIG: ${{ secrets.PLAY_CONFIG }}
 
+  fdroid-release:
+    needs: android
+    if: always() && needs.android.result == 'success' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-android'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Read version from properties
+        id: version
+        run: |
+          MAJOR=$(grep "MAJOR=" version.properties | cut -d'=' -f2)
+          MINOR=$(grep "MINOR=" version.properties | cut -d'=' -f2)
+          PATCH=$(grep "PATCH=" version.properties | cut -d'=' -f2)
+          VERSION_NAME="$MAJOR.$MINOR.$PATCH"
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_OUTPUT
+
+      - name: Create F-Droid release branch
+        run: |
+          git checkout -b "release-fdroid-${{ steps.version.outputs.VERSION_NAME }}"
+
+      - name: Update version in build.gradle.kts
+        run: |
+          VERSION_CODE=$(( ${{ github.run_number }} + 5000 ))
+          sed -i "s/versionCode = getVersionCode()/versionCode = $VERSION_CODE/" ./androidApp/build.gradle.kts
+          sed -i "s/versionName = getVersionName()/versionName = \"${{ steps.version.outputs.VERSION_NAME }}\"/" ./androidApp/build.gradle.kts
+
+      - name: Commit changes
+        run: |
+          git add androidApp/build.gradle.kts
+          git commit -m "Release for fdroid: ${{ steps.version.outputs.VERSION_NAME }}"
+
+      - name: Create and push tag
+        run: |
+          git tag "${{ steps.version.outputs.VERSION_NAME }}-fdroid"
+          git push origin "${{ steps.version.outputs.VERSION_NAME }}-fdroid"
+
+      - name: Cleanup
+        run: |
+          git checkout main
+          git branch -D "release-fdroid-${{ steps.version.outputs.VERSION_NAME }}"
+
   ios:
     if: endsWith(github.ref, '-all') || endsWith(github.ref, '-ios')
     uses: ./.github/workflows/ios-release.yml

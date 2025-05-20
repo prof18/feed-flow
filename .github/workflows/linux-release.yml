@@ -44,9 +44,9 @@ jobs:
       - name: Create path variables
         id: path_variables
         run: |
-          name_deb="FeedFlow-${VERSION}.deb"
+          name_deb="feedflow_${VERSION}_amd64.deb"
           path_deb="desktopApp/build/release/main-release/deb/${name_deb}"
-          name_rpm="FeedFlow-${VERSION}.rpm"
+          name_rpm="feedflow-${VERSION}-1.x86_64.rpm"
           path_rpm="desktopApp/build/release/main-release/rpm/${name_rpm}"
           echo "release_path_deb=$path_deb" >> $GITHUB_OUTPUT
           echo "release_path_rpm=$path_rpm" >> $GITHUB_OUTPUT

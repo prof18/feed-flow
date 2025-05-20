@@ -2,8 +2,8 @@ name: Update Website after Desktop Release
 
 on:
   workflow_dispatch: {}
-  # release:
-  #   types: [released]
+  release:
+    types: [released]
 
 jobs:
   update-website:
@@ -50,33 +50,46 @@ jobs:
           echo "RPM_URL=$RPM_URL" >> $GITHUB_ENV
           echo "DEB_URL=$DEB_URL" >> $GITHUB_ENV
 
-      # Commenting out the website update steps for now
-      # - name: Update website
-      #   run: |
-      #     # Update hero.yml
-      #     sed -i "s|button3Link:.*|button3Link: ${DMG_URL}|" website/data/hero.yml
-      #     sed -i "s|button5Link:.*|button5Link: ${RPM_URL}|" website/data/hero.yml
-      #     sed -i "s|button6Link:.*|button6Link: ${DEB_URL}|" website/data/hero.yml
-      #     
-      #     # Update downloads.yml
-      #     sed -i "s|url: \".*\.dmg\"|url: \"${DMG_URL}\"|" website/data/downloads.yml
-      #     sed -i "s|url: \".*\.msi\"|url: \"${MSI_URL}\"|" website/data/downloads.yml
-      #     sed -i "s|url: \".*\.rpm\"|url: \"${RPM_URL}\"|" website/data/downloads.yml
-      #     sed -i "s|url: \".*\.deb\"|url: \"${DEB_URL}\"|" website/data/downloads.yml
+      - name: Update website
+        run: |
+          # Update hero.yml only if URLs are not empty
+          if [ ! -z "$DMG_URL" ]; then
+            sed -i "s|button3Link:.*|button3Link: ${DMG_URL}|" website/data/hero.yml
+          fi
+          if [ ! -z "$RPM_URL" ]; then
+            sed -i "s|button5Link:.*|button5Link: ${RPM_URL}|" website/data/hero.yml
+          fi
+          if [ ! -z "$DEB_URL" ]; then
+            sed -i "s|button6Link:.*|button6Link: ${DEB_URL}|" website/data/hero.yml
+          fi
+          
+          # Update downloads.yml only if URLs are not empty
+          if [ ! -z "$DMG_URL" ]; then
+            sed -i "s|url: \".*\.dmg\"|url: \"${DMG_URL}\"|" website/data/downloads.yml
+          fi
+          if [ ! -z "$MSI_URL" ]; then
+            sed -i "s|url: \".*\.msi\"|url: \"${MSI_URL}\"|" website/data/downloads.yml
+          fi
+          if [ ! -z "$RPM_URL" ]; then
+            sed -i "s|url: \".*\.rpm\"|url: \"${RPM_URL}\"|" website/data/downloads.yml
+          fi
+          if [ ! -z "$DEB_URL" ]; then
+            sed -i "s|url: \".*\.deb\"|url: \"${DEB_URL}\"|" website/data/downloads.yml
+          fi
 
-      # - name: Setup Hugo
-      #   uses: peaceiris/actions-hugo@v3
-      #   with:
-      #     hugo-version: '0.101.0'
-      #     extended: true
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.101.0'
+          extended: true
 
-      # - name: Build
-      #   run: |
-      #     cd website
-      #     HUGO_ENV=production hugo --gc --minify
+      - name: Build
+        run: |
+          cd website
+          HUGO_ENV=production hugo --gc --minify
 
-      # - name: Deploy
-      #   uses: peaceiris/actions-gh-pages@v4
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: website/public
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: website/public

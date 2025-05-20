@@ -64,6 +64,7 @@ jobs:
       SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
 
   macos-testflight:
+    if: ${{ inputs.platforms == 'all' || inputs.platforms == 'macos' }}
     uses: ./.github/workflows/macos-testflight-release.yml
     secrets:
       GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
@@ -81,6 +82,7 @@ jobs:
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
 
   macos:
+    if: ${{ inputs.platforms == 'all' || inputs.platforms == 'macos' }}
     uses: ./.github/workflows/macos-release.yml
     secrets:
       GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}

@@ -21,40 +21,62 @@ jobs:
           PATCH=$(grep "PATCH=" version.properties | cut -d'=' -f2)
           echo "VERSION=$MAJOR.$MINOR.$PATCH" >> $GITHUB_ENV
 
-      - name: Update website
-        env:
-          VERSION: ${{ env.VERSION }}
+      - name: Get latest release assets
+        id: get_assets
         run: |
-          # Construct URLs
-          DMG_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-all/FeedFlow-${VERSION}.dmg"
-          MSI_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-all/FeedFlow-${VERSION}.msi"
-          RPM_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-all/feedflow-${VERSION}-1.x86_64.rpm"
-          DEB_URL="https://github.com/prof18/feed-flow/releases/download/${VERSION}-all/feedflow_${VERSION}_amd64.deb"
+          # Get the latest release assets
+          echo "Fetching latest release assets..."
+          ASSETS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/prof18/feed-flow/releases/latest" | jq -r '.assets[] | {name: .name, url: .browser_download_url}')
           
-          # Update hero.yml
-          sed -i "s|button3Link:.*|button3Link: ${DMG_URL}|" website/data/hero.yml
-          sed -i "s|button5Link:.*|button5Link: ${RPM_URL}|" website/data/hero.yml
-          sed -i "s|button6Link:.*|button6Link: ${DEB_URL}|" website/data/hero.yml
+          echo "Raw assets data:"
+          echo "$ASSETS"
           
-          # Update downloads.yml
-          sed -i "s|url: \".*\.dmg\"|url: \"${DMG_URL}\"|" website/data/downloads.yml
-          sed -i "s|url: \".*\.msi\"|url: \"${MSI_URL}\"|" website/data/downloads.yml
-          sed -i "s|url: \".*\.rpm\"|url: \"${RPM_URL}\"|" website/data/downloads.yml
-          sed -i "s|url: \".*\.deb\"|url: \"${DEB_URL}\"|" website/data/downloads.yml
+          # Extract URLs for each file type
+          DMG_URL=$(echo "$ASSETS" | jq -r 'select(.name | endswith(".dmg")) | .url')
+          MSI_URL=$(echo "$ASSETS" | jq -r 'select(.name | endswith(".msi")) | .url')
+          RPM_URL=$(echo "$ASSETS" | jq -r 'select(.name | endswith(".rpm")) | .url')
+          DEB_URL=$(echo "$ASSETS" | jq -r 'select(.name | endswith(".deb")) | .url')
+          
+          echo "Extracted URLs:"
+          echo "DMG URL: $DMG_URL"
+          echo "MSI URL: $MSI_URL"
+          echo "RPM URL: $RPM_URL"
+          echo "DEB URL: $DEB_URL"
+          
+          # Set outputs
+          echo "DMG_URL=$DMG_URL" >> $GITHUB_ENV
+          echo "MSI_URL=$MSI_URL" >> $GITHUB_ENV
+          echo "RPM_URL=$RPM_URL" >> $GITHUB_ENV
+          echo "DEB_URL=$DEB_URL" >> $GITHUB_ENV
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: '0.101.0'
-          extended: true
+      # Commenting out the website update steps for now
+      # - name: Update website
+      #   run: |
+      #     # Update hero.yml
+      #     sed -i "s|button3Link:.*|button3Link: ${DMG_URL}|" website/data/hero.yml
+      #     sed -i "s|button5Link:.*|button5Link: ${RPM_URL}|" website/data/hero.yml
+      #     sed -i "s|button6Link:.*|button6Link: ${DEB_URL}|" website/data/hero.yml
+      #     
+      #     # Update downloads.yml
+      #     sed -i "s|url: \".*\.dmg\"|url: \"${DMG_URL}\"|" website/data/downloads.yml
+      #     sed -i "s|url: \".*\.msi\"|url: \"${MSI_URL}\"|" website/data/downloads.yml
+      #     sed -i "s|url: \".*\.rpm\"|url: \"${RPM_URL}\"|" website/data/downloads.yml
+      #     sed -i "s|url: \".*\.deb\"|url: \"${DEB_URL}\"|" website/data/downloads.yml
 
-      - name: Build
-        run: |
-          cd website
-          HUGO_ENV=production hugo --gc --minify
+      # - name: Setup Hugo
+      #   uses: peaceiris/actions-hugo@v3
+      #   with:
+      #     hugo-version: '0.101.0'
+      #     extended: true
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: website/public
+      # - name: Build
+      #   run: |
+      #     cd website
+      #     HUGO_ENV=production hugo --gc --minify
+
+      # - name: Deploy
+      #   uses: peaceiris/actions-gh-pages@v4
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: website/public

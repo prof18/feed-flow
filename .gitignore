@@ -119,7 +119,6 @@ bin/
 /website/public/
 /.kotlin/
 /play_config.json
-/iosApp/Assets/FeedFlow.xcconfig
 /build-logic/.kotlin/
 buildServer.json
 iosApp/buildServer.json

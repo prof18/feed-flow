@@ -187,10 +187,7 @@ class FeedFetcherRepository internal constructor(
             return true
         }
 
-        val lastSyncTimestamp = feedSource.lastSyncTimestamp
-        if (lastSyncTimestamp == null) {
-            return true
-        }
+        val lastSyncTimestamp = feedSource.lastSyncTimestamp ?: return true
 
         val currentTime = dateFormatter.currentTimeMillis()
         val timeDifference = currentTime - lastSyncTimestamp

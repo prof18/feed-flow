@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -36,7 +37,8 @@ class SettingsViewModel internal constructor(
                 val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
                 val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
                 val isExperimentalParsingEnabled = settingsRepository.isExperimentalParsingEnabled()
-                val isRemoveTitleFromDescriptionEnabled = settingsRepository.getRemoveTitleFromDescription()
+                val isRemoveTitleFromDescriptionEnabled =
+                    settingsRepository.getRemoveTitleFromDescription()
                 val isHideDescriptionEnabled = settingsRepository.getHideDescription()
                 val isHideImagesEnabled = settingsRepository.getHideImages()
                 val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
@@ -44,6 +46,7 @@ class SettingsViewModel internal constructor(
                 val leftSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.LEFT)
                 val rightSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.RIGHT)
                 val dateFormat = settingsRepository.getDateFormat()
+                val feedItemType = settingsRepository.getFeedItemType()
                 settingsMutableState.update {
                     SettingsState(
                         isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
@@ -59,6 +62,7 @@ class SettingsViewModel internal constructor(
                         leftSwipeActionType = leftSwipeAction,
                         rightSwipeActionType = rightSwipeAction,
                         dateFormat = dateFormat,
+                        feedItemType = feedItemType,
                     )
                 }
             }
@@ -188,6 +192,13 @@ class SettingsViewModel internal constructor(
                 it.copy(dateFormat = format)
             }
             feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateFeedItemType(feedItemType: FeedItemType) {
+        viewModelScope.launch {
+            settingsRepository.setFeedItemType(feedItemType)
+            settingsMutableState.update { it.copy(feedItemType = feedItemType) }
         }
     }
 }

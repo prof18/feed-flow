@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -30,13 +31,17 @@ class SettingsRepository(
     )
     val swipeActions: StateFlow<SwipeActions> = swipeActionsMutableFlow.asStateFlow()
 
+    private val feedItemTypeMutableFlow = MutableStateFlow(getFeedItemType())
+    val feedItemType: StateFlow<FeedItemType> = feedItemTypeMutableFlow.asStateFlow()
+
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
 
     private val isExperimentalParsingEnabledMutableFlow = MutableStateFlow(
         isExperimentalParsingEnabled(),
     )
-    val isExperimentalParsingEnabledFlow: StateFlow<Boolean> = isExperimentalParsingEnabledMutableFlow.asStateFlow()
+    val isExperimentalParsingEnabledFlow: StateFlow<Boolean> =
+        isExperimentalParsingEnabledMutableFlow.asStateFlow()
 
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
@@ -105,8 +110,10 @@ class SettingsRepository(
     fun setReaderModeFontSize(value: Int) =
         settings.set(SettingsFields.READER_MODE_FONT_SIZE.name, value)
 
-    fun getFeedListFontScaleFactor(): Int =
-        settings.getInt(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, DEFAULT_FEED_LIST_FONT_SCALE_FACTOR)
+    fun getFeedListFontScaleFactor(): Int = settings.getInt(
+        SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name,
+        DEFAULT_FEED_LIST_FONT_SCALE_FACTOR
+    )
 
     fun setFeedListFontScaleFactor(value: Int) =
         settings.set(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, value)
@@ -204,10 +211,20 @@ class SettingsRepository(
     fun setDateFormat(format: DateFormat) =
         settings.set(SettingsFields.DATE_FORMAT.name, format.name)
 
+    fun getFeedItemType(): FeedItemType =
+        settings.getString(SettingsFields.FEED_ITEM_TYPE.name, FeedItemType.LIST_TILE.name)
+            .let { FeedItemType.valueOf(it) }
+
+    fun setFeedItemType(feedItemType: FeedItemType) {
+        settings[SettingsFields.FEED_ITEM_TYPE.name] = feedItemType.name
+        feedItemTypeMutableFlow.update { feedItemType }
+    }
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
     }
+
 }
 
 internal enum class SettingsFields {
@@ -233,4 +250,5 @@ internal enum class SettingsFields {
     LEFT_SWIPE_ACTION,
     RIGHT_SWIPE_ACTION,
     DATE_FORMAT,
+    FEED_ITEM_TYPE,
 }

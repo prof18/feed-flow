@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -31,6 +32,11 @@ class SettingsViewModel internal constructor(
 
     init {
         viewModelScope.launch {
+            settingsRepository.feedOrderFlow.collect { feedOrder ->
+                settingsMutableState.update { it.copy(feedOrder = feedOrder) }
+            }
+        }
+        viewModelScope.launch {
             settingsRepository.syncPeriodFlow.collect { syncPeriod ->
                 val isMarkReadEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
                 val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
@@ -44,8 +50,10 @@ class SettingsViewModel internal constructor(
                 val leftSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.LEFT)
                 val rightSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.RIGHT)
                 val dateFormat = settingsRepository.getDateFormat()
+                val feedOrder = settingsRepository.getFeedOrder()
                 settingsMutableState.update {
                     SettingsState(
+                        feedOrder = feedOrder,
                         isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
                         isShowReadItemsEnabled = isShowReadItemsEnabled,
                         isReaderModeEnabled = isReaderModeEnabled,
@@ -187,6 +195,14 @@ class SettingsViewModel internal constructor(
             settingsMutableState.update {
                 it.copy(dateFormat = format)
             }
+            feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateFeedOrder(feedOrder: FeedOrder) {
+        viewModelScope.launch {
+            settingsRepository.setFeedOrder(feedOrder)
+            // No need to update state here, it's collected from the flow
             feedStateRepository.getFeeds()
         }
     }

@@ -30,7 +30,7 @@ struct SettingsScreen: View {
     @State private var leftSwipeActionType: SwipeActionType = .none
     @State private var rightSwipeActionType: SwipeActionType = .none
     @State private var dateFormat: DateFormat = .normal
-    @State private var feedOrder: FeedOrder = FeedOrder.newestFirst // Default, will be updated from ViewModel
+    @State private var feedOrder: FeedOrder = .newestFirst
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor = 0.0
     @State private var isExperimentalParsingEnabled = false
@@ -121,7 +121,7 @@ struct SettingsScreen: View {
                 vmStoreOwner.instance.updateExperimentalParsing(value: isExperimentalParsingEnabled)
             }
             .onChange(of: feedOrder) {
-                vmStoreOwner.instance.updateFeedOrder(order: feedOrder)
+                vmStoreOwner.instance.updateFeedOrder(feedOrder: feedOrder)
             }
     }
 
@@ -149,6 +149,7 @@ struct SettingsScreen: View {
                     leftSwipeAction: $leftSwipeActionType,
                     rightSwipeAction: $rightSwipeActionType,
                     dateFormat: $dateFormat,
+                    feedOrder: $feedOrder,
                     onScaleFactorChange: { newValue in
                         vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
                     }
@@ -261,15 +262,6 @@ private struct BehaviourSection: View {
                 Label(feedFlowStrings.settingsToggleShowReadArticles, systemImage: "eye")
             }.onTapGesture {
                 isShowReadItemEnabled.toggle()
-            }
-
-            Picker(selection: $feedOrder) {
-                Text(feedFlowStrings.settingsFeedOrderNewestFirst)
-                    .tag(FeedOrder.newestFirst)
-                Text(feedFlowStrings.settingsFeedOrderOldestFirst)
-                    .tag(FeedOrder.oldestFirst)
-            } label: {
-                Label(feedFlowStrings.settingsFeedOrderTitle, systemImage: "arrow.up.arrow.down.circle")
             }
         }
     }

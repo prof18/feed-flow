@@ -13,7 +13,6 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -325,16 +324,6 @@ class HomeViewModel internal constructor(
     fun deleteCategory(categoryId: CategoryId) {
         viewModelScope.launch {
             feedCategoryRepository.deleteCategory(categoryId.value)
-            feedStateRepository.getFeeds()
-        }
-    }
-
-    fun updateFeedOrder(order: FeedOrder) {
-        viewModelScope.launch {
-            settingsRepository.setFeedOrder(order)
-            // The FeedStateRepository already observes settingsRepository.feedOrderFlow indirectly
-            // by calling settingsRepository.getFeedOrder() in its getFeeds() and loadMoreFeeds()
-            // methods. We just need to trigger a refresh.
             feedStateRepository.getFeeds()
         }
     }

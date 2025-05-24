@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Feed
 import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
+import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.filled.Construction
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
@@ -41,19 +42,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.CrashlyticsHelper
-import com.prof18.feedflow.android.R
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelector
+import com.prof18.feedflow.android.settings.components.FeedOrderSelectionDialog
 import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
-import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.utils.AppConfig
@@ -461,61 +461,47 @@ private fun FeedOrderSelector(
     currentFeedOrder: FeedOrder,
     onFeedOrderSelected: (FeedOrder) -> Unit,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
+    var showDialog by remember { mutableStateOf(false) }
+    val strings = LocalFeedFlowStrings.current
 
-    Column(
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(horizontal = Spacing.regular)
-            .padding(vertical = Spacing.small),
+            .clickable { showDialog = true }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.small)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
-        Text(
-            text = stringResource(id = R.string.settings_feed_order_title),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.padding(bottom = Spacing.small),
+        Icon(
+            Icons.AutoMirrored.Outlined.Sort,
+            contentDescription = null,
         )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                ) { onFeedOrderSelected(FeedOrder.NEWEST_FIRST) }
-                .padding(vertical = Spacing.xsmall),
+        Column(
+            modifier = Modifier.weight(1f),
         ) {
-            androidx.compose.material3.RadioButton(
-                selected = currentFeedOrder == FeedOrder.NEWEST_FIRST,
-                onClick = { onFeedOrderSelected(FeedOrder.NEWEST_FIRST) },
-            )
-            Spacer(Modifier.padding(start = Spacing.medium))
             Text(
-                text = stringResource(id = R.string.settings_feed_order_newest_first),
+                text = strings.settingsFeedOrderTitle,
                 style = MaterialTheme.typography.bodyLarge,
             )
+            Text(
+                text = when (currentFeedOrder) {
+                    FeedOrder.NEWEST_FIRST -> strings.settingsFeedOrderNewestFirst
+                    FeedOrder.OLDEST_FIRST -> strings.settingsFeedOrderOldestFirst
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
+    }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                ) { onFeedOrderSelected(FeedOrder.OLDEST_FIRST) }
-                .padding(vertical = Spacing.xsmall),
-        ) {
-            androidx.compose.material3.RadioButton(
-                selected = currentFeedOrder == FeedOrder.OLDEST_FIRST,
-                onClick = { onFeedOrderSelected(FeedOrder.OLDEST_FIRST) },
-            )
-            Spacer(Modifier.padding(start = Spacing.medium))
-            Text(
-                text = stringResource(id = R.string.settings_feed_order_oldest_first),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
+    if (showDialog) {
+        FeedOrderSelectionDialog(
+            currentFeedOrder = currentFeedOrder,
+            onFeedOrderSelected = onFeedOrderSelected,
+            dismissDialog = { showDialog = false },
+        )
     }
 }
 

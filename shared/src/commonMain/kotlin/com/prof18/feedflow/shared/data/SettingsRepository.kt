@@ -39,9 +39,6 @@ class SettingsRepository(
     )
     val isExperimentalParsingEnabledFlow: StateFlow<Boolean> = isExperimentalParsingEnabledMutableFlow.asStateFlow()
 
-    private val feedOrderMutableFlow = MutableStateFlow(getFeedOrder())
-    val feedOrderFlow: StateFlow<FeedOrder> = feedOrderMutableFlow.asStateFlow()
-
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
@@ -214,7 +211,6 @@ class SettingsRepository(
 
     fun setFeedOrder(order: FeedOrder) {
         settings[SettingsFields.FEED_ORDER.name] = order.name
-        feedOrderMutableFlow.update { order }
     }
 
     private companion object {

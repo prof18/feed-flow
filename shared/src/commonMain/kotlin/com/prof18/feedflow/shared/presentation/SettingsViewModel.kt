@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
-import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -31,11 +31,6 @@ class SettingsViewModel internal constructor(
     val feedFontSizeState: StateFlow<FeedFontSizes> = fontSizeRepository.feedFontSizeState
 
     init {
-        viewModelScope.launch {
-            settingsRepository.feedOrderFlow.collect { feedOrder ->
-                settingsMutableState.update { it.copy(feedOrder = feedOrder) }
-            }
-        }
         viewModelScope.launch {
             settingsRepository.syncPeriodFlow.collect { syncPeriod ->
                 val isMarkReadEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
@@ -202,7 +197,9 @@ class SettingsViewModel internal constructor(
     fun updateFeedOrder(feedOrder: FeedOrder) {
         viewModelScope.launch {
             settingsRepository.setFeedOrder(feedOrder)
-            // No need to update state here, it's collected from the flow
+            settingsMutableState.update {
+                it.copy(feedOrder = feedOrder)
+            }
             feedStateRepository.getFeeds()
         }
     }

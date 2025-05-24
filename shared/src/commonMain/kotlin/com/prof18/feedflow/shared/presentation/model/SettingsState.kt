@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation.model
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 
@@ -19,4 +20,5 @@ data class SettingsState(
     val leftSwipeActionType: SwipeActionType = SwipeActionType.NONE,
     val rightSwipeActionType: SwipeActionType = SwipeActionType.NONE,
     val dateFormat: DateFormat = DateFormat.NORMAL,
+    val feedOrder: FeedOrder = FeedOrder.NEWEST_FIRST,
 )

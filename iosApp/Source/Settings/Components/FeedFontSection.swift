@@ -20,6 +20,7 @@ struct FeedFontSection: View {
     @Binding var leftSwipeAction: SwipeActionType
     @Binding var rightSwipeAction: SwipeActionType
     @Binding var dateFormat: DateFormat
+    @Binding var feedOrder: FeedOrder
     let onScaleFactorChange: (Double) -> Void
 
     var body: some View {
@@ -106,6 +107,15 @@ struct FeedFontSection: View {
             }
 
             DateFormatSection(dateFormat: $dateFormat)
+
+            Picker(selection: $feedOrder) {
+                Text(feedFlowStrings.settingsFeedOrderNewestFirst)
+                    .tag(FeedOrder.newestFirst)
+                Text(feedFlowStrings.settingsFeedOrderOldestFirst)
+                    .tag(FeedOrder.oldestFirst)
+            } label: {
+                Label(feedFlowStrings.settingsFeedOrderTitle, systemImage: "arrow.up.arrow.down.circle")
+            }
 
             Picker(selection: $leftSwipeAction) {
                 Text(feedFlowStrings.settingsSwipeActionToggleRead)

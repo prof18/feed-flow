@@ -10,6 +10,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
@@ -35,6 +36,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onFeedFontScaleClick: () -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     setCrashReportingEnabled: (Boolean) -> Unit,
+    onFeedOrderSelected: (FeedOrder) -> Unit,
 ) {
     MenuBar {
         Menu(LocalFeedFlowStrings.current.fileMenu, mnemonic = 'F') {
@@ -150,6 +152,19 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneMonth,
                     selected = settingsState.autoDeletePeriod == AutoDeletePeriod.ONE_MONTH,
                     onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_MONTH) },
+                )
+            }
+
+            Menu(LocalFeedFlowStrings.current.settingsFeedOrderTitle) {
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsFeedOrderNewestFirst,
+                    selected = settingsState.feedOrder == FeedOrder.NEWEST_FIRST,
+                    onClick = { onFeedOrderSelected(FeedOrder.NEWEST_FIRST) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsFeedOrderOldestFirst,
+                    selected = settingsState.feedOrder == FeedOrder.OLDEST_FIRST,
+                    onClick = { onFeedOrderSelected(FeedOrder.OLDEST_FIRST) },
                 )
             }
         }

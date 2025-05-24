@@ -1,0 +1,5 @@
+<resources>
+    <string name="settings_feed_order_title">Feed Order</string>
+    <string name="settings_feed_order_newest_first">Newest First</string>
+    <string name="settings_feed_order_oldest_first">Oldest First</string>
+</resources>

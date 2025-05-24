@@ -41,15 +41,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.CrashlyticsHelper
+import com.prof18.feedflow.android.R
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelector
 import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -165,6 +168,9 @@ fun SettingsScreen(
             settingsViewModel.updateDateFormat(format)
         },
         navigateToNotifications = navigateToNotifications,
+        onFeedOrderSelected = { order ->
+            settingsViewModel.updateFeedOrder(order)
+        },
     )
 }
 
@@ -196,6 +202,7 @@ private fun SettingsScreenContent(
     onSwipeActionSelected: (SwipeDirection, SwipeActionType) -> Unit,
     onDateFormatSelected: (DateFormat) -> Unit,
     navigateToNotifications: () -> Unit,
+    onFeedOrderSelected: (FeedOrder) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -363,6 +370,13 @@ private fun SettingsScreenContent(
             }
 
             item {
+                FeedOrderSelector(
+                    currentFeedOrder = settingsState.feedOrder,
+                    onFeedOrderSelected = onFeedOrderSelected,
+                )
+            }
+
+            item {
                 SwipeActionSelector(
                     direction = SwipeDirection.LEFT,
                     currentAction = settingsState.leftSwipeActionType,
@@ -438,6 +452,69 @@ private fun SettingsScreenContent(
                     onClick = onAboutClick,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun FeedOrderSelector(
+    currentFeedOrder: FeedOrder,
+    onFeedOrderSelected: (FeedOrder) -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Column(
+        modifier = Modifier
+            .padding(horizontal = Spacing.regular)
+            .padding(vertical = Spacing.small),
+    ) {
+        Text(
+            text = stringResource(id = R.string.settings_feed_order_title),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.padding(bottom = Spacing.small),
+        )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                ) { onFeedOrderSelected(FeedOrder.NEWEST_FIRST) }
+                .padding(vertical = Spacing.xsmall),
+        ) {
+            androidx.compose.material3.RadioButton(
+                selected = currentFeedOrder == FeedOrder.NEWEST_FIRST,
+                onClick = { onFeedOrderSelected(FeedOrder.NEWEST_FIRST) },
+            )
+            Spacer(Modifier.padding(start = Spacing.medium))
+            Text(
+                text = stringResource(id = R.string.settings_feed_order_newest_first),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                ) { onFeedOrderSelected(FeedOrder.OLDEST_FIRST) }
+                .padding(vertical = Spacing.xsmall),
+        ) {
+            androidx.compose.material3.RadioButton(
+                selected = currentFeedOrder == FeedOrder.OLDEST_FIRST,
+                onClick = { onFeedOrderSelected(FeedOrder.OLDEST_FIRST) },
+            )
+            Spacer(Modifier.padding(start = Spacing.medium))
+            Text(
+                text = stringResource(id = R.string.settings_feed_order_oldest_first),
+                style = MaterialTheme.typography.bodyLarge,
+            )
         }
     }
 }
@@ -748,6 +825,7 @@ private fun SettingsScreenPreview() {
             onDateFormatSelected = {},
             navigateToNotifications = {},
             setExperimentalParsing = {},
+            onFeedOrderSelected = {},
         )
     }
 }

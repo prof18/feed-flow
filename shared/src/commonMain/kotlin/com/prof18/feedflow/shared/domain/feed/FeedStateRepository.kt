@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
@@ -51,12 +52,16 @@ internal class FeedStateRepository(
 
     suspend fun getFeeds() {
         try {
+            val feedOrder = settingsRepository.getFeedOrder()
+            val sortOrderString = if (feedOrder == FeedOrder.OLDEST_FIRST) "ASC" else "DESC"
+
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
                     feedFilter = currentFeedFilterMutableState.value,
                     pageSize = PAGE_SIZE,
                     offset = 0,
                     showReadItems = settingsRepository.getShowReadArticlesTimeline(),
+                    sortOrder = sortOrderString,
                 )
             }
             currentPage = 1
@@ -91,12 +96,16 @@ internal class FeedStateRepository(
             return
         }
         try {
+            val feedOrder = settingsRepository.getFeedOrder()
+            val sortOrderString = if (feedOrder == FeedOrder.OLDEST_FIRST) "ASC" else "DESC"
+
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
                     feedFilter = currentFeedFilterMutableState.value,
                     pageSize = PAGE_SIZE,
                     offset = currentPage * PAGE_SIZE,
                     showReadItems = settingsRepository.getShowReadArticlesTimeline(),
+                    sortOrder = sortOrderString,
                 )
             }
             currentPage += 1

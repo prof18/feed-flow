@@ -48,7 +48,7 @@ AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
 AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId)
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
-ORDER BY pub_date DESC
+ORDER BY CASE WHEN :sortOrder = 'ASC' THEN pub_date END ASC, CASE WHEN :sortOrder = 'DESC' THEN pub_date END DESC
 LIMIT :pageSize OFFSET :offset;
 
 selectFeedUrlsForFilter:

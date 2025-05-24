@@ -30,6 +30,7 @@ struct SettingsScreen: View {
     @State private var leftSwipeActionType: SwipeActionType = .none
     @State private var rightSwipeActionType: SwipeActionType = .none
     @State private var dateFormat: DateFormat = .normal
+    @State private var feedOrder: FeedOrder = .newestFirst
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor = 0.0
     @State private var isExperimentalParsingEnabled = false
@@ -53,6 +54,7 @@ struct SettingsScreen: View {
                     leftSwipeActionType = state.leftSwipeActionType
                     rightSwipeActionType = state.rightSwipeActionType
                     dateFormat = state.dateFormat
+                    feedOrder = state.feedOrder
                     isExperimentalParsingEnabled = state.isExperimentalParsingEnabled
                 }
             }
@@ -118,6 +120,9 @@ struct SettingsScreen: View {
             .onChange(of: isExperimentalParsingEnabled) {
                 vmStoreOwner.instance.updateExperimentalParsing(value: isExperimentalParsingEnabled)
             }
+            .onChange(of: feedOrder) {
+                vmStoreOwner.instance.updateFeedOrder(feedOrder: feedOrder)
+            }
     }
 
     private var settingsContent: some View {
@@ -129,7 +134,7 @@ struct SettingsScreen: View {
                     autoDeletePeriod: $autoDeletePeriod,
                     isReaderModeEnabled: $isReaderModeEnabled,
                     isExperimentalParsingEnabled: $isExperimentalParsingEnabled,
-
+                    feedOrder: $feedOrder,
                     isMarkReadWhenScrollingEnabled: $isMarkReadWhenScrollingEnabled,
                     isShowReadItemEnabled: $isShowReadItemEnabled
                 )
@@ -144,6 +149,7 @@ struct SettingsScreen: View {
                     leftSwipeAction: $leftSwipeActionType,
                     rightSwipeAction: $rightSwipeActionType,
                     dateFormat: $dateFormat,
+                    feedOrder: $feedOrder,
                     onScaleFactorChange: { newValue in
                         vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
                     }
@@ -198,6 +204,7 @@ private struct BehaviourSection: View {
     @Binding var autoDeletePeriod: AutoDeletePeriod
     @Binding var isReaderModeEnabled: Bool
     @Binding var isExperimentalParsingEnabled: Bool
+    @Binding var feedOrder: FeedOrder
 
     @Binding var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isShowReadItemEnabled: Bool

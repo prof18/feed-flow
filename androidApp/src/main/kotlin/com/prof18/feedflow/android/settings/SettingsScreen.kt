@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Feed
 import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
+import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.filled.Construction
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
@@ -47,10 +48,12 @@ import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.CrashlyticsHelper
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelector
+import com.prof18.feedflow.android.settings.components.FeedOrderSelectionDialog
 import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.utils.AppConfig
@@ -165,6 +168,9 @@ fun SettingsScreen(
             settingsViewModel.updateDateFormat(format)
         },
         navigateToNotifications = navigateToNotifications,
+        onFeedOrderSelected = { order ->
+            settingsViewModel.updateFeedOrder(order)
+        },
     )
 }
 
@@ -196,6 +202,7 @@ private fun SettingsScreenContent(
     onSwipeActionSelected: (SwipeDirection, SwipeActionType) -> Unit,
     onDateFormatSelected: (DateFormat) -> Unit,
     navigateToNotifications: () -> Unit,
+    onFeedOrderSelected: (FeedOrder) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -363,6 +370,13 @@ private fun SettingsScreenContent(
             }
 
             item {
+                FeedOrderSelector(
+                    currentFeedOrder = settingsState.feedOrder,
+                    onFeedOrderSelected = onFeedOrderSelected,
+                )
+            }
+
+            item {
                 SwipeActionSelector(
                     direction = SwipeDirection.LEFT,
                     currentAction = settingsState.leftSwipeActionType,
@@ -439,6 +453,55 @@ private fun SettingsScreenContent(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun FeedOrderSelector(
+    currentFeedOrder: FeedOrder,
+    onFeedOrderSelected: (FeedOrder) -> Unit,
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val strings = LocalFeedFlowStrings.current
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable { showDialog = true }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.small)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.AutoMirrored.Outlined.Sort,
+            contentDescription = null,
+        )
+
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = strings.settingsFeedOrderTitle,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = when (currentFeedOrder) {
+                    FeedOrder.NEWEST_FIRST -> strings.settingsFeedOrderNewestFirst
+                    FeedOrder.OLDEST_FIRST -> strings.settingsFeedOrderOldestFirst
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+
+    if (showDialog) {
+        FeedOrderSelectionDialog(
+            currentFeedOrder = currentFeedOrder,
+            onFeedOrderSelected = onFeedOrderSelected,
+            dismissDialog = { showDialog = false },
+        )
     }
 }
 
@@ -748,6 +811,7 @@ private fun SettingsScreenPreview() {
             onDateFormatSelected = {},
             navigateToNotifications = {},
             setExperimentalParsing = {},
+            onFeedOrderSelected = {},
         )
     }
 }

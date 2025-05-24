@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -204,6 +205,14 @@ class SettingsRepository(
     fun setDateFormat(format: DateFormat) =
         settings.set(SettingsFields.DATE_FORMAT.name, format.name)
 
+    fun getFeedOrder(): FeedOrder =
+        settings.getString(SettingsFields.FEED_ORDER.name, FeedOrder.NEWEST_FIRST.name)
+            .let { FeedOrder.valueOf(it) }
+
+    fun setFeedOrder(order: FeedOrder) {
+        settings[SettingsFields.FEED_ORDER.name] = order.name
+    }
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -211,6 +220,7 @@ class SettingsRepository(
 }
 
 internal enum class SettingsFields {
+    FEED_ORDER,
     FAVOURITE_BROWSER_ID,
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,

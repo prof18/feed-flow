@@ -400,6 +400,9 @@ fun main() = application {
                                 deleteFeeds = {
                                     homeViewModel.deleteAllFeeds()
                                 },
+                                onFeedOrderSelected = { order ->
+                                    settingsViewModel.updateFeedOrder(order)
+                                },
                                 setMarkReadWhenScrolling = { enabled ->
                                     settingsViewModel.updateMarkReadWhenScrolling(enabled)
                                 },

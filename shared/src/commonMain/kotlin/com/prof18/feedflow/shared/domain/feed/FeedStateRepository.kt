@@ -51,12 +51,15 @@ internal class FeedStateRepository(
 
     suspend fun getFeeds() {
         try {
+            val feedOrder = settingsRepository.getFeedOrder()
+
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
                     feedFilter = currentFeedFilterMutableState.value,
                     pageSize = PAGE_SIZE,
                     offset = 0,
                     showReadItems = settingsRepository.getShowReadArticlesTimeline(),
+                    sortOrder = feedOrder,
                 )
             }
             currentPage = 1
@@ -91,12 +94,14 @@ internal class FeedStateRepository(
             return
         }
         try {
+            val feedOrder = settingsRepository.getFeedOrder()
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
                     feedFilter = currentFeedFilterMutableState.value,
                     pageSize = PAGE_SIZE,
                     offset = currentPage * PAGE_SIZE,
                     showReadItems = settingsRepository.getShowReadArticlesTimeline(),
+                    sortOrder = feedOrder,
                 )
             }
             currentPage += 1

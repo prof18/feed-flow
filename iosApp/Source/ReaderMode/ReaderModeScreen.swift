@@ -67,6 +67,23 @@ struct ReaderModeScreen: View {
                         )
 
                         Button {
+                            let archiveUrlString = getArchiveISUrl(articleUrl: feedItemUrlInfo.url)
+                            if browserSelector.openInAppBrowser() {
+                                appState.navigate(
+                                    route: CommonViewRoute.inAppBrowser(url: URL(string: archiveUrlString)!)
+                                )
+                            } else {
+                                openURL(
+                                    browserSelector.getUrlForDefaultBrowser(
+                                        stringUrl: URL(string: archiveUrlString)!.absoluteString))
+                            }
+
+
+                        } label: {
+                            Image(systemName: "hammer.fill")
+                        }
+
+                        Button {
                             if browserSelector.openInAppBrowser() {
                                 appState.navigate(
                                     route: CommonViewRoute.inAppBrowser(url: URL(string: feedItemUrlInfo.url)!)
@@ -78,18 +95,6 @@ struct ReaderModeScreen: View {
                             }
                         } label: {
                             Image(systemName: "globe")
-                        }
-
-                        Button {
-                            let archiveUrlString = vmStoreOwner.instance.getArchiveUrl(articleUrl: feedItemUrlInfo.url)
-                            if let archiveUrl = URL(string: archiveUrlString) {
-                                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: archiveUrl.absoluteString))
-                            } else {
-                                print("Error: Could not create archive URL from string: \(archiveUrlString)")
-                            }
-                        } label: {
-                            Image(systemName: "archivebox.fill")
-                                .accessibilityLabel("Open in archive.is")
                         }
 
                         fontSizeMenu

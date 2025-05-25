@@ -12,7 +12,7 @@ kotlin {
                 implementation(libs.immutable.collections)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.touchlab.kermit)
-                implementation(libs.kotlinx.datetime)
+                implementation(libs.kotlinx.date.time)
             }
         }
     }

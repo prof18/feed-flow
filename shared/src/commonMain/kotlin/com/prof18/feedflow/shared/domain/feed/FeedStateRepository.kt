@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.repo.BlockedWordRepository
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
@@ -20,11 +21,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedStateRepository(
@@ -32,7 +37,20 @@ internal class FeedStateRepository(
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
     private val dateFormatter: DateFormatter,
+    private val blockedWordRepository: BlockedWordRepository,
+    private val coroutineScope: CoroutineScope,
 ) {
+    init {
+        coroutineScope.launch {
+            blockedWordRepository.getBlockedWords().distinctUntilChanged().collect {
+                // Blocked words changed, reload feeds.
+                // getFeeds() will fetch the first page and update mutableFeedState.
+                // UI observing feedState will get the new list.
+                getFeeds()
+            }
+        }
+    }
+
     private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
     val errorState = errorMutableState.asSharedFlow()
 

@@ -226,4 +226,12 @@
     <string name="settings_feed_order_newest_first">Newest First</string>
     <string name="settings_feed_order_oldest_first">Oldest First</string>
     <string name="reader_mode_archive_button_content_description">Open in archive.is</string>
+
+    <!-- Blocked Words Feature -->
+    <string name="blocked_words_title">Blocked Words</string>
+    <string name="blocked_words_add_button">Add</string>
+    <string name="blocked_words_input_placeholder">Enter word to block</string>
+    <string name="blocked_words_empty_list">No words are currently blocked.</string>
+    <string name="blocked_words_delete_content_description">Delete %1$s</string>
+    <string name="common_back_cd">Back</string>
 </resources>

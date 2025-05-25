@@ -17,7 +17,9 @@ import androidx.compose.material.icons.automirrored.filled.Feed
 import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.automirrored.outlined.Sort
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Construction
+import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.DeleteSweep
@@ -25,6 +27,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Report
+import androidx.compose.material.icons.outlined.Settings // Placeholder if Block is not found
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
@@ -87,6 +90,7 @@ fun SettingsScreen(
     navigateToImportExport: () -> Unit,
     navigateToAccounts: () -> Unit,
     navigateToNotifications: () -> Unit,
+    navigateToBlockedWords: () -> Unit,
 ) {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val feedDownloadWorkerEnqueuer = koinInject<FeedDownloadWorkerEnqueuer>()
@@ -203,6 +207,7 @@ private fun SettingsScreenContent(
     onDateFormatSelected: (DateFormat) -> Unit,
     navigateToNotifications: () -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
+    navigateToBlockedWords: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -251,6 +256,14 @@ private fun SettingsScreenContent(
                     title = LocalFeedFlowStrings.current.settingsAccounts,
                     icon = Icons.Outlined.Sync,
                     onClick = navigateToAccounts,
+                )
+            }
+
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.blockedWordsTitle,
+                    icon = Icons.Outlined.Block,
+                    onClick = navigateToBlockedWords,
                 )
             }
 
@@ -812,6 +825,7 @@ private fun SettingsScreenPreview() {
             navigateToNotifications = {},
             setExperimentalParsing = {},
             onFeedOrderSelected = {},
+            navigateToBlockedWords = {},
         )
     }
 }

@@ -50,6 +50,7 @@ import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
+import com.prof18.feedflow.desktop.ui.settings.blockedwords.BlockedWordsScreen // Import BlockedWordsScreen
 import com.prof18.feedflow.desktop.utils.disableSentry
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -349,6 +350,30 @@ fun main() = application {
 
                         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
 
+                        var blockedWordsDialogVisibility by remember { mutableStateOf(false) }
+                        val blockedWordsDialogState = rememberDialogState(
+                            size = DpSize(600.dp, 400.dp), // Adjust size as needed
+                        )
+                        DialogWindow(
+                            state = blockedWordsDialogState,
+                            title = "Blocked Words", // TODO: Use LocalFeedFlowStrings
+                            visible = blockedWordsDialogVisibility,
+                            onCloseRequest = {
+                                blockedWordsDialogVisibility = false
+                            },
+                            icon = painterResource(Res.drawable.icon), // Optional: use app icon or specific
+                        ) {
+                            // Provide a theme if not inherited, though DialogWindow usually inherits from parent
+                            FeedFlowTheme { // Assuming FeedFlowTheme is available and appropriate
+                                BlockedWordsScreen(
+                                    onBackClick = {
+                                        blockedWordsDialogVisibility = false
+                                    }
+                                    // ViewModel will be injected by koinInject in BlockedWordsScreen
+                                )
+                            }
+                        }
+
                         Navigator(
                             MainScreen(
                                 frameWindowScope = this,
@@ -414,6 +439,10 @@ fun main() = application {
                                 },
                                 onFeedFontScaleClick = {
                                     feedListFontDialogState = true
+                                },
+                                // Add the new callback for the menu bar
+                                onBlockedWordsClick = {
+                                    blockedWordsDialogVisibility = true
                                 },
                                 onAutoDeletePeriodSelected = { period ->
                                     settingsViewModel.updateAutoDeletePeriod(period)

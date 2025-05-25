@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/abseil-cpp-binary.git",
       "state" : {
-        "revision" : "194a6706acbd25e4ef639bcaddea16e8758a3e27",
-        "version" : "1.2024011602.0"
+        "revision" : "bbe8b69694d7873315fd3a4ad41efe043e1c07c5",
+        "version" : "1.2024072200.0"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
-        "revision" : "2e02253fd1ce99145bcbf1bb367ccf61bd0ca46b",
-        "version" : "11.6.0"
+        "revision" : "3663b1aa6c7a1bed67ee80fd09dc6d0f9c3bb660",
+        "version" : "11.13.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "4f234bcbdae841d7015258fbbf8e7743a39b8200",
-        "version" : "11.4.0"
+        "revision" : "543071966b3fb6613a2fc5c6e7112d1e998184a7",
+        "version" : "11.13.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleUtilities.git",
       "state" : {
-        "revision" : "66dd81c729364b0425d0c2b73e38a489f32b1717",
-        "version" : "8.0.1"
+        "revision" : "60da361632d0de02786f709bdc0c4df340f7613e",
+        "version" : "8.1.0"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/grpc-binary.git",
       "state" : {
-        "revision" : "f56d8fc3162de9a498377c7b6cea43431f4f5083",
-        "version" : "1.65.1"
+        "revision" : "cc0001a0cf963aa40501d9c2b181e7fc9fd8ec71",
+        "version" : "1.69.0"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/interop-ios-for-google-sdks.git",
       "state" : {
-        "revision" : "2d12673670417654f08f5f90fdd62926dc3a2648",
-        "version" : "100.0.0"
+        "revision" : "040d087ac2267d2ddd4cca36c757d1c6a05fdbfe",
+        "version" : "101.0.0"
       }
     },
     {
@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scinfu/SwiftSoup",
       "state" : {
-        "revision" : "3c2c7e1e72b8abd96eafbae80323c5c1e5317437",
-        "version" : "2.7.5"
+        "revision" : "bba848db50462894e7fc0891d018dfecad4ef11e",
+        "version" : "2.8.7"
       }
     },
     {

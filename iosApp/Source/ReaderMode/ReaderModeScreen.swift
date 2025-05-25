@@ -80,6 +80,18 @@ struct ReaderModeScreen: View {
                             Image(systemName: "globe")
                         }
 
+                        Button {
+                            let archiveUrlString = vmStoreOwner.instance.getArchiveUrl(articleUrl: feedItemUrlInfo.url)
+                            if let archiveUrl = URL(string: archiveUrlString) {
+                                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: archiveUrl.absoluteString))
+                            } else {
+                                print("Error: Could not create archive URL from string: \(archiveUrlString)")
+                            }
+                        } label: {
+                            Image(systemName: "archivebox.fill")
+                                .accessibilityLabel("Open in archive.is")
+                        }
+
                         fontSizeMenu
                     }
                 )

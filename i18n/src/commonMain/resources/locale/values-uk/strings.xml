@@ -222,4 +222,7 @@
     <string name="date_format_normal">День/Місяць</string>
     <string name="settings_experimental_parsing">Використовуйте експериментальний механізм для режиму читання</string>
     <string name="enable_notifications_for_feed">Увімкнути сповіщення про нові статті</string>
+    <string name="settings_feed_order_title">Сортувати за датою</string>
+    <string name="settings_feed_order_newest_first">Спочатку новіші</string>
+    <string name="settings_feed_order_oldest_first">Спочатку найстаріші</string>
 </resources>

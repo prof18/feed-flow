@@ -33,6 +33,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
     onFeedFontScaleClick: () -> Unit,
+    onBlockedWordsClick: () -> Unit, // New callback parameter
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     setCrashReportingEnabled: (Boolean) -> Unit,
 ) {
@@ -112,6 +113,11 @@ fun FrameWindowScope.FeedFlowMenuBar(
         }
 
         Menu(LocalFeedFlowStrings.current.settingsBehaviourTitle, mnemonic = 'B') {
+            Item(
+                text = LocalFeedFlowStrings.current.blockedWordsTitle, 
+                onClick = onBlockedWordsClick, 
+            )
+            // Separator() // Optional: if you want a separator before other items
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.settingsReaderMode,
                 checked = settingsState.isReaderModeEnabled,

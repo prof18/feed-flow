@@ -189,6 +189,13 @@ private struct FeedSection: View {
             } label: {
                 Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
             }
+
+            // Add NavigationLink for Blocked Words
+            // TODO: Get proper string for "Blocked Words" from LocalFeedFlowStrings if available, or add it.
+            // TODO: Choose an appropriate systemImage for "Blocked Words". "nosign" or "hand.raised.slash" or "shield.lefthalf.filled"
+            NavigationLink(destination: BlockedWordsView()) {
+                Label("Blocked Words", systemImage: "nosign") // Placeholder string and icon
+            }
         }
     }
 }

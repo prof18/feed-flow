@@ -6,6 +6,9 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.repo.BlockedWordRepository
+import com.prof18.feedflow.core.repo.BlockedWordRepositoryImpl
+// Blocked Word Use Cases are removed
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
@@ -127,6 +130,20 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     single<DateFormatter> {
         DateFormatterImpl(
             logger = getWith("DateFormatter"),
+        )
+    }
+
+    factoryOf(::BlockedWordRepositoryImpl) bind BlockedWordRepository::class
+
+    // Removed Use Case definitions:
+    // factory { GetBlockedWordsUseCase(get()) }
+    // factory { InsertBlockedWordUseCase(get()) }
+    // factory { DeleteBlockedWordUseCase(get()) }
+
+    viewModel {
+        BlockedWordsViewModel(
+            blockedWordRepository = get(), // Corrected: inject BlockedWordRepository
+            dispatcherProvider = get(),
         )
     }
 
@@ -350,6 +367,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             settingsRepository = get(),
             dateFormatter = get(),
             logger = getWith("FeedStateRepository"),
+            blockedWordRepository = get(), // Corrected: inject BlockedWordRepository
+            coroutineScope = get() // Assuming CoroutineScope is provided elsewhere or added for FeedStateRepository
         )
     }
 

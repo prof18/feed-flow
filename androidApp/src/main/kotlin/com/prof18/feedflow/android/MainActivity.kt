@@ -49,6 +49,7 @@ import com.prof18.feedflow.android.search.SearchScreen
 import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.about.AboutScreen
 import com.prof18.feedflow.android.settings.about.LicensesScreen
+import com.prof18.feedflow.android.settings.blockedwords.BlockedWordsScreen // Import BlockedWordsScreen
 import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
 import com.prof18.feedflow.android.settings.notifications.NotificationsSettingsScreen
 import com.prof18.feedflow.core.model.FeedItemId
@@ -229,6 +230,9 @@ class MainActivity : ComponentActivity() {
                     navigateToNotifications = {
                         navController.navigate(Notifications)
                     },
+                    navigateToBlockedWords = { // Add this lambda
+                        navController.navigate(BlockedWordsScreenRoute)
+                    },
                 )
             }
 
@@ -378,6 +382,14 @@ class MainActivity : ComponentActivity() {
                     navigateBack = {
                         navController.popBackStack()
                     },
+                )
+            }
+
+            composable<BlockedWordsScreenRoute> { // Add new destination
+                BlockedWordsScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
                 )
             }
         }

@@ -20,7 +20,7 @@ firebase-bom = "33.14.0"
 flexmarkHtml2mdConverter = "0.64.8"
 glance = "1.1.1"
 google-services = "4.4.2"
-immutable-collections = "0.3.8"
+immutable-collections = "0.4.0"
 io-coil = "3.1.0"
 jsoup = "1.20.1"
 # When updating, check the version of jna in the following link:

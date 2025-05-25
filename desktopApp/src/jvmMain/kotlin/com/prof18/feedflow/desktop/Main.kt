@@ -79,7 +79,7 @@ import java.awt.event.WindowFocusListener
 import java.io.File
 import java.io.InputStream
 import java.net.URI
-import java.util.*
+import java.util.Properties
 import javax.swing.UIManager
 
 @Suppress("UnsafeDynamicallyLoadedCode")
@@ -291,6 +291,7 @@ fun main() = application {
                                         isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
                                         isHideImagesEnabled = settingsState.isHideImagesEnabled,
                                         dateFormat = settingsState.dateFormat,
+                                        feedItemType = settingsState.feedItemType,
                                     )
 
                                     Spacer(modifier = Modifier.padding(top = Spacing.regular))

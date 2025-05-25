@@ -19,11 +19,12 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
-import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.home.components.HomeScreenContent
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
@@ -43,6 +44,7 @@ internal fun ExpandedView(
     loadingState: FeedUpdateStatus,
     feedItems: ImmutableList<FeedItem>,
     feedFontSizes: FeedFontSizes,
+    feedItemType: FeedItemType,
     lazyListState: LazyListState,
     unReadCount: Long,
     swipeActions: SwipeActions,
@@ -100,6 +102,7 @@ internal fun ExpandedView(
             feedState = feedItems,
             listState = lazyListState,
             feedFontSizes = feedFontSizes,
+            feedItemType = feedItemType,
             unReadCount = unReadCount,
             currentFeedFilter = currentFeedFilter,
             swipeActions = swipeActions,
@@ -134,6 +137,7 @@ private fun ExpandedViewPreview() {
     FeedFlowTheme {
         ExpandedView(
             feedItems = feedItemsForPreview,
+            feedItemType = FeedItemType.LIST_TILE,
             navDrawerState = navDrawerState,
             unReadCount = 42,
             currentFeedFilter = FeedFilter.Timeline,

@@ -21,12 +21,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -122,7 +122,7 @@ internal fun FeedSourcesWithCategoryList(
                     )
 
                     Icon(
-                        imageVector = Icons.Rounded.KeyboardArrowRight,
+                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                         contentDescription = null,
                         modifier = Modifier.rotate(degrees),
                     )
@@ -187,10 +187,10 @@ private fun FeedSourcesList(
             )
 
             if (index < feedSources.size - 1) {
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier,
                     thickness = 0.2.dp,
-                    color = Color.Gray,
+                    color = Color.Gray
                 )
             }
         }
@@ -380,7 +380,7 @@ internal fun FeedSourceNavBar(
                 },
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = null,
                 )
             }

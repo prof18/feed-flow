@@ -19,7 +19,6 @@ import com.prof18.feedflow.android.home.bywindowsize.ExpandedHomeView
 import com.prof18.feedflow.android.home.bywindowsize.MediumHomeView
 import com.prof18.feedflow.android.home.components.NoFeedsBottomSheet
 import com.prof18.feedflow.core.model.FeedFilter
-import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource

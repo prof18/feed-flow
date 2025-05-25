@@ -21,6 +21,6 @@ data class SettingsState(
     val leftSwipeActionType: SwipeActionType = SwipeActionType.NONE,
     val rightSwipeActionType: SwipeActionType = SwipeActionType.NONE,
     val dateFormat: DateFormat = DateFormat.NORMAL,
-    val feedItemType: FeedItemType = FeedItemType.LIST_TILE
     val feedOrder: FeedOrder = FeedOrder.NEWEST_FIRST,
+    val feedItemType: FeedItemType = FeedItemType.LIST_TILE,
 )

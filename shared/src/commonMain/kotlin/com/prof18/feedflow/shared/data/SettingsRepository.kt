@@ -2,8 +2,8 @@ package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
-import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedItemType
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -113,7 +113,7 @@ class SettingsRepository(
 
     fun getFeedListFontScaleFactor(): Int = settings.getInt(
         SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name,
-        DEFAULT_FEED_LIST_FONT_SCALE_FACTOR
+        DEFAULT_FEED_LIST_FONT_SCALE_FACTOR,
     )
 
     fun setFeedListFontScaleFactor(value: Int) =
@@ -233,7 +233,6 @@ class SettingsRepository(
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
     }
-
 }
 
 internal enum class SettingsFields {

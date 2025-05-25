@@ -369,10 +369,6 @@ fun FeedItemCard(
                 )
                 .padding(horizontal = Spacing.regular)
                 .padding(vertical = Spacing.regular)
-                .tagForTesting(
-                    tag = "${TestingTag.FEED_ITEM}_$index",
-                    mergeDescendants = true,
-                ),
         ) {
             FeedSourceAndUnreadDotRow(
                 feedItem = feedItem,

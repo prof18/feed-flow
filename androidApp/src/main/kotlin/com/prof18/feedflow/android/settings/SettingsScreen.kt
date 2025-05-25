@@ -53,8 +53,8 @@ import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
-import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedItemType
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.utils.AppConfig
@@ -175,7 +175,7 @@ fun SettingsScreen(
         },
         setFeedItem = { feedItemType ->
             settingsViewModel.updateFeedItemType(feedItemType)
-        }
+        },
     )
 }
 
@@ -355,7 +355,6 @@ private fun SettingsScreenContent(
             }
 
             item {
-
                 HideDescriptionSwitch(
                     isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
                     setHideDescription = setHideDescription,

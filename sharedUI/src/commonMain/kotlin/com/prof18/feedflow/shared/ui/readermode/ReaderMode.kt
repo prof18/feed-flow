@@ -9,9 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,9 +34,6 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun ReaderModeContent(
@@ -149,25 +147,23 @@ private fun ReaderModeToolbar(
 
                     IconButton(
                         onClick = {
-                            if (readerModeState is ReaderModeState.Success) {
-                                onArchiveClick(readerModeState.readerModeData.url)
-                            }
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Archive,
-                            contentDescription = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
-                        )
-                    }
-
-                    IconButton(
-                        onClick = {
                             onShareClick(readerModeState.readerModeData.url)
                         },
                     ) {
                         Icon(
                             imageVector = Icons.Default.Share,
                             contentDescription = null,
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            onArchiveClick(readerModeState.readerModeData.url)
+                        },
+                    ) {
+                        Icon(
+                            imageVector = hammerIcon,
+                            contentDescription = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
                         )
                     }
 

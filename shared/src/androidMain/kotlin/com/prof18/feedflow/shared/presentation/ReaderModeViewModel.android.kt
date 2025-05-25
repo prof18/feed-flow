@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
-import com.prof18.feedflow.core.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
@@ -55,9 +54,5 @@ class ReaderModeViewModel internal constructor(
         viewModelScope.launch {
             feedActionsRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
-    }
-
-    fun getArchiveUrl(articleUrl: String): String {
-        return getArchiveISUrl(articleUrl)
     }
 }

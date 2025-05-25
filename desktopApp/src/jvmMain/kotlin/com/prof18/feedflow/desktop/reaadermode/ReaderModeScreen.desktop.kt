@@ -35,6 +35,7 @@ import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.readermode.ReaderModeContent
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import kotlinx.coroutines.launch
 
 internal data class ReaderModeScreen(
@@ -82,7 +83,7 @@ internal data class ReaderModeScreen(
                 readerModeViewModel.updateFontSize(it)
             },
             onArchiveClick = { articleUrl ->
-                val archiveUrl = readerModeViewModel.getArchiveUrl(articleUrl)
+                val archiveUrl = getArchiveISUrl(articleUrl)
                 uriHandler.openUri(archiveUrl)
             },
             readerModeSuccessView = { contentPadding, successState ->

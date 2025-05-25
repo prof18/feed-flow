@@ -225,4 +225,7 @@
     <string name="settings_feed_item_type_list">List item</string>
     <string name="settings_feed_item_type_card">Card</string>
     <string name="feed_type_title">Feed Type</string>
+    <string name="settings_feed_order_title">Sort by Date</string>
+    <string name="settings_feed_order_newest_first">Newest First</string>
+    <string name="settings_feed_order_oldest_first">Oldest First</string>
 </resources>

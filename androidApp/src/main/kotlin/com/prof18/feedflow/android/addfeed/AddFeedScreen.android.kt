@@ -18,14 +18,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
 import com.prof18.feedflow.shared.ui.feed.addfeed.AddFeedContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -124,8 +122,6 @@ fun AddFeedScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        modifier = Modifier
-                            .tagForTesting(TestingTag.BACK_BUTTON),
                         onClick = {
                             navigateBack()
                         },

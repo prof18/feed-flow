@@ -14,6 +14,11 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+apply(from = "../versioning.gradle.kts")
+
+val appVersionCode: () -> Int by extra
+val appVersionName: () -> String by extra
+
 val local = Properties()
 val localProperties: File = rootProject.file("keystore.properties")
 if (localProperties.exists()) {
@@ -32,8 +37,8 @@ android {
         applicationId = "com.prof18.feedflow"
         minSdk = libs.versions.android.min.sdk.get().toInt()
         targetSdk = libs.versions.android.target.sdk.get().toInt()
-        versionCode = getVersionCode()
-        versionName = getVersionName()
+        versionCode = appVersionCode()
+        versionName = appVersionName()
 
         addManifestPlaceholders(
             mapOf(
@@ -161,19 +166,6 @@ play {
     serviceAccountCredentials.set(file("../play_config.json"))
     track.set("internal")
 }
-
-fun getVersionCode(): Int =
-    providers.exec {
-        commandLine("git", "rev-list", "HEAD", "--first-parent", "--count")
-    }.standardOutput.asText.get().trim().toInt()
-
-fun getVersionName(): String =
-    providers.exec {
-        commandLine("git", "describe", "--tags", "--abbrev=0", "--match", "*-android")
-    }.standardOutput
-        .asText.get()
-        .trim()
-        .replace("-android", "")
 
 android.applicationVariants.configureEach {
     val name = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }

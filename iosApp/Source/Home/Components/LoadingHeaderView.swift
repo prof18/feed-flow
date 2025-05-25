@@ -14,11 +14,9 @@ struct LoadingHeaderView: View {
 
                     Text(feedFlowStrings.loadingFeedMessage(feedRefreshCounter))
                         .font(.body)
-                        .accessibilityIdentifier(TestingTag.shared.LOADING_BAR)
                 } else {
                     Text(feedFlowStrings.loadingFeedMessage("..."))
                         .font(.body)
-                        .accessibilityIdentifier(TestingTag.shared.LOADING_BAR)
                 }
             }
         }

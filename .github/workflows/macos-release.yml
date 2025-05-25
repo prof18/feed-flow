@@ -1,0 +1,108 @@
+name: macOS Release
+
+on:
+  workflow_call:
+    secrets:
+      GRADLE_CACHE_ENCRYPTION_KEY:
+        required: true
+      DROPBOX_API_KEY:
+        required: true
+      SENTRY_DNS:
+        required: true
+      SIGNING_CERTIFICATE_P12_DATA_MACOS:
+        required: true
+      SIGNING_CERTIFICATE_PASSWORD_MACOS:
+        required: true
+      APPLE_ID_NOTARIZATION:
+        required: true
+      NOTARIZATION_PWD:
+        required: true
+      APPSTORE_TEAM_ID:
+        required: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    outputs:
+      release_path: ${{ steps.path_variables.outputs.release_path }}
+      artifact_name: ${{ steps.path_variables.outputs.artifact_name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+
+      # Developer ID Application
+      - name: Import signing certificate
+        uses: apple-actions/import-codesign-certs@v5
+        with:
+          p12-file-base64: ${{ secrets.SIGNING_CERTIFICATE_P12_DATA_MACOS }}
+          p12-password: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD_MACOS }}
+
+      - name: Read version from properties
+        id: version
+        run: |
+          MAJOR=$(grep "MAJOR=" version.properties | cut -d'=' -f2)
+          MINOR=$(grep "MINOR=" version.properties | cut -d'=' -f2)
+          PATCH=$(grep "PATCH=" version.properties | cut -d'=' -f2)
+          VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Update Licenses file
+        run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+
+      - name: Create path variables
+        id: path_variables
+        run: |
+          name="FeedFlow-${VERSION}.dmg"
+          path="desktopApp/build/release/main-release/dmg/${name}"
+          echo "release_path=$path" >> $GITHUB_OUTPUT
+          echo "artifact_name=$name" >> $GITHUB_OUTPUT
+          echo "RELEASE_PATH=$path" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=$name" >> $GITHUB_ENV
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Create Properties file
+        run: |
+          echo "is_release=true" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "sentry_dns=$SENTRY_DNS" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "version=$VERSION" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "dropbox_key=$DROPBOX_API_KEY" >> desktopApp/src/jvmMain/resources/props.properties
+        env:
+          SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+          VERSION: ${{ steps.version.outputs.version }}
+          DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+
+      - name: Create DMG
+        run: ./gradlew packageReleaseDmg
+
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            **/build/compose/logs/*  
+
+      - name: Notarization
+        run: |
+          xcrun notarytool submit $RELEASE_PATH --apple-id $APPLE_ID_NOTARIZATION --password $NOTARIZATION_PWD --team-id $APPSTORE_TEAM_ID --wait
+          xcrun stapler staple $RELEASE_PATH
+        env:
+          APPLE_ID_NOTARIZATION: ${{ secrets.APPLE_ID_NOTARIZATION }}
+          APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
+          NOTARIZATION_PWD: ${{ secrets.NOTARIZATION_PWD }}
+          RELEASE_PATH: ${{ env.RELEASE_PATH }}
+
+      - name: Upload asset
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ env.RELEASE_PATH }}
+          name: ${{ env.ARTIFACT_NAME }}
+          retention-days: 7 

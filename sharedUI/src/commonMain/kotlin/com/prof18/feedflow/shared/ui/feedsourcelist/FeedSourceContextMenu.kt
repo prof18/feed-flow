@@ -4,12 +4,9 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 internal fun FeedSourceContextMenu(
@@ -65,8 +62,6 @@ internal fun FeedSourceContextMenu(
         }
 
         DropdownMenuItem(
-            modifier = Modifier
-                .tagForTesting(TestingTag.FEED_SOURCE_DELETE_BUTTON),
             text = {
                 Text(LocalFeedFlowStrings.current.deleteFeed)
             },

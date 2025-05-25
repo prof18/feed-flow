@@ -26,10 +26,8 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 internal fun HomeAppBar(
@@ -91,8 +89,6 @@ internal fun HomeAppBar(
             }
 
             IconButton(
-                modifier = Modifier
-                    .tagForTesting(TestingTag.SETTING_BUTTON),
                 onClick = {
                     showMenu = !showMenu
                 },
@@ -129,8 +125,7 @@ internal fun HomeAppBar(
                     onDoubleTap = { onDoubleClick() },
                     onTap = { onClick() },
                 )
-            }
-            .tagForTesting(TestingTag.HOME_TOOLBAR),
+            },
     )
 }
 
@@ -147,8 +142,6 @@ private fun FeedFilter.getTitle(): String =
 @Composable
 private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
     IconButton(
-        modifier = Modifier
-            .tagForTesting(TestingTag.DRAWER_MENU_BUTTON),
         onClick = {
             onDrawerMenuClick()
         },

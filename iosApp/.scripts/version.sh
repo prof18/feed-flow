@@ -1,9 +1,29 @@
 #!/bin/sh -euo pipefail
+VERSION_PROPERTIES_FILE="${SRCROOT}/../version.properties"
 
-tag=$(git describe --tags --abbrev=0 --match *-ios)
-VERSION_NAME=$(echo "$tag" | sed 's/-ios//')
+if [ ! -f "$VERSION_PROPERTIES_FILE" ]; then
+    echo "Error: version.properties not found at $VERSION_PROPERTIES_FILE. SRCROOT is $SRCROOT"
+    exit 1
+fi
 
-VERSION_CODE=$(git rev-list HEAD --first-parent --count)
+MAJOR=$(grep '^MAJOR=' "$VERSION_PROPERTIES_FILE" | cut -d'=' -f2)
+MINOR=$(grep '^MINOR=' "$VERSION_PROPERTIES_FILE" | cut -d'=' -f2)
+PATCH=$(grep '^PATCH=' "$VERSION_PROPERTIES_FILE" | cut -d'=' -f2)
+
+if [ -z "$MAJOR" ] || [ -z "$MINOR" ] || [ -z "$PATCH" ]; then
+    echo "Error: Could not read MAJOR, MINOR, or PATCH from $VERSION_PROPERTIES_FILE"
+    exit 1
+fi
+
+VERSION_NAME="${MAJOR}.${MINOR}.${PATCH}"
+VERSION_CODE=""
+if [ -n "${GITHUB_RUN_NUMBER:-}" ]; then
+    # CI/Pre-release/Prod/Hotfix build number
+    VERSION_CODE=$((GITHUB_RUN_NUMBER + 5000))
+else
+    # Local build code
+    VERSION_CODE="1"
+fi
 
 # Prepare directory / file where the generated value will be written.
 mkdir -p "${SRCROOT}"/Plist

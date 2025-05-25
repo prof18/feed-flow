@@ -28,11 +28,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.ParsedFeedSource
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -146,8 +144,6 @@ private fun ImportExportIdleView(
 
         item {
             SettingItem(
-                modifier = Modifier
-                    .tagForTesting(TestingTag.IMPORT_FEED_OPML_BUTTON),
                 title = LocalFeedFlowStrings.current.importFeedButton,
                 icon = Icons.Default.FileDownload,
                 onClick = onImportClick,
@@ -262,15 +258,12 @@ private fun ImportDoneView(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    modifier = Modifier
-                        .tagForTesting(TestingTag.IMPORT_DONE_MESSAGE),
                     text = LocalFeedFlowStrings.current.feedsImportDoneMessage,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Button(
                     modifier = Modifier
-                        .padding(top = Spacing.regular)
-                        .tagForTesting(TestingTag.IMPORT_DONE_BUTTON),
+                        .padding(top = Spacing.regular),
                     onClick = onDoneClick,
                 ) {
                     Text(LocalFeedFlowStrings.current.doneButton)

@@ -40,7 +40,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
@@ -48,7 +47,6 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.NotificationSettingState
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
@@ -124,8 +122,6 @@ private fun NotificationSettingsScreenContent(
                 },
                 navigationIcon = {
                     IconButton(
-                        modifier = Modifier
-                            .testTag(TestingTag.BACK_BUTTON_FEED_SETTINGS),
                         onClick = onNavigateBack,
                     ) {
                         Icon(

@@ -20,14 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.core.model.FeedSourceSettings
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
 import com.prof18.feedflow.shared.ui.feed.editfeed.EditFeedContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 
 @Composable
 internal fun EditScreen(
@@ -136,8 +134,6 @@ internal fun EditScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        modifier = Modifier
-                            .tagForTesting(TestingTag.BACK_BUTTON),
                         onClick = {
                             navigateBack()
                         },

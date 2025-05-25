@@ -1,9 +1,26 @@
-name: Android Alpha Release
+name: Android Release
 
 on:
-  push:
-    tags:
-      - '*-android'
+  workflow_call:
+    secrets:
+      GRADLE_CACHE_ENCRYPTION_KEY:
+        required: true
+      KEYSTORE_FILE:
+        required: true
+      KEYSTORE_PASSPHRASE:
+        required: true
+      KEYSTORE_KEY_ALIAS:
+        required: true
+      KEYSTORE_KEY_PASSWORD:
+        required: true
+      KEYSTORE_STORE_PASSWORD:
+        required: true
+      DROPBOX_API_KEY:
+        required: true
+      FIREBASE_JSON:
+        required: true
+      PLAY_CONFIG:
+        required: true
 
 jobs:
   deploy:
@@ -11,8 +28,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle

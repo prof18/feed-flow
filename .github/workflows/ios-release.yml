@@ -1,17 +1,36 @@
-name: iOS TestFlight Release
+name: iOS Release
+
 on:
-  push:
-    tags:
-      - '*-ios'
+  workflow_call:
+    secrets:
+      GRADLE_CACHE_ENCRYPTION_KEY:
+        required: true
+      DROPBOX_API_KEY:
+        required: true
+      FIREBASE_PLIST:
+        required: true
+      CERTIFICATES_P12:
+        required: true
+      CERTIFICATES_PASSWORD:
+        required: true
+      BUNDLE_ID:
+        required: true
+      APPSTORE_ISSUER_ID:
+        required: true
+      APPSTORE_KEY_ID:
+        required: true
+      APPSTORE_PRIVATE_KEY:
+        required: true
+      APPSTORE_TEAM_ID:
+        required: true
 
 jobs:
   deploy:
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 30
+
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Xcode version
         run: |
@@ -147,4 +166,4 @@ jobs:
           app-path: ${{ env.ipa_path }}
           issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
-          api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+          api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }} 

@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemType
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -46,9 +47,11 @@ class SettingsViewModel internal constructor(
                 val leftSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.LEFT)
                 val rightSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.RIGHT)
                 val dateFormat = settingsRepository.getDateFormat()
+                val feedOrder = settingsRepository.getFeedOrder()
                 val feedItemType = settingsRepository.getFeedItemType()
                 settingsMutableState.update {
                     SettingsState(
+                        feedOrder = feedOrder,
                         isMarkReadWhenScrollingEnabled = isMarkReadEnabled,
                         isShowReadItemsEnabled = isShowReadItemsEnabled,
                         isReaderModeEnabled = isReaderModeEnabled,
@@ -190,6 +193,16 @@ class SettingsViewModel internal constructor(
             settingsRepository.setDateFormat(format)
             settingsMutableState.update {
                 it.copy(dateFormat = format)
+            }
+            feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateFeedOrder(feedOrder: FeedOrder) {
+        viewModelScope.launch {
+            settingsRepository.setFeedOrder(feedOrder)
+            settingsMutableState.update {
+                it.copy(feedOrder = feedOrder)
             }
             feedStateRepository.getFeeds()
         }

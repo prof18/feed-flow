@@ -9,12 +9,10 @@ on:
 
 jobs:
   checks:
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
@@ -53,11 +51,11 @@ jobs:
     needs: [ checks ]
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
       - name: Create dummy Firebase json
         run: |
@@ -73,23 +71,21 @@ jobs:
     needs: [ checks ]
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
       - name: Build Desktop App
         run: ./gradlew :desktopApp:packageDistributionForCurrentOS
 
   build-ios-app:
     name: Build iOS App
-    runs-on: macos-14
+    runs-on: macos-latest
     needs: [ checks ]
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Xcode version
         run: |
@@ -105,6 +101,8 @@ jobs:
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
       - name: Create Dummy Firebase Plist
         run: |

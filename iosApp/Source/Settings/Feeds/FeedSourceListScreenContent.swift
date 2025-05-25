@@ -55,7 +55,6 @@ struct FeedSourceListScreenContent: View {
 
             Text(feedFlowStrings.noFeedsFoundMessage)
                 .font(.body)
-                .accessibilityIdentifier(TestingTag.shared.NO_FEED_SOURCE_MESSAGE)
 
             NavigationLink(destination: AddFeedScreen()) {
                 Text(feedFlowStrings.addFeed)
@@ -119,7 +118,6 @@ struct FeedSourceListScreenContent: View {
                         trailing: Spacing.regular
                     )
                 )
-                .accessibilityIdentifier(TestingTag.shared.FEED_SOURCE_SELECTOR)
             }
         }
     }
@@ -229,7 +227,6 @@ private struct FeedSourceListItem: View {
                 } label: {
                     Label(feedFlowStrings.deleteFeed, systemImage: "trash")
                 }
-                .accessibilityIdentifier(TestingTag.shared.FEED_SOURCE_DELETE_BUTTON)
 
                 if isOnVisionOSDevice() {
                     Button {

@@ -13,6 +13,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceToNotify
@@ -36,7 +37,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 class DatabaseHelper(
-    sqlDriver: SqlDriver,
+    private val sqlDriver: SqlDriver,
     private val backgroundDispatcher: CoroutineDispatcher,
     private val logger: Logger,
 ) {
@@ -46,6 +47,10 @@ class DatabaseHelper(
             link_opening_preferenceAdapter = EnumColumnAdapter(),
         ),
     )
+
+    fun close() {
+        sqlDriver.close()
+    }
 
     suspend fun getFeedSources(): List<FeedSource> = withContext(backgroundDispatcher) {
         dbRef.feedSourceQueries
@@ -100,9 +105,11 @@ class DatabaseHelper(
         pageSize: Long,
         offset: Long,
         showReadItems: Boolean,
+        sortOrder: FeedOrder,
     ): List<SelectFeeds> = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries
             .selectFeeds(
+                sortOrder = sortOrder.sqlValue,
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isRead = feedFilter.getIsReadFlag(showReadItems),
@@ -119,6 +126,7 @@ class DatabaseHelper(
     ): Flow<List<SelectFeeds>> =
         dbRef.feedItemQueries
             .selectFeeds(
+                sortOrder = "DESC", // Default for widget, or make it configurable if needed
                 feedSourceId = null,
                 feedSourceCategoryId = null,
                 isRead = false,

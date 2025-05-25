@@ -24,7 +24,6 @@ import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
-import com.prof18.feedflow.core.utils.TestingTag
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.presentation.preview.inProgressFeedUpdateStatus
@@ -32,7 +31,6 @@ import com.prof18.feedflow.shared.ui.home.components.FeedList
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.tagForTesting
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -69,8 +67,7 @@ internal fun FeedWithContentView(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = Spacing.regular)
-                    .tagForTesting(TestingTag.LOADING_BAR),
+                    .padding(horizontal = Spacing.regular),
                 text = LocalFeedFlowStrings.current.loadingFeedMessage(feedRefreshCounter),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium,

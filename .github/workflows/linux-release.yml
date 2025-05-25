@@ -1,0 +1,96 @@
+name: Linux Release
+
+on:
+  workflow_call:
+    secrets:
+      GRADLE_CACHE_ENCRYPTION_KEY:
+        required: true
+      DROPBOX_API_KEY:
+        required: true
+      SENTRY_DNS:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    outputs:
+      release_path_deb: ${{ steps.path_variables.outputs.release_path_deb }}
+      release_path_rpm: ${{ steps.path_variables.outputs.release_path_rpm }}
+      deb_name: ${{ steps.path_variables.outputs.deb_name }}
+      rpm_name: ${{ steps.path_variables.outputs.rpm_name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-gradle
+        with:
+          gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+
+      - name: Read version from properties
+        id: version
+        run: |
+          MAJOR=$(grep "MAJOR=" version.properties | cut -d'=' -f2)
+          MINOR=$(grep "MINOR=" version.properties | cut -d'=' -f2)
+          PATCH=$(grep "PATCH=" version.properties | cut -d'=' -f2)
+          VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Update Licenses file
+        run: ./gradlew desktopApp:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/resources/
+
+      - name: Create path variables
+        id: path_variables
+        run: |
+          name_deb="feedflow_${VERSION}_amd64.deb"
+          path_deb="desktopApp/build/release/main-release/deb/${name_deb}"
+          name_rpm="feedflow-${VERSION}-1.x86_64.rpm"
+          path_rpm="desktopApp/build/release/main-release/rpm/${name_rpm}"
+          echo "release_path_deb=$path_deb" >> $GITHUB_OUTPUT
+          echo "release_path_rpm=$path_rpm" >> $GITHUB_OUTPUT
+          echo "deb_name=$name_deb" >> $GITHUB_OUTPUT
+          echo "rpm_name=$name_rpm" >> $GITHUB_OUTPUT
+          echo "RELEASE_PATH_DEB=$path_deb" >> $GITHUB_ENV
+          echo "RELEASE_PATH_RPM=$path_rpm" >> $GITHUB_ENV
+          echo "DEB_NAME=$name_deb" >> $GITHUB_ENV
+          echo "RPM_NAME=$name_rpm" >> $GITHUB_ENV
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Create Properties file
+        run: |
+          echo "is_release=true" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "sentry_dns=$SENTRY_DNS" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "version=$VERSION" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "dropbox_key=$DROPBOX_API_KEY" >> desktopApp/src/jvmMain/resources/props.properties
+        env:
+          SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+          VERSION: ${{ steps.version.outputs.version }}
+          DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+
+      - name: Create RPM & DEB
+        run: ./gradlew packageReleaseDeb packageReleaseRpm
+
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            **/build/compose/logs/*  
+
+      - name: Upload RPM
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ env.RELEASE_PATH_RPM }}
+          name: ${{ env.RPM_NAME }}
+          retention-days: 1
+
+      - name: Upload DEB
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ env.RELEASE_PATH_DEB }}
+          name: ${{ env.DEB_NAME }}
+          retention-days: 1 

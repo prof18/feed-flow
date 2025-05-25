@@ -34,6 +34,7 @@ import androidx.compose.ui.window.rememberDialogState
 import androidx.compose.ui.window.rememberWindowState
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
+import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -46,16 +47,15 @@ import com.prof18.feedflow.desktop.about.AboutContent
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.FeedFlowMenuBar
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
-import com.prof18.feedflow.desktop.macosreview.MacosReviewBridge
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.desktop.utils.disableSentry
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.HomeViewModel
-import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
@@ -162,21 +162,6 @@ fun main() = application {
     val scope = rememberCoroutineScope()
     var showBackupLoader by remember { mutableStateOf(false) }
 
-    val reviewViewModel = desktopViewModel { DI.koin.get<ReviewViewModel>() }
-    if (getDesktopOS().isMacOs() && isSandboxed) {
-        val canShowReview by reviewViewModel.canShowReviewDialog.collectAsState()
-        if (canShowReview) {
-            try {
-                val resourcesDir = System.getProperty("compose.application.resources.dir")
-                val libraryPath = resourcesDir + File.separator + System.mapLibraryName("kreview")
-                System.load(libraryPath)
-                MacosReviewBridge().triggerAppStoreReview()
-            } catch (_: Throwable) {
-                // best effort
-            }
-        }
-    }
-
     FeedFlowTheme {
         val lyricist = rememberFeedFlowStrings()
         val icon = painterResource(Res.drawable.icon)
@@ -185,8 +170,14 @@ fun main() = application {
                 onCloseRequest = {
                     scope.launch {
                         showBackupLoader = true
-                        feedSyncRepo.performBackup()
-                        exitApplication()
+                        try {
+                            feedSyncRepo.performBackup()
+                            DI.koin.get<DatabaseCloser>().close()
+                        } catch (e: Exception) {
+                            DI.koin.get<Logger>().e("Error during cleanup", e)
+                        } finally {
+                            exitApplication()
+                        }
                     }
                 },
                 state = windowState,
@@ -408,6 +399,9 @@ fun main() = application {
                                 },
                                 deleteFeeds = {
                                     homeViewModel.deleteAllFeeds()
+                                },
+                                onFeedOrderSelected = { order ->
+                                    settingsViewModel.updateFeedOrder(order)
                                 },
                                 setMarkReadWhenScrolling = { enabled ->
                                     settingsViewModel.updateMarkReadWhenScrolling(enabled)

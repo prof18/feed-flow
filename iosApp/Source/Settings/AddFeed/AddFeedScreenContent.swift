@@ -52,7 +52,6 @@ struct AddFeedScreenContent: View {
                             .textContentType(.URL)
                             .disableAutocorrection(true)
                             .hoverEffect()
-                            .accessibilityIdentifier(TestingTag.shared.FEED_URL_INPUT)
                     },
                     header: {
                         Text(feedFlowStrings.feedUrl)
@@ -63,8 +62,6 @@ struct AddFeedScreenContent: View {
                                 Text(errorMessage)
                                     .font(.caption)
                                     .foregroundColor(.red)
-                                    .accessibilityIdentifier(
-                                        TestingTag.shared.INVALID_URL_ERROR_MESSAGE)
                             }
                         }
                     }
@@ -81,13 +78,10 @@ struct AddFeedScreenContent: View {
                                 categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader
                             Text(title)
                                 .tag(categoryItem as CategoriesState.CategoryItem?)
-                                .accessibilityIdentifier(
-                                    "\(TestingTag.shared.CATEGORY_RADIO_BUTTON)_\(title)")
                         }
                     }
                     .hoverEffect()
                 }
-                .accessibilityIdentifier(TestingTag.shared.CATEGORY_SELECTOR)
 
                 if !categoryItems.isEmpty {
                     categoriesSection
@@ -136,7 +130,6 @@ struct AddFeedScreenContent: View {
                     } label: {
                         Image(systemName: "xmark.circle")
                     }
-                    .accessibilityIdentifier(TestingTag.shared.BACK_BUTTON)
                 }
             }
 
@@ -177,7 +170,6 @@ struct AddFeedScreenContent: View {
                         newCategory = ""
                     }
                     .hoverEffect()
-                    .accessibilityIdentifier(TestingTag.shared.CATEGORY_TEXT_INPUT)
 
                 Spacer()
 
@@ -190,7 +182,6 @@ struct AddFeedScreenContent: View {
                             .tint(.green)
                     }
                     .hoverEffect()
-                    .accessibilityIdentifier(TestingTag.shared.ADD_CATEGORY_BUTTON)
                 }
             }
         }
@@ -208,7 +199,6 @@ struct AddFeedScreenContent: View {
             }
         }
         .disabled(feedURL.isEmpty)
-        .accessibilityIdentifier(TestingTag.shared.ADD_FEED_BUTTON)
     }
 }
 

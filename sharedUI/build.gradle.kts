@@ -50,6 +50,7 @@ kotlin {
                 implementation(libs.immutable.collections)
                 implementation(libs.saket.swipe)
                 implementation(libs.components.ui.tooling.preview)
+                implementation(libs.kotlinx.datetime)
             }
         }
 

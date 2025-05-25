@@ -46,6 +46,11 @@ internal fun ReaderModeScreen(
     onUpdateFontSize: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     navigateBack: () -> Unit,
+    // It's assumed that the caller will provide the ReaderModeViewModel instance
+    // or a function that can call readerModeViewModel.getArchiveUrl(articleUrl)
+    // For the purpose of this task, we'll inject it, assuming it's available via Koin.
+    // If not, this screen's signature or its caller would need adjustment.
+    readerModeViewModel: ReaderModeViewModel = koinInject(),
 ) {
     val browserManager = koinInject<BrowserManager>()
 
@@ -91,6 +96,10 @@ internal fun ReaderModeScreen(
             )
         },
         onBookmarkClick = onBookmarkClick,
+        onArchiveClick = { articleUrl ->
+            val archiveUrl = readerModeViewModel.getArchiveUrl(articleUrl)
+            browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
+        },
     )
 }
 

@@ -81,6 +81,10 @@ internal data class ReaderModeScreen(
             onFontSizeChange = {
                 readerModeViewModel.updateFontSize(it)
             },
+            onArchiveClick = { articleUrl ->
+                val archiveUrl = readerModeViewModel.getArchiveUrl(articleUrl)
+                uriHandler.openUri(archiveUrl)
+            },
             readerModeSuccessView = { contentPadding, successState ->
                 Column(
                     modifier = Modifier

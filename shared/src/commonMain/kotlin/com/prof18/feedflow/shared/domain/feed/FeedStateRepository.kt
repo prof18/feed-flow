@@ -5,7 +5,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
-import com.prof18.feedflow.core.repo.BlockedWordRepository
+// import com.prof18.feedflow.core.repo.BlockedWordRepository // Removed
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
@@ -37,12 +37,12 @@ internal class FeedStateRepository(
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
     private val dateFormatter: DateFormatter,
-    private val blockedWordRepository: BlockedWordRepository,
+    // private val blockedWordRepository: BlockedWordRepository, // Removed
     private val coroutineScope: CoroutineScope,
 ) {
     init {
         coroutineScope.launch {
-            blockedWordRepository.getBlockedWords().distinctUntilChanged().collect {
+            databaseHelper.getBlockedWords().distinctUntilChanged().collect { // Changed to use databaseHelper
                 // Blocked words changed, reload feeds.
                 // getFeeds() will fetch the first page and update mutableFeedState.
                 // UI observing feedState will get the new list.

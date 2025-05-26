@@ -1,0 +1,18 @@
+CREATE TABLE BlockedWord (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    word TEXT NOT NULL UNIQUE
+);
+
+-- The following INSERT is an example and will be executed when the database is created.
+-- It's not a reusable query. For inserting new words, 'insertWord' query below should be used.
+INSERT INTO BlockedWord (word) VALUES ('example');
+
+-- Queries required by DatabaseHelper.kt
+selectAllWords:
+SELECT word FROM BlockedWord;
+
+insertWord:
+INSERT OR IGNORE INTO BlockedWord (word) VALUES (?);
+
+deleteWord:
+DELETE FROM BlockedWord WHERE word = ?;

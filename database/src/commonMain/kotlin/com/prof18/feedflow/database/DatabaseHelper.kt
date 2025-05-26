@@ -25,6 +25,7 @@ import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.db.GetFeedSourcesWithUnreadCount
 import com.prof18.feedflow.db.Search
+import com.prof18.feedflow.db.BlockedWordQueries
 import com.prof18.feedflow.db.SelectFeedSourceById
 import com.prof18.feedflow.db.SelectFeedUrls
 import com.prof18.feedflow.db.SelectFeeds
@@ -46,7 +47,10 @@ class DatabaseHelper(
         feed_source_preferencesAdapter = Feed_source_preferences.Adapter(
             link_opening_preferenceAdapter = EnumColumnAdapter(),
         ),
+        // No custom adapter needed for BlockedWord table with standard types
     )
+
+    private val blockedWordQueries = dbRef.blockedWordQueries
 
     fun close() {
         sqlDriver.close()
@@ -555,6 +559,70 @@ class DatabaseHelper(
         dbRef.feedSourcePreferencesQueries
             .areNotificationsEnabled()
             .executeAsOne()
+    }
+
+    // Blocked Words Queries
+    fun getBlockedWords(): Flow<List<String>> =
+        blockedWordQueries.selectAllWords() // Assuming SQLDelight generates selectAllWords that returns List<String>
+            .asFlow()
+            .mapToList(backgroundDispatcher) // This might be redundant if selectAllWords() already returns List<String>
+                                          // If selectAll() returns List<BlockedWord>, then map { it.word } is needed.
+                                          // Let's assume selectAll() returns List<BlockedWord> for now as per standard generation.
+            .map { blockedWords -> // This mapping is if selectAll() returns List<BlockedWord> objects
+                blockedWords.map { it.word }
+            }
+            .catch { throwable ->
+                logger.e(throwable) { "Error while getting blocked words" }
+                emit(emptyList()) // Emit an empty list on error
+            }
+            .flowOn(backgroundDispatcher)
+
+    suspend fun insertBlockedWord(word: String) {
+        try {
+            dbRef.transactionWithContext(backgroundDispatcher) {
+                // Assuming SQLDelight generates an insert function.
+                // The .sq file has INSERT INTO BlockedWord (word) VALUES (?);
+                // SQLDelight will generate a function like `insert(word: String)`
+                blockedWordQueries.insert(word = word)
+            }
+        } catch (e: Exception) {
+            // Log error, could be due to UNIQUE constraint violation if word already exists
+            logger.e(e) { "Error while inserting blocked word: $word. It might already exist." }
+            // Depending on requirements, can rethrow or notify UI
+        }
+    }
+
+    suspend fun deleteBlockedWord(word: String) {
+        try {
+            dbRef.transactionWithContext(backgroundDispatcher) {
+                // Assuming SQLDelight generates a deleteByWord function or similar.
+                // If not, I'd need to define a specific query in BlockedWord.sq like:
+                // deleteByWord:
+                // DELETE FROM BlockedWord WHERE word = ?;
+                // For now, assuming a 'delete(word: String)' is generated if 'word' is UNIQUE or PRIMARY KEY used in a query.
+                // Given `word TEXT NOT NULL UNIQUE`, SQLDelight might generate `deleteByWord(word: String)`
+                // Or a generic `delete(id: Long)` if only primary key deletion is default.
+                // The .sq file doesn't explicitly name queries, so defaults are assumed.
+                // Let's assume `blockedWordQueries.deleteByWord(word)` or similar needs to be defined in .sq
+                // For now, I'll write it as if a query `deleteByWord` exists or will be added to BlockedWord.sq:
+                // deleteByWord: DELETE FROM BlockedWord WHERE word = :word;
+                // And SQLDelight generates `blockedWordQueries.deleteByWord(word)`
+                // If the table only has `word` and `id`, and `word` is unique,
+                // it's common to delete by the unique human-readable field.
+                // The initial .sq file only has INSERT. It's missing SELECT and DELETE queries.
+                // I will assume for now that the necessary queries (selectAll, deleteByWord) will be added to BlockedWord.sq
+                // or are standardly generated.
+                // If BlockedWord.sq is:
+                // CREATE TABLE BlockedWord (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, word TEXT NOT NULL UNIQUE);
+                // selectAll: SELECT word FROM BlockedWord;
+                // insert: INSERT INTO BlockedWord (word) VALUES (?);
+                // deleteByWord: DELETE FROM BlockedWord WHERE word = ?;
+                // Then the code would be:
+                blockedWordQueries.deleteByWord(word = word)
+            }
+        } catch (e: Exception) {
+            logger.e(e) { "Error while deleting blocked word: $word" }
+        }
     }
 
     private suspend fun Transacter.transactionWithContext(

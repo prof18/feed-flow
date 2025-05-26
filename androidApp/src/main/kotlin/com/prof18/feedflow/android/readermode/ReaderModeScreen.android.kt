@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.readermode
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -111,9 +112,23 @@ private fun ReaderMode(
         mutableStateOf(null)
     }
 
+    val isDarkMode = isSystemInDarkTheme()
+    val backgroundColor = if (isDarkMode) {
+        "#1e1e1e"
+    } else {
+        "#f6f8fa"
+    }
+    val borderColor = if (isDarkMode) {
+        "#444444"
+    } else {
+        "#d1d9e0"
+    }
+
     val colors = ReaderColors(
         textColor = "#$bodyColor",
         linkColor = "#$linkColor",
+        backgroundColor = backgroundColor,
+        borderColor = borderColor,
     )
 
     val latestOpenInBrowser by rememberUpdatedState(openInBrowser)

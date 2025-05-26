@@ -38,12 +38,12 @@ fun getReaderModeStyledHtml(
             }
             
             body {
-                color: ${colors.textColor};
                 overflow-wrap: break-word;
                 font: -apple-system-body;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
                 font-size: $fontSizeCss;
                 line-height: 1.5em;
+                ${colors?.let { "color: ${it.textColor};" }}
             }
             
             .__hero {
@@ -55,22 +55,22 @@ fun getReaderModeStyledHtml(
                 overflow: hidden;
                 border-radius: 7px;
             }
-
+            
             #__content {
                 line-height: 1.5;
                 overflow-x: hidden;
             }
-
+            
             @media screen and (min-width: 650px) {
                 #__content {  line-height: 1.5; }
             }
-
+            
             h1, h2, h3, h4, h5, h6 {
                 line-height: 1.2;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
                 font-weight: 800;
             }
-
+            
             img, iframe, object, video {
                 max-width: 100%;
                 height: auto;
@@ -80,23 +80,31 @@ fun getReaderModeStyledHtml(
             pre {
                 max-width: 100%;
                 overflow-x: auto;
+                ${colors?.let { "background-color: ${it.backgroundColor};" }}
+                ${colors?.let { "border: 1px solid ${it.borderColor};" }}
+                border-radius: 6px;
+                padding: 12px 16px;
+                margin: 16px 0;
+                font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+                line-height: 1.4286;
+                font-size: $fontSizeCss;
             }
-
+            
             table {
                 display: block;
                 max-width: 100%;
                 overflow-x: auto;
             }
-
+            
             a:link {
-                color: ${colors.linkColor};
+                ${colors?.let { "color: ${it.linkColor};" }}
             }
-
+            
             figure {
                 margin-left: 0;
                 margin-right: 0;
             }
-
+            
             figcaption, cite {
                 opacity: 0.5;
                 font-size: small;
@@ -107,7 +115,7 @@ fun getReaderModeStyledHtml(
                 vertical-align: baseline;
                 opacity: 0.5;
             }
-
+            
             .__subtitle .__icon {
                 width: 1.2em;
                 height: 1.2em;
@@ -118,7 +126,7 @@ fun getReaderModeStyledHtml(
                 position: relative;
                 top: 0.3em;
             }
-
+            
             .__subtitle .__separator {
                 opacity: 0.5;
             }
@@ -129,12 +137,12 @@ fun getReaderModeStyledHtml(
                 margin-top: 5px;
                 max-width: 700px;
             }
-
+            
             #__footer {
                 margin-bottom: 4em;
                 margin-top: 2em;
             }
-
+            
             #__footer > .label {
                 font-size: small;
                 opacity: 0.5;
@@ -158,27 +166,37 @@ fun getReaderModeStyledHtml(
             }
             
             iframe {
-              width: 100%;
-              max-width: 100%;
-              height: 250px;
-              max-height: 250px;
-            }
-            
-            pre {
-             line-height: 1.4286;
+                width: 100%;
+                max-width: 100%;
+                height: 250px;
+                max-height: 250px;
             }
             
             code {
-              padding: 1px 2px;
-              line-height: 1.8em;
-              border-radius: 2px;
+                padding: 2px 4px;
+                border-radius: 3px;
+                line-height: 1.4em;
+                ${colors?.let { "background-color: ${it.backgroundColor};" }}
+                ${colors?.let { "border: 1px solid ${it.borderColor};" }}
+                font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+                font-size: $fontSizeCss;
+                ${colors?.let { "color: ${it.textColor};" }}
             }
             
             pre code {
-              letter-spacing: -.027em;
-              font-size: 1.15em;
+                letter-spacing: -.027em;
+                font-size: $fontSizeCss;
+                background-color: transparent;
+                border: none;
+                padding: 0;
             }
             
+            img, iframe, object, video {
+                max-width: 100%;
+                height: auto;
+                border-radius: 7px;
+            }
+                        
         </style>
         <body>
             <div id="__reader_container">

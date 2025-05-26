@@ -6,9 +6,7 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.domain.DateFormatter
-import com.prof18.feedflow.core.repo.BlockedWordRepository
-import com.prof18.feedflow.core.repo.BlockedWordRepositoryImpl
-// Blocked Word Use Cases are removed
+// BlockedWordRepository and Impl are removed
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
@@ -133,7 +131,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
-    factoryOf(::BlockedWordRepositoryImpl) bind BlockedWordRepository::class
+    // BlockedWordRepositoryImpl binding is removed as the repository is no longer used.
 
     // Removed Use Case definitions:
     // factory { GetBlockedWordsUseCase(get()) }
@@ -142,7 +140,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     viewModel {
         BlockedWordsViewModel(
-            blockedWordRepository = get(), // Corrected: inject BlockedWordRepository
+            databaseHelper = get(), // Changed from blockedWordRepository to databaseHelper
             dispatcherProvider = get(),
         )
     }
@@ -363,12 +361,12 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     single {
         FeedStateRepository(
-            databaseHelper = get(),
+            databaseHelper = get(), // DatabaseHelper can provide blocked words if needed
             settingsRepository = get(),
             dateFormatter = get(),
             logger = getWith("FeedStateRepository"),
-            blockedWordRepository = get(), // Corrected: inject BlockedWordRepository
-            coroutineScope = get() // Assuming CoroutineScope is provided elsewhere or added for FeedStateRepository
+            // blockedWordRepository = get(), // Removed BlockedWordRepository dependency
+            coroutineScope = get()
         )
     }
 

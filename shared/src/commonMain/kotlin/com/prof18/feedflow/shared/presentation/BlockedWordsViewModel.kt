@@ -1,9 +1,10 @@
 package com.prof18.feedflow.shared.presentation
 
-import com.prof18.feedflow.core.repo.BlockedWordRepository
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,7 +25,7 @@ data class BlockedWordsUiState(
 // If a common BaseViewModel exists and is discoverable, that would be preferable.
 // For now, implementing scope directly.
 open class BlockedWordsViewModel(
-    private val blockedWordRepository: BlockedWordRepository,
+    private val databaseHelper: DatabaseHelper, // Changed from BlockedWordRepository
     private val dispatcherProvider: DispatcherProvider
 ) {
     // Mimic viewModelScope from potential BaseViewModel structure
@@ -39,7 +40,7 @@ open class BlockedWordsViewModel(
 
     private fun loadBlockedWords() {
         _uiState.update { it.copy(isLoading = true, error = null) }
-        blockedWordRepository.getBlockedWords()
+        databaseHelper.getBlockedWords() // Changed from blockedWordRepository
             .onEach { words ->
                 _uiState.update {
                     it.copy(
@@ -72,7 +73,7 @@ open class BlockedWordsViewModel(
 
         viewModelScope.launch(dispatcherProvider.io) {
             try {
-                blockedWordRepository.insertBlockedWord(newWord)
+                databaseHelper.insertBlockedWord(newWord) // Changed from blockedWordRepository
                 // State will be updated by the collector in loadBlockedWords()
                 // Clear the text input field
                 _uiState.update { it.copy(newWordText = "", error = null) }
@@ -87,7 +88,7 @@ open class BlockedWordsViewModel(
     fun deleteBlockedWord(word: String) {
         viewModelScope.launch(dispatcherProvider.io) {
             try {
-                blockedWordRepository.deleteBlockedWord(word)
+                databaseHelper.deleteBlockedWord(word) // Changed from blockedWordRepository
                 // State will be updated by the collector in loadBlockedWords()
                  _uiState.update { it.copy(error = null) }
             } catch (e: Exception) {

@@ -225,8 +225,12 @@ class DatabaseHelper(
         }
 
     suspend fun deleteOldFeedItems(timeThreshold: Long) =
-        dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedItemQueries.clearOldItems(timeThreshold)
+        try {
+            dbRef.transactionWithContext(backgroundDispatcher) {
+                dbRef.feedItemQueries.clearOldItems(timeThreshold)
+            }
+        } catch (_: Exception) {
+            logger.e { "Error while deleting old feed items" }
         }
 
     suspend fun getOldFeedItem(timeThreshold: Long) = withContext(backgroundDispatcher) {

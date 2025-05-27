@@ -84,7 +84,6 @@ fun FeedListFontSettings(
                     feedFontSize = fontSizes,
                     shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuShareComments,
                     shareMenuLabel = LocalFeedFlowStrings.current.menuShare,
-                    index = 0,
                     disableClick = true,
                     onFeedItemClick = {},
                     onBookmarkClick = { _, _ -> },

@@ -114,7 +114,6 @@ fun SearchScreenContent(
                             FeedItemView(
                                 feedItem = item,
                                 feedFontSize = feedFontSizes,
-                                index = index,
                                 shareCommentsMenuLabel = shareCommentsMenuLabel,
                                 shareMenuLabel = shareMenuLabel,
                                 onFeedItemClick = onFeedItemClick,

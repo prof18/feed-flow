@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -123,7 +124,6 @@ fun FeedList(
             if (swipeToRight == null && swipeToLeft == null) {
                 FeedItemView(
                     feedItem = item,
-                    index = index,
                     shareMenuLabel = shareMenuLabel,
                     shareCommentsMenuLabel = shareCommentsMenuLabel,
                     onFeedItemClick = onFeedItemClick,
@@ -140,7 +140,6 @@ fun FeedList(
                 ) {
                     FeedItemView(
                         feedItem = item,
-                        index = index,
                         shareMenuLabel = shareMenuLabel,
                         shareCommentsMenuLabel = shareCommentsMenuLabel,
                         onFeedItemClick = onFeedItemClick,
@@ -156,6 +155,7 @@ fun FeedList(
             if (index == feedItems.size - 1 && currentFeedFilter !is FeedFilter.Read) {
                 Box(
                     modifier = Modifier
+                        .navigationBarsPadding()
                         .fillMaxWidth(),
                 ) {
                     TextButton(
@@ -196,16 +196,15 @@ fun FeedList(
 fun FeedItemView(
     feedItem: FeedItem,
     feedFontSize: FeedFontSizes,
-    index: Int,
-    disableClick: Boolean = false,
     shareMenuLabel: String,
     shareCommentsMenuLabel: String,
+    modifier: Modifier = Modifier,
+    disableClick: Boolean = false,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     var showItemMenu by remember {
         mutableStateOf(
@@ -243,7 +242,6 @@ fun FeedItemView(
         FeedSourceAndUnreadDotRow(
             feedItem = feedItem,
             feedFontSize = feedFontSize,
-            index = index,
         )
 
         TitleSubtitleAndImageRow(
@@ -291,7 +289,6 @@ fun FeedItemView(
 private fun FeedSourceAndUnreadDotRow(
     feedItem: FeedItem,
     feedFontSize: FeedFontSizes,
-    index: Int,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

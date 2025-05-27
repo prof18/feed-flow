@@ -227,8 +227,8 @@ class HomeViewModel internal constructor(
         viewModelScope.launch {
             feedOperationMutableState.update { FeedOperation.MarkingAllRead }
             feedActionsRepository.markAllCurrentFeedAsRead()
-            feedFetcherRepository.fetchFeeds()
             feedOperationMutableState.update { FeedOperation.None }
+            feedFetcherRepository.fetchFeeds()
         }
     }
 

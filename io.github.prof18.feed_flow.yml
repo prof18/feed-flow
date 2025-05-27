@@ -1,0 +1,78 @@
+app-id: io.github.prof18.feed_flow
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk17
+command: feed-flow-wrapper.sh
+finish-args:
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --filesystem=xdg-config/feed-flow:create
+  - --filesystem=xdg-cache/feed-flow:create
+  - --device=dri # JavaFX/Compose UI might benefit from this
+
+modules:
+  - name: openjdk # Installs the JRE from the SDK extension into /app/jre
+    buildsystem: simple
+    build-commands:
+      - /usr/lib/sdk/openjdk17/install.sh
+
+  - name: feed-flow-app
+    buildsystem: simple
+    build-commands:
+      # The 'sources' entry below clones the git repo into a directory, typically named after the project or 'feed-flow'.
+      # We will work within the 'feed-flow' directory.
+      - cd feed-flow
+      # Ensure gradlew is executable
+      - chmod +x ./gradlew
+      # Build the application using Gradle.
+      # We need the main JAR and its dependencies.
+      # The :desktopApp:jar task creates the main jar.
+      # Dependencies are typically in desktopApp/build/compose/jars/libs/
+      - ./gradlew :desktopApp:jar
+      # Install the application files into the Flatpak's /app directory
+      - install -d /app/bin /app/lib/feed-flow /app/share/feed-flow/
+      # Copy the main JAR to /app/lib/feed-flow/
+      # The JAR name will be something like FeedFlow-X.Y.Z.jar. We need to find it.
+      # Let's assume the build produces desktopApp/build/libs/FeedFlow-*.jar (standard for 'java' plugin)
+      # or desktopApp/build/compose/jars/feed-flow-desktop-*.jar (for compose)
+      # The gradle file has `group = "com.prof18"` and `kotlin { jvm { ... } }`
+      # The compose plugin usually names it ${project.name}-${platform}-${project.version}.jar
+      # So, desktopApp/build/compose/jars/feed-flow-desktopApp-jvm-${version}.jar
+      # Or, if we use the packageName from nativeDistributions: FeedFlow-${version}.jar
+      # The task :desktopApp:jar should produce desktopApp/build/libs/desktopApp.jar if not otherwise configured.
+      # Let's find the jar in desktopApp/build/compose/jars/ after the build.
+      # For now, we'll use a wildcard and refine if needed, or use the most specific name found.
+      # The output of :desktopApp:jar is typically desktopApp/build/libs/desktopApp.jar (if no version is set in jar task)
+      # Or desktopApp/build/libs/desktopApp-<version>.jar
+      # Given the compose plugin structure, it's more likely in build/compose/jars/
+      # Let's assume the jar is named desktopApp.jar or similar after the :desktopApp:jar task.
+      # A safer bet is to look for desktopApp/build/compose/jars/feed-flow-desktopApp-jvm-*.jar
+      # The project name for desktopApp is not explicitly set, so it defaults to "desktopApp".
+      # The version comes from version.properties.
+      # So the JAR would be desktopApp/build/compose/jars/desktopApp-jvm-<version>.jar
+      # This needs to be robust.
+      - find desktopApp/build/compose/jars/ -name "desktopApp-jvm-*.jar" -print -quit | xargs -I {} install -Dm644 {} /app/lib/feed-flow/feed-flow.jar
+      # Copy dependency JARs. These are usually in desktopApp/build/compose/jars/libs/
+      - cp -r desktopApp/build/compose/jars/libs/*.jar /app/lib/feed-flow/
+      # Create the wrapper script
+      - |
+        cat <<EOF > /app/bin/feed-flow-wrapper.sh
+        #!/bin/sh
+        export JAVA_HOME=/app/jre
+        export PATH=\$JAVA_HOME/bin:\$PATH
+        # If dependency JARs are separate in /app/lib/feed-flow/ and not a fat JAR:
+        exec java -cp "/app/lib/feed-flow/*" com.prof18.feedflow.desktop.MainKt "\$@"
+        EOF
+      - chmod +x /app/bin/feed-flow-wrapper.sh
+      # Install desktop file, icon, and metainfo
+      # These files are in desktopApp/packaging/flatpak/ within the source checkout
+      - install -Dm644 desktopApp/packaging/flatpak/io.github.prof18.feed_flow.desktop /app/share/applications/io.github.prof18.feed_flow.desktop
+      - install -Dm644 desktopApp/packaging/flatpak/io.github.prof18.feed_flow.png /app/share/icons/hicolor/128x128/apps/io.github.prof18.feed_flow.png
+      - install -Dm644 desktopApp/packaging/flatpak/io.github.prof18.feed_flow.metainfo.xml /app/share/metainfo/io.github.prof18.feed_flow.metainfo.xml
+    sources:
+      - type: git
+        url: https://github.com/prof18/feed-flow.git
+        branch: main # Or a specific release tag like 'v1.2.3'

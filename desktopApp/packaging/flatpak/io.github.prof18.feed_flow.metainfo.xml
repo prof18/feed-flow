@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.prof18.feed_flow</id>
+  
+  <name>Feed Flow</name>
+  <summary>A Multiplatform RSS Reader</summary>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Apache-2.0</project_license>
+  
+  <description>
+    <p>
+      Feed Flow is a modern, multiplatform RSS reader designed to keep you updated with your favorite news sources and blogs. 
+      It offers a clean and intuitive interface, ensuring a seamless reading experience across your devices.
+    </p>
+    <ul>
+      <li>Supports multiple accounts (e.g., local, Feedly, Inoreader - check current app features for accuracy)</li>
+      <li>Offline reading capabilities</li>
+      <li>Customizable interface</li>
+      <li>OPML import/export</li>
+    </ul>
+  </description>
+  
+  <launchable type="desktop-id">io.github.prof18.feed_flow.desktop</launchable>
+  
+  <screenshots>
+    <!-- Add actual screenshot URLs or paths if available within the Flathub build context -->
+    <!-- For now, placeholder or remove if not submitting actual screenshots with initial PR -->
+    <!-- 
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/prof18/feed-flow/main/assets/screenshots/eng/macos/main_window.png</image>
+    </screenshot>
+    -->
+  </screenshots>
+  
+  <url type="homepage">https://prof18.github.io/feed-flow</url>
+  <url type="bugtracker">https://github.com/prof18/feed-flow/issues</url>
+  <url type="donation">https://github.com/sponsors/prof18</url>
+  
+  <developer_name>Marco Gomiero</developer_name>
+  
+  <content_rating type="oars-1.1" />
+  
+  <releases>
+    <!-- This section should be updated with each new release by CI/CD or manually -->
+    <release version="1.0.0" date="YYYY-MM-DD">
+      <description>
+        <p>Initial release.</p>
+      </description>
+    </release>
+  </releases>
+
+  <provides>
+    <binary>feed-flow-wrapper.sh</binary>
+  </provides>
+
+</component>

@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Feed Flow
+GenericName=RSS Reader
+Comment=A Multiplatform RSS Reader
+Exec=feed-flow-wrapper.sh
+Icon=io.github.prof18.feed_flow
+Terminal=false
+Categories=Network;News;
+Keywords=RSS;Feed;News;Reader;
+StartupNotify=true
+X-GNOME-SingleWindow=false
+PrefersNonDefaultGPU=false
+X-KDE-Wayland- تحتفظ=Plasma-Wayland-Fix-Shadows

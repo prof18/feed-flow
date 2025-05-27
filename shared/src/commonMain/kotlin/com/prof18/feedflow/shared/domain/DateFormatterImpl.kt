@@ -542,6 +542,7 @@ class DateFormatterImpl(
             { chars("UTC") },
             { chars("CET") },
             { chars("CST") },
+            { chars("EEST") },
         ) {}
     }
 

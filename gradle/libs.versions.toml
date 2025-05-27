@@ -59,6 +59,7 @@ stately-concurrency = "2.1.0"
 triplet-play = "3.12.1"
 voyager = "1.0.1"
 workmanager = "2.10.1"
+compose-hotreload = "1.0.0-alpha10"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
@@ -168,3 +169,4 @@ org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kot
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sql-delight" }
 triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
+compose-hotreload = { id = "org.jetbrains.compose.hot-reload", version.ref = "compose-hotreload" }

@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.about.libraries)
+    alias(libs.plugins.compose.hotreload)
 }
 
 apply(from = "../versioning.gradle.kts")

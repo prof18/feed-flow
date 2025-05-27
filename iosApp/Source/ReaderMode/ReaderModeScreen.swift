@@ -78,7 +78,6 @@ struct ReaderModeScreen: View {
                                         stringUrl: URL(string: archiveUrlString)!.absoluteString))
                             }
 
-
                         } label: {
                             Image(systemName: "hammer.fill")
                         }

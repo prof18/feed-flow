@@ -7,7 +7,6 @@ fun getReaderModeStyledHtml(
     articleLink: String,
     content: String,
     title: String?,
-    heroImageUrl: String?,
     fontSize: Int,
 ): String {
     val cleanedTitleCode = title?.strippingSiteNameFromPageTitle()?.let { pageTitle ->
@@ -18,10 +17,6 @@ fun getReaderModeStyledHtml(
         ?.replace("www.", "").let { subtitle ->
             "<p class='__subtitle'>$subtitle</p>"
         }
-
-    val heroImageCode = heroImageUrl?.let { url ->
-        "<img class='__hero' src=\"$url\" />"
-    }.orEmpty()
 
     val fontSizeCss = "${fontSize}px"
 
@@ -200,8 +195,6 @@ fun getReaderModeStyledHtml(
         <body>
             <div id="__reader_container">
                 <div id='__content' style='opacity: 0'>
-                    $heroImageCode
-        
                     $cleanedTitleCode
                         $subtitleCode
                     $content

@@ -167,7 +167,6 @@ private fun ReaderMode(
                     content = content,
                     title = title,
                     fontSize = readerModeState.readerModeData.fontSize,
-                    heroImageUrl = readerModeState.readerModeData.heroImageUrl,
                 )
 
                 finalContents = finalHTML

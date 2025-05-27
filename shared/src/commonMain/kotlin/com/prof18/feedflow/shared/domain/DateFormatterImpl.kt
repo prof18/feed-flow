@@ -461,10 +461,15 @@ class DateFormatterImpl(
         return try {
             parsed?.toInstantUsingOffset()?.toEpochMilliseconds()
         } catch (_: IllegalArgumentException) {
-            parsed?.apply {
-                hour = 0
-                minute = 0
-            }?.toInstantUsingOffset()?.toEpochMilliseconds()
+            // Last resort
+            try {
+                parsed?.apply {
+                    hour = 0
+                    minute = 0
+                }?.toInstantUsingOffset()?.toEpochMilliseconds()
+            } catch (_: Exception) {
+                null
+            }
         }
     }
 

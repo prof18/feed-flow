@@ -29,9 +29,13 @@ import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
+import com.prof18.feedflow.shared.util.InMemoryCacheControlStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 internal class FeedSourcesRepository(
     private val databaseHelper: DatabaseHelper,
@@ -355,6 +359,47 @@ internal class FeedSourcesRepository(
         feedSyncRepository.performBackup()
         feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
         feedStateRepository.getFeeds()
+
+        // Logic for Cache-Control and next_fetch_timestamp
+        val feedUrlForCache = feedSource.url // URL used for fetching
+        val cacheControlHeader = InMemoryCacheControlStorage.get(feedUrlForCache)
+        var maxAgeSeconds: Long? = null
+
+        if (cacheControlHeader != null) {
+            logger.d { "Found Cache-Control for $feedUrlForCache: $cacheControlHeader" }
+            val directives = cacheControlHeader.split(',').map { it.trim() }
+            val maxAgeDirective = directives.find { it.startsWith("max-age=", ignoreCase = true) }
+            if (maxAgeDirective != null) {
+                try {
+                    maxAgeSeconds = maxAgeDirective.substringAfter('=').toLongOrNull()
+                    if (maxAgeSeconds != null && maxAgeSeconds <= 0) {
+                        logger.d { "Invalid max-age value (<=0): $maxAgeSeconds for $feedUrlForCache. Ignoring." }
+                        maxAgeSeconds = null // Ignore non-positive max-age
+                    }
+                } catch (e: NumberFormatException) {
+                    logger.d(e) { "Failed to parse max-age value from $maxAgeDirective for $feedUrlForCache" }
+                    maxAgeSeconds = null
+                }
+            }
+        }
+
+        if (maxAgeSeconds != null) {
+            val now = Clock.System.now()
+            val nextFetchInstant = now.plus(maxAgeSeconds.seconds) // Using extension from kotlin.time
+            val nextFetchTimestampMillis = nextFetchInstant.toEpochMilliseconds()
+
+            logger.d { "Updating next_fetch_timestamp for ${feedSource.id} ($feedUrlForCache) to $nextFetchTimestampMillis (${nextFetchInstant})" }
+            databaseHelper.feedSourceQueries.updateNextFetchTimestamp(
+                nextFetchTimestamp = nextFetchTimestampMillis,
+                urlHash = feedSource.id, // urlHash is feedSource.id
+            )
+        } else {
+            logger.d { "No valid max-age found for $feedUrlForCache. Not updating next_fetch_timestamp for ${feedSource.id}." }
+            // Optionally, clear it if it might have an old value, or set a default.
+            // For now, we only update if max-age is present. If it was NULL before, it remains NULL.
+            // If we want to ensure it's NULL if no max-age, we'd add:
+            // databaseHelper.feedSourceQueries.updateNextFetchTimestamp(nextFetchTimestamp = null, urlHash = feedSource.id)
+        }
     }
 
     private suspend fun updateFeedSource(feedSource: FeedSource) {

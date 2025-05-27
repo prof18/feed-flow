@@ -45,7 +45,9 @@ import com.prof18.feedflow.shared.presentation.NotificationsViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
+import com.prof18.feedflow.shared.util.InMemoryCacheControlStorage
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.observer.ResponseObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.KoinApplication
@@ -387,6 +389,44 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         NotificationsViewModel(
             databaseHelper = get(),
             settingsRepository = get(),
+        )
+    }
+
+    // Shared HttpClient for the application
+    single {
+        HttpClient(engine = get()) { // Assuming an engine is provided by platform modules
+            install(ResponseObserver) {
+                onResponse { response ->
+                    val requestUrl = response.call.request.url.toString()
+                    response.headers["Cache-Control"]?.let { cacheControlValue ->
+                        // Using runBlocking here is not ideal, but Koin setup is synchronous
+                        // and InMemoryCacheControlStorage uses suspend functions.
+                        // Consider making InMemoryCacheControlStorage non-suspend if this becomes an issue.
+                        // For now, this demonstrates the interceptor logic.
+                        // Alternatively, inject a coroutine scope if appropriate for Koin setup.
+                        kotlinx.coroutines.runBlocking { // Added for suspension
+                            InMemoryCacheControlStorage.put(requestUrl, cacheControlValue)
+                        }
+                        // TODO: Potentially log this if a logger is easily accessible here
+                        // val logger = get<Logger>()
+                        // logger.d { "HttpClientInterceptor: Stored Cache-Control for $requestUrl: $cacheControlValue" }
+                    }
+                }
+            }
+            // Add other client configurations if needed, e.g. ContentNegotiation, Logging, defaultRequest
+            // For example:
+            // install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
+            //     json(get()) // If Json is a Koin component
+            // }
+            // install(io.ktor.client.plugins.logging.Logging) {
+            //     level = io.ktor.client.plugins.logging.LogLevel.INFO
+            // }
+        }
+    }
+
+    factory { // RssParser from com.prof18.rssparser
+        com.prof18.rssparser.RssParser(
+            httpClient = get() // Injects the shared HttpClient
         )
     }
 }

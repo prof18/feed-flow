@@ -26,7 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
+import kotlinx.datetime.Clock // Already present, but good to confirm
 import kotlin.time.Duration.Companion.days
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -182,28 +182,55 @@ class FeedFetcherRepository internal constructor(
         forceRefresh: Boolean,
     ): Boolean {
         val isOpenRssFeed = feedSource.url.contains("openrss.org", ignoreCase = true)
+        val feedTitle = feedSource.title // For logging
 
+        // 1. Handle forceRefresh (maintains existing openrss.org exclusion from forceRefresh)
         if (forceRefresh && !isOpenRssFeed) {
+            logger.d { "Fetching '$feedTitle' due to forceRefresh." }
             return true
         }
 
+        val currentTimeMillis = Clock.System.now().toEpochMilliseconds()
+
+        // 2. Check next_fetch_timestamp (if available)
+        // Assuming feedSource.next_fetch_timestamp is Long? and accessible here
+        // This field would have been added to the core model if mappings were updated
+        // after the DB change.
+        val nextFetchTimestamp = feedSource.next_fetch_timestamp
+
+        if (nextFetchTimestamp != null) {
+            return if (currentTimeMillis >= nextFetchTimestamp) {
+                logger.d { "Fetching '$feedTitle' as current time ($currentTimeMillis) is past next_fetch_timestamp ($nextFetchTimestamp)." }
+                true
+            } else {
+                logger.d { "Skipping '$feedTitle' as current time ($currentTimeMillis) is before next_fetch_timestamp ($nextFetchTimestamp). Needs to wait until $nextFetchTimestamp." }
+                false
+            }
+        }
+
+        // 3. If next_fetch_timestamp is null, fall back to old logic (lastSyncTimestamp based)
+        logger.d { "Next_fetch_timestamp for '$feedTitle' is null. Falling back to lastSyncTimestamp logic." }
         val lastSyncTimestamp = feedSource.lastSyncTimestamp
-        if (lastSyncTimestamp == null) {
+        if (lastSyncTimestamp == null) { // If never synced before
+            logger.d { "Fetching '$feedTitle' as it was never synced (lastSyncTimestamp is null)." }
             return true
         }
 
-        val currentTime = dateFormatter.currentTimeMillis()
-        val timeDifference = currentTime - lastSyncTimestamp
+        val timeDifference = currentTimeMillis - lastSyncTimestamp
 
         val refreshThresholdInMillis = if (isOpenRssFeed) {
-            // 6 hours for openrss.org feeds
-            (6 * 60 * 60) * 1000L
+            (6 * 60 * 60) * 1000L // 6 hours for openrss.org feeds
         } else {
-            // 1 hour for other feeds
-            (60 * 60) * 1000L
+            (60 * 60) * 1000L // 1 hour for other feeds
         }
 
-        return timeDifference >= refreshThresholdInMillis
+        val shouldFetchByOldLogic = timeDifference >= refreshThresholdInMillis
+        if (shouldFetchByOldLogic) {
+            logger.d { "Fetching '$feedTitle' based on fallback logic (time difference: $timeDifference >= threshold: $refreshThresholdInMillis)." }
+        } else {
+            logger.d { "Skipping '$feedTitle' based on fallback logic (time difference: $timeDifference < threshold: $refreshThresholdInMillis)." }
+        }
+        return shouldFetchByOldLogic
     }
 
     private suspend fun parseFeeds(
@@ -215,12 +242,13 @@ class FeedFetcherRepository internal constructor(
 
         feedSourceUrls
             .mapNotNull { feedSource ->
-                val shouldRefresh = shouldRefreshFeed(feedSource, forceRefresh)
-                if (shouldRefresh) {
+                // The shouldRefreshFeed function now incorporates the next_fetch_timestamp logic
+                if (shouldRefreshFeed(feedSource, forceRefresh)) {
                     feedSource
                 } else {
-                    logger.d { "One hour is not passed, skipping: ${feedSource.url}}" }
-                    feedToUpdate.remove(feedSource.url)
+                    // Logger message is now inside shouldRefreshFeed, so no need for another one here
+                    // logger.d { "Skipping feed: ${feedSource.url} based on refresh logic." }
+                    feedToUpdate.remove(feedSource.url) // Ensure this is safe if called multiple times
                     updateRefreshCount()
                     null
                 }

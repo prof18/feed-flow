@@ -1,0 +1,1 @@
+ALTER TABLE feed_source ADD COLUMN next_fetch_timestamp INTEGER DEFAULT NULL;

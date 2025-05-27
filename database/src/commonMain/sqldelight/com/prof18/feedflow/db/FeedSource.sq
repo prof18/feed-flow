@@ -7,7 +7,8 @@ CREATE TABLE feed_source (
     title TEXT NOT NULL,
     category_id TEXT,
     last_sync_timestamp INTEGER,
-    logo_url TEXT
+    logo_url TEXT,
+    next_fetch_timestamp INTEGER DEFAULT NULL
 );
 
 insertFeedSource:
@@ -79,3 +80,8 @@ updateCategoryId:
 UPDATE feed_source
 SET category_id = :newCategoryId
 WHERE category_id = :oldCategoryId;
+
+updateNextFetchTimestamp:
+UPDATE feed_source
+SET next_fetch_timestamp = :nextFetchTimestamp
+WHERE url_hash = :urlHash;

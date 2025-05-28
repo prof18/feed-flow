@@ -444,6 +444,7 @@
 				uk,
 				ja,
 				cs,
+				lv,
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (

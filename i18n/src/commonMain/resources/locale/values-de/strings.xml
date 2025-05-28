@@ -222,4 +222,7 @@
     <string name="date_format_normal">Tag/Monat</string>
     <string name="settings_experimental_parsing">Experimentelle Lösung für den Lesemodus verwenden</string>
     <string name="enable_notifications_for_feed">Benachrichtigungen für neue Artikel aktivieren</string>
+    <string name="settings_feed_order_title">Nach Datum sortieren</string>
+    <string name="settings_feed_order_newest_first">Neueste zuerst</string>
+    <string name="settings_feed_order_oldest_first">Älteste zuerst</string>
 </resources>

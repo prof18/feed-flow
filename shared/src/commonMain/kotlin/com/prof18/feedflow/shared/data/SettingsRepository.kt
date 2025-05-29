@@ -2,7 +2,7 @@ package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
-import com.prof18.feedflow.core.model.FeedItemType
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
@@ -33,7 +33,7 @@ class SettingsRepository(
     val swipeActions: StateFlow<SwipeActions> = swipeActionsMutableFlow.asStateFlow()
 
     private val feedItemTypeMutableFlow = MutableStateFlow(getFeedItemType())
-    val feedItemType: StateFlow<FeedItemType> = feedItemTypeMutableFlow.asStateFlow()
+    val feedLayout: StateFlow<FeedLayout> = feedItemTypeMutableFlow.asStateFlow()
 
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
@@ -220,13 +220,13 @@ class SettingsRepository(
         settings[SettingsFields.FEED_ORDER.name] = order.name
     }
 
-    fun getFeedItemType(): FeedItemType =
-        settings.getString(SettingsFields.FEED_ITEM_TYPE.name, FeedItemType.LIST_TILE.name)
-            .let { FeedItemType.valueOf(it) }
+    fun getFeedItemType(): FeedLayout =
+        settings.getString(SettingsFields.FEED_ITEM_TYPE.name, FeedLayout.LIST.name)
+            .let { FeedLayout.valueOf(it) }
 
-    fun setFeedItemType(feedItemType: FeedItemType) {
-        settings[SettingsFields.FEED_ITEM_TYPE.name] = feedItemType.name
-        feedItemTypeMutableFlow.update { feedItemType }
+    fun setFeedItemType(feedLayout: FeedLayout) {
+        settings[SettingsFields.FEED_ITEM_TYPE.name] = feedLayout.name
+        feedItemTypeMutableFlow.update { feedLayout }
     }
 
     private companion object {

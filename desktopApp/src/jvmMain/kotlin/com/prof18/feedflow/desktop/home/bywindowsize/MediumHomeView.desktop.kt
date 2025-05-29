@@ -24,8 +24,8 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
-import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -48,7 +48,7 @@ internal fun MediumView(
     paddingValues: PaddingValues,
     loadingState: FeedUpdateStatus,
     feedItems: ImmutableList<FeedItem>,
-    feedItemType: FeedItemType,
+    feedLayout: FeedLayout,
     feedFontSizes: FeedFontSizes,
     lazyListState: LazyListState,
     unReadCount: Long,
@@ -111,7 +111,7 @@ internal fun MediumView(
             paddingValues = paddingValues,
             loadingState = loadingState,
             feedState = feedItems,
-            feedItemType = feedItemType,
+            feedLayout = feedLayout,
             listState = lazyListState,
             unReadCount = unReadCount,
             showDrawerMenu = true,
@@ -153,7 +153,7 @@ private fun MediumViewPreview() {
     FeedFlowTheme {
         MediumView(
             feedItems = feedItemsForPreview,
-            feedItemType = FeedItemType.LIST_TILE,
+            feedLayout = FeedLayout.LIST,
             navDrawerState = navDrawerState,
             unReadCount = 42,
             currentFeedFilter = FeedFilter.Timeline,

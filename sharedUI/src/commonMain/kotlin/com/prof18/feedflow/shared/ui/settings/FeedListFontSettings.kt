@@ -1,21 +1,17 @@
 package com.prof18.feedflow.shared.ui.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
-import com.prof18.feedflow.core.model.FeedItemType
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.shared.ui.home.components.FeedItemCard
@@ -28,7 +24,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 fun FeedListFontSettings(
     fontSizes: FeedFontSizes,
     modifier: Modifier = Modifier,
-    feedItemType: FeedItemType,
+    feedLayout: FeedLayout,
     isHideDescriptionEnabled: Boolean,
     isHideImagesEnabled: Boolean,
     dateFormat: DateFormat,
@@ -41,8 +37,8 @@ fun FeedListFontSettings(
                 .padding(Spacing.medium),
         ) {
 
-                when (feedItemType) {
-                    FeedItemType.LIST_TILE -> FeedItemView(
+                when (feedLayout) {
+                    FeedLayout.LIST -> FeedItemView(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.background),
                         feedItem = FeedItem(
@@ -88,7 +84,7 @@ fun FeedListFontSettings(
                         onCommentClick = {},
                         onShareClick = {},
                     )
-                    FeedItemType.CARD -> FeedItemCard(
+                    FeedLayout.CARD -> FeedItemCard(
                         feedItem = FeedItem(
                             id = "1",
                             url = "https://www.example.com",

@@ -52,7 +52,7 @@ internal fun HomeScreen(
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsStateWithLifecycle()
     val swipeActions by homeViewModel.swipeActions.collectAsStateWithLifecycle()
     val feedOperation by homeViewModel.feedOperationState.collectAsStateWithLifecycle()
-    val feedItemType by homeViewModel.feedItemType.collectAsStateWithLifecycle()
+    val feedItemType by homeViewModel.feedLayout.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -112,7 +112,7 @@ internal fun HomeScreen(
                 feedUpdateStatus = loadingState,
                 currentFeedFilter = currentFeedFilter,
                 feedFontSizes = feedFontSizes,
-                feedItemType = feedItemType,
+                feedLayout = feedItemType,
                 swipeActions = swipeActions,
                 onAddFeedClick = {
                     showBottomSheet = true
@@ -183,7 +183,7 @@ internal fun HomeScreen(
                 snackbarHostState = snackbarHostState,
                 feedUpdateStatus = loadingState,
                 feedFontSizes = feedFontSizes,
-                feedItemType = feedItemType,
+                feedLayout = feedItemType,
                 swipeActions = swipeActions,
                 onAddFeedClick = {
                     showBottomSheet = true
@@ -254,7 +254,7 @@ internal fun HomeScreen(
                 snackbarHostState = snackbarHostState,
                 feedUpdateStatus = loadingState,
                 feedFontSizes = feedFontSizes,
-                feedItemType = feedItemType,
+                feedLayout = feedItemType,
                 swipeActions = swipeActions,
                 onAddFeedClick = {
                     showBottomSheet = true

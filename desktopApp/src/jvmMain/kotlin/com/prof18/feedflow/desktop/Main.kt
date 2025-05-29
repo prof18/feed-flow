@@ -291,7 +291,7 @@ fun main() = application {
                                         isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
                                         isHideImagesEnabled = settingsState.isHideImagesEnabled,
                                         dateFormat = settingsState.dateFormat,
-                                        feedItemType = settingsState.feedItemType,
+                                        feedLayout = settingsState.feedLayout,
                                     )
 
                                     Spacer(modifier = Modifier.padding(top = Spacing.regular))

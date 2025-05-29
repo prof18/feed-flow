@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
-import com.prof18.feedflow.core.model.FeedItemType
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -38,8 +38,7 @@ class SettingsViewModel internal constructor(
                 val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
                 val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
                 val isExperimentalParsingEnabled = settingsRepository.isExperimentalParsingEnabled()
-                val isRemoveTitleFromDescriptionEnabled =
-                    settingsRepository.getRemoveTitleFromDescription()
+                val isRemoveTitleFromDescriptionEnabled = settingsRepository.getRemoveTitleFromDescription()
                 val isHideDescriptionEnabled = settingsRepository.getHideDescription()
                 val isHideImagesEnabled = settingsRepository.getHideImages()
                 val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
@@ -65,7 +64,7 @@ class SettingsViewModel internal constructor(
                         leftSwipeActionType = leftSwipeAction,
                         rightSwipeActionType = rightSwipeAction,
                         dateFormat = dateFormat,
-                        feedItemType = feedItemType,
+                        feedLayout = feedItemType,
                     )
                 }
             }
@@ -208,10 +207,10 @@ class SettingsViewModel internal constructor(
         }
     }
 
-    fun updateFeedItemType(feedItemType: FeedItemType) {
+    fun updateFeedItemType(feedLayout: FeedLayout) {
         viewModelScope.launch {
-            settingsRepository.setFeedItemType(feedItemType)
-            settingsMutableState.update { it.copy(feedItemType = feedItemType) }
+            settingsRepository.setFeedItemType(feedLayout)
+            settingsMutableState.update { it.copy(feedLayout = feedLayout) }
         }
     }
 }

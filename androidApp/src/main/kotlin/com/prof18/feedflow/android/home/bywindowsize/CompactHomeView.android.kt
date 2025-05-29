@@ -16,8 +16,8 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
-import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -39,7 +39,7 @@ internal fun CompactHomeView(
     snackbarHostState: SnackbarHostState,
     feedUpdateStatus: FeedUpdateStatus,
     feedFontSizes: FeedFontSizes,
-    feedItemType: FeedItemType,
+    feedLayout: FeedLayout,
     currentFeedFilter: FeedFilter,
     swipeActions: SwipeActions,
     onAddFeedClick: () -> Unit,
@@ -101,7 +101,7 @@ internal fun CompactHomeView(
             loadingState = feedUpdateStatus,
             feedState = feedItems,
             feedFontSizes = feedFontSizes,
-            feedItemType = feedItemType,
+            feedLayout = feedLayout,
             showDrawerMenu = true,
             currentFeedFilter = currentFeedFilter,
             swipeActions = swipeActions,
@@ -144,7 +144,7 @@ private fun CompactHomeViewPreview() {
             snackbarHostState = SnackbarHostState(),
             feedUpdateStatus = inProgressFeedUpdateStatus,
             feedFontSizes = FeedFontSizes(),
-            feedItemType = FeedItemType.LIST_TILE,
+            feedLayout = FeedLayout.LIST,
             currentFeedFilter = FeedFilter.Timeline,
             swipeActions = SwipeActions(
                 leftSwipeAction = SwipeActionType.NONE,

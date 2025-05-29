@@ -21,8 +21,8 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
-import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -45,7 +45,7 @@ internal fun MediumHomeView(
     snackbarHostState: SnackbarHostState,
     feedUpdateStatus: FeedUpdateStatus,
     feedFontSizes: FeedFontSizes,
-    feedItemType: FeedItemType,
+    feedLayout: FeedLayout,
     swipeActions: SwipeActions,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
@@ -115,7 +115,7 @@ internal fun MediumHomeView(
             loadingState = feedUpdateStatus,
             feedState = feedItems,
             feedFontSizes = feedFontSizes,
-            feedItemType = feedItemType,
+            feedLayout = feedLayout,
             showDrawerMenu = true,
             isDrawerMenuOpen = isDrawerMenuFullVisible,
             currentFeedFilter = currentFeedFilter,
@@ -152,7 +152,7 @@ private fun MediumHomeViewPreview() {
             unReadCount = 42,
             snackbarHostState = SnackbarHostState(),
             feedUpdateStatus = inProgressFeedUpdateStatus,
-            feedItemType = FeedItemType.CARD,
+            feedLayout = FeedLayout.CARD,
             currentFeedFilter = FeedFilter.Timeline,
             swipeActions = SwipeActions(
                 leftSwipeAction = SwipeActionType.NONE,

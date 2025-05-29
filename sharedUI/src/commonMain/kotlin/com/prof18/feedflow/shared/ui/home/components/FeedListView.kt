@@ -54,9 +54,9 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
-import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActionType.NONE
@@ -79,7 +79,7 @@ import me.saket.swipe.SwipeableActionsBox
 fun FeedList(
     feedItems: ImmutableList<FeedItem>,
     feedFontSize: FeedFontSizes,
-    feedItemType: FeedItemType,
+    feedLayout: FeedLayout,
     currentFeedFilter: FeedFilter,
     shareMenuLabel: String,
     shareCommentsMenuLabel: String,
@@ -125,8 +125,8 @@ fun FeedList(
             )
 
             if (swipeToRight == null && swipeToLeft == null) {
-                when (feedItemType) {
-                    FeedItemType.LIST_TILE -> FeedItemView(
+                when (feedLayout) {
+                    FeedLayout.LIST -> FeedItemView(
                         feedItem = item,
                         index = index,
                         shareMenuLabel = shareMenuLabel,
@@ -139,7 +139,7 @@ fun FeedList(
                         onShareClick = onShareClick,
                     )
 
-                    FeedItemType.CARD -> FeedItemCard(
+                    FeedLayout.CARD -> FeedItemCard(
                         feedItem = item,
                         index = index,
                         shareMenuLabel = shareMenuLabel,
@@ -157,8 +157,8 @@ fun FeedList(
                     startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
                     endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
                 ) {
-                    when (feedItemType) {
-                        FeedItemType.LIST_TILE -> FeedItemView(
+                    when (feedLayout) {
+                        FeedLayout.LIST -> FeedItemView(
                             feedItem = item,
                             index = index,
                             shareMenuLabel = shareMenuLabel,
@@ -171,7 +171,7 @@ fun FeedList(
                             onShareClick = onShareClick,
                         )
 
-                        FeedItemType.CARD -> FeedItemCard(
+                        FeedLayout.CARD -> FeedItemCard(
                             feedItem = item,
                             index = index,
                             shareMenuLabel = shareMenuLabel,

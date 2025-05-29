@@ -49,7 +49,7 @@ internal fun HomeScreen(
     val feedFontSizes by homeViewModel.feedFontSizeState.collectAsState()
     val swipeActions by homeViewModel.swipeActions.collectAsState()
     val feedOperation by homeViewModel.feedOperationState.collectAsState()
-    val feedItemType by homeViewModel.feedItemType.collectAsState()
+    val feedItemType by homeViewModel.feedLayout.collectAsState()
 
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
@@ -107,7 +107,7 @@ internal fun HomeScreen(
                 loadingState = loadingState,
                 lazyListState = listState,
                 feedFontSizes = feedFontSizes,
-                feedItemType = feedItemType,
+                feedLayout = feedItemType,
                 swipeActions = swipeActions,
                 onAddFeedClick = {
                     showDialog = true
@@ -176,7 +176,7 @@ internal fun HomeScreen(
                 paddingValues = paddingValues,
                 loadingState = loadingState,
                 feedItems = feedState,
-                feedItemType = feedItemType,
+                feedLayout = feedItemType,
                 lazyListState = listState,
                 unReadCount = unReadCount,
                 feedFontSizes = feedFontSizes,
@@ -251,7 +251,7 @@ internal fun HomeScreen(
                 lazyListState = listState,
                 unReadCount = unReadCount,
                 feedFontSizes = feedFontSizes,
-                feedItemType = feedItemType,
+                feedLayout = feedItemType,
                 swipeActions = swipeActions,
                 onAddFeedClick = {
                     showDialog = true

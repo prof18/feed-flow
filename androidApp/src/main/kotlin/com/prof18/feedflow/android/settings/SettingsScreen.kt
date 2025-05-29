@@ -53,7 +53,7 @@ import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
-import com.prof18.feedflow.core.model.FeedItemType
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -66,7 +66,7 @@ import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
-import com.prof18.feedflow.shared.ui.settings.FeedItemSelector
+import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.FeedListFontSettings
 import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
 import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
@@ -208,7 +208,7 @@ private fun SettingsScreenContent(
     onDateFormatSelected: (DateFormat) -> Unit,
     navigateToNotifications: () -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
-    setFeedItem: (FeedItemType) -> Unit,
+    setFeedItem: (FeedLayout) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -342,14 +342,14 @@ private fun SettingsScreenContent(
                     fontSizes = fontSizes,
                     updateFontScale = updateFontScale,
                     dateFormat = settingsState.dateFormat,
-                    feedItemType = settingsState.feedItemType,
+                    feedLayout = settingsState.feedLayout,
                 )
             }
 
             item {
                 Spacer(modifier = Modifier.padding(top = Spacing.regular))
-                FeedItemSelector(
-                    feedItemType = settingsState.feedItemType,
+                FeedLayoutSelector(
+                    feedLayout = settingsState.feedLayout,
                     onFormatSelected = setFeedItem,
                 )
             }

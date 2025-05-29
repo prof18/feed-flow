@@ -11,7 +11,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
-import com.prof18.feedflow.core.model.FeedItemType
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
@@ -80,7 +80,7 @@ class HomeViewModel internal constructor(
     val currentFeedFilter = feedStateRepository.currentFeedFilter
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
     val swipeActions: StateFlow<SwipeActions> = settingsRepository.swipeActions
-    val feedItemType: StateFlow<FeedItemType> = settingsRepository.feedItemType
+    val feedLayout: StateFlow<FeedLayout> = settingsRepository.feedLayout
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 

@@ -27,13 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.prof18.feedflow.core.model.FeedItemType
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun FeedItemSelector(feedItemType: FeedItemType, onFormatSelected: (FeedItemType) -> Unit) {
+fun FeedLayoutSelector(feedLayout: FeedLayout, onFormatSelected: (FeedLayout) -> Unit) {
     var showDialog by remember { mutableStateOf(false) }
 
     Row(
@@ -54,13 +54,13 @@ fun FeedItemSelector(feedItemType: FeedItemType, onFormatSelected: (FeedItemType
             modifier = Modifier.weight(1f),
         ) {
             Text(
-                text = LocalFeedFlowStrings.current.feedTypeTitle,
+                text = LocalFeedFlowStrings.current.feedLayoutTitle,
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                text = when (feedItemType) {
-                    FeedItemType.LIST_TILE -> LocalFeedFlowStrings.current.settingsFeedItemTypeList
-                    FeedItemType.CARD -> LocalFeedFlowStrings.current.settingsFeedItemTypeCard
+                text = when (feedLayout) {
+                    FeedLayout.LIST -> LocalFeedFlowStrings.current.settingsFeedLayoutList
+                    FeedLayout.CARD -> LocalFeedFlowStrings.current.settingsFeedLayoutCard
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -70,7 +70,7 @@ fun FeedItemSelector(feedItemType: FeedItemType, onFormatSelected: (FeedItemType
 
     if (showDialog) {
         FeedItemTypeSelectionDialog(
-            currentFeedItemType = feedItemType,
+            currentFeedLayout = feedLayout,
             onfeedItemTypeSelected = onFormatSelected,
             dismissDialog = { showDialog = false },
         )
@@ -79,8 +79,8 @@ fun FeedItemSelector(feedItemType: FeedItemType, onFormatSelected: (FeedItemType
 
 @Composable
 private fun FeedItemTypeSelectionDialog(
-    currentFeedItemType: FeedItemType,
-    onfeedItemTypeSelected: (FeedItemType) -> Unit,
+    currentFeedLayout: FeedLayout,
+    onfeedItemTypeSelected: (FeedLayout) -> Unit,
     dismissDialog: () -> Unit,
 ) {
     Dialog(onDismissRequest = dismissDialog) {
@@ -89,12 +89,12 @@ private fun FeedItemTypeSelectionDialog(
                 .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.background),
         ) {
-            items(FeedItemType.entries) { feedItemType ->
+            items(FeedLayout.entries) { feedItemType ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .selectable(
-                            selected = feedItemType == currentFeedItemType,
+                            selected = feedItemType == currentFeedLayout,
                             onClick = {
                                 onfeedItemTypeSelected(feedItemType)
                                 dismissDialog()
@@ -103,7 +103,7 @@ private fun FeedItemTypeSelectionDialog(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     RadioButton(
-                        selected = feedItemType == currentFeedItemType,
+                        selected = feedItemType == currentFeedLayout,
                         onClick = {
                             onfeedItemTypeSelected(feedItemType)
                             dismissDialog()
@@ -111,8 +111,8 @@ private fun FeedItemTypeSelectionDialog(
                     )
                     Text(
                         text = when (feedItemType) {
-                            FeedItemType.LIST_TILE -> LocalFeedFlowStrings.current.settingsFeedItemTypeList
-                            FeedItemType.CARD -> LocalFeedFlowStrings.current.settingsFeedItemTypeCard
+                            FeedLayout.LIST -> LocalFeedFlowStrings.current.settingsFeedLayoutList
+                            FeedLayout.CARD -> LocalFeedFlowStrings.current.settingsFeedLayoutCard
                         },
                         style = MaterialTheme.typography.bodyMedium,
                     )
@@ -125,8 +125,8 @@ private fun FeedItemTypeSelectionDialog(
 @Preview
 @Composable
 private fun FeedItemSelectorPreview() {
-    FeedItemSelector(
-        feedItemType = FeedItemType.CARD,
+    FeedLayoutSelector(
+        feedLayout = FeedLayout.CARD,
         onFormatSelected = {},
     )
 }
@@ -135,7 +135,7 @@ private fun FeedItemSelectorPreview() {
 @Composable
 private fun FeedItemTypeSelectionDialogPreview() {
     FeedItemTypeSelectionDialog(
-        currentFeedItemType = FeedItemType.CARD,
+        currentFeedLayout = FeedLayout.CARD,
         onfeedItemTypeSelected = {},
         dismissDialog = {},
     )

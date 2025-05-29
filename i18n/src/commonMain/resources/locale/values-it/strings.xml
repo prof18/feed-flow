@@ -195,7 +195,7 @@
     <string name="widget_configuration_description">Scegli la frequenza di controllo dei nuovi articoli in background e di aggiornamento del widget.</string>
     <string name="widget_configuration_title">Configurazione widget</string>
     <string name="widget_configuration_confirm">Aggiungi Widget</string>
-    <string name="settings_feed_item_type_list">Lista</string>
-    <string name="settings_feed_item_type_card">Carta</string>
-    <string name="feed_type_title">Tipologia di feed</string>
+    <string name="settings_feed_layout_list">Lista</string>
+    <string name="settings_feed_layout_card">Schede</string>
+    <string name="feed_layout_title">Visualizzazione feed</string>
 </resources>

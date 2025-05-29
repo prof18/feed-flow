@@ -24,8 +24,8 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
-import com.prof18.feedflow.core.model.FeedItemType
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.desktop.utils.copyToClipboard
@@ -43,7 +43,7 @@ internal fun FeedWithContentView(
     paddingValues: PaddingValues,
     feedState: ImmutableList<FeedItem>,
     feedFontSizes: FeedFontSizes,
-    feedItemType: FeedItemType,
+    feedLayout: FeedLayout,
     loadingState: FeedUpdateStatus,
     listState: LazyListState,
     currentFeedFilter: FeedFilter,
@@ -72,7 +72,7 @@ internal fun FeedWithContentView(
                 feedItems = feedState,
                 listState = listState,
                 feedFontSize = feedFontSizes,
-                feedItemType = feedItemType,
+                feedLayout = feedLayout,
                 shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuCopyLinkComments,
                 shareMenuLabel = LocalFeedFlowStrings.current.menuCopyLink,
                 currentFeedFilter = currentFeedFilter,
@@ -130,7 +130,7 @@ private fun FeedWithContentViewPreview() {
             loadingState = inProgressFeedUpdateStatus,
             listState = LazyListState(),
             feedFontSizes = FeedFontSizes(),
-            feedItemType = FeedItemType.LIST_TILE,
+            feedLayout = FeedLayout.LIST,
             currentFeedFilter = FeedFilter.Timeline,
             swipeActions = SwipeActions(
                 leftSwipeAction = SwipeActionType.NONE,

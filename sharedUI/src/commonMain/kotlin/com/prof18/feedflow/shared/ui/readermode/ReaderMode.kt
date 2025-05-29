@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Language
@@ -41,6 +42,7 @@ fun ReaderModeContent(
     navigateBack: () -> Unit,
     openInBrowser: (String) -> Unit,
     onShareClick: (String) -> Unit,
+    onArchiveClick: (articleUrl: String) -> Unit,
     modifier: Modifier = Modifier,
     onFontSizeChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
@@ -56,6 +58,7 @@ fun ReaderModeContent(
                 navigateBack = navigateBack,
                 openInBrowser = openInBrowser,
                 onShareClick = onShareClick,
+                onArchiveClick = onArchiveClick,
                 onFontSizeChange = onFontSizeChange,
                 onBookmarkClick = onBookmarkClick,
             )
@@ -96,6 +99,7 @@ private fun ReaderModeToolbar(
     navigateBack: () -> Unit,
     openInBrowser: (String) -> Unit,
     onShareClick: (String) -> Unit,
+    onArchiveClick: (articleUrl: String) -> Unit,
     onFontSizeChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
 ) {
@@ -149,6 +153,17 @@ private fun ReaderModeToolbar(
                         Icon(
                             imageVector = Icons.Default.Share,
                             contentDescription = null,
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            onArchiveClick(readerModeState.readerModeData.url)
+                        },
+                    ) {
+                        Icon(
+                            imageVector = hammerIcon,
+                            contentDescription = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
                         )
                     }
 

@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.skie) apply false
+    alias(libs.plugins.compose.hotreload) apply false
 }
 
 tasks.register("clean", Delete::class) {

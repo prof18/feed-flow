@@ -67,6 +67,22 @@ struct ReaderModeScreen: View {
                         )
 
                         Button {
+                            let archiveUrlString = getArchiveISUrl(articleUrl: feedItemUrlInfo.url)
+                            if browserSelector.openInAppBrowser() {
+                                appState.navigate(
+                                    route: CommonViewRoute.inAppBrowser(url: URL(string: archiveUrlString)!)
+                                )
+                            } else {
+                                openURL(
+                                    browserSelector.getUrlForDefaultBrowser(
+                                        stringUrl: URL(string: archiveUrlString)!.absoluteString))
+                            }
+
+                        } label: {
+                            Image(systemName: "hammer.fill")
+                        }
+
+                        Button {
                             if browserSelector.openInAppBrowser() {
                                 appState.navigate(
                                     route: CommonViewRoute.inAppBrowser(url: URL(string: feedItemUrlInfo.url)!)

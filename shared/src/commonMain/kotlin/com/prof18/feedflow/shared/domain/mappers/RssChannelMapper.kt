@@ -15,10 +15,9 @@ internal class RssChannelMapper(
     private val logger: Logger,
 ) {
 
-    @Suppress("MagicNumber")
     fun getFeedItems(rssChannel: RssChannel, feedSource: FeedSource, dateFormat: DateFormat): List<FeedItem> =
         rssChannel.items.mapNotNull { rssItem ->
-            val title = rssItem.title
+            val title = rssItem.title?.filterSpecialCharacters()
             val url = rssItem.link ?: run {
                 val parsedUrl = parseUrl(rssItem.guid.orEmpty())
                 return@run if (parsedUrl != null) {
@@ -57,7 +56,7 @@ internal class RssChannelMapper(
                     title = title,
                     subtitle = rssItem.description?.let { description ->
                         val partialDesc = if (description.isNotEmpty()) {
-                            description.take(500)
+                            description.take(n = 500)
                         } else {
                             description
                         }
@@ -79,3 +78,21 @@ internal class RssChannelMapper(
             }
         }
 }
+
+private fun String.filterSpecialCharacters(): String =
+    this.replace("â€™", "’")
+        .replace("â€™", "’")
+        .replace("&acirc;&#128;&#153;", "’")
+        .replace("â€œ", "“")
+        .replace("â&#128;&#156;", "“")
+        .replace("&acirc;&#128;&#156;", "“")
+        .replace("â€", "”")
+        .replace("â&#128;&#157;", "”")
+        .replace("&acirc;&#128;&#157;", "”")
+        .replace("â€”", "—")
+        .replace("&acirc;&#128;&#148;", "—")
+        .replace("Â", "")
+        .replace("&Acirc;&nbsp;", "")
+        .replace(" &amp;hellip;", "…")
+        .replace("&amp;hellip;", "…")
+        .replace("&#8217;", "’")

@@ -34,7 +34,7 @@ extension UIColor {
     }
 }
 
-private func withColorScheme(dark: Bool /* otherwise light */, block: () -> Void) {
+func withColorScheme(dark: Bool /* otherwise light */, block: () -> Void) {
     UITraitCollection(userInterfaceStyle: dark ? .dark : .light).performAsCurrent {
         block()
     }

@@ -78,7 +78,6 @@ class FeedFetcherRepository internal constructor(
     suspend fun markItemsAsNotified() =
         databaseHelper.markFeedItemsAsNotified()
 
-    @Suppress("MagicNumber")
     private suspend fun fetchFeedsWithGReader() {
         val feedSourceUrls = databaseHelper.getFeedSources()
         if (feedSourceUrls.isEmpty()) {
@@ -90,7 +89,7 @@ class FeedFetcherRepository internal constructor(
                 }
         }
         // If the sync is skipped quickly, sometimes the loading spinner stays out
-        delay(50)
+        delay(timeMillis = 50)
         isFeedSyncDone = true
         updateRefreshCount()
         // After fetching new feeds, delete old ones based on user settings
@@ -98,7 +97,6 @@ class FeedFetcherRepository internal constructor(
         feedStateRepository.getFeeds()
     }
 
-    @Suppress("MagicNumber")
     private suspend fun fetchFeedsWithRssParser(
         forceRefresh: Boolean = false,
         isFirstLaunch: Boolean = false,
@@ -129,7 +127,7 @@ class FeedFetcherRepository internal constructor(
 
             feedSyncRepository.syncFeedItems()
             // If the sync is skipped quickly, sometimes the loading spinner stays out
-            delay(50)
+            delay(timeMillis = 50)
             isFeedSyncDone = true
             // After fetching new feeds, delete old ones based on user settings
             cleanOldFeeds()
@@ -187,10 +185,7 @@ class FeedFetcherRepository internal constructor(
             return true
         }
 
-        val lastSyncTimestamp = feedSource.lastSyncTimestamp
-        if (lastSyncTimestamp == null) {
-            return true
-        }
+        val lastSyncTimestamp = feedSource.lastSyncTimestamp ?: return true
 
         val currentTime = dateFormatter.currentTimeMillis()
         val timeDifference = currentTime - lastSyncTimestamp

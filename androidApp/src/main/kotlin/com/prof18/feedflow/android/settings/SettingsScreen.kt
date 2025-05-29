@@ -173,8 +173,8 @@ fun SettingsScreen(
         onFeedOrderSelected = { order ->
             settingsViewModel.updateFeedOrder(order)
         },
-        setFeedItem = { feedItemType ->
-            settingsViewModel.updateFeedItemType(feedItemType)
+        setFeedItem = { feedLayout ->
+            settingsViewModel.updateFeedLayout(feedLayout)
         },
     )
 }

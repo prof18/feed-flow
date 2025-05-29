@@ -7,6 +7,5 @@ data class ReaderModeData(
     val url: String,
     val fontSize: Int,
     val isBookmarked: Boolean,
-    val heroImageUrl: String?,
     val extractor: ReaderExtractor,
 )

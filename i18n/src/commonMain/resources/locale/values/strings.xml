@@ -228,4 +228,5 @@
     <string name="settings_feed_order_title">Sort by Date</string>
     <string name="settings_feed_order_newest_first">Newest First</string>
     <string name="settings_feed_order_oldest_first">Oldest First</string>
+    <string name="reader_mode_archive_button_content_description">Open in archive.is</string>
 </resources>

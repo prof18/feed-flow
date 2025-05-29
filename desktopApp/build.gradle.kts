@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.about.libraries)
+    alias(libs.plugins.compose.hotreload)
 }
 
 apply(from = "../versioning.gradle.kts")
@@ -198,6 +199,7 @@ val macExtraPlistKeys: String
           <string>uk</string>
           <string>ja</string>
           <string>cs</string>
+          <string>lv</string>
         </array>
         <key>NSUbiquitousContainers</key>
         <dict>

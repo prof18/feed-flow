@@ -32,8 +32,8 @@ class SettingsRepository(
     )
     val swipeActions: StateFlow<SwipeActions> = swipeActionsMutableFlow.asStateFlow()
 
-    private val feedItemTypeMutableFlow = MutableStateFlow(getFeedItemType())
-    val feedLayout: StateFlow<FeedLayout> = feedItemTypeMutableFlow.asStateFlow()
+    private val feedLayoutMutableFlow = MutableStateFlow(getFeedLayout())
+    val feedLayout: StateFlow<FeedLayout> = feedLayoutMutableFlow.asStateFlow()
 
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
@@ -220,13 +220,13 @@ class SettingsRepository(
         settings[SettingsFields.FEED_ORDER.name] = order.name
     }
 
-    fun getFeedItemType(): FeedLayout =
-        settings.getString(SettingsFields.FEED_ITEM_TYPE.name, FeedLayout.LIST.name)
+    fun getFeedLayout(): FeedLayout =
+        settings.getString(SettingsFields.FEED_LAYOUT.name, FeedLayout.LIST.name)
             .let { FeedLayout.valueOf(it) }
 
-    fun setFeedItemType(feedLayout: FeedLayout) {
-        settings[SettingsFields.FEED_ITEM_TYPE.name] = feedLayout.name
-        feedItemTypeMutableFlow.update { feedLayout }
+    fun setFeedLayout(feedLayout: FeedLayout) {
+        settings[SettingsFields.FEED_LAYOUT.name] = feedLayout.name
+        feedLayoutMutableFlow.update { feedLayout }
     }
 
     private companion object {
@@ -259,5 +259,5 @@ internal enum class SettingsFields {
     LEFT_SWIPE_ACTION,
     RIGHT_SWIPE_ACTION,
     DATE_FORMAT,
-    FEED_ITEM_TYPE,
+    FEED_LAYOUT,
 }

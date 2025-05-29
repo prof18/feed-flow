@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.readermode
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +35,7 @@ import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.ui.readermode.ReaderModeContent
+import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import org.json.JSONException
 import org.json.JSONObject
 import org.koin.compose.koinInject
@@ -90,6 +92,10 @@ internal fun ReaderModeScreen(
             )
         },
         onBookmarkClick = onBookmarkClick,
+        onArchiveClick = { articleUrl ->
+            val archiveUrl = getArchiveISUrl(articleUrl)
+            browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
+        },
     )
 }
 
@@ -111,9 +117,23 @@ private fun ReaderMode(
         mutableStateOf(null)
     }
 
+    val isDarkMode = isSystemInDarkTheme()
+    val backgroundColor = if (isDarkMode) {
+        "#1e1e1e"
+    } else {
+        "#f6f8fa"
+    }
+    val borderColor = if (isDarkMode) {
+        "#444444"
+    } else {
+        "#d1d9e0"
+    }
+
     val colors = ReaderColors(
         textColor = "#$bodyColor",
         linkColor = "#$linkColor",
+        backgroundColor = backgroundColor,
+        borderColor = borderColor,
     )
 
     val latestOpenInBrowser by rememberUpdatedState(openInBrowser)
@@ -147,7 +167,6 @@ private fun ReaderMode(
                     content = content,
                     title = title,
                     fontSize = readerModeState.readerModeData.fontSize,
-                    heroImageUrl = readerModeState.readerModeData.heroImageUrl,
                 )
 
                 finalContents = finalHTML

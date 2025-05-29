@@ -225,4 +225,5 @@
     <string name="settings_feed_order_title">Сортиране по дата</string>
     <string name="settings_feed_order_newest_first">Най-новите първо</string>
     <string name="settings_feed_order_oldest_first">Най-старите първо</string>
+    <string name="reader_mode_archive_button_content_description">Отваряне в archive.is</string>
 </resources>

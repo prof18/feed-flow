@@ -225,4 +225,5 @@
     <string name="settings_feed_order_title">Сортувати за датою</string>
     <string name="settings_feed_order_newest_first">Спочатку новіші</string>
     <string name="settings_feed_order_oldest_first">Спочатку найстаріші</string>
+    <string name="reader_mode_archive_button_content_description">Відкрити в archive.is</string>
 </resources>

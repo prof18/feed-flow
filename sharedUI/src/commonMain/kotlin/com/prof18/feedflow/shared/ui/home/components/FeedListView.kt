@@ -77,7 +77,7 @@ import me.saket.swipe.SwipeableActionsBox
 @Suppress("MagicNumber")
 @OptIn(FlowPreview::class)
 @Composable
-fun FeedList(
+internal fun FeedList(
     feedItems: ImmutableList<FeedItem>,
     feedFontSize: FeedFontSizes,
     feedLayout: FeedLayout,
@@ -227,12 +227,12 @@ fun FeedItemView(
     feedFontSize: FeedFontSizes,
     shareMenuLabel: String,
     shareCommentsMenuLabel: String,
-    modifier: Modifier = Modifier,
-    disableClick: Boolean = false,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
+    modifier: Modifier = Modifier,
+    disableClick: Boolean = false,
     onShareClick: (FeedItemUrlTitle) -> Unit,
 ) {
     var showItemMenu by remember {

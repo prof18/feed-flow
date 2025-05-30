@@ -190,7 +190,7 @@ private fun FeedSourcesList(
                 HorizontalDivider(
                     modifier = Modifier,
                     thickness = 0.2.dp,
-                    color = Color.Gray
+                    color = Color.Gray,
                 )
             }
         }

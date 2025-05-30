@@ -12,8 +12,8 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun FeedNameTextField(
-    modifier: Modifier = Modifier,
     feedName: String,
+    modifier: Modifier = Modifier,
     onFeedNameUpdated: (String) -> Unit,
 ) {
     OutlinedTextField(

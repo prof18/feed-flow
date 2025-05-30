@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Language
@@ -43,10 +42,11 @@ fun ReaderModeContent(
     openInBrowser: (String) -> Unit,
     onShareClick: (String) -> Unit,
     onArchiveClick: (articleUrl: String) -> Unit,
-    modifier: Modifier = Modifier,
     onFontSizeChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
-    snackbarHost: @Composable () -> Unit = {},
+    modifier: Modifier = Modifier,
+    snackbarHost: @Composable () -> Unit = {
+    },
     readerModeSuccessView: @Composable (PaddingValues, ReaderModeState.Success) -> Unit,
 ) {
     Scaffold(

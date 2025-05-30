@@ -17,7 +17,7 @@ import coil3.request.ImageRequest
 import com.prof18.feedflow.shared.ui.style.Spacing
 
 @Composable
-fun FeedItemImage(
+internal fun FeedItemImage(
     url: String,
     width: Dp,
     modifier: Modifier = Modifier,

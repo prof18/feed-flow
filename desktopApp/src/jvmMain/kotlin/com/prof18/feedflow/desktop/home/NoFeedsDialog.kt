@@ -1,4 +1,4 @@
-package com.prof18.feedflow.desktop.home.components
+package com.prof18.feedflow.desktop.home
 
 import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.VerticalScrollbar

@@ -43,9 +43,12 @@ fun FreshRssSyncContent(
     onBackClick: () -> Unit,
     onDisconnectClick: () -> Unit,
     onLoginClick: (serverUrl: String, username: String, password: String) -> Unit,
-    snackbarHost: @Composable () -> Unit = {},
+    modifier: Modifier = Modifier,
+    snackbarHost: @Composable () -> Unit = {
+    },
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -99,8 +102,8 @@ private fun LoadingView() {
 
 @Composable
 fun DisconnectedView(
-    modifier: Modifier = Modifier,
     isLoginLoading: Boolean,
+    modifier: Modifier = Modifier,
     onLoginClick: (serverUrl: String, username: String, password: String) -> Unit,
 ) {
     var serverUrl by remember { mutableStateOf("") }

@@ -239,7 +239,6 @@ private fun ImportDoneView(
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     val feedSources = feedSourcesInvalid.ifEmpty { feedSourceWithError }
     val errorMessage = if (feedSourcesInvalid.isNotEmpty()) {
         LocalFeedFlowStrings.current.wrongLinkReportTitle

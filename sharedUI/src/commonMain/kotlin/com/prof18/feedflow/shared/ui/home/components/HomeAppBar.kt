@@ -1,6 +1,5 @@
-package com.prof18.feedflow.android.home.components
+package com.prof18.feedflow.shared.ui.home.components
 
-import FeedFlowTheme
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,8 +24,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.LinkOpeningPreference
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -35,6 +32,7 @@ internal fun HomeAppBar(
     unReadCount: Long,
     showDrawerMenu: Boolean,
     isDrawerOpen: Boolean,
+    showDropdownMenu: Boolean,
     onDrawerMenuClick: () -> Unit,
     onMarkAllReadClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
@@ -42,7 +40,6 @@ internal fun HomeAppBar(
     onClick: () -> Unit,
     onDoubleClick: () -> Unit,
     onForceRefreshClick: () -> Unit,
-    onDeleteDatabase: () -> Unit,
     onSearchClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
 ) {
@@ -88,36 +85,37 @@ internal fun HomeAppBar(
                 )
             }
 
-            IconButton(
-                onClick = {
-                    showMenu = !showMenu
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = "Settings",
+            if (showDropdownMenu) {
+                IconButton(
+                    onClick = {
+                        showMenu = !showMenu
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Settings",
+                    )
+                }
+
+                HomeAppBarDropdownMenu(
+                    showMenu = showMenu,
+                    feedFilter = currentFeedFilter,
+                    closeMenu = {
+                        showMenu = false
+                    },
+                    onMarkAllReadClicked = onMarkAllReadClicked,
+                    onClearOldArticlesClicked = onClearOldArticlesClicked,
+                    onSettingsButtonClicked = {
+                        showMenu = false
+                        onSettingsButtonClicked()
+                    },
+                    onForceRefreshClick = onForceRefreshClick,
+                    onEditFeedClick = { feedSource ->
+                        showMenu = false
+                        onEditFeedClick(feedSource)
+                    },
                 )
             }
-
-            HomeAppBarDropdownMenu(
-                showMenu = showMenu,
-                feedFilter = currentFeedFilter,
-                closeMenu = {
-                    showMenu = false
-                },
-                onMarkAllReadClicked = onMarkAllReadClicked,
-                onClearOldArticlesClicked = onClearOldArticlesClicked,
-                onSettingsButtonClicked = {
-                    showMenu = false
-                    onSettingsButtonClicked()
-                },
-                onForceRefreshClick = onForceRefreshClick,
-                onDeleteDatabase = onDeleteDatabase,
-                onEditFeedClick = { feedSource ->
-                    showMenu = false
-                    onEditFeedClick(feedSource)
-                },
-            )
         },
         modifier = Modifier
             .pointerInput(Unit) {
@@ -153,65 +151,6 @@ private fun DrawerIcon(onDrawerMenuClick: () -> Unit, isDrawerOpen: Boolean) {
                 Icons.Default.Menu
             },
             contentDescription = "Drawer menu",
-        )
-    }
-}
-
-@PreviewPhone
-@Composable
-private fun HomeAppBarPreview() {
-    FeedFlowTheme {
-        HomeAppBar(
-            currentFeedFilter = FeedFilter.Source(
-                feedSource = FeedSource(
-                    id = "0",
-                    url = "",
-                    title = "A very very very very very very long title",
-                    category = null,
-                    lastSyncTimestamp = null,
-                    logoUrl = null,
-                    linkOpeningPreference = LinkOpeningPreference.DEFAULT,
-                    isHiddenFromTimeline = false,
-                    isPinned = false,
-                    isNotificationEnabled = false,
-                ),
-            ),
-            showDrawerMenu = true,
-            isDrawerOpen = false,
-            onDrawerMenuClick = {},
-            unReadCount = 42,
-            onMarkAllReadClicked = { },
-            onSettingsButtonClicked = { },
-            onClearOldArticlesClicked = { },
-            onClick = { },
-            onDoubleClick = {},
-            onForceRefreshClick = {},
-            onDeleteDatabase = {},
-            onSearchClick = {},
-            onEditFeedClick = { },
-        )
-    }
-}
-
-@PreviewPhone
-@Composable
-private fun HomeAppBarSmallPreview() {
-    FeedFlowTheme {
-        HomeAppBar(
-            currentFeedFilter = FeedFilter.Timeline,
-            showDrawerMenu = true,
-            isDrawerOpen = false,
-            onDrawerMenuClick = {},
-            unReadCount = 42,
-            onMarkAllReadClicked = { },
-            onSettingsButtonClicked = { },
-            onClearOldArticlesClicked = { },
-            onClick = { },
-            onDoubleClick = {},
-            onForceRefreshClick = {},
-            onDeleteDatabase = {},
-            onSearchClick = {},
-            onEditFeedClick = { },
         )
     }
 }

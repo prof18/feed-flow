@@ -57,10 +57,11 @@ fun SearchScreenContent(
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
-    modifier: Modifier = Modifier,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
-    snackbarHost: @Composable () -> Unit = {},
+    modifier: Modifier = Modifier,
+    snackbarHost: @Composable () -> Unit = {
+    },
 ) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue(searchQuery, TextRange(searchQuery.length))) }
 

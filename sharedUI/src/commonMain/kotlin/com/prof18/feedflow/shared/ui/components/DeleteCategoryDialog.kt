@@ -16,7 +16,7 @@ fun DeleteCategoryDialog(
 ) {
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = { 
+            onDismissRequest = {
                 onDismiss()
             },
             title = { Text(LocalFeedFlowStrings.current.deleteCategoryConfirmationTitle) },
@@ -26,20 +26,20 @@ fun DeleteCategoryDialog(
                     onClick = {
                         onDeleteCategory(categoryId)
                         onDismiss()
-                    }
+                    },
                 ) {
                     Text(LocalFeedFlowStrings.current.deleteFeed)
                 }
             },
             dismissButton = {
                 TextButton(
-                    onClick = { 
+                    onClick = {
                         onDismiss()
-                    }
+                    },
                 ) {
                     Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
                 }
-            }
+            },
         )
     }
 }

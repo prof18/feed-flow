@@ -35,13 +35,14 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun DateFormatSelector(
     currentFormat: DateFormat,
+    modifier: Modifier = Modifier,
     onFormatSelected: (DateFormat) -> Unit,
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .clickable { showDialog = true }
             .fillMaxWidth()
             .padding(vertical = Spacing.small)

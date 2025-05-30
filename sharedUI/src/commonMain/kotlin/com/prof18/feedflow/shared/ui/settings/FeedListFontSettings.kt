@@ -25,16 +25,16 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 @Composable
 fun FeedListFontSettings(
     fontSizes: FeedFontSizes,
-    modifier: Modifier = Modifier,
     feedLayout: FeedLayout,
     isHideDescriptionEnabled: Boolean,
     isHideImagesEnabled: Boolean,
     dateFormat: DateFormat,
+    modifier: Modifier = Modifier,
     updateFontScale: (Int) -> Unit,
 ) {
-    Column {
+    Column(modifier = modifier) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(Spacing.medium),
         ) {

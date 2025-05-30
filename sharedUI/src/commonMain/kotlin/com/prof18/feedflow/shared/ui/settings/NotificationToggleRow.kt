@@ -15,9 +15,9 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 
 @Composable
 fun NotificationToggleRow(
-    modifier: Modifier = Modifier,
     title: String,
     isChecked: Boolean,
+    modifier: Modifier = Modifier,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(

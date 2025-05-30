@@ -16,9 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -72,7 +69,6 @@ class MainActivity : ComponentActivity() {
     private val messageQueue by inject<FeedSyncMessageQueue>()
     private val reviewViewModel by viewModel<ReviewViewModel>()
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -98,7 +94,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val readerModeViewModel: ReaderModeViewModel = koinViewModel()
 
-            val windowSize = calculateWindowSizeClass(this@MainActivity)
             val snackbarHostState = remember { SnackbarHostState() }
 
             FeedFlowTheme {
@@ -121,7 +116,6 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background,
                     ) {
                         FeedFlowNavigation(
-                            windowSizeClass = windowSize,
                             navController = navController,
                             readerModeViewModel = readerModeViewModel,
                         )
@@ -142,7 +136,6 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun FeedFlowNavigation(
-        windowSizeClass: WindowSizeClass,
         navController: NavHostController,
         readerModeViewModel: ReaderModeViewModel,
     ) {
@@ -179,7 +172,6 @@ class MainActivity : ComponentActivity() {
                 }
 
                 HomeScreen(
-                    windowSizeClass = windowSizeClass,
                     homeViewModel = homeViewModel,
                     onSettingsButtonClicked = {
                         navController.navigate(Settings)

@@ -42,14 +42,14 @@ fun EditFeedContent(
     onLinkOpeningPreferenceSelected: (LinkOpeningPreference) -> Unit,
     onHiddenToggled: (Boolean) -> Unit,
     onPinnedToggled: (Boolean) -> Unit,
-    onNotificationToggleChanged: (Boolean) -> Unit = {},
-    showNotificationToggle: Boolean = false,
     editFeed: () -> Unit,
     onExpandClick: () -> Unit,
     onAddCategoryClick: (CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     modifier: Modifier = Modifier,
+    onNotificationToggleChanged: (Boolean) -> Unit = {},
+    showNotificationToggle: Boolean = false,
     snackbarHost: @Composable () -> Unit = {},
     topAppBar: @Composable () -> Unit = {},
 ) {
@@ -99,7 +99,7 @@ fun EditFeedContent(
 
             item {
                 Row(
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(top = Spacing.regular),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -118,7 +118,7 @@ fun EditFeedContent(
 
             item {
                 Row(
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(top = Spacing.regular),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -138,7 +138,7 @@ fun EditFeedContent(
             item {
                 if (showNotificationToggle) {
                     Row(
-                        modifier = modifier
+                        modifier = Modifier
                             .padding(top = Spacing.regular),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

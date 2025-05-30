@@ -1,6 +1,5 @@
-package com.prof18.feedflow.android.home.components
+package com.prof18.feedflow.shared.ui.home.components
 
-import FeedFlowTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
@@ -12,10 +11,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -27,7 +24,6 @@ internal fun HomeAppBarDropdownMenu(
     onClearOldArticlesClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onForceRefreshClick: () -> Unit,
-    onDeleteDatabase: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
 ) {
     DropdownMenu(
@@ -112,41 +108,6 @@ internal fun HomeAppBarDropdownMenu(
                     contentDescription = null,
                 )
             },
-        )
-
-        if (BuildConfig.DEBUG) {
-            DropdownMenuItem(
-                onClick = {
-                    onDeleteDatabase()
-                },
-                text = {
-                    Text("Delete database")
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                    )
-                },
-            )
-        }
-    }
-}
-
-@PreviewPhone
-@Composable
-private fun SettingsDropdownMenuPreview() {
-    FeedFlowTheme {
-        HomeAppBarDropdownMenu(
-            showMenu = true,
-            feedFilter = FeedFilter.Timeline,
-            closeMenu = {},
-            onMarkAllReadClicked = {},
-            onClearOldArticlesClicked = {},
-            onSettingsButtonClicked = {},
-            onForceRefreshClick = {},
-            onDeleteDatabase = {},
-            onEditFeedClick = {},
         )
     }
 }

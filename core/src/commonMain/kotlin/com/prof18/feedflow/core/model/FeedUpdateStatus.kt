@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.domain.model
+package com.prof18.feedflow.core.model
 
 sealed interface FeedUpdateStatus {
     val refreshedFeedCount: Int

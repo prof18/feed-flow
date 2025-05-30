@@ -71,10 +71,10 @@ private fun AnnotatedClickableText(
                     style = SpanStyle(
                         color = Color.Blue,
                         fontWeight = FontWeight.Bold,
-                    )
+                    ),
                 ),
-                linkInteractionListener = { onTextClick() }
-            )
+                linkInteractionListener = { onTextClick() },
+            ),
         ) {
             append(" Marco Gomiero")
         }

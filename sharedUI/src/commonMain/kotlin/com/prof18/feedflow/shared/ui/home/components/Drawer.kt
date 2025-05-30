@@ -65,22 +65,18 @@ import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
 import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
+import com.prof18.feedflow.shared.ui.home.FeedManagementActions
+import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-fun Drawer(
-    navDrawerState: NavDrawerState,
-    currentFeedFilter: FeedFilter,
+internal fun Drawer(
+    displayState: HomeDisplayState,
+    feedManagementActions: FeedManagementActions,
     onFeedFilterSelected: (FeedFilter) -> Unit,
-    onAddFeedClicked: () -> Unit,
-    onEditFeedClick: (FeedSource) -> Unit,
-    onDeleteFeedSourceClick: (FeedSource) -> Unit,
-    onPinFeedClick: (FeedSource) -> Unit,
-    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
-    onDeleteCategoryClick: (CategoryId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -92,36 +88,38 @@ fun Drawer(
     ) {
         item {
             DrawerTimelineItem(
-                currentFeedFilter = currentFeedFilter,
+                currentFeedFilter = displayState.currentFeedFilter,
                 onFeedFilterSelected = onFeedFilterSelected,
-                drawerItem = navDrawerState.timeline.filterIsInstance<DrawerItem.Timeline>().firstOrNull()
+                drawerItem = displayState.navDrawerState.timeline.filterIsInstance<DrawerItem.Timeline>().firstOrNull()
                     ?: DrawerItem.Timeline(unreadCount = 0),
             )
         }
 
         item {
             DrawerReadItem(
-                currentFeedFilter = currentFeedFilter,
+                currentFeedFilter = displayState.currentFeedFilter,
                 onFeedFilterSelected = onFeedFilterSelected,
             )
         }
 
         item {
             DrawerBookmarksItem(
-                currentFeedFilter = currentFeedFilter,
+                currentFeedFilter = displayState.currentFeedFilter,
                 onFeedFilterSelected = onFeedFilterSelected,
-                drawerItem = navDrawerState.bookmarks.filterIsInstance<DrawerItem.Bookmarks>().firstOrNull()
+                drawerItem = displayState.navDrawerState.bookmarks
+                    .filterIsInstance<DrawerItem.Bookmarks>()
+                    .firstOrNull()
                     ?: DrawerItem.Bookmarks(unreadCount = 0),
             )
         }
 
         item {
             DrawerAddItem(
-                onAddFeedClicked = onAddFeedClicked,
+                onAddFeedClicked = feedManagementActions.onAddFeedClick,
             )
         }
 
-        if (navDrawerState.pinnedFeedSources.isNotEmpty()) {
+        if (displayState.navDrawerState.pinnedFeedSources.isNotEmpty()) {
             item {
                 DrawerDivider()
             }
@@ -137,45 +135,45 @@ fun Drawer(
                     )
 
                     FeedSourcesList(
-                        drawerFeedSources = navDrawerState.pinnedFeedSources
+                        drawerFeedSources = displayState.navDrawerState.pinnedFeedSources
                             .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
-                        currentFeedFilter = currentFeedFilter,
+                        currentFeedFilter = displayState.currentFeedFilter,
                         onFeedFilterSelected = onFeedFilterSelected,
-                        onEditFeedClick = onEditFeedClick,
-                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                        onPinFeedClick = onPinFeedClick,
+                        onEditFeedClick = feedManagementActions.onEditFeedClick,
+                        onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
+                        onPinFeedClick = feedManagementActions.onPinFeedClick,
                     )
                 }
             }
         }
 
-        if (navDrawerState.categories.isNotEmpty()) {
+        if (displayState.navDrawerState.categories.isNotEmpty()) {
             item {
                 DrawerDivider()
             }
 
             item {
                 DrawerCategoriesSection(
-                    navDrawerState = navDrawerState,
-                    currentFeedFilter = currentFeedFilter,
+                    navDrawerState = displayState.navDrawerState,
+                    currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
-                    onEditCategoryClick = onEditCategoryClick,
-                    onDeleteCategoryClick = onDeleteCategoryClick,
+                    onEditCategoryClick = feedManagementActions.onEditCategoryClick,
+                    onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
                 )
             }
         }
 
-        if (navDrawerState.feedSourcesByCategory.isNotEmpty() ||
-            navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
+        if (displayState.navDrawerState.feedSourcesByCategory.isNotEmpty() ||
+            displayState.navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
         ) {
             item {
                 DrawerFeedSourcesByCategories(
-                    navDrawerState = navDrawerState,
-                    currentFeedFilter = currentFeedFilter,
+                    navDrawerState = displayState.navDrawerState,
+                    currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
-                    onEditFeedClick = onEditFeedClick,
-                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                    onPinFeedClick = onPinFeedClick,
+                    onEditFeedClick = feedManagementActions.onEditFeedClick,
+                    onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
+                    onPinFeedClick = feedManagementActions.onPinFeedClick,
                 )
             }
         }
@@ -663,13 +661,13 @@ fun FeedSourceDrawerItem(
     label: @Composable () -> Unit,
     selected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     icon: @Composable () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
-    colors: NavigationDrawerItemColors = NavigationDrawerItemDefaults.colors(),
     unreadCount: Long,
+    modifier: Modifier = Modifier,
+    colors: NavigationDrawerItemColors = NavigationDrawerItemDefaults.colors(),
 ) {
     var showFeedMenu by remember {
         mutableStateOf(

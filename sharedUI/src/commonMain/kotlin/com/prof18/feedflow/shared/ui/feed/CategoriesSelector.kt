@@ -93,10 +93,10 @@ internal fun CategoriesSelector(
 
 @Composable
 private fun CategoriesList(
-    modifier: Modifier,
     categoriesState: CategoriesState,
     onAddCategoryClick: (CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    modifier: Modifier = Modifier,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -112,7 +112,7 @@ private fun CategoriesList(
         },
         onDeleteCategory = { categoryId ->
             onDeleteCategoryClick(categoryId)
-        }
+        },
     )
 
     EditCategoryDialog(
@@ -124,7 +124,7 @@ private fun CategoriesList(
         },
         onEditCategory = { categoryId, newName ->
             onEditCategoryClick(categoryId, newName)
-        }
+        },
     )
     AnimatedVisibility(
         modifier = modifier,

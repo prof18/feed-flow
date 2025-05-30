@@ -37,6 +37,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun SwipeActionSelector(
     direction: SwipeDirection,
     currentAction: SwipeActionType,
+    modifier: Modifier = Modifier,
     onActionSelected: (SwipeActionType) -> Unit,
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -44,7 +45,7 @@ fun SwipeActionSelector(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .clickable { showDialog = true }
             .fillMaxWidth()
             .padding(vertical = Spacing.xsmall)

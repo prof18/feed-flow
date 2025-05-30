@@ -83,7 +83,7 @@ import java.net.URI
 import java.util.Properties
 import javax.swing.UIManager
 
-@Suppress("UnsafeDynamicallyLoadedCode")
+@Suppress("UnsafeDynamicallyLoadedCode", "CyclomaticComplexMethod")
 fun main() = application {
     val properties = Properties()
     val propsFile = DI::class.java.classLoader?.getResourceAsStream("props.properties")

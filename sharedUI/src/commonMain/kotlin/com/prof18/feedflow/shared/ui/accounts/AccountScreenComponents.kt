@@ -35,9 +35,9 @@ fun AccountsContent(
     syncAccount: SyncAccounts,
     accounts: ImmutableList<SyncAccounts>,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
     onDropboxCLick: () -> Unit,
     onICloudClick: () -> Unit,
+    modifier: Modifier = Modifier,
     onFreshRssClick: () -> Unit,
 ) {
     Scaffold(
@@ -87,7 +87,7 @@ fun AccountsContent(
                         val isEnabled = syncAccount == SyncAccounts.LOCAL || syncAccount == account
                         AccountsItem(
                             modifier = Modifier.weight(1f)
-                                .alpha(if (isEnabled) 1f else 0.5f),
+                                .alpha(alpha = if (isEnabled) 1f else 0.5f),
                             title = account.getTitle(),
                             icon = account.getIcon(),
                             isClickEnabled = isEnabled,
@@ -137,8 +137,8 @@ private fun SyncAccounts.getIcon() =
 private fun AccountsItem(
     title: String,
     icon: ImageVector,
-    modifier: Modifier = Modifier,
     isClickEnabled: Boolean,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Row(

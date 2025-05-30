@@ -55,7 +55,7 @@ fun SliderWithPlusMinus(
                 sliderValue = it
                 onValueChange(it)
             },
-            modifier = modifier.weight(10f),
+            modifier = Modifier.weight(weight = 10f),
             enabled = enabled,
             valueRange = valueRange,
             steps = steps,

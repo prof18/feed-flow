@@ -11,11 +11,11 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceState
+import com.prof18.feedflow.core.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.shared.domain.model.Browser
-import com.prof18.feedflow.shared.domain.model.InProgressFeedUpdateStatus
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 

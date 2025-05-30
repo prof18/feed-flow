@@ -58,6 +58,6 @@ internal fun CategoryContextMenu(
         onDeleteCategory = { id ->
             onDeleteCategoryClick(id)
             showDeleteDialog = false
-        }
+        },
     )
 }

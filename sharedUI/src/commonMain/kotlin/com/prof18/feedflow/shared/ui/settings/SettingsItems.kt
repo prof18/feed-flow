@@ -24,13 +24,14 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 @Composable
 fun HideDescriptionSwitch(
     isHideDescriptionEnabled: Boolean,
+    modifier: Modifier = Modifier,
     setHideDescription: (Boolean) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .clickable {
                 setHideDescription(!isHideDescriptionEnabled)
             }
@@ -61,13 +62,14 @@ fun HideDescriptionSwitch(
 @Composable
 fun HideImagesSwitch(
     isHideImagesEnabled: Boolean,
+    modifier: Modifier = Modifier,
     setHideImages: (Boolean) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .clickable {
                 setHideImages(!isHideImagesEnabled)
             }
@@ -98,13 +100,14 @@ fun HideImagesSwitch(
 @Composable
 fun RemoveTitleFromDescSwitch(
     isRemoveTitleFromDescriptionEnabled: Boolean,
+    modifier: Modifier = Modifier,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .clickable {
                 setRemoveTitleFromDescription(!isRemoveTitleFromDescriptionEnabled)
             }

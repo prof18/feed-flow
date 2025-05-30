@@ -1,4 +1,4 @@
-package com.prof18.feedflow.android.home.components
+package com.prof18.feedflow.android.home
 
 import FeedFlowTheme
 import androidx.compose.foundation.isSystemInDarkTheme

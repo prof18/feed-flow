@@ -126,6 +126,7 @@ dependencies {
     implementation(compose.materialIconsExtended)
     implementation(compose.ui)
     implementation(compose.uiTooling)
+    implementation(compose.material3AdaptiveNavigationSuite)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewModel.compose)
@@ -134,7 +135,6 @@ dependencies {
 
     implementation(libs.bundles.about.libraries)
 
-    implementation(libs.material.window.size)
     implementation(libs.androidx.browser)
     implementation(libs.compose.webview)
 

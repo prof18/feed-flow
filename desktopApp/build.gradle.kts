@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.about.libraries)
     alias(libs.plugins.compose.hotreload)
+    alias(libs.plugins.feedflow.detekt)
 }
 
 apply(from = "../versioning.gradle.kts")
@@ -57,6 +58,7 @@ kotlin {
                 implementation(libs.multiplatform.markdown.renderer.coil)
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.transition)
+                implementation(libs.material.window.size)
             }
         }
     }

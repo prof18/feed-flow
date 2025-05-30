@@ -5,11 +5,11 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedUpdateStatus
+import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
-import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
-import com.prof18.feedflow.shared.domain.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
 import com.prof18.feedflow.shared.presentation.model.ErrorState
 import com.prof18.feedflow.shared.utils.executeWithRetry

@@ -38,7 +38,7 @@ ksp = "2.1.21-2.0.1"
 ktor = "3.1.3"
 lifecycle = "2.9.0"
 lyricist = "1.7.0"
-material-window-size = "1.3.2"
+material-window-size = "1.7.3"
 multiplatform-settings = "1.3.0"
 multiplatformMarkdownRendererM3 = "0.35.0"
 nav-compose = "2.9.0"
@@ -121,7 +121,7 @@ lyricist = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" 
 #  and https://github.com/adrielcafe/lyricist/pull/46 gets merged
 #lyricist-processorXml = { module = "cafe.adriel.lyricist:lyricist-processor-xml", version.ref = "lyricist" }
 lyricist-processorXml = { module = "com.github.prof18:lyricist", version = "e305b936c3" }
-material-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material-window-size" }
+material-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material-window-size" }
 multiplatform-markdown-renderer-coil = { module = "com.mikepenz:multiplatform-markdown-renderer-coil3", version.ref = "multiplatformMarkdownRendererM3" }
 multiplatform-markdown-renderer-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "multiplatformMarkdownRendererM3" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }

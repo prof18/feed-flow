@@ -40,7 +40,7 @@ fun EditCategoryDialog(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Done,
                     ),
                 )
             },
@@ -52,7 +52,7 @@ fun EditCategoryDialog(
                             onEditCategory(categoryId, CategoryName(editedCategoryName))
                         }
                         onDismiss()
-                    }
+                    },
                 ) {
                     Text(LocalFeedFlowStrings.current.actionSave)
                 }
@@ -61,11 +61,11 @@ fun EditCategoryDialog(
                 TextButton(
                     onClick = {
                         onDismiss()
-                    }
+                    },
                 ) {
                     Text(LocalFeedFlowStrings.current.deleteCategoryCloseButton)
                 }
-            }
+            },
         )
     }
 }

@@ -5,8 +5,10 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
+import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.core.model.isError
@@ -23,8 +25,6 @@ import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.model.AddFeedResponse
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
-import com.prof18.feedflow.shared.domain.model.FinishedFeedUpdateStatus
-import com.prof18.feedflow.shared.domain.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 import com.prof18.rssparser.RssParser

@@ -1,8 +1,11 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.feedflow.detekt)
 }
 
 java {
@@ -47,6 +50,7 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.preview)
                 implementation(compose.materialIconsExtended)
+                implementation(compose.material3AdaptiveNavigationSuite)
                 implementation(libs.immutable.collections)
                 implementation(libs.saket.swipe)
                 implementation(libs.components.ui.tooling.preview)

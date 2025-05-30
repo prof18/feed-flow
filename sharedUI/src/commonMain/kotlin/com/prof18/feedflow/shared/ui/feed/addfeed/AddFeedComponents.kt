@@ -38,10 +38,10 @@ fun AddFeedContent(
     onAddCategoryClick: (CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
-    showNotificationToggle: Boolean = false,
     isNotificationEnabled: Boolean,
-    onNotificationToggleChanged: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier,
+    showNotificationToggle: Boolean = false,
+    onNotificationToggleChanged: (Boolean) -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
     topAppBar: @Composable () -> Unit = {},
 ) {
@@ -94,16 +94,16 @@ fun AddFeedContent(
                             .fillMaxWidth()
                             .padding(vertical = Spacing.small),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Switch(
                             checked = isNotificationEnabled,
-                            onCheckedChange = onNotificationToggleChanged
+                            onCheckedChange = onNotificationToggleChanged,
                         )
                     }
                 }

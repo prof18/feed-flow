@@ -173,7 +173,7 @@ fun SettingsScreen(
         onFeedOrderSelected = { order ->
             settingsViewModel.updateFeedOrder(order)
         },
-        setFeedItem = { feedLayout ->
+        setFeedLayout = { feedLayout ->
             settingsViewModel.updateFeedLayout(feedLayout)
         },
     )
@@ -208,7 +208,7 @@ private fun SettingsScreenContent(
     onDateFormatSelected: (DateFormat) -> Unit,
     navigateToNotifications: () -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
-    setFeedItem: (FeedLayout) -> Unit,
+    setFeedLayout: (FeedLayout) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -350,7 +350,7 @@ private fun SettingsScreenContent(
                 Spacer(modifier = Modifier.padding(top = Spacing.regular))
                 FeedLayoutSelector(
                     feedLayout = settingsState.feedLayout,
-                    onFormatSelected = setFeedItem,
+                    onFormatSelected = setFeedLayout,
                 )
             }
 
@@ -825,7 +825,7 @@ private fun SettingsScreenPreview() {
             navigateToNotifications = {},
             setExperimentalParsing = {},
             onFeedOrderSelected = {},
-            setFeedItem = {},
+            setFeedLayout = {},
         )
     }
 }

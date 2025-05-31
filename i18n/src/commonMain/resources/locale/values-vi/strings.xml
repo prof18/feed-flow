@@ -195,10 +195,10 @@
     <string name="settings_sync_period_one_day">Mỗi ngày</string>
     <string name="settings_left_swipe_action">Vuốt trái</string>
     <string name="settings_right_swipe_action">Vuốt phải</string>
-    <string name="settings_swipe_action_toggle_read">Chuyển đổi đọc</string>
+    <string name="settings_swipe_action_toggle_read">Đánh dấu đã đọc</string>
     <string name="settings_swipe_action_none">Không dùng</string>
     <string name="settings_sync_period_fifteen_minutes">Mỗi 15 phút</string>
-    <string name="settings_swipe_action_toggle_bookmark">Chuyển đổi lưu</string>
+    <string name="settings_swipe_action_toggle_bookmark">Đánh dấu lưu</string>
     <string name="settings_notification_no_feed">Có vẻ như bạn chưa thêm bất kỳ nguồn cấp dữ liệu nào. Hãy thêm nguồn cấp dữ liệu để bắt đầu nhận thông báo!</string>
     <string name="settings_notification_check_period">Tuần suất kiểm tra thông báo</string>
     <string name="settings_notification_check_period_desc">Chọn tần suất kiểm tra thông báo bài viết mới</string>
@@ -225,4 +225,5 @@
     <string name="settings_feed_order_title">Xếp theo ngày</string>
     <string name="settings_feed_order_newest_first">Mới nhất trước</string>
     <string name="settings_feed_order_oldest_first">Cũ nhất trước</string>
+    <string name="reader_mode_archive_button_content_description">Mở trong archive.is</string>
 </resources>

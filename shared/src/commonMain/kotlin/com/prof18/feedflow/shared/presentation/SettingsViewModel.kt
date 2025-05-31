@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -46,6 +47,7 @@ class SettingsViewModel internal constructor(
                 val rightSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.RIGHT)
                 val dateFormat = settingsRepository.getDateFormat()
                 val feedOrder = settingsRepository.getFeedOrder()
+                val feedLayout = settingsRepository.getFeedLayout()
                 settingsMutableState.update {
                     SettingsState(
                         feedOrder = feedOrder,
@@ -62,6 +64,7 @@ class SettingsViewModel internal constructor(
                         leftSwipeActionType = leftSwipeAction,
                         rightSwipeActionType = rightSwipeAction,
                         dateFormat = dateFormat,
+                        feedLayout = feedLayout,
                     )
                 }
             }
@@ -201,6 +204,13 @@ class SettingsViewModel internal constructor(
                 it.copy(feedOrder = feedOrder)
             }
             feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateFeedLayout(feedLayout: FeedLayout) {
+        viewModelScope.launch {
+            settingsRepository.setFeedLayout(feedLayout)
+            settingsMutableState.update { it.copy(feedLayout = feedLayout) }
         }
     }
 }

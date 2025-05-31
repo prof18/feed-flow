@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -39,6 +40,7 @@ internal fun ExpandedHomeView(
     snackbarHostState: SnackbarHostState,
     feedUpdateStatus: FeedUpdateStatus,
     feedFontSizes: FeedFontSizes,
+    feedLayout: FeedLayout,
     swipeActions: SwipeActions,
     onSettingsButtonClicked: () -> Unit,
     onAddFeedClick: () -> Unit,
@@ -101,6 +103,7 @@ internal fun ExpandedHomeView(
             loadingState = feedUpdateStatus,
             feedState = feedItems,
             feedFontSizes = feedFontSizes,
+            feedLayout = feedLayout,
             currentFeedFilter = currentFeedFilter,
             swipeActions = swipeActions,
             onAddFeedClick = onAddFeedClick,
@@ -134,6 +137,7 @@ private fun ExpandedHomeViewPreview() {
             snackbarHostState = SnackbarHostState(),
             feedUpdateStatus = inProgressFeedUpdateStatus,
             feedFontSizes = FeedFontSizes(),
+            feedLayout = FeedLayout.LIST,
             currentFeedFilter = FeedFilter.Timeline,
             swipeActions = SwipeActions(
                 leftSwipeAction = SwipeActionType.NONE,

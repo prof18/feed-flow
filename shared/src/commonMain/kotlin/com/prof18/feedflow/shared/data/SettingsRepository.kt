@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
@@ -31,13 +32,17 @@ class SettingsRepository(
     )
     val swipeActions: StateFlow<SwipeActions> = swipeActionsMutableFlow.asStateFlow()
 
+    private val feedLayoutMutableFlow = MutableStateFlow(getFeedLayout())
+    val feedLayout: StateFlow<FeedLayout> = feedLayoutMutableFlow.asStateFlow()
+
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
 
     private val isExperimentalParsingEnabledMutableFlow = MutableStateFlow(
         isExperimentalParsingEnabled(),
     )
-    val isExperimentalParsingEnabledFlow: StateFlow<Boolean> = isExperimentalParsingEnabledMutableFlow.asStateFlow()
+    val isExperimentalParsingEnabledFlow: StateFlow<Boolean> =
+        isExperimentalParsingEnabledMutableFlow.asStateFlow()
 
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
@@ -106,8 +111,10 @@ class SettingsRepository(
     fun setReaderModeFontSize(value: Int) =
         settings.set(SettingsFields.READER_MODE_FONT_SIZE.name, value)
 
-    fun getFeedListFontScaleFactor(): Int =
-        settings.getInt(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, DEFAULT_FEED_LIST_FONT_SCALE_FACTOR)
+    fun getFeedListFontScaleFactor(): Int = settings.getInt(
+        SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name,
+        DEFAULT_FEED_LIST_FONT_SCALE_FACTOR,
+    )
 
     fun setFeedListFontScaleFactor(value: Int) =
         settings.set(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, value)
@@ -213,6 +220,15 @@ class SettingsRepository(
         settings[SettingsFields.FEED_ORDER.name] = order.name
     }
 
+    fun getFeedLayout(): FeedLayout =
+        settings.getString(SettingsFields.FEED_LAYOUT.name, FeedLayout.LIST.name)
+            .let { FeedLayout.valueOf(it) }
+
+    fun setFeedLayout(feedLayout: FeedLayout) {
+        settings[SettingsFields.FEED_LAYOUT.name] = feedLayout.name
+        feedLayoutMutableFlow.update { feedLayout }
+    }
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -243,4 +259,5 @@ internal enum class SettingsFields {
     LEFT_SWIPE_ACTION,
     RIGHT_SWIPE_ACTION,
     DATE_FORMAT,
+    FEED_LAYOUT,
 }

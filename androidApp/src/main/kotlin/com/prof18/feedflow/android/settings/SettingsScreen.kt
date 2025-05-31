@@ -53,6 +53,7 @@ import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
@@ -65,6 +66,7 @@ import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
+import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.FeedListFontSettings
 import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
 import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
@@ -171,6 +173,9 @@ fun SettingsScreen(
         onFeedOrderSelected = { order ->
             settingsViewModel.updateFeedOrder(order)
         },
+        setFeedLayout = { feedLayout ->
+            settingsViewModel.updateFeedLayout(feedLayout)
+        },
     )
 }
 
@@ -203,6 +208,7 @@ private fun SettingsScreenContent(
     onDateFormatSelected: (DateFormat) -> Unit,
     navigateToNotifications: () -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
+    setFeedLayout: (FeedLayout) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -336,12 +342,19 @@ private fun SettingsScreenContent(
                     fontSizes = fontSizes,
                     updateFontScale = updateFontScale,
                     dateFormat = settingsState.dateFormat,
+                    feedLayout = settingsState.feedLayout,
                 )
             }
 
             item {
                 Spacer(modifier = Modifier.padding(top = Spacing.regular))
+                FeedLayoutSelector(
+                    feedLayout = settingsState.feedLayout,
+                    onFormatSelected = setFeedLayout,
+                )
+            }
 
+            item {
                 HideDescriptionSwitch(
                     isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
                     setHideDescription = setHideDescription,
@@ -812,6 +825,7 @@ private fun SettingsScreenPreview() {
             navigateToNotifications = {},
             setExperimentalParsing = {},
             onFeedOrderSelected = {},
+            setFeedLayout = {},
         )
     }
 }

@@ -25,6 +25,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.desktop.utils.copyToClipboard
@@ -42,6 +43,7 @@ internal fun FeedWithContentView(
     paddingValues: PaddingValues,
     feedState: ImmutableList<FeedItem>,
     feedFontSizes: FeedFontSizes,
+    feedLayout: FeedLayout,
     loadingState: FeedUpdateStatus,
     listState: LazyListState,
     currentFeedFilter: FeedFilter,
@@ -70,6 +72,7 @@ internal fun FeedWithContentView(
                 feedItems = feedState,
                 listState = listState,
                 feedFontSize = feedFontSizes,
+                feedLayout = feedLayout,
                 shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuCopyLinkComments,
                 shareMenuLabel = LocalFeedFlowStrings.current.menuCopyLink,
                 currentFeedFilter = currentFeedFilter,
@@ -85,7 +88,7 @@ internal fun FeedWithContentView(
                 markAllAsRead = markAllAsRead,
                 onShareClick = { urlTitle ->
                     copyToClipboard(urlTitle.url)
-                }
+                },
             )
 
             VerticalScrollbar(
@@ -127,6 +130,7 @@ private fun FeedWithContentViewPreview() {
             loadingState = inProgressFeedUpdateStatus,
             listState = LazyListState(),
             feedFontSizes = FeedFontSizes(),
+            feedLayout = FeedLayout.LIST,
             currentFeedFilter = FeedFilter.Timeline,
             swipeActions = SwipeActions(
                 leftSwipeAction = SwipeActionType.NONE,

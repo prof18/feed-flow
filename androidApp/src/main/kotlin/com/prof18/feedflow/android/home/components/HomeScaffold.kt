@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
@@ -37,6 +38,7 @@ internal fun HomeScaffold(
     loadingState: FeedUpdateStatus,
     feedState: ImmutableList<FeedItem>,
     feedFontSizes: FeedFontSizes,
+    feedLayout: FeedLayout,
     currentFeedFilter: FeedFilter,
     swipeActions: SwipeActions,
     onSettingsButtonClicked: () -> Unit,
@@ -105,6 +107,7 @@ internal fun HomeScaffold(
             feedState = feedState,
             listState = listState,
             feedFontSizes = feedFontSizes,
+            feedLayout = feedLayout,
             currentFeedFilter = currentFeedFilter,
             swipeActions = swipeActions,
             onRefresh = {
@@ -150,6 +153,7 @@ private fun HomeScaffoldPreview() {
             ),
             feedState = feedItemsForPreview,
             feedFontSizes = FeedFontSizes(),
+            feedLayout = FeedLayout.CARD,
             currentFeedFilter = FeedFilter.Timeline,
             swipeActions = SwipeActions(
                 leftSwipeAction = SwipeActionType.NONE,

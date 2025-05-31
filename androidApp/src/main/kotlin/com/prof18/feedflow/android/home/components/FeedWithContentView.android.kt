@@ -21,6 +21,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.shared.domain.model.FeedUpdateStatus
@@ -38,6 +39,7 @@ internal fun FeedWithContentView(
     lazyListState: LazyListState,
     feedItems: ImmutableList<FeedItem>,
     feedFontSizes: FeedFontSizes,
+    feedLayout: FeedLayout,
     currentFeedFilter: FeedFilter,
     swipeActions: SwipeActions,
     updateReadStatus: (Int) -> Unit,
@@ -105,6 +107,7 @@ internal fun FeedWithContentView(
                         url = titleAndUrl.url,
                     )
                 },
+                feedLayout = feedLayout,
             )
         }
     }
@@ -119,6 +122,7 @@ private fun FeedWithContentViewPreview() {
             lazyListState = LazyListState(),
             feedItems = feedItemsForPreview,
             feedFontSizes = FeedFontSizes(),
+            feedLayout = FeedLayout.LIST,
             currentFeedFilter = FeedFilter.Timeline,
             swipeActions = SwipeActions(
                 leftSwipeAction = SwipeActionType.NONE,

@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.NavDrawerState
@@ -24,6 +25,7 @@ class HomeDisplayState(
     val feedFontSizes: FeedFontSizes,
     val currentFeedFilter: FeedFilter,
     val swipeActions: SwipeActions,
+    val feedLayout: FeedLayout,
 )
 
 @Stable

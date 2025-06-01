@@ -225,4 +225,8 @@
     <string name="settings_feed_order_title">Nach Datum sortieren</string>
     <string name="settings_feed_order_newest_first">Neueste zuerst</string>
     <string name="settings_feed_order_oldest_first">Älteste zuerst</string>
+    <string name="reader_mode_archive_button_content_description">In archive.is öffnen</string>
+    <string name="settings_feed_layout_list">Liste</string>
+    <string name="settings_feed_layout_card">Karte</string>
+    <string name="feed_layout_title">Feed-Layout</string>
 </resources>

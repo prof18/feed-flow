@@ -226,4 +226,7 @@
     <string name="settings_feed_order_newest_first">Най-новите първо</string>
     <string name="settings_feed_order_oldest_first">Най-старите първо</string>
     <string name="reader_mode_archive_button_content_description">Отваряне в archive.is</string>
+    <string name="settings_feed_layout_list">Списък</string>
+    <string name="settings_feed_layout_card">Карта</string>
+    <string name="feed_layout_title">Оформление на емисия</string>
 </resources>

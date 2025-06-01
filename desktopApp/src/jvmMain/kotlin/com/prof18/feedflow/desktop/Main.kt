@@ -59,6 +59,7 @@ import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
+import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.FeedListFontSettings
 import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
 import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
@@ -295,6 +296,13 @@ fun main() = application {
                                     )
 
                                     Spacer(modifier = Modifier.padding(top = Spacing.regular))
+
+                                    FeedLayoutSelector(
+                                        feedLayout = settingsState.feedLayout,
+                                        onFormatSelected = { feedLayout ->
+                                            settingsViewModel.updateFeedLayout(feedLayout)
+                                        }
+                                    )
 
                                     HideDescriptionSwitch(
                                         isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,

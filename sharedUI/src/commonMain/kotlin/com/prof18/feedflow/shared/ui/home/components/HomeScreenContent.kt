@@ -119,6 +119,7 @@ fun HomeScreenContent(
                             updateReadStatus = feedListActions.markAsReadOnScroll,
                             markAllAsRead = feedListActions.markAllRead,
                             onShareClick = shareBehavior.onShareClick,
+                            feedLayout = displayState.feedLayout,
                         )
                     }
                 }

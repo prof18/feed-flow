@@ -301,7 +301,7 @@ fun main() = application {
                                         feedLayout = settingsState.feedLayout,
                                         onFormatSelected = { feedLayout ->
                                             settingsViewModel.updateFeedLayout(feedLayout)
-                                        }
+                                        },
                                     )
 
                                     HideDescriptionSwitch(

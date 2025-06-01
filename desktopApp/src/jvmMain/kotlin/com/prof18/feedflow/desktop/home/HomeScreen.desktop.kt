@@ -121,6 +121,7 @@ internal fun HomeScreen(
         feedFontSizes = feedFontSizes,
         currentFeedFilter = currentFeedFilter,
         swipeActions = swipeActions,
+        feedLayout = feedLayout,
     )
 
     val feedListActions = FeedListActions(

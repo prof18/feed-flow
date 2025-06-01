@@ -332,7 +332,7 @@ fun FeedItemCard(
 
     Card(
         modifier = modifier.padding(8.dp),
-        shape = RoundedCornerShape(30.dp)
+        shape = RoundedCornerShape(30.dp),
     ) {
         Column(
             modifier = Modifier
@@ -359,7 +359,7 @@ fun FeedItemCard(
                     },
                 )
                 .padding(horizontal = Spacing.regular)
-                .padding(vertical = Spacing.regular)
+                .padding(vertical = Spacing.regular),
         ) {
             FeedSourceAndUnreadDotRow(
                 feedItem = feedItem,

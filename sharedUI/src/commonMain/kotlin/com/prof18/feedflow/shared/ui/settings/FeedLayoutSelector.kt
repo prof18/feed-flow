@@ -33,12 +33,16 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun FeedLayoutSelector(feedLayout: FeedLayout, onFormatSelected: (FeedLayout) -> Unit) {
+fun FeedLayoutSelector(
+    feedLayout: FeedLayout,
+    modifier: Modifier = Modifier,
+    onFormatSelected: (FeedLayout) -> Unit,
+) {
     var showDialog by remember { mutableStateOf(false) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .clickable { showDialog = true }
             .fillMaxWidth()
             .padding(vertical = Spacing.small)

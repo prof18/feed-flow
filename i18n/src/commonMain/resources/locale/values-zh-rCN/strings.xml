@@ -196,8 +196,8 @@
     <string name="settings_sync_period_one_day">每天</string>
     <string name="settings_left_swipe_action">向左滑动</string>
     <string name="settings_right_swipe_action">向右滑动</string>
-    <string name="settings_swipe_action_toggle_read">切换已读</string>
-    <string name="settings_swipe_action_toggle_bookmark">切换收藏</string>
+    <string name="settings_swipe_action_toggle_read">切换阅读状态</string>
+    <string name="settings_swipe_action_toggle_bookmark">切换收藏状态</string>
     <string name="settings_swipe_action_none">已禁用</string>
     <string name="settings_notification_check_period">通知检查频率</string>
     <string name="settings_title_notifications">通知</string>
@@ -226,4 +226,7 @@
     <string name="settings_feed_order_newest_first">从新到旧</string>
     <string name="settings_feed_order_oldest_first">从旧到新</string>
     <string name="reader_mode_archive_button_content_description">在 archive.is 中打开</string>
+    <string name="feed_layout_title">订阅布局</string>
+    <string name="settings_feed_layout_list">列表</string>
+    <string name="settings_feed_layout_card">卡片</string>
 </resources>

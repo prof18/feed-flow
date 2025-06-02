@@ -6,9 +6,9 @@ import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-internal class FeedFlowWidgetReceiver : GlanceAppWidgetReceiver(), KoinComponent {
+internal class FeedFlowWidgetCardReceiver : GlanceAppWidgetReceiver(), KoinComponent {
 
     private val repository by inject<FeedWidgetRepository>()
 
-    override val glanceAppWidget: GlanceAppWidget = FeedFlowWidget(repository)
+    override val glanceAppWidget: GlanceAppWidget = FeedFlowWidgetCard(repository)
 }

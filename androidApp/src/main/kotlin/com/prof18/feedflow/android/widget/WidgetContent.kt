@@ -25,12 +25,16 @@ import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
+import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
+import androidx.glance.layout.RowScope
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.text.FontWeight
@@ -45,6 +49,7 @@ import coil3.size.Precision
 import coil3.size.Scale
 import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
@@ -52,7 +57,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun Content(feedItems: ImmutableList<FeedItem>) {
+internal fun Content(feedItems: ImmutableList<FeedItem>, feedLayout: FeedLayout) {
     Scaffold(
         titleBar = {
             Text(
@@ -98,65 +103,108 @@ internal fun Content(feedItems: ImmutableList<FeedItem>) {
         } else {
             LazyColumn {
                 items(feedItems) { feedItem ->
-                    Row(
-                        modifier = GlanceModifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .clickable(
-                                actionStartActivity(
-                                    Intent(LocalContext.current.applicationContext, MainActivity::class.java)
-                                        .setAction(Intent.ACTION_VIEW)
-                                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                        .setData("feedflow://feed/${feedItem.id}".toUri()),
-                                ),
-
-                            ),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val modifier = GlanceModifier.defaultWeight()
-
-                        Column(
-                            modifier = modifier
-                                .padding(end = Spacing.regular),
-                        ) {
-                            val fontStyle = TextStyle(
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 12.sp,
-                                color = (GlanceTheme.colors.onSurface),
-                            )
-
-                            Row {
-                                Text(
-                                    text = feedItem.feedSource.title,
-                                    style = fontStyle,
-                                )
-                            }
-                            Text(
-                                text = feedItem.title.orEmpty(),
-                                maxLines = 2,
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp,
-                                    color = (GlanceTheme.colors.onSurface),
-                                ),
-                            )
-
-                            feedItem.dateString?.let { dateString ->
-                                Text(
-                                    modifier = GlanceModifier.padding(top = Spacing.xsmall),
-                                    text = dateString,
-                                    style = fontStyle,
-                                )
-                            }
-                        }
-
-                        feedItem.imageUrl?.let { imageUrl ->
-                            FeedItemImage(imageUrl)
-                        }
+                    when (feedLayout) {
+                        FeedLayout.LIST -> WidgetFeedItemList(feedItem)
+                        FeedLayout.CARD -> WidgetFeedItemCard(feedItem)
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun WidgetFeedItemList(feedItem: FeedItem, modifier: GlanceModifier = GlanceModifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable(
+                actionStartActivity(
+                    Intent(
+                        LocalContext.current.applicationContext,
+                        MainActivity::class.java,
+                    )
+                        .setAction(Intent.ACTION_VIEW)
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        .setData("feedflow://feed/${feedItem.id}".toUri()),
+                ),
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Content(feedItem)
+    }
+}
+
+@Composable
+fun WidgetFeedItemCard(feedItem: FeedItem, modifier: GlanceModifier = GlanceModifier) {
+    Column(modifier = modifier) {
+        Row(
+            modifier = GlanceModifier
+                .fillMaxWidth()
+                .padding(12.dp)
+                .cornerRadius(20.dp)
+                .background(GlanceTheme.colors.secondaryContainer)
+                .clickable(
+                    actionStartActivity(
+                        Intent(
+                            LocalContext.current.applicationContext,
+                            MainActivity::class.java,
+                        )
+                            .setAction(Intent.ACTION_VIEW)
+                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            .setData("feedflow://feed/${feedItem.id}".toUri()),
+                    ),
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Content(feedItem)
+        }
+        Spacer(GlanceModifier.height(8.dp))
+    }
+}
+
+@Composable
+fun RowScope.Content(feedItem: FeedItem, modifier: GlanceModifier = GlanceModifier) {
+    val modifier = modifier.defaultWeight()
+
+    Column(
+        modifier = modifier
+            .padding(end = Spacing.regular),
+    ) {
+        val fontStyle = TextStyle(
+            fontWeight = FontWeight.Normal,
+            fontSize = 12.sp,
+            color = (GlanceTheme.colors.onSurface),
+        )
+
+        Row {
+            Text(
+                text = feedItem.feedSource.title,
+                style = fontStyle,
+            )
+        }
+        Text(
+            text = feedItem.title.orEmpty(),
+            maxLines = 2,
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = (GlanceTheme.colors.onSurface),
+            ),
+        )
+
+        feedItem.dateString?.let { dateString ->
+            Text(
+                modifier = GlanceModifier.padding(top = Spacing.xsmall),
+                text = dateString,
+                style = fontStyle,
+            )
+        }
+    }
+
+    feedItem.imageUrl?.let { imageUrl ->
+        FeedItemImage(imageUrl)
     }
 }
 

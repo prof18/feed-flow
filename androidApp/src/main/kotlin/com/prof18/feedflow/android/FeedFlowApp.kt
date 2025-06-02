@@ -11,7 +11,8 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.prof18.feedflow.android.notifications.AndroidNotifier
-import com.prof18.feedflow.android.widget.FeedFlowWidget
+import com.prof18.feedflow.android.widget.FeedFlowWidgetCard
+import com.prof18.feedflow.android.widget.FeedFlowWidgetList
 import com.prof18.feedflow.android.widget.WidgetConfigurationViewModel
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
@@ -79,9 +80,18 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                     single { appConfig }
                     factory<WidgetUpdater> {
                         WidgetUpdater {
-                            GlanceAppWidgetManager(context = this@FeedFlowApp).getGlanceIds(FeedFlowWidget::class.java)
+                            GlanceAppWidgetManager(
+                                context = this@FeedFlowApp,
+                            ).getGlanceIds(FeedFlowWidgetList::class.java)
                                 .forEach { id ->
-                                    FeedFlowWidget(widgetRepository).update(this@FeedFlowApp, id)
+                                    FeedFlowWidgetList(widgetRepository).update(this@FeedFlowApp, id)
+                                }
+
+                            GlanceAppWidgetManager(
+                                context = this@FeedFlowApp,
+                            ).getGlanceIds(FeedFlowWidgetCard::class.java)
+                                .forEach { id ->
+                                    FeedFlowWidgetCard(widgetRepository).update(this@FeedFlowApp, id)
                                 }
                         }
                     }
@@ -107,9 +117,17 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                         super.onStop(owner)
                         feedSyncRepo.enqueueBackup()
                         lifecycle.coroutineScope.launch {
-                            GlanceAppWidgetManager(context = this@FeedFlowApp).getGlanceIds(FeedFlowWidget::class.java)
+                            GlanceAppWidgetManager(
+                                context = this@FeedFlowApp,
+                            ).getGlanceIds(FeedFlowWidgetList::class.java)
                                 .forEach { id ->
-                                    FeedFlowWidget(widgetRepository).update(this@FeedFlowApp, id)
+                                    FeedFlowWidgetList(widgetRepository).update(this@FeedFlowApp, id)
+                                }
+                            GlanceAppWidgetManager(
+                                context = this@FeedFlowApp,
+                            ).getGlanceIds(FeedFlowWidgetCard::class.java)
+                                .forEach { id ->
+                                    FeedFlowWidgetCard(widgetRepository).update(this@FeedFlowApp, id)
                                 }
                         }
                     }

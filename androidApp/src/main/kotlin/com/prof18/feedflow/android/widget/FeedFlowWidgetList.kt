@@ -7,12 +7,13 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceTheme
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.provideContent
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
 
-internal class FeedFlowWidget(
+internal class FeedFlowWidgetList(
     private val repository: FeedWidgetRepository,
 ) : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -21,7 +22,7 @@ internal class FeedFlowWidget(
             ProvideFeedFlowStrings(lyricist) {
                 val feedItems by repository.getFeeds().collectAsState(persistentListOf())
                 GlanceTheme {
-                    Content(feedItems)
+                    Content(feedItems, FeedLayout.LIST)
                 }
             }
         }

@@ -196,7 +196,7 @@
     <string name="settings_sync_period_fifteen_minutes">Alle 15 Minuten</string>
     <string name="settings_left_swipe_action">Nach links wischen</string>
     <string name="settings_right_swipe_action">Nach rechts wischen</string>
-    <string name="settings_swipe_action_toggle_read">Lesen umschalten</string>
+    <string name="settings_swipe_action_toggle_read">Lesestatus umschalten</string>
     <string name="settings_sync_period_one_day">Jeden Tag</string>
     <string name="settings_sync_period_thirty_minutes">Alle 30 Minuten</string>
     <string name="settings_notification_no_feed">Anscheinend haben Sie noch keine Feeds hinzugefügt. Füge Sie ein paar hinzu, um Benachrichtigungen zu erhalten!</string>

@@ -49,7 +49,7 @@ import com.prof18.feedflow.android.CrashlyticsHelper
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelector
 import com.prof18.feedflow.android.settings.components.FeedOrderSelectionDialog
-import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
+import com.prof18.feedflow.android.settings.components.SyncPeriodSelector
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -662,61 +662,6 @@ private fun ShowReadItemOnTimelineSwitch(
             interactionSource = interactionSource,
             checked = isShowReadItemEnabled,
             onCheckedChange = setShowReadItem,
-        )
-    }
-}
-
-@Composable
-private fun SyncPeriodSelector(
-    currentPeriod: SyncPeriod,
-    onPeriodSelected: (SyncPeriod) -> Unit,
-) {
-    var showDialog by remember { mutableStateOf(false) }
-    val strings = LocalFeedFlowStrings.current
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable { showDialog = true }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.Outlined.Sync,
-            contentDescription = null,
-        )
-
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
-            Text(
-                text = strings.settingsSyncPeriod,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Text(
-                text = when (currentPeriod) {
-                    SyncPeriod.NEVER -> strings.settingsSyncPeriodNever
-                    SyncPeriod.FIFTEEN_MINUTES -> strings.settingsSyncPeriodFifteenMinutes
-                    SyncPeriod.THIRTY_MINUTES -> strings.settingsSyncPeriodThirtyMinutes
-                    SyncPeriod.ONE_HOUR -> strings.settingsSyncPeriodOneHour
-                    SyncPeriod.TWO_HOURS -> strings.settingsSyncPeriodTwoHours
-                    SyncPeriod.SIX_HOURS -> strings.settingsSyncPeriodSixHours
-                    SyncPeriod.TWELVE_HOURS -> strings.settingsSyncPeriodTwelveHours
-                    SyncPeriod.ONE_DAY -> strings.settingsSyncPeriodOneDay
-                },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-
-    if (showDialog) {
-        SyncPeriodDialog(
-            currentPeriod = currentPeriod,
-            onPeriodSelected = onPeriodSelected,
-            dismissDialog = { showDialog = false },
         )
     }
 }

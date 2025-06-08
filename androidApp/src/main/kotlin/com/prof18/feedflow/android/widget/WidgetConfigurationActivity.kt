@@ -7,31 +7,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
+import com.prof18.feedflow.android.settings.components.SyncPeriodSelector
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
@@ -65,9 +57,12 @@ class WidgetConfigurationActivity : ComponentActivity() {
                 val lyricist = rememberFeedFlowStrings()
                 ProvideFeedFlowStrings(lyricist) {
                     val syncPeriod by viewModel.syncPeriodState.collectAsStateWithLifecycle()
+                    val feedLayout by viewModel.feedLayoutState.collectAsStateWithLifecycle()
                     WidgetConfigurationScreen(
                         syncPeriod = syncPeriod,
+                        feedLayout = feedLayout,
                         onSyncPeriodSelected = viewModel::updateSyncPeriod,
+                        onFeedLayoutSelected = viewModel::updateFeedLayout,
                         onConfirm = {
                             viewModel.enqueueWorker()
                             setResult(RESULT_OK, resultValue)
@@ -83,10 +78,11 @@ class WidgetConfigurationActivity : ComponentActivity() {
 @Composable
 private fun WidgetConfigurationScreen(
     syncPeriod: SyncPeriod,
+    feedLayout: FeedLayout,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
+    onFeedLayoutSelected: (FeedLayout) -> Unit,
     onConfirm: () -> Unit,
 ) {
-    var showSyncPeriodDialog by remember { mutableStateOf(false) }
     val strings = LocalFeedFlowStrings.current
 
     Scaffold(
@@ -99,69 +95,34 @@ private fun WidgetConfigurationScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = Spacing.regular),
+                .padding(paddingValues),
         ) {
             Text(
+                modifier = Modifier.padding(horizontal = Spacing.regular),
                 text = strings.widgetConfigurationDescription,
                 style = MaterialTheme.typography.bodyLarge,
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable { showSyncPeriodDialog = true }
-                    .fillMaxWidth()
-                    .padding(vertical = Spacing.xsmall)
-                    .padding(top = Spacing.regular),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-            ) {
-                Icon(
-                    Icons.Outlined.Sync,
-                    contentDescription = null,
-                )
+            SyncPeriodSelector(
+                currentPeriod = syncPeriod,
+                onPeriodSelected = onSyncPeriodSelected,
+                showNeverSync = false,
+            )
 
-                Column(
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Text(
-                        text = strings.settingsSyncPeriod,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    Text(
-                        text = when (syncPeriod) {
-                            SyncPeriod.FIFTEEN_MINUTES -> strings.settingsSyncPeriodFifteenMinutes
-                            SyncPeriod.THIRTY_MINUTES -> strings.settingsSyncPeriodThirtyMinutes
-                            SyncPeriod.ONE_HOUR -> strings.settingsSyncPeriodOneHour
-                            SyncPeriod.TWO_HOURS -> strings.settingsSyncPeriodTwoHours
-                            SyncPeriod.SIX_HOURS -> strings.settingsSyncPeriodSixHours
-                            SyncPeriod.TWELVE_HOURS -> strings.settingsSyncPeriodTwelveHours
-                            SyncPeriod.ONE_DAY -> strings.settingsSyncPeriodOneDay
-                            SyncPeriod.NEVER -> "" // This is never shown here
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
+            FeedLayoutSelector(
+                feedLayout = feedLayout,
+                onFormatSelected = onFeedLayoutSelected,
+            )
 
             Button(
                 onClick = onConfirm,
                 modifier = Modifier
+                    .padding(horizontal = Spacing.regular)
                     .fillMaxWidth()
                     .padding(vertical = Spacing.medium),
             ) {
                 Text(text = strings.widgetConfigurationConfirm)
             }
-        }
-
-        if (showSyncPeriodDialog) {
-            SyncPeriodDialog(
-                currentPeriod = syncPeriod,
-                showNeverSync = false,
-                onPeriodSelected = onSyncPeriodSelected,
-                dismissDialog = { showSyncPeriodDialog = false },
-            )
         }
     }
 }

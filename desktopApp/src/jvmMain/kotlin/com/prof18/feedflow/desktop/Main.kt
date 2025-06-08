@@ -299,7 +299,7 @@ fun main() = application {
 
                                     FeedLayoutSelector(
                                         feedLayout = settingsState.feedLayout,
-                                        onFormatSelected = { feedLayout ->
+                                        onFeedLayoutSelected = { feedLayout ->
                                             settingsViewModel.updateFeedLayout(feedLayout)
                                         },
                                     )

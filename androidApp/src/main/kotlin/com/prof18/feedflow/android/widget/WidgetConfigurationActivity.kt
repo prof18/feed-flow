@@ -111,7 +111,7 @@ private fun WidgetConfigurationScreen(
 
             FeedLayoutSelector(
                 feedLayout = feedLayout,
-                onFormatSelected = onFeedLayoutSelected,
+                onFeedLayoutSelected = onFeedLayoutSelected,
             )
 
             Button(

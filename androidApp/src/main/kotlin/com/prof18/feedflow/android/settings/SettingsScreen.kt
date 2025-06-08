@@ -350,7 +350,7 @@ private fun SettingsScreenContent(
                 Spacer(modifier = Modifier.padding(top = Spacing.regular))
                 FeedLayoutSelector(
                     feedLayout = settingsState.feedLayout,
-                    onFormatSelected = setFeedLayout,
+                    onFeedLayoutSelected = setFeedLayout,
                 )
             }
 

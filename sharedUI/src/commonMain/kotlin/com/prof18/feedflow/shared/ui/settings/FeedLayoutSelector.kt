@@ -35,8 +35,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun FeedLayoutSelector(
     feedLayout: FeedLayout,
-    modifier: Modifier = Modifier,
     onFormatSelected: (FeedLayout) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -82,7 +82,7 @@ fun FeedLayoutSelector(
 }
 
 @Composable
-private fun FeedLayoutSelectorDialog(
+fun FeedLayoutSelectorDialog(
     currentFeedLayout: FeedLayout,
     onFeedLayoutSelected: (FeedLayout) -> Unit,
     dismissDialog: () -> Unit,

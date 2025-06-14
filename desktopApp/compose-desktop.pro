@@ -173,3 +173,6 @@
 
 
 -keep class com.prof18.feedflow.feedsync.greader.data.dto.** { *; }
+
+# Because of coil crash: Error: java.io.IOException: canceled due to java.lang.VerifyError: Bad return type
+-keep class okio.** { *; }

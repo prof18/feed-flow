@@ -19,9 +19,10 @@ internal class FeedFlowWidget(
         provideContent {
             val lyricist = rememberFeedFlowStrings()
             ProvideFeedFlowStrings(lyricist) {
+                val feedLayout by repository.getFeedLayout().collectAsState()
                 val feedItems by repository.getFeeds().collectAsState(persistentListOf())
                 GlanceTheme {
-                    Content(feedItems)
+                    Content(feedItems, feedLayout)
                 }
             }
         }

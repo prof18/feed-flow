@@ -35,8 +35,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun FeedLayoutSelector(
     feedLayout: FeedLayout,
+    onFeedLayoutSelected: (FeedLayout) -> Unit,
     modifier: Modifier = Modifier,
-    onFormatSelected: (FeedLayout) -> Unit,
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -75,14 +75,14 @@ fun FeedLayoutSelector(
     if (showDialog) {
         FeedLayoutSelectorDialog(
             currentFeedLayout = feedLayout,
-            onFeedLayoutSelected = onFormatSelected,
+            onFeedLayoutSelected = onFeedLayoutSelected,
             dismissDialog = { showDialog = false },
         )
     }
 }
 
 @Composable
-private fun FeedLayoutSelectorDialog(
+fun FeedLayoutSelectorDialog(
     currentFeedLayout: FeedLayout,
     onFeedLayoutSelected: (FeedLayout) -> Unit,
     dismissDialog: () -> Unit,
@@ -131,7 +131,7 @@ private fun FeedLayoutSelectorDialog(
 private fun FeedLayoutSelectorPreview() {
     FeedLayoutSelector(
         feedLayout = FeedLayout.CARD,
-        onFormatSelected = {},
+        onFeedLayoutSelected = {},
     )
 }
 

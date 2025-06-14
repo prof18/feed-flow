@@ -2,6 +2,7 @@ package com.prof18.feedflow.android.widget
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
@@ -19,9 +20,13 @@ class WidgetConfigurationViewModel(
     private val _syncPeriodState = MutableStateFlow<SyncPeriod>(SyncPeriod.ONE_HOUR)
     val syncPeriodState: StateFlow<SyncPeriod> = _syncPeriodState.asStateFlow()
 
+    private val _feedLayoutState = MutableStateFlow<FeedLayout>(FeedLayout.LIST)
+    val feedLayoutState: StateFlow<FeedLayout> = _feedLayoutState.asStateFlow()
+
     init {
         viewModelScope.launch {
             val currentPeriod = settingsRepository.getSyncPeriod()
+            val currentFeedLayout = settingsRepository.getFeedLayout()
             _syncPeriodState.update {
                 if (currentPeriod == SyncPeriod.NEVER) {
                     SyncPeriod.ONE_HOUR
@@ -29,15 +34,21 @@ class WidgetConfigurationViewModel(
                     currentPeriod
                 }
             }
+            _feedLayoutState.update { currentFeedLayout }
         }
     }
 
     fun updateSyncPeriod(period: SyncPeriod) {
         _syncPeriodState.update { period }
-        settingsRepository.setSyncPeriod(period)
+    }
+
+    fun updateFeedLayout(feedLayout: FeedLayout) {
+        _feedLayoutState.update { feedLayout }
     }
 
     fun enqueueWorker() {
+        settingsRepository.setSyncPeriod(syncPeriodState.value)
+        settingsRepository.setFeedLayout(feedLayoutState.value)
         feedDownloadWorkerEnqueuer.updateWorker(syncPeriodState.value)
     }
 }

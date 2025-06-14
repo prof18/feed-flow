@@ -79,7 +79,9 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                     single { appConfig }
                     factory<WidgetUpdater> {
                         WidgetUpdater {
-                            GlanceAppWidgetManager(context = this@FeedFlowApp).getGlanceIds(FeedFlowWidget::class.java)
+                            GlanceAppWidgetManager(
+                                context = this@FeedFlowApp,
+                            ).getGlanceIds(FeedFlowWidget::class.java)
                                 .forEach { id ->
                                     FeedFlowWidget(widgetRepository).update(this@FeedFlowApp, id)
                                 }
@@ -107,7 +109,9 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                         super.onStop(owner)
                         feedSyncRepo.enqueueBackup()
                         lifecycle.coroutineScope.launch {
-                            GlanceAppWidgetManager(context = this@FeedFlowApp).getGlanceIds(FeedFlowWidget::class.java)
+                            GlanceAppWidgetManager(
+                                context = this@FeedFlowApp,
+                            ).getGlanceIds(FeedFlowWidget::class.java)
                                 .forEach { id ->
                                     FeedFlowWidget(widgetRepository).update(this@FeedFlowApp, id)
                                 }

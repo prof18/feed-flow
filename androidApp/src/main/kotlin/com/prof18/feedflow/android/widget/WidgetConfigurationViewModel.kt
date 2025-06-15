@@ -26,7 +26,7 @@ class WidgetConfigurationViewModel(
     init {
         viewModelScope.launch {
             val currentPeriod = settingsRepository.getSyncPeriod()
-            val currentFeedLayout = settingsRepository.getFeedLayout()
+            val currentFeedLayout = settingsRepository.getFeedWidgetLayout()
             _syncPeriodState.update {
                 if (currentPeriod == SyncPeriod.NEVER) {
                     SyncPeriod.ONE_HOUR
@@ -48,7 +48,7 @@ class WidgetConfigurationViewModel(
 
     fun enqueueWorker() {
         settingsRepository.setSyncPeriod(syncPeriodState.value)
-        settingsRepository.setFeedLayout(feedLayoutState.value)
+        settingsRepository.setFeedWidgetLayout(feedLayoutState.value)
         feedDownloadWorkerEnqueuer.updateWorker(syncPeriodState.value)
     }
 }

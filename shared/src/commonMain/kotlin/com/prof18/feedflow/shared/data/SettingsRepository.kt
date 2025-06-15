@@ -35,6 +35,9 @@ class SettingsRepository(
     private val feedLayoutMutableFlow = MutableStateFlow(getFeedLayout())
     val feedLayout: StateFlow<FeedLayout> = feedLayoutMutableFlow.asStateFlow()
 
+    private val feedWidgetLayoutMutableFlow = MutableStateFlow(getFeedWidgetLayout())
+    val feedWidgetLayout: StateFlow<FeedLayout> = feedWidgetLayoutMutableFlow.asStateFlow()
+
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
 
@@ -229,6 +232,15 @@ class SettingsRepository(
         feedLayoutMutableFlow.update { feedLayout }
     }
 
+    fun getFeedWidgetLayout(): FeedLayout =
+        settings.getString(SettingsFields.FEED_WIDGET_LAYOUT.name, FeedLayout.LIST.name)
+            .let { FeedLayout.valueOf(it) }
+
+    fun setFeedWidgetLayout(feedLayout: FeedLayout) {
+        settings[SettingsFields.FEED_WIDGET_LAYOUT.name] = feedLayout.name
+        feedWidgetLayoutMutableFlow.update { feedLayout }
+    }
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -260,4 +272,5 @@ internal enum class SettingsFields {
     RIGHT_SWIPE_ACTION,
     DATE_FORMAT,
     FEED_LAYOUT,
+    FEED_WIDGET_LAYOUT,
 }

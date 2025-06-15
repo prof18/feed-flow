@@ -49,6 +49,9 @@ struct HomeScreen: View {
     @State
     var swipeActions: SwipeActions = .init(leftSwipeAction: .none, rightSwipeAction: .none)
 
+    @State
+    var feedLayout: FeedLayout = .list
+
     @Binding
     var toggleListScroll: Bool
 
@@ -77,6 +80,7 @@ struct HomeScreen: View {
             columnVisibility: $columnVisibility,
             feedFontSizes: $feedFontSizes,
             swipeActions: $swipeActions,
+            feedLayout: $feedLayout,
             onRefresh: {
                 homeViewModel.getNewFeeds(isFirstLaunch: false)
             },
@@ -201,6 +205,11 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.swipeActions {
                 self.swipeActions = state
+            }
+        }
+        .task {
+            for await state in homeViewModel.feedLayout {
+                self.feedLayout = state
             }
         }
         .onChange(of: scenePhase) {

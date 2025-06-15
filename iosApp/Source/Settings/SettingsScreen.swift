@@ -31,6 +31,7 @@ struct SettingsScreen: View {
     @State private var rightSwipeActionType: SwipeActionType = .none
     @State private var dateFormat: DateFormat = .normal
     @State private var feedOrder: FeedOrder = .newestFirst
+    @State private var feedLayout: FeedLayout = .list
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor = 0.0
     @State private var isExperimentalParsingEnabled = false
@@ -55,6 +56,7 @@ struct SettingsScreen: View {
                     rightSwipeActionType = state.rightSwipeActionType
                     dateFormat = state.dateFormat
                     feedOrder = state.feedOrder
+                    feedLayout = state.feedLayout
                     isExperimentalParsingEnabled = state.isExperimentalParsingEnabled
                 }
             }
@@ -123,6 +125,9 @@ struct SettingsScreen: View {
             .onChange(of: feedOrder) {
                 vmStoreOwner.instance.updateFeedOrder(feedOrder: feedOrder)
             }
+            .onChange(of: feedLayout) {
+                vmStoreOwner.instance.updateFeedLayout(feedLayout: feedLayout)
+            }
     }
 
     private var settingsContent: some View {
@@ -150,6 +155,7 @@ struct SettingsScreen: View {
                     rightSwipeAction: $rightSwipeActionType,
                     dateFormat: $dateFormat,
                     feedOrder: $feedOrder,
+                    feedLayout: $feedLayout,
                     onScaleFactorChange: { newValue in
                         vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
                     }

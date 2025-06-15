@@ -21,6 +21,7 @@ struct FeedFontSection: View {
     @Binding var rightSwipeAction: SwipeActionType
     @Binding var dateFormat: DateFormat
     @Binding var feedOrder: FeedOrder
+    @Binding var feedLayout: FeedLayout
     let onScaleFactorChange: (Double) -> Void
 
     var body: some View {
@@ -54,7 +55,8 @@ struct FeedFontSection: View {
                             isBookmarked: false
                         ),
                         index: 0,
-                        feedFontSizes: feedFontSizes
+                        feedFontSizes: feedFontSizes,
+                        feedLayout: feedLayout
                     )
                     .background(Color.secondaryBackgroundColor)
                     .padding(Spacing.small)
@@ -87,6 +89,15 @@ struct FeedFontSection: View {
                     Image(systemName: "plus")
                 }
             }.padding(.bottom, Spacing.regular)
+
+            Picker(selection: $feedLayout) {
+                Text(feedFlowStrings.settingsFeedLayoutList)
+                    .tag(FeedLayout.list)
+                Text(feedFlowStrings.settingsFeedLayoutCard)
+                    .tag(FeedLayout.card)
+            } label: {
+                Label(feedFlowStrings.feedLayoutTitle, systemImage: "rectangle.grid.1x2")
+            }
 
             Toggle(isOn: $isHideDescriptionEnabled) {
                 Label(feedFlowStrings.settingsHideDescription, systemImage: "text.page.slash")

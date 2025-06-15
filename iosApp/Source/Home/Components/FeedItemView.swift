@@ -16,6 +16,7 @@ struct FeedItemView: View {
     let feedItem: FeedItem
     let index: Int
     let feedFontSizes: FeedFontSizes
+    var feedLayout: FeedLayout = .list
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -112,6 +113,7 @@ struct FeedItemView: View {
     FeedItemView(
         feedItem: feedItemsForPreview[2],
         index: 0,
-        feedFontSizes: defaultFeedFontSizes()
+        feedFontSizes: defaultFeedFontSizes(),
+        feedLayout: .list
     )
 }

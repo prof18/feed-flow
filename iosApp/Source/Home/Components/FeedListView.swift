@@ -24,6 +24,7 @@ struct FeedListView: View {
     let columnVisibility: NavigationSplitViewVisibility
     let feedFontSizes: FeedFontSizes
     let swipeActions: SwipeActions
+    let feedLayout: FeedLayout
 
     let onReloadClick: () -> Void
     let onAddFeedClick: () -> Void
@@ -63,6 +64,7 @@ struct FeedListView: View {
                             index: index,
                             feedFontSizes: feedFontSizes,
                             swipeActions: swipeActions,
+                            feedLayout: feedLayout,
                             onItemClick: onItemClick,
                             onBookmarkClick: onBookmarkClick,
                             onReadStatusClick: onReadStatusClick
@@ -115,6 +117,7 @@ struct FeedListView: View {
         columnVisibility: .all,
         feedFontSizes: defaultFeedFontSizes(),
         swipeActions: SwipeActions(leftSwipeAction: .none, rightSwipeAction: .none),
+        feedLayout: .list,
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},
@@ -136,6 +139,7 @@ struct FeedListView: View {
         columnVisibility: .all,
         feedFontSizes: defaultFeedFontSizes(),
         swipeActions: SwipeActions(leftSwipeAction: .none, rightSwipeAction: .none),
+        feedLayout: .list,
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},
@@ -157,6 +161,7 @@ struct FeedListView: View {
         columnVisibility: .all,
         feedFontSizes: defaultFeedFontSizes(),
         swipeActions: SwipeActions(leftSwipeAction: .none, rightSwipeAction: .none),
+        feedLayout: .list,
         onReloadClick: {},
         onAddFeedClick: {},
         requestNewPage: {},

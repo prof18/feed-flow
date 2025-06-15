@@ -29,6 +29,7 @@ struct HomeContent: View {
     @Binding var columnVisibility: NavigationSplitViewVisibility
     @Binding var feedFontSizes: FeedFontSizes
     @Binding var swipeActions: SwipeActions
+    @Binding var feedLayout: FeedLayout
 
     @State var isToolbarVisible: Bool = true
 
@@ -56,6 +57,7 @@ struct HomeContent: View {
                 columnVisibility: columnVisibility,
                 feedFontSizes: feedFontSizes,
                 swipeActions: swipeActions,
+                feedLayout: feedLayout,
                 onReloadClick: onRefresh,
                 onAddFeedClick: {
                     self.sheetToShow = .noFeedSource
@@ -293,6 +295,7 @@ struct HomeContent: View {
         columnVisibility: .constant(.all),
         feedFontSizes: .constant(defaultFeedFontSizes()),
         swipeActions: .constant(SwipeActions(leftSwipeAction: .none, rightSwipeAction: .none)),
+        feedLayout: .constant(.list),
         onRefresh: {},
         updateReadStatus: { _ in },
         onMarkAllReadClick: {},
@@ -328,6 +331,7 @@ struct HomeContent: View {
         columnVisibility: .constant(.all),
         feedFontSizes: .constant(defaultFeedFontSizes()),
         swipeActions: .constant(SwipeActions(leftSwipeAction: .none, rightSwipeAction: .none)),
+        feedLayout: .constant(.list),
         onRefresh: {},
         updateReadStatus: { _ in },
         onMarkAllReadClick: {},
@@ -363,6 +367,7 @@ struct HomeContent: View {
         columnVisibility: .constant(.all),
         feedFontSizes: .constant(defaultFeedFontSizes()),
         swipeActions: .constant(SwipeActions(leftSwipeAction: .none, rightSwipeAction: .none)),
+        feedLayout: .constant(.list),
         onRefresh: {},
         updateReadStatus: { _ in },
         onMarkAllReadClick: {},

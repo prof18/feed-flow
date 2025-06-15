@@ -11,6 +11,7 @@ struct FeedItemRowView: View {
     let index: Int
     let feedFontSizes: FeedFontSizes
     let swipeActions: SwipeActions
+    let feedLayout: FeedLayout
     let onItemClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
@@ -55,7 +56,7 @@ struct FeedItemRowView: View {
                 onItemClick(urlInfo)
             },
             label: {
-                FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)
+                FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes, feedLayout: feedLayout)
                     .contentShape(Rectangle())
             }
         )

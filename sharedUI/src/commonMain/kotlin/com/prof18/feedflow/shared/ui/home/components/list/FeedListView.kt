@@ -1,0 +1,269 @@
+package com.prof18.feedflow.shared.ui.home.components.list
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BookmarkAdd
+import androidx.compose.material.icons.filled.BookmarkRemove
+import androidx.compose.material.icons.filled.MarkEmailRead
+import androidx.compose.material.icons.filled.MarkEmailUnread
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import com.prof18.feedflow.core.model.FeedFilter
+import com.prof18.feedflow.core.model.FeedFontSizes
+import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedItemUrlTitle
+import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActionType.NONE
+import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_BOOKMARK_STATUS
+import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_READ_STATUS
+import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
+import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.PreviewHelper
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import me.saket.swipe.SwipeAction
+import me.saket.swipe.SwipeableActionsBox
+import org.jetbrains.compose.ui.tooling.preview.Preview
+
+@Suppress("MagicNumber")
+@OptIn(FlowPreview::class)
+@Composable
+internal fun FeedList(
+    feedItems: ImmutableList<FeedItem>,
+    feedFontSize: FeedFontSizes,
+    feedLayout: FeedLayout,
+    currentFeedFilter: FeedFilter,
+    shareMenuLabel: String,
+    shareCommentsMenuLabel: String,
+    swipeActions: SwipeActions,
+    updateReadStatus: (Int) -> Unit,
+    requestMoreItems: () -> Unit,
+    onFeedItemClick: (FeedItemUrlInfo) -> Unit,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onCommentClick: (FeedItemUrlInfo) -> Unit,
+    markAllAsRead: () -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState(),
+) {
+    val shouldStartPaginate = remember {
+        derivedStateOf {
+            val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                ?: return@derivedStateOf false
+
+            val totalItemsCount = listState.layoutInfo.totalItemsCount
+            lastVisibleItemIndex >= totalItemsCount - 15
+        }
+    }
+
+    LazyColumn(
+        modifier = modifier,
+        state = listState,
+    ) {
+        itemsIndexed(
+            items = feedItems,
+        ) { index, item ->
+
+            val swipeToRight = swipeActions.rightSwipeAction.toSwipeAction(
+                feedItem = item,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
+            )
+            val swipeToLeft = swipeActions.leftSwipeAction.toSwipeAction(
+                feedItem = item,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
+            )
+
+            if (swipeToRight == null && swipeToLeft == null) {
+                when (feedLayout) {
+                    FeedLayout.LIST -> FeedItemListView(
+                        feedItem = item,
+                        shareMenuLabel = shareMenuLabel,
+                        shareCommentsMenuLabel = shareCommentsMenuLabel,
+                        onFeedItemClick = onFeedItemClick,
+                        onCommentClick = onCommentClick,
+                        onBookmarkClick = onBookmarkClick,
+                        onReadStatusClick = onReadStatusClick,
+                        feedFontSize = feedFontSize,
+                        onShareClick = onShareClick,
+                    )
+                    FeedLayout.CARD -> FeedItemCard(
+                        feedItem = item,
+                        shareMenuLabel = shareMenuLabel,
+                        shareCommentsMenuLabel = shareCommentsMenuLabel,
+                        onFeedItemClick = onFeedItemClick,
+                        onCommentClick = onCommentClick,
+                        onBookmarkClick = onBookmarkClick,
+                        onReadStatusClick = onReadStatusClick,
+                        feedFontSize = feedFontSize,
+                        onShareClick = onShareClick,
+                    )
+                }
+            } else {
+                SwipeableActionsBox(
+                    startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
+                    endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
+                ) {
+                    when (feedLayout) {
+                        FeedLayout.LIST -> FeedItemListView(
+                            feedItem = item,
+                            shareMenuLabel = shareMenuLabel,
+                            shareCommentsMenuLabel = shareCommentsMenuLabel,
+                            onFeedItemClick = onFeedItemClick,
+                            onCommentClick = onCommentClick,
+                            onBookmarkClick = onBookmarkClick,
+                            onReadStatusClick = onReadStatusClick,
+                            feedFontSize = feedFontSize,
+                            onShareClick = onShareClick,
+                        )
+                        FeedLayout.CARD -> FeedItemCard(
+                            feedItem = item,
+                            shareMenuLabel = shareMenuLabel,
+                            shareCommentsMenuLabel = shareCommentsMenuLabel,
+                            onFeedItemClick = onFeedItemClick,
+                            onCommentClick = onCommentClick,
+                            onBookmarkClick = onBookmarkClick,
+                            onReadStatusClick = onReadStatusClick,
+                            feedFontSize = feedFontSize,
+                            onShareClick = onShareClick,
+                        )
+                    }
+                }
+            }
+            if (index == feedItems.size - 1 && currentFeedFilter !is FeedFilter.Read) {
+                Box(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .fillMaxWidth(),
+                ) {
+                    TextButton(
+                        modifier = Modifier
+                            .padding(top = Spacing.small)
+                            .padding(bottom = Spacing.medium)
+                            .align(Alignment.Center),
+                        onClick = markAllAsRead,
+                    ) {
+                        Text(LocalFeedFlowStrings.current.markAllReadButton)
+                    }
+                }
+            }
+        }
+    }
+
+    val latestUpdateReadStatus by rememberUpdatedState(updateReadStatus)
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .distinctUntilChanged()
+            .debounce(2000)
+            .collect { index ->
+                if (index > 1) {
+                    latestUpdateReadStatus(index - 1)
+                }
+            }
+    }
+
+    val latestRequestMoreItems by rememberUpdatedState(requestMoreItems)
+    LaunchedEffect(key1 = shouldStartPaginate.value) {
+        if (shouldStartPaginate.value) {
+            latestRequestMoreItems()
+        }
+    }
+}
+
+@Composable
+private fun SwipeActionType.toSwipeAction(
+    feedItem: FeedItem,
+    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
+    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+): SwipeAction? =
+    when (this) {
+        TOGGLE_READ_STATUS -> SwipeAction(
+            icon = rememberVectorPainter(
+                image = if (feedItem.isRead) {
+                    Icons.Default.MarkEmailUnread
+                } else {
+                    Icons.Default.MarkEmailRead
+                },
+            ),
+            background = MaterialTheme.colorScheme.surfaceContainerHighest,
+            onSwipe = {
+                onReadStatusClick(
+                    FeedItemId(feedItem.id),
+                    !feedItem.isRead,
+                )
+            },
+        )
+
+        TOGGLE_BOOKMARK_STATUS -> SwipeAction(
+            icon = rememberVectorPainter(
+                image = if (feedItem.isBookmarked) {
+                    Icons.Default.BookmarkRemove
+                } else {
+                    Icons.Default.BookmarkAdd
+                },
+            ),
+            background = MaterialTheme.colorScheme.surfaceContainerHighest,
+            onSwipe = {
+                onBookmarkClick(
+                    FeedItemId(feedItem.id),
+                    !feedItem.isBookmarked,
+                )
+            },
+        )
+
+        NONE -> null
+    }
+
+@Preview
+@Composable
+internal fun FeedListPreview() {
+    PreviewHelper {
+        FeedList(
+            feedItems = feedItemsForPreview,
+            feedFontSize = FeedFontSizes(),
+            feedLayout = FeedLayout.LIST,
+            currentFeedFilter = FeedFilter.Timeline,
+            shareMenuLabel = "Share",
+            shareCommentsMenuLabel = "Share with comments",
+            swipeActions = SwipeActions(
+                leftSwipeAction = TOGGLE_READ_STATUS,
+                rightSwipeAction = TOGGLE_BOOKMARK_STATUS,
+            ),
+            updateReadStatus = {},
+            requestMoreItems = {},
+            onFeedItemClick = {},
+            onBookmarkClick = { _, _ -> },
+            onReadStatusClick = { _, _ -> },
+            onCommentClick = {},
+            markAllAsRead = {},
+            onShareClick = {},
+        )
+    }
+}

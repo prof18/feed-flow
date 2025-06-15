@@ -142,8 +142,8 @@ fun WidgetFeedItemCard(feedItem: FeedItem, modifier: GlanceModifier = GlanceModi
         Row(
             modifier = GlanceModifier
                 .fillMaxWidth()
-                .padding(12.dp)
-                .cornerRadius(20.dp)
+                .padding(16.dp)
+                .cornerRadius(16.dp)
                 .background(GlanceTheme.colors.secondaryContainer)
                 .clickable(
                     actionStartActivity(

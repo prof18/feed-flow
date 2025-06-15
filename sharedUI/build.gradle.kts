@@ -34,6 +34,7 @@ kotlin {
         androidMain {
             dependencies {
                 api(libs.io.coil.network)
+                implementation(compose.preview)
             }
         }
 
@@ -48,7 +49,7 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
-                implementation(compose.preview)
+                implementation(compose.components.uiToolingPreview)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.material3AdaptiveNavigationSuite)
                 implementation(libs.immutable.collections)

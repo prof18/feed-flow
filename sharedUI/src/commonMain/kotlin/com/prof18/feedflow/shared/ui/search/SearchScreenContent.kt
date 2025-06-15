@@ -41,7 +41,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.SearchState
-import com.prof18.feedflow.shared.ui.home.components.FeedItemView
+import com.prof18.feedflow.shared.ui.home.components.list.FeedItemListView
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -112,7 +112,7 @@ fun SearchScreenContent(
 
                     is SearchState.DataFound -> {
                         itemsIndexed(searchState.items) { index, item ->
-                            FeedItemView(
+                            FeedItemListView(
                                 feedItem = item,
                                 feedFontSize = feedFontSizes,
                                 shareCommentsMenuLabel = shareCommentsMenuLabel,

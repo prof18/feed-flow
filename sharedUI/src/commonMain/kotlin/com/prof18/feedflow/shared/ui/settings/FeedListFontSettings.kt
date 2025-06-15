@@ -16,8 +16,8 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
-import com.prof18.feedflow.shared.ui.home.components.FeedItemCard
-import com.prof18.feedflow.shared.ui.home.components.FeedItemView
+import com.prof18.feedflow.shared.ui.home.components.list.FeedItemCard
+import com.prof18.feedflow.shared.ui.home.components.list.FeedItemListView
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -44,7 +44,7 @@ fun FeedListFontSettings(
                         tonalElevation = 8.dp,
                         shadowElevation = 8.dp,
                     ) {
-                        FeedItemView(
+                        FeedItemListView(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.background),
                             feedItem = FeedItem(

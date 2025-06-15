@@ -33,7 +33,7 @@ class FeedWidgetRepository internal constructor(
             }
     }
 
-    fun getFeedLayout() = settingsRepository.feedLayout
+    fun getFeedLayout() = settingsRepository.feedWidgetLayout
 
     internal suspend fun getFeedItemById(id: FeedItemId): FeedItemUrlInfo? {
         return databaseHelper.getFeedItemUrlInfo(id.id)

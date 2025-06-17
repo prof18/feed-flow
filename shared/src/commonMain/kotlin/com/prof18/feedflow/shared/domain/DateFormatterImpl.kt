@@ -51,7 +51,11 @@ class DateFormatterImpl(
                 year()
             }
             char(' ')
-            hour()
+            alternativeParsing({
+                hour(padding = Padding.NONE)
+            }) {
+                hour()
+            }
             char(':')
             minute()
             optional {
@@ -71,17 +75,49 @@ class DateFormatterImpl(
         },
 
         //  "Thu 02 May 2024 11:37:00 +0200"
+        // Tue, 17 Jun 2025 12:00:00 +03
         Format {
             alternativeParsing({
                 // the day of week may be missing
             }) {
                 dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
+                optional {
+                    char(',')
+                }
                 chars(" ")
             }
+
             dayOfMonth(Padding.ZERO)
             char(' ')
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char(' ')
+            year()
+            char(' ')
+            hour()
+            char(':')
+            minute()
+            optional {
+                char(':')
+                second()
+            }
+            chars(" ")
+            alternativeParsing({
+                offset(UtcOffset.Formats.FOUR_DIGITS)
+            }, {
+                offset(UtcOffset.Formats.ISO_BASIC)
+            }) {
+                offset(UtcOffset.Formats.ISO)
+            }
+        },
+
+        // Mon, Jun 16, 2025 06:28:45 +0200
+        Format {
+            dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
+            chars(", ")
+            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            chars(" ")
+            dayOfMonth(Padding.ZERO)
+            chars(", ")
             year()
             char(' ')
             hour()
@@ -308,7 +344,11 @@ class DateFormatterImpl(
             char(' ')
             year()
             char(' ')
-            hour()
+            alternativeParsing(
+                {
+                    hour(padding = Padding.NONE)
+                },
+            ) { hour() }
             char(':')
             minute()
             optional {
@@ -435,6 +475,42 @@ class DateFormatterImpl(
             char(':')
             second()
         },
+
+        // 03.06.2025 14:12:00
+        Format {
+            dayOfMonth()
+            char('.')
+            monthNumber()
+            char('.')
+            year()
+            char(' ')
+            hour()
+            char(':')
+            minute()
+            char(':')
+            second()
+        },
+
+        // Oct 26, 2020 9:47am
+        // Aug 22, 2022 11:35am
+        Format {
+            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            char(' ')
+            dayOfMonth()
+            chars(", ")
+            year()
+            char(' ')
+            alternativeParsing(
+                {
+                    hour(padding = Padding.NONE)
+                },
+            ) {
+                hour()
+            }
+            char(':')
+            minute()
+            amPmMarker(am = "am", pm = "pm")
+        },
     )
 
     override fun getDateMillisFromString(dateString: String): Long? {
@@ -496,6 +572,7 @@ class DateFormatterImpl(
                     minute()
                 }
             }
+
             isThisYear -> {
                 LocalDateTime.Format {
                     dayAndMonth(dateFormat)
@@ -505,6 +582,7 @@ class DateFormatterImpl(
                     minute()
                 }
             }
+
             else -> {
                 LocalDateTime.Format {
                     dayAndMonth(dateFormat)
@@ -528,6 +606,7 @@ class DateFormatterImpl(
                 char('/')
                 monthNumber()
             }
+
             DateFormat.AMERICAN -> {
                 monthNumber()
                 char('/')
@@ -548,6 +627,7 @@ class DateFormatterImpl(
             { chars("CET") },
             { chars("CST") },
             { chars("EEST") },
+            { chars("CEST") },
         ) {}
     }
 

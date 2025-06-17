@@ -69,6 +69,8 @@ struct FeedListView: View {
                             onBookmarkClick: onBookmarkClick,
                             onReadStatusClick: onReadStatusClick
                         )
+                        .listRowSeparator(feedLayout == .card ? .hidden : .automatic)
+                        .listRowInsets(EdgeInsets())
                         .onAppear {
                             if let index = feedState.firstIndex(of: feedItem) {
                                 indexHolder.lastAppearedIndex = index

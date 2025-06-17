@@ -58,7 +58,9 @@ struct FeedFontSection: View {
                         feedFontSizes: feedFontSizes,
                         feedLayout: feedLayout
                     )
-                    .background(Color.secondaryBackgroundColor)
+                    // .if(feedLayout == .list) { view in
+                    //     view.background(Color.secondaryBackgroundColor)
+                    // }
                     .padding(Spacing.small)
                     .padding(.top, Spacing.small)
                     .cornerRadius(Spacing.small)

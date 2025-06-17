@@ -19,7 +19,7 @@ struct FeedItemView: View {
     var feedLayout: FeedLayout = .list
 
     var body: some View {
-        VStack(alignment: .leading) {
+        let content = VStack(alignment: .leading) {
             HStack {
                 if !feedItem.isRead {
                     Circle()
@@ -55,6 +55,16 @@ struct FeedItemView: View {
         }
         .padding(.horizontal, Spacing.regular)
         .padding(.vertical, Spacing.small)
+
+        if feedLayout == .card {
+            content
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(16)
+                .padding(.horizontal, Spacing.small)
+                .padding(.vertical, Spacing.small)
+        } else {
+            content
+        }
     }
 
     @ViewBuilder
@@ -110,10 +120,27 @@ struct FeedItemView: View {
 }
 
 #Preview {
-    FeedItemView(
-        feedItem: feedItemsForPreview[2],
-        index: 0,
-        feedFontSizes: defaultFeedFontSizes(),
-        feedLayout: .list
-    )
+    VStack {
+        Text("List Layout")
+            .font(.headline)
+            .padding()
+
+        FeedItemView(
+            feedItem: feedItemsForPreview[2],
+            index: 0,
+            feedFontSizes: defaultFeedFontSizes(),
+            feedLayout: .list
+        )
+
+        Text("Card Layout")
+            .font(.headline)
+            .padding()
+
+        FeedItemView(
+            feedItem: feedItemsForPreview[2],
+            index: 0,
+            feedFontSizes: defaultFeedFontSizes(),
+            feedLayout: .card
+        )
+    }
 }

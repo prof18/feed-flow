@@ -5,19 +5,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
-import com.prof18.feedflow.shared.ui.home.components.list.FeedItemCard
-import com.prof18.feedflow.shared.ui.home.components.list.FeedItemListView
+import com.prof18.feedflow.shared.ui.home.components.list.FeedItemContainer
+import com.prof18.feedflow.shared.ui.home.components.list.FeedItemView
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -38,60 +36,10 @@ fun FeedListFontSettings(
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(Spacing.medium),
         ) {
-            when (feedLayout) {
-                FeedLayout.LIST ->
-                    Surface(
-                        tonalElevation = 8.dp,
-                        shadowElevation = 8.dp,
-                    ) {
-                        FeedItemListView(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.background),
-                            feedItem = FeedItem(
-                                id = "1",
-                                url = "https://www.example.com",
-                                title = LocalFeedFlowStrings.current.settingsFontScaleTitleExample,
-                                subtitle = if (isHideDescriptionEnabled) {
-                                    null
-                                } else {
-                                    LocalFeedFlowStrings.current.settingsFontScaleSubtitleExample
-                                },
-                                content = null,
-                                imageUrl = if (isHideImagesEnabled) null else "https://lipsum.app/200x200",
-                                feedSource = FeedSource(
-                                    id = "1",
-                                    url = "https://www.example.it",
-                                    title = LocalFeedFlowStrings.current.settingsFontScaleFeedSourceExample,
-                                    category = null,
-                                    lastSyncTimestamp = null,
-                                    logoUrl = null,
-                                    linkOpeningPreference = LinkOpeningPreference.DEFAULT,
-                                    isHiddenFromTimeline = false,
-                                    isPinned = false,
-                                    isNotificationEnabled = false,
-                                ),
-                                pubDateMillis = null,
-                                dateString = when (dateFormat) {
-                                    DateFormat.NORMAL -> "25/12"
-                                    DateFormat.AMERICAN -> "12/25"
-                                },
-                                commentsUrl = null,
-                                isRead = false,
-                                isBookmarked = false,
-                            ),
-                            feedFontSize = fontSizes,
-                            shareCommentsMenuLabel = LocalFeedFlowStrings.current.menuShareComments,
-                            shareMenuLabel = LocalFeedFlowStrings.current.menuShare,
-                            disableClick = true,
-                            onFeedItemClick = {},
-                            onBookmarkClick = { _, _ -> },
-                            onReadStatusClick = { _, _ -> },
-                            onCommentClick = {},
-                            onShareClick = {},
-                        )
-                    }
-
-                FeedLayout.CARD -> FeedItemCard(
+            FeedItemContainer(feedLayout) {
+                FeedItemView(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background),
                     feedItem = FeedItem(
                         id = "1",
                         url = "https://www.example.com",
@@ -133,6 +81,7 @@ fun FeedListFontSettings(
                     onReadStatusClick = { _, _ -> },
                     onCommentClick = {},
                     onShareClick = {},
+                    feedLayout = feedLayout,
                 )
             }
         }

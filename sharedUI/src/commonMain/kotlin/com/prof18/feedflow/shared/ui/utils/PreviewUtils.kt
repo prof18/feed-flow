@@ -30,12 +30,13 @@ fun PreviewHelper(
 }
 
 @Composable
-private fun PreviewColumn(
-    paddingEnabled: Boolean,
+fun PreviewColumn(
+    modifier: Modifier = Modifier,
+    paddingEnabled: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(MaterialTheme.colorScheme.background)
             .padding(
                 if (paddingEnabled) Spacing.small else 0.dp,

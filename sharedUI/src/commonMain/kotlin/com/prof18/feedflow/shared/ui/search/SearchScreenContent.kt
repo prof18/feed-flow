@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -41,7 +42,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.SearchState
-import com.prof18.feedflow.shared.ui.home.components.list.FeedItemListView
+import com.prof18.feedflow.shared.ui.home.components.list.FeedItemContainer
+import com.prof18.feedflow.shared.ui.home.components.list.FeedItemView
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -112,17 +114,20 @@ fun SearchScreenContent(
 
                     is SearchState.DataFound -> {
                         itemsIndexed(searchState.items) { index, item ->
-                            FeedItemListView(
-                                feedItem = item,
-                                feedFontSize = feedFontSizes,
-                                shareCommentsMenuLabel = shareCommentsMenuLabel,
-                                shareMenuLabel = shareMenuLabel,
-                                onFeedItemClick = onFeedItemClick,
-                                onBookmarkClick = onBookmarkClick,
-                                onReadStatusClick = onReadStatusClick,
-                                onCommentClick = onCommentClick,
-                                onShareClick = onShareClick,
-                            )
+                            FeedItemContainer(feedLayout = searchState.feedLayout) {
+                                FeedItemView(
+                                    feedItem = item,
+                                    feedFontSize = feedFontSizes,
+                                    shareCommentsMenuLabel = shareCommentsMenuLabel,
+                                    shareMenuLabel = shareMenuLabel,
+                                    onFeedItemClick = onFeedItemClick,
+                                    onBookmarkClick = onBookmarkClick,
+                                    onReadStatusClick = onReadStatusClick,
+                                    onCommentClick = onCommentClick,
+                                    feedLayout = searchState.feedLayout,
+                                    onShareClick = onShareClick,
+                                )
+                            }
                         }
                     }
                 }

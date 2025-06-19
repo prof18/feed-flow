@@ -56,6 +56,8 @@ class SearchViewModel internal constructor(
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 
+    private val feedLayout = settingsRepository.getFeedLayout()
+
     init {
         searchQueryMutableState
             .debounce(500.milliseconds)
@@ -127,7 +129,8 @@ class SearchViewModel internal constructor(
                         )
                     } else {
                         SearchState.DataFound(
-                            foundFeed.map { feedItem ->
+                            feedLayout = feedLayout,
+                            items = foundFeed.map { feedItem ->
                                 feedItem.toFeedItem(
                                     dateFormatter = dateFormatter,
                                     removeTitleFromDesc = isRemoveTitleFromDescriptionEnabled,

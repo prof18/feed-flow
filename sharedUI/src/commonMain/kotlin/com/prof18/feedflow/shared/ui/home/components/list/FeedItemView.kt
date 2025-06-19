@@ -22,6 +22,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
+import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -29,11 +30,12 @@ import com.prof18.feedflow.shared.ui.utils.PreviewHelper
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-internal fun FeedItemListView(
+internal fun FeedItemView(
     feedItem: FeedItem,
     feedFontSize: FeedFontSizes,
     shareMenuLabel: String,
     shareCommentsMenuLabel: String,
+    feedLayout: FeedLayout,
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
@@ -98,12 +100,14 @@ internal fun FeedItemListView(
             )
         }
 
-        HorizontalDivider(
-            modifier = Modifier
-                .padding(top = Spacing.regular),
-            thickness = 0.2.dp,
-            color = Color.Gray,
-        )
+        if (feedLayout == FeedLayout.LIST) {
+            HorizontalDivider(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                thickness = 0.2.dp,
+                color = Color.Gray,
+            )
+        }
 
         FeedItemContextMenu(
             showMenu = showItemMenu,
@@ -125,9 +129,10 @@ internal fun FeedItemListView(
 @Composable
 internal fun FeedItemListViewPreview() {
     PreviewHelper {
-        FeedItemListView(
+        FeedItemView(
             feedItem = feedItemsForPreview.first(),
             feedFontSize = FeedFontSizes(),
+            feedLayout = FeedLayout.LIST,
             shareMenuLabel = "Share",
             shareCommentsMenuLabel = "Share Comments",
             onFeedItemClick = {},

@@ -8,11 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -25,7 +28,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -41,6 +45,7 @@ import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.PreviewColumn
 import com.prof18.feedflow.shared.ui.utils.PreviewHelper
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.FlowPreview
@@ -89,21 +94,27 @@ internal fun FeedList(
         itemsIndexed(
             items = feedItems,
         ) { index, item ->
+            val swipeBackgroundColor = when (feedLayout) {
+                FeedLayout.LIST -> MaterialTheme.colorScheme.surfaceContainerHighest
+                FeedLayout.CARD -> MaterialTheme.colorScheme.surfaceContainer
+            }
 
             val swipeToRight = swipeActions.rightSwipeAction.toSwipeAction(
                 feedItem = item,
+                swipeBackgroundColor = swipeBackgroundColor,
                 onBookmarkClick = onBookmarkClick,
                 onReadStatusClick = onReadStatusClick,
             )
             val swipeToLeft = swipeActions.leftSwipeAction.toSwipeAction(
                 feedItem = item,
+                swipeBackgroundColor = swipeBackgroundColor,
                 onBookmarkClick = onBookmarkClick,
                 onReadStatusClick = onReadStatusClick,
             )
 
-            if (swipeToRight == null && swipeToLeft == null) {
-                when (feedLayout) {
-                    FeedLayout.LIST -> FeedItemListView(
+            FeedItemContainer(feedLayout = feedLayout) {
+                if (swipeToRight == null && swipeToLeft == null) {
+                    FeedItemView(
                         feedItem = item,
                         shareMenuLabel = shareMenuLabel,
                         shareCommentsMenuLabel = shareCommentsMenuLabel,
@@ -113,40 +124,19 @@ internal fun FeedList(
                         onReadStatusClick = onReadStatusClick,
                         feedFontSize = feedFontSize,
                         onShareClick = onShareClick,
+                        feedLayout = feedLayout,
                     )
-                    FeedLayout.CARD -> FeedItemCard(
-                        feedItem = item,
-                        shareMenuLabel = shareMenuLabel,
-                        shareCommentsMenuLabel = shareCommentsMenuLabel,
-                        onFeedItemClick = onFeedItemClick,
-                        onCommentClick = onCommentClick,
-                        onBookmarkClick = onBookmarkClick,
-                        onReadStatusClick = onReadStatusClick,
-                        feedFontSize = feedFontSize,
-                        onShareClick = onShareClick,
-                    )
-                }
-            } else {
-                SwipeableActionsBox(
-                    startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
-                    endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
-                ) {
-                    when (feedLayout) {
-                        FeedLayout.LIST -> FeedItemListView(
+                } else {
+                    SwipeableActionsBox(
+                        backgroundUntilSwipeThreshold = swipeBackgroundColor,
+                        startActions = swipeToRight?.let { listOf(it) }.orEmpty(),
+                        endActions = swipeToLeft?.let { listOf(it) }.orEmpty(),
+                    ) {
+                        FeedItemView(
                             feedItem = item,
                             shareMenuLabel = shareMenuLabel,
                             shareCommentsMenuLabel = shareCommentsMenuLabel,
-                            onFeedItemClick = onFeedItemClick,
-                            onCommentClick = onCommentClick,
-                            onBookmarkClick = onBookmarkClick,
-                            onReadStatusClick = onReadStatusClick,
-                            feedFontSize = feedFontSize,
-                            onShareClick = onShareClick,
-                        )
-                        FeedLayout.CARD -> FeedItemCard(
-                            feedItem = item,
-                            shareMenuLabel = shareMenuLabel,
-                            shareCommentsMenuLabel = shareCommentsMenuLabel,
+                            feedLayout = feedLayout,
                             onFeedItemClick = onFeedItemClick,
                             onCommentClick = onCommentClick,
                             onBookmarkClick = onBookmarkClick,
@@ -181,7 +171,7 @@ internal fun FeedList(
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .distinctUntilChanged()
-            .debounce(2000)
+            .debounce(timeoutMillis = 2000)
             .collect { index ->
                 if (index > 1) {
                     latestUpdateReadStatus(index - 1)
@@ -197,22 +187,47 @@ internal fun FeedList(
     }
 }
 
+@Suppress("ModifierMissing")
+@Composable
+fun FeedItemContainer(
+    feedLayout: FeedLayout,
+    content: @Composable () -> Unit,
+) {
+    when (feedLayout) {
+        FeedLayout.LIST -> content()
+        FeedLayout.CARD -> {
+            Card(
+                modifier = Modifier.padding(Spacing.small),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                content()
+            }
+        }
+    }
+}
+
 @Composable
 private fun SwipeActionType.toSwipeAction(
     feedItem: FeedItem,
+    swipeBackgroundColor: Color,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
-): SwipeAction? =
-    when (this) {
+): SwipeAction? {
+    return when (this) {
         TOGGLE_READ_STATUS -> SwipeAction(
-            icon = rememberVectorPainter(
-                image = if (feedItem.isRead) {
-                    Icons.Default.MarkEmailUnread
-                } else {
-                    Icons.Default.MarkEmailRead
-                },
-            ),
-            background = MaterialTheme.colorScheme.surfaceContainerHighest,
+            icon = {
+                Icon(
+                    modifier = Modifier.padding(Spacing.regular),
+                    imageVector = if (feedItem.isRead) {
+                        Icons.Default.MarkEmailUnread
+                    } else {
+                        Icons.Default.MarkEmailRead
+                    },
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            },
+            background = swipeBackgroundColor,
             onSwipe = {
                 onReadStatusClick(
                     FeedItemId(feedItem.id),
@@ -222,14 +237,19 @@ private fun SwipeActionType.toSwipeAction(
         )
 
         TOGGLE_BOOKMARK_STATUS -> SwipeAction(
-            icon = rememberVectorPainter(
-                image = if (feedItem.isBookmarked) {
-                    Icons.Default.BookmarkRemove
-                } else {
-                    Icons.Default.BookmarkAdd
-                },
-            ),
-            background = MaterialTheme.colorScheme.surfaceContainerHighest,
+            icon = {
+                Icon(
+                    modifier = Modifier.padding(Spacing.regular),
+                    imageVector = if (feedItem.isBookmarked) {
+                        Icons.Default.BookmarkRemove
+                    } else {
+                        Icons.Default.BookmarkAdd
+                    },
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            },
+            background = swipeBackgroundColor,
             onSwipe = {
                 onBookmarkClick(
                     FeedItemId(feedItem.id),
@@ -240,30 +260,54 @@ private fun SwipeActionType.toSwipeAction(
 
         NONE -> null
     }
+}
 
 @Preview
 @Composable
 internal fun FeedListPreview() {
     PreviewHelper {
-        FeedList(
-            feedItems = feedItemsForPreview,
-            feedFontSize = FeedFontSizes(),
-            feedLayout = FeedLayout.LIST,
-            currentFeedFilter = FeedFilter.Timeline,
-            shareMenuLabel = "Share",
-            shareCommentsMenuLabel = "Share with comments",
-            swipeActions = SwipeActions(
-                leftSwipeAction = TOGGLE_READ_STATUS,
-                rightSwipeAction = TOGGLE_BOOKMARK_STATUS,
-            ),
-            updateReadStatus = {},
-            requestMoreItems = {},
-            onFeedItemClick = {},
-            onBookmarkClick = { _, _ -> },
-            onReadStatusClick = { _, _ -> },
-            onCommentClick = {},
-            markAllAsRead = {},
-            onShareClick = {},
-        )
+        PreviewColumn {
+            FeedList(
+                feedItems = feedItemsForPreview,
+                feedFontSize = FeedFontSizes(),
+                feedLayout = FeedLayout.LIST,
+                currentFeedFilter = FeedFilter.Timeline,
+                shareMenuLabel = "Share",
+                shareCommentsMenuLabel = "Share with comments",
+                swipeActions = SwipeActions(
+                    leftSwipeAction = TOGGLE_READ_STATUS,
+                    rightSwipeAction = TOGGLE_BOOKMARK_STATUS,
+                ),
+                updateReadStatus = {},
+                requestMoreItems = {},
+                onFeedItemClick = {},
+                onBookmarkClick = { _, _ -> },
+                onReadStatusClick = { _, _ -> },
+                onCommentClick = {},
+                markAllAsRead = {},
+                onShareClick = {},
+            )
+
+            FeedList(
+                feedItems = feedItemsForPreview,
+                feedFontSize = FeedFontSizes(),
+                feedLayout = FeedLayout.CARD,
+                currentFeedFilter = FeedFilter.Timeline,
+                shareMenuLabel = "Share",
+                shareCommentsMenuLabel = "Share with comments",
+                swipeActions = SwipeActions(
+                    leftSwipeAction = TOGGLE_READ_STATUS,
+                    rightSwipeAction = TOGGLE_BOOKMARK_STATUS,
+                ),
+                updateReadStatus = {},
+                requestMoreItems = {},
+                onFeedItemClick = {},
+                onBookmarkClick = { _, _ -> },
+                onReadStatusClick = { _, _ -> },
+                onCommentClick = {},
+                markAllAsRead = {},
+                onShareClick = {},
+            )
+        }
     }
 }

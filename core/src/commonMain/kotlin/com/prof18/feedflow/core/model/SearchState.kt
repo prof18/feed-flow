@@ -5,6 +5,7 @@ import kotlinx.collections.immutable.ImmutableList
 sealed class SearchState {
     data class DataFound(
         val items: ImmutableList<FeedItem>,
+        val feedLayout: FeedLayout,
     ) : SearchState()
 
     data class NoDataFound(

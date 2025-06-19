@@ -1,6 +1,20 @@
-name: Full Release
+name: Release
 
 on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'Platforms to build for prerelease'
+        required: true
+        type: choice
+        options:
+          - all
+          - android
+          - ios
+          - linux
+          - windows
+          - macos
+        default: 'all'
   push:
     tags:
       - '*-all'
@@ -12,7 +26,7 @@ on:
 
 jobs:
   android:
-    if: endsWith(github.ref, '-all') || endsWith(github.ref, '-android')
+    if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'android')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-android')))
     uses: ./.github/workflows/android-release.yml
     secrets:
       GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
@@ -27,7 +41,7 @@ jobs:
 
   fdroid-release:
     needs: android
-    if: always() && needs.android.result == 'success' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-android'))
+    if: github.event_name == 'push' && always() && needs.android.result == 'success' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-android'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -75,7 +89,7 @@ jobs:
           git branch -D "release-fdroid-${{ steps.version.outputs.VERSION_NAME }}"
 
   ios:
-    if: endsWith(github.ref, '-all') || endsWith(github.ref, '-ios')
+    if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'ios')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-ios')))
     uses: ./.github/workflows/ios-release.yml
     secrets:
       GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
@@ -90,7 +104,7 @@ jobs:
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
 
   windows:
-    if: endsWith(github.ref, '-all') || endsWith(github.ref, '-windows')
+    if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'windows')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-windows')))
     uses: ./.github/workflows/windows-release.yml
     secrets:
       GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
@@ -99,7 +113,7 @@ jobs:
       MSIX_PUBLISHER_DISPLAY_NAME: ${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}
 
   linux:
-    if: endsWith(github.ref, '-all') || endsWith(github.ref, '-linux')
+    if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'linux')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-linux')))
     uses: ./.github/workflows/linux-release.yml
     secrets:
       GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
@@ -107,7 +121,7 @@ jobs:
       SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
 
   macos-testflight:
-    if: endsWith(github.ref, '-all') || endsWith(github.ref, '-macos')
+    if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'macos')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-macos')))
     uses: ./.github/workflows/macos-testflight-release.yml
     secrets:
       GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
@@ -125,7 +139,7 @@ jobs:
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
 
   macos:
-    if: endsWith(github.ref, '-all') || endsWith(github.ref, '-macos')
+    if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'macos')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-macos')))
     uses: ./.github/workflows/macos-release.yml
     secrets:
       GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
@@ -139,7 +153,7 @@ jobs:
 
   create-release:
     needs: [windows, linux, macos]
-    if: always() && (needs.windows.result == 'success' || needs.linux.result == 'success' || needs.macos.result == 'success') && (endsWith(github.ref, '-all') || endsWith(github.ref, '-windows') || endsWith(github.ref, '-linux') || endsWith(github.ref, '-macos'))
+    if: github.event_name == 'push' && always() && (needs.windows.result == 'success' || needs.linux.result == 'success' || needs.macos.result == 'success') && (endsWith(github.ref, '-all') || endsWith(github.ref, '-windows') || endsWith(github.ref, '-linux') || endsWith(github.ref, '-macos'))
     runs-on: ubuntu-latest
     permissions:
       contents: write

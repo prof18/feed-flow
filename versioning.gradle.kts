@@ -22,7 +22,7 @@ fun getCurrentTimestamp(): String {
 fun appVersionCode(): Int {
     val ciBuildNumber = System.getenv("GITHUB_RUN_NUMBER")
     return if (ciBuildNumber != null) {
-        ciBuildNumber.toInt() + 5000
+        ciBuildNumber.toInt() + 6000
     } else {
         1 // Local build version code
     }

@@ -18,21 +18,19 @@ fi
 VERSION_NAME="${MAJOR}.${MINOR}.${PATCH}"
 VERSION_CODE=""
 if [ -n "${GITHUB_RUN_NUMBER:-}" ]; then
-    # CI/Pre-release/Prod/Hotfix build number
-    VERSION_CODE=$((GITHUB_RUN_NUMBER + 5000))
+    # CI build number
+    VERSION_CODE=$((GITHUB_RUN_NUMBER + 6000))
 else
     # Local build code
     VERSION_CODE="1"
 fi
 
-# Prepare directory / file where the generated value will be written.
 mkdir -p "${SRCROOT}"/Plist
 touch "${SRCROOT}"/Plist/Prefix
 
 echo "Checking folder"
 ls "${SRCROOT}"/Plist
 
-# Write content to a file
 cat <<EOF > "${SRCROOT}"/Plist/Prefix
 #define VERSION_NAME ${VERSION_NAME}
 #define VERSION_CODE ${VERSION_CODE}

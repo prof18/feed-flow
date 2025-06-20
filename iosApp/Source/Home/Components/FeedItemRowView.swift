@@ -56,8 +56,10 @@ struct FeedItemRowView: View {
                 onItemClick(urlInfo)
             },
             label: {
-                FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes, feedLayout: feedLayout)
-                    .contentShape(Rectangle())
+                FeedItemView(
+                    feedItem: feedItem, index: index, feedFontSizes: feedFontSizes, feedLayout: feedLayout
+                )
+                .contentShape(Rectangle())
             }
         )
         .buttonStyle(.plain)
@@ -66,62 +68,12 @@ struct FeedItemRowView: View {
         .hoverEffect()
         .if(swipeActions.leftSwipeAction != .none) { view in
             view.swipeActions(edge: .trailing) {
-                switch swipeActions.leftSwipeAction {
-                case .toggleReadStatus:
-                    Button {
-                        onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead)
-                    } label: {
-                        if feedItem.isRead {
-                            Image(systemName: "envelope.badge")
-                        } else {
-                            Image(systemName: "envelope.open")
-                        }
-                    }
-                case .toggleBookmarkStatus:
-                    Button {
-                        onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked)
-                    } label: {
-                        if feedItem.isBookmarked {
-                            Image(systemName: "bookmark.slash")
-                        } else {
-                            Image(systemName: "bookmark")
-                        }
-                    }
-                case .none:
-                    EmptyView()
-                @unknown default:
-                    EmptyView()
-                }
+                swipeActionButton(for: swipeActions.leftSwipeAction)
             }
         }
         .if(swipeActions.rightSwipeAction != .none) { view in
             view.swipeActions(edge: .leading) {
-                switch swipeActions.rightSwipeAction {
-                case .toggleReadStatus:
-                    Button {
-                        onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead)
-                    } label: {
-                        if feedItem.isRead {
-                            Image(systemName: "envelope.badge")
-                        } else {
-                            Image(systemName: "envelope.open")
-                        }
-                    }
-                case .toggleBookmarkStatus:
-                    Button {
-                        onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked)
-                    } label: {
-                        if feedItem.isBookmarked {
-                            Image(systemName: "bookmark.slash")
-                        } else {
-                            Image(systemName: "bookmark")
-                        }
-                    }
-                case .none:
-                    EmptyView()
-                @unknown default:
-                    EmptyView()
-                }
+                swipeActionButton(for: swipeActions.rightSwipeAction)
             }
         }
         .contextMenu {
@@ -130,6 +82,50 @@ struct FeedItemRowView: View {
                 onBookmarkClick: onBookmarkClick,
                 onReadStatusClick: onReadStatusClick
             )
+        }
+    }
+
+    @ViewBuilder
+    private func swipeActionButton(for action: SwipeActionType) -> some View {
+        switch action {
+        case .toggleReadStatus:
+            createSwipeButton(
+                action: { onReadStatusClick(FeedItemId(id: feedItem.id), !feedItem.isRead) },
+                isToggled: feedItem.isRead,
+                toggledImageName: "envelope.badge",
+                untoggledImageName: "envelope.open"
+            )
+        case .toggleBookmarkStatus:
+            createSwipeButton(
+                action: { onBookmarkClick(FeedItemId(id: feedItem.id), !feedItem.isBookmarked) },
+                isToggled: feedItem.isBookmarked,
+                toggledImageName: "bookmark.slash",
+                untoggledImageName: "bookmark"
+            )
+        case .none:
+            EmptyView()
+        @unknown default:
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private func createSwipeButton(
+        action: @escaping () -> Void,
+        isToggled: Bool,
+        toggledImageName: String,
+        untoggledImageName: String
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: isToggled ? toggledImageName : untoggledImageName)
+                .if(feedLayout == .card) { image in
+                    image
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.primary, .primary)
+                }
+        }
+        .if(feedLayout == .card) { button in
+            button.tint(Color(.systemBackground))
         }
     }
 }

@@ -19,7 +19,7 @@ struct FeedItemView: View {
     var feedLayout: FeedLayout = .list
 
     var body: some View {
-        let content = VStack(alignment: .leading) {
+        VStack(alignment: .leading) {
             HStack {
                 if !feedItem.isRead {
                     Circle()
@@ -55,15 +55,12 @@ struct FeedItemView: View {
         }
         .padding(.horizontal, Spacing.regular)
         .padding(.vertical, Spacing.small)
-
-        if feedLayout == .card {
-            content
+        .if(feedLayout == .card) { view in
+            view
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(16)
                 .padding(.horizontal, Spacing.small)
                 .padding(.vertical, Spacing.small)
-        } else {
-            content
         }
     }
 

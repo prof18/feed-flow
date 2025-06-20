@@ -21,10 +21,10 @@ fun PreviewHelper(
 ) {
     Column(modifier = modifier) {
         PreviewTheme(darkTheme = false) {
-            PreviewColumn(paddingEnabled, content)
+            PreviewColumn(paddingEnabled = paddingEnabled, content = content)
         }
         PreviewTheme(darkTheme = true) {
-            PreviewColumn(paddingEnabled, content)
+            PreviewColumn(paddingEnabled = paddingEnabled, content = content)
         }
     }
 }

@@ -39,7 +39,6 @@ struct FeedItemRowView: View {
                 case .readerMode:
                     self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
                 case .internalBrowser:
-                    // Navigate instead of presenting modally
                     self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
                 case .preferredBrowser:
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
@@ -47,7 +46,6 @@ struct FeedItemRowView: View {
                     if browserSelector.openReaderMode(link: feedItem.url) {
                         self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
                     } else if browserSelector.openInAppBrowser() {
-                        // Navigate instead of presenting modally
                         self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
                     } else {
                         openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
@@ -82,6 +80,12 @@ struct FeedItemRowView: View {
                 onBookmarkClick: onBookmarkClick,
                 onReadStatusClick: onReadStatusClick
             )
+        } preview: {
+            FeedItemView(
+                feedItem: feedItem, index: index, feedFontSizes: feedFontSizes, feedLayout: .list
+            )
+            .frame(width: UIScreen.main.bounds.width - (Spacing.regular * 2))
+            .scaleEffect(1.0)
         }
     }
 

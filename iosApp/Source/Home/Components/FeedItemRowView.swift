@@ -110,7 +110,7 @@ struct FeedItemRowView: View {
                 .if(feedLayout == .card) { image in
                     image
                         .symbolRenderingMode(.palette)
-                        .foregroundStyle(.primary, .primary)
+                        .foregroundStyle(Color.accentColor, Color.accentColor)
                 }
         }
         .if(feedLayout == .card) { button in

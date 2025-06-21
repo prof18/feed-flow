@@ -29,9 +29,7 @@ struct FeedItemRowView: View {
                 )
 
                 guard let url = URL(string: feedItem.url) else {
-                    // Handle invalid URL error appropriately
-                    print("Invalid URL for feed item: \(feedItem.id)")
-                    onItemClick(urlInfo) // Still call onItemClick if needed
+                    onItemClick(urlInfo)
                     return
                 }
 
@@ -73,19 +71,6 @@ struct FeedItemRowView: View {
             view.swipeActions(edge: .leading) {
                 swipeActionButton(for: swipeActions.rightSwipeAction)
             }
-        }
-        .contextMenu {
-            FeedItemContextMenu(
-                feedItem: feedItem,
-                onBookmarkClick: onBookmarkClick,
-                onReadStatusClick: onReadStatusClick
-            )
-        } preview: {
-            FeedItemView(
-                feedItem: feedItem, index: index, feedFontSizes: feedFontSizes, feedLayout: .list
-            )
-            .frame(width: UIScreen.main.bounds.width - (Spacing.regular * 2))
-            .scaleEffect(1.0)
         }
     }
 

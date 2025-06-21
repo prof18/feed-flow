@@ -8,6 +8,8 @@
 
 import FeedFlowKit
 import Foundation
+import Nuke
+import NukeUI
 import Reader
 import SwiftUI
 
@@ -69,6 +71,35 @@ struct FeedListView: View {
                             onBookmarkClick: onBookmarkClick,
                             onReadStatusClick: onReadStatusClick
                         )
+                        .if(feedLayout == .card) { view in
+                            view
+                                .contextMenu {
+                                    FeedItemContextMenu(
+                                        feedItem: feedItem,
+                                        onBookmarkClick: onBookmarkClick,
+                                        onReadStatusClick: onReadStatusClick
+                                    )
+                                } preview: {
+                                    FeedItemView(
+                                        feedItem: feedItem,
+                                        index: index,
+                                        feedFontSizes: feedFontSizes,
+                                        feedLayout: feedLayout
+                                    )
+                                    .background(Color(.secondarySystemBackground))
+                                    .frame(idealWidth: 600, idealHeight: 300)
+                                }
+                        }
+                        .if(feedLayout == .list) { view in
+                            view
+                                .contextMenu {
+                                    FeedItemContextMenu(
+                                        feedItem: feedItem,
+                                        onBookmarkClick: onBookmarkClick,
+                                        onReadStatusClick: onReadStatusClick
+                                    )
+                                }
+                        }
                         .listRowSeparator(feedLayout == .card ? .hidden : .automatic)
                         .listRowInsets(EdgeInsets())
                         .onAppear {

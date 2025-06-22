@@ -18,19 +18,19 @@ platforms:
       - title: Homebrew
         url: https://formulae.brew.sh/cask/feedflow
       - title: Direct Download
-        url: https://github.com/prof18/feed-flow/releases/download/1.0.88-desktop/FeedFlow-1.0.88.dmg
+        url: "https://github.com/prof18/feed-flow/releases/download/1.2.0-all/FeedFlow-1.2.0.dmg"
 
   - name: Windows
     links:
       - title: App Store
         url: https://apps.microsoft.com/detail/9n5t1rfbb6v5
       - title: Direct Download
-        url: "https://github.com/prof18/feed-flow/releases/download/1.0.88-desktop/FeedFlow-1.0.88.msi"
+        url: "https://github.com/prof18/feed-flow/releases/download/1.1.9-desktop/FeedFlow-1.1.9.msi"
 
 
   - name: Linux
     links:
       - title: RPM Package
-        url: "https://github.com/prof18/feed-flow/releases/download/1.0.88-desktop/feedflow-1.0.88-1.x86_64.rpm"
+        url: "https://github.com/prof18/feed-flow/releases/download/1.2.0-all/feedflow-1.2.0-1.x86_64.rpm"
       - title: DEB Package
-        url: "https://github.com/prof18/feed-flow/releases/download/1.0.88-desktop/feedflow_1.0.88_amd64.deb"
+        url: "https://github.com/prof18/feed-flow/releases/download/1.2.0-all/feedflow_1.2.0_amd64.deb"

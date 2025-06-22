@@ -9,7 +9,7 @@ object AppDataPathBuilder {
             "${System.getProperty("user.home")}/Library/Application Support/FeedFlow"
         }
         System.getProperty("os.name").contains("windows", true) -> {
-            "${System.getProperty("user.home")}\\AppData\\Local\\FeedFlow"
+            "${System.getProperty("user.home")}\\AppData\\Roaming\\FeedFlow"
         }
         else -> System.getenv("XDG_DATA_HOME")?.let { "$it/FeedFlow" }
             ?: "${System.getProperty("user.home")}/.local/share/FeedFlow"

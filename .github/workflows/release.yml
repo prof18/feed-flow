@@ -86,11 +86,6 @@ jobs:
           git tag "${{ steps.version.outputs.VERSION_NAME }}-fdroid"
           git push origin "${{ steps.version.outputs.VERSION_NAME }}-fdroid"
 
-      - name: Cleanup
-        run: |
-          git checkout main
-          git branch -D "release-fdroid-${{ steps.version.outputs.VERSION_NAME }}"
-
   ios:
     if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'ios')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-ios')))
     uses: ./.github/workflows/ios-release.yml

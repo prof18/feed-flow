@@ -69,9 +69,12 @@ jobs:
 
       - name: Update version in build.gradle.kts
         run: |
-          VERSION_CODE=$(( ${{ github.run_number }} + 5000 ))
-          sed -i "s/versionCode = getVersionCode()/versionCode = $VERSION_CODE/" ./androidApp/build.gradle.kts
-          sed -i "s/versionName = getVersionName()/versionName = \"${{ steps.version.outputs.VERSION_NAME }}\"/" ./androidApp/build.gradle.kts
+          VERSION_CODE=$(( ${{ github.run_number }} + 6000 ))
+          echo $VERSION_CODE
+          sed -i "s/versionCode = appVersionCode()/versionCode = $VERSION_CODE/" ./androidApp/build.gradle.kts
+          sed -i "s/versionName = appVersionName()/versionName = \"${{ steps.version.outputs.VERSION_NAME }}\"/" ./androidApp/build.gradle.kts
+        env:
+          VERSION: ${{ steps.version.outputs.version }}  
 
       - name: Commit changes
         run: |

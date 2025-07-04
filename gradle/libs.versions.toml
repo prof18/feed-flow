@@ -59,7 +59,7 @@ stately-concurrency = "2.1.0"
 triplet-play = "3.12.1"
 voyager = "1.0.1"
 workmanager = "2.10.2"
-compose-hotreload = "1.0.0-alpha10"
+compose-hotreload = "1.0.0-beta03"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }

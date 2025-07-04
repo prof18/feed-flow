@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Locale
 import java.util.Properties
 
@@ -57,10 +58,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.majorVersion
-    }
-
     signingConfigs {
         create("release") {
             keyAlias = local.getProperty("keyAlias")
@@ -113,6 +110,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
         freeCompilerArgs = listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
         )
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 

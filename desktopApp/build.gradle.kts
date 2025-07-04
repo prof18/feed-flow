@@ -31,9 +31,7 @@ kotlin {
         languageVersion = JavaLanguageVersion.of(17)
     }
 
-    jvm {
-        withJava()
-    }
+    jvm()
 
     sourceSets {
         jvmMain {

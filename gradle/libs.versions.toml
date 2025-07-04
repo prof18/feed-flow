@@ -58,7 +58,7 @@ sql-delight = "2.0.2"
 stately-concurrency = "2.1.0"
 triplet-play = "3.12.1"
 voyager = "1.0.1"
-workmanager = "2.10.1"
+workmanager = "2.10.2"
 compose-hotreload = "1.0.0-alpha10"
 
 [libraries]

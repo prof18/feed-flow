@@ -31,7 +31,7 @@ import com.prof18.feedflow.feedsync.greader.domain.mapping.ItemContentDTOMapper
 import com.prof18.feedflow.feedsync.greader.domain.mapping.toFeedSource
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class GReaderRepository internal constructor(
     private val gReaderClient: GReaderClient,

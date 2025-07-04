@@ -2,7 +2,7 @@ package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.database.DatabaseHelper
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 
 internal class ReviewRepository(

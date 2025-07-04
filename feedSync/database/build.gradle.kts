@@ -5,6 +5,10 @@ plugins {
 
 kotlin {
     sourceSets {
+        all {
+            languageSettings.optIn("kotlin.time.ExperimentalTime")
+        }
+
         commonMain {
             dependencies {
                 implementation(project(":core"))
@@ -16,7 +20,6 @@ kotlin {
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
                 implementation(libs.stately.concurrency)
-
             }
         }
 

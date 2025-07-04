@@ -30,13 +30,13 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSFileManagerItemReplacementUsingNewMetadataOnly
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
+import kotlin.time.Clock
 
 internal class FeedSyncIosWorker(
     private val dispatcherProvider: DispatcherProvider,

@@ -9,7 +9,7 @@ import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class FeedSyncRepository internal constructor(
     private val syncedDatabaseHelper: SyncedDatabaseHelper,

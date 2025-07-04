@@ -16,10 +16,10 @@ import com.prof18.feedflow.feedsync.database.di.SYNC_DB_DRIVER
 import com.prof18.feedflow.feedsync.database.model.SyncedFeedSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import org.koin.core.component.KoinComponent
 import org.koin.core.qualifier.named
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Clock
 
 class SyncedDatabaseHelper(
     private val backgroundDispatcher: CoroutineDispatcher,

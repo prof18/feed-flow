@@ -46,6 +46,7 @@ kotlin {
     sourceSets {
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+            languageSettings.optIn("kotlin.time.ExperimentalTime")
         }
 
         commonMain {

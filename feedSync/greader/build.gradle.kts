@@ -5,6 +5,10 @@ plugins {
 
 kotlin {
     sourceSets {
+        all {
+            languageSettings.optIn("kotlin.time.ExperimentalTime")
+        }
+
         commonMain {
             dependencies {
                 implementation(project(":core"))

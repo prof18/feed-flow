@@ -3,8 +3,6 @@ package com.prof18.feedflow.shared.domain
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.DateFormat
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -19,8 +17,11 @@ import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.alternativeParsing
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.optional
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class DateFormatterImpl(
     private val logger: Logger,
@@ -37,7 +38,7 @@ class DateFormatterImpl(
                 dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
                 chars(", ")
             }
-            dayOfMonth(Padding.NONE)
+            day(Padding.NONE)
             char(' ')
             alternativeParsing({
                 monthName(MonthNames.ENGLISH_ABBREVIATED)
@@ -87,7 +88,7 @@ class DateFormatterImpl(
                 chars(" ")
             }
 
-            dayOfMonth(Padding.ZERO)
+            day(Padding.ZERO)
             char(' ')
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char(' ')
@@ -116,7 +117,7 @@ class DateFormatterImpl(
             chars(", ")
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             chars(" ")
-            dayOfMonth(Padding.ZERO)
+            day(Padding.ZERO)
             chars(", ")
             year()
             char(' ')
@@ -139,7 +140,7 @@ class DateFormatterImpl(
                 dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
                 chars(", ")
             }
-            dayOfMonth(Padding.NONE)
+            day(Padding.NONE)
             char(' ')
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char(' ')
@@ -168,9 +169,9 @@ class DateFormatterImpl(
                 chars(", ")
             }
             alternativeParsing({
-                dayOfMonth()
+                day()
             }) {
-                dayOfMonth(Padding.NONE)
+                day(Padding.NONE)
             }
             char(' ')
             alternativeParsing({
@@ -204,7 +205,7 @@ class DateFormatterImpl(
             char('-')
             monthNumber()
             char('-')
-            dayOfMonth()
+            day()
             optional {
                 char(' ')
             }
@@ -241,7 +242,7 @@ class DateFormatterImpl(
                 dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
                 chars(", ")
             }
-            dayOfMonth()
+            day()
             char(' ')
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char(' ')
@@ -263,7 +264,7 @@ class DateFormatterImpl(
             }) {
                 char('/')
             }
-            dayOfMonth()
+            day()
         },
 
         Format {
@@ -271,7 +272,7 @@ class DateFormatterImpl(
             char('/')
             monthNumber()
             char('/')
-            dayOfMonth()
+            day()
         },
 
         // 2024-05-03 14:30
@@ -280,7 +281,7 @@ class DateFormatterImpl(
             char('-')
             monthNumber()
             char('-')
-            dayOfMonth()
+            day()
             char(' ')
             hour()
             char(':')
@@ -297,7 +298,7 @@ class DateFormatterImpl(
                 monthName(MonthNames.ENGLISH_ABBREVIATED)
             }
             char(' ')
-            dayOfMonth()
+            day()
             char(',')
             char(' ')
             year()
@@ -305,7 +306,7 @@ class DateFormatterImpl(
 
         // 30 August 2024
         Format {
-            dayOfMonth()
+            day()
             char(' ')
             monthName(MonthNames.ENGLISH_FULL)
             char(' ')
@@ -317,9 +318,9 @@ class DateFormatterImpl(
             monthName(MonthNames.ENGLISH_FULL)
             char(' ')
             alternativeParsing({
-                dayOfMonth()
+                day()
             }) {
-                dayOfMonth(Padding.NONE)
+                day(Padding.NONE)
             }
             char(',')
             char(' ')
@@ -335,9 +336,9 @@ class DateFormatterImpl(
                 chars(", ")
             }
             alternativeParsing({
-                dayOfMonth()
+                day()
             }) {
-                dayOfMonth(Padding.NONE)
+                day(Padding.NONE)
             }
             char(' ')
             monthName(MonthNames.ENGLISH_ABBREVIATED)
@@ -366,9 +367,9 @@ class DateFormatterImpl(
             }
             char(' ')
             alternativeParsing({
-                dayOfMonth()
+                day()
             }) {
-                dayOfMonth(Padding.NONE)
+                day(Padding.NONE)
             }
             char('/')
             monthNumber()
@@ -390,9 +391,9 @@ class DateFormatterImpl(
             chars(", ")
 
             alternativeParsing({
-                dayOfMonth()
+                day()
             }) {
-                dayOfMonth(Padding.NONE)
+                day(Padding.NONE)
             }
             char(' ')
             alternativeParsing({
@@ -422,7 +423,7 @@ class DateFormatterImpl(
                 monthName(MonthNames.ENGLISH_ABBREVIATED)
             }
             char(' ')
-            dayOfMonth()
+            day()
             chars(", ")
             year()
             char(' ')
@@ -441,7 +442,7 @@ class DateFormatterImpl(
         Format {
             monthNumber()
             char('/')
-            dayOfMonth()
+            day()
             char('/')
             yearTwoDigits(1990)
             char(' ')
@@ -454,7 +455,7 @@ class DateFormatterImpl(
 
         // "14.03.2025
         Format {
-            dayOfMonth()
+            day()
             char('.')
             monthNumber()
             char('.')
@@ -463,7 +464,7 @@ class DateFormatterImpl(
 
         // 30-Apr-2025 07:00:00
         Format {
-            dayOfMonth()
+            day()
             char('-')
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char('-')
@@ -478,7 +479,7 @@ class DateFormatterImpl(
 
         // 03.06.2025 14:12:00
         Format {
-            dayOfMonth()
+            day()
             char('.')
             monthNumber()
             char('.')
@@ -496,7 +497,7 @@ class DateFormatterImpl(
         Format {
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char(' ')
-            dayOfMonth()
+            day()
             chars(", ")
             year()
             char(' ')
@@ -557,8 +558,8 @@ class DateFormatterImpl(
 
         val localDate = LocalDate(
             year = dateTime.year,
-            monthNumber = dateTime.monthNumber,
-            dayOfMonth = dateTime.dayOfMonth,
+            month = dateTime.month.number,
+            day = dateTime.day,
         )
 
         val isToday = today == localDate
@@ -602,7 +603,7 @@ class DateFormatterImpl(
     private fun DateTimeFormatBuilder.WithDateTime.dayAndMonth(dateFormat: DateFormat) {
         when (dateFormat) {
             DateFormat.NORMAL -> {
-                dayOfMonth()
+                day()
                 char('/')
                 monthNumber()
             }
@@ -610,7 +611,7 @@ class DateFormatterImpl(
             DateFormat.AMERICAN -> {
                 monthNumber()
                 char('/')
-                dayOfMonth()
+                day()
             }
         }
     }
@@ -636,7 +637,7 @@ class DateFormatterImpl(
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
 
         val dateFormat = LocalDateTime.Format {
-            dayOfMonth()
+            day()
             char('/')
             monthNumber()
             char('/')
@@ -658,6 +659,6 @@ class DateFormatterImpl(
     override fun getCurrentDateForExport(): String {
         val instant = Clock.System.now()
         val dateTime: LocalDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-        return "${dateTime.dayOfMonth}-${dateTime.monthNumber}-${dateTime.year}"
+        return "${dateTime.day}-${dateTime.month.number}-${dateTime.year}"
     }
 }

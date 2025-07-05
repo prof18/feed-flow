@@ -51,7 +51,7 @@ sentry = "8.16.0"
 skie = "0.10.4"
 slf4jNop = "2.0.17"
 # When updating, check the version of sqlite-jdbc in the following link:
-# https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L70
+# https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L74
 # if necessry, dowload again the native library here
 # https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
 sql-delight = "2.1.0"

@@ -15,4 +15,8 @@ fun ParsedFeedSource.toFeedSource() = FeedSource(
     isHiddenFromTimeline = false,
     isPinned = false,
     isNotificationEnabled = false,
+    cacheControlMaxAge = null,
+    cacheControlExpires = null,
+    cacheControlLastModified = null,
+    cacheControlEtag = null,
 )

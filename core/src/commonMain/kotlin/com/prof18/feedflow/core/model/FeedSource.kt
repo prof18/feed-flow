@@ -11,4 +11,8 @@ data class FeedSource(
     val isHiddenFromTimeline: Boolean,
     val isPinned: Boolean,
     val isNotificationEnabled: Boolean,
+    val cacheControlMaxAge: Int?,
+    val cacheControlExpires: Long?,
+    val cacheControlLastModified: Long?,
+    val cacheControlEtag: String?,
 )

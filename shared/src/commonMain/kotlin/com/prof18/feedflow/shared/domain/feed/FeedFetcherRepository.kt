@@ -20,6 +20,7 @@ import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
+import com.prof18.feedflow.shared.utils.CacheControlManager
 import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -41,6 +42,7 @@ class FeedFetcherRepository internal constructor(
     private val rssParser: RssParser,
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
+    private val cacheControlManager: CacheControlManager? = null,
 ) {
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
@@ -186,8 +188,15 @@ class FeedFetcherRepository internal constructor(
         }
 
         val lastSyncTimestamp = feedSource.lastSyncTimestamp ?: return true
-
         val currentTime = dateFormatter.currentTimeMillis()
+
+        // First check if we have cache control information
+        val shouldRefreshBasedOnCacheControl = shouldRefreshBasedOnCacheControl(feedSource, currentTime)
+        if (shouldRefreshBasedOnCacheControl != null) {
+            return shouldRefreshBasedOnCacheControl
+        }
+
+        // Fall back to time-based logic if no cache control info
         val timeDifference = currentTime - lastSyncTimestamp
 
         val refreshThresholdInMillis = if (isOpenRssFeed) {
@@ -199,6 +208,27 @@ class FeedFetcherRepository internal constructor(
         }
 
         return timeDifference >= refreshThresholdInMillis
+    }
+
+    private fun shouldRefreshBasedOnCacheControl(
+        feedSource: FeedSource,
+        currentTime: Long,
+    ): Boolean? {
+        val lastSyncTimestamp = feedSource.lastSyncTimestamp ?: return null
+
+        // Check max-age directive
+        feedSource.cacheControlMaxAge?.let { maxAge ->
+            val expirationTime = lastSyncTimestamp + (maxAge * 1000L)
+            return currentTime >= expirationTime
+        }
+
+        // Check expires header
+        feedSource.cacheControlExpires?.let { expiresTime ->
+            return currentTime >= expiresTime
+        }
+
+        // If no cache control information, return null to fall back to time-based logic
+        return null
     }
 
     private suspend fun parseFeeds(
@@ -227,6 +257,10 @@ class FeedFetcherRepository internal constructor(
                     try {
                         val rssChannel = rssParser.getRssChannel(feedSource.url)
                         logger.d { "<- Got back ${rssChannel.title}" }
+                        
+                        // Save cache control information if available
+                        saveCacheControlInfo(feedSource)
+                        
                         feedToUpdate.remove(feedSource.url)
                         updateRefreshCount()
                         rssChannelMapper.getFeedItems(
@@ -257,6 +291,18 @@ class FeedFetcherRepository internal constructor(
             databaseHelper.insertFeedItems(
                 feedItems = allFeedItems,
                 lastSyncTimestamp = dateFormatter.currentTimeMillis(),
+            )
+        }
+    }
+
+    private suspend fun saveCacheControlInfo(feedSource: FeedSource) {
+        cacheControlManager?.getCacheControlInfo(feedSource.url)?.let { cacheInfo ->
+            databaseHelper.updateCacheControlInfo(
+                feedSourceId = feedSource.id,
+                maxAge = cacheInfo.maxAge,
+                expires = cacheInfo.expiresTimestamp,
+                lastModified = cacheInfo.lastModifiedTimestamp,
+                etag = cacheInfo.etag,
             )
         }
     }

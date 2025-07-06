@@ -47,6 +47,10 @@ internal fun Search.toFeedItem(
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
+        cacheControlMaxAge = null,
+        cacheControlExpires = null,
+        cacheControlLastModified = null,
+        cacheControlEtag = null,
     ),
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {

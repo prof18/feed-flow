@@ -49,6 +49,10 @@ internal fun SelectFeeds.toFeedItem(
         isHiddenFromTimeline = feed_source_is_hidden ?: false,
         isPinned = feed_source_is_pinned ?: false,
         isNotificationEnabled = feed_source_notifications_enabled ?: false,
+        cacheControlMaxAge = null,
+        cacheControlExpires = null,
+        cacheControlLastModified = null,
+        cacheControlEtag = null,
     ),
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {

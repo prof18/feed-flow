@@ -40,6 +40,9 @@ import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
+import com.prof18.feedflow.shared.utils.CacheControlManager
+import com.prof18.feedflow.shared.utils.IosCacheControlManager
+import com.prof18.feedflow.shared.utils.IosUrlSessionFactory
 import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
@@ -94,15 +97,20 @@ fun initKoinIos(
 
 @OptIn(ExperimentalSettingsImplementation::class)
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
+    single<IosCacheControlManager> {
+        IosCacheControlManager.getInstance()
+    }
+    
+    single<CacheControlManager> {
+        get<IosCacheControlManager>()
+    }
+    
     single {
+        val cacheControlManager = get<IosCacheControlManager>()
+        val nsUrlSession = IosUrlSessionFactory.createSessionWithCacheControl(cacheControlManager)
+        
         RssParserBuilder(
-            nsUrlSession = NSURLSession.sessionWithConfiguration(
-                NSURLSessionConfiguration.defaultSessionConfiguration().apply {
-                    HTTPAdditionalHeaders = mapOf(
-                        "User-Agent" to "FeedFlow (RSS Reader; +https://feedflow.dev)",
-                    )
-                },
-            ),
+            nsUrlSession = nsUrlSession,
         ).build()
     }
 

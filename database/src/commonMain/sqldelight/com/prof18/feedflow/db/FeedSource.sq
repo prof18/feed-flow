@@ -7,7 +7,11 @@ CREATE TABLE feed_source (
     title TEXT NOT NULL,
     category_id TEXT,
     last_sync_timestamp INTEGER,
-    logo_url TEXT
+    logo_url TEXT,
+    cache_control_max_age INTEGER,
+    cache_control_expires INTEGER,
+    cache_control_last_modified INTEGER,
+    cache_control_etag TEXT
 );
 
 insertFeedSource:
@@ -18,7 +22,7 @@ deleteAllExcept:
 DELETE FROM feed_source WHERE url_hash NOT IN :urlHashes;
 
 selectFeedUrls:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled, feed_source.cache_control_max_age, feed_source.cache_control_expires, feed_source.cache_control_last_modified, feed_source.cache_control_etag FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
@@ -26,7 +30,7 @@ ON feed_source.url_hash = feed_source_preferences.feed_source_id
 ORDER BY feed_source.title COLLATE NOCASE ASC;
 
 selectFeedSourceById:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled, feed_source.cache_control_max_age, feed_source.cache_control_expires, feed_source.cache_control_last_modified, feed_source.cache_control_etag FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
@@ -39,6 +43,14 @@ DELETE FROM feed_source WHERE url_hash = :urlHash;
 updateLastSyncTimestamp:
 UPDATE feed_source
 SET last_sync_timestamp = :lastSyncTimestamp
+WHERE url_hash = :urlHash;
+
+updateCacheControlInfo:
+UPDATE feed_source
+SET cache_control_max_age = :maxAge,
+    cache_control_expires = :expires,
+    cache_control_last_modified = :lastModified,
+    cache_control_etag = :etag
 WHERE url_hash = :urlHash;
 
 deleteAllLastSync:
@@ -67,7 +79,7 @@ deleteAll:
 DELETE FROM feed_source;
 
 selectByCategory:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled, feed_source.cache_control_max_age, feed_source.cache_control_expires, feed_source.cache_control_last_modified, feed_source.cache_control_etag FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences

@@ -62,6 +62,10 @@ fun FeedListFontSettings(
                             isHiddenFromTimeline = false,
                             isPinned = false,
                             isNotificationEnabled = false,
+                            cacheControlMaxAge = null,
+                            cacheControlExpires = null,
+                            cacheControlLastModified = null,
+                            cacheControlEtag = null,
                         ),
                         pubDateMillis = null,
                         dateString = when (dateFormat) {

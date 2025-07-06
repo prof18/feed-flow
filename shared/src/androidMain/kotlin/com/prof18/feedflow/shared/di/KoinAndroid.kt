@@ -18,6 +18,8 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
+import com.prof18.feedflow.shared.utils.CacheControlInterceptor
+import com.prof18.feedflow.shared.utils.CacheControlManager
 import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
@@ -33,11 +35,20 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
+    single<CacheControlInterceptor> {
+        CacheControlInterceptor.getInstance()
+    }
+    
+    single<CacheControlManager> {
+        get<CacheControlInterceptor>()
+    }
+
     single {
         RssParserBuilder(
             callFactory = OkHttpClient
                 .Builder()
                 .addInterceptor(UserAgentInterceptor())
+                .addInterceptor(get<CacheControlInterceptor>())
                 .build(),
         ).build()
     }

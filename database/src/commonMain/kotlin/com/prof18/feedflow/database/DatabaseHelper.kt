@@ -482,6 +482,10 @@ class DatabaseHelper(
                     linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
                     isPinned = feedSource.is_pinned ?: false,
                     isNotificationEnabled = feedSource.notifications_enabled ?: false,
+                    cacheControlMaxAge = feedSource.cache_control_max_age?.toInt(),
+                    cacheControlExpires = feedSource.cache_control_expires,
+                    cacheControlLastModified = feedSource.cache_control_last_modified,
+                    cacheControlEtag = feedSource.cache_control_etag,
                 )
             }
     }
@@ -553,6 +557,22 @@ class DatabaseHelper(
     suspend fun markFeedItemsAsNotified() =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedItemQueries.markFeedItemsNotified()
+        }
+
+    suspend fun updateCacheControlInfo(
+        feedSourceId: String,
+        maxAge: Int?,
+        expires: Long?,
+        lastModified: Long?,
+        etag: String?,
+    ) = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.feedSourceQueries.updateCacheControlInfo(
+            urlHash = feedSourceId,
+            maxAge = maxAge?.toLong(),
+            expires = expires,
+            lastModified = lastModified,
+            etag = etag,
+        )
         }
 
     suspend fun areNotificationsEnabled(): Boolean = withContext(backgroundDispatcher) {
@@ -659,6 +679,10 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            cacheControlMaxAge = feedSource.cache_control_max_age?.toInt(),
+            cacheControlExpires = feedSource.cache_control_expires,
+            cacheControlLastModified = feedSource.cache_control_last_modified,
+            cacheControlEtag = feedSource.cache_control_etag,
         )
     }
 
@@ -683,6 +707,10 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            cacheControlMaxAge = feedSource.cache_control_max_age?.toInt(),
+            cacheControlExpires = feedSource.cache_control_expires,
+            cacheControlLastModified = feedSource.cache_control_last_modified,
+            cacheControlEtag = feedSource.cache_control_etag,
         )
     }
 
@@ -707,6 +735,10 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            cacheControlMaxAge = feedSource.cache_control_max_age?.toInt(),
+            cacheControlExpires = feedSource.cache_control_expires,
+            cacheControlLastModified = feedSource.cache_control_last_modified,
+            cacheControlEtag = feedSource.cache_control_etag,
         )
     }
 

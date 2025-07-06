@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=FeedFlow
+GenericName=RSS Reader
+Comment=A minimalistic RSS Reader with full OPML import/export support
+Icon=io.github.prof18.feed_flow
+Exec=feed-flow-wrapper.sh
+Terminal=false
+StartupNotify=true
+Categories=Network;News;
+Keywords=RSS;Feed;News;Reader;
+MimeType=application/rss+xml;application/atom+xml;text/x-opml+xml;
+StartupWMClass=FeedFlow

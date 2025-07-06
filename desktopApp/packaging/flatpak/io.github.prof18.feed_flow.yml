@@ -1,0 +1,42 @@
+app-id: io.github.prof18.feed_flow
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk21
+command: feed-flow
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --filesystem=xdg-documents:ro
+  - --filesystem=xdg-download:rw
+  - --env=PATH=/app/bin:/usr/bin:/app/jre/bin
+
+modules:
+  - name: openjdk
+    buildsystem: simple
+    build-commands:
+      - /usr/lib/sdk/openjdk21/install.sh
+
+  - name: feed-flow
+    buildsystem: simple
+    build-commands:
+      - ./gradlew desktopApp:packageUberJarForCurrentOS
+      - install -Dm755 desktopApp/build/compose/jars/feed-flow-linux-x64-*.jar /app/lib/feed-flow.jar
+      - install -Dm644 desktopApp/packaging/flatpak/io.github.prof18.feed_flow.desktop /app/share/applications/io.github.prof18.feed_flow.desktop
+      - install -Dm644 desktopApp/packaging/flatpak/io.github.prof18.feed_flow.metainfo.xml /app/share/metainfo/io.github.prof18.feed_flow.metainfo.xml
+      - install -Dm644 desktopApp/packaging/flatpak/io.github.prof18.feed_flow.png /app/share/icons/hicolor/512x512/apps/io.github.prof18.feed_flow.png
+      - |
+        cat > /app/bin/feed-flow << 'EOF'
+        #!/bin/bash
+        exec java -jar /app/lib/feed-flow.jar "$@"
+        EOF
+      - chmod +x /app/bin/feed-flow
+    sources:
+      - type: git
+        url: https://github.com/prof18/feed-flow
+        tag: v1.2.2
+        commit: 3e3f4c5f8a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d  # Replace with actual commit hash

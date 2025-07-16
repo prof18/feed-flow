@@ -229,5 +229,5 @@
     <string name="settings_feed_layout_card">Cartes</string>
     <string name="feed_layout_title">Mise en page</string>
     <string name="settings_swipe_action_toggle_read">Activer lus</string>
-    <string name="settings_swipe_action_toggle_bookmark">Activer les marque-pages</string>
+    <string name="settings_swipe_action_toggle_bookmark">Activer les favoris</string>
 </resources>

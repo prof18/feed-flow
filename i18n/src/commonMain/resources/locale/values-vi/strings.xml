@@ -44,7 +44,7 @@
     <string name="last_upload">Tải lên lần cuối: %s</string>
     <string name="error_account_sync">Đã xảy ra lỗi khi đồng bộ dữ liệu trong tài khoản của bạn :(</string>
     <string name="no_dropbox_sync_yet">Dữ liệu chưa được đồng bộ hóa với Dropbox. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
-    <string name="settings_hide_duplicated_title_from_desc">Ẩn tên trang web trên bài viết</string>
+    <string name="settings_hide_duplicated_title_from_desc">Ẩn tựa đề bài viết</string>
     <string name="reader_mode_font_size">Cỡ chữ</string>
     <string name="author_label">Lập trình bằng ❤️ bởi</string>
     <string name="settings_button">Cài đặt</string>
@@ -52,7 +52,7 @@
     <string name="feeds_title">Nguồn cấp</string>
     <string name="feed_added_message">Đã thêm %s thành công</string>
     <string name="feed_url">URL nguồn cấp</string>
-    <string name="loading_feed_message">Đang nạp nguồn cấp %s</string>
+    <string name="loading_feed_message">Đang lấy %s nguồn cấp</string>
     <string name="no_feeds_found_message">Không tìm thấy nguồn cấp nào. Hãy thêm mới!</string>
     <string name="feeds_importing_message">Đang nhập nguồn cấp</string>
     <string name="feeds_import_done_message">Đã nhập xong</string>
@@ -67,7 +67,7 @@
     <string name="close_menu_button">Đóng menu</string>
     <string name="settings_app_title">Ứng dụng</string>
     <string name="about_the_app">FeedFlow là một trình đọc RSS tối giản theo quan điểm riêng của tác giả. Các bài viết được mở trên trang web của chúng thông qua trình duyệt của bạn. Nếu không thích bị phân tâm, FeedFlow có chế độ đọc các bài viết ngay trong ứng dụng.\nBạn có thể nhập và xuất bộ sưu tập RSS của mình bằng file OPML.</string>
-    <string name="force_feed_refresh">Tự động làm mới nguồn cấp</string>
+    <string name="force_feed_refresh">Làm mới nguồn cấp ngay</string>
     <string name="menu_mark_as_read">Đánh dấu đã đọc</string>
     <string name="menu_open_comments">Đọc bình luận</string>
     <string name="dropbox_confirm_button">Xác nhận</string>
@@ -152,7 +152,7 @@
     <string name="fresh_rss_password_hint">Mật khẩu FreshRSS API (Cài đặt &gt; Hồ sơ)</string>
     <string name="delete_category_close_button">Đóng</string>
     <string name="settings_auto_delete">Tự động xóa bài viết cũ</string>
-    <string name="settings_auto_delete_period_disabled">Tắt</string>
+    <string name="settings_auto_delete_period_disabled">Không</string>
     <string name="delete_category_confirmation_title">Xóa danh mục?</string>
     <string name="delete_category_confirmation_message">Bạn có chắc muốn xóa danh mục này? Các nguồn cấp dữ liệu trong danh mục này sẽ được chuyển đến Chưa phân loại.</string>
     <string name="settings_auto_delete_desc">Tự động xóa các bài viết sau khoảng thời gian cụ thể</string>

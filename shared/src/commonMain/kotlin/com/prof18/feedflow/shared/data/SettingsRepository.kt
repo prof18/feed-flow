@@ -63,7 +63,7 @@ class SettingsRepository(
         if (isReaderModeEnabled != null) {
             return requireNotNull(isReaderModeEnabled)
         } else {
-            val value = settings.getBoolean(SettingsFields.USE_READER_MODE.name, false)
+            val value = settings.getBoolean(SettingsFields.USE_READER_MODE.name, true)
             isReaderModeEnabled = value
             return value
         }
@@ -239,7 +239,6 @@ internal enum class SettingsFields {
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,
     USE_READER_MODE,
-    USE_EXPERIMENTAL_PARSING,
     IS_SYNC_UPLOAD_REQUIRED,
     REMOVE_TITLE_FROM_DESCRIPTION,
     HIDE_DESCRIPTION,

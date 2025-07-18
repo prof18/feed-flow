@@ -340,7 +340,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             parser = get(),
             dateFormatter = get(),
             rssChannelMapper = get(),
-            settingsRepository = get(),
         )
     }
 

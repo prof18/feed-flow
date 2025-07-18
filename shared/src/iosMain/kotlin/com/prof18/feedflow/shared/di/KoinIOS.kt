@@ -18,7 +18,7 @@ import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.KeychainSettingsMigration
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
+import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
@@ -177,6 +177,21 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedActionsRepository = get(),
         )
     }
+
+    factory {
+        SerialFeedFetcherRepository(
+            dispatcherProvider = get(),
+            feedStateRepository = get(),
+            gReaderRepository = get(),
+            databaseHelper = get(),
+            feedSyncRepository = get(),
+            logger = getWith("SerialFeedFetcherRepository"),
+            rssParser = get(),
+            rssChannelMapper = get(),
+            dateFormatter = get(),
+            notifier = get(),
+        )
+    }
 }
 
 @Suppress("unused") // Called from Swift
@@ -200,7 +215,7 @@ object Deps : KoinComponent {
     fun getFreshRssSyncViewModel() = getKoin().get<FreshRssSyncViewModel>()
     fun getDeeplinkFeedViewModel() = getKoin().get<DeeplinkFeedViewModel>()
     fun getReviewViewModel() = getKoin().get<ReviewViewModel>()
-    fun getFeedFetcherRepository() = getKoin().get<FeedFetcherRepository>()
+    fun getSerialFeedFetcherRepository() = getKoin().get<SerialFeedFetcherRepository>()
     fun getNotificationsViewModel() = getKoin().get<NotificationsViewModel>()
     fun getNotifier() = getKoin().get<Notifier>()
 }

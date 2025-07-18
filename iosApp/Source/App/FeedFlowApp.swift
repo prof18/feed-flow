@@ -110,13 +110,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
             let backgroundTask = Task {
                 do {
-                    let repo = Deps.shared.getFeedFetcherRepository()
-                    try await repo.fetchFeeds(forceRefresh: false, isFirstLaunch: false, isFetchingFromBackground: true)
+                    let repo = Deps.shared.getSerialFeedFetcherRepository()
+                    try await repo.fetchFeeds()
                     WidgetCenter.shared.reloadAllTimelines()
-                    if let feedSourceToNotify = try? await repo.getFeedSourceToNotify() {
-                        Deps.shared.getNotifier().showNewArticlesNotification(feedSourcesToNotify: feedSourceToNotify)
-                    }
-                    try? await repo.markItemsAsNotified()
                     task.setTaskCompleted(success: true)
                 } catch {
                     task.setTaskCompleted(success: false)

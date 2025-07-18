@@ -206,7 +206,6 @@ class FeedFetcherRepository internal constructor(
         forceRefresh: Boolean,
     ) {
         val allFeedItems = mutableListOf<FeedItem>()
-        val dateFormat = settingsRepository.getDateFormat()
 
         feedSourceUrls
             .mapNotNull { feedSource ->
@@ -232,7 +231,6 @@ class FeedFetcherRepository internal constructor(
                         rssChannelMapper.getFeedItems(
                             rssChannel = rssChannel,
                             feedSource = feedSource,
-                            dateFormat = dateFormat,
                         )
                     } catch (e: Throwable) {
                         logger.e { "Error, skip: ${feedSource.url}}. Error: $e" }

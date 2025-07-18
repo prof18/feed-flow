@@ -30,7 +30,6 @@ import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedItemId
-import com.prof18.feedflow.core.model.ReaderExtractor
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
@@ -143,24 +142,14 @@ private fun ReaderMode(
             modifier = Modifier.requiredSize(0.dp),
             articleLink = readerModeState.readerModeData.url,
             articleContent = readerModeState.readerModeData.content,
-            readerExtractor = readerModeState.readerModeData.extractor,
             contentLoaded = { result ->
                 Logger.d { "Parsed article" }
                 Logger.d { result }
                 val jsonResult = JSONObject(result)
 
-                val content: String
-                val title: String?
-                when (readerModeState.readerModeData.extractor) {
-                    ReaderExtractor.POSTLIGHT -> {
-                        title = jsonResult.getStringOrNull("title")
-                        content = jsonResult.getStringOrNull("content").orEmpty()
-                    }
-                    ReaderExtractor.DEFUDDLE -> {
-                        title = jsonResult.getStringOrNull("title")
-                        content = jsonResult.getStringOrNull("content").orEmpty()
-                    }
-                }
+                // Always use DEFUDDLE parsing
+                val title = jsonResult.getStringOrNull("title")
+                val content = jsonResult.getStringOrNull("content").orEmpty()
                 val finalHTML = getReaderModeStyledHtml(
                     articleLink = readerModeState.readerModeData.url,
                     colors = colors,

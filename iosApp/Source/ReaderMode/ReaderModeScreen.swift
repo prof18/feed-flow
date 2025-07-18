@@ -13,7 +13,6 @@ struct ReaderModeScreen: View {
     @State private var isSliderMoving = false
     @State private var reset = false
     @State private var isBookmarked = false
-    @State private var readerExtractor: ReaderExtractorType?
 
     @StateObject private var vmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
         Deps.shared.getReaderModeViewModel())
@@ -21,106 +20,87 @@ struct ReaderModeScreen: View {
     let feedItemUrlInfo: FeedItemUrlInfo
 
     var body: some View {
-        Group {
-            if readerExtractor == nil {
-                ProgressView()
-            } else {
-                ReaderView(
-                    url: URL(string: feedItemUrlInfo.url)!,
-                    options: ReaderViewOptions(
-                        additionalCSS: """
-                            #__reader_container {
-                                font-size: \(fontSize)px
-                            }
-                        """,
-                        onLinkClicked: { url in
-                            if browserSelector.openInAppBrowser() {
-                                appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
-                            } else {
-                                openURL(
-                                    browserSelector.getUrlForDefaultBrowser(
-                                        stringUrl: url.absoluteString))
-                            }
-                        },
-                        readerExtractor: readerExtractor ?? .postlight
-                    ),
-                    toolbarContent: {
-                        Button {
-                            isBookmarked.toggle()
-                            vmStoreOwner.instance.updateBookmarkStatus(
-                                feedItemId: FeedItemId(id: feedItemUrlInfo.id),
-                                bookmarked: isBookmarked
-                            )
-                        } label: {
-                            if isBookmarked {
-                                Image(systemName: "bookmark.slash")
-                            } else {
-                                Image(systemName: "bookmark")
-                            }
-                        }
+        ReaderView(
+            url: URL(string: feedItemUrlInfo.url)!,
+            options: ReaderViewOptions(
+                additionalCSS: """
+                    #__reader_container {
+                        font-size: \(fontSize)px
+                    }
+                """,
+                onLinkClicked: { url in
+                    if browserSelector.openInAppBrowser() {
+                        appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                    } else {
+                        openURL(
+                            browserSelector.getUrlForDefaultBrowser(
+                                stringUrl: url.absoluteString))
+                    }
+                }
+            ),
+            toolbarContent: {
+                Button {
+                    isBookmarked.toggle()
+                    vmStoreOwner.instance.updateBookmarkStatus(
+                        feedItemId: FeedItemId(id: feedItemUrlInfo.id),
+                        bookmarked: isBookmarked
+                    )
+                } label: {
+                    if isBookmarked {
+                        Image(systemName: "bookmark.slash")
+                    } else {
+                        Image(systemName: "bookmark")
+                    }
+                }
 
-                        ShareLink(
-                            item: URL(string: feedItemUrlInfo.url)!,
-                            label: {
-                                Label("Share", systemImage: "square.and.arrow.up")
-                            }
-                        )
-
-                        Button {
-                            let archiveUrlString = getArchiveISUrl(articleUrl: feedItemUrlInfo.url)
-                            if browserSelector.openInAppBrowser() {
-                                appState.navigate(
-                                    route: CommonViewRoute.inAppBrowser(url: URL(string: archiveUrlString)!)
-                                )
-                            } else {
-                                openURL(
-                                    browserSelector.getUrlForDefaultBrowser(
-                                        stringUrl: URL(string: archiveUrlString)!.absoluteString))
-                            }
-
-                        } label: {
-                            Image(systemName: "hammer.fill")
-                        }
-
-                        Button {
-                            if browserSelector.openInAppBrowser() {
-                                appState.navigate(
-                                    route: CommonViewRoute.inAppBrowser(url: URL(string: feedItemUrlInfo.url)!)
-                                )
-                            } else {
-                                openURL(
-                                    browserSelector.getUrlForDefaultBrowser(
-                                        stringUrl: URL(string: feedItemUrlInfo.url)!.absoluteString))
-                            }
-                        } label: {
-                            Image(systemName: "globe")
-                        }
-
-                        fontSizeMenu
+                ShareLink(
+                    item: URL(string: feedItemUrlInfo.url)!,
+                    label: {
+                        Label("Share", systemImage: "square.and.arrow.up")
                     }
                 )
-                .onAppear {
-                    isBookmarked = feedItemUrlInfo.isBookmarked
-                }
-                .id(reset)
-                .task {
-                    for await state in vmStoreOwner.instance.readerFontSizeState {
-                        self.fontSize = Double(truncating: state)
-                        self.reset.toggle()
+
+                Button {
+                    let archiveUrlString = getArchiveISUrl(articleUrl: feedItemUrlInfo.url)
+                    if browserSelector.openInAppBrowser() {
+                        appState.navigate(
+                            route: CommonViewRoute.inAppBrowser(url: URL(string: archiveUrlString)!)
+                        )
+                    } else {
+                        openURL(
+                            browserSelector.getUrlForDefaultBrowser(
+                                stringUrl: URL(string: archiveUrlString)!.absoluteString))
                     }
+
+                } label: {
+                    Image(systemName: "hammer.fill")
                 }
+
+                Button {
+                    if browserSelector.openInAppBrowser() {
+                        appState.navigate(
+                            route: CommonViewRoute.inAppBrowser(url: URL(string: feedItemUrlInfo.url)!)
+                        )
+                    } else {
+                        openURL(
+                            browserSelector.getUrlForDefaultBrowser(
+                                stringUrl: URL(string: feedItemUrlInfo.url)!.absoluteString))
+                    }
+                } label: {
+                    Image(systemName: "globe")
+                }
+
+                fontSizeMenu
             }
+        )
+        .onAppear {
+            isBookmarked = feedItemUrlInfo.isBookmarked
         }
+        .id(reset)
         .task {
-            for await state in vmStoreOwner.instance.readerExtractorState {
-                switch state {
-                case .postlight:
-                    self.readerExtractor = .postlight
-                case .defuddle:
-                    self.readerExtractor = .defuddle
-                case .none:
-                    self.readerExtractor = .postlight
-                }
+            for await state in vmStoreOwner.instance.readerFontSizeState {
+                self.fontSize = Double(truncating: state)
+                self.reset.toggle()
             }
         }
     }

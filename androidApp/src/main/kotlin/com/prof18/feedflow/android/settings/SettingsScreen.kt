@@ -17,7 +17,6 @@ import androidx.compose.material.icons.automirrored.filled.Feed
 import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.automirrored.outlined.Sort
-import androidx.compose.material.icons.filled.Construction
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.DeleteSweep
@@ -135,9 +134,6 @@ fun SettingsScreen(
         setReaderMode = { enabled ->
             settingsViewModel.updateReaderMode(enabled)
         },
-        setExperimentalParsing = { value ->
-            settingsViewModel.updateExperimentalParsing(value)
-        },
         setRemoveTitleFromDescription = { enabled ->
             settingsViewModel.updateRemoveTitleFromDescription(enabled)
         },
@@ -196,7 +192,6 @@ private fun SettingsScreenContent(
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
-    setExperimentalParsing: (Boolean) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     setHideDescription: (Boolean) -> Unit,
     setHideImages: (Boolean) -> Unit,
@@ -302,13 +297,6 @@ private fun SettingsScreenContent(
                 ReaderModeSwitch(
                     setReaderMode = setReaderMode,
                     isReaderModeEnabled = settingsState.isReaderModeEnabled,
-                )
-            }
-
-            item {
-                ExperimentalParsingSwitch(
-                    setExperimentalParsing = setExperimentalParsing,
-                    isExperimentalParsingEnabled = settingsState.isExperimentalParsingEnabled,
                 )
             }
 
@@ -556,43 +544,6 @@ private fun ReaderModeSwitch(
 }
 
 @Composable
-private fun ExperimentalParsingSwitch(
-    setExperimentalParsing: (Boolean) -> Unit,
-    isExperimentalParsingEnabled: Boolean,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable {
-                setExperimentalParsing(!isExperimentalParsingEnabled)
-            }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.Default.Construction,
-            contentDescription = null,
-        )
-
-        Text(
-            text = LocalFeedFlowStrings.current.settingsExperimentalParsing,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .weight(1f),
-        )
-        Switch(
-            interactionSource = interactionSource,
-            checked = isExperimentalParsingEnabled,
-            onCheckedChange = setExperimentalParsing,
-        )
-    }
-}
-
-@Composable
 private fun MarkReadWhenScrollingSwitch(
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     isMarkReadWhenScrollingEnabled: Boolean,
@@ -768,7 +719,6 @@ private fun SettingsScreenPreview() {
             onSwipeActionSelected = { _, _ -> },
             onDateFormatSelected = {},
             navigateToNotifications = {},
-            setExperimentalParsing = {},
             onFeedOrderSelected = {},
             setFeedLayout = {},
         )

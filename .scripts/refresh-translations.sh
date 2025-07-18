@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./gradlew :i18n:kspCommonMainKotlinMetadata
+./gradlew :i18n:kspCommonMainKotlinMetadata --rerun-tasks

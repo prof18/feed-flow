@@ -89,3 +89,4 @@ feed-flow/
 - When adding new strings, the StringsVersion number needs to be bumped.
 - The database migrations are placed in the `sqldelight/com/prof18/feedflow/migrations` folder
 - Avoid putting default values in the functions
+- do not write any tests unless told you to do so

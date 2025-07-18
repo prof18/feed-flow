@@ -37,7 +37,7 @@ class SettingsViewModel internal constructor(
                 val isMarkReadEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
                 val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
                 val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
-                val isExperimentalParsingEnabled = settingsRepository.isExperimentalParsingEnabled()
+                val isExperimentalParsingEnabled = true
                 val isRemoveTitleFromDescriptionEnabled = settingsRepository.getRemoveTitleFromDescription()
                 val isHideDescriptionEnabled = settingsRepository.getHideDescription()
                 val isHideImagesEnabled = settingsRepository.getHideImages()
@@ -99,15 +99,6 @@ class SettingsViewModel internal constructor(
         settingsMutableState.update {
             it.copy(
                 isReaderModeEnabled = value,
-            )
-        }
-    }
-
-    fun updateExperimentalParsing(value: Boolean) {
-        settingsRepository.setExperimentalParsing(value)
-        settingsMutableState.update {
-            it.copy(
-                isExperimentalParsingEnabled = value,
             )
         }
     }

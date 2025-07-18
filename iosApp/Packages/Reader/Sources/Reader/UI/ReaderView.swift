@@ -42,8 +42,7 @@ public struct ReaderView<ToolbarView: View>: View {
                 do {
                     let result = try await Reader.fetchAndExtractContent(
                         fromURL: url,
-                        additionalCSS: options.additionalCSS,
-                        readerExtractor: options.readerExtractor
+                        additionalCSS: options.additionalCSS
                     )
                     self.status = .extractedContent(
                         html: result.styledHTML,

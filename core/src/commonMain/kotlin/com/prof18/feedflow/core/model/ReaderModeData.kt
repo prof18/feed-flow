@@ -7,5 +7,4 @@ data class ReaderModeData(
     val url: String,
     val fontSize: Int,
     val isBookmarked: Boolean,
-    val extractor: ReaderExtractor,
 )

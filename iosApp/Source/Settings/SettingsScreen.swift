@@ -34,7 +34,6 @@ struct SettingsScreen: View {
     @State private var feedLayout: FeedLayout = .list
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor = 0.0
-    @State private var isExperimentalParsingEnabled = false
 
     @State private var imageUrl: String? = "https://lipsum.app/200x200"
     @State private var articleDescription: String? = feedFlowStrings
@@ -57,7 +56,6 @@ struct SettingsScreen: View {
                     dateFormat = state.dateFormat
                     feedOrder = state.feedOrder
                     feedLayout = state.feedLayout
-                    isExperimentalParsingEnabled = state.isExperimentalParsingEnabled
                 }
             }
             .task {
@@ -119,9 +117,6 @@ struct SettingsScreen: View {
             .onChange(of: dateFormat) {
                 vmStoreOwner.instance.updateDateFormat(format: dateFormat)
             }
-            .onChange(of: isExperimentalParsingEnabled) {
-                vmStoreOwner.instance.updateExperimentalParsing(value: isExperimentalParsingEnabled)
-            }
             .onChange(of: feedOrder) {
                 vmStoreOwner.instance.updateFeedOrder(feedOrder: feedOrder)
             }
@@ -138,7 +133,6 @@ struct SettingsScreen: View {
                     browserSelector: browserSelector,
                     autoDeletePeriod: $autoDeletePeriod,
                     isReaderModeEnabled: $isReaderModeEnabled,
-                    isExperimentalParsingEnabled: $isExperimentalParsingEnabled,
                     feedOrder: $feedOrder,
                     isMarkReadWhenScrollingEnabled: $isMarkReadWhenScrollingEnabled,
                     isShowReadItemEnabled: $isShowReadItemEnabled
@@ -209,7 +203,6 @@ private struct BehaviourSection: View {
     @Bindable var browserSelector: BrowserSelector
     @Binding var autoDeletePeriod: AutoDeletePeriod
     @Binding var isReaderModeEnabled: Bool
-    @Binding var isExperimentalParsingEnabled: Bool
     @Binding var feedOrder: FeedOrder
 
     @Binding var isMarkReadWhenScrollingEnabled: Bool
@@ -250,12 +243,6 @@ private struct BehaviourSection: View {
                 Label(feedFlowStrings.settingsReaderMode, systemImage: "doc.text")
             }.onTapGesture {
                 isReaderModeEnabled.toggle()
-            }
-
-            Toggle(isOn: $isExperimentalParsingEnabled) {
-                Label(feedFlowStrings.settingsExperimentalParsing, systemImage: "hammer")
-            }.onTapGesture {
-                isExperimentalParsingEnabled.toggle()
             }
 
             Toggle(isOn: $isMarkReadWhenScrollingEnabled) {

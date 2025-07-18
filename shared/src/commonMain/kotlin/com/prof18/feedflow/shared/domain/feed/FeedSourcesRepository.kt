@@ -18,7 +18,6 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
-import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
@@ -46,7 +45,6 @@ internal class FeedSourcesRepository(
     private val parser: RssParser,
     private val dateFormatter: DateFormatter,
     private val rssChannelMapper: RssChannelMapper,
-    private val settingsRepository: SettingsRepository,
 ) {
     private val knownUrlSuffix = listOf(
         "",
@@ -324,7 +322,6 @@ internal class FeedSourcesRepository(
         val rssChannel = feedFound.rssChannel
         val parsedFeedSource = feedFound.parsedFeedSource
         val currentTimestamp = dateFormatter.currentTimeMillis()
-        val dateFormat = settingsRepository.getDateFormat()
         val feedSource = FeedSource(
             id = parsedFeedSource.url.hashCode().toString(),
             url = parsedFeedSource.url,
@@ -341,7 +338,6 @@ internal class FeedSourcesRepository(
         val feedItems = rssChannelMapper.getFeedItems(
             rssChannel = rssChannel,
             feedSource = feedSource,
-            dateFormat = dateFormat,
         )
 
         databaseHelper.insertFeedSource(

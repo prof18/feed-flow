@@ -122,3 +122,4 @@ bin/
 /build-logic/.kotlin/
 buildServer.json
 iosApp/buildServer.json
+/crashes/

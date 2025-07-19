@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -46,6 +45,7 @@ import com.prof18.feedflow.shared.ui.home.components.list.FeedItemContainer
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemView
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.coroutines.delay
 
 @Composable
 fun SearchScreenContent(
@@ -71,6 +71,8 @@ fun SearchScreenContent(
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
+        // Sometimes is crashing because the focusRequester is done too ealy
+        delay(timeMillis = 100)
         focusRequester.requestFocus()
     }
 

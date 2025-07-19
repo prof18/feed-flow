@@ -1,0 +1,37 @@
+import kotlin.Int;
+
+-- Remove PRIMARY KEY constraint from feed_search FTS4 table
+-- FTS4 virtual tables don't typically need PRIMARY KEY constraints
+
+-- Drop existing triggers
+DROP TRIGGER IF EXISTS populate_feed_search;
+DROP TRIGGER IF EXISTS delete_feed_search;
+
+-- Drop and recreate the FTS4 table without PRIMARY KEY
+DROP TABLE IF EXISTS feed_search;
+
+CREATE VIRTUAL TABLE IF NOT EXISTS feed_search USING FTS4(
+    url_hash TEXT NOT NULL,
+    title TEXT,
+    subtitle TEXT,
+    tokenize="unicode61"
+);
+
+-- Repopulate the table from existing feed_item data
+INSERT INTO feed_search (url_hash, title, subtitle)
+SELECT
+    url_hash,
+    title,
+    subtitle
+FROM feed_item;
+
+-- Recreate triggers
+CREATE TRIGGER IF NOT EXISTS populate_feed_search
+AFTER INSERT ON feed_item
+BEGIN INSERT OR IGNORE INTO feed_search(url_hash, title, subtitle) VALUES (new.url_hash, new.title, new.subtitle);
+END;
+
+CREATE TRIGGER IF NOT EXISTS delete_feed_search
+BEFORE DELETE ON feed_item
+BEGIN DELETE FROM feed_search WHERE url_hash = old.url_hash;
+END;

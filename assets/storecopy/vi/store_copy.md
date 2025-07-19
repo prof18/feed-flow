@@ -6,8 +6,7 @@ FeedFlow - Trình đọc RSS
 
 Tối giản, nhanh chóng, gọn gàng
 
-## Mô tả dài
-
+## Mô tả chi tiết
 Cập nhật thông tin theo cách của bạn với FeedFlow, trình đọc RSS tối giản giúp
 kiểm soát dòng thời gian nội dung của mình. Đồng bộ hóa trên mọi thiết bị và
 trải nghiệm đọc sạch sẽ, không bị phân tâm.
@@ -21,33 +20,32 @@ Tính năng chính:
   dữ liệu nâng cao
 - Tùy chọn đọc linh hoạt: Chọn giữa chế độ xem web, chế độ đọc hoặc trình duyệt
   ưa thích của bạn
-- Tập trung vào quyền riêng tư: Chọn trình duyệt yêu thích của bạn để có trải
+- Chú trọng vào quyền riêng tư: Chọn trình duyệt yêu thích của bạn để có trải
   nghiệm đọc riêng biệt
 - Di chuyển dễ dàng: Nhập và xuất nguồn cấp RSS của bạn thông qua các file OPML
 
-Điểm khác biệt của FeedFlow:
+Điểm tạo nên sự khác biệt của FeedFlow:
 
 - Giao diện sạch sẽ, trực quan cho phép bạn tập trung vào nội dung
-- Nhiều tùy chọn đồng bộ hóa phù hợp với quy trình làm việc của bạn (Beta)
-- Trải nghiệm đọc có thể tùy chỉnh với chế độ đọc
+- Nhiều tùy chọn đồng bộ hóa phù hợp với quy trình làm việc của bạn (Thử nghiệm)
+- Tùy chỉnh trải nghiệm với chế độ đọc
 - Nhanh và nhẹ
-- Cập nhật thường xuyên và luôn cải tiến
+- Cập nhật thường xuyên và luôn được cải tiến
 
 Phù hợp với:
-- Những người đam mê tin tức muốn kiểm soát chế độ tiêu thụ thông tin của họ
-- Độc giả quan tâm đến quyền riêng tư
-- Nhà sáng tạo nội dung theo dõi nhiều nguồn
-- Bất kỳ ai muốn dọn dẹp trải nghiệm đọc kỹ thuật số của mình
+- Những người đam mê tin tức muốn kiểm soát cách tiêu thụ thông tin của họ
+- Độc giả chú trọng tới quyền riêng tư
+- Nhà sáng tạo nội dung theo dõi nhiều nguồn tin
+- Bất kỳ ai muốn thu dọn trải nghiệm đọc tin tức số của mình
 
-Tham gia cùng hàng ngàn độc giả đã chọn FeedFlow để có cách cập nhật thông tin
-tốt hơn.
+Tham gia cùng hàng ngàn độc giả đã chọn FeedFlow để cập nhật thông tin tốt hơn.
 
-Lưu ý: Tính năng đồng bộ hiện đang trong giai đoạn thử nghiệm. Trải nghiệm liên
-tục được cải thiện dựa trên phản hồi của người dùng.
+Lưu ý: Tính năng đồng bộ hiện đang trong giai đoạn thử nghiệm. Trải nghiệm được
+liên tục cải thiện dựa trên phản hồi của người dùng.
 
 ## Minh họa 1
 
-Tất cả nguồn cấp dữ liệu trong túi của bạn
+Tất cả nguồn tin trong túi của bạn
 
 ## Minh họa 3
 
@@ -63,4 +61,4 @@ Tận hưởng chế độ đọc không lộn xộn
 
 ## Ảnh bìa
 
-Trình đọc RSS tối giản
+trình đọc RSS tối giản

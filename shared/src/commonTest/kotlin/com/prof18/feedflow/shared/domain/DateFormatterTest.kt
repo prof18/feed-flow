@@ -69,6 +69,7 @@ class DateFormatterTest {
         "Mon, 16 Jun 2025 13:39:25 CEST",
         "Mon, Jun 16, 2025 06:28:45 +0200",
         "Tue, 17 Jun 2025 12:00:00 +03",
+        "Mon., 16 Jun 2025 15:08:44 +0200",
     )
 
     @Test

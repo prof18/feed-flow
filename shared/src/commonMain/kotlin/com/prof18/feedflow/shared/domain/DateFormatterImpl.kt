@@ -83,6 +83,9 @@ class DateFormatterImpl(
             }) {
                 dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
                 optional {
+                    char('.')
+                }
+                optional {
                     char(',')
                 }
                 chars(" ")
@@ -138,6 +141,9 @@ class DateFormatterImpl(
                 // the day of week may be missing
             }) {
                 dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
+                optional {
+                    char('.')
+                }
                 chars(", ")
             }
             day(Padding.NONE)

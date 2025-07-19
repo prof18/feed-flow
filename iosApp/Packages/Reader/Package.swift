@@ -14,7 +14,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/cezheng/Fuzi", from: "3.1.3"),
-        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.8.8")
+        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.9.5")
     ],
     targets: [
         .target(

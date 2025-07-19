@@ -12,20 +12,18 @@ struct FeedItemContextMenu: View {
     let onReadStatusClick: (FeedItemId, Bool) -> Void
 
     var body: some View {
-        VStack {
-            makeReadUnreadButton(feedItem: feedItem)
-            makeBookmarkButton(feedItem: feedItem)
-            makeCommentsButton(feedItem: feedItem)
-            makeShareButton(feedItem: feedItem)
-            if let commentUrl = feedItem.commentsUrl {
-                makeShareCommentsButton(commentsUrl: commentUrl)
-            }
-            if isOnVisionOSDevice() {
-                Button {
-                    // No-op so it will close itself
-                } label: {
-                    Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
-                }
+        makeReadUnreadButton(feedItem: feedItem)
+        makeBookmarkButton(feedItem: feedItem)
+        makeCommentsButton(feedItem: feedItem)
+        makeShareButton(feedItem: feedItem)
+        if let commentUrl = feedItem.commentsUrl {
+            makeShareCommentsButton(commentsUrl: commentUrl)
+        }
+        if isOnVisionOSDevice() {
+            Button {
+                // No-op so it will close itself
+            } label: {
+                Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
             }
         }
     }

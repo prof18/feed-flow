@@ -185,11 +185,12 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     }
 
     // MARK: - File Upload Prevention
-    
+
+    @available(iOS 18.4, *)
     func webView(
-        _ webView: WKWebView,
-        runOpenPanelWith parameters: WKOpenPanelParameters,
-        initiatedByFrame frame: WKFrameInfo,
+        _: WKWebView,
+        runOpenPanelWith _: WKOpenPanelParameters,
+        initiatedByFrame _: WKFrameInfo,
         completionHandler: @escaping ([URL]?) -> Void
     ) {
         // Block all file upload attempts to prevent unwanted photo library access

@@ -119,8 +119,15 @@ class SearchViewModel internal constructor(
     }
 
     private fun search(query: String) {
+        val currentFeedFilter = feedStateRepository.getCurrentFeedFilter()
+        val showReadItems = settingsRepository.getShowReadArticlesTimeline()
+
         feedActionsRepository
-            .search(query)
+            .search(
+                query = query,
+                feedFilter = currentFeedFilter,
+                showReadItems = showReadItems,
+            )
             .onEach { foundFeed ->
                 searchMutableState.update {
                     if (foundFeed.isEmpty()) {

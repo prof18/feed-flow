@@ -32,7 +32,7 @@ SELECT
 FROM (
   SELECT *
   FROM feed_search
-  WHERE feed_search MATCH :query
+  WHERE feed_search MATCH :query || '*'
 ) AS searched_feeds
 INNER JOIN feed_item
 ON searched_feeds.url_hash = feed_item.url_hash
@@ -42,4 +42,9 @@ LEFT JOIN feed_source_category
 ON feed_source.category_id == feed_source_category.id
 LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id
+WHERE (:feedSourceId IS NULL OR feed_source.url_hash = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCategoryId)
+AND (:isRead IS NULL OR feed_item.is_read = :isRead)
+AND (:isBookmarked IS NULL OR feed_item.is_bookmarked = :isBookmarked)
+AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
 ORDER BY feed_item.pub_date DESC;

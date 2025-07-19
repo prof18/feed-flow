@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.domain.feed
 
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.onErrorSuspend
@@ -100,8 +101,14 @@ internal class FeedActionsRepository(
         }
     }
 
-    fun search(query: String): Flow<List<Search>> =
+    fun search(
+        query: String,
+        feedFilter: FeedFilter? = null,
+        showReadItems: Boolean = true,
+    ): Flow<List<Search>> =
         databaseHelper.search(
             searchQuery = query,
+            feedFilter = feedFilter ?: feedStateRepository.getCurrentFeedFilter(),
+            showReadItems = showReadItems,
         )
 }

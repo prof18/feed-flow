@@ -373,9 +373,20 @@ class DatabaseHelper(
             )
         }
 
-    fun search(searchQuery: String): Flow<List<Search>> =
+    fun search(
+        searchQuery: String,
+        feedFilter: FeedFilter = FeedFilter.Timeline,
+        showReadItems: Boolean = true,
+    ): Flow<List<Search>> =
         dbRef.feedSearchQueries
-            .search(query = searchQuery)
+            .search(
+                query = searchQuery,
+                feedSourceId = feedFilter.getFeedSourceId(),
+                feedSourceCategoryId = feedFilter.getCategoryId(),
+                isRead = feedFilter.getIsReadFlag(showReadItems),
+                isBookmarked = feedFilter.getBookmarkFlag(),
+                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
+            )
             .asFlow()
             .mapToList(backgroundDispatcher)
             .flowOn(backgroundDispatcher)

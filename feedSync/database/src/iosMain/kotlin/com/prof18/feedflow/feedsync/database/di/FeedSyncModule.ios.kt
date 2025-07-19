@@ -2,6 +2,7 @@ package com.prof18.feedflow.feedsync.database.di
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
+import co.touchlab.sqliter.JournalMode
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DatabaseFileMigration
 import com.prof18.feedflow.core.utils.getAppGroupDatabasePath
@@ -30,7 +31,9 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
                     conf.copy(
                         extendedConfig = conf.extendedConfig.copy(
                             basePath = getAppGroupDatabasePath(),
+                            busyTimeout = 30000,
                         ),
+                        journalMode = JournalMode.WAL,
                     )
                 },
                 name = databaseName,

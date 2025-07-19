@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
@@ -42,6 +43,7 @@ internal fun FeedItemView(
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     modifier: Modifier = Modifier,
     disableClick: Boolean = false,
+    currentFeedFilter: FeedFilter = FeedFilter.Timeline,
     onShareClick: (FeedItemUrlTitle) -> Unit,
 ) {
     var showItemMenu by remember {
@@ -80,6 +82,7 @@ internal fun FeedItemView(
         FeedSourceAndUnreadDotRow(
             feedItem = feedItem,
             feedFontSize = feedFontSize,
+            currentFeedFilter = currentFeedFilter,
         )
 
         TitleSubtitleAndImageRow(
@@ -88,6 +91,7 @@ internal fun FeedItemView(
                 .fillMaxWidth(),
             feedItem = feedItem,
             feedFontSize = feedFontSize,
+            currentFeedFilter = currentFeedFilter,
         )
 
         feedItem.dateString?.let { dateString ->
@@ -97,6 +101,9 @@ internal fun FeedItemView(
                 text = dateString,
                 fontSize = feedFontSize.feedMetaFontSize.sp,
                 style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(
+                    alpha = if (feedItem.isRead && currentFeedFilter !is FeedFilter.Read) 0.6f else 1f,
+                ),
             )
         }
 

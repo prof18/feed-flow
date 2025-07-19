@@ -125,6 +125,7 @@ internal fun FeedList(
                         feedFontSize = feedFontSize,
                         onShareClick = onShareClick,
                         feedLayout = feedLayout,
+                        currentFeedFilter = currentFeedFilter,
                     )
                 } else {
                     SwipeableActionsBox(
@@ -143,6 +144,7 @@ internal fun FeedList(
                             onReadStatusClick = onReadStatusClick,
                             feedFontSize = feedFontSize,
                             onShareClick = onShareClick,
+                            currentFeedFilter = currentFeedFilter,
                         )
                     }
                 }

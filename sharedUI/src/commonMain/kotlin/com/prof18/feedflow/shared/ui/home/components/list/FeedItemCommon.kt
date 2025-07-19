@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.shared.ui.home.components.FeedItemImage
@@ -29,6 +30,7 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 internal fun FeedSourceAndUnreadDotRow(
     feedItem: FeedItem,
     feedFontSize: FeedFontSizes,
+    currentFeedFilter: FeedFilter = FeedFilter.Timeline,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -50,6 +52,9 @@ internal fun FeedSourceAndUnreadDotRow(
             text = feedItem.feedSource.title,
             fontSize = feedFontSize.feedMetaFontSize.sp,
             style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(
+                alpha = if (feedItem.isRead && currentFeedFilter !is FeedFilter.Read) 0.6f else 1f,
+            ),
         )
 
         if (feedItem.isBookmarked) {
@@ -70,6 +75,7 @@ internal fun TitleSubtitleAndImageRow(
     feedItem: FeedItem,
     feedFontSize: FeedFontSizes,
     modifier: Modifier = Modifier,
+    currentFeedFilter: FeedFilter = FeedFilter.Timeline,
 ) {
     Row(
         modifier = modifier,
@@ -86,6 +92,9 @@ internal fun TitleSubtitleAndImageRow(
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
                     lineHeight = (feedFontSize.feedTitleFontSize + 4).sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(
+                        alpha = if (feedItem.isRead && currentFeedFilter !is FeedFilter.Read) 0.6f else 1f,
+                    ),
                 )
             }
 
@@ -104,6 +113,9 @@ internal fun TitleSubtitleAndImageRow(
                     fontSize = feedFontSize.feedDescFontSize.sp,
                     lineHeight = (feedFontSize.feedDescFontSize + 6).sp,
                     style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(
+                        alpha = if (feedItem.isRead && currentFeedFilter !is FeedFilter.Read) 0.6f else 1f,
+                    ),
                 )
             }
         }

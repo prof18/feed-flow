@@ -183,4 +183,17 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
             canGoForward: webview.canGoForward
         )
     }
+
+    // MARK: - File Upload Prevention
+    
+    func webView(
+        _ webView: WKWebView,
+        runOpenPanelWith parameters: WKOpenPanelParameters,
+        initiatedByFrame frame: WKFrameInfo,
+        completionHandler: @escaping ([URL]?) -> Void
+    ) {
+        // Block all file upload attempts to prevent unwanted photo library access
+        // RSS reader app should not need to upload files
+        completionHandler(nil)
+    }
 }

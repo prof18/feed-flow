@@ -17,6 +17,7 @@ struct FeedItemView: View {
     let index: Int
     let feedFontSizes: FeedFontSizes
     var feedLayout: FeedLayout = .list
+    var currentFeedFilter: FeedFilter = .Timeline()
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -31,6 +32,7 @@ struct FeedItemView: View {
                 Text(feedItem.feedSource.title)
                     .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
                     .padding(.top, Spacing.small)
+                    .opacity(feedItem.isRead && !(currentFeedFilter is FeedFilter.Read) ? 0.6 : 1.0)
 
                 Spacer()
 
@@ -51,6 +53,7 @@ struct FeedItemView: View {
                 Text(dateString)
                     .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
                     .padding(.bottom, Spacing.small)
+                    .opacity(feedItem.isRead && !(currentFeedFilter is FeedFilter.Read) ? 0.6 : 1.0)
             }
         }
         .padding(.horizontal, Spacing.regular)
@@ -71,6 +74,7 @@ struct FeedItemView: View {
                 Text(title)
                     .font(.system(size: CGFloat(feedFontSizes.feedTitleFontSize)))
                     .bold()
+                    .opacity(feedItem.isRead && !(currentFeedFilter is FeedFilter.Read) ? 0.6 : 1.0)
             }
 
             if let subtitle = feedItem.subtitle {
@@ -78,6 +82,7 @@ struct FeedItemView: View {
                     .lineLimit(3)
                     .font(.system(size: CGFloat(feedFontSizes.feedDescFontSize)))
                     .padding(.top, getPaddingTop(feedItem: feedItem))
+                    .opacity(feedItem.isRead && !(currentFeedFilter is FeedFilter.Read) ? 0.6 : 1.0)
             }
         }
     }
@@ -126,7 +131,8 @@ struct FeedItemView: View {
             feedItem: feedItemsForPreview[2],
             index: 0,
             feedFontSizes: defaultFeedFontSizes(),
-            feedLayout: .list
+            feedLayout: .list,
+            currentFeedFilter: FeedFilter.Timeline()
         )
 
         Text("Card Layout")
@@ -137,7 +143,8 @@ struct FeedItemView: View {
             feedItem: feedItemsForPreview[2],
             index: 0,
             feedFontSizes: defaultFeedFontSizes(),
-            feedLayout: .card
+            feedLayout: .card,
+            currentFeedFilter: FeedFilter.Timeline()
         )
     }
 }

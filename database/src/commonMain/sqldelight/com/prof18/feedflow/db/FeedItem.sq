@@ -118,9 +118,6 @@ UPDATE feed_item
 SET is_bookmarked = :starred
 WHERE url_hash = :urlHash;
 
-selectAllUrlHashes:
-SELECT url_hash FROM feed_item;
-
 updateFeedItemReadAndBookmarked:
 UPDATE feed_item
 SET is_read = ?, is_bookmarked = ?
@@ -130,26 +127,6 @@ selectForSync:
 SELECT url_hash, is_read, is_bookmarked, pub_date
 FROM feed_item
 WHERE is_read = 1 OR is_bookmarked = 1;
-
-updateBookmarked:
-UPDATE feed_item
-SET is_bookmarked = 1
-WHERE url_hash IN :urlHashes;
-
-updateNotBookmarked:
-UPDATE feed_item
-SET is_bookmarked = 0
-WHERE url_hash NOT IN :urlHashes;
-
-updateRead:
-UPDATE feed_item
-SET is_read = 1
-WHERE url_hash NOT IN :urlHashes;
-
-updateUnread:
-UPDATE feed_item
-SET is_read = 0
-WHERE url_hash IN :urlHashes;
 
 updateAllReadStatus:
 UPDATE feed_item
@@ -188,3 +165,18 @@ ORDER BY pub_date DESC;
 markFeedItemsNotified:
 UPDATE feed_item
 SET notification_sent = 1;
+
+updateReadStatusFromFeedItemStatus:
+UPDATE feed_item
+SET is_read = CASE 
+    WHEN url_hash IN (SELECT feed_item_id FROM feed_item_status WHERE type = 'UNREAD') THEN 0
+    ELSE 1
+END;
+
+updateBookmarkStatusFromFeedItemStatus:
+UPDATE feed_item
+SET is_bookmarked = CASE
+    WHEN url_hash IN (SELECT feed_item_id FROM feed_item_status WHERE type = 'STARRED') THEN 1
+    ELSE 0
+END;
+

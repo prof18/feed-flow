@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.getAppGroupDatabasePath
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.db.Feed_item_status
 import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
@@ -31,6 +32,9 @@ fun getFeedItems(appEnvironment: AppEnvironment): List<FeedItemWidget> {
         sqlDriver,
         feed_source_preferencesAdapter = Feed_source_preferences.Adapter(
             link_opening_preferenceAdapter = EnumColumnAdapter(),
+        ),
+        feed_item_statusAdapter = Feed_item_status.Adapter(
+            typeAdapter = EnumColumnAdapter(),
         ),
     )
 

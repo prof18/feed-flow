@@ -67,6 +67,7 @@ struct FeedListView: View {
                             feedFontSizes: feedFontSizes,
                             swipeActions: swipeActions,
                             feedLayout: feedLayout,
+                            currentFeedFilter: currentFeedFilter,
                             onItemClick: onItemClick,
                             onBookmarkClick: onBookmarkClick,
                             onReadStatusClick: onReadStatusClick
@@ -84,7 +85,8 @@ struct FeedListView: View {
                                         feedItem: feedItem,
                                         index: index,
                                         feedFontSizes: feedFontSizes,
-                                        feedLayout: feedLayout
+                                        feedLayout: feedLayout,
+                                        currentFeedFilter: currentFeedFilter
                                     )
                                     .background(Color(.secondarySystemBackground))
                                     .frame(idealWidth: 600, idealHeight: 300)

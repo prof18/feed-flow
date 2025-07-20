@@ -1,62 +1,67 @@
-# Title
+# Başlık
 
 FeedFlow - RSS Reader
 
-## Short desc
+## Kısa açıklama
 
 Minimal, fast, uncluttered
 
-## Long desc
-Stay informed your way with FeedFlow, a minimalistic RSS reader that puts you in control of your content timeline.
-Sync across all your devices and enjoy a clean, distraction-free reading experience.
+## Uzun açıklama
+İçerik zaman çizelgenizin kontrolünü size veren minimalist bir RSS okuyucu olan
+FeedFlow ile her zaman bilgi sahibi olun. Tüm cihazlarınız arasında senkronize
+edin ve temiz, dikkat dağıtıcı unsurlardan uzak bir okuma deneyiminin keyfini
+çıkarın.
 
-Key Features:
+Anahtar Özellikler:
 
-- Minimalist Design: Focus on what matters with a clutter-free interface
-- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS) or Dropbox (all platforms)
-- FreshRSS Integration: Connect to your FreshRSS server for advanced feed management
-- Flexible Reading Options: Choose between web view, reader mode, or your preferred browser
-- Privacy-Focused: Select your favorite privacy-focused browser for a separate reading experience
-- Easy Migration: Import and export your RSS feeds via OPML files
+- Minimalist Tasarım: Dağınık olmayan bir arayüzle önemli olan şeylere odaklanın
+- Sorunsuz Senkronizasyon: iCloud (iOS/macOS) veya Dropbox (tüm platformlar) ile
+  akışlarınızı cihazlar arasında senkronize halde tutun
+- FreshRSS Entegrasyonu: Gelişmiş besleme yönetimi için FreshRSS sunucunuza
+  bağlanın
+- Esnek Okuma Seçenekleri: Web görünümü, okuyucu modu veya tercih ettiğiniz
+  tarayıcı arasında seçim yapın
+- Gizlilik Odaklı: Ayrı bir okuma deneyimi için en sevdiğiniz gizlilik odaklı
+  tarayıcıyı seçin
+- Kolay Geçiş: RSS beslemelerinizi OPML dosyaları aracılığıyla içe ve dışa
+  aktarın
 
-What Sets FeedFlow Apart:
+FeedFlow'u Farklı Kılan Nedir:
 
-- Clean, intuitive interface that lets you focus on content
-- Multiple sync options to fit your workflow (Beta)
-- Customizable reading experience with reader mode
-- Fast and lightweight
-- Regular updates and active development
+- İçeriğe odaklanmanızı sağlayan temiz, sezgisel arayüz
+- İş akışınıza uygun birden fazla senkronizasyon seçeneği (Beta)
+- Okuyucu modu ile özelleştirilebilir okuma deneyimi
+- Hızlı ve hafif
+- Düzenli güncellemeler ve aktif geliştirme
 
-Perfect for:
-- News enthusiasts who want control over their information diet
-- Privacy-conscious readers
-- Content creators tracking multiple sources
-- Anyone looking to declutter their digital reading experience
+Şunlar için mükemmel:
+- Bilgi üzerinde kontrol sahibi olmak isteyen haber meraklıları
+- Gizliliğe duyarlı okuyucular
+- Birden fazla kaynağı izleyen içerik oluşturucular
+- Dijital okuma deneyimlerini düzene sokmak isteyen herkes
 
-Join thousands of readers who've chosen FeedFlow for a better way to stay informed.
+Bilgi sahibi olmanın daha iyi bir yolu için FeedFlow'u seçen binlerce okuyucuya
+katılın.
 
-Note: Sync functionality is currently in beta. The experience is continuously improving based on user feedback.
+Not: Senkronizasyon işlevi şu anda beta sürümündedir. Deneyim, kullanıcı geri
+bildirimlerine dayalı olarak sürekli olarak geliştirilmektedir.
 
-## Screenshot 1
+## Ekran görüntüsü 1
 
-All your feeds
-in your pocket
+Tüm beslemeleriniz cebinizde
 
-## Screenshot 3
+## Ekran görüntüsü 3
 
-Import your
-existing collection
+Mevcut koleksiyonunuzu içe aktarın
 
-## Screenshot 4
+## Ekran görüntüsü 4
 
-Open the articles
-in your favourite browser
+Makaleleri favori tarayıcınızda açın
 
-## Screenshot 5
+## Ekran görüntüsü 5
 
-Enjoy a clutter-free
-reader mode
+Dağınık olmayan bir okuyucu modunun keyfini çıkarın
 
-## Banner image
+## Banner resmi
 
-minimalistic RSS Reader
+minimalist RSS Okuyucu

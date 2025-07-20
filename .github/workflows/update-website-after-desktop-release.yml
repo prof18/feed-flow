@@ -53,9 +53,6 @@ jobs:
       - name: Update website
         run: |
           # Update hero.yml only if URLs are not empty
-          if [ ! -z "$DMG_URL" ]; then
-            sed -i "s|button3Link:.*|button3Link: ${DMG_URL}|" website/data/hero.yml
-          fi
           if [ ! -z "$RPM_URL" ]; then
             sed -i "s|button5Link:.*|button5Link: ${RPM_URL}|" website/data/hero.yml
           fi

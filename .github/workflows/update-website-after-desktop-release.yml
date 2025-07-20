@@ -77,6 +77,13 @@ jobs:
             sed -i "s|url: \".*\.deb\"|url: \"${DEB_URL}\"|" website/data/downloads.yml
           fi
 
+      - name: Debug print of hero and downloads
+        run: |
+          echo "Hero:"
+          cat website/data/hero.yml
+          echo "Downloads:"
+          cat website/data/downloads.yml
+
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:

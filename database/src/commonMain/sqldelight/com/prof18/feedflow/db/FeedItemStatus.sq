@@ -1,0 +1,13 @@
+import com.prof18.feedflow.database.FeedItemStatusType;
+
+CREATE TABLE feed_item_status(
+    feed_item_id TEXT NOT NULL,
+    type TEXT AS FeedItemStatusType NOT NULL,
+    PRIMARY KEY (feed_item_id, type)
+);
+
+insertFeedItemStatus:
+INSERT OR REPLACE INTO feed_item_status(feed_item_id, type) VALUES (?, ?);
+
+deleteAllStatuses:
+DELETE FROM feed_item_status;

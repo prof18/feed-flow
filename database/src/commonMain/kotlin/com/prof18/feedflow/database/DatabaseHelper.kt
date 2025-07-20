@@ -22,6 +22,7 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.db.FeedFlowDB
+import com.prof18.feedflow.db.Feed_item_status
 import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.db.GetFeedSourcesWithUnreadCount
 import com.prof18.feedflow.db.Search
@@ -45,6 +46,9 @@ class DatabaseHelper(
         sqlDriver,
         feed_source_preferencesAdapter = Feed_source_preferences.Adapter(
             link_opening_preferenceAdapter = EnumColumnAdapter(),
+        ),
+        feed_item_statusAdapter = Feed_item_status.Adapter(
+            typeAdapter = EnumColumnAdapter(),
         ),
     )
 
@@ -436,20 +440,33 @@ class DatabaseHelper(
             }
     }
 
-    suspend fun updateFeedItemReadStatus(feedItemId: List<String>) =
+    suspend fun updateFeedItemReadStatus(feedItemIds: List<String>) =
         try {
             dbRef.transactionWithContext(backgroundDispatcher) {
-                dbRef.feedItemQueries.updateRead(feedItemId)
-                dbRef.feedItemQueries.updateUnread(feedItemId)
+                // in the feed item tables are set unread by default.
+                feedItemIds.forEach { feedItemId ->
+                    dbRef.feedItemStatusQueries.insertFeedItemStatus(
+                        feed_item_id = feedItemId,
+                        type = FeedItemStatusType.UNREAD,
+                    )
+                }
+                dbRef.feedItemQueries.updateReadStatusFromFeedItemStatus()
+                dbRef.feedItemStatusQueries.deleteAllStatuses()
             }
         } catch (e: Exception) {
             logger.e(e) { "Error while updating read status with FreshRSS" }
         }
 
-    suspend fun updateFeedItemBookmarkStatus(feedItemId: List<String>) =
+    suspend fun updateFeedItemBookmarkStatus(feedItemIds: List<String>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedItemQueries.updateBookmarked(feedItemId)
-            dbRef.feedItemQueries.updateNotBookmarked(feedItemId)
+            feedItemIds.forEach { feedItemId ->
+                dbRef.feedItemStatusQueries.insertFeedItemStatus(
+                    feed_item_id = feedItemId,
+                    type = FeedItemStatusType.STARRED,
+                )
+            }
+            dbRef.feedItemQueries.updateBookmarkStatusFromFeedItemStatus()
+            dbRef.feedItemStatusQueries.deleteAllStatuses()
         }
 
     suspend fun deleteAll() = dbRef.transactionWithContext(backgroundDispatcher) {

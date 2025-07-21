@@ -36,10 +36,11 @@ val feedFlowStrings: Map<String, FeedFlowStrings> = mapOf(
     Locales.Ja to JaFeedFlowStrings,
     Locales.Cs to CsFeedFlowStrings,
     Locales.Lv to LvFeedFlowStrings,
+    Locales.Tr to TrFeedFlowStrings,
 )
 
 expect fun String.format(vararg args: Any): String
 
 @Suppress("UnusedPrivateProperty")
 // This is a trick to be sure that KSP re-generates the strings when there's no code updates
-private const val StringsVersion = 145
+private const val StringsVersion = 146

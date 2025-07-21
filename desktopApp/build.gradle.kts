@@ -200,6 +200,7 @@ val macExtraPlistKeys: String
           <string>ja</string>
           <string>cs</string>
           <string>lv</string>
+          <string>tr</string>
         </array>
         <key>NSUbiquitousContainers</key>
         <dict>

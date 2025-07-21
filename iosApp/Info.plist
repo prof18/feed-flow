@@ -38,6 +38,7 @@
 		<string>ja</string>
 		<string>cs</string>
 		<string>lv</string>
+		<string>tr</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>

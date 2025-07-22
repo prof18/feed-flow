@@ -22,7 +22,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 40
     outputs:
       release_path: ${{ steps.path_variables.outputs.release_path }}

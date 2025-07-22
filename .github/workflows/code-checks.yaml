@@ -9,7 +9,7 @@ on:
 
 jobs:
   checks:
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -82,7 +82,7 @@ jobs:
 
   build-ios-app:
     name: Build iOS App
-    runs-on: macos-latest
+    runs-on: macos-15
     needs: [ checks ]
     steps:
       - uses: actions/checkout@v4

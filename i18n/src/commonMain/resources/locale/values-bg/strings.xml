@@ -165,9 +165,9 @@
     <string name="settings_hide_description">Скриване на описанието на статията</string>
     <string name="hide_feed_from_timeline_description">Скрийте статиите на тези емисии от времевата линия</string>
     <string name="pin_feed_source_description">Закачете тази емисия</string>
-    <string name="menu_add_to_pinned">Закачете</string>
-    <string name="menu_remove_from_pinned">Откачете</string>
-    <string name="drawer_title_pinned_feeds">Закачени източници на емисии</string>
+    <string name="menu_add_to_pinned">Закачане</string>
+    <string name="menu_remove_from_pinned">Откачане</string>
+    <string name="drawer_title_pinned_feeds">Закачени източници на емисия</string>
     <string name="feed_list_appearance">Външен вид на списъка с емисии</string>
     <string name="settings_crash_reporting">Изпращане на анонимни доклади за сривове</string>
     <string name="category_name">Име на категория</string>

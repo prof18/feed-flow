@@ -16,7 +16,7 @@ CREATE TABLE feed_item (
 );
 
 insertFeedItem:
-INSERT OR REPLACE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date, comments_url)
+INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date, comments_url)
 VALUES (?,?,?,?,?,?,?,?, ?);
 
 countUnreadFeeds:

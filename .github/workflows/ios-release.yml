@@ -97,10 +97,6 @@ jobs:
           api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
           api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
 
-      - name: debug
-        run: |
-          security find-identity -v -p codesigning
-
       - name: build archive
         run: |
           cd iosApp

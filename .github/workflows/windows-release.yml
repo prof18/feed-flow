@@ -159,7 +159,42 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "`nStarting MSIX conversion..."
-          MsixPackagingTool.exe create-package --template "msix-conversion-config.xml" -v
+          
+          # Find the MSIX Packaging Tool executable
+          $toolPaths = @(
+            "C:\Program Files\WindowsApps\Microsoft.MsixPackagingTool_*\MsixPackagingTool.exe",
+            "C:\Program Files (x86)\Microsoft\MsixPackagingTool\MsixPackagingTool.exe",
+            "$env:LOCALAPPDATA\Microsoft\WindowsApps\MsixPackagingTool.exe",
+            "$env:ProgramFiles\Microsoft\MsixPackagingTool\MsixPackagingTool.exe"
+          )
+          
+          $msixTool = $null
+          foreach ($path in $toolPaths) {
+            $resolved = Get-ChildItem -Path $path -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($resolved) {
+              $msixTool = $resolved.FullName
+              Write-Host "Found MSIX Packaging Tool at: $msixTool"
+              break
+            }
+          }
+          
+          if (-not $msixTool) {
+            # Try to find it using Get-AppxPackage
+            $package = Get-AppxPackage -Name "*MsixPackagingTool*" | Select-Object -First 1
+            if ($package) {
+              $installLocation = $package.InstallLocation
+              $msixTool = Join-Path $installLocation "MsixPackagingTool.exe"
+              Write-Host "Found MSIX Packaging Tool via AppxPackage at: $msixTool"
+            }
+          }
+          
+          if (-not $msixTool -or -not (Test-Path $msixTool)) {
+            Write-Error "MSIX Packaging Tool executable not found!"
+            exit 1
+          }
+          
+          Write-Host "Using MSIX Packaging Tool: $msixTool"
+          & $msixTool create-package --template "msix-conversion-config.xml" -v
 
       - name: Update MSIX Manifest
         shell: pwsh

@@ -51,6 +51,10 @@ jobs:
           p12-file-base64: ${{ secrets.MAC_APP_DISTRIBUTION_INSTALLER_CERTIFICATE }}
           p12-password: ${{ secrets.MAC_APP_DISTRIBUTION_INSTALLER_CERTIFICATE_PWD }}
 
+      - name: debug
+        run: |
+          security find-identity -v -p codesigning
+
       - name: Create Embedded Provision Profile
         run: |
           echo "$EMBEDDED_PROVISION" > desktopApp/embedded.provisionprofile.b64

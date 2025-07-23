@@ -66,9 +66,7 @@ struct FeedFlowApp: App {
                     case .background:
                         feedSyncTimer.invalidate()
                         scheduleAppRefresh()
-                        Task { @MainActor in
-                            WidgetCenter.shared.reloadAllTimelines()
-                        }
+                        WidgetCenter.shared.reloadAllTimelines()
                     default:
                         break
                     }
@@ -114,9 +112,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 do {
                     let repo = Deps.shared.getSerialFeedFetcherRepository()
                     try await repo.fetchFeeds()
-                    await MainActor.run {
-                        WidgetCenter.shared.reloadAllTimelines()
-                    }
+                    WidgetCenter.shared.reloadAllTimelines()
                     task.setTaskCompleted(success: true)
                 } catch {
                     task.setTaskCompleted(success: false)

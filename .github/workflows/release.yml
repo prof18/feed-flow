@@ -109,7 +109,9 @@ jobs:
       DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
       SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
       MSIX_PUBLISHER_DISPLAY_NAME: ${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}
-
+      TDECK_SALT: ${{ secrets.TDECK_SALT }}
+      TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
+      
   linux:
     if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'linux')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-linux')))
     uses: ./.github/workflows/linux-release.yml
@@ -117,6 +119,8 @@ jobs:
       GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
       DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
       SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+      TDECK_SALT: ${{ secrets.TDECK_SALT }}
+      TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
 
   macos-testflight:
     if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'macos')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-macos')))
@@ -135,6 +139,8 @@ jobs:
       APPLE_ID_NOTARIZATION: ${{ secrets.APPLE_ID_NOTARIZATION }}
       NOTARIZATION_PWD: ${{ secrets.NOTARIZATION_PWD }}
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
+      TDECK_SALT: ${{ secrets.TDECK_SALT }}
+      TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
 
   macos:
     if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'macos')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-macos')))
@@ -148,6 +154,8 @@ jobs:
       APPLE_ID_NOTARIZATION: ${{ secrets.APPLE_ID_NOTARIZATION }}
       NOTARIZATION_PWD: ${{ secrets.NOTARIZATION_PWD }}
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
+      TDECK_SALT: ${{ secrets.TDECK_SALT }}
+      TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
 
   create-release:
     needs: [windows, linux, macos]

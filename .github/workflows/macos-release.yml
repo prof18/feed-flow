@@ -19,6 +19,10 @@ on:
         required: true
       APPSTORE_TEAM_ID:
         required: true
+      TDECK_SALT:
+        required: true
+      TDECK_APP_ID:
+        required: true
 
 jobs:
   build:
@@ -74,10 +78,14 @@ jobs:
           echo "sentry_dns=$SENTRY_DNS" >> desktopApp/src/jvmMain/resources/props.properties
           echo "version=$VERSION" >> desktopApp/src/jvmMain/resources/props.properties
           echo "dropbox_key=$DROPBOX_API_KEY" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "tdeck_salt=$TDECK_SALT" >> desktopApp/src/jvmMain/resources/props.properties
+          echo "tdeck_app_id=$TDECK_APP_ID" >> desktopApp/src/jvmMain/resources/props.properties
         env:
           SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
           VERSION: ${{ steps.version.outputs.version }}
           DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+          TDECK_SALT: ${{ secrets.TDECK_SALT }}
+          TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
 
       - name: Create DMG
         run: ./gradlew packageReleaseDmg

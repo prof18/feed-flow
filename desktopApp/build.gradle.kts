@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.about.libraries)
     alias(libs.plugins.compose.hotreload)
     alias(libs.plugins.feedflow.detekt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 apply(from = "../versioning.gradle.kts")
@@ -57,6 +58,10 @@ kotlin {
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.transition)
                 implementation(libs.material.window.size)
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlinx.date.time)
             }
         }
     }

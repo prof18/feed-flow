@@ -40,6 +40,7 @@ import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
@@ -49,6 +50,7 @@ import com.prof18.feedflow.desktop.home.FeedFlowMenuBar
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
+import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.desktop.utils.disableSentry
 import com.prof18.feedflow.desktop.utils.initSentry
@@ -145,6 +147,12 @@ fun main() = application {
             dns = sentryDns,
             version = version,
         )
+    }
+
+    // Skip Windows for now
+    if (getDesktopOS() != DesktopOS.WINDOWS) {
+        val telemetryClient = DI.koin.get<TelemetryDeckClient>()
+        telemetryClient.signal("TelemetryDeck.Session.started")
     }
 
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())

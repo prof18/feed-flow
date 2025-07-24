@@ -5,6 +5,7 @@ import FirebaseCrashlytics
 import SwiftUI
 import SwiftyDropbox
 import WidgetKit
+import TelemetryDeck
 
 @main
 struct FeedFlowApp: App {
@@ -16,6 +17,7 @@ struct FeedFlowApp: App {
 
     init() {
         startKoin()
+        setupTelemetry()
 
         if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
             if let keys = NSDictionary(contentsOfFile: path) {
@@ -89,6 +91,13 @@ func scheduleAppRefresh() {
     request.earliestBeginDate = .now.addingTimeInterval(2 * 3600)
     request.requiresNetworkConnectivity = true
     try? BGTaskScheduler.shared.submit(request)
+}
+
+func setupTelemetry() {
+    #if !DEBUG
+    let config = TelemetryDeck.Config(appID: "0334762E-7A84-4A80-A1BA-879165ED0333")
+    TelemetryDeck.initialize(config: config)
+    #endif
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {

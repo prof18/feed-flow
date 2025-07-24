@@ -179,12 +179,21 @@ jobs:
           }
           
           if (-not $msixTool) {
-            # Try to find it using Get-AppxPackage
-            $package = Get-AppxPackage -Name "*MsixPackagingTool*" | Select-Object -First 1
-            if ($package) {
-              $installLocation = $package.InstallLocation
-              $msixTool = Join-Path $installLocation "MsixPackagingTool.exe"
-              Write-Host "Found MSIX Packaging Tool via AppxPackage at: $msixTool"
+            Write-Warning "MSIX Packaging Tool not found in standard locations. Attempting alternative search..."
+            # Try to find any installed MSIX tools in common locations
+            $searchPaths = @(
+              "$env:ProgramFiles\*msix*",
+              "$env:ProgramFiles\Microsoft\*",
+              "$env:LOCALAPPDATA\Microsoft\*msix*"
+            )
+            
+            foreach ($searchPath in $searchPaths) {
+              $found = Get-ChildItem -Path $searchPath -Filter "MsixPackagingTool.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+              if ($found) {
+                $msixTool = $found.FullName
+                Write-Host "Found MSIX Packaging Tool via search at: $msixTool"
+                break
+              }
             }
           }
           

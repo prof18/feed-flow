@@ -21,7 +21,7 @@ flexmarkHtml2mdConverter = "0.64.8"
 glance = "1.1.1"
 google-services = "4.4.3"
 immutable-collections = "0.4.0"
-io-coil = "3.2.0"
+io-coil = "3.3.0"
 jsoup = "1.21.1"
 # When updating, check the version of jna in the following link:
 # https://github.com/Dansoftowner/jSystemThemeDetector/blob/master/build.gradle

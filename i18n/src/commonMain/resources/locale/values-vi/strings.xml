@@ -52,7 +52,7 @@
     <string name="feeds_title">Nguồn cấp</string>
     <string name="feed_added_message">Đã thêm %s thành công</string>
     <string name="feed_url">URL nguồn cấp</string>
-    <string name="loading_feed_message">Đang lấy %s nguồn cấp</string>
+    <string name="loading_feed_message">Đang lấy nguồn cấp %s</string>
     <string name="no_feeds_found_message">Không tìm thấy nguồn cấp nào. Hãy thêm mới!</string>
     <string name="feeds_importing_message">Đang nhập nguồn cấp</string>
     <string name="feeds_import_done_message">Đã nhập xong</string>

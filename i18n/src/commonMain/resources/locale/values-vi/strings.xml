@@ -208,7 +208,7 @@
     <string name="settings_notifications_permission_status_title">Trạng thái cấp quyền</string>
     <string name="settings_notifications_permission_status_granted">Đã cho phép</string>
     <string name="settings_notifications_permission_status_denied">Đã từ chối</string>
-    <string name="settings_notifications_permission_request_button">Quyền yêu cầu</string>
+    <string name="settings_notifications_permission_request_button">Cho phép</string>
     <string name="new_articles_notification_title">Có bài viết mới</string>
     <string name="notification_channel_name">Những bài viết mới</string>
     <string name="new_articles_notification_content">Bài viết mới từ %s</string>

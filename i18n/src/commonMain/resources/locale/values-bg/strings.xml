@@ -20,7 +20,7 @@
     <string name="about_nav_bar">Относно</string>
     <string name="open_source_nav_bar">Лицензи с отворен код</string>
     <string name="report_issue_button">Докладване на проблем</string>
-    <string name="open_website_button">Откриване на уебсайт</string>
+    <string name="open_website_button">Отворете уебсайта</string>
     <string name="import_export_opml">Внасяне и Изнасяне на OPML</string>
     <string name="import_export_opml_title">Внасяне и Изнасяне</string>
     <string name="done_button">Добре</string>
@@ -37,7 +37,7 @@
     <string name="drawer_title_read">Прочетено</string>
     <string name="drawer_title_bookmarks">Отметки</string>
     <string name="menu_mark_as_unread">Маркиране като непрочетено</string>
-    <string name="menu_open_comments">Отворете коментарите</string>
+    <string name="menu_open_comments">Отваряне на коментари</string>
     <string name="empty_screen_back_to_timeline">Назад към хронологията</string>
     <string name="about_menu_contribute_translations">Помогнете с преводите</string>
     <string name="rename_feed_source_name_button">Преименуване</string>

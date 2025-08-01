@@ -31,14 +31,16 @@ class SyncedDatabaseHelper(
     private val dbMutex = Mutex()
 
     private suspend fun getDbRef(): FeedFlowFeedSyncDB =
-        dbMutex.withLock {
-            if (dbRef.value == null) {
-                val scope = getKoin().getOrCreateScope(FEED_SYNC_SCOPE_NAME, named(FEED_SYNC_SCOPE_NAME))
+        withContext(backgroundDispatcher) {
+            dbMutex.withLock {
+                if (dbRef.value == null) {
+                    val scope = getKoin().getOrCreateScope(FEED_SYNC_SCOPE_NAME, named(FEED_SYNC_SCOPE_NAME))
 
-                val driver = scope.get<SqlDriver>(qualifier = named(SYNC_DB_DRIVER))
-                dbRef.set(FeedFlowFeedSyncDB(driver))
+                    val driver = scope.get<SqlDriver>(qualifier = named(SYNC_DB_DRIVER))
+                    dbRef.set(FeedFlowFeedSyncDB(driver))
+                }
+                return@withLock requireNotNull(dbRef.get())
             }
-            return requireNotNull(dbRef.get())
         }
 
     fun closeScope() {
@@ -160,8 +162,9 @@ class SyncedDatabaseHelper(
         }
     }
 
-    suspend fun deleteAllFeedSources() =
+    suspend fun deleteAllFeedSources() = withContext(backgroundDispatcher) {
         getDbRef().syncedFeedSourceQueries.deleteAll()
+    }
 
     suspend fun getLastChangeTimestamp(tableName: SyncTable): Long? = withContext(backgroundDispatcher) {
         getDbRef().syncedMetadataQueries.selectLastChangeTimestamp(tableName.tableName)

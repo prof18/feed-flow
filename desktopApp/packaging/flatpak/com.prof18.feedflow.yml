@@ -1,0 +1,42 @@
+app-id: com.prof18.feedflow
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk21
+command: feed-flow
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --filesystem=xdg-documents:ro
+  - --filesystem=xdg-download:rw
+
+modules:
+  - name: feed-flow
+    buildsystem: simple
+    build-options:
+      build-args:
+        - --share=network
+    build-commands:
+      - /usr/lib/sdk/openjdk21/install.sh
+      - echo "is_release=true" >> desktopApp/src/jvmMain/resources/props.properties
+      - echo "version=1.3.0" >> desktopApp/src/jvmMain/resources/props.properties
+      - . /usr/lib/sdk/openjdk21/enable.sh && ./gradlew desktopApp:packageReleaseUberJarForCurrentOS -Dorg.gradle.jvmargs="-Xmx12g -XX:MaxMetaspaceSize=2g" -Dorg.gradle.daemon=true -Dorg.gradle.parallel=false
+      - ls -la desktopApp/build/compose/jars/ || echo "Directory doesn't exist"
+      - JAR_FILE=$(find desktopApp/build/compose/jars/ -name "*.jar" -type f | head -1) && install -Dm755 "$JAR_FILE" /app/lib/feed-flow.jar
+      - install -Dm644 desktopApp/packaging/flatpak/com.prof18.feedflow.desktop /app/share/applications/com.prof18.feedflow.desktop
+      - install -Dm644 desktopApp/packaging/flatpak/com.prof18.feedflow.metainfo.xml /app/share/metainfo/com.prof18.feedflow.metainfo.xml
+      - install -Dm644 desktopApp/packaging/flatpak/com.prof18.feedflow.png /app/share/icons/hicolor/512x512/apps/com.prof18.feedflow.png
+      - |
+        cat > /app/bin/feed-flow << 'EOF'
+        #!/bin/bash
+        exec /app/jre/bin/java -jar /app/lib/feed-flow.jar "$@"
+        EOF
+      - chmod +x /app/bin/feed-flow
+    sources:
+      - type: git
+        url: https://github.com/prof18/feed-flow
+        tag: 1.3.0-all

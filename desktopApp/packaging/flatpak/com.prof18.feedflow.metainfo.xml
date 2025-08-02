@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.prof18.feedflow</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Apache-2.0</project_license>
+  <name>FeedFlow</name>
+  <summary>A minimalistic RSS Reader</summary>
+  <description>
+    <p>
+      FeedFlow is a minimalistic RSS Reader that provides a clean and simple way to read your favorite RSS feeds.
+      The application is designed to open the original website for each article, allowing you to choose your preferred browser on mobile platforms.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Minimalistic and clean interface</li>
+      <li>Full OPML import and export support for easy migration</li>
+      <li>Cross-platform support (Android, iOS, macOS, Windows, Linux)</li>
+      <li>Built with modern technologies (Jetpack Compose, Kotlin Multiplatform)</li>
+      <li>Privacy-focused reading experience</li>
+    </ul>
+  </description>
+  
+  <launchable type="desktop-id">com.prof18.feedflow.desktop</launchable>
+  
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main FeedFlow interface</caption>
+      <image>https://raw.githubusercontent.com/prof18/feed-flow/main/assets/banners.png</image>
+    </screenshot>
+  </screenshots>
+  
+  <url type="homepage">https://github.com/prof18/feed-flow</url>
+  <url type="bugtracker">https://github.com/prof18/feed-flow/issues</url>
+  <url type="help">https://github.com/prof18/feed-flow</url>
+  
+  <developer_name>Marco Gomiero</developer_name>
+  
+  <content_rating type="oars-1.1">
+    <content_attribute id="violence-cartoon">none</content_attribute>
+    <content_attribute id="violence-fantasy">none</content_attribute>
+    <content_attribute id="violence-realistic">none</content_attribute>
+    <content_attribute id="violence-bloodshed">none</content_attribute>
+    <content_attribute id="violence-sexual">none</content_attribute>
+    <content_attribute id="violence-desecration">none</content_attribute>
+    <content_attribute id="violence-slavery">none</content_attribute>
+    <content_attribute id="violence-worship">none</content_attribute>
+    <content_attribute id="drugs-alcohol">none</content_attribute>
+    <content_attribute id="drugs-narcotics">none</content_attribute>
+    <content_attribute id="drugs-tobacco">none</content_attribute>
+    <content_attribute id="sex-nudity">none</content_attribute>
+    <content_attribute id="sex-themes">none</content_attribute>
+    <content_attribute id="sex-homosexuality">none</content_attribute>
+    <content_attribute id="sex-prostitution">none</content_attribute>
+    <content_attribute id="sex-adultery">none</content_attribute>
+    <content_attribute id="sex-appearance">none</content_attribute>
+    <content_attribute id="language-profanity">none</content_attribute>
+    <content_attribute id="language-humor">none</content_attribute>
+    <content_attribute id="language-discrimination">none</content_attribute>
+    <content_attribute id="social-chat">none</content_attribute>
+    <content_attribute id="social-info">mild</content_attribute>
+    <content_attribute id="social-audio">none</content_attribute>
+    <content_attribute id="social-location">none</content_attribute>
+    <content_attribute id="social-contacts">none</content_attribute>
+    <content_attribute id="money-purchasing">none</content_attribute>
+    <content_attribute id="money-gambling">none</content_attribute>
+  </content_rating>
+  
+  <releases>
+    <release version="1.2.2" date="2024-12-24">
+      <description>
+        <p>Current stable release</p>
+      </description>
+    </release>
+  </releases>
+  
+  <categories>
+    <category>Network</category>
+    <category>News</category>
+  </categories>
+  
+  <keywords>
+    <keyword>RSS</keyword>
+    <keyword>Feed</keyword>
+    <keyword>News</keyword>
+    <keyword>Reader</keyword>
+    <keyword>OPML</keyword>
+  </keywords>
+</component>

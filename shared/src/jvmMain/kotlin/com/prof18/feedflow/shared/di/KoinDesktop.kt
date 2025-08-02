@@ -37,13 +37,14 @@ import java.util.prefs.Preferences
 fun initKoinDesktop(
     appEnvironment: AppEnvironment,
     isICloudEnabled: Boolean,
+    isDropboxEnabled: Boolean,
     version: String,
     modules: List<Module>,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
         isLoggingEnabled = appEnvironment.isRelease(),
-        isDropboxSyncEnabled = true,
+        isDropboxSyncEnabled = isDropboxEnabled,
         isIcloudSyncEnabled = isICloudEnabled,
         appVersion = version,
     ),

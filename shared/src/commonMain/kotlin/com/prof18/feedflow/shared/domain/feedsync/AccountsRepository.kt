@@ -20,43 +20,50 @@ internal class AccountsRepository(
     private val currentAccountMutableState = MutableStateFlow(SyncAccounts.LOCAL)
     val currentAccountState = currentAccountMutableState.asStateFlow()
 
-    private val desktopAccounts = listOf(
-        SyncAccounts.DROPBOX,
-        SyncAccounts.FRESH_RSS,
-    )
-
-    private val macOSAccounts = listOf(
-        SyncAccounts.DROPBOX,
-        SyncAccounts.ICLOUD,
-        SyncAccounts.FRESH_RSS,
-    )
-
-    private val androidAccounts = listOf(
-        SyncAccounts.DROPBOX,
-        SyncAccounts.FRESH_RSS,
-    )
-
-    private val androidAccountsNoDropbox = listOf(
-        SyncAccounts.FRESH_RSS,
-    )
-
-    private val iosAccounts = listOf(
-        SyncAccounts.ICLOUD,
-        SyncAccounts.FRESH_RSS,
-        SyncAccounts.DROPBOX,
-    )
-
     init {
         restoreAccounts()
     }
 
-    fun getValidAccounts() =
-        when (currentOS) {
-            CurrentOS.Desktop.Linux -> desktopAccounts
-            CurrentOS.Desktop.Mac -> if (appConfig.isIcloudSyncEnabled) macOSAccounts else desktopAccounts
-            CurrentOS.Desktop.Windows -> desktopAccounts
-            CurrentOS.Android -> if (appConfig.isDropboxSyncEnabled) androidAccounts else androidAccountsNoDropbox
-            CurrentOS.Ios -> iosAccounts
+    fun getValidAccounts(): List<SyncAccounts> =
+        buildList {
+            when (currentOS) {
+                CurrentOS.Android -> {
+                    if (appConfig.isDropboxSyncEnabled) {
+                        add(SyncAccounts.DROPBOX)
+                    }
+                    add(SyncAccounts.FRESH_RSS)
+                }
+                CurrentOS.Desktop.Linux -> {
+                    if (appConfig.isDropboxSyncEnabled) {
+                        add(SyncAccounts.DROPBOX)
+                    }
+                    add(SyncAccounts.FRESH_RSS)
+                }
+                CurrentOS.Desktop.Mac -> {
+                    if (appConfig.isIcloudSyncEnabled) {
+                        add(SyncAccounts.ICLOUD)
+                    }
+                    if (appConfig.isDropboxSyncEnabled) {
+                        add(SyncAccounts.DROPBOX)
+                    }
+                    add(SyncAccounts.FRESH_RSS)
+                }
+                CurrentOS.Desktop.Windows -> {
+                    if (appConfig.isDropboxSyncEnabled) {
+                        add(SyncAccounts.DROPBOX)
+                    }
+                    add(SyncAccounts.FRESH_RSS)
+                }
+                CurrentOS.Ios -> {
+                    if (appConfig.isIcloudSyncEnabled) {
+                        add(SyncAccounts.ICLOUD)
+                    }
+                    if (appConfig.isDropboxSyncEnabled) {
+                        add(SyncAccounts.DROPBOX)
+                    }
+                    add(SyncAccounts.FRESH_RSS)
+                }
+            }
         }
 
     fun setDropboxAccount() {

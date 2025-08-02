@@ -30,7 +30,7 @@ class TelemetryDeckClient(
     private val sessionId = UUID.randomUUID().toString()
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    private var appId: String?
+    private val appId: String = "0334762E-7A84-4A80-A1BA-879165ED0333"
     private var appVersion: String?
 
     init {
@@ -39,16 +39,14 @@ class TelemetryDeckClient(
             ?: InputStream.nullInputStream()
         properties.load(propsFile)
 
-        appId = properties["tdeck_app_id"]?.toString()
         appVersion = properties["version"]?.toString()
         val saltFromProps = properties["tdeck_salt"]?.toString()
 
-        saltFromProps?.let { salt ->
-            userIdManager = UserIdManager(
-                salt = salt,
-                appEnv = appEnvironment,
-            )
-        }
+        val salt = saltFromProps ?: ""
+        userIdManager = UserIdManager(
+            salt = salt,
+            appEnv = appEnvironment,
+        )
     }
 
     fun signal(type: String, parameters: Map<String, String> = emptyMap()) {
@@ -66,7 +64,7 @@ class TelemetryDeckClient(
     private suspend fun sendSignal(type: String, parameters: Map<String, String>) {
         val id = appId
         val userId = userIdManager?.getHashedUserId()
-        if (id.isNullOrEmpty() || userId.isNullOrEmpty()) {
+        if (userId.isNullOrEmpty()) {
             logger.w { "TelemetryDeck: appId or userId is not set, skipping signal." }
             return
         }

@@ -103,6 +103,9 @@ fun main() = application {
         ?.toBooleanStrictOrNull()
         ?: false
 
+    val dropboxKey = properties["dropbox_key"]
+        ?.toString()
+
     val appEnvironment = if (isRelease) {
         AppEnvironment.Release
     } else {
@@ -138,6 +141,7 @@ fun main() = application {
         appEnvironment = appEnvironment,
         isICloudEnabled = isIcloudEnabled,
         version = version ?: "",
+        isDropboxEnabled = dropboxKey != null,
     )
 
     val isCrashReportEnabled = DI.koin.get<SettingsRepository>().getCrashReportingEnabled()

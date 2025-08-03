@@ -1,6 +1,7 @@
 .idea
 .DS_Store
 build
+Build
 captures
 .externalNativeBuild
 .cxx

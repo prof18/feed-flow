@@ -16,6 +16,7 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.skie) apply false
     alias(libs.plugins.compose.hotreload) apply false
+    alias(libs.plugins.flatpak.gradle.generator) apply false
 }
 
 tasks.register("clean", Delete::class) {

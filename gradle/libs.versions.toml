@@ -60,6 +60,7 @@ triplet-play = "3.12.1"
 voyager = "1.0.1"
 workmanager = "2.10.2"
 compose-hotreload = "1.0.0-beta04"
+flatpack-gradle-generator = "1.5.0"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
@@ -170,3 +171,4 @@ skie = { id = "co.touchlab.skie", version.ref = "skie" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sql-delight" }
 triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
 compose-hotreload = { id = "org.jetbrains.compose.hot-reload", version.ref = "compose-hotreload" }
+flatpak-gradle-generator = { id = "io.github.jwharm.flatpak-gradle-generator", version.ref = "flatpack-gradle-generator" }

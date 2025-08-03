@@ -1,4 +1,5 @@
 import com.mikepenz.aboutlibraries.plugin.AboutLibrariesExtension
+import org.gradle.kotlin.dsl.flatpakGradleGenerator
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -10,6 +11,7 @@ plugins {
     alias(libs.plugins.compose.hotreload)
     alias(libs.plugins.feedflow.detekt)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.flatpak.gradle.generator)
 }
 
 apply(from = "../versioning.gradle.kts")
@@ -236,3 +238,10 @@ tasks.withType(KotlinCompile::class.java) {
         )
     }
 }
+
+tasks.flatpakGradleGenerator {
+    outputFile = project.file("packaging/flatpak/flatpak-sources.json")
+    downloadDirectory.set("../offline-repository")
+    excludeConfigurations.set(listOf("testCompileClasspath", "testRuntimeClasspath"))
+}
+

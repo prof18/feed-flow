@@ -3,58 +3,97 @@ set -e
 
 echo "Disabling Android targets for Flatpak build..."
 
-# Files to modify
-FILES=(
-    "shared/build.gradle.kts"
-    "sharedUI/build.gradle.kts"
-    "core/build.gradle.kts"
-    "database/build.gradle.kts"
-    "i18n/build.gradle.kts"
-    "feedSync/dropbox/build.gradle.kts"
-    "feedSync/database/build.gradle.kts"
-    "feedSync/greader/build.gradle.kts"
-    "feedSync/icloud/build.gradle.kts"
-    "feedSync/networkcore/build.gradle.kts"
-)
-
-for file in "${FILES[@]}"; do
-    if [ -f "$file" ]; then
-        # Comment out androidTarget and android{} blocks
-        sed -i '
-            /^\s*androidTarget/s/^/\/\/ /
-            /^\s*android\s*{/,/^\s*}/ {
-                s/^/\/\/ /
-            }
-        ' "$file"
+# Function to comment out Android-related lines in any file
+disable_android_in_file() {
+    local file="$1"
+    
+    # Use awk for more robust pattern matching
+    awk '
+    BEGIN { in_android_block = 0; brace_count = 0 }
+    
+    # Match androidTarget lines
+    /^[[:space:]]*androidTarget/ {
+        print "// " $0
+        if ($0 ~ /{[[:space:]]*$/) {
+            in_android_block = 1
+            brace_count = 1
+        }
+        next
+    }
+    
+    # Match android { blocks
+    /^[[:space:]]*android[[:space:]]*{/ {
+        print "// " $0
+        in_android_block = 1
+        brace_count = 1
+        next
+    }
+    
+    # Handle lines inside android blocks
+    in_android_block {
+        # Count braces
+        for (i = 1; i <= length($0); i++) {
+            char = substr($0, i, 1)
+            if (char == "{") brace_count++
+            if (char == "}") brace_count--
+        }
         
-        echo "  Modified: $file"
-    else
-        echo "  Warning: $file not found"
-    fi
+        print "// " $0
+        
+        # End of block when brace count reaches 0
+        if (brace_count == 0) {
+            in_android_block = 0
+        }
+        next
+    }
+    
+    # Match Android plugin applications
+    /alias\(libs\.plugins\.android\./ {
+        print "// " $0
+        next
+    }
+    
+    # Match kotlin.android plugin
+    /alias\(libs\.plugins\.kotlin\.android\)/ {
+        print "// " $0
+        next
+    }
+    
+    # Match direct android plugin applications
+    /apply\("com\.android\./ {
+        print "// " $0
+        next
+    }
+    
+    # Match Android imports
+    /^import.*android\./ {
+        print "// " $0
+        next
+    }
+    
+    # Match LibraryExtension configuration blocks
+    /configure<LibraryExtension>/ {
+        print "// " $0
+        in_android_block = 1
+        brace_count = 1
+        next
+    }
+    
+    # Print all other lines as-is
+    { print }
+    ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+
+# Find all build.gradle.kts files and process them
+find . -name "build.gradle.kts" -type f | while read -r file; do
+    echo "  Processing: $file"
+    disable_android_in_file "$file"
 done
 
-# Comment out android plugins in root build.gradle.kts
-if [ -f "build.gradle.kts" ]; then
-    sed -i '
-        /alias(libs\.plugins\.android\.application)/s/^/\/\/ /
-        /alias(libs\.plugins\.android\.library)/s/^/\/\/ /
-        /alias(libs\.plugins\.kotlin\.android)/s/^/\/\/ /
-    ' "build.gradle.kts"
-    echo "  Modified: build.gradle.kts"
-fi
-
-# Disable Android in convention plugin
-if [ -f "build-logic/convention/src/main/kotlin/KmpLibraryConventionPlugin.kt" ]; then
-    sed -i '
-        /apply("com\.android\.library")/s/^/\/\/ /
-        /androidTarget\s*{/,/^\s*}/ {
-            s/^/\/\/ /
-        }
-        /configure<LibraryExtension>/,/^\s*}/ {
-            s/^/\/\/ /
-        }
-    ' "build-logic/convention/src/main/kotlin/KmpLibraryConventionPlugin.kt"
-    echo "  Modified: build-logic/convention/src/main/kotlin/KmpLibraryConventionPlugin.kt"
-fi
+# Find all Kotlin files in build-logic and process them
+find build-logic -name "*.kt" -type f | while read -r file; do
+    echo "  Processing: $file"
+    disable_android_in_file "$file"
+done
 
 echo "Android targets disabled for Flatpak build!"

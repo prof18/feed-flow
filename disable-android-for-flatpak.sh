@@ -43,4 +43,18 @@ if [ -f "build.gradle.kts" ]; then
     echo "  Modified: build.gradle.kts"
 fi
 
+# Disable Android in convention plugin
+if [ -f "build-logic/convention/src/main/kotlin/KmpLibraryConventionPlugin.kt" ]; then
+    sed -i '
+        /apply("com\.android\.library")/s/^/\/\/ /
+        /androidTarget\s*{/,/^\s*}/ {
+            s/^/\/\/ /
+        }
+        /configure<LibraryExtension>/,/^\s*}/ {
+            s/^/\/\/ /
+        }
+    ' "build-logic/convention/src/main/kotlin/KmpLibraryConventionPlugin.kt"
+    echo "  Modified: build-logic/convention/src/main/kotlin/KmpLibraryConventionPlugin.kt"
+fi
+
 echo "Android targets disabled for Flatpak build!"

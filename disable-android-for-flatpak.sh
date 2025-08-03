@@ -31,18 +31,28 @@ disable_android_in_file() {
     
     # Handle lines inside android blocks
     in_android_block {
-        # Count braces
-        for (i = 1; i <= length($0); i++) {
-            char = substr($0, i, 1)
-            if (char == "{") brace_count++
-            if (char == "}") brace_count--
+        # Special case: looking for opening brace after val declaration
+        if (brace_count == -1) {
+            if ($0 ~ /{/) {
+                brace_count = 1
+            } else {
+                brace_count = 0
+            }
+        } else {
+            # Count braces normally
+            for (i = 1; i <= length($0); i++) {
+                char = substr($0, i, 1)
+                if (char == "{") brace_count++
+                if (char == "}") brace_count--
+            }
         }
         
         print "// " $0
         
         # End of block when brace count reaches 0
-        if (brace_count == 0) {
+        if (brace_count <= 0) {
             in_android_block = 0
+            brace_count = 0
         }
         next
     }
@@ -71,8 +81,41 @@ disable_android_in_file() {
         next
     }
     
+    # Match debugImplementation lines (Android-specific)
+    /debugImplementation/ {
+        print "// " $0
+        next
+    }
+    
     # Match LibraryExtension configuration blocks
     /configure<LibraryExtension>/ {
+        print "// " $0
+        in_android_block = 1
+        brace_count = 1
+        next
+    }
+    
+    # Match pure Android source sets (not commonJvmAndroid)
+    /^[[:space:]]*androidMain[[:space:]]*{/ {
+        print "// " $0
+        in_android_block = 1
+        brace_count = 1
+        next
+    }
+    
+    /^[[:space:]]*val androidUnitTest/ {
+        print "// " $0
+        in_android_block = 1
+        # Check if opening brace is on same line
+        if ($0 ~ /{/) {
+            brace_count = 1
+        } else {
+            brace_count = -1  # Look for opening brace on next line
+        }
+        next
+    }
+    
+    /^[[:space:]]*androidUnitTest[[:space:]]*{/ {
         print "// " $0
         in_android_block = 1
         brace_count = 1
@@ -95,5 +138,11 @@ find build-logic -name "*.kt" -type f | while read -r file; do
     echo "  Processing: $file"
     disable_android_in_file "$file"
 done
+
+# Handle settings.gradle.kts to exclude androidApp module
+if [ -f "settings.gradle.kts" ]; then
+    echo "  Processing: settings.gradle.kts"
+    sed -i '' 's/^include(":androidApp")/\/\/ include(":androidApp")/' "settings.gradle.kts"
+fi
 
 echo "Android targets disabled for Flatpak build!"

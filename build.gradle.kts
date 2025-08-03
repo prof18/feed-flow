@@ -16,7 +16,7 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.skie) apply false
     alias(libs.plugins.compose.hotreload) apply false
-    alias(libs.plugins.flatpak.gradle.generator) apply false
+    alias(libs.plugins.flatpak.gradle.generator)
 }
 
 tasks.register("clean", Delete::class) {
@@ -29,17 +29,21 @@ subprojects {
             if (project.findProperty("composeCompilerReports") == "true") {
                 freeCompilerArgs = listOf(
                     "-P",
-                    "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${layout.buildDirectory.get().asFile.absolutePath}/compose_compiler"
+                    "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${layout.buildDirectory.get().asFile.absolutePath}/compose_compiler",
                 )
             }
             if (project.findProperty("composeCompilerMetrics") == "true") {
                 freeCompilerArgs = listOf(
                     "-P",
-                    "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${layout.buildDirectory.get().asFile.absolutePath}/compose_compiler"
+                    "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${layout.buildDirectory.get().asFile.absolutePath}/compose_compiler",
                 )
             }
         }
     }
 }
 
-
+tasks.flatpakGradleGenerator {
+    outputFile = project.file("desktopApp/packaging/flatpak/flatpak-sources-root.json")
+    downloadDirectory.set("./offline-repository")
+    excludeConfigurations.set(listOf("testCompileClasspath", "testRuntimeClasspath"))
+}

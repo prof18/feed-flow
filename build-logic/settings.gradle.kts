@@ -2,6 +2,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("./offline-repository") }
     }
     versionCatalogs {
         create("libs") {

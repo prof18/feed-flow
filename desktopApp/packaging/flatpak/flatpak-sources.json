@@ -1485,6 +1485,13 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-avro/2.15.0/jackson-dataformat-avro-2.15.0.pom",
+    "sha512": "77fea5a3a92a8e0538d1fdad7f7ca43e7a5417bb7df24b3507842b001629165f406cdf73bb9ab4735b3636406f9560219ececddfd3309a0f8d4463d45c0f1091",
+    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-avro/2.15.0",
+    "dest-filename": "jackson-dataformat-avro-2.15.0.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jackson-base/2.15.0/jackson-base-2.15.0.pom",
     "sha512": "06cd4b63de5e7cf0c5bf49c028ae3f75f2ba62da1c73801588bfc4a6558a72e9beef08663fdf39192c9845f13f5a6bd19d30e8ada72d069bb3ab8e43f7e55893",
     "dest": "./offline-repository/com/fasterxml/jackson/jackson-base/2.15.0",
@@ -1545,6 +1552,55 @@
     "sha512": "08e1cc341a153f64b670d87831eedfe79a150b8fb7e3a4afbaef54deaa28d2767ae86d12b4f0c5404184360ab8e48a3655e610f3bf2fe6c97a06e9fc3df49b37",
     "dest": "./offline-repository/com/google/code/findbugs/jsr305/3.0.2",
     "dest-filename": "jsr305-3.0.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/google/devtools/ksp/symbol-processing-api/2.2.0-2.0.2/symbol-processing-api-2.2.0-2.0.2.jar",
+    "sha512": "cc2f4272e6fe74ea3ae46c38eb27d3e59f4d2fdb53e8889203293cc63ccfb151d34c804e1657224d9328d2e12ebcbb322ab977a4307faa1ef5acaee6a080b375",
+    "dest": "./offline-repository/com/google/devtools/ksp/symbol-processing-api/2.2.0-2.0.2",
+    "dest-filename": "symbol-processing-api-2.2.0-2.0.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/google/devtools/ksp/symbol-processing-api/2.2.0-2.0.2/symbol-processing-api-2.2.0-2.0.2.module",
+    "sha512": "69493c9a70b2b3d59023efbaebe32ed2cdbc03a6105795a9ad4804235a71c85a954203b184ee13371170f4c8f9024670f3b7cb0c52462c998e75eb5b623c09f6",
+    "dest": "./offline-repository/com/google/devtools/ksp/symbol-processing-api/2.2.0-2.0.2",
+    "dest-filename": "symbol-processing-api-2.2.0-2.0.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/google/devtools/ksp/symbol-processing-api/2.2.0-2.0.2/symbol-processing-api-2.2.0-2.0.2.pom",
+    "sha512": "acb3f4289e3f83f2154aee46d581460f4c40abf0a2fa0e6476bdc18894257a7245b0928c4da0f0a40e00ab37ebb07b702ea8e305104bcae1605bd09f619c88c3",
+    "dest": "./offline-repository/com/google/devtools/ksp/symbol-processing-api/2.2.0-2.0.2",
+    "dest-filename": "symbol-processing-api-2.2.0-2.0.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/google/devtools/ksp/symbol-processing-cmdline/2.2.0-2.0.2/symbol-processing-cmdline-2.2.0-2.0.2.jar",
+    "sha512": "84b73e13a1c5a0460512d7cdce30759b580151c3be2145a5972e07785239a3f17f8e29ec189dc8ce727a24fb703353cf21a4fd54925aec3e440bbd9d2739f106",
+    "dest": "./offline-repository/com/google/devtools/ksp/symbol-processing-cmdline/2.2.0-2.0.2",
+    "dest-filename": "symbol-processing-cmdline-2.2.0-2.0.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/google/devtools/ksp/symbol-processing-cmdline/2.2.0-2.0.2/symbol-processing-cmdline-2.2.0-2.0.2.pom",
+    "sha512": "b66bac2855d95f3c7ecea03d8c45334d2d48e13b501e9295760cd47bf0afa3aa97da4930d89ff734df18d9c05cbbc4e7ef3f4a2a7c8f2ae318043614237c782a",
+    "dest": "./offline-repository/com/google/devtools/ksp/symbol-processing-cmdline/2.2.0-2.0.2",
+    "dest-filename": "symbol-processing-cmdline-2.2.0-2.0.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/google/devtools/ksp/symbol-processing/2.2.0-2.0.2/symbol-processing-2.2.0-2.0.2.jar",
+    "sha512": "0246870c2f8f749c037b02d2ba90e8da157610b67c1c51773f4c035518f269a98ab973090fd840e68d559ba65c61eb552da6e0f1829ede40332a5217c7b9f4a1",
+    "dest": "./offline-repository/com/google/devtools/ksp/symbol-processing/2.2.0-2.0.2",
+    "dest-filename": "symbol-processing-2.2.0-2.0.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/google/devtools/ksp/symbol-processing/2.2.0-2.0.2/symbol-processing-2.2.0-2.0.2.pom",
+    "sha512": "5608226048a9dc4974afdc2cf2574ee374ca14c50fada4992ece7b4414df95ce52da0ffcbd89467dc07a3e17800c745e99bc28e77fba6d65fc448068c714deaa",
+    "dest": "./offline-repository/com/google/devtools/ksp/symbol-processing/2.2.0-2.0.2",
+    "dest-filename": "symbol-processing-2.2.0-2.0.2.pom"
   },
   {
     "type": "file",
@@ -7680,6 +7736,13 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-bom/1.6.3/kotlinx-serialization-bom-1.6.3.pom",
+    "sha512": "630358d6bbc2936593368444b426b5e4dab3ea8defe5b582d2e7556bc22108a9ada34fcd09302bcdeaca739de2fad21a89848088fb0f016be2c3f52e15ea76a8",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-bom/1.6.3",
+    "dest-filename": "kotlinx-serialization-bom-1.6.3.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-bom/1.8.1/kotlinx-serialization-bom-1.8.1.pom",
     "sha512": "f803ed322b63adf2ecc516a14e5acdbdcec96088519320ab9d18cda5d7ca5afcdbae7e2c77262b2cd25bbed5f096902c10c90369f1ffe3d2504a7fea60e6e55e",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-bom/1.8.1",
@@ -7694,10 +7757,24 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-cbor-jvm/1.6.3/kotlinx-serialization-cbor-jvm-1.6.3.pom",
+    "sha512": "06e295f95d626eb0f3ad3f09678d431b203f285d593a3ab5706eb5f96cbb42d6773c990d9fe436d4c897c47ff451bc60c5ba4d4d5f7c176e7d75d16b5207facf",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-cbor-jvm/1.6.3",
+    "dest-filename": "kotlinx-serialization-cbor-jvm-1.6.3.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-cbor-jvm/1.9.0/kotlinx-serialization-cbor-jvm-1.9.0.pom",
     "sha512": "2ffee035430d1049f509ca6d98e940493ca534b3a34f61c73aa29a7508eb2dd10932fe7a01489e06cad7278fdfeeb21bbdf37f476a4feceb3031649ca85e4264",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-cbor-jvm/1.9.0",
     "dest-filename": "kotlinx-serialization-cbor-jvm-1.9.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-cbor/1.6.3/kotlinx-serialization-cbor-1.6.3.pom",
+    "sha512": "e6c8df485c95d772a80adf7d561e8d5c7188a9a9a14f76b237f2cfd54c2073d6a8eca5cec919666af861cfddaf84480e35600b2a6aebb8ff2a671695d040fe81",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-cbor/1.6.3",
+    "dest-filename": "kotlinx-serialization-cbor-1.6.3.pom"
   },
   {
     "type": "file",
@@ -7726,6 +7803,27 @@
     "sha512": "4139f92e8d3aec7e8a3df895c16c9fc231ef628502efc40e6a01f4a216d94461ba24b245646d5ba5e00068b3390533251bc0e458107f6ffe16737e540360350c",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.4.1",
     "dest-filename": "kotlinx-serialization-core-jvm-1.4.1.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar",
+    "sha512": "ea9d9ca6e1bdd6966d0d41996de09fa3ffee3d030ed405ffdc1a0b412e0b68a8ae7d4f5a391a8a1e52bdd135a321f78e4423c92c03727dae79a6619633a1b0b7",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3",
+    "dest-filename": "kotlinx-serialization-core-jvm-1.6.3.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.module",
+    "sha512": "d8a975dcf86d98b1036023245d5e0d8f0f68318c597219d6eceeaf69beab12e48e76f83559bd2d5a5e7415ea0fc5cd3166fbdd42038bc6d61bb1b346f11ca4aa",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3",
+    "dest-filename": "kotlinx-serialization-core-jvm-1.6.3.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.pom",
+    "sha512": "23f6380152cba7b53ad035364814f607e2e7cf89120d0453bee721e3f9c513f267255ac8a5fccd8ef41f9b9f24bfc3784792ad5cbe09605ac358988541874cc0",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3",
+    "dest-filename": "kotlinx-serialization-core-jvm-1.6.3.pom"
   },
   {
     "type": "file",
@@ -7764,6 +7862,20 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core/1.6.3/kotlinx-serialization-core-1.6.3.module",
+    "sha512": "12018985c9ce5f2a84635d7316d98f6fac7f5b14cb8fbb52011be469a70b3954b4185a84fdf612c59baae80e69db94ece6e99503bc007f7619176dab7bccfe35",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core/1.6.3",
+    "dest-filename": "kotlinx-serialization-core-1.6.3.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core/1.6.3/kotlinx-serialization-core-1.6.3.pom",
+    "sha512": "331d983640f508b29bf7e888b0d125753f1aa4cd19188b208b376055a83d76f70b5c68a1e1ae1f70562b65f27b4d5ce6080d396d4ae5ec90daf95179bcc1b2ca",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core/1.6.3",
+    "dest-filename": "kotlinx-serialization-core-1.6.3.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core/1.9.0/kotlinx-serialization-core-1.9.0.jar",
     "sha512": "568773de093d78be9afa19ec0c27d80d43e436be93db0d401a18869c833eb4757cddd42341fe509e5dc2f73d7cc6a265e06bcd134f08a0c2b676241453d2ba8e",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core/1.9.0",
@@ -7782,6 +7894,13 @@
     "sha512": "44d0860121fc35b62e781e925d0185847673b76a5997f5f34f65349f9685040dcdc6cd400b6c16782c5511fafed37520797bd8aaa008cfcdd594b625f878da9e",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core/1.9.0",
     "dest-filename": "kotlinx-serialization-core-1.9.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-hocon/1.6.3/kotlinx-serialization-hocon-1.6.3.pom",
+    "sha512": "982823e4d4cbe908f8d81eb7b2c3ab1501d7150c2b5eb13c4aef90fb658b79229d9b995b21bdab29c2b16725180289c4cbb2f99560d59b9c52cc8f77a4b9c7de",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-hocon/1.6.3",
+    "dest-filename": "kotlinx-serialization-hocon-1.6.3.pom"
   },
   {
     "type": "file",
@@ -7869,6 +7988,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.jar",
+    "sha512": "55a3efc812efbf323ea0eff04a4a4f1186e508313c59b4ba7a49f7e980bd7905831a3ba77ce4ba9b4049f77ab03380852d9feec4a844f28a1ed92253fd5d6f09",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3",
+    "dest-filename": "kotlinx-serialization-json-jvm-1.6.3.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.module",
+    "sha512": "051a79a70e84802284efb3b63c6b6f88e93a61d65c89fcd374a75d2f7807bdbafdc2453bad2f7a45c9340457a7ac4e887ac522730e53cb5042f9759e1d1822f9",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3",
+    "dest-filename": "kotlinx-serialization-json-jvm-1.6.3.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.pom",
+    "sha512": "cace27bfcc8f80acf73e5bc2515cad41cc85f359e835625a6ba6aa78f26d6e6235565fa2764d91960ed85a903cd6f410e96a4a7fdc22af85173d49cdf18c0845",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3",
+    "dest-filename": "kotlinx-serialization-json-jvm-1.6.3.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.9.0/kotlinx-serialization-json-jvm-1.9.0.jar",
     "sha512": "a2abfcf5751c4c5c5cc0f37e9200794f22d0c28daa76a6a8edfed4bebd8375e2e49b263671ef86b4ec2925079970b8424cf3971f47eae03914f5b3cee48459fa",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.9.0",
@@ -7890,10 +8030,24 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json-okio-jvm/1.6.3/kotlinx-serialization-json-okio-jvm-1.6.3.pom",
+    "sha512": "26505b729a8844c52bab5f40487541f3456de5a531d5292972b56593d0747b0bcc97b915cf8dc0ef4f5076182e2c2d1bff9d3364c3971df6f259be17581389b5",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json-okio-jvm/1.6.3",
+    "dest-filename": "kotlinx-serialization-json-okio-jvm-1.6.3.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json-okio-jvm/1.9.0/kotlinx-serialization-json-okio-jvm-1.9.0.pom",
     "sha512": "bc8dc1c7bcf69f5b6a814970c0f0704cdea9b548d78e8533398295f8dbd38176773149cf65a0d14735cd99e67b72b5c72f4946ca5fc0f73ab677bf6d2d6907ef",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json-okio-jvm/1.9.0",
     "dest-filename": "kotlinx-serialization-json-okio-jvm-1.9.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json-okio/1.6.3/kotlinx-serialization-json-okio-1.6.3.pom",
+    "sha512": "6ecfaf2373f6fafba9948936e13be15297873bf9e38c30a72cb028462590f43e9d9bf6c4658e9d7ea38d3a3f7e30cc7d73c27e5797015deaa8849355b533b2ea",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json-okio/1.6.3",
+    "dest-filename": "kotlinx-serialization-json-okio-1.6.3.pom"
   },
   {
     "type": "file",
@@ -7918,6 +8072,20 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3.module",
+    "sha512": "9f6ad57288c0eaafa25150456d41f73fdb958addc30cba8ed8a4966e4253f749c6500f983fdec04119067fac10faeb3bc2b7310509a9ad305cdfdad86afe34db",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3",
+    "dest-filename": "kotlinx-serialization-json-1.6.3.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3.pom",
+    "sha512": "86db03b62c9708cee8e862067b4db3ad0379025d85a80e9a4353c2065f79a21bdf5e2e3be8ea43027cdf0a7184fc8d579948c2098e8f8ba2f84ccd46eb490bec",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3",
+    "dest-filename": "kotlinx-serialization-json-1.6.3.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.9.0/kotlinx-serialization-json-1.9.0.jar",
     "sha512": "45ad0c69d98f2bdb69406e64d058516a42f3bafa77a0b53ce706af36ab460e4392f6547ca0e78ff3d348705c18820f1402764d814c23c1300e617f134891e68c",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json/1.9.0",
@@ -7939,10 +8107,24 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-properties-jvm/1.6.3/kotlinx-serialization-properties-jvm-1.6.3.pom",
+    "sha512": "8046c3c8abd08ee24960debe8d3168452b4346ec6b5170b57387ab2114cfad4ee5956accc7002e9c8b7f3867f8a5894a55a6f23825582319989ed6d035b4bbe4",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-properties-jvm/1.6.3",
+    "dest-filename": "kotlinx-serialization-properties-jvm-1.6.3.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-properties-jvm/1.9.0/kotlinx-serialization-properties-jvm-1.9.0.pom",
     "sha512": "c60c9a6eda280c2c00a64b18bf500f02e81b23ad8a4a192f079696cadb2a909305208ec6bdba74ba0a9dca1b8cf7982f72aa078d1970e1d6d96259e6e5706bf0",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-properties-jvm/1.9.0",
     "dest-filename": "kotlinx-serialization-properties-jvm-1.9.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-properties/1.6.3/kotlinx-serialization-properties-1.6.3.pom",
+    "sha512": "7c6399184fa299596752fdf786c536a897bc321b8dbd8601f34b6bbc5875efd9691fac09057caf5f2e19bbcedad15c8f375ccc56d8af5058996f868ea9aec4cf",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-properties/1.6.3",
+    "dest-filename": "kotlinx-serialization-properties-1.6.3.pom"
   },
   {
     "type": "file",
@@ -7953,10 +8135,24 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-protobuf-jvm/1.6.3/kotlinx-serialization-protobuf-jvm-1.6.3.pom",
+    "sha512": "3ceaed2552d94257ad728a2c4effded5692975c557f6d24c3239c4fa255e4212def941bc98d4fd3b2a456daf497961b09d7aff5f2d78f311869ca7716786175b",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-protobuf-jvm/1.6.3",
+    "dest-filename": "kotlinx-serialization-protobuf-jvm-1.6.3.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-protobuf-jvm/1.9.0/kotlinx-serialization-protobuf-jvm-1.9.0.pom",
     "sha512": "e63c235778cde2e1ee675ad836e91c9c62cd7e9e3c3da16c363a62fe23f3133d8090bb45f7aa8377c98e209654c79445923150297fb3cc158f4597f0d914420c",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-protobuf-jvm/1.9.0",
     "dest-filename": "kotlinx-serialization-protobuf-jvm-1.9.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-protobuf/1.6.3/kotlinx-serialization-protobuf-1.6.3.pom",
+    "sha512": "ac90e51f0f4a8a33c460adc8ea8465318b644cbfd1bf5dca4ddfd27c2da44931cff68103634e6e2d2310ee5e85e7289e0c22384bfca01b751db31bb8ba62502f",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-protobuf/1.6.3",
+    "dest-filename": "kotlinx-serialization-protobuf-1.6.3.pom"
   },
   {
     "type": "file",

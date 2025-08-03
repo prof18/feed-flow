@@ -1,6 +1,6 @@
 dependencyResolutionManagement {
     repositories {
-        maven { url = uri("./offline-repository") }
+        maven { url = uri("../offline-repository") }
         google()
         mavenCentral()
     }

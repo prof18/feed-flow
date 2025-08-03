@@ -3,14 +3,15 @@ pluginManagement {
     repositories {
         google()
         gradlePluginPortal()
-        mavenCentral()
         maven { url = uri("./offline-repository") }
+        mavenCentral()
     }
 }
 
 dependencyResolutionManagement {
     repositories {
         google()
+        maven { url = uri("./offline-repository") }
         mavenCentral()
         maven {
             url = uri("https://jitpack.io")
@@ -21,7 +22,6 @@ dependencyResolutionManagement {
                 includeModule("com.github.prof18", "lyricist")
             }
         }
-        maven { url = uri("./offline-repository") }
     }
 }
 

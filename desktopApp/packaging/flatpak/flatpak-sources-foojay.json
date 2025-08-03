@@ -19,5 +19,26 @@
     "sha512": "57b924377d3c62fe9b5758c662f0d51c96bb2790b47551225958888d47abd2b04d1741c8b2d845001b3c5e1442f19c47864de11dbfa89f45bfa961521e696e20",
     "dest": "./offline-repository/org/gradle/toolchains/foojay-resolver-convention/org.gradle.toolchains.foojay-resolver-convention.gradle.plugin/1.0.0",
     "dest-filename": "org.gradle.toolchains.foojay-resolver-convention.gradle.plugin-1.0.0.pom"
-  }
+  },
+    {
+      "type": "file",
+      "url": "https://plugins.gradle.org/m2/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar",
+      "sha512": "5dbe7a697511cfbe44f3ffb954e32e997677ecc61f03bb7bb374f1b8fa4a931a95cd9d1f5288eb5d42e2aa380e3241b35059786c07edc48e5aa67c30cddad8a5",
+      "dest": "./offline-repository/com/google/guava/guava/32.0.1-jre",
+      "dest-filename": "guava-32.0.1-jre.jar"
+    },
+    {
+      "type": "file",
+      "url": "https://plugins.gradle.org/m2/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.pom",
+      "sha512": "b328ea0da831ac28d35f1501e6649502c75687e316c546da0193190105bba074eb6080e6f6b67a11812dfba87a172df67ac653b3a690af5bdbeed44e4e7caa50 ",
+      "dest": "./offline-repository/com/google/guava/guava/32.0.1-jre",
+      "dest-filename": "guava-32.0.1-jre.pom"
+    },
+    {
+      "type": "file",
+      "url": "https://plugins.gradle.org/m2/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.module",
+      "sha512": "91083a7d6f1ff711c32d516d8c6040280087a91508498555ade6105e930e15360965c273fbe10cd72807a18a384eb3e2daf1f9a37c24744d253bf520dae37d5a",
+      "dest": "./offline-repository/com/google/guava/guava/32.0.1-jre",
+      "dest-filename": "guava-32.0.1-jre.module"
+    }
 ]

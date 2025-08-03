@@ -87,6 +87,12 @@ disable_android_in_file() {
         next
     }
     
+    # Match android gradle plugin dependencies
+    /libs\.android\.gradle\.plugin/ {
+        print "// " $0
+        next
+    }
+    
     # Match LibraryExtension configuration blocks
     /configure<LibraryExtension>/ {
         print "// " $0

@@ -1,17 +1,17 @@
 pluginManagement {
     includeBuild("build-logic")
     repositories {
+        maven { url = uri("./offline-repository") }
         google()
         gradlePluginPortal()
-        maven { url = uri("./offline-repository") }
         mavenCentral()
     }
 }
 
 dependencyResolutionManagement {
     repositories {
-        google()
         maven { url = uri("./offline-repository") }
+        google()
         mavenCentral()
         maven {
             url = uri("https://jitpack.io")

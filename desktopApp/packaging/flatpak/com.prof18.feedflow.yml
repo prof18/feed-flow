@@ -55,5 +55,5 @@ modules:
         dest-filename: "gradle-bin.zip"
       - flatpak-sources.json
       - flatpak-sources-convention.json
-      - flatpak-sources-foojay.json
+      - flatpak-sources-manual.json
       - flatpak-sources-root.json

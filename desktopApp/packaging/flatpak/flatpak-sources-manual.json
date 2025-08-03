@@ -20,25 +20,25 @@
     "dest": "./offline-repository/org/gradle/toolchains/foojay-resolver-convention/org.gradle.toolchains.foojay-resolver-convention.gradle.plugin/1.0.0",
     "dest-filename": "org.gradle.toolchains.foojay-resolver-convention.gradle.plugin-1.0.0.pom"
   },
-    {
-      "type": "file",
-      "url": "https://plugins.gradle.org/m2/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar",
-      "sha512": "5dbe7a697511cfbe44f3ffb954e32e997677ecc61f03bb7bb374f1b8fa4a931a95cd9d1f5288eb5d42e2aa380e3241b35059786c07edc48e5aa67c30cddad8a5",
-      "dest": "./offline-repository/com/google/guava/guava/32.0.1-jre",
-      "dest-filename": "guava-32.0.1-jre.jar"
-    },
-    {
-      "type": "file",
-      "url": "https://plugins.gradle.org/m2/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.pom",
-      "sha512": "b328ea0da831ac28d35f1501e6649502c75687e316c546da0193190105bba074eb6080e6f6b67a11812dfba87a172df67ac653b3a690af5bdbeed44e4e7caa50",
-      "dest": "./offline-repository/com/google/guava/guava/32.0.1-jre",
-      "dest-filename": "guava-32.0.1-jre.pom"
-    },
-    {
-      "type": "file",
-      "url": "https://plugins.gradle.org/m2/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.module",
-      "sha512": "91083a7d6f1ff711c32d516d8c6040280087a91508498555ade6105e930e15360965c273fbe10cd72807a18a384eb3e2daf1f9a37c24744d253bf520dae37d5a",
-      "dest": "./offline-repository/com/google/guava/guava/32.0.1-jre",
-      "dest-filename": "guava-32.0.1-jre.module"
-    }
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/app/cash/sqldelight/compiler-env/2.1.0/compiler-env-2.1.0.jar",
+    "sha512": "5a189443ce46c5ec1f48cdf5b45b414b48e263ee28417dd5618f9ecd9b5614bd1498ac6bc936527aba1539d633370a7d1513c7cb515ce7b5ee11dd89181b29c0",
+    "dest": "./offline-repository/app/cash/sqldelight/compiler-env/2.1.0",
+    "dest-filename": "compiler-env-2.1.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/app/cash/sqldelight/compiler-env/2.1.0/compiler-env-2.1.0.pom",
+    "sha512": "c81507b5a3902812e856c7e4ce858d14f85626087ab9256064d9f174312c68cfa17d8879edcd7d23e6fb8561f341519b44752a86b26bde7d565b93212c005c8b",
+    "dest": "./offline-repository/app/cash/sqldelight/compiler-env/2.1.0",
+    "dest-filename": "compiler-env-2.1.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/app/cash/sqldelight/compiler-env/2.1.0/compiler-env-2.1.0.module",
+    "sha512": "12e493a9db0e98a6f9225f3e0867c4c7a28e550364d0066f3c9c935028f523aaa5a5f02ba9bcbf35a6aff7e838a1483e8a41a59dac682c8c290468f167d6d83c",
+    "dest": "./offline-repository/app/cash/sqldelight/compiler-env/2.1.0",
+    "dest-filename": "compiler-env-2.1.0.module"
+  }
 ]

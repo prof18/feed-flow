@@ -142,7 +142,8 @@ done
 # Handle settings.gradle.kts to exclude androidApp module
 if [ -f "settings.gradle.kts" ]; then
     echo "  Processing: settings.gradle.kts"
-    sed -i '' 's/^include(":androidApp")/\/\/ include(":androidApp")/' "settings.gradle.kts"
+    # Use portable sed syntax that works on both Linux and macOS
+    sed 's/^include(":androidApp")/\/\/ include(":androidApp")/' "settings.gradle.kts" > "settings.gradle.kts.tmp" && mv "settings.gradle.kts.tmp" "settings.gradle.kts"
 fi
 
 echo "Android targets disabled for Flatpak build!"

@@ -30,7 +30,7 @@
     {
       "type": "file",
       "url": "https://plugins.gradle.org/m2/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.pom",
-      "sha512": "b328ea0da831ac28d35f1501e6649502c75687e316c546da0193190105bba074eb6080e6f6b67a11812dfba87a172df67ac653b3a690af5bdbeed44e4e7caa50 ",
+      "sha512": "b328ea0da831ac28d35f1501e6649502c75687e316c546da0193190105bba074eb6080e6f6b67a11812dfba87a172df67ac653b3a690af5bdbeed44e4e7caa50",
       "dest": "./offline-repository/com/google/guava/guava/32.0.1-jre",
       "dest-filename": "guava-32.0.1-jre.pom"
     },

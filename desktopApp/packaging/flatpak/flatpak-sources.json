@@ -848,6 +848,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/lyricist/lyricist-core-desktop/1.7.0/lyricist-core-desktop-1.7.0.jar",
+    "sha512": "d36f99ac949128243033da7a66e125125a33c15f1f6eb3399238e3aa1cb8207cdb22765d12be345fc680b69472a99a71550991541806b0a75866c6e89192a621",
+    "dest": "./offline-repository/cafe/adriel/lyricist/lyricist-core-desktop/1.7.0",
+    "dest-filename": "lyricist-core-desktop-1.7.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/lyricist/lyricist-core-desktop/1.7.0/lyricist-core-desktop-1.7.0.module",
+    "sha512": "526831e53087a910341b0eec480b803a1fd2057c3b9c82aceb730fa96c3da005e82be966434fdf3561d8fa17ab7cf540b3c65f45c41e8f7c266e68f7b85e455f",
+    "dest": "./offline-repository/cafe/adriel/lyricist/lyricist-core-desktop/1.7.0",
+    "dest-filename": "lyricist-core-desktop-1.7.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/lyricist/lyricist-core-desktop/1.7.0/lyricist-core-desktop-1.7.0.pom",
+    "sha512": "35be883af98ad9a86b1d50627a09ad53c1afce96420e015349f7eb1997004609432171095dfed60414449e2df89c51f74073c7e588b11ba431f9116087ad4164",
+    "dest": "./offline-repository/cafe/adriel/lyricist/lyricist-core-desktop/1.7.0",
+    "dest-filename": "lyricist-core-desktop-1.7.0.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/cafe/adriel/lyricist/lyricist-core/1.7.0/lyricist-core-1.7.0.jar",
     "sha512": "68af56b4816442615131de3d52094b93e093ff6b8e23a3deae589b7e325e16b52027c14910aede8e5e3b58a3904ae49bcef89650231bb6828b1f214f7509c812",
     "dest": "./offline-repository/cafe/adriel/lyricist/lyricist-core/1.7.0",
@@ -866,6 +887,27 @@
     "sha512": "be36fdf04f823af3b10c67933cd92d493e0eb315b0ae132acd5e3e72e01022b8a0493f01d2e81abbb7667c44ea79a843b76d5c586e2834273f732664291cf43a",
     "dest": "./offline-repository/cafe/adriel/lyricist/lyricist-core/1.7.0",
     "dest-filename": "lyricist-core-1.7.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/lyricist/lyricist-desktop/1.7.0/lyricist-desktop-1.7.0.jar",
+    "sha512": "ab55c36efda383ba075ccfdcd788a960f209c49b866abd82009ad59711e097d5f29bf13883841ec0ec9176868a3c01d79dca7ea91f3f535e23077806d1382d0b",
+    "dest": "./offline-repository/cafe/adriel/lyricist/lyricist-desktop/1.7.0",
+    "dest-filename": "lyricist-desktop-1.7.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/lyricist/lyricist-desktop/1.7.0/lyricist-desktop-1.7.0.module",
+    "sha512": "75bf4a167999f17cf051c8c01015669adfbc2fdfc0b9a4a1698f41d337803cbff73d7ec11cda8a9c71c481af24a2c98ce9da069f409c8dea7da1de725ae30e36",
+    "dest": "./offline-repository/cafe/adriel/lyricist/lyricist-desktop/1.7.0",
+    "dest-filename": "lyricist-desktop-1.7.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/lyricist/lyricist-desktop/1.7.0/lyricist-desktop-1.7.0.pom",
+    "sha512": "836a646406e3bb46a73bf76871545557571cda2548ab5a962592bb1157d90856ad6aaa7d2ebefaf8a8c33724af98aaa3e6d06601dd8080de3da295535ea94637",
+    "dest": "./offline-repository/cafe/adriel/lyricist/lyricist-desktop/1.7.0",
+    "dest-filename": "lyricist-desktop-1.7.0.pom"
   },
   {
     "type": "file",
@@ -890,6 +932,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-core-desktop/1.0.1/voyager-core-desktop-1.0.1.jar",
+    "sha512": "58a88df0660e7cc4978ca840a0d5a91002d89c8c3d17894b568533a86eaa63cdf0b6641aa2c6ea03ec39d9f993aa178f480af4d49085eeda06768ab4ab52c104",
+    "dest": "./offline-repository/cafe/adriel/voyager/voyager-core-desktop/1.0.1",
+    "dest-filename": "voyager-core-desktop-1.0.1.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-core-desktop/1.0.1/voyager-core-desktop-1.0.1.module",
+    "sha512": "1e620ab45396a5c9791f4b867570631236666f5a8114323f513e0b329991213e390bf24fffcd719f1122028268d11c9b5674ab6141e8f1e25ad1cf7a667fb90c",
+    "dest": "./offline-repository/cafe/adriel/voyager/voyager-core-desktop/1.0.1",
+    "dest-filename": "voyager-core-desktop-1.0.1.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-core-desktop/1.0.1/voyager-core-desktop-1.0.1.pom",
+    "sha512": "738e69cbddcab0a9e941feec52dff391f687e51297489052ea9aae48a4722fd266d12e81b8c8c9f0ecd809fd81348b781b5be69b8f0c0e3a984365f116e03af1",
+    "dest": "./offline-repository/cafe/adriel/voyager/voyager-core-desktop/1.0.1",
+    "dest-filename": "voyager-core-desktop-1.0.1.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-core/1.0.1/voyager-core-1.0.1.jar",
     "sha512": "ca8f111ed6d479d145fcbab99eb3813a82e8337d60c6178ee4090bdb97ff1a66d365cb692fa8d5cad1d79e01a247dd7a94feec8a8d479a5098cedaeb495476fe",
     "dest": "./offline-repository/cafe/adriel/voyager/voyager-core/1.0.1",
@@ -911,6 +974,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-navigator-desktop/1.0.1/voyager-navigator-desktop-1.0.1.jar",
+    "sha512": "cca172210edaf58fb6aea2fe4c998ffd965a20a14d9339ead70358e3c70d04add86e23d8a15135d2a1f07fa385a438ab0b0f8df262a6c9bd1c0be18240252b27",
+    "dest": "./offline-repository/cafe/adriel/voyager/voyager-navigator-desktop/1.0.1",
+    "dest-filename": "voyager-navigator-desktop-1.0.1.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-navigator-desktop/1.0.1/voyager-navigator-desktop-1.0.1.module",
+    "sha512": "70b68370eb6b539ff60abe4c588c0273b35582eb53eab3f1ed3e22b866cf5f4f209288f371a849a6b92d470701fa54d65c36a0a5a55a493292e09a46dff6a4d7",
+    "dest": "./offline-repository/cafe/adriel/voyager/voyager-navigator-desktop/1.0.1",
+    "dest-filename": "voyager-navigator-desktop-1.0.1.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-navigator-desktop/1.0.1/voyager-navigator-desktop-1.0.1.pom",
+    "sha512": "4b0a06b8390c3d795ae2d656069cb49c3bbe1edac2194dd71b45cab9e87ba8a8699737c617f7632b3f0915875f20adaa35e473cc35fea4e1247f55e62bb21c74",
+    "dest": "./offline-repository/cafe/adriel/voyager/voyager-navigator-desktop/1.0.1",
+    "dest-filename": "voyager-navigator-desktop-1.0.1.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-navigator/1.0.1/voyager-navigator-1.0.1.jar",
     "sha512": "75a85e5c8989701bd16a78ffd43224503d3c46c8285d3e3f35f56687eb61e119e02f10aa2faa8f8663efd4cdf06471e9bc37bc377113c26b605a5cd91be49988",
     "dest": "./offline-repository/cafe/adriel/voyager/voyager-navigator/1.0.1",
@@ -929,6 +1013,27 @@
     "sha512": "cda4c11b2f6c886cb3adc43ecd23f374817565e64b291e12c7f2fb914f63300aaef305ceb1f4ef4815622e76a313b313d79dbae938437e935a9dd2c6d4c1108b",
     "dest": "./offline-repository/cafe/adriel/voyager/voyager-navigator/1.0.1",
     "dest-filename": "voyager-navigator-1.0.1.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-transitions-desktop/1.0.1/voyager-transitions-desktop-1.0.1.jar",
+    "sha512": "17bc7c14181f4d873759e4b51e33df0116aead47d16e447b0faa88860f6d253f123f56f0db60db574e6e064fae93ce5f2155b7b5b32d14417c0aaabb4f987a82",
+    "dest": "./offline-repository/cafe/adriel/voyager/voyager-transitions-desktop/1.0.1",
+    "dest-filename": "voyager-transitions-desktop-1.0.1.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-transitions-desktop/1.0.1/voyager-transitions-desktop-1.0.1.module",
+    "sha512": "00a98166e27aa7874b30228a2ddaf0ba45507c5b835da14711bd97819d03491f14e3d0cc7f77434013e09593a76f49c6aa01b675b77f756d8545165202ac1902",
+    "dest": "./offline-repository/cafe/adriel/voyager/voyager-transitions-desktop/1.0.1",
+    "dest-filename": "voyager-transitions-desktop-1.0.1.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/cafe/adriel/voyager/voyager-transitions-desktop/1.0.1/voyager-transitions-desktop-1.0.1.pom",
+    "sha512": "788628c75e25828dfb35c95b06364ae8230fd98e529fe71c56a1158396699428f6fdf004f82338a698d2265f7312220a4fb0bcea6be12946540b5f7a5fab7a13",
+    "dest": "./offline-repository/cafe/adriel/voyager/voyager-transitions-desktop/1.0.1",
+    "dest-filename": "voyager-transitions-desktop-1.0.1.pom"
   },
   {
     "type": "file",
@@ -1373,185 +1478,10 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-avro/2.15.0/jackson-dataformat-avro-2.15.0.pom",
-    "sha512": "77fea5a3a92a8e0538d1fdad7f7ca43e7a5417bb7df24b3507842b001629165f406cdf73bb9ab4735b3636406f9560219ececddfd3309a0f8d4463d45c0f1091",
-    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-avro/2.15.0",
-    "dest-filename": "jackson-dataformat-avro-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.15.0/jackson-dataformat-cbor-2.15.0.pom",
-    "sha512": "9b2e861427adbcf4e6267e37d0b1b0c68bfff31937711f5b3291798bb1990bcbef25352d63cf7796797069f97caced22a80c76f7da39195f4e662c3a95468918",
-    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.15.0",
-    "dest-filename": "jackson-dataformat-cbor-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-csv/2.15.0/jackson-dataformat-csv-2.15.0.pom",
-    "sha512": "dd07030bc19a137081da2e12de68c81d93b434fbac9f5c98f7f9879dcd302048ffd234e4c12771a137ef0faaeafb274f01f68ef9912aa92bc27c80eb099d6247",
-    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-csv/2.15.0",
-    "dest-filename": "jackson-dataformat-csv-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-ion/2.15.0/jackson-dataformat-ion-2.15.0.pom",
-    "sha512": "183b14c013a43263241745a6142681f4ee4b888014602ef844a8ae0b7e7ebb264c80cd91228e09ee5a8769fca81cb77ba06cf3ea8b2ac00d3ebb15f121507ab4",
-    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-ion/2.15.0",
-    "dest-filename": "jackson-dataformat-ion-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-properties/2.15.0/jackson-dataformat-properties-2.15.0.pom",
-    "sha512": "1cfc84e54d53e8cbb5527f4e2130e2240772e01b00dee92ca787f4a3afb48b27eb54e6f6aad8cf378ce4744597178fc77df58ed35386e499835336e9f8741f33",
-    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-properties/2.15.0",
-    "dest-filename": "jackson-dataformat-properties-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-protobuf/2.15.0/jackson-dataformat-protobuf-2.15.0.pom",
-    "sha512": "ae9d9c942f30b6bfa4c3774a0e48885ffed380ebb2a30df5ae66b7b7d2cb07d78762080a4a7c8c225651f667c92877a208c2a8df7cc05fea4460198ff6c878f6",
-    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-protobuf/2.15.0",
-    "dest-filename": "jackson-dataformat-protobuf-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-smile/2.15.0/jackson-dataformat-smile-2.15.0.pom",
-    "sha512": "74648a01045be87cda91774124c135bdd627401448d7e9a99ada0173877a42bf039d35784cbd8c46c1072e054737cb05ac8197569b3fc9d8a745be328b4f2e7f",
-    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-smile/2.15.0",
-    "dest-filename": "jackson-dataformat-smile-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-toml/2.15.0/jackson-dataformat-toml-2.15.0.pom",
-    "sha512": "d50ec131ae5e8b02af2e41fb16ed1f493ac13ec06207c373a050e4994c5ed4b6bca7efb93fac82b744d92870b01dc3c920531ccfc372ec9be34baf54e8f667e8",
-    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-toml/2.15.0",
-    "dest-filename": "jackson-dataformat-toml-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.15.0/jackson-dataformat-xml-2.15.0.pom",
-    "sha512": "07eb494c31de47bd27e9b8cb0707418c88e52fec46aa5fa62873a8a59ee1f5b2c003ba3926c17466140edf37db70bb8a60106cd2ad960e914da022957515c9aa",
-    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.15.0",
-    "dest-filename": "jackson-dataformat-xml-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.15.0/jackson-dataformat-yaml-2.15.0.pom",
-    "sha512": "eae8b67052657f2071c9bbe90dddace7bb105340069d0f2e2b9d4876984dfe392ae4b9dc9565dc5d13260b7fb92b1071abe81f26811cad42e7e5a872d76dd59e",
-    "dest": "./offline-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.15.0",
-    "dest-filename": "jackson-dataformat-yaml-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-eclipse-collections/2.15.0/jackson-datatype-eclipse-collections-2.15.0.pom",
-    "sha512": "d452dd3ec4bc58105fdbb9762cddd91ef39de4a04328fbf75e812c236b3345188bd609da46fa29f90de2e723948560b6c915730221ca558d4768790e05270990",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-eclipse-collections/2.15.0",
-    "dest-filename": "jackson-datatype-eclipse-collections-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-guava/2.15.0/jackson-datatype-guava-2.15.0.pom",
-    "sha512": "168de90da6c5e36a7f203d32de0774e2e8da7f8b90eee96777952c48c662bc6ca8c78d441bde5dc06d96768a971a919c88fade8fddc0292fac74469526f7b0f8",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-guava/2.15.0",
-    "dest-filename": "jackson-datatype-guava-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-hibernate4/2.15.0/jackson-datatype-hibernate4-2.15.0.pom",
-    "sha512": "cb1c4dc0f41d0659835f3fec29b7b6c8191175247a3b7011d1ac1857d445b5f99a0ef1fda42a1b8392652892225b5eae4b801faa59835240c1cbb4697caf3a7c",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-hibernate4/2.15.0",
-    "dest-filename": "jackson-datatype-hibernate4-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-hibernate5-jakarta/2.15.0/jackson-datatype-hibernate5-jakarta-2.15.0.pom",
-    "sha512": "fdf19f7e00c2ab4e8a86dff79ab4e393f948bbeb64f0844e17acaad20fb22add92302af76586531ef844b69cdc0f9324d23593764ee8581aab4ad07771cf98a7",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-hibernate5-jakarta/2.15.0",
-    "dest-filename": "jackson-datatype-hibernate5-jakarta-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-hibernate5/2.15.0/jackson-datatype-hibernate5-2.15.0.pom",
-    "sha512": "747b7bae38512df9f56ec297a3188d82907c6beea35591a7a1e1e2282bede94406313131578c7fdd4b6a9af4d517869022b1dcd9ffbf598cdcb1824e7e9f2a7b",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-hibernate5/2.15.0",
-    "dest-filename": "jackson-datatype-hibernate5-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-hibernate6/2.15.0/jackson-datatype-hibernate6-2.15.0.pom",
-    "sha512": "fc3bb13d9e43f4991cb10757a4e19b30d8b954b79e1113e7c15413a249d291a6084901be2e9d9de2d25f7873bb77a14060ebb66c5f8d4c056cdc907e87e8b5b4",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-hibernate6/2.15.0",
-    "dest-filename": "jackson-datatype-hibernate6-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-hppc/2.15.0/jackson-datatype-hppc-2.15.0.pom",
-    "sha512": "8848f5a33af7b06706b90b11ddda96bd68d046bcfc0940f3f437d295e40bde88134e4520519fa1c61c850a7697970973a48c5b889b3b64179ef2ba7cc7ce34ed",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-hppc/2.15.0",
-    "dest-filename": "jackson-datatype-hppc-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-jakarta-jsonp/2.15.0/jackson-datatype-jakarta-jsonp-2.15.0.pom",
-    "sha512": "0857d6da43cbb0aa89015e08e258e50eb5e5bf41feeaf270b4ea63bb5521ef51e4ab87ed5547cd0a99d93b7a21bff5adfd8bf018a0f98cc097e807ebf1b4e80c",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-jakarta-jsonp/2.15.0",
-    "dest-filename": "jackson-datatype-jakarta-jsonp-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-jaxrs/2.15.0/jackson-datatype-jaxrs-2.15.0.pom",
-    "sha512": "49e66287a4fa969ae6395cb3e7e4bb2240ece10ab935c292a3439284156d42afed6e1b8888a886e89361cb5fa33636a95258597dca17e2957990f5028974074e",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-jaxrs/2.15.0",
-    "dest-filename": "jackson-datatype-jaxrs-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.15.0/jackson-datatype-jdk8-2.15.0.pom",
-    "sha512": "e7545ccc073b9d1e55db002d0c3913b74c8a80e9c625689818db838a3a5e762b91274d7bdf76e82d2ef0be903cd1775d3e3dc92c5885e459ab4dfdfc271b146d",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.15.0",
-    "dest-filename": "jackson-datatype-jdk8-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-joda-money/2.15.0/jackson-datatype-joda-money-2.15.0.pom",
-    "sha512": "9fd91f7c3e3c03bd33fce1ffe23c1954c0a0ac84d82bd230d20896ec62192360ce92f20de447f994c2555263bcb282d55b53d36304337104dd7464a978bf620b",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-joda-money/2.15.0",
-    "dest-filename": "jackson-datatype-joda-money-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-joda/2.15.0/jackson-datatype-joda-2.15.0.pom",
-    "sha512": "c72a47f9218c8e6b8efc83a3e4919e1db1cd614f58a0ec920ada3820115d711a7612501aab9972e21242f7afe2f5cece456eedbf3d73935156798dd73af7a6dc",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-joda/2.15.0",
-    "dest-filename": "jackson-datatype-joda-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-json-org/2.15.0/jackson-datatype-json-org-2.15.0.pom",
-    "sha512": "7d641d39ff8589ec1c64ec2021fea8dad52a5aaf9eda9765efcae02f520353d808b40121dc6cabc4b9abbb8a148ec1e2444e031e83e6a876c148ece73129de15",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-json-org/2.15.0",
-    "dest-filename": "jackson-datatype-json-org-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.15.0/jackson-datatype-jsr310-2.15.0.pom",
-    "sha512": "decb36791d3e186e88432ac277fd12bf434225678e4b3bd5b9dc87a09520eb58f94c52f518fac90f7846ca8d95fcf44f6e6b856a62438b2cf32a8c894e8c51b8",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.15.0",
-    "dest-filename": "jackson-datatype-jsr310-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-jsr353/2.15.0/jackson-datatype-jsr353-2.15.0.pom",
-    "sha512": "587779550939f7b5c01e73ab4a5983b56ff6793d378ad6c0d4e3eccd422af669ae8e4f3869ba0aacbeb09e05d3d3545dc0a6fa924e02b5e310388036a120467e",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr353/2.15.0",
-    "dest-filename": "jackson-datatype-jsr353-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/datatype/jackson-datatype-pcollections/2.15.0/jackson-datatype-pcollections-2.15.0.pom",
-    "sha512": "f022b58891a1698c0f3fb53808d6da62330a01001d47373214bdffc1211bf15ca754bfc07b6ec699bb2f2574c595e276c150dfbeb79a076d732fb5340a9369e9",
-    "dest": "./offline-repository/com/fasterxml/jackson/datatype/jackson-datatype-pcollections/2.15.0",
-    "dest-filename": "jackson-datatype-pcollections-2.15.0.pom"
+    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/core/jackson-databind/2.15.0/jackson-databind-2.15.0.pom",
+    "sha512": "505523b1b9df5f85a2f8ebad571d5a91af383850b833a38b275198ece45faa634eaa5634ad03691f3974c35f39c8cd542b752875b1665c61a510b0852373f976",
+    "dest": "./offline-repository/com/fasterxml/jackson/core/jackson-databind/2.15.0",
+    "dest-filename": "jackson-databind-2.15.0.pom"
   },
   {
     "type": "file",
@@ -1576,248 +1506,31 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-base/2.15.0/jackson-jakarta-rs-base-2.15.0.pom",
-    "sha512": "cd4868960213a771f4ad84f650363ff33f9762fddd581529063753368e25353a0d35234b83dd5d2eb73a002f5327c566aeaebdc907ae7d6c2eff0b9b4da851e6",
-    "dest": "./offline-repository/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-base/2.15.0",
-    "dest-filename": "jackson-jakarta-rs-base-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-cbor-provider/2.15.0/jackson-jakarta-rs-cbor-provider-2.15.0.pom",
-    "sha512": "e2682609db6a456cb78e4f5b76f2b4b1a73df18fe25a3f5ec04f8a9206acef1a431c3b02b1398ea08891f90abbe9a56c0b90339ae6c34138855c35c24618c151",
-    "dest": "./offline-repository/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-cbor-provider/2.15.0",
-    "dest-filename": "jackson-jakarta-rs-cbor-provider-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-json-provider/2.15.0/jackson-jakarta-rs-json-provider-2.15.0.pom",
-    "sha512": "9deea3bafa463921551949249ea6840b04fb58d2c3215d41564723db6414198f3b55286f73b21dffd415ab2ee8b93a85869938c28670fa9b5d9c9c8715a143ec",
-    "dest": "./offline-repository/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-json-provider/2.15.0",
-    "dest-filename": "jackson-jakarta-rs-json-provider-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-smile-provider/2.15.0/jackson-jakarta-rs-smile-provider-2.15.0.pom",
-    "sha512": "107f5c778d357b8fd7753399df6d1ee181ddcf7a7d3678d883d70b46d94483a341f5f579bf9cf6a605ca02d222caa3054ec703bf6d7f964ed9ebd60beb64d207",
-    "dest": "./offline-repository/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-smile-provider/2.15.0",
-    "dest-filename": "jackson-jakarta-rs-smile-provider-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-xml-provider/2.15.0/jackson-jakarta-rs-xml-provider-2.15.0.pom",
-    "sha512": "61d69320337a3ef336b0d421fea5aa2e697fe17c34797361ae876645aeb3f2939ac2224351bae8d60357bb37ccf197b808d878161df3ff63c248e34cfdcaa0ee",
-    "dest": "./offline-repository/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-xml-provider/2.15.0",
-    "dest-filename": "jackson-jakarta-rs-xml-provider-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-yaml-provider/2.15.0/jackson-jakarta-rs-yaml-provider-2.15.0.pom",
-    "sha512": "6dccf9c9cc34ff72fd701a60a27e95abb83c352d314605dee2a4584503c2fae6100cc131ac8ff2b383c09ed6c6587605e92b7ad2a1f8338ca13090398cd68b67",
-    "dest": "./offline-repository/com/fasterxml/jackson/jakarta/rs/jackson-jakarta-rs-yaml-provider/2.15.0",
-    "dest-filename": "jackson-jakarta-rs-yaml-provider-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jaxrs/jackson-jaxrs-base/2.15.0/jackson-jaxrs-base-2.15.0.pom",
-    "sha512": "39e3a9cea71602958c50f88c4d37b68bc22fec39b45762cc9056f562210dba802482d0f184a6ffce142901854baec465a0f70360cb2146e048abac812c87b87d",
-    "dest": "./offline-repository/com/fasterxml/jackson/jaxrs/jackson-jaxrs-base/2.15.0",
-    "dest-filename": "jackson-jaxrs-base-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jaxrs/jackson-jaxrs-cbor-provider/2.15.0/jackson-jaxrs-cbor-provider-2.15.0.pom",
-    "sha512": "14f823a617d0ee64c57014e65f7b08d5431519b80f83fadad1a92b132994bf3cbdf9757373478a1a0f62610bc3551045361c1927aaddd2dbd15136ce3b335918",
-    "dest": "./offline-repository/com/fasterxml/jackson/jaxrs/jackson-jaxrs-cbor-provider/2.15.0",
-    "dest-filename": "jackson-jaxrs-cbor-provider-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jaxrs/jackson-jaxrs-json-provider/2.15.0/jackson-jaxrs-json-provider-2.15.0.pom",
-    "sha512": "2f9c386b025e29d039368740381e6652a64b1dbea4c7967693a6d0c4f445cb443ee5acf06d82e9c61e52cdbd1ec32e336493607138cbe734d5aaeb9d95fdfdea",
-    "dest": "./offline-repository/com/fasterxml/jackson/jaxrs/jackson-jaxrs-json-provider/2.15.0",
-    "dest-filename": "jackson-jaxrs-json-provider-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jaxrs/jackson-jaxrs-smile-provider/2.15.0/jackson-jaxrs-smile-provider-2.15.0.pom",
-    "sha512": "43683f453876a985e133242745603add7efe92d05137b56f44e7519bf98844fbd13c04bd26e3bae46d43bb772a1c32b926f7abae2c7f9c5d020b5b26a80ae72c",
-    "dest": "./offline-repository/com/fasterxml/jackson/jaxrs/jackson-jaxrs-smile-provider/2.15.0",
-    "dest-filename": "jackson-jaxrs-smile-provider-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jaxrs/jackson-jaxrs-xml-provider/2.15.0/jackson-jaxrs-xml-provider-2.15.0.pom",
-    "sha512": "04cc70e49f24e06149a17abd80c78aad7e937e187170a8417d9d1912179c9a05b2b7e93d0414cca3736adf6113d8ca6ad2e90e9390b087ed1657ea68fed5186f",
-    "dest": "./offline-repository/com/fasterxml/jackson/jaxrs/jackson-jaxrs-xml-provider/2.15.0",
-    "dest-filename": "jackson-jaxrs-xml-provider-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jaxrs/jackson-jaxrs-yaml-provider/2.15.0/jackson-jaxrs-yaml-provider-2.15.0.pom",
-    "sha512": "104c2f95fcfc64100fa77d7f6f9223774d9f77a475f9b6ba51160587392459fc05f13d0515cc7f6073292ba826f4ac90ed556cef1946d2122500b5971c83f789",
-    "dest": "./offline-repository/com/fasterxml/jackson/jaxrs/jackson-jaxrs-yaml-provider/2.15.0",
-    "dest-filename": "jackson-jaxrs-yaml-provider-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jr/jackson-jr-all/2.15.0/jackson-jr-all-2.15.0.pom",
-    "sha512": "1503d8a0418d3a1db5188045dced7f462ed16da14fe07852f6bb4315ac9cb1de69d335b5a673e9c94d32cc59aaa3afa9cd69186bb9b7f74d2b80c90ce1c7c151",
-    "dest": "./offline-repository/com/fasterxml/jackson/jr/jackson-jr-all/2.15.0",
-    "dest-filename": "jackson-jr-all-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jr/jackson-jr-annotation-support/2.15.0/jackson-jr-annotation-support-2.15.0.pom",
-    "sha512": "4bc7524be3d85e0e89a9c012ffe3176908ccae6a15fba141b8e61587c3edf83e08755744cff700b730911250a8d17872802db313bc5acddf47ae358e6caaf3cc",
-    "dest": "./offline-repository/com/fasterxml/jackson/jr/jackson-jr-annotation-support/2.15.0",
-    "dest-filename": "jackson-jr-annotation-support-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jr/jackson-jr-objects/2.15.0/jackson-jr-objects-2.15.0.pom",
-    "sha512": "676a42cd62008b6a3c473b2552694ab4e3d1e89e69f9a1e905cf5abac744e6e9ccf44ef30dcfe6d8b6a26c591ae29c2d1c9797212b151ec3a3fffd74804964e0",
-    "dest": "./offline-repository/com/fasterxml/jackson/jr/jackson-jr-objects/2.15.0",
-    "dest-filename": "jackson-jr-objects-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jr/jackson-jr-retrofit2/2.15.0/jackson-jr-retrofit2-2.15.0.pom",
-    "sha512": "0dfded08564d084c10dc9ddcfca6f29a64ec9d5a29cace578ef5569e1d6b506e6ce522bd37e0e71f3f8af92278ca7ae8d8da3fe6469306dd43607821512d4065",
-    "dest": "./offline-repository/com/fasterxml/jackson/jr/jackson-jr-retrofit2/2.15.0",
-    "dest-filename": "jackson-jr-retrofit2-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jr/jackson-jr-stree/2.15.0/jackson-jr-stree-2.15.0.pom",
-    "sha512": "83bc98e8332b8200753af71b31dfc47bbc578cee2a9c951ec8ba4d677b4b8422808e5dc4e9f265e741879cd35a4fe7d2feafeb5e2b2553041f96682cbce9b124",
-    "dest": "./offline-repository/com/fasterxml/jackson/jr/jackson-jr-stree/2.15.0",
-    "dest-filename": "jackson-jr-stree-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-afterburner/2.15.0/jackson-module-afterburner-2.15.0.pom",
-    "sha512": "27b5f2c95fd8cedb6d3e87dabfaa78b92dea0694e511bec8f6d3ad868963f3b54b294e93ec3f143dc891e33cb03ee580676de093f618bf2a67a5d36f8c532ce1",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-afterburner/2.15.0",
-    "dest-filename": "jackson-module-afterburner-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-blackbird/2.15.0/jackson-module-blackbird-2.15.0.pom",
-    "sha512": "227e8acc576c489051131f7ca204000a05d2061e4535199366aaab223f8c922304f742beceee22bad5e5f2cef7cc6c15a7cf354b9772479f86798ae48449afb8",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-blackbird/2.15.0",
-    "dest-filename": "jackson-module-blackbird-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-guice/2.15.0/jackson-module-guice-2.15.0.pom",
-    "sha512": "b1b4724961c58ababeb8dd9424f5d1cbc754e5a00c87a9724ccda120b7270adb276e75aa29eb4f83751acb3d98db0005028c85c3db7aae41500ed790bf4f1a8f",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-guice/2.15.0",
-    "dest-filename": "jackson-module-guice-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-jakarta-xmlbind-annotations/2.15.0/jackson-module-jakarta-xmlbind-annotations-2.15.0.pom",
-    "sha512": "3e2e538f521c5ddffd6c54bf48efac93f3fa1b41f9ea4626d9317ceccdeed51895e0fda77ba9686fe5b6bdc4750fd550df38337995ef4ee261aaf2d8457e5ff4",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-jakarta-xmlbind-annotations/2.15.0",
-    "dest-filename": "jackson-module-jakarta-xmlbind-annotations-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.15.0/jackson-module-jaxb-annotations-2.15.0.pom",
-    "sha512": "83e772dc0749b88d6ef163928e410ccc4b8505b514a0fac4a0fae880d5072f84ee4bc3f68ea3339f99dfdf684b5605cfe8eeff9ef8f2bf435bb0dfe72e7946e7",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.15.0",
-    "dest-filename": "jackson-module-jaxb-annotations-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-jsonSchema-jakarta/2.15.0/jackson-module-jsonSchema-jakarta-2.15.0.pom",
-    "sha512": "61449b486c2c1b81e700315a27979c4402b57cc3e8fdce70822a42b4453cecd6a601ed4a97b73082f755df9f201bd1e2ffe5a8006227664800ce2e73a554f9ef",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-jsonSchema-jakarta/2.15.0",
-    "dest-filename": "jackson-module-jsonSchema-jakarta-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-jsonSchema/2.15.0/jackson-module-jsonSchema-2.15.0.pom",
-    "sha512": "a8b93070189de95e68193ed048a11e0d1018d90b20761328e2f131b02f216feb90b858968bc6f21188c01b04402967e2df22966d1fa2ea3ba97a339a92ba0dcc",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-jsonSchema/2.15.0",
-    "dest-filename": "jackson-module-jsonSchema-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-kotlin/2.15.0/jackson-module-kotlin-2.15.0.pom",
-    "sha512": "20e62f1f16950058514ab8f12c0b246ea43bc40035c484e439d0a5b3dc0077ea35e4ce17ca3863f8636e0678efd7cf9bb923068509a9e1bff50c99a885b5a32f",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-kotlin/2.15.0",
-    "dest-filename": "jackson-module-kotlin-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-mrbean/2.15.0/jackson-module-mrbean-2.15.0.pom",
-    "sha512": "5969c9630296bd9dfd56000c5bdc545ff36baef9b2c635b7ce24c77b4093965e8c620356961995e4b28cd5ae102110a9d8941110c7dffbc5b579a297e3ccc7da",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-mrbean/2.15.0",
-    "dest-filename": "jackson-module-mrbean-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-no-ctor-deser/2.15.0/jackson-module-no-ctor-deser-2.15.0.pom",
-    "sha512": "4be4e2860a08ef899140535d8b9009ffc008e19299b257a7b477300eb82425efb84688e340c66fa4de6c3582068676d10853bc22120a351fc82fe8ecd6377d94",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-no-ctor-deser/2.15.0",
-    "dest-filename": "jackson-module-no-ctor-deser-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-osgi/2.15.0/jackson-module-osgi-2.15.0.pom",
-    "sha512": "dbbc0ae25d4c0f287e517c79eb8e6dcbd9c0d08d932ebb89fd5a3a55c766c927be869ae3e7405a627241897d0153ce2eed50ed13794bc1441fea20faf77a2fa5",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-osgi/2.15.0",
-    "dest-filename": "jackson-module-osgi-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-parameter-names/2.15.0/jackson-module-parameter-names-2.15.0.pom",
-    "sha512": "5cd96e8123c1ee42b0837e9020de228a15f8c1cff6c544b5dfb135abcf90c985b68c8167e18e62f9774256eac6d90117835dfa338cdd8e7e8d7ccb0918b91a50",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.15.0",
-    "dest-filename": "jackson-module-parameter-names-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-paranamer/2.15.0/jackson-module-paranamer-2.15.0.pom",
-    "sha512": "a40d4f0270d39aed138aa6061f00a2bb2bd2bc27c1b7c204113b97241eb62dad90ffbefec374285b66b22e5a5c21a7cc7b7638b2f8c2c3e75a44df7e5d605d13",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-paranamer/2.15.0",
-    "dest-filename": "jackson-module-paranamer-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-scala_2.11/2.15.0/jackson-module-scala_2.11-2.15.0.pom",
-    "sha512": "dfcbb1e64f19db544d881d4f540aff5537df077215fa155e8e5ace3461f092db127c7aa76d092091fcc2b743e5344d038a5b898b0c3fd3a7a312a92b9ef682cc",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-scala_2.11/2.15.0",
-    "dest-filename": "jackson-module-scala_2.11-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-scala_2.12/2.15.0/jackson-module-scala_2.12-2.15.0.pom",
-    "sha512": "bd7e5f57483ab7095d788183a169c70adadc27d7a5289d291e7c0dab212f0a437e7b47d5d9df285c7737cbb0574dad8bd3ee7ffab10d9613a4e7785c19509ed1",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-scala_2.12/2.15.0",
-    "dest-filename": "jackson-module-scala_2.12-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-scala_2.13/2.15.0/jackson-module-scala_2.13-2.15.0.pom",
-    "sha512": "192ab398dd969aa5cbb55df7c38ebf0a6e27903d7b0dfd2c0271e233ac28bee800388bf99ce77093887d3792f826a1054e2f9fa2c0d0f568837970df2ee5a997",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-scala_2.13/2.15.0",
-    "dest-filename": "jackson-module-scala_2.13-2.15.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/module/jackson-module-scala_3/2.15.0/jackson-module-scala_3-2.15.0.pom",
-    "sha512": "5d3c79da93d5bfcd2beaa9089a46ed175245a7871e10721491d42de242aa8e9908d15aee2bd8300be65476e6e886b51e4bff284d0b18a9443cb00ac7fb7b3c1b",
-    "dest": "./offline-repository/com/fasterxml/jackson/module/jackson-module-scala_3/2.15.0",
-    "dest-filename": "jackson-module-scala_3-2.15.0.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/com/fasterxml/oss-parent/50/oss-parent-50.pom",
     "sha512": "b50fb8abbc07abe3bdca3fba18303d39095da498cace7bbc601c41563ef10cd5dd464b3ae0b838fb31b8d655f4aae76065bbd32d6b4fa9bea13515619249b860",
     "dest": "./offline-repository/com/fasterxml/oss-parent/50",
     "dest-filename": "oss-parent-50.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/github/oshi/oshi-core/5.8.6/oshi-core-5.8.6.jar",
+    "sha512": "abfbb78151a7064512ff2847740ebf9f210317b84cfd34a61f69b598209b79c1652b2f3740d11aa2ec859f7abb8b09dc163b6fbbcf04209bfba7307c39e5c756",
+    "dest": "./offline-repository/com/github/oshi/oshi-core/5.8.6",
+    "dest-filename": "oshi-core-5.8.6.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/github/oshi/oshi-core/5.8.6/oshi-core-5.8.6.pom",
+    "sha512": "b29216a60e97ac2ed92d4ddedf08c0f348623ffef1ba2b80eea6da3c0d1aaa4e5c651ff55f9a0ea84abccb6ed2a0ed2fa4dab29a89c75abd8c623f82989154b8",
+    "dest": "./offline-repository/com/github/oshi/oshi-core/5.8.6",
+    "dest-filename": "oshi-core-5.8.6.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/github/oshi/oshi-parent/5.8.6/oshi-parent-5.8.6.pom",
+    "sha512": "6f552de6327a495c27d8a5061b973ccac120237fcfa697042b53fea46cea6594805ce2ec3588e8277a3e03aaaf9070a44660f1d296035bdf7dc4223eafe71036",
+    "dest": "./offline-repository/com/github/oshi/oshi-parent/5.8.6",
+    "dest-filename": "oshi-parent-5.8.6.pom"
   },
   {
     "type": "file",
@@ -1835,17 +1548,24 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4/aboutlibraries-compose-core-jvm-12.2.4.pom",
-    "sha512": "49729bb0e0dd86a132647c77bbd088393f114b80d2d547d84ac480b0b2291e651170a665f77cab9a7a5ec71dcc576793f18edbb5dbd2fdda1060054675639e66",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4/aboutlibraries-compose-core-jvm-12.2.4.jar",
+    "sha512": "a7dfb4d1005e5f07f6e07b011a41b5c00d5da49f8c2bb2fc0666d62e453296628571479f5415ad7263b90f8ba078e30a6904fb2afcc8db99143ecb74f925dfeb",
     "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4",
-    "dest-filename": "aboutlibraries-compose-core-jvm-12.2.4.pom"
+    "dest-filename": "aboutlibraries-compose-core-jvm-12.2.4.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4/aboutlibraries-compose-core-jvm-12.2.4.jar",
-    "sha512": "a7dfb4d1005e5f07f6e07b011a41b5c00d5da49f8c2bb2fc0666d62e453296628571479f5415ad7263b90f8ba078e30a6904fb2afcc8db99143ecb74f925dfeb",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4/aboutlibraries-compose-core-jvm-12.2.4.module",
+    "sha512": "b9f3c9d802586cee4741572c55343563ee38dbd9ab1128250239ca6d2dc73aa48f5e2b69eaa5b5ec4ad06645b625ff0a04e5206969189786500b79c713bf9c2b",
     "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4",
-    "dest-filename": "aboutlibraries-compose-jvm.jar"
+    "dest-filename": "aboutlibraries-compose-core-jvm-12.2.4.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4/aboutlibraries-compose-core-jvm-12.2.4.pom",
+    "sha512": "49729bb0e0dd86a132647c77bbd088393f114b80d2d547d84ac480b0b2291e651170a665f77cab9a7a5ec71dcc576793f18edbb5dbd2fdda1060054675639e66",
+    "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4",
+    "dest-filename": "aboutlibraries-compose-core-jvm-12.2.4.pom"
   },
   {
     "type": "file",
@@ -1870,6 +1590,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-jvm/12.2.4/aboutlibraries-compose-jvm-12.2.4.jar",
+    "sha512": "02fa70a98beced396a77cd5d33aff5c71eb319cc0337d9b8f8409c8e137e1c8a96291b1d71233bd2fe97d01ecf7e9b0482f1e14ba2156fdcdefcf39796fc9b49",
+    "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-jvm/12.2.4",
+    "dest-filename": "aboutlibraries-compose-jvm-12.2.4.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-jvm/12.2.4/aboutlibraries-compose-jvm-12.2.4.module",
+    "sha512": "13d7ae146bb8bc53f748c5efd79af23097783025250f6a537785befd2aef84e279271207bbd40abc20ff3b514214b89c4fbc1078965f9b79faac86eaf0852b3a",
+    "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-jvm/12.2.4",
+    "dest-filename": "aboutlibraries-compose-jvm-12.2.4.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-jvm/12.2.4/aboutlibraries-compose-jvm-12.2.4.pom",
+    "sha512": "edf3e11dc18930e901c06349f24fe55c1c3de63a3a44045ee4cf36c21dbe0d6c2f4674a015d4f997e7e3296cf62ae033ef4e74b022d289c6a749bf5b92638d34",
+    "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-jvm/12.2.4",
+    "dest-filename": "aboutlibraries-compose-jvm-12.2.4.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose/12.2.4/aboutlibraries-compose-12.2.4.jar",
     "sha512": "678bd93494a1cccb0ded4bf6a3c6adcdce7b11da729df45d28538c02a9b25f68dcda0e4b50355d83e1799065e74643c57a24c9c84e9360a3691ceeda07b5c791",
     "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose/12.2.4",
@@ -1888,6 +1629,27 @@
     "sha512": "b6ebdf092e44d442d76630bdd7e80fa56ec560354586d5d560ea20ff93b06d73289c532ad40ab666d90e9da7c2951b5c81a844389e8516ba7ab210f5099fa5c2",
     "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose/12.2.4",
     "dest-filename": "aboutlibraries-compose-12.2.4.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-core-jvm/12.2.4/aboutlibraries-core-jvm-12.2.4.jar",
+    "sha512": "87a4804c641931cf1d0c69870cb71f0c31608b47efbe6ea57e614c9f7ecb30e876c9cc4ae602f53bd7feb05565fa2fbb074e126e71dab88d6cf67b1ca0508182",
+    "dest": "./offline-repository/com/mikepenz/aboutlibraries-core-jvm/12.2.4",
+    "dest-filename": "aboutlibraries-core-jvm-12.2.4.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-core-jvm/12.2.4/aboutlibraries-core-jvm-12.2.4.module",
+    "sha512": "a6d10908234b1c0c1df50b1367aaa1ea91c2e6599c91fe70387fb6537da81652c9b86ee3d1d0bd8a952e2bef0083bc5f06559189443a1b2386e9175f320f4673",
+    "dest": "./offline-repository/com/mikepenz/aboutlibraries-core-jvm/12.2.4",
+    "dest-filename": "aboutlibraries-core-jvm-12.2.4.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-core-jvm/12.2.4/aboutlibraries-core-jvm-12.2.4.pom",
+    "sha512": "fe77e374fcfe942ed3b4c4bfe08e13438a33a4a111aaf3c2b2e184dbebcd444da064636651b36b9d3e031091f39b31cc3403583a780450c21c7ece879f7fbaf4",
+    "dest": "./offline-repository/com/mikepenz/aboutlibraries-core-jvm/12.2.4",
+    "dest-filename": "aboutlibraries-core-jvm-12.2.4.pom"
   },
   {
     "type": "file",
@@ -1912,6 +1674,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-coil3-jvm/0.35.0/multiplatform-markdown-renderer-coil3-jvm-0.35.0.jar",
+    "sha512": "c0b95b97910b56472f060de9ce7fa90cce0a45de20a9ddc583cac4f81db8f7cee8a8b9d3359d960399c92851ca12019b2e3f8bf8ac087af3cfa3e040fbcef2cf",
+    "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-coil3-jvm/0.35.0",
+    "dest-filename": "multiplatform-markdown-renderer-coil3-jvm-0.35.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-coil3-jvm/0.35.0/multiplatform-markdown-renderer-coil3-jvm-0.35.0.module",
+    "sha512": "eea17984fef176cad005e481d11e6d655712766ef8b0bc77a80f6a8bcd0f1c09af884927054ee1f238d74ec04c48665061eb721ced1aca6e8ee3560195f6a61a",
+    "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-coil3-jvm/0.35.0",
+    "dest-filename": "multiplatform-markdown-renderer-coil3-jvm-0.35.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-coil3-jvm/0.35.0/multiplatform-markdown-renderer-coil3-jvm-0.35.0.pom",
+    "sha512": "ee4d6476a3568292f575d1383991986eb9919cfa703a9872834401e877e216bf1205bcedaf7037b87a8c608c19aa9cd7e3bc1a541207f6434dad9ce8fd592777",
+    "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-coil3-jvm/0.35.0",
+    "dest-filename": "multiplatform-markdown-renderer-coil3-jvm-0.35.0.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-coil3/0.35.0/multiplatform-markdown-renderer-coil3-0.35.0.jar",
     "sha512": "764f0099c449e8b27ce5f7e66784523f1b558eb337ff2ee6d52fb35c9f047c9fe6d453c43346f7823c59119c0c1ee01a88ef40be5ed59bddc9c53898cd6e7490",
     "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-coil3/0.35.0",
@@ -1933,17 +1716,45 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/com/mikepenz/multiplatform-markdown-renderer-jvm/0.35.0/multiplatform-markdown-renderer-jvm-0.35.0.jar",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-jvm/0.35.0/multiplatform-markdown-renderer-jvm-0.35.0.jar",
     "sha512": "bef4021a838e63b07fa07e45667eeb111dc2a72e039a8b9b918bbbe8d5b440be3690077660f6efcbf3ade1798362b4fbad32fdee636ba57223ba93f1bda37b76",
     "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-jvm/0.35.0",
     "dest-filename": "multiplatform-markdown-renderer-jvm-0.35.0.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/com/mikepenz/multiplatform-markdown-renderer-jvm/0.35.0/multiplatform-markdown-renderer-jvm-0.35.0.pom",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-jvm/0.35.0/multiplatform-markdown-renderer-jvm-0.35.0.module",
+    "sha512": "1f15d9c438e94433e7c3a0737f04e84d8101d3784a5e33fb9af0a494498b5175b513cb52e5aad56b2adfce414b47cf7c3db9ea74769e4c6d804cbe13d2cc8dd7",
+    "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-jvm/0.35.0",
+    "dest-filename": "multiplatform-markdown-renderer-jvm-0.35.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-jvm/0.35.0/multiplatform-markdown-renderer-jvm-0.35.0.pom",
     "sha512": "af2d7b91914ff4284dd817d2646c6dbc6c10f72653879ab2cfdce05ed5a9360c9390ff56a37b2753a09d761e04cbf872569d06dce306fd79c03def816f204c53",
     "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-jvm/0.35.0",
     "dest-filename": "multiplatform-markdown-renderer-jvm-0.35.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-m3-jvm/0.35.0/multiplatform-markdown-renderer-m3-jvm-0.35.0.jar",
+    "sha512": "60949ccfe0d9309baeada0d5d59e60d14c70d23a3f0d3ca9863046a6ad69842549b40d5bf55f92edea964dc3db6e5a5af4c13b9a3fb261acade665035d010583",
+    "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-m3-jvm/0.35.0",
+    "dest-filename": "multiplatform-markdown-renderer-m3-jvm-0.35.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-m3-jvm/0.35.0/multiplatform-markdown-renderer-m3-jvm-0.35.0.module",
+    "sha512": "5441384f3a28f27501ef1936a231576a17d6bf1ef07e5f82ceb05fae181664ff1043141a43d4594497c04a939b77584097bd110a649c71661cca0b034f41b910",
+    "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-m3-jvm/0.35.0",
+    "dest-filename": "multiplatform-markdown-renderer-m3-jvm-0.35.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-m3-jvm/0.35.0/multiplatform-markdown-renderer-m3-jvm-0.35.0.pom",
+    "sha512": "493c7772c3c1682da1af4a635750b41b1ba192d71d24ee688bfafca84662803865ce36afac87c16d4312bb6cce86daf057c2903e7393160b0ddb883370b5a9ea",
+    "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-m3-jvm/0.35.0",
+    "dest-filename": "multiplatform-markdown-renderer-m3-jvm-0.35.0.pom"
   },
   {
     "type": "file",
@@ -1989,17 +1800,24 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0/ktlint-cli-ruleset-core-0.50.0.jar",
+    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0/ktlint-cli-ruleset-core-0.50.0.jar",
     "sha512": "ceeb2598b82b2262c50bcacaaceac0eedc2133cc4f91e4fc703951ced036e4d098d72191f8bf45fe4b884be936777f8437733ab1bd32759fdb5a0c22b9ea40d0",
     "dest": "./offline-repository/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0",
     "dest-filename": "ktlint-cli-ruleset-core-0.50.0.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0/ktlint-cli-ruleset-core-0.50.0.module",
+    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0/ktlint-cli-ruleset-core-0.50.0.module",
     "sha512": "14e6aa222e090b30ebc27dc8274a4bcdcf140ec93e9b9d5f2531ad1f714ed807e3eaecc03e2cd9d02819ea6f9023a04d8157a6afec500313f0f2f470b148359d",
     "dest": "./offline-repository/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0",
     "dest-filename": "ktlint-cli-ruleset-core-0.50.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0/ktlint-cli-ruleset-core-0.50.0.pom",
+    "sha512": "8dffa90d01ec14a0f47065441874d670634bd101b20d60d9573c918a93b3ec3354ec0ab81aa1551d13322e14ce55d789f3c226e67bb9a26fc9b2cc7878afc251",
+    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0",
+    "dest-filename": "ktlint-cli-ruleset-core-0.50.0.pom"
   },
   {
     "type": "file",
@@ -2056,6 +1874,13 @@
     "sha512": "6569a4cb49d87201ef004fd5206ac5d63f001d894859cca11d82ddcc2c3ac800291d37dac7a766b47be5dbefb028d6e03829765be132a04feab690bbc41a10c0",
     "dest": "./offline-repository/com/pinterest/ktlint/ktlint-ruleset-standard/0.50.0",
     "dest-filename": "ktlint-ruleset-standard-0.50.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-ruleset-standard/0.50.0/ktlint-ruleset-standard-0.50.0.pom",
+    "sha512": "2d83bbdac9d9af619b928c509a92c7f41b16ac639dabc4f8f047c75fccadb5898f10ad832553eb78ae996fca2b8d3465c087a9707bb29c5d11aff8a18d518ad8",
+    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-ruleset-standard/0.50.0",
+    "dest-filename": "ktlint-ruleset-standard-0.50.0.pom"
   },
   {
     "type": "file",
@@ -2262,6 +2087,90 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-emoji/0.64.8/flexmark-ext-emoji-0.64.8.jar",
+    "sha512": "9ec1027418071a4dc68e23b3d23181290341fa122bf9346067fd3505bfc174d569c294259f1641991362152fabd424e1d42a610de7e6a9f294871fcbe969c035",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-emoji/0.64.8",
+    "dest-filename": "flexmark-ext-emoji-0.64.8.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-emoji/0.64.8/flexmark-ext-emoji-0.64.8.pom",
+    "sha512": "74e97f854029063bdc1ddb363cc3abecee7380b7d22dfea27c09410f0261d5f8960a739a51c0260a6d86582aade454fc9b76575dca5364b0374d500556cf98c0",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-emoji/0.64.8",
+    "dest-filename": "flexmark-ext-emoji-0.64.8.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-gfm-strikethrough/0.64.8/flexmark-ext-gfm-strikethrough-0.64.8.jar",
+    "sha512": "981638cc3a35b879b092aa9a03141646824f2117c2781113890c63ea0c7876c345a5e73ac02c5256741c02f03d530a075b656ed8fcb11ac48b7daa8f047cf904",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-gfm-strikethrough/0.64.8",
+    "dest-filename": "flexmark-ext-gfm-strikethrough-0.64.8.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-gfm-strikethrough/0.64.8/flexmark-ext-gfm-strikethrough-0.64.8.pom",
+    "sha512": "691d4157af314f70b84e047a36db3257ab6eecb9e23cad1786745fd6e72174ea49a1acccca7c02e3efff931692c39aa6dd5ded05b2b27ae85ecff3553d2f9380",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-gfm-strikethrough/0.64.8",
+    "dest-filename": "flexmark-ext-gfm-strikethrough-0.64.8.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-ins/0.64.8/flexmark-ext-ins-0.64.8.jar",
+    "sha512": "a172d9321a38970a11d7a5e32665698390ad6ae186226e89f0956d75448c57ad0d015ad98cf671692818392a18df3b01b29ab3264f9ed67f62c5ba757400a815",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-ins/0.64.8",
+    "dest-filename": "flexmark-ext-ins-0.64.8.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-ins/0.64.8/flexmark-ext-ins-0.64.8.pom",
+    "sha512": "d8ad0826f9ee63051d9ed74871d5f5a984dd0b7e80bde3fd2cfadbcff5f986a28ac31a3f2e05718056ac242e843fbedf88fd3cfb4ed4eb21f500cb2ff8ddd329",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-ins/0.64.8",
+    "dest-filename": "flexmark-ext-ins-0.64.8.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-superscript/0.64.8/flexmark-ext-superscript-0.64.8.jar",
+    "sha512": "ab5c7b1ddd8058de20624812c836b729a6f7d72a751458f7cf8fcf0d9ea3a538bafb69611fe66693ba6b94871e3c5fe9a77836a9a67140e6124ea894dfe5f08d",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-superscript/0.64.8",
+    "dest-filename": "flexmark-ext-superscript-0.64.8.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-superscript/0.64.8/flexmark-ext-superscript-0.64.8.pom",
+    "sha512": "cdfbfc6ea0805e6480e4be08e9efd5a2c2bf63169cb3d5edd1d0d000b8a19b9e5c38294d053aaffb4a8f8070615deed8ffef8b9311d1bb48a0a793cade3a4164",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-superscript/0.64.8",
+    "dest-filename": "flexmark-ext-superscript-0.64.8.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-tables/0.64.8/flexmark-ext-tables-0.64.8.jar",
+    "sha512": "28f9a143d8c1488cb3ba5127db279d09f54551f937e1b07418dbdf97ba4dfb283b1fb3b78344b21b4ec9e81918dac439f4a169986bbc92c7ee09b719346df1f7",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-tables/0.64.8",
+    "dest-filename": "flexmark-ext-tables-0.64.8.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-tables/0.64.8/flexmark-ext-tables-0.64.8.pom",
+    "sha512": "4f7d8e6335d0448bbe9870887bbe5b0ca4eaedc80832248ae7371b6cd235777c33653acd281f9b007a88e6e4125b6b0235b26797bc5ca970453bd81a2f860ffd",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-tables/0.64.8",
+    "dest-filename": "flexmark-ext-tables-0.64.8.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-wikilink/0.64.8/flexmark-ext-wikilink-0.64.8.jar",
+    "sha512": "b88f8e4102cdcf947e0a149aa23840189cfe77f1578ec187d16e4bf085d0ef11f383e3c8b9eebfd5e162340004a2bf9c50062658ffb02d519b67545c0f408652",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-wikilink/0.64.8",
+    "dest-filename": "flexmark-ext-wikilink-0.64.8.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-ext-wikilink/0.64.8/flexmark-ext-wikilink-0.64.8.pom",
+    "sha512": "831568b126a4fb68832d5e4348c2c64b6273f194b7caac2b2d4082fccb817eda7b026036e00857310bf1b7aa0e9b2fee17f53aa4fb574c26399415a30932ff97",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-ext-wikilink/0.64.8",
+    "dest-filename": "flexmark-ext-wikilink-0.64.8.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-html2md-converter/0.64.8/flexmark-html2md-converter-0.64.8.jar",
     "sha512": "1dd01fd483f578ee44e756500e4d441e9073d233c7fb7fc63ec3f74a7e40534b86d9f2ad5c849ddbbb3bcaa7aa276a119f9781ed879d47a629280d1651702913",
     "dest": "./offline-repository/com/vladsch/flexmark/flexmark-html2md-converter/0.64.8",
@@ -2280,6 +2189,20 @@
     "sha512": "fae1846b1f9696f00a37d12bab188410348f3c1897d15a93f73af92dc650aa8dee2b3b1ccfa951c9abfefddce124a2b4469c0a29bb912ee450f4909d0bb7a4a1",
     "dest": "./offline-repository/com/vladsch/flexmark/flexmark-java/0.64.8",
     "dest-filename": "flexmark-java-0.64.8.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-jira-converter/0.64.8/flexmark-jira-converter-0.64.8.jar",
+    "sha512": "600a5e4d907904553f4ee96b9ad48bba508829b0f6e67c3a9788aceb0fbc8cb91c4616c429d8820557b75c040fc198e08380fa23e5b7f441f0f85bd9b8bc5462",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-jira-converter/0.64.8",
+    "dest-filename": "flexmark-jira-converter-0.64.8.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-jira-converter/0.64.8/flexmark-jira-converter-0.64.8.pom",
+    "sha512": "6a336498b5929ba2b4dc48bddc4fcb069028bd82dd8ad87baa97b24b6a46ebc2450ade22ca89ff6d49fd142fe3cb63515a3752e2da0ce6f3c95995cecf3b59b0",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-jira-converter/0.64.8",
+    "dest-filename": "flexmark-jira-converter-0.64.8.pom"
   },
   {
     "type": "file",
@@ -2360,6 +2283,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-util-format/0.64.8/flexmark-util-format-0.64.8.pom",
+    "sha512": "6b51913ee03fe8d96b05ea80a529a85a15836534e0d16c26579d8925771cfa3c363574e601fbdf6ce0c6a96ee3406d30fecb31856ace208699e0c6a6ec51a11e",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-util-format/0.64.8",
+    "dest-filename": "flexmark-util-format-0.64.8.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-util-html/0.64.8/flexmark-util-html-0.64.8.jar",
+    "sha512": "f22467a4449a34bfecf7e2fd1507fd2cc453cb216f7d061659bb6e07bd933771295cf546ac642c2ac4ea8a33945e05af34b02e424a4c539ea525ff7ef9e55004",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-util-html/0.64.8",
+    "dest-filename": "flexmark-util-html-0.64.8.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-util-html/0.64.8/flexmark-util-html-0.64.8.pom",
+    "sha512": "7e6d6a3675322a63df85490c21410c3ce27c5f184acef1103d6fdf03d887069fef0bfecaffb514a95908aad92463c941b5c964b3e86478ab7b9cbe3ac78b9b08",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-util-html/0.64.8",
+    "dest-filename": "flexmark-util-html-0.64.8.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-util-misc/0.64.8/flexmark-util-misc-0.64.8.jar",
     "sha512": "538b9a79edfd5ec1debc33a421fbe70ce6fdd4068f924016cf16391a9ad23d1ece8c85500408298582ac6d483b8c5ef2cc2796d18136bd1b79859303a918764e",
     "dest": "./offline-repository/com/vladsch/flexmark/flexmark-util-misc/0.64.8",
@@ -2371,6 +2315,20 @@
     "sha512": "4fa4cde2e0e8940b88a669e1d0c59feb9ac488077799d4ee174eea3bfa15c65ed122b5f2f716e5b2118aadfb774c3669693f3b75fbee53e3b22512ebb0138b52",
     "dest": "./offline-repository/com/vladsch/flexmark/flexmark-util-misc/0.64.8",
     "dest-filename": "flexmark-util-misc-0.64.8.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-util-options/0.64.8/flexmark-util-options-0.64.8.jar",
+    "sha512": "1a3e709e89e6a54480ed04c86a9b41eeb7d0685ccd07d65e40153312335c01ccc02eaa8970c4ce7f60f71b1250c96ea2a1303aa5b28f3dbe961e75d5c9956c11",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-util-options/0.64.8",
+    "dest-filename": "flexmark-util-options-0.64.8.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark-util-options/0.64.8/flexmark-util-options-0.64.8.pom",
+    "sha512": "5b64176ba743387f9f3c771ebc6461b41cc4a0b2ac95385c227d1e45c6fe1df7eecb2cbcab07ff9de766ea9142591d949cd4bcffba3831452611943d317459d3",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark-util-options/0.64.8",
+    "dest-filename": "flexmark-util-options-0.64.8.pom"
   },
   {
     "type": "file",
@@ -2413,6 +2371,34 @@
     "sha512": "ad4ce818b40c37a5b23be30d1c7817bc2eb8fc8b85567092c24271548a32999ddf83782ece22a999d2439952c5a01b16b49102827c557f7b5d68e6ab11e4eb0a",
     "dest": "./offline-repository/com/vladsch/flexmark/flexmark-util/0.64.8",
     "dest-filename": "flexmark-util-0.64.8.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark/0.64.8/flexmark-0.64.8.jar",
+    "sha512": "aabd169e479082106f52fe833692e726a5dcff76890ef5efd495dfd7d4e5c732fed8d4fd8d48ae0cee89bf3eeca7e03bac910e485d9495a5734d653011b211d0",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark/0.64.8",
+    "dest-filename": "flexmark-0.64.8.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/com/vladsch/flexmark/flexmark/0.64.8/flexmark-0.64.8.pom",
+    "sha512": "49500f2191fac4e32f3ccee154f55f5bd64f595bf251e57809f0020b605272b64ccc26374aa136ea4fe596f7a1a62ee39e16343ca0888ccd419030174d1c13b9",
+    "dest": "./offline-repository/com/vladsch/flexmark/flexmark/0.64.8",
+    "dest-filename": "flexmark-0.64.8.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/de/jangassen/jfa/1.2.0/jfa-1.2.0.jar",
+    "sha512": "b7eaa51f2e926249161c2e684d3a57d6933f7f24e0f3ebf6455f3e66cb8771121dbc4ed14f0f6fce87f51284210a8d91e0f1bab4fbd69492e7a1c32fc0919bcd",
+    "dest": "./offline-repository/de/jangassen/jfa/1.2.0",
+    "dest-filename": "jfa-1.2.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/de/jangassen/jfa/1.2.0/jfa-1.2.0.pom",
+    "sha512": "06c5ed8b9055e5a173a69b16a0798e7a1231fe8b4b2a35ad7aef4c1a84d22aef0e3bba02ec8de8e460aab306ee0816f2790f59bd36b8ab0a64d28f516962892d",
+    "dest": "./offline-repository/de/jangassen/jfa/1.2.0",
+    "dest-filename": "jfa-1.2.0.pom"
   },
   {
     "type": "file",
@@ -2696,7 +2682,21 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/coil-kt/coil3/coil-compose-core-jvm/3.2.0/coil-compose-core-jvm-3.2.0.pom",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-compose-core-jvm/3.2.0/coil-compose-core-jvm-3.2.0.jar",
+    "sha512": "f3b5aefb9bf38e6a28cd4e544f39e3e4bf74278c5723cac5a0491a1b0d5dacd5815acae3f38c148fbecbc91ed52fa0081e3eef10db7e4fa97d00df34adef9342",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-compose-core-jvm/3.2.0",
+    "dest-filename": "coil-compose-core-jvm-3.2.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-compose-core-jvm/3.2.0/coil-compose-core-jvm-3.2.0.module",
+    "sha512": "17c86594479de02573eca1c9824eeacad084e9864604149f9157dc9a31b385f463ce9708f281908b68ab7ce777f2316c55cea22da2f2c87b112d278baec8e11b",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-compose-core-jvm/3.2.0",
+    "dest-filename": "coil-compose-core-jvm-3.2.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-compose-core-jvm/3.2.0/coil-compose-core-jvm-3.2.0.pom",
     "sha512": "bb1e3bc29aeccaff170ca254642cf6d0baf763c26c8575a99854e8fca62d58438a65cc39a888152095e1859729d96bfacca3bb3c74de11ad01af53e2838da13d",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-compose-core-jvm/3.2.0",
     "dest-filename": "coil-compose-core-jvm-3.2.0.pom"
@@ -2724,10 +2724,24 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-compose-jvm/3.2.0/coil-compose-jvm-3.2.0.jar",
+    "sha512": "fd8fd7f6bb92620645ed3303a0eb14925df7695ddae6d86c9bd1f9d526854eb8a810b0463f3ac05a5dd9ac13fcef441477b5aa24bf011fd17b1b826dcb6ec118",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-compose-jvm/3.2.0",
+    "dest-filename": "coil-compose-jvm-3.2.0.jar"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-compose-jvm/3.2.0/coil-compose-jvm-3.2.0.module",
     "sha512": "e1ce74f684714d4bd02e847420356f2776d1b4d8f646c9e1f02d3960e69611978b14efe90bd312b2d5e796c7afba12c7a07bc42f8ec5c29a4a80ba691d69d17d",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-compose-jvm/3.2.0",
     "dest-filename": "coil-compose-jvm-3.2.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-compose-jvm/3.2.0/coil-compose-jvm-3.2.0.pom",
+    "sha512": "a9177039863d6ae220b95528d50c9e9d3eb8510a79cbd037457bf3805093079c26d89723da209893aa5c9a9f5f60722f19f452943f036c4908d4094500c75bcd",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-compose-jvm/3.2.0",
+    "dest-filename": "coil-compose-jvm-3.2.0.pom"
   },
   {
     "type": "file",
@@ -2752,10 +2766,24 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-core-jvm/3.2.0/coil-core-jvm-3.2.0.jar",
+    "sha512": "dcc6a865034d7bed5708f2afd1b00ba1e679468ab2c5b4365fc2917093f93e8698a1f44e2ca12db2191a867cc7d5761dcdcc4edb889a00ab02d74b408a746ef6",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-core-jvm/3.2.0",
+    "dest-filename": "coil-core-jvm-3.2.0.jar"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-core-jvm/3.2.0/coil-core-jvm-3.2.0.module",
     "sha512": "bba5c065b72b64210c8acc85cb28ca4e678c2221425a17472d14d339e457b3ab032eb6c4abdea8f3bf212e119512de786814d905be527790d8ce7b982dfbe96c",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-core-jvm/3.2.0",
     "dest-filename": "coil-core-jvm-3.2.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-core-jvm/3.2.0/coil-core-jvm-3.2.0.pom",
+    "sha512": "6d850281d3eaa8343bc59e63c078fa9f6f7bc998b7912318a6a7e7f85a1f65fb1931c518091e3d41acf97911422c13fc152b727e5206f694c2f5387331b10eb7",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-core-jvm/3.2.0",
+    "dest-filename": "coil-core-jvm-3.2.0.pom"
   },
   {
     "type": "file",
@@ -2780,52 +2808,94 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/coil-kt/coil3/coil-jvm/3.2.0/coil-jvm-3.2.0.jar",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-jvm/3.2.0/coil-jvm-3.2.0.jar",
     "sha512": "c89061f1edf19046c301104ac96f9b2f98d3aa5e635fd3ded8646394d4fe978358fdad3ce4d194ab7b3ed02e1448eb31cb0b9efe8685991f0c7691cde7757be9",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-jvm/3.2.0",
     "dest-filename": "coil-jvm-3.2.0.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/coil-kt/coil3/coil-jvm/3.2.0/coil-jvm-3.2.0.module",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-jvm/3.2.0/coil-jvm-3.2.0.module",
     "sha512": "aca556c9d2df3a69c81505bb934041591e03e24966ccd6da84239252f1a3fcdb05ff89d6a4e47d2eef497160a59df7ca2bcf6059a8404a914cdd3e65ac621329",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-jvm/3.2.0",
     "dest-filename": "coil-jvm-3.2.0.module"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/coil-kt/coil3/coil-jvm/3.2.0/coil-jvm-3.2.0.pom",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-jvm/3.2.0/coil-jvm-3.2.0.pom",
     "sha512": "18f829880b6a32d760ff5bcd564bbcd1579f650c2f795d1de805613c79163a6f91219b0c490cd4429e05cd860885c14384a833b2faa58033474baaed4e7e7cf1",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-jvm/3.2.0",
     "dest-filename": "coil-jvm-3.2.0.pom"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/coil-kt/coil3/coil-network-core-jvm/3.2.0/coil-network-core-jvm-3.2.0.jar",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-core-jvm/3.2.0/coil-network-core-jvm-3.2.0.jar",
     "sha512": "07b3f03842b0cc992273e90d70d0d1927b92ab4a8872866634d748347f1931cf86b7a478fea7cb2fe73d37f818e1d0cdc929e302786e9966f9b722f487a4253c",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-network-core-jvm/3.2.0",
     "dest-filename": "coil-network-core-jvm-3.2.0.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/coil-kt/coil3/coil-network-core-jvm/3.2.0/coil-network-core-jvm-3.2.0.module",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-core-jvm/3.2.0/coil-network-core-jvm-3.2.0.module",
     "sha512": "024b4356caf5b462d0a7a903084dd1eb2c91bce24cb00ca1b88055a85b9f66edb2de25a77bea1c74334275bcb09b4e1e47bfd03825e039060e3d59b5e5acff98",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-network-core-jvm/3.2.0",
     "dest-filename": "coil-network-core-jvm-3.2.0.module"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/coil-kt/coil3/coil-network-core-jvm/3.2.0/coil-network-core-jvm-3.2.0.pom",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-core-jvm/3.2.0/coil-network-core-jvm-3.2.0.pom",
     "sha512": "de45fe07b0eeff134a5e63fbe87709bc8d044d3e1a635a96ef710fe8176f27f86d2291d8a467d5e637b791953baff047772f35cdf3dfb3ec6ad5d4ecc531c707",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-network-core-jvm/3.2.0",
     "dest-filename": "coil-network-core-jvm-3.2.0.pom"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/coil-kt/coil3/coil-network-okhttp/3.2.0/coil-network-okhttp-3.2.0.module",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-core/3.2.0/coil-network-core-3.2.0.module",
+    "sha512": "9396119bb4225936fbc35381d67ea3d1b6e18ad999c12e8aed619cca3278099a61dcf5b855f5fb77a60973a63d7059c8c9cc9495db623ed27942d1a953942f03",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-network-core/3.2.0",
+    "dest-filename": "coil-network-core-3.2.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-core/3.2.0/coil-network-core-3.2.0.pom",
+    "sha512": "55a870033282e41d219cfc1fcf1a60e8c1a9ba49c8378e4e0abfb150ef87899e26723a6bc28507fbea9c4674a3a4c1dde7f0ce6a011624968835779fb67262f0",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-network-core/3.2.0",
+    "dest-filename": "coil-network-core-3.2.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-okhttp-jvm/3.2.0/coil-network-okhttp-jvm-3.2.0.jar",
+    "sha512": "a2ab790c22c23d73de06337dc16817b0f49bdb53611547fd8f078292120103064322c29dec552185e164bc495328a7168a79ab20b65c01a91991812617ad56b0",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-network-okhttp-jvm/3.2.0",
+    "dest-filename": "coil-network-okhttp-jvm-3.2.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-okhttp-jvm/3.2.0/coil-network-okhttp-jvm-3.2.0.module",
+    "sha512": "af8daf1aeaabbdd2c3e90dc88238caeed37466c806e2504805bedeb146e3fd9dcd58f072ea5006d145bdf3cf03b1ea993985fa400abfc7b0cb3d80a186fbbf5a",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-network-okhttp-jvm/3.2.0",
+    "dest-filename": "coil-network-okhttp-jvm-3.2.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-okhttp-jvm/3.2.0/coil-network-okhttp-jvm-3.2.0.pom",
+    "sha512": "c3ef797d1ed747e06a47d3012bbedb650abafd9d3f3552ae97b0bb3f9bb23adaacf985087f9f694eb7eb6a3534d7e54da6caaa537e7c1bf5a3ace47f41ecc577",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-network-okhttp-jvm/3.2.0",
+    "dest-filename": "coil-network-okhttp-jvm-3.2.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-okhttp/3.2.0/coil-network-okhttp-3.2.0.module",
     "sha512": "90e8450d7de993cb826f62b524bf48167ea489775c95ee074b45e36286ff7e64687eb4639ff7c9ce8cd85a804a1798985bc8701a8252c35c29d49ca994c696dc",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-network-okhttp/3.2.0",
     "dest-filename": "coil-network-okhttp-3.2.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-okhttp/3.2.0/coil-network-okhttp-3.2.0.pom",
+    "sha512": "9c9c254f641c41dde5adf0a024acac090b3e23ccb3cd21911c897d82eb1a9ec1e35552996ce7482cca1dfb0ab7b53fe268453a2e889bf1eeda4271f4195c2e3d",
+    "dest": "./offline-repository/io/coil-kt/coil3/coil-network-okhttp/3.2.0",
+    "dest-filename": "coil-network-okhttp-3.2.0.pom"
   },
   {
     "type": "file",
@@ -2906,7 +2976,21 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/github/g00fy2/versioncompare/1.4.1/versioncompare-1.4.1.pom",
+    "url": "https://plugins.gradle.org/m2/io/github/g00fy2/versioncompare/1.4.1/versioncompare-1.4.1.jar",
+    "sha512": "297ce9c7efd6c72195ed94ac7f5fb6dc73ec672f95956c62c4b0956a6dc4574311d634d1abae2d6748a40b9c413c0f6d9d0eba5b2383121e423fc2f451e4fe1c",
+    "dest": "./offline-repository/io/github/g00fy2/versioncompare/1.4.1",
+    "dest-filename": "versioncompare-1.4.1.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/github/g00fy2/versioncompare/1.4.1/versioncompare-1.4.1.module",
+    "sha512": "ada2835297a4b0286ca501411dc58e5b6349ec3b0566a053b9e7c9c50ad4ccfe93d199e0f075ec75ccfcac2da157321586addd18c06d8a4089042521012b2b45",
+    "dest": "./offline-repository/io/github/g00fy2/versioncompare/1.4.1",
+    "dest-filename": "versioncompare-1.4.1.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/github/g00fy2/versioncompare/1.4.1/versioncompare-1.4.1.pom",
     "sha512": "1e881f9634223aaf05bdbb0622715886c41f197b77aa1ac0ec0017228fc243b9766fe9549f33339e7a91bcf5372e18e7c20ef3bcc2977edba694cf9491fda851",
     "dest": "./offline-repository/io/github/g00fy2/versioncompare/1.4.1",
     "dest-filename": "versioncompare-1.4.1.pom"
@@ -2955,21 +3039,21 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-api/1.23.7/detekt-api-1.23.7.jar",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-api/1.23.7/detekt-api-1.23.7.jar",
     "sha512": "12a8269cc40feb931594bffd2946c059b8718b5a9b9857cc559a4adfbc988dd1656cd84ec441c8ba88bc004c2354a3738d80e706a40ed328ce8777f97051970d",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-api/1.23.7",
     "dest-filename": "detekt-api-1.23.7.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-api/1.23.7/detekt-api-1.23.7.module",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-api/1.23.7/detekt-api-1.23.7.module",
     "sha512": "553dc5f6c4f25ec5221a7832d09b400b1cfd37b7d9bbdc2feff23330267630fb85e2c2bfe4384891fde3cfb5d476c587afcbdb10413afe1c80c72887db0a94b3",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-api/1.23.7",
     "dest-filename": "detekt-api-1.23.7.module"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-api/1.23.7/detekt-api-1.23.7.pom",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-api/1.23.7/detekt-api-1.23.7.pom",
     "sha512": "fecbf0ae7c589becd3b8a4ad6c4ea136cfbff501da4de4042e01e13cfa601887e615260325da20a9d322bdf35a9701377e77113074a317995d852ab7e22bab69",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-api/1.23.7",
     "dest-filename": "detekt-api-1.23.7.pom"
@@ -3018,21 +3102,21 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-core/1.23.7/detekt-core-1.23.7.jar",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-core/1.23.7/detekt-core-1.23.7.jar",
     "sha512": "cae5bcdd06ecd858fc1b3ad6b5c9cb03eae21ce2beabc92f8ea0d298b42fca51a7875f49ecd92b6c22ea0c9c402f1eca92b369562450b4878f0789056b514323",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-core/1.23.7",
     "dest-filename": "detekt-core-1.23.7.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-core/1.23.7/detekt-core-1.23.7.module",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-core/1.23.7/detekt-core-1.23.7.module",
     "sha512": "4946b8ef287a9458a24ff27481518e0a4b05a921bc237b896d55cdd33b5469edb0bab753cd64dbaf2aaf872a3c07e7cf1104e3e8c8ae03b1a45b679af525830d",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-core/1.23.7",
     "dest-filename": "detekt-core-1.23.7.module"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-core/1.23.7/detekt-core-1.23.7.pom",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-core/1.23.7/detekt-core-1.23.7.pom",
     "sha512": "f5e9510d7cdd3dd671b349356f31d0b77832fc790be6e9aa510a4723e77f954cb9a906bfedd7efc129322f1d9fdefbf271c72a34461ac32c3c7c70255b51ac7c",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-core/1.23.7",
     "dest-filename": "detekt-core-1.23.7.pom"
@@ -3092,6 +3176,13 @@
     "sha512": "640132bb859e1ef9798eda5a07d24bd206c2e4f902fdaf56dd0bbf12819b6c8d6e6e01ff5ddefc360a573bd8af994756649fc8ef6b4730103eaf870924785231",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.7",
     "dest-filename": "detekt-metrics-1.23.7.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.7/detekt-metrics-1.23.7.pom",
+    "sha512": "67e00217e883eb1fafc571cd6d6ca37b66906de7338c0725f1424930e9cd0c7e41a9c8dcf5792001c258ebffee7c8e36d9f24e34d6e94c36c89b0abc0c907d86",
+    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.7",
+    "dest-filename": "detekt-metrics-1.23.7.pom"
   },
   {
     "type": "file",
@@ -3158,14 +3249,21 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7/detekt-psi-utils-1.23.7.jar",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7/detekt-psi-utils-1.23.7.jar",
     "sha512": "6c201fd2976f6521d88253c951aa1b8ea29c98bf4f2c59d713fa8a8b44eb7447dcdaef01ceea3a89cbd7c1b08cd70ca7c69be8ab26c79629ed3ff4d22d4c4170",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7",
     "dest-filename": "detekt-psi-utils-1.23.7.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7/detekt-psi-utils-1.23.7.pom",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7/detekt-psi-utils-1.23.7.module",
+    "sha512": "23eee91d93d9a785cb6b70b78641d099f184b6d6064d46325583c3260557e874ca6e3f16ed7c44b0d0ff28471b04a8d433939bd43fb78cd22613675b5c16f70c",
+    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7",
+    "dest-filename": "detekt-psi-utils-1.23.7.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7/detekt-psi-utils-1.23.7.pom",
     "sha512": "ff3b7edf9c44c2f72c922f62ac6d66b27a4905e6f856edeeaafe79c326fc28b0171df511bde5e92aa06d69390c97837dec8f843ef5e5959d47267c28bfb49404",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7",
     "dest-filename": "detekt-psi-utils-1.23.7.pom"
@@ -3207,6 +3305,13 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.7/detekt-report-html-1.23.7.pom",
+    "sha512": "eefebc5a92d483999c829a30acb06f11f776b9dcc032335980d6ef72a4f7c957762081d6c1cf6bdb77eeff7337a2f2c1ec256688d3959add344448bd1594ebcc",
+    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.7",
+    "dest-filename": "detekt-report-html-1.23.7.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8/detekt-report-html-1.23.8.jar",
     "sha512": "76ff606036badb7fd2178f6450d73305e6897848203ca2673ea03f2062c864b76647fd1eea777802d269dda15bc1a7b7dcb75de3145f86dee2c2109728198a77",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8",
@@ -3228,7 +3333,21 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7/detekt-report-md-1.23.7.pom",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7/detekt-report-md-1.23.7.jar",
+    "sha512": "438e8b708d616ee5e3f5b4619fcc6da97ffde14ab517a4a6985c4e5cdffcf558b965f35784432589c22c4153d30af09afe92978962c21a693b7db4c757e2631f",
+    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7",
+    "dest-filename": "detekt-report-md-1.23.7.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7/detekt-report-md-1.23.7.module",
+    "sha512": "1557ae06739987344dc89c4a944f730926c3b0705f03cbc19c3956393090a79576f2a00f163e127514c5bca5f7ffb0d222b1999fd4c053ac0a0f61543bee0480",
+    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7",
+    "dest-filename": "detekt-report-md-1.23.7.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7/detekt-report-md-1.23.7.pom",
     "sha512": "d9854d1150b05cddcb00aac50ac0520ceee8a772444ad4cda6565842bc330b089771917d105aa1a0b6ea10721f265ff3619c5c9ab6a8f2a009b20b196674bb2c",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7",
     "dest-filename": "detekt-report-md-1.23.7.pom"
@@ -3256,14 +3375,21 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7/detekt-report-sarif-1.23.7.jar",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7/detekt-report-sarif-1.23.7.jar",
     "sha512": "2bc52f76853f70f15b209fbb661569ed09c8226e34ba781d770280748b6644942815b19a3a4f166f86b57b35f8e3696f2bd54b4326ea89bd9a34b973bf881950",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7",
     "dest-filename": "detekt-report-sarif-1.23.7.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7/detekt-report-sarif-1.23.7.pom",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7/detekt-report-sarif-1.23.7.module",
+    "sha512": "264e19992c21773016a3d67a6f369592d89ec5ad6c1a655ac81d25933fed17398b5d6284333a35271e3f8a6552fb7719fe4877c690229834f2b946331e02835e",
+    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7",
+    "dest-filename": "detekt-report-sarif-1.23.7.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7/detekt-report-sarif-1.23.7.pom",
     "sha512": "f59592b9d6076888604e0d2a99dfc1a11880efa5f822b4422d43790c54fac1469a2ea08c16557b8ae6b949ec3938cce6609cbd669a43790ee9c897d86d77b7f5",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7",
     "dest-filename": "detekt-report-sarif-1.23.7.pom"
@@ -3305,6 +3431,13 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.7/detekt-report-txt-1.23.7.pom",
+    "sha512": "59766a38a7e87966616b0ac5a0fcbc8b2ebac38c790523a9d04eff331e68a28b6746a64370b3dbcd41105afd86169f86f58565ef5cde5732441162c7155a897c",
+    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.7",
+    "dest-filename": "detekt-report-txt-1.23.7.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8/detekt-report-txt-1.23.8.jar",
     "sha512": "70d1f13bbcfe4f4481631162e2afde28106cc0a8c41e165a8882244d310c258d488523d1bf18f08dbd6660296b174a3c1cd5f96cb9b4ba808ffba388da3f50e7",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8",
@@ -3337,6 +3470,13 @@
     "sha512": "78196af848bc57489fb708e343474e5871d4329b0f1b281c350c90e255575ba12ac49b3a1a87eee3d824204619b871d5909599a05f5a8425c23e2bc719c8953f",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.7",
     "dest-filename": "detekt-report-xml-1.23.7.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.7/detekt-report-xml-1.23.7.pom",
+    "sha512": "8b6e20b9662b941c10bcb3bd948278b53311e63ee0461793713b1dbf6f94334a8b1d3eebdcbbc5c7277b6af5e538e4581e54953225d5855c3055b72f1e259035",
+    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.7",
+    "dest-filename": "detekt-report-xml-1.23.7.pom"
   },
   {
     "type": "file",
@@ -3582,6 +3722,13 @@
     "sha512": "99822736336355ee53369f6f1a5edbd363642a08ba155a7882950d3a784111909697698f054c324cd46840410538be6defe6699d0a4bbd89312eb3766bd0456e",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.7",
     "dest-filename": "detekt-tooling-1.23.7.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.7/detekt-tooling-1.23.7.pom",
+    "sha512": "f6697c1ca6ffc1d8e9ae46954ff95ea2060042c16443cab3972f22eb97276d3572a3b9449597cee51936e3144a35f00d57c2e77046348cdd969f03a3b5c670eb",
+    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.7",
+    "dest-filename": "detekt-tooling-1.23.7.pom"
   },
   {
     "type": "file",
@@ -4649,7 +4796,21 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/io/nlopez/compose/rules/common/0.4.22/common-0.4.22.pom",
+    "url": "https://plugins.gradle.org/m2/io/nlopez/compose/rules/common/0.4.22/common-0.4.22.jar",
+    "sha512": "7dbf329c3140ba0c59afef04c3b5a9c80384a62e8009789ac553801bc39b2af875dc319aff3b636194867bb14aedeb9ed3f40b5dfb9ee0d85f27f4e432648779",
+    "dest": "./offline-repository/io/nlopez/compose/rules/common/0.4.22",
+    "dest-filename": "common-0.4.22.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/nlopez/compose/rules/common/0.4.22/common-0.4.22.module",
+    "sha512": "2649c52ea85876715568f4deaa5139050ba77fe7c2856db98142c63fa35392b40848caed08f2727e8a83fcf95c4a9f2d0ac6571a9b6e76fdd04a9d4ccc182576",
+    "dest": "./offline-repository/io/nlopez/compose/rules/common/0.4.22",
+    "dest-filename": "common-0.4.22.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/nlopez/compose/rules/common/0.4.22/common-0.4.22.pom",
     "sha512": "a348a9f05257d5f60e60764012a8d0ba896fc06a9b5b2e835c79722d47880826d51310e11be0c83df40079816d392fda6bcd255ba19be0c556dd443d19e1c4ac",
     "dest": "./offline-repository/io/nlopez/compose/rules/common/0.4.22",
     "dest-filename": "common-0.4.22.pom"
@@ -4667,6 +4828,13 @@
     "sha512": "4e956fde9b1f2418e4a995b716c0358b39237979e47529608a03c17594145d6436b80d9d9fa411b4e1fcf67033b4d6e92f35338be53a93d9731039e2137a8007",
     "dest": "./offline-repository/io/nlopez/compose/rules/detekt/0.4.22",
     "dest-filename": "detekt-0.4.22.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/io/nlopez/compose/rules/detekt/0.4.22/detekt-0.4.22.pom",
+    "sha512": "c9d0befa8ffde839f213af461be1d8057ce189c3681049b4641bd801cf9c9e32e550934894c034b5884b631601f6389fb40ebc3bc044b31c2b3dbccdf9e0c501",
+    "dest": "./offline-repository/io/nlopez/compose/rules/detekt/0.4.22",
+    "dest-filename": "detekt-0.4.22.pom"
   },
   {
     "type": "file",
@@ -4761,10 +4929,38 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/me/saket/swipe/swipe-jvm/1.3.0/swipe-jvm-1.3.0.pom",
+    "url": "https://plugins.gradle.org/m2/me/saket/swipe/swipe-jvm/1.3.0/swipe-jvm-1.3.0.jar",
+    "sha512": "1532cf6a02f50e4e30f20aaed13345de17a67ab5c997cd7b072acd432d840e2013d1a4ac1c6591f8eb8129ab7fdfdb22b110122b8963e5605b7396f8adfa6bdf",
+    "dest": "./offline-repository/me/saket/swipe/swipe-jvm/1.3.0",
+    "dest-filename": "swipe-jvm-1.3.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/me/saket/swipe/swipe-jvm/1.3.0/swipe-jvm-1.3.0.module",
+    "sha512": "9ce813a94ae93b2f09f7d443a8bd7197cbc96d395a1000dcf73325567680c3e35e1b20cfbf338d90ede2c68f8256b4eba122024ba6ceb45505e75ee117dc29a2",
+    "dest": "./offline-repository/me/saket/swipe/swipe-jvm/1.3.0",
+    "dest-filename": "swipe-jvm-1.3.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/me/saket/swipe/swipe-jvm/1.3.0/swipe-jvm-1.3.0.pom",
     "sha512": "2e75f56c210bea33e3859cb98860bc4c9fd91d314e246b573a6349789aa8a7015054a2fb98a1cf2f19e197fe6dce4ca2215a847a4a5d3c57eaffc611373beea9",
     "dest": "./offline-repository/me/saket/swipe/swipe-jvm/1.3.0",
     "dest-filename": "swipe-jvm-1.3.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/me/saket/swipe/swipe/1.3.0/swipe-1.3.0.module",
+    "sha512": "312e093eaf14da8e9c37fad139cd371b139ff1750c356446b54b7ba2aa52f052ac02dea3c96f1d9aa880e8ddcae7c5b6f48717890b123ee44974f748763028d7",
+    "dest": "./offline-repository/me/saket/swipe/swipe/1.3.0",
+    "dest-filename": "swipe-1.3.0.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/me/saket/swipe/swipe/1.3.0/swipe-1.3.0.pom",
+    "sha512": "dd7717283d7d0705009f12cb0e0c9c26199393f128d2ce9a9a3b124cac4a03ea8ccf2fbe426b16be5a9666127e7601273e10d2f44cc4530d94caa1ddbc33e6fb",
+    "dest": "./offline-repository/me/saket/swipe/swipe/1.3.0",
+    "dest-filename": "swipe-1.3.0.pom"
   },
   {
     "type": "file",
@@ -4782,21 +4978,56 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/ec4j/core/ec4j-core-parent/0.3.0/ec4j-core-parent-0.3.0.pom",
+    "url": "https://plugins.gradle.org/m2/net/java/dev/jna/jna-platform/5.10.0/jna-platform-5.10.0.jar",
+    "sha512": "bc8bfd5a5c9a8a145ea789ac946dc3ee6e9b7f5b721733567df8a1aff0a8499d6b1434306226004bc8bc58fe41ec1fc8a99d5420301682b72f379ae526bfa4e5",
+    "dest": "./offline-repository/net/java/dev/jna/jna-platform/5.10.0",
+    "dest-filename": "jna-platform-5.10.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/net/java/dev/jna/jna-platform/5.10.0/jna-platform-5.10.0.pom",
+    "sha512": "2d08651f0f7c9fded8083fbcc50b27ed2908d75beec5ec31b1b596761b45c25270d468e202be3979c0eed3d1343da7868694ec290918cff0eb229ac3b0d01107",
+    "dest": "./offline-repository/net/java/dev/jna/jna-platform/5.10.0",
+    "dest-filename": "jna-platform-5.10.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/net/java/dev/jna/jna/5.10.0/jna-5.10.0-jpms.jar",
+    "sha512": "dc1aa4826b0460691c776e3904e6f11b0e602c9bdeb9fe8fabcd4bb01963a63fff6d8fb7d797ebfa38ccadc98671a42a9218135a36e4abcf8cf7d71985fc81fe",
+    "dest": "./offline-repository/net/java/dev/jna/jna/5.10.0",
+    "dest-filename": "jna-5.10.0-jpms.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/net/java/dev/jna/jna/5.10.0/jna-5.10.0.jar",
+    "sha512": "7daf6a8605afff8bfc564b73b1a09ec8384f3ed2a5970f5e29ac3ac52336808e3cb2a083a22e8e00a6da8913b6dfdc093b92ba18a4f6f9ffafbd70006e308fa6",
+    "dest": "./offline-repository/net/java/dev/jna/jna/5.10.0",
+    "dest-filename": "jna-5.10.0.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/net/java/dev/jna/jna/5.10.0/jna-5.10.0.pom",
+    "sha512": "fc3262a1fa320927808bdb307a3b49be622143eb053a51dafc7f9a5a7c3606148cb3eccecbe03e366168705e94ff61792f38b99b90150ae0f5c43d217e8912ec",
+    "dest": "./offline-repository/net/java/dev/jna/jna/5.10.0",
+    "dest-filename": "jna-5.10.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/ec4j/core/ec4j-core-parent/0.3.0/ec4j-core-parent-0.3.0.pom",
     "sha512": "25a43139f6eac9fb0d961a487df9d178b5db1022ded1e80060da90232c41b972902e91c40580a4fd8981db6ceb03b27454f36a179bcf5c27eb2df66f27c281d9",
     "dest": "./offline-repository/org/ec4j/core/ec4j-core-parent/0.3.0",
     "dest-filename": "ec4j-core-parent-0.3.0.pom"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/ec4j/core/ec4j-core/0.3.0/ec4j-core-0.3.0.jar",
+    "url": "https://plugins.gradle.org/m2/org/ec4j/core/ec4j-core/0.3.0/ec4j-core-0.3.0.jar",
     "sha512": "6080efc39f04ef7b1caf64e65e5f3a87e10c0dcfc6fa01c88225afef4703c8b70e96d9e2e600843da826579d8bd1b644eba42fb5e3cf65d41b65a339c5019484",
     "dest": "./offline-repository/org/ec4j/core/ec4j-core/0.3.0",
     "dest-filename": "ec4j-core-0.3.0.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/ec4j/core/ec4j-core/0.3.0/ec4j-core-0.3.0.pom",
+    "url": "https://plugins.gradle.org/m2/org/ec4j/core/ec4j-core/0.3.0/ec4j-core-0.3.0.pom",
     "sha512": "0f81afa52108cb32da64cb02ff37257f5519cf834937be4fbb4df6d169a6cc1eb5606714a43c3c215a220ac9bfc5818782748a41e1c4e61fe837b1e4d29f0d0e",
     "dest": "./offline-repository/org/ec4j/core/ec4j-core/0.3.0",
     "dest-filename": "ec4j-core-0.3.0.pom"
@@ -4856,6 +5087,27 @@
     "sha512": "039d28bcdf5de51fd3d9460846143d5fb4b45bd42a0939935ae8efa246153e14794abad5b51df25e66972cbb8314cdeff93a344afc79b3da42062d1d687286bb",
     "dest": "./offline-repository/org/jetbrains/androidx/lifecycle/lifecycle-common/2.8.4",
     "dest-filename": "lifecycle-common-2.8.4.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/androidx/lifecycle/lifecycle-runtime-compose-desktop/2.8.4/lifecycle-runtime-compose-desktop-2.8.4.jar",
+    "sha512": "448db831f02c2edbc8752c69556196188216f56bfc3859d244b2f17c32591929856a91a459592a2342a68100141a29f1b7e517ea4e86e6de5b1c338e2d692dfe",
+    "dest": "./offline-repository/org/jetbrains/androidx/lifecycle/lifecycle-runtime-compose-desktop/2.8.4",
+    "dest-filename": "lifecycle-runtime-compose-desktop-2.8.4.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/androidx/lifecycle/lifecycle-runtime-compose-desktop/2.8.4/lifecycle-runtime-compose-desktop-2.8.4.module",
+    "sha512": "b8380fea7bf1c62181991f817552662a8346121c63c14ba2732130b3bfca99fe7fc9c87a446690195d74cee925ccb31db995c17f669fd981450b498b5c884bd4",
+    "dest": "./offline-repository/org/jetbrains/androidx/lifecycle/lifecycle-runtime-compose-desktop/2.8.4",
+    "dest-filename": "lifecycle-runtime-compose-desktop-2.8.4.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/androidx/lifecycle/lifecycle-runtime-compose-desktop/2.8.4/lifecycle-runtime-compose-desktop-2.8.4.pom",
+    "sha512": "377e0b943c123421505af4d726c5e494fc2034c030e12bbdda96a02dec29cf3fb5c8f15e6149dd70576b676c9f1eb9f07d6cc49a4468109c771b8395dfd1981e",
+    "dest": "./offline-repository/org/jetbrains/androidx/lifecycle/lifecycle-runtime-compose-desktop/2.8.4",
+    "dest-filename": "lifecycle-runtime-compose-desktop-2.8.4.pom"
   },
   {
     "type": "file",
@@ -4922,6 +5174,41 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/androidx/window/window-core-desktop/1.3.1/window-core-desktop-1.3.1.jar",
+    "sha512": "8d493c44c2aba5955abd14fda92f7737d655973a8220033c9fd73c5079e085005121d7a4b39bef0c985cd23676ac71e222266434a461e96011755e467d84a81b",
+    "dest": "./offline-repository/org/jetbrains/androidx/window/window-core-desktop/1.3.1",
+    "dest-filename": "window-core-desktop-1.3.1.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/androidx/window/window-core-desktop/1.3.1/window-core-desktop-1.3.1.module",
+    "sha512": "79a796aa04f3e421ab8f4ec49e4ccd25651a2383f81a285218dc1ccd924434082e63e95efbbdb8b22cc344064c2d5b8611beff97dc525e456cdcaf9b46d95016",
+    "dest": "./offline-repository/org/jetbrains/androidx/window/window-core-desktop/1.3.1",
+    "dest-filename": "window-core-desktop-1.3.1.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/androidx/window/window-core-desktop/1.3.1/window-core-desktop-1.3.1.pom",
+    "sha512": "8b889b10dcaa3c1aa24022d1709ba0d4006b91383b3663e5a7812df2bccc0f3d9030bf4f64747c08942d8781aca36213d1068914b17bee23bb58f9913f7252ae",
+    "dest": "./offline-repository/org/jetbrains/androidx/window/window-core-desktop/1.3.1",
+    "dest-filename": "window-core-desktop-1.3.1.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/androidx/window/window-core/1.3.1/window-core-1.3.1.module",
+    "sha512": "b3d4aba8dccf8e733896345136877997419191908f6b13b825c6c259da7b14a7fe0070b1b6ec4d8d25bd68849d5d1883503a0a6bc6f73aa4fa1f3dab300efb97",
+    "dest": "./offline-repository/org/jetbrains/androidx/window/window-core/1.3.1",
+    "dest-filename": "window-core-1.3.1.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/androidx/window/window-core/1.3.1/window-core-1.3.1.pom",
+    "sha512": "0ad9d44a08925e055b007f8a21a8b48494de91ef33ff3e936fd46311716cffa7111d765465a6ed36a62bdfc3c154d00f28393ade9aff4f7601193a62b1b684ee",
+    "dest": "./offline-repository/org/jetbrains/androidx/window/window-core/1.3.1",
+    "dest-filename": "window-core-1.3.1.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/annotations/13.0/annotations-13.0.jar",
     "sha512": "5622d0ffe410e7272e2bb9fae1006caedeb86d0c62d2d9f3929a3b3cdcdef1963218fcf0cede82e95ef9f4da3ed4a173fa055ee6e4038886376181e0423e02ff",
     "dest": "./offline-repository/org/jetbrains/annotations/13.0",
@@ -4964,21 +5251,21 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/animation/animation-core-desktop/1.8.2/animation-core-desktop-1.8.2.jar",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/animation/animation-core-desktop/1.8.2/animation-core-desktop-1.8.2.jar",
     "sha512": "a142ac7156e6d6ab44fe0365552c67a3090ba395323ed2ad2934f1687d6730eb696e448aa2cd632b1785f0c4b21b82af59d367e75fb69596cf51ac6fda063e5c",
     "dest": "./offline-repository/org/jetbrains/compose/animation/animation-core-desktop/1.8.2",
     "dest-filename": "animation-core-desktop-1.8.2.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/animation/animation-core-desktop/1.8.2/animation-core-desktop-1.8.2.module",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/animation/animation-core-desktop/1.8.2/animation-core-desktop-1.8.2.module",
     "sha512": "58c13218c89c1ed9b9abd1f30799fd173993f77dd1884db288a223263f6607f050644f393df0edefa927a8582214807937f817749edea7b2931ed5f687411ff1",
     "dest": "./offline-repository/org/jetbrains/compose/animation/animation-core-desktop/1.8.2",
     "dest-filename": "animation-core-desktop-1.8.2.module"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/animation/animation-core-desktop/1.8.2/animation-core-desktop-1.8.2.pom",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/animation/animation-core-desktop/1.8.2/animation-core-desktop-1.8.2.pom",
     "sha512": "65e6d8dc80944194db24d3e378f40d94a0bf607e270b4b86fd3a5ee5a0f1616d5bc08683669caa9849e0942f94d7dce677be7eaf7b000e1ab11708f22bc8aedd",
     "dest": "./offline-repository/org/jetbrains/compose/animation/animation-core-desktop/1.8.2",
     "dest-filename": "animation-core-desktop-1.8.2.pom"
@@ -5006,10 +5293,24 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/animation/animation-desktop/1.8.2/animation-desktop-1.8.2.jar",
+    "sha512": "1eca074d5686cbfea1790792d53eb448611157c16d43e2b6f7e63421a7dcdf2a628641973d0ecbd53f836ec2653303d555f4fe375261b09e47c13c015a4f89bd",
+    "dest": "./offline-repository/org/jetbrains/compose/animation/animation-desktop/1.8.2",
+    "dest-filename": "animation-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/animation/animation-desktop/1.8.2/animation-desktop-1.8.2.module",
     "sha512": "a075126607792e357ec9a7d3c270cc398a0a3506599de56f16f53dc2fd8ddd796cdf7c05494fa109d1e83023488ecd83067ef90febec020c725f0ad16c7a51ef",
     "dest": "./offline-repository/org/jetbrains/compose/animation/animation-desktop/1.8.2",
     "dest-filename": "animation-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/animation/animation-desktop/1.8.2/animation-desktop-1.8.2.pom",
+    "sha512": "867e4a7f4da6e7e3b38cb62d788e58c3f73882a13123e65a936f103739bf1f09e4fa99eb7eb7094f4168fc50119ec754fa5c759d802a0b64a9f28a79d0f4099c",
+    "dest": "./offline-repository/org/jetbrains/compose/animation/animation-desktop/1.8.2",
+    "dest-filename": "animation-desktop-1.8.2.pom"
   },
   {
     "type": "file",
@@ -5034,14 +5335,14 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/annotation-internal/annotation/1.6.11/annotation-1.6.11.module",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/annotation-internal/annotation/1.6.11/annotation-1.6.11.module",
     "sha512": "a98c005d8fcd18d6ead801d0fa93fbaad53e1d823eb6766a51b288995c0a11778a386ce094e18215fece03c993e793d3eddc470cb25a197e7c3b4fd8117979fb",
     "dest": "./offline-repository/org/jetbrains/compose/annotation-internal/annotation/1.6.11",
     "dest-filename": "annotation-1.6.11.module"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/annotation-internal/annotation/1.6.11/annotation-1.6.11.pom",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/annotation-internal/annotation/1.6.11/annotation-1.6.11.pom",
     "sha512": "7faf670cc3c19ba3b28352a4d9a1b1f0df9c489c860f5ba5e5486246b06a30e1363a99dba871e5dfd514a20836f3057248be7138335c25a92ac49a4067d31cae",
     "dest": "./offline-repository/org/jetbrains/compose/annotation-internal/annotation/1.6.11",
     "dest-filename": "annotation-1.6.11.pom"
@@ -5090,10 +5391,24 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-desktop/1.8.2/components-resources-desktop-1.8.2.jar",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-resources-desktop/1.8.2/components-resources-desktop-1.8.2.jar",
     "sha512": "6eb2a6333d13f21f34bb95f26d51ad604c918e2d22e29e08500c5c7b8e5573ee5e389bd5f91501e8504ab838e47fda2b5cd8482d6b593bd4b806eda934906e3c",
     "dest": "./offline-repository/org/jetbrains/compose/components/components-resources-desktop/1.8.2",
-    "dest-filename": "library-desktop-1.8.2.jar"
+    "dest-filename": "components-resources-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-resources-desktop/1.8.2/components-resources-desktop-1.8.2.module",
+    "sha512": "34bad54a624108df1025ac43683a97ae260f235d9860bc77b31b9957bb33c1227c093d80f2aff4129f86fd8a762ad66bcff1994441b6de3803369aef9284e58e",
+    "dest": "./offline-repository/org/jetbrains/compose/components/components-resources-desktop/1.8.2",
+    "dest-filename": "components-resources-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-resources-desktop/1.8.2/components-resources-desktop-1.8.2.pom",
+    "sha512": "0dc3a48ddcca774899f0a3b40482429bd2bbc41f3af83c899502750412a7b63681c65c99c331dea5ef1fc3801095c9c83c7598b59d5a4108c502f04d76ddd95f",
+    "dest": "./offline-repository/org/jetbrains/compose/components/components-resources-desktop/1.8.2",
+    "dest-filename": "components-resources-desktop-1.8.2.pom"
   },
   {
     "type": "file",
@@ -5118,24 +5433,38 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2/components-ui-tooling-preview-desktop-1.8.2.jar",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2/components-ui-tooling-preview-desktop-1.8.2.jar",
     "sha512": "278903c7a4a62a8ccdd4f9137cf9de54349022654cd7a860cc2e34369338763e06475785c6bba99f13ee88f764c0dd3ef78d8bae13914688c1527d7d6c864799",
     "dest": "./offline-repository/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2",
     "dest-filename": "components-ui-tooling-preview-desktop-1.8.2.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2/components-ui-tooling-preview-desktop-1.8.2.module",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2/components-ui-tooling-preview-desktop-1.8.2.module",
     "sha512": "80304bf0d59af9bdccf73b0e6d437a9ae7324203786dac9660bad12af6c346b2d0eaee19b9b00aae704bd097ef7db762e514688f3e24b7a8c478f9832f66862d",
     "dest": "./offline-repository/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2",
     "dest-filename": "components-ui-tooling-preview-desktop-1.8.2.module"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2/components-ui-tooling-preview-desktop-1.8.2.pom",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2/components-ui-tooling-preview-desktop-1.8.2.pom",
     "sha512": "c5018f1f04b6313034859eda8dec8def099710ccb9b8ab0fb5ad753ee6e9a2d0f8da1f40019daf749e758d41b732bdc8a6d1f98d39a3fc4666dc75fd3ae72816",
     "dest": "./offline-repository/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2",
     "dest-filename": "components-ui-tooling-preview-desktop-1.8.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-ui-tooling-preview/1.8.2/components-ui-tooling-preview-1.8.2.module",
+    "sha512": "96af67563f85cf962cfff8b0fbc4729ec064a1e1a8d7b4ee0a1fcf14fc016ae52a59ee56c1b5c826a52f65fab61768fb0f182406d0906502dafcd809f510f922",
+    "dest": "./offline-repository/org/jetbrains/compose/components/components-ui-tooling-preview/1.8.2",
+    "dest-filename": "components-ui-tooling-preview-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-ui-tooling-preview/1.8.2/components-ui-tooling-preview-1.8.2.pom",
+    "sha512": "45dc3bd59c549d40eb1bae26b019577f3bd4aec35ee73d073e71b9549b553c61645daf0add0b80a0cad8de939c9beba5e1d93cfec3aa4c4afa56630f59c99e8d",
+    "dest": "./offline-repository/org/jetbrains/compose/components/components-ui-tooling-preview/1.8.2",
+    "dest-filename": "components-ui-tooling-preview-1.8.2.pom"
   },
   {
     "type": "file",
@@ -5143,6 +5472,27 @@
     "sha512": "a612099c4dd73f4dd740868072bf4d8ebd92fc10dedd8d52f681337231b31b5c3fde44618824e1cd30fe676d278f53f769c26c39dbc73a8dad8d90130a48123a",
     "dest": "./offline-repository/org/jetbrains/compose/desktop/desktop-jvm-macos-arm64/1.8.2",
     "dest-filename": "desktop-jvm-macos-arm64-1.8.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/desktop/desktop-jvm/1.8.2/desktop-jvm-1.8.2.jar",
+    "sha512": "d8070c71f705307565636c7a8a60499e74ac13213b6f131cf924743b32e0c0af5af55be98c41eaa3f612d2273b62842c619d8c37c25f8213787ccd0fc21bad1a",
+    "dest": "./offline-repository/org/jetbrains/compose/desktop/desktop-jvm/1.8.2",
+    "dest-filename": "desktop-jvm-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/desktop/desktop-jvm/1.8.2/desktop-jvm-1.8.2.module",
+    "sha512": "9e68d968cdd256d9ceb0edc69c8dbe63c8684235995664bfd2052c9ebd1b26f3c1d01515804e2f9a4bf69e7165d97a2eeae1b150bb51fb3b72d6540b29d03747",
+    "dest": "./offline-repository/org/jetbrains/compose/desktop/desktop-jvm/1.8.2",
+    "dest-filename": "desktop-jvm-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/desktop/desktop-jvm/1.8.2/desktop-jvm-1.8.2.pom",
+    "sha512": "4f89158f4a07ca4daf82c178db23a2fdf3bc8097ab625204d6252a129bb56db6e4a0b7e91ca830ee8316edde9d9c3fc616d983d103c28b9b73e581515b15159b",
+    "dest": "./offline-repository/org/jetbrains/compose/desktop/desktop-jvm/1.8.2",
+    "dest-filename": "desktop-jvm-1.8.2.pom"
   },
   {
     "type": "file",
@@ -5167,6 +5517,13 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/foundation/foundation-desktop/1.8.2/foundation-desktop-1.8.2.jar",
+    "sha512": "59ab4b8a3d36bf4c0d7b5e5b78396dfd0ef0dcfe03970174836d7589a13201f0d30177e034c860c2e75ef3ddd041b39502701b0357618ae0c8a814bf743d0b59",
+    "dest": "./offline-repository/org/jetbrains/compose/foundation/foundation-desktop/1.8.2",
+    "dest-filename": "foundation-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/foundation/foundation-desktop/1.8.2/foundation-desktop-1.8.2.module",
     "sha512": "e7cac515702e34abffb0bc3f682b99ad2d913a42bcfa00ad34021a1eb4e80c97794f2e59cc6f4099cb60c32cfcf2c9dcc3909e7e4d04f182cb992d41153b4ebd",
     "dest": "./offline-repository/org/jetbrains/compose/foundation/foundation-desktop/1.8.2",
@@ -5174,21 +5531,28 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/foundation/foundation-layout-desktop/1.8.2/foundation-layout-desktop-1.8.2.jar",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/foundation/foundation-desktop/1.8.2/foundation-desktop-1.8.2.pom",
+    "sha512": "0b847c620aecbae4254246a5c7b39ce86c0d4feec9e3db238e0f79124fb1f29fb3e22d84a876b13ad6f2dbb565becc22611c8f38d61b6ad358c692078a6e673a",
+    "dest": "./offline-repository/org/jetbrains/compose/foundation/foundation-desktop/1.8.2",
+    "dest-filename": "foundation-desktop-1.8.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/foundation/foundation-layout-desktop/1.8.2/foundation-layout-desktop-1.8.2.jar",
     "sha512": "90bebddb5fa64aea90b7943714b6b0dae1b0238731db235d81d48c0252463ed2b861b18aab8912684577c76ad9e7767ebcaaf5b3be9c7fe3a263c01eff93dddc",
     "dest": "./offline-repository/org/jetbrains/compose/foundation/foundation-layout-desktop/1.8.2",
     "dest-filename": "foundation-layout-desktop-1.8.2.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/foundation/foundation-layout-desktop/1.8.2/foundation-layout-desktop-1.8.2.module",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/foundation/foundation-layout-desktop/1.8.2/foundation-layout-desktop-1.8.2.module",
     "sha512": "e6c1f07e9a5e47922f5e0375156f6810437019ed6955166444bec16f52876b9e3999ac625201c413105487aaf8cbdd464aa13a61ac4d54af781a866693e5a656",
     "dest": "./offline-repository/org/jetbrains/compose/foundation/foundation-layout-desktop/1.8.2",
     "dest-filename": "foundation-layout-desktop-1.8.2.module"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/foundation/foundation-layout-desktop/1.8.2/foundation-layout-desktop-1.8.2.pom",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/foundation/foundation-layout-desktop/1.8.2/foundation-layout-desktop-1.8.2.pom",
     "sha512": "3999b78f3659c537233b68d8ade286a746e83f344bf43a4c64eae0831d254808f86a5a12752a5b02dda0cb28467c6471796538a1d989da0121e0b11a1c89f00c",
     "dest": "./offline-repository/org/jetbrains/compose/foundation/foundation-layout-desktop/1.8.2",
     "dest-filename": "foundation-layout-desktop-1.8.2.pom"
@@ -5405,6 +5769,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/hot-reload/hot-reload-runtime-api-jvm/1.0.0-beta04/hot-reload-runtime-api-jvm-1.0.0-beta04.jar",
+    "sha512": "cd0ab8bdd835e514086e8c98a5571e21a4a66f704ec97886b8c755b91e613de9b9fd4499f0f76574c584711c9982a07bb145ff5ecf4ce89923f3f7756fea08c2",
+    "dest": "./offline-repository/org/jetbrains/compose/hot-reload/hot-reload-runtime-api-jvm/1.0.0-beta04",
+    "dest-filename": "hot-reload-runtime-api-jvm-1.0.0-beta04.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/hot-reload/hot-reload-runtime-api-jvm/1.0.0-beta04/hot-reload-runtime-api-jvm-1.0.0-beta04.module",
+    "sha512": "0423b2aa434ff9de59c1ce1bba9161b92bd5ed8b6bd6245e6d9168e2cba0469f1e0d05104a0058aecb39d93a354441a52449dc3cdd7e8f9430fccb204d6e5504",
+    "dest": "./offline-repository/org/jetbrains/compose/hot-reload/hot-reload-runtime-api-jvm/1.0.0-beta04",
+    "dest-filename": "hot-reload-runtime-api-jvm-1.0.0-beta04.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/hot-reload/hot-reload-runtime-api-jvm/1.0.0-beta04/hot-reload-runtime-api-jvm-1.0.0-beta04.pom",
+    "sha512": "49ea9d66b1582ee62a27220644e77e1dd2d7d19519b6e0f43ac3447ac90f234c17b8e1648145abebec75d4a44bf5ea7b01dd2eb7e009f1b6c531e9688761db3f",
+    "dest": "./offline-repository/org/jetbrains/compose/hot-reload/hot-reload-runtime-api-jvm/1.0.0-beta04",
+    "dest-filename": "hot-reload-runtime-api-jvm-1.0.0-beta04.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/hot-reload/hot-reload-runtime-api/1.0.0-beta04/hot-reload-runtime-api-1.0.0-beta04.jar",
     "sha512": "4b50ee4bec6c42143e10d0b33641c746d6d148179e71b6a94fe9ebc53fa6eab3bb09612e2a788316b371fb56c0275924c97b155d9d033c6e429b9dd50fd40934",
     "dest": "./offline-repository/org/jetbrains/compose/hot-reload/hot-reload-runtime-api/1.0.0-beta04",
@@ -5447,17 +5832,45 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/material/material-desktop/1.8.2/material-desktop-1.8.2.jar",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-desktop/1.8.2/material-desktop-1.8.2.jar",
     "sha512": "0be256082a8b3745bf7abba555ef6a71be1ec33d40bef37f39af1cd8df10c76cc7e436efffedf5eb454824a46c0977041505dd38a0339a33ee3997a8a5aa3d7b",
     "dest": "./offline-repository/org/jetbrains/compose/material/material-desktop/1.8.2",
     "dest-filename": "material-desktop-1.8.2.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/material/material-desktop/1.8.2/material-desktop-1.8.2.module",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-desktop/1.8.2/material-desktop-1.8.2.module",
     "sha512": "bbe6408f9233e192e8de8a1b54d5f9873d3774cdbf683e848be2760a9439f03cf400e75aeb1e27fe128fbd3d9090058e83268f74dfa2d67c67dfa83f6eff2234",
     "dest": "./offline-repository/org/jetbrains/compose/material/material-desktop/1.8.2",
     "dest-filename": "material-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-desktop/1.8.2/material-desktop-1.8.2.pom",
+    "sha512": "28fa9539cfc704eeca618fa902b2b839fb94faa97ee30b8cc03088d8b990cda1cd579ae74d12ff14689591109995f765aa15531f455f198c60a0cfbed5ecdeb3",
+    "dest": "./offline-repository/org/jetbrains/compose/material/material-desktop/1.8.2",
+    "dest-filename": "material-desktop-1.8.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-icons-core-desktop/1.7.3/material-icons-core-desktop-1.7.3.jar",
+    "sha512": "01b95ca4efdab4dc9242ee6487676f41e9e15bf045cabf215b1b126d9d25f298edbccfd1c285dad000747b5386eb132cf2ab88d46e6dd18cff16fa28e9c1b54e",
+    "dest": "./offline-repository/org/jetbrains/compose/material/material-icons-core-desktop/1.7.3",
+    "dest-filename": "material-icons-core-desktop-1.7.3.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-icons-core-desktop/1.7.3/material-icons-core-desktop-1.7.3.module",
+    "sha512": "8e87e6e4ae12634e1e3e06ab03aabf63f0c144c902132802c3056ee74672c64e861ebaa69493454bd90c2aa162ca9cf8a6e28e9af66ef8b351dc3687eb68691f",
+    "dest": "./offline-repository/org/jetbrains/compose/material/material-icons-core-desktop/1.7.3",
+    "dest-filename": "material-icons-core-desktop-1.7.3.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-icons-core-desktop/1.7.3/material-icons-core-desktop-1.7.3.pom",
+    "sha512": "667fd48d798c193732cdee0c88862f095006621f650f68f3a945ea2d2eeadcf4094f37bbb135f4ccc85da3c15d0212b0a2ad3103bb897436034177057b3f0568",
+    "dest": "./offline-repository/org/jetbrains/compose/material/material-icons-core-desktop/1.7.3",
+    "dest-filename": "material-icons-core-desktop-1.7.3.pom"
   },
   {
     "type": "file",
@@ -5482,10 +5895,24 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/material/material-icons-extended-desktop/1.7.3/material-icons-extended-desktop-1.7.3.jar",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-icons-extended-desktop/1.7.3/material-icons-extended-desktop-1.7.3.jar",
     "sha512": "3259bf1e6d4453816fe9f2b1a77f3104d6f1de6c89b78e862e3cf5a7a4aaa9f488426a405ee91af165679e93777b77e30a9e754eaa99d1479d01d12486b63ffa",
     "dest": "./offline-repository/org/jetbrains/compose/material/material-icons-extended-desktop/1.7.3",
     "dest-filename": "material-icons-extended-desktop-1.7.3.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-icons-extended-desktop/1.7.3/material-icons-extended-desktop-1.7.3.module",
+    "sha512": "a049a00283673009307fd04168de7669f79c8b2786bf8cf0d742338a4d68285436baed9af82f185bec620b8b930c2e4f945968a5758f01ec5afb745266e460da",
+    "dest": "./offline-repository/org/jetbrains/compose/material/material-icons-extended-desktop/1.7.3",
+    "dest-filename": "material-icons-extended-desktop-1.7.3.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-icons-extended-desktop/1.7.3/material-icons-extended-desktop-1.7.3.pom",
+    "sha512": "ceda293fe85e4e7565d0b5149ba151ea15395419b6f213f5f0646ac55c045ad22d09dd4f8ead77b8bd2fd70b42f744149b45d47d857364089afb5a0a1a17df41",
+    "dest": "./offline-repository/org/jetbrains/compose/material/material-icons-extended-desktop/1.7.3",
+    "dest-filename": "material-icons-extended-desktop-1.7.3.pom"
   },
   {
     "type": "file",
@@ -5507,6 +5934,27 @@
     "sha512": "aa18c9a76c882cf476c9d0c739abc172d0092a9322d01c980ca84b1b6dcba41a6a530dbae3cd71138842d0317be4aed937643cb84ae4d71a6e2cc93f8f6162d0",
     "dest": "./offline-repository/org/jetbrains/compose/material/material-icons-extended/1.7.3",
     "dest-filename": "material-icons-extended-1.7.3.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-ripple-desktop/1.8.2/material-ripple-desktop-1.8.2.jar",
+    "sha512": "0e55bc9c2f93bde3c1d52b015cbc974116dc0537027ae20833ffa581df1619f720f55c7070769b5b4248a3075c4efbb321e523c76488061fa770b6445dfd10e3",
+    "dest": "./offline-repository/org/jetbrains/compose/material/material-ripple-desktop/1.8.2",
+    "dest-filename": "material-ripple-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-ripple-desktop/1.8.2/material-ripple-desktop-1.8.2.module",
+    "sha512": "e8a5e17a5d2095277fd4f988c261958e81e1cb475355ab4e3f490f884b00c2acdb4359799eefc98fd12541cd6994cd6c474ef9d801044b7686215c0cef3a317b",
+    "dest": "./offline-repository/org/jetbrains/compose/material/material-ripple-desktop/1.8.2",
+    "dest-filename": "material-ripple-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material/material-ripple-desktop/1.8.2/material-ripple-desktop-1.8.2.pom",
+    "sha512": "66b24caa99527f9b69e88a2c190e28b18ddef08af465e0a4ef73862ec8e15cbbe37267461b6ca8938155c943dc45275dbcae26c6f2fb79c0b7fb6e6df2060e68",
+    "dest": "./offline-repository/org/jetbrains/compose/material/material-ripple-desktop/1.8.2",
+    "dest-filename": "material-ripple-desktop-1.8.2.pom"
   },
   {
     "type": "file",
@@ -5552,17 +6000,115 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/material3/material3-desktop/1.8.2/material3-desktop-1.8.2.jar",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/adaptive/adaptive-desktop/1.1.2/adaptive-desktop-1.1.2.jar",
+    "sha512": "a7b41d8a9ed3ac7984912df3cda381bba071bee6c402e7814f50fa6f2d8e73d4c5a0a9266104a1ae4486e8bed645950152533350a7b70f06ca02f6946f4ea4c5",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/adaptive/adaptive-desktop/1.1.2",
+    "dest-filename": "adaptive-desktop-1.1.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/adaptive/adaptive-desktop/1.1.2/adaptive-desktop-1.1.2.module",
+    "sha512": "694b5a65111e6a958c26f1e19a494f7f56fbd91ea173db00929da9cb7ebf2b2f9334907473ac5ad3baec988b1bc1cf7ef153b981be415bd98a0edcc22c72610f",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/adaptive/adaptive-desktop/1.1.2",
+    "dest-filename": "adaptive-desktop-1.1.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/adaptive/adaptive-desktop/1.1.2/adaptive-desktop-1.1.2.pom",
+    "sha512": "275f8ec9df789333795e41f2724e4e016bf556d5d7f55338eadffc3984f47217128b065ac6c8b320713d71f9fc1ed869721605dd065d74514e75271707101a39",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/adaptive/adaptive-desktop/1.1.2",
+    "dest-filename": "adaptive-desktop-1.1.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/adaptive/adaptive/1.1.2/adaptive-1.1.2.module",
+    "sha512": "924a2006eebd206eea80f300c91fff1526dd51b579ceece13ef156f82ee5b4de000900c01412e3b7c4febe1db870f320b5cb89c35e3e72885261e30f5e6c42ab",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/adaptive/adaptive/1.1.2",
+    "dest-filename": "adaptive-1.1.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/adaptive/adaptive/1.1.2/adaptive-1.1.2.pom",
+    "sha512": "39807773c3fedf8a47bdf928bec1482952eba35479d0589280bbc40cbe4ff832ff18cbcc1ca4a22a2297d9308040b4ae483923623f443944e1da7930fd2ac1b3",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/adaptive/adaptive/1.1.2",
+    "dest-filename": "adaptive-1.1.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-adaptive-navigation-suite-desktop/1.8.2/material3-adaptive-navigation-suite-desktop-1.8.2.jar",
+    "sha512": "90fa105881ab0945fd00e6bb455669853e1921c9dab19285639bba83fdf30d052eb9d2b88d891ca01b715b35c2cfc8a67d29f8bbb2bf38eb4643191ad508e413",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/material3-adaptive-navigation-suite-desktop/1.8.2",
+    "dest-filename": "material3-adaptive-navigation-suite-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-adaptive-navigation-suite-desktop/1.8.2/material3-adaptive-navigation-suite-desktop-1.8.2.module",
+    "sha512": "ec5d62ae232a5a3d83edb880418142ebde2579a77ba1415d686d387240d24a3d4d993e32874d996eb374391c7b4971f0e9502013fd485e00b25bbbd321da588e",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/material3-adaptive-navigation-suite-desktop/1.8.2",
+    "dest-filename": "material3-adaptive-navigation-suite-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-adaptive-navigation-suite-desktop/1.8.2/material3-adaptive-navigation-suite-desktop-1.8.2.pom",
+    "sha512": "1d5684ddcc5e2b76a88f8b0806352326863e1913da3df12d1dc2c879364da246593c34e56e7f7b40f2197f0223cf1ddcb18aea0c5ed3f79145461a525da681d6",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/material3-adaptive-navigation-suite-desktop/1.8.2",
+    "dest-filename": "material3-adaptive-navigation-suite-desktop-1.8.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-adaptive-navigation-suite/1.8.2/material3-adaptive-navigation-suite-1.8.2.module",
+    "sha512": "0017422a1f966f7a268d36fa3e93d6f3c271c8a4b227e84f45cd2b7a96db7f9094bd9f317c5cca0a16d63976e38722881d42d9960c7d09b4204aba756dee425d",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/material3-adaptive-navigation-suite/1.8.2",
+    "dest-filename": "material3-adaptive-navigation-suite-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-adaptive-navigation-suite/1.8.2/material3-adaptive-navigation-suite-1.8.2.pom",
+    "sha512": "fed863a4f2f81791fbdc2427562787c9ea52cccbab636b649f72f3cee67de604a980489a830f4b6c3557db2c1977979ba39f3bfc7a05f39e5a658224f1081538",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/material3-adaptive-navigation-suite/1.8.2",
+    "dest-filename": "material3-adaptive-navigation-suite-1.8.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-desktop/1.8.2/material3-desktop-1.8.2.jar",
     "sha512": "2fd3e5d2e30815ce682ee9f54975850c5e5391b29d60d25c846b97f7190e8b24fa6c07d1e82a10f7361a2afd5c9d4cf679c3dd5dc8252b999b78a4ff94443685",
     "dest": "./offline-repository/org/jetbrains/compose/material3/material3-desktop/1.8.2",
     "dest-filename": "material3-desktop-1.8.2.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/material3/material3-desktop/1.8.2/material3-desktop-1.8.2.pom",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-desktop/1.8.2/material3-desktop-1.8.2.module",
+    "sha512": "41b1b90f43d913e5f2446add0036fd1fa078bb388ddbdd4cb6de43ab04e0b3cffddad1fca8886f1a6c272412e1abcfe5231f0f88e4eddcbc78b90f2244d3f49a",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/material3-desktop/1.8.2",
+    "dest-filename": "material3-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-desktop/1.8.2/material3-desktop-1.8.2.pom",
     "sha512": "57322f2408879756495e90c1c331f76df84dbf35d6f5eba6f0abdf05a930bb9dd647c1293f3103264293d14abe7b005587c83c8a68ea0109afca96f170889cd6",
     "dest": "./offline-repository/org/jetbrains/compose/material3/material3-desktop/1.8.2",
     "dest-filename": "material3-desktop-1.8.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-window-size-class-desktop/1.8.2/material3-window-size-class-desktop-1.8.2.jar",
+    "sha512": "3dd0cdf6a3f948833821ea002aacdf2d72702d2fcfe60ea153dc2216764e13900db1c7c037bca750a3be8510ae7e647e986cf759ed56b553ba797f7dca6cd028",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/material3-window-size-class-desktop/1.8.2",
+    "dest-filename": "material3-window-size-class-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-window-size-class-desktop/1.8.2/material3-window-size-class-desktop-1.8.2.module",
+    "sha512": "893974db61ff0406053a71e5a226dea4e85fbdc415d0c44b5250059348c3f16b5ab17b21e46e17ad47651b4b5db2e270389bdea883b727e2545b4ac702f5a82c",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/material3-window-size-class-desktop/1.8.2",
+    "dest-filename": "material3-window-size-class-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/material3/material3-window-size-class-desktop/1.8.2/material3-window-size-class-desktop-1.8.2.pom",
+    "sha512": "aec4b197f35bce8d6abf1c899cb39355852d42436371d8e79d3f0bc30bd69774feaa931e26c7308d268abb1f45a63478863a95b67bd439a523759a39314d2740",
+    "dest": "./offline-repository/org/jetbrains/compose/material3/material3-window-size-class-desktop/1.8.2",
+    "dest-filename": "material3-window-size-class-desktop-1.8.2.pom"
   },
   {
     "type": "file",
@@ -5629,6 +6175,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/runtime/runtime-saveable-desktop/1.8.2/runtime-saveable-desktop-1.8.2.jar",
+    "sha512": "bdda275791c2d52c1d7e0b578e054aefad81dd26b4cf8eff5199f4e330b1b64f81acd91d959f6d541704141a1f3840e766d88b2364f0da17f3aa4209d45c0a0f",
+    "dest": "./offline-repository/org/jetbrains/compose/runtime/runtime-saveable-desktop/1.8.2",
+    "dest-filename": "runtime-saveable-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/runtime/runtime-saveable-desktop/1.8.2/runtime-saveable-desktop-1.8.2.module",
+    "sha512": "eab5880256fbf4f48d01c8286fce324208bd3c406ebc36971d161c4fe2c487aaacaea2068cb774ef6e44a9a8a515a81941d375ce086869e6f88c55aa1ebd5fdc",
+    "dest": "./offline-repository/org/jetbrains/compose/runtime/runtime-saveable-desktop/1.8.2",
+    "dest-filename": "runtime-saveable-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/runtime/runtime-saveable-desktop/1.8.2/runtime-saveable-desktop-1.8.2.pom",
+    "sha512": "8ef17656e309cd59289439cde438dfae1929a4aff378d280dfa6fb905df7f96ddbf52d78209793a0a7bceb19ca0c55f1e030cf2021203e2f14f3a5870305d743",
+    "dest": "./offline-repository/org/jetbrains/compose/runtime/runtime-saveable-desktop/1.8.2",
+    "dest-filename": "runtime-saveable-desktop-1.8.2.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/runtime/runtime-saveable/1.8.2/runtime-saveable-1.8.2.jar",
     "sha512": "1002fdfb21da7326ae41631432042b0200b9beb64541b39519165d86f7a1d1f12de1e5e2c9d0efb40fa94c571e4c289ee90a92709887beac61ab71140359fff2",
     "dest": "./offline-repository/org/jetbrains/compose/runtime/runtime-saveable/1.8.2",
@@ -5671,6 +6238,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-backhandler-desktop/1.8.2/ui-backhandler-desktop-1.8.2.jar",
+    "sha512": "c1f30e95c624a6ebe6d3bb5fe79bed73b385ff42b897276a7333a0434635092edb923cbf6ca0d4eaca8293a9b11a688725ba0735498ab47c7f7980312fa7bd85",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-backhandler-desktop/1.8.2",
+    "dest-filename": "ui-backhandler-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-backhandler-desktop/1.8.2/ui-backhandler-desktop-1.8.2.module",
+    "sha512": "0795a3aa80a88d423e47801f314de1d94f68e89764a2091ea480447dfb6b54fe27b593057d1fbbfb994e2af96041dbdb611dffa0a640cd4125927bf43c75d916",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-backhandler-desktop/1.8.2",
+    "dest-filename": "ui-backhandler-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-backhandler-desktop/1.8.2/ui-backhandler-desktop-1.8.2.pom",
+    "sha512": "a8b717f5b4403c72b271d4e4e8ddbfa7703bedc2e380499a5aaa6483c56876c984719240391b45fd6ad9047edd5274813bd1829f1fe5cea557547fc9d51e24ce",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-backhandler-desktop/1.8.2",
+    "dest-filename": "ui-backhandler-desktop-1.8.2.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-backhandler/1.8.2/ui-backhandler-1.8.2.jar",
     "sha512": "e397d0b498cc61d10f10f802fbd550e477e4826660a7b233fd504df6e315f21d09fcd36f1cc39e7b9e8c8c5ee08f40139ab3ee257a9c4b9fe8e5db19e2beb97f",
     "dest": "./offline-repository/org/jetbrains/compose/ui/ui-backhandler/1.8.2",
@@ -5692,10 +6280,45 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-desktop/1.8.2/ui-desktop-1.8.2.jar",
+    "sha512": "561b1baf84c45eca19da663466a8e8cf97d483f83b17ade88528e2fcbf17a3b9133ee8c9362e870a89dd746cb7c18cc2dbb6da6b472f254ceff0190ed3c2fba7",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-desktop/1.8.2",
+    "dest-filename": "ui-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-desktop/1.8.2/ui-desktop-1.8.2.module",
     "sha512": "c08c6bd9a8c9d46c7a4bda9a28f01b0ceab5ddaaab2eb5c1e000db74824171a924988a379534bf2ab044b902ea84b37d1c952ad88e9fd3f5e502322701eba0dd",
     "dest": "./offline-repository/org/jetbrains/compose/ui/ui-desktop/1.8.2",
     "dest-filename": "ui-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-desktop/1.8.2/ui-desktop-1.8.2.pom",
+    "sha512": "3a2f84af4481fbc85c186796bf08da9bd5645c63534e37d702a637faec56bf6867ca727294b78e37d916652c0d5049b31488d65baf69a037f4a81ebed3946d4a",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-desktop/1.8.2",
+    "dest-filename": "ui-desktop-1.8.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-geometry-desktop/1.8.2/ui-geometry-desktop-1.8.2.jar",
+    "sha512": "1fe3476a87c22e36bf032d55c0b8b985e9a0600c57df829e56ea6c70488ca8b0d3da27d9ba758379e38cb454402a8a38abf99ade2c6b9760383041b282376d11",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-geometry-desktop/1.8.2",
+    "dest-filename": "ui-geometry-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-geometry-desktop/1.8.2/ui-geometry-desktop-1.8.2.module",
+    "sha512": "454e0f2c716ca0137b687cbd347316eebfec577b8f0c9fcef5300e4735dbaa2a2f22cc25ec9862f526e8369c6e0d76bb4c4820927d4f2a1d6fa1e1050027b110",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-geometry-desktop/1.8.2",
+    "dest-filename": "ui-geometry-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-geometry-desktop/1.8.2/ui-geometry-desktop-1.8.2.pom",
+    "sha512": "774e7cf8d36861405874d1894d1583b7e6869c9db327625e9a216fda8b81d896bfa191f2da0d7547cdb3c226d95ffb73ce301f12099c669e6b85230a2a77f6d9",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-geometry-desktop/1.8.2",
+    "dest-filename": "ui-geometry-desktop-1.8.2.pom"
   },
   {
     "type": "file",
@@ -5720,7 +6343,21 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-graphics-desktop/1.8.2/ui-graphics-desktop-1.8.2.pom",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-graphics-desktop/1.8.2/ui-graphics-desktop-1.8.2.jar",
+    "sha512": "fa44ce0cd6aac35e5124ccf51798ce9a63cb535d06db317bf066097f15f912abfe41266c030593140433c647e421640b2e3bbf8d6b3a45ba1c0713f10a133f12",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-graphics-desktop/1.8.2",
+    "dest-filename": "ui-graphics-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-graphics-desktop/1.8.2/ui-graphics-desktop-1.8.2.module",
+    "sha512": "0d091d28c53db43c426fe721e5c6ee6c08345d80cc089ffda84b594df137b47d82bd18049f46f69186a5a0fc9276c20bf7cb52acc6903b535634e7153d1fc2c5",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-graphics-desktop/1.8.2",
+    "dest-filename": "ui-graphics-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-graphics-desktop/1.8.2/ui-graphics-desktop-1.8.2.pom",
     "sha512": "f9a29646bab17a2933712d36d71eb40241c7b3764446d9803cdae478b3b3465fce77578485aad5e25017cbfade38350f13facf2b1addc7029bc697bf8d6cfbba",
     "dest": "./offline-repository/org/jetbrains/compose/ui/ui-graphics-desktop/1.8.2",
     "dest-filename": "ui-graphics-desktop-1.8.2.pom"
@@ -5748,6 +6385,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-text-desktop/1.8.2/ui-text-desktop-1.8.2.jar",
+    "sha512": "acc248eac86bf47ed127b02f9061a11687822cf17d152af2676c94f43b1247186561725faea249d79690f32bb6458a416598f4dfa0f8e4ed56fa15874d94a842",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-text-desktop/1.8.2",
+    "dest-filename": "ui-text-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-text-desktop/1.8.2/ui-text-desktop-1.8.2.module",
+    "sha512": "b931904382fde2353f085e88446841cf24db573726a79e6065fcf881d2a253fa6e0c1e8b29f89fbfe0d31ca7f06e6e9cc8fabfc7f4a5d6958b2d9452d178f6ee",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-text-desktop/1.8.2",
+    "dest-filename": "ui-text-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-text-desktop/1.8.2/ui-text-desktop-1.8.2.pom",
+    "sha512": "2f9495152782efbd59061dee6b078f9590c938db23c9202314c1ded7600479802f7365f43dd1ed7fcac7c91c741c7d5fa333af86593b10705ef19521d132e6b9",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-text-desktop/1.8.2",
+    "dest-filename": "ui-text-desktop-1.8.2.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-text/1.8.2/ui-text-1.8.2.jar",
     "sha512": "37642b472d163c0d2b4178724fa896cbaeb61eccfec5187dbe585bd6067d643eae854d043ba9039b392ffd86aa1d89366a7998a6e327aece395b2dc96b61b88a",
     "dest": "./offline-repository/org/jetbrains/compose/ui/ui-text/1.8.2",
@@ -5766,6 +6424,27 @@
     "sha512": "737cef74f1b2bdda21439ba45ea34d508ca8c336338044eed12327958ba0ea0fae5e8d5163ec4f2a84c06a1bce46aaf0e88c62d59ece835bb6b28155d61a9a21",
     "dest": "./offline-repository/org/jetbrains/compose/ui/ui-text/1.8.2",
     "dest-filename": "ui-text-1.8.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-tooling-preview-desktop/1.8.2/ui-tooling-preview-desktop-1.8.2.jar",
+    "sha512": "c733328acc460ad177bce49e0209b201296b57b7e1cc39cde0f1d3627bb2745baa485f7d90bdf0403ec495ff303ba8c24d1bc07dab18bff9e79669bfccb8ca58",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-tooling-preview-desktop/1.8.2",
+    "dest-filename": "ui-tooling-preview-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-tooling-preview-desktop/1.8.2/ui-tooling-preview-desktop-1.8.2.module",
+    "sha512": "222375693381a9ee8f02eeb78ccf076f231d2660a8f9b13c0116876491ed130a609b832b1fa1077bedbfc7364215b2bc36b6ee002e1f179f5d579209f900364c",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-tooling-preview-desktop/1.8.2",
+    "dest-filename": "ui-tooling-preview-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-tooling-preview-desktop/1.8.2/ui-tooling-preview-desktop-1.8.2.pom",
+    "sha512": "e47c4cb664cd37f8522add95e04c225673f2e699551239748ba020cfc9e5a520e3b30789cbb1d3d8e9c7713cad43a1b3282587daa990004532e689876545dd89",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-tooling-preview-desktop/1.8.2",
+    "dest-filename": "ui-tooling-preview-desktop-1.8.2.pom"
   },
   {
     "type": "file",
@@ -5811,6 +6490,27 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-unit-desktop/1.8.2/ui-unit-desktop-1.8.2.jar",
+    "sha512": "b3af0dfc450a83f7aeefdce66c4b6c6bda81e9f27ed897b6bb9ae15a199eb92a8229cd2513746aa428541530d42a058a975bbda27f2d4a9145f86dafc111ce39",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-unit-desktop/1.8.2",
+    "dest-filename": "ui-unit-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-unit-desktop/1.8.2/ui-unit-desktop-1.8.2.module",
+    "sha512": "c671ce7948f4cc7a6cfbb7072c13a6afdb41067d5f2286a1afa1ae209ef29cb0e36a2ffb1e3f192b8966bb94ec3a845855f872c68af21eba0af3ef8b2019a23b",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-unit-desktop/1.8.2",
+    "dest-filename": "ui-unit-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-unit-desktop/1.8.2/ui-unit-desktop-1.8.2.pom",
+    "sha512": "4de2d59ce3472e0d9cbcd060c114e4fc94b3abceb10eb493bc396bd5f60bc23beabb32e421378c104682c5c3d92b0dc86fd2fcfa5d1c0ca8966d78efc0d130c2",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-unit-desktop/1.8.2",
+    "dest-filename": "ui-unit-desktop-1.8.2.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-unit/1.8.2/ui-unit-1.8.2.jar",
     "sha512": "7049ba91491fe59944e035f023bcf3f8404fcc45426d3d289d8d3e111c11ea19bae1183c66e8f9f54951d13096dfadb45c804b9f68a4d980efadbf1711680252",
     "dest": "./offline-repository/org/jetbrains/compose/ui/ui-unit/1.8.2",
@@ -5829,6 +6529,27 @@
     "sha512": "a15262603014da9570fe9ca1a6bce4b7781a9996cbbc8ac66720d6e41f78df62ca8f74952e2a0267577c8aaee16adbf762851ad8d11711b510348a690dd7e6ca",
     "dest": "./offline-repository/org/jetbrains/compose/ui/ui-unit/1.8.2",
     "dest-filename": "ui-unit-1.8.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-util-desktop/1.8.2/ui-util-desktop-1.8.2.jar",
+    "sha512": "0a5f1d3782fe0faec6bca75c6235c8c5b991718e025e4e5dbfda84104a97724cd4e1a865ed713ff7ee47d3eafe039b5f883b03e77a3415fcb7a2302b62df88f4",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-util-desktop/1.8.2",
+    "dest-filename": "ui-util-desktop-1.8.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-util-desktop/1.8.2/ui-util-desktop-1.8.2.module",
+    "sha512": "26627253320ba10ce62cd7f74050973875e873e399f9d589a5847bcf75601344354e40759c18d07fa79f469604fb78d95991da9ffc2d92339bd13d7d72009526",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-util-desktop/1.8.2",
+    "dest-filename": "ui-util-desktop-1.8.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/ui/ui-util-desktop/1.8.2/ui-util-desktop-1.8.2.pom",
+    "sha512": "e76c26ebb979e99c6caa12aa5442fd053d2858de36f5c0696cb4d7fc576614b82150adb8336030cf389b569d46621548e286a346dc3f63f0b256670c9136c75a",
+    "dest": "./offline-repository/org/jetbrains/compose/ui/ui-util-desktop/1.8.2",
+    "dest-filename": "ui-util-desktop-1.8.2.pom"
   },
   {
     "type": "file",
@@ -6084,14 +6805,14 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-reflect/2.0.10/kotlin-reflect-2.0.10.jar",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-reflect/2.0.10/kotlin-reflect-2.0.10.jar",
     "sha512": "b6fce3c76f8475b3b674aaceb007d9eb54bc164ffc6703dd53ee4220fca04d61901bcbbefb2d7f02f6745c4dfa97c70d73bfa99b6433364f13d7605764722085",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-reflect/2.0.10",
     "dest-filename": "kotlin-reflect-2.0.10.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-reflect/2.0.10/kotlin-reflect-2.0.10.pom",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-reflect/2.0.10/kotlin-reflect-2.0.10.pom",
     "sha512": "f5653e01db020720edb0eee485c894d8611f999dabdc6c73d5555b1732f63329867fcbfc0d37b46fdbb788caf4bc21a42a06472499cf5a8faa589e513bb3d07e",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-reflect/2.0.10",
     "dest-filename": "kotlin-reflect-2.0.10.pom"
@@ -6280,14 +7001,14 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar",
     "sha512": "f839178f07b9d6bd9a3910d13b181399e975211fa556c3a9ead08eca30ababa74f75c79aee95224ffb7b610b9e56768eeeba18e8fae84826903adb12e122bb67",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10",
     "dest-filename": "kotlin-stdlib-jdk7-1.9.10.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.pom",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.pom",
     "sha512": "fdb3c9ce1109cb6f067f0645ffca942982dc7ac66ca92eb5ae22edf9011bc8b5e02ce0e96a5def49945aec45f59f565789dd9c076913f8c8045660dcbcf33a9e",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10",
     "dest-filename": "kotlin-stdlib-jdk7-1.9.10.pom"
@@ -6336,14 +7057,14 @@
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar",
     "sha512": "b027fc4a0be8e69f41a86ae775ce350ef0084eb4652e50a0640dbcc600db76c3fc2983e17c96b6071b5698cea636e1b2cb015e84a6c0efe95e6db668036ba3cc",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10",
     "dest-filename": "kotlin-stdlib-jdk8-1.9.10.jar"
   },
   {
     "type": "file",
-    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.pom",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.pom",
     "sha512": "8cf0741fc581be275cccb34ab1f37ea6f6adfbeb086ec685258d2ddee1d7fdb03695a4da20c6a97e3043886dbf95f36b29db11699069d71c0c7aff9f4f6c740c",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10",
     "dest-filename": "kotlin-stdlib-jdk8-1.9.10.pom"
@@ -6686,6 +7407,41 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-play-services/1.10.2/kotlinx-coroutines-play-services-1.10.2.pom",
+    "sha512": "1d86a2fb6e27ad9c8f5f2650178151216097628491fdb2d1beaa1c4a8cfaf29ed0f54039ed005aa8923b57db807627cefc5c95f6476139b5d72a0d33184dbfad",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-play-services/1.10.2",
+    "dest-filename": "kotlinx-coroutines-play-services-1.10.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-reactive/1.10.2/kotlinx-coroutines-reactive-1.10.2.pom",
+    "sha512": "9ba65dfa502929f8916f57894b8ea6205bb52a44eb8aaa5cea0c5630837ce476747e4af8d72ac9df6cabbab8f34398106f825be985600c37fb77e79a9552d17a",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-reactive/1.10.2",
+    "dest-filename": "kotlinx-coroutines-reactive-1.10.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-reactor/1.10.2/kotlinx-coroutines-reactor-1.10.2.pom",
+    "sha512": "f4d42f9d92dd3cf83b720df9032e417e661eaa9d52c6e6666f83f5560124675d7a3c82ff56cdaba00b5da64e30fe3fb61960c9de5faf1046bbb4e953fcd4a49c",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-reactor/1.10.2",
+    "dest-filename": "kotlinx-coroutines-reactor-1.10.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-rx2/1.10.2/kotlinx-coroutines-rx2-1.10.2.pom",
+    "sha512": "19966b5d3355093806434a106588b8d988a23688e602ae9200a0dda5f159e04856049815509f5b7ab9bfeeb1929c700f0a9bc9b8f0848a27fdc19211e5dee711",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-rx2/1.10.2",
+    "dest-filename": "kotlinx-coroutines-rx2-1.10.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-rx3/1.10.2/kotlinx-coroutines-rx3-1.10.2.pom",
+    "sha512": "713797767bb99ea92ea9f1bd643a6abbfa957e4f54abaaeff8e2ef851ccece0e582204157b9d3f51887c92fa26190ecc9c2ceab0aa8c2413b954e5e24c182db4",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-rx3/1.10.2",
+    "dest-filename": "kotlinx-coroutines-rx3-1.10.2.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-slf4j/1.10.2/kotlinx-coroutines-slf4j-1.10.2.jar",
     "sha512": "e0688d8b0d58774656d147c90438ca3bece9f2052c5ca8c6965817fc29c790e229751f81874a3d06b2291feacea004a7c1b8d7769d2cdd03cd3dc9ddaf5fa183",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-slf4j/1.10.2",
@@ -6725,6 +7481,20 @@
     "sha512": "b88bb52e56146233d4703c7a9695049605a9a21d85e3f075f278ededeac80f76e9cf2110f4336cbafb46ee475558da664d8f068f6d2e524b0b18f20483478977",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-swing/1.10.2",
     "dest-filename": "kotlinx-coroutines-swing-1.10.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.10.2/kotlinx-coroutines-test-jvm-1.10.2.pom",
+    "sha512": "646a554dc77ea050467c5cc43518459ce33e7c1b9103673c13a9f0288f5c1cbdbb43913bcf7e0fb1c02f2323b92a0feab17ddc223a1a919b8392431be65fca6d",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.10.2",
+    "dest-filename": "kotlinx-coroutines-test-jvm-1.10.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.10.2/kotlinx-coroutines-test-1.10.2.pom",
+    "sha512": "4d49f5a32e32558d490f6159be5740a361b2ed615f762a63623b430feca757d499934157e16c52669b07a14cbe5ffe42e192db26b81190b06e3b84963ddaaeed",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.10.2",
+    "dest-filename": "kotlinx-coroutines-test-1.10.2.pom"
   },
   {
     "type": "file",
@@ -7183,6 +7953,41 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-protobuf-jvm/1.9.0/kotlinx-serialization-protobuf-jvm-1.9.0.pom",
+    "sha512": "e63c235778cde2e1ee675ad836e91c9c62cd7e9e3c3da16c363a62fe23f3133d8090bb45f7aa8377c98e209654c79445923150297fb3cc158f4597f0d914420c",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-protobuf-jvm/1.9.0",
+    "dest-filename": "kotlinx-serialization-protobuf-jvm-1.9.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-protobuf/1.9.0/kotlinx-serialization-protobuf-1.9.0.pom",
+    "sha512": "4dfea789bfc56233416867012cc05c623b3f0abddfdc9a3c1be98fdda7f9c2e4f88b4605533eb543d9e0c3984ff673ca2b032edad6989aecf5b683ef7cc88472",
+    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-protobuf/1.9.0",
+    "dest-filename": "kotlinx-serialization-protobuf-1.9.0.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/markdown-jvm/0.7.3/markdown-jvm-0.7.3.jar",
+    "sha512": "d74abb9ebc518f6d60d84df187390e82fa918ef805f887ea543d7ffd1a83393e80fc2fa2e0ca50e1ca7275e4a2c8652d2be01d763a771391c5d3fa0b4f8bea71",
+    "dest": "./offline-repository/org/jetbrains/markdown-jvm/0.7.3",
+    "dest-filename": "markdown-jvm-0.7.3.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/markdown-jvm/0.7.3/markdown-jvm-0.7.3.module",
+    "sha512": "03fd8d6ae5d7dd08dc77669cc2a75a28a22aae1235721b77146d6201261693b336b29fa531606e4b1e30e28ad21f5d5f2581926f09e45e014847b4f0d7ad4ed4",
+    "dest": "./offline-repository/org/jetbrains/markdown-jvm/0.7.3",
+    "dest-filename": "markdown-jvm-0.7.3.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/markdown-jvm/0.7.3/markdown-jvm-0.7.3.pom",
+    "sha512": "a5e6f36bf110013f8cf95f57e61fdd666c4f2bfc49c8edf064e78ce56093fb68e66226e3dc79c18fa83bfc504569e9e7cfe506e86ab3377fedb1eeb8690d3e2e",
+    "dest": "./offline-repository/org/jetbrains/markdown-jvm/0.7.3",
+    "dest-filename": "markdown-jvm-0.7.3.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/markdown/0.7.3/markdown-0.7.3.jar",
     "sha512": "fee754f7849eb97162b1e655128f4d9a291090b69f06becd9116275cfd1d62dfb78cd525ba1d27c6d80513b42af1779474db4f783077ddc4058816a1aaf4c1cc",
     "dest": "./offline-repository/org/jetbrains/markdown/0.7.3",
@@ -7204,10 +8009,38 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/skiko/skiko-awt-runtime-macos-arm64/0.9.4.2/skiko-awt-runtime-macos-arm64-0.9.4.2.jar",
+    "sha512": "0da2d5039d0790ae4f69038869734990d0783431de7baa3487977e7583ee6c646dfed62672d61dada16b8a92fc92464a23878e95d25603a5d675ebce390a87a5",
+    "dest": "./offline-repository/org/jetbrains/skiko/skiko-awt-runtime-macos-arm64/0.9.4.2",
+    "dest-filename": "skiko-awt-runtime-macos-arm64-0.9.4.2.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/skiko/skiko-awt-runtime-macos-arm64/0.9.4.2/skiko-awt-runtime-macos-arm64-0.9.4.2.pom",
+    "sha512": "446570fd334ec3967e050f01b55355ad29c7c12b08ebad20a06deb7cb0dcf188b20f23b8395a21881104ca259d02c90ce517fdcd52a534ea5f1150f617639da0",
+    "dest": "./offline-repository/org/jetbrains/skiko/skiko-awt-runtime-macos-arm64/0.9.4.2",
+    "dest-filename": "skiko-awt-runtime-macos-arm64-0.9.4.2.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/skiko/skiko-awt/0.9.4.2/skiko-awt-0.9.4.2.jar",
+    "sha512": "fcffb39394cd4996066f41f65ffe158e018df24dacdb1c9adda86688efa26dfea7919235d8e6f35cc1e2749552b89e1fd9d6fe9f7e715c275c89735b1556e71d",
+    "dest": "./offline-repository/org/jetbrains/skiko/skiko-awt/0.9.4.2",
+    "dest-filename": "skiko-awt-0.9.4.2.jar"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/skiko/skiko-awt/0.9.4.2/skiko-awt-0.9.4.2.module",
     "sha512": "b3108ae28a34a67e3834c8fb4454138896fd613f7de2a97c98e5a7fc8c0555ec28b78a39dda896d94d8c00f6158c06f7d0eff410ea49e478fb21a92380e8b380",
     "dest": "./offline-repository/org/jetbrains/skiko/skiko-awt/0.9.4.2",
     "dest-filename": "skiko-awt-0.9.4.2.module"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/jetbrains/skiko/skiko-awt/0.9.4.2/skiko-awt-0.9.4.2.pom",
+    "sha512": "eab04d47c7782592c50507546579cce371186a2866100f6a250cafa1aabf473c810ad1359f04abe528cbf5fbbcac667cba71a3fe3a52fa267f9360dba05ec500",
+    "dest": "./offline-repository/org/jetbrains/skiko/skiko-awt/0.9.4.2",
+    "dest-filename": "skiko-awt-0.9.4.2.pom"
   },
   {
     "type": "file",
@@ -7323,6 +8156,20 @@
   },
   {
     "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/slf4j/slf4j-api/2.0.3/slf4j-api-2.0.3.jar",
+    "sha512": "cf50d5cc86404fefa49730da36147db5f6d65c8b06163bbf62311e6874c20ca46db02ab6bda27c9c1485a5c57fe63b89fd3000b8d838c429240ee95734f5901e",
+    "dest": "./offline-repository/org/slf4j/slf4j-api/2.0.3",
+    "dest-filename": "slf4j-api-2.0.3.jar"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/slf4j/slf4j-api/2.0.3/slf4j-api-2.0.3.pom",
+    "sha512": "a4baf7b19db8d5ca35f9a747dddacc1431998270f4ee72cfc400e50dedb933c004e3ed1150bdf6fbf3da76eb7cbf0bb0ff0a527d2ab1c7321b82991b93ebd95e",
+    "dest": "./offline-repository/org/slf4j/slf4j-api/2.0.3",
+    "dest-filename": "slf4j-api-2.0.3.pom"
+  },
+  {
+    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/slf4j/slf4j-bom/2.0.17/slf4j-bom-2.0.17.pom",
     "sha512": "cb2db4597b98b9981959413e3ffcd5882f8e267d3d51f989c396807c36893296065cbe443a173029e8d3a0851eced25f5149dc2dafa0dd2c29fca737180a7029",
     "dest": "./offline-repository/org/slf4j/slf4j-bom/2.0.17",
@@ -7348,6 +8195,13 @@
     "sha512": "5b16a209843c18a478a0a16dff83ae1c75eedbdeadc15a958d536a36631d4d39a9998e085c165a79ced8ad187f021e2f3cd4068856ca174db35657ef5a473c5a",
     "dest": "./offline-repository/org/slf4j/slf4j-parent/2.0.17",
     "dest-filename": "slf4j-parent-2.0.17.pom"
+  },
+  {
+    "type": "file",
+    "url": "https://plugins.gradle.org/m2/org/slf4j/slf4j-parent/2.0.3/slf4j-parent-2.0.3.pom",
+    "sha512": "3782b350d57cb2ce3a68494e56484cec95fa5905efc8204ff99dca6cbbe6f696e2f5f2181b15176c8d916b42d9dcdfd13d760d2a29aaefd7b27620ac39c9d5f8",
+    "dest": "./offline-repository/org/slf4j/slf4j-parent/2.0.3",
+    "dest-filename": "slf4j-parent-2.0.3.pom"
   },
   {
     "type": "file",

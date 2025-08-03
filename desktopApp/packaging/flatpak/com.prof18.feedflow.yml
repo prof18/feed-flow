@@ -53,3 +53,4 @@ modules:
         dest: "gradle/wrapper"
         dest-filename: "gradle-bin.zip"
       - flatpak-sources.json
+      - flatpak-sources-convention.json

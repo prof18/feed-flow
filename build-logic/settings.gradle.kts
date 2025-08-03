@@ -1,3 +1,12 @@
+pluginManagement {
+    repositories {
+        google()
+        gradlePluginPortal()
+        maven { url = uri("./offline-repository") }
+        mavenCentral()
+    }
+}
+
 dependencyResolutionManagement {
     repositories {
         maven { url = uri("../offline-repository") }

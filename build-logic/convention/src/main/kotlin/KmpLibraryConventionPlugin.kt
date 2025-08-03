@@ -19,11 +19,11 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
             configure<KotlinMultiplatformExtension> {
                 androidTarget {
                     compilerOptions {
-                        jvmTarget.set(JvmTarget.JVM_17)
+                        jvmTarget.set(JvmTarget.JVM_21)
                     }
                 }
 
-                jvmToolchain(17)
+                jvmToolchain(21)
 
                 jvm()
 
@@ -41,8 +41,8 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                     minSdk = version("android-min-sdk").toInt()
                 }
                 compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_17
-                    targetCompatibility = JavaVersion.VERSION_17
+                    sourceCompatibility = JavaVersion.VERSION_21
+                    targetCompatibility = JavaVersion.VERSION_21
                 }
             }
         }

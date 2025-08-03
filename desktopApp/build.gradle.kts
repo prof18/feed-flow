@@ -241,7 +241,7 @@ tasks.withType(KotlinCompile::class.java) {
 
 tasks.flatpakGradleGenerator {
     outputFile = project.file("packaging/flatpak/flatpak-sources.json")
-    downloadDirectory.set("../offline-repository")
+    downloadDirectory.set("./offline-repository")
     excludeConfigurations.set(listOf("testCompileClasspath", "testRuntimeClasspath"))
 }
 

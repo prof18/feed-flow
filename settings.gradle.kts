@@ -1,16 +1,15 @@
 pluginManagement {
     includeBuild("build-logic")
     repositories {
-        mavenLocal()
         google()
         gradlePluginPortal()
         mavenCentral()
+        maven { url = uri("./offline-repository") }
     }
 }
 
 dependencyResolutionManagement {
     repositories {
-        mavenLocal()
         google()
         mavenCentral()
         maven {
@@ -22,6 +21,7 @@ dependencyResolutionManagement {
                 includeModule("com.github.prof18", "lyricist")
             }
         }
+        maven { url = uri("./offline-repository") }
     }
 }
 

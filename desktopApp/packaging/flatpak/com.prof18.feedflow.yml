@@ -47,5 +47,5 @@ modules:
     sources:
       - type: git
         url: https://github.com/prof18/feed-flow
-        commit: a39cd8e3c5553cf7698897cef2083cbaba08a65c
+        commit: f2a84586390c59e7df231bd3becd889df6a9ffde
       - flatpak-sources.json

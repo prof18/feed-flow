@@ -1478,13 +1478,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/core/jackson-databind/2.15.0/jackson-databind-2.15.0.pom",
-    "sha512": "505523b1b9df5f85a2f8ebad571d5a91af383850b833a38b275198ece45faa634eaa5634ad03691f3974c35f39c8cd542b752875b1665c61a510b0852373f976",
-    "dest": "./offline-repository/com/fasterxml/jackson/core/jackson-databind/2.15.0",
-    "dest-filename": "jackson-databind-2.15.0.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/com/fasterxml/jackson/jackson-base/2.15.0/jackson-base-2.15.0.pom",
     "sha512": "06cd4b63de5e7cf0c5bf49c028ae3f75f2ba62da1c73801588bfc4a6558a72e9beef08663fdf39192c9845f13f5a6bd19d30e8ada72d069bb3ab8e43f7e55893",
     "dest": "./offline-repository/com/fasterxml/jackson/jackson-base/2.15.0",
@@ -1548,24 +1541,10 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4/aboutlibraries-compose-core-jvm-12.2.4.jar",
-    "sha512": "a7dfb4d1005e5f07f6e07b011a41b5c00d5da49f8c2bb2fc0666d62e453296628571479f5415ad7263b90f8ba078e30a6904fb2afcc8db99143ecb74f925dfeb",
-    "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4",
-    "dest-filename": "aboutlibraries-compose-core-jvm-12.2.4.jar"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4/aboutlibraries-compose-core-jvm-12.2.4.module",
     "sha512": "b9f3c9d802586cee4741572c55343563ee38dbd9ab1128250239ca6d2dc73aa48f5e2b69eaa5b5ec4ad06645b625ff0a04e5206969189786500b79c713bf9c2b",
     "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4",
     "dest-filename": "aboutlibraries-compose-core-jvm-12.2.4.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4/aboutlibraries-compose-core-jvm-12.2.4.pom",
-    "sha512": "49729bb0e0dd86a132647c77bbd088393f114b80d2d547d84ac480b0b2291e651170a665f77cab9a7a5ec71dcc576793f18edbb5dbd2fdda1060054675639e66",
-    "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-core-jvm/12.2.4",
-    "dest-filename": "aboutlibraries-compose-core-jvm-12.2.4.pom"
   },
   {
     "type": "file",
@@ -1590,24 +1569,10 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-jvm/12.2.4/aboutlibraries-compose-jvm-12.2.4.jar",
-    "sha512": "02fa70a98beced396a77cd5d33aff5c71eb319cc0337d9b8f8409c8e137e1c8a96291b1d71233bd2fe97d01ecf7e9b0482f1e14ba2156fdcdefcf39796fc9b49",
-    "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-jvm/12.2.4",
-    "dest-filename": "aboutlibraries-compose-jvm-12.2.4.jar"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-jvm/12.2.4/aboutlibraries-compose-jvm-12.2.4.module",
     "sha512": "13d7ae146bb8bc53f748c5efd79af23097783025250f6a537785befd2aef84e279271207bbd40abc20ff3b514214b89c4fbc1078965f9b79faac86eaf0852b3a",
     "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-jvm/12.2.4",
     "dest-filename": "aboutlibraries-compose-jvm-12.2.4.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-compose-jvm/12.2.4/aboutlibraries-compose-jvm-12.2.4.pom",
-    "sha512": "edf3e11dc18930e901c06349f24fe55c1c3de63a3a44045ee4cf36c21dbe0d6c2f4674a015d4f997e7e3296cf62ae033ef4e74b022d289c6a749bf5b92638d34",
-    "dest": "./offline-repository/com/mikepenz/aboutlibraries-compose-jvm/12.2.4",
-    "dest-filename": "aboutlibraries-compose-jvm-12.2.4.pom"
   },
   {
     "type": "file",
@@ -1632,24 +1597,10 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-core-jvm/12.2.4/aboutlibraries-core-jvm-12.2.4.jar",
-    "sha512": "87a4804c641931cf1d0c69870cb71f0c31608b47efbe6ea57e614c9f7ecb30e876c9cc4ae602f53bd7feb05565fa2fbb074e126e71dab88d6cf67b1ca0508182",
-    "dest": "./offline-repository/com/mikepenz/aboutlibraries-core-jvm/12.2.4",
-    "dest-filename": "aboutlibraries-core-jvm-12.2.4.jar"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-core-jvm/12.2.4/aboutlibraries-core-jvm-12.2.4.module",
     "sha512": "a6d10908234b1c0c1df50b1367aaa1ea91c2e6599c91fe70387fb6537da81652c9b86ee3d1d0bd8a952e2bef0083bc5f06559189443a1b2386e9175f320f4673",
     "dest": "./offline-repository/com/mikepenz/aboutlibraries-core-jvm/12.2.4",
     "dest-filename": "aboutlibraries-core-jvm-12.2.4.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/mikepenz/aboutlibraries-core-jvm/12.2.4/aboutlibraries-core-jvm-12.2.4.pom",
-    "sha512": "fe77e374fcfe942ed3b4c4bfe08e13438a33a4a111aaf3c2b2e184dbebcd444da064636651b36b9d3e031091f39b31cc3403583a780450c21c7ece879f7fbaf4",
-    "dest": "./offline-repository/com/mikepenz/aboutlibraries-core-jvm/12.2.4",
-    "dest-filename": "aboutlibraries-core-jvm-12.2.4.pom"
   },
   {
     "type": "file",
@@ -1685,13 +1636,6 @@
     "sha512": "eea17984fef176cad005e481d11e6d655712766ef8b0bc77a80f6a8bcd0f1c09af884927054ee1f238d74ec04c48665061eb721ced1aca6e8ee3560195f6a61a",
     "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-coil3-jvm/0.35.0",
     "dest-filename": "multiplatform-markdown-renderer-coil3-jvm-0.35.0.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/mikepenz/multiplatform-markdown-renderer-coil3-jvm/0.35.0/multiplatform-markdown-renderer-coil3-jvm-0.35.0.pom",
-    "sha512": "ee4d6476a3568292f575d1383991986eb9919cfa703a9872834401e877e216bf1205bcedaf7037b87a8c608c19aa9cd7e3bc1a541207f6434dad9ce8fd592777",
-    "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer-coil3-jvm/0.35.0",
-    "dest-filename": "multiplatform-markdown-renderer-coil3-jvm-0.35.0.pom"
   },
   {
     "type": "file",
@@ -1797,90 +1741,6 @@
     "sha512": "bed959aadc20c0a4a3e59941b70966e2de5d8001acf2371ccb8fa37b43cb1450c09fb05ef5f46a978c8bc06ce4cf64342ebae99ef6d2fd22aa7708667e69a0f4",
     "dest": "./offline-repository/com/mikepenz/multiplatform-markdown-renderer/0.35.0",
     "dest-filename": "multiplatform-markdown-renderer-0.35.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0/ktlint-cli-ruleset-core-0.50.0.jar",
-    "sha512": "ceeb2598b82b2262c50bcacaaceac0eedc2133cc4f91e4fc703951ced036e4d098d72191f8bf45fe4b884be936777f8437733ab1bd32759fdb5a0c22b9ea40d0",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0",
-    "dest-filename": "ktlint-cli-ruleset-core-0.50.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0/ktlint-cli-ruleset-core-0.50.0.module",
-    "sha512": "14e6aa222e090b30ebc27dc8274a4bcdcf140ec93e9b9d5f2531ad1f714ed807e3eaecc03e2cd9d02819ea6f9023a04d8157a6afec500313f0f2f470b148359d",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0",
-    "dest-filename": "ktlint-cli-ruleset-core-0.50.0.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0/ktlint-cli-ruleset-core-0.50.0.pom",
-    "sha512": "8dffa90d01ec14a0f47065441874d670634bd101b20d60d9573c918a93b3ec3354ec0ab81aa1551d13322e14ce55d789f3c226e67bb9a26fc9b2cc7878afc251",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-cli-ruleset-core/0.50.0",
-    "dest-filename": "ktlint-cli-ruleset-core-0.50.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-logger/0.50.0/ktlint-logger-0.50.0.jar",
-    "sha512": "ce317a374451825f25f182a4e9a73caa8eada0843f1776b3949341688ef6556210664a41613cc9900666eaa99debe28f60092ab0c26d7c6020be3d2b9833e60c",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-logger/0.50.0",
-    "dest-filename": "ktlint-logger-0.50.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-logger/0.50.0/ktlint-logger-0.50.0.module",
-    "sha512": "a165825ff5f54b1be72c4aef7f0e5518e7253653fc8e247bf9932e1efcd522616c8f81eef592598a6326e86bb97717e7121e817587ac809e5676014fc71f665a",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-logger/0.50.0",
-    "dest-filename": "ktlint-logger-0.50.0.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-logger/0.50.0/ktlint-logger-0.50.0.pom",
-    "sha512": "c11cc40d1f699a6ec9725deebdd3094831bb5083602a7b8bebc0ba5d895737116ae28fde893526a9eaca864d7e5a6e8ce467e215c6044f2f763543ece0bc5610",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-logger/0.50.0",
-    "dest-filename": "ktlint-logger-0.50.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-rule-engine-core/0.50.0/ktlint-rule-engine-core-0.50.0.jar",
-    "sha512": "188d32e640e45dcf608e85d69b13b71417d9c7a172dd8dc673c5b3e2451aaac766aaf13bd88c965a059f9aad20ba9ac11373ff24947066514139f4f2cd08b933",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-rule-engine-core/0.50.0",
-    "dest-filename": "ktlint-rule-engine-core-0.50.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-rule-engine-core/0.50.0/ktlint-rule-engine-core-0.50.0.module",
-    "sha512": "ae6049b63bd28fdd044d2021bb39f464e1678ed0ed893806fa684618ff00c129a5719fa1af27312b84e4d1387bf1b3e3b5a71bd818928b5a28757b363adb4d6f",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-rule-engine-core/0.50.0",
-    "dest-filename": "ktlint-rule-engine-core-0.50.0.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-rule-engine-core/0.50.0/ktlint-rule-engine-core-0.50.0.pom",
-    "sha512": "8516c7e73a0bf0c548541ea81ca6947eaa9037852f52c5d1fac8893d88bf91c06ddb23a5d148cad7792ca1717e7693342b3bec61b8a70d92fbbb0f684880c067",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-rule-engine-core/0.50.0",
-    "dest-filename": "ktlint-rule-engine-core-0.50.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-ruleset-standard/0.50.0/ktlint-ruleset-standard-0.50.0.jar",
-    "sha512": "774e41a7fafba2846d0ceb43c5de6b3da08a7a62afbe75cc39e347589f932049eaebe1201e485eaa5c1c0b8de145835e3ae0bf17199620510be8d560b6315939",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-ruleset-standard/0.50.0",
-    "dest-filename": "ktlint-ruleset-standard-0.50.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-ruleset-standard/0.50.0/ktlint-ruleset-standard-0.50.0.module",
-    "sha512": "6569a4cb49d87201ef004fd5206ac5d63f001d894859cca11d82ddcc2c3ac800291d37dac7a766b47be5dbefb028d6e03829765be132a04feab690bbc41a10c0",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-ruleset-standard/0.50.0",
-    "dest-filename": "ktlint-ruleset-standard-0.50.0.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/com/pinterest/ktlint/ktlint-ruleset-standard/0.50.0/ktlint-ruleset-standard-0.50.0.pom",
-    "sha512": "2d83bbdac9d9af619b928c509a92c7f41b16ac639dabc4f8f047c75fccadb5898f10ad832553eb78ae996fca2b8d3465c087a9707bb29c5d11aff8a18d518ad8",
-    "dest": "./offline-repository/com/pinterest/ktlint/ktlint-ruleset-standard/0.50.0",
-    "dest-filename": "ktlint-ruleset-standard-0.50.0.pom"
   },
   {
     "type": "file",
@@ -2402,70 +2262,21 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/dev/drewhamilton/poko/poko-annotations-jvm/0.16.0/poko-annotations-jvm-0.16.0.jar",
-    "sha512": "6adefb573879066c1f508735838e5482bdd23dcc89bed39fda02316b0535f740063d12c52e86751d4fbc5ae7fc387da917280d4ef41462e3ed213a5ba5e9bd69",
-    "dest": "./offline-repository/dev/drewhamilton/poko/poko-annotations-jvm/0.16.0",
-    "dest-filename": "poko-annotations-jvm-0.16.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/dev/drewhamilton/poko/poko-annotations-jvm/0.16.0/poko-annotations-jvm-0.16.0.module",
-    "sha512": "e8ec6e509d0ba56254e4b617feaa8c6d4aae231d7ac2db2f8c84f8e3eb3aff9ed7683982271ca64e477140df08999b3f6cb565524eb6ce32b4db29ab50dda9ef",
-    "dest": "./offline-repository/dev/drewhamilton/poko/poko-annotations-jvm/0.16.0",
-    "dest-filename": "poko-annotations-jvm-0.16.0.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/dev/drewhamilton/poko/poko-annotations-jvm/0.16.0/poko-annotations-jvm-0.16.0.pom",
-    "sha512": "73ba787cab47cbc1900fe1d10054d428f4befbdea1cc8d88ec83cc53a126604052f5c1bd4c362c45a57af26a25800eff26c43d18a4558df9f78c6437cd2f8e49",
-    "dest": "./offline-repository/dev/drewhamilton/poko/poko-annotations-jvm/0.16.0",
-    "dest-filename": "poko-annotations-jvm-0.16.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/dev/drewhamilton/poko/poko-annotations-jvm/0.17.1/poko-annotations-jvm-0.17.1.jar",
-    "sha512": "6adefb573879066c1f508735838e5482bdd23dcc89bed39fda02316b0535f740063d12c52e86751d4fbc5ae7fc387da917280d4ef41462e3ed213a5ba5e9bd69",
-    "dest": "./offline-repository/dev/drewhamilton/poko/poko-annotations-jvm/0.17.1",
-    "dest-filename": "poko-annotations-jvm-0.17.1.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/dev/drewhamilton/poko/poko-annotations-jvm/0.17.1/poko-annotations-jvm-0.17.1.module",
-    "sha512": "cbd081a93d0590ce853fbd7645899cb778dcdf29f2bdd64970495ac0d87b443076b91b96f8302d2be2701a9aa075ae10062557c013d0cbb0e151ca698d077a81",
-    "dest": "./offline-repository/dev/drewhamilton/poko/poko-annotations-jvm/0.17.1",
-    "dest-filename": "poko-annotations-jvm-0.17.1.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/dev/drewhamilton/poko/poko-annotations-jvm/0.17.1/poko-annotations-jvm-0.17.1.pom",
-    "sha512": "a2e36ac3634f5a496c1cc395779e1e02d94bd6a0c77014b58757edaab9283f32c87cdf8da597909da543a66503fcbc0e0ce72a48d3917e555aecb8578f6079c4",
-    "dest": "./offline-repository/dev/drewhamilton/poko/poko-annotations-jvm/0.17.1",
-    "dest-filename": "poko-annotations-jvm-0.17.1.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/dev/drewhamilton/poko/poko-annotations/0.16.0/poko-annotations-0.16.0.module",
+    "url": "https://repo.maven.apache.org/maven2/dev/drewhamilton/poko/poko-annotations/0.16.0/poko-annotations-0.16.0.module",
     "sha512": "98294b70eef96d51226ec5b50b3c3b28ab14610ef38f7331a51cb4a59850fd1ae4f2f0cc335f341d90837def7e3ab33fc4be760616e0a0311f0644fb12693bf8",
     "dest": "./offline-repository/dev/drewhamilton/poko/poko-annotations/0.16.0",
     "dest-filename": "poko-annotations-0.16.0.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/dev/drewhamilton/poko/poko-annotations/0.16.0/poko-annotations-0.16.0.pom",
+    "url": "https://repo.maven.apache.org/maven2/dev/drewhamilton/poko/poko-annotations/0.16.0/poko-annotations-0.16.0.pom",
     "sha512": "d3c5e90e134e2273c7c6706282eeb858f8eb9ddff52b0568f6ec6abaf7224df963e085e0f8d2011c61471a2cba103f3da12f5e1053d2ff59f80a372e83f11d1d",
     "dest": "./offline-repository/dev/drewhamilton/poko/poko-annotations/0.16.0",
     "dest-filename": "poko-annotations-0.16.0.pom"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/dev/drewhamilton/poko/poko-annotations/0.17.1/poko-annotations-0.17.1.module",
-    "sha512": "73029ff78e707ed2060ee14f4ef983a7bd90d0d3d29b2292395209bbb0b518d91d3b24c76f59caa803f9d2e40007b06f470041a47627e293bfedc6a8e4d62c29",
-    "dest": "./offline-repository/dev/drewhamilton/poko/poko-annotations/0.17.1",
-    "dest-filename": "poko-annotations-0.17.1.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/dev/drewhamilton/poko/poko-annotations/0.17.1/poko-annotations-0.17.1.pom",
+    "url": "https://repo.maven.apache.org/maven2/dev/drewhamilton/poko/poko-annotations/0.17.1/poko-annotations-0.17.1.pom",
     "sha512": "98201114ae3c7052bff5c54c8eb1d41b7dd4e8079c1da5ba0d907bd7794a27d3b7e2018bc7c865b864c07b7fcc0c44c9ce11741caace24f53f29d532a20060fe",
     "dest": "./offline-repository/dev/drewhamilton/poko/poko-annotations/0.17.1",
     "dest-filename": "poko-annotations-0.17.1.pom"
@@ -2843,13 +2654,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-core-jvm/3.2.0/coil-network-core-jvm-3.2.0.pom",
-    "sha512": "de45fe07b0eeff134a5e63fbe87709bc8d044d3e1a635a96ef710fe8176f27f86d2291d8a467d5e637b791953baff047772f35cdf3dfb3ec6ad5d4ecc531c707",
-    "dest": "./offline-repository/io/coil-kt/coil3/coil-network-core-jvm/3.2.0",
-    "dest-filename": "coil-network-core-jvm-3.2.0.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/io/coil-kt/coil3/coil-network-core/3.2.0/coil-network-core-3.2.0.module",
     "sha512": "9396119bb4225936fbc35381d67ea3d1b6e18ad999c12e8aed619cca3278099a61dcf5b855f5fb77a60973a63d7059c8c9cc9495db623ed27942d1a953942f03",
     "dest": "./offline-repository/io/coil-kt/coil3/coil-network-core/3.2.0",
@@ -2920,56 +2724,7 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/davidburstrom/contester/contester-breakpoint/0.2.0/contester-breakpoint-0.2.0.jar",
-    "sha512": "4536cbedceab490047cf2a2c0a7438aa8757327469f6559f11ea9cd95e51a8de4d9dc4657c259bcc39575c4c9e15a916e40695bf4f7982124db068971cdcb02c",
-    "dest": "./offline-repository/io/github/davidburstrom/contester/contester-breakpoint/0.2.0",
-    "dest-filename": "contester-breakpoint-0.2.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/davidburstrom/contester/contester-breakpoint/0.2.0/contester-breakpoint-0.2.0.module",
-    "sha512": "c14e1b41ff0f21f120cecc0d56c9550cf2824fbc8ee90b1e99f950189122581a0aa6d9e52a2e7f9925213883b4413313853a4884377717d7496ac6bae458b7ea",
-    "dest": "./offline-repository/io/github/davidburstrom/contester/contester-breakpoint/0.2.0",
-    "dest-filename": "contester-breakpoint-0.2.0.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/davidburstrom/contester/contester-breakpoint/0.2.0/contester-breakpoint-0.2.0.pom",
-    "sha512": "a5b064e578e6d1331e31f2f73007df37bd34bf1f808e3c6eca1c1b9a8ef50fd673a8036719f16f8306feec5a9134d35432949fc02d94e647be72c61bb560315f",
-    "dest": "./offline-repository/io/github/davidburstrom/contester/contester-breakpoint/0.2.0",
-    "dest-filename": "contester-breakpoint-0.2.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/detekt/sarif4k/sarif4k-jvm/0.6.0/sarif4k-jvm-0.6.0.jar",
-    "sha512": "96499a151e1250bf976db95def8caf8949ab1464b59dc8a233f12ced64e815635a806e77f81fec846a44d51832628703f64ce5c83313843f90093dc49b9b6353",
-    "dest": "./offline-repository/io/github/detekt/sarif4k/sarif4k-jvm/0.6.0",
-    "dest-filename": "sarif4k-jvm-0.6.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/detekt/sarif4k/sarif4k-jvm/0.6.0/sarif4k-jvm-0.6.0.module",
-    "sha512": "0dce653298ad8dab783148e2259d2029eb66bad6a54b9685b5a25e6e36ee7290b035833cf07be8051018333afd477bd207b44cbe2c5da2c6a6b511bbd2d4ba99",
-    "dest": "./offline-repository/io/github/detekt/sarif4k/sarif4k-jvm/0.6.0",
-    "dest-filename": "sarif4k-jvm-0.6.0.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/detekt/sarif4k/sarif4k-jvm/0.6.0/sarif4k-jvm-0.6.0.pom",
-    "sha512": "dd77f3d7d236ab57741fa7540a5ff6d2f3fe69444e619a2fef0dd105f271f4bbfb320649edb2114dc31a0d019e6c3411d0e247956400daa1b340bf03fd1d887f",
-    "dest": "./offline-repository/io/github/detekt/sarif4k/sarif4k-jvm/0.6.0",
-    "dest-filename": "sarif4k-jvm-0.6.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/detekt/sarif4k/sarif4k/0.6.0/sarif4k-0.6.0.module",
-    "sha512": "f5c3ca971084e0fe4f011764f86c91e2bd3b6c0e5667c67d40e0a82e90622c77d9ac49d4079899a1f309e45ce0de6948df12f126b895b75c31b8021dba77755e",
-    "dest": "./offline-repository/io/github/detekt/sarif4k/sarif4k/0.6.0",
-    "dest-filename": "sarif4k-0.6.0.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/detekt/sarif4k/sarif4k/0.6.0/sarif4k-0.6.0.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/github/detekt/sarif4k/sarif4k/0.6.0/sarif4k-0.6.0.pom",
     "sha512": "f0cb71efc54db1266cc8851b31a446cc0b5909c5dd7b536eef11d5bef920f9b357f615bb6c43350510bb6555dc969215caded2d3f885bfc2bcda3de566b5de0e",
     "dest": "./offline-repository/io/github/detekt/sarif4k/sarif4k/0.6.0",
     "dest-filename": "sarif4k-0.6.0.pom"
@@ -2997,798 +2752,168 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/java-diff-utils/java-diff-utils-parent/4.12/java-diff-utils-parent-4.12.pom",
-    "sha512": "67476b78236fac9cf37c521a4ec52365ac0cdff510083af8b272a13b669900c4800dfd5ce263ee0769297357edc41769647c272f9283ac50aff69dcf1971eeed",
-    "dest": "./offline-repository/io/github/java-diff-utils/java-diff-utils-parent/4.12",
-    "dest-filename": "java-diff-utils-parent-4.12.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/java-diff-utils/java-diff-utils/4.12/java-diff-utils-4.12.jar",
-    "sha512": "df950eaccfc24641ba7957e42e0bd54024bafe07450cfed8404b8e9efb00931bb96b2518c582310f98508ac550c34d38cde49a220fc9d743bbc52d0fd25feb53",
-    "dest": "./offline-repository/io/github/java-diff-utils/java-diff-utils/4.12",
-    "dest-filename": "java-diff-utils-4.12.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/java-diff-utils/java-diff-utils/4.12/java-diff-utils-4.12.pom",
-    "sha512": "4e3f08b0636b7a6c499f91408561dd30403ba94e2fc6c1e11678b2d138991414e6ccdcfc5e110a95700a8e2e5eaa9a656a6af692ba4187e604274edd9964e4e3",
-    "dest": "./offline-repository/io/github/java-diff-utils/java-diff-utils/4.12",
-    "dest-filename": "java-diff-utils-4.12.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/microutils/kotlin-logging-jvm/3.0.5/kotlin-logging-jvm-3.0.5.jar",
-    "sha512": "c9c5a06f6c1bb98838ecddb91ab815dc3be234ab13019233fb504ddb360948ce269bf32ea6be6d06ab05801c6f049262fdf83656c5b697f2b1c2ce38f10e4403",
-    "dest": "./offline-repository/io/github/microutils/kotlin-logging-jvm/3.0.5",
-    "dest-filename": "kotlin-logging-jvm-3.0.5.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/microutils/kotlin-logging-jvm/3.0.5/kotlin-logging-jvm-3.0.5.module",
-    "sha512": "cb6e60ca430e19844ffbe111251c886766bc57c399377b96b90e3476675b2747f2c1f28859819a0945808ac6a8ffbb3ea40c7e26f8d7aa6b3f08bdb9ec1856cd",
-    "dest": "./offline-repository/io/github/microutils/kotlin-logging-jvm/3.0.5",
-    "dest-filename": "kotlin-logging-jvm-3.0.5.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/github/microutils/kotlin-logging-jvm/3.0.5/kotlin-logging-jvm-3.0.5.pom",
-    "sha512": "cad877a4c4502c93a7c2b34d26f2eaa7dbe536f84df14ce70ab3c998cfede5b1b2e1f25e64a45df8a8371105ee8b2f0d764c8302e1d1c749dc6668f49458d304",
-    "dest": "./offline-repository/io/github/microutils/kotlin-logging-jvm/3.0.5",
-    "dest-filename": "kotlin-logging-jvm-3.0.5.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-api/1.23.7/detekt-api-1.23.7.jar",
-    "sha512": "12a8269cc40feb931594bffd2946c059b8718b5a9b9857cc559a4adfbc988dd1656cd84ec441c8ba88bc004c2354a3738d80e706a40ed328ce8777f97051970d",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-api/1.23.7",
-    "dest-filename": "detekt-api-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-api/1.23.7/detekt-api-1.23.7.module",
-    "sha512": "553dc5f6c4f25ec5221a7832d09b400b1cfd37b7d9bbdc2feff23330267630fb85e2c2bfe4384891fde3cfb5d476c587afcbdb10413afe1c80c72887db0a94b3",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-api/1.23.7",
-    "dest-filename": "detekt-api-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-api/1.23.7/detekt-api-1.23.7.pom",
-    "sha512": "fecbf0ae7c589becd3b8a4ad6c4ea136cfbff501da4de4042e01e13cfa601887e615260325da20a9d322bdf35a9701377e77113074a317995d852ab7e22bab69",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-api/1.23.7",
-    "dest-filename": "detekt-api-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-api/1.23.8/detekt-api-1.23.8.jar",
-    "sha512": "ea0c7cff48f77aa9d07e2451fb943e5700c7586f4de6849530986ac816a219903f4e384684b734fa26cfcacd361ba8c2d5e504c7d7e89bc16374607cdc15d4f2",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-api/1.23.8",
-    "dest-filename": "detekt-api-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-api/1.23.8/detekt-api-1.23.8.module",
-    "sha512": "0019eae9cb4097bbcaac64ea2b6772aecab3e0d306920e923911e5543a35d994f355c0291a807109f55f30c000ba5a3914fe3e46c26992782e44672b88f47cb0",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-api/1.23.8",
-    "dest-filename": "detekt-api-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-api/1.23.8/detekt-api-1.23.8.pom",
-    "sha512": "f00d62ad966ce8fe4c9a5a1ca94256e304ed2a918feb74520ecf301bee26feba38ef54a816e259dd0549c5766a62c2708427e4d4718a6c4d5975c2d035836911",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-api/1.23.8",
-    "dest-filename": "detekt-api-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-cli/1.23.8/detekt-cli-1.23.8.jar",
-    "sha512": "c6e1da48f1276ce9de16bcaa3a6a13e586309e0b9d78ee59bfb6d04823749556aafc683fb06be7b06bd489dd75738ce9a90d54df9cdbe1004b39f710ce2b7bb0",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-cli/1.23.8",
-    "dest-filename": "detekt-cli-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-cli/1.23.8/detekt-cli-1.23.8.module",
-    "sha512": "ff6cf5ae75503a9dbbb3fdd3371b24b169e3bc2aa32c3f1bcbb776c0307fdefe2085f149174c3f6f5efa4eefb45145220ff5378050a12aa1a31d6db1f39d36fe",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-cli/1.23.8",
-    "dest-filename": "detekt-cli-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-cli/1.23.8/detekt-cli-1.23.8.pom",
-    "sha512": "7267303bbb65ad4820986bc8ee0911a4475c10f24aeb3d2b657411139519d02dbb799dee9a24580f6ca74687f4938daa8fb86c228141ac61fd82dbaf87a0b955",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-cli/1.23.8",
-    "dest-filename": "detekt-cli-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-core/1.23.7/detekt-core-1.23.7.jar",
-    "sha512": "cae5bcdd06ecd858fc1b3ad6b5c9cb03eae21ce2beabc92f8ea0d298b42fca51a7875f49ecd92b6c22ea0c9c402f1eca92b369562450b4878f0789056b514323",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-core/1.23.7",
-    "dest-filename": "detekt-core-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-core/1.23.7/detekt-core-1.23.7.module",
-    "sha512": "4946b8ef287a9458a24ff27481518e0a4b05a921bc237b896d55cdd33b5469edb0bab753cd64dbaf2aaf872a3c07e7cf1104e3e8c8ae03b1a45b679af525830d",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-core/1.23.7",
-    "dest-filename": "detekt-core-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-core/1.23.7/detekt-core-1.23.7.pom",
-    "sha512": "f5e9510d7cdd3dd671b349356f31d0b77832fc790be6e9aa510a4723e77f954cb9a906bfedd7efc129322f1d9fdefbf271c72a34461ac32c3c7c70255b51ac7c",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-core/1.23.7",
-    "dest-filename": "detekt-core-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-core/1.23.8/detekt-core-1.23.8.jar",
-    "sha512": "ab9a490a0fe25837446608a23c11b4c1951212eef1744f265ee79f8a3d82b31df564ceb085cd142c6446cd06715992b7ba74b91753025267f38e801a777ce842",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-core/1.23.8",
-    "dest-filename": "detekt-core-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-core/1.23.8/detekt-core-1.23.8.module",
-    "sha512": "3fa9048ad210166a3c8c5af824795b05293bbeb317334cd589e04ee1e89b841ca63a8525b423b373716a48f4f9a59582c92555b77c498df2a6b4437d2fbd0867",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-core/1.23.8",
-    "dest-filename": "detekt-core-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-core/1.23.8/detekt-core-1.23.8.pom",
-    "sha512": "4b0230a01f98914997bfa0594e4bb060e1616b33619d64b99b9559bdfb785ed33d2f4da7bbaf7bcb13c8c055af9e2e9df1b462e17cca2d48c843f4b6cb35e6eb",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-core/1.23.8",
-    "dest-filename": "detekt-core-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-formatting/1.23.8/detekt-formatting-1.23.8.jar",
-    "sha512": "996f470f356e9dcb14276eb94810f8f44546a86e57763215af5dae06181446f4a3351d115f005dd0e39cd154d1a2d02dad45d21f1f599861e2eb595be742837f",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-formatting/1.23.8",
-    "dest-filename": "detekt-formatting-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-formatting/1.23.8/detekt-formatting-1.23.8.module",
-    "sha512": "3a7dc7faa1e18307d61cf89f806fe6b37ba0a8939cef3e2e4bedf643ceef7164a5752d8f59367ec575fe0ed47031a5e31b9b52e92f7a73d637d501e78fec9d0f",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-formatting/1.23.8",
-    "dest-filename": "detekt-formatting-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-formatting/1.23.8/detekt-formatting-1.23.8.pom",
-    "sha512": "4a0647fcdf5ee223d3e13d24eafdaa077beb71ed95698b576fc9b5c9bec46ce0710fe21b4a4b6853c6913962164ef9a409195ba7ac77c11ddef1b18fef181e31",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-formatting/1.23.8",
-    "dest-filename": "detekt-formatting-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.7/detekt-metrics-1.23.7.jar",
-    "sha512": "83a36e06239d5ebbb60411f77ce5669616b1e3026bf63f8dce6ce6a4cd4c3b93667e0dcda4b2421c9f692bf425ff6f0cd004b108085f8fb1c5408ecaf9cf5590",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.7",
-    "dest-filename": "detekt-metrics-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.7/detekt-metrics-1.23.7.module",
-    "sha512": "640132bb859e1ef9798eda5a07d24bd206c2e4f902fdaf56dd0bbf12819b6c8d6e6e01ff5ddefc360a573bd8af994756649fc8ef6b4730103eaf870924785231",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.7",
-    "dest-filename": "detekt-metrics-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.7/detekt-metrics-1.23.7.pom",
-    "sha512": "67e00217e883eb1fafc571cd6d6ca37b66906de7338c0725f1424930e9cd0c7e41a9c8dcf5792001c258ebffee7c8e36d9f24e34d6e94c36c89b0abc0c907d86",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.7",
-    "dest-filename": "detekt-metrics-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.8/detekt-metrics-1.23.8.jar",
-    "sha512": "bd779dc7dfa1540494d4e44d9363ffd12b65f7eb4eabe320805a21170898d5dff6076645f0ea623f3a61437dee808a2059694dfa48c9cc2ef834a9743ccbbb51",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.8",
-    "dest-filename": "detekt-metrics-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.8/detekt-metrics-1.23.8.module",
-    "sha512": "85350005ce07017d00efdea4a04473c0d0eff03bad3994a8e2b14aa1ba64e9baa1db313f68385f56b324697b7db96ba7a8c3554591f859543a4b27c833707c53",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.8",
-    "dest-filename": "detekt-metrics-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.8/detekt-metrics-1.23.8.pom",
-    "sha512": "8effb073ec8d4446a424d09c5fc84295219d5f4562e6934e6812e945767c8239539f491e6274721a87bc00a5e344c1d49361777da79ad02104f05f5313f8af1f",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-metrics/1.23.8",
-    "dest-filename": "detekt-metrics-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-parser/1.23.7/detekt-parser-1.23.7.jar",
-    "sha512": "c84b7a19cf5bbeacb76502e7f02313b2376a4dcd97b51b948d6957ac4ecb53e521d817fdd328b2503985b72e5dc366e143371b8f8978572c0ea7833bc3bfaa4b",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-parser/1.23.7",
-    "dest-filename": "detekt-parser-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-parser/1.23.7/detekt-parser-1.23.7.module",
-    "sha512": "5ad31d9694d277b7b7095c62131b7b932eecabca51dbabd4fa1a687cb49c7ca1088e8bc7996d45634929bec06c1afe5ddbc05e4b162a47f41fb50dff534c2cb6",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-parser/1.23.7",
-    "dest-filename": "detekt-parser-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-parser/1.23.7/detekt-parser-1.23.7.pom",
-    "sha512": "dcb9cf56c03aac36bdcd67d113878f7dcf52a2a4baaa43c50b61b0c08af91159d0b332fbf7b2c395e4fa2ee1da4229f99e646fd62daecba36b83f86ccf423b1d",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-parser/1.23.7",
-    "dest-filename": "detekt-parser-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-parser/1.23.8/detekt-parser-1.23.8.jar",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-parser/1.23.8/detekt-parser-1.23.8.jar",
     "sha512": "42db7df025564cb5e924c9e0884cab960527481afa846564ad6b912d11fbba7edb08b5b3ae09f8f24904ba4f109c9380aea4af732e006afefa7a26bd2d28f322",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-parser/1.23.8",
     "dest-filename": "detekt-parser-1.23.8.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-parser/1.23.8/detekt-parser-1.23.8.module",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-parser/1.23.8/detekt-parser-1.23.8.module",
     "sha512": "53ff0feae7da4a6ad4a2d66b9fe9280b86bff9629589da22231dff07882b5b9066d03276cbae86b045cb3cbfb475e8ae36a92664ded1a0074242009ea369d12e",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-parser/1.23.8",
     "dest-filename": "detekt-parser-1.23.8.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-parser/1.23.8/detekt-parser-1.23.8.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-parser/1.23.8/detekt-parser-1.23.8.pom",
     "sha512": "5c978adb52715a112d0026448b465d3ff2e66aefbbdffe74b9770984a0537fadc2fddeaee0bd8aff62335a5998b3810ba39eced8f91d8be45995e0a34d05e8ce",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-parser/1.23.8",
     "dest-filename": "detekt-parser-1.23.8.pom"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7/detekt-psi-utils-1.23.7.jar",
-    "sha512": "6c201fd2976f6521d88253c951aa1b8ea29c98bf4f2c59d713fa8a8b44eb7447dcdaef01ceea3a89cbd7c1b08cd70ca7c69be8ab26c79629ed3ff4d22d4c4170",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7",
-    "dest-filename": "detekt-psi-utils-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7/detekt-psi-utils-1.23.7.module",
-    "sha512": "23eee91d93d9a785cb6b70b78641d099f184b6d6064d46325583c3260557e874ca6e3f16ed7c44b0d0ff28471b04a8d433939bd43fb78cd22613675b5c16f70c",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7",
-    "dest-filename": "detekt-psi-utils-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7/detekt-psi-utils-1.23.7.pom",
-    "sha512": "ff3b7edf9c44c2f72c922f62ac6d66b27a4905e6f856edeeaafe79c326fc28b0171df511bde5e92aa06d69390c97837dec8f843ef5e5959d47267c28bfb49404",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.7",
-    "dest-filename": "detekt-psi-utils-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.8/detekt-psi-utils-1.23.8.jar",
-    "sha512": "82ae41a52537ac882298a682ce62f9455c53865fb7525a88be590ff7c5f600d90a351c1f1637e2ba48f304b81bd7b7183f129e44326e7253be38c9a3e025b754",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.8",
-    "dest-filename": "detekt-psi-utils-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.8/detekt-psi-utils-1.23.8.module",
-    "sha512": "6823a0e5551182216b585beb779cb145d875abc80834ef6e3901b7d013dccc2ec026b47593e08faa322e0940ee0a1740b7faae21db14fbc229eb776658a0730b",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.8",
-    "dest-filename": "detekt-psi-utils-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.8/detekt-psi-utils-1.23.8.pom",
-    "sha512": "71924815bf74b53a25e0b3c53c202c4e4104a7a822a6e50a9da6fe131fda4ee01bef7cddfefb7d02ea7bcfb0c38c4ea3eb18bd53f74b93ed0c3c72690ed782c2",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-psi-utils/1.23.8",
-    "dest-filename": "detekt-psi-utils-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.7/detekt-report-html-1.23.7.jar",
-    "sha512": "de9fe5058c53b103fadcab56b152e6ccbae5daffafbbc207e454add4187182b5001b3d12b37ae65f8df1aa56c33fd1ec7f395b5a4e5a845a5e98a4c738f59290",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.7",
-    "dest-filename": "detekt-report-html-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.7/detekt-report-html-1.23.7.module",
-    "sha512": "c2d2a84d1bca9b84e39e2772073d0aa684d2ffbf58312ba63341f448a5e764c272b605684145873abf9e075adbb68df6de0e737831beaf20bc9d3ddd271a503e",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.7",
-    "dest-filename": "detekt-report-html-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.7/detekt-report-html-1.23.7.pom",
-    "sha512": "eefebc5a92d483999c829a30acb06f11f776b9dcc032335980d6ef72a4f7c957762081d6c1cf6bdb77eeff7337a2f2c1ec256688d3959add344448bd1594ebcc",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.7",
-    "dest-filename": "detekt-report-html-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8/detekt-report-html-1.23.8.jar",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8/detekt-report-html-1.23.8.jar",
     "sha512": "76ff606036badb7fd2178f6450d73305e6897848203ca2673ea03f2062c864b76647fd1eea777802d269dda15bc1a7b7dcb75de3145f86dee2c2109728198a77",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8",
     "dest-filename": "detekt-report-html-1.23.8.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8/detekt-report-html-1.23.8.module",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8/detekt-report-html-1.23.8.module",
     "sha512": "bce613ca7efe66228b48ce31c5a9a59f5c7bf729b3f2c0ad0b129cb96475cb7472b57e32daf0ff5472bfb55630d4a22e0f5bf4649e9110cb1230ec3af056116f",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8",
     "dest-filename": "detekt-report-html-1.23.8.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8/detekt-report-html-1.23.8.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8/detekt-report-html-1.23.8.pom",
     "sha512": "bb515981f3d7d9a97b21b752fa507db982b5ce5308307b87a7693bcfffe998b42ca58a6e10ad4588fa1858eef0eb71d2c789db78b04b44528e51f2a4af57eda3",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-html/1.23.8",
     "dest-filename": "detekt-report-html-1.23.8.pom"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7/detekt-report-md-1.23.7.jar",
-    "sha512": "438e8b708d616ee5e3f5b4619fcc6da97ffde14ab517a4a6985c4e5cdffcf558b965f35784432589c22c4153d30af09afe92978962c21a693b7db4c757e2631f",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7",
-    "dest-filename": "detekt-report-md-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7/detekt-report-md-1.23.7.module",
-    "sha512": "1557ae06739987344dc89c4a944f730926c3b0705f03cbc19c3956393090a79576f2a00f163e127514c5bca5f7ffb0d222b1999fd4c053ac0a0f61543bee0480",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7",
-    "dest-filename": "detekt-report-md-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7/detekt-report-md-1.23.7.pom",
-    "sha512": "d9854d1150b05cddcb00aac50ac0520ceee8a772444ad4cda6565842bc330b089771917d105aa1a0b6ea10721f265ff3619c5c9ab6a8f2a009b20b196674bb2c",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.7",
-    "dest-filename": "detekt-report-md-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.8/detekt-report-md-1.23.8.jar",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.8/detekt-report-md-1.23.8.jar",
     "sha512": "e131bf4851c9f5deae7839ac6563a3e289b822223bed8fa4a26ae7c178e9d864449647cf0f0c0e5b52ac05b06b8c055c941aaed2e428d0bf7a685c3966218a41",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.8",
     "dest-filename": "detekt-report-md-1.23.8.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.8/detekt-report-md-1.23.8.module",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.8/detekt-report-md-1.23.8.module",
     "sha512": "1c4fe71d74c7157f64deea537e9ad61693f9d577921f026f59385bcd3e7d7c04ed3ff2ac1d2b0d691d0cb2010366e407c1f4e5d066628b78425d65481513a0b7",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.8",
     "dest-filename": "detekt-report-md-1.23.8.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.8/detekt-report-md-1.23.8.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.8/detekt-report-md-1.23.8.pom",
     "sha512": "7fc5ca633b950b2aca354f9f2b1d71cebb969cf89cc6b3324a5e65c9a4fa4974e604258dc3c119c3641b7de31c84700d73edb8ab1ebf4f4a35f0eede34029d17",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-md/1.23.8",
     "dest-filename": "detekt-report-md-1.23.8.pom"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7/detekt-report-sarif-1.23.7.jar",
-    "sha512": "2bc52f76853f70f15b209fbb661569ed09c8226e34ba781d770280748b6644942815b19a3a4f166f86b57b35f8e3696f2bd54b4326ea89bd9a34b973bf881950",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7",
-    "dest-filename": "detekt-report-sarif-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7/detekt-report-sarif-1.23.7.module",
-    "sha512": "264e19992c21773016a3d67a6f369592d89ec5ad6c1a655ac81d25933fed17398b5d6284333a35271e3f8a6552fb7719fe4877c690229834f2b946331e02835e",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7",
-    "dest-filename": "detekt-report-sarif-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7/detekt-report-sarif-1.23.7.pom",
-    "sha512": "f59592b9d6076888604e0d2a99dfc1a11880efa5f822b4422d43790c54fac1469a2ea08c16557b8ae6b949ec3938cce6609cbd669a43790ee9c897d86d77b7f5",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.7",
-    "dest-filename": "detekt-report-sarif-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.8/detekt-report-sarif-1.23.8.jar",
-    "sha512": "6c7e9a7d81eb757bd61b577ceb404b01b75765bba782eb7cab2d4c5f30a97ee1c49ecab5acf067ff0153db2d9a49ef0247729f4b6072e6bc0287d7f55e13c7af",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.8",
-    "dest-filename": "detekt-report-sarif-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.8/detekt-report-sarif-1.23.8.module",
-    "sha512": "4d75a3e9c11520c5b7046ebbd3f3f807e7d9b4a145193301f6e54abadd88ebab214083596eff4f0155f84d65e0dd1f68669199805ac040095fd5484f1ba24599",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.8",
-    "dest-filename": "detekt-report-sarif-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.8/detekt-report-sarif-1.23.8.pom",
-    "sha512": "2d0b6c0c714014a167cb25ff76acc882230ab7440353ea3b9196c3d8d3572c573d2d1cb7bd507f5cb156167be2af3db39a67e2a31e303886b48fff3818ffa13f",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-sarif/1.23.8",
-    "dest-filename": "detekt-report-sarif-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.7/detekt-report-txt-1.23.7.jar",
-    "sha512": "63cce16fe8593b0bb88412d7a7a24e380d06baa8b3d0599e134bd13a86a8d32fc5eea38e5daeffabf72a2fc427abdc77f0ced6e5faf77f6a70df8808418367de",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.7",
-    "dest-filename": "detekt-report-txt-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.7/detekt-report-txt-1.23.7.module",
-    "sha512": "18fa7d697e7121cc13379946880b8d405d3b57683ad79cf6cc9274b98f8dde165824cf21e94fdd973b2a116c087bfda8ae276e01d41dffb4fe0f9f01b7a62ac6",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.7",
-    "dest-filename": "detekt-report-txt-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.7/detekt-report-txt-1.23.7.pom",
-    "sha512": "59766a38a7e87966616b0ac5a0fcbc8b2ebac38c790523a9d04eff331e68a28b6746a64370b3dbcd41105afd86169f86f58565ef5cde5732441162c7155a897c",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.7",
-    "dest-filename": "detekt-report-txt-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8/detekt-report-txt-1.23.8.jar",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8/detekt-report-txt-1.23.8.jar",
     "sha512": "70d1f13bbcfe4f4481631162e2afde28106cc0a8c41e165a8882244d310c258d488523d1bf18f08dbd6660296b174a3c1cd5f96cb9b4ba808ffba388da3f50e7",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8",
     "dest-filename": "detekt-report-txt-1.23.8.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8/detekt-report-txt-1.23.8.module",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8/detekt-report-txt-1.23.8.module",
     "sha512": "b511729ce5601ca298cf02a6f9ae987cb7167bff1028131076dd988caa3f4c0e7ae62ac0d35bbb2fc169d6f35ced6cbb5c04a0e8113ae9b22845ca1ea2d99e07",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8",
     "dest-filename": "detekt-report-txt-1.23.8.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8/detekt-report-txt-1.23.8.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8/detekt-report-txt-1.23.8.pom",
     "sha512": "396597ea6fbbb4873ae1b73b9aedeb8a25f623b42db9cc147f1372164421b2dda0ec54a8de013b95ef8d3487ecbdfd8c98472d7fa4a341dc5257c40a8b82f911",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-txt/1.23.8",
     "dest-filename": "detekt-report-txt-1.23.8.pom"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.7/detekt-report-xml-1.23.7.jar",
-    "sha512": "8674792d9a42b3f40d3f197917248d3a5f217f5dca0734d4d5adb3136df94eb83e72a2ce74d66fb3ea1d203faa829f50e2cdd2ffa52e05a48c05daa948844617",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.7",
-    "dest-filename": "detekt-report-xml-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.7/detekt-report-xml-1.23.7.module",
-    "sha512": "78196af848bc57489fb708e343474e5871d4329b0f1b281c350c90e255575ba12ac49b3a1a87eee3d824204619b871d5909599a05f5a8425c23e2bc719c8953f",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.7",
-    "dest-filename": "detekt-report-xml-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.7/detekt-report-xml-1.23.7.pom",
-    "sha512": "8b6e20b9662b941c10bcb3bd948278b53311e63ee0461793713b1dbf6f94334a8b1d3eebdcbbc5c7277b6af5e538e4581e54953225d5855c3055b72f1e259035",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.7",
-    "dest-filename": "detekt-report-xml-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.8/detekt-report-xml-1.23.8.jar",
-    "sha512": "eba9d75a878238b0e392c8da2d8085c2669c98c5512673df8bef442f843d6b916676b0facdd6be787636386475525e4ed858337c9c35ba4d9eec32177e33b968",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.8",
-    "dest-filename": "detekt-report-xml-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.8/detekt-report-xml-1.23.8.module",
-    "sha512": "bd1887e37d723db95779e9c8d67d4cacea91c8c3ffde5f3b0cb8ec8146ec6c11958422590c031c567ca361b3d10a129218de5f2bc0a207afeed490cde0b721dd",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.8",
-    "dest-filename": "detekt-report-xml-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.8/detekt-report-xml-1.23.8.pom",
-    "sha512": "3173bd916ce304d045cf9f516afb6324da72d6bfa10855015fdb61612406457444bffaad31ef480a65d43a34c08d7558e80854d91305928f81877fda13b0764d",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-report-xml/1.23.8",
-    "dest-filename": "detekt-report-xml-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-complexity/1.23.8/detekt-rules-complexity-1.23.8.jar",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-rules-complexity/1.23.8/detekt-rules-complexity-1.23.8.jar",
     "sha512": "05d6faa4fecaeb119e85b281630793c3bd639dd3e45243b36fcadc2c38fec37273713b95a16b58a9028fc873088b8f40485affb1fe09e283ed634e28e92d7702",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-complexity/1.23.8",
     "dest-filename": "detekt-rules-complexity-1.23.8.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-complexity/1.23.8/detekt-rules-complexity-1.23.8.module",
-    "sha512": "b31c57d20d78a69c29e8e612d749147cc919f0e279c8aa1e3f825a9cbd86fef9c382bd913bf2cbcdee2674b303c4814aab388d190630234deac60bfb155903d6",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-complexity/1.23.8",
-    "dest-filename": "detekt-rules-complexity-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-complexity/1.23.8/detekt-rules-complexity-1.23.8.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-rules-complexity/1.23.8/detekt-rules-complexity-1.23.8.pom",
     "sha512": "d4bd6a4c78faa79fe5f6defd1572b84febfa7d50fb6344703ae816b967bc5f8aef4573c05741ba1fa40f8d97e06f086e91c51a3af4f75297396c802b5a8608e4",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-complexity/1.23.8",
     "dest-filename": "detekt-rules-complexity-1.23.8.pom"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-coroutines/1.23.8/detekt-rules-coroutines-1.23.8.jar",
-    "sha512": "7f1d4dd7617aacca48e7cfe20f56a6baaca48d72210f187c568386b15ba6353787b8948cfc5932af9189fe0a0593525b61a5b6f1e2913072c53c6efba9c7be90",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-coroutines/1.23.8",
-    "dest-filename": "detekt-rules-coroutines-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-coroutines/1.23.8/detekt-rules-coroutines-1.23.8.module",
-    "sha512": "50f75eb1430a0411bc8e8eb261d2c9cb6f7aa7df92275485dbc0dc3051a522acd9e604aeb7a249723d1e4cfbf0c4597802cddc81d445eede379656989b43b4ed",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-coroutines/1.23.8",
-    "dest-filename": "detekt-rules-coroutines-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-coroutines/1.23.8/detekt-rules-coroutines-1.23.8.pom",
-    "sha512": "615619c28e86bd0b2f0dac520d40fb1f81681815c804f946ede07dff53512dc689165ac2ff1d7125d515237ab4b24a143533a548c13284055302af3eb6349342",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-coroutines/1.23.8",
-    "dest-filename": "detekt-rules-coroutines-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-documentation/1.23.8/detekt-rules-documentation-1.23.8.jar",
-    "sha512": "7527ec85319ee9bfe8b65c8b1e85e5d46138173654c529efaa3ddefa04ced6b075b5d6ea704a81e7dc51192be9cb78f0834e02cc30b986d689e60ae8ade0e8d2",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-documentation/1.23.8",
-    "dest-filename": "detekt-rules-documentation-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-documentation/1.23.8/detekt-rules-documentation-1.23.8.module",
-    "sha512": "4f726c25cdf3e142b0a95093cdee2ec65188419d6a2b60f11ad63632faf2e92b1c5eb849e89e9de6e8432826542f2294237ece34fdf8d5dc4d03ccffac9fdb8f",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-documentation/1.23.8",
-    "dest-filename": "detekt-rules-documentation-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-documentation/1.23.8/detekt-rules-documentation-1.23.8.pom",
-    "sha512": "353e80bdbcdd3e8f50a3843c5feac6bf7089f16c8c3200232dba372e948b376f8c2a125337d91ab2478f44745f1e051c4565259cbda7d5ccb78aedb368e318f6",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-documentation/1.23.8",
-    "dest-filename": "detekt-rules-documentation-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-empty/1.23.8/detekt-rules-empty-1.23.8.jar",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-rules-empty/1.23.8/detekt-rules-empty-1.23.8.jar",
     "sha512": "4cf83aca78d65c7152926ee05a68ea618a74da42d505a9a4756960df3fe65227452a82828cd0c0f7336956613ae5eacb18cbf482bd8b99d82c8de57dceceab9a",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-empty/1.23.8",
     "dest-filename": "detekt-rules-empty-1.23.8.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-empty/1.23.8/detekt-rules-empty-1.23.8.module",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-rules-empty/1.23.8/detekt-rules-empty-1.23.8.module",
     "sha512": "662e1f817b3306ed4f0398a36a23a31c8b6fdebf02d337c99c7dacf958bbcbfc391d97946c17d602b0c89b173ceccd038fe1330e40d6f9f7b40e5f3f9a4ddb08",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-empty/1.23.8",
     "dest-filename": "detekt-rules-empty-1.23.8.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-empty/1.23.8/detekt-rules-empty-1.23.8.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-rules-empty/1.23.8/detekt-rules-empty-1.23.8.pom",
     "sha512": "caaef33d2ada655f623f90c8965ac95aca05373d031c5822f0d1ef3a615fd3746741bb9f3d8b0017e257975e1da6023ab82ba71152908f984de1abce20644389",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-empty/1.23.8",
     "dest-filename": "detekt-rules-empty-1.23.8.pom"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-errorprone/1.23.8/detekt-rules-errorprone-1.23.8.jar",
-    "sha512": "0f405a14781ce0904c0fc9fd12bc96d20885b524d3d7a694fb4b9ca40a60364958df5f62befc02cac1ae874a04091660f4875e47813fe38ed4103912877ecf90",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-errorprone/1.23.8",
-    "dest-filename": "detekt-rules-errorprone-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-errorprone/1.23.8/detekt-rules-errorprone-1.23.8.module",
-    "sha512": "5d0d8f7eecf540110b857ff5a85c018025ce204512674130fb6e4d57d069eb2f5d414907024f216dd4800b4c454883aabb21d86443fb9dd4c5e36e30d8331916",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-errorprone/1.23.8",
-    "dest-filename": "detekt-rules-errorprone-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-errorprone/1.23.8/detekt-rules-errorprone-1.23.8.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-rules-errorprone/1.23.8/detekt-rules-errorprone-1.23.8.pom",
     "sha512": "1129dc1b17b757dd8b49da073defd42a89dc980612d604635b5685a4a58851eed314c48c429820481e988828992f59c237624567d8d3e2b1ceeddcffc1cc84c7",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-errorprone/1.23.8",
     "dest-filename": "detekt-rules-errorprone-1.23.8.pom"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-exceptions/1.23.8/detekt-rules-exceptions-1.23.8.jar",
-    "sha512": "ccd5c685138f75956c92f565217159d9021701094cac6e3390b7a0b446fd134697ac02dae7571c2130da045d53f02b5093cd3889a6d420d7ead932e610c530ac",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-exceptions/1.23.8",
-    "dest-filename": "detekt-rules-exceptions-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-exceptions/1.23.8/detekt-rules-exceptions-1.23.8.module",
-    "sha512": "aec8cd414624da2589fd0b26ead985984e68c32c995b9bbd690283dc1e6cc81f651d02bd70b41c20d146178040003cec319d9112129d77ae82b2e61116237e2e",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-exceptions/1.23.8",
-    "dest-filename": "detekt-rules-exceptions-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-exceptions/1.23.8/detekt-rules-exceptions-1.23.8.pom",
-    "sha512": "a89cd8ada0628d0a2bb91241c95e7624d254ac29facfa8cff9684cf3227d3a8633682fc818662781b3433f7acb2a9cc1bda2d0f5c1d2d7b723d1e10775316c72",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-exceptions/1.23.8",
-    "dest-filename": "detekt-rules-exceptions-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-naming/1.23.8/detekt-rules-naming-1.23.8.jar",
-    "sha512": "76a84aee5f088a6d696f6c91b752a151db6bd784f2dff9e71c81a912d54f23c371b6d64146b7609e096fff7d53f3e9fd0db7c8d9eadbb085211a7a89d2c3c3e6",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-naming/1.23.8",
-    "dest-filename": "detekt-rules-naming-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-naming/1.23.8/detekt-rules-naming-1.23.8.module",
-    "sha512": "999346fca5c94034d7300eb101d6dbe14f1e809c99425acc6fa7f5955041aa11e1099c5815f625096638e54e8abe35fe5abadca3431883dadc5dca1a5f054b26",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-naming/1.23.8",
-    "dest-filename": "detekt-rules-naming-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-naming/1.23.8/detekt-rules-naming-1.23.8.pom",
-    "sha512": "2cdaf15ac8df74b9b0efc8642adbc5b318df8ac5f958adeee4f432c69672e2cd6e67ea132e40c22048a3e1d013cc9f2a54379aa3a458b184da8e812ac946a387",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-naming/1.23.8",
-    "dest-filename": "detekt-rules-naming-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-performance/1.23.8/detekt-rules-performance-1.23.8.jar",
-    "sha512": "b87a27d1149f26e4ea09b3e37437e9730a31cf1bb95889f2f1c53df89cb4c8c2e76fa66ec8919c94e5dae7d28d66a41bab1427f109161629f25f99f224e342c4",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-performance/1.23.8",
-    "dest-filename": "detekt-rules-performance-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-performance/1.23.8/detekt-rules-performance-1.23.8.module",
-    "sha512": "962b0113342ea0340a70e7cfd36d12dbbb579dedb45ce9c87062e07b38725e372d3aa7651963a8cbfffbcb69c0ba98b7c785db9b0c7777a924c4fc2c494fcaad",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-performance/1.23.8",
-    "dest-filename": "detekt-rules-performance-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-performance/1.23.8/detekt-rules-performance-1.23.8.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-rules-performance/1.23.8/detekt-rules-performance-1.23.8.pom",
     "sha512": "9c4e4392745e43b1f710f936461da2397eec013b48f496f8e0dfcc8b71a1020dadbad09a43a6319ba267c3320000f5abc8ced4b1c67c7467bb58f37c960e92aa",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-performance/1.23.8",
     "dest-filename": "detekt-rules-performance-1.23.8.pom"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-style/1.23.8/detekt-rules-style-1.23.8.jar",
-    "sha512": "61e4e7a4e32b3fd656af1367901bc2808856140b715002fd780b2a4e67bbd9209d5d9792c34537d07331456e5ddedc4efc87fc9078d07a7170c89bc5dc6fb81d",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-style/1.23.8",
-    "dest-filename": "detekt-rules-style-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-style/1.23.8/detekt-rules-style-1.23.8.module",
-    "sha512": "9fa3e597b8f0451e09441680d0db82e0168900bd81e5852171dc595ee0dbb3b3a781a304ce3c5c525b6629e6f95457fb94adef57a33d3f7fd259d9cdc7b5e1a6",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-style/1.23.8",
-    "dest-filename": "detekt-rules-style-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules-style/1.23.8/detekt-rules-style-1.23.8.pom",
-    "sha512": "2f79e2c0cb7cc2e8936004a91b7897b5976469e18db46d92cf295f3af07effb94bfa4d0b0cdff76b1011f6fd22f4a770defef727973f3e1175328b5a6ad53884",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules-style/1.23.8",
-    "dest-filename": "detekt-rules-style-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules/1.23.8/detekt-rules-1.23.8.jar",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-rules/1.23.8/detekt-rules-1.23.8.jar",
     "sha512": "0cda9eee16f9b9b1f8107756124db0fbfcccc882cdb4a1d16a97e3484e2c81e4640efadaec14b6b36bc74de04ac152801668cc9b43a44d1b3c859783b2c09504",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules/1.23.8",
     "dest-filename": "detekt-rules-1.23.8.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules/1.23.8/detekt-rules-1.23.8.module",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-rules/1.23.8/detekt-rules-1.23.8.module",
     "sha512": "c430db79d665aeed534babf72c1d98486f96da60d7b677b0853bb20a2fd36d1b52d2ab7158d32d8aa6479d44d0f35b13e1700535f2f34bcd006700caf363602a",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules/1.23.8",
     "dest-filename": "detekt-rules-1.23.8.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-rules/1.23.8/detekt-rules-1.23.8.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-rules/1.23.8/detekt-rules-1.23.8.pom",
     "sha512": "b3ac0146c4c1b6e8566936eaacb2379d437427341fb0bba4131a4470ee29b9f847bd05fcc1c26f7b683586d9073dd05e9637d7919000524ce0d1c6b499a82c5a",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-rules/1.23.8",
     "dest-filename": "detekt-rules-1.23.8.pom"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.7/detekt-tooling-1.23.7.jar",
-    "sha512": "c45092d0bd3d854879ca8e892fe34f2ed61a553b36078f828cb04079881016f5a36067fd904e27131a46e38cbf566901afce352dcfca71c610384e9285832bd2",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.7",
-    "dest-filename": "detekt-tooling-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.7/detekt-tooling-1.23.7.module",
-    "sha512": "99822736336355ee53369f6f1a5edbd363642a08ba155a7882950d3a784111909697698f054c324cd46840410538be6defe6699d0a4bbd89312eb3766bd0456e",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.7",
-    "dest-filename": "detekt-tooling-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.7/detekt-tooling-1.23.7.pom",
-    "sha512": "f6697c1ca6ffc1d8e9ae46954ff95ea2060042c16443cab3972f22eb97276d3572a3b9449597cee51936e3144a35f00d57c2e77046348cdd969f03a3b5c670eb",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.7",
-    "dest-filename": "detekt-tooling-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.8/detekt-tooling-1.23.8.jar",
-    "sha512": "eddd109919af76dcf9e32eaac5f762a70603bf728674e6490570b6d6344c76f89392c0d6ed37f61ce392b79fa2c55706cc35d5a8453d3cfb9ce8c8e4d8192e20",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.8",
-    "dest-filename": "detekt-tooling-1.23.8.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.8/detekt-tooling-1.23.8.module",
-    "sha512": "00f00252138d781f8c6da2e87a620f5be1d493a919033d77c2d066600c1a9c4517bea7e98a0c00c8b00afce59abffcdf0a3a42d829f8294fa9ea9155e085f36b",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.8",
-    "dest-filename": "detekt-tooling-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.8/detekt-tooling-1.23.8.pom",
-    "sha512": "bce22db16faf31257c78e366d97d3f4a47999c78672f7fec0b494086b3c624f36fd4d464d4be6eedae586b396578de633bf711ec16e823f084a9d817dac5984f",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-tooling/1.23.8",
-    "dest-filename": "detekt-tooling-1.23.8.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-utils/1.23.7/detekt-utils-1.23.7.jar",
-    "sha512": "c13ff15222720fe45bd9c3302ccd10d9714bc44e17bc56ade7876ea5c887103d60f549aa1f0fd3330b1d8d4f0fdb7bc1143be8481a7ec6414d0f065579b30188",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-utils/1.23.7",
-    "dest-filename": "detekt-utils-1.23.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-utils/1.23.7/detekt-utils-1.23.7.module",
-    "sha512": "9400acd98b748d24dba23e0063aeee7695dca2f60a98918219be1713d5f320b4729b513b9cb5fa5614a4ca07e29136396a9ff7d5ce340620493d11b447122838",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-utils/1.23.7",
-    "dest-filename": "detekt-utils-1.23.7.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-utils/1.23.7/detekt-utils-1.23.7.pom",
-    "sha512": "78c4299e5ef299c0393961f0138aad612fd7dfb4d50b056d70110771197e9bbd9171e0ade38228ceb5c5758867bfc9b32af8601e1b47661292f0b8b392f7951e",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-utils/1.23.7",
-    "dest-filename": "detekt-utils-1.23.7.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-utils/1.23.8/detekt-utils-1.23.8.jar",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-utils/1.23.8/detekt-utils-1.23.8.jar",
     "sha512": "2fa8636cf154c3316a30b184aa59f4ea161f6cc040fe0cfb1d23c4769926d25c70e9c33d11984b017bd9d65ef751b99afe3e5c54a310b32c39eff06e5fd9cf5b",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-utils/1.23.8",
     "dest-filename": "detekt-utils-1.23.8.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-utils/1.23.8/detekt-utils-1.23.8.module",
-    "sha512": "17ed583d052f8a4e4b5ca6de83ef760a7cf8af57fc7b4a0451161283eb238d0ed21a72505ec30aa10a3ed0145001d2ec218eced0c65589f83575e29f76ce761e",
-    "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-utils/1.23.8",
-    "dest-filename": "detekt-utils-1.23.8.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/gitlab/arturbosch/detekt/detekt-utils/1.23.8/detekt-utils-1.23.8.pom",
+    "url": "https://repo.maven.apache.org/maven2/io/gitlab/arturbosch/detekt/detekt-utils/1.23.8/detekt-utils-1.23.8.pom",
     "sha512": "18fc428e51b8fa977bac28491c78399768cf3178a26c1911110d5edaf02ee81178a3db0b61a529ff45d55641bc98812f2ab478383ebd13018e00bf90d6d2d4e5",
     "dest": "./offline-repository/io/gitlab/arturbosch/detekt/detekt-utils/1.23.8",
     "dest-filename": "detekt-utils-1.23.8.pom"
@@ -4796,48 +3921,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/nlopez/compose/rules/common/0.4.22/common-0.4.22.jar",
-    "sha512": "7dbf329c3140ba0c59afef04c3b5a9c80384a62e8009789ac553801bc39b2af875dc319aff3b636194867bb14aedeb9ed3f40b5dfb9ee0d85f27f4e432648779",
-    "dest": "./offline-repository/io/nlopez/compose/rules/common/0.4.22",
-    "dest-filename": "common-0.4.22.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/nlopez/compose/rules/common/0.4.22/common-0.4.22.module",
-    "sha512": "2649c52ea85876715568f4deaa5139050ba77fe7c2856db98142c63fa35392b40848caed08f2727e8a83fcf95c4a9f2d0ac6571a9b6e76fdd04a9d4ccc182576",
-    "dest": "./offline-repository/io/nlopez/compose/rules/common/0.4.22",
-    "dest-filename": "common-0.4.22.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/nlopez/compose/rules/common/0.4.22/common-0.4.22.pom",
-    "sha512": "a348a9f05257d5f60e60764012a8d0ba896fc06a9b5b2e835c79722d47880826d51310e11be0c83df40079816d392fda6bcd255ba19be0c556dd443d19e1c4ac",
-    "dest": "./offline-repository/io/nlopez/compose/rules/common/0.4.22",
-    "dest-filename": "common-0.4.22.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/nlopez/compose/rules/detekt/0.4.22/detekt-0.4.22.jar",
-    "sha512": "15d32133d0f524bf79f0e39d36b32ecb42b59fa9af0087047cef8a5df059162b2507510ef5d8797614c033be9238acb918261921246545d78404176b2290e706",
-    "dest": "./offline-repository/io/nlopez/compose/rules/detekt/0.4.22",
-    "dest-filename": "detekt-0.4.22.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/nlopez/compose/rules/detekt/0.4.22/detekt-0.4.22.module",
-    "sha512": "4e956fde9b1f2418e4a995b716c0358b39237979e47529608a03c17594145d6436b80d9d9fa411b4e1fcf67033b4d6e92f35338be53a93d9731039e2137a8007",
-    "dest": "./offline-repository/io/nlopez/compose/rules/detekt/0.4.22",
-    "dest-filename": "detekt-0.4.22.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/io/nlopez/compose/rules/detekt/0.4.22/detekt-0.4.22.pom",
-    "sha512": "c9d0befa8ffde839f213af461be1d8057ce189c3681049b4641bd801cf9c9e32e550934894c034b5884b631601f6389fb40ebc3bc044b31c2b3dbccdf9e0c501",
-    "dest": "./offline-repository/io/nlopez/compose/rules/detekt/0.4.22",
-    "dest-filename": "detekt-0.4.22.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/io/sellmair/evas-compose-jvm/1.3.0/evas-compose-jvm-1.3.0.jar",
     "sha512": "332a5ddb0d6cce3e5445b518ef1cc3e7a04d9038023f84a553c6fe291f5adae8c8fc99afc122df4410b938b7aeee872db5f8db0e2877d5909079468e0330d6f6",
     "dest": "./offline-repository/io/sellmair/evas-compose-jvm/1.3.0",
@@ -4943,13 +4026,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/me/saket/swipe/swipe-jvm/1.3.0/swipe-jvm-1.3.0.pom",
-    "sha512": "2e75f56c210bea33e3859cb98860bc4c9fd91d314e246b573a6349789aa8a7015054a2fb98a1cf2f19e197fe6dce4ca2215a847a4a5d3c57eaffc611373beea9",
-    "dest": "./offline-repository/me/saket/swipe/swipe-jvm/1.3.0",
-    "dest-filename": "swipe-jvm-1.3.0.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/me/saket/swipe/swipe/1.3.0/swipe-1.3.0.module",
     "sha512": "312e093eaf14da8e9c37fad139cd371b139ff1750c356446b54b7ba2aa52f052ac02dea3c96f1d9aa880e8ddcae7c5b6f48717890b123ee44974f748763028d7",
     "dest": "./offline-repository/me/saket/swipe/swipe/1.3.0",
@@ -5013,27 +4089,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/ec4j/core/ec4j-core-parent/0.3.0/ec4j-core-parent-0.3.0.pom",
-    "sha512": "25a43139f6eac9fb0d961a487df9d178b5db1022ded1e80060da90232c41b972902e91c40580a4fd8981db6ceb03b27454f36a179bcf5c27eb2df66f27c281d9",
-    "dest": "./offline-repository/org/ec4j/core/ec4j-core-parent/0.3.0",
-    "dest-filename": "ec4j-core-parent-0.3.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/ec4j/core/ec4j-core/0.3.0/ec4j-core-0.3.0.jar",
-    "sha512": "6080efc39f04ef7b1caf64e65e5f3a87e10c0dcfc6fa01c88225afef4703c8b70e96d9e2e600843da826579d8bd1b644eba42fb5e3cf65d41b65a339c5019484",
-    "dest": "./offline-repository/org/ec4j/core/ec4j-core/0.3.0",
-    "dest-filename": "ec4j-core-0.3.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/ec4j/core/ec4j-core/0.3.0/ec4j-core-0.3.0.pom",
-    "sha512": "0f81afa52108cb32da64cb02ff37257f5519cf834937be4fbb4df6d169a6cc1eb5606714a43c3c215a220ac9bfc5818782748a41e1c4e61fe837b1e4d29f0d0e",
-    "dest": "./offline-repository/org/ec4j/core/ec4j-core/0.3.0",
-    "dest-filename": "ec4j-core-0.3.0.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/javassist/javassist/3.30.2-GA/javassist-3.30.2-GA.jar",
     "sha512": "046c5b87732ef28540c56f88891238e49ac15fcc23e1f13e0b12de816831ba3de54e68a727b6163877a7b19b13f1362c0e6affa2664af1fdac5748632ed7a09e",
     "dest": "./offline-repository/org/javassist/javassist/3.30.2-GA",
@@ -5045,27 +4100,6 @@
     "sha512": "3c9d81b656558c6e55442af8a08d47033059049fababd7bccc96d6c268f67e6c7f72de5f5bc93597b7da251ac8ecce296c4fe56c475121094f5993fe03a9be97",
     "dest": "./offline-repository/org/javassist/javassist/3.30.2-GA",
     "dest-filename": "javassist-3.30.2-GA.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jcommander/jcommander/1.85/jcommander-1.85.jar",
-    "sha512": "aa1d19723c83de1f54f6f645121ab283403ece5ba78319c9daa4418c421e26c7fbd8bc36d35f6ed4cd9b8ae25d6daa2bc36818a1659cec8c5550441d6fb609d0",
-    "dest": "./offline-repository/org/jcommander/jcommander/1.85",
-    "dest-filename": "jcommander-1.85.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jcommander/jcommander/1.85/jcommander-1.85.module",
-    "sha512": "eabf09e72953ca83854a08222b637325129aca6e34226a5f8f3de878885b7fd8aa5662f9517ef388c75e74bc21fe72c52d6aceff3858b06684db66d8a1115940",
-    "dest": "./offline-repository/org/jcommander/jcommander/1.85",
-    "dest-filename": "jcommander-1.85.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jcommander/jcommander/1.85/jcommander-1.85.pom",
-    "sha512": "ccc4052db8f88869b3582941d2bc42a69b6506c5992fcaddb788833bbc8668a2dac3d25917a7f50160d076b87c2b939d5df242107ccaf41d73c9d34b0764a21d",
-    "dest": "./offline-repository/org/jcommander/jcommander/1.85",
-    "dest-filename": "jcommander-1.85.pom"
   },
   {
     "type": "file",
@@ -5335,14 +4369,14 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/annotation-internal/annotation/1.6.11/annotation-1.6.11.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/annotation-internal/annotation/1.6.11/annotation-1.6.11.module",
     "sha512": "a98c005d8fcd18d6ead801d0fa93fbaad53e1d823eb6766a51b288995c0a11778a386ce094e18215fece03c993e793d3eddc470cb25a197e7c3b4fd8117979fb",
     "dest": "./offline-repository/org/jetbrains/compose/annotation-internal/annotation/1.6.11",
     "dest-filename": "annotation-1.6.11.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/annotation-internal/annotation/1.6.11/annotation-1.6.11.pom",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/annotation-internal/annotation/1.6.11/annotation-1.6.11.pom",
     "sha512": "7faf670cc3c19ba3b28352a4d9a1b1f0df9c489c860f5ba5e5486246b06a30e1363a99dba871e5dfd514a20836f3057248be7138335c25a92ac49a4067d31cae",
     "dest": "./offline-repository/org/jetbrains/compose/annotation-internal/annotation/1.6.11",
     "dest-filename": "annotation-1.6.11.pom"
@@ -5433,24 +4467,10 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2/components-ui-tooling-preview-desktop-1.8.2.jar",
-    "sha512": "278903c7a4a62a8ccdd4f9137cf9de54349022654cd7a860cc2e34369338763e06475785c6bba99f13ee88f764c0dd3ef78d8bae13914688c1527d7d6c864799",
-    "dest": "./offline-repository/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2",
-    "dest-filename": "components-ui-tooling-preview-desktop-1.8.2.jar"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2/components-ui-tooling-preview-desktop-1.8.2.module",
     "sha512": "80304bf0d59af9bdccf73b0e6d437a9ae7324203786dac9660bad12af6c346b2d0eaee19b9b00aae704bd097ef7db762e514688f3e24b7a8c478f9832f66862d",
     "dest": "./offline-repository/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2",
     "dest-filename": "components-ui-tooling-preview-desktop-1.8.2.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2/components-ui-tooling-preview-desktop-1.8.2.pom",
-    "sha512": "c5018f1f04b6313034859eda8dec8def099710ccb9b8ab0fb5ad753ee6e9a2d0f8da1f40019daf749e758d41b732bdc8a6d1f98d39a3fc4666dc75fd3ae72816",
-    "dest": "./offline-repository/org/jetbrains/compose/components/components-ui-tooling-preview-desktop/1.8.2",
-    "dest-filename": "components-ui-tooling-preview-desktop-1.8.2.pom"
   },
   {
     "type": "file",
@@ -6595,48 +5615,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/intellij/deps/trove4j/1.0.20200330/trove4j-1.0.20200330.jar",
-    "sha512": "f80f1374015f94546f2d1bc39272de08173ac354d119f8b3f04d0976112119f9bd576af74d177a47bdab7c0e362eb3c91a999409c32ccac3488ff884d8b8d62c",
-    "dest": "./offline-repository/org/jetbrains/intellij/deps/trove4j/1.0.20200330",
-    "dest-filename": "trove4j-1.0.20200330.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/intellij/deps/trove4j/1.0.20200330/trove4j-1.0.20200330.pom",
-    "sha512": "d88f143aa18d2875b60f684f9ccc8cd41aacd6d50abd9efdb792b36f70bcd0e56d7a52c006b169279d8ccad47565e52595317ed9870929bf83dfbdfa300d8233",
-    "dest": "./offline-repository/org/jetbrains/intellij/deps/trove4j/1.0.20200330",
-    "dest-filename": "trove4j-1.0.20200330.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/abi-tools-api/2.2.0/abi-tools-api-2.2.0.jar",
-    "sha512": "e374ce2304ece97622f4da0ab6ef47ceb3055dbce400bc7200b33004dd94a29ae29d539a380cce8078c4c49060385a1bb1a7defa476a2a0fba232318f4bc0a95",
-    "dest": "./offline-repository/org/jetbrains/kotlin/abi-tools-api/2.2.0",
-    "dest-filename": "abi-tools-api-2.2.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/abi-tools-api/2.2.0/abi-tools-api-2.2.0.pom",
-    "sha512": "b4178a4a7357ff76abc8eecb9c8aa49afa4b4365f15ae849635695c948edd8cf239cb8b29178fcaf53a3c3c9c18fd1d15acf887b1ec92327af2e3a5320860547",
-    "dest": "./offline-repository/org/jetbrains/kotlin/abi-tools-api/2.2.0",
-    "dest-filename": "abi-tools-api-2.2.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/abi-tools/2.2.0/abi-tools-2.2.0.jar",
-    "sha512": "e8b2f774db046792cc19c58aa9d66915d6eaf55e54a3cd1f4294aee7c509b0016509615c9558a9f8fa773a590ee4659bed50a648bd3d9d5cb3083afa5c13e668",
-    "dest": "./offline-repository/org/jetbrains/kotlin/abi-tools/2.2.0",
-    "dest-filename": "abi-tools-2.2.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/abi-tools/2.2.0/abi-tools-2.2.0.pom",
-    "sha512": "343afe1b84e62ba6474fc4541492f67354f25d4f1e7a9cf779011c7c803ca9857070dd5f5e92653a5a6abcee1b47a6d9a25fd5905a1750150d44c2a8669a2542",
-    "dest": "./offline-repository/org/jetbrains/kotlin/abi-tools/2.2.0",
-    "dest-filename": "abi-tools-2.2.0.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-build-tools-api/2.2.0/kotlin-build-tools-api-2.2.0.jar",
     "sha512": "c227e6034366da85cf6b7a4faff3d442b9b85666f5c09f96c05a6b0623d8679f4a6c0665948cb9124177509b857eaa9476b92f3095da6a718a098f3478a5a81e",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-build-tools-api/2.2.0",
@@ -6662,20 +5640,6 @@
     "sha512": "7f14d4b8ef615df8487ac5f919514df5208e3f8e48df93330d945beffb53e4bf7eaedf671978ba6ee25f550a50350194c88d14ff84c592b629f1e3ad2d3a556d",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-build-tools-impl/2.2.0",
     "dest-filename": "kotlin-build-tools-impl-2.2.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-compiler-embeddable/2.0.21/kotlin-compiler-embeddable-2.0.21.jar",
-    "sha512": "b1b58efdc486d5e2dde47cbc774ef4e3a81c3059858777097c09dad9cb1f97e6a343314f4b433783511dbabdffe6b85fedef578c5bce6112ff5aebd157d9e73f",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-compiler-embeddable/2.0.21",
-    "dest-filename": "kotlin-compiler-embeddable-2.0.21.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-compiler-embeddable/2.0.21/kotlin-compiler-embeddable-2.0.21.pom",
-    "sha512": "a31f491c0c9cd9b2fcd5145460f6f8b573d63b03b42443e1fe9b02e082f59ef7308eaf4586a08d0d836896ac421c342b0d4e4b20d86ce22a97f817d7265d5391",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-compiler-embeddable/2.0.21",
-    "dest-filename": "kotlin-compiler-embeddable-2.0.21.pom"
   },
   {
     "type": "file",
@@ -6735,20 +5699,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-daemon-embeddable/2.0.21/kotlin-daemon-embeddable-2.0.21.jar",
-    "sha512": "1906eaef528ce574c2156a3946ec3875bb7dd4fe31ed323a6986ca2242112c105c826722f455b4fc218a4db91bb40a057082baf1b05054c67fa786b486aee14b",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-daemon-embeddable/2.0.21",
-    "dest-filename": "kotlin-daemon-embeddable-2.0.21.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-daemon-embeddable/2.0.21/kotlin-daemon-embeddable-2.0.21.pom",
-    "sha512": "a369369d20a6cfbdc4323131afc10efef24d57cabd7c80d478fba401ad160329afca127d8a5e77551cb16585dc73c590fb9558387ab94543a270d5f51320cab3",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-daemon-embeddable/2.0.21",
-    "dest-filename": "kotlin-daemon-embeddable-2.0.21.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-daemon-embeddable/2.2.0/kotlin-daemon-embeddable-2.2.0.jar",
     "sha512": "e52771cc1722e62a1044be4cc93c75de29b4c1758a9ee520cec0c62b06c904a8988f0e652e2130342e8299e11f1a88a251a63e6f172fc30810c8bbb47e56ba29",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-daemon-embeddable/2.2.0",
@@ -6760,34 +5710,6 @@
     "sha512": "2f6b5d0dd7ff4afa2e36efc0adffe9ce13e06dacc2447f06d04d030d1ab49866100377d5fa7f98f8bb4c68519755050629a5ac55aa039f7deb1f504e322e6f12",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-daemon-embeddable/2.2.0",
     "dest-filename": "kotlin-daemon-embeddable-2.2.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-klib-commonizer-embeddable/2.2.0/kotlin-klib-commonizer-embeddable-2.2.0.jar",
-    "sha512": "f9a57b5647eded540e6f7468240f1dd2b4a90ba1f10f7988e1ef8b5806678b42eff00c2b6ac42218a0577677b436b2b342e8d13585849d03a744f831c7a42891",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-klib-commonizer-embeddable/2.2.0",
-    "dest-filename": "kotlin-klib-commonizer-embeddable-2.2.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-klib-commonizer-embeddable/2.2.0/kotlin-klib-commonizer-embeddable-2.2.0.pom",
-    "sha512": "b1529acab55861a95ab024c95d6cb09f8300415e3e188be4f604ae2261716185751dee373b1045d98136eadc299f9202299bd11d282c792cda51ab62736a2adb",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-klib-commonizer-embeddable/2.2.0",
-    "dest-filename": "kotlin-klib-commonizer-embeddable-2.2.0.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-metadata-jvm/2.2.0/kotlin-metadata-jvm-2.2.0.jar",
-    "sha512": "c2a96c840dd9ff43a6585963a2ccb13e402d91d9bb69985f6d159d98d7c1220763fe4349e327cf5a424bfa2d243e1702ea8878e7e050243edfd0ed5ca340f026",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-metadata-jvm/2.2.0",
-    "dest-filename": "kotlin-metadata-jvm-2.2.0.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-metadata-jvm/2.2.0/kotlin-metadata-jvm-2.2.0.pom",
-    "sha512": "7b8070495cecf25aba92a3384320836a180a5ae027532d364ec60c95799931a28477840dd748e63b8de3872b9e1c376cac0068f5e0a8f97563bdd87a539e9b24",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-metadata-jvm/2.2.0",
-    "dest-filename": "kotlin-metadata-jvm-2.2.0.pom"
   },
   {
     "type": "file",
@@ -6805,45 +5727,17 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-reflect/2.0.10/kotlin-reflect-2.0.10.jar",
-    "sha512": "b6fce3c76f8475b3b674aaceb007d9eb54bc164ffc6703dd53ee4220fca04d61901bcbbefb2d7f02f6745c4dfa97c70d73bfa99b6433364f13d7605764722085",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-reflect/2.0.10",
-    "dest-filename": "kotlin-reflect-2.0.10.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-reflect/2.0.10/kotlin-reflect-2.0.10.pom",
-    "sha512": "f5653e01db020720edb0eee485c894d8611f999dabdc6c73d5555b1732f63329867fcbfc0d37b46fdbb788caf4bc21a42a06472499cf5a8faa589e513bb3d07e",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-reflect/2.0.10",
-    "dest-filename": "kotlin-reflect-2.0.10.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-reflect/2.0.21/kotlin-reflect-2.0.21.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-reflect/2.0.21/kotlin-reflect-2.0.21.jar",
     "sha512": "3b35fb5684bc7cad47a5c068b2671ae55cabe6ca16745277ac44ce0785b1384ad35444fbe10b68ca7c360ba9a86b0061a6101956b370e6c19bd8c85c9bc13dcd",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-reflect/2.0.21",
     "dest-filename": "kotlin-reflect-2.0.21.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-reflect/2.0.21/kotlin-reflect-2.0.21.pom",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-reflect/2.0.21/kotlin-reflect-2.0.21.pom",
     "sha512": "39be2e959d5c2e2e22445edcfb41b43497b2ad5edfc936081a6a72fcf8b9291571f5d3d6a7ef5d7eb30ddd2cff744966f68ddfea2da33120bf30326e12492425",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-reflect/2.0.21",
     "dest-filename": "kotlin-reflect-2.0.21.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-script-runtime/2.0.21/kotlin-script-runtime-2.0.21.jar",
-    "sha512": "52b19de82211d58f1635662cf8b8dbf762a7c0cd8acef3543d98cc1cbc22a210e012f113fe1f6bb4090da30497b431e5026445b70eb2194c2af6361fe437d1c5",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-script-runtime/2.0.21",
-    "dest-filename": "kotlin-script-runtime-2.0.21.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-script-runtime/2.0.21/kotlin-script-runtime-2.0.21.pom",
-    "sha512": "d1f337ec3d93611614834a3b0a8cccfc6ed91eb351a99ab1ab949c9bc028f44e71e381d2a6012d3dbcc9ffa719e163cccb8637721b6368e404ec43d7bf56e562",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-script-runtime/2.0.21",
-    "dest-filename": "kotlin-script-runtime-2.0.21.pom"
   },
   {
     "type": "file",
@@ -6931,14 +5825,14 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-common/2.0.21/kotlin-stdlib-common-2.0.21.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/2.0.21/kotlin-stdlib-common-2.0.21.module",
     "sha512": "ad4142f6d86b2daffae8dad0289de4a9d369ec72948b365081a0ebd6841556ac2fe6e5b199edd1a9c4db104905c524129e09aefa67dc2790b476d025700eba3b",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-common/2.0.21",
     "dest-filename": "kotlin-stdlib-common-2.0.21.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-common/2.0.21/kotlin-stdlib-common-2.0.21.pom",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/2.0.21/kotlin-stdlib-common-2.0.21.pom",
     "sha512": "85a2f145f964d2296694ba5ab03f116268267fcca5eaf1f63445b5bfb3478997057d57f8e60661979e7aa55fc028728ac3aa7a385a4ef7109e904f104c59308e",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-common/2.0.21",
     "dest-filename": "kotlin-stdlib-common-2.0.21.pom"
@@ -6973,13 +5867,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.8.0/kotlin-stdlib-jdk7-1.8.0.jar",
-    "sha512": "3ed41f0dc53bacac17004e8a205f3ecbe341dfb8ebe200f75b5edf19beea655679958c1e87f5dfd356784fff36a39c0169972f6f3bd32a14d038b17b59e1c4d7",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.8.0",
-    "dest-filename": "kotlin-stdlib-jdk7-1.8.0.jar"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.8.0/kotlin-stdlib-jdk7-1.8.0.pom",
     "sha512": "f18fd89c03d5abccf2eb2a8306044dc505e29a2bb97e2d8afdd102d7d8c42908494182daa6133e8dceb221c8bcb9a52f62c7a7232c6657abb9c91c77b2a65af7",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.8.0",
@@ -7001,20 +5888,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar",
-    "sha512": "f839178f07b9d6bd9a3910d13b181399e975211fa556c3a9ead08eca30ababa74f75c79aee95224ffb7b610b9e56768eeeba18e8fae84826903adb12e122bb67",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10",
-    "dest-filename": "kotlin-stdlib-jdk7-1.9.10.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.pom",
-    "sha512": "fdb3c9ce1109cb6f067f0645ffca942982dc7ac66ca92eb5ae22edf9011bc8b5e02ce0e96a5def49945aec45f59f565789dd9c076913f8c8045660dcbcf33a9e",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10",
-    "dest-filename": "kotlin-stdlib-jdk7-1.9.10.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/2.1.21/kotlin-stdlib-jdk7-2.1.21.jar",
     "sha512": "26b8a2316e115bae3061b65f6a1996eeda570df8e1f138d9e99e39d8a649a514803382b9231258d48f1ee36b816b6b9d0b2954e8e57d0ceb45322aa2feb8b18e",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/2.1.21",
@@ -7026,13 +5899,6 @@
     "sha512": "d05ac493cd6e3c8178243269949d2c9122487f1f9b1fbc901d1a64a665293ee9cd1b58916013dc80206e21288d19138b68be054a55ca56f03da3de9267849923",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/2.1.21",
     "dest-filename": "kotlin-stdlib-jdk7-2.1.21.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.8.0/kotlin-stdlib-jdk8-1.8.0.jar",
-    "sha512": "a85e81accfeefc7038ae61e003927824e7289557c53e96921e1cecc1c19a63b4aef06ded2fb7439227737e4676bc23a20c9602cf85ccd40619f15b7cfb36603b",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.8.0",
-    "dest-filename": "kotlin-stdlib-jdk8-1.8.0.jar"
   },
   {
     "type": "file",
@@ -7057,20 +5923,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar",
-    "sha512": "b027fc4a0be8e69f41a86ae775ce350ef0084eb4652e50a0640dbcc600db76c3fc2983e17c96b6071b5698cea636e1b2cb015e84a6c0efe95e6db668036ba3cc",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10",
-    "dest-filename": "kotlin-stdlib-jdk8-1.9.10.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.pom",
-    "sha512": "8cf0741fc581be275cccb34ab1f37ea6f6adfbeb086ec685258d2ddee1d7fdb03695a4da20c6a97e3043886dbf95f36b29db11699069d71c0c7aff9f4f6c740c",
-    "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10",
-    "dest-filename": "kotlin-stdlib-jdk8-1.9.10.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/2.1.21/kotlin-stdlib-jdk8-2.1.21.jar",
     "sha512": "90839cce2cc5c2c2a03efe352dbd0fabd7bf2fd827fe4c107f715c7f12afec6a22eec05847a2b50dc7c829498856b79c791eebeac4a57ba25f620e500e252e42",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/2.1.21",
@@ -7085,21 +5937,21 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib/2.0.21/kotlin-stdlib-2.0.21.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.0.21/kotlin-stdlib-2.0.21.jar",
     "sha512": "4e6786c4e7af13eddc5a2a06b336f430987f16ac1f4c0af541cd97400d689f7d8726a276ca549e7f19d7b939f47a1535dff7ea45f76b14197a0e876cc44d3acd",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib/2.0.21",
     "dest-filename": "kotlin-stdlib-2.0.21.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib/2.0.21/kotlin-stdlib-2.0.21.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.0.21/kotlin-stdlib-2.0.21.module",
     "sha512": "28d2618070b9a596ed01a547f360d21bee2d504020952cda8b8a914ee05454b6560eacb4d4d602ae61b915559e76acbb3bcc96b25fe76140ec14cca5d8c07261",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib/2.0.21",
     "dest-filename": "kotlin-stdlib-2.0.21.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-stdlib/2.0.21/kotlin-stdlib-2.0.21.pom",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.0.21/kotlin-stdlib-2.0.21.pom",
     "sha512": "8b1f1ffcd1fdc8f71183f80fad469036a6bdfce169c5691484070259fc37d3eab7879e0658ef605e5609469a18c9c16f77f3123de1f0605153feff616985beb0",
     "dest": "./offline-repository/org/jetbrains/kotlin/kotlin-stdlib/2.0.21",
     "dest-filename": "kotlin-stdlib-2.0.21.pom"
@@ -7274,13 +6126,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-bom/1.6.4/kotlinx-coroutines-bom-1.6.4.pom",
-    "sha512": "cbf3434b3f75137994325b2d2a3671f9b0becc4922022a2bf653823f6d93278d8a37a49829d4dd47b807b047c7cbf719412f40dc30d018a9001567c535158f1b",
-    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-bom/1.6.4",
-    "dest-filename": "kotlinx-coroutines-bom-1.6.4.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-bom/1.8.0/kotlinx-coroutines-bom-1.8.0.pom",
     "sha512": "1204d8fbc5b8bf19ea84a008e7b8d4c146ee3fd10bdc603168068b76e30f0e129c7a9ec5467b9de0bdede1b1bd9e65aa028db0769f994baf63effd4af2c6820a",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-bom/1.8.0",
@@ -7306,27 +6151,6 @@
     "sha512": "e146303a289ff4ca6e6b93470d37036816a4a77c6d72f7fe8200befe3ba9317dad18e6aa6ee216403a163146b3cc3f55e9a53beec582029fb734d363255f1522",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.10.2",
     "dest-filename": "kotlinx-coroutines-core-jvm-1.10.2.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.6.4/kotlinx-coroutines-core-jvm-1.6.4.jar",
-    "sha512": "a4fb638b7427b4e2a87d750958e6ca66c75eefb64c4f359cbfa2d08c868455aa0ff9091c2f2e61f1e4a7c51a3771c68795e96cf306368945940f172dd324742d",
-    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.6.4",
-    "dest-filename": "kotlinx-coroutines-core-jvm-1.6.4.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.6.4/kotlinx-coroutines-core-jvm-1.6.4.module",
-    "sha512": "26487245cd1853111b14f3b5039e6b73ef77f201fe77bbb4f900d118faf3b8c320ff40a200efa406f165dffd94cdf2e19981f65f9aac3911cce228a1dc167e94",
-    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.6.4",
-    "dest-filename": "kotlinx-coroutines-core-jvm-1.6.4.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.6.4/kotlinx-coroutines-core-jvm-1.6.4.pom",
-    "sha512": "5b6ee13381e00ab4a46d82e357b2873d3c942a1cfaddb9ee59210945613cdacaa4a47a67278ebed1547d1fea4fbde1014b9f057d77826a309801d592cfb118ad",
-    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.6.4",
-    "dest-filename": "kotlinx-coroutines-core-jvm-1.6.4.pom"
   },
   {
     "type": "file",
@@ -7575,27 +6399,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-html-jvm/0.8.1/kotlinx-html-jvm-0.8.1.jar",
-    "sha512": "0d4874fa6bbd7a67e60312ec748366847aa088569bde331a10b947516071483a4b69384113af64de7f809cf07e91e15f516403d817163c23810c5add39d586f3",
-    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-html-jvm/0.8.1",
-    "dest-filename": "kotlinx-html-jvm-0.8.1.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-html-jvm/0.8.1/kotlinx-html-jvm-0.8.1.module",
-    "sha512": "5a261e8a59af1593f5e8c64919f19ec5dce10f2107f9b5d67ea76cbd5f88057daed64c56e6e201b48f33f551a66d15fbb4b2165de226a8c73e917a51ab51fda4",
-    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-html-jvm/0.8.1",
-    "dest-filename": "kotlinx-html-jvm-0.8.1.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-html-jvm/0.8.1/kotlinx-html-jvm-0.8.1.pom",
-    "sha512": "63926494302e6ece74fe93323a0af1ad33cf4b4bde590fee0b6795fbc885932418544c2ec715cec2507bc7e5bf644b69c7d5e26bf273b5e4c88d345d36517f5b",
-    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-html-jvm/0.8.1",
-    "dest-filename": "kotlinx-html-jvm-0.8.1.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-io-bytestring-jvm/0.7.0/kotlinx-io-bytestring-jvm-0.7.0.jar",
     "sha512": "646ada4367044be8d051aff3eb9424e6dffdb7bb95ddff2f95d5f0f51f652e0b33662779eab02a0e9317676f9647dd684e10fafaae26af46d60cfa6226c45d19",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-io-bytestring-jvm/0.7.0",
@@ -7708,24 +6511,17 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.4.1/kotlinx-serialization-core-jvm-1.4.1.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.4.1/kotlinx-serialization-core-jvm-1.4.1.jar",
     "sha512": "26e6fdf3dd6ed31b8d2d6799ce34c07ffaea9a8aed2c003fb6a7c68b23cd49f564d4f2ff1bd55456de6b0805225a644ea3d24eb152858284fd013ff04b18b981",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.4.1",
     "dest-filename": "kotlinx-serialization-core-jvm-1.4.1.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.4.1/kotlinx-serialization-core-jvm-1.4.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.4.1/kotlinx-serialization-core-jvm-1.4.1.module",
     "sha512": "7c95b19ad9ddbe0cc594312b930c6c4ca99b7b859586d54e0990829715cb0ff3b85ab953d76859291411e363617834d2e275aae18f976a6ded27e47731259292",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.4.1",
     "dest-filename": "kotlinx-serialization-core-jvm-1.4.1.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.4.1/kotlinx-serialization-core-jvm-1.4.1.pom",
-    "sha512": "4139f92e8d3aec7e8a3df895c16c9fc231ef628502efc40e6a01f4a216d94461ba24b245646d5ba5e00068b3390533251bc0e458107f6ffe16737e540360350c",
-    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.4.1",
-    "dest-filename": "kotlinx-serialization-core-jvm-1.4.1.pom"
   },
   {
     "type": "file",
@@ -7750,17 +6546,10 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core/1.4.1/kotlinx-serialization-core-1.4.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core/1.4.1/kotlinx-serialization-core-1.4.1.module",
     "sha512": "1fbe8529bdb84875a0e58b2910d1b9604c5e430a87174c3a124909d2ee6f2330e37d1672708655eb743186e26b43fdc241dd80e2ecc8c4d7e535252dea06b9a1",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core/1.4.1",
     "dest-filename": "kotlinx-serialization-core-1.4.1.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-core/1.4.1/kotlinx-serialization-core-1.4.1.pom",
-    "sha512": "e73ec15072cd6ff9f83e34478d5602b24c9ebe092fff16876083dc2f99ae39d0079183f9f202c5d93b3c1de76150a86626ec620fd4be6b0dfb1dcc945a66e1d8",
-    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-core/1.4.1",
-    "dest-filename": "kotlinx-serialization-core-1.4.1.pom"
   },
   {
     "type": "file",
@@ -7848,21 +6637,21 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.4.1/kotlinx-serialization-json-jvm-1.4.1.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.4.1/kotlinx-serialization-json-jvm-1.4.1.jar",
     "sha512": "a47c35e4c9a92044b7f54f3fd0cf208ceae08a3513b3d519e17387a0ab05390c8210e5b13853e21c6d0c8797cbc667143777cedee060f16964ff9ec353760f13",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.4.1",
     "dest-filename": "kotlinx-serialization-json-jvm-1.4.1.jar"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.4.1/kotlinx-serialization-json-jvm-1.4.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.4.1/kotlinx-serialization-json-jvm-1.4.1.module",
     "sha512": "0e14436ee1184626fcc1c67be0c6476f19f1c97ee2b070b6eefc2c93ee408024bbca3630f5ee078b82649485e15ef74d0ac62ad27fe23dd067615a4210073d70",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.4.1",
     "dest-filename": "kotlinx-serialization-json-jvm-1.4.1.module"
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.4.1/kotlinx-serialization-json-jvm-1.4.1.pom",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.4.1/kotlinx-serialization-json-jvm-1.4.1.pom",
     "sha512": "f2f250578262912600cc0a4ed5c1ed14cedcd5985a4ee6c03404a634bbe81bdeec1be42ce7b8a8a2ad33dd09211dff1b162c76aaae906eb887002e475e66cbb6",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.4.1",
     "dest-filename": "kotlinx-serialization-json-jvm-1.4.1.pom"
@@ -7904,17 +6693,10 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.4.1/kotlinx-serialization-json-1.4.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.4.1/kotlinx-serialization-json-1.4.1.module",
     "sha512": "104c013b5a6ea424d968e7dc27b9b13800e23ca76bb62b656adceba7dde7148dfd55e8e8c5d7d48adccf2bd44d4c43a7ab8b8ebf39c9924ce853222270900d3d",
     "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json/1.4.1",
     "dest-filename": "kotlinx-serialization-json-1.4.1.module"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.4.1/kotlinx-serialization-json-1.4.1.pom",
-    "sha512": "297a3f7a8a8af3155dcf1387a0b3ae6df9ff6a66a13f52d5aa9a0522087037a5dc011f310ff6ab1171d7ebc7d804f3cae15f822ce22d6bfc76900561e16b0989",
-    "dest": "./offline-repository/org/jetbrains/kotlinx/kotlinx-serialization-json/1.4.1",
-    "dest-filename": "kotlinx-serialization-json-1.4.1.pom"
   },
   {
     "type": "file",
@@ -8156,20 +6938,6 @@
   },
   {
     "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/slf4j/slf4j-api/2.0.3/slf4j-api-2.0.3.jar",
-    "sha512": "cf50d5cc86404fefa49730da36147db5f6d65c8b06163bbf62311e6874c20ca46db02ab6bda27c9c1485a5c57fe63b89fd3000b8d838c429240ee95734f5901e",
-    "dest": "./offline-repository/org/slf4j/slf4j-api/2.0.3",
-    "dest-filename": "slf4j-api-2.0.3.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/slf4j/slf4j-api/2.0.3/slf4j-api-2.0.3.pom",
-    "sha512": "a4baf7b19db8d5ca35f9a747dddacc1431998270f4ee72cfc400e50dedb933c004e3ed1150bdf6fbf3da76eb7cbf0bb0ff0a527d2ab1c7321b82991b93ebd95e",
-    "dest": "./offline-repository/org/slf4j/slf4j-api/2.0.3",
-    "dest-filename": "slf4j-api-2.0.3.pom"
-  },
-  {
-    "type": "file",
     "url": "https://plugins.gradle.org/m2/org/slf4j/slf4j-bom/2.0.17/slf4j-bom-2.0.17.pom",
     "sha512": "cb2db4597b98b9981959413e3ffcd5882f8e267d3d51f989c396807c36893296065cbe443a173029e8d3a0851eced25f5149dc2dafa0dd2c29fca737180a7029",
     "dest": "./offline-repository/org/slf4j/slf4j-bom/2.0.17",
@@ -8195,27 +6963,6 @@
     "sha512": "5b16a209843c18a478a0a16dff83ae1c75eedbdeadc15a958d536a36631d4d39a9998e085c165a79ced8ad187f021e2f3cd4068856ca174db35657ef5a473c5a",
     "dest": "./offline-repository/org/slf4j/slf4j-parent/2.0.17",
     "dest-filename": "slf4j-parent-2.0.17.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/slf4j/slf4j-parent/2.0.3/slf4j-parent-2.0.3.pom",
-    "sha512": "3782b350d57cb2ce3a68494e56484cec95fa5905efc8204ff99dca6cbbe6f696e2f5f2181b15176c8d916b42d9dcdfd13d760d2a29aaefd7b27620ac39c9d5f8",
-    "dest": "./offline-repository/org/slf4j/slf4j-parent/2.0.3",
-    "dest-filename": "slf4j-parent-2.0.3.pom"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/snakeyaml/snakeyaml-engine/2.7/snakeyaml-engine-2.7.jar",
-    "sha512": "65afbcc9b9ea865f75db7b4ee1ecbdc2f361670b28f0ea90f6725175d2a506d058c25a5ff0c44a9aab3ed2dddd2ee2b7f63df4995740ba312d2f27fa9578533b",
-    "dest": "./offline-repository/org/snakeyaml/snakeyaml-engine/2.7",
-    "dest-filename": "snakeyaml-engine-2.7.jar"
-  },
-  {
-    "type": "file",
-    "url": "https://plugins.gradle.org/m2/org/snakeyaml/snakeyaml-engine/2.7/snakeyaml-engine-2.7.pom",
-    "sha512": "822cb07bab6e1575d57269959ba0871690da520be352e6ee30e1667aec1aa1065c23b4d90087d5fbabf245409f020990b6eb66ea88da884833e4bdf0f06afc20",
-    "dest": "./offline-repository/org/snakeyaml/snakeyaml-engine/2.7",
-    "dest-filename": "snakeyaml-engine-2.7.pom"
   },
   {
     "type": "file",

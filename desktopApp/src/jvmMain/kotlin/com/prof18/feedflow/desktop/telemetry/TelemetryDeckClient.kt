@@ -32,6 +32,7 @@ class TelemetryDeckClient(
 
     private val appId: String = "0334762E-7A84-4A80-A1BA-879165ED0333"
     private var appVersion: String?
+    private var isFlatpack: Boolean? = false
 
     init {
         val properties = Properties()
@@ -40,6 +41,7 @@ class TelemetryDeckClient(
         properties.load(propsFile)
 
         appVersion = properties["version"]?.toString()
+        isFlatpack = properties["flatpak"]?.toString()?.toBooleanStrictOrNull()
         val saltFromProps = properties["tdeck_salt"]?.toString()
 
         val salt = saltFromProps ?: ""
@@ -103,6 +105,9 @@ class TelemetryDeckClient(
             isAppStore()?.let { isAppStore ->
                 set("TelemetryDeck.RunContext.isAppStore", isAppStore.toString())
             }
+            isFlatpack()?.let { isFlatpack ->
+                set("TelemetryDeck.RunContext.isFlatpack", isFlatpack.toString())
+            }
         }
     }
 
@@ -117,6 +122,14 @@ class TelemetryDeckClient(
             DesktopOS.MAC -> System.getenv("APP_SANDBOX_CONTAINER_ID")?.isNotEmpty()
             DesktopOS.WINDOWS -> null
             DesktopOS.LINUX -> null
+        }
+    }
+
+    private fun isFlatpack(): Boolean? {
+        return when (getDesktopOS()) {
+            DesktopOS.MAC -> null
+            DesktopOS.WINDOWS -> null
+            DesktopOS.LINUX -> isFlatpack
         }
     }
 

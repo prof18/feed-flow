@@ -44,8 +44,7 @@
   
   <screenshots>
     <screenshot type="default">
-      <caption>Main FeedFlow interface</caption>
-      <image>https://raw.githubusercontent.com/prof18/feed-flow/main/assets/banners.png</image>
+      <image>https://raw.githubusercontent.com/prof18/feedflow-assets/refs/heads/main/screenshots/raw/linux/home.png</image>
     </screenshot>
   </screenshots>
 
@@ -65,13 +64,11 @@
   </content_rating>
 
   <releases>
-    <release version="1.3.1" date="2024-01-18">
-      <url type="details">https://example.org/changelog.html#version_1.0.1</url>
+    <release version="1.3.1" date="2025-08-04">
       <description>
         <p>Release description</p>
         <ul>
-          <li>List of changes</li>
-          <li>List of changes</li>
+          <li>First release!</li>
         </ul>
       </description>
     </release>

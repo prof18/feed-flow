@@ -91,6 +91,7 @@ class TelemetryDeckClient(
         val systemVersion = "${getOperatingSystem()} ${System.getProperty("os.version")}"
         return mutableMapOf(
             "TelemetryDeck.AppInfo.version" to (appVersion ?: "unknown"),
+            "TelemetryDeck.AppInfo.versionAndBuildNumber" to (appVersion ?: "unknown"),
             "TelemetryDeck.Device.operatingSystem" to getOperatingSystem(),
             "TelemetryDeck.Device.architecture" to System.getProperty("os.arch"),
             "TelemetryDeck.Device.systemMajorMinorVersion" to systemVersion,

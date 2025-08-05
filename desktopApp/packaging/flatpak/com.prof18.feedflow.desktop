@@ -2,12 +2,11 @@
 Type=Application
 Name=FeedFlow
 GenericName=RSS Reader
-Comment=A minimalistic RSS Reader with full OPML import/export support
+Comment=A minimalistic RSS Reader
 Icon=com.prof18.feedflow
-Exec=feedflow.sh
+Exec=feedflow
 Terminal=false
 StartupNotify=true
-Categories=Network;News;
+Categories=News;
 Keywords=RSS;Feed;News;Reader;
-MimeType=application/rss+xml;application/atom+xml;text/x-opml+xml;
 StartupWMClass=FeedFlow

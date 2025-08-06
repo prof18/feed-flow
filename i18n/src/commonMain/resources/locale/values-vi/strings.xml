@@ -52,7 +52,7 @@
     <string name="feeds_title">Nguồn cấp</string>
     <string name="feed_added_message">Đã thêm %s thành công</string>
     <string name="feed_url">URL nguồn cấp</string>
-    <string name="loading_feed_message">Đang lấy %s nguồn cấp</string>
+    <string name="loading_feed_message">Đang lấy nguồn cấp %s</string>
     <string name="no_feeds_found_message">Không tìm thấy nguồn cấp nào. Hãy thêm mới!</string>
     <string name="feeds_importing_message">Đang nhập nguồn cấp</string>
     <string name="feeds_import_done_message">Đã nhập xong</string>
@@ -208,7 +208,7 @@
     <string name="settings_notifications_permission_status_title">Trạng thái cấp quyền</string>
     <string name="settings_notifications_permission_status_granted">Đã cho phép</string>
     <string name="settings_notifications_permission_status_denied">Đã từ chối</string>
-    <string name="settings_notifications_permission_request_button">Quyền yêu cầu</string>
+    <string name="settings_notifications_permission_request_button">Cho phép</string>
     <string name="new_articles_notification_title">Có bài viết mới</string>
     <string name="notification_channel_name">Những bài viết mới</string>
     <string name="new_articles_notification_content">Bài viết mới từ %s</string>

@@ -30,6 +30,8 @@ platforms:
 
   - name: Linux
     links:
+      - title: Flathub
+        url: https://flathub.org/apps/com.prof18.feedflow
       - title: RPM Package
         url: "https://github.com/prof18/feed-flow/releases/download/1.2.0-all/feedflow-1.2.0-1.x86_64.rpm"
       - title: DEB Package

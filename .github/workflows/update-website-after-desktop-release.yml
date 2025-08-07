@@ -51,15 +51,7 @@ jobs:
           echo "DEB_URL=$DEB_URL" >> $GITHUB_ENV
 
       - name: Update website
-        run: |
-          # Update hero.yml only if URLs are not empty
-          if [ ! -z "$RPM_URL" ]; then
-            sed -i "s|button5Link:.*|button5Link: ${RPM_URL}|" website/data/hero.yml
-          fi
-          if [ ! -z "$DEB_URL" ]; then
-            sed -i "s|button6Link:.*|button6Link: ${DEB_URL}|" website/data/hero.yml
-          fi
-          
+        run: |          
           # Update downloads.yml only if URLs are not empty
           if [ ! -z "$DMG_URL" ]; then
             sed -i "s|url: \".*\.dmg\"|url: \"${DMG_URL}\"|" website/data/downloads.yml

@@ -11,8 +11,6 @@ button3text: macOS
 button3Link: https://apps.apple.com/us/app/feedflow-rss-reader/id6447210518
 button4text: Windows
 button4Link: https://apps.microsoft.com/detail/9n5t1rfbb6v5
-button5text: Linux (rpm)
-button5Link: https://github.com/prof18/feed-flow/releases/download/1.0.88-desktop/feedflow-1.0.88-1.x86_64.rpm
-button6text: Linux (deb)
-button6Link: https://github.com/prof18/feed-flow/releases/download/1.0.88-desktop/feedflow_1.0.88_amd64.deb
+button5text: Flathub
+button5Link: https://flathub.org/apps/com.prof18.feedflow
 image: images/hero/hero-image.svg

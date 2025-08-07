@@ -57,7 +57,7 @@ class TelemetryDeckClient(
                 try {
                     sendSignal(type, parameters)
                 } catch (e: Exception) {
-                    logger.e(e) { "Error while sending signal" }
+                    logger.d(e) { "Error while sending signal" }
                 }
             }
         }

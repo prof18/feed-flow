@@ -67,30 +67,36 @@ internal class FeedSyncIosWorker(
     @OptIn(ExperimentalForeignApi::class)
     private suspend fun performUpload() = withContext(dispatcherProvider.io) {
         try {
+            logger.w { "Starting upload" }
             feedSyncer.populateSyncDbIfEmpty()
             feedSyncer.updateFeedItemsToSyncDatabase()
             feedSyncer.closeDB()
+            logger.w { "Sync database populated and closed" }
 
             val databasePath = getDatabaseUrl()
             if (databasePath == null) {
+                logger.w { "Database URL is null, cannot perform upload" }
                 emitErrorMessage()
                 return@withContext
             }
             accountSpecificUpload(databasePath)
             settingsRepository.setIsSyncUploadRequired(false)
             emitSuccessMessage()
-        } catch (_: SQLiteException) {
+        } catch (e: SQLiteException) {
+            logger.e(e) { "SQLiteException during upload" }
             try {
                 feedSyncer.closeDB()
+                logger.w { "Sync database closed after error" }
                 getDatabaseUrl()?.let { path ->
                     NSFileManager.defaultManager.removeItemAtURL(path, null)
                     feedSyncer.populateSyncDbIfEmpty()
+                    logger.w { "Sync database recreated after error" }
                 }
             } catch (_: Exception) {
                 // best effort
             }
         } catch (e: Exception) {
-            logger.e("Upload to dropbox failed", e)
+            logger.e("Upload failed", e)
             emitErrorMessage()
         }
     }
@@ -107,8 +113,10 @@ internal class FeedSyncIosWorker(
 
     override suspend fun syncFeedSources(): SyncResult = withContext(dispatcherProvider.io) {
         try {
+            logger.w { "Start syncing feed sources" }
             feedSyncer.syncFeedSourceCategory()
             feedSyncer.syncFeedSource()
+            logger.w { "Syncing feed sources finished" }
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed sources failed", e)
@@ -118,7 +126,9 @@ internal class FeedSyncIosWorker(
 
     override suspend fun syncFeedItems(): SyncResult = withContext(dispatcherProvider.io) {
         try {
+            logger.w { "Start syncing feed items" }
             feedSyncer.syncFeedItem()
+            logger.w { "Syncing feed items finished" }
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed items failed", e)
@@ -194,7 +204,7 @@ internal class FeedSyncIosWorker(
                 )
                 dropboxDataSource.performUpload(dropboxUploadParam)
                 dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
-                logger.d { "Upload to dropbox successfully" }
+                logger.w { "Upload to dropbox successfully" }
             }
 
             SyncAccounts.ICLOUD -> {
@@ -220,9 +230,11 @@ internal class FeedSyncIosWorker(
                             logger.e { "Error uploading to iCloud: ${errorPtr.value}" }
                         }
                     }
+                    iCloudSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+                    logger.w { "Upload to iCloud successfully" }
+                } else {
+                    logger.e { "Error uploading to iCloud: iCloud URL is null" }
                 }
-                iCloudSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
-                logger.d { "Upload to iCloud successfully" }
             }
 
             else -> {
@@ -247,6 +259,7 @@ internal class FeedSyncIosWorker(
                 }
                 replaceDatabase(destinationUrl.url)
                 dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+                logger.w { "Download from Dropbox successfully" }
                 SyncResult.Success
             }
 
@@ -266,7 +279,7 @@ internal class FeedSyncIosWorker(
         val iCloudUrl = getICloudFolderURL()
         val tempUrl = getTemporaryFileUrl()
         if (iCloudUrl == null || tempUrl == null) {
-            logger.e { "Error downloading database" }
+            logger.e { "Error downloading from iCloud: iCloud URL or temporary URL is null" }
             return SyncResult.Error
         }
         NSFileManager.defaultManager.removeItemAtURL(
@@ -290,7 +303,7 @@ internal class FeedSyncIosWorker(
 
             replaceDatabase(tempUrl)
             iCloudSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
-            logger.d { "Download from iCloud successfully" }
+            logger.w { "Download from iCloud successfully" }
             return SyncResult.Success
         }
     }

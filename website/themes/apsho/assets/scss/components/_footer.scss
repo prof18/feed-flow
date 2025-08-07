@@ -25,6 +25,34 @@
       color: #7a8081;
       line-height: 36px;
     }
+    
+    .social-links {
+      margin-top: 20px;
+      display: flex;
+      gap: 18px;
+      
+      a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        border-radius: 7px;
+        transition: all 0.3s ease;
+        color: #7a8081;
+        
+        &:hover {
+          color: $text-color-dark;
+          background-color: rgba(0, 0, 0, 0.05);
+          text-decoration: none;
+          transform: translateY(-2px);
+        }
+        
+        svg {
+          width: 22px;
+          height: 22px;
+        }
+      }
+    }
 
     &-social {
       margin: 0;

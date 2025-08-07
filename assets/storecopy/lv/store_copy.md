@@ -7,21 +7,18 @@ FeedFlow - RSS lasītājs
 Minimālistisks, ātrs, vienkāršs
 
 ## Pilnais apraksts
-FeedFlow — RSS lasītājs ar minimālistisku saskarni. Jūsu pavadonis informācijas
-pasaulē, kas ļauj iegūt tikai to saturu, kas jūs interesē. Sinhronizējiet visas
-savas ierīces un izbaudiet ērtu lasīšanas pieredzi bez traucēkļiem.
 
 Galvenās funkcijas:
 
 - Minimālistisks dizains: koncentrējieties uz galveno, izmantojot vienkāršu, bez
   liekām detaļām saskarni
-- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
-  or Dropbox (all platforms)
-- FreshRSS integrācija: izveidojiet savienojumu ar savu FreshRSS serveri, lai
-  veiktu uzlabotu plūsmu pārvaldību
-- Elastīgi lasīšanas varianti: variet atlasīt tīmekļa skatu, lasīšanas režīmu
+- Nemanāmā sinhronizācija: Uztur jūsu ziņu plūsmas sinhronizētas dažādās ierīcēs
+  ar iCloud (iOS/macOS) vai Dropbox (visas platformas)
+- FreshRSS integrācija: variet pievienot savu FreshRSS serveri, lai veiktu
+  uzlabotu plūsmu pārvaldību
+- Elastīgi lasīšanas varianti: variet atlasīt tīmekļa skatu, iebūvēto lasītāju
   vai savu vēlamo pārlūku
-- Uz konfidencialitāti vērsts: variet atlasīt savu iecienītāko privātuma
+- Uz konfidencialitāti orientēts: Iespēja atlasīt savu iecienītāko privātuma
   pārlūku, lai iegūtu personisku lasīšanas pieredzi
 - Vienkārši pāriet uz citu RSS lietotni: variet ievietot un izgūt RSS ziņu
   plūsmas ar OPML datnēm
@@ -29,38 +26,38 @@ Galvenās funkcijas:
 Ar ko FeedFlow pārāks pār citiem:
 
 - Tīrs, intuitīvs saskarnes dizains, kas ļauj koncentrēties uz saturu
-- Multiple sync options to fit your workflow (Beta)
-- Customizable reading experience with reader mode
-- Fast and lightweight
-- Regular updates and active development
+- Vairākas sinhronizācijas izvēles, kas atbilst jūsu darbplūsmai (Beta funkcija)
+- Pielāgojama lasīšanas pieredze ar iebūvēto lasītāju
+- Ātrs un viegls
+- Regulāri atjauninājumi un aktīva izstrāde
 
-Perfect for:
-- News enthusiasts who want control over their information diet
-- Privacy-conscious readers
-- Content creators tracking multiple sources
-- Anyone looking to declutter their digital reading experience
+Ideāli piemērots:
+- Ziņu cienītājiem, kuri vēlas kontrolēt savu informācijas plūsmu
+- Lasītājiem, kuriem rūp sava konfidencialitāte
+- Satura veidotājiem, kas seko vairākiem ziņu avotiem
+- Ikvienam, kuri vēlas vienkāršot savu digitālo lasīšanas pieredzi
 
-Join thousands of readers who've chosen FeedFlow for a better way to stay
-informed.
+Pievienojieties tūkstošiem lasītāju, kuri izvēlējušies FeedFlow, kā labāko veidu
+palikt informētiem mūsu digitālajā informācijas laikmetā.
 
-Note: Sync functionality is currently in beta. The experience is continuously
-improving based on user feedback.
+Piezīme: Sinhronizācijas funkcijas pašlaik ir beta stadijā. Pieredze tiek
+nepārtraukti uzlabota, pamatojoties uz lietotāju atsauksmēm.
 
 ## 1. ekrānuzņēmums
 
-All your feeds in your pocket
+Visas ziņu plūsmas savā kabatā
 
 ## 3. ekrānuzņēmums
 
-Import your existing collection
+Ievietojiet savu esošo RSS kolekciju
 
 ## 4. ekrānuzņēmums
 
-Open the articles in your favourite browser
+Atveriet rakstus savā iecienītākajā pārlūkā
 
 ## 5. ekrānuzņēmums
 
-Enjoy a clutter-free reader mode
+Izbaudiet iebūvēto lasītāju bez kaitinošiem elementiem
 
 ## Reklāmkaroga attēls
 

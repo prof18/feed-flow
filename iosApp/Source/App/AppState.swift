@@ -7,6 +7,7 @@
 //
 
 import Collections
+import FeedFlowKit
 import Foundation
 import SwiftUI
 
@@ -16,6 +17,7 @@ import SwiftUI
     var regularNavigationPath = NavigationPath()
     var compatNavigationPath = NavigationPath()
     var sizeClass: UserInterfaceSizeClass?
+    var colorScheme: ColorScheme?
 
     var redrawAfterFeedSourceEdit: Bool = false
 
@@ -39,5 +41,16 @@ import SwiftUI
                 showBanner: true
             )
         )
+    }
+
+    func updateTheme(_ themeMode: ThemeMode) {
+        switch themeMode {
+        case .light:
+            colorScheme = .light
+        case .dark:
+            colorScheme = .dark
+        case .system:
+            colorScheme = nil
+        }
     }
 }

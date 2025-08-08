@@ -32,6 +32,7 @@ struct SettingsScreen: View {
     @State private var dateFormat: DateFormat = .normal
     @State private var feedOrder: FeedOrder = .newestFirst
     @State private var feedLayout: FeedLayout = .list
+    @State private var themeMode: ThemeMode = .system
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor = 0.0
 
@@ -58,6 +59,7 @@ struct SettingsScreen: View {
                     dateFormat = state.dateFormat
                     feedOrder = state.feedOrder
                     feedLayout = state.feedLayout
+                    themeMode = state.themeMode
                 }
             }
             .task {
@@ -125,6 +127,12 @@ struct SettingsScreen: View {
             .onChange(of: feedLayout) {
                 vmStoreOwner.instance.updateFeedLayout(feedLayout: feedLayout)
             }
+            .onChange(of: themeMode) {
+                vmStoreOwner.instance.updateThemeMode(mode: themeMode)
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    appState.updateTheme(themeMode)
+                }
+            }
     }
 
     private var settingsContent: some View {
@@ -136,6 +144,7 @@ struct SettingsScreen: View {
                     autoDeletePeriod: $autoDeletePeriod,
                     isReaderModeEnabled: $isReaderModeEnabled,
                     feedOrder: $feedOrder,
+                    themeMode: $themeMode,
                     isMarkReadWhenScrollingEnabled: $isMarkReadWhenScrollingEnabled,
                     isShowReadItemEnabled: $isShowReadItemEnabled
                 )
@@ -207,6 +216,7 @@ private struct BehaviourSection: View {
     @Binding var autoDeletePeriod: AutoDeletePeriod
     @Binding var isReaderModeEnabled: Bool
     @Binding var feedOrder: FeedOrder
+    @Binding var themeMode: ThemeMode
 
     @Binding var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isShowReadItemEnabled: Bool
@@ -240,6 +250,17 @@ private struct BehaviourSection: View {
                     .tag(AutoDeletePeriod.oneMonth)
             } label: {
                 Label(feedFlowStrings.settingsAutoDelete, systemImage: "arrow.3.trianglepath")
+            }
+
+            Picker(selection: $themeMode) {
+                Text(feedFlowStrings.settingsThemeSystem)
+                    .tag(ThemeMode.system)
+                Text(feedFlowStrings.settingsThemeLight)
+                    .tag(ThemeMode.light)
+                Text(feedFlowStrings.settingsThemeDark)
+                    .tag(ThemeMode.dark)
+            } label: {
+                Label(feedFlowStrings.settingsTheme, systemImage: "moon")
             }
 
             Toggle(isOn: $isReaderModeEnabled) {

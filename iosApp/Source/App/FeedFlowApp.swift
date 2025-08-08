@@ -32,6 +32,7 @@ struct FeedFlowApp: App {
         WindowGroup {
             ContentView()
                 .environment(appState)
+                .preferredColorScheme(appState.colorScheme)
                 .onOpenURL(perform: { url in
                     if url.scheme == "feedflow" {
                         handleFeedFlowURL(url)

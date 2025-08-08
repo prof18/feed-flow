@@ -182,10 +182,6 @@
 # Keep all kotlinx.serialization generated serializers to avoid optimizer issues
 -keep class **$$serializer { *; }
 
-# Keep all classes from GReaderResources.kt and entire greader package
--keep class com.prof18.feedflow.feedsync.greader.** { *; }
--keepnames class com.prof18.feedflow.feedsync.greader.**
-
 # Because of coil crash: Error: java.io.IOException: canceled due to java.lang.VerifyError: Bad return type
 -keep class okio.** { *; }
 

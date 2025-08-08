@@ -11,6 +11,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
+import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
@@ -37,6 +38,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     setCrashReportingEnabled: (Boolean) -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
+    onThemeModeSelected: (ThemeMode) -> Unit,
 ) {
     MenuBar {
         Menu(LocalFeedFlowStrings.current.fileMenu, mnemonic = 'F') {
@@ -69,6 +71,24 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     onClearOldFeedClick()
                 },
             )
+
+            Menu(LocalFeedFlowStrings.current.settingsTheme) {
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsThemeSystem,
+                    selected = settingsState.themeMode == ThemeMode.SYSTEM,
+                    onClick = { onThemeModeSelected(ThemeMode.SYSTEM) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsThemeLight,
+                    selected = settingsState.themeMode == ThemeMode.LIGHT,
+                    onClick = { onThemeModeSelected(ThemeMode.LIGHT) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsThemeDark,
+                    selected = settingsState.themeMode == ThemeMode.DARK,
+                    onClick = { onThemeModeSelected(ThemeMode.DARK) },
+                )
+            }
 
             DebugMenu(
                 showDebugMenu = showDebugMenu,

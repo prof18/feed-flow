@@ -44,6 +44,8 @@ struct ContentView: View {
             if appState.sizeClass == nil {
                 appState.sizeClass = horizontalSizeClass
             }
+            let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
+            appState.updateTheme(savedThemeMode)
         }
         .onChange(of: horizontalSizeClass) {
             if !isAppInBackground && horizontalSizeClass != appState.sizeClass {

@@ -329,4 +329,6 @@ class HomeViewModel internal constructor(
             feedStateRepository.getFeeds()
         }
     }
+
+    fun getCurrentThemeMode() = settingsRepository.getThemeMode()
 }

@@ -39,6 +39,7 @@ import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.SyncResult
+import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
@@ -69,6 +70,7 @@ import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
 import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
@@ -86,7 +88,7 @@ import java.util.Properties
 import javax.swing.UIManager
 
 @Suppress("UnsafeDynamicallyLoadedCode", "CyclomaticComplexMethod")
-fun main() = application {
+fun main() {
     val properties = Properties()
     val propsFile = DI::class.java.classLoader?.getResourceAsStream("props.properties")
         ?: InputStream.nullInputStream()
@@ -161,316 +163,327 @@ fun main() = application {
 
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
-    val windowState = rememberWindowState()
+    application {
+        val windowState = rememberWindowState()
 
-    val koin = DI.koin
-    setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
+        val koin = DI.koin
+        setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
 
-    val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
-    val searchViewModel = desktopViewModel { DI.koin.get<SearchViewModel>() }
+        val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
+        val searchViewModel = desktopViewModel { DI.koin.get<SearchViewModel>() }
 
-    val feedSyncRepo = DI.koin.get<FeedSyncRepository>()
-    val messageQueue = DI.koin.get<FeedSyncMessageQueue>()
+        val feedSyncRepo = DI.koin.get<FeedSyncRepository>()
+        val messageQueue = DI.koin.get<FeedSyncMessageQueue>()
 
-    val scope = rememberCoroutineScope()
-    var showBackupLoader by remember { mutableStateOf(false) }
+        val scope = rememberCoroutineScope()
+        var showBackupLoader by remember { mutableStateOf(false) }
 
-    FeedFlowTheme {
-        val lyricist = rememberFeedFlowStrings()
-        val icon = painterResource(Res.drawable.icon)
-        ProvideFeedFlowStrings(lyricist) {
-            Window(
-                onCloseRequest = {
-                    scope.launch {
-                        showBackupLoader = true
-                        try {
-                            feedSyncRepo.performBackup()
-                            DI.koin.get<DatabaseCloser>().close()
-                        } catch (e: Exception) {
-                            DI.koin.get<Logger>().e("Error during cleanup", e)
-                        } finally {
-                            exitApplication()
-                        }
-                    }
-                },
-                state = windowState,
-                title = "FeedFlow",
-                icon = icon,
-            ) {
-                val listener = object : WindowFocusListener {
-                    override fun windowGainedFocus(e: WindowEvent) {
-                        // Do nothing
-                    }
+        val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
+        val settingsState by settingsViewModel.settingsState.collectAsState()
+        val darkTheme = when (settingsState.themeMode) {
+            ThemeMode.SYSTEM -> rememberDesktopDarkTheme()
+            ThemeMode.LIGHT -> false
+            ThemeMode.DARK -> true
+        }
 
-                    override fun windowLostFocus(e: WindowEvent) {
+        FeedFlowTheme(darkTheme = darkTheme) {
+            val lyricist = rememberFeedFlowStrings()
+            val icon = painterResource(Res.drawable.icon)
+            ProvideFeedFlowStrings(lyricist) {
+                Window(
+                    onCloseRequest = {
                         scope.launch {
-                            feedSyncRepo.performBackup()
+                            showBackupLoader = true
+                            try {
+                                feedSyncRepo.performBackup()
+                                DI.koin.get<DatabaseCloser>().close()
+                            } catch (e: Exception) {
+                                DI.koin.get<Logger>().e("Error during cleanup", e)
+                            } finally {
+                                exitApplication()
+                            }
+                        }
+                    },
+                    state = windowState,
+                    title = "FeedFlow",
+                    icon = icon,
+                ) {
+                    val listener = object : WindowFocusListener {
+                        override fun windowGainedFocus(e: WindowEvent) {
+                            // Do nothing
+                        }
+
+                        override fun windowLostFocus(e: WindowEvent) {
+                            scope.launch {
+                                feedSyncRepo.performBackup()
+                            }
                         }
                     }
-                }
 
-                DisposableEffect(Unit) {
-                    window.addWindowFocusListener(listener)
-                    onDispose {
-                        window.removeWindowFocusListener(listener)
-                    }
-                }
-
-                val snackbarHostState = remember { SnackbarHostState() }
-
-                val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
-                LaunchedEffect(Unit) {
-                    messageQueue.messageQueue.collect { message ->
-                        if (message is SyncResult.Error) {
-                            snackbarHostState.showSnackbar(
-                                message = errorMessage,
-                            )
+                    DisposableEffect(Unit) {
+                        window.addWindowFocusListener(listener)
+                        onDispose {
+                            window.removeWindowFocusListener(listener)
                         }
                     }
-                }
 
-                if (showBackupLoader) {
-                    FeedFlowTheme {
-                        Scaffold {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                CircularProgressIndicator()
-                                Text(
-                                    modifier = Modifier
-                                        .padding(top = Spacing.regular),
-                                    text = LocalFeedFlowStrings.current.feedSyncInProgress,
+                    val snackbarHostState = remember { SnackbarHostState() }
+
+                    val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
+                    LaunchedEffect(Unit) {
+                        messageQueue.messageQueue.collect { message ->
+                            if (message is SyncResult.Error) {
+                                snackbarHostState.showSnackbar(
+                                    message = errorMessage,
                                 )
                             }
                         }
                     }
-                } else {
-                    CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
-                        val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
-                        val settingsState by settingsViewModel.settingsState.collectAsState()
 
-                        val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
-                        val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
-
-                        val listState = rememberLazyListState()
-
-                        var aboutDialogVisibility by remember { mutableStateOf(false) }
-                        val aboutDialogState = rememberDialogState(
-                            size = DpSize(500.dp, 500.dp),
-                        )
-                        DialogWindow(
-                            state = aboutDialogState,
-                            title = LocalFeedFlowStrings.current.appName,
-                            visible = aboutDialogVisibility,
-                            onCloseRequest = {
-                                aboutDialogVisibility = false
-                            },
-                        ) {
-                            AboutContent(
-                                versionLabel = LocalFeedFlowStrings.current.aboutAppVersion(version ?: "N/A"),
-                            )
-                        }
-
-                        var feedListFontDialogState by remember { mutableStateOf(false) }
-                        val fontSizesState by settingsViewModel.feedFontSizeState.collectAsState()
-
-                        val dialogState = rememberDialogState(
-                            size = DpSize(500.dp, 720.dp),
-                        )
-                        DialogWindow(
-                            state = dialogState,
-                            title = LocalFeedFlowStrings.current.feedListAppearance,
-                            visible = feedListFontDialogState,
-                            onCloseRequest = {
-                                feedListFontDialogState = false
-                            },
-                        ) {
-                            Scaffold { paddingValues ->
-                                val scrollableState = rememberScrollState()
+                    if (showBackupLoader) {
+                        FeedFlowTheme(darkTheme = darkTheme) {
+                            Scaffold {
                                 Column(
                                     modifier = Modifier
-                                        .verticalScroll(scrollableState),
+                                        .fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
-                                    FeedListFontSettings(
-                                        fontSizes = fontSizesState,
+                                    CircularProgressIndicator()
+                                    Text(
                                         modifier = Modifier
-                                            .padding(paddingValues),
-                                        updateFontScale = { fontScale ->
-                                            settingsViewModel.updateFontScale(fontScale)
-                                        },
-                                        isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
-                                        isHideImagesEnabled = settingsState.isHideImagesEnabled,
-                                        dateFormat = settingsState.dateFormat,
-                                        feedLayout = settingsState.feedLayout,
-                                    )
-
-                                    Spacer(modifier = Modifier.padding(top = Spacing.regular))
-
-                                    FeedLayoutSelector(
-                                        feedLayout = settingsState.feedLayout,
-                                        onFeedLayoutSelected = { feedLayout ->
-                                            settingsViewModel.updateFeedLayout(feedLayout)
-                                        },
-                                    )
-
-                                    HideDescriptionSwitch(
-                                        isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
-                                        setHideDescription = {
-                                            settingsViewModel.updateHideDescription(
-                                                !settingsState.isHideDescriptionEnabled,
-                                            )
-                                        },
-                                    )
-
-                                    HideImagesSwitch(
-                                        isHideImagesEnabled = settingsState.isHideImagesEnabled,
-                                        setHideImages = {
-                                            settingsViewModel.updateHideImages(!settingsState.isHideImagesEnabled)
-                                        },
-                                    )
-
-                                    RemoveTitleFromDescSwitch(
-                                        isRemoveTitleFromDescriptionEnabled =
-                                        settingsState.isRemoveTitleFromDescriptionEnabled,
-                                        setRemoveTitleFromDescription = {
-                                            settingsViewModel.updateRemoveTitleFromDescription(
-                                                !settingsState.isRemoveTitleFromDescriptionEnabled,
-                                            )
-                                        },
-                                    )
-
-                                    DateFormatSelector(
-                                        currentFormat = settingsState.dateFormat,
-                                        onFormatSelected = { format ->
-                                            settingsViewModel.updateDateFormat(format)
-                                        },
-                                    )
-
-                                    SwipeActionSelector(
-                                        direction = SwipeDirection.LEFT,
-                                        currentAction = settingsState.leftSwipeActionType,
-                                        onActionSelected = { action ->
-                                            settingsViewModel.updateSwipeAction(SwipeDirection.LEFT, action)
-                                        },
-                                    )
-
-                                    SwipeActionSelector(
-                                        direction = SwipeDirection.RIGHT,
-                                        currentAction = settingsState.rightSwipeActionType,
-                                        onActionSelected = { action ->
-                                            settingsViewModel.updateSwipeAction(SwipeDirection.RIGHT, action)
-                                        },
+                                            .padding(top = Spacing.regular),
+                                        text = LocalFeedFlowStrings.current.feedSyncInProgress,
                                     )
                                 }
                             }
                         }
+                    } else {
+                        CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
+                            val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
+                            val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
 
-                        val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
+                            val listState = rememberLazyListState()
 
-                        Navigator(
-                            MainScreen(
-                                frameWindowScope = this,
-                                appEnvironment = appEnvironment,
-                                version = version,
-                                homeViewModel = homeViewModel,
-                                searchViewModel = searchViewModel,
-                                listState = listState,
-                            ),
-                        ) { navigator ->
-                            FeedFlowMenuBar(
-                                showDebugMenu = appEnvironment.isDebug(),
-                                settingsState = settingsState,
-                                feedFilter = currentFeedFilter,
-                                onRefreshClick = {
-                                    scope.launch {
-                                        listState.animateScrollToItem(0)
-                                        homeViewModel.getNewFeeds()
-                                    }
-                                },
-                                onMarkAllReadClick = {
-                                    homeViewModel.markAllRead()
-                                },
-                                onImportExportClick = {
-                                    navigator.push(
-                                        ImportExportScreen(
-                                            composeWindow = window,
-                                            triggerFeedFetch = {
-                                                homeViewModel.getNewFeeds()
-                                            },
-                                        ),
-                                    )
-                                },
-                                onClearOldFeedClick = {
-                                    homeViewModel.deleteOldFeedItems()
-                                },
-                                onAboutClick = {
-                                    aboutDialogVisibility = true
-                                },
-                                onBugReportClick = {
-                                    val desktop = Desktop.getDesktop()
-                                    val uri = URI.create(
-                                        UserFeedbackReporter.getEmailUrl(
-                                            subject = emailSubject,
-                                            content = emailContent,
-                                        ),
-                                    )
-                                    desktop.mail(uri)
-                                },
-                                onForceRefreshClick = {
-                                    scope.launch {
-                                        listState.animateScrollToItem(0)
-                                        homeViewModel.forceFeedRefresh()
-                                    }
-                                },
-                                deleteFeeds = {
-                                    homeViewModel.deleteAllFeeds()
-                                },
-                                onFeedOrderSelected = { order ->
-                                    settingsViewModel.updateFeedOrder(order)
-                                },
-                                setMarkReadWhenScrolling = { enabled ->
-                                    settingsViewModel.updateMarkReadWhenScrolling(enabled)
-                                },
-                                setShowReadItem = { enabled ->
-                                    settingsViewModel.updateShowReadItemsOnTimeline(enabled)
-                                },
-                                setReaderMode = { enabled ->
-                                    settingsViewModel.updateReaderMode(enabled)
-                                },
-                                onFeedFontScaleClick = {
-                                    feedListFontDialogState = true
-                                },
-                                onAutoDeletePeriodSelected = { period ->
-                                    settingsViewModel.updateAutoDeletePeriod(period)
-                                },
-                                setCrashReportingEnabled = { enabled ->
-                                    settingsViewModel.updateCrashReporting(enabled)
-                                    if (enabled) {
-                                        if (appEnvironment.isRelease() && sentryDns != null && version != null) {
-                                            initSentry(
-                                                dns = sentryDns,
-                                                version = version,
-                                            )
-                                        }
-                                    } else {
-                                        disableSentry()
-                                    }
-                                },
+                            var aboutDialogVisibility by remember { mutableStateOf(false) }
+                            val aboutDialogState = rememberDialogState(
+                                size = DpSize(500.dp, 500.dp),
                             )
+                            DialogWindow(
+                                state = aboutDialogState,
+                                title = LocalFeedFlowStrings.current.appName,
+                                visible = aboutDialogVisibility,
+                                onCloseRequest = {
+                                    aboutDialogVisibility = false
+                                },
+                            ) {
+                                AboutContent(
+                                    versionLabel = LocalFeedFlowStrings.current.aboutAppVersion(version ?: "N/A"),
+                                    isDarkTheme = darkTheme,
+                                )
+                            }
 
-                            ScaleTransition(navigator)
-                        }
+                            var feedListFontDialogState by remember { mutableStateOf(false) }
+                            val fontSizesState by settingsViewModel.feedFontSizeState.collectAsState()
 
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Bottom,
-                        ) {
-                            SnackbarHost(snackbarHostState)
+                            val dialogState = rememberDialogState(
+                                size = DpSize(500.dp, 720.dp),
+                            )
+                            DialogWindow(
+                                state = dialogState,
+                                title = LocalFeedFlowStrings.current.feedListAppearance,
+                                visible = feedListFontDialogState,
+                                onCloseRequest = {
+                                    feedListFontDialogState = false
+                                },
+                            ) {
+                                Scaffold { paddingValues ->
+                                    val scrollableState = rememberScrollState()
+                                    Column(
+                                        modifier = Modifier
+                                            .verticalScroll(scrollableState),
+                                    ) {
+                                        FeedListFontSettings(
+                                            fontSizes = fontSizesState,
+                                            modifier = Modifier
+                                                .padding(paddingValues),
+                                            updateFontScale = { fontScale ->
+                                                settingsViewModel.updateFontScale(fontScale)
+                                            },
+                                            isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
+                                            isHideImagesEnabled = settingsState.isHideImagesEnabled,
+                                            dateFormat = settingsState.dateFormat,
+                                            feedLayout = settingsState.feedLayout,
+                                        )
+
+                                        Spacer(modifier = Modifier.padding(top = Spacing.regular))
+
+                                        FeedLayoutSelector(
+                                            feedLayout = settingsState.feedLayout,
+                                            onFeedLayoutSelected = { feedLayout ->
+                                                settingsViewModel.updateFeedLayout(feedLayout)
+                                            },
+                                        )
+
+                                        HideDescriptionSwitch(
+                                            isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
+                                            setHideDescription = {
+                                                settingsViewModel.updateHideDescription(
+                                                    !settingsState.isHideDescriptionEnabled,
+                                                )
+                                            },
+                                        )
+
+                                        HideImagesSwitch(
+                                            isHideImagesEnabled = settingsState.isHideImagesEnabled,
+                                            setHideImages = {
+                                                settingsViewModel.updateHideImages(!settingsState.isHideImagesEnabled)
+                                            },
+                                        )
+
+                                        RemoveTitleFromDescSwitch(
+                                            isRemoveTitleFromDescriptionEnabled =
+                                            settingsState.isRemoveTitleFromDescriptionEnabled,
+                                            setRemoveTitleFromDescription = {
+                                                settingsViewModel.updateRemoveTitleFromDescription(
+                                                    !settingsState.isRemoveTitleFromDescriptionEnabled,
+                                                )
+                                            },
+                                        )
+
+                                        DateFormatSelector(
+                                            currentFormat = settingsState.dateFormat,
+                                            onFormatSelected = { format ->
+                                                settingsViewModel.updateDateFormat(format)
+                                            },
+                                        )
+
+                                        SwipeActionSelector(
+                                            direction = SwipeDirection.LEFT,
+                                            currentAction = settingsState.leftSwipeActionType,
+                                            onActionSelected = { action ->
+                                                settingsViewModel.updateSwipeAction(SwipeDirection.LEFT, action)
+                                            },
+                                        )
+
+                                        SwipeActionSelector(
+                                            direction = SwipeDirection.RIGHT,
+                                            currentAction = settingsState.rightSwipeActionType,
+                                            onActionSelected = { action ->
+                                                settingsViewModel.updateSwipeAction(SwipeDirection.RIGHT, action)
+                                            },
+                                        )
+                                    }
+                                }
+                            }
+
+                            val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
+
+                            Navigator(
+                                MainScreen(
+                                    frameWindowScope = this,
+                                    appEnvironment = appEnvironment,
+                                    version = version,
+                                    homeViewModel = homeViewModel,
+                                    searchViewModel = searchViewModel,
+                                    listState = listState,
+                                ),
+                            ) { navigator ->
+                                FeedFlowMenuBar(
+                                    showDebugMenu = appEnvironment.isDebug(),
+                                    settingsState = settingsState,
+                                    feedFilter = currentFeedFilter,
+                                    onRefreshClick = {
+                                        scope.launch {
+                                            listState.animateScrollToItem(0)
+                                            homeViewModel.getNewFeeds()
+                                        }
+                                    },
+                                    onMarkAllReadClick = {
+                                        homeViewModel.markAllRead()
+                                    },
+                                    onImportExportClick = {
+                                        navigator.push(
+                                            ImportExportScreen(
+                                                composeWindow = window,
+                                                triggerFeedFetch = {
+                                                    homeViewModel.getNewFeeds()
+                                                },
+                                            ),
+                                        )
+                                    },
+                                    onClearOldFeedClick = {
+                                        homeViewModel.deleteOldFeedItems()
+                                    },
+                                    onAboutClick = {
+                                        aboutDialogVisibility = true
+                                    },
+                                    onBugReportClick = {
+                                        val desktop = Desktop.getDesktop()
+                                        val uri = URI.create(
+                                            UserFeedbackReporter.getEmailUrl(
+                                                subject = emailSubject,
+                                                content = emailContent,
+                                            ),
+                                        )
+                                        desktop.mail(uri)
+                                    },
+                                    onForceRefreshClick = {
+                                        scope.launch {
+                                            listState.animateScrollToItem(0)
+                                            homeViewModel.forceFeedRefresh()
+                                        }
+                                    },
+                                    deleteFeeds = {
+                                        homeViewModel.deleteAllFeeds()
+                                    },
+                                    onFeedOrderSelected = { order ->
+                                        settingsViewModel.updateFeedOrder(order)
+                                    },
+                                    setMarkReadWhenScrolling = { enabled ->
+                                        settingsViewModel.updateMarkReadWhenScrolling(enabled)
+                                    },
+                                    setShowReadItem = { enabled ->
+                                        settingsViewModel.updateShowReadItemsOnTimeline(enabled)
+                                    },
+                                    setReaderMode = { enabled ->
+                                        settingsViewModel.updateReaderMode(enabled)
+                                    },
+                                    onFeedFontScaleClick = {
+                                        feedListFontDialogState = true
+                                    },
+                                    onAutoDeletePeriodSelected = { period ->
+                                        settingsViewModel.updateAutoDeletePeriod(period)
+                                    },
+                                    setCrashReportingEnabled = { enabled ->
+                                        settingsViewModel.updateCrashReporting(enabled)
+                                        if (enabled) {
+                                            if (appEnvironment.isRelease() && sentryDns != null && version != null) {
+                                                initSentry(
+                                                    dns = sentryDns,
+                                                    version = version,
+                                                )
+                                            }
+                                        } else {
+                                            disableSentry()
+                                        }
+                                    },
+                                    onThemeModeSelected = { mode ->
+                                        settingsViewModel.updateThemeMode(mode)
+                                    },
+                                )
+
+                                ScaleTransition(navigator)
+                            }
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Bottom,
+                            ) {
+                                SnackbarHost(snackbarHostState)
+                            }
                         }
                     }
                 }

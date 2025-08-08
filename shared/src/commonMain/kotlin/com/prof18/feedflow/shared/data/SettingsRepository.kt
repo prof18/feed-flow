@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.SwipeDirection
+import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
@@ -40,6 +41,9 @@ class SettingsRepository(
 
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
+
+    private val themeModeMutableFlow = MutableStateFlow<ThemeMode>(getThemeMode())
+    val themeModeFlow: StateFlow<ThemeMode> = themeModeMutableFlow.asStateFlow()
 
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
@@ -227,6 +231,15 @@ class SettingsRepository(
         feedWidgetLayoutMutableFlow.update { feedLayout }
     }
 
+    fun getThemeMode(): ThemeMode =
+        settings.getString(SettingsFields.THEME_MODE.name, ThemeMode.SYSTEM.name)
+            .let { ThemeMode.valueOf(it) }
+
+    fun setThemeMode(mode: ThemeMode) {
+        settings[SettingsFields.THEME_MODE.name] = mode.name
+        themeModeMutableFlow.update { mode }
+    }
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -258,4 +271,5 @@ internal enum class SettingsFields {
     DATE_FORMAT,
     FEED_LAYOUT,
     FEED_WIDGET_LAYOUT,
+    THEME_MODE,
 }

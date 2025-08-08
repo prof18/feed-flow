@@ -112,6 +112,8 @@ struct HomeContent: View {
             switch item {
             case .settings:
                 SettingsScreen(fetchFeeds: onRefresh)
+                    .environment(appState)
+                    .preferredColorScheme(appState.colorScheme)
 
             case .noFeedSource:
                 NoFeedsBottomSheet(

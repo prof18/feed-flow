@@ -41,60 +41,60 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 @Composable
 fun AboutContent(
     versionLabel: String,
+    isDarkTheme: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    FeedFlowTheme {
-        Scaffold(
-            modifier = modifier,
-        ) { paddingValues ->
+    Scaffold(
+        modifier = modifier,
+    ) { paddingValues ->
 
-            var showLicensesScreen by remember { mutableStateOf(false) }
+        var showLicensesScreen by remember { mutableStateOf(false) }
 
-            if (showLicensesScreen) {
-                LicensesScreen(
-                    onBackClick = {
-                        showLicensesScreen = false
-                    },
-                )
-            } else {
-                val listState = rememberLazyListState()
-                val uriHandler = LocalUriHandler.current
+        if (showLicensesScreen) {
+            LicensesScreen(
+                isDarkTheme = isDarkTheme,
+                onBackClick = {
+                    showLicensesScreen = false
+                },
+            )
+        } else {
+            val listState = rememberLazyListState()
+            val uriHandler = LocalUriHandler.current
 
-                Column(
-                    modifier = Modifier
-                        .padding(paddingValues),
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues),
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(paddingValues)
+                        .weight(1f)
+                        .padding(end = 4.dp),
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                            .padding(paddingValues)
-                            .weight(1f)
-                            .padding(end = 4.dp),
-                    ) {
-                        SettingsItemList(
-                            listState = listState,
-                            versionLabel = versionLabel,
-                            showLicensesScreen = {
-                                showLicensesScreen = true
-                            },
-                        )
-
-                        CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
-                            VerticalScrollbar(
-                                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-                                adapter = rememberScrollbarAdapter(
-                                    scrollState = listState,
-                                ),
-                            )
-                        }
-                    }
-
-                    AuthorText(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        nameClicked = {
-                            uriHandler.openUri(MG_WEBSITE)
+                    SettingsItemList(
+                        listState = listState,
+                        versionLabel = versionLabel,
+                        showLicensesScreen = {
+                            showLicensesScreen = true
                         },
                     )
+
+                    CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
+                        VerticalScrollbar(
+                            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                            adapter = rememberScrollbarAdapter(
+                                scrollState = listState,
+                            ),
+                        )
+                    }
                 }
+
+                AuthorText(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    nameClicked = {
+                        uriHandler.openUri(MG_WEBSITE)
+                    },
+                )
             }
         }
     }
@@ -158,6 +158,7 @@ private fun SettingsItemList(
 private fun AboutContentPreview() {
     FeedFlowTheme {
         AboutContent(
+            isDarkTheme = false,
             versionLabel = "Version: 1.0.0",
         )
     }

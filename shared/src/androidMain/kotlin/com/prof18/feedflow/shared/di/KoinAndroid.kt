@@ -17,6 +17,7 @@ import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
 import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.Settings
@@ -130,6 +131,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         FeedDownloadWorkerEnqueuer(
             settingsRepository = get(),
             context = get(),
+        )
+    }
+
+    viewModel {
+        ThemeViewModel(
+            settingsRepository = get(),
         )
     }
 }

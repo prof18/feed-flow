@@ -24,6 +24,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ImportExportScreen(
     navigateBack: () -> Unit,
+    onDoneClick: () -> Unit,
 ) {
     val viewModel = koinViewModel<ImportExportViewModel>()
 
@@ -53,7 +54,7 @@ fun ImportExportScreen(
     ImportExportContent(
         navigateBack = navigateBack,
         feedImportExportState = feedImporterState,
-        onDoneClick = navigateBack,
+        onDoneClick = onDoneClick,
         onRetryClick = {
             viewModel.clearState()
         },

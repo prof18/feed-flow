@@ -176,7 +176,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         ImportExportViewModel(
             feedImportExportRepository = get(),
-            feedFetcherRepository = get(),
             logger = getWith("ImportExportViewModel"),
             dateFormatter = get(),
         )
@@ -318,9 +317,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSyncRepository = get(),
             accountsRepository = get(),
             gReaderRepository = get(),
-            logger = getWith("FeedImportExportRepository"),
-            logoRetriever = get(),
-            rssParser = get(),
             databaseHelper = get(),
             opmlFeedHandler = get(),
         )

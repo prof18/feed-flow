@@ -39,7 +39,14 @@ internal data class MainScreen(
             snackbarHostState = snackbarHostState,
             listState = listState,
             onImportExportClick = {
-                navigator.push(ImportExportScreen(frameWindowScope.window))
+                navigator.push(
+                    ImportExportScreen(
+                        composeWindow = frameWindowScope.window,
+                        triggerFeedFetch = {
+                            homeViewModel.getNewFeeds()
+                        },
+                    ),
+                )
             },
             onSearchClick = {
                 navigator.push(SearchScreen(searchViewModel))

@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.domain.feed
 
-import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.onError
@@ -14,13 +13,6 @@ import com.prof18.feedflow.shared.domain.model.NotValidFeedSources
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
-import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
-import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.model.RssChannel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 
 internal class FeedImportExportRepository(
@@ -30,9 +22,6 @@ internal class FeedImportExportRepository(
     private val feedSyncRepository: FeedSyncRepository,
     private val accountsRepository: AccountsRepository,
     private val gReaderRepository: GReaderRepository,
-    private val logger: Logger,
-    private val logoRetriever: FeedSourceLogoRetriever,
-    private val rssParser: RssParser,
 ) {
     suspend fun addFeedsFromFile(
         opmlInput: OpmlInput,
@@ -58,24 +47,14 @@ internal class FeedImportExportRepository(
                 )
             }
             else -> {
-                val validatedFeeds = validateFeeds(feeds)
-
-                val validFeedSources: List<ParsedFeedSource> = validatedFeeds
-                    .filter { it.isValid }
-                    .map { it.parsedFeedSource }
-
-                val notValidFeedSources = validatedFeeds
-                    .filter { !it.isValid }
-                    .map { it.parsedFeedSource }
-
                 databaseHelper.insertCategories(categories)
-                databaseHelper.insertFeedSource(validFeedSources)
+                databaseHelper.insertFeedSource(feeds)
 
-                feedSyncRepository.addSourceAndCategories(validFeedSources.map { it.toFeedSource() }, categories)
+                feedSyncRepository.addSourceAndCategories(feeds.map { it.toFeedSource() }, categories)
                 feedSyncRepository.performBackup()
 
                 return@withContext NotValidFeedSources(
-                    feedSources = notValidFeedSources,
+                    feedSources = emptyList(),
                     feedSourcesWithError = emptyList(),
                 )
             }
@@ -87,39 +66,4 @@ internal class FeedImportExportRepository(
         val feedsByCategory = feeds.groupBy { it.category }
         opmlFeedHandler.exportFeed(opmlOutput, feedsByCategory)
     }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private suspend fun validateFeeds(
-        feedSources: List<ParsedFeedSource>,
-    ): List<FeedValidationResult> =
-        feedSources
-            .asFlow()
-            .flatMapMerge(concurrency = getNumberOfConcurrentParsingRequests()) { feedSource ->
-                suspend {
-                    val rssChannel = checkIfValidRss(feedSource.url)
-                    val isValidRss = rssChannel != null
-                    val feedSourceLogoUrl = rssChannel?.let { logoRetriever.getFeedSourceLogoUrl(it) }
-
-                    logger.d { "${feedSource.url} is valid? $isValidRss" }
-                    FeedValidationResult(
-                        parsedFeedSource = feedSource.copy(logoUrl = feedSourceLogoUrl),
-                        isValid = isValidRss,
-                    )
-                }.asFlow()
-            }
-            .toList()
-
-    private suspend fun checkIfValidRss(url: String): RssChannel? {
-        return try {
-            rssParser.getRssChannel(url)
-        } catch (e: Throwable) {
-            logger.d { "Wrong url input: $e" }
-            null
-        }
-    }
-
-    private data class FeedValidationResult(
-        val parsedFeedSource: ParsedFeedSource,
-        val isValid: Boolean,
-    )
 }

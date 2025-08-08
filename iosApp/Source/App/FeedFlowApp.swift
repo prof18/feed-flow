@@ -4,8 +4,8 @@ import FirebaseCore
 import FirebaseCrashlytics
 import SwiftUI
 import SwiftyDropbox
-import WidgetKit
 import TelemetryDeck
+import WidgetKit
 
 @main
 struct FeedFlowApp: App {
@@ -95,8 +95,8 @@ func scheduleAppRefresh() {
 
 func setupTelemetry() {
     #if !DEBUG
-    let config = TelemetryDeck.Config(appID: "0334762E-7A84-4A80-A1BA-879165ED0333")
-    TelemetryDeck.initialize(config: config)
+        let config = TelemetryDeck.Config(appID: "0334762E-7A84-4A80-A1BA-879165ED0333")
+        TelemetryDeck.initialize(config: config)
     #endif
 }
 

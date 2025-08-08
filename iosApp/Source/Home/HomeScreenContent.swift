@@ -111,7 +111,7 @@ struct HomeContent: View {
         .sheet(item: $sheetToShow) { item in
             switch item {
             case .settings:
-                SettingsScreen()
+                SettingsScreen(fetchFeeds: onRefresh)
 
             case .noFeedSource:
                 NoFeedsBottomSheet(
@@ -127,7 +127,7 @@ struct HomeContent: View {
                 AddFeedScreen(showCloseButton: true)
 
             case .importExport:
-                ImportExportScreen(showCloseButton: true)
+                ImportExportScreen(showCloseButton: true, fetchFeeds: onRefresh)
 
             case let .editFeed(source):
                 EditFeedScreen(feedSource: source)

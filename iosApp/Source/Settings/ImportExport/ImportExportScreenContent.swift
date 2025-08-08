@@ -196,6 +196,8 @@ struct ImportExportContent: View {
         .buttonStyle(.bordered)
         .padding(.top, Spacing.regular)
         .padding(.horizontal, Spacing.medium)
+
+        Spacer()
     }
 
     @ViewBuilder

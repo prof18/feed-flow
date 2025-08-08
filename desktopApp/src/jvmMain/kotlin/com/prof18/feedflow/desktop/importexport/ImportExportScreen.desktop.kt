@@ -25,6 +25,7 @@ import javax.swing.JFrame
 
 internal class ImportExportScreen(
     private val composeWindow: ComposeWindow,
+    private val triggerFeedFetch: () -> Unit,
 ) : Screen {
 
     @Composable
@@ -83,6 +84,7 @@ internal class ImportExportScreen(
             },
             feedImportExportState = feedImporterState,
             onDoneClick = {
+                triggerFeedFetch()
                 navigator.pop()
             },
             onRetryClick = {

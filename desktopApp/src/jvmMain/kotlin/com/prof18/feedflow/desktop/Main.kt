@@ -394,7 +394,14 @@ fun main() = application {
                                     homeViewModel.markAllRead()
                                 },
                                 onImportExportClick = {
-                                    navigator.push(ImportExportScreen(window))
+                                    navigator.push(
+                                        ImportExportScreen(
+                                            composeWindow = window,
+                                            triggerFeedFetch = {
+                                                homeViewModel.getNewFeeds()
+                                            },
+                                        ),
+                                    )
                                 },
                                 onClearOldFeedClick = {
                                     homeViewModel.deleteOldFeedItems()

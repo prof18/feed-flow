@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity() {
 
     private val messageQueue by inject<FeedSyncMessageQueue>()
     private val reviewViewModel by viewModel<ReviewViewModel>()
+    private val homeViewModel by viewModel<HomeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -156,7 +157,6 @@ class MainActivity : ComponentActivity() {
                 ),
             ) { backStackEntry ->
                 val route = backStackEntry.toRoute<Home>()
-                val homeViewModel = koinViewModel<HomeViewModel>()
 
                 val savedStateHandle = backStackEntry.savedStateHandle
 
@@ -268,6 +268,10 @@ class MainActivity : ComponentActivity() {
             composable<ImportExport> {
                 ImportExportScreen(
                     navigateBack = {
+                        navController.popBackStack()
+                    },
+                    onDoneClick = {
+                        homeViewModel.getNewFeeds()
                         navController.popBackStack()
                     },
                 )

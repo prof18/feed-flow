@@ -21,6 +21,7 @@ struct ImportExportScreen: View {
     @State var sheetToShow: ImportExportSheetToShow?
 
     var showCloseButton: Bool = false
+    let fetchFeeds: () -> Void
 
     var body: some View {
         NavigationStack {
@@ -39,6 +40,7 @@ struct ImportExportScreen: View {
                     vmStoreOwner.instance.clearState()
                 },
                 onDoneClick: {
+                    fetchFeeds()
                     vmStoreOwner.instance.clearState()
                 }
             )

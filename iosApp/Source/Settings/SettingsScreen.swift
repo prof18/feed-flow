@@ -39,6 +39,8 @@ struct SettingsScreen: View {
     @State private var articleDescription: String? = feedFlowStrings
         .settingsFontScaleSubtitleExample
 
+    let fetchFeeds: () -> Void
+
     var body: some View {
         settingsContent
             .task {
@@ -128,7 +130,7 @@ struct SettingsScreen: View {
     private var settingsContent: some View {
         NavigationStack {
             Form {
-                FeedSection(dismiss: dismiss, appState: appState)
+                FeedSection(dismiss: dismiss, appState: appState, fetchFeeds: fetchFeeds)
                 BehaviourSection(
                     browserSelector: browserSelector,
                     autoDeletePeriod: $autoDeletePeriod,
@@ -174,6 +176,7 @@ struct SettingsScreen: View {
 private struct FeedSection: View {
     let dismiss: DismissAction
     let appState: AppState
+    let fetchFeeds: () -> Void
 
     var body: some View {
         Section(feedFlowStrings.settingsTitleFeed) {
@@ -185,7 +188,7 @@ private struct FeedSection: View {
                 Label(feedFlowStrings.addFeed, systemImage: "plus.app")
             }
 
-            NavigationLink(destination: ImportExportScreen()) {
+            NavigationLink(destination: ImportExportScreen(fetchFeeds: fetchFeeds)) {
                 Label(feedFlowStrings.importExportOpml, systemImage: "arrow.up.arrow.down")
             }
 

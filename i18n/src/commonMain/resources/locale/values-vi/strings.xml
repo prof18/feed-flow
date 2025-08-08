@@ -6,7 +6,7 @@
     <string name="refresh_feeds">Làm mới bảng tin</string>
     <string name="no_feeds_add_one_message">Chưa có nguồn cấp, xin hãy thêm</string>
     <string name="app_name">FeedFlow</string>
-    <string name="toggle_mark_read_when_scrolling">Đánh dấu đã đọc khi vuốt qua</string>
+    <string name="toggle_mark_read_when_scrolling">Cuộn qua nghĩa là đã đọc</string>
     <string name="drawer_title_bookmarks">Đã lưu</string>
     <string name="export_feeds_button">Xuất nguồn cấp ra OPML</string>
     <string name="about_nav_bar">Giới thiệu</string>
@@ -44,7 +44,7 @@
     <string name="last_upload">Tải lên lần cuối: %s</string>
     <string name="error_account_sync">Đã xảy ra lỗi khi đồng bộ dữ liệu trong tài khoản của bạn :(</string>
     <string name="no_dropbox_sync_yet">Dữ liệu chưa được đồng bộ hóa với Dropbox. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
-    <string name="settings_hide_duplicated_title_from_desc">Ẩn tựa đề bài viết</string>
+    <string name="settings_hide_duplicated_title_from_desc">Ẩn tựa đề trùng phụ đề</string>
     <string name="reader_mode_font_size">Cỡ chữ</string>
     <string name="author_label">Lập trình bằng ❤️ bởi</string>
     <string name="settings_button">Cài đặt</string>
@@ -214,7 +214,7 @@
     <string name="new_articles_notification_content">Bài viết mới từ %s</string>
     <string name="settings_open_settings">Mở cài đặt</string>
     <string name="settings_notifications_title">Thông báo</string>
-    <string name="settings_notifications_warning_reliability">Thông báo được kiểm tra trên thiết bị của bạn nhưng không phải lúc nào cũng diễn ra đáng tin cậy do hạn chế của hệ thống.</string>
+    <string name="settings_notifications_warning_reliability">Thông báo được kiểm tra trên thiết bị của bạn. Nhưng có thể hoạt động không chính xác do hạn chế của hệ thống.</string>
     <string name="settings_notifications_settings_instructions">Vui lòng bật thông báo app trong cài đặt iOS.</string>
     <string name="marking_all_read_dialog_title">Đánh dấu đã đọc tất cả...</string>
     <string name="date_format_title">Định dạng ngày</string>

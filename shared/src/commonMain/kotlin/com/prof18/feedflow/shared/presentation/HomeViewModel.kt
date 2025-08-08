@@ -230,7 +230,7 @@ class HomeViewModel internal constructor(
             feedOperationMutableState.update { FeedOperation.MarkingAllRead }
             feedActionsRepository.markAllCurrentFeedAsRead()
             feedOperationMutableState.update { FeedOperation.None }
-            feedFetcherRepository.fetchFeeds()
+            feedStateRepository.getFeeds()
         }
     }
 

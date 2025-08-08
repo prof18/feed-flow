@@ -16,7 +16,9 @@ internal class RssChannelMapper(
 
     fun getFeedItems(rssChannel: RssChannel, feedSource: FeedSource): List<FeedItem> =
         rssChannel.items.mapNotNull { rssItem ->
-            val title = rssItem.title?.filterSpecialCharacters()
+            val title = rssItem.title
+                ?.let { htmlParser.getTextFromHTML(it) }
+                ?.filterSpecialCharacters()
             val url = rssItem.link ?: run {
                 val parsedUrl = parseUrl(rssItem.guid.orEmpty())
                 return@run if (parsedUrl != null) {
@@ -90,4 +92,8 @@ private fun String.filterSpecialCharacters(): String =
         .replace("&Acirc;&nbsp;", "")
         .replace(" &amp;hellip;", "…")
         .replace("&amp;hellip;", "…")
+        .replace("&hellip;", "…")
+        .replace("&#8230;", "…")
+        .replace("&#8220;", "“")
+        .replace("&#8221;", "”")
         .replace("&#8217;", "’")

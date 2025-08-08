@@ -20,6 +20,7 @@ import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
+import com.prof18.feedflow.shared.utils.skipLogging
 import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -233,7 +234,9 @@ class FeedFetcherRepository internal constructor(
                             feedSource = feedSource,
                         )
                     } catch (e: Throwable) {
-                        logger.e { "Error, skip: ${feedSource.url}}. Error: $e" }
+                        if (!e.skipLogging()) {
+                            logger.e { "Error, skip: ${feedSource.url}}. Error: $e" }
+                        }
                         feedStateRepository.emitErrorState(
                             FeedErrorState(
                                 failingSourceName = feedSource.title,

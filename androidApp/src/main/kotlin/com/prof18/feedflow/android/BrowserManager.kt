@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.BrowserIds
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
@@ -113,7 +114,7 @@ class BrowserManager(
             if (browserId == BrowserIds.IN_APP_BROWSER) {
                 val intent = CustomTabsIntent.Builder()
                     .build()
-                intent.launchUrl(context, Uri.parse(url))
+                intent.launchUrl(context, url.toUri())
             } else {
                 val intent = getFavouriteBrowserIntent(url)
                 context.startActivity(intent)

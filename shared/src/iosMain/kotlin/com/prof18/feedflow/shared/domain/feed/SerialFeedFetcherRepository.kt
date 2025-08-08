@@ -11,6 +11,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.exception.HttpException
 import kotlinx.coroutines.withContext
 
 /**
@@ -111,6 +112,9 @@ class SerialFeedFetcherRepository internal constructor(
                     feedItems = feedItems,
                     lastSyncTimestamp = dateFormatter.currentTimeMillis(),
                 )
+            } catch (e: HttpException) {
+                // Ignore HTTP errors
+                logger.d { "Error, skip: ${feedSource.url}. Error: $e" }
             } catch (e: Throwable) {
                 logger.e { "Error, skip: ${feedSource.url}. Error: $e" }
             }

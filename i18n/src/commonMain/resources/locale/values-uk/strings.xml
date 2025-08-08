@@ -229,4 +229,8 @@
     <string name="settings_feed_layout_list">Список</string>
     <string name="feed_layout_title">Макет стрічки</string>
     <string name="settings_feed_layout_card">Картка</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_theme_system">Система</string>
+    <string name="settings_theme_light">Світло</string>
+    <string name="settings_theme_dark">Темний</string>
 </resources>

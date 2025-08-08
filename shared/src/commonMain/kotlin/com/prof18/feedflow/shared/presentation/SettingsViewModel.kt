@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
+import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -48,6 +49,7 @@ class SettingsViewModel internal constructor(
                 val dateFormat = settingsRepository.getDateFormat()
                 val feedOrder = settingsRepository.getFeedOrder()
                 val feedLayout = settingsRepository.getFeedLayout()
+                val themeMode = settingsRepository.getThemeMode()
                 settingsMutableState.update {
                     SettingsState(
                         feedOrder = feedOrder,
@@ -65,6 +67,7 @@ class SettingsViewModel internal constructor(
                         rightSwipeActionType = rightSwipeAction,
                         dateFormat = dateFormat,
                         feedLayout = feedLayout,
+                        themeMode = themeMode,
                     )
                 }
             }
@@ -202,6 +205,13 @@ class SettingsViewModel internal constructor(
         viewModelScope.launch {
             settingsRepository.setFeedLayout(feedLayout)
             settingsMutableState.update { it.copy(feedLayout = feedLayout) }
+        }
+    }
+
+    fun updateThemeMode(mode: ThemeMode) {
+        viewModelScope.launch {
+            settingsRepository.setThemeMode(mode)
+            settingsMutableState.update { it.copy(themeMode = mode) }
         }
     }
 }

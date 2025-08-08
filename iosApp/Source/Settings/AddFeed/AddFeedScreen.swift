@@ -33,38 +33,47 @@ struct AddFeedScreen: View {
 
     var body: some View {
         NavigationStack {
-            AddFeedScreenContent(
-                feedURL: $feedURL,
-                showError: $showError,
-                errorMessage: $errorMessage,
-                categoryItems: $categoryItems,
-                isAddingFeed: $isAddingFeed,
-                categorySelectorObserver: categorySelectorObserver,
-                showCloseButton: showCloseButton,
-                updateFeedUrlTextFieldValue: { value in
-                    vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
-                },
-                deleteCategory: { categoryId in
-                    vmStoreOwner.instance.deleteCategory(categoryId: categoryId)
-                },
-                addNewCategory: { categoryName in
-                    vmStoreOwner.instance.addNewCategory(categoryName: categoryName)
-                },
-                addFeed: {
-                    vmStoreOwner.instance.addFeed()
-                },
-                updateCategoryName: { categoryId, categoryName in
-                    vmStoreOwner.instance.editCategory(
-                        categoryId: CategoryId(value: categoryId),
-                        newName: CategoryName(name: categoryName)
-                    )
-                },
-                showNotificationToggle: showNotificationToggle,
-                isNotificationEnabled: isNotificationEnabled,
-                onNotificationToggleChanged: { enabled in
-                    vmStoreOwner.instance.updateNotificationStatus(status: enabled)
+            ZStack {
+                AddFeedScreenContent(
+                    feedURL: $feedURL,
+                    showError: $showError,
+                    errorMessage: $errorMessage,
+                    categoryItems: $categoryItems,
+                    isAddingFeed: $isAddingFeed,
+                    categorySelectorObserver: categorySelectorObserver,
+                    showCloseButton: showCloseButton,
+                    updateFeedUrlTextFieldValue: { value in
+                        vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
+                    },
+                    deleteCategory: { categoryId in
+                        vmStoreOwner.instance.deleteCategory(categoryId: categoryId)
+                    },
+                    addNewCategory: { categoryName in
+                        vmStoreOwner.instance.addNewCategory(categoryName: categoryName)
+                    },
+                    addFeed: {
+                        vmStoreOwner.instance.addFeed()
+                    },
+                    updateCategoryName: { categoryId, categoryName in
+                        vmStoreOwner.instance.editCategory(
+                            categoryId: CategoryId(value: categoryId),
+                            newName: CategoryName(name: categoryName)
+                        )
+                    },
+                    showNotificationToggle: showNotificationToggle,
+                    isNotificationEnabled: isNotificationEnabled,
+                    onNotificationToggleChanged: { enabled in
+                        vmStoreOwner.instance.updateNotificationStatus(status: enabled)
+                    }
+                )
+
+                @Bindable var appState = appState
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    Snackbar(messageQueue: $appState.snackbarQueue)
                 }
-            )
+            }
         }
         .task {
             for await state in vmStoreOwner.instance.feedAddedState {

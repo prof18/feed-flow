@@ -116,6 +116,11 @@
 -keep class io.ktor.serialization.kotlinx.json.KotlinxSerializationJsonExtensionProvider { *; }
 -keep class io.ktor.client.engine.okhttp.OkHttpEngineContainer { *; }
 
+# Ktor Resources
+-keep class io.ktor.resources.** { *; }
+-keepattributes *Annotation*
+-keep class **$*$annotationImpl** { *; }
+
 
 # Dropbox
 -keep class com.dropbox.core.test.proguard.Main { *** main(...); }
@@ -174,5 +179,24 @@
 
 -keep class com.prof18.feedflow.feedsync.greader.data.dto.** { *; }
 
+# Keep all kotlinx.serialization generated serializers to avoid optimizer issues
+-keep class **$$serializer { *; }
+
+# Keep all classes from GReaderResources.kt and entire greader package
+-keep class com.prof18.feedflow.feedsync.greader.** { *; }
+-keepnames class com.prof18.feedflow.feedsync.greader.**
+
 # Because of coil crash: Error: java.io.IOException: canceled due to java.lang.VerifyError: Bad return type
 -keep class okio.** { *; }
+
+
+# ---- Targeted fixes for Kotlinx Serialization + Ktor Resources VerifyError (keep optimizations on) ----
+# Keep the internal descriptor class to avoid optimizer rewriting causing bad bytecode
+-keep class kotlinx.serialization.internal.PluginGeneratedSerialDescriptor { *; }
+
+# Preserve important attributes for nested classes/annotations to avoid verifier confusion
+-keepattributes InnerClasses,EnclosingMethod,Signature
+
+# Disable only the risky optimization that can remove required checkcasts on annotation proxies
+# This keeps other optimizations enabled
+-optimizations !code/simplification/cast

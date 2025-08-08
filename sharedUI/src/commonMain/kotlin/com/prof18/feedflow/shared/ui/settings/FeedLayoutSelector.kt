@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.core.model.FeedLayout
@@ -87,39 +88,51 @@ fun FeedLayoutSelectorDialog(
     onFeedLayoutSelected: (FeedLayout) -> Unit,
     dismissDialog: () -> Unit,
 ) {
+    val strings = LocalFeedFlowStrings.current
     Dialog(onDismissRequest = dismissDialog) {
-        LazyColumn(
+        Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.background),
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.background)
+                .padding(Spacing.regular),
         ) {
-            items(FeedLayout.entries) { feedLayout ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .selectable(
+            Text(
+                text = strings.feedLayoutTitle,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .padding(top = Spacing.small)
+                    .padding(bottom = Spacing.regular),
+            )
+            LazyColumn {
+                items(FeedLayout.entries) { feedLayout ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = feedLayout == currentFeedLayout,
+                                onClick = {
+                                    onFeedLayoutSelected(feedLayout)
+                                    dismissDialog()
+                                },
+                                role = Role.RadioButton,
+                            )
+                            .padding(vertical = Spacing.small),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RadioButton(
                             selected = feedLayout == currentFeedLayout,
-                            onClick = {
-                                onFeedLayoutSelected(feedLayout)
-                                dismissDialog()
+                            onClick = null,
+                        )
+                        Text(
+                            text = when (feedLayout) {
+                                FeedLayout.LIST -> strings.settingsFeedLayoutList
+                                FeedLayout.CARD -> strings.settingsFeedLayoutCard
                             },
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RadioButton(
-                        selected = feedLayout == currentFeedLayout,
-                        onClick = {
-                            onFeedLayoutSelected(feedLayout)
-                            dismissDialog()
-                        },
-                    )
-                    Text(
-                        text = when (feedLayout) {
-                            FeedLayout.LIST -> LocalFeedFlowStrings.current.settingsFeedLayoutList
-                            FeedLayout.CARD -> LocalFeedFlowStrings.current.settingsFeedLayoutCard
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = Spacing.small),
+                        )
+                    }
                 }
             }
         }

@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.shared.domain.model.Browser
@@ -42,35 +43,46 @@ internal fun BrowserSelectionDialog(
     dismissDialog: () -> Unit,
 ) {
     Dialog(onDismissRequest = dismissDialog) {
-        LazyColumn(
+        Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.background),
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.background)
+                .padding(Spacing.regular),
         ) {
-            items(browserList) { browser ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .selectable(
+            Text(
+                text = LocalFeedFlowStrings.current.browserSelectionButton,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .padding(top = Spacing.small)
+                    .padding(bottom = Spacing.regular),
+            )
+            LazyColumn {
+                items(browserList) { browser ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = browser.isFavourite,
+                                onClick = {
+                                    onBrowserSelected(browser)
+                                    dismissDialog()
+                                },
+                                role = androidx.compose.ui.semantics.Role.RadioButton,
+                            )
+                            .padding(vertical = Spacing.small),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RadioButton(
                             selected = browser.isFavourite,
-                            onClick = {
-                                onBrowserSelected(browser)
-                                dismissDialog()
-                            },
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RadioButton(
-                        selected = browser.isFavourite,
-                        onClick = {
-                            onBrowserSelected(browser)
-                            dismissDialog()
-                        },
-                    )
-                    Text(
-                        text = browser.name,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                            onClick = null,
+                        )
+                        Text(
+                            text = browser.name,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = Spacing.small),
+                        )
+                    }
                 }
             }
         }

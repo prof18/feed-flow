@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.core.model.FeedOrder
@@ -33,15 +34,17 @@ internal fun FeedOrderSelectionDialog(
     Dialog(onDismissRequest = dismissDialog) {
         Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.background)
                 .padding(Spacing.regular),
         ) {
             Text(
                 text = strings.settingsFeedOrderTitle,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = Spacing.regular),
+                modifier = Modifier
+                    .padding(top = Spacing.small)
+                    .padding(bottom = Spacing.regular),
             )
 
             LazyColumn {
@@ -82,16 +85,19 @@ private fun FeedOrderOption(
             .selectable(
                 selected = selected,
                 onClick = onClick,
-            ),
+                role = Role.RadioButton,
+            )
+            .padding(vertical = Spacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RadioButton(
             selected = selected,
-            onClick = onClick,
+            onClick = null,
         )
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(start = Spacing.small),
         )
     }
 }

@@ -279,7 +279,7 @@ fun main() {
                             ) {
                                 AboutContent(
                                     versionLabel = LocalFeedFlowStrings.current.aboutAppVersion(version ?: "N/A"),
-                                    isDarkTheme = darkTheme
+                                    isDarkTheme = darkTheme,
                                 )
                             }
 
@@ -404,13 +404,13 @@ fun main() {
                                     },
                                     onImportExportClick = {
                                         navigator.push(
-                                        ImportExportScreen(
-                                            composeWindow = window,
-                                            triggerFeedFetch = {
-                                                homeViewModel.getNewFeeds()
-                                            },
-                                        ),
-                                    )
+                                            ImportExportScreen(
+                                                composeWindow = window,
+                                                triggerFeedFetch = {
+                                                    homeViewModel.getNewFeeds()
+                                                },
+                                            ),
+                                        )
                                     },
                                     onClearOldFeedClick = {
                                         homeViewModel.deleteOldFeedItems()

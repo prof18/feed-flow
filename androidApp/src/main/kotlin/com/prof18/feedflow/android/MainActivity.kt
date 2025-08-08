@@ -1,11 +1,7 @@
 package com.prof18.feedflow.android
 
-import FeedFlowTheme
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -35,6 +31,7 @@ import androidx.navigation.toRoute
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
+import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.android.deeplink.DeepLinkScreen
 import com.prof18.feedflow.android.editfeed.EditScreen
 import com.prof18.feedflow.android.editfeed.toEditFeed
@@ -57,14 +54,12 @@ import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.viewmodel.koinViewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseThemeActivity() {
 
     private val messageQueue by inject<FeedSyncMessageQueue>()
     private val reviewViewModel by viewModel<ReviewViewModel>()
@@ -72,8 +67,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        enableEdgeToEdge()
 
         if (BuildConfig.FLAVOR == "googlePlay") {
             lifecycleScope.launch {
@@ -91,46 +84,41 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
 
-        setContent {
-            val readerModeViewModel: ReaderModeViewModel = koinViewModel()
+    @Composable
+    override fun Content() {
+        val readerModeViewModel: ReaderModeViewModel = koinViewModel()
+        val snackbarHostState = remember { SnackbarHostState() }
 
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            FeedFlowTheme {
-                val navController = rememberNavController()
-                val lyricist = rememberFeedFlowStrings()
-                ProvideFeedFlowStrings(lyricist) {
-                    val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
-                    LaunchedEffect(Unit) {
-                        messageQueue.messageQueue.collect { message ->
-                            if (message is SyncResult.Error) {
-                                snackbarHostState.showSnackbar(
-                                    message = errorMessage,
-                                )
-                            }
-                        }
-                    }
-
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background,
-                    ) {
-                        FeedFlowNavigation(
-                            navController = navController,
-                            readerModeViewModel = readerModeViewModel,
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Bottom,
-                        ) {
-                            SnackbarHost(snackbarHostState)
-                        }
-                    }
+        val navController = rememberNavController()
+        val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
+        LaunchedEffect(Unit) {
+            messageQueue.messageQueue.collect { message ->
+                if (message is SyncResult.Error) {
+                    snackbarHostState.showSnackbar(
+                        message = errorMessage,
+                    )
                 }
+            }
+        }
+
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background,
+        ) {
+            FeedFlowNavigation(
+                navController = navController,
+                readerModeViewModel = readerModeViewModel,
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom,
+            ) {
+                SnackbarHost(snackbarHostState)
             }
         }
     }

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
+import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MarkAsUnread
@@ -49,6 +50,7 @@ import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
 import com.prof18.feedflow.android.settings.components.BrowserSelector
 import com.prof18.feedflow.android.settings.components.FeedOrderSelectionDialog
 import com.prof18.feedflow.android.settings.components.SyncPeriodSelector
+import com.prof18.feedflow.android.settings.components.ThemeModeDialog
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
@@ -56,6 +58,7 @@ import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
+import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.Browser
@@ -172,6 +175,9 @@ fun SettingsScreen(
         setFeedLayout = { feedLayout ->
             settingsViewModel.updateFeedLayout(feedLayout)
         },
+        onThemeModeSelected = { themeMode ->
+            settingsViewModel.updateThemeMode(themeMode)
+        },
     )
 }
 
@@ -204,6 +210,7 @@ private fun SettingsScreenContent(
     navigateToNotifications: () -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
     setFeedLayout: (FeedLayout) -> Unit,
+    onThemeModeSelected: (ThemeMode) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -290,6 +297,13 @@ private fun SettingsScreenContent(
                 AutoDeletePeriodSelector(
                     currentPeriod = settingsState.autoDeletePeriod,
                     onPeriodSelected = onAutoDeletePeriodSelected,
+                )
+            }
+
+            item {
+                ThemeModeSelector(
+                    currentThemeMode = settingsState.themeMode,
+                    onThemeModeSelected = onThemeModeSelected,
                 )
             }
 
@@ -689,6 +703,56 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
     )
 }
 
+@Composable
+private fun ThemeModeSelector(
+    currentThemeMode: ThemeMode,
+    onThemeModeSelected: (ThemeMode) -> Unit,
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val strings = LocalFeedFlowStrings.current
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable { showDialog = true }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.small)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.Outlined.DarkMode,
+            contentDescription = null,
+        )
+
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = strings.settingsTheme,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = when (currentThemeMode) {
+                    ThemeMode.LIGHT -> strings.settingsThemeLight
+                    ThemeMode.DARK -> strings.settingsThemeDark
+                    ThemeMode.SYSTEM -> strings.settingsThemeSystem
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+
+    if (showDialog) {
+        ThemeModeDialog(
+            currentThemeMode = currentThemeMode,
+            onThemeModeSelected = onThemeModeSelected,
+            dismissDialog = { showDialog = false },
+        )
+    }
+}
+
 @PreviewPhone
 @Composable
 private fun SettingsScreenPreview() {
@@ -721,6 +785,7 @@ private fun SettingsScreenPreview() {
             navigateToNotifications = {},
             onFeedOrderSelected = {},
             setFeedLayout = {},
+            onThemeModeSelected = {},
         )
     }
 }

@@ -42,7 +42,6 @@ FeedFlow is a cross-platform RSS reader built with Kotlin Multiplatform, Compose
 
 # Build shared framework for iOS
 ./gradlew :shared:linkDebugFrameworkIosArm64
-./gradlew :shared:li
 ```
 
 ### Code Quality Commands
@@ -59,6 +58,7 @@ FeedFlow is a cross-platform RSS reader built with Kotlin Multiplatform, Compose
 - DO NOT write comments for every function or class. Only write comments when the code is not self-explanatory.
 - DO NOT write tests unless specifically told to do so.
 - DO NOT excessively use try/catch blocks for every function. Use them only for the top caller or the bottom callers, depending on the cases.
+- ALWAYS run gradle tasks with the following flag: `--quiet --console=plain`
 
 ### iOS Development
 The iOS app uses Xcode and requires iOS-specific setup:

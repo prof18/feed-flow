@@ -53,7 +53,13 @@ internal fun FeedSourceAndUnreadDotRow(
             fontSize = feedFontSize.feedMetaFontSize.sp,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(
-                alpha = if (feedItem.isRead && currentFeedFilter !is FeedFilter.Read) 0.6f else 1f,
+                alpha = if (feedItem.isRead &&
+                    currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
+                ) {
+                    0.6f
+                } else {
+                    1f
+                },
             ),
         )
 
@@ -93,7 +99,13 @@ internal fun TitleSubtitleAndImageRow(
                     style = MaterialTheme.typography.titleSmall,
                     lineHeight = (feedFontSize.feedTitleFontSize + 4).sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = if (feedItem.isRead && currentFeedFilter !is FeedFilter.Read) 0.6f else 1f,
+                        alpha = if (feedItem.isRead &&
+                            currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
+                        ) {
+                            0.6f
+                        } else {
+                            1f
+                        },
                     ),
                 )
             }
@@ -114,7 +126,13 @@ internal fun TitleSubtitleAndImageRow(
                     lineHeight = (feedFontSize.feedDescFontSize + 6).sp,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = if (feedItem.isRead && currentFeedFilter !is FeedFilter.Read) 0.6f else 1f,
+                        alpha = if (feedItem.isRead &&
+                            currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
+                        ) {
+                            0.6f
+                        } else {
+                            1f
+                        },
                     ),
                 )
             }

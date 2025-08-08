@@ -102,7 +102,13 @@ internal fun FeedItemView(
                 fontSize = feedFontSize.feedMetaFontSize.sp,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = if (feedItem.isRead && currentFeedFilter !is FeedFilter.Read) 0.6f else 1f,
+                    alpha = if (feedItem.isRead &&
+                        currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
+                    ) {
+                        0.6f
+                    } else {
+                        1f
+                    },
                 ),
             )
         }

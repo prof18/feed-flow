@@ -234,4 +234,8 @@
     <string name="settings_feed_layout_card">Kaart</string>
     <string name="feed_layout_title">Uudisvoo paigutus</string>
     <string name="settings_feed_layout_list">Loend</string>
+    <string name="settings_theme">Kujundus</string>
+    <string name="settings_theme_system">Süsteemi kujundus</string>
+    <string name="settings_theme_light">Hele kujundus</string>
+    <string name="settings_theme_dark">Tume kujundus</string>
 </resources>

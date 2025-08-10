@@ -136,14 +136,31 @@ struct SidebarDrawer: View {
         HStack {
             Text(title)
             Spacer()
-            Button(
-                action: {
-                    onAddFeedClick()
-                },
-                label: {
-                    Image(systemName: "plus.app")
-                }
-            )
+            if #available(iOS 26.0, *) {
+                Button(
+                    action: {
+                        onAddFeedClick()
+                    },
+                    label: {
+                        Image(systemName: "plus")
+                            .foregroundStyle(.primary)
+                            .fontWeight(.medium)
+                            .imageScale(.medium)
+                    }
+                )
+                .buttonStyle(.glass)
+                .modifier(GlassEffectModifier())
+                .padding(.horizontal, -8)
+            } else {
+                Button(
+                    action: {
+                        onAddFeedClick()
+                    },
+                    label: {
+                        Image(systemName: "plus.app")
+                    }
+                )
+            }
         }
         .if(appState.sizeClass == .compact) { view in
             view.listRowInsets(

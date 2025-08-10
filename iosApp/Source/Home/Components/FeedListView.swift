@@ -37,6 +37,7 @@ struct FeedListView: View {
     let onBackToTimelineClick: () -> Void
     let onMarkAllAsReadClick: () -> Void
     let openDrawer: () -> Void
+    let onScrollPositionChanged: (Bool) -> Void
 
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
@@ -110,6 +111,8 @@ struct FeedListView: View {
                                 if index == feedState.count - 15 {
                                     requestNewPage()
                                 }
+                                // Show scroll to top button when user has scrolled past first 3 items
+                                onScrollPositionChanged(index > 3)
                             }
                         }
                         .onDisappear {
@@ -161,7 +164,8 @@ struct FeedListView: View {
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {},
         onMarkAllAsReadClick: {},
-        openDrawer: {}
+        openDrawer: {},
+        onScrollPositionChanged: { _ in }
     ).environment(HomeListIndexHolder(fakeHomeViewModel: true))
 }
 
@@ -183,7 +187,8 @@ struct FeedListView: View {
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {},
         onMarkAllAsReadClick: {},
-        openDrawer: {}
+        openDrawer: {},
+        onScrollPositionChanged: { _ in }
     )
 }
 
@@ -205,6 +210,7 @@ struct FeedListView: View {
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {},
         onMarkAllAsReadClick: {},
-        openDrawer: {}
+        openDrawer: {},
+        onScrollPositionChanged: { _ in }
     )
 }

@@ -51,8 +51,14 @@ internal class RssChannelMapper(
                 logger.i { "Skipping item of ${rssChannel.link}, article link is null" }
                 null
             } else {
+                val id = if (rssItem.guid != null) {
+                    rssItem.guid.hashCode().toString()
+                } else {
+                    url.hashCode().toString()
+                }
+
                 FeedItem(
-                    id = url.hashCode().toString(),
+                    id = id,
                     url = url,
                     title = title,
                     subtitle = rssItem.description?.let { description ->

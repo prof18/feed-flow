@@ -75,7 +75,11 @@ struct AddAccountScreen: View {
                     Button {
                         self.dismiss()
                     } label: {
-                        Image(systemName: "xmark.circle")
+                        if isiOS26OrLater(){
+                            Image(systemName: "xmark")
+                        } else {
+                            Image(systemName: "xmark.circle")
+                        }
                     }
                 }
             }

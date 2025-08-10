@@ -54,7 +54,9 @@ struct NoFeedsBottomSheet: View {
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
-            .background(Color.secondaryBackgroundColor)
+            .if(!isiOS26OrLater()) { view in
+                            view.background(Color.secondaryBackgroundColor)
+            }
             .navigationTitle(feedFlowStrings.noFeedModalTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -67,7 +69,7 @@ struct NoFeedsBottomSheet: View {
                 }
             }
         }
-        .presentationDetents([.fraction(0.6)])
+        .presentationDetents([.medium])
     }
 }
 

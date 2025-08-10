@@ -37,6 +37,7 @@ struct HomeContent: View {
     @Binding var feedLayout: FeedLayout
 
     @State var isToolbarVisible: Bool = true
+    @State var showScrollToTop: Bool = false
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
@@ -73,10 +74,16 @@ struct HomeContent: View {
                 onReadStatusClick: onReadStatusClick,
                 onBackToTimelineClick: onBackToTimelineClick,
                 onMarkAllAsReadClick: onMarkAllReadClick,
-                openDrawer: openDrawer
+                openDrawer: openDrawer,
+                onScrollPositionChanged: { shouldShow in
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        showScrollToTop = shouldShow
+                    }
+                }
             )
             .onChange(of: toggleListScroll) {
                 proxy.scrollTo(feedState.first?.id)
+                showScrollToTop = false
             }
             .onChange(of: showSettings) {
                 sheetToShow = .settings
@@ -85,18 +92,24 @@ struct HomeContent: View {
                 view.navigationBarBackButtonHidden(true)
             }
             .navigationBarTitleDisplayMode(.inline)
+            .if(isiOS26OrLater()) { view in
+                view.navigationTitle(getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount))
+            }
             .toolbar {
                 if isToolbarVisible {
-                    makeToolbarHeaderView(proxy: proxy)
-                    if !isOnVisionOSDevice() {
-                        if showFeedSyncButton {
-                            makeFeedSynToolbarView()
-                        }
-                        makeSearchToolbarView()
-                        makeMenuToolbarView(proxy: proxy)
+                    if isiOS26OrLater() {
+                        makeIOS26ToolbarContent(proxy: proxy)
+                    } else {
+                        makeLegacyToolbarContent(proxy: proxy)
                     }
                 }
             }
+            .showsScrollToTop(isVisible: showScrollToTop, onScrollToTop: {
+                withAnimation {
+                    proxy.scrollTo(feedState.first?.id)
+                    showScrollToTop = false
+                }
+            })
         }
         .onChange(of: appState.redrawAfterFeedSourceEdit) {
             onRefresh()
@@ -139,6 +152,57 @@ struct HomeContent: View {
             case let .editFeed(source):
                 EditFeedScreen(feedSource: source)
             }
+        }
+    }
+
+    @ToolbarContentBuilder
+    private func makeIOS26ToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
+        if appState.sizeClass == .compact {
+        ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    self.dismiss()
+                } label: {
+                    Image(systemName: "sidebar.left")
+                }
+            }
+        }
+        
+        if #available(iOS 26.0, *) {
+            ToolbarSpacer(.fixed)
+        }
+        
+       ToolbarItem {
+            Button {
+                self.appState.navigate(
+                    route: CommonViewRoute.search
+                )
+            } label: {
+                Image(systemName: "magnifyingglass")
+            }
+        }
+        
+        if #available(iOS 26.0, *) {
+            ToolbarSpacer(.fixed)
+        }
+        if showFeedSyncButton {
+            makeFeedSynToolbarView()
+        }
+        
+        if !isOnVisionOSDevice() {
+            makeMenuToolbarView(proxy: proxy)
+        }
+    }
+    
+    @ToolbarContentBuilder
+    private func makeLegacyToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
+        makeToolbarHeaderView(proxy: proxy)
+        
+        if !isOnVisionOSDevice() {
+            if showFeedSyncButton {
+                makeFeedSynToolbarView()
+            }
+            makeSearchToolbarView()
+            makeMenuToolbarView(proxy: proxy)
         }
     }
 
@@ -246,11 +310,25 @@ struct HomeContent: View {
                     }
                 #endif
             } label: {
-                Image(systemName: "ellipsis.circle")
+                if isiOS26OrLater() {
+                    Image(systemName: "ellipsis")
+                } else {
+                    Image(systemName: "ellipsis.circle")
+                }
             }
         }
     }
 
+    func getNavBarTitleWithCount(feedFilter: FeedFilter, unreadCount: Int) -> String {
+        let baseName = getNavBarName(feedFilter: feedFilter)
+        
+        if !(feedFilter is FeedFilter.Read) && !(feedFilter is FeedFilter.Bookmarks) {
+            return "\(baseName) (\(unreadCount))"
+        } else {
+            return baseName
+        }
+    }
+    
     func getNavBarName(feedFilter: FeedFilter) -> String {
         let deviceType = getDeviceType()
 
@@ -281,6 +359,10 @@ struct HomeContent: View {
         }
     }
 }
+
+
+
+
 
 #Preview("HomeContentLoading") {
     HomeContent(

@@ -129,7 +129,11 @@ struct AddFeedScreenContent: View {
                     Button {
                         presentationMode.wrappedValue.dismiss()
                     } label: {
-                        Image(systemName: "xmark.circle")
+                        if isiOS26OrLater(){
+                            Image(systemName: "xmark")
+                        } else {
+                            Image(systemName: "xmark.circle")
+                        }
                     }
                 }
             }

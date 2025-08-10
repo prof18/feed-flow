@@ -229,4 +229,8 @@
     <string name="settings_feed_layout_list">Списък</string>
     <string name="settings_feed_layout_card">Карта</string>
     <string name="feed_layout_title">Оформление на емисия</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_theme_system">Системна</string>
+    <string name="settings_theme_light">Светла</string>
+    <string name="settings_theme_dark">Тъмна</string>
 </resources>

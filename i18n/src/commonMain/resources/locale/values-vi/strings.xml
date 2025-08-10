@@ -86,7 +86,7 @@
     <string name="settings_title_feed">Nguồn cấp</string>
     <string name="browser_selection_button">Trình duyệt</string>
     <string name="delete_feed">Xóa</string>
-    <string name="mark_all_read_button">Đã đọc hết</string>
+    <string name="mark_all_read_button">Đánh dấu đã đọc hết</string>
     <string name="load_file_error_message">Không thể đọc file</string>
     <string name="retry_button">Thử lại</string>
     <string name="issue_report_title">Báo lỗi với FeedFlow</string>
@@ -229,4 +229,8 @@
     <string name="settings_feed_layout_list">Danh sách</string>
     <string name="settings_feed_layout_card">Thẻ</string>
     <string name="feed_layout_title">Bố cục bảng tin</string>
+    <string name="settings_theme">Chủ đề</string>
+    <string name="settings_theme_system">Giống hệ thống</string>
+    <string name="settings_theme_light">Sáng</string>
+    <string name="settings_theme_dark">Tối</string>
 </resources>

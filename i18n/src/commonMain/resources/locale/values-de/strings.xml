@@ -229,4 +229,8 @@
     <string name="settings_feed_layout_list">Liste</string>
     <string name="settings_feed_layout_card">Karte</string>
     <string name="feed_layout_title">Feed-Layout</string>
+    <string name="settings_theme">Design</string>
+    <string name="settings_theme_system">Systemeinstellung</string>
+    <string name="settings_theme_light">Hell</string>
+    <string name="settings_theme_dark">Dunkel</string>
 </resources>

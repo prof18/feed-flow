@@ -17,26 +17,44 @@ struct Snackbar: View {
     @State private var showBanner: Bool = false
 
     var body: some View {
-        HStack {
+        HStack(spacing: Spacing.medium) {
             VStack(alignment: .leading, spacing: Spacing.xsmall) {
                 Text(snackbarData.title)
-                    .font(.title3)
-                    .foregroundColor(Color.popupText)
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .foregroundColor(.white)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 if let subtitle = snackbarData.subtitle {
                     Text(subtitle)
-                        .font(.caption)
-                        .foregroundColor(Color.popupText)
+                        .font(.system(.footnote, design: .rounded))
+                        .foregroundColor(.white.opacity(0.8))
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
-            .padding(.vertical, Spacing.regular)
-            .padding(.horizontal, Spacing.medium)
 
             Spacer()
         }
-        .background(Color.popupBackground)
-        .shadow(radius: 10)
-        .cornerRadius(8)
+        .padding(.vertical, Spacing.medium)
+        .padding(.horizontal, Spacing.medium)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.15, green: 0.15, blue: 0.2).opacity(0.92),
+                            Color(red: 0.1, green: 0.1, blue: 0.15).opacity(0.88)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
         .transition(AnyTransition.move(edge: .bottom).combined(with: .opacity))
         .gesture(
             DragGesture()

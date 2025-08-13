@@ -20,8 +20,6 @@ struct NoFeedsBottomSheet: View {
     let onAddFeedClick: () -> Void
     let onImportExportClick: () -> Void
 
-    var preferredHeight: CGFloat = 400
-
     var body: some View {
         NavigationStack {
             List {
@@ -69,7 +67,7 @@ struct NoFeedsBottomSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium])
+        .background(Color.secondaryBackgroundColor)
     }
 }
 

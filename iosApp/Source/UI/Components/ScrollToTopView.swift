@@ -10,7 +10,7 @@ import SwiftUI
 struct ScrollToTopView: View {
     let onScrollToTop: () -> Void
     let isVisible: Bool
-        
+
     var body: some View {
         if isVisible {
             if #available(iOS 26.0, *) {
@@ -26,7 +26,7 @@ struct ScrollToTopView: View {
 private struct iOS26ScrollToTopView: View {
     @Namespace private var namespace
     let onScrollToTop: () -> Void
-    
+
     var body: some View {
         GlassEffectContainer(spacing: Spacing.regular) {
             VStack(alignment: .center, spacing: Spacing.regular) {
@@ -49,7 +49,7 @@ private struct iOS26ScrollToTopView: View {
 
 private struct LegacyScrollToTopView: View {
     let onScrollToTop: () -> Void
-    
+
     var body: some View {
         Button {
             onScrollToTop()
@@ -70,11 +70,11 @@ private struct LegacyScrollToTopView: View {
 private struct ShowsScrollToTopViewModifier: ViewModifier {
     let onScrollToTop: () -> Void
     @State private var showButton: Bool = false
-    
+
     func body(content: Content) -> some View {
         ZStack {
             content
-            
+
             HStack {
                 Spacer()
                 VStack {
@@ -93,7 +93,7 @@ extension View {
     func showsScrollToTop(onScrollToTop: @escaping () -> Void) -> some View {
         modifier(ShowsScrollToTopViewModifier(onScrollToTop: onScrollToTop))
     }
-    
+
     /// A function that returns a view after it applies `ShowsScrollToTopViewModifier` with custom visibility control.
     func showsScrollToTop(isVisible: Bool, onScrollToTop: @escaping () -> Void) -> some View {
         modifier(ShowsScrollToTopViewModifierWithBinding(isVisible: isVisible, onScrollToTop: onScrollToTop))
@@ -103,11 +103,11 @@ extension View {
 private struct ShowsScrollToTopViewModifierWithBinding: ViewModifier {
     let isVisible: Bool
     let onScrollToTop: () -> Void
-    
+
     func body(content: Content) -> some View {
         ZStack {
             content
-            
+
             HStack {
                 Spacer()
                 VStack {

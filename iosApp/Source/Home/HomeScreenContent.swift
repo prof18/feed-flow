@@ -158,7 +158,7 @@ struct HomeContent: View {
     @ToolbarContentBuilder
     private func makeIOS26ToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
         if appState.sizeClass == .compact {
-        ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     self.dismiss()
                 } label: {
@@ -166,12 +166,12 @@ struct HomeContent: View {
                 }
             }
         }
-        
+
         if #available(iOS 26.0, *) {
             ToolbarSpacer(.fixed)
         }
-        
-       ToolbarItem {
+
+        ToolbarItem {
             Button {
                 self.appState.navigate(
                     route: CommonViewRoute.search
@@ -180,23 +180,23 @@ struct HomeContent: View {
                 Image(systemName: "magnifyingglass")
             }
         }
-        
+
         if #available(iOS 26.0, *) {
             ToolbarSpacer(.fixed)
         }
         if showFeedSyncButton {
             makeFeedSynToolbarView()
         }
-        
+
         if !isOnVisionOSDevice() {
             makeMenuToolbarView(proxy: proxy)
         }
     }
-    
+
     @ToolbarContentBuilder
     private func makeLegacyToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
         makeToolbarHeaderView(proxy: proxy)
-        
+
         if !isOnVisionOSDevice() {
             if showFeedSyncButton {
                 makeFeedSynToolbarView()
@@ -321,14 +321,14 @@ struct HomeContent: View {
 
     func getNavBarTitleWithCount(feedFilter: FeedFilter, unreadCount: Int) -> String {
         let baseName = getNavBarName(feedFilter: feedFilter)
-        
+
         if !(feedFilter is FeedFilter.Read) && !(feedFilter is FeedFilter.Bookmarks) {
             return "\(baseName) (\(unreadCount))"
         } else {
             return baseName
         }
     }
-    
+
     func getNavBarName(feedFilter: FeedFilter) -> String {
         let deviceType = getDeviceType()
 
@@ -359,10 +359,6 @@ struct HomeContent: View {
         }
     }
 }
-
-
-
-
 
 #Preview("HomeContentLoading") {
     HomeContent(

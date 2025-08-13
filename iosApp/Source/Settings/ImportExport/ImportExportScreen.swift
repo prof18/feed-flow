@@ -57,7 +57,7 @@ struct ImportExportScreen: View {
                         Button {
                             presentationMode.wrappedValue.dismiss()
                         } label: {
-                            if isiOS26OrLater(){
+                            if isiOS26OrLater() {
                                 Image(systemName: "xmark")
                             } else {
                                 Image(systemName: "xmark.circle")

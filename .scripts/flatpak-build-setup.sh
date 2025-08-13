@@ -9,7 +9,7 @@ echo "Setting up FeedFlow for Flatpak build..."
 
 # Set build properties
 echo "is_release=true" >> desktopApp/src/jvmMain/resources/props.properties
-echo "version=1.3.3" >> desktopApp/src/jvmMain/resources/props.properties
+echo "version=1.4.0" >> desktopApp/src/jvmMain/resources/props.properties
 echo "flatpak=true" >> desktopApp/src/jvmMain/resources/props.properties
 
 # Update Gradle wrapper distribution URL

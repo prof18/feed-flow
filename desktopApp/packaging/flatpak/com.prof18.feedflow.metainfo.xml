@@ -64,6 +64,16 @@
   </content_rating>
 
   <releases>
+      <release version="1.4.0" date="2025-08-13">
+          <description>
+              <p>The identifier of the feed items changed. NOTE: There could be some duplicate items until all the feeds are updated</p>
+              <p>Avoid triggering a refresh after mark all as read</p>
+              <p>Add theme switcher</p>
+              <p>Improve OPML importing</p>
+              <p>Bug fixes and improvements</p>
+              <p>Fix issue with Fresh RSS login</p>
+          </description>
+      </release>
     <release version="1.3.3" date="2025-08-05">
       <description>
         <p>First release!</p>

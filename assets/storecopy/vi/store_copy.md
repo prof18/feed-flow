@@ -7,22 +7,19 @@ FeedFlow - Trình đọc RSS
 Tối giản, nhanh chóng, gọn gàng
 
 ## Mô tả chi tiết
-Cập nhật thông tin theo cách của bạn với FeedFlow, trình đọc RSS tối giản giúp
-kiểm soát dòng thời gian nội dung của mình. Đồng bộ hóa trên mọi thiết bị và
-trải nghiệm đọc sạch sẽ, không bị phân tâm.
 
 Tính năng chính:
 
 - Thiết kế tối giản: Tập trung vào những gì quan trọng với giao diện gọn gàng
-- Đồng bộ liền mạch: Nguồn cấp dữ liệu của bạn được đồng bộ trên các thiết bị
-  với iCloud (iOS/macOS) hoặc Dropbox (tất cả các nền tảng)
-- Tích hợp FreshRSS: Kết nối với máy chủ FreshRSS của bạn để quản lý nguồn cấp
-  dữ liệu nâng cao
+- Đồng bộ liền mạch: Nguồn tin của bạn được đồng bộ trên các thiết bị với iCloud
+  (iOS/macOS) hoặc Dropbox (tất cả các nền tảng)
+- Tích hợp FreshRSS: Kết nối với máy chủ FreshRSS của bạn để quản lý nguồn tin
+  nâng cao
 - Tùy chọn đọc linh hoạt: Chọn giữa chế độ xem web, chế độ đọc hoặc trình duyệt
   ưa thích của bạn
 - Chú trọng vào quyền riêng tư: Chọn trình duyệt yêu thích của bạn để có trải
   nghiệm đọc riêng biệt
-- Di chuyển dễ dàng: Nhập và xuất nguồn cấp RSS của bạn thông qua các file OPML
+- Di chuyển dễ dàng: Nhập và xuất nguồn tin RSS của bạn thông qua các file OPML
 
 Điểm tạo nên sự khác biệt của FeedFlow:
 

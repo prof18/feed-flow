@@ -55,7 +55,7 @@ struct NoFeedsBottomSheet: View {
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
             .if(!isiOS26OrLater()) { view in
-                            view.background(Color.secondaryBackgroundColor)
+                view.background(Color.secondaryBackgroundColor)
             }
             .navigationTitle(feedFlowStrings.noFeedModalTitle)
             .navigationBarTitleDisplayMode(.inline)

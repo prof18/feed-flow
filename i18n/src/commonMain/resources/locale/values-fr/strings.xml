@@ -230,4 +230,8 @@
     <string name="feed_layout_title">Mise en page</string>
     <string name="settings_swipe_action_toggle_read">Activer lus</string>
     <string name="settings_swipe_action_toggle_bookmark">Activer les favoris</string>
+    <string name="settings_theme_dark">Sombre</string>
+    <string name="settings_theme">Thème</string>
+    <string name="settings_theme_system">Système</string>
+    <string name="settings_theme_light">Clair</string>
 </resources>

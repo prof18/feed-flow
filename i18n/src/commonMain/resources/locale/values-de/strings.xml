@@ -163,10 +163,10 @@
     <string name="settings_auto_delete_period">Periode löschen</string>
     <string name="settings_hide_description">Artikelbeschreibung ausblenden</string>
     <string name="settings_hide_images">Artikelbild ausblenden</string>
-    <string name="menu_remove_from_pinned">Pin entfernen</string>
-    <string name="menu_add_to_pinned">Pin setzen</string>
+    <string name="menu_remove_from_pinned">Nicht anpinnen</string>
+    <string name="menu_add_to_pinned">Anpinnen</string>
     <string name="feed_list_appearance">Aussehen der Feedliste</string>
-    <string name="drawer_title_pinned_feeds">Quellen der gepinnten Feeds</string>
+    <string name="drawer_title_pinned_feeds">Angepinnte Feeds</string>
     <string name="hide_feed_from_timeline_description">Artikel dieses Feeds in der Zeitleiste ausblenden</string>
     <string name="pin_feed_source_description">Feed anpinnen</string>
     <string name="category_name">Kategorienname</string>
@@ -229,4 +229,8 @@
     <string name="settings_feed_layout_list">Liste</string>
     <string name="settings_feed_layout_card">Karte</string>
     <string name="feed_layout_title">Feed-Layout</string>
+    <string name="settings_theme">Design</string>
+    <string name="settings_theme_system">Systemeinstellung</string>
+    <string name="settings_theme_light">Hell</string>
+    <string name="settings_theme_dark">Dunkel</string>
 </resources>

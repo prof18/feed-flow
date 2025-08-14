@@ -229,4 +229,8 @@
     <string name="settings_feed_order_title">Seřadit podle data</string>
     <string name="settings_feed_order_newest_first">Nejdříve nejnovější</string>
     <string name="settings_feed_order_oldest_first">Nejdříve nejstarší</string>
+    <string name="settings_theme">Motiv vzhledu</string>
+    <string name="settings_theme_system">Systémový</string>
+    <string name="settings_theme_light">Světlý</string>
+    <string name="settings_theme_dark">Tmavý</string>
 </resources>

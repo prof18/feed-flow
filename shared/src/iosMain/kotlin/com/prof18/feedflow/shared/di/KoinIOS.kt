@@ -40,6 +40,7 @@ import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
+import com.prof18.feedflow.shared.utils.Telemetry
 import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
@@ -64,6 +65,7 @@ fun initKoinIos(
     dropboxDataSource: DropboxDataSource,
     appVersion: String,
     notifier: Notifier,
+    telemetry: Telemetry,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
@@ -78,6 +80,7 @@ fun initKoinIos(
             factory { htmlParser }
             single { dropboxDataSource }
             single { notifier }
+            single { telemetry }
             single<FeedFlowStrings> {
                 when {
                     languageCode == null -> EnFeedFlowStrings
@@ -153,6 +156,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             settingsRepository = get(),
             accountsRepository = get(),
             iCloudSettings = get(),
+            telemetry = get(),
         )
     }
 

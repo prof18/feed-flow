@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		132B595E2DB28E8D0005D0D7 /* Reader in Frameworks */ = {isa = PBXBuildFile; productRef = 132B595D2DB28E8D0005D0D7 /* Reader */; };
+		133E7E312E4F2BD800B2232E /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = 133E7E302E4F2BD800B2232E /* TelemetryDeck */; };
 		1378B0432D735968004E9424 /* SwiftyDropbox in Frameworks */ = {isa = PBXBuildFile; productRef = 1378B0422D735968004E9424 /* SwiftyDropbox */; };
 		1378B0452D735977004E9424 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 1378B0442D735977004E9424 /* SwiftSoup */; };
 		13929EA32D7345F0003752AE /* ShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 13929E992D7345F0003752AE /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -147,6 +148,7 @@
 				UI/Style/Spacing.swift,
 				Utils/IosHtmlParser.swift,
 				Utils/IOSNotifier.swift,
+				Utils/TelemetryReporter.swift,
 				Utils/VMStoreOwner.swift,
 			);
 			target = 13929E982D7345F0003752AE /* ShareExtension */;
@@ -163,10 +165,8 @@
 			membershipExceptions = (
 				Accounts/Dropbox/Data/DropboxDataSourceIos.swift,
 				Accounts/Dropbox/Data/DropboxErrors.swift,
-				DI/Koin.swift,
 				UI/Style/Spacing.swift,
 				Utils/IosHtmlParser.swift,
-				Utils/IOSNotifier.swift,
 			);
 			target = 13A571E42D747F0600F0FFB0 /* WidgetExtension */;
 		};
@@ -187,6 +187,7 @@
 				13929EB72D734E95003752AE /* FirebaseCrashlytics in Frameworks */,
 				1378B0432D735968004E9424 /* SwiftyDropbox in Frameworks */,
 				1378B0452D735977004E9424 /* SwiftSoup in Frameworks */,
+				133E7E312E4F2BD800B2232E /* TelemetryDeck in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,6 +322,7 @@
 				13929EB62D734E95003752AE /* FirebaseCrashlytics */,
 				1378B0422D735968004E9424 /* SwiftyDropbox */,
 				1378B0442D735977004E9424 /* SwiftSoup */,
+				133E7E302E4F2BD800B2232E /* TelemetryDeck */,
 			);
 			productName = ShareExtension;
 			productReference = 13929E992D7345F0003752AE /* ShareExtension.appex */;
@@ -1181,6 +1183,11 @@
 		132B595D2DB28E8D0005D0D7 /* Reader */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Reader;
+		};
+		133E7E302E4F2BD800B2232E /* TelemetryDeck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCEBF1402E2CFEDD004CE2B2 /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryDeck;
 		};
 		1378B0422D735968004E9424 /* SwiftyDropbox */ = {
 			isa = XCSwiftPackageProductDependency;

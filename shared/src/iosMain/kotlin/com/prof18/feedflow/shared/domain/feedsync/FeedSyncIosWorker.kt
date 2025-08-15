@@ -17,6 +17,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.utils.Telemetry
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
@@ -49,6 +50,7 @@ internal class FeedSyncIosWorker(
     private val settingsRepository: SettingsRepository,
     private val accountsRepository: AccountsRepository,
     private val iCloudSettings: ICloudSettings,
+    private val telemetry: Telemetry,
 ) : FeedSyncWorker {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -75,7 +77,11 @@ internal class FeedSyncIosWorker(
 
             val databasePath = getDatabaseUrl()
             if (databasePath == null) {
-                logger.w { "Database URL is null, cannot perform upload" }
+                logger.e { "Database URL is null, cannot perform upload" }
+                telemetry.trackError(
+                    id = "FeedSyncIosWorker.performUpload",
+                    message = "Database URL is null, cannot perform upload",
+                )
                 emitErrorMessage()
                 return@withContext
             }
@@ -84,19 +90,33 @@ internal class FeedSyncIosWorker(
             emitSuccessMessage()
         } catch (e: SQLiteException) {
             logger.e(e) { "SQLiteException during upload" }
+            telemetry.trackError(
+                id = "FeedSyncIosWorker.performUpload",
+                message = "SQLiteException during upload: ${e.message}",
+            )
             try {
                 feedSyncer.closeDB()
-                logger.w { "Sync database closed after error" }
+                logger.e { "Sync database closed after error" }
                 getDatabaseUrl()?.let { path ->
                     NSFileManager.defaultManager.removeItemAtURL(path, null)
                     feedSyncer.populateSyncDbIfEmpty()
-                    logger.w { "Sync database recreated after error" }
+                    logger.e { "Sync database recreated after error" }
+                    telemetry.signal("FeedSyncIosWorker.performUpload.recreateDatabase")
                 }
             } catch (_: Exception) {
                 // best effort
+                logger.e { "Database recreation after error failed" }
+                telemetry.trackError(
+                    id = "FeedSyncIosWorker.performUpload",
+                    message = "Database recreation after error failed",
+                )
             }
         } catch (e: Exception) {
             logger.e("Upload failed", e)
+            telemetry.trackError(
+                id = "FeedSyncIosWorker.performUpload",
+                message = "Upload failed: ${e.message}",
+            )
             emitErrorMessage()
         }
     }
@@ -106,7 +126,13 @@ internal class FeedSyncIosWorker(
             feedSyncer.closeDB()
             accountSpecificDownload()
         } catch (e: Exception) {
-            logger.e("Download from dropbox failed", e)
+            logger.e("Download failed", e)
+            if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
+                telemetry.trackError(
+                    id = "FeedSyncIosWorker.download",
+                    message = "Download failed: ${e.message}",
+                )
+            }
             SyncResult.Error
         }
     }
@@ -117,9 +143,16 @@ internal class FeedSyncIosWorker(
             feedSyncer.syncFeedSourceCategory()
             feedSyncer.syncFeedSource()
             logger.w { "Syncing feed sources finished" }
+            if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
+                telemetry.signal("FeedSyncIosWorker.syncFeedSources.iCloud")
+            }
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed sources failed", e)
+            telemetry.trackError(
+                id = "FeedSyncIosWorker.syncFeedSources",
+                message = "Sync feed sources failed: ${e.message}",
+            )
             SyncResult.Error
         }
     }
@@ -129,9 +162,16 @@ internal class FeedSyncIosWorker(
             logger.w { "Start syncing feed items" }
             feedSyncer.syncFeedItem()
             logger.w { "Syncing feed items finished" }
+            if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
+                telemetry.signal("FeedSyncIosWorker.syncFeedItems.iCloud")
+            }
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed items failed", e)
+            telemetry.trackError(
+                id = "FeedSyncIosWorker.syncFeedItems",
+                message = "Sync feed items failed: ${e.message}",
+            )
             SyncResult.Error
         }
     }
@@ -184,6 +224,10 @@ internal class FeedSyncIosWorker(
 
                 if (errorPtr.value != null) {
                     logger.e { "Error replacing database: ${errorPtr.value}" }
+                    telemetry.trackError(
+                        id = "FeedSyncIosWorker.replaceDatabase",
+                        message = "Error replacing database: ${errorPtr.value}",
+                    )
                     return false
                 }
 
@@ -228,12 +272,21 @@ internal class FeedSyncIosWorker(
 
                         if (errorPtr.value != null) {
                             logger.e { "Error uploading to iCloud: ${errorPtr.value}" }
+                            telemetry.trackError(
+                                id = "FeedSyncIosWorker.accountSpecificUpload",
+                                message = "Error uploading to iCloud: ${errorPtr.value}",
+                            )
                         }
                     }
                     iCloudSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
                     logger.w { "Upload to iCloud successfully" }
+                    telemetry.signal("FeedSyncIosWorker.accountSpecificUpload.iCloud")
                 } else {
                     logger.e { "Error uploading to iCloud: iCloud URL is null" }
+                    telemetry.trackError(
+                        id = "FeedSyncIosWorker.accountSpecificUpload",
+                        message = "Error uploading to iCloud: iCloud URL is null",
+                    )
                 }
             }
 
@@ -280,6 +333,10 @@ internal class FeedSyncIosWorker(
         val tempUrl = getTemporaryFileUrl()
         if (iCloudUrl == null || tempUrl == null) {
             logger.e { "Error downloading from iCloud: iCloud URL or temporary URL is null" }
+            telemetry.trackError(
+                id = "FeedSyncIosWorker.iCloudDownload",
+                message = "Error downloading from iCloud: iCloud URL or temporary URL is null",
+            )
             return SyncResult.Error
         }
         NSFileManager.defaultManager.removeItemAtURL(
@@ -298,12 +355,17 @@ internal class FeedSyncIosWorker(
 
             if (errorPtr.value != null) {
                 logger.e { "Error downloading from iCloud: ${errorPtr.value}" }
+                telemetry.trackError(
+                    id = "FeedSyncIosWorker.iCloudDownload",
+                    message = "Error downloading from iCloud: ${errorPtr.value}",
+                )
                 return SyncResult.Error
             }
 
             replaceDatabase(tempUrl)
             iCloudSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
             logger.w { "Download from iCloud successfully" }
+            telemetry.signal("FeedSyncIosWorker.iCloudDownload")
             return SyncResult.Success
         }
     }

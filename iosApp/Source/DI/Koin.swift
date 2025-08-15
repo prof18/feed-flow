@@ -28,7 +28,8 @@ func startKoin() {
         regionCode: regionCode,
         dropboxDataSource: DropboxDataSourceIos(),
         appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
-        notifier: IOSNotifier()
+        notifier: IOSNotifier(),
+        telemetry: TelemetryReporter()
     )
     _feedFlowStrings = Deps.shared.getFeedFlowStrings()
 }

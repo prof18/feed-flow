@@ -39,7 +39,6 @@ import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
-import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
@@ -286,17 +285,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSourcesRepository = get(),
             accountsRepository = get(),
             databaseHelper = get(),
-        )
-    }
-
-    viewModel {
-        ICloudSyncViewModel(
-            iCloudSettings = get(),
-            dateFormatter = get(),
-            accountsRepository = get(),
-            feedSyncRepository = get(),
-            feedFetcherRepository = get(),
-            feedSyncMessageQueue = get(),
         )
     }
 

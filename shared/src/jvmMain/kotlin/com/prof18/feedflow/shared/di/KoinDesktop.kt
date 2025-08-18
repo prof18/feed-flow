@@ -18,6 +18,7 @@ import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
+import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.MarkdownToHtmlConverter
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
@@ -155,4 +156,15 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     factoryOf(::ReaderModeViewModel)
 
     factoryOf(::DatabaseCloser)
+
+    viewModel {
+        ICloudSyncViewModel(
+            iCloudSettings = get(),
+            dateFormatter = get(),
+            accountsRepository = get(),
+            feedSyncRepository = get(),
+            feedFetcherRepository = get(),
+            feedSyncMessageQueue = get(),
+        )
+    }
 }

@@ -196,6 +196,18 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             notifier = get(),
         )
     }
+
+    viewModel {
+        ICloudSyncViewModel(
+            iCloudSettings = get(),
+            dateFormatter = get(),
+            accountsRepository = get(),
+            feedSyncRepository = get(),
+            feedFetcherRepository = get(),
+            feedSyncMessageQueue = get(),
+            logger = getWith("ICloudSyncViewModel"),
+        )
+    }
 }
 
 @Suppress("unused") // Called from Swift

@@ -66,7 +66,7 @@ internal class FeedSyncAndroidWorker(
             feedSyncer.updateFeedItemsToSyncDatabase()
             feedSyncer.closeDB()
 
-            val databaseFile = generateDatabaseFile() ?: return@withContext SyncResult.Error
+            val databaseFile = generateDatabaseFile() ?: return@withContext SyncResult.Error.General
             val dropboxUploadParam = DropboxUploadParam(
                 path = "/${getDatabaseNameWithExtension()}",
                 file = databaseFile,
@@ -80,11 +80,11 @@ internal class FeedSyncAndroidWorker(
         } catch (e: Exception) {
             logger.e("Upload to dropbox failed", e)
             emitErrorMessage()
-            return@withContext SyncResult.Error
+            return@withContext SyncResult.Error.General
         }
     }
 
-    override suspend fun download(): SyncResult = withContext(dispatcherProvider.io) {
+    override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
         val databaseLocalPath = databasePath()
         val dropboxDownloadParam = DropboxDownloadParam(
             path = "/${getDatabaseNameWithExtension()}",
@@ -100,7 +100,7 @@ internal class FeedSyncAndroidWorker(
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Download from dropbox failed", e)
-            SyncResult.Error
+            SyncResult.Error.General
         }
     }
 
@@ -111,7 +111,7 @@ internal class FeedSyncAndroidWorker(
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed sources failed", e)
-            SyncResult.Error
+            SyncResult.Error.General
         }
     }
 
@@ -121,7 +121,7 @@ internal class FeedSyncAndroidWorker(
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed items failed", e)
-            SyncResult.Error
+            SyncResult.Error.General
         }
     }
 
@@ -180,7 +180,7 @@ internal class FeedSyncAndroidWorker(
         "${getDatabaseName()}.db"
 
     private suspend fun emitErrorMessage() =
-        feedSyncMessageQueue.emitResult(SyncResult.Error)
+        feedSyncMessageQueue.emitResult(SyncResult.Error.General)
 
     private suspend fun emitSuccessMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.Success)

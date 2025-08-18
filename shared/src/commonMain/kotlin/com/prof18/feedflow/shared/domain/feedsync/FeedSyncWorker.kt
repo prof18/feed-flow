@@ -13,7 +13,7 @@ internal interface FeedSyncWorker {
      */
     suspend fun uploadImmediate()
 
-    suspend fun download(): SyncResult
+    suspend fun download(isFirstSync: Boolean = false): SyncResult
 
     suspend fun syncFeedSources(): SyncResult
 

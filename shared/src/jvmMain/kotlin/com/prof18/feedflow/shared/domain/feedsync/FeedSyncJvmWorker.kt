@@ -118,7 +118,7 @@ internal class FeedSyncJvmWorker(
             }
         }
 
-    override suspend fun download(): SyncResult = withContext(dispatcherProvider.io) {
+    override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
         try {
             databaseFile.delete()
         } catch (_: Exception) {
@@ -130,7 +130,7 @@ internal class FeedSyncJvmWorker(
             accountSpecificDownload()
         } catch (e: Exception) {
             logger.e("Download from dropbox failed", e)
-            SyncResult.Error
+            SyncResult.Error.General
         }
     }
 
@@ -158,27 +158,27 @@ internal class FeedSyncJvmWorker(
 
                     DownloadResult.URL_NULL -> {
                         logger.e { "iCloud URL is null" }
-                        SyncResult.Error
+                        SyncResult.Error.General
                     }
 
                     DownloadResult.TEMP_URL_NULL -> {
                         logger.e { "Temporary URL is null" }
-                        SyncResult.Error
+                        SyncResult.Error.General
                     }
 
                     DownloadResult.DOWNLOAD_ERROR -> {
                         logger.e { "Error during iCloud download" }
-                        SyncResult.Error
+                        SyncResult.Error.General
                     }
 
                     DownloadResult.DATABASE_REPLACE_ERROR -> {
                         logger.e { "Error during database replace" }
-                        SyncResult.Error
+                        SyncResult.Error.General
                     }
 
                     DownloadResult.UNKNOWN_ERROR -> {
                         logger.e { "Unknown error during iCloud download. Check the enum mapping" }
-                        SyncResult.Error
+                        SyncResult.Error.General
                     }
                 }
             }
@@ -197,7 +197,7 @@ internal class FeedSyncJvmWorker(
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed sources failed", e)
-            SyncResult.Error
+            SyncResult.Error.General
         }
     }
 
@@ -207,7 +207,7 @@ internal class FeedSyncJvmWorker(
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed items failed", e)
-            SyncResult.Error
+            SyncResult.Error.General
         }
     }
 
@@ -237,7 +237,7 @@ internal class FeedSyncJvmWorker(
         "${getDatabaseName()}.db"
 
     private suspend fun emitErrorMessage() =
-        feedSyncMessageQueue.emitResult(SyncResult.Error)
+        feedSyncMessageQueue.emitResult(SyncResult.Error.General)
 
     private suspend fun emitSuccessMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.Success)

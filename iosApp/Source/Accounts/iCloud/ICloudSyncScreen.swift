@@ -52,13 +52,23 @@ struct ICloudSyncScreen: View {
         }
         .task {
             for await state in vmStoreOwner.instance.syncMessageQueue where state.isError() {
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: feedFlowStrings.errorAccountSync,
-                        subtitle: nil,
-                        showBanner: true
+                if state is SyncResultErrorICloudNotAvailable {
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.icloudConnectionError,
+                            subtitle: nil,
+                            showBanner: true
+                        )
                     )
-                )
+                } else {
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.errorAccountSync,
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    )
+                }
             }
         }
     }

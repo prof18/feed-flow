@@ -17,6 +17,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.presentation.getICloudBaseFolderURL
 import com.prof18.feedflow.shared.utils.Telemetry
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -121,19 +122,21 @@ internal class FeedSyncIosWorker(
         }
     }
 
-    override suspend fun download(): SyncResult = withContext(dispatcherProvider.io) {
+    override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
         return@withContext try {
             feedSyncer.closeDB()
-            accountSpecificDownload()
+            accountSpecificDownload(isFirstSync)
         } catch (e: Exception) {
-            logger.e("Download failed", e)
-            if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
-                telemetry.trackError(
-                    id = "FeedSyncIosWorker.download",
-                    message = "Download failed: ${e.message}",
-                )
+            if (!isFirstSync) {
+                logger.e("Download failed", e)
+                if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
+                    telemetry.trackError(
+                        id = "FeedSyncIosWorker.download",
+                        message = "Download failed: ${e.message}",
+                    )
+                }
             }
-            SyncResult.Error
+            SyncResult.Error.General
         }
     }
 
@@ -153,7 +156,7 @@ internal class FeedSyncIosWorker(
                 id = "FeedSyncIosWorker.syncFeedSources",
                 message = "Sync feed sources failed: ${e.message}",
             )
-            SyncResult.Error
+            SyncResult.Error.General
         }
     }
 
@@ -172,7 +175,7 @@ internal class FeedSyncIosWorker(
                 id = "FeedSyncIosWorker.syncFeedItems",
                 message = "Sync feed items failed: ${e.message}",
             )
-            SyncResult.Error
+            SyncResult.Error.General
         }
     }
 
@@ -189,7 +192,7 @@ internal class FeedSyncIosWorker(
     }
 
     private suspend fun emitErrorMessage() =
-        feedSyncMessageQueue.emitResult(SyncResult.Error)
+        feedSyncMessageQueue.emitResult(SyncResult.Error.General)
 
     private suspend fun emitSuccessMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.Success)
@@ -295,7 +298,7 @@ internal class FeedSyncIosWorker(
             }
         }
 
-    private suspend fun accountSpecificDownload(): SyncResult {
+    private suspend fun accountSpecificDownload(isFirstSync: Boolean): SyncResult {
         return when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.DROPBOX -> {
                 val dropboxDownloadParam = DropboxDownloadParam(
@@ -308,7 +311,7 @@ internal class FeedSyncIosWorker(
                 val destinationUrl = result.destinationUrl
                 if (destinationUrl == null) {
                     logger.e { "Error downloading database" }
-                    return SyncResult.Error
+                    return SyncResult.Error.General
                 }
                 replaceDatabase(destinationUrl.url)
                 dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
@@ -317,7 +320,7 @@ internal class FeedSyncIosWorker(
             }
 
             SyncAccounts.ICLOUD -> {
-                return iCloudDownload()
+                return iCloudDownload(isFirstSync)
             }
 
             else -> {
@@ -328,16 +331,22 @@ internal class FeedSyncIosWorker(
     }
 
     @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-    private fun iCloudDownload(): SyncResult {
+    private suspend fun iCloudDownload(isFirstSync: Boolean): SyncResult {
         val iCloudUrl = getICloudFolderURL()
         val tempUrl = getTemporaryFileUrl()
         if (iCloudUrl == null || tempUrl == null) {
-            logger.e { "Error downloading from iCloud: iCloud URL or temporary URL is null" }
+            val iCloudUrlNull = iCloudUrl == null
+            val tempUrlNull = tempUrl == null
+            val message =
+                """
+                    Error downloading from iCloud: iCloud URL is null: $iCloudUrlNull, temporary URL is null: $tempUrlNull
+                """.trimIndent()
+            logger.e { message }
             telemetry.trackError(
                 id = "FeedSyncIosWorker.iCloudDownload",
-                message = "Error downloading from iCloud: iCloud URL or temporary URL is null",
+                message = message,
             )
-            return SyncResult.Error
+            return if (iCloudUrl == null) SyncResult.Error.ICloudNotAvailable else SyncResult.Error.General
         }
         NSFileManager.defaultManager.removeItemAtURL(
             tempUrl,
@@ -354,12 +363,14 @@ internal class FeedSyncIosWorker(
             )
 
             if (errorPtr.value != null) {
-                logger.e { "Error downloading from iCloud: ${errorPtr.value}" }
-                telemetry.trackError(
-                    id = "FeedSyncIosWorker.iCloudDownload",
-                    message = "Error downloading from iCloud: ${errorPtr.value}",
-                )
-                return SyncResult.Error
+                if (!isFirstSync) {
+                    logger.e { "Error downloading from iCloud: ${errorPtr.value}" }
+                    telemetry.trackError(
+                        id = "FeedSyncIosWorker.iCloudDownload",
+                        message = "Error downloading from iCloud: ${errorPtr.value}",
+                    )
+                }
+                return SyncResult.Error.General
             }
 
             replaceDatabase(tempUrl)
@@ -370,9 +381,7 @@ internal class FeedSyncIosWorker(
         }
     }
 
-    private fun getICloudFolderURL(): NSURL? = NSFileManager.defaultManager
-        .URLForUbiquityContainerIdentifier("iCloud.com.prof18.feedflow")
-        ?.URLByAppendingPathComponent("Documents")
+    private suspend fun getICloudFolderURL(): NSURL? = getICloudBaseFolderURL()
         ?.URLByAppendingPathComponent(getDatabaseName())
 
     private fun getTemporaryFileUrl(): NSURL? {

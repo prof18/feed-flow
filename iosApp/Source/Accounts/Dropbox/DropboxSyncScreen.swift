@@ -11,10 +11,10 @@ import Foundation
 import SwiftUI
 
 struct DropboxSyncScreen: View {
-    @Environment(AppState.self) private var appState
+    @Environment(AppState.self)
+    private var appState
 
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<DropboxSyncViewModel>(Deps.shared.getDropboxSyncViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<DropboxSyncViewModel>(Deps.shared.getDropboxSyncViewModel())
 
     @State private var uiState: AccountConnectionUiState = .Unlinked()
 

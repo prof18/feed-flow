@@ -12,9 +12,12 @@ import Reader
 import SwiftUI
 
 struct CompactView: View {
-    @Environment(AppState.self) private var appState
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(\.openURL) private var openURL
+    @Environment(AppState.self)
+    private var appState
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(\.openURL)
+    private var openURL
 
     @Binding var selectedDrawerItem: DrawerItem?
 
@@ -101,11 +104,10 @@ struct CompactView: View {
                         showSettings: .constant(false),
                         selectedDrawerItem: $selectedDrawerItem,
                         columnVisibility: .constant(.automatic),
-                        homeViewModel: homeViewModel,
-                        openDrawer: {
-                            // Handle by the view for the compact view
-                        }
-                    )
+                        homeViewModel: homeViewModel
+                    ) {
+                        // Handle by the view for the compact view
+                    }
                     .environment(indexHolder)
                 }
             }

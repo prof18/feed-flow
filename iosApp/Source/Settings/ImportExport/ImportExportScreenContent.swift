@@ -13,11 +13,9 @@ struct ImportExportContent: View {
     @Environment(\.presentationMode)
     var presentationMode
 
-    @Binding
-    var feedImportExportState: FeedImportExportState
+    @Binding var feedImportExportState: FeedImportExportState
 
-    @Binding
-    var sheetToShow: ImportExportSheetToShow?
+    @Binding var sheetToShow: ImportExportSheetToShow?
 
     let onExportClick: () -> Void
     let onRetryClick: () -> Void
@@ -45,8 +43,7 @@ struct ImportExportContent: View {
         }
     }
 
-    @ViewBuilder
-    var importExportContent: some View {
+    @ViewBuilder var importExportContent: some View {
         switch onEnum(of: feedImportExportState) {
         case .idle:
             idleView
@@ -68,8 +65,7 @@ struct ImportExportContent: View {
         }
     }
 
-    @ViewBuilder
-    private var idleView: some View {
+    @ViewBuilder private var idleView: some View {
         VStack {
             Form {
                 Section {
@@ -85,32 +81,25 @@ struct ImportExportContent: View {
                     }
                 )
 
-                Button(
-                    action: onExportClick,
-                    label: {
-                        Label(feedFlowStrings.exportFeedsButton, systemImage: "arrow.up.doc")
-                    }
-                )
+                Button(action: onExportClick) {
+                    Label(feedFlowStrings.exportFeedsButton, systemImage: "arrow.up.doc")
+                }
             }
             Spacer()
         }
     }
 
-    @ViewBuilder
-    private var errorView: some View {
+    @ViewBuilder private var errorView: some View {
         VStack {
             Spacer()
 
             Text(feedFlowStrings.genericErrorMessage)
                 .font(.body)
 
-            Button(
-                action: onRetryClick,
-                label: {
-                    Text(feedFlowStrings.retryButton)
-                        .frame(maxWidth: .infinity)
-                }
-            )
+            Button(action: onRetryClick) {
+                Text(feedFlowStrings.retryButton)
+                    .frame(maxWidth: .infinity)
+            }
             .buttonStyle(.bordered)
             .padding(.top, Spacing.regular)
             .padding(.horizontal, Spacing.medium)
@@ -133,8 +122,7 @@ struct ImportExportContent: View {
         .frame(maxWidth: .infinity)
     }
 
-    @ViewBuilder
-    private var exportDoneView: some View {
+    @ViewBuilder private var exportDoneView: some View {
         VStack {
             Spacer()
 
@@ -174,8 +162,7 @@ struct ImportExportContent: View {
         }
     }
 
-    @ViewBuilder
-    private var allFeedSourceValidView: some View {
+    @ViewBuilder private var allFeedSourceValidView: some View {
         Spacer()
 
         Text(feedFlowStrings.feedsImportDoneMessage)

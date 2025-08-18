@@ -17,11 +17,10 @@ class DropboxDataSourceIos: DropboxDataSource {
     func setup(apiKey: String) {
         DropboxClientsManager.setupWithAppKey(
             apiKey,
-            backgroundSessionIdentifier: "feed-flow-drobox-sync-background-identifier",
-            requestsToReconnect: { requestResults in
-                DropboxDataSourceIos.processReconnect(requestResults: requestResults)
-            }
-        )
+            backgroundSessionIdentifier: "feed-flow-drobox-sync-background-identifier"
+        ) { requestResults in
+            DropboxDataSourceIos.processReconnect(requestResults: requestResults)
+        }
     }
 
     static func processReconnect(requestResults: [Result<DropboxBaseRequestBox, ReconnectionError>]) {
@@ -99,7 +98,6 @@ class DropboxDataSourceIos: DropboxDataSource {
                             destinationUrl: DatabaseDestinationUrl(url: response.1)
                         )
                         completionHandler(downloadResult, nil)
-
                     } else if let error = error {
                         Deps.shared.getLogger(tag: "DropboxDataSourceIos").e(
                             messageString: error.description
@@ -140,7 +138,7 @@ class DropboxDataSourceIos: DropboxDataSource {
 
                     let uploadResult = DropboxUploadResult(
                         id: response.id,
-                        editDateMillis: Int64(response.serverModified.timeIntervalSince1970 * 1000),
+                        editDateMillis: Int64(response.serverModified.timeIntervalSince1970 * 1_000),
                         sizeInByte: Int64(response.size),
                         contentHash: response.contentHash
                     )

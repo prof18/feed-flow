@@ -10,7 +10,8 @@ import FeedFlowKit
 import Foundation
 import UIKit
 
-@Observable class BrowserSelector {
+@Observable
+class BrowserSelector {
     private let supportedBrowsers = [
         Browser(
             id: "",
@@ -118,9 +119,9 @@ import UIKit
             } else {
                 url = "\(selectedBrowser.id)\(stringUrl)"
             }
-            return URL(string: url)!
+            return URL(string: url) ?? URL(string: stringUrl) ?? URL(fileURLWithPath: "")
         } else {
-            return URL(string: stringUrl)!
+            return URL(string: stringUrl) ?? URL(fileURLWithPath: "")
         }
     }
 }

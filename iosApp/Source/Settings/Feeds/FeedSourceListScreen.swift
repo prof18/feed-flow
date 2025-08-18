@@ -10,14 +10,13 @@ import FeedFlowKit
 import SwiftUI
 
 struct FeedSourceListScreen: View {
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<FeedSourceListViewModel>(
+    @StateObject private var vmStoreOwner = VMStoreOwner<FeedSourceListViewModel>(
         Deps.shared.getFeedSourceListViewModel())
 
-    @Environment(AppState.self) private var appState
+    @Environment(AppState.self)
+    private var appState
 
-    @State
-    private var feedState: FeedSourceListState = .init(
+    @State private var feedState: FeedSourceListState = .init(
         feedSourcesWithoutCategory: [],
         feedSourcesWithCategory: []
     )

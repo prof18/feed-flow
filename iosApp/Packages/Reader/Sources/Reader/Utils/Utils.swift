@@ -22,7 +22,7 @@ extension String {
         for separator in [" | ", " – ", " — ", " - "] {
             if contains(separator),
                let firstComponent = components(separatedBy: separator).first,
-               firstComponent != "" {
+               !firstComponent.isEmpty {
                 return firstComponent.byStrippingSiteNameFromPageTitle
             }
         }
@@ -36,7 +36,7 @@ extension String {
 
 extension URL {
     var inferredFaviconURL: URL {
-        return URL(string: "/favicon.ico", relativeTo: self)!
+        return URL(string: "/favicon.ico", relativeTo: self) ?? self
     }
 
     var hostWithoutWWW: String {
@@ -50,6 +50,6 @@ extension URL {
 
 extension View {
     func onAppearOrChange<T: Equatable>(_ value: T, perform: @escaping (T) -> Void) -> some View {
-        onAppear(perform: { perform(value) }).onChange(of: value, perform: perform)
+        onAppear { perform(value) }.onChange(of: value, perform: perform)
     }
 }

@@ -11,11 +11,12 @@ import Foundation
 import SwiftUI
 
 struct ICloudSyncScreen: View {
-    @Environment(AppState.self) private var appState
-    @Environment(\.dismiss) private var dismiss
+    @Environment(AppState.self)
+    private var appState
+    @Environment(\.dismiss)
+    private var dismiss
 
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<ICloudSyncViewModel>(Deps.shared.getICloudSyncViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<ICloudSyncViewModel>(Deps.shared.getICloudSyncViewModel())
 
     @State private var uiState: AccountConnectionUiState = .Unlinked()
 

@@ -10,7 +10,8 @@ import FeedFlowKit
 import SwiftUI
 
 struct ICloudSyncScreenContent: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss)
+    private var dismiss
 
     var connectionState: AccountConnectionUiState
     let onConnectClick: () -> Void
@@ -22,8 +23,7 @@ struct ICloudSyncScreenContent: View {
             .navigationTitle("iCloud")
     }
 
-    @ViewBuilder
-    private var content: some View {
+    @ViewBuilder private var content: some View {
         switch onEnum(of: connectionState) {
         case .loading:
             ProgressView()
@@ -36,8 +36,7 @@ struct ICloudSyncScreenContent: View {
         }
     }
 
-    @ViewBuilder
-    private var loadingView: some View {
+    @ViewBuilder private var loadingView: some View {
         ProgressView()
     }
 
@@ -118,8 +117,7 @@ struct ICloudSyncScreenContent: View {
         }
     }
 
-    @ViewBuilder
-    private var disconnectedView: some View {
+    @ViewBuilder private var disconnectedView: some View {
         VStack {
             Form {
                 Section {

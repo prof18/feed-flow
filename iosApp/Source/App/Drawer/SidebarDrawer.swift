@@ -12,7 +12,8 @@ import SwiftUI
 
 @MainActor
 struct SidebarDrawer: View {
-    @Environment(AppState.self) private var appState
+    @Environment(AppState.self)
+    private var appState
     @Binding var selectedDrawerItem: DrawerItem?
 
     let navDrawerState: NavDrawerState
@@ -86,8 +87,7 @@ struct SidebarDrawer: View {
         )
     }
 
-    @ViewBuilder
-    private var feedSourcesWithoutCategorySection: some View {
+    @ViewBuilder private var feedSourcesWithoutCategorySection: some View {
         if !navDrawerState.feedSourcesWithoutCategory.isEmpty {
             Section(
                 content: {
@@ -104,8 +104,7 @@ struct SidebarDrawer: View {
         }
     }
 
-    @ViewBuilder
-    private var feedSourcesWithCategorySection: some View {
+    @ViewBuilder private var feedSourcesWithCategorySection: some View {
         if !navDrawerState.feedSourcesByCategory.isEmpty {
             Section(
                 content: {
@@ -155,7 +154,8 @@ struct SidebarDrawer: View {
                     trailing: Spacing.small
                 )
             )
-        }.if(appState.sizeClass == .regular) { view in
+        }
+        .if(appState.sizeClass == .regular) { view in
             view.listRowInsets(
                 EdgeInsets(
                     top: Spacing.small,
@@ -207,8 +207,7 @@ struct SidebarDrawer: View {
         )
     }
 
-    @ViewBuilder
-    private var visionOsSection: some View {
+    @ViewBuilder private var visionOsSection: some View {
         Spacer()
 
         Divider()

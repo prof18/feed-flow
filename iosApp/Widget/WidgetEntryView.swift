@@ -12,7 +12,8 @@ import WidgetKit
 
 struct WidgetEntryView: View {
     var entry: Provider.Entry
-    @Environment(\.widgetFamily) private var widgetFamily
+    @Environment(\.widgetFamily)
+    private var widgetFamily
 
     var body: some View {
         if entry.feedItems.isEmpty {
@@ -31,8 +32,7 @@ struct WidgetEntryView: View {
         }
     }
 
-    @ViewBuilder
-    private var feedItemsList: some View {
+    @ViewBuilder private var feedItemsList: some View {
         let itemsToShow = numberOfItemsToShow()
 
         if widgetFamily == .systemSmall && !entry.feedItems.isEmpty {
@@ -52,8 +52,7 @@ struct WidgetEntryView: View {
 
             ForEach(items, id: \.id) { item in
                 Link(
-                    destination: URL(string: "feedflow://feed/\(item.id)") ?? URL(
-                        string: "feedflow://")!
+                    destination: URL(string: "feedflow://feed/\(item.id)") ?? URL(string: "feedflow://") ?? URL(fileURLWithPath: "")
                 ) {
                     WidgetFeedItemView(feedItem: item, lineLimit: widgetFamily == .systemMedium ? 1 : 2)
                 }
@@ -82,8 +81,7 @@ struct WidgetEntryView: View {
             LazyVGrid(columns: columns, spacing: Spacing.medium) {
                 ForEach(items, id: \.id) { item in
                     Link(
-                        destination: URL(string: "feedflow://feed/\(item.id)") ?? URL(
-                            string: "feedflow://")!
+                        destination: URL(string: "feedflow://feed/\(item.id)") ?? URL(string: "feedflow://") ?? URL(fileURLWithPath: "")
                     ) {
                         WidgetFeedItemView(feedItem: item, lineLimit: 2)
                             .frame(maxWidth: .infinity)
@@ -97,8 +95,7 @@ struct WidgetEntryView: View {
 
     private func smallWidgetFeedItemView(_ feedItem: FeedItemWidget) -> some View {
         Link(
-            destination: URL(string: "feedflow://feed/\(feedItem.id)") ?? URL(
-                string: "feedflow://")!
+            destination: URL(string: "feedflow://feed/\(feedItem.id)") ?? URL(string: "feedflow://") ?? URL(fileURLWithPath: "")
         ) {
             VStack(alignment: .leading, spacing: Spacing.xsmall) {
                 Text(feedItem.feedSourceTitle)

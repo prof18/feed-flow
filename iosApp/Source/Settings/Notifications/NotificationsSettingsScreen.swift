@@ -11,11 +11,14 @@ import SwiftUI
 import UserNotifications
 
 struct NotificationsSettingsScreen: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
+    @Environment(\.dismiss)
+    private var dismiss
+    @Environment(\.openURL)
+    private var openURL
 
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<NotificationsViewModel>(Deps.shared.getNotificationsViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<NotificationsViewModel>(
+        Deps.shared.getNotificationsViewModel()
+    )
 
     @State private var notificationState = NotificationSettingState(
         feedSources: [],

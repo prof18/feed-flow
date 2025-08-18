@@ -51,7 +51,7 @@ struct Provider: TimelineProvider {
 
     func getTimeline(in _: Context, completion: @escaping (Timeline<WidgetEntry>) -> Void) {
         let currentDate = Date()
-        let refreshDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
+        let refreshDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate) ?? currentDate
         let entry = WidgetEntry(
             date: currentDate,
             feedItems: getFeedItems(appEnvironment: appEnvironment),

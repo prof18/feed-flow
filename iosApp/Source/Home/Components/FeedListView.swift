@@ -14,10 +14,14 @@ import Reader
 import SwiftUI
 
 struct FeedListView: View {
-    @Environment(\.openURL) private var openURL
-    @Environment(HomeListIndexHolder.self) private var indexHolder
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(AppState.self) private var appState
+    @Environment(\.openURL)
+    private var openURL
+    @Environment(HomeListIndexHolder.self)
+    private var indexHolder
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(AppState.self)
+    private var appState
 
     var loadingState: FeedUpdateStatus?
     var feedState: [FeedItem]

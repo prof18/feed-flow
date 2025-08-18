@@ -14,6 +14,7 @@ import UIKit
 @objc(ShareViewController)
 class ShareViewController: UIViewController {
     override func viewDidLoad() {
+        super.viewDidLoad()
         startKoin()
         let contentView = UIHostingController(
             rootView: ShareView(extensionContext: extensionContext)

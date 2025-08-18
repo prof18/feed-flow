@@ -10,7 +10,8 @@ import FeedFlowKit
 import SwiftUI
 
 struct DropboxSyncScreenContent: View {
-    @Environment(AppState.self) private var appState
+    @Environment(AppState.self)
+    private var appState
 
     var connectionState: AccountConnectionUiState
     let onDropboxAuthSuccess: () -> Void
@@ -39,8 +40,7 @@ struct DropboxSyncScreenContent: View {
             }
     }
 
-    @ViewBuilder
-    private var content: some View {
+    @ViewBuilder private var content: some View {
         switch connectionState {
         case is AccountConnectionUiState.Loading:
             ProgressView()
@@ -56,8 +56,7 @@ struct DropboxSyncScreenContent: View {
         }
     }
 
-    @ViewBuilder
-    private var loadingView: some View {
+    @ViewBuilder private var loadingView: some View {
         ProgressView()
     }
 
@@ -138,8 +137,7 @@ struct DropboxSyncScreenContent: View {
         }
     }
 
-    @ViewBuilder
-    private var disconnectedView: some View {
+    @ViewBuilder private var disconnectedView: some View {
         VStack {
             Form {
                 Section {

@@ -10,10 +10,10 @@ import FeedFlowKit
 import SwiftUI
 
 struct AddFeedScreen: View {
-    @Environment(AppState.self) private var appState
+    @Environment(AppState.self)
+    private var appState
 
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(Deps.shared.getAddFeedViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(Deps.shared.getAddFeedViewModel())
 
     @State private var categorySelectorObserver = CategorySelectorObserver()
 

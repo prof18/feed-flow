@@ -9,15 +9,13 @@
 import FeedFlowKit
 import Foundation
 
-@Observable class HomeListIndexHolder {
-    @ObservationIgnored
-    let homeViewModel: HomeViewModel?
+@Observable
+class HomeListIndexHolder {
+    @ObservationIgnored let homeViewModel: HomeViewModel?
 
-    @ObservationIgnored
-    var isLoading: Bool = false
+    @ObservationIgnored var isLoading: Bool = false
 
-    @ObservationIgnored
-    var lastAppearedIndex = 0
+    @ObservationIgnored var lastAppearedIndex = 0
 
     private var lastReadIndex = 0
     private var timer: Timer?

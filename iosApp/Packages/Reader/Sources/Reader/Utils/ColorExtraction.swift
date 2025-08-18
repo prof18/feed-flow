@@ -15,7 +15,9 @@ extension UIColor {
         }
 
         let hexString = String(
-            format: "#%02lX%02lX%02lX", lroundf(Float(red * 255)), lroundf(Float(green * 255)),
+            format: "#%02lX%02lX%02lX",
+            lroundf(Float(red * 255)),
+            lroundf(Float(green * 255)),
             lroundf(Float(blue * 255))
         )
         return hexString

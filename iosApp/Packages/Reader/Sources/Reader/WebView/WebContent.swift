@@ -19,7 +19,6 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
 
     @Published private(set) var info = WebViewInfo()
 
-    // swiftlint:disable:next function_body_length
     init(
         transparent: Bool = false,
         allowsInlinePlayback: Bool = false,
@@ -38,54 +37,41 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
         webview.uiDelegate = self
 
         observers.append(
-            webview.observe(
-                \.url,
-                changeHandler: { [weak self] _, _ in
-                    self?.needsMetadataRefresh()
-                }
-            )
+            webview.observe(\.url) { [weak self] _, _ in
+                self?.needsMetadataRefresh()
+            }
         )
 
         observers.append(
-            webview.observe(
-                \.url,
-                changeHandler: { [weak self] _, _ in
-                    self?.needsMetadataRefresh()
-                }
-            )
+            webview.observe(\.url) { [weak self] _, _ in
+                self?.needsMetadataRefresh()
+            }
         )
 
         observers.append(
-            webview.observe(
-                \.canGoBack,
-                changeHandler: { [weak self] _, val in
-                    self?.info.canGoBack = val.newValue ?? false
-                }
-            )
+            webview.observe(\.canGoBack) { [weak self] _, val in
+                self?.info.canGoBack = val.newValue ?? false
+            }
         )
 
         observers.append(
-            webview.observe(
-                \.canGoForward,
-                changeHandler: { [weak self] _, val in
-                    self?.info.canGoForward = val.newValue ?? false
-                }
-            )
+            webview.observe(\.canGoForward) { [weak self] _, val in
+                self?.info.canGoForward = val.newValue ?? false
+            }
         )
 
         observers.append(
-            webview.observe(
-                \.isLoading,
-                changeHandler: { [weak self] _, val in
-                    self?.info.isLoading = val.newValue ?? false
-                }
-            )
+            webview.observe(\.isLoading) { [weak self] _, val in
+                self?.info.isLoading = val.newValue ?? false
+            }
         )
 
         webview.scrollView.backgroundColor = nil
         NotificationCenter.default.addObserver(
-            self, selector: #selector(appDidForeground),
-            name: UIApplication.willEnterForegroundNotification, object: nil
+            self,
+            selector: #selector(appDidForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
         )
 
         updateTransparency()
@@ -126,7 +112,8 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
         block(self)
     }
 
-    @objc private func appDidForeground() {
+    @objc
+    private func appDidForeground() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             if self.waitingForRepopulationAfterTermination, let block = self.populateBlock {
                 block(self)
@@ -144,7 +131,8 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     }
 
     func webView(
-        _: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+        _: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         if navigationAction.targetFrame?.isMainFrame ?? true,
@@ -161,8 +149,10 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
     }
 
     func webView(
-        _: WKWebView, createWebViewWith _: WKWebViewConfiguration,
-        for navigationAction: WKNavigationAction, windowFeatures _: WKWindowFeatures
+        _: WKWebView,
+        createWebViewWith _: WKWebViewConfiguration,
+        for navigationAction: WKNavigationAction,
+        windowFeatures _: WKWindowFeatures
     ) -> WKWebView? {
         // Load in same window:
         if let url = navigationAction.request.url {
@@ -179,7 +169,9 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
 
     private func refreshMetadataNow() {
         info = .init(
-            url: webview.url, title: webview.title, canGoBack: webview.canGoBack,
+            url: webview.url,
+            title: webview.title,
+            canGoBack: webview.canGoBack,
             canGoForward: webview.canGoForward
         )
     }

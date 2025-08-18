@@ -9,8 +9,10 @@ import WidgetKit
 
 @main
 struct FeedFlowApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
-    @Environment(\.scenePhase) private var scenePhase: ScenePhase
+    @UIApplicationDelegateAdaptor(AppDelegate.self)
+    private var delegate
+    @Environment(\.scenePhase)
+    private var scenePhase: ScenePhase
     @State private var appState: AppState = .init()
 
     private var feedSyncTimer: FeedSyncTimer = .init()
@@ -33,7 +35,7 @@ struct FeedFlowApp: App {
             ContentView()
                 .environment(appState)
                 .preferredColorScheme(appState.colorScheme)
-                .onOpenURL(perform: { url in
+                .onOpenURL { url in
                     if url.scheme == "feedflow" {
                         handleFeedFlowURL(url)
                     } else {
@@ -89,7 +91,7 @@ struct FeedFlowApp: App {
 func scheduleAppRefresh() {
     let request = BGProcessingTaskRequest(identifier: "com.prof18.feedflow.articlesync")
     // Schedule for 2 hours from now
-    request.earliestBeginDate = .now.addingTimeInterval(2 * 3600)
+    request.earliestBeginDate = .now.addingTimeInterval(2 * 3_600)
     request.requiresNetworkConnectivity = true
     try? BGTaskScheduler.shared.submit(request)
 }
@@ -146,11 +148,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         DropboxClientsManager.handleEventsForBackgroundURLSession(
             with: identifier,
             creationInfos: [],
-            completionHandler: completionHandler,
-            requestsToReconnect: { requestResults in
-                DropboxDataSourceIos.processReconnect(requestResults: requestResults)
-            }
-        )
+            completionHandler: completionHandler
+        ) { requestResults in
+            DropboxDataSourceIos.processReconnect(requestResults: requestResults)
+        }
     }
 
     private func configureFirebase() {

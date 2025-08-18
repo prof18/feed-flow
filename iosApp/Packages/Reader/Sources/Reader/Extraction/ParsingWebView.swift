@@ -84,7 +84,9 @@ class ParsingWebView: NSObject, WKUIDelegate, WKNavigationDelegate {
         Reader.logger.info("Initializing...")
         readyState = .initializing
         let defuddleJS = try? String(
-            contentsOf: Bundle.module.url(forResource: "defuddle", withExtension: "js")!
+            contentsOf: Bundle.module.url(forResource: "defuddle", withExtension: "js")
+                ?? Bundle.main.url(forResource: "defuddle", withExtension: "js")
+                ?? URL(fileURLWithPath: "")
         )
         let html = """
         <body>

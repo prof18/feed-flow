@@ -11,13 +11,16 @@ import FirebaseCrashlytics
 import SwiftUI
 
 struct SettingsScreen: View {
-    @Environment(AppState.self) private var appState
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
+    @Environment(AppState.self)
+    private var appState
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(\.dismiss)
+    private var dismiss
+    @Environment(\.openURL)
+    private var openURL
 
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<SettingsViewModel>(Deps.shared.getSettingsViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<SettingsViewModel>(Deps.shared.getSettingsViewModel())
 
     @State private var isMarkReadWhenScrollingEnabled = true
     @State private var isShowReadItemEnabled = false
@@ -163,11 +166,10 @@ struct SettingsScreen: View {
                     rightSwipeAction: $rightSwipeActionType,
                     dateFormat: $dateFormat,
                     feedOrder: $feedOrder,
-                    feedLayout: $feedLayout,
-                    onScaleFactorChange: { newValue in
-                        vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
-                    }
-                )
+                    feedLayout: $feedLayout
+                ) { newValue in
+                    vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
+                }
                 AppSection(openURL: openURL, isCrashReportingEnabled: $isCrashReportingEnabled)
             }
             .scrollContentBackground(.hidden)

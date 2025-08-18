@@ -3,9 +3,12 @@ import Foundation
 import SwiftUI
 
 struct FeedItemContextMenu: View {
-    @Environment(\.openURL) private var openURL
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(AppState.self) private var appState
+    @Environment(\.openURL)
+    private var openURL
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(AppState.self)
+    private var appState
 
     let feedItem: FeedItem
     let onBookmarkClick: (FeedItemId, Bool) -> Void
@@ -59,7 +62,9 @@ struct FeedItemContextMenu: View {
         if let commentsUrl = feedItem.commentsUrl {
             Button {
                 if browserSelector.openInAppBrowser() {
-                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: URL(string: commentsUrl)!))
+                    if let url = URL(string: commentsUrl) {
+                        appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                    }
                 } else {
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
                 }
@@ -72,21 +77,20 @@ struct FeedItemContextMenu: View {
     @ViewBuilder
     private func makeShareButton(feedItem: FeedItem) -> some View {
         ShareLink(
-            item: URL(string: feedItem.url)!,
-            message: Text(feedItem.title ?? ""),
-            label: {
-                Label(feedFlowStrings.menuShare, systemImage: "square.and.arrow.up")
-            }
-        )
+            item: URL(string: feedItem.url) ?? URL(fileURLWithPath: ""),
+            message: Text(feedItem.title ?? "")
+        ) {
+            Label(feedFlowStrings.menuShare, systemImage: "square.and.arrow.up")
+        }
     }
 
     @ViewBuilder
     private func makeShareCommentsButton(commentsUrl: String) -> some View {
         ShareLink(
-            item: URL(string: commentsUrl)!,
-            label: {
-                Label(feedFlowStrings.menuShareComments, systemImage: "square.and.arrow.up.on.square")
-            }
+            item: URL(string: commentsUrl) ?? URL(fileURLWithPath: "")
+        ) {
+            Label(feedFlowStrings.menuShareComments, systemImage: "square.and.arrow.up.on.square")
+        }
         )
     }
 }

@@ -61,7 +61,8 @@ private struct ShimmerMask: ViewModifier {
             .mask {
                 LinearGradient(
                     colors: [Color.black, Color.black.opacity(0), Color.black],
-                    startPoint: startPoint, endPoint: endPoint
+                    startPoint: startPoint,
+                    endPoint: endPoint
                 )
             }
             .onAppear {

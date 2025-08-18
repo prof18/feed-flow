@@ -10,7 +10,8 @@ import FeedFlowKit
 import SwiftUI
 
 struct EditFeedScreenContent: View {
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.presentationMode)
+    private var presentationMode
 
     @State private var newCategory: String = ""
     @State private var showDeleteCategoryDialog = false

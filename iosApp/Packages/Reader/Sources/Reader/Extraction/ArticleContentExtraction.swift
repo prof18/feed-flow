@@ -20,7 +20,7 @@ struct ExtractedContent: Equatable {
 extension ExtractedContent {
     var plainText: String {
         if let content {
-            let parsed = try? HTMLDocument(data: content.data(using: .utf8)!)
+            let parsed = try? HTMLDocument(data: content.data(using: .utf8) ?? Data())
             return parsed?.root?.stringValue.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         }
         return ""

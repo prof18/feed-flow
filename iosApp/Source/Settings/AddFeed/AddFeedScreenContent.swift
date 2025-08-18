@@ -10,7 +10,8 @@ import FeedFlowKit
 import SwiftUI
 
 struct AddFeedScreenContent: View {
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.presentationMode)
+    private var presentationMode
 
     @State private var newCategory: String = ""
     @State private var showDeleteCategoryDialog = false
@@ -218,7 +219,9 @@ struct AddFeedScreenContent: View {
         updateCategoryName: { _, _ in },
         showNotificationToggle: true,
         isNotificationEnabled: false,
-        onNotificationToggleChanged: { _ in }
+        onNotificationToggleChanged: { _ in
+            // onNotificationToggleChanged
+        }
     )
 }
 
@@ -238,6 +241,8 @@ struct AddFeedScreenContent: View {
         updateCategoryName: { _, _ in },
         showNotificationToggle: true,
         isNotificationEnabled: true,
-        onNotificationToggleChanged: { _ in }
+        onNotificationToggleChanged: { _ in
+            // onNotificationToggleChanged
+        }
     )
 }

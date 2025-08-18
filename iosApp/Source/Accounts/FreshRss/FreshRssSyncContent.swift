@@ -25,8 +25,7 @@ struct FreshRssSyncContent: View {
             .navigationTitle("FreshRSS")
     }
 
-    @ViewBuilder
-    private var content: some View {
+    @ViewBuilder private var content: some View {
         switch uiState {
         case is AccountConnectionUiState.Loading:
             loadingView()

@@ -11,8 +11,7 @@ import Foundation
 import SwiftUI
 
 struct AccountsScreen: View {
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<AccountsViewModel>(Deps.shared.getAccountsViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<AccountsViewModel>(Deps.shared.getAccountsViewModel())
 
     @State private var syncAccount: SyncAccounts = .local
 

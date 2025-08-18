@@ -34,62 +34,57 @@ struct EditFeedScreen: View {
     @State private var isNotificationEnabled: Bool = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                EditFeedScreenContent(
-                    feedURL: $feedURL,
-                    feedName: $feedName,
-                    showError: $showError,
-                    errorMessage: $errorMessage,
-                    categoryItems: $categoryItems,
-                    isAddingFeed: $isAddingFeed,
-                    linkOpeningPreference: $linkOpeningPreference,
-                    isHidden: $isHidden,
-                    isPinned: $isPinned,
-                    isNotificationEnabled: $isNotificationEnabled,
-                    categorySelectorObserver: categorySelectorObserver,
-                    showNotificationToggle: showNotificationToggle,
-                    updateFeedUrlTextFieldValue: { value in
-                        vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
-                    },
-                    updateFeedNameTextFieldValue: { value in
-                        vmStoreOwner.instance.updateFeedNameTextFieldValue(feedNameTextFieldValue: value)
-                    },
-                    deleteCategory: { categoryId in
-                        vmStoreOwner.instance.deleteCategory(categoryId: categoryId)
-                    },
-                    addNewCategory: { categoryName in
-                        vmStoreOwner.instance.addNewCategory(categoryName: categoryName)
-                    },
-                    updateLinkOpeningPreference: { preference in
-                        vmStoreOwner.instance.updateLinkOpeningPreference(preference: preference)
-                    },
-                    onHiddenToggled: { hidden in
-                        vmStoreOwner.instance.updateIsHiddenFromTimeline(isHidden: hidden)
-                    },
-                    onPinnedToggled: { pinned in
-                        vmStoreOwner.instance.updateIsPinned(isPinned: pinned)
-                    },
-                    onNotificationToggleChanged: { isNotificationEnabled in
-                        vmStoreOwner.instance.updateIsNotificationEnabled(isNotificationEnabled: isNotificationEnabled)
-                    },
-                    addFeed: {
-                        vmStoreOwner.instance.editFeed()
-                    },
-                    updateCategoryName: { categoryId, categoryName in
-                        vmStoreOwner.instance.editCategory(
-                            categoryId: CategoryId(value: categoryId),
-                            newName: CategoryName(name: categoryName)
-                        )
-                    }
-                )
+        @Bindable var appState = appState
 
-                @Bindable var appState = appState
-                VStack(spacing: 0) {
-                    Spacer()
-                    Snackbar(messageQueue: $appState.snackbarQueue)
+        NavigationStack {
+            EditFeedScreenContent(
+                feedURL: $feedURL,
+                feedName: $feedName,
+                showError: $showError,
+                errorMessage: $errorMessage,
+                categoryItems: $categoryItems,
+                isAddingFeed: $isAddingFeed,
+                linkOpeningPreference: $linkOpeningPreference,
+                isHidden: $isHidden,
+                isPinned: $isPinned,
+                isNotificationEnabled: $isNotificationEnabled,
+                categorySelectorObserver: categorySelectorObserver,
+                showNotificationToggle: showNotificationToggle,
+                updateFeedUrlTextFieldValue: { value in
+                    vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
+                },
+                updateFeedNameTextFieldValue: { value in
+                    vmStoreOwner.instance.updateFeedNameTextFieldValue(feedNameTextFieldValue: value)
+                },
+                deleteCategory: { categoryId in
+                    vmStoreOwner.instance.deleteCategory(categoryId: categoryId)
+                },
+                addNewCategory: { categoryName in
+                    vmStoreOwner.instance.addNewCategory(categoryName: categoryName)
+                },
+                updateLinkOpeningPreference: { preference in
+                    vmStoreOwner.instance.updateLinkOpeningPreference(preference: preference)
+                },
+                onHiddenToggled: { hidden in
+                    vmStoreOwner.instance.updateIsHiddenFromTimeline(isHidden: hidden)
+                },
+                onPinnedToggled: { pinned in
+                    vmStoreOwner.instance.updateIsPinned(isPinned: pinned)
+                },
+                onNotificationToggleChanged: { isNotificationEnabled in
+                    vmStoreOwner.instance.updateIsNotificationEnabled(isNotificationEnabled: isNotificationEnabled)
+                },
+                addFeed: {
+                    vmStoreOwner.instance.editFeed()
+                },
+                updateCategoryName: { categoryId, categoryName in
+                    vmStoreOwner.instance.editCategory(
+                        categoryId: CategoryId(value: categoryId),
+                        newName: CategoryName(name: categoryName)
+                    )
                 }
-            }
+            )
+            .snackbar(messageQueue: $appState.snackbarQueue)
             .onAppear {
                 vmStoreOwner.instance.loadFeedToEdit(feedSource: feedSource)
             }

@@ -43,7 +43,10 @@ struct SettingsScreen: View {
     let fetchFeeds: () -> Void
 
     var body: some View {
+        @Bindable var appState = appState
+
         settingsContent
+            .snackbar(messageQueue: $appState.snackbarQueue)
             .task {
                 for await state in vmStoreOwner.instance.settingsState {
                     isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled

@@ -22,6 +22,8 @@ struct ICloudSyncScreen: View {
     let isFromAddAccount: Bool
 
     var body: some View {
+        @Bindable var appState = appState
+
         ICloudSyncScreenContent(
             connectionState: uiState,
             onConnectClick: {
@@ -34,6 +36,7 @@ struct ICloudSyncScreen: View {
                 vmStoreOwner.instance.unlink()
             }
         )
+        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in vmStoreOwner.instance.iCloudConnectionUiState {
                 self.uiState = state

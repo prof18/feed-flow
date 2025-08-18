@@ -24,29 +24,23 @@ struct FreshRssSyncScreen: View {
     let isFromAddAccount: Bool
 
     var body: some View {
-        ZStack {
-            FreshRssSyncContent(
-                uiState: uiState,
-                isLoginLoading: isLoginLoading,
-                onDisconnectClick: {
-                    vmStoreOwner.instance.disconnect()
-                },
-                onLoginClick: { serverUrl, username, password in
-                    vmStoreOwner.instance.login(
-                        username: username,
-                        password: password,
-                        url: serverUrl
-                    )
-                }
-            )
+        @Bindable var appState = appState
 
-            @Bindable var appState = appState
-            VStack(spacing: 0) {
-                Spacer()
-
-                Snackbar(messageQueue: $appState.snackbarQueue)
+        FreshRssSyncContent(
+            uiState: uiState,
+            isLoginLoading: isLoginLoading,
+            onDisconnectClick: {
+                vmStoreOwner.instance.disconnect()
+            },
+            onLoginClick: { serverUrl, username, password in
+                vmStoreOwner.instance.login(
+                    username: username,
+                    password: password,
+                    url: serverUrl
+                )
             }
-        }
+        )
+        .snackbar(messageQueue: $appState.snackbarQueue)
         .loadingDialog(isLoading: isLoginLoading)
         .task {
             for await state in vmStoreOwner.instance.uiState {

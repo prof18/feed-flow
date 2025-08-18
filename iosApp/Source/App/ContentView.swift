@@ -16,7 +16,9 @@ struct ContentView: View {
     @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline(unreadCount: 0)
 
     var body: some View {
-        ZStack {
+        @Bindable var appState = appState
+
+        Group {
             if appState.sizeClass == .compact {
                 CompactView(
                     selectedDrawerItem: $selectedDrawerItem,
@@ -32,14 +34,8 @@ struct ContentView: View {
                 )
                 .environment(browserSelector)
             }
-
-            @Bindable var appState = appState
-            VStack(spacing: 0) {
-                Spacer()
-
-                Snackbar(messageQueue: $appState.snackbarQueue)
-            }
         }
+        .snackbar(messageQueue: $appState.snackbarQueue)
         .onAppear {
             if appState.sizeClass == nil {
                 appState.sizeClass = horizontalSizeClass

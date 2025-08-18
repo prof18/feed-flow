@@ -23,25 +23,19 @@ struct FeedSourceListScreen: View {
     )
 
     var body: some View {
-        ZStack {
-            FeedSourceListScreenContent(
-                feedState: $feedState,
-                deleteFeedSource: { feedSource in
-                    vmStoreOwner.instance.deleteFeedSource(feedSource: feedSource)
-                },
-                renameFeedSource: { feedSource, newName in
-                    vmStoreOwner.instance.updateFeedName(feedSource: feedSource, newName: newName)
-                }
-            )
-            .id(appState.redrawAfterFeedSourceEdit)
+        @Bindable var appState = appState
 
-            @Bindable var appState = appState
-            VStack(spacing: 0) {
-                Spacer()
-
-                Snackbar(messageQueue: $appState.snackbarQueue)
+        FeedSourceListScreenContent(
+            feedState: $feedState,
+            deleteFeedSource: { feedSource in
+                vmStoreOwner.instance.deleteFeedSource(feedSource: feedSource)
+            },
+            renameFeedSource: { feedSource, newName in
+                vmStoreOwner.instance.updateFeedName(feedSource: feedSource, newName: newName)
             }
-        }
+        )
+        .id(appState.redrawAfterFeedSourceEdit)
+        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in vmStoreOwner.instance.feedSourcesState {
                 self.feedState = state

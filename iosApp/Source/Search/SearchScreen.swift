@@ -14,6 +14,8 @@ struct SearchScreen: View {
     @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
     var body: some View {
+        @Bindable var appState = appState
+
         SearchScreenContent(
             searchText: $searchText,
             searchState: $searchState,
@@ -24,7 +26,9 @@ struct SearchScreen: View {
             onReadStatusClick: { feedItemId, isRead in
                 vmStoreOwner.instance.onReadStatusClick(feedItemId: feedItemId, read: isRead)
             }
-        ).onChange(of: searchText) {
+        )
+        .snackbar(messageQueue: $appState.snackbarQueue)
+        .onChange(of: searchText) {
             vmStoreOwner.instance.updateSearchQuery(query: searchText)
         }
         .task {

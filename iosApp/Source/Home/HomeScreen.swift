@@ -67,6 +67,8 @@ struct HomeScreen: View {
     let openDrawer: () -> Void
 
     var body: some View {
+        @Bindable var appState = appState
+
         HomeContent(
             loadingState: $loadingState,
             feedState: $feedState,
@@ -119,6 +121,7 @@ struct HomeScreen: View {
             },
             openDrawer: openDrawer
         )
+        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in homeViewModel.loadingState {
                 let isLoading = state.isLoading()

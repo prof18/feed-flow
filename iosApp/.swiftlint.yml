@@ -5,6 +5,7 @@
 excluded:
   - Build/
   - Kotlin/
+  - Packages/
   - Preview Content/
   - FeedFlow.xcodeproj/
   - "*.generated.swift"

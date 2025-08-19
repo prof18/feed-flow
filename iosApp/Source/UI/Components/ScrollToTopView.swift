@@ -14,7 +14,7 @@ struct ScrollToTopView: View {
     var body: some View {
         if isVisible {
             if #available(iOS 26.0, *) {
-                iOS26ScrollToTopView(onScrollToTop: onScrollToTop)
+                IOS26ScrollToTopView(onScrollToTop: onScrollToTop)
             } else {
                 LegacyScrollToTopView(onScrollToTop: onScrollToTop)
             }
@@ -23,7 +23,7 @@ struct ScrollToTopView: View {
 }
 
 @available(iOS 26.0, *)
-private struct iOS26ScrollToTopView: View {
+private struct IOS26ScrollToTopView: View {
     @Namespace private var namespace
     let onScrollToTop: () -> Void
 

@@ -4,9 +4,14 @@ import Reader
 import SwiftUI
 
 struct ReaderModeScreen: View {
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(\.openURL) private var openURL
-    @Environment(AppState.self) private var appState
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    
+    @Environment(\.openURL)
+    private var openURL
+    
+    @Environment(AppState.self)
+    private var appState
 
     @State private var showFontSizeMenu: Bool = false
     @State private var fontSize = 16.0
@@ -20,8 +25,9 @@ struct ReaderModeScreen: View {
     let feedItemUrlInfo: FeedItemUrlInfo
 
     var body: some View {
+        if let url = URL(string: feedItemUrlInfo.url) {
         ReaderView(
-            url: URL(string: feedItemUrlInfo.url)!,
+            url: url,
             options: ReaderViewOptions(
                 additionalCSS: """
                     #__reader_container {
@@ -49,24 +55,32 @@ struct ReaderModeScreen: View {
                 onArchive: {
                     let archiveUrlString = getArchiveISUrl(articleUrl: feedItemUrlInfo.url)
                     if browserSelector.openInAppBrowser() {
-                        appState.navigate(
-                            route: CommonViewRoute.inAppBrowser(url: URL(string: archiveUrlString)!)
-                        )
+                        if let archiveUrl = URL(string: archiveUrlString) {
+                            appState.navigate(
+                                route: CommonViewRoute.inAppBrowser(url: archiveUrl)
+                            )
+                        }
                     } else {
-                        openURL(
-                            browserSelector.getUrlForDefaultBrowser(
-                                stringUrl: URL(string: archiveUrlString)!.absoluteString))
+                        if let archiveUrl = URL(string: archiveUrlString) {
+                            openURL(
+                                browserSelector.getUrlForDefaultBrowser(
+                                    stringUrl: archiveUrl.absoluteString))
+                        }
                     }
                 },
                 onOpenInBrowser: {
                     if browserSelector.openInAppBrowser() {
-                        appState.navigate(
-                            route: CommonViewRoute.inAppBrowser(url: URL(string: feedItemUrlInfo.url)!)
-                        )
+                        if let urlForBrowser = URL(string: feedItemUrlInfo.url) {
+                            appState.navigate(
+                                route: CommonViewRoute.inAppBrowser(url: urlForBrowser)
+                            )
+                        }
                     } else {
-                        openURL(
-                            browserSelector.getUrlForDefaultBrowser(
-                                stringUrl: URL(string: feedItemUrlInfo.url)!.absoluteString))
+                        if let urlForDefault = URL(string: feedItemUrlInfo.url) {
+                            openURL(
+                                browserSelector.getUrlForDefaultBrowser(
+                                    stringUrl: urlForDefault.absoluteString))
+                        }
                     }
                 },
                 onFontSizeMenuToggle: {
@@ -99,6 +113,10 @@ struct ReaderModeScreen: View {
                 self.fontSize = Double(truncating: state)
                 self.reset.toggle()
             }
+        }
+        } else {
+            Text("Invalid URL")
+                .foregroundColor(.red)
         }
     }
 }

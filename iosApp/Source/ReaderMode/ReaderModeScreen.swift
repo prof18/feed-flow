@@ -106,7 +106,9 @@ struct ReaderModeScreen: View {
         .onAppear {
             isBookmarked = feedItemUrlInfo.isBookmarked
         }
-        .ignoresSafeArea()
+        .if(isiOS26OrLater()) { view in
+            view.ignoresSafeArea()
+        }
         .id(reset)
         .task {
             for await state in vmStoreOwner.instance.readerFontSizeState {

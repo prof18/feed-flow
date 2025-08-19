@@ -63,7 +63,7 @@ struct FeedFlowApp: App {
                             )
                         }
                     }
-                })
+                }
                 .onChange(of: scenePhase) {
                     switch scenePhase {
                     case .active:

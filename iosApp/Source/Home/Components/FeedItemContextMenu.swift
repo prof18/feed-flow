@@ -91,6 +91,5 @@ struct FeedItemContextMenu: View {
         ) {
             Label(feedFlowStrings.menuShareComments, systemImage: "square.and.arrow.up.on.square")
         }
-        )
     }
 }

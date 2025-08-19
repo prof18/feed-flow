@@ -12,7 +12,8 @@ import SwiftUI
 
 struct SFSafariView: UIViewControllerRepresentable {
     let url: URL
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss)
+    private var dismiss
 
     func makeUIViewController(context: Context) -> SFSafariViewController {
         let safari = SFSafariViewController(url: url)

@@ -36,5 +36,8 @@ func startKoin() {
 
 private var _feedFlowStrings: FeedFlowStrings?
 var feedFlowStrings: FeedFlowStrings {
-    return _feedFlowStrings!
+    guard let strings = _feedFlowStrings else {
+        fatalError("FeedFlowStrings not initialized. Make sure to call startKoin first.")
+    }
+    return strings
 }

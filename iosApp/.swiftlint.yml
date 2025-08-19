@@ -1,0 +1,133 @@
+# SwiftLint configuration file for FeedFlow iOS app
+# For more information about SwiftLint rules: https://realm.github.io/SwiftLint/rule-directory.html
+
+# Paths to exclude from linting
+excluded:
+  - Build/
+  - Kotlin/
+  - Preview Content/
+  - FeedFlow.xcodeproj/
+  - "*.generated.swift"
+
+# Paths to include for linting (optional - if not specified, all Swift files are included except excluded ones)
+included:
+  - Source/
+  - ShareExtension/
+  - Widget/
+  - Packages/
+
+# Rules to disable
+disabled_rules:
+  - trailing_whitespace # Disable trailing whitespace rule (can be annoying)
+  - file_header # Disable file header requirement
+  - todo # Allow TODO comments
+  - implicit_return # Keep explicit return statements
+  - trailing_closure # Disable trailing closure to avoid conflict with multiple_closures_with_trailing_closure
+
+# Rules to enable that are opt-in
+opt_in_rules:
+  - array_init
+  - attributes
+  - closure_end_indentation
+  - closure_spacing
+  - collection_alignment
+  - contains_over_first_not_nil
+  - empty_count
+  - empty_string
+  - enum_case_associated_values_count
+  - explicit_init
+  - extension_access_modifier
+  - fallthrough
+  - fatal_error_message
+  - first_where
+  - force_unwrapping
+  - identical_operands
+  - joined_default_parameter
+  - last_where
+  - legacy_random
+  - literal_expression_end_indentation
+  - multiline_arguments
+  - multiline_function_chains
+  - multiline_literal_brackets
+  - multiline_parameters
+  - nimble_operator
+  - nslocalizedstring_key
+  - number_separator
+  - object_literal
+  - operator_usage_whitespace
+  - overridden_super_call
+  - override_in_extension
+  - pattern_matching_keywords
+  - prefer_self_type_over_type_of_self
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - single_test_class
+  - sorted_first_last
+  - sorted_imports
+  - static_operator
+  - strong_iboutlet
+  - toggle_bool
+  - trailing_closure
+  - unneeded_parentheses_in_closure_argument
+  - vertical_parameter_alignment_on_call
+  - vertical_whitespace_closing_braces
+  - vertical_whitespace_opening_braces
+  - yoda_condition
+
+# Configurable rules with custom settings
+line_length:
+  warning: 120
+  error: 150
+  ignores_function_declarations: true
+  ignores_comments: true
+  ignores_urls: true
+
+function_body_length:
+  warning: 50
+  error: 100
+
+function_parameter_count:
+  warning: 5
+  error: 8
+
+type_body_length:
+  warning: 300
+  error: 400
+
+file_length:
+  warning: 500
+  error: 1200
+
+cyclomatic_complexity:
+  warning: 10
+  error: 20
+
+nesting:
+  type_level:
+    warning: 3
+  function_level:
+    warning: 5
+
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+  max_length:
+    warning: 40
+    error: 60
+  excluded:
+    - id
+    - url
+    - db
+
+large_tuple:
+  warning: 3
+  error: 4
+
+# Custom reporter (optional)
+reporter: "xcode"
+
+# Analyzer rules (optional - requires full builds)
+analyzer_rules:
+  - explicit_self
+  - unused_declaration

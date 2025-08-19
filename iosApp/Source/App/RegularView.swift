@@ -12,9 +12,12 @@ import Reader
 import SwiftUI
 
 struct RegularView: View {
-    @Environment(AppState.self) private var appState
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(\.openURL) private var openURL
+    @Environment(AppState.self)
+    private var appState
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(\.openURL)
+    private var openURL
 
     @Binding var selectedDrawerItem: DrawerItem?
 
@@ -99,11 +102,10 @@ struct RegularView: View {
                     showSettings: $showSettings,
                     selectedDrawerItem: $selectedDrawerItem,
                     columnVisibility: $columnVisibility,
-                    homeViewModel: homeViewModel,
-                    openDrawer: {
-                        columnVisibility = .all
-                    }
-                )
+                    homeViewModel: homeViewModel
+                ) {
+                    columnVisibility = .all
+                }
                 .environment(indexHolder)
             }
             .navigationBarTitleDisplayMode(.inline)

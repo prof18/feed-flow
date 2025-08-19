@@ -34,7 +34,5 @@ struct NoFeedsSourceView: View {
 }
 
 #Preview {
-    NoFeedsSourceView(
-        onAddFeedClick: {}
-    )
+    NoFeedsSourceView {}
 }

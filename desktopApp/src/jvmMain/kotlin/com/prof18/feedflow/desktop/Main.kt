@@ -41,7 +41,6 @@ import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.utils.AppEnvironment
-import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
@@ -155,11 +154,8 @@ fun main() {
         )
     }
 
-    // Skip Windows for now
-    if (getDesktopOS() != DesktopOS.WINDOWS) {
-        val telemetryClient = DI.koin.get<TelemetryDeckClient>()
-        telemetryClient.signal("TelemetryDeck.Session.started")
-    }
+    val telemetryClient = DI.koin.get<TelemetryDeckClient>()
+    telemetryClient.signal("TelemetryDeck.Session.started")
 
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 

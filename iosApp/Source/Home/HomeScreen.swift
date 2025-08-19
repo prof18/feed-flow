@@ -10,53 +10,44 @@ import FeedFlowKit
 import SwiftUI
 
 struct HomeScreen: View {
-    @Environment(AppState.self) private var appState
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(HomeListIndexHolder.self) private var indexHolder
-    @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.openURL) private var openURL
+    @Environment(AppState.self)
+    private var appState
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(HomeListIndexHolder.self)
+    private var indexHolder
+    @Environment(\.scenePhase)
+    private var scenePhase
+    @Environment(\.openURL)
+    private var openURL
 
-    @State
-    var loadingState: FeedUpdateStatus?
+    @State var loadingState: FeedUpdateStatus?
 
-    @State
-    var feedState: [FeedItem] = []
+    @State var feedState: [FeedItem] = []
 
-    @State
-    var showLoading: Bool = true
+    @State var showLoading: Bool = true
 
-    @State
-    private var sheetToShow: HomeSheetToShow?
+    @State private var sheetToShow: HomeSheetToShow?
 
-    @State
-    var unreadCount = 0
+    @State var unreadCount = 0
 
-    @State
-    var currentFeedFilter: FeedFilter = .Timeline()
+    @State var currentFeedFilter: FeedFilter = .Timeline()
 
-    @State
-    var showFeedSyncButton: Bool = false
+    @State var showFeedSyncButton: Bool = false
 
-    @State
-    var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
+    @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
-    @State
-    var showFeedOperationDialog: Bool = false
+    @State var showFeedOperationDialog: Bool = false
 
-    @State
-    var feedOperationLoadingMessage: String?
+    @State var feedOperationLoadingMessage: String?
 
-    @State
-    var swipeActions: SwipeActions = .init(leftSwipeAction: .none, rightSwipeAction: .none)
+    @State var swipeActions: SwipeActions = .init(leftSwipeAction: .none, rightSwipeAction: .none)
 
-    @State
-    var feedLayout: FeedLayout = .list
+    @State var feedLayout: FeedLayout = .list
 
-    @Binding
-    var toggleListScroll: Bool
+    @Binding var toggleListScroll: Bool
 
-    @Binding
-    var showSettings: Bool
+    @Binding var showSettings: Bool
 
     @Binding var selectedDrawerItem: DrawerItem?
 

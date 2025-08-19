@@ -32,7 +32,12 @@ struct FeedItemView: View {
                 Text(feedItem.feedSource.title)
                     .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
                     .padding(.top, Spacing.small)
-                    .opacity(feedItem.isRead && !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) ? 0.6 : 1.0)
+                    .opacity(
+                        feedItem.isRead &&
+                            !(currentFeedFilter is FeedFilter.Read) &&
+                            !(currentFeedFilter is FeedFilter.Bookmarks)
+                            ? 0.6 : 1.0
+                    )
 
                 Spacer()
 
@@ -53,7 +58,12 @@ struct FeedItemView: View {
                 Text(dateString)
                     .font(.system(size: CGFloat(feedFontSizes.feedMetaFontSize)))
                     .padding(.bottom, Spacing.small)
-                    .opacity(feedItem.isRead && !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) ? 0.6 : 1.0)
+                    .opacity(
+                        feedItem.isRead &&
+                            !(currentFeedFilter is FeedFilter.Read) &&
+                            !(currentFeedFilter is FeedFilter.Bookmarks)
+                            ? 0.6 : 1.0
+                    )
             }
         }
         .padding(.horizontal, Spacing.regular)
@@ -67,14 +77,18 @@ struct FeedItemView: View {
         }
     }
 
-    @ViewBuilder
-    private var titleAndSubtitleCell: some View {
+    @ViewBuilder private var titleAndSubtitleCell: some View {
         VStack(alignment: .leading) {
             if let title = feedItem.title {
                 Text(title)
                     .font(.system(size: CGFloat(feedFontSizes.feedTitleFontSize)))
                     .bold()
-                    .opacity(feedItem.isRead && !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) ? 0.6 : 1.0)
+                    .opacity(
+                        feedItem.isRead &&
+                            !(currentFeedFilter is FeedFilter.Read) &&
+                            !(currentFeedFilter is FeedFilter.Bookmarks)
+                            ? 0.6 : 1.0
+                    )
             }
 
             if let subtitle = feedItem.subtitle {
@@ -82,13 +96,17 @@ struct FeedItemView: View {
                     .lineLimit(3)
                     .font(.system(size: CGFloat(feedFontSizes.feedDescFontSize)))
                     .padding(.top, getPaddingTop(feedItem: feedItem))
-                    .opacity(feedItem.isRead && !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) ? 0.6 : 1.0)
+                    .opacity(
+                        feedItem.isRead &&
+                            !(currentFeedFilter is FeedFilter.Read) &&
+                            !(currentFeedFilter is FeedFilter.Bookmarks)
+                            ? 0.6 : 1.0
+                    )
             }
         }
     }
 
-    @ViewBuilder
-    private var feedItemImage: some View {
+    @ViewBuilder private var feedItemImage: some View {
         if let imageUrl = feedItem.imageUrl {
             Spacer()
             LazyImage(url: URL(string: imageUrl)) { state in

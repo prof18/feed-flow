@@ -10,12 +10,13 @@ import FeedFlowKit
 import SwiftUI
 
 struct EditFeedScreen: View {
-    @Environment(AppState.self) private var appState
+    @Environment(AppState.self)
+    private var appState
 
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.presentationMode)
+    private var presentationMode
 
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<EditFeedViewModel>(Deps.shared.getEditFeedViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<EditFeedViewModel>(Deps.shared.getEditFeedViewModel())
 
     var feedSource: FeedSource
 

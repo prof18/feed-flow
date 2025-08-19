@@ -10,7 +10,8 @@ import FeedFlowKit
 import SwiftUI
 
 struct LicensesScreen: View {
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.presentationMode)
+    private var presentationMode
 
     @State var htmlContent: String?
 
@@ -18,15 +19,14 @@ struct LicensesScreen: View {
         licenseView
             .padding(Spacing.regular)
             .onAppear {
-                let baseURL = Bundle.main.url(forResource: "licenses", withExtension: "html")!
+                guard let baseURL = Bundle.main.url(forResource: "licenses", withExtension: "html") else { return }
                 let htmlString = try? String(contentsOf: baseURL, encoding: String.Encoding.utf8)
 
                 self.htmlContent = htmlString ?? ""
             }
     }
 
-    @ViewBuilder
-    private var licenseView: some View {
+    @ViewBuilder private var licenseView: some View {
         if let content = htmlContent {
             HTMLStringView(htmlContent: content)
         } else {

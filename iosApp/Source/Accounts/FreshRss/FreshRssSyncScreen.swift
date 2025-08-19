@@ -10,11 +10,12 @@ import FeedFlowKit
 import SwiftUI
 
 struct FreshRssSyncScreen: View {
-    @Environment(AppState.self) private var appState
-    @Environment(\.dismiss) private var dismiss
+    @Environment(AppState.self)
+    private var appState
+    @Environment(\.dismiss)
+    private var dismiss
 
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<FreshRssSyncViewModel>(
+    @StateObject private var vmStoreOwner = VMStoreOwner<FreshRssSyncViewModel>(
         Deps.shared.getFreshRssSyncViewModel()
     )
 

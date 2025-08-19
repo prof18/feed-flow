@@ -2,13 +2,16 @@ import FeedFlowKit
 import SwiftUI
 
 struct DeepLinkFeedScreen: View {
-    @Environment(\.openURL) private var openURL
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(\.dismiss) private var dismiss
-    @Environment(AppState.self) private var appState
+    @Environment(\.openURL)
+    private var openURL
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(\.dismiss)
+    private var dismiss
+    @Environment(AppState.self)
+    private var appState
 
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<DeeplinkFeedViewModel>(
+    @StateObject private var vmStoreOwner = VMStoreOwner<DeeplinkFeedViewModel>(
         Deps.shared.getDeeplinkFeedViewModel())
 
     @State private var state: DeeplinkFeedState = .Loading()
@@ -38,7 +41,9 @@ struct DeepLinkFeedScreen: View {
                     case .readerMode:
                         self.readerModeInfo = urlInfo
                     case .internalBrowser:
-                        appState.navigate(route: CommonViewRoute.inAppBrowser(url: URL(string: urlInfo.url)!))
+                        if let url = URL(string: urlInfo.url) {
+                            appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                        }
                     case .preferredBrowser:
                         openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
                         self.dismiss()
@@ -46,7 +51,9 @@ struct DeepLinkFeedScreen: View {
                         if browserSelector.openReaderMode(link: urlInfo.url) {
                             self.readerModeInfo = urlInfo
                         } else if browserSelector.openInAppBrowser() {
-                            appState.navigate(route: CommonViewRoute.inAppBrowser(url: URL(string: urlInfo.url)!))
+                            if let url = URL(string: urlInfo.url) {
+                                appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                            }
                         } else {
                             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
                             self.dismiss()

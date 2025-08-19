@@ -3,9 +3,12 @@ import StoreKit
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(AppState.self) private var appState
-    @Environment(\.scenePhase) private var scenePhase: ScenePhase
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
+    @Environment(AppState.self)
+    private var appState
+    @Environment(\.scenePhase)
+    private var scenePhase: ScenePhase
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass: UserInterfaceSizeClass?
 
     @State var browserSelector: BrowserSelector = .init()
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())

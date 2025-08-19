@@ -10,12 +10,13 @@ import FeedFlowKit
 import SwiftUI
 
 struct ImportExportScreen: View {
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.presentationMode)
+    private var presentationMode
 
-    @Environment(AppState.self) private var appState
+    @Environment(AppState.self)
+    private var appState
 
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(Deps.shared.getImportExportViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(Deps.shared.getImportExportViewModel())
 
     @State var feedImportExportState: FeedImportExportState = .Idle()
     @State var sheetToShow: ImportExportSheetToShow?
@@ -89,10 +90,14 @@ struct ImportExportScreen: View {
                     }
 
                 case .shareSheet:
-                    ShareSheet(
-                        activityItems: [getUrlForOpmlExport()! as URL],
-                        applicationActivities: nil
-                    ) { _, _, _, _ in }
+                    if let exportUrl = getUrlForOpmlExport() {
+                        ShareSheet(
+                            activityItems: [exportUrl],
+                            applicationActivities: nil
+                        ) { _, _, _, _ in }
+                    } else {
+                        EmptyView()
+                    }
                 }
             }
         }

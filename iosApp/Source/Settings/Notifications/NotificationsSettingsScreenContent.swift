@@ -56,7 +56,7 @@ struct NotificationsSettingsContent: View {
                             })
                         }
 
-                        Section(content: {
+                        Section {
                             Text(feedFlowStrings.settingsNotificationsWarningReliability)
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
@@ -68,7 +68,7 @@ struct NotificationsSettingsContent: View {
                             )) {
                                 Text(feedFlowStrings.settingsNotificationsEnableAllTitle)
                             }
-                        })
+                        }
 
                         Section(content: {
                             ForEach(notificationState.feedSources, id: \.feedSourceId) { source in

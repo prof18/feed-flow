@@ -12,7 +12,8 @@ import SwiftUI
 
 @MainActor
 struct FeedSourceListScreenContent: View {
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.presentationMode)
+    private var presentationMode
 
     @State private var showAddFeed = false
 
@@ -48,8 +49,7 @@ struct FeedSourceListScreenContent: View {
         }
     }
 
-    @ViewBuilder
-    private var emptyView: some View {
+    @ViewBuilder private var emptyView: some View {
         VStack {
             Spacer()
 
@@ -69,9 +69,8 @@ struct FeedSourceListScreenContent: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    @ViewBuilder
-    private var feedSourcesWithoutCategoryList: some View {
-        if feedState.feedSourcesWithoutCategory.count > 0 {
+    @ViewBuilder private var feedSourcesWithoutCategoryList: some View {
+        if !feedState.feedSourcesWithoutCategory.isEmpty {
             List {
                 ForEach(feedState.feedSourcesWithoutCategory, id: \.self.id) { feedSource in
                     FeedSourceListItem(
@@ -87,8 +86,7 @@ struct FeedSourceListScreenContent: View {
         }
     }
 
-    @ViewBuilder
-    private var feedSourcesWithCategoryList: some View {
+    @ViewBuilder private var feedSourcesWithCategoryList: some View {
         List {
             ForEach(feedState.feedSourcesWithCategory, id: \.self.categoryId) { feedSourceState in
                 DisclosureGroup(
@@ -125,7 +123,8 @@ struct FeedSourceListScreenContent: View {
 
 @MainActor
 private struct FeedSourceListItem: View {
-    @Environment(AppState.self) private var appState
+    @Environment(AppState.self)
+    private var appState
 
     @State var feedSource: FeedSource
     @State var feedSourceTitle: String

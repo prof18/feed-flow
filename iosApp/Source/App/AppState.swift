@@ -11,7 +11,8 @@ import FeedFlowKit
 import Foundation
 import SwiftUI
 
-@Observable class AppState {
+@Observable
+class AppState {
     var snackbarQueue: Deque<SnackbarData> = Deque()
     var snackbarQueueForSheet: Deque<SnackbarData> = Deque()
     var regularNavigationPath = NavigationPath()

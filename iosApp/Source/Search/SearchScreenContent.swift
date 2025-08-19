@@ -3,9 +3,12 @@ import Foundation
 import SwiftUI
 
 struct SearchScreenContent: View {
-    @Environment(\.openURL) private var openURL
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(AppState.self) private var appState
+    @Environment(\.openURL)
+    private var openURL
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(AppState.self)
+    private var appState
 
     @Binding var searchText: String
     @Binding var searchState: SearchState
@@ -52,7 +55,9 @@ struct SearchScreenContent: View {
                                    route: CommonViewRoute.readerMode(feedItem: feedItem)
                                )
                            } else if browserSelector.openInAppBrowser() {
-                               appState.navigate(route: CommonViewRoute.inAppBrowser(url: URL(string: feedItem.url)!))
+                               if let url = URL(string: feedItem.url) {
+                                   appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                               }
                            } else {
                                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                            }
@@ -118,7 +123,9 @@ struct SearchScreenContent: View {
         if let commentsUrl = feedItem.commentsUrl {
             Button {
                 if browserSelector.openInAppBrowser() {
-                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: URL(string: commentsUrl)!))
+                    if let url = URL(string: commentsUrl) {
+                        appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                    }
                 } else {
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
                 }

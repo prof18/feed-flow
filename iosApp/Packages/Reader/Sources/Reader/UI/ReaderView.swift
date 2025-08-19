@@ -4,8 +4,7 @@ public struct ReaderView<ToolbarView: View>: View {
     var url: URL
     var options: ReaderViewOptions
 
-    @ToolbarContentBuilder
-    let toolbarContent: () -> ToolbarView
+    @ToolbarContentBuilder let toolbarContent: () -> ToolbarView
 
     @State private var status = ReaderStatus.fetching
     @State private var titleFromFallbackWebView: String?
@@ -22,7 +21,8 @@ public struct ReaderView<ToolbarView: View>: View {
     }
 
     public init(
-        url: URL, options: ReaderViewOptions,
+        url: URL,
+        options: ReaderViewOptions,
         @ViewBuilder toolbarContent: @escaping () -> ToolbarView
     ) {
         self.url = url

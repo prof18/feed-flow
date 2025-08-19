@@ -3,9 +3,12 @@ import Foundation
 import SwiftUI
 
 struct FeedItemRowView: View {
-    @Environment(\.openURL) private var openURL
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(AppState.self) private var appState
+    @Environment(\.openURL)
+    private var openURL
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(AppState.self)
+    private var appState
 
     let feedItem: FeedItem
     let index: Int
@@ -54,7 +57,11 @@ struct FeedItemRowView: View {
             },
             label: {
                 FeedItemView(
-                    feedItem: feedItem, index: index, feedFontSizes: feedFontSizes, feedLayout: feedLayout, currentFeedFilter: currentFeedFilter
+                    feedItem: feedItem,
+                    index: index,
+                    feedFontSizes: feedFontSizes,
+                    feedLayout: feedLayout,
+                    currentFeedFilter: currentFeedFilter
                 )
                 .contentShape(Rectangle())
             }

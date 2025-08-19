@@ -10,9 +10,12 @@ import FeedFlowKit
 import SwiftUI
 
 struct NoFeedsBottomSheet: View {
-    @Environment(\.presentationMode) private var presentationMode
-    @Environment(AppState.self) private var appState
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode)
+    private var presentationMode
+    @Environment(AppState.self)
+    private var appState
+    @Environment(\.dismiss)
+    private var dismiss
 
     let onAddFeedClick: () -> Void
     let onImportExportClick: () -> Void

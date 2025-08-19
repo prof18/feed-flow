@@ -21,11 +21,9 @@ struct ShareView: View {
         case idle
     }
 
-    @StateObject
-    private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(Deps.shared.getAddFeedViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<AddFeedViewModel>(Deps.shared.getAddFeedViewModel())
 
-    @State
-    private var uiState: UIState = .loading
+    @State private var uiState: UIState = .loading
 
     var body: some View {
         VStack(spacing: Spacing.regular) {

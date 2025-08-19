@@ -10,14 +10,11 @@ import Collections
 import SwiftUI
 
 struct Snackbar: View {
-    @Binding
-    var messageQueue: Deque<SnackbarData>
+    @Binding var messageQueue: Deque<SnackbarData>
 
-    @State
-    private var snackbarData: SnackbarData = .init()
+    @State private var snackbarData: SnackbarData = .init()
 
-    @State
-    private var showBanner: Bool = false
+    @State private var showBanner: Bool = false
 
     var body: some View {
         HStack {

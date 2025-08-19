@@ -4,9 +4,12 @@ import Reader
 import SwiftUI
 
 struct ReaderModeScreen: View {
-    @Environment(BrowserSelector.self) private var browserSelector
-    @Environment(\.openURL) private var openURL
-    @Environment(AppState.self) private var appState
+    @Environment(BrowserSelector.self)
+    private var browserSelector
+    @Environment(\.openURL)
+    private var openURL
+    @Environment(AppState.self)
+    private var appState
 
     @State private var showFontSizeMenu: Bool = false
     @State private var fontSize = 16.0
@@ -21,78 +24,82 @@ struct ReaderModeScreen: View {
 
     var body: some View {
         ReaderView(
-            url: URL(string: feedItemUrlInfo.url)!,
+            url: URL(string: feedItemUrlInfo.url) ?? URL(string: "about:blank") ?? URL(fileURLWithPath: ""),
             options: ReaderViewOptions(
                 additionalCSS: """
                     #__reader_container {
                         font-size: \(fontSize)px
                     }
-                """,
-                onLinkClicked: { url in
-                    if browserSelector.openInAppBrowser() {
-                        appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
-                    } else {
+                """
+            ) { url in
+                if browserSelector.openInAppBrowser() {
+                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                } else {
+                    openURL(
+                        browserSelector.getUrlForDefaultBrowser(
+                            stringUrl: url.absoluteString))
+                }
+            }
+        ) {
+            Button {
+                isBookmarked.toggle()
+                vmStoreOwner.instance.updateBookmarkStatus(
+                    feedItemId: FeedItemId(id: feedItemUrlInfo.id),
+                    bookmarked: isBookmarked
+                )
+            } label: {
+                if isBookmarked {
+                    Image(systemName: "bookmark.slash")
+                } else {
+                    Image(systemName: "bookmark")
+                }
+            }
+
+            ShareLink(
+                item: URL(string: feedItemUrlInfo.url) ?? URL(string: "about:blank") ?? URL(fileURLWithPath: "")
+            ) {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
+
+            Button {
+                let archiveUrlString = getArchiveISUrl(articleUrl: feedItemUrlInfo.url)
+                if browserSelector.openInAppBrowser() {
+                    if let url = URL(string: archiveUrlString) {
+                        appState.navigate(
+                            route: CommonViewRoute.inAppBrowser(url: url)
+                        )
+                    }
+                } else {
+                    if let url = URL(string: archiveUrlString) {
                         openURL(
                             browserSelector.getUrlForDefaultBrowser(
                                 stringUrl: url.absoluteString))
                     }
                 }
-            ),
-            toolbarContent: {
-                Button {
-                    isBookmarked.toggle()
-                    vmStoreOwner.instance.updateBookmarkStatus(
-                        feedItemId: FeedItemId(id: feedItemUrlInfo.id),
-                        bookmarked: isBookmarked
-                    )
-                } label: {
-                    if isBookmarked {
-                        Image(systemName: "bookmark.slash")
-                    } else {
-                        Image(systemName: "bookmark")
-                    }
-                }
-
-                ShareLink(
-                    item: URL(string: feedItemUrlInfo.url)!,
-                    label: {
-                        Label("Share", systemImage: "square.and.arrow.up")
-                    }
-                )
-
-                Button {
-                    let archiveUrlString = getArchiveISUrl(articleUrl: feedItemUrlInfo.url)
-                    if browserSelector.openInAppBrowser() {
-                        appState.navigate(
-                            route: CommonViewRoute.inAppBrowser(url: URL(string: archiveUrlString)!)
-                        )
-                    } else {
-                        openURL(
-                            browserSelector.getUrlForDefaultBrowser(
-                                stringUrl: URL(string: archiveUrlString)!.absoluteString))
-                    }
-
-                } label: {
-                    Image(systemName: "hammer.fill")
-                }
-
-                Button {
-                    if browserSelector.openInAppBrowser() {
-                        appState.navigate(
-                            route: CommonViewRoute.inAppBrowser(url: URL(string: feedItemUrlInfo.url)!)
-                        )
-                    } else {
-                        openURL(
-                            browserSelector.getUrlForDefaultBrowser(
-                                stringUrl: URL(string: feedItemUrlInfo.url)!.absoluteString))
-                    }
-                } label: {
-                    Image(systemName: "globe")
-                }
-
-                fontSizeMenu
+            } label: {
+                Image(systemName: "hammer.fill")
             }
-        )
+
+            Button {
+                if browserSelector.openInAppBrowser() {
+                    if let url = URL(string: feedItemUrlInfo.url) {
+                        appState.navigate(
+                            route: CommonViewRoute.inAppBrowser(url: url)
+                        )
+                    }
+                } else {
+                    if let url = URL(string: feedItemUrlInfo.url) {
+                        openURL(
+                            browserSelector.getUrlForDefaultBrowser(
+                                stringUrl: url.absoluteString))
+                    }
+                }
+            } label: {
+                Image(systemName: "globe")
+            }
+
+            fontSizeMenu
+        }
         .onAppear {
             isBookmarked = feedItemUrlInfo.isBookmarked
         }
@@ -105,8 +112,7 @@ struct ReaderModeScreen: View {
         }
     }
 
-    @ViewBuilder
-    private var fontSizeMenu: some View {
+    @ViewBuilder private var fontSizeMenu: some View {
         Button {
             showFontSizeMenu.toggle()
         } label: {
@@ -127,14 +133,13 @@ struct ReaderModeScreen: View {
 
                     Slider(
                         value: $fontSize,
-                        in: 12 ... 40,
-                        onEditingChanged: { isEditing in
-                            if !isEditing {
-                                vmStoreOwner.instance.updateFontSize(
-                                    newFontSize: Int32(Int(fontSize)))
-                            }
+                        in: 12 ... 40
+                    ) { isEditing in
+                        if !isEditing {
+                            vmStoreOwner.instance.updateFontSize(
+                                newFontSize: Int32(Int(fontSize)))
                         }
-                    )
+                    }
 
                     Button {
                         fontSize += 1.0

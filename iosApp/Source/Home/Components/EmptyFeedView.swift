@@ -10,8 +10,10 @@ import FeedFlowKit
 import SwiftUI
 
 struct EmptyFeedView: View {
-    @Environment(AppState.self) private var appState
-    @Environment(\.dismiss) private var dismiss
+    @Environment(AppState.self)
+    private var appState
+    @Environment(\.dismiss)
+    private var dismiss
 
     let currentFeedFilter: FeedFilter
     let onReloadClick: () -> Void

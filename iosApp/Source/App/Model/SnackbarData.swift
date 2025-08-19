@@ -32,6 +32,6 @@ struct SnackbarData: Equatable {
 
 extension SnackbarData {
     func isEmpty() -> Bool {
-        return title == "" && subtitle == nil && showSnackbar == false
+        return title.isEmpty && subtitle == nil && showSnackbar == false
     }
 }

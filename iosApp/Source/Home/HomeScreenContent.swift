@@ -10,12 +10,17 @@ import FeedFlowKit
 import SwiftUI
 
 struct HomeContent: View {
-    @Environment(HomeListIndexHolder.self) private var indexHolder
-    @Environment(AppState.self) private var appState
-    @Environment(\.scenePhase) private var scenePhase: ScenePhase
+    @Environment(HomeListIndexHolder.self)
+    private var indexHolder
+    @Environment(AppState.self)
+    private var appState
+    @Environment(\.scenePhase)
+    private var scenePhase: ScenePhase
 
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
+    @Environment(\.dismiss)
+    private var dismiss
+    @Environment(\.openURL)
+    private var openURL
 
     @Binding var loadingState: FeedUpdateStatus?
     @Binding var feedState: [FeedItem]
@@ -240,7 +245,6 @@ struct HomeContent: View {
                         Label("Delete Database", systemImage: "trash")
                     }
                 #endif
-
             } label: {
                 Image(systemName: "ellipsis.circle")
             }

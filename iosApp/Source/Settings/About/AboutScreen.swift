@@ -11,11 +11,10 @@ import Foundation
 import SwiftUI
 
 struct AboutScreen: View {
-    @Environment(\.openURL) private var openURL
+    @Environment(\.openURL)
+    private var openURL
 
-    // swiftlint:disable line_length
     private let authorLink: LocalizedStringKey = "\(feedFlowStrings.authorLabel) [Marco Gomiero](https://www.marcogomiero.com)"
-    // swiftlint:enable line_length
 
     var body: some View {
         VStack {
@@ -50,7 +49,6 @@ struct AboutScreen: View {
                             Label(feedFlowStrings.aboutMenuContributeTranslations, systemImage: "flag")
                         }
                     )
-
                 } footer: {
                     if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                         Text(feedFlowStrings.aboutAppVersion(appVersion))

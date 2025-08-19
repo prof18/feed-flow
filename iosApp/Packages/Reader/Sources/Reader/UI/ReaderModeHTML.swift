@@ -13,26 +13,23 @@ extension Reader {
         includeExitReaderButton _: Bool = true
     ) -> String {
         let escapedTitle = Entities.escape(title.byStrippingSiteNameFromPageTitle)
-        let logger = Reader.logger
 
         let (fgLight, fgDark) = ReaderTheme.foreground.hexPair
-        let (fg2Light, fg2Dark) = ReaderTheme.foreground2.hexPair
         let (bgLight, bgDark) = ReaderTheme.background.hexPair
-        let (bg2Light, bg2Dark) = ReaderTheme.background2.hexPair
         let (linkLight, linkDark) = ReaderTheme.link.hexPair
 
-        var lightBackgroundColor = "#f6f8fa"
-        var darkBackgroundColor = "#1e1e1e"
+        let lightBackgroundColor = "#f6f8fa"
+        let darkBackgroundColor = "#1e1e1e"
 
-        var lightBorderColor = "#d1d9e0"
-        var darkBorderColor = "#444444"
+        let lightBorderColor = "#d1d9e0"
+        let darkBorderColor = "#444444"
 
         let subtitle: String = {
             var partsHTML = [String]()
 
             let separatorHTML = "<span class='__separator'> · </span>"
             func appendSeparatorIfNecessary() {
-                if partsHTML.count > 0 {
+                if !partsHTML.isEmpty {
                     partsHTML.append(separatorHTML)
                 }
             }
@@ -40,7 +37,7 @@ extension Reader {
                 appendSeparatorIfNecessary()
                 partsHTML.append(host)
             }
-            if partsHTML.count == 0 { return "" }
+            if partsHTML.isEmpty { return "" }
             return "<p class='__subtitle'>\(partsHTML.joined())</p>"
         }()
 
@@ -58,7 +55,8 @@ extension Reader {
           body {
               overflow-wrap: break-word;
               font: -apple-system-body;
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                           Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
               font-size: $fontSizeCss;
               line-height: 1.5em;
               color: \(fgLight);
@@ -86,7 +84,8 @@ extension Reader {
 
           h1, h2, h3, h4, h5, h6 {
               line-height: 1.2;
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                           Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
               font-weight: 800;
           }
 
@@ -253,7 +252,7 @@ extension Reader {
 extension URL {
     /// If HTML is generated with `includeExitReaderButton=true`, clicking the button will navigate to this URL,
     /// which you should intercept and use to display the original website.
-    static let exitReaderModeLink = URL(string: "feeeed://exit-reader-mode")!
+    static let exitReaderModeLink = URL(string: "feeeed://exit-reader-mode") ?? URL(fileURLWithPath: "")
 }
 
 extension Fuzi.XMLElement {

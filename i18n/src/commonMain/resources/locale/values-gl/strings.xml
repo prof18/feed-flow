@@ -229,4 +229,8 @@
     <string name="settings_feed_layout_list">Lista</string>
     <string name="settings_feed_layout_card">Tarxeta</string>
     <string name="feed_layout_title">Disposición da canle</string>
+    <string name="settings_theme">Decorado</string>
+    <string name="settings_theme_system">Sistema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Escuro</string>
 </resources>

@@ -69,7 +69,7 @@
     <string name="import_export_description">FeedFlow obsługuje importowanie i eksportowanie subskrypcji za pomocą pliku OPML, dla lepszej współpracy z innymi czytnikami kanałów</string>
     <string name="no_feed_modal_title">Dodaj nowy kanał</string>
     <string name="no_feed_modal_message">Możesz ręcznie dodać kanał lub zaimportować swoje subskrypcje z innego czytnika RSS, lub możesz połączyć konto, aby zsynchronizować dane z innego urządzenia (ta funkcja jest w fazie beta).</string>
-    <string name="drawer_title_read">Czytaj</string>
+    <string name="drawer_title_read">Przeczytane</string>
     <string name="settings_toggle_show_read_articles">Pokaż przeczytane artykuły na osi czasu</string>
     <string name="menu_add_to_bookmark">Dodaj do zakładek</string>
     <string name="menu_remove_from_bookmark">Usuń z zakładek</string>
@@ -229,4 +229,8 @@
     <string name="settings_feed_order_newest_first">Od najnowszych</string>
     <string name="settings_feed_order_oldest_first">Od najstarszych</string>
     <string name="reader_mode_archive_button_content_description">Otwórz w archive.is</string>
+    <string name="settings_theme">Motyw</string>
+    <string name="settings_theme_system">Systemowy</string>
+    <string name="settings_theme_light">Jasny</string>
+    <string name="settings_theme_dark">Ciemny</string>
 </resources>

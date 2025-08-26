@@ -233,4 +233,5 @@
     <string name="settings_theme_system">Система</string>
     <string name="settings_theme_light">Світло</string>
     <string name="settings_theme_dark">Темний</string>
+    <string name="icloud_connection_error">Вибачте, але нам не вдається підключитися до iCloud. Перевірте, чи ви ввійшли в систему, чи ввімкнено iCloud Drive, і чи є у вас вільне місце</string>
 </resources>

@@ -233,4 +233,5 @@
     <string name="settings_theme_system">Systemeinstellung</string>
     <string name="settings_theme_light">Hell</string>
     <string name="settings_theme_dark">Dunkel</string>
+    <string name="icloud_connection_error">Leider können wir uns nicht mit iCloud verbinden. Bitte prüfen sie, ob sie angemeldet sind, ob das iCloud Laufwerk aktiviert ist und ob Speicherplatz zur Verfügung steht</string>
 </resources>

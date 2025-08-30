@@ -29,7 +29,7 @@ jsoup = "1.21.1"
 # https://github.com/java-native-access/jna
 jsystem-theme-detector = "3.9.1"
 junit = "4.13.2"
-kermit = "2.0.6"
+kermit = "2.0.8"
 koin-bom = "4.1.0"
 kotlin = "2.2.0"
 kotlinx-date-time = "0.7.1"

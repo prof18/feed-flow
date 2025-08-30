@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-15
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ checks ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ checks ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle
@@ -85,7 +85,7 @@ jobs:
     runs-on: macos-15
     needs: [ checks ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Xcode version
         run: |

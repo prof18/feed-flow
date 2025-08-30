@@ -27,7 +27,7 @@ jobs:
       name_msix: ${{ steps.path_variables.outputs.name_msix }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle

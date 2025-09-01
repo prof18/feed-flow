@@ -234,4 +234,5 @@
     <string name="settings_theme">Thème</string>
     <string name="settings_theme_system">Système</string>
     <string name="settings_theme_light">Clair</string>
+    <string name="icloud_connection_error">Navré, nous n\'avons pu nous connecter à iCloud. Veuillez vérifier si vous êtes bien connecté, si iCloud Drive est activé, et si il vous reste de l\'espace de stockage</string>
 </resources>

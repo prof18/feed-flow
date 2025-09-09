@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -102,24 +103,26 @@ internal data class ReaderModeScreen(
                         fontWeight = FontWeight.Light,
                     )
 
-                    Markdown(
-                        modifier = Modifier
-                            .padding(Spacing.regular),
-                        content = successState.readerModeData.content,
-                        imageTransformer = Coil3ImageTransformerImpl,
-                        typography = markdownTypography(
-                            h1 = MaterialTheme.typography.displaySmall,
-                            h2 = MaterialTheme.typography.titleLarge,
-                            h3 = MaterialTheme.typography.titleLarge,
-                            h4 = MaterialTheme.typography.titleMedium,
-                            h5 = MaterialTheme.typography.titleMedium,
-                            h6 = MaterialTheme.typography.titleMedium,
-                            paragraph = MaterialTheme.typography.bodyLarge.copy(
-                                lineHeight = (fontSize + 15).sp,
-                                fontSize = fontSize.sp,
+                    SelectionContainer {
+                        Markdown(
+                            modifier = Modifier
+                                .padding(Spacing.regular),
+                            content = successState.readerModeData.content,
+                            imageTransformer = Coil3ImageTransformerImpl,
+                            typography = markdownTypography(
+                                h1 = MaterialTheme.typography.displaySmall,
+                                h2 = MaterialTheme.typography.titleLarge,
+                                h3 = MaterialTheme.typography.titleLarge,
+                                h4 = MaterialTheme.typography.titleMedium,
+                                h5 = MaterialTheme.typography.titleMedium,
+                                h6 = MaterialTheme.typography.titleMedium,
+                                paragraph = MaterialTheme.typography.bodyLarge.copy(
+                                    lineHeight = (fontSize + 15).sp,
+                                    fontSize = fontSize.sp,
+                                ),
                             ),
-                        ),
-                    )
+                        )
+                    }
                 }
             },
             onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->

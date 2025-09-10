@@ -153,6 +153,7 @@ dependencies {
     "googlePlayImplementation"(libs.firebase.crashlytics)
     "googlePlayImplementation"(libs.touchlab.kermit.crash)
     "googlePlayImplementation"(libs.play.review)
+    "googlePlayImplementation"(libs.telemetry.deck)
 
     debugImplementation(compose.uiTooling)
 

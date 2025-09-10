@@ -58,6 +58,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
 
         if (isGooglePlayFlavor && appEnvironment.isRelease()) {
             CrashlyticsHelper.initCrashlytics()
+            TelemetryHelper.initTelemetry(this)
         }
 
         initKoin(

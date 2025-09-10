@@ -12,6 +12,7 @@ finish-args:
   - --device=dri
   - --filesystem=xdg-documents:ro
   - --filesystem=xdg-download:rw
+  - --filesystem=xdg-config:create
 
 modules:
   - name: openjdk

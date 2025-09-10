@@ -61,6 +61,7 @@ voyager = "1.0.1"
 workmanager = "2.10.3"
 compose-hotreload = "1.0.0-beta06"
 flatpack-gradle-generator = "1.5.0"
+telemetry-deck = "6.2.0"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
@@ -147,6 +148,7 @@ touchlab-kermit-test = { module = "co.touchlab:kermit-test", version.ref = "kerm
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-transition = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "workmanager" }
+telemetry-deck = { module = "com.telemetrydeck:kotlin-sdk", version.ref = "telemetry-deck" }
 
 [bundles]
 about-libraries = ["about-libraries-core", "about-libraries-compose"]

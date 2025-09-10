@@ -233,4 +233,5 @@
     <string name="settings_theme_system">Giống hệ thống</string>
     <string name="settings_theme_light">Sáng</string>
     <string name="settings_theme_dark">Tối</string>
+    <string name="icloud_connection_error">Rất tiếc, chúng tôi không thể kết nối với iCloud. Vui lòng kiểm tra xem bạn đã đăng nhập chưa, iCloud Drive đã được bật chưa và bạn còn dung lượng trống không</string>
 </resources>

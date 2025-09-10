@@ -233,4 +233,5 @@
     <string name="settings_theme_system">Sistema</string>
     <string name="settings_theme_light">Claro</string>
     <string name="settings_theme_dark">Escuro</string>
+    <string name="icloud_connection_error">Lamentamos non poder conectar con iCloud. Comproba se iniciaches sesión, iCloud Drive está activada e tes espazo abondo</string>
 </resources>

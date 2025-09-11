@@ -20,8 +20,6 @@ struct NoFeedsBottomSheet: View {
     let onAddFeedClick: () -> Void
     let onImportExportClick: () -> Void
 
-    var preferredHeight: CGFloat = 400
-
     var body: some View {
         NavigationStack {
             List {
@@ -54,7 +52,9 @@ struct NoFeedsBottomSheet: View {
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
-            .background(Color.secondaryBackgroundColor)
+            .if(!isiOS26OrLater()) { view in
+                view.background(Color.secondaryBackgroundColor)
+            }
             .navigationTitle(feedFlowStrings.noFeedModalTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -67,7 +67,7 @@ struct NoFeedsBottomSheet: View {
                 }
             }
         }
-        .presentationDetents([.fraction(0.6)])
+        .background(Color.secondaryBackgroundColor)
     }
 }
 

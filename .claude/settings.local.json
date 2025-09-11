@@ -5,7 +5,8 @@
       "Bash(swiftlint lint:*)",
       "Bash(find:*)",
       "Bash(swiftlint:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(swiftlint:*)"
     ],
     "deny": []
   }

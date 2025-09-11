@@ -1,10 +1,40 @@
 import SwiftUI
 
-public struct ReaderView<ToolbarView: View>: View {
+public struct ReaderViewActions {
+    public let onBookmarkToggle: (Bool) -> Void
+    public let onArchive: () -> Void
+    public let onOpenInBrowser: () -> Void
+    public let onFontSizeMenuToggle: () -> Void
+    public let onFontSizeDecrease: () -> Void
+    public let onFontSizeIncrease: () -> Void
+    public let onFontSizeChange: (Double) -> Void
+
+    public init(
+        onBookmarkToggle: @escaping (Bool) -> Void,
+        onArchive: @escaping () -> Void,
+        onOpenInBrowser: @escaping () -> Void,
+        onFontSizeMenuToggle: @escaping () -> Void,
+        onFontSizeDecrease: @escaping () -> Void,
+        onFontSizeIncrease: @escaping () -> Void,
+        onFontSizeChange: @escaping (Double) -> Void
+    ) {
+        self.onBookmarkToggle = onBookmarkToggle
+        self.onArchive = onArchive
+        self.onOpenInBrowser = onOpenInBrowser
+        self.onFontSizeMenuToggle = onFontSizeMenuToggle
+        self.onFontSizeDecrease = onFontSizeDecrease
+        self.onFontSizeIncrease = onFontSizeIncrease
+        self.onFontSizeChange = onFontSizeChange
+    }
+}
+
+public struct ReaderView: View {
     var url: URL
     var options: ReaderViewOptions
-
-    @ToolbarContentBuilder let toolbarContent: () -> ToolbarView
+    var actions: ReaderViewActions
+    var isBookmarked: Bool
+    var fontSize: Double
+    var showFontSizeMenu: Bool
 
     @State private var status = ReaderStatus.fetching
     @State private var titleFromFallbackWebView: String?
@@ -23,11 +53,17 @@ public struct ReaderView<ToolbarView: View>: View {
     public init(
         url: URL,
         options: ReaderViewOptions,
-        @ViewBuilder toolbarContent: @escaping () -> ToolbarView
+        actions: ReaderViewActions,
+        isBookmarked: Bool,
+        fontSize: Double,
+        showFontSizeMenu: Bool
     ) {
         self.url = url
         self.options = options
-        self.toolbarContent = toolbarContent
+        self.actions = actions
+        self.isBookmarked = isBookmarked
+        self.fontSize = fontSize
+        self.showFontSizeMenu = showFontSizeMenu
     }
 
     public var body: some View {
@@ -36,7 +72,11 @@ public struct ReaderView<ToolbarView: View>: View {
             .overlay(loader)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                toolbarContent()
+                if isiOS26OrLater() {
+                    makeIOS26ToolbarContent()
+                } else {
+                    makeLegacyToolbarContent()
+                }
             }
             .task {
                 do {
@@ -81,6 +121,138 @@ public struct ReaderView<ToolbarView: View>: View {
             status = .failedToExtractContent
         } else {
             options.onLinkClicked?(url)
+        }
+    }
+
+    @ToolbarContentBuilder
+    private func makeIOS26ToolbarContent() -> some ToolbarContent {
+        ToolbarItemGroup(placement: .bottomBar) {
+            Button {
+                let newBookmarkState = !isBookmarked
+                actions.onBookmarkToggle(newBookmarkState)
+            } label: {
+                if isBookmarked {
+                    Image(systemName: "bookmark.slash")
+                } else {
+                    Image(systemName: "bookmark")
+                }
+            }
+
+            ShareLink(
+                item: url,
+                label: {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+            )
+
+            Button {
+                actions.onArchive()
+            } label: {
+                Image(systemName: "hammer.fill")
+            }
+        }
+
+        ToolbarItem {
+            Button {
+                actions.onOpenInBrowser()
+            } label: {
+                Image(systemName: "globe")
+            }
+        }
+
+        if #available(iOS 26.0, *) {
+            ToolbarSpacer(.fixed)
+        }
+
+        ToolbarItem {
+            fontSizeMenu
+        }
+    }
+
+    @ToolbarContentBuilder
+    private func makeLegacyToolbarContent() -> some ToolbarContent {
+        ToolbarItem {
+            Button {
+                let newBookmarkState = !isBookmarked
+                actions.onBookmarkToggle(newBookmarkState)
+            } label: {
+                if isBookmarked {
+                    Image(systemName: "bookmark.slash")
+                } else {
+                    Image(systemName: "bookmark")
+                }
+            }
+        }
+
+        ToolbarItem {
+            ShareLink(
+                item: url,
+                label: {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+            )
+        }
+
+        ToolbarItem {
+            Button {
+                actions.onArchive()
+            } label: {
+                Image(systemName: "hammer.fill")
+            }
+        }
+
+        ToolbarItem {
+            Button {
+                actions.onOpenInBrowser()
+            } label: {
+                Image(systemName: "globe")
+            }
+        }
+
+        ToolbarItem {
+            fontSizeMenu
+        }
+    }
+
+    @ViewBuilder
+    private var fontSizeMenu: some View {
+        Button {
+            actions.onFontSizeMenuToggle()
+        } label: {
+            Image(systemName: "textformat.size")
+        }
+        .font(.title3)
+        .popover(isPresented: .constant(showFontSizeMenu)) {
+            VStack(alignment: .leading) {
+                Text("Font Size")
+
+                HStack {
+                    Button {
+                        actions.onFontSizeDecrease()
+                    } label: {
+                        Image(systemName: "minus")
+                    }
+
+                    Slider(
+                        value: .constant(fontSize),
+                        in: 12 ... 40,
+                        onEditingChanged: { isEditing in
+                            if !isEditing {
+                                actions.onFontSizeChange(fontSize)
+                            }
+                        }
+                    )
+
+                    Button {
+                        actions.onFontSizeIncrease()
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+            .frame(width: 250, height: 100)
+            .padding(.horizontal, 16)
+            .presentationCompactAdaptation((.popover))
         }
     }
 }

@@ -37,6 +37,7 @@ struct HomeContent: View {
     @Binding var feedLayout: FeedLayout
 
     @State var isToolbarVisible: Bool = true
+    @State var showScrollToTop: Bool = false
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
@@ -73,10 +74,16 @@ struct HomeContent: View {
                 onReadStatusClick: onReadStatusClick,
                 onBackToTimelineClick: onBackToTimelineClick,
                 onMarkAllAsReadClick: onMarkAllReadClick,
-                openDrawer: openDrawer
+                openDrawer: openDrawer,
+                onScrollPositionChanged: { shouldShow in
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        showScrollToTop = shouldShow
+                    }
+                }
             )
             .onChange(of: toggleListScroll) {
                 proxy.scrollTo(feedState.first?.id)
+                showScrollToTop = false
             }
             .onChange(of: showSettings) {
                 sheetToShow = .settings
@@ -85,18 +92,24 @@ struct HomeContent: View {
                 view.navigationBarBackButtonHidden(true)
             }
             .navigationBarTitleDisplayMode(.inline)
+            .if(isiOS26OrLater()) { view in
+                view.navigationTitle(getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount))
+            }
             .toolbar {
                 if isToolbarVisible {
-                    makeToolbarHeaderView(proxy: proxy)
-                    if !isOnVisionOSDevice() {
-                        if showFeedSyncButton {
-                            makeFeedSynToolbarView()
-                        }
-                        makeSearchToolbarView()
-                        makeMenuToolbarView(proxy: proxy)
+                    if isiOS26OrLater() {
+                        makeIOS26ToolbarContent(proxy: proxy)
+                    } else {
+                        makeLegacyToolbarContent(proxy: proxy)
                     }
                 }
             }
+            .showsScrollToTop(isVisible: showScrollToTop, onScrollToTop: {
+                withAnimation {
+                    proxy.scrollTo(feedState.first?.id)
+                    showScrollToTop = false
+                }
+            })
         }
         .onChange(of: appState.redrawAfterFeedSourceEdit) {
             onRefresh()
@@ -139,145 +152,6 @@ struct HomeContent: View {
             case let .editFeed(source):
                 EditFeedScreen(feedSource: source)
             }
-        }
-    }
-
-    @ToolbarContentBuilder
-    private func makeToolbarHeaderView(proxy: ScrollViewProxy) -> some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            HStack {
-                if appState.sizeClass == .compact {
-                    Button {
-                        self.dismiss()
-                    } label: {
-                        Image(systemName: "sidebar.left")
-                    }
-                }
-
-                HStack {
-                    Text(getNavBarName(feedFilter: currentFeedFilter))
-                        .font(.title2)
-
-                    if !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) {
-                        Text("(\(unreadCount))")
-                            .font(.title2)
-                    }
-                }
-                .padding(.vertical, Spacing.medium)
-                .onTapGesture(count: 1) {
-                    proxy.scrollTo(feedState.first?.id)
-                }
-                .onTapGesture(count: 2) {
-                    updateReadStatus(Int32(indexHolder.getLastReadIndex()))
-                    self.indexHolder.refresh()
-                    proxy.scrollTo(feedState.first?.id)
-                    onRefresh()
-                }
-            }
-        }
-    }
-
-    @ToolbarContentBuilder
-    private func makeFeedSynToolbarView() -> some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                self.onFeedSyncClick()
-            } label: {
-                Image(systemName: "arrow.uturn.up")
-            }
-        }
-    }
-
-    @ToolbarContentBuilder
-    private func makeSearchToolbarView() -> some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                self.appState.navigate(
-                    route: CommonViewRoute.search
-                )
-            } label: {
-                Image(systemName: "magnifyingglass")
-            }
-        }
-    }
-
-    @ToolbarContentBuilder
-    private func makeMenuToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
-        ToolbarItem(placement: .primaryAction) {
-            Menu {
-                Button {
-                    onMarkAllReadClick()
-                } label: {
-                    Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
-                }
-
-                Button {
-                    onDeleteOldFeedClick()
-                } label: {
-                    Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
-                }
-
-                Button {
-                    proxy.scrollTo(feedState.first?.id)
-                    onForceRefreshClick()
-                } label: {
-                    Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
-                }
-
-                if let source = (currentFeedFilter as? FeedFilter.Source)?.feedSource {
-                    Button {
-                        self.sheetToShow = .editFeed(source)
-                    } label: {
-                        Label(feedFlowStrings.editFeed, systemImage: "pencil")
-                    }
-                }
-
-                Button {
-                    self.sheetToShow = .settings
-                } label: {
-                    Label(feedFlowStrings.settingsButton, systemImage: "gear")
-                }
-
-                #if DEBUG
-                    Button {
-                        deleteAllFeeds()
-                    } label: {
-                        Label("Delete Database", systemImage: "trash")
-                    }
-                #endif
-            } label: {
-                Image(systemName: "ellipsis.circle")
-            }
-        }
-    }
-
-    func getNavBarName(feedFilter: FeedFilter) -> String {
-        let deviceType = getDeviceType()
-
-        func getTruncatedTitle(_ title: String) -> String {
-            switch deviceType {
-            case .iphonePortrait:
-                return title.truncate(maxChar: 12)
-            case .ipad, .iphoneLandscape:
-                return title.truncate(maxChar: 40)
-            }
-        }
-
-        switch feedFilter {
-        case let category as FeedFilter.Category:
-            return getTruncatedTitle(category.feedCategory.title)
-
-        case let source as FeedFilter.Source:
-            return getTruncatedTitle(source.feedSource.title)
-
-        case is FeedFilter.Read:
-            return feedFlowStrings.drawerTitleRead
-
-        case is FeedFilter.Bookmarks:
-            return feedFlowStrings.drawerTitleBookmarks
-
-        default:
-            return feedFlowStrings.appName
         }
     }
 }
@@ -391,4 +265,211 @@ struct HomeContent: View {
     .environment(HomeListIndexHolder(fakeHomeViewModel: true))
     .environment(AppState())
     .environment(BrowserSelector())
+}
+
+// MARK: - HomeContent Toolbar Extension
+private extension HomeContent {
+    @ToolbarContentBuilder
+    func makeIOS26ToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
+        if appState.sizeClass == .compact {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    self.dismiss()
+                } label: {
+                    Image(systemName: "sidebar.left")
+                }
+            }
+        }
+
+        if #available(iOS 26.0, *) {
+            ToolbarSpacer(.fixed)
+        }
+
+        ToolbarItem {
+            Button {
+                self.appState.navigate(
+                    route: CommonViewRoute.search
+                )
+            } label: {
+                Image(systemName: "magnifyingglass")
+            }
+        }
+
+        if #available(iOS 26.0, *) {
+            ToolbarSpacer(.fixed)
+        }
+        if showFeedSyncButton {
+            makeFeedSynToolbarView()
+        }
+
+        if !isOnVisionOSDevice() {
+            makeMenuToolbarView(proxy: proxy)
+        }
+    }
+
+    @ToolbarContentBuilder
+    func makeLegacyToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
+        makeToolbarHeaderView(proxy: proxy)
+
+        if !isOnVisionOSDevice() {
+            if showFeedSyncButton {
+                makeFeedSynToolbarView()
+            }
+            makeSearchToolbarView()
+            makeMenuToolbarView(proxy: proxy)
+        }
+    }
+
+    @ToolbarContentBuilder
+    func makeToolbarHeaderView(proxy: ScrollViewProxy) -> some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            HStack {
+                if appState.sizeClass == .compact {
+                    Button {
+                        self.dismiss()
+                    } label: {
+                        Image(systemName: "sidebar.left")
+                    }
+                }
+
+                HStack {
+                    Text(getNavBarName(feedFilter: currentFeedFilter))
+                        .font(.title2)
+
+                    if !(currentFeedFilter is FeedFilter.Read) && !(currentFeedFilter is FeedFilter.Bookmarks) {
+                        Text("(\(unreadCount))")
+                            .font(.title2)
+                    }
+                }
+                .padding(.vertical, Spacing.medium)
+                .onTapGesture(count: 1) {
+                    proxy.scrollTo(feedState.first?.id)
+                }
+                .onTapGesture(count: 2) {
+                    updateReadStatus(Int32(indexHolder.getLastReadIndex()))
+                    self.indexHolder.refresh()
+                    proxy.scrollTo(feedState.first?.id)
+                    onRefresh()
+                }
+            }
+        }
+    }
+
+    @ToolbarContentBuilder
+    func makeFeedSynToolbarView() -> some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                self.onFeedSyncClick()
+            } label: {
+                Image(systemName: "arrow.uturn.up")
+            }
+        }
+    }
+
+    @ToolbarContentBuilder
+    func makeSearchToolbarView() -> some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                self.appState.navigate(
+                    route: CommonViewRoute.search
+                )
+            } label: {
+                Image(systemName: "magnifyingglass")
+            }
+        }
+    }
+
+    @ToolbarContentBuilder
+    func makeMenuToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button {
+                    onMarkAllReadClick()
+                } label: {
+                    Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
+                }
+
+                Button {
+                    onDeleteOldFeedClick()
+                } label: {
+                    Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
+                }
+
+                Button {
+                    proxy.scrollTo(feedState.first?.id)
+                    onForceRefreshClick()
+                } label: {
+                    Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
+                }
+
+                if let source = (currentFeedFilter as? FeedFilter.Source)?.feedSource {
+                    Button {
+                        self.sheetToShow = .editFeed(source)
+                    } label: {
+                        Label(feedFlowStrings.editFeed, systemImage: "pencil")
+                    }
+                }
+
+                Button {
+                    self.sheetToShow = .settings
+                } label: {
+                    Label(feedFlowStrings.settingsButton, systemImage: "gear")
+                }
+
+                #if DEBUG
+                    Button {
+                        deleteAllFeeds()
+                    } label: {
+                        Label("Delete Database", systemImage: "trash")
+                    }
+                #endif
+            } label: {
+                if isiOS26OrLater() {
+                    Image(systemName: "ellipsis")
+                } else {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
+    }
+
+    func getNavBarTitleWithCount(feedFilter: FeedFilter, unreadCount: Int) -> String {
+        let baseName = getNavBarName(feedFilter: feedFilter)
+
+        if !(feedFilter is FeedFilter.Read) && !(feedFilter is FeedFilter.Bookmarks) {
+            return "\(baseName) (\(unreadCount))"
+        } else {
+            return baseName
+        }
+    }
+
+    func getNavBarName(feedFilter: FeedFilter) -> String {
+        let deviceType = getDeviceType()
+
+        func getTruncatedTitle(_ title: String) -> String {
+            switch deviceType {
+            case .iphonePortrait:
+                return title.truncate(maxChar: 12)
+            case .ipad, .iphoneLandscape:
+                return title.truncate(maxChar: 40)
+            }
+        }
+
+        switch feedFilter {
+        case let category as FeedFilter.Category:
+            return getTruncatedTitle(category.feedCategory.title)
+
+        case let source as FeedFilter.Source:
+            return getTruncatedTitle(source.feedSource.title)
+
+        case is FeedFilter.Read:
+            return feedFlowStrings.drawerTitleRead
+
+        case is FeedFilter.Bookmarks:
+            return feedFlowStrings.drawerTitleBookmarks
+
+        default:
+            return feedFlowStrings.appName
+        }
+    }
 }

@@ -6,8 +6,10 @@ import SwiftUI
 struct ReaderModeScreen: View {
     @Environment(BrowserSelector.self)
     private var browserSelector
+    
     @Environment(\.openURL)
     private var openURL
+    
     @Environment(AppState.self)
     private var appState
 
@@ -23,85 +25,89 @@ struct ReaderModeScreen: View {
     let feedItemUrlInfo: FeedItemUrlInfo
 
     var body: some View {
+        if let url = URL(string: feedItemUrlInfo.url) {
         ReaderView(
-            url: URL(string: feedItemUrlInfo.url) ?? URL(string: "about:blank") ?? URL(fileURLWithPath: ""),
+            url: url,
             options: ReaderViewOptions(
                 additionalCSS: """
                     #__reader_container {
                         font-size: \(fontSize)px
                     }
-                """
-            ) { url in
-                if browserSelector.openInAppBrowser() {
-                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
-                } else {
-                    openURL(
-                        browserSelector.getUrlForDefaultBrowser(
-                            stringUrl: url.absoluteString))
-                }
-            }
-        ) {
-            Button {
-                isBookmarked.toggle()
-                vmStoreOwner.instance.updateBookmarkStatus(
-                    feedItemId: FeedItemId(id: feedItemUrlInfo.id),
-                    bookmarked: isBookmarked
-                )
-            } label: {
-                if isBookmarked {
-                    Image(systemName: "bookmark.slash")
-                } else {
-                    Image(systemName: "bookmark")
-                }
-            }
-
-            ShareLink(
-                item: URL(string: feedItemUrlInfo.url) ?? URL(string: "about:blank") ?? URL(fileURLWithPath: "")
-            ) {
-                Label("Share", systemImage: "square.and.arrow.up")
-            }
-
-            Button {
-                let archiveUrlString = getArchiveISUrl(articleUrl: feedItemUrlInfo.url)
-                if browserSelector.openInAppBrowser() {
-                    if let url = URL(string: archiveUrlString) {
-                        appState.navigate(
-                            route: CommonViewRoute.inAppBrowser(url: url)
-                        )
-                    }
-                } else {
-                    if let url = URL(string: archiveUrlString) {
+                """,
+                onLinkClicked: { url in
+                    if browserSelector.openInAppBrowser() {
+                        appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                    } else {
                         openURL(
                             browserSelector.getUrlForDefaultBrowser(
                                 stringUrl: url.absoluteString))
                     }
                 }
-            } label: {
-                Image(systemName: "hammer.fill")
-            }
-
-            Button {
-                if browserSelector.openInAppBrowser() {
-                    if let url = URL(string: feedItemUrlInfo.url) {
-                        appState.navigate(
-                            route: CommonViewRoute.inAppBrowser(url: url)
-                        )
+            ),
+            actions: ReaderViewActions(
+                onBookmarkToggle: { newBookmarkState in
+                    isBookmarked = newBookmarkState
+                    vmStoreOwner.instance.updateBookmarkStatus(
+                        feedItemId: FeedItemId(id: feedItemUrlInfo.id),
+                        bookmarked: isBookmarked
+                    )
+                },
+                onArchive: {
+                    let archiveUrlString = getArchiveISUrl(articleUrl: feedItemUrlInfo.url)
+                    if browserSelector.openInAppBrowser() {
+                        if let archiveUrl = URL(string: archiveUrlString) {
+                            appState.navigate(
+                                route: CommonViewRoute.inAppBrowser(url: archiveUrl)
+                            )
+                        }
+                    } else {
+                        if let archiveUrl = URL(string: archiveUrlString) {
+                            openURL(
+                                browserSelector.getUrlForDefaultBrowser(
+                                    stringUrl: archiveUrl.absoluteString))
+                        }
                     }
-                } else {
-                    if let url = URL(string: feedItemUrlInfo.url) {
-                        openURL(
-                            browserSelector.getUrlForDefaultBrowser(
-                                stringUrl: url.absoluteString))
+                },
+                onOpenInBrowser: {
+                    if browserSelector.openInAppBrowser() {
+                        if let urlForBrowser = URL(string: feedItemUrlInfo.url) {
+                            appState.navigate(
+                                route: CommonViewRoute.inAppBrowser(url: urlForBrowser)
+                            )
+                        }
+                    } else {
+                        if let urlForDefault = URL(string: feedItemUrlInfo.url) {
+                            openURL(
+                                browserSelector.getUrlForDefaultBrowser(
+                                    stringUrl: urlForDefault.absoluteString))
+                        }
                     }
+                },
+                onFontSizeMenuToggle: {
+                    showFontSizeMenu.toggle()
+                },
+                onFontSizeDecrease: {
+                    fontSize -= 1.0
+                    vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                },
+                onFontSizeIncrease: {
+                    fontSize += 1.0
+                    vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                },
+                onFontSizeChange: { newSize in
+                    fontSize = newSize
+                    vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
                 }
-            } label: {
-                Image(systemName: "globe")
-            }
-
-            fontSizeMenu
-        }
+            ),
+            isBookmarked: isBookmarked,
+            fontSize: fontSize,
+            showFontSizeMenu: showFontSizeMenu
+        )
         .onAppear {
             isBookmarked = feedItemUrlInfo.isBookmarked
+        }
+        .if(isiOS26OrLater()) { view in
+            view.ignoresSafeArea()
         }
         .id(reset)
         .task {
@@ -110,48 +116,9 @@ struct ReaderModeScreen: View {
                 self.reset.toggle()
             }
         }
-    }
-
-    @ViewBuilder private var fontSizeMenu: some View {
-        Button {
-            showFontSizeMenu.toggle()
-        } label: {
-            Image(systemName: "textformat.size")
-        }
-        .font(.title3)
-        .popover(isPresented: $showFontSizeMenu) {
-            VStack(alignment: .leading) {
-                Text(feedFlowStrings.readerModeFontSize)
-
-                HStack {
-                    Button {
-                        fontSize -= 1.0
-                        vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                    } label: {
-                        Image(systemName: "minus")
-                    }
-
-                    Slider(
-                        value: $fontSize,
-                        in: 12 ... 40
-                    ) { isEditing in
-                        if !isEditing {
-                            vmStoreOwner.instance.updateFontSize(
-                                newFontSize: Int32(Int(fontSize)))
-                        }
-                    }
-
-                    Button {
-                        fontSize += 1.0
-                        vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                }
-            }
-            .frame(width: 250, height: 100)
-            .padding(.horizontal, Spacing.regular)
-            .presentationCompactAdaptation((.popover))
+        } else {
+            Text("Invalid URL")
+                .foregroundColor(.red)
         }
     }
 }

@@ -1,5 +1,7 @@
 #!/bin/sh
 
-swiftformat iosApp  --swiftversion 5
-swiftlint --fix iosApp
-swiftlint iosApp
+cd iosApp
+swiftformat --swiftversion 5
+swiftlint --fix
+swiftlint
+cd ..

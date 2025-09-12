@@ -1,5 +1,1 @@
-- Add notifications support for new articles
-- Add a new experimental engine for the reader mode (please try and leave feedback!)
-- Add possibility to change date format (from day/month to month/day)
-- Add swipe for mark as read or bookmark an article
 - Bug fixes and improvements

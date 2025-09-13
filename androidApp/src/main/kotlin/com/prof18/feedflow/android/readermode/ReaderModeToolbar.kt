@@ -1,11 +1,7 @@
-package com.prof18.feedflow.shared.ui.readermode
+package com.prof18.feedflow.android.readermode
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -14,105 +10,45 @@ import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
+import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-fun ReaderModeContent(
+internal fun ReaderModeToolbar(
     readerModeState: ReaderModeState,
     fontSize: Int,
     navigateBack: () -> Unit,
     openInBrowser: (String) -> Unit,
     onShareClick: (String) -> Unit,
-    onArchiveClick: (articleUrl: String) -> Unit,
-    onFontSizeChange: (Int) -> Unit,
-    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    snackbarHost: @Composable () -> Unit = {
-    },
-    readerModeSuccessView: @Composable (PaddingValues, ReaderModeState.Success) -> Unit,
-) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            ReaderModeToolbar(
-                readerModeState = readerModeState,
-                fontSize = fontSize,
-                navigateBack = navigateBack,
-                openInBrowser = openInBrowser,
-                onShareClick = onShareClick,
-                onArchiveClick = onArchiveClick,
-                onFontSizeChange = onFontSizeChange,
-                onBookmarkClick = onBookmarkClick,
-            )
-        },
-        snackbarHost = snackbarHost,
-    ) { contentPadding ->
-        when (readerModeState) {
-            is ReaderModeState.HtmlNotAvailable -> {
-                navigateBack()
-                openInBrowser(readerModeState.url)
-            }
-
-            ReaderModeState.Loading -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .padding(contentPadding)
-                        .fillMaxSize(),
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-
-            is ReaderModeState.Success -> {
-                readerModeSuccessView(
-                    contentPadding,
-                    readerModeState,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ReaderModeToolbar(
-    readerModeState: ReaderModeState,
-    fontSize: Int,
-    navigateBack: () -> Unit,
-    openInBrowser: (String) -> Unit,
-    onShareClick: (String) -> Unit,
-    onArchiveClick: (articleUrl: String) -> Unit,
+    onArchiveClick: (String) -> Unit,
     onFontSizeChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
-    TopAppBar(
+    androidx.compose.material3.TopAppBar(
         title = {},
         navigationIcon = {
             IconButton(
                 onClick = navigateBack,
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = null,
                 )
             }
@@ -190,8 +126,6 @@ private fun ReaderModeToolbar(
                     }
 
                     DropdownMenu(
-                        modifier = Modifier
-                            .fillMaxWidth(fraction = 0.8f),
                         expanded = showMenu,
                         onDismissRequest = {
                             showMenu = false

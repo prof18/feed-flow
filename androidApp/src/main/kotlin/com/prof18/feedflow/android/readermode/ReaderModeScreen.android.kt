@@ -1,6 +1,7 @@
 package com.prof18.feedflow.android.readermode
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -15,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -33,7 +36,6 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
-import com.prof18.feedflow.shared.ui.readermode.ReaderModeContent
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import org.json.JSONException
 import org.json.JSONObject
@@ -52,50 +54,71 @@ internal fun ReaderModeScreen(
     val context = LocalContext.current
     val navigator = rememberWebViewNavigator()
 
-    ReaderModeContent(
-        readerModeState = readerModeState,
-        fontSize = fontSize,
-        navigateBack = {
-            if (navigator.canGoBack) {
-                navigator.navigateBack()
-            } else {
-                navigateBack()
-            }
-        },
-        onFontSizeChange = { newFontSize ->
-            navigator.evaluateJavaScript(
-                """
-                    document.getElementById("__reader_container").style.fontSize = "$newFontSize" + "px";
-                    document.getElementById("__reader_container").style.lineHeight = "1.5em";
-                """.trimIndent(),
-            )
-            onUpdateFontSize(newFontSize)
-        },
-        openInBrowser = { url ->
-            browserManager.openUrlWithFavoriteBrowser(url, context)
-        },
-        onShareClick = { url ->
-            context.openShareSheet(
-                title = null,
-                url = url,
-            )
-        },
-        readerModeSuccessView = { contentPadding, state ->
-            ReaderMode(
-                readerModeState = state,
+    Scaffold(
+        topBar = {
+            ReaderModeToolbar(
+                readerModeState = readerModeState,
+                fontSize = fontSize,
+                navigateBack = {
+                    if (navigator.canGoBack) {
+                        navigator.navigateBack()
+                    } else {
+                        navigateBack()
+                    }
+                },
                 openInBrowser = { url ->
                     browserManager.openUrlWithFavoriteBrowser(url, context)
                 },
-                contentPadding = contentPadding,
-                navigator = navigator,
+                onShareClick = { url ->
+                    context.openShareSheet(
+                        title = null,
+                        url = url,
+                    )
+                },
+                onArchiveClick = { articleUrl ->
+                    val archiveUrl = getArchiveISUrl(articleUrl)
+                    browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
+                },
+                onFontSizeChange = { newFontSize ->
+                    navigator.evaluateJavaScript(
+                        """
+                            document.getElementById("__reader_container").style.fontSize = "$newFontSize" + "px";
+                            document.getElementById("__reader_container").style.lineHeight = "1.5em";
+                        """.trimIndent(),
+                    )
+                    onUpdateFontSize(newFontSize)
+                },
+                onBookmarkClick = onBookmarkClick,
             )
         },
-        onBookmarkClick = onBookmarkClick,
-        onArchiveClick = { articleUrl ->
-            val archiveUrl = getArchiveISUrl(articleUrl)
-            browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
-        },
-    )
+    ) { contentPadding ->
+        when (readerModeState) {
+            is ReaderModeState.HtmlNotAvailable -> {
+                navigateBack()
+                browserManager.openUrlWithFavoriteBrowser(readerModeState.url, context)
+            }
+            ReaderModeState.Loading -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .padding(contentPadding)
+                        .fillMaxSize(),
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            is ReaderModeState.Success -> {
+                ReaderMode(
+                    readerModeState = readerModeState,
+                    openInBrowser = { url ->
+                        browserManager.openUrlWithFavoriteBrowser(url, context)
+                    },
+                    contentPadding = contentPadding,
+                    navigator = navigator,
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalStdlibApi::class)

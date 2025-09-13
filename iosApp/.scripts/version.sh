@@ -22,7 +22,7 @@ if [ -n "${GITHUB_RUN_NUMBER:-}" ]; then
     VERSION_CODE=$((GITHUB_RUN_NUMBER + 6000))
 else
     # Local build code
-    VERSION_CODE="6045"
+    VERSION_CODE="6046"
 fi
 
 mkdir -p "${SRCROOT}"/Plist

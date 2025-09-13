@@ -13,7 +13,7 @@ struct FreshRssSyncContent: View {
     @State private var serverUrl: String = ""
     @State private var username: String = ""
     @State private var password: String = ""
-    @State private var isPasswordVisible: Bool = false
+    @State private var isPasswordVisible = false
 
     let uiState: AccountConnectionUiState
     let isLoginLoading: Bool

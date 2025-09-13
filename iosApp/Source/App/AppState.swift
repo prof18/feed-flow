@@ -20,7 +20,7 @@ class AppState {
     var sizeClass: UserInterfaceSizeClass?
     var colorScheme: ColorScheme?
 
-    var redrawAfterFeedSourceEdit: Bool = false
+    var redrawAfterFeedSourceEdit = false
 
     init() {
         compatNavigationPath.append(CompactViewRoute.feed)

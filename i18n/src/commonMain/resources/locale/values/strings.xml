@@ -138,6 +138,7 @@
     <string name="deleting_feed_dialog_title">Deleting...</string>
     <string name="add_feed_generic_error">There was an error while adding the feed. Please retry</string>
     <string name="edit_feed_generic_error">Something went wrong while editing the feed. Please retry.</string>
+    <string name="open_feed_settings">Open feed settings</string>
     <string name="feed_added_message_without_name">Feed added</string>
     <string name="sync_error_message">There was an error while syncing the feeds. Please retry.</string>
     <string name="wrong_credentials_error_message">The credentials are not correct. Please try again.</string>

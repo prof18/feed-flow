@@ -20,9 +20,9 @@ struct AddFeedScreen: View {
     @State private var showError = false
     @State private var errorMessage = ""
     @State private var categoryItems: [CategoriesState.CategoryItem] = []
-    @State private var isAddingFeed: Bool = false
-    @State private var showNotificationToggle: Bool = false
-    @State private var isNotificationEnabled: Bool = false
+    @State private var isAddingFeed = false
+    @State private var showNotificationToggle = false
+    @State private var isNotificationEnabled = false
     @State var feedURL = ""
 
     var showCloseButton: Bool

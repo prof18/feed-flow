@@ -13,7 +13,7 @@ import Foundation
 class HomeListIndexHolder {
     @ObservationIgnored let homeViewModel: HomeViewModel?
 
-    @ObservationIgnored var isLoading: Bool = false
+    @ObservationIgnored var isLoading = false
 
     @ObservationIgnored var lastAppearedIndex = 0
 

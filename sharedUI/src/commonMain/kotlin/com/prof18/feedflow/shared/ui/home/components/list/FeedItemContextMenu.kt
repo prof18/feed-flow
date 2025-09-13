@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -32,6 +33,7 @@ internal fun FeedItemContextMenu(
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     closeMenu: () -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
+    onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
 ) {
     DropdownMenu(
         expanded = showMenu,
@@ -73,6 +75,15 @@ internal fun FeedItemContextMenu(
                 closeMenu = closeMenu,
             )
         }
+
+        DropdownMenuItem(
+            text = { Text(LocalFeedFlowStrings.current.openFeedSettings) },
+            leadingIcon = { Icon(imageVector = Icons.Default.Settings, contentDescription = null) },
+            onClick = {
+                onOpenFeedSettings(feedItem.feedSource)
+                closeMenu()
+            },
+        )
     }
 }
 

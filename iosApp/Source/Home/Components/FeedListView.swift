@@ -42,6 +42,7 @@ struct FeedListView: View {
     let onMarkAllAsReadClick: () -> Void
     let openDrawer: () -> Void
     let onScrollPositionChanged: (Bool) -> Void
+    let onOpenFeedSettings: (FeedSource) -> Void
 
     var body: some View {
         if loadingState is NoFeedSourcesStatus {
@@ -83,7 +84,8 @@ struct FeedListView: View {
                                     FeedItemContextMenu(
                                         feedItem: feedItem,
                                         onBookmarkClick: onBookmarkClick,
-                                        onReadStatusClick: onReadStatusClick
+                                        onReadStatusClick: onReadStatusClick,
+                                        onOpenFeedSettings: onOpenFeedSettings
                                     )
                                 } preview: {
                                     FeedItemView(
@@ -103,7 +105,8 @@ struct FeedListView: View {
                                     FeedItemContextMenu(
                                         feedItem: feedItem,
                                         onBookmarkClick: onBookmarkClick,
-                                        onReadStatusClick: onReadStatusClick
+                                        onReadStatusClick: onReadStatusClick,
+                                        onOpenFeedSettings: onOpenFeedSettings
                                     )
                                 }
                         }
@@ -169,7 +172,8 @@ struct FeedListView: View {
         onBackToTimelineClick: {},
         onMarkAllAsReadClick: {},
         openDrawer: {},
-        onScrollPositionChanged: { _ in }
+        onScrollPositionChanged: { _ in },
+        onOpenFeedSettings: { _ in }
     ).environment(HomeListIndexHolder(fakeHomeViewModel: true))
 }
 
@@ -192,7 +196,8 @@ struct FeedListView: View {
         onBackToTimelineClick: {},
         onMarkAllAsReadClick: {},
         openDrawer: {},
-        onScrollPositionChanged: { _ in }
+        onScrollPositionChanged: { _ in },
+        onOpenFeedSettings: { _ in }
     )
 }
 
@@ -215,6 +220,7 @@ struct FeedListView: View {
         onBackToTimelineClick: {},
         onMarkAllAsReadClick: {},
         openDrawer: {},
-        onScrollPositionChanged: { _ in }
+        onScrollPositionChanged: { _ in },
+        onOpenFeedSettings: { _ in }
     )
 }

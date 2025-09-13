@@ -6,7 +6,8 @@
       "Bash(find:*)",
       "Bash(swiftlint:*)",
       "Bash(sed:*)",
-      "Bash(swiftlint:*)"
+      "Bash(swiftlint:*)",
+      "Bash(.scripts/refresh-translations.sh:*)"
     ],
     "deny": []
   }

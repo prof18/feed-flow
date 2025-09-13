@@ -81,6 +81,7 @@ fun FeedListFontSettings(
                     onReadStatusClick = { _, _ -> },
                     onCommentClick = {},
                     onShareClick = {},
+                    onOpenFeedSettings = {},
                     feedLayout = feedLayout,
                 )
             }

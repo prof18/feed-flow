@@ -41,6 +41,7 @@ internal fun FeedItemView(
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
+    onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
     modifier: Modifier = Modifier,
     disableClick: Boolean = false,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
@@ -134,6 +135,7 @@ internal fun FeedItemView(
             onReadStatusClick = onReadStatusClick,
             onCommentClick = onCommentClick,
             onShareClick = onShareClick,
+            onOpenFeedSettings = onOpenFeedSettings,
         )
     }
 }
@@ -153,6 +155,7 @@ internal fun FeedItemListViewPreview() {
             onReadStatusClick = { _, _ -> },
             onCommentClick = {},
             onShareClick = {},
+            onOpenFeedSettings = {},
             disableClick = true,
         )
     }

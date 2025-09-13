@@ -30,7 +30,7 @@ struct CompactView: View {
         feedSourcesWithoutCategory: [],
         feedSourcesByCategory: [:]
     )
-    @State var scrollUpTrigger: Bool = false
+    @State var scrollUpTrigger = false
     @State var showAddFeedSheet = false
     @State var showEditFeedSheet = false
 

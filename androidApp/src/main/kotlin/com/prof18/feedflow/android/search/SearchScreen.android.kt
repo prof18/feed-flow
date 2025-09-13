@@ -29,6 +29,7 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun SearchScreen(
     navigateBack: () -> Unit,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
+    navigateToEditFeed: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
 ) {
     val viewModel = koinViewModel<SearchViewModel>()
     val browserManager = koinInject<BrowserManager>()
@@ -106,6 +107,7 @@ internal fun SearchScreen(
                 url = titleAndUrl.url,
             )
         },
+        onOpenFeedSettings = navigateToEditFeed,
     )
 }
 
@@ -126,6 +128,7 @@ private fun Preview() {
             onReadStatusClick = { _, _ -> },
             onCommentClick = {},
             onShareClick = { _ -> },
+            onOpenFeedSettings = {},
         )
     }
 }

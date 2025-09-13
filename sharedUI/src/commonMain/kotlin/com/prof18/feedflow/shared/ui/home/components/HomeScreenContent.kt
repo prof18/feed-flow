@@ -134,6 +134,7 @@ fun HomeScreenContent(
                             updateReadStatus = feedListActions.markAsReadOnScroll,
                             markAllAsRead = feedListActions.markAllRead,
                             onShareClick = shareBehavior.onShareClick,
+                            onOpenFeedSettings = feedManagementActions.onEditFeedClick,
                             feedLayout = displayState.feedLayout,
                         )
                     }

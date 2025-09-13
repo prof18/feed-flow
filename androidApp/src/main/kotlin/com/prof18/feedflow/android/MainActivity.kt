@@ -293,6 +293,9 @@ class MainActivity : BaseThemeActivity() {
                         readerModeViewModel.getReaderModeHtml(urlInfo)
                         navController.navigate(ReaderMode)
                     },
+                    navigateToEditFeed = { feedSource ->
+                        navController.navigate(feedSource.toEditFeed())
+                    },
                 )
             }
 

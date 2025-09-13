@@ -25,7 +25,7 @@ struct HomeScreen: View {
 
     @State var feedState: [FeedItem] = []
 
-    @State var showLoading: Bool = true
+    @State var showLoading = true
 
     @State private var sheetToShow: HomeSheetToShow?
 
@@ -33,11 +33,11 @@ struct HomeScreen: View {
 
     @State var currentFeedFilter: FeedFilter = .Timeline()
 
-    @State var showFeedSyncButton: Bool = false
+    @State var showFeedSyncButton = false
 
     @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
-    @State var showFeedOperationDialog: Bool = false
+    @State var showFeedOperationDialog = false
 
     @State var feedOperationLoadingMessage: String?
 

@@ -14,7 +14,7 @@ struct ContentView: View {
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
     @StateObject private var reviewVmStoreOwner = VMStoreOwner<ReviewViewModel>(Deps.shared.getReviewViewModel())
 
-    @State private var isAppInBackground: Bool = false
+    @State private var isAppInBackground = false
 
     @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline(unreadCount: 0)
 

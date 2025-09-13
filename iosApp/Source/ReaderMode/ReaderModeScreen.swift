@@ -13,7 +13,7 @@ struct ReaderModeScreen: View {
     @Environment(AppState.self)
     private var appState
 
-    @State private var showFontSizeMenu: Bool = false
+    @State private var showFontSizeMenu = false
     @State private var fontSize = 16.0
     @State private var isSliderMoving = false
     @State private var reset = false

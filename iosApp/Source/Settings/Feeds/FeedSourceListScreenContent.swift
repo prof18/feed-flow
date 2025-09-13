@@ -129,7 +129,7 @@ private struct FeedSourceListItem: View {
     @State var feedSource: FeedSource
     @State var feedSourceTitle: String
 
-    @State var isRenameEnabled: Bool = false
+    @State var isRenameEnabled = false
 
     let deleteFeedSource: (FeedSource) -> Void
     let renameFeedSource: (FeedSource, String) -> Void

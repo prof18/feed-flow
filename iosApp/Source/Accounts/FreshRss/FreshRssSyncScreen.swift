@@ -20,7 +20,7 @@ struct FreshRssSyncScreen: View {
     )
 
     @State private var uiState: AccountConnectionUiState = .Unlinked()
-    @State private var isLoginLoading: Bool = false
+    @State private var isLoginLoading = false
 
     let isFromAddAccount: Bool
 

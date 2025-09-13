@@ -14,7 +14,7 @@ struct Snackbar: View {
 
     @State private var snackbarData: SnackbarData = .init()
 
-    @State private var showBanner: Bool = false
+    @State private var showBanner = false
 
     var body: some View {
         HStack(spacing: Spacing.medium) {

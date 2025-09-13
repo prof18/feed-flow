@@ -74,6 +74,7 @@ internal fun FeedList(
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     markAllAsRead: () -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
+    onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
 ) {
@@ -123,6 +124,7 @@ internal fun FeedList(
                         onBookmarkClick = onBookmarkClick,
                         onReadStatusClick = onReadStatusClick,
                         feedFontSize = feedFontSize,
+                        onOpenFeedSettings = onOpenFeedSettings,
                         onShareClick = onShareClick,
                         feedLayout = feedLayout,
                         currentFeedFilter = currentFeedFilter,
@@ -143,6 +145,7 @@ internal fun FeedList(
                             onBookmarkClick = onBookmarkClick,
                             onReadStatusClick = onReadStatusClick,
                             feedFontSize = feedFontSize,
+                            onOpenFeedSettings = onOpenFeedSettings,
                             onShareClick = onShareClick,
                             currentFeedFilter = currentFeedFilter,
                         )
@@ -288,6 +291,7 @@ internal fun FeedListPreview() {
                 onCommentClick = {},
                 markAllAsRead = {},
                 onShareClick = {},
+                onOpenFeedSettings = {},
             )
 
             FeedList(
@@ -309,6 +313,7 @@ internal fun FeedListPreview() {
                 onCommentClick = {},
                 markAllAsRead = {},
                 onShareClick = {},
+                onOpenFeedSettings = {},
             )
         }
     }

@@ -30,10 +30,10 @@ struct RegularView: View {
         feedSourcesWithoutCategory: [],
         feedSourcesByCategory: [:]
     )
-    @State var scrollUpTrigger: Bool = false
-    @State var showSettings: Bool = false
+    @State var scrollUpTrigger = false
+    @State var showSettings = false
     @State var showAddFeedSheet = false
-    @State var isToggled: Bool = false
+    @State var isToggled = false
 
     @State var indexHolder: HomeListIndexHolder
     var drawerItems: [DrawerItem] = []

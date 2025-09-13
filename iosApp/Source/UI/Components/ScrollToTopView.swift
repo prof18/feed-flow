@@ -69,7 +69,7 @@ private struct LegacyScrollToTopView: View {
 
 private struct ShowsScrollToTopViewModifier: ViewModifier {
     let onScrollToTop: () -> Void
-    @State private var showButton: Bool = false
+    @State private var showButton = false
 
     func body(content: Content) -> some View {
         ZStack {

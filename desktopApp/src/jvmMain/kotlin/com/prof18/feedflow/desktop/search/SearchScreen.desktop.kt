@@ -18,6 +18,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -106,6 +107,9 @@ internal data class SearchScreen(
             onShareClick = { titleAndUrl ->
                 copyToClipboard(titleAndUrl.url)
             },
+            onOpenFeedSettings = { feedSource ->
+                navigator.push(EditFeedScreen(feedSource))
+            },
         )
     }
 }
@@ -127,6 +131,7 @@ private fun Preview() {
             onReadStatusClick = { _, _ -> },
             onCommentClick = {},
             onShareClick = { _ -> },
+            onOpenFeedSettings = {},
         )
     }
 }

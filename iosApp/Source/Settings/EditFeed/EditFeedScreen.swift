@@ -25,14 +25,14 @@ struct EditFeedScreen: View {
     @State private var showError = false
     @State private var errorMessage = ""
     @State private var categoryItems: [CategoriesState.CategoryItem] = []
-    @State private var isAddingFeed: Bool = false
+    @State private var isAddingFeed = false
     @State var feedURL = ""
     @State var feedName = ""
     @State var linkOpeningPreference = LinkOpeningPreference.default
     @State var isHidden = false
     @State var isPinned = false
-    @State private var showNotificationToggle: Bool = false
-    @State private var isNotificationEnabled: Bool = false
+    @State private var showNotificationToggle = false
+    @State private var isNotificationEnabled = false
 
     var body: some View {
         @Bindable var appState = appState

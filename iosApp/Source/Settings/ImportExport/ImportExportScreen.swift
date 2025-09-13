@@ -21,7 +21,7 @@ struct ImportExportScreen: View {
     @State var feedImportExportState: FeedImportExportState = .Idle()
     @State var sheetToShow: ImportExportSheetToShow?
 
-    var showCloseButton: Bool = false
+    var showCloseButton = false
     let fetchFeeds: () -> Void
 
     var body: some View {

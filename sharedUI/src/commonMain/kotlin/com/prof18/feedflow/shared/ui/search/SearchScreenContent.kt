@@ -61,6 +61,7 @@ fun SearchScreenContent(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
+    onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
     modifier: Modifier = Modifier,
     snackbarHost: @Composable () -> Unit = {
     },
@@ -126,6 +127,7 @@ fun SearchScreenContent(
                                     onBookmarkClick = onBookmarkClick,
                                     onReadStatusClick = onReadStatusClick,
                                     onCommentClick = onCommentClick,
+                                    onOpenFeedSettings = onOpenFeedSettings,
                                     feedLayout = searchState.feedLayout,
                                     onShareClick = onShareClick,
                                 )

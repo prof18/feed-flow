@@ -34,8 +34,8 @@ struct AddFeedScreenContent: View {
     let addNewCategory: (CategoryName) -> Void
     let addFeed: () -> Void
     let updateCategoryName: (String, String) -> Void
-    var showNotificationToggle: Bool = false
-    var isNotificationEnabled: Bool = false
+    var showNotificationToggle = false
+    var isNotificationEnabled = false
     var onNotificationToggleChanged: (Bool) -> Void = { _ in }
 
     var body: some View {

@@ -36,8 +36,8 @@ struct HomeContent: View {
     @Binding var swipeActions: SwipeActions
     @Binding var feedLayout: FeedLayout
 
-    @State var isToolbarVisible: Bool = true
-    @State var showScrollToTop: Bool = false
+    @State var isToolbarVisible = true
+    @State var showScrollToTop = false
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
@@ -79,6 +79,9 @@ struct HomeContent: View {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         showScrollToTop = shouldShow
                     }
+                },
+                onOpenFeedSettings: { feedSource in
+                    sheetToShow = .editFeed(feedSource)
                 }
             )
             .onChange(of: toggleListScroll) {

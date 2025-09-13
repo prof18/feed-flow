@@ -13,6 +13,7 @@ struct FeedItemContextMenu: View {
     let feedItem: FeedItem
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
+    let onOpenFeedSettings: (FeedSource) -> Void
 
     var body: some View {
         makeReadUnreadButton(feedItem: feedItem)
@@ -22,6 +23,7 @@ struct FeedItemContextMenu: View {
         if let commentUrl = feedItem.commentsUrl {
             makeShareCommentsButton(commentsUrl: commentUrl)
         }
+        makeFeedSettingsButton(feedItem: feedItem)
         if isOnVisionOSDevice() {
             Button {
                 // No-op so it will close itself
@@ -90,6 +92,15 @@ struct FeedItemContextMenu: View {
             item: URL(string: commentsUrl) ?? URL(fileURLWithPath: "")
         ) {
             Label(feedFlowStrings.menuShareComments, systemImage: "square.and.arrow.up.on.square")
+        }
+    }
+
+    @ViewBuilder
+    private func makeFeedSettingsButton(feedItem: FeedItem) -> some View {
+        Button {
+            onOpenFeedSettings(feedItem.feedSource)
+        } label: {
+            Label(feedFlowStrings.openFeedSettings, systemImage: "gearshape")
         }
     }
 }

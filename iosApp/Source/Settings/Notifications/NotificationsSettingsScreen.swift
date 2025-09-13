@@ -25,7 +25,7 @@ struct NotificationsSettingsScreen: View {
         isEnabledForAll: false
     )
 
-    @State private var hasNotificationPermission: Bool = false
+    @State private var hasNotificationPermission = false
     @State private var permissionStatus: UNAuthorizationStatus = .notDetermined
 
     var body: some View {

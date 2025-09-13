@@ -14,7 +14,12 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +46,7 @@ internal fun ReaderModeToolbar(
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
-    androidx.compose.material3.TopAppBar(
+    TopAppBar(
         title = {},
         navigationIcon = {
             IconButton(
@@ -81,48 +86,85 @@ internal fun ReaderModeToolbar(
                         },
                     )
 
-                    IconButton(
-                        onClick = {
-                            onShareClick(readerModeState.readerModeData.url)
-                        },
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        state = rememberTooltipState(),
+                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.menuShare) } },
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = null,
-                        )
+                        IconButton(
+                            onClick = {
+                                onShareClick(readerModeState.readerModeData.url)
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = null,
+                            )
+                        }
                     }
 
-                    IconButton(
-                        onClick = {
-                            onArchiveClick(readerModeState.readerModeData.url)
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        state = rememberTooltipState(),
+                        tooltip = {
+                            PlainTooltip {
+                                Text(
+                                    LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
+                                )
+                            }
                         },
                     ) {
-                        Icon(
-                            imageVector = hammerIcon,
-                            contentDescription = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
-                        )
+                        IconButton(
+                            onClick = {
+                                onArchiveClick(readerModeState.readerModeData.url)
+                            },
+                        ) {
+                            val label = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription
+                            Icon(
+                                imageVector = hammerIcon,
+                                contentDescription = label,
+                            )
+                        }
                     }
 
-                    IconButton(
-                        onClick = {
-                            openInBrowser(readerModeState.readerModeData.url)
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        state = rememberTooltipState(),
+                        tooltip = {
+                            PlainTooltip {
+                                Text(
+                                    LocalFeedFlowStrings.current.readerModeBrowserButtonContentDescription,
+                                )
+                            }
                         },
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Language,
-                            contentDescription = null,
-                        )
+                        IconButton(
+                            onClick = {
+                                openInBrowser(readerModeState.readerModeData.url)
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Language,
+                                contentDescription = null,
+                            )
+                        }
                     }
 
-                    IconButton(
-                        onClick = {
-                            showMenu = true
-                        },
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        state = rememberTooltipState(),
+                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeFontSize) } },
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.TextFields,
-                            contentDescription = null,
-                        )
+                        IconButton(
+                            onClick = {
+                                showMenu = true
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.TextFields,
+                                contentDescription = null,
+                            )
+                        }
                     }
 
                     DropdownMenu(
@@ -160,16 +202,27 @@ private fun BookmarkButton(
     isBookmarked: Boolean,
     onClick: () -> Unit,
 ) {
-    IconButton(
-        onClick = onClick,
+    val tooltipText = if (isBookmarked) {
+        LocalFeedFlowStrings.current.menuRemoveFromBookmark
+    } else {
+        LocalFeedFlowStrings.current.menuAddToBookmark
+    }
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+        state = rememberTooltipState(),
+        tooltip = { PlainTooltip { Text(tooltipText) } },
     ) {
-        Icon(
-            imageVector = if (isBookmarked) {
-                Icons.Default.BookmarkRemove
-            } else {
-                Icons.Default.BookmarkAdd
-            },
-            contentDescription = null,
-        )
+        IconButton(
+            onClick = onClick,
+        ) {
+            Icon(
+                imageVector = if (isBookmarked) {
+                    Icons.Default.BookmarkRemove
+                } else {
+                    Icons.Default.BookmarkAdd
+                },
+                contentDescription = null,
+            )
+        }
     }
 }

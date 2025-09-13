@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop.reaadermode
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -17,15 +18,20 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -41,10 +47,12 @@ import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -102,11 +110,11 @@ internal data class ReaderModeScreen(
             snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { contentPadding ->
             when (val s = state) {
-                is com.prof18.feedflow.core.model.ReaderModeState.HtmlNotAvailable -> {
+                is ReaderModeState.HtmlNotAvailable -> {
                     navigator.pop()
                     uriHandler.openUri(s.url)
                 }
-                com.prof18.feedflow.core.model.ReaderModeState.Loading -> {
+                ReaderModeState.Loading -> {
                     androidx.compose.foundation.layout.Box(
                         contentAlignment = androidx.compose.ui.Alignment.Center,
                         modifier = Modifier
@@ -116,7 +124,7 @@ internal data class ReaderModeScreen(
                         androidx.compose.material3.CircularProgressIndicator()
                     }
                 }
-                is com.prof18.feedflow.core.model.ReaderModeState.Success -> {
+                is ReaderModeState.Success -> {
                     Column(
                         modifier = Modifier
                             .padding(contentPadding)
@@ -161,7 +169,7 @@ internal data class ReaderModeScreen(
 
 @Composable
 private fun ReaderModeToolbar(
-    readerModeState: com.prof18.feedflow.core.model.ReaderModeState,
+    readerModeState: ReaderModeState,
     fontSize: Int,
     navigateBack: () -> Unit,
     openInBrowser: (String) -> Unit,
@@ -170,7 +178,7 @@ private fun ReaderModeToolbar(
     onFontSizeChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
 ) {
-    var showMenu by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
         title = {},
@@ -185,10 +193,10 @@ private fun ReaderModeToolbar(
             }
         },
         actions = {
-            androidx.compose.foundation.layout.Row {
-                if (readerModeState is com.prof18.feedflow.core.model.ReaderModeState.HtmlNotAvailable) {
-                    var isBookmarked by androidx.compose.runtime.remember {
-                        androidx.compose.runtime.mutableStateOf(readerModeState.isBookmarked)
+            Row {
+                if (readerModeState is ReaderModeState.HtmlNotAvailable) {
+                    var isBookmarked by remember {
+                        mutableStateOf(readerModeState.isBookmarked)
                     }
                     BookmarkButton(
                         isBookmarked = isBookmarked,
@@ -199,9 +207,9 @@ private fun ReaderModeToolbar(
                     )
                 }
 
-                if (readerModeState is com.prof18.feedflow.core.model.ReaderModeState.Success) {
-                    var isBookmarked by androidx.compose.runtime.remember {
-                        androidx.compose.runtime.mutableStateOf(readerModeState.readerModeData.isBookmarked)
+                if (readerModeState is ReaderModeState.Success) {
+                    var isBookmarked by remember {
+                        mutableStateOf(readerModeState.readerModeData.isBookmarked)
                     }
 
                     BookmarkButton(
@@ -212,48 +220,85 @@ private fun ReaderModeToolbar(
                         },
                     )
 
-                    IconButton(
-                        onClick = {
-                            onShareClick(readerModeState.readerModeData.url)
-                        },
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        state = rememberTooltipState(),
+                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.menuShare) } },
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = null,
-                        )
+                        IconButton(
+                            onClick = {
+                                onShareClick(readerModeState.readerModeData.url)
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = null,
+                            )
+                        }
                     }
 
-                    IconButton(
-                        onClick = {
-                            onArchiveClick(readerModeState.readerModeData.url)
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        state = rememberTooltipState(),
+                        tooltip = {
+                            PlainTooltip {
+                                Text(
+                                    LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
+                                )
+                            }
                         },
                     ) {
-                        Icon(
-                            imageVector = hammerIcon,
-                            contentDescription = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
-                        )
+                        IconButton(
+                            onClick = {
+                                onArchiveClick(readerModeState.readerModeData.url)
+                            },
+                        ) {
+                            val label = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription
+                            Icon(
+                                imageVector = hammerIcon,
+                                contentDescription = label,
+                            )
+                        }
                     }
 
-                    IconButton(
-                        onClick = {
-                            openInBrowser(readerModeState.readerModeData.url)
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        state = rememberTooltipState(),
+                        tooltip = {
+                            PlainTooltip {
+                                Text(
+                                    LocalFeedFlowStrings.current.readerModeBrowserButtonContentDescription,
+                                )
+                            }
                         },
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Language,
-                            contentDescription = null,
-                        )
+                        IconButton(
+                            onClick = {
+                                openInBrowser(readerModeState.readerModeData.url)
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Language,
+                                contentDescription = null,
+                            )
+                        }
                     }
 
-                    IconButton(
-                        onClick = {
-                            showMenu = true
-                        },
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        state = rememberTooltipState(),
+                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeFontSize) } },
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.TextFields,
-                            contentDescription = null,
-                        )
+                        IconButton(
+                            onClick = {
+                                showMenu = true
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.TextFields,
+                                contentDescription = null,
+                            )
+                        }
                     }
 
                     DropdownMenu(
@@ -270,7 +315,7 @@ private fun ReaderModeToolbar(
                                 style = MaterialTheme.typography.titleMedium,
                             )
 
-                            com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus(
+                            SliderWithPlusMinus(
                                 value = fontSize.toFloat(),
                                 onValueChange = {
                                     onFontSizeChange(it.toInt())
@@ -291,16 +336,27 @@ private fun BookmarkButton(
     isBookmarked: Boolean,
     onClick: () -> Unit,
 ) {
-    IconButton(
-        onClick = onClick,
+    val tooltipText = if (isBookmarked) {
+        LocalFeedFlowStrings.current.menuRemoveFromBookmark
+    } else {
+        LocalFeedFlowStrings.current.menuAddToBookmark
+    }
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+        state = rememberTooltipState(),
+        tooltip = { PlainTooltip { Text(tooltipText) } },
     ) {
-        Icon(
-            imageVector = if (isBookmarked) {
-                Icons.Default.BookmarkRemove
-            } else {
-                Icons.Default.BookmarkAdd
-            },
-            contentDescription = null,
-        )
+        IconButton(
+            onClick = onClick,
+        ) {
+            Icon(
+                imageVector = if (isBookmarked) {
+                    Icons.Default.BookmarkRemove
+                } else {
+                    Icons.Default.BookmarkAdd
+                },
+                contentDescription = null,
+            )
+        }
     }
 }

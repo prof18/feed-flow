@@ -47,8 +47,7 @@
     <string name="import_feed_button">Feed importálása OPML-ből</string>
     <string name="app_name" translatable="false">FeedFlow</string>
     <string name="feeds_title">Feedek</string>
-    <string name="about_the_app">A FeedFlow egy minimalista RSS olvasó alkalmazás. A cikkek az eredeti weboldalukon nyílnak meg a szabadon választott, kedvenc, akár privát böngészést is támogató böngésződben. Így különválaszthatod az olvasási előzményeidet a mindennapi böngészésedtől.
-\nAz RSS feed gyűjteményedet importálhatod OPML fájlból, vagy exportálhatod a gyűjteményedet innen egy OPML fájlba.</string>
+    <string name="about_the_app">A FeedFlow egy minimalista RSS olvasó alkalmazás. A cikkek az eredeti weboldalukon nyílnak meg a szabadon választott, kedvenc, akár privát böngészést is támogató böngésződben. Így különválaszthatod az olvasási előzményeidet a mindennapi böngészésedtől. \nAz RSS feed gyűjteményedet importálhatod OPML fájlból, vagy exportálhatod a gyűjteményedet innen egy OPML fájlba.</string>
     <string name="load_file_error_message">HIba történt a fájl betöltésekor</string>
     <string name="add_feed">Feed hozzáadása</string>
     <string name="in_app_browser">Alkalmazáson belüli böngésző</string>
@@ -223,4 +222,16 @@
     <string name="settings_feed_list_title">Hírfolyamok listája</string>
     <string name="widget_configuration_description">Válaszd ki, hogy milyen sűrűn frissüljenek a cikkek a háttérben a widget frissítéséhez.</string>
     <string name="settings_notifications_settings_instructions">Kérünk, hogy engedélyezd az értesítéseket az iOS beállításokban.</string>
+    <string name="reader_mode_archive_button_content_description"></string>
+    <string name="settings_feed_layout_list"></string>
+    <string name="icloud_connection_error"></string>
+    <string name="settings_theme_light"></string>
+    <string name="feed_layout_title"></string>
+    <string name="settings_feed_order_title"></string>
+    <string name="settings_theme_system"></string>
+    <string name="settings_theme"></string>
+    <string name="settings_feed_layout_card"></string>
+    <string name="settings_theme_dark"></string>
+    <string name="settings_feed_order_newest_first"></string>
+    <string name="settings_feed_order_oldest_first"></string>
 </resources>

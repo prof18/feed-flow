@@ -1,28 +1,45 @@
 # Title
 
-FeedFlow
+FeedFlow - RSS Reader
 
 ## Short desc
 
-Minimalistic and opinionated RSS Reader
+Minimal, fast, uncluttered
 
 ## Long desc
 
-Follow your favorite RSS feeds with FeedFlow, a minimalistic and opinionated RSS
-Reader. Enjoy a clutter-free reading experience as FeedFlow offers a
-minimalistic list and it opens the articles on their respective websites.
+Key Features:
 
-Tailor your browsing experience by choosing your preferred browser. This way,
-you can choose your favorite privacy-focused browser to separate your reading
-experience from your main browser.
+- Minimalist Design: Focus on what matters with a clutter-free interface
+- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
+  or Dropbox (all platforms)
+- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
+  management
+- Flexible Reading Options: Choose between web view, reader mode, or your
+  preferred browser
+- Privacy-Focused: Select your favorite privacy-focused browser for a separate
+  reading experience
+- Easy Migration: Import and export your RSS feeds via OPML files
 
-Your existing RSS collection can be easily imported: FeedFlow offers full and
-easy import and export capabilities through OPML files.
+What Sets FeedFlow Apart:
 
-Just focus on reading (or scrolling)!
+- Clean, intuitive interface that lets you focus on content
+- Multiple sync options to fit your workflow (Beta)
+- Customizable reading experience with reader mode
+- Fast and lightweight
+- Regular updates and active development
 
-The app is still in development, so some features could be missing or there
-could be some issues. Please report any kind of bugs or feature suggestions!
+Perfect for:
+- News enthusiasts who want control over their information diet
+- Privacy-conscious readers
+- Content creators tracking multiple sources
+- Anyone looking to declutter their digital reading experience
+
+Join thousands of readers who've chosen FeedFlow for a better way to stay
+informed.
+
+Note: Sync functionality is currently in beta. The experience is continuously
+improving based on user feedback.
 
 ## Screenshot 1
 
@@ -35,3 +52,11 @@ Import your existing collection
 ## Screenshot 4
 
 Open the articles in your favourite browser
+
+## Screenshot 5
+
+Enjoy a clutter-free reader mode
+
+## Banner image
+
+minimalistic RSS Reader

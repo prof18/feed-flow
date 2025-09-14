@@ -149,7 +149,7 @@ extension Reader {
           }
 
           #__content {
-              padding: 1.5em;
+              padding: 24px;
               margin: auto;
               margin-top: 5px;
               max-width: 700px;

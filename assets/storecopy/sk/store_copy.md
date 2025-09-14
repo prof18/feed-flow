@@ -8,23 +8,38 @@ Minimálny, rýchly, prehľadný
 
 ## Dlhý popis
 
-Sleduj svoje obľúbené RSS kanály s FeedFlow, minimalistickou RSS čítačkou. Uži
-si prehľadné čítanie bez rušivých prvkov. FeedFlow ponúka minimalistický zoznam
-a otvára články na príslušných webových stránkach alebo v režime čítačky.
+Key Features:
 
-Prispôsob si svoje prehliadanie výberom preferovaného prehliadača. Takto si
-môžeš zvoliť svoj obľúbený prehliadač zameraný na súkromie a oddeliť svoje
-čítanie od hlavného prehliadača. A ak sa chceš prehliadaču vyhnúť, FeedFlow
-ponúka režim čítačky pre nerušené vychutnanie obsahu článkov.
+- Minimalist Design: Focus on what matters with a clutter-free interface
+- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
+  or Dropbox (all platforms)
+- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
+  management
+- Flexible Reading Options: Choose between web view, reader mode, or your
+  preferred browser
+- Privacy-Focused: Select your favorite privacy-focused browser for a separate
+  reading experience
+- Easy Migration: Import and export your RSS feeds via OPML files
 
-Prechod na FeedFlow je hračkou. Tvoja existujúca zbierku RSS sa dá jednoducho
-importovať vďaka našim komplexným a ľahko použiteľným funkciám importu a exportu
-pomocou súborov OPML, zaručujúci plynulý zážitok z čítania.
+What Sets FeedFlow Apart:
 
-Sústreď sa len na čítanie (alebo scrollovanie)!
+- Clean, intuitive interface that lets you focus on content
+- Multiple sync options to fit your workflow (Beta)
+- Customizable reading experience with reader mode
+- Fast and lightweight
+- Regular updates and active development
 
-Aplikácia je stále vo vývoji, takže niektoré funkcie môžu chýbať alebo sa môžu
-vyskytnúť problémy. Prosím, nahlás akékoľvek chyby alebo návrhy na nové funkcie!
+Perfect for:
+- News enthusiasts who want control over their information diet
+- Privacy-conscious readers
+- Content creators tracking multiple sources
+- Anyone looking to declutter their digital reading experience
+
+Join thousands of readers who've chosen FeedFlow for a better way to stay
+informed.
+
+Note: Sync functionality is currently in beta. The experience is continuously
+improving based on user feedback.
 
 ## Snímka obrazovky 1
 

@@ -11,7 +11,7 @@
     <string name="no_feeds_found_message">Nenhum feed encontrado. Por favor, adicione um novo feed!</string>
     <string name="no_feeds_add_one_message">Nenhum feed, favor adicionar um</string>
     <string name="loading_feed_message">Carregando feeds %s</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">Marca todos como lido</string>
     <string name="settings_button">Configurações</string>
     <string name="feeds_importing_message">Importando feed</string>
@@ -231,4 +231,5 @@
     <string name="settings_feed_order_oldest_first"></string>
     <string name="new_articles_notification_title"></string>
     <string name="settings_auto_delete_period"></string>
+    <string name="clear_old_articles_button"></string>
 </resources>

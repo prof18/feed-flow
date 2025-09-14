@@ -5,7 +5,7 @@
     <string name="no_feeds_add_one_message">Няма емисии. Моля, добавете една</string>
     <string name="empty_feed_message">Няма какво друго да се чете тук!</string>
     <string name="loading_feed_message">Зареждане на емисии %s</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">Маркиране на всичко като прочетено</string>
     <string name="feeds_import_done_message">Внасянето завърши</string>
     <string name="settings_title">Настройки</string>

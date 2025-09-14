@@ -102,11 +102,7 @@
     <string name="account_refresh_progress">Aggiornamento in corso</string>
     <string name="settings_title_feed">Feed</string>
     <string name="settings_accounts">Account</string>
-    <string name="accounts_description">Connetti un account per sincronizzare iscrizioni ai feed, categorie, articoli letti e preferiti tra i tuoi dispositivi.
-\n
-\nQuesta funzionalità è in Beta possono esserci problemi (per esempio, gli articoli letti potrebbero non essere sincronizzati). Più servizi verranno supportati in futuro.
-\n
-\nSolo un account nello stesso momento è supportato.</string>
+    <string name="accounts_description">Connetti un account per sincronizzare iscrizioni ai feed, categorie, articoli letti e preferiti tra i tuoi dispositivi. \n \nQuesta funzionalità è in Beta possono esserci problemi (per esempio, gli articoli letti potrebbero non essere sincronizzati). Più servizi verranno supportati in futuro. \n \nSolo un account nello stesso momento è supportato.</string>
     <string name="dropbox_sync_success">Il tuo account Dropbox è stato collegato correttamente</string>
     <string name="dropbox_auth_code_hint">Codice di autorizzazione</string>
     <string name="dropbox_sync_common_description">Collega il tuo account Dropbox per sincronizzare le sottoscrizioni dei feed, le categorie, gli articoli letti e preferiti tra i tuoi dispositivi Android, iOS, iPadOS e desktop. I dati verranno salvati in una cartella specifica dell\'app; FeedFlow non avrà accesso a nessuno dei tuoi file</string>

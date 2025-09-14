@@ -5,7 +5,7 @@
     <string name="about_button">Par lietotni</string>
     <string name="default_browser">Noklusējuma pārlūks</string>
     <string name="delete_feed">Dzēst</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">Atzīmēt visus kā lasītus⁣</string>
     <string name="clear_old_articles_button">Dzēst ziņas, kas vecākas par nedēļu</string>
     <string name="settings_button">Iestatījumi</string>

@@ -233,4 +233,5 @@
     <string name="settings_theme_system">Systémový</string>
     <string name="settings_theme_light">Světlý</string>
     <string name="settings_theme_dark">Tmavý</string>
+    <string name="icloud_connection_error"></string>
 </resources>

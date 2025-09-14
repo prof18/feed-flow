@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_added_message">Informasjonskanal "%s" tillagt</string>
+    <string name="feed_added_message">Informasjonskanal %s tillagt</string>
     <string name="feed_url_placeholder">https://minfavorittblogg.no/kanal</string>
     <string name="import_dialog_title">Velg OPML-fil</string>
     <string name="feeds_import_done_message">Importert</string>
@@ -231,4 +231,6 @@
     <string name="settings_feed_order_oldest_first"></string>
     <string name="new_articles_notification_title"></string>
     <string name="settings_auto_delete_period"></string>
+    <string name="search_placeholder"></string>
+    <string name="search_hint_title"></string>
 </resources>

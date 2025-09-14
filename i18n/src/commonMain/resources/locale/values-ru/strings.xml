@@ -8,7 +8,7 @@
     <string name="delete_feed">Удалить</string>
     <string name="empty_feed_message">Здесь нечего больше читать!</string>
     <string name="refresh_feeds">Обновить ленты</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">Отметить все как прочитано</string>
     <string name="settings_button">Настройки</string>
     <string name="feeds_importing_message">Импортирование ленты</string>

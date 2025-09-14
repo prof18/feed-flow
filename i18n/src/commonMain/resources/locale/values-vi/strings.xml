@@ -5,7 +5,7 @@
     <string name="empty_feed_message">Ở đây chưa có gì để đọc!</string>
     <string name="refresh_feeds">Làm mới bảng tin</string>
     <string name="no_feeds_add_one_message">Chưa có nguồn tin, xin hãy thêm</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="toggle_mark_read_when_scrolling">Cuộn qua nghĩa là đã đọc</string>
     <string name="drawer_title_bookmarks">Đã lưu</string>
     <string name="export_feeds_button">Xuất nguồn tin ra OPML</string>

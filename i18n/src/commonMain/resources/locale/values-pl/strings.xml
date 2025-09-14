@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_added_message">Kanał "%s" dodany</string>
+    <string name="feed_added_message">Kanał %s dodany</string>
     <string name="feed_url">Adres URL kanału</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="add_feed">Dodaj kanał</string>

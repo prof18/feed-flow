@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="add_feed_category_title">Kategória</string>
     <string name="add_feed_categories_title">Kategórie</string>
     <string name="settings_app_title">Aplikácia</string>

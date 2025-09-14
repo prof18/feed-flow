@@ -34,7 +34,7 @@
     <string name="generic_error_message">Noe gikk galt :(</string>
     <string name="default_browser">Forvalgt nettleser</string>
     <string name="import_feed_button">Importer informasjonskanal fra OPML</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="feeds_title">Informasjonskanaler</string>
     <string name="load_file_error_message">Kunne ikke laste inn fil</string>
     <string name="add_feed">Legg til informasjonskanal</string>
@@ -233,4 +233,5 @@
     <string name="settings_auto_delete_period"></string>
     <string name="search_placeholder"></string>
     <string name="search_hint_title"></string>
+    <string name="clear_old_articles_button"></string>
 </resources>

@@ -83,6 +83,15 @@ internal fun EditScreen(
         }
     }
 
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.feedDeletedState.collect {
+            showDeleteDialog = false
+            latestNavigateBack()
+        }
+    }
+
     EditFeedContent(
         modifier = modifier,
         feedUrl = feedUrl,
@@ -127,6 +136,10 @@ internal fun EditScreen(
         onEditCategoryClick = { categoryId, newName ->
             viewModel.editCategory(categoryId, newName)
         },
+        showDeleteDialog = showDeleteDialog,
+        onShowDeleteDialog = { showDeleteDialog = true },
+        onDismissDeleteDialog = { showDeleteDialog = false },
+        onConfirmDelete = { viewModel.deleteFeed() },
         topAppBar = {
             TopAppBar(
                 title = {
@@ -174,6 +187,10 @@ private fun EditScreenPreview() {
             onAddCategoryClick = {},
             onDeleteCategoryClick = {},
             onEditCategoryClick = { _, _ -> },
+            showDeleteDialog = true,
+            onShowDeleteDialog = {},
+            onDismissDeleteDialog = {},
+            onConfirmDelete = {},
             topAppBar = {
                 TopAppBar(
                     title = {

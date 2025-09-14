@@ -93,6 +93,15 @@ internal data class EditFeedScreen(
             }
         }
 
+        var showDeleteDialog by remember { mutableStateOf(false) }
+
+        LaunchedEffect(Unit) {
+            viewModel.feedDeletedState.collect {
+                showDeleteDialog = false
+                navigator.pop()
+            }
+        }
+
         EditFeedContent(
             feedUrl = feedUrl,
             feedName = feedName,
@@ -156,6 +165,10 @@ internal data class EditFeedScreen(
                     },
                 )
             },
+            showDeleteDialog = showDeleteDialog,
+            onShowDeleteDialog = { showDeleteDialog = true },
+            onDismissDeleteDialog = { showDeleteDialog = false },
+            onConfirmDelete = { viewModel.deleteFeed() },
         )
     }
 }
@@ -185,6 +198,10 @@ private fun EditScreenPreview() {
             onAddCategoryClick = {},
             onDeleteCategoryClick = {},
             onEditCategoryClick = { _, _ -> },
+            showDeleteDialog = true,
+            onShowDeleteDialog = {},
+            onDismissDeleteDialog = {},
+            onConfirmDelete = {},
             topAppBar = {
                 TopAppBar(
                     title = {

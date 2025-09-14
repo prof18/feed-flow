@@ -16,6 +16,7 @@ struct EditFeedScreenContent: View {
     @State private var newCategory: String = ""
     @State private var showDeleteCategoryDialog = false
     @State private var showEditCategoryDialog = false
+    @State private var showDeleteFeedDialog = false
     @State private var categoryToDelete: String?
     @State private var categoryToEdit: String?
     @State private var editedCategoryName: String = ""
@@ -44,6 +45,7 @@ struct EditFeedScreenContent: View {
     let onNotificationToggleChanged: (Bool) -> Void
     let addFeed: () -> Void
     let updateCategoryName: (String, String) -> Void
+    let onDeleteFeed: () -> Void
 
     var body: some View {
         Form {
@@ -143,6 +145,20 @@ struct EditFeedScreenContent: View {
             if !categoryItems.isEmpty {
                 categoriesSection
             }
+
+            Section {
+                Button(
+                    action: {
+                        showDeleteFeedDialog = true
+                    },
+                    label: {
+                        Text(feedFlowStrings.deleteFeedButton)
+                            .foregroundColor(.red)
+                            .frame(maxWidth: .infinity)
+                    }
+                )
+                .buttonStyle(.borderless)
+            }
         }
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
@@ -161,6 +177,14 @@ struct EditFeedScreenContent: View {
                 editedCategoryName: $editedCategoryName,
                 onSave: updateCategoryName
             )
+        }
+        .alert(feedFlowStrings.deleteFeedConfirmationTitle, isPresented: $showDeleteFeedDialog) {
+            Button(feedFlowStrings.deleteCategoryCloseButton, role: .cancel) { }
+            Button(feedFlowStrings.deleteFeed, role: .destructive) {
+                onDeleteFeed()
+            }
+        } message: {
+            Text(feedFlowStrings.deleteFeedConfirmationMessage)
         }
         .navigationTitle(feedFlowStrings.editFeed)
         .navigationBarTitleDisplayMode(.inline)

@@ -83,6 +83,9 @@ struct EditFeedScreen: View {
                         categoryId: CategoryId(value: categoryId),
                         newName: CategoryName(name: categoryName)
                     )
+                },
+                onDeleteFeed: {
+                    vmStoreOwner.instance.deleteFeed()
                 }
             )
             .snackbar(messageQueue: $appState.snackbarQueue)
@@ -154,6 +157,12 @@ struct EditFeedScreen: View {
             .task {
                 for await state in vmStoreOwner.instance.showNotificationToggleState {
                     self.showNotificationToggle = state as? Bool ?? false
+                }
+            }
+            .task {
+                for await _ in vmStoreOwner.instance.feedDeletedState {
+                    self.appState.redrawAfterFeedSourceEdit.toggle()
+                    self.presentationMode.wrappedValue.dismiss()
                 }
             }
         }

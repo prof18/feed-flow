@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
@@ -25,6 +26,7 @@ class EditFeedViewModel internal constructor(
     private val accountsRepository: AccountsRepository,
     private val feedSourcesRepository: FeedSourcesRepository,
     private val databaseHelper: DatabaseHelper,
+    private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
     val categoriesState = categoryUseCase.categoriesState
     private var originalFeedSource: FeedSource? = null
@@ -40,6 +42,9 @@ class EditFeedViewModel internal constructor(
 
     private val feedEditedMutableState: MutableSharedFlow<FeedEditedState> = MutableSharedFlow()
     val feedEditedState = feedEditedMutableState.asSharedFlow()
+
+    private val feedDeletedMutableState: MutableSharedFlow<Unit> = MutableSharedFlow()
+    val feedDeletedState = feedDeletedMutableState.asSharedFlow()
 
     private val showNotificationToggleMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showNotificationToggleState = showNotificationToggleMutableState.asStateFlow()
@@ -174,6 +179,15 @@ class EditFeedViewModel internal constructor(
             } else {
                 feedEditedMutableState.emit(FeedEditedState.FeedEdited(feedNameState.value))
             }
+        }
+    }
+
+    fun deleteFeed() {
+        val feedToDelete = originalFeedSource ?: return
+        viewModelScope.launch {
+            feedSourcesRepository.deleteFeed(feedToDelete)
+            feedStateRepository.getFeeds()
+            feedDeletedMutableState.emit(Unit)
         }
     }
 }

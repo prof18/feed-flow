@@ -58,7 +58,7 @@
     <string name="new_category_hint">Nouvelle catégorie</string>
     <string name="drawer_title_timeline">Chronologie</string>
     <string name="drawer_title_categories">Catégories</string>
-    <string name="about_app_version">Version de l\'application : %s</string>
+    <string name="about_app_version">Version de l\'application : %s</string>
     <string name="add_feed_categories_title">Catégories</string>
     <string name="in_app_browser">Navigateur de l\'application</string>
     <string name="clear_old_articles_button">Supprimer les posts de plus d\'une semaine</string>

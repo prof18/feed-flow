@@ -233,4 +233,9 @@
     <string name="file_menu">File</string>
     <string name="settings_swipe_action_toggle_read">Segna come letto/non letto</string>
     <string name="settings_swipe_action_toggle_bookmark">Aggiungi/rimuovi segnalibro</string>
+    <string name="icloud_connection_error"></string>
+    <string name="settings_theme_light"></string>
+    <string name="settings_theme_system"></string>
+    <string name="settings_theme"></string>
+    <string name="settings_theme_dark"></string>
 </resources>

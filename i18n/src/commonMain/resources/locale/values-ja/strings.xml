@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_added_message">フィード "%s" が追加されました</string>
+    <string name="feed_added_message">フィード %s が追加されました</string>
     <string name="feed_url">フィードのURL</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="add_feed">フィードを追加</string>
@@ -11,7 +11,7 @@
     <string name="refresh_feeds">フィードを再読み込み</string>
     <string name="no_feeds_found_message">フィードがありません。フィードを追加してください！</string>
     <string name="loading_feed_message">フィード %s を読み込んでいます</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">全て既読にする</string>
     <string name="clear_old_articles_button">1週間より前のフィードを削除</string>
     <string name="settings_button">設定</string>
@@ -89,7 +89,7 @@
     <string name="close_menu_button">メニューを閉じる</string>
     <string name="in_app_browser">アプリ内蔵のブラウザ</string>
     <string name="settings_reader_mode">記事をリーダーモードで開く</string>
-    <string name="search_no_data">"%s"にマッチするものはありませんでした。</string>
+    <string name="search_no_data">%sにマッチするものはありませんでした。</string>
     <string name="search_placeholder">検索…</string>
     <string name="search_hint_title">入力開始…</string>
     <string name="search_hint_subtitle">結果は自動で現れます</string>
@@ -128,7 +128,7 @@
     <string name="edit_feed_source_name_button">編集</string>
     <string name="edit_feed">フィードを編集</string>
     <string name="feed_name">フィードの名称</string>
-    <string name="feed_edited_message">フィード "%s" が更新されました</string>
+    <string name="feed_edited_message">フィード %s が更新されました</string>
     <string name="open_another_feed">他のフィードを開く</string>
     <string name="settings_feed_list_title">フィードのリスト</string>
     <string name="settings_feed_list_scale_title">文字の大きさ</string>
@@ -158,7 +158,7 @@
     <string name="link_opening_preference_internal_browser">アプリ内蔵ブラウザ</string>
     <string name="link_opening_preference_preferred_browser">お好みのブラウザ</string>
     <string name="delete_category_confirmation_title">カテゴリを削除しますか？</string>
-    <string name="delete_category_confirmation_message">このカテゴリを削除してもよろしいですか？このカテゴリ内のフィードは "未分類" に移動されます。</string>
+    <string name="delete_category_confirmation_message">このカテゴリを削除してもよろしいですか？このカテゴリ内のフィードは 未分類 に移動されます。</string>
     <string name="delete_category_close_button">閉じる</string>
     <string name="settings_auto_delete">古い記事を自動的に削除</string>
     <string name="settings_auto_delete_desc">選択した間隔より古い記事を自動的に削除</string>
@@ -190,4 +190,48 @@
     <string name="widget_configuration_title">ウィジェットの設定</string>
     <string name="widget_configuration_description">バックグラウンドで新しい記事をチェックし、ウィジェットを更新する頻度を選択します。</string>
     <string name="widget_configuration_confirm">ウィジェットを追加</string>
+    <string name="settings_swipe_action_toggle_read"></string>
+    <string name="reader_mode_archive_button_content_description"></string>
+    <string name="settings_feed_layout_list"></string>
+    <string name="date_format_title"></string>
+    <string name="settings_sync_period_thirty_minutes"></string>
+    <string name="settings_experimental_parsing"></string>
+    <string name="settings_title_notifications"></string>
+    <string name="icloud_connection_error"></string>
+    <string name="settings_left_swipe_action"></string>
+    <string name="settings_theme_light"></string>
+    <string name="settings_notifications_permission_status_title"></string>
+    <string name="settings_notifications_settings_instructions"></string>
+    <string name="settings_notification_check_period_desc"></string>
+    <string name="feed_layout_title"></string>
+    <string name="enable_notifications_for_feed"></string>
+    <string name="settings_right_swipe_action"></string>
+    <string name="settings_swipe_action_none"></string>
+    <string name="new_articles_notification_content"></string>
+    <string name="settings_feed_order_title"></string>
+    <string name="file_menu"></string>
+    <string name="settings_swipe_action_toggle_bookmark"></string>
+    <string name="settings_sync_period_fifteen_minutes"></string>
+    <string name="settings_theme_system"></string>
+    <string name="settings_notification_no_feed"></string>
+    <string name="date_format_american"></string>
+    <string name="settings_open_settings"></string>
+    <string name="settings_notifications_title"></string>
+    <string name="settings_notifications_permission_status_granted"></string>
+    <string name="notification_channel_name"></string>
+    <string name="settings_notifications_permission_request_button"></string>
+    <string name="marking_all_read_dialog_title"></string>
+    <string name="settings_theme"></string>
+    <string name="settings_sync_period_one_day"></string>
+    <string name="settings_feed_layout_card"></string>
+    <string name="settings_theme_dark"></string>
+    <string name="settings_feed_order_newest_first"></string>
+    <string name="settings_notification_check_period"></string>
+    <string name="settings_notifications_warning_reliability"></string>
+    <string name="notification_channel_description"></string>
+    <string name="settings_notifications_enable_all_title"></string>
+    <string name="settings_notifications_permission_status_denied"></string>
+    <string name="date_format_normal"></string>
+    <string name="settings_feed_order_oldest_first"></string>
+    <string name="new_articles_notification_title"></string>
 </resources>

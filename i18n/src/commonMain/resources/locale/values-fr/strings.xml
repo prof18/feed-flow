@@ -46,8 +46,7 @@
     <string name="import_feed_button">Importer un flux depuis OPML</string>
     <string name="app_name" translatable="false">FeedFlow</string>
     <string name="feeds_title">Flux</string>
-    <string name="about_the_app">FeedFlow est un lecteur RSS minimaliste. Les articles s\'ouvrent sur leur site web respectif et vous pouvez opter pour votre navigateur préféré, respectueux de la vie privée, afin de séparer votre expérience de lecture de votre navigateur principal.
-\nVous pouvez importer et exporter votre collection RSS vers un fichier OPML.</string>
+    <string name="about_the_app">FeedFlow est un lecteur RSS minimaliste. Les articles s\'ouvrent sur leur site web respectif et vous pouvez opter pour votre navigateur préféré, respectueux de la vie privée, afin de séparer votre expérience de lecture de votre navigateur principal. \nVous pouvez importer et exporter votre collection RSS vers un fichier OPML.</string>
     <string name="load_file_error_message">Impossible de charger le fichier</string>
     <string name="add_feed">Ajouter un flux</string>
     <string name="add_feed_category_title">Categorie</string>

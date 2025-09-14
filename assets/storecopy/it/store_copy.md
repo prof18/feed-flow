@@ -8,11 +8,6 @@ Minimale, veloce, ordinato
 
 ## Descrizione completa
 
-Resta aggiornato a modo tuo con FeedFlow, un lettore RSS minimalista che ti
-permette di avere il pieno controllo della tua timeline di contenuti.
-Sincronizza tra tutti i tuoi dispositivi e goditi un'esperienza di lettura
-pulita e senza distrazioni.
-
 Caratteristiche Principali:
 
 - Design Minimalista: Concentrati su ciò che conta con un'interfaccia essenziale

@@ -222,16 +222,4 @@
     <string name="settings_swipe_action_toggle_read">Переключить чтение</string>
     <string name="settings_swipe_action_toggle_bookmark">Переключить закладку</string>
     <string name="settings_swipe_action_none">Отключено</string>
-    <string name="reader_mode_archive_button_content_description"></string>
-    <string name="settings_feed_layout_list"></string>
-    <string name="icloud_connection_error"></string>
-    <string name="settings_theme_light"></string>
-    <string name="feed_layout_title"></string>
-    <string name="settings_feed_order_title"></string>
-    <string name="settings_theme_system"></string>
-    <string name="settings_theme"></string>
-    <string name="settings_feed_layout_card"></string>
-    <string name="settings_theme_dark"></string>
-    <string name="settings_feed_order_newest_first"></string>
-    <string name="settings_feed_order_oldest_first"></string>
 </resources>

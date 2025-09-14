@@ -89,7 +89,7 @@
     <string name="close_menu_button">Zamknij menu</string>
     <string name="in_app_browser">Przeglądarka w aplikacji</string>
     <string name="settings_reader_mode">Otwórz artykuły w trybie czytania</string>
-    <string name="search_no_data">Brak wyników dla "%s".</string>
+    <string name="search_no_data">Brak wyników dla %s.</string>
     <string name="search_placeholder">Szukaj...</string>
     <string name="search_hint_title">Rozpocznij pisanie...</string>
     <string name="search_hint_subtitle">Wyniki pojawią się automatycznie</string>
@@ -128,7 +128,7 @@
     <string name="edit_feed_source_name_button">Edytuj</string>
     <string name="edit_feed">Edytuj kanał</string>
     <string name="feed_name">Nazwa kanału</string>
-    <string name="feed_edited_message">Kanał "%s" zaktualizowany</string>
+    <string name="feed_edited_message">Kanał %s zaktualizowany</string>
     <string name="open_another_feed">Otwórz inny kanał</string>
     <string name="settings_feed_list_title">Lista kanałów</string>
     <string name="settings_feed_list_scale_title">Skala tekstu</string>
@@ -158,7 +158,7 @@
     <string name="link_opening_preference_internal_browser">Przeglądarka w aplikacji</string>
     <string name="link_opening_preference_preferred_browser">Ulubiona przeglądarka</string>
     <string name="delete_category_confirmation_title">Usunąć kategorię?</string>
-    <string name="delete_category_confirmation_message">Czy na pewno chcesz usunąć tę kategorię? Kanały w tej kategorii zostaną przeniesione do sekcji "Nieskategoryzowane".</string>
+    <string name="delete_category_confirmation_message">Czy na pewno chcesz usunąć tę kategorię? Kanały w tej kategorii zostaną przeniesione do sekcji Nieskategoryzowane.</string>
     <string name="delete_category_close_button">Zamknij</string>
     <string name="settings_auto_delete">Automatyczne usuwanie starych artykułów</string>
     <string name="settings_auto_delete_desc">Automatycznie usuwaj artykuły starsze niż wybrany zakres czasowy</string>
@@ -211,7 +211,7 @@
     <string name="settings_notifications_permission_request_button">Poproś o pozwolenie</string>
     <string name="new_articles_notification_title">Dostępne nowe artykuły</string>
     <string name="notification_channel_name">Nowe artykuły</string>
-    <string name="new_articles_notification_content">Nowe artykuły z "%s"</string>
+    <string name="new_articles_notification_content">Nowe artykuły z %s</string>
     <string name="settings_notifications_title">Powiadomienia</string>
     <string name="settings_notifications_warning_reliability">Powiadomienia są sprawdzane na Twoim urządzeniu, ale mogą nie zawsze pojawiać się niezawodnie ze względu na ograniczenia systemu.</string>
     <string name="settings_open_settings">Otwórz Ustawienia</string>
@@ -233,4 +233,5 @@
     <string name="settings_theme_system">Systemowy</string>
     <string name="settings_theme_light">Jasny</string>
     <string name="settings_theme_dark">Ciemny</string>
+    <string name="icloud_connection_error"></string>
 </resources>

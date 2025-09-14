@@ -1,16 +1,12 @@
 # Başlık
 
-FeedFlow - RSS Reader
+FeedFlow - RSS Okuyucu
 
 ## Kısa açıklama
 
-Minimal, fast, uncluttered
+Minimal, hızlı, düzenli
 
 ## Uzun açıklama
-İçerik zaman çizelgenizin kontrolünü size veren minimalist bir RSS okuyucu olan
-FeedFlow ile her zaman bilgi sahibi olun. Tüm cihazlarınız arasında senkronize
-edin ve temiz, dikkat dağıtıcı unsurlardan uzak bir okuma deneyiminin keyfini
-çıkarın.
 
 Anahtar Özellikler:
 

@@ -8,7 +8,7 @@
     <string name="feeds_import_done_message">Import terminé</string>
     <string name="feeds_importing_message">Import du flux</string>
     <string name="invalid_rss_url">Le lien que vous avez fourni n\'est pas un flux RSS valide</string>
-    <string name="no_feeds_found_message">Aucun flux trouvé. Veuillez ajouter un nouveau flux !</string>
+    <string name="no_feeds_found_message">Aucun flux trouvé. Veuillez ajouter un nouveau flux !</string>
     <string name="no_feeds_add_one_message">Aucun flux, ajoutez-en un</string>
     <string name="new_release_available_link">Télécharger ici</string>
     <string name="refresh_feeds">Actualiser le flux</string>
@@ -30,11 +30,11 @@
     <string name="wrong_link_report_title">Les flux suivants n\'ont pas été ajoutés car ils ne sont pas valides</string>
     <string name="open_source_licenses">Licences Open Source</string>
     <string name="browser_selection_button">Navigateur</string>
-    <string name="feed_error_message">Une erreur s\'est produite avec : %s :(</string>
+    <string name="feed_error_message">Une erreur s\'est produite avec : %s :(</string>
     <string name="issue_report_title">Signaler un problème avec FeedFlow</string>
     <string name="export_dialog_title">Enregistrer un fichier OPML</string>
-    <string name="new_release_available_title">Une nouvelle version de FeedFlow est disponible :</string>
-    <string name="empty_feed_message">Il n\'y a rien d\'autre à lire ici !</string>
+    <string name="new_release_available_title">Une nouvelle version de FeedFlow est disponible :</string>
+    <string name="empty_feed_message">Il n\'y a rien d\'autre à lire ici !</string>
     <string name="export_feeds_button">Exporter les flux vers OPML</string>
     <string name="settings_button">Paramètres</string>
     <string name="open_source_nav_bar">Licences Open Source</string>
@@ -44,7 +44,7 @@
     <string name="generic_error_message">Oups, une erreur s\'est produite :(</string>
     <string name="default_browser">Navigateur par défaut</string>
     <string name="import_feed_button">Importer un flux depuis OPML</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="feeds_title">Flux</string>
     <string name="about_the_app">FeedFlow est un lecteur RSS minimaliste. Les articles s\'ouvrent sur leur site web respectif et vous pouvez opter pour votre navigateur préféré, respectueux de la vie privée, afin de séparer votre expérience de lecture de votre navigateur principal.
 \nVous pouvez importer et exporter votre collection RSS vers un fichier OPML.</string>

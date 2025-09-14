@@ -8,24 +8,38 @@ Simple, rápido, lixeiro
 
 ## Descr. longa
 
-Sigue as túas canles RSS favoritas con FeedFlow, un Lector RSS minimalista.
-Desfruta dunha experiencia de lectura sen distraccións, FeedFlow mostra unha
-lista e abre os artigos nos seus propios sitios web ou no modo lectura.
+Key Features:
 
-Personaliza a experiencia de lectura elixindo o teu navegador preferido. Deste
-xeito podes seleccionar un navegador con máis controis de privacidade para
-separar as túas lecturas do navegador habitual. Incluso podes evitar o
-navegador, FeedFlow ofréceche un modo lectura para desfrutar do contido dos
-artigos sen distraccións.
+- Minimalist Design: Focus on what matters with a clutter-free interface
+- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
+  or Dropbox (all platforms)
+- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
+  management
+- Flexible Reading Options: Choose between web view, reader mode, or your
+  preferred browser
+- Privacy-Focused: Select your favorite privacy-focused browser for a separate
+  reading experience
+- Easy Migration: Import and export your RSS feeds via OPML files
 
-Migrar os teus datos a FeedFlow é moi doado. Podes importar as túas canles RSS
-grazas ao sistema de importación usando ficheiros OPML, garantizando unha
-experiencia de lectura sen chanzos.
+What Sets FeedFlow Apart:
 
-Podes centrarte en ler (ou só mirar por enriba)!
+- Clean, intuitive interface that lets you focus on content
+- Multiple sync options to fit your workflow (Beta)
+- Customizable reading experience with reader mode
+- Fast and lightweight
+- Regular updates and active development
 
-A app está en desenvolvemento, algunhas características aínda poderían non
-funcionar ben. Informa das incidencias ou suxire novas características!
+Perfect for:
+- News enthusiasts who want control over their information diet
+- Privacy-conscious readers
+- Content creators tracking multiple sources
+- Anyone looking to declutter their digital reading experience
+
+Join thousands of readers who've chosen FeedFlow for a better way to stay
+informed.
+
+Note: Sync functionality is currently in beta. The experience is continuously
+improving based on user feedback.
 
 ## Captura de pantalla 1
 

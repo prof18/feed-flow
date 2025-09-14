@@ -35,6 +35,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
     private val feedSyncRepo by inject<FeedSyncRepository>()
     private val widgetRepository by inject<FeedWidgetRepository>()
     private val feedDownloadWorkerEnqueuer by inject<FeedDownloadWorkerEnqueuer>()
+    private val browserManager by inject<BrowserManager>()
 
     override fun onCreate() {
         super.onCreate()
@@ -84,7 +85,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                 context = this@FeedFlowApp,
                             ).getGlanceIds(FeedFlowWidget::class.java)
                                 .forEach { id ->
-                                    FeedFlowWidget(widgetRepository).update(this@FeedFlowApp, id)
+                                    FeedFlowWidget(widgetRepository, get<BrowserManager>()).update(this@FeedFlowApp, id)
                                 }
                         }
                     }
@@ -114,7 +115,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                 context = this@FeedFlowApp,
                             ).getGlanceIds(FeedFlowWidget::class.java)
                                 .forEach { id ->
-                                    FeedFlowWidget(widgetRepository).update(this@FeedFlowApp, id)
+                                    FeedFlowWidget(widgetRepository, browserManager).update(this@FeedFlowApp, id)
                                 }
                         }
                     }

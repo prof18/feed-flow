@@ -105,6 +105,10 @@ class BrowserManager(
         return browserListMutableState.value.firstOrNull { it.isFavourite }?.id
     }
 
+    fun getBrowserPackageNameWithoutInApp(): String? {
+        return browserListMutableState.value.firstOrNull { it.isFavourite && it.id != BrowserIds.IN_APP_BROWSER }?.id
+    }
+
     fun openUrlWithFavoriteBrowser(
         url: String,
         context: Context,
@@ -128,13 +132,12 @@ class BrowserManager(
     }
 
     private fun getFavouriteBrowserIntent(url: String): Intent {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
+        return Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse(url)
             getBrowserPackageName()?.let { packageName ->
                 setPackage(packageName)
             }
         }
-        return intent
     }
 
     fun openUrlWithDefaultBrowser(

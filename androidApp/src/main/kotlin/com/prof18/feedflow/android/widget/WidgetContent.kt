@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.widget
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -19,6 +20,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.Scaffold
@@ -47,9 +49,11 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.size.Precision
 import coil3.size.Scale
+import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
@@ -57,7 +61,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun Content(feedItems: ImmutableList<FeedItem>, feedLayout: FeedLayout) {
+internal fun Content(
+    feedItems: ImmutableList<FeedItem>,
+    feedLayout: FeedLayout,
+    browserManager: BrowserManager,
+) {
     Scaffold(
         titleBar = {
             Text(
@@ -104,8 +112,8 @@ internal fun Content(feedItems: ImmutableList<FeedItem>, feedLayout: FeedLayout)
             LazyColumn {
                 items(feedItems) { feedItem ->
                     when (feedLayout) {
-                        FeedLayout.LIST -> WidgetFeedItemList(feedItem)
-                        FeedLayout.CARD -> WidgetFeedItemCard(feedItem)
+                        FeedLayout.LIST -> WidgetFeedItemList(feedItem, browserManager)
+                        FeedLayout.CARD -> WidgetFeedItemCard(feedItem, browserManager)
                     }
                 }
             }
@@ -114,22 +122,19 @@ internal fun Content(feedItems: ImmutableList<FeedItem>, feedLayout: FeedLayout)
 }
 
 @Composable
-fun WidgetFeedItemList(feedItem: FeedItem, modifier: GlanceModifier = GlanceModifier) {
+fun WidgetFeedItemList(
+    feedItem: FeedItem,
+    browserManager: BrowserManager,
+    modifier: GlanceModifier = GlanceModifier,
+) {
+    val context = LocalContext.current.applicationContext
+    val clickAction = createFeedItemClickAction(feedItem, context, browserManager)
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clickable(
-                actionStartActivity(
-                    Intent(
-                        LocalContext.current.applicationContext,
-                        MainActivity::class.java,
-                    )
-                        .setAction(Intent.ACTION_VIEW)
-                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        .setData("feedflow://feed/${feedItem.id}".toUri()),
-                ),
-            ),
+            .clickable(clickAction),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Content(feedItem)
@@ -137,7 +142,14 @@ fun WidgetFeedItemList(feedItem: FeedItem, modifier: GlanceModifier = GlanceModi
 }
 
 @Composable
-fun WidgetFeedItemCard(feedItem: FeedItem, modifier: GlanceModifier = GlanceModifier) {
+fun WidgetFeedItemCard(
+    feedItem: FeedItem,
+    browserManager: BrowserManager,
+    modifier: GlanceModifier = GlanceModifier,
+) {
+    val context = LocalContext.current.applicationContext
+    val clickAction = createFeedItemClickAction(feedItem, context, browserManager)
+
     Column(modifier = modifier) {
         Row(
             modifier = GlanceModifier
@@ -145,17 +157,7 @@ fun WidgetFeedItemCard(feedItem: FeedItem, modifier: GlanceModifier = GlanceModi
                 .padding(16.dp)
                 .cornerRadius(16.dp)
                 .background(GlanceTheme.colors.secondaryContainer)
-                .clickable(
-                    actionStartActivity(
-                        Intent(
-                            LocalContext.current.applicationContext,
-                            MainActivity::class.java,
-                        )
-                            .setAction(Intent.ACTION_VIEW)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            .setData("feedflow://feed/${feedItem.id}".toUri()),
-                    ),
-                ),
+                .clickable(clickAction),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Content(feedItem)
@@ -245,3 +247,50 @@ private fun FeedItemImage(imageUrl: String, modifier: GlanceModifier = GlanceMod
 
 private val Float.dpToPx: Float
     get() = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, Resources.getSystem().displayMetrics)
+
+private fun FeedItem.shouldOpenInBrowser(): Boolean =
+    url.contains("type=pdf") || url.contains("youtube.com") ||
+        feedSource.linkOpeningPreference == LinkOpeningPreference.PREFERRED_BROWSER
+
+private fun createFeedItemClickAction(
+    feedItem: FeedItem,
+    context: Context,
+    browserManager: BrowserManager,
+): Action = when (feedItem.feedSource.linkOpeningPreference) {
+    LinkOpeningPreference.READER_MODE -> {
+        createDeepLinkAction(feedItem, context)
+    }
+    LinkOpeningPreference.INTERNAL_BROWSER, LinkOpeningPreference.PREFERRED_BROWSER -> {
+        createBrowserAction(feedItem, browserManager)
+    }
+    LinkOpeningPreference.DEFAULT -> {
+        if (browserManager.openReaderMode() && !feedItem.shouldOpenInBrowser()) {
+            createDeepLinkAction(feedItem, context)
+        } else {
+            createBrowserAction(feedItem, browserManager)
+        }
+    }
+}
+
+private fun createBrowserAction(feedItem: FeedItem, browserManager: BrowserManager): Action {
+    val intent = Intent(Intent.ACTION_VIEW, feedItem.url.toUri()).apply {
+        browserManager.getBrowserPackageNameWithoutInApp()?.let { packageName ->
+            setPackage(packageName)
+        }
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+
+    return actionStartActivity(intent)
+}
+
+private fun createDeepLinkAction(feedItem: FeedItem, context: Context): Action {
+    return actionStartActivity(
+        Intent(
+            context,
+            MainActivity::class.java,
+        )
+            .setAction(Intent.ACTION_VIEW)
+            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            .setData("feedflow://feed/${feedItem.id}".toUri()),
+    )
+}

@@ -43,6 +43,7 @@ struct FeedFontSection: View {
                                 category: nil,
                                 lastSyncTimestamp: nil,
                                 logoUrl: nil,
+                                fetchFailed: false,
                                 linkOpeningPreference: .default,
                                 isHiddenFromTimeline: false,
                                 isPinned: false,

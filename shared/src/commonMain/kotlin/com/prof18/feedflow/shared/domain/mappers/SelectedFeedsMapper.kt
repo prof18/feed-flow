@@ -49,11 +49,10 @@ internal fun SelectFeeds.toFeedItem(
         isHiddenFromTimeline = feed_source_is_hidden ?: false,
         isPinned = feed_source_is_pinned ?: false,
         isNotificationEnabled = feed_source_notifications_enabled ?: false,
+        fetchFailed = feed_source_fetch_failed,
     ),
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {
-        @Suppress("RedundantRequireNotNullCall")
-        // It's required because the variables come from another module
         dateFormatter.formatDateForFeed(
             millis = requireNotNull(pub_date),
             dateFormat = dateFormat,

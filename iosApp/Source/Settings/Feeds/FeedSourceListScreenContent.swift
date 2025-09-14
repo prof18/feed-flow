@@ -138,6 +138,10 @@ private struct FeedSourceListItem: View {
 
     var body: some View {
         HStack {
+            if feedSource.fetchFailed {
+                makeFeedFailureIcon()
+            }
+
             if let imageUrl = feedSource.logoUrl {
                 LazyImage(url: URL(string: imageUrl)) { state in
                     if let image = state.image {
@@ -151,10 +155,10 @@ private struct FeedSourceListItem: View {
                         Image(systemName: "square.stack.3d.up")
                     }
                 }
-                .padding(.leading, Spacing.regular)
+                .padding(.leading, feedSource.fetchFailed ? Spacing.xsmall : Spacing.regular)
             } else {
                 Image(systemName: "square.stack.3d.up")
-                    .padding(.leading, Spacing.regular)
+                    .padding(.leading, feedSource.fetchFailed ? Spacing.xsmall : Spacing.regular)
             }
 
             VStack(alignment: .leading) {
@@ -201,6 +205,12 @@ private struct FeedSourceListItem: View {
         )
         .if(!isRenameEnabled) { view in
             view.contextMenu {
+                
+                Label(
+                    feedFlowStrings.feedFetchFailedTooltipShort,
+                    systemImage: "exclamationmark.triangle.fill"
+                )
+                
                 NavigationLink(
                     destination: EditFeedScreen(
                         feedSource: feedSource
@@ -236,6 +246,15 @@ private struct FeedSourceListItem: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func makeFeedFailureIcon() -> some View {
+        Image(systemName: "exclamationmark.triangle.fill")
+            .foregroundColor(Color(red: 1.0, green: 0.56, blue: 0.0)) // #FF8F00
+            .font(.system(size: 16))
+            .padding(.leading, Spacing.regular)
+            .padding(.trailing, Spacing.small)
     }
 }
 

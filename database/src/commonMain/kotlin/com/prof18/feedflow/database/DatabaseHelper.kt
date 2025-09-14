@@ -510,8 +510,9 @@ class DatabaseHelper(
                     ),
                     lastSyncTimestamp = feedSource.last_sync_timestamp,
                     logoUrl = feedSource.feed_source_logo_url,
-                    isHiddenFromTimeline = feedSource.is_hidden ?: false,
+                    fetchFailed = feedSource.fetch_failed,
                     linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+                    isHiddenFromTimeline = feedSource.is_hidden ?: false,
                     isPinned = feedSource.is_pinned ?: false,
                     isNotificationEnabled = feedSource.notifications_enabled ?: false,
                 )
@@ -687,6 +688,7 @@ class DatabaseHelper(
             category = category,
             lastSyncTimestamp = feedSource.last_sync_timestamp,
             logoUrl = feedSource.feed_source_logo_url,
+            fetchFailed = feedSource.fetch_failed,
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
@@ -711,6 +713,7 @@ class DatabaseHelper(
             category = category,
             lastSyncTimestamp = feedSource.last_sync_timestamp,
             logoUrl = feedSource.feed_source_logo_url,
+            fetchFailed = feedSource.fetch_failed,
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
@@ -735,12 +738,21 @@ class DatabaseHelper(
             category = category,
             lastSyncTimestamp = feedSource.last_sync_timestamp,
             logoUrl = feedSource.feed_source_logo_url,
+            fetchFailed = feedSource.fetch_failed,
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
         )
     }
+
+    suspend fun setFeedFetchFailed(feedSourceId: String, failed: Boolean) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.setFetchFailed(
+                fetchFailed = failed,
+                urlHash = feedSourceId,
+            )
+        }
 
     companion object {
         internal const val DB_FILE_NAME_WITH_EXTENSION = "FeedFlow.db"

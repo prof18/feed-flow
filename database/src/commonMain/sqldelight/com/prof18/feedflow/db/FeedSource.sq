@@ -7,7 +7,8 @@ CREATE TABLE feed_source (
     title TEXT NOT NULL,
     category_id TEXT,
     last_sync_timestamp INTEGER,
-    logo_url TEXT
+    logo_url TEXT,
+    fetch_failed INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0
 );
 
 insertFeedSource:
@@ -18,7 +19,7 @@ deleteAllExcept:
 DELETE FROM feed_source WHERE url_hash NOT IN :urlHashes;
 
 selectFeedUrls:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source.fetch_failed AS fetch_failed, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
@@ -26,7 +27,7 @@ ON feed_source.url_hash = feed_source_preferences.feed_source_id
 ORDER BY feed_source.title COLLATE NOCASE ASC;
 
 selectFeedSourceById:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source.fetch_failed AS fetch_failed, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
@@ -38,7 +39,7 @@ DELETE FROM feed_source WHERE url_hash = :urlHash;
 
 updateLastSyncTimestamp:
 UPDATE feed_source
-SET last_sync_timestamp = :lastSyncTimestamp
+SET last_sync_timestamp = :lastSyncTimestamp, fetch_failed = 0
 WHERE url_hash = :urlHash;
 
 deleteAllLastSync:
@@ -67,7 +68,7 @@ deleteAll:
 DELETE FROM feed_source;
 
 selectByCategory:
-SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
+SELECT feed_source.url, feed_source.url_hash, feed_source.title AS feed_source_title, feed_source.last_sync_timestamp, feed_source_category.id AS category_id, feed_source_category.title AS category_title, feed_source.logo_url AS feed_source_logo_url, feed_source.fetch_failed AS fetch_failed, feed_source_preferences.link_opening_preference, feed_source_preferences.is_hidden, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled FROM feed_source
 LEFT JOIN feed_source_category
 ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
@@ -79,3 +80,8 @@ updateCategoryId:
 UPDATE feed_source
 SET category_id = :newCategoryId
 WHERE category_id = :oldCategoryId;
+
+setFetchFailed:
+UPDATE feed_source
+SET fetch_failed = :fetchFailed
+WHERE url_hash = :urlHash;

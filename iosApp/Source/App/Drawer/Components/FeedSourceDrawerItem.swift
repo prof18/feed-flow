@@ -19,6 +19,9 @@ struct FeedSourceDrawerItem: View {
 
     var body: some View {
         HStack {
+            if drawerItem.feedSource.fetchFailed {
+                makeFeedFailureIcon()
+            }
             makeFeedSourceIcon(logoUrl: drawerItem.feedSource.logoUrl)
             makeFeedSourceTitle(title: drawerItem.feedSource.title)
             Spacer()
@@ -31,6 +34,14 @@ struct FeedSourceDrawerItem: View {
         .contextMenu {
             makeFeedSourceContextMenu(feedSource: drawerItem.feedSource)
         }
+    }
+
+    @ViewBuilder
+    private func makeFeedFailureIcon() -> some View {
+        Image(systemName: "exclamationmark.triangle.fill")
+            .foregroundColor(Color(red: 1.0, green: 0.56, blue: 0.0)) // #FF8F00
+            .font(.system(size: 16))
+            .padding(.trailing, Spacing.small)
     }
 
     @ViewBuilder
@@ -79,6 +90,11 @@ struct FeedSourceDrawerItem: View {
 
     @ViewBuilder
     private func makeFeedSourceContextMenu(feedSource: FeedSource) -> some View {
+        Label(
+            feedFlowStrings.feedFetchFailedTooltipShort,
+            systemImage: "exclamationmark.triangle.fill"
+        )
+        
         Button {
             onEdit(feedSource)
         } label: {

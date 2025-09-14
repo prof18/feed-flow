@@ -28,6 +28,8 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -35,8 +37,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -655,6 +661,7 @@ private fun FeedSourcesList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedSourceDrawerItem(
     feedSource: FeedSource,
@@ -675,64 +682,94 @@ fun FeedSourceDrawerItem(
         )
     }
 
-    Surface(
-        selected = selected,
-        onClick = onClick,
-        modifier =
-        modifier
-            .semantics { role = Role.Tab }
-            .heightIn(min = 56.0.dp)
-            .fillMaxWidth(),
-        shape = CircleShape,
-        color = colors.containerColor(selected).value,
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            Modifier
-                .feedSourceMenuClickModifier(
-                    onClick = {
-                        onClick()
-                    },
-                    onLongClick = {
-                        showFeedMenu = true
-                    },
-                )
-                .padding(start = 16.dp, end = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f),
+        if (feedSource.fetchFailed) {
+            TooltipBox(
+                modifier = Modifier
+                    .padding(start = Spacing.regular),
+                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                tooltip = {
+                    PlainTooltip {
+                        Text(LocalFeedFlowStrings.current.feedFetchFailedTooltip)
+                    }
+                },
+                state = rememberTooltipState(),
             ) {
-                val iconColor = colors.iconColor(selected).value
-                CompositionLocalProvider(LocalContentColor provides iconColor, content = icon)
-                Spacer(Modifier.width(12.dp))
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = null,
+                    tint = Color(color = 0xFFFF8F00),
+                )
+            }
+            Spacer(Modifier.width(Spacing.small))
+        }
 
-                Box(Modifier.weight(1f)) {
-                    val labelColor = colors.textColor(selected).value
-                    CompositionLocalProvider(LocalContentColor provides labelColor, content = label)
+        Surface(
+            selected = selected,
+            onClick = onClick,
+            modifier = Modifier
+                .semantics { role = Role.Tab }
+                .heightIn(min = 56.0.dp)
+                .fillMaxWidth(),
+            shape = CircleShape,
+            color = colors.containerColor(selected).value,
+        ) {
+            val paddingStart = if (feedSource.fetchFailed) {
+                Spacing.xsmall
+            } else {
+                Spacing.regular
+            }
+            Row(
+                Modifier
+                    .feedSourceMenuClickModifier(
+                        onClick = {
+                            onClick()
+                        },
+                        onLongClick = {
+                            showFeedMenu = true
+                        },
+                    )
+                    .padding(start = paddingStart, end = 24.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    val iconColor = colors.iconColor(selected).value
+                    CompositionLocalProvider(LocalContentColor provides iconColor, content = icon)
+                    Spacer(Modifier.width(12.dp))
+
+                    Box(Modifier.weight(1f)) {
+                        val labelColor = colors.textColor(selected).value
+                        CompositionLocalProvider(LocalContentColor provides labelColor, content = label)
+                    }
+                }
+
+                if (unreadCount > 0) {
+                    Text(
+                        modifier = Modifier.padding(start = Spacing.small),
+                        text = unreadCount.toString(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = colors.textColor(selected).value,
+                    )
                 }
             }
 
-            if (unreadCount > 0) {
-                Text(
-                    modifier = Modifier.padding(start = Spacing.small),
-                    text = unreadCount.toString(),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = colors.textColor(selected).value,
-                )
-            }
+            FeedSourceContextMenu(
+                showFeedMenu = showFeedMenu,
+                hideMenu = {
+                    showFeedMenu = false
+                },
+                onEditFeedClick = onEditFeedClick,
+                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                feedSource = feedSource,
+                onPinFeedClick = onPinFeedClick,
+            )
         }
-
-        FeedSourceContextMenu(
-            showFeedMenu = showFeedMenu,
-            hideMenu = {
-                showFeedMenu = false
-            },
-            onEditFeedClick = onEditFeedClick,
-            onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-            feedSource = feedSource,
-            onPinFeedClick = onPinFeedClick,
-        )
     }
 }

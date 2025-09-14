@@ -25,6 +25,7 @@ SELECT
   feed_source.url_hash AS feed_source_id,
   feed_source.url AS feed_source_url,
   feed_source.last_sync_timestamp AS feed_source_last_sync_timestamp,
+  feed_source.fetch_failed AS feed_source_fetch_failed,
   feed_source_category.id AS feed_source_category_id,
   feed_source_category.title AS feed_source_category_title,
   feed_source.logo_url AS feed_source_logo_url,

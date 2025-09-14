@@ -24,16 +24,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -197,6 +203,7 @@ private fun FeedSourcesList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedSourceItem(
     feedSource: FeedSource,
@@ -232,84 +239,108 @@ private fun FeedSourceItem(
     }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .feedSourceMenuClickModifier(
-                onLongClick = if (isEditEnabled) {
-                    null
-                } else {
-                    {
-                        showFeedMenu = true
-                    }
-                },
-            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val imageUrl = feedSource.logoUrl
-        if (imageUrl != null) {
-            FeedSourceLogoImage(
-                size = 24.dp,
-                imageUrl = imageUrl,
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Default.Category,
-                contentDescription = null,
-            )
+        if (feedSource.fetchFailed) {
+            val tooltipText = LocalFeedFlowStrings.current.feedFetchFailedTooltip
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                tooltip = {
+                    PlainTooltip { Text(tooltipText) }
+                },
+                state = rememberTooltipState(),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = tooltipText,
+                    tint = Color(color = 0xFFFF8F00),
+                )
+            }
         }
 
-        Column(
+        val paddingStart = if (feedSource.fetchFailed) Spacing.small else 0.dp
+
+        Row(
             modifier = Modifier
-                .padding(start = Spacing.regular),
+                .fillMaxWidth()
+                .feedSourceMenuClickModifier(
+                    onLongClick = if (isEditEnabled) {
+                        null
+                    } else {
+                        {
+                            showFeedMenu = true
+                        }
+                    },
+                )
+                .padding(start = paddingStart),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            AnimatedVisibility(!isEditEnabled) {
+            val imageUrl = feedSource.logoUrl
+            if (imageUrl != null) {
+                FeedSourceLogoImage(
+                    size = 24.dp,
+                    imageUrl = imageUrl,
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Category,
+                    contentDescription = null,
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .padding(start = Spacing.regular),
+            ) {
+                AnimatedVisibility(!isEditEnabled) {
+                    Text(
+                        modifier = Modifier
+                            .padding(top = Spacing.small),
+                        text = feedSource.title,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+                val interactionSource = remember { MutableInteractionSource() }
+
+                AnimatedVisibility(isEditEnabled) {
+                    FeedSourceTitleEdit(
+                        focusRequester = focusRequester,
+                        feedTitleInput = feedTitleInput,
+                        isEditEnabled = isEditEnabled,
+                        onFeedNameUpdated = {
+                            feedTitleInput = it
+                        },
+                        onRenameFeedSourceClick = {
+                            onRenameFeedSourceClick(feedSource, feedTitleInput.text)
+                            isEditEnabled = false
+                            focusManager.clearFocus()
+                        },
+                        interactionSource = interactionSource,
+                    )
+                }
+
                 Text(
                     modifier = Modifier
-                        .padding(top = Spacing.small),
-                    text = feedSource.title,
-                    style = MaterialTheme.typography.bodyLarge,
+                        .padding(top = Spacing.xsmall)
+                        .padding(bottom = Spacing.small),
+                    text = feedSource.url,
+                    style = MaterialTheme.typography.labelLarge,
                 )
-            }
-            val interactionSource = remember { MutableInteractionSource() }
 
-            AnimatedVisibility(isEditEnabled) {
-                FeedSourceTitleEdit(
-                    focusRequester = focusRequester,
-                    feedTitleInput = feedTitleInput,
-                    isEditEnabled = isEditEnabled,
-                    onFeedNameUpdated = {
-                        feedTitleInput = it
+                FeedSourceContextMenu(
+                    showFeedMenu = showFeedMenu,
+                    hideMenu = {
+                        showFeedMenu = false
                     },
+                    onEditFeedClick = onEditFeedClick,
+                    onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                    feedSource = feedSource,
                     onRenameFeedSourceClick = {
-                        onRenameFeedSourceClick(feedSource, feedTitleInput.text)
-                        isEditEnabled = false
-                        focusManager.clearFocus()
+                        isEditEnabled = true
                     },
-                    interactionSource = interactionSource,
+                    onPinFeedClick = onPinFeedClick,
                 )
             }
-
-            Text(
-                modifier = Modifier
-                    .padding(top = Spacing.xsmall)
-                    .padding(bottom = Spacing.small),
-                text = feedSource.url,
-                style = MaterialTheme.typography.labelLarge,
-            )
-
-            FeedSourceContextMenu(
-                showFeedMenu = showFeedMenu,
-                hideMenu = {
-                    showFeedMenu = false
-                },
-                onEditFeedClick = onEditFeedClick,
-                onDeleteFeedSourceClick = onDeleteFeedSourceClick,
-                feedSource = feedSource,
-                onRenameFeedSourceClick = {
-                    isEditEnabled = true
-                },
-                onPinFeedClick = onPinFeedClick,
-            )
         }
     }
 }

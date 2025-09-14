@@ -50,6 +50,7 @@ data class EditFeed(
     val isHidden: Boolean,
     val isPinned: Boolean,
     val isNotificationEnabled: Boolean,
+    val fetchFailed: Boolean,
 )
 
 @Serializable

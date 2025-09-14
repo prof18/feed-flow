@@ -237,6 +237,8 @@ class FeedFetcherRepository internal constructor(
                         if (!e.skipLogging()) {
                             logger.e { "Error, skip: ${feedSource.url}}. Error: $e" }
                         }
+                        // Mark failure flag on error
+                        databaseHelper.setFeedFetchFailed(feedSource.id, true)
                         feedStateRepository.emitErrorState(
                             FeedErrorState(
                                 failingSourceName = feedSource.title,

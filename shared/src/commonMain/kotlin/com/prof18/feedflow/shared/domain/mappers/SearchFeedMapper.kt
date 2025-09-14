@@ -47,6 +47,7 @@ internal fun Search.toFeedItem(
         isHiddenFromTimeline = false,
         isPinned = false,
         isNotificationEnabled = false,
+        fetchFailed = feed_source_fetch_failed,
     ),
     pubDateMillis = pub_date,
     dateString = if (pub_date != null) {

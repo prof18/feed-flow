@@ -62,6 +62,7 @@ fun FeedListFontSettings(
                             isHiddenFromTimeline = false,
                             isPinned = false,
                             isNotificationEnabled = false,
+                            fetchFailed = false,
                         ),
                         pubDateMillis = null,
                         dateString = when (dateFormat) {

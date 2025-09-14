@@ -333,6 +333,7 @@ internal class FeedSourcesRepository(
             linkOpeningPreference = LinkOpeningPreference.DEFAULT,
             isPinned = false,
             isNotificationEnabled = isNotificationEnabled,
+            fetchFailed = false,
         )
 
         val feedItems = rssChannelMapper.getFeedItems(

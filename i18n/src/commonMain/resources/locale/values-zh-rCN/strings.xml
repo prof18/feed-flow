@@ -5,7 +5,7 @@
     <string name="no_feeds_add_one_message">没有订阅源，请添加</string>
     <string name="refresh_feeds">刷新订阅源</string>
     <string name="loading_feed_message">正在加载订阅源 %s</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="show_on_github">在 GitHub 查看</string>
     <string name="about_nav_bar">关于</string>
     <string name="open_source_nav_bar">开放源代码许可</string>

@@ -148,6 +148,7 @@ internal fun Drawer(
                         onEditFeedClick = feedManagementActions.onEditFeedClick,
                         onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
                         onPinFeedClick = feedManagementActions.onPinFeedClick,
+                        onOpenWebsite = feedManagementActions.onOpenWebsite,
                     )
                 }
             }
@@ -180,6 +181,7 @@ internal fun Drawer(
                     onEditFeedClick = feedManagementActions.onEditFeedClick,
                     onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
                     onPinFeedClick = feedManagementActions.onPinFeedClick,
+                    onOpenWebsite = feedManagementActions.onOpenWebsite,
                 )
             }
         }
@@ -459,6 +461,7 @@ private fun DrawerFeedSourcesByCategories(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: (String) -> Unit,
 ) {
     Column {
         Column {
@@ -480,6 +483,7 @@ private fun DrawerFeedSourcesByCategories(
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onPinFeedClick = onPinFeedClick,
+                onOpenWebsite = onOpenWebsite,
             )
 
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
@@ -500,6 +504,7 @@ private fun DrawerFeedSourcesByCategories(
                     onEditFeedClick = onEditFeedClick,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onPinFeedClick = onPinFeedClick,
+                    onOpenWebsite = onOpenWebsite,
                 )
             }
         }
@@ -517,6 +522,7 @@ private fun DrawerFeedSourceByCategoryItem(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -570,6 +576,7 @@ private fun DrawerFeedSourceByCategoryItem(
             onEditFeedClick = onEditFeedClick,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             onPinFeedClick = onPinFeedClick,
+            onOpenWebsite = onOpenWebsite,
         )
     }
 }
@@ -583,6 +590,7 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: (String) -> Unit,
 ) {
     AnimatedVisibility(
         visible = isCategoryExpanded,
@@ -601,6 +609,7 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
             onEditFeedClick = onEditFeedClick,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             onPinFeedClick = onPinFeedClick,
+            onOpenWebsite = onOpenWebsite,
         )
     }
 }
@@ -613,6 +622,7 @@ private fun FeedSourcesList(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: (String) -> Unit,
 ) {
     Column {
         drawerFeedSources.forEach { feedSourceWrapper ->
@@ -654,6 +664,7 @@ private fun FeedSourcesList(
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onPinFeedClick = onPinFeedClick,
+                onOpenWebsite = onOpenWebsite,
                 feedSource = feedSourceWrapper.feedSource,
                 unreadCount = feedSourceWrapper.unreadCount,
             )
@@ -672,6 +683,7 @@ fun FeedSourceDrawerItem(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: (String) -> Unit,
     unreadCount: Long,
     modifier: Modifier = Modifier,
     colors: NavigationDrawerItemColors = NavigationDrawerItemDefaults.colors(),
@@ -769,6 +781,7 @@ fun FeedSourceDrawerItem(
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 feedSource = feedSource,
                 onPinFeedClick = onPinFeedClick,
+                onOpenWebsite = onOpenWebsite,
             )
         }
     }

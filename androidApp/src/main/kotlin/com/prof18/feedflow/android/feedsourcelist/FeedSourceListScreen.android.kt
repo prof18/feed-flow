@@ -9,7 +9,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
@@ -20,6 +22,7 @@ import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun FeedSourceListScreen(
@@ -33,6 +36,8 @@ fun FeedSourceListScreen(
 
     val strings = LocalFeedFlowStrings.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val browserManager = koinInject<BrowserManager>()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.errorState.collect { errorState ->
@@ -82,6 +87,7 @@ fun FeedSourceListScreen(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         },
+        onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
     )
 }
 
@@ -101,6 +107,7 @@ private fun FeedSourceListContentPreview() {
             onRenameFeedSourceClick = { _, _ -> },
             onEditFeedSourceClick = {},
             onPinFeedClick = {},
+            onOpenWebsite = {},
         )
     }
 }

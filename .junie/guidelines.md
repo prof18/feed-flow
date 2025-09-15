@@ -33,40 +33,13 @@ feed-flow/
 └── build-logic/   # Custom build configuration
 ```
 
-## Setup Instructions
-1. **Basic Setup**:
-   - Clone the repository
-   - Use Android Studio or IntelliJ IDEA with Kotlin Multiplatform support
-
-2. **Android Setup**:
-   - Copy dummy Google Services file:
-     ```bash
-     cp config/dummy-google-services.json androidApp/src/debug/google-services.json
-     cp config/dummy-google-services.json androidApp/src/release/google-services.json
-     ```
-   - Create keystore.properties for Dropbox integration
-
-3. **iOS Setup**:
-   - Copy and configure FeedFlow.xcconfig
-   - Set up GoogleService-Info.plist
-   - Configure Config.xcconfig for Dropbox integration
-
-4. **Desktop Setup**:
-   - Configure props.properties for Dropbox integration
-   - Run using: `./gradlew desktopApp:run`
-
 ## Development Workflow
 1. **Code Organization**:
    - Place shared logic in `shared` module
    - Platform-specific code goes in respective app modules
    - Use `expect/actual` for platform-specific implementations
 
-2. **Testing**:
-   - Write tests for shared code in `shared` module
-   - Use Maestro for UI testing
-   - Run platform-specific tests before submitting PRs
-
-3. **Best Practices**:
+2. **Best Practices**:
    - Follow Kotlin coding conventions
    - Use dependency injection
    - Keep UI logic in presentation layer
@@ -90,3 +63,5 @@ feed-flow/
 - The database migrations are placed in the `sqldelight/com/prof18/feedflow/migrations` folder
 - Avoid putting default values in the functions
 - do not write any tests unless told you to do so
+- Never put default values on data classes
+- if you are developing for Android and desktop, DO NOT link and compile the shared module for iOS.

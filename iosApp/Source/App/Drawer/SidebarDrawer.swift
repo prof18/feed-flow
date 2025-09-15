@@ -14,8 +14,15 @@ import SwiftUI
 struct SidebarDrawer: View {
     @Environment(AppState.self)
     private var appState
+    
+    @Environment(BrowserSelector.self)
+    private var browserSelector: BrowserSelector
+    
+    @Environment(\.openURL)
+    private var openURL
+    
     @Binding var selectedDrawerItem: DrawerItem?
-
+    
     let navDrawerState: NavDrawerState
     let onFeedFilterSelected: (FeedFilter) -> Void
     let onMarkAllReadClick: () -> Void
@@ -194,7 +201,16 @@ struct SidebarDrawer: View {
             },
             onEdit: onEditFeedClick,
             onPin: onPinFeedClick,
-            onDelete: onDeleteFeedClick
+            onDelete: onDeleteFeedClick,
+            onOpenWebsite: { url in
+                // TODO: open in app?
+                if browserSelector.openInAppBrowser() {
+                    guard let url = URL(string: url) else { return }
+                    self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                } else {
+                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url))
+                }
+            }
         )
     }
 

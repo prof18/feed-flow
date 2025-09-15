@@ -16,6 +16,7 @@ struct FeedSourceDrawerItem: View {
     let onEdit: (FeedSource) -> Void
     let onPin: (FeedSource) -> Void
     let onDelete: (FeedSource) -> Void
+    let onOpenWebsite: (String) -> Void
 
     var body: some View {
         HStack {
@@ -90,10 +91,12 @@ struct FeedSourceDrawerItem: View {
 
     @ViewBuilder
     private func makeFeedSourceContextMenu(feedSource: FeedSource) -> some View {
-        Label(
-            feedFlowStrings.feedFetchFailedTooltipShort,
-            systemImage: "exclamationmark.triangle.fill"
-        )
+        if feedSource.fetchFailed {
+            Label(
+                feedFlowStrings.feedFetchFailedTooltipShort,
+                systemImage: "exclamationmark.triangle.fill"
+            )
+        }
         
         Button {
             onEdit(feedSource)
@@ -108,6 +111,14 @@ struct FeedSourceDrawerItem: View {
                 feedSource.isPinned ? feedFlowStrings.menuRemoveFromPinned : feedFlowStrings.menuAddToPinned,
                 systemImage: feedSource.isPinned ? "pin.slash" : "pin"
             )
+        }
+
+        if let websiteUrl = feedSource.websiteUrl {
+            Button {
+                onOpenWebsite(websiteUrl)
+            } label: {
+                Label(feedFlowStrings.openWebsiteButton, systemImage: "globe")
+            }
         }
 
         Button {

@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.window.DialogWindow
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -51,6 +52,7 @@ class FeedSourceListScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val strings = LocalFeedFlowStrings.current
         val snackbarHostState = remember { SnackbarHostState() }
+        val uriHandler = LocalUriHandler.current
 
         LaunchedEffect(Unit) {
             viewModel.errorState.collect { errorState ->
@@ -105,6 +107,7 @@ class FeedSourceListScreen : Screen {
             snackbarHost = {
                 SnackbarHost(snackbarHostState)
             },
+            onOpenWebsite = { url -> uriHandler.openUri(url) },
         )
     }
 }
@@ -125,6 +128,7 @@ private fun FeedSourceListContentPreview() {
             navigateBack = {},
             onRenameFeedSourceClick = { _, _ -> },
             onPinFeedClick = {},
+            onOpenWebsite = {},
         )
     }
 }

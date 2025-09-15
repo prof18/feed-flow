@@ -80,6 +80,7 @@ internal fun FeedSourcesWithCategoryList(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -93,6 +94,7 @@ internal fun FeedSourcesWithCategoryList(
                 onRenameFeedSourceClick = onRenameFeedSourceClick,
                 onEditFeedClick = onEditFeedClick,
                 onPinFeedClick = onPinFeedClick,
+                onOpenWebsite = onOpenWebsite,
             )
         }
 
@@ -140,6 +142,7 @@ internal fun FeedSourcesWithCategoryList(
                     onRenameFeedSourceClick = onRenameFeedSourceClick,
                     onEditFeedClick = onEditFeedClick,
                     onPinFeedClick = onPinFeedClick,
+                    onOpenWebsite = onOpenWebsite,
                 )
             }
         }
@@ -153,6 +156,7 @@ private fun FeedSourcesListWithCategorySelector(
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: (String) -> Unit,
 ) {
     AnimatedVisibility(
         visible = feedSourceState.isExpanded,
@@ -170,6 +174,7 @@ private fun FeedSourcesListWithCategorySelector(
             onRenameFeedSourceClick = onRenameFeedSourceClick,
             onEditFeedClick = onEditFeedClick,
             onPinFeedClick = onPinFeedClick,
+            onOpenWebsite = onOpenWebsite,
         )
     }
 }
@@ -181,6 +186,7 @@ private fun FeedSourcesList(
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: (String) -> Unit,
 ) {
     Column {
         feedSources.forEachIndexed { index, feedSource ->
@@ -190,6 +196,7 @@ private fun FeedSourcesList(
                 onRenameFeedSourceClick = onRenameFeedSourceClick,
                 onEditFeedClick = onEditFeedClick,
                 onPinFeedClick = onPinFeedClick,
+                onOpenWebsite = onOpenWebsite,
             )
 
             if (index < feedSources.size - 1) {
@@ -211,6 +218,7 @@ private fun FeedSourceItem(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: (FeedSource, String) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: (String) -> Unit,
 ) {
     var showFeedMenu by remember {
         mutableStateOf(
@@ -339,6 +347,7 @@ private fun FeedSourceItem(
                         isEditEnabled = true
                     },
                     onPinFeedClick = onPinFeedClick,
+                    onOpenWebsite = onOpenWebsite,
                 )
             }
         }

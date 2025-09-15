@@ -53,6 +53,7 @@ class FeedManagementActions(
     val onPinFeedClick: (FeedSource) -> Unit,
     val onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     val onDeleteCategoryClick: (CategoryId) -> Unit,
+    val onOpenWebsite: (String) -> Unit,
 )
 
 @Stable

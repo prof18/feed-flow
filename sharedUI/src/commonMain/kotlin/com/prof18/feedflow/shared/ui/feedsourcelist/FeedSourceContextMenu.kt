@@ -17,6 +17,7 @@ internal fun FeedSourceContextMenu(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onRenameFeedSourceClick: ((FeedSource) -> Unit)? = null,
     onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: ((String) -> Unit),
 ) {
     DropdownMenu(
         expanded = showFeedMenu,
@@ -56,6 +57,20 @@ internal fun FeedSourceContextMenu(
                 },
                 onClick = {
                     onRenameFeedSourceClick(feedSource)
+                    hideMenu()
+                },
+            )
+        }
+
+        // Open website (if available and callback provided)
+        val websiteUrl = feedSource.websiteUrl
+        if (websiteUrl != null) {
+            DropdownMenuItem(
+                text = {
+                    Text(LocalFeedFlowStrings.current.openWebsiteButton)
+                },
+                onClick = {
+                    onOpenWebsite(websiteUrl)
                     hideMenu()
                 },
             )

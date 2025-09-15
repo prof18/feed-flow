@@ -12,11 +12,15 @@ import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isLinux
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import java.awt.Desktop
+import java.net.URI
 
 @Composable
 fun FrameWindowScope.FeedFlowMenuBar(
@@ -200,6 +204,18 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 checked = settingsState.isCrashReportingEnabled,
                 onCheckedChange = setCrashReportingEnabled,
             )
+
+            if (getDesktopOS().isLinux()) {
+                Separator()
+                Item(
+                    text = LocalFeedFlowStrings.current.supportTheProject,
+                    onClick = {
+                        runCatching {
+                            Desktop.getDesktop().browse(URI("https://www.paypal.me/MarcoGomiero"))
+                        }
+                    },
+                )
+            }
 
             Item(
                 text = LocalFeedFlowStrings.current.aboutButton,

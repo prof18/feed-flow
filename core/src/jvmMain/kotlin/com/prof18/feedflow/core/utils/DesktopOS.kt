@@ -16,3 +16,5 @@ fun getDesktopOS(): DesktopOS {
 }
 
 fun DesktopOS.isMacOs() = this == DesktopOS.MAC
+
+fun DesktopOS.isLinux() = this == DesktopOS.LINUX

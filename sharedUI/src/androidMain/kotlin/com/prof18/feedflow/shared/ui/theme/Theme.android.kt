@@ -30,3 +30,12 @@ fun FeedFlowTheme(
         content = content,
     )
 }
+
+@Composable
+actual fun FeedFlowThemePreview(
+    content: @Composable () -> Unit,
+) {
+    FeedFlowTheme(
+        content = content,
+    )
+}

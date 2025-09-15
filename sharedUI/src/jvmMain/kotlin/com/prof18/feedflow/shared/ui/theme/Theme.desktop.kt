@@ -31,6 +31,16 @@ fun FeedFlowTheme(
 }
 
 @Composable
+actual fun FeedFlowThemePreview(
+    content: @Composable () -> Unit,
+) {
+    FeedFlowTheme(
+        darkTheme = rememberDesktopDarkTheme(),
+        content = content,
+    )
+}
+
+@Composable
 fun rememberDesktopDarkTheme(): Boolean {
     var darkTheme by remember {
         mutableStateOf(currentSystemTheme == SystemTheme.DARK)

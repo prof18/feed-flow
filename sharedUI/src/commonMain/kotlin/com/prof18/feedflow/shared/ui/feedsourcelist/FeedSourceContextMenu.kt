@@ -15,8 +15,8 @@ internal fun FeedSourceContextMenu(
     hideMenu: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
-    onRenameFeedSourceClick: ((FeedSource) -> Unit)? = null,
     onPinFeedClick: (FeedSource) -> Unit,
+    onRenameFeedSourceClick: ((FeedSource) -> Unit)? = null,
     onOpenWebsite: ((String) -> Unit),
 ) {
     DropdownMenu(

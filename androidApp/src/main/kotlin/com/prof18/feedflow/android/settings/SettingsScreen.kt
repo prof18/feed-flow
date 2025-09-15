@@ -1,6 +1,5 @@
 package com.prof18.feedflow.android.settings
 
-import FeedFlowTheme
 import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -76,6 +75,7 @@ import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.collections.immutable.ImmutableList

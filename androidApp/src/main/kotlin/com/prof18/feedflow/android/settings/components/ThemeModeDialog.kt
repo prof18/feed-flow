@@ -1,7 +1,5 @@
 package com.prof18.feedflow.android.settings.components
 
-import FeedFlowTheme
-import android.R.attr.bottom
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable

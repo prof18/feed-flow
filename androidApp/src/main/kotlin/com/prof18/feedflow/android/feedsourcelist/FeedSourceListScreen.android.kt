@@ -1,6 +1,5 @@
 package com.prof18.feedflow.android.feedsourcelist
 
-import FeedFlowTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -19,10 +18,11 @@ import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceListContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
-import org.koin.compose.viewmodel.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FeedSourceListScreen(

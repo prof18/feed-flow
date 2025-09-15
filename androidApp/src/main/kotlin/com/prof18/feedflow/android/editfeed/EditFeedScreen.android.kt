@@ -1,6 +1,5 @@
 package com.prof18.feedflow.android.editfeed
 
-import FeedFlowTheme
 import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -25,6 +24,7 @@ import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
 import com.prof18.feedflow.shared.ui.feed.editfeed.EditFeedContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable

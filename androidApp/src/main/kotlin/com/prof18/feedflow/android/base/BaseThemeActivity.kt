@@ -1,6 +1,5 @@
 package com.prof18.feedflow.android.base
 
-import FeedFlowTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -16,6 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.prof18.feedflow.android.util.isSystemInDarkTheme
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import kotlinx.coroutines.flow.combine

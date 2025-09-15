@@ -1,6 +1,5 @@
 package com.prof18.feedflow.android.settings.about
 
-import FeedFlowTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +28,7 @@ import com.prof18.feedflow.shared.ui.about.AboutTextItem
 import com.prof18.feedflow.shared.ui.about.AuthorText
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.koinInject
 

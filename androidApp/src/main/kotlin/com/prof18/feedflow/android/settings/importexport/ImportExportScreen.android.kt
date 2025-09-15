@@ -1,6 +1,5 @@
 package com.prof18.feedflow.android.settings.importexport
 
-import FeedFlowTheme
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -18,6 +17,7 @@ import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.preview.importExportStates
 import com.prof18.feedflow.shared.ui.importexport.ImportExportContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import org.koin.compose.viewmodel.koinViewModel
 

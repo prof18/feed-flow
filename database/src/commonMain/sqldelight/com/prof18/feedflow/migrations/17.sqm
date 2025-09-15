@@ -1,3 +1,8 @@
+ALTER TABLE feed_source ADD COLUMN website_url TEXT;
+
+DROP VIEW IF EXISTS feed_source_unread_count;
+DROP VIEW IF EXISTS category_with_unread;
+
 CREATE VIEW feed_source_unread_count AS
 SELECT
     feed_source.url_hash AS url_hash,
@@ -25,7 +30,6 @@ ON feed_source.category_id = feed_source_category.id
 LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id;
 
-
 CREATE VIEW category_with_unread AS
 SELECT
     feed_source_category.id,
@@ -38,14 +42,3 @@ SELECT
         AND feed_item.is_read == 0
     ) AS unread_count
 FROM feed_source_category;
-
-getCategoriesWithUnreadCount:
-SELECT id, title, unread_count
-FROM category_with_unread
-ORDER BY title COLLATE NOCASE ASC;
-
-
-getFeedSourcesWithUnreadCount:
-SELECT url_hash, feed_source_title, url, feed_source_logo_url, feed_source_website_url, category_id, category_title, last_sync_timestamp, fetch_failed, link_opening_preference, is_hidden, is_pinned, notifications_enabled, unread_count
-FROM feed_source_unread_count
-ORDER BY feed_source_title COLLATE NOCASE ASC;

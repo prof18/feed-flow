@@ -205,7 +205,6 @@ private struct FeedSourceListItem: View {
         )
         .if(!isRenameEnabled) { view in
             view.contextMenu {
-                
                 Label(
                     feedFlowStrings.feedFetchFailedTooltipShort,
                     systemImage: "exclamationmark.triangle.fill"

@@ -7,6 +7,7 @@ data class FeedSource(
     val category: FeedSourceCategory?,
     val lastSyncTimestamp: Long?,
     val logoUrl: String?,
+    val websiteUrl: String?,
     val fetchFailed: Boolean,
     val linkOpeningPreference: LinkOpeningPreference,
     val isHiddenFromTimeline: Boolean,

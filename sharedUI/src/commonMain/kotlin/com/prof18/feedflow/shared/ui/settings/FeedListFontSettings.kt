@@ -58,6 +58,7 @@ fun FeedListFontSettings(
                             category = null,
                             lastSyncTimestamp = null,
                             logoUrl = null,
+                            websiteUrl = null,
                             linkOpeningPreference = LinkOpeningPreference.DEFAULT,
                             isHiddenFromTimeline = false,
                             isPinned = false,

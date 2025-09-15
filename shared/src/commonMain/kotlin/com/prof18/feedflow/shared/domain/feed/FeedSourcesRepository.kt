@@ -329,6 +329,7 @@ internal class FeedSourcesRepository(
             lastSyncTimestamp = currentTimestamp,
             category = parsedFeedSource.category,
             logoUrl = parsedFeedSource.logoUrl,
+            websiteUrl = rssChannel.link,
             isHiddenFromTimeline = false,
             linkOpeningPreference = LinkOpeningPreference.DEFAULT,
             isPinned = false,

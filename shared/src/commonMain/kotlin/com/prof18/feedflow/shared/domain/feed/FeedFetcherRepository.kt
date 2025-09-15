@@ -42,6 +42,7 @@ class FeedFetcherRepository internal constructor(
     private val rssParser: RssParser,
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
+    private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
 ) {
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
@@ -229,6 +230,16 @@ class FeedFetcherRepository internal constructor(
                         logger.d { "<- Got back ${rssChannel.title}" }
                         feedToUpdate.remove(feedSource.url)
                         updateRefreshCount()
+                        if (feedSource.logoUrl == null) {
+                            val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
+                            databaseHelper.updateFeedSourceLogoUrl(feedSourceId = feedSource.id, logoUrl = logoUrl)
+                        }
+                        if (feedSource.websiteUrl == null) {
+                            databaseHelper.updateFeedSourceWebsiteUrl(
+                                feedSourceId = feedSource.id,
+                                websiteUrl = rssChannel.link,
+                            )
+                        }
                         rssChannelMapper.getFeedItems(
                             rssChannel = rssChannel,
                             feedSource = feedSource,

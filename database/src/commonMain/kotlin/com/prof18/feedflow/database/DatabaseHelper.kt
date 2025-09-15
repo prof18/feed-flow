@@ -515,6 +515,7 @@ class DatabaseHelper(
                     isHiddenFromTimeline = feedSource.is_hidden ?: false,
                     isPinned = feedSource.is_pinned ?: false,
                     isNotificationEnabled = feedSource.notifications_enabled ?: false,
+                    websiteUrl = feedSource.feed_source_website_url,
                 )
             }
     }
@@ -688,6 +689,7 @@ class DatabaseHelper(
             category = category,
             lastSyncTimestamp = feedSource.last_sync_timestamp,
             logoUrl = feedSource.feed_source_logo_url,
+            websiteUrl = feedSource.feed_source_website_url,
             fetchFailed = feedSource.fetch_failed,
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
@@ -713,6 +715,7 @@ class DatabaseHelper(
             category = category,
             lastSyncTimestamp = feedSource.last_sync_timestamp,
             logoUrl = feedSource.feed_source_logo_url,
+            websiteUrl = feedSource.feed_source_website_url,
             fetchFailed = feedSource.fetch_failed,
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
@@ -738,6 +741,7 @@ class DatabaseHelper(
             category = category,
             lastSyncTimestamp = feedSource.last_sync_timestamp,
             logoUrl = feedSource.feed_source_logo_url,
+            websiteUrl = feedSource.feed_source_website_url,
             fetchFailed = feedSource.fetch_failed,
             linkOpeningPreference = feedSource.link_opening_preference ?: LinkOpeningPreference.DEFAULT,
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
@@ -750,6 +754,22 @@ class DatabaseHelper(
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedSourceQueries.setFetchFailed(
                 fetchFailed = failed,
+                urlHash = feedSourceId,
+            )
+        }
+
+    suspend fun updateFeedSourceLogoUrl(feedSourceId: String, logoUrl: String?) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.updateLogoUrl(
+                logoUrl = logoUrl,
+                urlHash = feedSourceId,
+            )
+        }
+
+    suspend fun updateFeedSourceWebsiteUrl(feedSourceId: String, websiteUrl: String?) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.updateWebsiteUrl(
+                websiteUrl = websiteUrl,
                 urlHash = feedSourceId,
             )
         }

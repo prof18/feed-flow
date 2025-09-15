@@ -11,6 +11,7 @@ fun ParsedFeedSource.toFeedSource() = FeedSource(
     category = this.category,
     lastSyncTimestamp = null,
     logoUrl = this.logoUrl,
+    websiteUrl = null,
     fetchFailed = false,
     linkOpeningPreference = LinkOpeningPreference.DEFAULT,
     isHiddenFromTimeline = false,

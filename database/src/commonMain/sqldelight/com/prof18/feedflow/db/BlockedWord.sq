@@ -1,0 +1,44 @@
+CREATE TABLE blocked_word (
+    keyword TEXT NOT NULL PRIMARY KEY
+);
+
+insertBlockedKeyword:
+INSERT OR IGNORE INTO blocked_word(keyword) VALUES (?);
+
+deleteBlockedKeyword:
+DELETE FROM blocked_word WHERE keyword = ?;
+
+selectBlockedKeywords:
+SELECT keyword FROM blocked_word ORDER BY rowid DESC;
+
+CREATE TRIGGER IF NOT EXISTS update_blocked_on_keyword_insert
+AFTER INSERT ON blocked_word
+FOR EACH ROW
+BEGIN
+  UPDATE feed_item
+  SET is_blocked = 1
+  WHERE is_blocked = 0
+  AND (
+    (COALESCE(title, '') LIKE '%' || new.keyword || '%' ESCAPE '\' COLLATE NOCASE) OR
+    (COALESCE(subtitle, '') LIKE '%' || new.keyword || '%' ESCAPE '\' COLLATE NOCASE) OR
+    (COALESCE(content, '') LIKE '%' || new.keyword || '%' ESCAPE '\' COLLATE NOCASE)
+  );
+END;
+
+CREATE TRIGGER IF NOT EXISTS update_blocked_on_keyword_delete
+AFTER DELETE ON blocked_word
+FOR EACH ROW
+BEGIN
+  UPDATE feed_item
+  SET is_blocked = CASE
+    WHEN EXISTS (
+      SELECT 1 FROM blocked_word bk
+      WHERE
+        (COALESCE(feed_item.title, '') LIKE '%' || bk.keyword || '%' ESCAPE '\' COLLATE NOCASE) OR
+        (COALESCE(feed_item.subtitle, '') LIKE '%' || bk.keyword || '%' ESCAPE '\' COLLATE NOCASE) OR
+        (COALESCE(feed_item.content, '') LIKE '%' || bk.keyword || '%' ESCAPE '\' COLLATE NOCASE)
+    ) THEN 1
+    ELSE 0
+  END;
+END;
+

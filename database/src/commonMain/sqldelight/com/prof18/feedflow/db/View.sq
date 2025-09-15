@@ -18,6 +18,7 @@ SELECT
         FROM feed_item
         WHERE feed_item.feed_source_id == feed_source.url_hash
         AND feed_item.is_read == 0
+        AND feed_item.is_blocked == 0
     ) AS unread_count
 FROM feed_source
 LEFT JOIN feed_source_category
@@ -36,6 +37,7 @@ SELECT
         INNER JOIN feed_source ON feed_item.feed_source_id == feed_source.url_hash
         WHERE feed_source.category_id == feed_source_category.id
         AND feed_item.is_read == 0
+        AND feed_item.is_blocked == 0
     ) AS unread_count
 FROM feed_source_category;
 

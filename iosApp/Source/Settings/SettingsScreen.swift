@@ -212,6 +212,14 @@ private struct FeedSection: View {
             } label: {
                 Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
             }
+            
+            NavigationLink(destination: NotificationsSettingsScreen()) {
+                Label(feedFlowStrings.settingsNotificationsTitle, systemImage: "bell")
+            }
+            
+            NavigationLink(destination: BlockedWordsScreen()) {
+                Label(feedFlowStrings.settingsBlockedWords, systemImage: "exclamationmark.triangle")
+            }
         }
     }
 }
@@ -228,6 +236,17 @@ private struct BehaviourSection: View {
 
     var body: some View {
         Section(feedFlowStrings.settingsBehaviourTitle) {
+            Picker(selection: $themeMode) {
+                Text(feedFlowStrings.settingsThemeSystem)
+                    .tag(ThemeMode.system)
+                Text(feedFlowStrings.settingsThemeLight)
+                    .tag(ThemeMode.light)
+                Text(feedFlowStrings.settingsThemeDark)
+                    .tag(ThemeMode.dark)
+            } label: {
+                Label(feedFlowStrings.settingsTheme, systemImage: "moon")
+            }
+            
             Picker(
                 selection: $browserSelector.selectedBrowser,
                 content: {
@@ -240,10 +259,6 @@ private struct BehaviourSection: View {
                 }
             )
 
-            NavigationLink(destination: NotificationsSettingsScreen()) {
-                Label(feedFlowStrings.settingsNotificationsTitle, systemImage: "bell")
-            }
-
             Picker(selection: $autoDeletePeriod) {
                 Text(feedFlowStrings.settingsAutoDeletePeriodDisabled)
                     .tag(AutoDeletePeriod.disabled)
@@ -255,17 +270,6 @@ private struct BehaviourSection: View {
                     .tag(AutoDeletePeriod.oneMonth)
             } label: {
                 Label(feedFlowStrings.settingsAutoDelete, systemImage: "arrow.3.trianglepath")
-            }
-
-            Picker(selection: $themeMode) {
-                Text(feedFlowStrings.settingsThemeSystem)
-                    .tag(ThemeMode.system)
-                Text(feedFlowStrings.settingsThemeLight)
-                    .tag(ThemeMode.light)
-                Text(feedFlowStrings.settingsThemeDark)
-                    .tag(ThemeMode.dark)
-            } label: {
-                Label(feedFlowStrings.settingsTheme, systemImage: "moon")
             }
 
             Toggle(isOn: $isReaderModeEnabled) {

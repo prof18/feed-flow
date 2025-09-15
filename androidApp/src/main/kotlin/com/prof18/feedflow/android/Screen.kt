@@ -61,3 +61,6 @@ data class DeepLinkScreen(
 
 @Serializable
 internal data object Notifications
+
+@Serializable
+internal data object BlockedWords

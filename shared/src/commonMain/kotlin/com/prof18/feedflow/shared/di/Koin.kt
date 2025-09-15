@@ -34,6 +34,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
+import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
@@ -216,6 +217,13 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dateFormatter = get(),
             settingsRepository = get(),
             feedFontSizeRepository = get(),
+            feedStateRepository = get(),
+        )
+    }
+
+    viewModel {
+        BlockedWordsViewModel(
+            databaseHelper = get(),
             feedStateRepository = get(),
         )
     }

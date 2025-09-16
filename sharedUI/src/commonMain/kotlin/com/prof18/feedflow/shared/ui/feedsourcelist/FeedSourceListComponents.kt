@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -54,6 +56,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.IntSize
@@ -74,6 +77,7 @@ internal expect fun Modifier.feedSourceMenuClickModifier(
 
 @Composable
 internal fun FeedSourcesWithCategoryList(
+    paddingValues: PaddingValues,
     feedSourceState: FeedSourceListState,
     onExpandClicked: (CategoryId?) -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
@@ -83,8 +87,12 @@ internal fun FeedSourcesWithCategoryList(
     onOpenWebsite: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val layoutDir = LocalLayoutDirection.current
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier
+            .padding(top = paddingValues.calculateTopPadding())
+            .padding(start = paddingValues.calculateLeftPadding(layoutDir))
+            .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         contentPadding = PaddingValues(Spacing.regular),
     ) {
         item {
@@ -145,6 +153,10 @@ internal fun FeedSourcesWithCategoryList(
                     onOpenWebsite = onOpenWebsite,
                 )
             }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
         }
     }
 }

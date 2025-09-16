@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
 import com.prof18.feedflow.shared.ui.home.FeedListActions
@@ -78,9 +79,13 @@ fun HomeScreenContent(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
+        val layoutDir = LocalLayoutDirection.current
+
         Column(
             modifier = Modifier
-                .padding(innerPadding),
+                .padding(top = innerPadding.calculateTopPadding())
+                .padding(start = innerPadding.calculateLeftPadding(layoutDir))
+                .padding(end = innerPadding.calculateRightPadding(layoutDir)),
         ) {
             toolbarContent()
 

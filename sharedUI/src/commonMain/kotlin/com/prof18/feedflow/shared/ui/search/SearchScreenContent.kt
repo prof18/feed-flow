@@ -4,8 +4,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -81,8 +84,12 @@ fun SearchScreenContent(
         modifier = modifier,
         snackbarHost = snackbarHost,
     ) { padding ->
+        val layoutDir = LocalLayoutDirection.current
         Column(
-            modifier = Modifier.padding(padding),
+            modifier = Modifier
+                .padding(top = padding.calculateTopPadding())
+                .padding(start = padding.calculateLeftPadding(layoutDir))
+                .padding(end = padding.calculateRightPadding(layoutDir)),
         ) {
             SearchBar(
                 modifier = Modifier
@@ -134,6 +141,10 @@ fun SearchScreenContent(
                             }
                         }
                     }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(padding.calculateBottomPadding()))
                 }
             }
         }

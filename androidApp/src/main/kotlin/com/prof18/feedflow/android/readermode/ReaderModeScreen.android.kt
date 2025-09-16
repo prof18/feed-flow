@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Logger
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
@@ -170,7 +171,6 @@ private fun ReaderMode(
                 Logger.d { result }
                 val jsonResult = JSONObject(result)
 
-                // Always use DEFUDDLE parsing
                 val title = jsonResult.getStringOrNull("title")
                 val content = jsonResult.getStringOrNull("content").orEmpty()
                 val finalHTML = getReaderModeStyledHtml(
@@ -213,10 +213,13 @@ private fun ReaderMode(
                 this.supportZoom = false
             }
 
+            val layoutDir = LocalLayoutDirection.current
             WebView(
                 modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(top = contentPadding.calculateTopPadding())
+                    .padding(start = contentPadding.calculateLeftPadding(layoutDir))
+                    .padding(end = contentPadding.calculateRightPadding(layoutDir)),
                 state = webViewState,
                 navigator = navigator,
                 webViewJsBridge = jsBridge,

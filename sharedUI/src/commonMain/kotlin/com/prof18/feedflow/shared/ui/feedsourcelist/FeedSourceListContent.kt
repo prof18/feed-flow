@@ -41,8 +41,6 @@ fun FeedSourceListContent(
             )
         } else {
             FeedSourcesWithCategoryList(
-                modifier = Modifier
-                    .padding(paddingValues),
                 feedSourceState = feedSourceListState,
                 onExpandClicked = onExpandClicked,
                 onDeleteFeedSourceClick = onDeleteFeedClick,
@@ -50,6 +48,7 @@ fun FeedSourceListContent(
                 onEditFeedClick = onEditFeedSourceClick,
                 onPinFeedClick = onPinFeedClick,
                 onOpenWebsite = onOpenWebsite,
+                paddingValues = paddingValues,
             )
         }
     }

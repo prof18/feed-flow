@@ -3,9 +3,13 @@ package com.prof18.feedflow.shared.ui.accounts.freshrss
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.LinkOff
@@ -27,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -67,11 +72,13 @@ fun FreshRssSyncContent(
             )
         },
         snackbarHost = snackbarHost,
-    ) { padding ->
-        Box(
+    ) { paddingValues ->
+        val layoutDir = LocalLayoutDirection.current
+        Column(
             modifier = Modifier
-                .padding(padding)
-                .padding(bottom = Spacing.regular),
+                .padding(top = paddingValues.calculateTopPadding())
+                .padding(start = paddingValues.calculateLeftPadding(layoutDir))
+                .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
             when (uiState) {
                 is AccountConnectionUiState.Linked -> ConnectedView(
@@ -85,6 +92,8 @@ fun FreshRssSyncContent(
                     onLoginClick = onLoginClick,
                 )
             }
+
+            Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
         }
     }
 }
@@ -111,10 +120,12 @@ fun DisconnectedView(
     var password by remember { mutableStateOf("") }
 
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scrollableState = rememberScrollState()
 
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(scrollableState)
             .padding(Spacing.regular),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -187,7 +198,10 @@ private fun ConnectedView(
     uiState: AccountConnectionUiState.Linked,
     onDisconnectClick: () -> Unit,
 ) {
-    Column {
+    val scrollableState = rememberScrollState()
+    Column(
+        Modifier.verticalScroll(scrollableState),
+    ) {
         Text(
             text = LocalFeedFlowStrings.current.freshRssAccountConnected,
             style = MaterialTheme.typography.bodyMedium,

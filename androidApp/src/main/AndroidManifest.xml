@@ -19,6 +19,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="FeedFlow"
         android:supportsRtl="true"
+        android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.FeedFlow"
         android:usesCleartextTraffic="true">
 

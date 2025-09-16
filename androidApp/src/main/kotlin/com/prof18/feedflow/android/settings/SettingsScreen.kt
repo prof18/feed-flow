@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -41,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
@@ -217,9 +219,12 @@ private fun SettingsScreenContent(
             SettingsNavBar(navigateBack)
         },
     ) { paddingValues ->
+        val layoutDir = LocalLayoutDirection.current
         LazyColumn(
             modifier = Modifier
-                .padding(paddingValues),
+                .padding(top = paddingValues.calculateTopPadding())
+                .padding(start = paddingValues.calculateLeftPadding(layoutDir))
+                .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
             item {
                 Text(
@@ -466,6 +471,10 @@ private fun SettingsScreenContent(
                     icon = Icons.Outlined.Info,
                     onClick = onAboutClick,
                 )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
             }
         }
     }

@@ -1,7 +1,9 @@
 package com.prof18.feedflow.shared.ui.feed.editfeed
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
@@ -103,9 +106,12 @@ fun EditFeedContent(
                 },
             )
         }
+        val layoutDir = LocalLayoutDirection.current
         LazyColumn(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
+                .padding(start = paddingValues.calculateLeftPadding(layoutDir))
+                .padding(end = paddingValues.calculateRightPadding(layoutDir))
                 .padding(horizontal = Spacing.regular),
         ) {
             item {
@@ -245,6 +251,10 @@ fun EditFeedContent(
                 ) {
                     Text(LocalFeedFlowStrings.current.deleteFeedButton)
                 }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
             }
         }
     }

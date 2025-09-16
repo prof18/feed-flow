@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
@@ -150,10 +151,13 @@ private fun NotificationSettingsScreenContent(
                 )
             }
         } else {
+            val layoutDir = LocalLayoutDirection.current
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .padding(start = paddingValues.calculateLeftPadding(layoutDir))
+                    .padding(end = paddingValues.calculateRightPadding(layoutDir)),
             ) {
                 Column {
                     if (!hasNotificationPermission) {
@@ -215,6 +219,10 @@ private fun NotificationSettingsScreenContent(
                                 )
                             },
                         )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
                     }
                 }
             }

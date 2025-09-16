@@ -1,10 +1,10 @@
 [versions]
 about-libraries = "12.2.4"
 activity-compose = "1.10.1"
-android-compile-sdk = "35"
+android-compile-sdk = "36"
 android-gradle-plugin = "8.10.1"
 android-min-sdk = "26"
-android-target-sdk = "35"
+android-target-sdk = "36"
 androidx-browser = "1.8.0"
 androidx-core-ktx = "1.7.0"
 arrow = "2.1.2"
@@ -65,7 +65,7 @@ flatpack-gradle-generator = "1.5.0"
 telemetry-deck = "6.2.0"
 
 [libraries]
-about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "about-libraries" }
+about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }
 about-libraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "about-libraries" }
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle-plugin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }

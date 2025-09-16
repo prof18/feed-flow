@@ -3,8 +3,10 @@ package com.prof18.feedflow.android
 import android.content.Intent
 import android.os.Bundle
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -133,8 +136,13 @@ class MainActivity : BaseThemeActivity() {
             startDestination = Home(),
             enterTransition = { fadeIn() + slideIntoContainer(SlideDirection.Start) },
             exitTransition = { fadeOut() + slideOutOfContainer(SlideDirection.Start) },
-            popEnterTransition = { fadeIn() + slideIntoContainer(SlideDirection.End) },
-            popExitTransition = { fadeOut() + slideOutOfContainer(SlideDirection.End) },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = {
+                scaleOut(
+                    targetScale = 0.9f,
+                    transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0.5f),
+                )
+            },
         ) {
             composable<Home>(
                 deepLinks = listOf(

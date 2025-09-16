@@ -37,6 +37,7 @@ fun getReaderModeStyledHtml(
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
                 font-size: $fontSizeCss;
                 line-height: 1.5em;
+                padding-bottom: 24px;
                 ${colors?.let { "color: ${it.textColor};" }}
             }
             
@@ -126,9 +127,8 @@ fun getReaderModeStyledHtml(
             }
             
             #__content {
-                padding: 24px;
+                padding: 0 24px 24px 24px;
                 margin: auto;
-                margin-top: 5px;
                 max-width: 700px;
             }
             

@@ -15,8 +15,7 @@ struct ImportExportContent: View {
 
     @Binding var feedImportExportState: FeedImportExportState
 
-    @Binding var sheetToShow: ImportExportSheetToShow?
-
+    let onImportClick: () -> Void
     let onExportClick: () -> Void
     let onRetryClick: () -> Void
     let onDoneClick: () -> Void
@@ -75,7 +74,7 @@ struct ImportExportContent: View {
                 }
 
                 Button(
-                    action: { self.sheetToShow = .filePicker },
+                    action: onImportClick,
                     label: {
                         Label(feedFlowStrings.importFeedButton, systemImage: "arrow.down.doc")
                     }
@@ -133,7 +132,6 @@ struct ImportExportContent: View {
             Button(
                 action: {
                     onDoneClick()
-                    self.sheetToShow = nil
                     self.presentationMode.wrappedValue.dismiss()
                 },
                 label: {
@@ -172,7 +170,6 @@ struct ImportExportContent: View {
         Button(
             action: {
                 onDoneClick()
-                self.sheetToShow = nil
                 self.presentationMode.wrappedValue.dismiss()
             },
             label: {
@@ -213,7 +210,6 @@ struct ImportExportContent: View {
 
         Button {
             onDoneClick()
-            self.sheetToShow = nil
             self.presentationMode.wrappedValue.dismiss()
         } label: {
             Text(feedFlowStrings.doneButton)
@@ -249,7 +245,6 @@ struct ImportExportContent: View {
 
         Button {
             onDoneClick()
-            self.sheetToShow = nil
             self.presentationMode.wrappedValue.dismiss()
         } label: {
             Text(feedFlowStrings.doneButton)
@@ -263,7 +258,7 @@ struct ImportExportContent: View {
 #Preview("With error") {
     ImportExportContent(
         feedImportExportState: .constant(feedImportSuccessWithErrorState),
-        sheetToShow: .constant(nil),
+        onImportClick: {},
         onExportClick: {},
         onRetryClick: {},
         onDoneClick: {}
@@ -273,7 +268,7 @@ struct ImportExportContent: View {
 #Preview {
     ImportExportContent(
         feedImportExportState: .constant(feedImportSuccessState),
-        sheetToShow: .constant(nil),
+        onImportClick: {},
         onExportClick: {},
         onRetryClick: {},
         onDoneClick: {}

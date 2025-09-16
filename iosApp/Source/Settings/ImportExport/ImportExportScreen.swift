@@ -19,7 +19,9 @@ struct ImportExportScreen: View {
     @StateObject private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(Deps.shared.getImportExportViewModel())
 
     @State var feedImportExportState: FeedImportExportState = .Idle()
-    @State var sheetToShow: ImportExportSheetToShow?
+    @State private var showFileImporter = false
+    @State private var showFileExporter = false
+    @State private var exportDocument: ExportDocument?
 
     var showCloseButton = false
     let fetchFeeds: () -> Void
@@ -30,7 +32,9 @@ struct ImportExportScreen: View {
         NavigationStack {
             ImportExportContent(
                 feedImportExportState: $feedImportExportState,
-                sheetToShow: $sheetToShow,
+                onImportClick: {
+                    showFileImporter = true
+                },
                 onExportClick: {
                     vmStoreOwner.instance.startExport()
                     if let url = getUrlForOpmlExport() {
@@ -70,38 +74,61 @@ struct ImportExportScreen: View {
                 for await state in vmStoreOwner.instance.importExportState {
                     self.feedImportExportState = state
                     if state is FeedImportExportState.ExportSuccess {
-                        self.sheetToShow = .shareSheet
+                        if let url = getUrlForOpmlExport() {
+                            do {
+                                let data = try Data(contentsOf: url)
+                                self.exportDocument = ExportDocument(data: data)
+                                self.showFileExporter = true
+                            } catch {
+                                vmStoreOwner.instance.reportExportError()
+                            }
+                        }
                     }
                 }
             }
-            .sheet(item: $sheetToShow) { item in
-                switch item {
-                case .filePicker:
-                    FilePickerController { url in
-                        do {
-                            let data = try Data(contentsOf: url)
-                            vmStoreOwner.instance.importFeed(opmlInput: OpmlInput(opmlData: data))
-                        } catch {
-                            vmStoreOwner.instance.reportExportError()
-                            self.appState.snackbarQueue.append(
-                                SnackbarData(
-                                    title: feedFlowStrings.loadFileErrorMessage,
-                                    subtitle: nil,
-                                    showBanner: true
-                                )
+            .fileImporter(
+                isPresented: $showFileImporter,
+                allowedContentTypes: [.xml, .data],
+                allowsMultipleSelection: false
+            ) { result in
+                switch result {
+                case .success(let urls):
+                    guard let url = urls.first else { return }
+                    do {
+                        let data = try Data(contentsOf: url)
+                        vmStoreOwner.instance.importFeed(opmlInput: OpmlInput(opmlData: data))
+                    } catch {
+                        vmStoreOwner.instance.reportExportError()
+                        self.appState.snackbarQueue.append(
+                            SnackbarData(
+                                title: feedFlowStrings.loadFileErrorMessage,
+                                subtitle: nil,
+                                showBanner: true
                             )
-                        }
+                        )
                     }
-
-                case .shareSheet:
-                    if let exportUrl = getUrlForOpmlExport() {
-                        ShareSheet(
-                            activityItems: [exportUrl],
-                            applicationActivities: nil
-                        ) { _, _, _, _ in }
-                    } else {
-                        EmptyView()
-                    }
+                case .failure:
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.loadFileErrorMessage,
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    )
+                }
+            }
+            .fileExporter(
+                isPresented: $showFileExporter,
+                document: exportDocument,
+                contentType: .xml,
+                defaultFilename: getDefaultFilename()
+            ) { result in
+                switch result {
+                case .success(let url):
+                    print("File exported to: \(url)")
+                case .failure(let error):
+                    print("Export failed: \(error)")
+                    vmStoreOwner.instance.reportExportError()
                 }
             }
         }
@@ -115,5 +142,11 @@ struct ImportExportScreen: View {
         let fileName = "feedflow-export_\(formattedDate)_\(deviceName).opml".lowercased()
 
         return cacheDirectory?.appendingPathComponent(fileName)
+    }
+
+    private func getDefaultFilename() -> String {
+        let formattedDate = vmStoreOwner.instance.getCurrentDateForExport()
+        let deviceName = UIDevice.current.name.replacingOccurrences(of: " ", with: "-")
+        return "feedflow-export_\(formattedDate)_\(deviceName).opml".lowercased()
     }
 }

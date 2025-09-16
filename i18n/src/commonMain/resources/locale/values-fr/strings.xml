@@ -235,4 +235,12 @@
     <string name="settings_theme_system">Système</string>
     <string name="settings_theme_light">Clair</string>
     <string name="icloud_connection_error">Navré, nous n\'avons pu nous connecter à iCloud. Veuillez vérifier si vous êtes bien connecté, si iCloud Drive est activé, et si il vous reste de l\'espace de stockage</string>
+    <string name="feed_fetch_failed_tooltip_short">Échec de l\'actualisation des flux</string>
+    <string name="support_the_project">Soutenez le projet</string>
+    <string name="open_feed_settings">Ouvrir les réglages des flux</string>
+    <string name="reader_mode_browser_button_content_description">Ouvrir dans un navigateur</string>
+    <string name="delete_feed_confirmation_title">Supprimer le flux ?</string>
+    <string name="delete_feed_confirmation_message">Êtes-vous sûr.e de vouloir supprimer ce flux ? Cette action est irréversible.</string>
+    <string name="delete_feed_button">Supprimer le flux</string>
+    <string name="feed_fetch_failed_tooltip">L\'actualisation des flux a échoué. Veuillez vérifier si le site fonctionne</string>
 </resources>

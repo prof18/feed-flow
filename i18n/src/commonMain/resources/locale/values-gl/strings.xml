@@ -234,4 +234,12 @@
     <string name="settings_theme_light">Claro</string>
     <string name="settings_theme_dark">Escuro</string>
     <string name="icloud_connection_error">Lamentamos non poder conectar con iCloud. Comproba se iniciaches sesión, iCloud Drive está activada e tes espazo abondo</string>
+    <string name="open_feed_settings">Abrir axustes da canle</string>
+    <string name="reader_mode_browser_button_content_description">Abrir no navegador</string>
+    <string name="delete_feed_confirmation_title">Eliminar canle?</string>
+    <string name="delete_feed_confirmation_message">Tes certeza de querer eliminar esta canle? Esta acción non se pode desfacer.</string>
+    <string name="delete_feed_button">Eliminar canle</string>
+    <string name="feed_fetch_failed_tooltip">Fallou a actualización da canle, comproba se esa web é accesible</string>
+    <string name="feed_fetch_failed_tooltip_short">Fallou a actualización da canle</string>
+    <string name="support_the_project">Apoia ao proxecto</string>
 </resources>

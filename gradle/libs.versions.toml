@@ -62,7 +62,7 @@ voyager = "1.0.1"
 workmanager = "2.10.3"
 compose-hotreload = "1.0.0-beta06"
 flatpack-gradle-generator = "1.5.0"
-telemetry-deck = "6.2.0"
+telemetry-deck = "6.2.2"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }

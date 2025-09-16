@@ -241,4 +241,5 @@
     <string name="delete_feed_button">删除订阅源</string>
     <string name="feed_fetch_failed_tooltip">订阅源更新失败。请检查网站是否正常运行</string>
     <string name="feed_fetch_failed_tooltip_short">订阅源更新失败</string>
+    <string name="support_the_project">支持项目</string>
 </resources>

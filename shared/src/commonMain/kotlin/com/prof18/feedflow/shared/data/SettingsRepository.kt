@@ -240,6 +240,18 @@ class SettingsRepository(
         themeModeMutableFlow.update { mode }
     }
 
+    fun getDesktopWindowWidthDp(): Int =
+        settings.getInt(SettingsFields.DESKTOP_WINDOW_WIDTH_DP.name, defaultValue = 800)
+
+    fun setDesktopWindowWidthDp(value: Int) =
+        settings.set(SettingsFields.DESKTOP_WINDOW_WIDTH_DP.name, value)
+
+    fun getDesktopWindowHeightDp(): Int =
+        settings.getInt(SettingsFields.DESKTOP_WINDOW_HEIGHT_DP.name, defaultValue = 600)
+
+    fun setDesktopWindowHeightDp(value: Int) =
+        settings.set(SettingsFields.DESKTOP_WINDOW_HEIGHT_DP.name, value)
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -272,4 +284,6 @@ internal enum class SettingsFields {
     FEED_LAYOUT,
     FEED_WIDGET_LAYOUT,
     THEME_MODE,
+    DESKTOP_WINDOW_WIDTH_DP,
+    DESKTOP_WINDOW_HEIGHT_DP,
 }

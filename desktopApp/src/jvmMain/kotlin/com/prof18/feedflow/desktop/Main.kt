@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -85,6 +86,7 @@ import java.io.InputStream
 import java.net.URI
 import java.util.Properties
 import javax.swing.UIManager
+import kotlin.math.roundToInt
 
 @Suppress("UnsafeDynamicallyLoadedCode", "CyclomaticComplexMethod")
 fun main() {
@@ -160,7 +162,10 @@ fun main() {
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
     application {
-        val windowState = rememberWindowState()
+        val settingsRepository = DI.koin.get<SettingsRepository>()
+        val savedWidthDp = settingsRepository.getDesktopWindowWidthDp()
+        val savedHeightDp = settingsRepository.getDesktopWindowHeightDp()
+        val windowState = rememberWindowState(size = DpSize(savedWidthDp.dp, savedHeightDp.dp))
 
         val koin = DI.koin
         setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
@@ -224,6 +229,14 @@ fun main() {
                     }
 
                     val snackbarHostState = remember { SnackbarHostState() }
+
+                    LaunchedEffect(windowState) {
+                        snapshotFlow { windowState.size }
+                            .collect { size ->
+                                settingsRepository.setDesktopWindowWidthDp(size.width.value.roundToInt())
+                                settingsRepository.setDesktopWindowHeightDp(size.height.value.roundToInt())
+                            }
+                    }
 
                     val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
                     LaunchedEffect(Unit) {

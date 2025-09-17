@@ -234,4 +234,12 @@
     <string name="settings_theme_light">Sáng</string>
     <string name="settings_theme_dark">Tối</string>
     <string name="icloud_connection_error">Rất tiếc, chúng tôi không thể kết nối với iCloud. Vui lòng kiểm tra xem bạn đã đăng nhập chưa, iCloud Drive đã được bật chưa và bạn còn dung lượng trống không</string>
+    <string name="open_feed_settings">Mở thiết lập nguồn tin</string>
+    <string name="reader_mode_browser_button_content_description">Mở trong trình duyệt</string>
+    <string name="delete_feed_confirmation_title">Xóa nguồn tin?</string>
+    <string name="delete_feed_confirmation_message">Bạn có chắc muốn xóa nguồn tin này? Thao tác này không thể hoàn tác.</string>
+    <string name="delete_feed_button">Xóa nguồn tin</string>
+    <string name="feed_fetch_failed_tooltip">Cập nhật nguồn tin thất bại. Vui lòng kiểm tra trạng thái trang web</string>
+    <string name="feed_fetch_failed_tooltip_short">Cập nhật nguồn tin thất bại</string>
+    <string name="support_the_project">Hỗ trợ dự án</string>
 </resources>

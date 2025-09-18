@@ -228,8 +228,8 @@
     <string name="reader_mode_archive_button_content_description">Ouvrir dans archive.is</string>
     <string name="settings_feed_layout_card">Cartes</string>
     <string name="feed_layout_title">Mise en page</string>
-    <string name="settings_swipe_action_toggle_read">Activer lus</string>
-    <string name="settings_swipe_action_toggle_bookmark">Activer les favoris</string>
+    <string name="settings_swipe_action_toggle_read">Changer l\'état de lecture</string>
+    <string name="settings_swipe_action_toggle_bookmark">Ajouter aux favoris</string>
     <string name="settings_theme_dark">Sombre</string>
     <string name="settings_theme">Thème</string>
     <string name="settings_theme_system">Système</string>

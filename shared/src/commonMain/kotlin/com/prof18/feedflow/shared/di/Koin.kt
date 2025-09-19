@@ -45,6 +45,7 @@ import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.defaultRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.KoinApplication
@@ -229,7 +230,14 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     single {
         HtmlRetriever(
             logger = getWith("HtmlRetriever"),
-            client = HttpClient(),
+            client = HttpClient {
+                defaultRequest {
+                    headers.append("User-Agent", "FeedFlow/6046 CFNetwork/3860.100.1 Darwin/24.6.0")
+                    headers.append("Accept", "*/*")
+                    headers.append("Accept-Language", "en-US,en;q=0.9")
+                    headers.append("Connection", "keep-alive")
+                }
+            },
         )
     }
 

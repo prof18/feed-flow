@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop
 
 import androidx.compose.foundation.LocalScrollbarStyle
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,9 +11,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -26,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
@@ -38,6 +42,10 @@ import cafe.adriel.voyager.transitions.ScaleTransition
 import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
+import com.formdev.flatlaf.FlatDarkLaf
+import com.formdev.flatlaf.FlatLaf
+import com.formdev.flatlaf.FlatLightLaf
+import com.formdev.flatlaf.FlatPropertiesLaf
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.model.ThemeMode
@@ -45,6 +53,7 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
+import com.prof18.feedflow.core.utils.isNotMacOs
 import com.prof18.feedflow.desktop.about.AboutContent
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.FeedFlowMenuBar
@@ -159,8 +168,6 @@ fun main() {
     val telemetryClient = DI.koin.get<TelemetryDeckClient>()
     telemetryClient.signal("TelemetryDeck.Session.started")
 
-    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-
     application {
         val settingsRepository = DI.koin.get<SettingsRepository>()
         val savedWidthDp = settingsRepository.getDesktopWindowWidthDp()
@@ -181,13 +188,17 @@ fun main() {
 
         val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
         val settingsState by settingsViewModel.settingsState.collectAsState()
-        val darkTheme = when (settingsState.themeMode) {
+        val isDarkTheme = when (settingsState.themeMode) {
             ThemeMode.SYSTEM -> rememberDesktopDarkTheme()
             ThemeMode.LIGHT -> false
             ThemeMode.DARK -> true
         }
 
-        FeedFlowTheme(darkTheme = darkTheme) {
+        FeedFlowTheme(darkTheme = isDarkTheme) {
+            LaunchedEffect(isDarkTheme, ) {
+                setupLookAndFeel(isDarkTheme)
+            }
+
             val lyricist = rememberFeedFlowStrings()
             val icon = painterResource(Res.drawable.icon)
             ProvideFeedFlowStrings(lyricist) {
@@ -205,8 +216,8 @@ fun main() {
                             }
                         }
                     },
+                    title = "",
                     state = windowState,
-                    title = "FeedFlow",
                     icon = icon,
                 ) {
                     val listener = object : WindowFocusListener {
@@ -217,6 +228,15 @@ fun main() {
                         override fun windowLostFocus(e: WindowEvent) {
                             scope.launch {
                                 feedSyncRepo.performBackup()
+                            }
+                        }
+                    }
+
+                    LaunchedEffect(window.rootPane) {
+                        if (getDesktopOS().isMacOs()) {
+                            with(window.rootPane) {
+                                putClientProperty("apple.awt.transparentTitleBar", true)
+                                putClientProperty("apple.awt.fullWindowContent", true)
                             }
                         }
                     }
@@ -250,7 +270,7 @@ fun main() {
                     }
 
                     if (showBackupLoader) {
-                        FeedFlowTheme(darkTheme = darkTheme) {
+                        FeedFlowTheme(darkTheme = isDarkTheme) {
                             Scaffold {
                                 Column(
                                     modifier = Modifier
@@ -288,7 +308,7 @@ fun main() {
                             ) {
                                 AboutContent(
                                     versionLabel = LocalFeedFlowStrings.current.aboutAppVersion(version ?: "N/A"),
-                                    isDarkTheme = darkTheme,
+                                    isDarkTheme = isDarkTheme,
                                 )
                             }
 
@@ -388,101 +408,114 @@ fun main() {
 
                             val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
 
-                            Navigator(
-                                MainScreen(
-                                    frameWindowScope = this,
-                                    appEnvironment = appEnvironment,
-                                    version = version,
-                                    homeViewModel = homeViewModel,
-                                    searchViewModel = searchViewModel,
-                                    listState = listState,
-                                ),
-                            ) { navigator ->
-                                FeedFlowMenuBar(
-                                    showDebugMenu = appEnvironment.isDebug(),
-                                    settingsState = settingsState,
-                                    feedFilter = currentFeedFilter,
-                                    onRefreshClick = {
-                                        scope.launch {
-                                            listState.animateScrollToItem(0)
-                                            homeViewModel.getNewFeeds()
-                                        }
-                                    },
-                                    onMarkAllReadClick = {
-                                        homeViewModel.markAllRead()
-                                    },
-                                    onImportExportClick = {
-                                        navigator.push(
-                                            ImportExportScreen(
-                                                composeWindow = window,
-                                                triggerFeedFetch = {
-                                                    homeViewModel.getNewFeeds()
-                                                },
-                                            ),
-                                        )
-                                    },
-                                    onClearOldFeedClick = {
-                                        homeViewModel.deleteOldFeedItems()
-                                    },
-                                    onAboutClick = {
-                                        aboutDialogVisibility = true
-                                    },
-                                    onBugReportClick = {
-                                        val desktop = Desktop.getDesktop()
-                                        val uri = URI.create(
-                                            UserFeedbackReporter.getEmailUrl(
-                                                subject = emailSubject,
-                                                content = emailContent,
-                                            ),
-                                        )
-                                        desktop.mail(uri)
-                                    },
-                                    onForceRefreshClick = {
-                                        scope.launch {
-                                            listState.animateScrollToItem(0)
-                                            homeViewModel.forceFeedRefresh()
-                                        }
-                                    },
-                                    deleteFeeds = {
-                                        homeViewModel.deleteAllFeeds()
-                                    },
-                                    onFeedOrderSelected = { order ->
-                                        settingsViewModel.updateFeedOrder(order)
-                                    },
-                                    setMarkReadWhenScrolling = { enabled ->
-                                        settingsViewModel.updateMarkReadWhenScrolling(enabled)
-                                    },
-                                    setShowReadItem = { enabled ->
-                                        settingsViewModel.updateShowReadItemsOnTimeline(enabled)
-                                    },
-                                    setReaderMode = { enabled ->
-                                        settingsViewModel.updateReaderMode(enabled)
-                                    },
-                                    onFeedFontScaleClick = {
-                                        feedListFontDialogState = true
-                                    },
-                                    onAutoDeletePeriodSelected = { period ->
-                                        settingsViewModel.updateAutoDeletePeriod(period)
-                                    },
-                                    setCrashReportingEnabled = { enabled ->
-                                        settingsViewModel.updateCrashReporting(enabled)
-                                        if (enabled) {
-                                            if (appEnvironment.isRelease() && sentryDns != null && version != null) {
-                                                initSentry(
-                                                    dns = sentryDns,
-                                                    version = version,
-                                                )
-                                            }
+                            Surface(
+                                modifier = Modifier
+                                    .then(
+                                        if (getDesktopOS().isMacOs()) {
+                                            Modifier
+                                                .background(MaterialTheme.colorScheme.background)
+                                                .padding(top = Spacing.regular)
                                         } else {
-                                            disableSentry()
-                                        }
-                                    },
-                                    onThemeModeSelected = { mode ->
-                                        settingsViewModel.updateThemeMode(mode)
-                                    },
-                                )
+                                            Modifier
+                                        },
+                                    ),
+                            ) {
+                                Navigator(
+                                    MainScreen(
+                                        frameWindowScope = this@Window,
+                                        appEnvironment = appEnvironment,
+                                        version = version,
+                                        homeViewModel = homeViewModel,
+                                        searchViewModel = searchViewModel,
+                                        listState = listState,
+                                    ),
+                                ) { navigator ->
+                                    FeedFlowMenuBar(
+                                        showDebugMenu = appEnvironment.isDebug(),
+                                        settingsState = settingsState,
+                                        feedFilter = currentFeedFilter,
+                                        onRefreshClick = {
+                                            scope.launch {
+                                                listState.animateScrollToItem(0)
+                                                homeViewModel.getNewFeeds()
+                                            }
+                                        },
+                                        onMarkAllReadClick = {
+                                            homeViewModel.markAllRead()
+                                        },
+                                        onImportExportClick = {
+                                            navigator.push(
+                                                ImportExportScreen(
+                                                    composeWindow = window,
+                                                    triggerFeedFetch = {
+                                                        homeViewModel.getNewFeeds()
+                                                    },
+                                                ),
+                                            )
+                                        },
+                                        onClearOldFeedClick = {
+                                            homeViewModel.deleteOldFeedItems()
+                                        },
+                                        onAboutClick = {
+                                            aboutDialogVisibility = true
+                                        },
+                                        onBugReportClick = {
+                                            val desktop = Desktop.getDesktop()
+                                            val uri = URI.create(
+                                                UserFeedbackReporter.getEmailUrl(
+                                                    subject = emailSubject,
+                                                    content = emailContent,
+                                                ),
+                                            )
+                                            desktop.mail(uri)
+                                        },
+                                        onForceRefreshClick = {
+                                            scope.launch {
+                                                listState.animateScrollToItem(0)
+                                                homeViewModel.forceFeedRefresh()
+                                            }
+                                        },
+                                        deleteFeeds = {
+                                            homeViewModel.deleteAllFeeds()
+                                        },
+                                        onFeedOrderSelected = { order ->
+                                            settingsViewModel.updateFeedOrder(order)
+                                        },
+                                        setMarkReadWhenScrolling = { enabled ->
+                                            settingsViewModel.updateMarkReadWhenScrolling(enabled)
+                                        },
+                                        setShowReadItem = { enabled ->
+                                            settingsViewModel.updateShowReadItemsOnTimeline(enabled)
+                                        },
+                                        setReaderMode = { enabled ->
+                                            settingsViewModel.updateReaderMode(enabled)
+                                        },
+                                        onFeedFontScaleClick = {
+                                            feedListFontDialogState = true
+                                        },
+                                        onAutoDeletePeriodSelected = { period ->
+                                            settingsViewModel.updateAutoDeletePeriod(period)
+                                        },
+                                        setCrashReportingEnabled = { enabled ->
+                                            settingsViewModel.updateCrashReporting(enabled)
+                                            if (enabled) {
+                                                if (appEnvironment.isRelease() && sentryDns != null && version != null) {
+                                                    initSentry(
+                                                        dns = sentryDns,
+                                                        version = version,
+                                                    )
+                                                }
+                                            } else {
+                                                disableSentry()
+                                            }
+                                        },
+                                        onThemeModeSelected = { mode ->
+                                            settingsViewModel.updateThemeMode(mode)
+                                        },
+                                    )
 
-                                ScaleTransition(navigator)
+                                    ScaleTransition(navigator)
+                                }
                             }
 
                             Column(
@@ -500,3 +533,46 @@ fun main() {
         }
     }
 }
+
+private fun setupLookAndFeel(isDarkMode: Boolean) {
+    if (getDesktopOS().isNotMacOs()) {
+        System.setProperty("flatlaf.useWindowDecorations", "true")
+        System.setProperty("flatlaf.menuBarEmbedded", "false")
+
+        try {
+            val themeFileName = if (isDarkMode) {
+                "feedflow-dark.properties"
+            } else {
+                "feedflow-light.properties"
+            }
+
+            // Load custom properties theme
+            val themeStream = DI::class.java.classLoader?.getResourceAsStream(themeFileName)
+
+            if (themeStream != null) {
+                val customLaf = FlatPropertiesLaf(themeFileName, themeStream)
+                UIManager.setLookAndFeel(customLaf)
+            } else {
+                // Fallback to standard themes if properties file not found
+                val newLaf = if (isDarkMode) {
+                    FlatDarkLaf()
+                } else {
+                    FlatLightLaf()
+                }
+                UIManager.setLookAndFeel(newLaf)
+                UIManager.put("MenuBar.border", null)
+            }
+
+            FlatLaf.updateUI()
+        } catch (_: Exception) {
+            // Fallback to default theme
+            val newLaf = if (isDarkMode) {
+                FlatDarkLaf()
+            } else {
+                FlatLightLaf()
+            }
+            UIManager.setLookAndFeel(newLaf)
+        }
+    }
+}
+

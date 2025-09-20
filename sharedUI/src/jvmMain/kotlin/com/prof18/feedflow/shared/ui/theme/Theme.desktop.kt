@@ -43,7 +43,7 @@ actual fun FeedFlowThemePreview(
 @Composable
 fun rememberDesktopDarkTheme(): Boolean {
     var darkTheme by remember {
-        mutableStateOf(currentSystemTheme == SystemTheme.DARK)
+        mutableStateOf(OsThemeDetector.getDetector().isDark)
     }
 
     DisposableEffect(Unit) {

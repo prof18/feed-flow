@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.utils.isLinux
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
+import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import java.awt.Desktop
@@ -134,6 +135,13 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Item(
                 text = LocalFeedFlowStrings.current.feedListAppearance,
                 onClick = onFeedFontScaleClick,
+            )
+
+            Item(
+                text = LocalFeedFlowStrings.current.settingsBlockedWords,
+                onClick = {
+                    navigator.push(BlockedWordsScreen())
+                },
             )
         }
 

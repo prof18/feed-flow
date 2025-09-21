@@ -93,6 +93,7 @@ fun SettingsScreen(
     navigateToImportExport: () -> Unit,
     navigateToAccounts: () -> Unit,
     navigateToNotifications: () -> Unit,
+    navigateToBlockedWords: () -> Unit,
 ) {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val feedDownloadWorkerEnqueuer = koinInject<FeedDownloadWorkerEnqueuer>()
@@ -130,6 +131,7 @@ fun SettingsScreen(
         },
         navigateToImportExport = navigateToImportExport,
         navigateToAccounts = navigateToAccounts,
+        navigateToBlockedWords = navigateToBlockedWords,
         setMarkReadWhenScrolling = { enabled ->
             settingsViewModel.updateMarkReadWhenScrolling(enabled)
         },
@@ -197,6 +199,7 @@ private fun SettingsScreenContent(
     onBugReportClick: () -> Unit,
     navigateToImportExport: () -> Unit,
     navigateToAccounts: () -> Unit,
+    navigateToBlockedWords: () -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
@@ -268,11 +271,34 @@ private fun SettingsScreenContent(
             }
 
             item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.settingsNotificationsTitle,
+                    icon = Icons.Outlined.Notifications,
+                    onClick = navigateToNotifications,
+                )
+            }
+
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.settingsBlockedWords,
+                    icon = Icons.Outlined.Report,
+                    onClick = navigateToBlockedWords,
+                )
+            }
+
+            item {
                 Text(
                     text = LocalFeedFlowStrings.current.settingsBehaviourTitle,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.padding(Spacing.regular),
+                )
+            }
+
+            item {
+                ThemeModeSelector(
+                    currentThemeMode = settingsState.themeMode,
+                    onThemeModeSelected = onThemeModeSelected,
                 )
             }
 
@@ -291,24 +317,9 @@ private fun SettingsScreenContent(
             }
 
             item {
-                SettingItem(
-                    title = LocalFeedFlowStrings.current.settingsNotificationsTitle,
-                    icon = Icons.Outlined.Notifications,
-                    onClick = navigateToNotifications,
-                )
-            }
-
-            item {
                 AutoDeletePeriodSelector(
                     currentPeriod = settingsState.autoDeletePeriod,
                     onPeriodSelected = onAutoDeletePeriodSelected,
-                )
-            }
-
-            item {
-                ThemeModeSelector(
-                    currentThemeMode = settingsState.themeMode,
-                    onThemeModeSelected = onThemeModeSelected,
                 )
             }
 
@@ -779,6 +790,7 @@ private fun SettingsScreenPreview() {
             onBugReportClick = {},
             navigateToImportExport = {},
             navigateToAccounts = {},
+            navigateToBlockedWords = {},
             setMarkReadWhenScrolling = {},
             setShowReadItem = {},
             setReaderMode = {},

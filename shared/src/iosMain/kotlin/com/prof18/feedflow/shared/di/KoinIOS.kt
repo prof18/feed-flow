@@ -27,6 +27,7 @@ import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
+import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
@@ -234,4 +235,5 @@ object Deps : KoinComponent {
     fun getSerialFeedFetcherRepository() = getKoin().get<SerialFeedFetcherRepository>()
     fun getNotificationsViewModel() = getKoin().get<NotificationsViewModel>()
     fun getNotifier() = getKoin().get<Notifier>()
+    fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
 }

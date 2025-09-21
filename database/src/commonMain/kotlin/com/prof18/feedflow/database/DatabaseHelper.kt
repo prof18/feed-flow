@@ -573,6 +573,27 @@ class DatabaseHelper(
             }
         }
 
+    suspend fun addBlockedWord(word: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.blockedWordQueries.insertBlockedKeyword(
+                keyword = word,
+            )
+        }
+
+    suspend fun removeBlockedWord(keyword: String) = dbRef.transactionWithContext(backgroundDispatcher) {
+        dbRef.blockedWordQueries.deleteBlockedKeyword(keyword)
+    }
+
+    fun observeBlockedWords(): Flow<List<String>> =
+        dbRef.blockedWordQueries
+            .selectBlockedKeywords()
+            .asFlow()
+            .catch {
+                logger.e(it) { "Something wrong while observing blocked words from Database" }
+            }
+            .mapToList(backgroundDispatcher)
+            .flowOn(backgroundDispatcher)
+
     suspend fun getFeedSourceToNotify(): List<FeedSourceToNotify> = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries.selectFeedSourceToNotify()
             .executeAsList()

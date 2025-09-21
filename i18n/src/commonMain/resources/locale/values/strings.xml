@@ -242,4 +242,8 @@
     <string name="feed_fetch_failed_tooltip">Feed update failed. Please check if the site is working</string>
     <string name="feed_fetch_failed_tooltip_short">Feed update failed</string>
     <string name="support_the_project">Support the project</string>
+    <string name="settings_blocked_words">Blocked words</string>
+    <string name="add_word_placeholder">Add word</string>
+    <string name="blocked_words_empty_state">No blocked words yet</string>
+    <string name="blocked_words_description">Articles containing these words in the title or description will be hidden.</string>
 </resources>

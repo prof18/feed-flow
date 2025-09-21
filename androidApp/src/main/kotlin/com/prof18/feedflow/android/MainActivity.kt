@@ -46,6 +46,7 @@ import com.prof18.feedflow.android.search.SearchScreen
 import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.about.AboutScreen
 import com.prof18.feedflow.android.settings.about.LicensesScreen
+import com.prof18.feedflow.android.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
 import com.prof18.feedflow.android.settings.notifications.NotificationsSettingsScreen
 import com.prof18.feedflow.core.model.FeedItemId
@@ -217,6 +218,9 @@ class MainActivity : BaseThemeActivity() {
                     navigateToNotifications = {
                         navController.navigate(Notifications)
                     },
+                    navigateToBlockedWords = {
+                        navController.navigate(BlockedWords)
+                    },
                 )
             }
 
@@ -370,6 +374,14 @@ class MainActivity : BaseThemeActivity() {
 
             composable<Notifications> {
                 NotificationsSettingsScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<BlockedWords> {
+                BlockedWordsScreen(
                     navigateBack = {
                         navController.popBackStack()
                     },

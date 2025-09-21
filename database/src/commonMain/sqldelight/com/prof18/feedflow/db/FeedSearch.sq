@@ -48,4 +48,5 @@ AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCateg
 AND (:isRead IS NULL OR feed_item.is_read = :isRead)
 AND (:isBookmarked IS NULL OR feed_item.is_bookmarked = :isBookmarked)
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
+AND feed_item.is_blocked = 0
 ORDER BY feed_item.pub_date DESC;

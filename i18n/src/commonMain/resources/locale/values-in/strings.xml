@@ -15,7 +15,7 @@
     <string name="refresh_feeds">Perbarui umpan</string>
     <string name="no_feeds_found_message">Tidak ada umpan yang ditemukan. Harap tambahkan umpan baru!</string>
     <string name="loading_feed_message">Memuat umpan %s</string>
-    <string name="app_name">Feedflow</string>
+    <string name="app_name" translatable="false">Feedflow</string>
     <string name="mark_all_read_button">Tandai semua sebagai telah dibaca</string>
     <string name="settings_button">Pengaturan</string>
     <string name="feeds_importing_message">Mengimpor umpan</string>

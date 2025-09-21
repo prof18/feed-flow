@@ -8,10 +8,6 @@ Minimal, cepat, rapi
 
 ## Penjelasan panjang
 
-Stay informed your way with FeedFlow, a minimalistic RSS reader that puts you in
-control of your content timeline. Sync across all your devices and enjoy a
-clean, distraction-free reading experience.
-
 Fitur Kunci:
 
 - Desain Minimalis: Fokus pada yang penting dengan antarmuka yang bersih

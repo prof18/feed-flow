@@ -11,7 +11,7 @@
     <string name="refresh_feeds">Akışları yenile</string>
     <string name="no_feeds_found_message">Hiç akış bulunamadı. Lütfen yeni bir akış ekleyin!</string>
     <string name="loading_feed_message">Akışlar yükleniyor %s</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">Tümünü okundu olarak işaretle</string>
     <string name="clear_old_articles_button">Bir haftadan eski gönderileri sil</string>
     <string name="settings_button">Ayarlar</string>
@@ -234,4 +234,12 @@
     <string name="settings_theme_light">Açık</string>
     <string name="settings_theme_dark">Koyu</string>
     <string name="icloud_connection_error">Üzgünüz, iCloud\'a bağlanılamıyor. Lütfen oturum açıp açmadığınızı, iCloud Drive\'ın açık olup olmadığını ve yeterli alanınızın olup olmadığını kontrol edin</string>
+    <string name="delete_feed_confirmation_message"></string>
+    <string name="delete_feed_confirmation_title"></string>
+    <string name="open_feed_settings"></string>
+    <string name="reader_mode_browser_button_content_description"></string>
+    <string name="feed_fetch_failed_tooltip_short"></string>
+    <string name="support_the_project"></string>
+    <string name="delete_feed_button"></string>
+    <string name="feed_fetch_failed_tooltip"></string>
 </resources>

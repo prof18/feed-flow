@@ -30,7 +30,7 @@
     <string name="feed_added_message">ஊட்டி %s சேர்க்கப்பட்டது</string>
     <string name="feed_url">முகவரி க்கு உணவளிக்கவும்</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">அனைத்தையும் படித்தபடி குறிக்கவும்</string>
     <string name="settings_button">அமைப்புகள்</string>
     <string name="feeds_importing_message">தீவனத்தை இறக்குமதி செய்கிறது</string>
@@ -121,4 +121,5 @@
     <string name="edit_feed">ஊட்டத்தைத் திருத்து</string>
     <string name="feed_name">உணவுப் பெயர்</string>
     <string name="feed_edited_message">ஊட்டி %s புதுப்பிக்கப்பட்டன</string>
+    <string name="clear_old_articles_button"></string>
 </resources>

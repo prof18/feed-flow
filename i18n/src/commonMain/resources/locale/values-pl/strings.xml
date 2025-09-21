@@ -11,7 +11,7 @@
     <string name="refresh_feeds">Odśwież kanały</string>
     <string name="no_feeds_found_message">Nie znaleziono kanałów. Dodaj nowy kanał!</string>
     <string name="loading_feed_message">Ładowanie kanałów %s</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">Oznacz wszystkie jako przeczytane</string>
     <string name="clear_old_articles_button">Usuń posty sprzed tygodnia</string>
     <string name="settings_button">Ustawienia</string>
@@ -37,7 +37,7 @@
     <string name="about_nav_bar">O programie</string>
     <string name="open_source_nav_bar">Licencje open source</string>
     <string name="report_issue_button">Zgłoś problem</string>
-    <string name="open_website_button">Otwórz stronę internetową</string>
+    <string name="open_website_button">Otwórz stronę internetową</string>
     <string name="database_error">Wystąpił błąd podczas pobierania kanałów. Spróbuj ponownie lub uruchom ponownie aplikację :(</string>
     <string name="force_feed_refresh">Wymuś odświeżenie kanałów</string>
     <string name="invalid_rss_url">Podany link nie jest prawidłowym kanałem RSS</string>

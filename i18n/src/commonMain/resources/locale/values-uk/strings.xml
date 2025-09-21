@@ -242,4 +242,8 @@
     <string name="feed_fetch_failed_tooltip">Не вдалося оновити стрічку. Перевірте, чи працює сайт</string>
     <string name="feed_fetch_failed_tooltip_short">Не вдалося оновити стрічку</string>
     <string name="support_the_project">Підтримайте проєкт</string>
+    <string name="settings_blocked_words">Заблоковані слова</string>
+    <string name="add_word_placeholder">Додати слово</string>
+    <string name="blocked_words_empty_state">Поки що немає заблокованих слів</string>
+    <string name="blocked_words_description">Статті, що містять ці слова в назві або описі, будуть приховані.</string>
 </resources>

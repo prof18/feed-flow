@@ -242,4 +242,8 @@
     <string name="feed_fetch_failed_tooltip">Uudisvoo uuendmine ei õnnestunud. Palun kontrolli, kas sait ikka töötab</string>
     <string name="feed_fetch_failed_tooltip_short">Uudisvoo uuendamine ei õnnestunud</string>
     <string name="support_the_project">Toeta meie projekti</string>
+    <string name="settings_blocked_words">Blokeeritud sõnad</string>
+    <string name="add_word_placeholder">Lisa sõna</string>
+    <string name="blocked_words_empty_state">Blokeeritud sõnu veel ei ole</string>
+    <string name="blocked_words_description">Kui artikli pealkirjas või kirjelduses on mõni neist sõnadest, siis artikkel saab olema peidetud.</string>
 </resources>

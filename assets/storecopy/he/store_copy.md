@@ -8,22 +8,38 @@ FeedFlow - קורא RSS
 
 ## תיאור ארוך
 
-עקוב אחר עדכוני ה-RSS האהובים עליך עם FeedFlow, קורא RSS מינימליסטי. תהנה
-מחוויית קריאה נטולת עומס, מכיוון ש- FeedFlow מציע רשימה מינימליסטית ופותח את
-המאמרים באתרי האינטרנט שלהם או במצב קריאה.
+Key Features:
 
-התאם את חווית הגלישה שלך על ידי בחירת הדפדפן המועדף עליך. בדרך זו, אתה יכול
-לבחור את הדפדפן המועדף עליך ממוקד פרטיות כדי להפריד את חווית הקריאה שלך מהדפדפן
-הראשי שלך. ואם תרצה להימנע מהדפדפן, FeedFlow מציעה מצב קריאה ליהנות מתוכן
-המאמרים ללא כל הסחות דעת.
+- Minimalist Design: Focus on what matters with a clutter-free interface
+- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
+  or Dropbox (all platforms)
+- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
+  management
+- Flexible Reading Options: Choose between web view, reader mode, or your
+  preferred browser
+- Privacy-Focused: Select your favorite privacy-focused browser for a separate
+  reading experience
+- Easy Migration: Import and export your RSS feeds via OPML files
 
-המעבר ל-FeedFlow הוא משב רוח. ניתן לייבא את אוסף ה-RSS הקיים שלך עם יכולות
-הייבוא והייצוא המלאות והקלות שלנו באמצעות קבצי OPML, מה שמבטיח חווית קריאה חלקה.
+What Sets FeedFlow Apart:
 
-פשוט התמקד בקריאה (או בגלילה)!
+- Clean, intuitive interface that lets you focus on content
+- Multiple sync options to fit your workflow (Beta)
+- Customizable reading experience with reader mode
+- Fast and lightweight
+- Regular updates and active development
 
-האפליקציה עדיין בפיתוח, כך שחלק מהתכונות עשויות להיות חסרות או שייתכנו בעיות.
-אנא דווח על באגים או הצעות לתכונות!
+Perfect for:
+- News enthusiasts who want control over their information diet
+- Privacy-conscious readers
+- Content creators tracking multiple sources
+- Anyone looking to declutter their digital reading experience
+
+Join thousands of readers who've chosen FeedFlow for a better way to stay
+informed.
+
+Note: Sync functionality is currently in beta. The experience is continuously
+improving based on user feedback.
 
 ## צילום מסך 1
 

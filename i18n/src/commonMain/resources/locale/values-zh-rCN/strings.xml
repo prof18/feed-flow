@@ -242,4 +242,8 @@
     <string name="feed_fetch_failed_tooltip">订阅源更新失败。请检查网站是否正常运行</string>
     <string name="feed_fetch_failed_tooltip_short">订阅源更新失败</string>
     <string name="support_the_project">支持项目</string>
+    <string name="settings_blocked_words">屏蔽词</string>
+    <string name="add_word_placeholder">添加词‌</string>
+    <string name="blocked_words_empty_state">尚无屏蔽词‌</string>
+    <string name="blocked_words_description">标题或描述中包含这些词的文章将被隐藏。</string>
 </resources>

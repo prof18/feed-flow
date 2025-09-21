@@ -234,4 +234,11 @@
     <string name="settings_theme_light">Hell</string>
     <string name="settings_theme_dark">Dunkel</string>
     <string name="icloud_connection_error">Leider können wir uns nicht mit iCloud verbinden. Bitte prüfen sie, ob sie angemeldet sind, ob das iCloud Laufwerk aktiviert ist und ob Speicherplatz zur Verfügung steht</string>
+    <string name="open_feed_settings">Feed-Einstellungen öffnen</string>
+    <string name="reader_mode_browser_button_content_description">Im Browser öffnen</string>
+    <string name="delete_feed_confirmation_title">Feed löschen?</string>
+    <string name="delete_feed_confirmation_message">Möchten sie diesen Feed wirklich löschen? Das kann nicht mehr rückgängig gemacht werden.</string>
+    <string name="delete_feed_button">Feed löschen</string>
+    <string name="feed_fetch_failed_tooltip">Der Feed-Update ist missglückt. Bitte prüfen sie, ob die Seite korrekt funktioniert</string>
+    <string name="feed_fetch_failed_tooltip_short">Der Feed-Update ist missglückt</string>
 </resources>

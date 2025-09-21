@@ -239,4 +239,12 @@
     <string name="settings_theme_light">Hele kujundus</string>
     <string name="settings_theme_dark">Tume kujundus</string>
     <string name="icloud_connection_error">Vabandust, ühenduse loomine iCloudiga ei õnnestu. Palun kontrolli, et oleksid sisse loginud, iCloud Drive on kasutusel ja sinu seadmes on piisavalt ruumi</string>
+    <string name="open_feed_settings">Ava uudisvoo seadistused</string>
+    <string name="reader_mode_browser_button_content_description">Ava veebibrauseris</string>
+    <string name="delete_feed_confirmation_title">Kas kustutame uudisvoo?</string>
+    <string name="delete_feed_confirmation_message">Kas sa oled kindel, et soovid selle uudisvoo kustutada? Seda tegevust ei saa tagasi pöörata.</string>
+    <string name="delete_feed_button">Kustuta uudisvoog</string>
+    <string name="feed_fetch_failed_tooltip">Uudisvoo uuendmine ei õnnestunud. Palun kontrolli, kas sait ikka töötab</string>
+    <string name="feed_fetch_failed_tooltip_short">Uudisvoo uuendamine ei õnnestunud</string>
+    <string name="support_the_project">Toeta meie projekti</string>
 </resources>

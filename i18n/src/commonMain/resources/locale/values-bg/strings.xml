@@ -234,4 +234,12 @@
     <string name="settings_theme_light">Светла</string>
     <string name="settings_theme_dark">Тъмна</string>
     <string name="icloud_connection_error">За съжаление не можем да се свържем с iCloud. Моля, проверете дали сте влезли в профила си, iCloud Drive е включен и имате свободно място</string>
+    <string name="open_feed_settings">Отваряне на настройките на емисията</string>
+    <string name="reader_mode_browser_button_content_description">Отвори в браузър</string>
+    <string name="delete_feed_confirmation_title">Изтриване на емисия?</string>
+    <string name="delete_feed_confirmation_message">Сигурни ли сте, че искате да изтриете тази емисия? Това действие не може да бъде отменено.</string>
+    <string name="delete_feed_button">Изтриване на емисия</string>
+    <string name="feed_fetch_failed_tooltip">Актуализирането на емисията не бе успешно. Моля, проверете дали сайтът работи</string>
+    <string name="feed_fetch_failed_tooltip_short">Актуализирането на емисията не бе успешно</string>
+    <string name="support_the_project">Подкрепете проекта</string>
 </resources>

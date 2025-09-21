@@ -234,4 +234,12 @@
     <string name="settings_theme_light">Світло</string>
     <string name="settings_theme_dark">Темний</string>
     <string name="icloud_connection_error">Вибачте, але нам не вдається підключитися до iCloud. Перевірте, чи ви ввійшли в систему, чи ввімкнено iCloud Drive, і чи є у вас вільне місце</string>
+    <string name="open_feed_settings">Відкрити налаштування стрічки</string>
+    <string name="reader_mode_browser_button_content_description">Відкрити у браузері</string>
+    <string name="delete_feed_confirmation_title">Видалити стрічку?</string>
+    <string name="delete_feed_confirmation_message">Ви впевнені, що хочете видалити цей канал? Цю дію не можна скасувати.</string>
+    <string name="delete_feed_button">Видалити стрічку</string>
+    <string name="feed_fetch_failed_tooltip">Не вдалося оновити стрічку. Перевірте, чи працює сайт</string>
+    <string name="feed_fetch_failed_tooltip_short">Не вдалося оновити стрічку</string>
+    <string name="support_the_project">Підтримайте проєкт</string>
 </resources>

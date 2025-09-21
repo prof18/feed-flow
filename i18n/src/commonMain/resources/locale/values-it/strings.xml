@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="delete_feed">Cancella</string>
-    <string name="feed_added_message">Feed "%s" aggiunto</string>
+    <string name="feed_added_message">Feed %s aggiunto</string>
     <string name="feed_url_placeholder">https://ilmioblogpreferito.it/feed</string>
     <string name="feed_add_in_progress_message">Per favore attendi, stiamo verificando la disponibilità di ogni feed. L\'operazione può richiedere del tempo a seconda della quantità di feed che stai importando</string>
     <string name="force_feed_refresh">Forza l\'aggiornamento dei feed</string>
@@ -50,10 +50,9 @@
     <string name="generic_error_message">Mi dispiace, qualcosa è andato storto :(</string>
     <string name="default_browser">Browser predefinito</string>
     <string name="import_feed_button">Importa feed da OPML</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="feeds_title">Elenco dei feed</string>
-    <string name="about_the_app">FeedFlow è un lettore RSS minimalista basato sulle opinioni personali dell\'autore. Gli articoli vengono aperti sui rispettivi siti web ed è possibile scegliere il proprio browser preferito incentrato sulla privacy per separare l\'esperienza di lettura dal browser principale. Se si desidera evitare il browser, FeedFlow offre una modalità lettore per godersi il contenuto degli articoli senza distrazioni.
-\nÈ possibile importare ed esportare la propria raccolta RSS da e verso file OPML.</string>
+    <string name="about_the_app">FeedFlow è un lettore RSS minimalista basato sulle opinioni personali dell\'autore. Gli articoli vengono aperti sui rispettivi siti web ed è possibile scegliere il proprio browser preferito incentrato sulla privacy per separare l\'esperienza di lettura dal browser principale. Se si desidera evitare il browser, FeedFlow offre una modalità lettore per godersi il contenuto degli articoli senza distrazioni. \nÈ possibile importare ed esportare la propria raccolta RSS da e verso file OPML.</string>
     <string name="load_file_error_message">Impossibile caricare il file</string>
     <string name="add_feed">Aggiungi feed</string>
     <string name="drawer_title_timeline">Timeline</string>

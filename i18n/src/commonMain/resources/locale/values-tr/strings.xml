@@ -234,4 +234,12 @@
     <string name="settings_theme_light">Açık</string>
     <string name="settings_theme_dark">Koyu</string>
     <string name="icloud_connection_error">Üzgünüz, iCloud\'a bağlanılamıyor. Lütfen oturum açıp açmadığınızı, iCloud Drive\'ın açık olup olmadığını ve yeterli alanınızın olup olmadığını kontrol edin - error code: %s.</string>
+    <string name="delete_feed_confirmation_message"></string>
+    <string name="delete_feed_confirmation_title"></string>
+    <string name="open_feed_settings"></string>
+    <string name="reader_mode_browser_button_content_description"></string>
+    <string name="feed_fetch_failed_tooltip_short"></string>
+    <string name="support_the_project"></string>
+    <string name="delete_feed_button"></string>
+    <string name="feed_fetch_failed_tooltip"></string>
 </resources>

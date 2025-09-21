@@ -195,7 +195,7 @@
     <string name="settings_sync_period_thirty_minutes">Toutes les 30 minutes</string>
     <string name="settings_sync_period_one_day">Tous les jours</string>
     <string name="file_menu">Fichier</string>
-    <string name="settings_notification_no_feed">Il semble que vous n\'ayez pas encore ajouté de flux. Ajoutez-en pour commencer à recevoir des notifications !</string>
+    <string name="settings_notification_no_feed">Il semble que vous n\'ayez pas encore ajouté de flux. Ajoutez-en pour commencer à recevoir des notifications !</string>
     <string name="settings_notification_check_period">Fréquence de vérification des notifications</string>
     <string name="settings_notification_check_period_desc">Choisissez la fréquence de vérification des notifications de nouveaux articles</string>
     <string name="settings_title_notifications">Notifications</string>

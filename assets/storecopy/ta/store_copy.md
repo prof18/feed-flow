@@ -8,27 +8,38 @@
 
 ## நீண்ட டெச்க்
 
-உங்களுக்கு பிடித்த RSS ஊட்டங்களை ஃபீட்ஃப்ளோ, மிகச்சிறிய RSS ரீடர் மூலம்
-பின்பற்றவும். ஃபீட்ஃப்ளோ ஒரு மிகச்சிறிய பட்டியலை வழங்குகிறது மற்றும் அந்தந்த
-வலைத்தளங்களில் அல்லது வாசகர் பயன்முறையில் கட்டுரைகளைத் திறப்பதால், ஒழுங்கீனம்
-இல்லாத வாசிப்பு அனுபவத்தை அனுபவிக்கவும்.
+Key Features:
 
-உங்களுக்கு விருப்பமான உலாவியைத் தேர்ந்தெடுப்பதன் மூலம் உங்கள் உலாவல் அனுபவத்தைத்
-தக்கவைக்கவும். இந்த வழியில், உங்கள் முதன்மையான உலாவியில் இருந்து உங்கள் வாசிப்பு
-அனுபவத்தை பிரிக்க உங்களுக்கு பிடித்த தனியுரிமை-மையப்படுத்தப்பட்ட உலாவியைத்
-தேர்ந்தெடுக்கலாம். நீங்கள் உலாவியைத் தவிர்க்க விரும்பினால், எந்த
-கவனச்சிதறல்களும் இல்லாமல் கட்டுரைகளின் உள்ளடக்கத்தை ரசிக்க ஃபீட்ஃப்ளோ ஒரு வாசகர்
-பயன்முறையை வழங்குகிறது.
+- Minimalist Design: Focus on what matters with a clutter-free interface
+- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
+  or Dropbox (all platforms)
+- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
+  management
+- Flexible Reading Options: Choose between web view, reader mode, or your
+  preferred browser
+- Privacy-Focused: Select your favorite privacy-focused browser for a separate
+  reading experience
+- Easy Migration: Import and export your RSS feeds via OPML files
 
-ஃபீட்ஃப்ளோவுக்கு மாற்றுவது ஒரு தென்றலாகும். உங்கள் தற்போதைய ஆர்எச்எச் சேகரிப்பு
-எங்கள் முழு மற்றும் எளிதான இறக்குமதி மற்றும் ஏற்றுமதி திறன்களுடன் OPML கோப்புகள்
-மூலம் இறக்குமதி செய்யப்படலாம், இது தடையற்ற வாசிப்பு அனுபவத்தை உறுதி செய்கிறது.
+What Sets FeedFlow Apart:
 
-வாசிப்பதில் (அல்லது ச்க்ரோலிங்) கவனம் செலுத்துங்கள்!
+- Clean, intuitive interface that lets you focus on content
+- Multiple sync options to fit your workflow (Beta)
+- Customizable reading experience with reader mode
+- Fast and lightweight
+- Regular updates and active development
 
-பயன்பாடு இன்னும் வளர்ச்சியில் உள்ளது, எனவே சில நற்பொருத்தங்கள் காணவில்லை அல்லது
-சிக்கல்கள் இருக்கலாம். ஏதேனும் பிழைகள் அல்லது அம்ச பரிந்துரைகளைப்
-புகாரளிக்கவும்!
+Perfect for:
+- News enthusiasts who want control over their information diet
+- Privacy-conscious readers
+- Content creators tracking multiple sources
+- Anyone looking to declutter their digital reading experience
+
+Join thousands of readers who've chosen FeedFlow for a better way to stay
+informed.
+
+Note: Sync functionality is currently in beta. The experience is continuously
+improving based on user feedback.
 
 ## திரைக்காட்சி 1
 

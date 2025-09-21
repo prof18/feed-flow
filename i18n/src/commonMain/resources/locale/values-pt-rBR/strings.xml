@@ -239,4 +239,5 @@
     <string name="settings_feed_order_oldest_first"></string>
     <string name="new_articles_notification_title"></string>
     <string name="settings_auto_delete_period"></string>
+    <string name="clear_old_articles_button"></string>
 </resources>

@@ -241,4 +241,5 @@
     <string name="delete_feed_button">Feed löschen</string>
     <string name="feed_fetch_failed_tooltip">Der Feed-Update ist missglückt. Bitte prüfen sie, ob die Seite korrekt funktioniert</string>
     <string name="feed_fetch_failed_tooltip_short">Der Feed-Update ist missglückt</string>
+    <string name="support_the_project"></string>
 </resources>

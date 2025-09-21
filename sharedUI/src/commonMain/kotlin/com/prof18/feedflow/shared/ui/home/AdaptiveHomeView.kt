@@ -112,7 +112,7 @@ fun AdaptiveHomeView(
                 )
             }
         }
-        WindowSizeClass.Medium -> {
+        WindowSizeClass.Medium, WindowSizeClass.Expanded -> {
             var isDrawerMenuFullVisible by remember { mutableStateOf(true) }
             Row {
                 AnimatedVisibility(
@@ -139,30 +139,6 @@ fun AdaptiveHomeView(
                     onDrawerMenuClick = {
                         isDrawerMenuFullVisible = !isDrawerMenuFullVisible
                     },
-                )
-            }
-        }
-        WindowSizeClass.Expanded -> {
-            Row {
-                Scaffold(
-                    modifier = Modifier.weight(1f),
-                ) { paddingValues ->
-                    DrawerInternal(
-                        modifier = Modifier.padding(paddingValues),
-                        onFeedFilterSelectedLambda = { feedFilter ->
-                            feedManagementActions.onFeedFilterSelected(feedFilter)
-                            scope.launch {
-                                listState.animateScrollToItem(0)
-                            }
-                        },
-                    )
-                }
-
-                HomeContentInternal(
-                    modifier = Modifier.weight(2f),
-                    showDrawerMenu = false,
-                    isDrawerMenuOpen = true,
-                    onDrawerMenuClick = { /* No action needed for Expanded */ },
                 )
             }
         }

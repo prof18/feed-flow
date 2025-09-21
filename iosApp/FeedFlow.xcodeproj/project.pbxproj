@@ -1134,7 +1134,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = exactVersion;
-				version = 11.15.0;
+				version = 12.3.0;
 			};
 		};
 		CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */ = {

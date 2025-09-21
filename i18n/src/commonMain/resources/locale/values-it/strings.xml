@@ -229,4 +229,17 @@
     <string name="file_menu">File</string>
     <string name="settings_swipe_action_toggle_read">Segna come letto/non letto</string>
     <string name="settings_swipe_action_toggle_bookmark">Aggiungi/rimuovi segnalibro</string>
+    <string name="delete_feed_confirmation_message"></string>
+    <string name="delete_feed_confirmation_title"></string>
+    <string name="open_feed_settings"></string>
+    <string name="reader_mode_browser_button_content_description"></string>
+    <string name="icloud_connection_error"></string>
+    <string name="settings_theme_light"></string>
+    <string name="settings_theme_system"></string>
+    <string name="feed_fetch_failed_tooltip_short"></string>
+    <string name="support_the_project"></string>
+    <string name="settings_theme"></string>
+    <string name="delete_feed_button"></string>
+    <string name="settings_theme_dark"></string>
+    <string name="feed_fetch_failed_tooltip"></string>
 </resources>

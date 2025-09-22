@@ -48,7 +48,7 @@ play-review = "2.0.2"
 readability4j = "1.0.8"
 rss-parser = "6.1.0"
 saket-swipe = "1.3.0"
-sentry = "8.21.1"
+sentry = "8.22.0"
 skie = "0.10.6"
 slf4jNop = "2.0.17"
 # When updating, check the version of sqlite-jdbc in the following link:

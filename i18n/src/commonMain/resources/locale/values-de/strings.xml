@@ -241,4 +241,9 @@
     <string name="delete_feed_button">Feed löschen</string>
     <string name="feed_fetch_failed_tooltip">Der Feed-Update ist missglückt. Bitte prüfen sie, ob die Seite korrekt funktioniert</string>
     <string name="feed_fetch_failed_tooltip_short">Der Feed-Update ist missglückt</string>
+    <string name="blocked_words_description">Artikel mit diesen Wörtern im Titel oder in der Beschreibung werden ausgeblendet.</string>
+    <string name="support_the_project">Das Projekt unterstützen</string>
+    <string name="settings_blocked_words">Blockierte Wörter</string>
+    <string name="add_word_placeholder">Wort hinzufügen</string>
+    <string name="blocked_words_empty_state">Derzeit keine blockierten Wörter</string>
 </resources>

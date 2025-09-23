@@ -242,4 +242,8 @@
     <string name="delete_feed_confirmation_message">Êtes-vous sûr.e de vouloir supprimer ce flux ? Cette action est irréversible.</string>
     <string name="delete_feed_button">Supprimer le flux</string>
     <string name="feed_fetch_failed_tooltip">L\'actualisation des flux a échoué. Veuillez vérifier si le site fonctionne</string>
+    <string name="settings_blocked_words">Mots bloqués</string>
+    <string name="add_word_placeholder">Ajouter un mot</string>
+    <string name="blocked_words_empty_state">Aucun mot bloqué pour le moment</string>
+    <string name="blocked_words_description">Les articles contenant ces mots dans leur titre ou leur description seront cachés.</string>
 </resources>

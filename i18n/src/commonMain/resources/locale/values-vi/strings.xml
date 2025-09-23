@@ -242,4 +242,8 @@
     <string name="feed_fetch_failed_tooltip">Cập nhật nguồn tin thất bại. Vui lòng kiểm tra trạng thái trang web</string>
     <string name="feed_fetch_failed_tooltip_short">Cập nhật nguồn tin thất bại</string>
     <string name="support_the_project">Hỗ trợ dự án</string>
+    <string name="settings_blocked_words">Những từ bị chặn</string>
+    <string name="add_word_placeholder">Thêm từ</string>
+    <string name="blocked_words_empty_state">Chưa chặn từ nào</string>
+    <string name="blocked_words_description">Các bài viết có chứa những từ này trong tựa đề hoặc mô tả sẽ bị ẩn.</string>
 </resources>

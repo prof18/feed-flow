@@ -242,4 +242,8 @@
     <string name="feed_fetch_failed_tooltip">Fallou a actualización da canle, comproba se esa web é accesible</string>
     <string name="feed_fetch_failed_tooltip_short">Fallou a actualización da canle</string>
     <string name="support_the_project">Apoia ao proxecto</string>
+    <string name="settings_blocked_words">Palabras bloqueadas</string>
+    <string name="add_word_placeholder">Engadir palabra</string>
+    <string name="blocked_words_empty_state">Non tes palabras bloqueadas</string>
+    <string name="blocked_words_description">Os artigos que conteñan estas palabras no título ou descrición estarán ocultos.</string>
 </resources>

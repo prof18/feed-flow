@@ -65,6 +65,7 @@ kotlin {
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.date.time)
+                implementation(libs.flatlaf)
             }
         }
     }
@@ -245,4 +246,3 @@ tasks.flatpakGradleGenerator {
     downloadDirectory.set("./offline-repository")
     excludeConfigurations.set(listOf("testCompileClasspath", "testRuntimeClasspath"))
 }
-

@@ -17,6 +17,7 @@ detekt = "1.23.8"
 detekt-compose-rules = "0.4.27"
 dropbox-core = "7.0.0"
 firebase-bom = "34.3.0"
+flatlaf = "3.6.1"
 flexmarkHtml2mdConverter = "0.64.8"
 glance = "1.1.1"
 google-services = "4.4.3"
@@ -88,6 +89,7 @@ dropbox-core = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dr
 dropbox-core-android = { module = "com.dropbox.core:dropbox-android-sdk", version.ref = "dropbox-core" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+flatlaf = { module = "com.formdev:flatlaf", version.ref = "flatlaf" }
 flexmark-html2md-converter = { module = "com.vladsch.flexmark:flexmark-html2md-converter", version.ref = "flexmarkHtml2mdConverter" }
 glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }

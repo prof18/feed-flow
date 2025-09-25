@@ -10,8 +10,6 @@ import androidx.compose.runtime.setValue
 import com.jthemedetecor.OsThemeDetector
 import com.prof18.feedflow.shared.ui.style.DarkColorScheme
 import com.prof18.feedflow.shared.ui.style.LightColorScheme
-import org.jetbrains.skiko.SystemTheme
-import org.jetbrains.skiko.currentSystemTheme
 import java.util.function.Consumer
 
 @Composable
@@ -43,7 +41,7 @@ actual fun FeedFlowThemePreview(
 @Composable
 fun rememberDesktopDarkTheme(): Boolean {
     var darkTheme by remember {
-        mutableStateOf(currentSystemTheme == SystemTheme.DARK)
+        mutableStateOf(OsThemeDetector.getDetector().isDark)
     }
 
     DisposableEffect(Unit) {

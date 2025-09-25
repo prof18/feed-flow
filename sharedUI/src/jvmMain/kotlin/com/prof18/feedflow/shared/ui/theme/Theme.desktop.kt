@@ -10,8 +10,6 @@ import androidx.compose.runtime.setValue
 import com.jthemedetecor.OsThemeDetector
 import com.prof18.feedflow.shared.ui.style.DarkColorScheme
 import com.prof18.feedflow.shared.ui.style.LightColorScheme
-import org.jetbrains.skiko.SystemTheme
-import org.jetbrains.skiko.currentSystemTheme
 import java.util.function.Consumer
 
 @Composable

@@ -29,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
@@ -195,8 +194,10 @@ fun main() {
         }
 
         FeedFlowTheme(darkTheme = isDarkTheme) {
-            LaunchedEffect(isDarkTheme, ) {
-                setupLookAndFeel(isDarkTheme)
+            LaunchedEffect(isDarkTheme) {
+                if (getDesktopOS().isNotMacOs()) {
+                    setupLookAndFeel(isDarkTheme)
+                }
             }
 
             val lyricist = rememberFeedFlowStrings()
@@ -499,7 +500,11 @@ fun main() {
                                         setCrashReportingEnabled = { enabled ->
                                             settingsViewModel.updateCrashReporting(enabled)
                                             if (enabled) {
-                                                if (appEnvironment.isRelease() && sentryDns != null && version != null) {
+                                                if (
+                                                    appEnvironment.isRelease() &&
+                                                    sentryDns != null &&
+                                                    version != null
+                                                ) {
                                                     initSentry(
                                                         dns = sentryDns,
                                                         version = version,
@@ -535,44 +540,41 @@ fun main() {
 }
 
 private fun setupLookAndFeel(isDarkMode: Boolean) {
-    if (getDesktopOS().isNotMacOs()) {
-        System.setProperty("flatlaf.useWindowDecorations", "true")
-        System.setProperty("flatlaf.menuBarEmbedded", "false")
+    System.setProperty("flatlaf.useWindowDecorations", "true")
+    System.setProperty("flatlaf.menuBarEmbedded", "false")
 
-        try {
-            val themeFileName = if (isDarkMode) {
-                "feedflow-dark.properties"
-            } else {
-                "feedflow-light.properties"
-            }
+    try {
+        val themeFileName = if (isDarkMode) {
+            "feedflow-dark.properties"
+        } else {
+            "feedflow-light.properties"
+        }
 
-            // Load custom properties theme
-            val themeStream = DI::class.java.classLoader?.getResourceAsStream(themeFileName)
+        // Load custom properties theme
+        val themeStream = DI::class.java.classLoader?.getResourceAsStream(themeFileName)
 
-            if (themeStream != null) {
-                val customLaf = FlatPropertiesLaf(themeFileName, themeStream)
-                UIManager.setLookAndFeel(customLaf)
-            } else {
-                // Fallback to standard themes if properties file not found
-                val newLaf = if (isDarkMode) {
-                    FlatDarkLaf()
-                } else {
-                    FlatLightLaf()
-                }
-                UIManager.setLookAndFeel(newLaf)
-                UIManager.put("MenuBar.border", null)
-            }
-
-            FlatLaf.updateUI()
-        } catch (_: Exception) {
-            // Fallback to default theme
+        if (themeStream != null) {
+            val customLaf = FlatPropertiesLaf(themeFileName, themeStream)
+            UIManager.setLookAndFeel(customLaf)
+        } else {
+            // Fallback to standard themes if properties file not found
             val newLaf = if (isDarkMode) {
                 FlatDarkLaf()
             } else {
                 FlatLightLaf()
             }
             UIManager.setLookAndFeel(newLaf)
+            UIManager.put("MenuBar.border", null)
         }
+
+        FlatLaf.updateUI()
+    } catch (_: Exception) {
+        // Fallback to default theme
+        val newLaf = if (isDarkMode) {
+            FlatDarkLaf()
+        } else {
+            FlatLightLaf()
+        }
+        UIManager.setLookAndFeel(newLaf)
     }
 }
-

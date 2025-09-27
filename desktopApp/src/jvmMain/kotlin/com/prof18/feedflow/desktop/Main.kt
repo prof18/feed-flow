@@ -255,7 +255,7 @@ private fun setupLookAndFeel(isDarkMode: Boolean) {
             UIManager.put("MenuBar.border", null)
         }
 
-        FlatLaf.updateUI()
+//        FlatLaf.updateUI()
     } catch (_: Exception) {
         // Fallback to default theme
         val newLaf = if (isDarkMode) {

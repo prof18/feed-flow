@@ -229,4 +229,5 @@
     <string name="file_menu">File</string>
     <string name="settings_swipe_action_toggle_read">Segna come letto/non letto</string>
     <string name="settings_swipe_action_toggle_bookmark">Aggiungi/rimuovi segnalibro</string>
+    <string name="settings_theme">Tema</string>
 </resources>

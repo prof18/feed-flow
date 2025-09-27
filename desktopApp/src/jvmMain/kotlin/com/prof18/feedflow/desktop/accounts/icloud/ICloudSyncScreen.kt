@@ -52,13 +52,13 @@ internal class ICloudSyncScreen : Screen {
         val snackbarHostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
 
-        val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
+        val flowStrings = LocalFeedFlowStrings.current
         LaunchedEffect(Unit) {
             viewModel.syncMessageQueue.collect { event ->
                 if (event is SyncResult.Error) {
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            message = errorMessage,
+                            message = flowStrings.errorAccountSync(event.errorCode.code),
                             duration = SnackbarDuration.Short,
                         )
                     }

@@ -18,7 +18,7 @@
     <string name="account_refresh_progress">Realizando a actualización</string>
     <string name="no_dropbox_sync_yet">Aínda non se sincronizaron os datos con Dropbox. Preme no botón de copia de apoio para sincronizar</string>
     <string name="mark_all_read_button">Marcar todo como lido</string>
-    <string name="error_account_sync">Lamentámolo, houbo un fallo ao sincronizar os datos da túa conta :(</string>
+    <string name="error_account_sync">Lamentámolo, houbo un fallo ao sincronizar os datos da túa conta - error code: %s :(</string>
     <string name="icloud_sync_success">Accedeuse correctamente á túa conta iCloud</string>
     <string name="feed_url">URL da canle</string>
     <string name="feed_url_placeholder">https://dominio.tld/feed</string>
@@ -33,7 +33,7 @@
     <string name="export_started_message">Creando a exportación</string>
     <string name="generic_error_message">Lamentámolo, pero houbo un fallo :(</string>
     <string name="default_browser">Navegador predeterminado</string>
-    <string name="feed_error_message">Houbo un fallo con: %s :(</string>
+    <string name="feed_error_message">Houbo un fallo con: %s - error code: %s :(</string>
     <string name="author_label">Creada con ❤️ por</string>
     <string name="show_on_github">Mostrar en GitHub</string>
     <string name="open_source_licenses">Licenzas de código aberto</string>
@@ -85,7 +85,7 @@
     <string name="bookmarked_articles_empty_screen_message">Nada por aquí, hora de engadir algún marcador!</string>
     <string name="close_menu_button">Pechar menú</string>
     <string name="in_app_browser">Navegador da app</string>
-    <string name="database_error">Algo fallo ao actualizar as canles. Volve a intentalo ou reinicia a app :(</string>
+    <string name="database_error">Algo fallo ao actualizar as canles. Volve a intentalo ou reinicia a app - error code: %s :(</string>
     <string name="invalid_rss_url">O enderezo proporcionado non é unha canle RSS válida</string>
     <string name="import_export_opml_title">Importar e exportar</string>
     <string name="drawer_title_bookmarks">Marcadores</string>
@@ -140,7 +140,7 @@
     <string name="fresh_rss_account_connected">Conectouse correctamente a túa conta FreshRSS</string>
     <string name="no_fresh_rss_sync_yet">Aínda non sincronizou</string>
     <string name="fresh_rss_last_sync">Última sincr: %s</string>
-    <string name="sync_error_message">Algo fallou ao sincronizar as canles. Volve intentalo.</string>
+    <string name="sync_error_message">Algo fallou ao sincronizar as canles - error code: %s :(Volve intentalo.</string>
     <string name="wrong_credentials_error_message">As credenciais non son correctas. Volve intentalo.</string>
     <string name="account_login">Acceder</string>
     <string name="fresh_rss_password_hint">Contrasinal da API FreshRSS (Axustes &gt; Perfil)</string>
@@ -233,7 +233,7 @@
     <string name="settings_theme_system">Sistema</string>
     <string name="settings_theme_light">Claro</string>
     <string name="settings_theme_dark">Escuro</string>
-    <string name="icloud_connection_error">Lamentamos non poder conectar con iCloud. Comproba se iniciaches sesión, iCloud Drive está activada e tes espazo abondo</string>
+    <string name="icloud_connection_error">Lamentamos non poder conectar con iCloud. Comproba se iniciaches sesión, iCloud Drive está activada e tes espazo abondo - error code: %s.</string>
     <string name="open_feed_settings">Abrir axustes da canle</string>
     <string name="reader_mode_browser_button_content_description">Abrir no navegador</string>
     <string name="delete_feed_confirmation_title">Eliminar canle?</string>

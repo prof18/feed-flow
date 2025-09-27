@@ -21,7 +21,7 @@
     <string name="export_started_message">Генерация экспорта</string>
     <string name="generic_error_message">Извините, что-то пошло не так :(</string>
     <string name="load_file_error_message">Невозможно загрузить файл</string>
-    <string name="feed_error_message">Что-то не так с: %s :(</string>
+    <string name="feed_error_message">Что-то не так с: %s - error code: %s :(</string>
     <string name="author_label">Разработано с ❤️ от</string>
     <string name="show_on_github">Глянуть на Гитхабе</string>
     <string name="open_source_licenses">Открытые лицензии</string>
@@ -73,7 +73,7 @@
     <string name="account_refresh_progress">Идёт обновление</string>
     <string name="feed_sync_in_progress">Идет синхронизация. Приложение автоматически закроется по завершении.</string>
     <string name="no_dropbox_sync_yet">Данные еще не синхронизированы с Dropbox. Нажмите кнопку резервного копирования, чтобы начать синхронизацию</string>
-    <string name="error_account_sync">Извините, что-то пошло не так при синхронизации данных в вашем аккаунте :(</string>
+    <string name="error_account_sync">Извините, что-то пошло не так при синхронизации данных в вашем аккаунте - error code: %s :(</string>
     <string name="add_account_button">Добавить аккаунт</string>
     <string name="icloud_sync_success">Ваш аккаунт iCloud успешно подключен</string>
     <string name="settings_hide_duplicated_title_from_desc">Скрыть заголовок из описания статьи</string>
@@ -87,7 +87,7 @@
     <string name="default_browser">Браузер по умолчанию</string>
     <string name="open_website_button">Открыть веб-сайт</string>
     <string name="open_source_nav_bar">Открытые лицензии</string>
-    <string name="database_error">Что-то пошло не так при получении лент. Пожалуйста, попробуйте еще раз или перезапустите приложение :(</string>
+    <string name="database_error">Что-то пошло не так при получении лент. Пожалуйста, попробуйте еще раз или перезапустите приложение - error code: %s :(</string>
     <string name="done_button">ОК</string>
     <string name="wrong_link_report_title">Следующие ленты не были добавлены, так как они недействительны</string>
     <string name="feed_add_in_progress_message">Пожалуйста, подождите, идет проверка доступности каждой ленты. Операция может занять некоторое время в зависимости от количества лент, которые вы импортируете</string>
@@ -131,7 +131,7 @@
     <string name="add_feed_generic_error">Произошла ошибка при добавлении ленты. Пожалуйста, попробуйте снова</string>
     <string name="edit_feed_generic_error">Произошла ошибка при редактировании ленты. Пожалуйста, попробуйте снова.</string>
     <string name="feed_added_message_without_name">Лента добавлена</string>
-    <string name="sync_error_message">Произошла ошибка при синхронизации лент. Пожалуйста, попробуйте снова.</string>
+    <string name="sync_error_message">Произошла ошибка при синхронизации лент - error code: %s :(Пожалуйста, попробуйте снова.</string>
     <string name="wrong_credentials_error_message">Учётные данные указаны неверно. Пожалуйста, попробуйте снова.</string>
     <string name="wrong_url_error_message">Указанная ссылка неверна. Пожалуйста, попробуйте снова.</string>
     <string name="link_with_error_report_title">Следующие ленты не были добавлены из-за ошибки</string>

@@ -57,23 +57,23 @@ class FeedSourceListScreen : Screen {
         LaunchedEffect(Unit) {
             viewModel.errorState.collect { errorState ->
                 when (errorState) {
-                    UIErrorState.DatabaseError -> {
+                    is UIErrorState.DatabaseError -> {
                         snackbarHostState.showSnackbar(
-                            strings.databaseError,
+                            strings.databaseError(errorState.errorCode.code),
                             duration = SnackbarDuration.Short,
                         )
                     }
 
                     is UIErrorState.FeedErrorState -> {
                         snackbarHostState.showSnackbar(
-                            strings.feedErrorMessage(errorState.feedName),
+                            strings.feedErrorMessage(errorState.feedName, errorState.errorCode.code),
                             duration = SnackbarDuration.Short,
                         )
                     }
 
-                    UIErrorState.SyncError -> {
+                    is UIErrorState.SyncError -> {
                         snackbarHostState.showSnackbar(
-                            strings.syncErrorMessage,
+                            strings.syncErrorMessage((errorState.errorCode.code)),
                             duration = SnackbarDuration.Short,
                         )
                     }

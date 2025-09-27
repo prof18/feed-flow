@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.core.model.onErrorSuspend
@@ -59,11 +60,15 @@ internal class FeedCategoryRepository(
                         onSuccess = {
                             gReaderRepository.fetchFeedSourcesAndCategories()
                                 .onErrorSuspend {
-                                    feedStateRepository.emitErrorState(SyncError)
+                                    feedStateRepository.emitErrorState(
+                                        SyncError(errorCode = FeedSyncError.FetchFeedSourcesAndCategoriesFailed),
+                                    )
                                 }
                         },
                         onFailure = {
-                            feedStateRepository.emitErrorState(SyncError)
+                            feedStateRepository.emitErrorState(
+                                SyncError(errorCode = FeedSyncError.DeleteCategoryFailed),
+                            )
                         },
                     )
             }
@@ -80,7 +85,7 @@ internal class FeedCategoryRepository(
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.editCategoryName(categoryId, newName)
                     .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError)
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditCategoryNameFailed))
                     }
             }
 

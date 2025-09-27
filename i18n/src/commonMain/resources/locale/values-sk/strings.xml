@@ -33,14 +33,14 @@
     <string name="export_dialog_title">Uložiť OPML súbor</string>
     <string name="load_file_error_message">Nie je možné načítať súbor</string>
     <string name="default_browser">Predvolený prehliadač</string>
-    <string name="feed_error_message">Niečo nie je v poriadku s: %s :(</string>
+    <string name="feed_error_message">Niečo nie je v poriadku s: %s - error code: %s :(</string>
     <string name="author_label">Vytvoril s ❤️</string>
     <string name="open_source_licenses">Open Source licencie</string>
     <string name="about_nav_bar">O aplikácii</string>
     <string name="report_issue_button">Nahlásiť problém</string>
     <string name="open_source_nav_bar">Open Source licencie</string>
     <string name="open_website_button">Otvoriť webovú stránku</string>
-    <string name="database_error">Počas načítavania feedov sa vyskytla chyba. Skús to znova alebo reštartuj aplikáciu :(</string>
+    <string name="database_error">Počas načítavania feedov sa vyskytla chyba. Skús to znova alebo reštartuj aplikáciu - error code: %s :(</string>
     <string name="force_feed_refresh">Vynútiť obnovenie feedov</string>
     <string name="invalid_rss_url">Zadaný odkaz nie je platným RSS feedom</string>
     <string name="done_button">OK</string>
@@ -110,7 +110,7 @@
     <string name="account_refresh_progress">Prebieha obnovenie</string>
     <string name="feed_sync_in_progress">Prebieha synchronizácia. Po dokončení sa aplikácia automaticky zatvorí.</string>
     <string name="no_dropbox_sync_yet">Údaje ešte nie sú synchronizované s Dropboxom. Kliknutím na tlačidlo Zálohovať spustíš synchronizáciu</string>
-    <string name="error_account_sync">Ľutujeme, pri synchronizácii údajov v tvojom účte sa vyskytla chyba :(</string>
+    <string name="error_account_sync">Ľutujeme, pri synchronizácii údajov v tvojom účte sa vyskytla chyba - error code: %s :(</string>
     <string name="add_account_button">Pridať účet</string>
     <string name="icloud_sync_success">Tvoj iCloud účet je úspešne pripojený</string>
     <string name="settings_hide_duplicated_title_from_desc">Skryť názov z popisu článku</string>

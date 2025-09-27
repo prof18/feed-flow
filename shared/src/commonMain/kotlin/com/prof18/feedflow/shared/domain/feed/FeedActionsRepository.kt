@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.feed
 
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.database.DatabaseHelper
@@ -27,7 +28,7 @@ internal class FeedActionsRepository(
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.updateReadStatus(itemsToUpdates.toList(), isRead = true)
                     .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError)
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
                     }
             }
 
@@ -44,7 +45,7 @@ internal class FeedActionsRepository(
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.markAllFeedAsRead(currentFilter)
                     .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError)
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkAllFeedsAsReadFailed))
                     }
             }
 
@@ -72,7 +73,7 @@ internal class FeedActionsRepository(
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.updateBookmarkStatus(feedItemId, isBookmarked)
                     .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError)
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateBookmarkStatusFailed))
                     }
             }
 
@@ -90,7 +91,7 @@ internal class FeedActionsRepository(
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.updateReadStatus(listOf(feedItemId), isRead)
                     .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError)
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateReadStatusFailed))
                     }
             }
 

@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
+import com.prof18.feedflow.core.model.DatabaseError as DatabaseErrorCode
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedStateRepository(
@@ -84,7 +85,7 @@ internal class FeedStateRepository(
             }
         } catch (e: Throwable) {
             logger.e(e) { "Something wrong while getting data from Database" }
-            errorMutableState.emit(DatabaseError)
+            errorMutableState.emit(DatabaseError(DatabaseErrorCode.FeedRetrievalFailed))
         }
     }
 
@@ -123,7 +124,7 @@ internal class FeedStateRepository(
             }
         } catch (e: Throwable) {
             logger.e(e) { "Something wrong while getting data from Database" }
-            errorMutableState.emit(DatabaseError)
+            errorMutableState.emit(DatabaseError(DatabaseErrorCode.PaginationFailed))
         }
     }
 

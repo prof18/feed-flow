@@ -5,7 +5,7 @@
     <string name="feed_add_in_progress_message">Bitte warte, die Verfügbarkeit aller Feeds wird geprüft. Der Vorgang kann eine Weile dauern, je nach der Anzahl der Feeds, die importiert werden</string>
     <string name="drawer_title_timeline">Zeitleiste</string>
     <string name="force_feed_refresh">Feeds auffrischen erzwingen</string>
-    <string name="database_error">Beim Abrufen der Feeds gab es ein Problem. Bitte versuche es erneut oder starte die App neu :(</string>
+    <string name="database_error">Beim Abrufen der Feeds gab es ein Problem. Bitte versuche es erneut oder starte die App neu - error code: %s :(</string>
     <string name="no_category">Ohne Kategorie</string>
     <string name="import_dialog_title">OPML-Datei auswählen</string>
     <string name="feeds_importing_message">Feed importieren</string>
@@ -79,7 +79,7 @@
     <string name="settings_app_title">App</string>
     <string name="menu_open_comments">Kommentare öffnen</string>
     <string name="settings_reader_mode">Artikel im Lesemodus öffnen</string>
-    <string name="feed_error_message">Es gibt ein Problem mit %s :(</string>
+    <string name="feed_error_message">Es gibt ein Problem mit %s - error code: %s :(</string>
     <string name="reader_mode_font_size">Schriftgröße</string>
     <string name="search_hint_subtitle">die Ergebnisse werden automatisch angezeigt</string>
     <string name="settings_title_feed">Feed</string>
@@ -109,7 +109,7 @@
     <string name="last_upload">Letzter Upload: %s</string>
     <string name="last_download">Letzter Download: %s</string>
     <string name="no_dropbox_sync_yet">Deine Daten sind noch nicht mit Dropbox synchronisiert. Drücke den Sicherungs-Knopf, um die Synchronisierung zu starten</string>
-    <string name="error_account_sync">Beim Synchronisieren der Daten mit deinem Konto ist leider ein Problem aufgetreten :(</string>
+    <string name="error_account_sync">Beim Synchronisieren der Daten mit deinem Konto ist leider ein Problem aufgetreten - error code: %s :(</string>
     <string name="import_export_description">Für eine bessere Interoperabilität mit anderen Feed-Readern unterstützt FeedFlow das Importieren und Exportieren deiner Abonnements als OPML-Datei</string>
     <string name="read_articles_empty_screen_message">Hier ist noch nichts; Zeit, mit dem Lesen zu beginnen!</string>
     <string name="bookmarked_articles_empty_screen_message">Hier ist noch nichts eingetragen - ein guter Zeitpunkt, um Lesezeichen hinzuzufügen!</string>
@@ -130,7 +130,7 @@
     <string name="icloud_sync_description">Verknüpfe dein iCloud-Konto, um deine Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen iOS-, iPadOS- und macOS-Geräten zu synchronisieren. Die Daten werden in einem App-spezifischen Ordner gespeichert; FeedFlow hat keinen Zugriff auf deine Dateien</string>
     <string name="open_another_feed">Einen anderen Feed öffnen</string>
     <string name="feed_added_message_without_name">Feed wurde hinzugefügt</string>
-    <string name="sync_error_message">Beim Synchronisieren der Feeds trat ein Fehler auf. Bitte erneut versuchen.</string>
+    <string name="sync_error_message">Beim Synchronisieren der Feeds trat ein Fehler auf - error code: %s :(. Bitte erneut versuchen.</string>
     <string name="wrong_credentials_error_message">Die Zugangsdaten sind nicht korrekt. Bitte erneut versuchen.</string>
     <string name="account_text_field_server_url">URL des Servers</string>
     <string name="account_text_field_username">Benutzername</string>
@@ -233,7 +233,7 @@
     <string name="settings_theme_system">Systemeinstellung</string>
     <string name="settings_theme_light">Hell</string>
     <string name="settings_theme_dark">Dunkel</string>
-    <string name="icloud_connection_error">Leider können wir uns nicht mit iCloud verbinden. Bitte prüfen sie, ob sie angemeldet sind, ob das iCloud Laufwerk aktiviert ist und ob Speicherplatz zur Verfügung steht</string>
+    <string name="icloud_connection_error">Leider können wir uns nicht mit iCloud verbinden. Bitte prüfen sie, ob sie angemeldet sind, ob das iCloud Laufwerk aktiviert ist und ob Speicherplatz zur Verfügung steht - error code: %s.</string>
     <string name="open_feed_settings">Feed-Einstellungen öffnen</string>
     <string name="reader_mode_browser_button_content_description">Im Browser öffnen</string>
     <string name="delete_feed_confirmation_title">Feed löschen?</string>

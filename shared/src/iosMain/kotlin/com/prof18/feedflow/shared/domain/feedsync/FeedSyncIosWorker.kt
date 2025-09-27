@@ -3,7 +3,11 @@ package com.prof18.feedflow.shared.domain.feedsync
 import co.touchlab.kermit.Logger
 import co.touchlab.sqliter.interop.SQLiteException
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.SyncDownloadError
+import com.prof18.feedflow.core.model.SyncFeedError
+import com.prof18.feedflow.core.model.SyncICloudError
 import com.prof18.feedflow.core.model.SyncResult
+import com.prof18.feedflow.core.model.SyncUploadError
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
@@ -118,7 +122,11 @@ internal class FeedSyncIosWorker(
                 id = "FeedSyncIosWorker.performUpload",
                 message = "Upload failed: ${e.message}",
             )
-            emitErrorMessage()
+            if (e.message?.contains("FeedFlow.DropboxErrors") == true) {
+                feedSyncMessageQueue.emitResult(SyncResult.General(SyncUploadError.DropboxAPIError))
+            } else {
+                emitErrorMessage()
+            }
         }
     }
 
@@ -136,7 +144,7 @@ internal class FeedSyncIosWorker(
                     )
                 }
             }
-            SyncResult.Error.General
+            SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
         }
     }
 
@@ -156,7 +164,7 @@ internal class FeedSyncIosWorker(
                 id = "FeedSyncIosWorker.syncFeedSources",
                 message = "Sync feed sources failed: ${e.message}",
             )
-            SyncResult.Error.General
+            SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
         }
     }
 
@@ -175,7 +183,7 @@ internal class FeedSyncIosWorker(
                 id = "FeedSyncIosWorker.syncFeedItems",
                 message = "Sync feed items failed: ${e.message}",
             )
-            SyncResult.Error.General
+            SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
         }
     }
 
@@ -186,13 +194,13 @@ internal class FeedSyncIosWorker(
 
             if (!dropboxDataSource.isClientSet()) {
                 logger.d { "Dropbox client is null" }
-                emitErrorMessage()
+                feedSyncMessageQueue.emitResult(SyncResult.General(SyncUploadError.DropboxClientRestoreError))
             }
         }
     }
 
     private suspend fun emitErrorMessage() =
-        feedSyncMessageQueue.emitResult(SyncResult.Error.General)
+        feedSyncMessageQueue.emitResult(SyncResult.General(SyncUploadError.DropboxUploadFailed))
 
     private suspend fun emitSuccessMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.Success)
@@ -311,7 +319,7 @@ internal class FeedSyncIosWorker(
                 val destinationUrl = result.destinationUrl
                 if (destinationUrl == null) {
                     logger.e { "Error downloading database" }
-                    return SyncResult.Error.General
+                    return SyncResult.General(SyncICloudError.DestinationUrlNull)
                 }
                 replaceDatabase(destinationUrl.url)
                 dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
@@ -346,7 +354,11 @@ internal class FeedSyncIosWorker(
                 id = "FeedSyncIosWorker.iCloudDownload",
                 message = message,
             )
-            return if (iCloudUrl == null) SyncResult.Error.ICloudNotAvailable else SyncResult.Error.General
+            return if (iCloudUrl == null) {
+                SyncResult.ICloudNotAvailable(SyncICloudError.URLNotAvailable)
+            } else {
+                SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
+            }
         }
         NSFileManager.defaultManager.removeItemAtURL(
             tempUrl,
@@ -370,7 +382,15 @@ internal class FeedSyncIosWorker(
                         message = "Error downloading from iCloud: ${errorPtr.value}",
                     )
                 }
-                return SyncResult.Error.General
+                val error = errorPtr.value.toString()
+                return when {
+                    error.contains("Code=260") || error.contains("Code=4") -> SyncResult.General(
+                        SyncICloudError.FileNotFound,
+                    )
+                    error.contains("Code=512") -> SyncResult.General(SyncICloudError.CopyOperationFailed)
+                    error.contains("Code=516") -> SyncResult.General(SyncICloudError.FileAlreadyExists)
+                    else -> SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
+                }
             }
 
             replaceDatabase(tempUrl)

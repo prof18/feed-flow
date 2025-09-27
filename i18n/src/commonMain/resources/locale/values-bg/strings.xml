@@ -13,7 +13,7 @@
     <string name="export_feeds_button">Изнасяне на емисии в OPML</string>
     <string name="about_button">Относно</string>
     <string name="default_browser">Браузър по подразбиране</string>
-    <string name="feed_error_message">Нещо не е наред с: %s :(</string>
+    <string name="feed_error_message">Нещо не е наред с: %s - error code: %s :(</string>
     <string name="author_label">Разработено с ❤️ от</string>
     <string name="show_on_github">Вижте в GitHub</string>
     <string name="open_source_licenses">Лицензи с отворен код</string>
@@ -59,7 +59,7 @@
     <string name="dropbox_confirm_button">Потвърждение</string>
     <string name="dropbox_sync_success">Вашият профил в Dropbox е свързан успешно</string>
     <string name="last_upload">Последно качване: %s</string>
-    <string name="error_account_sync">Съжаляваме, нещо се обърка при синхронизирането на данните във вашия профил :(</string>
+    <string name="error_account_sync">Съжаляваме, нещо се обърка при синхронизирането на данните във вашия профил  - error code: %s :(</string>
     <string name="settings_hide_duplicated_title_from_desc">Скриване на заглавието от описанието на статията</string>
     <string name="reader_mode_font_size">Размер на шрифта</string>
     <string name="feed_added_message">Емисията %s е добавена</string>
@@ -78,7 +78,7 @@
     <string name="load_file_error_message">Файлът не може да се зареди</string>
     <string name="generic_error_message">Съжаляваме, нещо се обърка :(</string>
     <string name="about_the_app">FeedFlow е минималистичен RSS четец, базиран на личното мнение на автора. Статиите се отварят на съответните им уебсайтове и можете да изберете любимия си браузър с фокус върху неприкосновеността на личния живот, за да отделите четенето от основния си браузър. Ако искате да избегнете браузъра, FeedFlow предлага режим на четене, за да се насладите на съдържанието на статиите без никакви разсейващи елементи.\nМожете да внасяте и изнасяте вашата RSS колекция от и в OPML файлове.</string>
-    <string name="database_error">Нещо се обърка по време на извличането на емисиите. Моля, опитайте отново или рестартирайте приложението :(</string>
+    <string name="database_error">Нещо се обърка по време на извличането на емисиите. Моля, опитайте отново или рестартирайте приложението - error code: %s :(</string>
     <string name="force_feed_refresh">Принудително обновяване на емисии</string>
     <string name="drawer_title_feed_sources">Източници на емисия</string>
     <string name="issue_content_template">Моля, опишете проблема и дайте връзка към RSS канала, който причинява проблемите. Ако можете, моля, прикачете екранна снимка и OPML файла</string>
@@ -137,7 +137,7 @@
     <string name="wrong_credentials_error_message">Удостоверенията не са правилни. Моля, опитайте отново.</string>
     <string name="account_text_field_server_url">URL адрес на сървъра</string>
     <string name="wrong_url_error_message">Предоставената връзка е неправилна. Моля, опитайте отново.</string>
-    <string name="sync_error_message">Имаше грешка при синхронизирането на емисиите. Моля, опитайте отново.</string>
+    <string name="sync_error_message">Имаше грешка при синхронизирането на емисиите - error code: %s :(Моля, опитайте отново.</string>
     <string name="account_text_field_password">Парола</string>
     <string name="fresh_rss_account_connected">Вашият профил в FreshRss е успешно свързан</string>
     <string name="edit_feed_generic_error">Нещо се обърка при редактирането на емисията. Моля, опитайте отново.</string>
@@ -233,7 +233,7 @@
     <string name="settings_theme_system">Системна</string>
     <string name="settings_theme_light">Светла</string>
     <string name="settings_theme_dark">Тъмна</string>
-    <string name="icloud_connection_error">За съжаление не можем да се свържем с iCloud. Моля, проверете дали сте влезли в профила си, iCloud Drive е включен и имате свободно място</string>
+    <string name="icloud_connection_error">За съжаление не можем да се свържем с iCloud. Моля, проверете дали сте влезли в профила си, iCloud Drive е включен и имате свободно място - error code: %s.</string>
     <string name="open_feed_settings">Отваряне на настройките на емисията</string>
     <string name="reader_mode_browser_button_content_description">Отвори в браузър</string>
     <string name="delete_feed_confirmation_title">Изтриване на емисия?</string>

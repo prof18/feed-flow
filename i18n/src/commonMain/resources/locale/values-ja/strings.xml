@@ -29,7 +29,7 @@
     <string name="generic_error_message">問題が発生しました :(</string>
     <string name="load_file_error_message">ファイルを読み込めませんでした</string>
     <string name="default_browser">デフォルトのブラウザ</string>
-    <string name="feed_error_message">%s で問題が発生しました :(</string>
+    <string name="feed_error_message">%s で問題が発生しました - error code: %s :(</string>
     <string name="author_label">❤️ によって開発されています。開発者:</string>
     <string name="show_on_github">GitHubで表示</string>
     <string name="open_source_licenses">オープンソースライセンス</string>
@@ -38,7 +38,7 @@
     <string name="open_source_nav_bar">オープンソースのライセンス</string>
     <string name="report_issue_button">問題を報告</string>
     <string name="open_website_button">Webサイトを開く</string>
-    <string name="database_error">フィードの取得中に問題が発生しました。再試行するか、アプリを再起動してください :(</string>
+    <string name="database_error">フィードの取得中に問題が発生しました。再試行するか、アプリを再起動してください - error code: %s :(</string>
     <string name="force_feed_refresh">フィードを強制的に再読み込み</string>
     <string name="invalid_rss_url">このリンクは正しいRSSフィードのものではありません</string>
     <string name="import_export_opml">OPMLのインポートとエクスポート</string>
@@ -116,7 +116,7 @@
     <string name="account_refresh_progress">更新中</string>
     <string name="feed_sync_in_progress">同期しています。完了後、アプリは自動的に終了します。</string>
     <string name="no_dropbox_sync_yet">データはまたDropboxと同期されていません。バックアップボタンを押して同期を開始できます。</string>
-    <string name="error_account_sync">アカウントに同期中に問題が発生しました :(</string>
+    <string name="error_account_sync">アカウントに同期中に問題が発生しました - error code: %s :(</string>
     <string name="icloud_sync_description">iCloudアカウントを接続すると、フィード購読、カテゴリ、既読、ブックマークした記事をiOS、iPadOS、macOSで同期できます。データはアプリ固有のフォルダに保存されます; FeedFlowはあなたのファイルにはアクセスできません</string>
     <string name="add_account_button">アカウントを追加</string>
     <string name="icloud_sync_success">iCloudアカウントは正常に接続されました。</string>
@@ -139,7 +139,7 @@
     <string name="add_feed_generic_error">フィードの追加中に問題が発生しました。再試行してください。</string>
     <string name="edit_feed_generic_error">フィードの編集中に問題が発生しました。再試行してください。</string>
     <string name="feed_added_message_without_name">フィードが追加されました</string>
-    <string name="sync_error_message">フィードの同期中に問題が発生しました。再試行してください。</string>
+    <string name="sync_error_message">フィードの同期中に問題が発生しました。再試行してください。- error code: %s :(</string>
     <string name="wrong_credentials_error_message">証明書が正しくありません。再試行してください。</string>
     <string name="wrong_url_error_message">リンクが正しくありません。再試行してください。</string>
     <string name="link_with_error_report_title">以下のフィードはエラーが発生したため追加されませんでした。</string>

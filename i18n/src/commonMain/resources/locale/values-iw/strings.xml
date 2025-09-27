@@ -25,10 +25,10 @@
     <string name="export_feeds_button">יצוא עדכונים ל-OPML</string>
     <string name="load_file_error_message">לא ניתן לטעון את הקובץ</string>
     <string name="default_browser">דפדפן ברירת מחדל</string>
-    <string name="feed_error_message">משהו לא בסדר עם: %s :(</string>
+    <string name="feed_error_message">משהו לא בסדר עם: %s - error code: %s :(</string>
     <string name="open_source_licenses">רישיונות קוד פתוח</string>
     <string name="open_website_button">פתח אתר</string>
-    <string name="database_error">משהו השתבש במהלך אחזור העדכונים. אנא נסה שוב או הפעל את האפליקציה מחדש :(</string>
+    <string name="database_error">משהו השתבש במהלך אחזור העדכונים. אנא נסה שוב או הפעל את האפליקציה מחדש - error code: %s :(</string>
     <string name="force_feed_refresh">כפה רענון עדכונים</string>
     <string name="invalid_rss_url">הקישור שסיפקת אינו עדכון RSS חוקי</string>
     <string name="retry_button">נסה שוב</string>
@@ -85,7 +85,7 @@
     <string name="last_download">הורדה אחרונה: %s</string>
     <string name="account_refresh_progress">הרענון מתבצע</string>
     <string name="feed_sync_in_progress">מתבצע סנכרון. האפליקציה תיסגר אוטומטית כשתסיים.</string>
-    <string name="error_account_sync">מצטערים, משהו השתבש במהלך סנכרון הנתונים בחשבון שלך :(</string>
+    <string name="error_account_sync">מצטערים, משהו השתבש במהלך סנכרון הנתונים בחשבון שלך - error code: %s :(</string>
     <string name="settings_hide_duplicated_title_from_desc">הסתר את הכותרת מתיאור המאמר</string>
     <string name="reader_mode_font_size">גודל גופן</string>
     <string name="open_another_feed">פתח עדכון אחר</string>

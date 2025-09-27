@@ -3,7 +3,7 @@
     <string name="feed_url_placeholder">https://monblogfavori.com/flux</string>
     <string name="feed_add_in_progress_message">Veuillez patienter, la disponibilité de chaque flux est en cours de vérification. L\'opération peut prendre un certain temps en fonction du nombre de flux que vous importez</string>
     <string name="force_feed_refresh">Forcer l\'actualisation du flux</string>
-    <string name="database_error">Une erreur s\'est produite lors de la récupération des flux. Veuillez réessayer ou relancer l\'application :(</string>
+    <string name="database_error">Une erreur s\'est produite lors de la récupération des flux. Veuillez réessayer ou relancer l\'application - error code: %s :(</string>
     <string name="import_dialog_title">Sélectionner un fichier OPML</string>
     <string name="feeds_import_done_message">Import terminé</string>
     <string name="feeds_importing_message">Import du flux</string>
@@ -30,7 +30,7 @@
     <string name="wrong_link_report_title">Les flux suivants n\'ont pas été ajoutés car ils ne sont pas valides</string>
     <string name="open_source_licenses">Licences Open Source</string>
     <string name="browser_selection_button">Navigateur</string>
-    <string name="feed_error_message">Une erreur s\'est produite avec : %s :(</string>
+    <string name="feed_error_message">Une erreur s\'est produite avec : %s - error code: %s :(</string>
     <string name="issue_report_title">Signaler un problème avec FeedFlow</string>
     <string name="export_dialog_title">Enregistrer un fichier OPML</string>
     <string name="new_release_available_title">Une nouvelle version de FeedFlow est disponible :</string>
@@ -109,7 +109,7 @@
     <string name="last_download">Dernier téléchargement : %s</string>
     <string name="feed_sync_in_progress">Synchronisation en cours. L\'application se fermera automatiquement une fois la tâche achevée.</string>
     <string name="no_dropbox_sync_yet">Les données ne sont pas encore synchronisées avec Dropbox. Cliquez sur le bouton « sauvegarde » afin de déclencher une synchronisation</string>
-    <string name="error_account_sync">Désolé, une erreur est survenue lors de la synchronisation des données dans votre compte :(</string>
+    <string name="error_account_sync">Désolé, une erreur est survenue lors de la synchronisation des données dans votre compte - error code: %s :(</string>
     <string name="drawer_title_feed_sources">Sources des flux</string>
     <string name="edit_feed_source_name_button">Modifier</string>
     <string name="edit_feed">Modifier le flux</string>
@@ -163,7 +163,7 @@
     <string name="feed_added_message_without_name">Flux ajouté</string>
     <string name="add_feed_generic_error">Une erreur est survenue lors de l\'ajout du flux. Veuillez réessayer</string>
     <string name="edit_feed_generic_error">Une erreur est survenue lors de l\'édition du flux. Veuillez réessayer.</string>
-    <string name="sync_error_message">Une erreur est survenue lors de la synchronisation des flux. Veuillez réessayer.</string>
+    <string name="sync_error_message">Une erreur est survenue lors de la synchronisation des flux - error code: %s :(. Veuillez réessayer.</string>
     <string name="wrong_credentials_error_message">Les informations d\'identification sont incorrects. Veuillez réessayer.</string>
     <string name="link_with_error_report_title">Les flux suivant n\'ont pas été ajoutés dû à une erreur</string>
     <string name="wrong_url_error_message">Le lien fourni est incorrect. Veuillez réessayer.</string>
@@ -233,7 +233,7 @@
     <string name="settings_theme">Thème</string>
     <string name="settings_theme_system">Système</string>
     <string name="settings_theme_light">Clair</string>
-    <string name="icloud_connection_error">Navré, nous n\'avons pu nous connecter à iCloud. Veuillez vérifier si vous êtes bien connecté, si iCloud Drive est activé, et si il vous reste de l\'espace de stockage</string>
+    <string name="icloud_connection_error">Navré, nous n\'avons pu nous connecter à iCloud. Veuillez vérifier si vous êtes bien connecté, si iCloud Drive est activé, et si il vous reste de l\'espace de stockage - error code: %s.</string>
     <string name="feed_fetch_failed_tooltip_short">Échec de l\'actualisation des flux</string>
     <string name="support_the_project">Soutenez le projet</string>
     <string name="open_feed_settings">Ouvrir les réglages des flux</string>

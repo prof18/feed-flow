@@ -6,6 +6,7 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
+import com.prof18.feedflow.core.model.SyncICloudError
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
@@ -45,7 +46,7 @@ class ICloudSyncViewModel internal constructor(
             val iCloudBaseFolderURL = getICloudBaseFolderURL()
             if (iCloudBaseFolderURL == null) {
                 iCloudSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
-                feedSyncMessageQueue.emitResult(SyncResult.Error.ICloudNotAvailable)
+                feedSyncMessageQueue.emitResult(SyncResult.ICloudNotAvailable(SyncICloudError.ServiceNotAvailable))
             } else {
                 iCloudSettings.setUseICloud(true)
                 accountsRepository.setICloudAccount()

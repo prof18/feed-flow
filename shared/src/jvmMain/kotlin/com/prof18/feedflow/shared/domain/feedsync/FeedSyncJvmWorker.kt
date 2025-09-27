@@ -2,7 +2,10 @@ package com.prof18.feedflow.shared.domain.feedsync
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.core.model.SyncDownloadError
+import com.prof18.feedflow.core.model.SyncFeedError
 import com.prof18.feedflow.core.model.SyncResult
+import com.prof18.feedflow.core.model.SyncUploadError
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -130,7 +133,7 @@ internal class FeedSyncJvmWorker(
             accountSpecificDownload()
         } catch (e: Exception) {
             logger.e("Download from dropbox failed", e)
-            SyncResult.Error.General
+            SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
         }
     }
 
@@ -158,27 +161,27 @@ internal class FeedSyncJvmWorker(
 
                     DownloadResult.URL_NULL -> {
                         logger.e { "iCloud URL is null" }
-                        SyncResult.Error.General
+                        SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.TEMP_URL_NULL -> {
                         logger.e { "Temporary URL is null" }
-                        SyncResult.Error.General
+                        SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.DOWNLOAD_ERROR -> {
                         logger.e { "Error during iCloud download" }
-                        SyncResult.Error.General
+                        SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.DATABASE_REPLACE_ERROR -> {
                         logger.e { "Error during database replace" }
-                        SyncResult.Error.General
+                        SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.UNKNOWN_ERROR -> {
                         logger.e { "Unknown error during iCloud download. Check the enum mapping" }
-                        SyncResult.Error.General
+                        SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
                 }
             }
@@ -197,7 +200,7 @@ internal class FeedSyncJvmWorker(
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed sources failed", e)
-            SyncResult.Error.General
+            SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
         }
     }
 
@@ -207,7 +210,7 @@ internal class FeedSyncJvmWorker(
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed items failed", e)
-            SyncResult.Error.General
+            SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
         }
     }
 
@@ -237,7 +240,7 @@ internal class FeedSyncJvmWorker(
         "${getDatabaseName()}.db"
 
     private suspend fun emitErrorMessage() =
-        feedSyncMessageQueue.emitResult(SyncResult.Error.General)
+        feedSyncMessageQueue.emitResult(SyncResult.General(SyncUploadError.DropboxUploadFailed))
 
     private suspend fun emitSuccessMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.Success)

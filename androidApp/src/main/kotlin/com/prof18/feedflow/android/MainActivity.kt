@@ -96,12 +96,12 @@ class MainActivity : BaseThemeActivity() {
         val snackbarHostState = remember { SnackbarHostState() }
 
         val navController = rememberNavController()
-        val errorMessage = LocalFeedFlowStrings.current.errorAccountSync
+        val flowStrings = LocalFeedFlowStrings.current
         LaunchedEffect(Unit) {
             messageQueue.messageQueue.collect { message ->
                 if (message is SyncResult.Error) {
                     snackbarHostState.showSnackbar(
-                        message = errorMessage,
+                        message = flowStrings.errorAccountSync(message.errorCode.code),
                     )
                 }
             }

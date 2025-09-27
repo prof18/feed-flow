@@ -5,7 +5,7 @@
     <string name="feed_url_placeholder">https://ilmioblogpreferito.it/feed</string>
     <string name="feed_add_in_progress_message">Per favore attendi, stiamo verificando la disponibilità di ogni feed. L\'operazione può richiedere del tempo a seconda della quantità di feed che stai importando</string>
     <string name="force_feed_refresh">Forza l\'aggiornamento dei feed</string>
-    <string name="database_error">Qualcosa è andato storto durante lo scaricamento dei feed. Riprova o riavvia l\'applicazione</string>
+    <string name="database_error">Qualcosa è andato storto durante lo scaricamento dei feed. Riprova o riavvia l\'applicazione  - error code: %s :(</string>
     <string name="no_category">Non categorizzato</string>
     <string name="import_dialog_title">Seleziona file OPML</string>
     <string name="feeds_import_done_message">Importazione effettuata</string>
@@ -34,7 +34,7 @@
     <string name="missing_title_and_link">Si è verificato un errore durante il recupero del titolo del feed</string>
     <string name="open_source_licenses">License Open source</string>
     <string name="browser_selection_button">Web browser</string>
-    <string name="feed_error_message">Qualcosa è andato storto con: %s :(</string>
+    <string name="feed_error_message">Qualcosa è andato storto con: %s - error code: %s :(</string>
     <string name="issue_report_title">Segnala un problema con FeedFlow</string>
     <string name="export_dialog_title">Salve file OPML</string>
     <string name="new_release_available_title">Una nuova versione di FeedFlow è disponibile:</string>
@@ -111,7 +111,7 @@
     <string name="last_download">Ultimo download: %s</string>
     <string name="no_dropbox_sync_yet">I dati non sono ancora sincronizzati con Dropbox. Clicca sul pulsante backup per avviare la sincronizzazione</string>
     <string name="feed_sync_in_progress">Aggiornamento in corso. L\'app si chiuderà automaticamente una volta concluso.</string>
-    <string name="error_account_sync">Spiacenti, si è verificato un errore durante la sincronizzazione dei dati nel tuo account :(</string>
+    <string name="error_account_sync">Spiacenti, si è verificato un errore durante la sincronizzazione dei dati nel tuo account - codice errore: %s :(</string>
     <string name="add_account_button">Aggiungi account</string>
     <string name="settings_hide_duplicated_title_from_desc">Nascondi titolo dalla descrizione dell\'articolo</string>
     <string name="reader_mode_font_size">Dimensione testo</string>
@@ -129,7 +129,7 @@
     <string name="link_with_error_report_title">I seguenti feed non sono stati aggiunti a causa di un errore</string>
     <string name="no_icloud_sync_yet">I dati non sono ancora sincronizzati con iCloud. Clicca il pulsante backup per avviare una sincronizzazione</string>
     <string name="icloud_sync_description">Collega il tuo account iCloud per sincronizzare le sottoscrizioni dei feed, le categorie, gli articoli letti e preferiti tra i tuoi dispositivi iOS, iPadOS e macOS. I dati verranno salvati in una cartella specifica dell\'app; FeedFlow non avrà accesso a nessuno dei tuoi file</string>
-    <string name="sync_error_message">Si è verificato un errore durante la sincronizzazione dei feed. Si prega di riprovare.</string>
+    <string name="sync_error_message">Si è verificato un errore durante la sincronizzazione dei feed - error code: %s :(Si prega di riprovare.</string>
     <string name="edit_feed_generic_error">Si è verificato un problema durante la modifica del feed. Si prega di riprovare.</string>
     <string name="wrong_url_error_message">Il link fornito non è corretto. Si prega di riprovare.</string>
     <string name="deleting_feed_dialog_title">Eliminazione in corso...</string>

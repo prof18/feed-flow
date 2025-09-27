@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_error_message">ஏதோ தவறு: %s :(</string>
+    <string name="feed_error_message">ஏதோ தவறு: %s - error code: %s :(</string>
     <string name="report_issue_button">சிக்கல் அறிக்கை</string>
     <string name="import_export_opml_title">இறக்குமதி மற்றும் ஏற்றுமதி</string>
     <string name="new_release_available_title">ஃபீட்ஃப்ளோவின் புதிய பதிப்பு கிடைக்கிறது:</string>
@@ -61,7 +61,7 @@
     <string name="done_button">சரி</string>
     <string name="wrong_link_report_title">அவை செல்லுபடியாகாததால் பின்வரும் ஊட்டங்கள் சேர்க்கப்படவில்லை</string>
     <string name="new_release_available_link">இங்கே பதிவிறக்கவும்</string>
-    <string name="database_error">ஊட்டங்களை மீட்டெடுக்கும் போது ஏதோ தவறு ஏற்பட்டது. பயன்பாட்டை மீண்டும் முயற்சிக்கவும் அல்லது மறுதொடக்கம் செய்யவும் :(</string>
+    <string name="database_error">ஊட்டங்களை மீட்டெடுக்கும் போது ஏதோ தவறு ஏற்பட்டது. பயன்பாட்டை மீண்டும் முயற்சிக்கவும் அல்லது மறுதொடக்கம் செய்யவும் - error code: %s :(</string>
     <string name="issue_report_title">ஃபீட்ஃப்ளோவுடன் ஒரு சிக்கலைப் புகாரளிக்கவும்</string>
     <string name="issue_content_template">தயவுசெய்து சிக்கலை விவரிக்கவும், சிக்கல்களை ஏற்படுத்தும் RSS ஊட்டத்திற்கு ஒரு இணைப்பை வழங்கவும். உங்களால் முடிந்தால், தயவுசெய்து ஒரு திரை காட்சி மற்றும் OPML கோப்பை இணைக்கவும்</string>
     <string name="new_category_hint">புதிய வகை பெயர்</string>
@@ -115,7 +115,7 @@
     <string name="account_refresh_progress">முன்னேற்றத்தில் புதுப்பிக்கவும்</string>
     <string name="feed_sync_in_progress">முன்னேற்றத்தில் ஒத்திசைக்கவும். பயன்பாடு முடிந்ததும் தானாகவே மூடப்படும்.</string>
     <string name="no_dropbox_sync_yet">டிராப்பாக்சுடன் தரவு இன்னும் ஒத்திசைக்கப்படவில்லை. ஒத்திசைவைத் தூண்டுவதற்கு காப்பு பொத்தானைக் சொடுக்கு செய்க</string>
-    <string name="error_account_sync">மன்னிக்கவும், உங்கள் கணக்கில் தரவை ஒத்திசைக்கும்போது ஏதோ தவறு ஏற்பட்டது :(</string>
+    <string name="error_account_sync">மன்னிக்கவும், உங்கள் கணக்கில் தரவை ஒத்திசைக்கும்போது ஏதோ தவறு ஏற்பட்டது - error code: %s :(</string>
     <string name="reader_mode_font_size">எழுத்துரு அளவு</string>
     <string name="edit_feed_source_name_button">தொகு</string>
     <string name="edit_feed">ஊட்டத்தைத் திருத்து</string>

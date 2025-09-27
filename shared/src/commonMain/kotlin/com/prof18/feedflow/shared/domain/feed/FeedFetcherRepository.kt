@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceToNotify
+import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.core.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
@@ -87,7 +88,7 @@ class FeedFetcherRepository internal constructor(
         } else {
             gReaderRepository.sync()
                 .onErrorSuspend {
-                    feedStateRepository.emitErrorState(SyncError)
+                    feedStateRepository.emitErrorState(SyncError(FeedSyncError.SyncFeedsFailed))
                 }
         }
         // If the sync is skipped quickly, sometimes the loading spinner stays out

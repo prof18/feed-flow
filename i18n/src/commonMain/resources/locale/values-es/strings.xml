@@ -24,7 +24,7 @@
     <string name="generic_error_message">Disculpa, algo salió mal :(</string>
     <string name="load_file_error_message">No se puede cargar el archivo</string>
     <string name="default_browser">Navegador por defecto</string>
-    <string name="feed_error_message">Algo anda mal con: %s :(</string>
+    <string name="feed_error_message">Algo anda mal con: %s - error code: %s :(</string>
     <string name="author_label">Desarrollado con ❤️ por</string>
     <string name="about_nav_bar">Acerca de</string>
     <string name="report_issue_button">Informar de un error</string>
@@ -63,7 +63,7 @@
     <string name="show_on_github">Mostrar en Github</string>
     <string name="open_source_licenses">Licencias de código abierto</string>
     <string name="about_the_app">FeedFlow es un lector de RSS minimalista basado en las opiniones personales del autor. Los artículos se abren en sus respectivas páginas web y puedes elegir tu navegador favorito centrado en la privacidad para separar tu experiencia de lectura de tu navegador principal. Si quieres evitar el navegador, FeedFlow ofrece un modo lector para disfrutar del contenido de los artículos sin distracciones. \nPuedes importar y exportar tu colección RSS desde y hacia archivos OPML.</string>
-    <string name="database_error">Algo salió mal durante la recuperación de los feeds. Vuelve a intentarlo o reinicia la aplicación :(</string>
+    <string name="database_error">Algo salió mal durante la recuperación de los feeds. Vuelve a intentarlo o reinicia la aplicación - error code: %s :(</string>
     <string name="open_source_nav_bar">Licencias de código abierto</string>
     <string name="invalid_rss_url">El enlace proporcionado no es una fuente RSS válida</string>
     <string name="import_export_opml">Importar o exportar OPML</string>
@@ -110,7 +110,7 @@
     <string name="dropbox_sync_desktop_description">Al hacer clic en el botón Conectar, serás redirigido al sitio web de Dropbox. Después de conectar la cuenta, copia el código de autorización e introdúcelo aquí en la aplicación</string>
     <string name="no_dropbox_sync_yet">Los datos aún no se han sincronizado con Dropbox. Haz clic en el botón de copia de seguridad para activar una sincronización</string>
     <string name="feed_sync_in_progress">Sincronización en curso. La aplicación se cerrará automáticamente cuando haya terminado.</string>
-    <string name="error_account_sync">Lo sentimos, algo ha ido mal al sincronizar los datos de tu cuenta :(</string>
+    <string name="error_account_sync">Lo sentimos, algo ha ido mal al sincronizar los datos de tu cuenta - error code: %s :(</string>
     <string name="add_account_button">Añadir una cuenta</string>
     <string name="icloud_sync_success">Tu cuenta de iCloud se ha conectado correctamente</string>
     <string name="no_icloud_sync_yet">Los datos aún no están sincronizados con iCloud. Haz clic en el botón de copia de seguridad para activar la sincronización</string>
@@ -222,7 +222,7 @@
     <string name="add_feed_generic_error">Ha habido un error al añadir el feed. Por favor, inténtalo de nuevo</string>
     <string name="edit_feed_generic_error">Algo ha fallado al editar el feed. Por favor, inténtalo de nuevo.</string>
     <string name="feed_added_message_without_name">Feed añadido</string>
-    <string name="sync_error_message">Ha habido un error al sincronizar los feeds. Por favor, inténtalo de nuevo.</string>
+    <string name="sync_error_message">Ha habido un error al sincronizar los feeds - error code: %s :(. Por favor, inténtalo de nuevo.</string>
     <string name="wrong_credentials_error_message">Las credenciales no son correctas. Por favor, inténtalo de nuevo.</string>
     <string name="wrong_url_error_message">El enlace proporcionado no es correcto. Por favor, inténtalo de nuevo.</string>
     <string name="link_with_error_report_title">Los siguientes feeds no se han añadido por un error</string>

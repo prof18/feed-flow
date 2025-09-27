@@ -21,7 +21,7 @@
     <string name="export_started_message">Генерація експорту</string>
     <string name="load_file_error_message">Не вдалося завантажити файл</string>
     <string name="default_browser">Стандартний переглядач</string>
-    <string name="feed_error_message">Щось не так з: %s :(</string>
+    <string name="feed_error_message">Щось не так з: %s - error code: %s :(</string>
     <string name="author_label">Розроблено з ❤️</string>
     <string name="about_nav_bar">Про</string>
     <string name="report_issue_button">Повідомити про проблему</string>
@@ -51,7 +51,7 @@
     <string name="feed_added_message">Стрічку %s додано</string>
     <string name="refresh_feeds">Оновити стрічки</string>
     <string name="generic_error_message">Вибачте, щось пішло не так :(</string>
-    <string name="database_error">Щось пішло не так під час отримання каналів. Будь ласка, спробуйте ще раз або перезапустіть додаток :(</string>
+    <string name="database_error">Щось пішло не так під час отримання каналів. Будь ласка, спробуйте ще раз або перезапустіть додаток - error code: %s :(</string>
     <string name="invalid_rss_url">Надане вами посилання не є дійсною RSS-стрічкою</string>
     <string name="retry_button">Спробувати знову</string>
     <string name="open_source_licenses">Ліцензії відкритого коду</string>
@@ -90,7 +90,7 @@
     <string name="last_download">Останнє завантаження: %s</string>
     <string name="account_refresh_progress">Виконується оновлення</string>
     <string name="no_dropbox_sync_yet">Дані ще не синхронізовані з Dropbox. Натисніть кнопку резервного копіювання, щоб запустити синхронізацію</string>
-    <string name="error_account_sync">На жаль, сталася помилка під час синхронізації даних у вашому обліковому записі :(</string>
+    <string name="error_account_sync">На жаль, сталася помилка під час синхронізації даних у вашому обліковому записі - error code: %s :(</string>
     <string name="add_account_button">Додати обліковий запис</string>
     <string name="settings_hide_duplicated_title_from_desc">Приховати заголовок в описі статті</string>
     <string name="reader_mode_font_size">Розмір шрифту</string>
@@ -105,7 +105,7 @@
     <string name="settings_font_scale_subtitle_example">Це підзаголовок статті</string>
     <string name="settings_font_scale_feed_source_example">Назва стрічки</string>
     <string name="deleting_feed_dialog_title">Видалення...</string>
-    <string name="sync_error_message">Виникла помилка під час синхронізації стрічок. Будь ласка, спробуйте ще раз.</string>
+    <string name="sync_error_message">Виникла помилка під час синхронізації стрічок - error code: %s :(Будь ласка, спробуйте ще раз.</string>
     <string name="link_with_error_report_title">Наступні стрічки не додано через помилку</string>
     <string name="account_text_field_server_url">URL сервера</string>
     <string name="account_text_field_username">Ім\'я користувача</string>
@@ -233,7 +233,7 @@
     <string name="settings_theme_system">Система</string>
     <string name="settings_theme_light">Світло</string>
     <string name="settings_theme_dark">Темний</string>
-    <string name="icloud_connection_error">Вибачте, але нам не вдається підключитися до iCloud. Перевірте, чи ви ввійшли в систему, чи ввімкнено iCloud Drive, і чи є у вас вільне місце</string>
+    <string name="icloud_connection_error">Вибачте, але нам не вдається підключитися до iCloud. Перевірте, чи ви ввійшли в систему, чи ввімкнено iCloud Drive, і чи є у вас вільне місце - error code: %s.</string>
     <string name="open_feed_settings">Відкрити налаштування стрічки</string>
     <string name="reader_mode_browser_button_content_description">Відкрити у браузері</string>
     <string name="delete_feed_confirmation_title">Видалити стрічку?</string>

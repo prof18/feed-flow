@@ -8,7 +8,11 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.ErrorCode
+import com.prof18.feedflow.core.model.SyncDownloadError
+import com.prof18.feedflow.core.model.SyncFeedError
 import com.prof18.feedflow.core.model.SyncResult
+import com.prof18.feedflow.core.model.SyncUploadError
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
@@ -66,7 +70,8 @@ internal class FeedSyncAndroidWorker(
             feedSyncer.updateFeedItemsToSyncDatabase()
             feedSyncer.closeDB()
 
-            val databaseFile = generateDatabaseFile() ?: return@withContext SyncResult.Error.General
+            val databaseFile = generateDatabaseFile()
+                ?: return@withContext SyncResult.General(SyncUploadError.DatabaseFileGeneration)
             val dropboxUploadParam = DropboxUploadParam(
                 path = "/${getDatabaseNameWithExtension()}",
                 file = databaseFile,
@@ -79,8 +84,8 @@ internal class FeedSyncAndroidWorker(
             return@withContext SyncResult.Success
         } catch (e: Exception) {
             logger.e("Upload to dropbox failed", e)
-            emitErrorMessage()
-            return@withContext SyncResult.Error.General
+            emitErrorMessage(SyncUploadError.DropboxUploadFailed)
+            return@withContext SyncResult.General(SyncUploadError.DropboxUploadFailed)
         }
     }
 
@@ -100,7 +105,7 @@ internal class FeedSyncAndroidWorker(
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Download from dropbox failed", e)
-            SyncResult.Error.General
+            SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
         }
     }
 
@@ -111,7 +116,7 @@ internal class FeedSyncAndroidWorker(
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed sources failed", e)
-            SyncResult.Error.General
+            SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
         }
     }
 
@@ -121,7 +126,7 @@ internal class FeedSyncAndroidWorker(
             SyncResult.Success
         } catch (e: Exception) {
             logger.e("Sync feed items failed", e)
-            SyncResult.Error.General
+            SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
         }
     }
 
@@ -171,7 +176,7 @@ internal class FeedSyncAndroidWorker(
 
             if (!dropboxDataSource.isClientSet()) {
                 logger.e { "Dropbox client is null" }
-                emitErrorMessage()
+                emitErrorMessage(SyncUploadError.DropboxClientRestoreError)
             }
         }
     }
@@ -179,8 +184,8 @@ internal class FeedSyncAndroidWorker(
     private fun getDatabaseNameWithExtension(): String =
         "${getDatabaseName()}.db"
 
-    private suspend fun emitErrorMessage() =
-        feedSyncMessageQueue.emitResult(SyncResult.Error.General)
+    private suspend fun emitErrorMessage(errorCode: ErrorCode) =
+        feedSyncMessageQueue.emitResult(SyncResult.General(errorCode))
 
     private suspend fun emitSuccessMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.Success)

@@ -23,7 +23,7 @@
     <string name="delete_feed">Slett</string>
     <string name="about_nav_bar">Om</string>
     <string name="open_source_licenses">Frie lisenser</string>
-    <string name="feed_error_message">Noe er galt med %s :(</string>
+    <string name="feed_error_message">Noe er galt med %s - error code: %s :(</string>
     <string name="export_dialog_title">Lagre OPML-fil</string>
     <string name="empty_feed_message">Intet mer å lese her.</string>
     <string name="export_feeds_button">Eksporter informasjonskanaler til OPML</string>
@@ -40,7 +40,7 @@
     <string name="add_feed">Legg til informasjonskanal</string>
     <string name="feed_add_in_progress_message">Vent mens informasjonskanalenes tilgjengelighet sjekkes. Dette kan ta en stund hvis det dreier seg om mange informasjonskanaler å importere.</string>
     <string name="force_feed_refresh">Påtving gjenoppfrisking av informasjonskanaler</string>
-    <string name="database_error">Kunne ikke hente informasjonskanalene. Prøv igjen eller start programmet på ny :(</string>
+    <string name="database_error">Kunne ikke hente informasjonskanalene. Prøv igjen eller start programmet på ny - error code: %s :(</string>
     <string name="invalid_rss_url">Lenken du angav er ikke en gyldig RSS-informasjonskanal</string>
     <string name="issue_content_template">Beskriv problemet og angi en lenke til RSS-informasjonskanalen som forårsaker problemene. Hvis du kan bør du legge ved en skjermavbildning og OPML-filen.</string>
     <string name="issue_content_title">Problem med FeedFlow</string>

@@ -29,7 +29,7 @@
     <string name="generic_error_message">Przepraszam, coś poszło nie tak :(</string>
     <string name="load_file_error_message">Nie można załadować pliku</string>
     <string name="default_browser">Domyślna przeglądarka</string>
-    <string name="feed_error_message">Coś jest nie tak z: %s :(</string>
+    <string name="feed_error_message">Coś jest nie tak z: %s - error code: %s :(</string>
     <string name="author_label">Stworzone z ❤️ przez</string>
     <string name="show_on_github">Pokaż na GitHub</string>
     <string name="open_source_licenses">Licencje open source</string>
@@ -38,7 +38,7 @@
     <string name="open_source_nav_bar">Licencje open source</string>
     <string name="report_issue_button">Zgłoś problem</string>
     <string name="open_website_button">Otwórz stronę internetową</string>
-    <string name="database_error">Wystąpił błąd podczas pobierania kanałów. Spróbuj ponownie lub uruchom ponownie aplikację :(</string>
+    <string name="database_error">Wystąpił błąd podczas pobierania kanałów. Spróbuj ponownie lub uruchom ponownie aplikację - error code: %s :(</string>
     <string name="force_feed_refresh">Wymuś odświeżenie kanałów</string>
     <string name="invalid_rss_url">Podany link nie jest prawidłowym kanałem RSS</string>
     <string name="import_export_opml">Importuj i eksportuj OPML</string>
@@ -116,7 +116,7 @@
     <string name="account_refresh_progress">Odświeżanie w toku</string>
     <string name="feed_sync_in_progress">Synchronizacja w toku. Aplikacja zostanie automatycznie zamknięta po jej zakończeniu.</string>
     <string name="no_dropbox_sync_yet">Dane nie są jeszcze zsynchronizowane z Dropbox. Kliknij przycisk kopii zapasowej, aby uruchomić synchronizację</string>
-    <string name="error_account_sync">Przepraszam, coś poszło nie tak podczas synchronizowania danych na Twoim koncie :(</string>
+    <string name="error_account_sync">Przepraszam, coś poszło nie tak podczas synchronizowania danych na Twoim koncie - error code: %s :(</string>
     <string name="icloud_sync_description">Połącz swoje konto iCloud, aby synchronizować subskrypcje kanałów, kategorie, przeczytane i dodane do zakładek artykuły między urządzeniami z systemem iOS, iPadOS i macOS. Dane zostaną zapisane w folderze aplikacji; FeedFlow nie będzie miał dostępu do żadnych Twoich plików</string>
     <string name="add_account_button">Dodaj konto</string>
     <string name="icloud_sync_success">Twoje konto iCloud zostało pomyślnie połączone</string>
@@ -139,7 +139,7 @@
     <string name="add_feed_generic_error">Wystąpił błąd podczas dodawania kanału. Spróbuj ponownie.</string>
     <string name="edit_feed_generic_error">Coś poszło nie tak podczas edycji kanału. Spróbuj ponownie.</string>
     <string name="feed_added_message_without_name">Kanał został dodany</string>
-    <string name="sync_error_message">Wystąpił błąd podczas synchronizacji kanałów. Spróbuj ponownie.</string>
+    <string name="sync_error_message">Wystąpił błąd podczas synchronizacji kanałów - error code: %s :(Spróbuj ponownie.</string>
     <string name="wrong_credentials_error_message">Dane uwierzytelniające są nieprawidłowe. Spróbuj ponownie.</string>
     <string name="wrong_url_error_message">Podany link jest nieprawidłowy. Spróbuj ponownie.</string>
     <string name="link_with_error_report_title">Następujące kanały nie zostały dodane z powodu błędu</string>

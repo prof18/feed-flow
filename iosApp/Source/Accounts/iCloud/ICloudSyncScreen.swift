@@ -53,18 +53,18 @@ struct ICloudSyncScreen: View {
         }
         .task {
             for await state in vmStoreOwner.instance.syncMessageQueue where state.isError() {
-                if state is SyncResultErrorICloudNotAvailable {
+                if let errorState = state as? SyncResultICloudNotAvailable {
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: feedFlowStrings.icloudConnectionError,
+                            title: feedFlowStrings.icloudConnectionError(errorState.errorCode.code),
                             subtitle: nil,
                             showBanner: true
                         )
                     )
-                } else {
+                } else if let errorState = state as? FeedSyncError {
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: feedFlowStrings.errorAccountSync,
+                            title: feedFlowStrings.errorAccountSync(errorState.code),
                             subtitle: nil,
                             showBanner: true
                         )

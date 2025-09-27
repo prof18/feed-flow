@@ -129,7 +129,7 @@ struct HomeScreen: View {
                 case .databaseError:
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: feedFlowStrings.databaseError,
+                            title: feedFlowStrings.databaseError(state.errorCode.code),
                             subtitle: nil,
                             showBanner: true
                         )
@@ -138,7 +138,7 @@ struct HomeScreen: View {
                 case let .feedErrorState(state):
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: feedFlowStrings.feedErrorMessage(state.feedName),
+                            title: feedFlowStrings.feedErrorMessage(state.feedName, state.errorCode.code),
                             subtitle: nil,
                             showBanner: true
                         )
@@ -147,7 +147,7 @@ struct HomeScreen: View {
                 case .syncError:
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: feedFlowStrings.syncErrorMessage,
+                            title: feedFlowStrings.syncErrorMessage(state.errorCode.code),
                             subtitle: nil,
                             showBanner: true
                         )

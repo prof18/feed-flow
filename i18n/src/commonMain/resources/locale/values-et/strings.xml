@@ -21,14 +21,14 @@
     <string name="generic_error_message">Vabandust, midagi läks valesti :(</string>
     <string name="load_file_error_message">Faili laadimine ei õnnestu</string>
     <string name="default_browser">Vaikimisi brauser</string>
-    <string name="feed_error_message">Midagi läks siin valesti: %s :(</string>
+    <string name="feed_error_message">Midagi läks siin valesti: %s - error code: %s :(</string>
     <string name="author_label">Suure ❤️\'ga arendanud</string>
     <string name="show_on_github">Vaata GitHubis</string>
     <string name="open_source_licenses">Avatud lähtekoodiga tarkvara litsentsid</string>
     <string name="about_nav_bar">Rakenduse teave</string>
     <string name="report_issue_button">Teata veast või problemist</string>
     <string name="open_website_button">Vaata veebis</string>
-    <string name="database_error">Midagi läks uudisvoogude laadimisel valesti. Palun proovi uuesti või taaskäivita rakendus :(</string>
+    <string name="database_error">Midagi läks uudisvoogude laadimisel valesti. Palun proovi uuesti või taaskäivita rakendus - error code: %s :(</string>
     <string name="force_feed_refresh">Laadi uudisvood kohe</string>
     <string name="invalid_rss_url">Sinu antud link ei ole korrektne RSS-uudisvoo link</string>
     <string name="import_export_opml">Import või eksport OPML-failist/faili</string>
@@ -66,7 +66,7 @@
     <string name="dropbox_sync_error">Dropboxiga ühenduse loomisel tekkis viga. Palun proovi uuesti</string>
     <string name="dropbox_sync_success">Ühenduse loomine sinu Dropboxi kontoga õnnestus</string>
     <string name="last_download">Viimane allalaadimine: %s</string>
-    <string name="error_account_sync">Vabandust, midagi läks sinu kasutajakonto andmete sünkroniseerimisel valesti :(</string>
+    <string name="error_account_sync">Vabandust, midagi läks sinu kasutajakonto andmete sünkroniseerimisel valesti - error code: %s :(</string>
     <string name="add_account_button">Lisa kasutajakonto</string>
     <string name="icloud_sync_success">Ühenduse loomine sinu iCloudi kontoga õnnestus</string>
     <string name="settings_hide_duplicated_title_from_desc">Peida pealkiri artikli kirjeldusest</string>
@@ -131,7 +131,7 @@
     <string name="deleting_feed_dialog_title">Kustutan...</string>
     <string name="edit_feed_generic_error">Uudisvoo muutmisel tekkis viga. Palun proovi uuesti.</string>
     <string name="feed_added_message_without_name">Uudisvoog on lisatud</string>
-    <string name="sync_error_message">Uudisvoogude sünkroniseerimisel tekkis viga. Palun proovi uuesti.</string>
+    <string name="sync_error_message">Uudisvoogude sünkroniseerimisel tekkis viga - error code: %s :(Palun proovi uuesti.</string>
     <string name="wrong_url_error_message">Lisatud link pole õige. Palun proovi uuesti.</string>
     <string name="link_with_error_report_title">Järgnevad uudisvood jäid vea tõttu lisamata</string>
     <string name="account_text_field_password">Salasõna</string>
@@ -233,7 +233,7 @@
     <string name="settings_theme_system">Süsteemi kujundus</string>
     <string name="settings_theme_light">Hele kujundus</string>
     <string name="settings_theme_dark">Tume kujundus</string>
-    <string name="icloud_connection_error">Vabandust, ühenduse loomine iCloudiga ei õnnestu. Palun kontrolli, et oleksid sisse loginud, iCloud Drive on kasutusel ja sinu seadmes on piisavalt ruumi</string>
+    <string name="icloud_connection_error">Vabandust, ühenduse loomine iCloudiga ei õnnestu. Palun kontrolli, et oleksid sisse loginud, iCloud Drive on kasutusel ja sinu seadmes on piisavalt ruumi - error code: %s.</string>
     <string name="open_feed_settings">Ava uudisvoo seadistused</string>
     <string name="reader_mode_browser_button_content_description">Ava veebibrauseris</string>
     <string name="delete_feed_confirmation_title">Kas kustutame uudisvoo?</string>

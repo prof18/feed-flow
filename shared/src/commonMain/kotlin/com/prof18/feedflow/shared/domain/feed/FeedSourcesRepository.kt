@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
+import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
@@ -68,7 +69,7 @@ internal class FeedSourcesRepository(
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.deleteFeedSource(feedSource.id)
                     .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError)
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.DeleteFeedSourceFailed))
                     }
             }
 
@@ -100,7 +101,7 @@ internal class FeedSourcesRepository(
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.editFeedSourceName(feedSourceId, newName)
                     .onErrorSuspend {
-                        feedStateRepository.emitErrorState(SyncError)
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditFeedSourceNameFailed))
                     }
             }
             else -> {

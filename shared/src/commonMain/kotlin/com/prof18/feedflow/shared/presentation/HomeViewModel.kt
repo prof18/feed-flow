@@ -164,19 +164,24 @@ class HomeViewModel internal constructor(
                             mutableUIErrorState.emit(
                                 UIErrorState.FeedErrorState(
                                     feedName = error.failingSourceName,
+                                    errorCode = error.errorCode,
                                 ),
                             )
                         }
 
                         is DatabaseError -> {
                             mutableUIErrorState.emit(
-                                UIErrorState.DatabaseError,
+                                UIErrorState.DatabaseError(
+                                    errorCode = error.errorCode,
+                                ),
                             )
                         }
 
                         is SyncError -> {
                             mutableUIErrorState.emit(
-                                UIErrorState.SyncError,
+                                UIErrorState.SyncError(
+                                    errorCode = error.errorCode,
+                                ),
                             )
                         }
                     }

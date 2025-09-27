@@ -52,13 +52,15 @@ struct DropboxSyncScreen: View {
         }
         .task {
             for await state in vmStoreOwner.instance.syncMessageQueue where state.isError() {
-                self.appState.snackbarQueue.append(
-                    SnackbarData(
-                        title: feedFlowStrings.errorAccountSync,
-                        subtitle: nil,
-                        showBanner: true
+                if let errorState = state as? any SyncResultError {
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.errorAccountSync(errorState.errorCode.code),
+                            subtitle: nil,
+                            showBanner: true
+                        )
                     )
-                )
+                }
             }
         }
     }

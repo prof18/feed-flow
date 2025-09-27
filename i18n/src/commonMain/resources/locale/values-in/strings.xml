@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_done">Selesai</string>
-    <string name="feed_error_message">Ada yang salah dengan: %s :(</string>
+    <string name="feed_error_message">Ada yang salah dengan: %s - error code: %s :(</string>
     <string name="icloud_sync_description">Hubungkan akun iCloud Anda untuk menyelaraskan langganan umpan, kategori, artikel yang telah dibaca dan ditandai antara perangkat iOS, iPadOS, dan macOS Anda. Data akan disimpan dalam folder khusus aplikasi; FeedFlow tidak akan memiliki akses ke berkas Anda</string>
     <string name="feed_added_message">Umpan %s ditambahkan</string>
     <string name="about_the_app">FeedFlow adalah Pembaca RSS minimalis yang didasarkan pada pendapat pribadi penulis. Artikel dibuka di situs web masing-masing, dan Anda dapat memilih peramban favorit yang berfokus pada privasi untuk memisahkan pengalaman membaca Anda dari peramban utama. Jika Anda ingin menghindari peramban, FeedFlow menawarkan mode pembaca untuk menikmati konten artikel tanpa gangguan apa pun.\nAnda dapat mengimpor dan mengekspor koleksi RSS Anda dari dan ke berkas OPML.</string>
@@ -37,7 +37,7 @@
     <string name="open_source_nav_bar">Lisensi open source</string>
     <string name="report_issue_button">Laporkan masalah</string>
     <string name="open_website_button">Buka website</string>
-    <string name="database_error">Terjadi kesalahan saat mengambil umpan. Silakan coba lagi atau mulai ulang aplikasi :(</string>
+    <string name="database_error">Terjadi kesalahan saat mengambil umpan. Silakan coba lagi atau mulai ulang aplikasi - error code: %s :(</string>
     <string name="force_feed_refresh">Paksa penyegaran umpan</string>
     <string name="invalid_rss_url">Tautan yang Anda berikan bukan umpan RSS yang valid</string>
     <string name="import_export_opml">Impor dan ekspor OPML</string>
@@ -104,7 +104,7 @@
     <string name="account_refresh_progress">Penyegaran sedang berlangsung</string>
     <string name="feed_sync_in_progress">Sinkronisasi sedang berlangsung. Aplikasi akan otomatis ditutup setelah selesai.</string>
     <string name="no_dropbox_sync_yet">Data belum disinkronkan dengan Dropbox. Klik tombol cadangan untuk memicu sinkronisasi</string>
-    <string name="error_account_sync">Maaf, terjadi kesalahan saat menyinkronkan data di akun Anda :(</string>
+    <string name="error_account_sync">Maaf, terjadi kesalahan saat menyinkronkan data di akun Anda - error code: %s :(</string>
     <string name="add_account_button">Tambah akun</string>
     <string name="icloud_sync_success">Akun iCloud Anda berhasil terhubung</string>
     <string name="no_icloud_sync_yet">Data belum disinkronkan dengan iCloud. Klik tombol cadangan untuk memicu sinkronisasi</string>
@@ -131,7 +131,7 @@
     <string name="feed_add_in_progress_message">Harap tunggu, ketersediaan setiap umpan sedang diperiksa. Operasi ini dapat memakan waktu cukup lama tergantung pada jumlah umpan yang Anda impor</string>
     <string name="edit_feed_generic_error">Terjadi kesalahan saat menyunting umpan. Silakan ulangi.</string>
     <string name="feed_added_message_without_name">Umpan ditambahkan</string>
-    <string name="sync_error_message">Terjadi kesalahan saat sinkronisasi umpan. Silakan ulangi.</string>
+    <string name="sync_error_message">Terjadi kesalahan saat sinkronisasi umpan - error code: %s :(Silakan ulangi.</string>
     <string name="wrong_credentials_error_message">Kredensial salah. Silakan coba lagi.</string>
     <string name="add_feed_generic_error">Terjadi kesalahan saat menambahkan umpan. Silakan ulangi</string>
     <string name="account_text_field_password">Sandi</string>

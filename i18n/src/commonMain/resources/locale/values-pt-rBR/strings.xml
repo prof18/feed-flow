@@ -28,7 +28,7 @@
     <string name="generic_error_message">Desculpe, algo deu errado :(</string>
     <string name="load_file_error_message">O arquivo foi incapaz de carregar</string>
     <string name="default_browser">Navegador padrão</string>
-    <string name="feed_error_message">Algo está errado com: %s :(</string>
+    <string name="feed_error_message">Algo está errado com: %s - error code: %s :(</string>
     <string name="author_label">Desenvolvido com ❤️ por</string>
     <string name="show_on_github">Mostrar no GitHub</string>
     <string name="open_source_licenses">Licenças Open source</string>
@@ -36,7 +36,7 @@
     <string name="open_source_nav_bar">Licenças Open source</string>
     <string name="report_issue_button">Reportar problema</string>
     <string name="open_website_button">Abrir website</string>
-    <string name="database_error">Algo deu errado durante a recuperação dos feeds. Tente novamente ou reinicie o aplicativo :(</string>
+    <string name="database_error">Algo deu errado durante a recuperação dos feeds. Tente novamente ou reinicie o aplicativo - error code: %s :(</string>
     <string name="force_feed_refresh">Força recarregamento de feeds</string>
     <string name="invalid_rss_url">O link fornecido não é um feed RSS válido</string>
     <string name="import_export_opml">Importe e exporte OPML</string>

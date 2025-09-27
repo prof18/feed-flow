@@ -30,7 +30,7 @@
     <string name="export_started_message">Generování exportu</string>
     <string name="generic_error_message">Omlouváme se, něco se pokazilo :(</string>
     <string name="load_file_error_message">Nelze načíst soubor</string>
-    <string name="feed_error_message">Vyskytla se chyba: %s :(</string>
+    <string name="feed_error_message">Vyskytla se chyba: %s - error code: %s :(</string>
     <string name="author_label">Vytvořeno s ❤️</string>
     <string name="show_on_github">Zobrazit na GitHubu</string>
     <string name="open_source_licenses">Open source licence</string>
@@ -93,7 +93,7 @@
     <string name="dropbox_sync_success">Váš účet Dropbox je úspěšně připojen</string>
     <string name="last_upload">Naposledy nahrané: %s</string>
     <string name="account_refresh_progress">Probíhající aktualizace</string>
-    <string name="error_account_sync">Omlouváme se, něco pokazilo při synchronizaci dat ve vašem účtu :(</string>
+    <string name="error_account_sync">Omlouváme se, něco pokazilo při synchronizaci dat ve vašem účtu - error code: %s :(</string>
     <string name="add_account_button">Přidat účet</string>
     <string name="icloud_sync_success">Váš účet iCloud je úspěšně připojen</string>
     <string name="no_icloud_sync_yet">Údaje nejsou synchronizovány s iCloud. Klepnutím na tlačítko zálohování spustíte synchronizaci</string>
@@ -113,7 +113,7 @@
     <string name="add_feed_generic_error">Při přidávání zdroje došlo k chybě. Zkuste to prosím znovu</string>
     <string name="edit_feed_generic_error">Při úpravě zdroje se něco pokazilo. Zkuste to prosím znovu.</string>
     <string name="feed_added_message_without_name">Zdroj přidán</string>
-    <string name="sync_error_message">Při synchronizaci zdrojů došlo k chybě. Zkuste to prosím znovu.</string>
+    <string name="sync_error_message">Při synchronizaci zdrojů došlo k chybě - error code: %s :(Zkuste to prosím znovu.</string>
     <string name="wrong_credentials_error_message">Přihlášení není správné. Prosím, zkuste to znovu.</string>
     <string name="account_text_field_server_url">URL serveru</string>
     <string name="account_text_field_username">Uživatelské jméno</string>
@@ -188,7 +188,7 @@
     <string name="error_feed_add">Při přidávání zdroje se něco pokazilo</string>
     <string name="menu_remove_from_pinned">Odepnout</string>
     <string name="link_with_error_report_title">Následující zdroje nebyly přidány kvůli chybě</string>
-    <string name="database_error">Při načítání zdrojů něco pokazilo. Zkuste to prosím znovu nebo aplikaci restartujte :(</string>
+    <string name="database_error">Při načítání zdrojů něco pokazilo. Zkuste to prosím znovu nebo aplikaci restartujte - error code: %s :(</string>
     <string name="settings_reader_mode">Otevřít články v režimu čtečky</string>
     <string name="settings_notification_no_feed">Vypadá to, že jste dosud nepřidali žádné zdroje. Přidejte nějaké, abyste začali odebírat upozornění!</string>
     <string name="settings_notification_check_period">Frekvence kontroly upozornění</string>

@@ -29,7 +29,7 @@
     <string name="generic_error_message">Üzgünüz, bir şeyler ters gitti :(</string>
     <string name="load_file_error_message">Dosya yüklenemedi</string>
     <string name="default_browser">Varsayılan tarayıcı</string>
-    <string name="feed_error_message">Şunda bir sorun var: %s :(</string>
+    <string name="feed_error_message">Şunda bir sorun var: %s - error code: %s :(</string>
     <string name="author_label">❤️ ile geliştiren</string>
     <string name="show_on_github">GitHub\'da göster</string>
     <string name="open_source_licenses">Açık kaynak lisansları</string>
@@ -38,7 +38,7 @@
     <string name="open_source_nav_bar">Açık kaynak lisansları</string>
     <string name="report_issue_button">Sorun bildir</string>
     <string name="open_website_button">Web sitesini aç</string>
-    <string name="database_error">Akışlar alınırken bir sorun oluştu. Lütfen tekrar deneyin veya uygulamayı yeniden başlatın :(</string>
+    <string name="database_error">Akışlar alınırken bir sorun oluştu. Lütfen tekrar deneyin veya uygulamayı yeniden başlatın - error code: %s :(</string>
     <string name="force_feed_refresh">Akışları yenilemeye zorla</string>
     <string name="invalid_rss_url">Sağladığınız bağlantı geçerli bir RSS akışı değil</string>
     <string name="import_export_opml">OPML içe ve dışa aktarma</string>
@@ -116,7 +116,7 @@
     <string name="account_refresh_progress">Yenileme sürüyor</string>
     <string name="feed_sync_in_progress">Eşitleme sürüyor. Tamamlandığında uygulama otomatik olarak kapanacaktır.</string>
     <string name="no_dropbox_sync_yet">Veriler henüz Dropbox ile eşitlenmedi. Bir eşitleme başlatmak için yedekle düğmesine tıklayın</string>
-    <string name="error_account_sync">Üzgünüz, hesabınızdaki veriler eşitlenirken bir sorun oluştu :(</string>
+    <string name="error_account_sync">Üzgünüz, hesabınızdaki veriler eşitlenirken bir sorun oluştu - error code: %s :(</string>
     <string name="icloud_sync_description">iOS, iPadOS ve macOS cihazlarınız arasında akış aboneliklerini, kategorileri, okunmuş ve yer imlerine eklenmiş makaleleri eşitlemek için iCloud hesabınızı bağlayın. Veriler uygulamaya özel bir klasöre kaydedilecektir; FeedFlow\'un dosyalarınızın hiçbirine erişimi olmayacaktır</string>
     <string name="add_account_button">Hesap ekle</string>
     <string name="icloud_sync_success">iCloud hesabınız başarıyla bağlandı</string>
@@ -139,7 +139,7 @@
     <string name="add_feed_generic_error">Akış eklenirken bir hata oluştu. Lütfen tekrar deneyin</string>
     <string name="edit_feed_generic_error">Akış düzenlenirken bir şeyler ters gitti. Lütfen tekrar deneyin.</string>
     <string name="feed_added_message_without_name">Akış eklendi</string>
-    <string name="sync_error_message">Akışlar eşitlenirken bir hata oluştu. Lütfen tekrar deneyin.</string>
+    <string name="sync_error_message">Akışlar eşitlenirken bir hata oluştu - error code: %s :(Lütfen tekrar deneyin.</string>
     <string name="wrong_credentials_error_message">Kimlik bilgileri doğru değil. Lütfen tekrar deneyin.</string>
     <string name="wrong_url_error_message">Sağlanan bağlantı doğru değil. Lütfen tekrar deneyin.</string>
     <string name="link_with_error_report_title">Aşağıdaki akışlar bir hata nedeniyle eklenmedi</string>
@@ -233,5 +233,5 @@
     <string name="settings_theme_system">Sistem</string>
     <string name="settings_theme_light">Açık</string>
     <string name="settings_theme_dark">Koyu</string>
-    <string name="icloud_connection_error">Üzgünüz, iCloud\'a bağlanılamıyor. Lütfen oturum açıp açmadığınızı, iCloud Drive\'ın açık olup olmadığını ve yeterli alanınızın olup olmadığını kontrol edin</string>
+    <string name="icloud_connection_error">Üzgünüz, iCloud\'a bağlanılamıyor. Lütfen oturum açıp açmadığınızı, iCloud Drive\'ın açık olup olmadığını ve yeterli alanınızın olup olmadığını kontrol edin - error code: %s.</string>
 </resources>

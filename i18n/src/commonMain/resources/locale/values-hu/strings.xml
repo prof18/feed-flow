@@ -4,7 +4,7 @@
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="feed_add_in_progress_message">Kérlek várj, folyamatban van az összes feed elérhetőségének ellenőrzése. Ez a művelet eltarthat egy ideig attól függően, hogy hány feedet importálsz</string>
     <string name="force_feed_refresh">Feedek frissítése mindenképp</string>
-    <string name="database_error">Hiba történt a feedek betöltése közben. Próbáld újra, vagy indítsd újra az alkalmazást. :(</string>
+    <string name="database_error">Hiba történt a feedek betöltése közben. Próbáld újra, vagy indítsd újra az alkalmazást. - error code: %s :(</string>
     <string name="import_dialog_title">OMPL fájl kiválasztása</string>
     <string name="feeds_import_done_message">Importálás kész</string>
     <string name="feeds_importing_message">Feed importálása</string>
@@ -31,7 +31,7 @@
     <string name="wrong_link_report_title">Az alábbi feedeket nem sikerült hozzáadni, mert nem érvényes RSS feedek</string>
     <string name="open_source_licenses">Nyílt forráskódú engedélyek</string>
     <string name="browser_selection_button">Böngésző</string>
-    <string name="feed_error_message">Valami nem stimmel ezzel: %s :(</string>
+    <string name="feed_error_message">Valami nem stimmel ezzel: %s - error code: %s :(</string>
     <string name="issue_report_title">A FeedFlow-val kapcsolatos probléma bejelentése</string>
     <string name="export_dialog_title">OMPL fájl mentése</string>
     <string name="new_release_available_title">Elérhető egy frissebb verzió:</string>
@@ -106,7 +106,7 @@
     <string name="dropbox_sync_mobile_description">A Csatlakoztatás gombra kattintással átirányítunk a Dropbox alkalmazásba vagy a Dropbox weboldalra. A fiókod csatlakoztatása után visszatérhetsz a FeedFlow-ba</string>
     <string name="dropbox_sync_error">Hiba történt a Drpobox fiókod csatlakoztatása közben. Próbáld újra</string>
     <string name="no_dropbox_sync_yet">Az adataid még nem szinkronizálódtak Dropbox-ba. Nyomd meg a biztonsági mentés gombot a szinkronizáláshoz</string>
-    <string name="error_account_sync">Hiba történt az adatok szinkronizálása közben :(</string>
+    <string name="error_account_sync">Hiba történt az adatok szinkronizálása közben - error code: %s :(</string>
     <string name="dropbox_sync_success">Sikeresen csatlakoztattad a Dropbox fiókodat</string>
     <string name="add_account_button">Fiól hozzáadása</string>
     <string name="no_icloud_sync_yet">Az adataid még nem szinkronizálódtak iCloudba. Nyomd meg a biztonsági mentés gombot a szinkronizáláshoz</string>
@@ -128,7 +128,7 @@
     <string name="settings_auto_delete_period_one_month">Egy hónapos</string>
     <string name="add_feed_generic_error">Hiba történt a hírfolyam hozzáadása közben. Próbáld újra</string>
     <string name="edit_feed_generic_error">Hiba történt a hírfolyam szerkesztése közben. Próbáld újra.</string>
-    <string name="sync_error_message">Hiba történt a hírfolyamok szinkronizálásakor. Próbáld újra.</string>
+    <string name="sync_error_message">Hiba történt a hírfolyamok szinkronizálásakor - error code: %s :(Próbáld újra.</string>
     <string name="feed_added_message_without_name">Hírfolyam hozzáadva</string>
     <string name="link_with_error_report_title">Az alábbi hírfolyamokat nem sikerült felvenni</string>
     <string name="account_text_field_server_url">Kiszolgáló URL</string>

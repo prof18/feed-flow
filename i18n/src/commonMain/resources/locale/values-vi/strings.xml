@@ -42,7 +42,7 @@
     <string name="dropbox_sync_error">Đã xảy ra lỗi khi kết nối với Dropbox. Vui lòng thử lại</string>
     <string name="dropbox_sync_success">Kết nối tài khoản Dropbox thành công</string>
     <string name="last_upload">Tải lên lần cuối: %s</string>
-    <string name="error_account_sync">Đã xảy ra lỗi khi đồng bộ dữ liệu trong tài khoản của bạn :(</string>
+    <string name="error_account_sync">Đã xảy ra lỗi khi đồng bộ dữ liệu trong tài khoản của bạn - error code: %s :(</string>
     <string name="no_dropbox_sync_yet">Dữ liệu chưa được đồng bộ hóa với Dropbox. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
     <string name="settings_hide_duplicated_title_from_desc">Ẩn tựa đề trùng phụ đề</string>
     <string name="reader_mode_font_size">Cỡ chữ</string>
@@ -62,7 +62,7 @@
     <string name="open_source_licenses">Giấy phép mã nguồn mở</string>
     <string name="show_on_github">GitHub</string>
     <string name="open_website_button">Trang chủ</string>
-    <string name="database_error">Đã xảy ra lỗi trong quá trình truy xuất nguồn tin. Hãy thử lại hoặc khởi động lại ứng dụng :(</string>
+    <string name="database_error">Đã xảy ra lỗi trong quá trình truy xuất nguồn tin. Hãy thử lại hoặc khởi động lại ứng dụng - error code: %s :(</string>
     <string name="new_release_available_title">FeedFlow đã có phiên bản mới:</string>
     <string name="close_menu_button">Đóng menu</string>
     <string name="settings_app_title">Ứng dụng</string>
@@ -78,7 +78,7 @@
     <string name="no_icloud_sync_yet">Dữ liệu chưa được đồng bộ hóa với iCloud. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
     <string name="settings_toggle_show_read_articles">Vẫn hiện các bài viết đã đọc</string>
     <string name="about_button">Giới thiệu</string>
-    <string name="feed_error_message">Xảy ra lỗi với: %s :(</string>
+    <string name="feed_error_message">Xảy ra lỗi với: %s - error code: %s :(</string>
     <string name="dropbox_sync_common_description">Kết nối tài khoản Dropbox của bạn để đồng bộ hóa các nguồn tin, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn.</string>
     <string name="last_download">Tải xuống lần cuối: %s</string>
     <string name="wrong_link_report_title">Các nguồn tin sau đây không được thêm vào vì chúng không hợp lệ</string>
@@ -132,7 +132,7 @@
     <string name="add_feed_generic_error">Đã xảy ra lỗi khi thêm nguồn tin. Vui lòng thử lại</string>
     <string name="edit_feed_generic_error">Đã xảy ra lỗi khi chỉnh sửa nguồn tin. Vui lòng thử lại.</string>
     <string name="feed_added_message_without_name">Đã thêm nguồn tin</string>
-    <string name="sync_error_message">Đã xảy ra lỗi khi đồng bộ nguồn tin. Vui lòng thử lại.</string>
+    <string name="sync_error_message">Đã xảy ra lỗi khi đồng bộ nguồn tin - error code: %s :(Vui lòng thử lại.</string>
     <string name="wrong_credentials_error_message">Thông tin đăng nhập không đúng. Vui lòng thử lại.</string>
     <string name="wrong_url_error_message">Liên kết đã cung cấp không đúng. Vui lòng thử lại.</string>
     <string name="link_with_error_report_title">Các nguồn tin sau đây không được thêm vào vì có lỗi</string>
@@ -233,7 +233,7 @@
     <string name="settings_theme_system">Giống hệ thống</string>
     <string name="settings_theme_light">Sáng</string>
     <string name="settings_theme_dark">Tối</string>
-    <string name="icloud_connection_error">Rất tiếc, chúng tôi không thể kết nối với iCloud. Vui lòng kiểm tra xem bạn đã đăng nhập chưa, iCloud Drive đã được bật chưa và bạn còn dung lượng trống không</string>
+    <string name="icloud_connection_error">Rất tiếc, chúng tôi không thể kết nối với iCloud. Vui lòng kiểm tra xem bạn đã đăng nhập chưa, iCloud Drive đã được bật chưa và bạn còn dung lượng trống không - error code: %s.</string>
     <string name="open_feed_settings">Mở thiết lập nguồn tin</string>
     <string name="reader_mode_browser_button_content_description">Mở trong trình duyệt</string>
     <string name="delete_feed_confirmation_title">Xóa nguồn tin?</string>

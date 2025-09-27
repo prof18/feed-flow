@@ -23,34 +23,46 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import java.awt.Desktop
 import java.net.URI
 
+data class MenuBarActions(
+    val onRefreshClick: () -> Unit,
+    val onMarkAllReadClick: () -> Unit,
+    val onImportExportClick: () -> Unit,
+    val onClearOldFeedClick: () -> Unit,
+    val onAboutClick: () -> Unit,
+    val onBugReportClick: () -> Unit,
+    val onForceRefreshClick: () -> Unit,
+    val onFeedFontScaleClick: () -> Unit,
+    val deleteFeeds: () -> Unit,
+)
+
+data class MenuBarSettings(
+    val setMarkReadWhenScrolling: (Boolean) -> Unit,
+    val setShowReadItem: (Boolean) -> Unit,
+    val setReaderMode: (Boolean) -> Unit,
+    val onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
+    val setCrashReportingEnabled: (Boolean) -> Unit,
+    val onFeedOrderSelected: (FeedOrder) -> Unit,
+    val onThemeModeSelected: (ThemeMode) -> Unit,
+)
+
+data class MenuBarState(
+    val showDebugMenu: Boolean,
+    val feedFilter: FeedFilter,
+    val settingsState: SettingsState,
+)
+
 @Composable
 fun FrameWindowScope.FeedFlowMenuBar(
-    showDebugMenu: Boolean,
-    feedFilter: FeedFilter,
-    settingsState: SettingsState,
-    onRefreshClick: () -> Unit,
-    onMarkAllReadClick: () -> Unit,
-    onImportExportClick: () -> Unit,
-    onClearOldFeedClick: () -> Unit,
-    onAboutClick: () -> Unit,
-    onBugReportClick: () -> Unit,
-    onForceRefreshClick: () -> Unit,
-    deleteFeeds: () -> Unit,
-    setMarkReadWhenScrolling: (Boolean) -> Unit,
-    setShowReadItem: (Boolean) -> Unit,
-    setReaderMode: (Boolean) -> Unit,
-    onFeedFontScaleClick: () -> Unit,
-    onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
-    setCrashReportingEnabled: (Boolean) -> Unit,
-    onFeedOrderSelected: (FeedOrder) -> Unit,
-    onThemeModeSelected: (ThemeMode) -> Unit,
+    state: MenuBarState,
+    actions: MenuBarActions,
+    settings: MenuBarSettings,
 ) {
     MenuBar {
         Menu(LocalFeedFlowStrings.current.fileMenu, mnemonic = 'F') {
             Item(
                 text = LocalFeedFlowStrings.current.refreshFeeds,
                 onClick = {
-                    onRefreshClick()
+                    actions.onRefreshClick()
                 },
                 shortcut = KeyShortcut(Key.R, meta = true),
             )
@@ -58,7 +70,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Item(
                 text = LocalFeedFlowStrings.current.forceFeedRefresh,
                 onClick = {
-                    onForceRefreshClick()
+                    actions.onForceRefreshClick()
                 },
                 shortcut = KeyShortcut(Key.R, meta = true, shift = true),
             )
@@ -66,49 +78,49 @@ fun FrameWindowScope.FeedFlowMenuBar(
             Item(
                 text = LocalFeedFlowStrings.current.markAllReadButton,
                 onClick = {
-                    onMarkAllReadClick()
+                    actions.onMarkAllReadClick()
                 },
             )
 
             Item(
                 text = LocalFeedFlowStrings.current.clearOldArticlesButton,
                 onClick = {
-                    onClearOldFeedClick()
+                    actions.onClearOldFeedClick()
                 },
             )
 
             Menu(LocalFeedFlowStrings.current.settingsTheme) {
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsThemeSystem,
-                    selected = settingsState.themeMode == ThemeMode.SYSTEM,
-                    onClick = { onThemeModeSelected(ThemeMode.SYSTEM) },
+                    selected = state.settingsState.themeMode == ThemeMode.SYSTEM,
+                    onClick = { settings.onThemeModeSelected(ThemeMode.SYSTEM) },
                 )
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsThemeLight,
-                    selected = settingsState.themeMode == ThemeMode.LIGHT,
-                    onClick = { onThemeModeSelected(ThemeMode.LIGHT) },
+                    selected = state.settingsState.themeMode == ThemeMode.LIGHT,
+                    onClick = { settings.onThemeModeSelected(ThemeMode.LIGHT) },
                 )
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsThemeDark,
-                    selected = settingsState.themeMode == ThemeMode.DARK,
-                    onClick = { onThemeModeSelected(ThemeMode.DARK) },
+                    selected = state.settingsState.themeMode == ThemeMode.DARK,
+                    onClick = { settings.onThemeModeSelected(ThemeMode.DARK) },
                 )
             }
 
             DebugMenu(
-                showDebugMenu = showDebugMenu,
-                deleteFeeds = deleteFeeds,
+                showDebugMenu = state.showDebugMenu,
+                deleteFeeds = actions.deleteFeeds,
             )
         }
 
         Menu(LocalFeedFlowStrings.current.settingsTitleFeed) {
             val navigator = LocalNavigator.currentOrThrow
 
-            if (feedFilter is FeedFilter.Source) {
+            if (state.feedFilter is FeedFilter.Source) {
                 Item(
                     text = LocalFeedFlowStrings.current.editFeed,
                     onClick = {
-                        navigator.push(EditFeedScreen(feedFilter.feedSource))
+                        navigator.push(EditFeedScreen(state.feedFilter.feedSource))
                     },
                 )
             }
@@ -122,7 +134,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
 
             Item(
                 text = LocalFeedFlowStrings.current.importExportOpml,
-                onClick = onImportExportClick,
+                onClick = actions.onImportExportClick,
             )
 
             Item(
@@ -134,7 +146,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
 
             Item(
                 text = LocalFeedFlowStrings.current.feedListAppearance,
-                onClick = onFeedFontScaleClick,
+                onClick = actions.onFeedFontScaleClick,
             )
 
             Item(
@@ -148,55 +160,55 @@ fun FrameWindowScope.FeedFlowMenuBar(
         Menu(LocalFeedFlowStrings.current.settingsBehaviourTitle, mnemonic = 'B') {
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.settingsReaderMode,
-                checked = settingsState.isReaderModeEnabled,
-                onCheckedChange = setReaderMode,
+                checked = state.settingsState.isReaderModeEnabled,
+                onCheckedChange = settings.setReaderMode,
             )
 
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.toggleMarkReadWhenScrolling,
-                checked = settingsState.isMarkReadWhenScrollingEnabled,
-                onCheckedChange = setMarkReadWhenScrolling,
+                checked = state.settingsState.isMarkReadWhenScrollingEnabled,
+                onCheckedChange = settings.setMarkReadWhenScrolling,
             )
 
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
-                checked = settingsState.isShowReadItemsEnabled,
-                onCheckedChange = setShowReadItem,
+                checked = state.settingsState.isShowReadItemsEnabled,
+                onCheckedChange = settings.setShowReadItem,
             )
 
             Menu(LocalFeedFlowStrings.current.settingsAutoDelete) {
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodDisabled,
-                    selected = settingsState.autoDeletePeriod == AutoDeletePeriod.DISABLED,
-                    onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.DISABLED) },
+                    selected = state.settingsState.autoDeletePeriod == AutoDeletePeriod.DISABLED,
+                    onClick = { settings.onAutoDeletePeriodSelected(AutoDeletePeriod.DISABLED) },
                 )
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneWeek,
-                    selected = settingsState.autoDeletePeriod == AutoDeletePeriod.ONE_WEEK,
-                    onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_WEEK) },
+                    selected = state.settingsState.autoDeletePeriod == AutoDeletePeriod.ONE_WEEK,
+                    onClick = { settings.onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_WEEK) },
                 )
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodTwoWeeks,
-                    selected = settingsState.autoDeletePeriod == AutoDeletePeriod.TWO_WEEKS,
-                    onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.TWO_WEEKS) },
+                    selected = state.settingsState.autoDeletePeriod == AutoDeletePeriod.TWO_WEEKS,
+                    onClick = { settings.onAutoDeletePeriodSelected(AutoDeletePeriod.TWO_WEEKS) },
                 )
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneMonth,
-                    selected = settingsState.autoDeletePeriod == AutoDeletePeriod.ONE_MONTH,
-                    onClick = { onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_MONTH) },
+                    selected = state.settingsState.autoDeletePeriod == AutoDeletePeriod.ONE_MONTH,
+                    onClick = { settings.onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_MONTH) },
                 )
             }
 
             Menu(LocalFeedFlowStrings.current.settingsFeedOrderTitle) {
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsFeedOrderNewestFirst,
-                    selected = settingsState.feedOrder == FeedOrder.NEWEST_FIRST,
-                    onClick = { onFeedOrderSelected(FeedOrder.NEWEST_FIRST) },
+                    selected = state.settingsState.feedOrder == FeedOrder.NEWEST_FIRST,
+                    onClick = { settings.onFeedOrderSelected(FeedOrder.NEWEST_FIRST) },
                 )
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsFeedOrderOldestFirst,
-                    selected = settingsState.feedOrder == FeedOrder.OLDEST_FIRST,
-                    onClick = { onFeedOrderSelected(FeedOrder.OLDEST_FIRST) },
+                    selected = state.settingsState.feedOrder == FeedOrder.OLDEST_FIRST,
+                    onClick = { settings.onFeedOrderSelected(FeedOrder.OLDEST_FIRST) },
                 )
             }
         }
@@ -204,13 +216,13 @@ fun FrameWindowScope.FeedFlowMenuBar(
         Menu(LocalFeedFlowStrings.current.settingsHelpTitle, mnemonic = 'B') {
             Item(
                 text = LocalFeedFlowStrings.current.reportIssueButton,
-                onClick = onBugReportClick,
+                onClick = actions.onBugReportClick,
             )
 
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.settingsCrashReporting,
-                checked = settingsState.isCrashReportingEnabled,
-                onCheckedChange = setCrashReportingEnabled,
+                checked = state.settingsState.isCrashReportingEnabled,
+                onCheckedChange = settings.setCrashReportingEnabled,
             )
 
             if (getDesktopOS().isLinux()) {
@@ -227,7 +239,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
 
             Item(
                 text = LocalFeedFlowStrings.current.aboutButton,
-                onClick = onAboutClick,
+                onClick = actions.onAboutClick,
             )
         }
     }

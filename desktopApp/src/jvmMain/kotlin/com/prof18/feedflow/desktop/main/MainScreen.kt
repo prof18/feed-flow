@@ -1,4 +1,4 @@
-package com.prof18.feedflow.desktop
+package com.prof18.feedflow.desktop.main
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.SnackbarHostState

@@ -1,10 +1,14 @@
 package com.prof18.feedflow.desktop
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import coil3.ImageLoader
@@ -33,6 +37,7 @@ import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import org.jetbrains.skiko.SkikoProperties.libraryPath
+import java.awt.Toolkit
 import java.io.File
 import java.io.InputStream
 import java.util.Properties
@@ -43,9 +48,7 @@ fun main() {
 
     application {
         val settingsRepository = DI.koin.get<SettingsRepository>()
-        val savedWidthDp = settingsRepository.getDesktopWindowWidthDp()
-        val savedHeightDp = settingsRepository.getDesktopWindowHeightDp()
-        val windowState = rememberWindowState(size = DpSize(savedWidthDp.dp, savedHeightDp.dp))
+        val windowState = windowState(settingsRepository)
 
         val koin = DI.koin
         setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
@@ -182,6 +185,46 @@ private fun setupTelemetryAndCrashReporting(appConfig: DesktopConfig) {
 
     val telemetryClient = DI.koin.get<TelemetryDeckClient>()
     telemetryClient.signal("TelemetryDeck.Session.started")
+}
+
+@Composable
+private fun windowState(settingsRepository: SettingsRepository): WindowState {
+    val savedWidthDp = settingsRepository.getDesktopWindowWidthDp()
+    val savedHeightDp = settingsRepository.getDesktopWindowHeightDp()
+    val savedPositionX = settingsRepository.getDesktopWindowXPositionDp()
+    val savedPositionY = settingsRepository.getDesktopWindowYPositionDp()
+
+    val toolkit = Toolkit.getDefaultToolkit()
+    val screenSize = toolkit.screenSize
+    val maxWidth = screenSize.width.dp
+    val maxHeight = screenSize.height.dp
+
+    val width = savedWidthDp.dp.coerceAtMost(maxWidth)
+    val height = savedHeightDp.dp.coerceAtMost(maxHeight)
+
+    val xPos = savedPositionX?.dp
+        ?.coerceIn(0.dp, (maxWidth - width).coerceAtLeast(minimumValue = 0.dp))
+        ?: Dp.Unspecified
+
+    val yPos = savedPositionY?.dp
+        ?.coerceIn(0.dp, (maxHeight - height).coerceAtLeast(minimumValue = 0.dp))
+        ?: Dp.Unspecified
+
+    val position = if (xPos != Dp.Unspecified && yPos != Dp.Unspecified) {
+        println("Setting position to $xPos, $yPos")
+        WindowPosition.Absolute(
+            x = xPos,
+            y = yPos,
+        )
+    } else {
+        WindowPosition.PlatformDefault
+    }
+
+    val windowState = rememberWindowState(
+        size = DpSize(width, height),
+        position = position,
+    )
+    return windowState
 }
 
 private fun setupLookAndFeel(isDarkMode: Boolean) {

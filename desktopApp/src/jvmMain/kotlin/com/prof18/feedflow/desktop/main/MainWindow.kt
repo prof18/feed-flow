@@ -141,6 +141,14 @@ internal fun ApplicationScope.MainWindow(
                 }
         }
 
+        LaunchedEffect(windowState) {
+            snapshotFlow { windowState.position }
+                .collect { position ->
+                    settingsRepository.setDesktopWindowXPositionDp(position.x.value)
+                    settingsRepository.setDesktopWindowYPositionDp(position.y.value)
+                }
+        }
+
         val flowStrings = LocalFeedFlowStrings.current
         LaunchedEffect(Unit) {
             messageQueue.messageQueue.collect { message ->

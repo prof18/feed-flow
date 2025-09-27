@@ -26,7 +26,7 @@
     <string name="no_feeds_add_one_message">Sen canles, engade algunha</string>
     <string name="empty_feed_message">Non hai aquí nada que ler!</string>
     <string name="refresh_feeds">Actualizar as canles</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="feeds_importing_message">Importando a canle</string>
     <string name="feeds_export_done_message">Exportación correcta</string>
     <string name="import_feed_button">Importar canle desde OPML</string>
@@ -242,4 +242,8 @@
     <string name="feed_fetch_failed_tooltip">Fallou a actualización da canle, comproba se esa web é accesible</string>
     <string name="feed_fetch_failed_tooltip_short">Fallou a actualización da canle</string>
     <string name="support_the_project">Apoia ao proxecto</string>
+    <string name="settings_blocked_words">Palabras bloqueadas</string>
+    <string name="add_word_placeholder">Engadir palabra</string>
+    <string name="blocked_words_empty_state">Non tes palabras bloqueadas</string>
+    <string name="blocked_words_description">Os artigos que conteñan estas palabras no título ou descrición estarán ocultos.</string>
 </resources>

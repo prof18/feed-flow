@@ -7,9 +7,6 @@ FeedFlow - RSS Reader
 Schlank, schnell, aufgeräumt
 
 ## Ausführliche Beschreibung
-Bleiben Sie auf ihre Art informiert - mit dem schlanken RSS-Reader FeedFlow, der
-ihnen die Kontrolle über die Zeitleisteninhalte gibt. Synchronisieren sie über
-alle ihre Geräte und geniessen sie ein sauberes Leseerlebnis ohne Ablenkung.
 
 Schlüsselfunktionen:
 

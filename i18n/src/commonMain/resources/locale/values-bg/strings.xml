@@ -5,7 +5,7 @@
     <string name="no_feeds_add_one_message">Няма емисии. Моля, добавете една</string>
     <string name="empty_feed_message">Няма какво друго да се чете тук!</string>
     <string name="loading_feed_message">Зареждане на емисии %s</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">Маркиране на всичко като прочетено</string>
     <string name="feeds_import_done_message">Внасянето завърши</string>
     <string name="settings_title">Настройки</string>
@@ -242,4 +242,8 @@
     <string name="feed_fetch_failed_tooltip">Актуализирането на емисията не бе успешно. Моля, проверете дали сайтът работи</string>
     <string name="feed_fetch_failed_tooltip_short">Актуализирането на емисията не бе успешно</string>
     <string name="support_the_project">Подкрепете проекта</string>
+    <string name="settings_blocked_words">Блокирани думи</string>
+    <string name="add_word_placeholder">Добавяне на дума</string>
+    <string name="blocked_words_empty_state">Все още няма блокирани думи</string>
+    <string name="blocked_words_description">Статиите, съдържащи тези думи в заглавието или описанието, ще бъдат скрити.</string>
 </resources>

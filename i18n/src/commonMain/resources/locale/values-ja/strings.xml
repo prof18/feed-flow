@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_added_message">フィード "%s" が追加されました</string>
+    <string name="feed_added_message">フィード %s が追加されました</string>
     <string name="feed_url">フィードのURL</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="add_feed">フィードを追加</string>
@@ -11,7 +11,7 @@
     <string name="refresh_feeds">フィードを再読み込み</string>
     <string name="no_feeds_found_message">フィードがありません。フィードを追加してください！</string>
     <string name="loading_feed_message">フィード %s を読み込んでいます</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">全て既読にする</string>
     <string name="clear_old_articles_button">1週間より前のフィードを削除</string>
     <string name="settings_button">設定</string>
@@ -89,7 +89,7 @@
     <string name="close_menu_button">メニューを閉じる</string>
     <string name="in_app_browser">アプリ内蔵のブラウザ</string>
     <string name="settings_reader_mode">記事をリーダーモードで開く</string>
-    <string name="search_no_data">"%s"にマッチするものはありませんでした。</string>
+    <string name="search_no_data">%sにマッチするものはありませんでした。</string>
     <string name="search_placeholder">検索…</string>
     <string name="search_hint_title">入力開始…</string>
     <string name="search_hint_subtitle">結果は自動で現れます</string>
@@ -128,7 +128,7 @@
     <string name="edit_feed_source_name_button">編集</string>
     <string name="edit_feed">フィードを編集</string>
     <string name="feed_name">フィードの名称</string>
-    <string name="feed_edited_message">フィード "%s" が更新されました</string>
+    <string name="feed_edited_message">フィード %s が更新されました</string>
     <string name="open_another_feed">他のフィードを開く</string>
     <string name="settings_feed_list_title">フィードのリスト</string>
     <string name="settings_feed_list_scale_title">文字の大きさ</string>
@@ -158,7 +158,7 @@
     <string name="link_opening_preference_internal_browser">アプリ内蔵ブラウザ</string>
     <string name="link_opening_preference_preferred_browser">お好みのブラウザ</string>
     <string name="delete_category_confirmation_title">カテゴリを削除しますか？</string>
-    <string name="delete_category_confirmation_message">このカテゴリを削除してもよろしいですか？このカテゴリ内のフィードは "未分類" に移動されます。</string>
+    <string name="delete_category_confirmation_message">このカテゴリを削除してもよろしいですか？このカテゴリ内のフィードは 未分類 に移動されます。</string>
     <string name="delete_category_close_button">閉じる</string>
     <string name="settings_auto_delete">古い記事を自動的に削除</string>
     <string name="settings_auto_delete_desc">選択した間隔より古い記事を自動的に削除</string>

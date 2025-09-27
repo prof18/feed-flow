@@ -1,62 +1,62 @@
-# Tytuł
+# Title
 
-FeedFlow - Czytnik RSS
+FeedFlow - RSS Reader
 
-## Krótki opis
+## Short desc
 
-Minimalistyczny, szybki, przejrzysty
+Minimal, fast, uncluttered
 
-## Długi opis
-Bądź na bieżąco dzięki FeedFlow, minimalistycznemu czytnikowi RSS, który daje Ci kontrolę nad osią czasu Twoich treści.
-Synchronizuj na wszystkich urządzeniach i ciesz się przejrzystym, pozbawionym rozpraszaczy doświadczeniem czytania.
+## Long desc
 
-Najważniejsze cechy:
+Key Features:
 
-- Minimalistyczny wygląd: Skoncentruj się na tym, co ważne, dzięki przejrzystemu interfejsowi
-- Płynna synchronizacja: Synchronizuj swoje kanały na różnych urządzeniach dzięki iCloud (iOS/macOS) lub Dropbox (wszystkie platformy)
-- Integracja z FreshRSS: Połącz się z serwerem FreshRSS, aby uzyskać zaawansowane zarządzanie kanałami
-- Elastyczne opcje czytania: Wybierz między widokiem internetowym, trybem czytania lub preferowaną przeglądarką
-- Skoncentrowany na prywatności: Wybierz swoją ulubioną przeglądarkę, która dba o prywatność, aby korzystać z osobnego trybu czytania
-- Łatwa migracja: Importuj i eksportuj swoje kanały RSS za pomocą plików OPML
+- Minimalist Design: Focus on what matters with a clutter-free interface
+- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
+  or Dropbox (all platforms)
+- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
+  management
+- Flexible Reading Options: Choose between web view, reader mode, or your
+  preferred browser
+- Privacy-Focused: Select your favorite privacy-focused browser for a separate
+  reading experience
+- Easy Migration: Import and export your RSS feeds via OPML files
 
-Co wyróżnia FeedFlow:
+What Sets FeedFlow Apart:
 
-- Przejrzysty, intuicyjny interfejs, który pozwala skupić się na treści
-- Wiele opcji synchronizacji, które dopasowują się do Twojego przepływu pracy (wersja beta)
-- Możliwość personalizacji trybu czytania
-- Szybki i lekki
-- Regularne aktualizacje i aktywny rozwój
+- Clean, intuitive interface that lets you focus on content
+- Multiple sync options to fit your workflow (Beta)
+- Customizable reading experience with reader mode
+- Fast and lightweight
+- Regular updates and active development
 
-Idealny dla:
-- Entuzjastów wiadomości, którzy chcą kontrolować swoją dietę informacyjną
-- Czytelników dbających o prywatność
-- Twórców treści śledzących wiele źródeł
-- Każdego, kto chce uporządkować swoje cyfrowe doświadczenie czytania
+Perfect for:
+- News enthusiasts who want control over their information diet
+- Privacy-conscious readers
+- Content creators tracking multiple sources
+- Anyone looking to declutter their digital reading experience
 
-Dołącz do tysięcy czytelników, którzy wybrali FeedFlow jako lepszy sposób na bycie na bieżąco.
+Join thousands of readers who've chosen FeedFlow for a better way to stay
+informed.
 
-Uwaga: Funkcja synchronizacji jest obecnie w fazie beta. Jest ona stale udoskonalana na podstawie opinii użytkowników.
+Note: Sync functionality is currently in beta. The experience is continuously
+improving based on user feedback.
 
-## Zrzut ekranu 1
+## Screenshot 1
 
-Wszystkie Twoje kanały
-w Twojej kieszeni
+All your feeds in your pocket
 
-## Zrzut ekranu 3
+## Screenshot 3
 
-Importuj swoją
-istniejącą kolekcję
+Import your existing collection
 
-## Zrzut ekranu 4
+## Screenshot 4
 
-Otwórz artykuły
-w swojej ulubionej przeglądarce
+Open the articles in your favourite browser
 
-## Zrzut ekranu 5
+## Screenshot 5
 
-Ciesz się przejrzystym
-trybem czytania
+Enjoy a clutter-free reader mode
 
-## Obraz baneru
+## Banner image
 
-minimalistyczny czytnik RSS
+minimalistic RSS Reader

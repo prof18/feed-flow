@@ -7,9 +7,6 @@ FeedFlow - lecteur RSS
 Minimaliste, rapide, épuré
 
 ## Description longue
-Restez informé à votre façon avec FeedFlow, un lecteur RSS minimaliste vous
-donnant le contrôle sur votre timeline. Synchronisez entre tous vous appareils
-et profitez d'une expérience de lecture propre, sans distractions.
 
 Fonctionnalités clés :
 

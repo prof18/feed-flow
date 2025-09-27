@@ -8,11 +8,6 @@ Napp, kiire ja müravaba viis uudiste jälgimiseks
 
 ## Pikk kirjeldus
 
-Jälgi sinule olulist teavet veebis FeedFlowga, minimalistliku uudisvoogude
-lugejaga, mis annab sulle võimaluse kontrollida, mida sa sind huvitava sisu
-ajajoonel näed. Sünkroniseeri andmeid kõigi oma nutiseadmete vahel ja naudi
-puhast ning müravaba lugemisvõimalust.
-
 Põhifunktsionaalsused:
 
 - Minimalistlik kujundus: müravaba kasutajaliides võimaldab sul keskenduda

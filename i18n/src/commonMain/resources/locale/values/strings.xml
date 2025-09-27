@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_added_message">Feed "%s" added</string>
+    <string name="feed_added_message">Feed %s added</string>
     <string name="feed_url">Feed URL</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="add_feed">Add feed</string>
@@ -11,7 +11,7 @@
     <string name="refresh_feeds">Refresh feeds</string>
     <string name="no_feeds_found_message">No feeds found. Please add a new feed!</string>
     <string name="loading_feed_message">Loading feeds %s</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="mark_all_read_button">Mark all as read</string>
     <string name="clear_old_articles_button">Delete week-old posts</string>
     <string name="settings_button">Settings</string>
@@ -33,7 +33,7 @@
     <string name="author_label">Developed with ❤️ by</string>
     <string name="show_on_github">Show on GitHub</string>
     <string name="open_source_licenses">Open source licenses</string>
-    <string name="about_the_app">FeedFlow is a minimalistic RSS Reader based on the author's personal opinions. The articles are opened on their respective websites, and you can choose your favorite privacy-focused browser to separate your reading experience from your main browser. If you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.\nYou can import and export your RSS collection from and to OPML files.</string>
+    <string name="about_the_app">FeedFlow is a minimalistic RSS Reader based on the author\'s personal opinions. The articles are opened on their respective websites, and you can choose your favorite privacy-focused browser to separate your reading experience from your main browser. If you want to avoid the browser, FeedFlow offers a reader mode to enjoy the content of the articles without any distractions.\nYou can import and export your RSS collection from and to OPML files.</string>
     <string name="about_nav_bar">About</string>
     <string name="open_source_nav_bar">Open source licenses</string>
     <string name="report_issue_button">Report issue</string>
@@ -89,7 +89,7 @@
     <string name="close_menu_button">Close menu</string>
     <string name="in_app_browser">In-app browser</string>
     <string name="settings_reader_mode">Open articles on reader mode</string>
-    <string name="search_no_data">No matches for "%s".</string>
+    <string name="search_no_data">No matches for %s.</string>
     <string name="search_placeholder">Search…</string>
     <string name="search_hint_title">Start typing…</string>
     <string name="search_hint_subtitle">the results will appear automatically</string>
@@ -104,7 +104,7 @@
     <string name="account_connect_button">Connect</string>
     <string name="account_disconnect_button">Disconnect</string>
     <string name="backup_button">Backup</string>
-    <string name="dropbox_sync_common_description">Connect your Dropbox account to sync feed subscriptions, categories, read and bookmarked articles between your Android, iOS, iPadOS and desktop devices. The data will be saved in an app-specific folder; FeedFlow won't have any access to any of your files</string>
+    <string name="dropbox_sync_common_description">Connect your Dropbox account to sync feed subscriptions, categories, read and bookmarked articles between your Android, iOS, iPadOS and desktop devices. The data will be saved in an app-specific folder; FeedFlow won\'t have any access to any of your files</string>
     <string name="dropbox_sync_mobile_description">By clicking on the Connect button you will be redirected on the Dropbox app or website. After connecting the account, you can come back to FeedFlow</string>
     <string name="dropbox_sync_desktop_description">By clicking on the Connect button you will be redirected on the Dropbox website. After connecting the account, copy the authorization code and enter it here in the app</string>
     <string name="dropbox_auth_code_hint">Authorization code</string>
@@ -114,10 +114,10 @@
     <string name="last_upload">Last upload: %s</string>
     <string name="last_download">Last download: %s</string>
     <string name="account_refresh_progress">Refresh in progress</string>
-    <string name="feed_sync_in_progress">Sync in progress. The app will automatically close when it's done.</string>
+    <string name="feed_sync_in_progress">Sync in progress. The app will automatically close when it\'s done.</string>
     <string name="no_dropbox_sync_yet">Data are not synced yet with Dropbox. Click the backup button to trigger a sync</string>
     <string name="error_account_sync">Sorry, something went wrong while syncing data in your account :(</string>
-    <string name="icloud_sync_description">Connect your iCloud account to sync feed subscriptions, categories, read and bookmarked articles between your iOS, iPadOS and macOS devices. The data will be saved in an app-specific folder; FeedFlow won't have any access to any of your files</string>
+    <string name="icloud_sync_description">Connect your iCloud account to sync feed subscriptions, categories, read and bookmarked articles between your iOS, iPadOS and macOS devices. The data will be saved in an app-specific folder; FeedFlow won\'t have any access to any of your files</string>
     <string name="add_account_button">Add account</string>
     <string name="icloud_sync_success">Your iCloud account is successfully connected</string>
     <string name="no_icloud_sync_yet">Data are not synced yet with iCloud. Click the backup button to trigger a sync</string>
@@ -128,7 +128,7 @@
     <string name="edit_feed_source_name_button">Edit</string>
     <string name="edit_feed">Edit feed</string>
     <string name="feed_name">Feed name</string>
-    <string name="feed_edited_message">Feed "%s" updated</string>
+    <string name="feed_edited_message">Feed %s updated</string>
     <string name="open_another_feed">Open another feed</string>
     <string name="settings_feed_list_title">Feed list</string>
     <string name="settings_feed_list_scale_title">Text scale</string>
@@ -159,7 +159,7 @@
     <string name="link_opening_preference_internal_browser">In-app browser</string>
     <string name="link_opening_preference_preferred_browser">Favourite browser</string>
     <string name="delete_category_confirmation_title">Delete category?</string>
-    <string name="delete_category_confirmation_message">Are you sure you want to delete this category? The feeds in this category will be moved to "Uncategorized".</string>
+    <string name="delete_category_confirmation_message">Are you sure you want to delete this category? The feeds in this category will be moved to Uncategorized.</string>
     <string name="delete_category_close_button">Close</string>
     <string name="settings_auto_delete">Auto-delete old articles</string>
     <string name="settings_auto_delete_desc">Automatically delete articles older than the selected period</string>
@@ -179,7 +179,7 @@
     <string name="settings_sync_period_twelve_hours">Every 12 hours</string>
     <string name="settings_sync_period_one_day">Every day</string>
     <string name="feed_url_help_text">Add any direct feed, website, or YouTube channel link. The feed will be detected automatically when possible</string>
-    <string name="hide_feed_from_timeline_description">Hide this feed's articles from the timeline</string>
+    <string name="hide_feed_from_timeline_description">Hide this feed\'s articles from the timeline</string>
     <string name="pin_feed_source_description">Pin this feed</string>
     <string name="drawer_title_pinned_feeds">Pinned Feed Sources</string>
     <string name="menu_add_to_pinned">Pin</string>
@@ -200,7 +200,7 @@
     <string name="settings_swipe_action_toggle_read">Toggle read</string>
     <string name="settings_swipe_action_toggle_bookmark">Toggle bookmark</string>
     <string name="settings_swipe_action_none">Disabled</string>
-    <string name="settings_notification_no_feed">Looks like you haven't added any feeds yet. Add some to start receiving notifications!</string>
+    <string name="settings_notification_no_feed">Looks like you haven\'t added any feeds yet. Add some to start receiving notifications!</string>
     <string name="settings_notification_check_period">Notification check frequency</string>
     <string name="settings_notification_check_period_desc">Choose how often to check for new article notifications</string>
     <string name="settings_title_notifications">Notifications</string>
@@ -212,7 +212,7 @@
     <string name="settings_notifications_permission_request_button">Request Permission</string>
     <string name="new_articles_notification_title">New articles available</string>
     <string name="notification_channel_name">New Articles</string>
-    <string name="new_articles_notification_content">New articles from "%s"</string>
+    <string name="new_articles_notification_content">New articles from %s</string>
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_notifications_warning_reliability">Notifications are checked on your device, but may not always occur reliably due to system limitations.</string>
     <string name="settings_open_settings">Open Settings</string>
@@ -235,7 +235,7 @@
     <string name="settings_theme_system">System</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
-    <string name="icloud_connection_error">Sorry but we are unable to connect to iCloud. Please check if you're signed in, iCloud Drive is turned on and you have space available</string>
+    <string name="icloud_connection_error">Sorry but we are unable to connect to iCloud. Please check if you\'re signed in, iCloud Drive is turned on and you have space available</string>
     <string name="delete_feed_confirmation_title">Delete feed?</string>
     <string name="delete_feed_confirmation_message">Are you sure you want to delete this feed? This action cannot be undone.</string>
     <string name="delete_feed_button">Delete feed</string>

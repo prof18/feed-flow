@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_added_message">Informasjonskanal "%s" tillagt</string>
+    <string name="feed_added_message">Informasjonskanal %s tillagt</string>
     <string name="feed_url_placeholder">https://minfavorittblogg.no/kanal</string>
     <string name="import_dialog_title">Velg OPML-fil</string>
     <string name="feeds_import_done_message">Importert</string>
@@ -34,7 +34,7 @@
     <string name="generic_error_message">Noe gikk galt :(</string>
     <string name="default_browser">Forvalgt nettleser</string>
     <string name="import_feed_button">Importer informasjonskanal fra OPML</string>
-    <string name="app_name">FeedFlow</string>
+    <string name="app_name" translatable="false">FeedFlow</string>
     <string name="feeds_title">Informasjonskanaler</string>
     <string name="load_file_error_message">Kunne ikke laste inn fil</string>
     <string name="add_feed">Legg til informasjonskanal</string>
@@ -49,6 +49,5 @@
     <string name="issue_report_title">Innrapporter en feil med FeedFlow</string>
     <string name="new_release_available_title">En ny versjon av FeedFlow er tilgjengelig:</string>
     <string name="mark_all_read_button">Marker alle som lest</string>
-    <string name="about_the_app">Minimalistisk RSS-leser med meningers mot. Artikler åpnes i respektiv nettside og du kan velge egen personvernsrespekterende nettleser for å gjøre opplevelsen bedre.
-\nDu kan importere og eksportere din RSS-samling til en OPML-fil.</string>
+    <string name="about_the_app">Minimalistisk RSS-leser med meningers mot. Artikler åpnes i respektiv nettside og du kan velge egen personvernsrespekterende nettleser for å gjøre opplevelsen bedre. \nDu kan importere og eksportere din RSS-samling til en OPML-fil.</string>
 </resources>

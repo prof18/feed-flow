@@ -1,58 +1,62 @@
-# タイトル
+# Title
 
-FeedFlow - RSSリーダー
+FeedFlow - RSS Reader
 
-## 簡潔な説明
+## Short desc
 
-ミニマル, 高速, すっきりしている
+Minimal, fast, uncluttered
 
-## 詳細な説明
-FeedFlowはコンテンツのタイムラインをコントロールできるミニマルなRSSリーダーです。
-あなたが持つ全ての端末で同期して、クリーンで気が散らない体験をお楽しみください。
+## Long desc
 
-主な特徴:
+Key Features:
 
-- ミニマルなデザイン: 気が散らないインターフェイスによってコンテンツに集中
-- シームレスな同期: iCloud (iOS/macOS) またはDropbox (すべてのプラットフォーム) でデバイス間でフィードを同期
-- FreshRSSの統合: FreshRSSサーバーに接続してフィードを管理
-- 柔軟な閲覧オプション: Web、リーダーモード、またはお好みのブラウザを選択して閲覧
-- プライバシーに配慮: お好みのプライバシー重視のブラウザを選択して閲覧を隔離
-- 簡単に切り替え: OPMLファイルでRSSフィードをインポート、エクスポート
+- Minimalist Design: Focus on what matters with a clutter-free interface
+- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
+  or Dropbox (all platforms)
+- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
+  management
+- Flexible Reading Options: Choose between web view, reader mode, or your
+  preferred browser
+- Privacy-Focused: Select your favorite privacy-focused browser for a separate
+  reading experience
+- Easy Migration: Import and export your RSS feeds via OPML files
 
-FeedFlowを際立たせるもの:
+What Sets FeedFlow Apart:
 
-- コンテンツに集中できるクリーンで直感的なインターフェース
-- ワークフローに合わせた複数の同期オプション(ベータ版)
-- リーダーモードによるカスタマイズ可能なフィードの閲覧
-- 高速で軽い
-- 定期的な更新と活発な開発
+- Clean, intuitive interface that lets you focus on content
+- Multiple sync options to fit your workflow (Beta)
+- Customizable reading experience with reader mode
+- Fast and lightweight
+- Regular updates and active development
 
-以下の人に最適:
-- 情報をコントロールしたいニュース愛好家
-- プライバシーを意識しているユーザー
-- 複数の情報源を参照するコンテンツクリエイター
-- デジタルの閲覧を断捨離したい全てのユーザー
+Perfect for:
+- News enthusiasts who want control over their information diet
+- Privacy-conscious readers
+- Content creators tracking multiple sources
+- Anyone looking to declutter their digital reading experience
 
-FeedFlowを選択した何千人ものユーザーと一緒に、より良い情報を入手しましょう。
+Join thousands of readers who've chosen FeedFlow for a better way to stay
+informed.
 
-ご注意: 同期機能は現在ベータ版です。ユーザーからのフィードバックに基づき、継続的に改善されています。
+Note: Sync functionality is currently in beta. The experience is continuously
+improving based on user feedback.
 
-## スクリーンショット 1
+## Screenshot 1
 
-全てのフィードを手元に
+All your feeds in your pocket
 
-## スクリーンショット 3
+## Screenshot 3
 
-既存のコレクションをインポート
+Import your existing collection
 
-## スクリーンショット 4
+## Screenshot 4
 
-お好みのブラウザで記事を閲覧
+Open the articles in your favourite browser
 
-## スクリーンショット 5
+## Screenshot 5
 
-気が散らない時間を楽しむ
+Enjoy a clutter-free reader mode
 
-## バナー
+## Banner image
 
-ミニマルなRSSリーダー
+minimalistic RSS Reader

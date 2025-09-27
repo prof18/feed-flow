@@ -1,30 +1,45 @@
 # Cím
 
-FeedFlow
+FeedFlow - RSS Reader
 
 ## Rövid leírás
 
-Minimalista RSS olvasó
+Minimal, fast, uncluttered
 
 ## Hosszú leírás
 
-Kövesd a kedvenc RSS feedjeidet a FeedFlow-val, a minimalista RSS olvasóval! A
-FeedFlow letisztult olvasási élményt nyújt a minimalista lista nézetével és a
-cikkek weboldalként megnyitásával.
+Key Features:
 
-Szabd saját igényeidhez a böngészési élményedet a kívánt böngésződ
-beállításával. Így a kedvenc, adatvédelmet előtérbe helyező böngésződet
-beállítva különválaszthatod az olvasási előzményeidet az egyéb böngészési
-előzményeidtől.
+- Minimalist Design: Focus on what matters with a clutter-free interface
+- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
+  or Dropbox (all platforms)
+- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
+  management
+- Flexible Reading Options: Choose between web view, reader mode, or your
+  preferred browser
+- Privacy-Focused: Select your favorite privacy-focused browser for a separate
+  reading experience
+- Easy Migration: Import and export your RSS feeds via OPML files
 
-Könnyen importálhatod meglévő RSS gyűjteményedet: a FeedFlow teljes és egyszerű
-megoldást nyújt a feedjeid importálására és exportálására OPML fájlok
-segítségével.
+What Sets FeedFlow Apart:
 
-Koncentrálj az olvasásra (vagy görgetésre)!
+- Clean, intuitive interface that lets you focus on content
+- Multiple sync options to fit your workflow (Beta)
+- Customizable reading experience with reader mode
+- Fast and lightweight
+- Regular updates and active development
 
-Az alkalmazás még fejlesztés alatt áll, így előfordulhatnak hiányzó funkciók és
-esetleges problémák. Szívesen fogadok bármilyen hibajelentést és javaslatot!
+Perfect for:
+- News enthusiasts who want control over their information diet
+- Privacy-conscious readers
+- Content creators tracking multiple sources
+- Anyone looking to declutter their digital reading experience
+
+Join thousands of readers who've chosen FeedFlow for a better way to stay
+informed.
+
+Note: Sync functionality is currently in beta. The experience is continuously
+improving based on user feedback.
 
 ## Képernyőkép 1
 
@@ -37,3 +52,11 @@ Importáld meglévő gyűjteményedet
 ## Képernyőkép 4
 
 Nyisd meg a cikkeket kedvenc böngésződben
+
+## Screenshot 5
+
+Enjoy a clutter-free reader mode
+
+## Banner image
+
+minimalistic RSS Reader

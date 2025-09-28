@@ -211,7 +211,6 @@ private fun windowState(settingsRepository: SettingsRepository): WindowState {
         ?: Dp.Unspecified
 
     val position = if (xPos != Dp.Unspecified && yPos != Dp.Unspecified) {
-        println("Setting position to $xPos, $yPos")
         WindowPosition.Absolute(
             x = xPos,
             y = yPos,

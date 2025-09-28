@@ -196,3 +196,26 @@
 # Disable only the risky optimization that can remove required checkcasts on annotation proxies
 # This keeps other optimizations enabled
 -optimizations !code/simplification/cast
+
+# FlatLaF Look and Feel
+-keep class com.formdev.flatlaf.** { *; }
+-keep class com.formdev.flatlaf.extras.** { *; }
+
+# Keep internal Swing classes that FlatLaF accesses dynamically
+-keep class sun.swing.SwingUtilities2 { *; }
+-keep class sun.swing.SwingUtilities2$* { *; }
+
+# Don't warn about missing internal Sun/Oracle classes that FlatLaF tries to access
+-dontwarn sun.swing.**
+-dontwarn com.sun.java.swing.**
+
+# Keep classes that FlatLaF might access via reflection
+-keepclassmembers class * {
+    ** getAATextInfo(...);
+}
+
+# Keep constructors that FlatLaF accesses dynamically
+-keepclassmembers class * {
+    <init>();
+    <init>(java.lang.Object, java.lang.Integer);
+}

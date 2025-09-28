@@ -228,43 +228,169 @@ private fun windowState(settingsRepository: SettingsRepository): WindowState {
 }
 
 private fun setupLookAndFeel(isDarkMode: Boolean) {
+    // Detect Flatpak environment
+    val isFlatpak = System.getenv("FLATPAK_ID") != null ||
+                   System.getenv("FLATPAK_DEST") != null ||
+                   System.getProperty("org.freedesktop.Platform") != null
+
     System.setProperty("flatlaf.useWindowDecorations", "true")
     System.setProperty("flatlaf.menuBarEmbedded", "false")
 
     try {
-        val themeFileName = if (isDarkMode) {
-            "feedflow-dark.properties"
+        if (isFlatpak) {
+            // Flatpak-safe custom theme loading
+            setupFlatpakCompatibleTheme(isDarkMode)
         } else {
-            "feedflow-light.properties"
+            // Original theme loading for native environment
+            setupNativeTheme(isDarkMode)
         }
+    } catch (e: Exception) {
+        println("Theme setup failed: ${e.message}")
+        // Fallback to basic theme
+        setupBasicFallbackTheme(isDarkMode)
+    }
+}
 
-        // Load custom properties theme
-        val themeStream = DI::class.java.classLoader?.getResourceAsStream(themeFileName)
+private fun setupNativeTheme(isDarkMode: Boolean) {
+    val themeFileName = if (isDarkMode) {
+        "feedflow-dark.properties"
+    } else {
+        "feedflow-light.properties"
+    }
 
-        if (themeStream != null) {
-            val customLaf = FlatPropertiesLaf(themeFileName, themeStream)
-            UIManager.setLookAndFeel(customLaf)
-        } else {
-            // Fallback to standard themes if properties file not found
-            val newLaf = if (isDarkMode) {
-                FlatDarkLaf()
-            } else {
-                FlatLightLaf()
-            }
-            UIManager.setLookAndFeel(newLaf)
-            UIManager.put("MenuBar.border", null)
-        }
+    // Load custom properties theme
+    val themeStream = DI::class.java.classLoader?.getResourceAsStream(themeFileName)
 
-//        FlatLaf.updateUI()
-    } catch (_: Exception) {
-        // Fallback to default theme
+    if (themeStream != null) {
+        val customLaf = FlatPropertiesLaf(themeFileName, themeStream)
+        UIManager.setLookAndFeel(customLaf)
+        // Note: FlatLaf.updateUI() commented out to prevent Flatpak crashes
+        // FlatLaf.updateUI()
+    } else {
+        // Fallback to standard themes if properties file not found
         val newLaf = if (isDarkMode) {
             FlatDarkLaf()
         } else {
             FlatLightLaf()
         }
         UIManager.setLookAndFeel(newLaf)
+        UIManager.put("MenuBar.border", null)
     }
+}
+
+private fun setupFlatpakCompatibleTheme(isDarkMode: Boolean) {
+    // First set up base FlatLaf theme
+    val newLaf = if (isDarkMode) {
+        FlatDarkLaf()
+    } else {
+        FlatLightLaf()
+    }
+    UIManager.setLookAndFeel(newLaf)
+
+    // Apply custom Material 3 colors manually
+    applyCustomThemeProperties(isDarkMode)
+
+    // Skip FlatLaf.updateUI() which causes crashes in Flatpak
+    // The theme will be applied when components are created
+}
+
+private fun applyCustomThemeProperties(isDarkMode: Boolean) {
+    if (isDarkMode) {
+        // Apply dark theme Material 3 colors
+        UIManager.put("MenuBar.background", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("MenuBar.foreground", java.awt.Color.decode("#E3E2E6"))
+        UIManager.put("MenuBar.border", null)
+        UIManager.put("MenuBar.hoverBackground", java.awt.Color.decode("#3E4759"))
+        UIManager.put("MenuBar.selectionBackground", java.awt.Color.decode("#3E4759"))
+
+        UIManager.put("Menu.background", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("Menu.foreground", java.awt.Color.decode("#E3E2E6"))
+        UIManager.put("Menu.hoverBackground", java.awt.Color.decode("#3E4759"))
+        UIManager.put("Menu.selectionBackground", java.awt.Color.decode("#3E4759"))
+        UIManager.put("Menu.selectionForeground", java.awt.Color.decode("#DAE2F9"))
+
+        UIManager.put("MenuItem.background", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("MenuItem.foreground", java.awt.Color.decode("#E3E2E6"))
+        UIManager.put("MenuItem.hoverBackground", java.awt.Color.decode("#3E4759"))
+        UIManager.put("MenuItem.selectionBackground", java.awt.Color.decode("#3E4759"))
+        UIManager.put("MenuItem.selectionForeground", java.awt.Color.decode("#DAE2F9"))
+
+        UIManager.put("CheckBoxMenuItem.background", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("CheckBoxMenuItem.foreground", java.awt.Color.decode("#E3E2E6"))
+        UIManager.put("CheckBoxMenuItem.hoverBackground", java.awt.Color.decode("#3E4759"))
+        UIManager.put("CheckBoxMenuItem.selectionBackground", java.awt.Color.decode("#3E4759"))
+        UIManager.put("CheckBoxMenuItem.selectionForeground", java.awt.Color.decode("#DAE2F9"))
+
+        UIManager.put("RadioButtonMenuItem.background", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("RadioButtonMenuItem.foreground", java.awt.Color.decode("#E3E2E6"))
+        UIManager.put("RadioButtonMenuItem.hoverBackground", java.awt.Color.decode("#3E4759"))
+        UIManager.put("RadioButtonMenuItem.selectionBackground", java.awt.Color.decode("#3E4759"))
+        UIManager.put("RadioButtonMenuItem.selectionForeground", java.awt.Color.decode("#DAE2F9"))
+
+        UIManager.put("TitlePane.background", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("TitlePane.inactiveBackground", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("TitlePane.foreground", java.awt.Color.decode("#E3E2E6"))
+        UIManager.put("TitlePane.inactiveForeground", java.awt.Color.decode("#9FA2A6"))
+
+        UIManager.put("RootPane.background", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("Panel.background", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("PopupMenu.background", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("PopupMenu.border", javax.swing.BorderFactory.createLineBorder(java.awt.Color.decode("#44474E")))
+    } else {
+        // Apply light theme Material 3 colors
+        UIManager.put("MenuBar.background", java.awt.Color.decode("#FDFBFF"))
+        UIManager.put("MenuBar.foreground", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("MenuBar.border", null)
+        UIManager.put("MenuBar.hoverBackground", java.awt.Color.decode("#DAE2F9"))
+        UIManager.put("MenuBar.selectionBackground", java.awt.Color.decode("#DAE2F9"))
+
+        UIManager.put("Menu.background", java.awt.Color.decode("#FDFBFF"))
+        UIManager.put("Menu.foreground", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("Menu.hoverBackground", java.awt.Color.decode("#DAE2F9"))
+        UIManager.put("Menu.selectionBackground", java.awt.Color.decode("#DAE2F9"))
+        UIManager.put("Menu.selectionForeground", java.awt.Color.decode("#131C2B"))
+
+        UIManager.put("MenuItem.background", java.awt.Color.decode("#FDFBFF"))
+        UIManager.put("MenuItem.foreground", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("MenuItem.hoverBackground", java.awt.Color.decode("#DAE2F9"))
+        UIManager.put("MenuItem.selectionBackground", java.awt.Color.decode("#DAE2F9"))
+        UIManager.put("MenuItem.selectionForeground", java.awt.Color.decode("#131C2B"))
+
+        UIManager.put("CheckBoxMenuItem.background", java.awt.Color.decode("#FDFBFF"))
+        UIManager.put("CheckBoxMenuItem.foreground", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("CheckBoxMenuItem.hoverBackground", java.awt.Color.decode("#DAE2F9"))
+        UIManager.put("CheckBoxMenuItem.selectionBackground", java.awt.Color.decode("#DAE2F9"))
+        UIManager.put("CheckBoxMenuItem.selectionForeground", java.awt.Color.decode("#131C2B"))
+
+        UIManager.put("RadioButtonMenuItem.background", java.awt.Color.decode("#FDFBFF"))
+        UIManager.put("RadioButtonMenuItem.foreground", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("RadioButtonMenuItem.hoverBackground", java.awt.Color.decode("#DAE2F9"))
+        UIManager.put("RadioButtonMenuItem.selectionBackground", java.awt.Color.decode("#DAE2F9"))
+        UIManager.put("RadioButtonMenuItem.selectionForeground", java.awt.Color.decode("#131C2B"))
+
+        UIManager.put("TitlePane.background", java.awt.Color.decode("#FDFBFF"))
+        UIManager.put("TitlePane.inactiveBackground", java.awt.Color.decode("#FDFBFF"))
+        UIManager.put("TitlePane.foreground", java.awt.Color.decode("#1A1B1F"))
+        UIManager.put("TitlePane.inactiveForeground", java.awt.Color.decode("#74777F"))
+
+        UIManager.put("RootPane.background", java.awt.Color.decode("#FDFBFF"))
+        UIManager.put("Panel.background", java.awt.Color.decode("#FDFBFF"))
+        UIManager.put("PopupMenu.background", java.awt.Color.decode("#FDFBFF"))
+        UIManager.put("PopupMenu.border", javax.swing.BorderFactory.createLineBorder(java.awt.Color.decode("#74777F")))
+    }
+
+    // Set common properties
+    UIManager.put("TitlePane.unifiedBackground", false)
+    UIManager.put("TitlePane.showIcon", true)
+}
+
+private fun setupBasicFallbackTheme(isDarkMode: Boolean) {
+    val newLaf = if (isDarkMode) {
+        FlatDarkLaf()
+    } else {
+        FlatLightLaf()
+    }
+    UIManager.setLookAndFeel(newLaf)
 }
 
 internal data class DesktopConfig(

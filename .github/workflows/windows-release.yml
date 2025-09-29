@@ -86,255 +86,132 @@ jobs:
       - name: Create MSI
         run: ./gradlew packageReleaseMsi
 
-      - name: Install MSIX Packaging Tool and Dependencies
-        shell: pwsh
-        run: |
-          # Create directory for MSIX output
-          New-Item -ItemType Directory -Force -Path "desktopApp/build/release/main-release/msix"
-          
-          # Try to install FOD package using optional features first
-          Write-Host "Attempting to enable required Windows features..."
-          try {
-            Enable-WindowsOptionalFeature -Online -FeatureName "MSIX-Core" -All -NoRestart -ErrorAction SilentlyContinue
-          } catch {
-            Write-Host "Optional feature installation failed, continuing..."
-          }
-          
-          # Download and install MSIX Packaging Tool directly without FOD
-          Write-Host "Downloading MSIX Packaging Tool..."
-          $msixToolUrl = "https://download.microsoft.com/download/e/2/e/e2e923b2-7a3a-4730-969d-ab37001fbb5e/MSIXPackagingtoolv1.2024.405.0.msixbundle"
-          $msixToolPath = "MSIXPackagingTool.msixbundle"
-          Invoke-WebRequest -Uri $msixToolUrl -OutFile $msixToolPath
-          
-          Write-Host "Installing MSIX Packaging Tool..."
-          try {
-            Add-AppxPackage -Path $msixToolPath -ForceApplicationShutdown
-            Write-Host "MSIX Packaging Tool installed successfully using Add-AppxPackage"
-          } catch {
-            Write-Host "Add-AppxPackage failed, trying alternative installation..."
-            # Alternative: Try to install using PowerShell App Deployment Toolkit approach
-            try {
-              $dismPath = "$env:SystemRoot\System32\dism.exe"
-              & $dismPath /Online /Add-ProvisionedAppxPackage /PackagePath:$msixToolPath /SkipLicense
-              Write-Host "MSIX Packaging Tool installed using DISM"
-            } catch {
-              Write-Host "Both installation methods failed. Checking if tool is already available..."
-              # Check if the tool is available in PATH or as an alias
-              $toolPath = Get-Command "MsixPackagingTool.exe" -ErrorAction SilentlyContinue
-              if ($toolPath) {
-                Write-Host "MSIX Packaging Tool found at: $($toolPath.Source)"
-              } else {
-                Write-Host "MSIX Packaging Tool not found. Installation failed."
-                exit 1
-              }
-            }
-          }
-          
-          Write-Host "Waiting for installation to complete..."
-          Start-Sleep -Seconds 10
-
-      - name: Prepare MSIX conversion template
-        shell: pwsh
-        run: |
-          # Convert paths to absolute Windows paths
-          $workspaceRoot = $pwd.Path
-          Write-Host "`nConverting paths to absolute Windows paths:"
-          Write-Host "Workspace root: $workspaceRoot"
-          
-          $absoluteMsiPath = Join-Path $workspaceRoot $env:RELEASE_PATH
-          $absoluteMsixPath = Join-Path $workspaceRoot $env:RELEASE_PATH_MSIX
-          
-          # Ensure paths use Windows format
-          $absoluteMsiPath = $absoluteMsiPath.Replace('/', '\')
-          $absoluteMsixPath = $absoluteMsixPath.Replace('/', '\')
-          
-          Write-Host "Absolute MSI path: $absoluteMsiPath"
-          Write-Host "Absolute MSIX path: $absoluteMsixPath"
-          
-          # Read and store content
-          $templateContent = Get-Content -Path ".github/msix-conversion-template.xml" -Raw
-          
-          # Do replacements with absolute paths
-          $templateContent = $templateContent.Replace("[MSIPath]", $absoluteMsiPath)
-          $templateContent = $templateContent.Replace("[MSIXOutputPath]", $absoluteMsixPath)
-          $templateContent = $templateContent.Replace("[AppVersion]", "${{ steps.version.outputs.version }}.0")
-          $templateContent = $templateContent.Replace("[PublisherName]", "${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}")
-          
-          Write-Host "`nWriting template to msix-conversion-config.xml"
-          $templateContent | Set-Content -Path "msix-conversion-config.xml" -NoNewline
-
       - name: Convert MSI to MSIX
         shell: pwsh
         run: |
-          Write-Host "`nStarting MSIX conversion..."
-          
-          # Find the MSIX Packaging Tool executable
-          $toolPaths = @(
-            "C:\Program Files\WindowsApps\Microsoft.MsixPackagingTool_*\MsixPackagingTool.exe",
-            "C:\Program Files (x86)\Microsoft\MsixPackagingTool\MsixPackagingTool.exe",
-            "$env:LOCALAPPDATA\Microsoft\WindowsApps\MsixPackagingTool.exe",
-            "$env:ProgramFiles\Microsoft\MsixPackagingTool\MsixPackagingTool.exe"
-          )
-          
-          $msixTool = $null
-          foreach ($path in $toolPaths) {
-            $resolved = Get-ChildItem -Path $path -ErrorAction SilentlyContinue | Select-Object -First 1
-            if ($resolved) {
-              $msixTool = $resolved.FullName
-              Write-Host "Found MSIX Packaging Tool at: $msixTool"
-              break
-            }
-          }
-          
-          if (-not $msixTool) {
-            Write-Warning "MSIX Packaging Tool not found in standard locations. Attempting alternative search..."
-            # Try to find any installed MSIX tools in common locations
-            $searchPaths = @(
-              "$env:ProgramFiles\*msix*",
-              "$env:ProgramFiles\Microsoft\*",
-              "$env:LOCALAPPDATA\Microsoft\*msix*"
-            )
-            
-            foreach ($searchPath in $searchPaths) {
-              $found = Get-ChildItem -Path $searchPath -Filter "MsixPackagingTool.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
-              if ($found) {
-                $msixTool = $found.FullName
-                Write-Host "Found MSIX Packaging Tool via search at: $msixTool"
-                break
-              }
-            }
-          }
-          
-          if (-not $msixTool -or -not (Test-Path $msixTool)) {
-            Write-Error "MSIX Packaging Tool executable not found!"
+          Write-Host "Starting manual MSI to MSIX conversion..."
+
+          # Create directories
+          $extractDir = "msix_extract"
+          $msixDir = "desktopApp/build/release/main-release/msix"
+          New-Item -ItemType Directory -Force -Path $extractDir | Out-Null
+          New-Item -ItemType Directory -Force -Path $msixDir | Out-Null
+
+          # Extract MSI contents
+          Write-Host "Extracting MSI contents..."
+          $msiPath = (Resolve-Path $env:RELEASE_PATH).Path
+          $extractPath = (Resolve-Path $extractDir).Path
+
+          $proc = Start-Process -FilePath "msiexec.exe" -ArgumentList "/a", "`"$msiPath`"", "/qn", "TARGETDIR=`"$extractPath`"" -Wait -PassThru
+          if ($proc.ExitCode -ne 0) {
+            Write-Error "MSI extraction failed with exit code $($proc.ExitCode)"
             exit 1
           }
-          
-          Write-Host "Using MSIX Packaging Tool: $msixTool"
-          & $msixTool create-package --template "msix-conversion-config.xml" -v
 
-      - name: Update MSIX Manifest
-        shell: pwsh
-        run: |
-          Write-Host "`nUpdating MSIX manifest..."
-          # Create a temporary directory for extraction
-          $tempDir = "temp_msix_extract"
-          New-Item -ItemType Directory -Force -Path $tempDir
-          
-          # Extract the MSIX package using makeappx
-          Write-Host "`nUnpacking MSIX package..."
-          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/makeappx.exe' unpack /p $env:RELEASE_PATH_MSIX /d $tempDir
-          
-          $manifestPath = Join-Path $tempDir "AppxManifest.xml"
-          # Log original content for debugging
-          Write-Host "`nOriginal manifest contents:"
-          Get-Content $manifestPath 
+          Write-Host "MSI extraction completed successfully"
 
-          # Load manifest as XML for robust editing
-          $xmlDoc = New-Object System.Xml.XmlDocument
-          $xmlDoc.Load($manifestPath) # Use Load method for XmlDocument
-
-          # Setup NamespaceManager for XPath queries
-          $nsManager = New-Object System.Xml.XmlNamespaceManager($xmlDoc.NameTable)
-          $nsManager.AddNamespace("pkg", "http://schemas.microsoft.com/appx/manifest/foundation/windows10")
-          $nsManager.AddNamespace("uap", "http://schemas.microsoft.com/appx/manifest/uap/windows10")
-          $nsManager.AddNamespace("desktop7", "http://schemas.microsoft.com/appx/manifest/desktop/windows10/7")
-          $nsManager.AddNamespace("rescap", "http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities")
-
-          # 1. Remove desktop7:Shortcut extension
-          $applicationNode = $xmlDoc.SelectSingleNode("/pkg:Package/pkg:Applications/pkg:Application", $nsManager)
-          if ($applicationNode) {
-              $extensionsNode = $applicationNode.SelectSingleNode("pkg:Extensions", $nsManager)
-              if ($extensionsNode) {
-                  $shortcutExtensionNode = $extensionsNode.SelectSingleNode("desktop7:Extension[@Category='windows.shortcut']", $nsManager)
-                  
-                  if ($shortcutExtensionNode) {
-                      Write-Host "Removing desktop7:Shortcut extension..."
-                      $extensionsNode.RemoveChild($shortcutExtensionNode) | Out-Null
-                  }
-
-                  # If the <Extensions> node becomes empty, remove it too
-                  if (-not $extensionsNode.HasChildNodes) {
-                      $applicationNode.RemoveChild($extensionsNode) | Out-Null
-                      Write-Host "Removed empty Extensions node."
-                  }
-              }
+          # Find the FeedFlow installation directory
+          $feedFlowDir = Get-ChildItem -Path $extractDir -Recurse -Directory -Filter "FeedFlow*" | Select-Object -First 1
+          if (-not $feedFlowDir) {
+            Write-Error "Could not find FeedFlow directory in extracted MSI"
+            Write-Host "Contents of extract directory:"
+            Get-ChildItem -Path $extractDir -Recurse | ForEach-Object { Write-Host $_.FullName }
+            exit 1
           }
 
-          # 2. Update TargetDeviceFamily version numbers
-          $targetDeviceFamilyNode = $xmlDoc.SelectSingleNode("/pkg:Package/pkg:Dependencies/pkg:TargetDeviceFamily[@Name='Windows.Desktop']", $nsManager)
-          if ($targetDeviceFamilyNode) {
-              Write-Host "Updating TargetDeviceFamily MinVersion to 10.0.17763.0 and MaxVersionTested to 10.0.22000.1..."
-              $targetDeviceFamilyNode.SetAttribute("MinVersion", "10.0.17763.0")
-              $targetDeviceFamilyNode.SetAttribute("MaxVersionTested", "10.0.22000.1")
-          } else {
-              Write-Warning "TargetDeviceFamily node with Name='Windows.Desktop' not found!"
+          Write-Host "Found FeedFlow directory at: $($feedFlowDir.FullName)"
+
+          # Create MSIX package structure
+          $packageRoot = "msix_package"
+          New-Item -ItemType Directory -Force -Path $packageRoot | Out-Null
+
+          # Copy application files to package root
+          Write-Host "Copying application files..."
+          Copy-Item -Path "$($feedFlowDir.FullName)\*" -Destination $packageRoot -Recurse -Force
+
+          # Verify that FeedFlow.exe exists
+          if (-not (Test-Path "$packageRoot\FeedFlow.exe")) {
+            Write-Error "FeedFlow.exe not found in package directory"
+            Write-Host "Contents of package directory:"
+            Get-ChildItem -Path $packageRoot -Recurse | ForEach-Object { Write-Host $_.FullName }
+            exit 1
           }
 
-          # 3. Update Resources section - ensuring it's AFTER Dependencies
-          $packageNode = $xmlDoc.SelectSingleNode("/pkg:Package", $nsManager)
-          $dependenciesNode = $packageNode.SelectSingleNode("pkg:Dependencies", $nsManager)
-          
-          # Remove existing Resources node if it exists
-          $currentResourcesNode = $packageNode.SelectSingleNode("pkg:Resources", $nsManager)
-          if ($currentResourcesNode) {
-              Write-Host "Removing existing Resources node..."
-              $packageNode.RemoveChild($currentResourcesNode) | Out-Null
-          }
+          # Create AppxManifest.xml
+          Write-Host "Creating AppxManifest.xml..."
+          $publisherName = "${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}"
+          $version = "${{ steps.version.outputs.version }}.0"
 
-          Write-Host "Adding new Resources node from .github/msix-resources-template.xml..."
-          # Create new resources node directly in the document
-          $resourcesNode = $xmlDoc.CreateElement("Resources", "http://schemas.microsoft.com/appx/manifest/foundation/windows10")
-          
-          # Load resources from template file
+          # Load resources template
           [xml]$resourcesTemplate = Get-Content -Path ".github/msix-resources-template.xml"
-          
-          # Add each Resource element from template
+          $resourcesXml = ""
           foreach ($resource in $resourcesTemplate.Resources.Resource) {
-              $newResource = $xmlDoc.CreateElement("Resource", "http://schemas.microsoft.com/appx/manifest/foundation/windows10")
-              $newResource.SetAttribute("Language", $resource.Language)
-              $resourcesNode.AppendChild($newResource) | Out-Null
+            $resourcesXml += "    <Resource Language=`"$($resource.Language)`" />`n"
           }
-          
-          # Insert the new Resources node after Dependencies
-          if ($dependenciesNode) {
-              $packageNode.InsertAfter($resourcesNode, $dependenciesNode) | Out-Null
-              Write-Host "Successfully inserted new Resources node after Dependencies."
-          } else {
-              $packageNode.AppendChild($resourcesNode) | Out-Null
-              Write-Warning "Dependencies node not found. Appended Resources node to Package."
+
+          # Build manifest XML
+          $manifestContent = '<?xml version="1.0" encoding="utf-8"?>' + "`n"
+          $manifestContent += '<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"' + "`n"
+          $manifestContent += '         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"' + "`n"
+          $manifestContent += '         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">' + "`n"
+          $manifestContent += '  <Identity Name="MarcoGomiero.FeedFlowRSSReader"' + "`n"
+          $manifestContent += "            Publisher=`"$publisherName`"" + "`n"
+          $manifestContent += "            Version=`"$version`"" + "`n"
+          $manifestContent += '            ProcessorArchitecture="x64" />' + "`n"
+          $manifestContent += '  <Properties>' + "`n"
+          $manifestContent += '    <DisplayName>FeedFlow - RSS Reader</DisplayName>' + "`n"
+          $manifestContent += '    <PublisherDisplayName>Marco Gomiero</PublisherDisplayName>' + "`n"
+          $manifestContent += '    <Logo>Assets\StoreLogo.png</Logo>' + "`n"
+          $manifestContent += '  </Properties>' + "`n"
+          $manifestContent += '  <Dependencies>' + "`n"
+          $manifestContent += '    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.1" />' + "`n"
+          $manifestContent += '  </Dependencies>' + "`n"
+          $manifestContent += '  <Resources>' + "`n"
+          $manifestContent += $resourcesXml
+          $manifestContent += '  </Resources>' + "`n"
+          $manifestContent += '  <Applications>' + "`n"
+          $manifestContent += '    <Application Id="FeedFlow" Executable="FeedFlow.exe" EntryPoint="Windows.FullTrustApplication">' + "`n"
+          $manifestContent += '      <uap:VisualElements DisplayName="FeedFlow - RSS Reader"' + "`n"
+          $manifestContent += '                          Description="A modern RSS reader"' + "`n"
+          $manifestContent += '                          BackgroundColor="transparent"' + "`n"
+          $manifestContent += '                          Square150x150Logo="Assets\Square150x150Logo.png"' + "`n"
+          $manifestContent += '                          Square44x44Logo="Assets\Square44x44Logo.png">' + "`n"
+          $manifestContent += '      </uap:VisualElements>' + "`n"
+          $manifestContent += '    </Application>' + "`n"
+          $manifestContent += '  </Applications>' + "`n"
+          $manifestContent += '  <Capabilities>' + "`n"
+          $manifestContent += '    <rescap:Capability Name="runFullTrust" />' + "`n"
+          $manifestContent += '    <Capability Name="internetClient" />' + "`n"
+          $manifestContent += '  </Capabilities>' + "`n"
+          $manifestContent += '</Package>'
+
+          [System.IO.File]::WriteAllText("$packageRoot\AppxManifest.xml", $manifestContent, [System.Text.Encoding]::UTF8)
+
+          # Create Assets folder with placeholder images
+          $assetsDir = "$packageRoot\Assets"
+          New-Item -ItemType Directory -Force -Path $assetsDir | Out-Null
+
+          # Create simple placeholder PNG files (1x1 transparent pixel)
+          $pngBytes = [Convert]::FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==")
+          [System.IO.File]::WriteAllBytes("$assetsDir\StoreLogo.png", $pngBytes)
+          [System.IO.File]::WriteAllBytes("$assetsDir\Square150x150Logo.png", $pngBytes)
+          [System.IO.File]::WriteAllBytes("$assetsDir\Square44x44Logo.png", $pngBytes)
+
+          # Package using makeappx
+          Write-Host "Packaging MSIX..."
+          $makeAppxPath = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\makeappx.exe"
+          & $makeAppxPath pack /d $packageRoot /p $env:RELEASE_PATH_MSIX /nv
+
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Failed to create MSIX package"
+            exit 1
           }
-          
-          # Write the updated manifest back to file
-          $xmlDoc.Save($manifestPath) 
-          
-          Write-Host "`nUpdated manifest contents:"
-          Get-Content $manifestPath # Log updated content
-          
-          # Create a new MSIX package with the updated manifest using makeappx
-          Write-Host "`nRepackaging MSIX with updated manifest..."
-          $tempMsixPath = Join-Path $tempDir "temp.msix"
-          
-          # Ensure we're in the correct directory for repackaging
-          Push-Location $tempDir
-          try {
-            & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/makeappx.exe' pack /d . /p "temp.msix"
-          }
-          finally {
-            Pop-Location
-          }
-          
-          # Delete the original MSIX and move the new one
-          Write-Host "`nReplacing original MSIX with updated package..."
-          if (Test-Path $env:RELEASE_PATH_MSIX) {
-            Remove-Item -Path $env:RELEASE_PATH_MSIX -Force
-          }
-          Move-Item -Path $tempMsixPath -Destination $env:RELEASE_PATH_MSIX -Force
-          
-          # Clean up
-          Remove-Item -Path $tempDir -Recurse -Force
-          
-          Write-Host "`nManifest updated successfully"
+
+          Write-Host "MSIX package created successfully at: $env:RELEASE_PATH_MSIX"
+
+          # Cleanup
+          Remove-Item -Path $extractDir -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path $packageRoot -Recurse -Force -ErrorAction SilentlyContinue
 
       - name: Upload reports
         if: failure()

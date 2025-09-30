@@ -8,7 +8,8 @@
       "Bash(sed:*)",
       "Bash(swiftlint:*)",
       "Bash(.scripts/refresh-translations.sh:*)",
-      "Bash(./gradlew:*)"
+      "Bash(./gradlew:*)",
+      "Read(//Users/mg/Desktop/**)"
     ],
     "deny": []
   }

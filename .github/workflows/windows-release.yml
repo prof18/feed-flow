@@ -195,7 +195,12 @@ jobs:
           $iconSources = @(
             "$packageRoot\icons\icon.png",
             "$packageRoot\app\icons\icon.png",
-            "$packageRoot\resources\icons\icon.png"
+            "$packageRoot\resources\icons\icon.png",
+            "$packageRoot\icons\icon.ico",
+            "$packageRoot\app\icons\icon.ico",
+            "$packageRoot\resources\icons\icon.ico",
+            "$packageRoot\app\icon.ico",
+            "$packageRoot\icon.ico"
           )
 
           $iconFound = $false
@@ -213,7 +218,7 @@ jobs:
 
           if (-not $iconFound) {
             Write-Warning "Icon not found in expected locations. Checking all files in package..."
-            $iconFiles = Get-ChildItem -Path $packageRoot -Recurse -Filter "icon.png" | Select-Object -First 1
+            $iconFiles = Get-ChildItem -Path $packageRoot -Recurse -Filter "icon.*" -Include "*.png", "*.ico" | Select-Object -First 1
             if ($iconFiles) {
               Write-Host "Found icon at: $($iconFiles.FullName)"
               Copy-Item -Path $iconFiles.FullName -Destination "$assetsDir\StoreLogo.png" -Force

@@ -187,28 +187,30 @@ jobs:
 
           [System.IO.File]::WriteAllText("$packageRoot\AppxManifest.xml", $manifestContent, [System.Text.Encoding]::UTF8)
 
-          # Create Assets folder and look for ICO file in package
+          # Create Assets folder
           $assetsDir = "$packageRoot\Assets"
           New-Item -ItemType Directory -Force -Path $assetsDir | Out-Null
 
-          # Find ICO files in the extracted MSI content
-          Write-Host "Looking for ICO files in package..."
-          $icoFiles = Get-ChildItem -Path $packageRoot -Recurse -Filter "*.ico" | Select-Object -First 1
+          # Extract PNG from ICO file using .NET imaging
+          Write-Host "Extracting transparent PNG from ICO file..."
+          $sourceIco = "desktopApp\src\jvmMain\resources\icons\icon.ico"
 
-          if ($icoFiles) {
-            Write-Host "Found ICO file at: $($icoFiles.FullName)"
-            # Copy the ICO file as PNG (Windows will handle the conversion)
-            Copy-Item -Path $icoFiles.FullName -Destination "$assetsDir\StoreLogo.png" -Force
-            Copy-Item -Path $icoFiles.FullName -Destination "$assetsDir\Square150x150Logo.png" -Force
-            Copy-Item -Path $icoFiles.FullName -Destination "$assetsDir\Square44x44Logo.png" -Force
+          if (Test-Path $sourceIco) {
+            Write-Host "Found ICO at: $sourceIco"
+
+            # PowerShell script to extract PNG from ICO
+            Add-Type -AssemblyName System.Drawing
+            $ico = [System.Drawing.Icon]::new($sourceIco)
+            $bitmap = $ico.ToBitmap()
+            $bitmap.Save("$assetsDir\StoreLogo.png", [System.Drawing.Imaging.ImageFormat]::Png)
+            $bitmap.Save("$assetsDir\Square150x150Logo.png", [System.Drawing.Imaging.ImageFormat]::Png)
+            $bitmap.Save("$assetsDir\Square44x44Logo.png", [System.Drawing.Imaging.ImageFormat]::Png)
+            $bitmap.Dispose()
+            $ico.Dispose()
+
+            Write-Host "Successfully extracted PNG from ICO"
           } else {
-            Write-Warning "No ICO file found in MSI package. Using source ICO."
-            $sourceIco = "desktopApp\src\jvmMain\resources\icons\icon.ico"
-            if (Test-Path $sourceIco) {
-              Copy-Item -Path $sourceIco -Destination "$assetsDir\StoreLogo.png" -Force
-              Copy-Item -Path $sourceIco -Destination "$assetsDir\Square150x150Logo.png" -Force
-              Copy-Item -Path $sourceIco -Destination "$assetsDir\Square44x44Logo.png" -Force
-            }
+            Write-Warning "ICO file not found at: $sourceIco"
           }
 
           # Package using makeappx

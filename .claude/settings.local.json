@@ -9,7 +9,8 @@
       "Bash(swiftlint:*)",
       "Bash(.scripts/refresh-translations.sh:*)",
       "Bash(./gradlew:*)",
-      "Read(//Users/mg/Desktop/**)"
+      "Read(//Users/mg/Desktop/**)",
+      "Bash(identify:*)"
     ],
     "deny": []
   }

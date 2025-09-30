@@ -191,41 +191,17 @@ jobs:
           $assetsDir = "$packageRoot\Assets"
           New-Item -ItemType Directory -Force -Path $assetsDir | Out-Null
 
-          # Find and copy the application icon from the package
-          $iconSources = @(
-            "$packageRoot\icons\icon.png",
-            "$packageRoot\app\icons\icon.png",
-            "$packageRoot\resources\icons\icon.png",
-            "$packageRoot\icons\icon.ico",
-            "$packageRoot\app\icons\icon.ico",
-            "$packageRoot\resources\icons\icon.ico",
-            "$packageRoot\app\icon.ico",
-            "$packageRoot\icon.ico"
-          )
-
-          $iconFound = $false
-          foreach ($iconPath in $iconSources) {
-            if (Test-Path $iconPath) {
-              Write-Host "Found icon at: $iconPath"
-              # Copy the icon to all required MSIX asset locations
-              Copy-Item -Path $iconPath -Destination "$assetsDir\StoreLogo.png" -Force
-              Copy-Item -Path $iconPath -Destination "$assetsDir\Square150x150Logo.png" -Force
-              Copy-Item -Path $iconPath -Destination "$assetsDir\Square44x44Logo.png" -Force
-              $iconFound = $true
-              break
-            }
-          }
-
-          if (-not $iconFound) {
-            Write-Warning "Icon not found in expected locations. Checking all files in package..."
-            $iconFiles = Get-ChildItem -Path $packageRoot -Recurse -Filter "icon.*" -Include "*.png", "*.ico" | Select-Object -First 1
-            if ($iconFiles) {
-              Write-Host "Found icon at: $($iconFiles.FullName)"
-              Copy-Item -Path $iconFiles.FullName -Destination "$assetsDir\StoreLogo.png" -Force
-              Copy-Item -Path $iconFiles.FullName -Destination "$assetsDir\Square150x150Logo.png" -Force
-              Copy-Item -Path $iconFiles.FullName -Destination "$assetsDir\Square44x44Logo.png" -Force
-              $iconFound = $true
-            }
+          # Copy icon directly from source directory (need PNG format for MSIX)
+          $sourceIcon = "desktopApp\src\jvmMain\resources\icons\icon.png"
+          if (Test-Path $sourceIcon) {
+            Write-Host "Copying icon from source: $sourceIcon"
+            Copy-Item -Path $sourceIcon -Destination "$assetsDir\StoreLogo.png" -Force
+            Copy-Item -Path $sourceIcon -Destination "$assetsDir\Square150x150Logo.png" -Force
+            Copy-Item -Path $sourceIcon -Destination "$assetsDir\Square44x44Logo.png" -Force
+            $iconFound = $true
+          } else {
+            Write-Warning "Source icon not found at: $sourceIcon"
+            $iconFound = $false
           }
 
           if (-not $iconFound) {

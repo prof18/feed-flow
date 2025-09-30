@@ -187,30 +187,28 @@ jobs:
 
           [System.IO.File]::WriteAllText("$packageRoot\AppxManifest.xml", $manifestContent, [System.Text.Encoding]::UTF8)
 
-          # Create Assets folder and copy icon files
+          # Create Assets folder and look for ICO file in package
           $assetsDir = "$packageRoot\Assets"
           New-Item -ItemType Directory -Force -Path $assetsDir | Out-Null
 
-          # Copy icon directly from source directory (need PNG format for MSIX)
-          $sourceIcon = "desktopApp\src\jvmMain\resources\icons\icon.png"
-          if (Test-Path $sourceIcon) {
-            Write-Host "Copying icon from source: $sourceIcon"
-            Copy-Item -Path $sourceIcon -Destination "$assetsDir\StoreLogo.png" -Force
-            Copy-Item -Path $sourceIcon -Destination "$assetsDir\Square150x150Logo.png" -Force
-            Copy-Item -Path $sourceIcon -Destination "$assetsDir\Square44x44Logo.png" -Force
-            $iconFound = $true
-          } else {
-            Write-Warning "Source icon not found at: $sourceIcon"
-            $iconFound = $false
-          }
+          # Find ICO files in the extracted MSI content
+          Write-Host "Looking for ICO files in package..."
+          $icoFiles = Get-ChildItem -Path $packageRoot -Recurse -Filter "*.ico" | Select-Object -First 1
 
-          if (-not $iconFound) {
-            Write-Warning "No icon found. Creating placeholder assets."
-            # Fallback: Create placeholder PNG files
-            $pngBytes = [Convert]::FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==")
-            [System.IO.File]::WriteAllBytes("$assetsDir\StoreLogo.png", $pngBytes)
-            [System.IO.File]::WriteAllBytes("$assetsDir\Square150x150Logo.png", $pngBytes)
-            [System.IO.File]::WriteAllBytes("$assetsDir\Square44x44Logo.png", $pngBytes)
+          if ($icoFiles) {
+            Write-Host "Found ICO file at: $($icoFiles.FullName)"
+            # Copy the ICO file as PNG (Windows will handle the conversion)
+            Copy-Item -Path $icoFiles.FullName -Destination "$assetsDir\StoreLogo.png" -Force
+            Copy-Item -Path $icoFiles.FullName -Destination "$assetsDir\Square150x150Logo.png" -Force
+            Copy-Item -Path $icoFiles.FullName -Destination "$assetsDir\Square44x44Logo.png" -Force
+          } else {
+            Write-Warning "No ICO file found in MSI package. Using source ICO."
+            $sourceIco = "desktopApp\src\jvmMain\resources\icons\icon.ico"
+            if (Test-Path $sourceIco) {
+              Copy-Item -Path $sourceIco -Destination "$assetsDir\StoreLogo.png" -Force
+              Copy-Item -Path $sourceIco -Destination "$assetsDir\Square150x150Logo.png" -Force
+              Copy-Item -Path $sourceIco -Destination "$assetsDir\Square44x44Logo.png" -Force
+            }
           }
 
           # Package using makeappx

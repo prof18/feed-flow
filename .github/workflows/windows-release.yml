@@ -91,45 +91,47 @@ jobs:
         run: |
           # Create directory for MSIX output
           New-Item -ItemType Directory -Force -Path "desktopApp/build/release/main-release/msix"
-          
-          # Try to install FOD package using optional features first
-          Write-Host "Attempting to enable required Windows features..."
+
+          # Install the MSIX Packaging Tool Driver capability first
+          Write-Host "Installing MSIX Packaging Tool Driver capability..."
+          Write-Host "This may take several minutes..."
+
+          $driverInstallStartTime = Get-Date
           try {
-            Enable-WindowsOptionalFeature -Online -FeatureName "MSIX-Core" -All -NoRestart -ErrorAction SilentlyContinue
+            # Use Start-Process to run dism with a longer timeout (20 minutes)
+            $dismProcess = Start-Process -FilePath "dism.exe" -ArgumentList "/online", "/add-capability", "/capabilityname:Msix.PackagingTool.Driver~~~~0.0.1.0" -Wait -PassThru -NoNewWindow -RedirectStandardOutput "dism-output.txt" -RedirectStandardError "dism-error.txt"
+
+            $driverInstallEndTime = Get-Date
+            $duration = ($driverInstallEndTime - $driverInstallStartTime).TotalSeconds
+            Write-Host "Driver installation completed in $duration seconds with exit code: $($dismProcess.ExitCode)"
+
+            if ($dismProcess.ExitCode -ne 0) {
+              Write-Host "DISM output:"
+              Get-Content "dism-output.txt" -ErrorAction SilentlyContinue
+              Write-Host "DISM errors:"
+              Get-Content "dism-error.txt" -ErrorAction SilentlyContinue
+              Write-Warning "Driver installation failed with exit code $($dismProcess.ExitCode), but continuing..."
+            }
           } catch {
-            Write-Host "Optional feature installation failed, continuing..."
+            Write-Warning "Driver installation failed with exception: $_"
+            Write-Host "Continuing anyway as the tool may work without explicit driver installation..."
           }
-          
-          # Download and install MSIX Packaging Tool directly without FOD
-          Write-Host "Downloading MSIX Packaging Tool..."
+
+          # Download and install MSIX Packaging Tool
+          Write-Host "`nDownloading MSIX Packaging Tool..."
           $msixToolUrl = "https://download.microsoft.com/download/e/2/e/e2e923b2-7a3a-4730-969d-ab37001fbb5e/MSIXPackagingtoolv1.2024.405.0.msixbundle"
           $msixToolPath = "MSIXPackagingTool.msixbundle"
           Invoke-WebRequest -Uri $msixToolUrl -OutFile $msixToolPath
-          
+
           Write-Host "Installing MSIX Packaging Tool..."
           try {
             Add-AppxPackage -Path $msixToolPath -ForceApplicationShutdown
-            Write-Host "MSIX Packaging Tool installed successfully using Add-AppxPackage"
+            Write-Host "MSIX Packaging Tool installed successfully"
           } catch {
-            Write-Host "Add-AppxPackage failed, trying alternative installation..."
-            # Alternative: Try to install using PowerShell App Deployment Toolkit approach
-            try {
-              $dismPath = "$env:SystemRoot\System32\dism.exe"
-              & $dismPath /Online /Add-ProvisionedAppxPackage /PackagePath:$msixToolPath /SkipLicense
-              Write-Host "MSIX Packaging Tool installed using DISM"
-            } catch {
-              Write-Host "Both installation methods failed. Checking if tool is already available..."
-              # Check if the tool is available in PATH or as an alias
-              $toolPath = Get-Command "MsixPackagingTool.exe" -ErrorAction SilentlyContinue
-              if ($toolPath) {
-                Write-Host "MSIX Packaging Tool found at: $($toolPath.Source)"
-              } else {
-                Write-Host "MSIX Packaging Tool not found. Installation failed."
-                exit 1
-              }
-            }
+            Write-Error "Failed to install MSIX Packaging Tool: $_"
+            exit 1
           }
-          
+
           Write-Host "Waiting for installation to complete..."
           Start-Sleep -Seconds 10
 
@@ -217,13 +219,35 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "`nUpdating MSIX manifest..."
+
+          # Find makeappx.exe in Windows SDK
+          $makeAppxPaths = @(
+            "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\makeappx.exe",
+            "C:\Program Files\Windows Kits\10\bin\*\x64\makeappx.exe"
+          )
+
+          $makeAppx = $null
+          foreach ($pattern in $makeAppxPaths) {
+            $found = Get-ChildItem -Path $pattern -ErrorAction SilentlyContinue | Sort-Object -Property Name -Descending | Select-Object -First 1
+            if ($found) {
+              $makeAppx = $found.FullName
+              Write-Host "Found makeappx.exe at: $makeAppx"
+              break
+            }
+          }
+
+          if (-not $makeAppx) {
+            Write-Error "makeappx.exe not found in Windows SDK!"
+            exit 1
+          }
+
           # Create a temporary directory for extraction
           $tempDir = "temp_msix_extract"
           New-Item -ItemType Directory -Force -Path $tempDir
-          
+
           # Extract the MSIX package using makeappx
           Write-Host "`nUnpacking MSIX package..."
-          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/makeappx.exe' unpack /p $env:RELEASE_PATH_MSIX /d $tempDir
+          & $makeAppx unpack /p $env:RELEASE_PATH_MSIX /d $tempDir
           
           $manifestPath = Join-Path $tempDir "AppxManifest.xml"
           # Log original content for debugging
@@ -314,11 +338,11 @@ jobs:
           # Create a new MSIX package with the updated manifest using makeappx
           Write-Host "`nRepackaging MSIX with updated manifest..."
           $tempMsixPath = Join-Path $tempDir "temp.msix"
-          
+
           # Ensure we're in the correct directory for repackaging
           Push-Location $tempDir
           try {
-            & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/makeappx.exe' pack /d . /p "temp.msix"
+            & $makeAppx pack /d . /p "temp.msix"
           }
           finally {
             Pop-Location

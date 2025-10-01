@@ -1,1 +1,12 @@
+- Added the possibility to hide articles containing specific keywords/phrases
+- Added quick-access button in sidebar to navigate to original feed websites
+- Fixed a bug that prevented automatic favicon fetching
+- Added visual warnings in the drawer and feed list for feeds that fail to fetch content
+- Added possibility to delete feed sources directly from edit screen
+- Added "Navigate to Feed Settings" option in article context menus
+- Added error codes for better troubleshooting
+- Fixed reader mode font scaling to prevent unwanted margin increases
+- Full immersive screen experience across all Android screens
+- Android widgets now support direct link opening
+- Navigate to articles without opening main app first
 - Bug fixes and improvements

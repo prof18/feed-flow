@@ -64,6 +64,22 @@
   </content_rating>
 
   <releases>
+      <release version="1.6.0" date="2025-10-01">
+          <description>
+              <p>Added the possibility to hide articles containing specific keywords/phrases</p>
+              <p>Added quick-access button in sidebar to navigate to original feed websites</p>
+              <p>Fixed a bug that prevented automatic favicon fetching</p>
+              <p>Added visual warnings in the drawer and feed list for feeds that fail to fetch content</p>
+              <p>Added possibility to delete feed sources directly from edit screen</p>
+              <p>Added "Navigate to Feed Settings" option in article context menus</p>
+              <p>Added error codes for better troubleshooting</p>
+              <p>The app now remembers window position and size between sessions</p>
+              <p>Added tooltips to all reader mode controls</p>
+              <p>Improved the dark/light mode detection</p>
+              <p>Improved window theming</p>
+              <p>Bug fixing and improvements</p>
+          </description>
+      </release>
       <release version="1.5.0" date="2025-09-12">
           <description>
               <p>Fix an issue where settings weren't saved on Linux</p>

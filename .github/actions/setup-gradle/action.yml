@@ -16,7 +16,7 @@ runs:
         distribution: 'zulu'
         java-version: 21
 
-    - uses: gradle/actions/setup-gradle@v4
+    - uses: gradle/actions/setup-gradle@v5
       with:
         cache-cleanup: on-success
         cache-encryption-key: ${{ inputs.gradle-cache-encryption-key }}

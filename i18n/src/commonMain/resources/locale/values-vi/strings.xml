@@ -200,7 +200,7 @@
     <string name="settings_sync_period_fifteen_minutes">Mỗi 15 phút</string>
     <string name="settings_swipe_action_toggle_bookmark">Đánh dấu lưu</string>
     <string name="settings_notification_no_feed">Có vẻ như bạn chưa thêm bất kỳ nguồn tin nào. Thêm ngay để bắt đầu nhận thông báo!</string>
-    <string name="settings_notification_check_period">Tuần suất kiểm tra thông báo</string>
+    <string name="settings_notification_check_period">Tần suất kiểm tra thông báo</string>
     <string name="settings_notification_check_period_desc">Chọn tần suất kiểm tra thông báo bài viết mới</string>
     <string name="settings_title_notifications">Thông báo</string>
     <string name="settings_notifications_enable_all_title">Bật tất cả thông báo</string>

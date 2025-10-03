@@ -1,3 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="add_feed">Afegir feed</string>
+    <string name="feed_url">URL Feed</string>
+    <string name="feeds_title">Feeds</string>
+    <string name="delete_feed">Esborrar</string>
+    <string name="no_feeds_add_one_message">Cap feed, si us plau afegir un</string>
+    <string name="empty_feed_message">Res mes per llegir !</string>
+    <string name="blocked_words_description">Els articles que continguin aquestes paraules en el títol o la descripció estaran ocults.</string>
+    <string name="add_word_placeholder">Afegir mot</string>
+    <string name="settings_blocked_words">Mots bloquejats</string>
+    <string name="feed_fetch_failed_tooltip_short">Ha fallat l’actualització del feed</string>
 </resources>

@@ -133,7 +133,7 @@
     <string name="deleting_feed_dialog_title">正在删除…</string>
     <string name="add_feed_generic_error">添加订阅源时出错，请重试</string>
     <string name="edit_feed_generic_error">编辑订阅源时出了点问题，请重试。</string>
-    <string name="sync_error_message">同步订阅源时出错，请重试。- error code: %s :(</string>
+    <string name="sync_error_message">同步订阅源时出错 —— 错误码：%s :(。请重试。</string>
     <string name="feed_added_message_without_name">订阅源已添加</string>
     <string name="wrong_credentials_error_message">凭据不正确，请重试。</string>
     <string name="wrong_url_error_message">提供的链接不正确，请重试。</string>

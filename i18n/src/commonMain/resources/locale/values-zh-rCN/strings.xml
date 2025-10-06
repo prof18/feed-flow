@@ -47,7 +47,7 @@
     <string name="dropbox_sync_common_description">连接 Dropbox 账号，在 Android、iOS、iPadOS 和桌面设备之间同步订阅内容、类别、已读和收藏的文章。数据将保存在应用特定的文件夹中，FeedFlow 不会访问您的任何文件</string>
     <string name="account_refresh_progress">正在刷新</string>
     <string name="no_dropbox_sync_yet">数据尚未与 Dropbox 同步，请点击备份按钮触发同步</string>
-    <string name="error_account_sync">抱歉，在同步您账号中的数据时出了点问题 - error code: %s :(</string>
+    <string name="error_account_sync">抱歉，在同步您账号中的数据时出了点问题 - 错误代码：%s :(</string>
     <string name="feed_added_message">订阅源 %s 已添加</string>
     <string name="add_feed">添加订阅源</string>
     <string name="feeds_title">订阅源</string>
@@ -71,13 +71,13 @@
     <string name="default_browser">默认浏览器</string>
     <string name="export_started_message">正在生成导出</string>
     <string name="load_file_error_message">无法加载文件</string>
-    <string name="feed_error_message">%s 出了点问题 - error code: %s :(</string>
+    <string name="feed_error_message">%s 出了点问题 - 错误代码：%s :(</string>
     <string name="open_source_licenses">开放源代码许可</string>
     <string name="about_the_app">FeedFlow 是一款秉承作者个人理念设计的简约 RSS 阅读器。文章在原始网站上打开，您可以选用您信赖的隐私浏览器，与日常浏览互不干扰。另外，FeedFlow 还提供阅读模式，畅享沉浸式阅读体验。\n您可以从 OPML 文件导入或导出您的 RSS 收藏。</string>
     <string name="retry_button">重试</string>
     <string name="done_button">确定</string>
     <string name="feed_add_in_progress_message">请稍候，正在检查每个订阅源的可用性。此操作可能需要一段时间，具体取决于您导入的订阅源数量</string>
-    <string name="database_error">检索订阅源时出了点问题，请重试或重启应用 - error code: %s :(</string>
+    <string name="database_error">检索订阅源时出了点问题，请重试或重启应用 - 错误代码：%s :(</string>
     <string name="invalid_rss_url">您提供的链接不是有效的 RSS 订阅源</string>
     <string name="new_release_available_title">FeedFlow 有可用的新版本：</string>
     <string name="no_category_selected_header">无类别</string>
@@ -133,7 +133,7 @@
     <string name="deleting_feed_dialog_title">正在删除…</string>
     <string name="add_feed_generic_error">添加订阅源时出错，请重试</string>
     <string name="edit_feed_generic_error">编辑订阅源时出了点问题，请重试。</string>
-    <string name="sync_error_message">同步订阅源时出错 —— 错误码：%s :(。请重试。</string>
+    <string name="sync_error_message">同步订阅源时出错 - 错误代码：%s :(。请重试。</string>
     <string name="feed_added_message_without_name">订阅源已添加</string>
     <string name="wrong_credentials_error_message">凭据不正确，请重试。</string>
     <string name="wrong_url_error_message">提供的链接不正确，请重试。</string>
@@ -233,7 +233,7 @@
     <string name="settings_theme_system">系统</string>
     <string name="settings_theme_light">浅色</string>
     <string name="settings_theme_dark">深色</string>
-    <string name="icloud_connection_error">抱歉，我们无法连接到 iCloud。请检查您是否已登录、iCloud 云盘是否已打开以及是否有可用空间 - error code: %s.</string>
+    <string name="icloud_connection_error">抱歉，我们无法连接到 iCloud。请检查您是否已登录、iCloud 云盘是否已打开以及是否有可用空间 - 错误代码：%s。</string>
     <string name="open_feed_settings">打开订阅源设置</string>
     <string name="reader_mode_browser_button_content_description">在浏览器中打开</string>
     <string name="delete_feed_confirmation_title">删除订阅源？</string>

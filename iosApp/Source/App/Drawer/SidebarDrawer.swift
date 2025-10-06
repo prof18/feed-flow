@@ -24,7 +24,8 @@ struct SidebarDrawer: View {
     @Binding var selectedDrawerItem: DrawerItem?
 
     @State private var showMarkAllReadDialog = false
-    
+    @State private var showClearOldArticlesDialog = false
+
     let navDrawerState: NavDrawerState
     let onFeedFilterSelected: (FeedFilter) -> Void
     let onMarkAllReadClick: () -> Void
@@ -86,6 +87,14 @@ struct SidebarDrawer: View {
             }
         } message: {
             Text(feedFlowStrings.markAllReadDialogMessage)
+        }
+        .alert(feedFlowStrings.clearOldArticlesButton, isPresented: $showClearOldArticlesDialog) {
+            Button(feedFlowStrings.cancelButton, role: .cancel) {}
+            Button(feedFlowStrings.confirmButton) {
+                onDeleteOldFeedClick()
+            }
+        } message: {
+            Text(feedFlowStrings.clearOldArticlesDialogMessage)
         }
     }
 
@@ -262,7 +271,7 @@ struct SidebarDrawer: View {
         }
 
         Button {
-            onDeleteOldFeedClick()
+            showClearOldArticlesDialog = true
         } label: {
             Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
         }

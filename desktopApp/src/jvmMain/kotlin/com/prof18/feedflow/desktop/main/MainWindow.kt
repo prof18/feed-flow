@@ -189,6 +189,7 @@ internal fun ApplicationScope.MainWindow(
 
                 var aboutDialogVisibility by remember { mutableStateOf(false) }
                 var showMarkAllReadDialog by remember { mutableStateOf(false) }
+                var showClearOldArticlesDialog by remember { mutableStateOf(false) }
 
                 AboutDialog(
                     visible = aboutDialogVisibility,
@@ -255,6 +256,31 @@ internal fun ApplicationScope.MainWindow(
                     )
                 }
 
+                if (showClearOldArticlesDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showClearOldArticlesDialog = false },
+                        title = { Text(LocalFeedFlowStrings.current.clearOldArticlesButton) },
+                        text = { Text(LocalFeedFlowStrings.current.clearOldArticlesDialogMessage) },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    homeViewModel.deleteOldFeedItems()
+                                    showClearOldArticlesDialog = false
+                                },
+                            ) {
+                                Text(LocalFeedFlowStrings.current.confirmButton)
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = { showClearOldArticlesDialog = false },
+                            ) {
+                                Text(LocalFeedFlowStrings.current.cancelButton)
+                            }
+                        },
+                    )
+                }
+
                 val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
 
                 Surface(
@@ -307,7 +333,7 @@ internal fun ApplicationScope.MainWindow(
                                     )
                                 },
                                 onClearOldFeedClick = {
-                                    homeViewModel.deleteOldFeedItems()
+                                    showClearOldArticlesDialog = true
                                 },
                                 onAboutClick = {
                                     aboutDialogVisibility = true

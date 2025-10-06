@@ -39,6 +39,7 @@ struct HomeContent: View {
     @State var isToolbarVisible = true
     @State var showScrollToTop = false
     @State var showMarkAllReadDialog = false
+    @State var showClearOldArticlesDialog = false
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
@@ -122,6 +123,14 @@ struct HomeContent: View {
             }
         } message: {
             Text(feedFlowStrings.markAllReadDialogMessage)
+        }
+        .alert(feedFlowStrings.clearOldArticlesButton, isPresented: $showClearOldArticlesDialog) {
+            Button(feedFlowStrings.cancelButton, role: .cancel) {}
+            Button(feedFlowStrings.confirmButton) {
+                onDeleteOldFeedClick()
+            }
+        } message: {
+            Text(feedFlowStrings.clearOldArticlesDialogMessage)
         }
         .onChange(of: appState.redrawAfterFeedSourceEdit) {
             onRefresh()
@@ -402,7 +411,7 @@ private extension HomeContent {
                 }
 
                 Button {
-                    onDeleteOldFeedClick()
+                    showClearOldArticlesDialog = true
                 } label: {
                     Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
                 }

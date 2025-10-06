@@ -33,6 +33,7 @@ internal fun HomeAppBarDropdownMenu(
     onEditFeedClick: (FeedSource) -> Unit,
 ) {
     var showMarkAllReadDialog by remember { mutableStateOf(false) }
+    var showClearOldArticlesDialog by remember { mutableStateOf(false) }
 
     if (showMarkAllReadDialog) {
         AlertDialog(
@@ -53,6 +54,32 @@ internal fun HomeAppBarDropdownMenu(
             dismissButton = {
                 TextButton(
                     onClick = { showMarkAllReadDialog = false },
+                ) {
+                    Text(LocalFeedFlowStrings.current.cancelButton)
+                }
+            },
+        )
+    }
+
+    if (showClearOldArticlesDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearOldArticlesDialog = false },
+            title = { Text(LocalFeedFlowStrings.current.clearOldArticlesButton) },
+            text = { Text(LocalFeedFlowStrings.current.clearOldArticlesDialogMessage) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onClearOldArticlesClicked()
+                        showClearOldArticlesDialog = false
+                        closeMenu()
+                    },
+                ) {
+                    Text(LocalFeedFlowStrings.current.confirmButton)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showClearOldArticlesDialog = false },
                 ) {
                     Text(LocalFeedFlowStrings.current.cancelButton)
                 }
@@ -81,8 +108,7 @@ internal fun HomeAppBarDropdownMenu(
 
         DropdownMenuItem(
             onClick = {
-                onClearOldArticlesClicked()
-                closeMenu()
+                showClearOldArticlesDialog = true
             },
             text = {
                 Text(LocalFeedFlowStrings.current.clearOldArticlesButton)

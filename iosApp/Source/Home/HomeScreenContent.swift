@@ -38,6 +38,7 @@ struct HomeContent: View {
 
     @State var isToolbarVisible = true
     @State var showScrollToTop = false
+    @State var showMarkAllReadDialog = false
 
     let onRefresh: () -> Void
     let updateReadStatus: (Int32) -> Void
@@ -113,6 +114,14 @@ struct HomeContent: View {
                     showScrollToTop = false
                 }
             })
+        }
+        .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
+            Button(feedFlowStrings.cancelButton, role: .cancel) {}
+            Button(feedFlowStrings.confirmButton) {
+                onMarkAllReadClick()
+            }
+        } message: {
+            Text(feedFlowStrings.markAllReadDialogMessage)
         }
         .onChange(of: appState.redrawAfterFeedSourceEdit) {
             onRefresh()
@@ -387,7 +396,7 @@ private extension HomeContent {
         ToolbarItem(placement: .primaryAction) {
             Menu {
                 Button {
-                    onMarkAllReadClick()
+                    showMarkAllReadDialog = true
                 } label: {
                     Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
                 }

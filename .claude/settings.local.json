@@ -8,7 +8,12 @@
       "Bash(sed:*)",
       "Bash(swiftlint:*)",
       "Bash(.scripts/refresh-translations.sh:*)",
-      "Bash(./gradlew:*)"
+      "Bash(./gradlew:*)",
+      "mcp__jetbrains__search_in_files_by_text",
+      "mcp__jetbrains__find_files_by_name_keyword",
+      "mcp__jetbrains__list_directory_tree",
+      "mcp__jetbrains__find_files_by_glob",
+      "mcp__jetbrains__get_file_problems"
     ],
     "deny": []
   }

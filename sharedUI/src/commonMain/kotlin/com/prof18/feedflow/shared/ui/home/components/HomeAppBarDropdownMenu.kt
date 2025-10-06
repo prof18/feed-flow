@@ -6,11 +6,17 @@ import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -26,14 +32,41 @@ internal fun HomeAppBarDropdownMenu(
     onForceRefreshClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
 ) {
+    var showMarkAllReadDialog by remember { mutableStateOf(false) }
+
+    if (showMarkAllReadDialog) {
+        AlertDialog(
+            onDismissRequest = { showMarkAllReadDialog = false },
+            title = { Text(LocalFeedFlowStrings.current.markAllReadButton) },
+            text = { Text(LocalFeedFlowStrings.current.markAllReadDialogMessage) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onMarkAllReadClicked()
+                        showMarkAllReadDialog = false
+                        closeMenu()
+                    },
+                ) {
+                    Text(LocalFeedFlowStrings.current.confirmButton)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showMarkAllReadDialog = false },
+                ) {
+                    Text(LocalFeedFlowStrings.current.cancelButton)
+                }
+            },
+        )
+    }
+
     DropdownMenu(
         expanded = showMenu,
         onDismissRequest = closeMenu,
     ) {
         DropdownMenuItem(
             onClick = {
-                onMarkAllReadClicked()
-                closeMenu()
+                showMarkAllReadDialog = true
             },
             text = {
                 Text(LocalFeedFlowStrings.current.markAllReadButton)

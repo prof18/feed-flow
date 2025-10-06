@@ -14,14 +14,16 @@ import SwiftUI
 struct SidebarDrawer: View {
     @Environment(AppState.self)
     private var appState
-    
+
     @Environment(BrowserSelector.self)
     private var browserSelector: BrowserSelector
-    
+
     @Environment(\.openURL)
     private var openURL
-    
+
     @Binding var selectedDrawerItem: DrawerItem?
+
+    @State private var showMarkAllReadDialog = false
     
     let navDrawerState: NavDrawerState
     let onFeedFilterSelected: (FeedFilter) -> Void
@@ -77,6 +79,14 @@ struct SidebarDrawer: View {
             }
         }
         .listStyle(.sidebar)
+        .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
+            Button(feedFlowStrings.cancelButton, role: .cancel) {}
+            Button(feedFlowStrings.confirmButton) {
+                onMarkAllReadClick()
+            }
+        } message: {
+            Text(feedFlowStrings.markAllReadDialogMessage)
+        }
     }
 
     private var pinnedFeedSourcesSection: some View {
@@ -246,7 +256,7 @@ struct SidebarDrawer: View {
         Divider()
 
         Button {
-            onMarkAllReadClick()
+            showMarkAllReadDialog = true
         } label: {
             Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
         }

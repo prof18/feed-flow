@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -14,6 +15,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -186,6 +188,7 @@ internal fun ApplicationScope.MainWindow(
                 val listState = rememberLazyListState()
 
                 var aboutDialogVisibility by remember { mutableStateOf(false) }
+                var showMarkAllReadDialog by remember { mutableStateOf(false) }
 
                 AboutDialog(
                     visible = aboutDialogVisibility,
@@ -227,6 +230,31 @@ internal fun ApplicationScope.MainWindow(
                     ),
                 )
 
+                if (showMarkAllReadDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showMarkAllReadDialog = false },
+                        title = { Text(LocalFeedFlowStrings.current.markAllReadButton) },
+                        text = { Text(LocalFeedFlowStrings.current.markAllReadDialogMessage) },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    homeViewModel.markAllRead()
+                                    showMarkAllReadDialog = false
+                                },
+                            ) {
+                                Text(LocalFeedFlowStrings.current.confirmButton)
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = { showMarkAllReadDialog = false },
+                            ) {
+                                Text(LocalFeedFlowStrings.current.cancelButton)
+                            }
+                        },
+                    )
+                }
+
                 val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
 
                 Surface(
@@ -266,7 +294,7 @@ internal fun ApplicationScope.MainWindow(
                                     }
                                 },
                                 onMarkAllReadClick = {
-                                    homeViewModel.markAllRead()
+                                    showMarkAllReadDialog = true
                                 },
                                 onImportExportClick = {
                                     navigator.push(

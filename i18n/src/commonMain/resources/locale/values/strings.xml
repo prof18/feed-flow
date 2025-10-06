@@ -246,4 +246,7 @@
     <string name="add_word_placeholder">Add word</string>
     <string name="blocked_words_empty_state">No blocked words yet</string>
     <string name="blocked_words_description">Articles containing these words in the title or description will be hidden.</string>
+    <string name="mark_all_read_dialog_message">Are you sure you want to mark all articles as read?</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="cancel_button">Cancel</string>
 </resources>

@@ -126,13 +126,5 @@ struct FeedSourceDrawerItem: View {
         } label: {
             Label(feedFlowStrings.deleteFeed, systemImage: "trash")
         }
-
-        if isOnVisionOSDevice() {
-            Button {
-                // No-op so it will close itself
-            } label: {
-                Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
-            }
-        }
     }
 }

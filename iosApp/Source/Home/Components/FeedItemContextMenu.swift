@@ -24,13 +24,6 @@ struct FeedItemContextMenu: View {
             makeShareCommentsButton(commentsUrl: commentUrl)
         }
         makeFeedSettingsButton(feedItem: feedItem)
-        if isOnVisionOSDevice() {
-            Button {
-                // No-op so it will close itself
-            } label: {
-                Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
-            }
-        }
     }
 
     @ViewBuilder

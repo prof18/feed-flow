@@ -323,22 +323,18 @@ private extension HomeContent {
             makeFeedSynToolbarView()
         }
 
-        if !isOnVisionOSDevice() {
-            makeMenuToolbarView(proxy: proxy)
-        }
+        makeMenuToolbarView(proxy: proxy)
     }
 
     @ToolbarContentBuilder
     func makeLegacyToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
         makeToolbarHeaderView(proxy: proxy)
 
-        if !isOnVisionOSDevice() {
-            if showFeedSyncButton {
-                makeFeedSynToolbarView()
-            }
-            makeSearchToolbarView()
-            makeMenuToolbarView(proxy: proxy)
+        if showFeedSyncButton {
+            makeFeedSynToolbarView()
         }
+        makeSearchToolbarView()
+        makeMenuToolbarView(proxy: proxy)
     }
 
     @ToolbarContentBuilder

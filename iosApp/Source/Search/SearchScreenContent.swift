@@ -76,15 +76,6 @@ struct SearchScreenContent: View {
                                makeReadUnreadButton(feedItem: feedItem)
                                makeBookmarkButton(feedItem: feedItem)
                                makeCommentsButton(feedItem: feedItem)
-                               if isOnVisionOSDevice() {
-                                   if isOnVisionOSDevice() {
-                                       Button {
-                                           // No-op so it will close itslef
-                                       } label: {
-                                           Label(feedFlowStrings.closeMenuButton, systemImage: "xmark")
-                                       }
-                                   }
-                               }
                            }
                        }
             }

@@ -74,10 +74,6 @@ struct SidebarDrawer: View {
 
             feedSourcesWithoutCategorySection
             feedSourcesWithCategorySection
-
-            if isOnVisionOSDevice() {
-                visionOsSection
-            }
         }
         .listStyle(.sidebar)
         .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
@@ -257,44 +253,6 @@ struct SidebarDrawer: View {
                 Text(title)
             }
         )
-    }
-
-    @ViewBuilder private var visionOsSection: some View {
-        Spacer()
-
-        Divider()
-
-        Button {
-            showMarkAllReadDialog = true
-        } label: {
-            Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
-        }
-
-        Button {
-            showClearOldArticlesDialog = true
-        } label: {
-            Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
-        }
-
-        Button {
-            onForceRefreshClick()
-        } label: {
-            Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
-        }
-
-        #if DEBUG
-            Button {
-                deleteAllFeeds()
-            } label: {
-                Label("Delete Database", systemImage: "trash")
-            }
-        #endif
-
-        Button {
-            onShowSettingsClick()
-        } label: {
-            Label(feedFlowStrings.settingsButton, systemImage: "gear")
-        }
     }
 }
 

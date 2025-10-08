@@ -1,62 +1,61 @@
-# Title
+# العنوان
 
-FeedFlow - RSS Reader
+FeedFlow - قارئ الخلاصات
 
-## Short desc
+## وصف قصير
 
-Minimal, fast, uncluttered
+بسيط، سريع، ومرتب
 
-## Long desc
+## وصف طويل
 
-Key Features:
+الميزات الرئيسية:
 
-- Minimalist Design: Focus on what matters with a clutter-free interface
-- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
-  or Dropbox (all platforms)
-- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
-  management
-- Flexible Reading Options: Choose between web view, reader mode, or your
-  preferred browser
-- Privacy-Focused: Select your favorite privacy-focused browser for a separate
-  reading experience
-- Easy Migration: Import and export your RSS feeds via OPML files
+- تصميم انسيابي: انطلق نحو المحتوى الأساسي بواجهة نظيفة
+- مزامنة سلسة: حافظ على تحديث خلاصاتك على جميع أجهزتك عبر iCloud (لأجهزة
+  iOS/macOS) أو Dropbox (لجميع المنصات)
+- ربط FreshRSS: اربط التطبيق بخادم FreshRSS الخاص بك للحصول على تحكم متقدم في
+  الخلاصات
+- خيارات قراءة مرنة: اختر بين عرض الويب، أو وضع القارئ، أو متصفحك المفضّل
+- التركيز على الخصوصية: اختر متصفحك المفضّل الذي يركّز على الخصوصية لتجربة قراءة
+  منفصلة
+- نقل بسيط: يمكنك جلب وإخراج خلاصات RSS عن طريق ملفات OPML
 
-What Sets FeedFlow Apart:
+ما الذي يميّز FeedFlow:
 
-- Clean, intuitive interface that lets you focus on content
-- Multiple sync options to fit your workflow (Beta)
-- Customizable reading experience with reader mode
-- Fast and lightweight
-- Regular updates and active development
+- تصميم واضح وسهل الاستخدام يتيح لك التركيز على المحتوى
+- المزامنة بخيارات متنوعة تناسب احتياجاتك (تجريبي)
+- تجربة قراءة قابلة للتخصيص مع وضع القارئ
+- سريع وخفيف
+- تحديثات منتظمة وتطوير مستمر
 
-Perfect for:
-- News enthusiasts who want control over their information diet
-- Privacy-conscious readers
-- Content creators tracking multiple sources
-- Anyone looking to declutter their digital reading experience
+مناسب تمامًا لـ:
+- عشّاق الأخبار الذين يريدون التحكم الكامل بمصادر معلوماتهم
+- القراء المهتمون بالخصوصية
+- صناع المحتوى الذين يتابعون مصادر متعددة
+- أي شخص يتطلع إلى ترتيب وتنظيف تجربة القراءة الرقمية لديه
 
-Join thousands of readers who've chosen FeedFlow for a better way to stay
-informed.
+انضم إلى آلاف القراء الذين اختاروا FeedFlow كطريقة أفضل للبقاء على الاطلاع بآخر
+الأخبار.
 
-Note: Sync functionality is currently in beta. The experience is continuously
-improving based on user feedback.
+ملاحظة: خاصية المزامنة حاليًا في مرحلة تجريبية. نعمل على تحسين التجربة باستمرار
+بناءً على ملاحظات المستخدمين.
 
-## Screenshot 1
+## لقطة الشاشة 1
 
-All your feeds in your pocket
+جميع خلاصاتك في متناول يدك
 
-## Screenshot 3
+## لقطة الشاشة 3
 
-Import your existing collection
+استورد مجموعتك الحالية
 
-## Screenshot 4
+## لقطة الشاشة 4
 
-Open the articles in your favourite browser
+افتح المقالات في متصفحك المفضل
 
-## Screenshot 5
+## لقطة الشاشة 5
 
-Enjoy a clutter-free reader mode
+تمتّع بوضع قراءة نظيف ومرتب
 
-## Banner image
+## صورة البانر
 
-minimalistic RSS Reader
+قارئ خلاصات RSS بسيط

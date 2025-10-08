@@ -10,5 +10,8 @@ data class FeedItemUrlInfo(
 )
 
 fun FeedItemUrlInfo.shouldOpenInBrowser(): Boolean =
-    openOnlyOnBrowser || url.contains("type=pdf") || url.contains("youtube.com") ||
+    openOnlyOnBrowser ||
+        url.contains("type=pdf") ||
+        url.contains("youtube.com") ||
+        url.contains(".torrent") ||
         linkOpeningPreference == LinkOpeningPreference.PREFERRED_BROWSER

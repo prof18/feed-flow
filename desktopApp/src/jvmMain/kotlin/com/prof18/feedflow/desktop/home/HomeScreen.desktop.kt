@@ -29,6 +29,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
@@ -142,7 +143,7 @@ internal fun HomeScreen(
                 LinkOpeningPreference.INTERNAL_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
                 LinkOpeningPreference.PREFERRED_BROWSER -> uriHandler.openUri(feedItemUrlInfo.url)
                 LinkOpeningPreference.DEFAULT -> {
-                    if (browserManager.openReaderMode()) {
+                    if (browserManager.openReaderMode() && !feedItemUrlInfo.shouldOpenInBrowser()) {
                         navigateToReaderMode(feedItemUrlInfo)
                     } else {
                         uriHandler.openUri(feedItemUrlInfo.url)

@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.readermode
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -8,9 +9,11 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +47,8 @@ internal fun ReaderModeToolbar(
     onFontSizeChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
 ) {
-    var showMenu by remember { mutableStateOf(false) }
+    var showFontSizeMenu by remember { mutableStateOf(false) }
+    var showOverflowMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
         title = {},
@@ -60,69 +64,49 @@ internal fun ReaderModeToolbar(
         },
         actions = {
             Row {
-                if (readerModeState is ReaderModeState.HtmlNotAvailable) {
-                    var isBookmarked by remember {
-                        mutableStateOf(readerModeState.isBookmarked)
-                    }
-                    BookmarkButton(
-                        isBookmarked = isBookmarked,
-                        onClick = {
-                            isBookmarked = !isBookmarked
-                            onBookmarkClick(FeedItemId(readerModeState.id), isBookmarked)
-                        },
-                    )
-                }
-
                 if (readerModeState is ReaderModeState.Success) {
                     var isBookmarked by remember {
                         mutableStateOf(readerModeState.readerModeData.isBookmarked)
                     }
 
-                    BookmarkButton(
-                        isBookmarked = isBookmarked,
-                        onClick = {
-                            isBookmarked = !isBookmarked
-                            onBookmarkClick(readerModeState.readerModeData.id, isBookmarked)
-                        },
-                    )
-
                     TooltipBox(
                         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                         state = rememberTooltipState(),
-                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.menuShare) } },
+                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeFontSize) } },
                     ) {
                         IconButton(
                             onClick = {
-                                onShareClick(readerModeState.readerModeData.url)
+                                showFontSizeMenu = true
                             },
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Share,
+                                imageVector = Icons.Outlined.TextFields,
                                 contentDescription = null,
                             )
                         }
                     }
 
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                        state = rememberTooltipState(),
-                        tooltip = {
-                            PlainTooltip {
-                                Text(
-                                    LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
-                                )
-                            }
+                    DropdownMenu(
+                        expanded = showFontSizeMenu,
+                        onDismissRequest = {
+                            showFontSizeMenu = false
                         },
                     ) {
-                        IconButton(
-                            onClick = {
-                                onArchiveClick(readerModeState.readerModeData.url)
-                            },
+                        Column(
+                            modifier = Modifier.padding(Spacing.regular),
                         ) {
-                            val label = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription
-                            Icon(
-                                imageVector = hammerIcon,
-                                contentDescription = label,
+                            Text(
+                                text = LocalFeedFlowStrings.current.readerModeFontSize,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+
+                            SliderWithPlusMinus(
+                                value = fontSize.toFloat(),
+                                onValueChange = {
+                                    onFontSizeChange(it.toInt())
+                                },
+                                valueRange = 12f..40f,
+                                steps = 40,
                             )
                         }
                     }
@@ -150,44 +134,80 @@ internal fun ReaderModeToolbar(
                         }
                     }
 
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                        state = rememberTooltipState(),
-                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeFontSize) } },
-                    ) {
+                    Box {
                         IconButton(
                             onClick = {
-                                showMenu = true
+                                showOverflowMenu = true
                             },
                         ) {
                             Icon(
-                                imageVector = Icons.Outlined.TextFields,
+                                imageVector = Icons.Default.MoreVert,
                                 contentDescription = null,
                             )
                         }
-                    }
 
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = {
-                            showMenu = false
-                        },
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(Spacing.regular),
+                        DropdownMenu(
+                            expanded = showOverflowMenu,
+                            onDismissRequest = {
+                                showOverflowMenu = false
+                            },
                         ) {
-                            Text(
-                                text = LocalFeedFlowStrings.current.readerModeFontSize,
-                                style = MaterialTheme.typography.titleMedium,
+                            DropdownMenuItem(
+                                text = {
+                                    val tooltipText = if (isBookmarked) {
+                                        LocalFeedFlowStrings.current.menuRemoveFromBookmark
+                                    } else {
+                                        LocalFeedFlowStrings.current.menuAddToBookmark
+                                    }
+                                    Text(text = tooltipText)
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = if (isBookmarked) {
+                                            Icons.Default.BookmarkRemove
+                                        } else {
+                                            Icons.Default.BookmarkAdd
+                                        },
+                                        contentDescription = null,
+                                    )
+                                },
+                                onClick = {
+                                    showOverflowMenu = false
+                                    isBookmarked = !isBookmarked
+                                    onBookmarkClick(readerModeState.readerModeData.id, isBookmarked)
+                                },
                             )
 
-                            SliderWithPlusMinus(
-                                value = fontSize.toFloat(),
-                                onValueChange = {
-                                    onFontSizeChange(it.toInt())
+                            DropdownMenuItem(
+                                text = { Text(text = LocalFeedFlowStrings.current.menuShare) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Share,
+                                        contentDescription = null,
+                                    )
                                 },
-                                valueRange = 12f..40f,
-                                steps = 40,
+                                onClick = {
+                                    showOverflowMenu = false
+                                    onShareClick(readerModeState.readerModeData.url)
+                                },
+                            )
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = hammerIcon,
+                                        contentDescription = null,
+                                    )
+                                },
+                                onClick = {
+                                    showOverflowMenu = false
+                                    onArchiveClick(readerModeState.readerModeData.url)
+                                },
                             )
                         }
                     }
@@ -195,34 +215,4 @@ internal fun ReaderModeToolbar(
             }
         },
     )
-}
-
-@Composable
-private fun BookmarkButton(
-    isBookmarked: Boolean,
-    onClick: () -> Unit,
-) {
-    val tooltipText = if (isBookmarked) {
-        LocalFeedFlowStrings.current.menuRemoveFromBookmark
-    } else {
-        LocalFeedFlowStrings.current.menuAddToBookmark
-    }
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-        state = rememberTooltipState(),
-        tooltip = { PlainTooltip { Text(tooltipText) } },
-    ) {
-        IconButton(
-            onClick = onClick,
-        ) {
-            Icon(
-                imageVector = if (isBookmarked) {
-                    Icons.Default.BookmarkRemove
-                } else {
-                    Icons.Default.BookmarkAdd
-                },
-                contentDescription = null,
-            )
-        }
-    }
 }

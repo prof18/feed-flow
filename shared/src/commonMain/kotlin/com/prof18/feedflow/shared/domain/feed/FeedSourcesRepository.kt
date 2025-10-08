@@ -372,8 +372,9 @@ internal class FeedSourcesRepository(
                     channel = channel,
                     usedUrl = actualUrl,
                 )
-            } catch (_: Throwable) {
+            } catch (e: Throwable) {
                 // Do nothing
+                logger.d(e) { "Failed to parse rssChannel: $actualUrl" }
             }
         }
 

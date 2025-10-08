@@ -51,7 +51,7 @@
     <string name="feed_add_in_progress_message">Please wait, every feed availability is being checked. The operation can take a while depending on the amount of feeds that you are importing</string>
     <string name="issue_report_title">Report an issue with FeedFlow</string>
     <string name="issue_content_title">Issue with FeedFlow</string>
-    <string name="issue_content_template">Please describe the issue and provide a link to the RSS Feed that causes the issues. If you can, please attach a screenshot and the OPML file</string>
+    <string name="issue_content_template">Please describe the issue, specify the platform that you are using, the app version, and provide a link to the RSS Feed that causes the issues. If you can, please attach a screenshot and the OPML file</string>
     <string name="missing_title_and_link">There was an error while getting the title of the feed</string>
     <string name="no_category_selected_header">No category</string>
     <string name="new_category_hint">New category name</string>

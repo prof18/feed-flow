@@ -17,7 +17,7 @@
     <string name="new_release_available_link">Scarica qui</string>
     <string name="refresh_feeds">Ricarica feed</string>
     <string name="done_button">OK</string>
-    <string name="issue_content_template">Descrivi il problema e fornisci un collegamento al feed RSS che causa i problemi. Se puoi, allega uno screenshot e il file OPML</string>
+    <string name="issue_content_template">Descrivi il problema, specifica la piattaforma che stai usando, la versione dell'app, e fornisci un link al feed RSS che causa i problemi. Se puoi, allega uno screenshot e il file OPML</string>
     <string name="about_button">Informazioni</string>
     <string name="report_issue_button">Segnala problema</string>
     <string name="export_started_message">Esportazione in corso</string>

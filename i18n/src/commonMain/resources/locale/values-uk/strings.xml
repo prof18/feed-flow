@@ -59,7 +59,7 @@
     <string name="about_the_app">FeedFlow — це мінімалістичний читач RSS, заснований на особистих думках автора. Статті відкриваються на відповідних вебсайтах, і ви можете вибрати свій улюблений переглядач, орієнтований на конфіденційність, щоб відокремити читання від основного браузера. Якщо ви хочете уникнути браузера, FeedFlow пропонує режим читання, щоб насолоджуватися вмістом статей без будь-яких відволікань.\nВи можете імпортувати та експортувати свою колекцію RSS із файлів OPML і до них.</string>
     <string name="add_feed_categories_title">Категорії</string>
     <string name="feed_add_in_progress_message">Будь ласка, зачекайте, доступність кожного каналу перевіряється. Операція може тривати деякий час залежно від кількості каналів, які ви імпортуєте</string>
-    <string name="issue_content_template">Будь ласка, опишіть проблему і надайте посилання на RSS-стрічку, яка викликає проблеми. Якщо можете, прикріпіть, будь ласка, знімок екрана і файл OPML</string>
+    <string name="issue_content_template">Будь ласка, опишіть проблему, вкажіть платформу, яку ви використовуєте, версію програми та надайте посилання на RSS-канал, який спричиняє проблеми. Якщо можливо, додайте знімок екрана та файл OPML</string>
     <string name="missing_title_and_link">Виникла помилка при отриманні заголовка стрічки</string>
     <string name="wrong_link_report_title">Наступні стрічки не додано, оскільки вони недійсні</string>
     <string name="feed_url">URL стрічки</string>
@@ -246,4 +246,8 @@
     <string name="add_word_placeholder">Додати слово</string>
     <string name="blocked_words_empty_state">Поки що немає заблокованих слів</string>
     <string name="blocked_words_description">Статті, що містять ці слова в назві або описі, будуть приховані.</string>
+    <string name="mark_all_read_dialog_message">Ви впевнені, що хочете позначити всі статті як прочитані?</string>
+    <string name="clear_old_articles_dialog_message">Ви впевнені, що хочете видалити старі статті?</string>
+    <string name="confirm_button">Підтвердити</string>
+    <string name="cancel_button">Скасувати</string>
 </resources>

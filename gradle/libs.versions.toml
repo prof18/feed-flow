@@ -61,7 +61,7 @@ stately-concurrency = "2.1.0"
 triplet-play = "3.12.1"
 voyager = "1.0.1"
 workmanager = "2.10.5"
-compose-hotreload = "1.0.0-beta08"
+compose-hotreload = "1.0.0-rc02"
 flatpack-gradle-generator = "1.5.0"
 telemetry-deck = "6.2.2"
 

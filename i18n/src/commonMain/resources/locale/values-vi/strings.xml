@@ -97,7 +97,7 @@
     <string name="invalid_rss_url">Liên kết này không phải là nguồn tin RSS hợp lệ</string>
     <string name="report_issue_button">Báo lỗi</string>
     <string name="import_export_opml_title">Nhập và xuất</string>
-    <string name="issue_content_template">Vui lòng mô tả vấn đề và cung cấp liên kết đến nguồn tin RSS gây ra vấn đề. Nếu có thể, vui lòng đính kèm ảnh chụp màn hình và file OPML</string>
+    <string name="issue_content_template">Vui lòng mô tả vấn đề, nền tảng đang dùng, phiên bản app và cung cấp liên kết đến nguồn tin RSS gây ra vấn đề. Nếu có thể, vui lòng đính kèm ảnh chụp màn hình và file OPML</string>
     <string name="add_feed_category_title">Danh mục</string>
     <string name="no_category_selected_header">Chưa có danh mục</string>
     <string name="action_done">Xong</string>
@@ -246,4 +246,8 @@
     <string name="add_word_placeholder">Thêm từ</string>
     <string name="blocked_words_empty_state">Chưa chặn từ nào</string>
     <string name="blocked_words_description">Các bài viết có chứa những từ này trong tựa đề hoặc mô tả sẽ bị ẩn.</string>
+    <string name="mark_all_read_dialog_message">Bạn có chắc muốn đánh dấu tất cả bài viết là đã đọc?</string>
+    <string name="clear_old_articles_dialog_message">Bạn có chắc muốn xóa những bài viết cũ?</string>
+    <string name="confirm_button">Xác nhận</string>
+    <string name="cancel_button">Hủy bỏ</string>
 </resources>

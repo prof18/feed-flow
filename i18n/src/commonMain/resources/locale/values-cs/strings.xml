@@ -3,7 +3,7 @@
     <string name="about_menu_contribute_translations">Pomozte s překladem</string>
     <string name="wrong_link_report_title">Následující zdroje nebyly přidány, protože nejsou validní</string>
     <string name="about_the_app">FeedFlow je minimalistická čtečka RSS založená na osobních názorech autora. Články se otevírají na příslušných webových stránkách a vy si můžete zvolit svůj oblíbený prohlížeč zaměřený na soukromí a oddělit tak čtení od svého hlavního prohlížeče. Pokud se chcete prohlížeči vyhnout, FeedFlow nabízí režim čtečky, ve které si můžete vychutnat obsah článků bez jakéhokoli rozptylování. \nSvou sbírku RSS můžete importovat a exportovat pomocí souborů OPML.</string>
-    <string name="issue_content_template">Prosím popište problém a uveďte odkaz na RSS Feed, který způsobuje problémy. Pokud můžete, připojte snímek obrazovky a soubor OPML</string>
+    <string name="issue_content_template">Popište prosím problém, zadejte platformu, kterou používáte, verzi aplikace a odkaz na RSS Feed, který způsobuje problémy. Pokud můžete, připojte snímek obrazovky a soubor OPML</string>
     <string name="default_browser">Výchozí prohlížeč</string>
     <string name="drawer_title_bookmarks">Záložky</string>
     <string name="about_button">O aplikaci</string>
@@ -233,4 +233,21 @@
     <string name="settings_theme_system">Systémový</string>
     <string name="settings_theme_light">Světlý</string>
     <string name="settings_theme_dark">Tmavý</string>
+    <string name="open_feed_settings">Otevřete nastavení vlákna</string>
+    <string name="reader_mode_browser_button_content_description">Otevřít v prohlížeči</string>
+    <string name="icloud_connection_error">Omlouváme se, ale nejsme schopni se připojit k iCloudu. Zkontrolujte, zda jste přihlášeni, iCloud Drive je zapnuto a máte k dispozici úložný prostor - kód chyby: %s.</string>
+    <string name="delete_feed_confirmation_title">Smazat kanál?</string>
+    <string name="delete_feed_confirmation_message">Přejete si skutečně odstranit tento zdroj? Tuto akci nelze zrušit.</string>
+    <string name="delete_feed_button">Odstranit zdroj</string>
+    <string name="feed_fetch_failed_tooltip">Aktualizace kanálu selhala. Zkontrolujte, zda stránky fungují</string>
+    <string name="feed_fetch_failed_tooltip_short">Aktualizace vlákna selhala</string>
+    <string name="support_the_project">Podpořte tento projekt</string>
+    <string name="settings_blocked_words">Blokovaná slova</string>
+    <string name="add_word_placeholder">Přidat slovo</string>
+    <string name="blocked_words_empty_state">Žádná zablokovaná slova</string>
+    <string name="blocked_words_description">Články obsahující tato slova v názvu nebo popisu budou skryty.</string>
+    <string name="mark_all_read_dialog_message">Přejete si skutečně označit všechny články jako přečtené?</string>
+    <string name="clear_old_articles_dialog_message">Přejete si skutečně odstranit staré články?</string>
+    <string name="confirm_button">Potvrdit</string>
+    <string name="cancel_button">Zrušit</string>
 </resources>

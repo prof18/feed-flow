@@ -81,7 +81,7 @@
     <string name="database_error">Нещо се обърка по време на извличането на емисиите. Моля, опитайте отново или рестартирайте приложението - error code: %s :(</string>
     <string name="force_feed_refresh">Принудително обновяване на емисии</string>
     <string name="drawer_title_feed_sources">Източници на емисия</string>
-    <string name="issue_content_template">Моля, опишете проблема и дайте връзка към RSS канала, който причинява проблемите. Ако можете, моля, прикачете екранна снимка и OPML файла</string>
+    <string name="issue_content_template">Моля, опишете проблема, посочете платформата, която използвате, версията на приложението и предоставете връзка към RSS емисията, която причинява проблемите. Ако е възможно, моля, прикачете екранна снимка и OPML файла.</string>
     <string name="invalid_rss_url">Предоставената от вас връзка е невалидна RSS емисия</string>
     <string name="retry_button">Опитайте отново</string>
     <string name="new_release_available_title">Налична е нова версия на FeedFlow:</string>
@@ -246,4 +246,8 @@
     <string name="add_word_placeholder">Добавяне на дума</string>
     <string name="blocked_words_empty_state">Все още няма блокирани думи</string>
     <string name="blocked_words_description">Статиите, съдържащи тези думи в заглавието или описанието, ще бъдат скрити.</string>
+    <string name="mark_all_read_dialog_message">Сигурни ли сте, че искате да маркирате всички статии като прочетени?</string>
+    <string name="clear_old_articles_dialog_message">Сигурни ли сте, че искате да изтриете стари статии?</string>
+    <string name="confirm_button">Потвърди</string>
+    <string name="cancel_button">Отказ</string>
 </resources>

@@ -246,4 +246,8 @@
     <string name="settings_blocked_words">Blockierte Wörter</string>
     <string name="add_word_placeholder">Wort hinzufügen</string>
     <string name="blocked_words_empty_state">Derzeit keine blockierten Wörter</string>
+    <string name="mark_all_read_dialog_message">Möchten sie wirklich alle Artikel als gelesen markieren?</string>
+    <string name="clear_old_articles_dialog_message">Möchten sie wirklich alte Artikel löschen?</string>
+    <string name="confirm_button">Bestätigen</string>
+    <string name="cancel_button">Abbrechen</string>
 </resources>

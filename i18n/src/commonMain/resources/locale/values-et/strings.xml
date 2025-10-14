@@ -80,7 +80,7 @@
     <string name="open_source_nav_bar">Avatud lähtekoodiga tarkvara litsentsid</string>
     <string name="no_category_selected_header">Kategooriaid pole</string>
     <string name="about_the_app">FeedFlow on autori isiklike eelistuste alusel loodud minimalistlik RSS-uudisvoogude lugeja. Artiklid avatakse oma veebisaitides ja sa saad selleks valida oma eelistatud privaatsusteadliku brauseri ning soovi korral teha seda eraldi oma põhibrauserist. Kui soovid brausereid vältida, siis FeedFlow\'l on olemas ka lugemisvaade, mis võimaldav sisu nautida ilma väliste segajateta. \nLisaks saad oma RSS-uudisvoogusid importida OPML-failist ja neid ka sinna eksportida.</string>
-    <string name="issue_content_template">Palun kirjelda viga või probleemi ning lisa link RSS-uudivoole, kus see tekib. Kui sul on võimalik, siis palun lisa ka ekraanitõmmis ja OPML-fail</string>
+    <string name="issue_content_template">Palun kirjelda viga või probleemi, täpsusta kasutatud platvormi ja rakenduse versioon ning lisa link RSS-uudivoole, kus see viga tekib. Kui sul on võimalik, siis palun lisa ka ekraanitõmmis ja OPML-fail</string>
     <string name="add_feed_category_title">Kategooria</string>
     <string name="drawer_title_timeline">Ajajoon</string>
     <string name="drawer_title_categories">Kategooriad</string>
@@ -246,4 +246,8 @@
     <string name="add_word_placeholder">Lisa sõna</string>
     <string name="blocked_words_empty_state">Blokeeritud sõnu veel ei ole</string>
     <string name="blocked_words_description">Kui artikli pealkirjas või kirjelduses on mõni neist sõnadest, siis artikkel saab olema peidetud.</string>
+    <string name="mark_all_read_dialog_message">Kas oled kindel, et soovid kõik artiklid märkida loetuks?</string>
+    <string name="clear_old_articles_dialog_message">Kas oled kindel, et soovid vanad artiklid kustutada?</string>
+    <string name="confirm_button">Kinnita</string>
+    <string name="cancel_button">Katkesta</string>
 </resources>

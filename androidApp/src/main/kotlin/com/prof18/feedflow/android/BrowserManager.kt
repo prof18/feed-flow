@@ -116,10 +116,12 @@ class BrowserManager(
         try {
             val browserId = getBrowserPackageName()
             if (browserId == BrowserIds.IN_APP_BROWSER) {
-                val intent = CustomTabsIntent.Builder()
-                    .build()
-                intent.launchUrl(context, url.toUri())
-            } else {
+                openWithInAppBrowser(url, context)
+                return
+            }
+
+            val appHandlerOpened = tryOpenWithAppHandler(url, context)
+            if (!appHandlerOpened) {
                 val intent = getFavouriteBrowserIntent(url)
                 context.startActivity(intent)
             }
@@ -131,9 +133,69 @@ class BrowserManager(
         }
     }
 
+    private fun openWithInAppBrowser(url: String, context: Context) {
+        val intent = CustomTabsIntent.Builder().build()
+        intent.launchUrl(context, url.toUri())
+    }
+
+    private fun tryOpenWithAppHandler(url: String, context: Context): Boolean {
+        val appHandlerIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = url.toUri()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                flags = Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER
+            }
+        }
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            tryOpenWithAppHandlerModern(appHandlerIntent, context)
+        } else {
+            tryOpenWithAppHandlerLegacy(appHandlerIntent, context)
+        }
+    }
+
+    private fun tryOpenWithAppHandlerModern(intent: Intent, context: Context): Boolean {
+        return try {
+            context.startActivity(intent)
+            true
+        } catch (_: ActivityNotFoundException) {
+            false
+        }
+    }
+
+    private fun tryOpenWithAppHandlerLegacy(intent: Intent, context: Context): Boolean {
+        val nonBrowserHandlers = getNonBrowserHandlers(intent)
+        return if (nonBrowserHandlers.isNotEmpty()) {
+            context.startActivity(intent)
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun getNonBrowserHandlers(intent: Intent) =
+        context.packageManager.queryIntentActivities(
+            intent,
+            PackageManager.MATCH_DEFAULT_ONLY,
+        ).filterNot { resolveInfo ->
+            isBrowserApp(resolveInfo.activityInfo.packageName)
+        }
+
+    private fun isBrowserApp(packageName: String): Boolean {
+        val testIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = "https://www.example.com".toUri()
+        }
+        val browserResolveInfos = context.packageManager.queryIntentActivities(
+            testIntent,
+            PackageManager.MATCH_DEFAULT_ONLY,
+        )
+        return browserResolveInfos.any {
+            it.activityInfo.packageName == packageName
+        }
+    }
+
     private fun getFavouriteBrowserIntent(url: String): Intent {
         return Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(url)
+            data = url.toUri()
             getBrowserPackageName()?.let { packageName ->
                 setPackage(packageName)
             }
@@ -146,7 +208,7 @@ class BrowserManager(
     ) {
         try {
             val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse(url)
+                data = url.toUri()
             }
             context.startActivity(intent)
         } catch (e: ActivityNotFoundException) {

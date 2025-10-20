@@ -498,12 +498,66 @@ class DateFormatterImpl(
             second()
         },
 
+        // Fri, 15 Oct 2021, 16:15:00 -0600
+        Format {
+            alternativeParsing({
+                // the day of week may be missing
+            }) {
+                dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
+                chars(", ")
+            }
+            alternativeParsing({
+                day(Padding.NONE)
+            }) {
+                day()
+            }
+            char(' ')
+            alternativeParsing({
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+            }) {
+                monthName(MonthNames.ENGLISH_FULL)
+            }
+            char(' ')
+            alternativeParsing({
+                yearTwoDigits(1970)
+            }) {
+                year()
+            }
+            chars(", ")
+            alternativeParsing({
+                hour(padding = Padding.NONE)
+            }) {
+                hour()
+            }
+            char(':')
+            minute()
+            optional {
+                char(':')
+                second()
+            }
+            chars(" ")
+            alternativeParsing({
+                chars("UT")
+            }, {
+                chars("Z")
+            }) {
+                optional("GMT") {
+                    offset(UtcOffset.Formats.FOUR_DIGITS)
+                }
+            }
+        },
+
         // Oct 26, 2020 9:47am
         // Aug 22, 2022 11:35am
+        // Oct 1, 2025 8:30am
         Format {
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char(' ')
-            day()
+            alternativeParsing({
+                day(Padding.NONE)
+            }) {
+                day()
+            }
             chars(", ")
             year()
             char(' ')

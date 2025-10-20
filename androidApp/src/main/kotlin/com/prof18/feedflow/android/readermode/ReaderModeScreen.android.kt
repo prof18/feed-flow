@@ -38,6 +38,7 @@ import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
+import com.prof18.feedflow.shared.utils.isValidUrl
 import org.json.JSONException
 import org.json.JSONObject
 import org.koin.compose.koinInject
@@ -68,7 +69,9 @@ internal fun ReaderModeScreen(
                     }
                 },
                 openInBrowser = { url ->
-                    browserManager.openUrlWithFavoriteBrowser(url, context)
+                    if (isValidUrl(url)) {
+                        browserManager.openUrlWithFavoriteBrowser(url, context)
+                    }
                 },
                 onShareClick = { url ->
                     context.openShareSheet(
@@ -78,7 +81,9 @@ internal fun ReaderModeScreen(
                 },
                 onArchiveClick = { articleUrl ->
                     val archiveUrl = getArchiveISUrl(articleUrl)
-                    browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
+                    if (isValidUrl(archiveUrl)) {
+                        browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
+                    }
                 },
                 onFontSizeChange = { newFontSize ->
                     navigator.evaluateJavaScript(
@@ -96,7 +101,9 @@ internal fun ReaderModeScreen(
         when (readerModeState) {
             is ReaderModeState.HtmlNotAvailable -> {
                 navigateBack()
-                browserManager.openUrlWithFavoriteBrowser(readerModeState.url, context)
+                if (isValidUrl(readerModeState.url)) {
+                    browserManager.openUrlWithFavoriteBrowser(readerModeState.url, context)
+                }
             }
             ReaderModeState.Loading -> {
                 Box(
@@ -112,7 +119,9 @@ internal fun ReaderModeScreen(
                 ReaderMode(
                     readerModeState = readerModeState,
                     openInBrowser = { url ->
-                        browserManager.openUrlWithFavoriteBrowser(url, context)
+                        if (isValidUrl(url)) {
+                            browserManager.openUrlWithFavoriteBrowser(url, context)
+                        }
                     },
                     contentPadding = contentPadding,
                     navigator = navigator,

@@ -57,6 +57,7 @@ import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
+import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.launch
 
 internal data class ReaderModeScreen(
@@ -85,7 +86,11 @@ internal data class ReaderModeScreen(
                     readerModeState = state,
                     fontSize = fontSize,
                     navigateBack = { navigator.pop() },
-                    openInBrowser = { url -> uriHandler.openUri(url) },
+                    openInBrowser = { url ->
+                        if (isValidUrl(url)) {
+                            uriHandler.openUri(url)
+                        }
+                    },
                     onShareClick = { url ->
                         val result = copyToClipboard(url)
                         if (result) {
@@ -99,7 +104,9 @@ internal data class ReaderModeScreen(
                     },
                     onArchiveClick = { articleUrl ->
                         val archiveUrl = getArchiveISUrl(articleUrl)
-                        uriHandler.openUri(archiveUrl)
+                        if (isValidUrl(archiveUrl)) {
+                            uriHandler.openUri(archiveUrl)
+                        }
                     },
                     onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
                     onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
@@ -112,7 +119,9 @@ internal data class ReaderModeScreen(
             when (val s = state) {
                 is ReaderModeState.HtmlNotAvailable -> {
                     navigator.pop()
-                    uriHandler.openUri(s.url)
+                    if (isValidUrl(s.url)) {
+                        uriHandler.openUri(s.url)
+                    }
                 }
                 ReaderModeState.Loading -> {
                     androidx.compose.foundation.layout.Box(

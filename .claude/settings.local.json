@@ -13,7 +13,8 @@
       "mcp__jetbrains__find_files_by_name_keyword",
       "mcp__jetbrains__list_directory_tree",
       "mcp__jetbrains__find_files_by_glob",
-      "mcp__jetbrains__get_file_problems"
+      "mcp__jetbrains__get_file_problems",
+      "mcp__jetbrains__create_new_file"
     ],
     "deny": []
   }

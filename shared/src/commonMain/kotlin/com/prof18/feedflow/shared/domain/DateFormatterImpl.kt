@@ -165,8 +165,8 @@ class DateFormatterImpl(
             offsetMinutesOfHour()
         },
 
-        // Fri, 7 May 2021 10:44:02 EST
-        //  Fri, 7 May 2021 10:44:02 EST
+        // Fri, 7 May 2021 10:44:02 EST (will be normalized to -0500)
+        // Fri, 7 May 2021 10:44:02 -0500
         Format {
             alternativeParsing({
                 // the day of week may be missing
@@ -200,12 +200,13 @@ class DateFormatterImpl(
                 second()
             }
             chars(" ")
-            timeZones()
+            offset(UtcOffset.Formats.FOUR_DIGITS)
         },
 
         // "2023-12-13 19:34:30  +0800"
         // "2023-12-20 18:35:26 +0800"
         // 2023-07-25T13:55:02
+        // "2023-12-15 00:00:00 UTC" (will be normalized to +0000)
         Format {
             year()
             char('-')
@@ -236,7 +237,6 @@ class DateFormatterImpl(
             optional {
                 offset(UtcOffset.Formats.FOUR_DIGITS)
             }
-            timeZones()
         },
 
         // 01 Jan 2014
@@ -391,7 +391,8 @@ class DateFormatterImpl(
             }
         },
 
-        // mar, 14 gen 2025 13:46:12 GMT
+        // mar, 14 gen 2025 13:46:12 GMT (will be normalized to +0000)
+        // thu, 18 jan 2024 13:46:12 CET (will be normalized to +0100)
         Format {
             dayOfWeek(DayOfWeekNames(DayOfWeekNames.ENGLISH_ABBREVIATED.names.map { it.lowercase() }))
             chars(", ")
@@ -418,10 +419,10 @@ class DateFormatterImpl(
                 second()
             }
             chars(" ")
-            timeZones()
+            offset(UtcOffset.Formats.FOUR_DIGITS)
         },
 
-        // Feb 19, 2025 00:49 GMT
+        // Feb 19, 2025 00:49 GMT (will be normalized to +0000)
         Format {
             alternativeParsing({
                 monthName(MonthNames(MonthNames.ENGLISH_ABBREVIATED.names.map { it.lowercase() }))
@@ -441,7 +442,7 @@ class DateFormatterImpl(
                 second()
             }
             chars(" ")
-            timeZones()
+            offset(UtcOffset.Formats.FOUR_DIGITS)
         },
 
         // 02/18/25 20:39:28
@@ -574,13 +575,41 @@ class DateFormatterImpl(
         },
     )
 
+    private val timezoneReplacements = mapOf(
+        "EST" to "-0500", // Eastern Standard Time
+        "EDT" to "-0400", // Eastern Daylight Time
+        "CST" to "-0600", // Central Standard Time (US)
+        "CDT" to "-0500", // Central Daylight Time
+        "PST" to "-0800", // Pacific Standard Time
+        "PDT" to "-0700", // Pacific Daylight Time
+        "GMT" to "+0000", // Greenwich Mean Time
+        "UTC" to "+0000", // Coordinated Universal Time
+        "CET" to "+0100", // Central European Time
+        "CEST" to "+0200", // Central European Summer Time
+        "EEST" to "+0300", // Eastern European Summer Time
+    )
+
+    private fun normalizeTimezones(dateString: String): String {
+        var normalized = dateString
+        // Replace timezone abbreviations with numeric offsets
+        timezoneReplacements.forEach { (abbrev, offset) ->
+            val regex = Regex("\\b$abbrev\\b")
+            normalized = regex.replace(normalized, offset)
+        }
+
+        return normalized
+    }
+
     override fun getDateMillisFromString(dateString: String): Long? {
         var exception: Throwable? = null
         var errorMessage: String? = null
 
+        // Replace timezone abbreviations with numeric offsets
+        val normalizedDateString = normalizeTimezones(dateString)
+
         val parsed = formats.firstNotNullOfOrNull { format ->
             try {
-                format.parse(dateString)
+                format.parse(normalizedDateString)
             } catch (e: IllegalArgumentException) {
                 exception = e
                 errorMessage = "Error while trying to format the date with dateFormatter. Date: $dateString"
@@ -674,22 +703,6 @@ class DateFormatterImpl(
                 day()
             }
         }
-    }
-
-    private fun DateTimeFormatBuilder.WithDateTimeComponents.timeZones() {
-        alternativeParsing(
-            { chars("EST") },
-            { chars("GMT") },
-            { chars("EDT") },
-            { chars("CDT") },
-            { chars("PDT") },
-            { chars("PST") },
-            { chars("UTC") },
-            { chars("CET") },
-            { chars("CST") },
-            { chars("EEST") },
-            { chars("CEST") },
-        ) {}
     }
 
     override fun formatDateForLastRefresh(millis: Long): String {

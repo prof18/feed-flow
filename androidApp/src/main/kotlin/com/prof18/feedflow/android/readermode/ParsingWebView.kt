@@ -64,16 +64,27 @@ fun ParsingWebView(
                     val parsingScript = """
                         const link = $linkUrl;
                         const htmlContent = $content;
-                        
+
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(htmlContent, 'text/html');
-                        
+
                         const defuddle = new Defuddle(doc, {
                              url: link
                          });
 
                         const result = defuddle.parse();
-                        
+
+                        // Extract plain text from content
+                        let plainText = '';
+                        if (result.content) {
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = result.content;
+                            plainText = (tempDiv.textContent || tempDiv.innerText || '').trim();
+                        }
+
+                        // Add plainText to result
+                        result.plainText = plainText;
+
                         let finalResult = JSON.stringify(result);
                         window.ReaderJSInterface.onContentParsed(finalResult);
                     """.trimIndent()

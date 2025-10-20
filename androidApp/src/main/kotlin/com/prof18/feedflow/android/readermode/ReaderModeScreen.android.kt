@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -125,6 +126,7 @@ internal fun ReaderModeScreen(
                     },
                     contentPadding = contentPadding,
                     navigator = navigator,
+                    navigateBack = navigateBack,
                 )
             }
         }
@@ -138,6 +140,7 @@ private fun ReaderMode(
     openInBrowser: (String) -> Unit,
     contentPadding: PaddingValues,
     navigator: WebViewNavigator,
+    navigateBack: () -> Unit,
 ) {
     val bodyColor = MaterialTheme.colorScheme.onSurface.toArgb().toHexString().substring(2)
     val linkColor = MaterialTheme.colorScheme.primary.toArgb().toHexString().substring(2)
@@ -147,6 +150,9 @@ private fun ReaderMode(
     }
     var finalContents: String? by remember {
         mutableStateOf(null)
+    }
+    var shouldNavigateBack by remember {
+        mutableStateOf(false)
     }
 
     val isDarkMode = isSystemInDarkTheme()
@@ -169,6 +175,13 @@ private fun ReaderMode(
     )
 
     val latestOpenInBrowser by rememberUpdatedState(openInBrowser)
+    val latestNavigateBack by rememberUpdatedState(navigateBack)
+
+    LaunchedEffect(shouldNavigateBack) {
+        if (shouldNavigateBack) {
+            latestNavigateBack()
+        }
+    }
 
     Column {
         ParsingWebView(
@@ -182,16 +195,24 @@ private fun ReaderMode(
 
                 val title = jsonResult.getStringOrNull("title")
                 val content = jsonResult.getStringOrNull("content").orEmpty()
-                val finalHTML = getReaderModeStyledHtml(
-                    articleLink = readerModeState.readerModeData.url,
-                    colors = colors,
-                    content = content,
-                    title = title,
-                    fontSize = readerModeState.readerModeData.fontSize,
-                )
+                val plainText = jsonResult.getStringOrNull("plainText").orEmpty()
 
-                finalContents = finalHTML
-                isContentReady = true
+                if (plainText.length >= 200) {
+                    val finalHTML = getReaderModeStyledHtml(
+                        articleLink = readerModeState.readerModeData.url,
+                        colors = colors,
+                        content = content,
+                        title = title,
+                        fontSize = readerModeState.readerModeData.fontSize,
+                    )
+
+                    finalContents = finalHTML
+                    isContentReady = true
+                } else {
+                    Logger.d { "Plain text too short (${plainText.length} chars), opening in browser" }
+                    latestOpenInBrowser(readerModeState.readerModeData.url)
+                    shouldNavigateBack = true
+                }
             },
         )
 

@@ -185,43 +185,7 @@ public struct ReaderView: View {
     @ToolbarContentBuilder
     private func makeLegacyToolbarContent() -> some ToolbarContent {
         ToolbarItem {
-            Button {
-                let newBookmarkState = !isBookmarked
-                actions.onBookmarkToggle(newBookmarkState)
-            } label: {
-                if isBookmarked {
-                    Image(systemName: "bookmark.slash")
-                } else {
-                    Image(systemName: "bookmark")
-                }
-            }
-        }
-
-        ToolbarItem {
-            ShareLink(
-                item: url,
-                label: {
-                    Label("Share", systemImage: "square.and.arrow.up")
-                }
-            )
-        }
-
-        ToolbarItem {
-            Button {
-                actions.onArchive()
-            } label: {
-                Image(systemName: "hammer.fill")
-            }
-        }
-
-        if let onComments = actions.onComments {
-            ToolbarItem {
-                Button {
-                    onComments()
-                } label: {
-                    Image(systemName: "bubble.left")
-                }
-            }
+            fontSizeMenu
         }
 
         ToolbarItem {
@@ -233,7 +197,40 @@ public struct ReaderView: View {
         }
 
         ToolbarItem {
-            fontSizeMenu
+            Menu {
+                Button {
+                    let newBookmarkState = !isBookmarked
+                    actions.onBookmarkToggle(newBookmarkState)
+                } label: {
+                    Label(
+                        isBookmarked ? "Remove Bookmark" : "Add Bookmark",
+                        systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
+                    )
+                }
+
+                ShareLink(
+                    item: url,
+                    label: {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                )
+
+                Button {
+                    actions.onArchive()
+                } label: {
+                    Label("Open in Archive", systemImage: "hammer.fill")
+                }
+
+                if let onComments = actions.onComments {
+                    Button {
+                        onComments()
+                    } label: {
+                        Label("Open Comments", systemImage: "bubble.left")
+                    }
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
         }
     }
 

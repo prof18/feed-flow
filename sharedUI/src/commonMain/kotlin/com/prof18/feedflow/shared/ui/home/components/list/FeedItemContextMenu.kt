@@ -176,6 +176,7 @@ private fun OpenCommentsMenuItem(
                     openOnlyOnBrowser = true,
                     isBookmarked = feedItem.isBookmarked,
                     linkOpeningPreference = LinkOpeningPreference.PREFERRED_BROWSER,
+                    commentsUrl = feedItem.commentsUrl,
                 ),
             )
             closeMenu()

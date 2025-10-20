@@ -121,7 +121,8 @@ struct CompactView: View {
                             title: feedItem.title,
                             openOnlyOnBrowser: false,
                             isBookmarked: feedItem.isBookmarked,
-                            linkOpeningPreference: feedItem.feedSource.linkOpeningPreference
+                            linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
+                            commentsUrl: feedItem.commentsUrl
                         )
                     )
 

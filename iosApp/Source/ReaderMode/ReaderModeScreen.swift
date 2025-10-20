@@ -83,6 +83,23 @@ struct ReaderModeScreen: View {
                         }
                     }
                 },
+                onComments: feedItemUrlInfo.commentsUrl != nil ? {
+                    if let commentsUrlString = feedItemUrlInfo.commentsUrl {
+                        if browserSelector.openInAppBrowser() {
+                            if let commentsUrl = URL(string: commentsUrlString) {
+                                appState.navigate(
+                                    route: CommonViewRoute.inAppBrowser(url: commentsUrl)
+                                )
+                            }
+                        } else {
+                            if let commentsUrl = URL(string: commentsUrlString) {
+                                openURL(
+                                    browserSelector.getUrlForDefaultBrowser(
+                                        stringUrl: commentsUrl.absoluteString))
+                            }
+                        }
+                    }
+                } : nil,
                 onFontSizeMenuToggle: {
                     showFontSizeMenu.toggle()
                 },

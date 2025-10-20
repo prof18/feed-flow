@@ -68,6 +68,7 @@ internal fun FeedItemView(
                                     title = feedItem.title,
                                     isBookmarked = feedItem.isBookmarked,
                                     linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
+                                    commentsUrl = feedItem.commentsUrl,
                                 ),
                             )
                         },

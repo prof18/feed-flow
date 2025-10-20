@@ -530,6 +530,7 @@ class DatabaseHelper(
                     title = url.title,
                     isBookmarked = url.is_bookmarked,
                     linkOpeningPreference = url.feed_source_link_opening_preference ?: LinkOpeningPreference.DEFAULT,
+                    commentsUrl = url.comments_url,
                 )
             }
     }

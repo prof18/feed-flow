@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
+import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
@@ -44,6 +45,7 @@ internal fun ReaderModeToolbar(
     openInBrowser: (String) -> Unit,
     onShareClick: (String, String?) -> Unit,
     onArchiveClick: (String) -> Unit,
+    onCommentsClick: (String) -> Unit,
     onFontSizeChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
 ) {
@@ -212,6 +214,27 @@ internal fun ReaderModeToolbar(
                                     onArchiveClick(readerModeState.readerModeData.url)
                                 },
                             )
+
+                            readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = LocalFeedFlowStrings.current
+                                                .readerModeCommentsButtonContentDescription,
+                                        )
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Comment,
+                                            contentDescription = null,
+                                        )
+                                    },
+                                    onClick = {
+                                        showOverflowMenu = false
+                                        onCommentsClick(commentsUrl)
+                                    },
+                                )
+                            }
                         }
                     }
                 }

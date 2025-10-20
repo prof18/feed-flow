@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
+import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
@@ -108,6 +109,11 @@ internal data class ReaderModeScreen(
                             uriHandler.openUri(archiveUrl)
                         }
                     },
+                    onCommentsClick = { commentsUrl ->
+                        if (isValidUrl(commentsUrl)) {
+                            uriHandler.openUri(commentsUrl)
+                        }
+                    },
                     onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
                     onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
                         readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
@@ -184,6 +190,7 @@ private fun ReaderModeToolbar(
     openInBrowser: (String) -> Unit,
     onShareClick: (String) -> Unit,
     onArchiveClick: (String) -> Unit,
+    onCommentsClick: (String) -> Unit,
     onFontSizeChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
 ) {
@@ -267,6 +274,31 @@ private fun ReaderModeToolbar(
                                 imageVector = hammerIcon,
                                 contentDescription = label,
                             )
+                        }
+                    }
+
+                    readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            state = rememberTooltipState(),
+                            tooltip = {
+                                PlainTooltip {
+                                    Text(
+                                        LocalFeedFlowStrings.current.readerModeCommentsButtonContentDescription,
+                                    )
+                                }
+                            },
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    onCommentsClick(commentsUrl)
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Comment,
+                                    contentDescription = null,
+                                )
+                            }
                         }
                     }
 

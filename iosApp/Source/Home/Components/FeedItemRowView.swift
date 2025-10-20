@@ -29,7 +29,8 @@ struct FeedItemRowView: View {
                     title: feedItem.title,
                     openOnlyOnBrowser: false,
                     isBookmarked: feedItem.isBookmarked,
-                    linkOpeningPreference: feedItem.feedSource.linkOpeningPreference
+                    linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
+                    commentsUrl: feedItem.commentsUrl
                 )
 
                 guard let url = URL(string: feedItem.url) else {

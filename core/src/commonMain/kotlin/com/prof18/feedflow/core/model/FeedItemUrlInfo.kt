@@ -7,6 +7,7 @@ data class FeedItemUrlInfo(
     val openOnlyOnBrowser: Boolean = false,
     val isBookmarked: Boolean,
     val linkOpeningPreference: LinkOpeningPreference,
+    val commentsUrl: String?,
 )
 
 fun FeedItemUrlInfo.shouldOpenInBrowser(): Boolean =

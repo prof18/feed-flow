@@ -34,6 +34,7 @@ class ReaderModeExtractor internal constructor(
             url = urlInfo.url,
             fontSize = settingsRepository.getReaderModeFontSize(),
             isBookmarked = urlInfo.isBookmarked,
+            commentsUrl = urlInfo.commentsUrl,
         )
     }
 }

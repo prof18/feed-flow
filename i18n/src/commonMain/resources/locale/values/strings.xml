@@ -231,6 +231,7 @@
     <string name="settings_feed_order_oldest_first">Oldest First</string>
     <string name="reader_mode_archive_button_content_description">Open in archive.is</string>
     <string name="reader_mode_browser_button_content_description">Open in browser</string>
+    <string name="reader_mode_comments_button_content_description">Open comments</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_system">System</string>
     <string name="settings_theme_light">Light</string>

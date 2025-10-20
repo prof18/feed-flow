@@ -86,6 +86,11 @@ internal fun ReaderModeScreen(
                         browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
                     }
                 },
+                onCommentsClick = { commentsUrl ->
+                    if (isValidUrl(commentsUrl)) {
+                        browserManager.openUrlWithFavoriteBrowser(commentsUrl, context)
+                    }
+                },
                 onFontSizeChange = { newFontSize ->
                     navigator.evaluateJavaScript(
                         """

@@ -4,6 +4,7 @@ public struct ReaderViewActions {
     public let onBookmarkToggle: (Bool) -> Void
     public let onArchive: () -> Void
     public let onOpenInBrowser: () -> Void
+    public let onComments: (() -> Void)?
     public let onFontSizeMenuToggle: () -> Void
     public let onFontSizeDecrease: () -> Void
     public let onFontSizeIncrease: () -> Void
@@ -13,6 +14,7 @@ public struct ReaderViewActions {
         onBookmarkToggle: @escaping (Bool) -> Void,
         onArchive: @escaping () -> Void,
         onOpenInBrowser: @escaping () -> Void,
+        onComments: (() -> Void)? = nil,
         onFontSizeMenuToggle: @escaping () -> Void,
         onFontSizeDecrease: @escaping () -> Void,
         onFontSizeIncrease: @escaping () -> Void,
@@ -21,6 +23,7 @@ public struct ReaderViewActions {
         self.onBookmarkToggle = onBookmarkToggle
         self.onArchive = onArchive
         self.onOpenInBrowser = onOpenInBrowser
+        self.onComments = onComments
         self.onFontSizeMenuToggle = onFontSizeMenuToggle
         self.onFontSizeDecrease = onFontSizeDecrease
         self.onFontSizeIncrease = onFontSizeIncrease
@@ -152,6 +155,16 @@ public struct ReaderView: View {
             }
         }
 
+        if let onComments = actions.onComments {
+            ToolbarItem {
+                Button {
+                    onComments()
+                } label: {
+                    Image(systemName: "bubble.left")
+                }
+            }
+        }
+
         ToolbarItem {
             Button {
                 actions.onOpenInBrowser()
@@ -198,6 +211,16 @@ public struct ReaderView: View {
                 actions.onArchive()
             } label: {
                 Image(systemName: "hammer.fill")
+            }
+        }
+
+        if let onComments = actions.onComments {
+            ToolbarItem {
+                Button {
+                    onComments()
+                } label: {
+                    Image(systemName: "bubble.left")
+                }
             }
         }
 

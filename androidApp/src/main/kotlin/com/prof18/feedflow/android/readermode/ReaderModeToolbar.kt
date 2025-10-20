@@ -42,7 +42,7 @@ internal fun ReaderModeToolbar(
     fontSize: Int,
     navigateBack: () -> Unit,
     openInBrowser: (String) -> Unit,
-    onShareClick: (String) -> Unit,
+    onShareClick: (String, String?) -> Unit,
     onArchiveClick: (String) -> Unit,
     onFontSizeChange: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
@@ -188,7 +188,10 @@ internal fun ReaderModeToolbar(
                                 },
                                 onClick = {
                                     showOverflowMenu = false
-                                    onShareClick(readerModeState.readerModeData.url)
+                                    onShareClick(
+                                        readerModeState.readerModeData.url,
+                                        readerModeState.readerModeData.title,
+                                    )
                                 },
                             )
 

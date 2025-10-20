@@ -74,9 +74,9 @@ internal fun ReaderModeScreen(
                         browserManager.openUrlWithFavoriteBrowser(url, context)
                     }
                 },
-                onShareClick = { url ->
+                onShareClick = { url, title ->
                     context.openShareSheet(
-                        title = null,
+                        title = title,
                         url = url,
                     )
                 },

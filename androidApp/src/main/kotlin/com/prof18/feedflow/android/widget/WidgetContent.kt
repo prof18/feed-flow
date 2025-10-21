@@ -66,6 +66,8 @@ internal fun Content(
     feedLayout: FeedLayout,
     browserManager: BrowserManager,
 ) {
+    val context = LocalContext.current
+
     Scaffold(
         titleBar = {
             Text(
@@ -73,7 +75,14 @@ internal fun Content(
                     .padding(top = Spacing.regular)
                     .padding(bottom = Spacing.small)
                     .padding(horizontal = Spacing.medium)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clickable(
+                        actionStartActivity(
+                            Intent(context, MainActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            }
+                        )
+                    ),
                 text = LocalFeedFlowStrings.current.widgetLatestItems,
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,

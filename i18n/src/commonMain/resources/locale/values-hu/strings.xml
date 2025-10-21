@@ -250,4 +250,5 @@
     <string name="clear_old_articles_dialog_message">Biztosan törölni szeretné a régi cikkeket?</string>
     <string name="confirm_button">Megerősítés</string>
     <string name="cancel_button">Mégse</string>
+    <string name="reader_mode_comments_button_content_description">Megjegyzések megnyitása</string>
 </resources>

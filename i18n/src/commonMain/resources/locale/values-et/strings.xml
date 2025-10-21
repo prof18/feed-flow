@@ -250,4 +250,5 @@
     <string name="clear_old_articles_dialog_message">Kas oled kindel, et soovid vanad artiklid kustutada?</string>
     <string name="confirm_button">Kinnita</string>
     <string name="cancel_button">Katkesta</string>
+    <string name="reader_mode_comments_button_content_description">Vaata kommentaare</string>
 </resources>

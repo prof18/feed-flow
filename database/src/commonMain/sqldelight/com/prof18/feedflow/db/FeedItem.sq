@@ -124,6 +124,7 @@ ON feed_source.category_id == feed_source_category.id
 LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE pub_date < :threshold
+AND is_bookmarked = 0
 AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
 AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId)

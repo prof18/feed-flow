@@ -21,11 +21,17 @@ internal class RssChannelMapper(
                 ?.filterSpecialCharacters()
             val url = rssItem.link ?: run {
                 val parsedUrl = parseUrl(rssItem.guid.orEmpty())
-                return@run if (parsedUrl != null) {
-                    rssItem.guid
-                } else {
-                    null
+                if (parsedUrl != null) {
+                    return@run rssItem.guid
                 }
+
+                // Check for URL in enclosures (e.g., podcasts, media items)
+                val enclosureUrl = rssItem.enclosure?.firstOrNull()?.url
+                if (!enclosureUrl.isNullOrBlank()) {
+                    return@run enclosureUrl
+                }
+
+                null
             }
             val pubDate = rssItem.pubDate
 

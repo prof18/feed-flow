@@ -250,4 +250,5 @@
     <string name="clear_old_articles_dialog_message">Möchten sie wirklich alte Artikel löschen?</string>
     <string name="confirm_button">Bestätigen</string>
     <string name="cancel_button">Abbrechen</string>
+    <string name="reader_mode_comments_button_content_description">Kommentare öffnen</string>
 </resources>

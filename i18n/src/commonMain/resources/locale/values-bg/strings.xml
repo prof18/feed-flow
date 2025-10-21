@@ -250,4 +250,5 @@
     <string name="clear_old_articles_dialog_message">Сигурни ли сте, че искате да изтриете стари статии?</string>
     <string name="confirm_button">Потвърди</string>
     <string name="cancel_button">Отказ</string>
+    <string name="reader_mode_comments_button_content_description">Отваряне на коментари</string>
 </resources>

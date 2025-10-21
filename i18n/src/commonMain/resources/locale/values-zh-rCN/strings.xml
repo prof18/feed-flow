@@ -250,4 +250,5 @@
     <string name="clear_old_articles_dialog_message">是否确定要删除旧文章？</string>
     <string name="confirm_button">确认</string>
     <string name="cancel_button">取消</string>
+    <string name="reader_mode_comments_button_content_description">打开评论</string>
 </resources>

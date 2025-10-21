@@ -250,4 +250,5 @@
     <string name="clear_old_articles_dialog_message">Ви впевнені, що хочете видалити старі статті?</string>
     <string name="confirm_button">Підтвердити</string>
     <string name="cancel_button">Скасувати</string>
+    <string name="reader_mode_comments_button_content_description">Відкрити коментарі</string>
 </resources>

@@ -228,17 +228,27 @@ class DatabaseHelper(
             }
         }
 
-    suspend fun deleteOldFeedItems(timeThreshold: Long) =
+    suspend fun deleteOldFeedItems(timeThreshold: Long, feedFilter: FeedFilter) =
         try {
             dbRef.transactionWithContext(backgroundDispatcher) {
-                dbRef.feedItemQueries.clearOldItems(timeThreshold)
+                dbRef.feedItemQueries.clearOldItems(
+                    threshold = timeThreshold,
+                    feedSourceId = feedFilter.getFeedSourceId(),
+                    feedSourceCategoryId = feedFilter.getCategoryId(),
+                    isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
+                )
             }
         } catch (_: Exception) {
             logger.e { "Error while deleting old feed items" }
         }
 
-    suspend fun getOldFeedItem(timeThreshold: Long) = withContext(backgroundDispatcher) {
-        dbRef.feedItemQueries.selectOldItems(timeThreshold).executeAsList().map { FeedItemId(it) }
+    suspend fun getOldFeedItem(timeThreshold: Long, feedFilter: FeedFilter) = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.selectOldItems(
+            threshold = timeThreshold,
+            feedSourceId = feedFilter.getFeedSourceId(),
+            feedSourceCategoryId = feedFilter.getCategoryId(),
+            isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
+        ).executeAsList().map { FeedItemId(it) }
     }
 
     suspend fun deleteFeedSource(feedSourceId: String) =

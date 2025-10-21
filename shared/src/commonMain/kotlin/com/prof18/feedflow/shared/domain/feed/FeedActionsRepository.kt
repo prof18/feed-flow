@@ -60,8 +60,9 @@ internal class FeedActionsRepository(
     suspend fun deleteOldFeeds() {
         // One week
         val threshold = Clock.System.now().minus(7.days).toEpochMilliseconds()
-        val oldFeedIds = databaseHelper.getOldFeedItem(threshold)
-        databaseHelper.deleteOldFeedItems(threshold)
+        val currentFilter = feedStateRepository.getCurrentFeedFilter()
+        val oldFeedIds = databaseHelper.getOldFeedItem(threshold, currentFilter)
+        databaseHelper.deleteOldFeedItems(threshold, currentFilter)
         feedSyncRepository.deleteFeedItems(oldFeedIds)
         feedStateRepository.getFeeds()
     }

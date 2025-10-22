@@ -55,11 +55,6 @@ data class EditFeed(
 )
 
 @Serializable
-data class DeepLinkScreen(
-    val feedId: String,
-)
-
-@Serializable
 internal data object Notifications
 
 @Serializable

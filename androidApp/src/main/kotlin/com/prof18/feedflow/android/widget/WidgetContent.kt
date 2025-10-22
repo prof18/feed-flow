@@ -79,9 +79,11 @@ internal fun Content(
                     .clickable(
                         actionStartActivity(
                             Intent(context, MainActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                            }
-                        )
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                    Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            },
+                        ),
                     ),
                 text = LocalFeedFlowStrings.current.widgetLatestItems,
                 style = TextStyle(
@@ -299,7 +301,9 @@ private fun createDeepLinkAction(feedItem: FeedItem, context: Context): Action {
             MainActivity::class.java,
         )
             .setAction(Intent.ACTION_VIEW)
-            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .setFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP,
+            )
             .setData("feedflow://feed/${feedItem.id}".toUri()),
     )
 }

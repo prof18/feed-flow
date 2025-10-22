@@ -37,7 +37,6 @@ import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
 import com.prof18.feedflow.android.base.BaseThemeActivity
-import com.prof18.feedflow.android.deeplink.DeepLinkScreen
 import com.prof18.feedflow.android.editfeed.EditScreen
 import com.prof18.feedflow.android.editfeed.toEditFeed
 import com.prof18.feedflow.android.editfeed.toFeedSource
@@ -52,6 +51,7 @@ import com.prof18.feedflow.android.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
 import com.prof18.feedflow.android.settings.notifications.NotificationsSettingsScreen
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncResult
@@ -111,7 +111,6 @@ class MainActivity : BaseThemeActivity() {
         val readerModeViewModel: ReaderModeViewModel = koinViewModel()
         val deeplinkViewModel: DeeplinkFeedViewModel = koinViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
-        val context = androidx.compose.ui.platform.LocalContext.current
 
         val navController = rememberNavController()
         val flowStrings = LocalFeedFlowStrings.current
@@ -125,6 +124,7 @@ class MainActivity : BaseThemeActivity() {
                     if (uri?.scheme == "feedflow" && uri.host == "feed") {
                         val feedId = uri.pathSegments.firstOrNull()
                         if (feedId != null) {
+                            readerModeViewModel.setLoading()
                             deeplinkViewModel.getReaderModeUrl(FeedItemId(feedId))
                         }
                     }
@@ -133,33 +133,12 @@ class MainActivity : BaseThemeActivity() {
         }
 
         LaunchedEffect(deeplinkState) {
-            when (val state = deeplinkState) {
-                is DeeplinkFeedState.Success -> {
-                    val feedUrlInfo = state.data
-                    deeplinkViewModel.markAsRead(FeedItemId(feedUrlInfo.id))
-                    when (feedUrlInfo.linkOpeningPreference) {
-                        LinkOpeningPreference.READER_MODE -> {
-                            readerModeViewModel.getReaderModeHtml(feedUrlInfo)
-                            navController.navigate(ReaderMode)
-                        }
-                        LinkOpeningPreference.INTERNAL_BROWSER -> {
-                            browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, context)
-                        }
-                        LinkOpeningPreference.PREFERRED_BROWSER -> {
-                            browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, context)
-                        }
-                        LinkOpeningPreference.DEFAULT -> {
-                            if (browserManager.openReaderMode() && !feedUrlInfo.shouldOpenInBrowser()) {
-                                readerModeViewModel.getReaderModeHtml(feedUrlInfo)
-                                navController.navigate(ReaderMode)
-                            } else {
-                                browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, context)
-                            }
-                        }
-                    }
-                }
-                else -> {}
-            }
+            handleDeepLinkState(
+                state = deeplinkState,
+                deeplinkViewModel = deeplinkViewModel,
+                readerModeViewModel = readerModeViewModel,
+                navController = navController,
+            )
         }
 
         LaunchedEffect(Unit) {
@@ -411,32 +390,6 @@ class MainActivity : BaseThemeActivity() {
                 )
             }
 
-            composable<DeepLinkScreen>(
-                deepLinks = listOf(
-                    navDeepLink {
-                        action = Intent.ACTION_VIEW
-                        uriPattern = "feedflow://feed/{feedId}"
-                    },
-                ),
-            ) { backStackEntry ->
-                val route = backStackEntry.toRoute<DeepLinkScreen>()
-
-                DeepLinkScreen(
-                    feedId = route.feedId,
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                    navigateToReaderMode = { feedItemUrl ->
-                        readerModeViewModel.getReaderModeHtml(feedItemUrl)
-                        navController.navigate(ReaderMode) {
-                            popUpTo<DeepLinkScreen> {
-                                inclusive = true
-                            }
-                        }
-                    },
-                )
-            }
-
             composable<Notifications> {
                 NotificationsSettingsScreen(
                     navigateBack = {
@@ -452,6 +405,55 @@ class MainActivity : BaseThemeActivity() {
                     },
                 )
             }
+        }
+    }
+
+    private fun handleDeepLinkState(
+        state: DeeplinkFeedState,
+        deeplinkViewModel: DeeplinkFeedViewModel,
+        readerModeViewModel: ReaderModeViewModel,
+        navController: NavHostController,
+    ) {
+        if (state is DeeplinkFeedState.Success) {
+            val feedUrlInfo = state.data
+            deeplinkViewModel.markAsRead(FeedItemId(feedUrlInfo.id))
+            handleLinkOpeningPreference(feedUrlInfo, readerModeViewModel, navController)
+        }
+    }
+
+    private fun handleLinkOpeningPreference(
+        feedUrlInfo: FeedItemUrlInfo,
+        readerModeViewModel: ReaderModeViewModel,
+        navController: NavHostController,
+    ) {
+        when (feedUrlInfo.linkOpeningPreference) {
+            LinkOpeningPreference.READER_MODE -> {
+                navigateToReaderModeIfNeeded(readerModeViewModel, navController, feedUrlInfo)
+            }
+            LinkOpeningPreference.INTERNAL_BROWSER -> {
+                browserManager.openWithInAppBrowser(feedUrlInfo.url, this@MainActivity)
+            }
+            LinkOpeningPreference.PREFERRED_BROWSER -> {
+                browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
+            }
+            LinkOpeningPreference.DEFAULT -> {
+                if (browserManager.openReaderMode() && !feedUrlInfo.shouldOpenInBrowser()) {
+                    navigateToReaderModeIfNeeded(readerModeViewModel, navController, feedUrlInfo)
+                } else {
+                    browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
+                }
+            }
+        }
+    }
+
+    private fun navigateToReaderModeIfNeeded(
+        readerModeViewModel: ReaderModeViewModel,
+        navController: NavHostController,
+        feedUrlInfo: FeedItemUrlInfo,
+    ) {
+        readerModeViewModel.getReaderModeHtml(feedUrlInfo)
+        if (navController.currentDestination?.route != ReaderMode::class.qualifiedName) {
+            navController.navigate(ReaderMode)
         }
     }
 }

@@ -29,6 +29,10 @@ class ReaderModeViewModel internal constructor(
     )
     val readerFontSizeState = readerFontSizeMutableState.asStateFlow()
 
+    fun setLoading() {
+        readerModeMutableState.value = ReaderModeState.Loading
+    }
+
     fun getReaderModeHtml(urlInfo: FeedItemUrlInfo) {
         viewModelScope.launch {
             readerModeMutableState.value = ReaderModeState.Loading

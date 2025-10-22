@@ -133,7 +133,7 @@ class BrowserManager(
         }
     }
 
-    private fun openWithInAppBrowser(url: String, context: Context) {
+    fun openWithInAppBrowser(url: String, context: Context) {
         val intent = CustomTabsIntent.Builder().build()
         intent.launchUrl(context, url.toUri())
     }

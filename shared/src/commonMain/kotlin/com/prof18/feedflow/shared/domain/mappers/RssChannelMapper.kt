@@ -26,12 +26,7 @@ internal class RssChannelMapper(
                 }
 
                 // Check for URL in enclosures (e.g., podcasts, media items)
-                val enclosureUrl = rssItem.enclosure?.firstOrNull()?.url
-                if (!enclosureUrl.isNullOrBlank()) {
-                    return@run enclosureUrl
-                }
-
-                null
+                rssItem.rawEnclosure?.url
             }
             val pubDate = rssItem.pubDate
 

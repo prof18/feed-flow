@@ -17,7 +17,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
@@ -51,12 +53,16 @@ import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
 import com.prof18.feedflow.android.settings.notifications.NotificationsSettingsScreen
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncResult
+import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
+import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
+import com.prof18.feedflow.shared.presentation.model.DeeplinkFeedState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -68,9 +74,13 @@ class MainActivity : BaseThemeActivity() {
     private val messageQueue by inject<FeedSyncMessageQueue>()
     private val reviewViewModel by viewModel<ReviewViewModel>()
     private val homeViewModel by viewModel<HomeViewModel>()
+    private val browserManager by inject<BrowserManager>()
+
+    private var currentIntent by mutableStateOf<Intent?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        currentIntent = intent
 
         if (BuildConfig.FLAVOR == "googlePlay") {
             lifecycleScope.launch {
@@ -90,13 +100,68 @@ class MainActivity : BaseThemeActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        currentIntent = intent
+    }
+
     @Composable
     override fun Content() {
         val readerModeViewModel: ReaderModeViewModel = koinViewModel()
+        val deeplinkViewModel: DeeplinkFeedViewModel = koinViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
+        val context = androidx.compose.ui.platform.LocalContext.current
 
         val navController = rememberNavController()
         val flowStrings = LocalFeedFlowStrings.current
+
+        val deeplinkState by deeplinkViewModel.deeplinkFeedState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(currentIntent) {
+            currentIntent?.let { intent ->
+                if (intent.action == Intent.ACTION_VIEW && intent.data != null) {
+                    val uri = intent.data
+                    if (uri?.scheme == "feedflow" && uri.host == "feed") {
+                        val feedId = uri.pathSegments.firstOrNull()
+                        if (feedId != null) {
+                            deeplinkViewModel.getReaderModeUrl(FeedItemId(feedId))
+                        }
+                    }
+                }
+            }
+        }
+
+        LaunchedEffect(deeplinkState) {
+            when (val state = deeplinkState) {
+                is DeeplinkFeedState.Success -> {
+                    val feedUrlInfo = state.data
+                    deeplinkViewModel.markAsRead(FeedItemId(feedUrlInfo.id))
+                    when (feedUrlInfo.linkOpeningPreference) {
+                        LinkOpeningPreference.READER_MODE -> {
+                            readerModeViewModel.getReaderModeHtml(feedUrlInfo)
+                            navController.navigate(ReaderMode)
+                        }
+                        LinkOpeningPreference.INTERNAL_BROWSER -> {
+                            browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, context)
+                        }
+                        LinkOpeningPreference.PREFERRED_BROWSER -> {
+                            browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, context)
+                        }
+                        LinkOpeningPreference.DEFAULT -> {
+                            if (browserManager.openReaderMode() && !feedUrlInfo.shouldOpenInBrowser()) {
+                                readerModeViewModel.getReaderModeHtml(feedUrlInfo)
+                                navController.navigate(ReaderMode)
+                            } else {
+                                browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, context)
+                            }
+                        }
+                    }
+                }
+                else -> {}
+            }
+        }
+
         LaunchedEffect(Unit) {
             messageQueue.messageQueue.collect { message ->
                 if (message is SyncResult.Error) {

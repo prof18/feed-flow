@@ -171,8 +171,9 @@ class FeedFetcherRepository internal constructor(
             AutoDeletePeriod.ONE_MONTH -> Clock.System.now().minus(30.days).toEpochMilliseconds()
         }
 
-        val oldFeedIds = databaseHelper.getOldFeedItem(threshold)
-        databaseHelper.deleteOldFeedItems(threshold)
+        val currentFilter = feedStateRepository.currentFeedFilter.value
+        val oldFeedIds = databaseHelper.getOldFeedItem(timeThreshold = threshold, feedFilter = currentFilter)
+        databaseHelper.deleteOldFeedItems(timeThreshold = threshold, feedFilter = currentFilter)
         feedSyncRepository.deleteFeedItems(oldFeedIds)
         feedStateRepository.getFeeds()
     }

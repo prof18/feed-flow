@@ -96,7 +96,7 @@
     <string name="feed_add_in_progress_message">Agarda, estáse a comprobar a dispoñibilidade de cada canle. Podería levarlle un anaco dependendo da cantidade de canles que esteas a importar</string>
     <string name="dropbox_confirm_button">Confirmar</string>
     <string name="feed_sync_in_progress">Sincronizando. A app vaise pechar automáticamente ao rematar.</string>
-    <string name="issue_content_template">Describe o problema e proporciona a ligazón á canle RSS que causa a incidencia. Se é posible, anexa unha captura de pantalla e o ficheiro OPML</string>
+    <string name="issue_content_template">Describe o problema, indica a plataforma que estás a usar, a versión da app, e proporciona a ligazón á canle RSS que causa a incidencia. Se é posible, anexa unha captura de pantalla e o ficheiro OPML</string>
     <string name="drawer_title_read">Ler</string>
     <string name="missing_title_and_link">Houbo un erro ao obter o título da canle</string>
     <string name="import_export_description">FeedFlow pode importar e exportar as túas subscricións desde un ficheiro OPML, para mellor compatibilidade con outros lectores de canles</string>
@@ -246,4 +246,9 @@
     <string name="add_word_placeholder">Engadir palabra</string>
     <string name="blocked_words_empty_state">Non tes palabras bloqueadas</string>
     <string name="blocked_words_description">Os artigos que conteñan estas palabras no título ou descrición estarán ocultos.</string>
+    <string name="reader_mode_comments_button_content_description">Abrir comentarios</string>
+    <string name="mark_all_read_dialog_message">Tes certeza de querer marcar todos os artigos como lidos?</string>
+    <string name="clear_old_articles_dialog_message">Tes certeza de querer eliiminar todos os artigos antigos?</string>
+    <string name="confirm_button">Confirmar</string>
+    <string name="cancel_button">Cancelar</string>
 </resources>

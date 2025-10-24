@@ -83,21 +83,21 @@ jobs:
 
       - name: Upload reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: reports
           path: |
             **/build/compose/logs/*  
 
       - name: Upload RPM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           path: ${{ env.RELEASE_PATH_RPM }}
           name: ${{ env.RPM_NAME }}
           retention-days: 1
 
       - name: Upload DEB
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           path: ${{ env.RELEASE_PATH_DEB }}
           name: ${{ env.DEB_NAME }}

@@ -362,7 +362,7 @@ jobs:
 
       - name: Upload reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: reports
           path: |
@@ -370,14 +370,14 @@ jobs:
 
       - name: Upload MSI asset
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           path: ${{ env.RELEASE_PATH }}
           name: ${{ env.ARTIFACT_NAME }}
           retention-days: 7
 
       - name: Upload MSIX asset
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           path: ${{ env.RELEASE_PATH_MSIX }}
           name: ${{ env.NAME_MSIX }}

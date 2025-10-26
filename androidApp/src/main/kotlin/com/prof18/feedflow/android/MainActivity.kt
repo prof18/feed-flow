@@ -27,6 +27,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -452,7 +453,7 @@ class MainActivity : BaseThemeActivity() {
         feedUrlInfo: FeedItemUrlInfo,
     ) {
         readerModeViewModel.getReaderModeHtml(feedUrlInfo)
-        if (navController.currentDestination?.route != ReaderMode::class.qualifiedName) {
+        if (navController.currentDestination?.hasRoute(ReaderMode::class) == false) {
             navController.navigate(ReaderMode)
         }
     }

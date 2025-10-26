@@ -44,8 +44,8 @@ include("feedSync:ikloud-macos")
 include("feedSync:greader")
 include("feedSync:networkcore")
 
- includeBuild("../RSS-Parser") {
-    dependencySubstitution {
-        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))
-    }
- }
+// includeBuild("../RSS-Parser") {
+//    dependencySubstitution {
+//        substitute(module("com.prof18.rssparser:rssparser")).using(project(":rssparser"))
+//    }
+// }

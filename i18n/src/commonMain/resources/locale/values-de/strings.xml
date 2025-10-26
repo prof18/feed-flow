@@ -15,7 +15,7 @@
     <string name="new_release_available_link">Hier herunterladen</string>
     <string name="refresh_feeds">Feeds auffrischen</string>
     <string name="done_button">OK</string>
-    <string name="issue_content_template">Bitte beschreibe den Fehler und gib einen Link zu dem RSS-Feed an, der den Fehler verursacht. Wenn möglich, hänge bitte einen Screenshot und die OPML-Datei an</string>
+    <string name="issue_content_template">Bitte beschreibe den Fehler, die benutzte Plattform, die Version der App und gib einen Link zu dem RSS-Feed an, der den Fehler verursacht. Wenn möglich, hänge bitte einen Screenshot und die OPML-Datei an</string>
     <string name="about_button">Über</string>
     <string name="report_issue_button">Fehler melden</string>
     <string name="export_started_message">Export wird erzeugt</string>

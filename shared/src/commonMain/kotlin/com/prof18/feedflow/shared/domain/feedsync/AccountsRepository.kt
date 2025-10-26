@@ -99,8 +99,11 @@ internal class AccountsRepository(
         return SyncAccounts.LOCAL
     }
 
-    fun isSyncEnabled(): Boolean =
-        getCurrentSyncAccount() != SyncAccounts.LOCAL
+    fun isSyncEnabled(): Boolean {
+        val currentSyncAccount = getCurrentSyncAccount()
+        return currentSyncAccount == SyncAccounts.ICLOUD ||
+            currentSyncAccount == SyncAccounts.DROPBOX
+    }
 
     private fun restoreAccounts() {
         currentAccountMutableState.update {

@@ -64,6 +64,17 @@
   </content_rating>
 
   <releases>
+      <release version="1.7.0" date="2025-10-28">
+          <description>
+              <p>Added ability to open article comments directly from Reader Mode</p>
+              <p>Prevents torrent files from opening in Reader Mode</p>
+              <p>"Delete week-old posts" now respects current filter (Timeline, Category, Source)</p>
+              <p>RSS items without links now use enclosure URLs (improves podcast feed support)</p>
+              <p>Added confirmations for "mark all as read" and "delete week-old feeds" actions</p>
+              <p>Fix some bugs on date handling</p>
+              <p>Bug fixing and improvements</p>
+          </description>
+      </release>
       <release version="1.6.0" date="2025-10-01">
           <description>
               <p>Added the possibility to hide articles containing specific keywords/phrases</p>

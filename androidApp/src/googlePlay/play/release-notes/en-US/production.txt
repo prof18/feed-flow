@@ -1,12 +1,12 @@
-- Added the possibility to hide articles containing specific keywords/phrases
-- Added quick-access button in sidebar to navigate to original feed websites
-- Fixed a bug that prevented automatic favicon fetching
-- Added visual warnings in the drawer and feed list for feeds that fail to fetch content
-- Added possibility to delete feed sources directly from edit screen
-- Added "Navigate to Feed Settings" option in article context menus
-- Added error codes for better troubleshooting
-- Fixed reader mode font scaling to prevent unwanted margin increases
-- Full immersive screen experience across all Android screens
-- Android widgets now support direct link opening
-- Navigate to articles without opening main app first
-- Bug fixes and improvements
+- Added ability to open article comments directly from Reader Mode
+- Prevents torrent files from opening in Reader Mode
+- "Delete week-old posts" now respects current filter (Timeline, Category,
+  Source)
+- RSS items without links now use enclosure URLs (improves podcast feed support)
+- Added confirmations for "mark all as read" and "delete week-old feeds" actions
+- Fix some bugs on date handling
+- Automatically open the article's website if the content is not parsed
+- Clicking on the widget header will now open the app
+- Widget clicks now resume app instead of restarting
+- YouTube links properly open in YouTube app when custom browser is selected
+- Bug fixing and improvements

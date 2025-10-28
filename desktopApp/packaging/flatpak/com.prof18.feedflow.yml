@@ -12,7 +12,6 @@ finish-args:
   - --device=dri
   - --filesystem=xdg-documents:ro
   - --filesystem=xdg-download:rw
-  - --filesystem=xdg-config:create
 
 modules:
   - name: openjdk
@@ -37,10 +36,10 @@ modules:
     sources:
       - type: git
         url: https://github.com/prof18/feed-flow
-        tag: 1.3.2-linux
+        tag: 1.7.0-all
       - type: file
-        url: "https://services.gradle.org/distributions/gradle-8.14.3-bin.zip"
-        sha256: "bd71102213493060956ec229d946beee57158dbd89d0e62b91bca0fa2c5f3531"
+        url: "https://services.gradle.org/distributions/gradle-9.1.0-bin.zip"
+        sha256: "a17ddd85a26b6a7f5ddb71ff8b05fc5104c0202c6e64782429790c933686c806"
         dest: "gradle/wrapper"
         dest-filename: "gradle-bin.zip"
       - flatpak-sources.json

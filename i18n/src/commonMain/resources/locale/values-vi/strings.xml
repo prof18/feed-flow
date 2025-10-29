@@ -250,4 +250,5 @@
     <string name="clear_old_articles_dialog_message">Bạn có chắc muốn xóa những bài viết cũ?</string>
     <string name="confirm_button">Xác nhận</string>
     <string name="cancel_button">Hủy bỏ</string>
+    <string name="reader_mode_comments_button_content_description">Mở bình luận</string>
 </resources>

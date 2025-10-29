@@ -13,7 +13,7 @@
     <string name="new_release_available_link">Télécharger ici</string>
     <string name="refresh_feeds">Actualiser le flux</string>
     <string name="done_button">OK</string>
-    <string name="issue_content_template">Veuillez décrire le problème et fournir un lien vers le flux RSS à l\'origine du problème. Si vous le pouvez, veuillez joindre une capture d\'écran et le fichier OPML</string>
+    <string name="issue_content_template">Veuillez décrire le problème et fournir un lien vers le flux RSS à l\'origine du problème. Veuillez préciser la plateforme que vous utilisez ainsi que la version de l\'application. Si vous le pouvez, veuillez joindre une capture d\'écran et le fichier OPML</string>
     <string name="about_button">À propos</string>
     <string name="report_issue_button">Signaler un problème</string>
     <string name="export_started_message">Génération de l\'export</string>
@@ -246,4 +246,9 @@
     <string name="add_word_placeholder">Ajouter un mot</string>
     <string name="blocked_words_empty_state">Aucun mot bloqué pour le moment</string>
     <string name="blocked_words_description">Les articles contenant ces mots dans leur titre ou leur description seront cachés.</string>
+    <string name="reader_mode_comments_button_content_description">Ouvrir les commentaires</string>
+    <string name="mark_all_read_dialog_message">Voulez-vous vraiment marquer tous les articles comme lus ?</string>
+    <string name="clear_old_articles_dialog_message">Voulez-vous vraiment supprimer les articles anciens ?</string>
+    <string name="confirm_button">Confirmer</string>
+    <string name="cancel_button">Annuler</string>
 </resources>

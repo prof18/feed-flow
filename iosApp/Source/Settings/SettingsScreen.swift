@@ -212,11 +212,7 @@ private struct FeedSection: View {
             } label: {
                 Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
             }
-            
-            NavigationLink(destination: NotificationsSettingsScreen()) {
-                Label(feedFlowStrings.settingsNotificationsTitle, systemImage: "bell")
-            }
-            
+
             NavigationLink(destination: BlockedWordsScreen()) {
                 Label(feedFlowStrings.settingsBlockedWords, systemImage: "exclamationmark.triangle")
             }

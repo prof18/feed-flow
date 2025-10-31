@@ -30,10 +30,8 @@ struct EditFeedScreenContent: View {
     @Binding var linkOpeningPreference: LinkOpeningPreference
     @Binding var isHidden: Bool
     @Binding var isPinned: Bool
-    @Binding var isNotificationEnabled: Bool
 
     var categorySelectorObserver: CategorySelectorObserver
-    var showNotificationToggle: Bool
 
     let updateFeedUrlTextFieldValue: (String) -> Void
     let updateFeedNameTextFieldValue: (String) -> Void
@@ -42,7 +40,6 @@ struct EditFeedScreenContent: View {
     let updateLinkOpeningPreference: (LinkOpeningPreference) -> Void
     let onHiddenToggled: (Bool) -> Void
     let onPinnedToggled: (Bool) -> Void
-    let onNotificationToggleChanged: (Bool) -> Void
     let addFeed: () -> Void
     let updateCategoryName: (String, String) -> Void
     let onDeleteFeed: () -> Void
@@ -115,15 +112,6 @@ struct EditFeedScreenContent: View {
                 }
                 .onChange(of: isPinned) {
                     onPinnedToggled(isPinned)
-                }
-
-                if showNotificationToggle {
-                    Toggle(isOn: $isNotificationEnabled) {
-                        Text(feedFlowStrings.enableNotificationsForFeed)
-                    }
-                    .onChange(of: isNotificationEnabled) {
-                        onNotificationToggleChanged(isNotificationEnabled)
-                    }
                 }
             }
 

@@ -9,7 +9,6 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
-import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.exception.HttpException
 import kotlinx.coroutines.withContext
@@ -28,7 +27,6 @@ class SerialFeedFetcherRepository internal constructor(
     private val rssParser: RssParser,
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
-    private val notifier: Notifier,
 ) {
     suspend fun fetchFeeds() {
         return withContext(dispatcherProvider.io) {
@@ -36,17 +34,12 @@ class SerialFeedFetcherRepository internal constructor(
             when {
                 gReaderRepository.isAccountSet() -> {
                     fetchFeedsWithGReader()
-                    databaseHelper.markFeedItemsAsNotified()
                 }
 
                 else -> {
                     fetchFeedsWithRssParser()
-                    databaseHelper.markFeedItemsAsNotified()
                 }
             }
-            val feedSourceToNotify = databaseHelper.getFeedSourceToNotify()
-            notifier.showNewArticlesNotification(feedSourceToNotify)
-            databaseHelper.markFeedItemsAsNotified()
         }
     }
 

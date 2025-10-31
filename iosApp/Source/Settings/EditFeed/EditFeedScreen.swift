@@ -31,8 +31,6 @@ struct EditFeedScreen: View {
     @State var linkOpeningPreference = LinkOpeningPreference.default
     @State var isHidden = false
     @State var isPinned = false
-    @State private var showNotificationToggle = false
-    @State private var isNotificationEnabled = false
 
     var body: some View {
         @Bindable var appState = appState
@@ -48,9 +46,7 @@ struct EditFeedScreen: View {
                 linkOpeningPreference: $linkOpeningPreference,
                 isHidden: $isHidden,
                 isPinned: $isPinned,
-                isNotificationEnabled: $isNotificationEnabled,
                 categorySelectorObserver: categorySelectorObserver,
-                showNotificationToggle: showNotificationToggle,
                 updateFeedUrlTextFieldValue: { value in
                     vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
                 },
@@ -71,9 +67,6 @@ struct EditFeedScreen: View {
                 },
                 onPinnedToggled: { pinned in
                     vmStoreOwner.instance.updateIsPinned(isPinned: pinned)
-                },
-                onNotificationToggleChanged: { isNotificationEnabled in
-                    vmStoreOwner.instance.updateIsNotificationEnabled(isNotificationEnabled: isNotificationEnabled)
                 },
                 addFeed: {
                     vmStoreOwner.instance.editFeed()
@@ -151,12 +144,6 @@ struct EditFeedScreen: View {
                     self.linkOpeningPreference = state.linkOpeningPreference
                     self.isHidden = state.isHiddenFromTimeline
                     self.isPinned = state.isPinned
-                    self.isNotificationEnabled = state.isNotificationEnabled
-                }
-            }
-            .task {
-                for await state in vmStoreOwner.instance.showNotificationToggleState {
-                    self.showNotificationToggle = state as? Bool ?? false
                 }
             }
             .task {

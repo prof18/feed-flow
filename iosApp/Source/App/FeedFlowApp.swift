@@ -103,7 +103,7 @@ func setupTelemetry() {
     #endif
 }
 
-class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -111,8 +111,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         #if !DEBUG
             configureFirebase()
         #endif
-
-        UNUserNotificationCenter.current().delegate = self
 
         BGTaskScheduler.shared.register(
             forTaskWithIdentifier: "com.prof18.feedflow.articlesync",
@@ -171,22 +169,5 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         #if !DEBUG
             setupCrashlytics()
         #endif
-    }
-
-    func userNotificationCenter(
-        _: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
-        let userInfo = response.notification.request.content.userInfo
-
-        if let feedSourceId = userInfo["feedSourceId"] as? String {
-            NotificationCenter.default.post(
-                name: .didReceiveNotificationDeepLink,
-                object: nil,
-                userInfo: ["feedSourceId": feedSourceId]
-            )
-        }
-        completionHandler()
     }
 }

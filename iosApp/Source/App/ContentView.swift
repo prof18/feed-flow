@@ -73,10 +73,5 @@ struct ContentView: View {
                 }
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .didReceiveNotificationDeepLink)) { notification in
-            if let feedSourceId = notification.userInfo?["feedSourceId"] as? String {
-                vmStoreOwner.instance.updateFeedSourceFilter(feedSourceId: feedSourceId)
-            }
-        }
     }
 }

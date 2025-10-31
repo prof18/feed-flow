@@ -23,7 +23,6 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.model.CurrentOS
-import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
@@ -36,7 +35,6 @@ import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
-import com.prof18.feedflow.shared.presentation.NotificationsViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -65,7 +63,6 @@ fun initKoinIos(
     regionCode: String?,
     dropboxDataSource: DropboxDataSource,
     appVersion: String,
-    notifier: Notifier,
     telemetry: Telemetry,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
@@ -80,7 +77,6 @@ fun initKoinIos(
         module {
             factory { htmlParser }
             single { dropboxDataSource }
-            single { notifier }
             single { telemetry }
             single<FeedFlowStrings> {
                 when {
@@ -194,7 +190,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             rssParser = get(),
             rssChannelMapper = get(),
             dateFormatter = get(),
-            notifier = get(),
         )
     }
 
@@ -233,7 +228,5 @@ object Deps : KoinComponent {
     fun getDeeplinkFeedViewModel() = getKoin().get<DeeplinkFeedViewModel>()
     fun getReviewViewModel() = getKoin().get<ReviewViewModel>()
     fun getSerialFeedFetcherRepository() = getKoin().get<SerialFeedFetcherRepository>()
-    fun getNotificationsViewModel() = getKoin().get<NotificationsViewModel>()
-    fun getNotifier() = getKoin().get<Notifier>()
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
 }

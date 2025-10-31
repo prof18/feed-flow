@@ -34,9 +34,6 @@ struct AddFeedScreenContent: View {
     let addNewCategory: (CategoryName) -> Void
     let addFeed: () -> Void
     let updateCategoryName: (String, String) -> Void
-    var showNotificationToggle = false
-    var isNotificationEnabled = false
-    var onNotificationToggleChanged: (Bool) -> Void = { _ in }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -86,17 +83,6 @@ struct AddFeedScreenContent: View {
 
                 if !categoryItems.isEmpty {
                     categoriesSection
-                }
-
-                if showNotificationToggle {
-                    Section {
-                        Toggle(isOn: Binding(
-                            get: { isNotificationEnabled },
-                            set: { onNotificationToggleChanged($0) }
-                        )) {
-                            Text(feedFlowStrings.enableNotificationsForFeed)
-                        }
-                    }
                 }
             }
         }
@@ -220,12 +206,7 @@ struct AddFeedScreenContent: View {
         deleteCategory: { _ in },
         addNewCategory: { _ in },
         addFeed: {},
-        updateCategoryName: { _, _ in },
-        showNotificationToggle: true,
-        isNotificationEnabled: false,
-        onNotificationToggleChanged: { _ in
-            // onNotificationToggleChanged
-        }
+        updateCategoryName: { _, _ in }
     )
 }
 
@@ -242,11 +223,6 @@ struct AddFeedScreenContent: View {
         deleteCategory: { _ in },
         addNewCategory: { _ in },
         addFeed: {},
-        updateCategoryName: { _, _ in },
-        showNotificationToggle: true,
-        isNotificationEnabled: true,
-        onNotificationToggleChanged: { _ in
-            // onNotificationToggleChanged
-        }
+        updateCategoryName: { _, _ in }
     )
 }

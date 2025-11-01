@@ -24,7 +24,7 @@
     <string name="new_release_available_link">Lejupielādēt var šeit</string>
     <string name="no_category_selected_header">Nav kategorijas</string>
     <string name="new_category_hint">Jaunās kategorijas nosaukums</string>
-    <string name="no_category">Nekategorizēts</string>
+    <string name="no_category">Nekategorizētie</string>
     <string name="add_feed_category_title">Kategorija</string>
     <string name="settings_behaviour_title">Uzvedība</string>
     <string name="delete_category_confirmation_title">Dzēst kategoriju?</string>
@@ -69,9 +69,9 @@
     <string name="open_another_feed">Atvērt citu ziņu plūsmu</string>
     <string name="show_on_github">Skatīt GitHub</string>
     <string name="open_source_nav_bar">Atvērtā pirmkoda licences</string>
-    <string name="drawer_title_bookmarks">Grāmatzīmes</string>
-    <string name="menu_remove_from_bookmark">Noņemt no grāmatzīmēm</string>
-    <string name="menu_add_to_bookmark">Pievienot grāmatzīmēm</string>
+    <string name="drawer_title_bookmarks">Saglabātie raksti</string>
+    <string name="menu_remove_from_bookmark">Aizvākt no saglabātiem rakstiem</string>
+    <string name="menu_add_to_bookmark">Pievienot saglabātiem rakstiem</string>
     <string name="menu_open_comments">Atvērt komentārus</string>
     <string name="in_app_browser">Lietotnes pārlūkā</string>
     <string name="link_copied_success">Saite veiksmīgi nokopēta!</string>
@@ -165,4 +165,25 @@
     <string name="account_disconnect_button">Atvienot</string>
     <string name="dropbox_sync_desktop_description">Noklikšķinot \"Pievienot\", jūs tiksiet novirzīti uz Dropbox vietni. Pēc konta pievienošanas nokopējiet autorizācijas kodu un ievadiet to šeit</string>
     <string name="fresh_rss_account_connected">Jūsu FreshRSS konts veiksmīgi pievienots</string>
+    <string name="invalid_rss_url">Dotā saite nav RSS ziņu plūsma</string>
+    <string name="wrong_link_report_title">Sekojošās ziņu plūsmas netika pievienotas, jo tās nav derīgas</string>
+    <string name="cancel_button">Atcelt</string>
+    <string name="delete_category_confirmation_message">Vai tiešām vēlaties dzēst šo kategoriju? Šīs kategorijas ziņu plūsmas tiks ievietotas \"Nekategorizētie\" kategorijā.</string>
+    <string name="open_feed_settings">Atvērt ziņu plūsmas iestatījumus</string>
+    <string name="settings_theme">Motīvs</string>
+    <string name="settings_theme_system">Sistēmas</string>
+    <string name="settings_theme_light">Gaišs</string>
+    <string name="settings_theme_dark">Tumšs</string>
+    <string name="settings_blocked_words">Bloķētie vārdi</string>
+    <string name="add_word_placeholder">Pievienot vārdu</string>
+    <string name="blocked_words_empty_state">Pagaidām nav pievienots neviens bloķēts vārds</string>
+    <string name="blocked_words_description">Raksti, kas satur zemāk pievienotos vārdus virsrakstā vai aprakstā, tiks paslēpti.</string>
+    <string name="enable_notifications_for_feed">Paziņot par jauniem rakstiem</string>
+    <string name="icloud_connection_error">Diemžēl neizdevās izveidot savienojumu ar iCloud. Lūdzu, pārliecinieties, ka esiet autorizējušies, iCloud Drive ir iespējots un ir brīva pietiekoša krātuves vieta. Kļūdas kods: %s.</string>
+    <string name="settings_notifications_enable_all_title">Paziņot par jauniem rakstiem visās ziņu plūsmās</string>
+    <string name="settings_notification_check_period">Paziņot</string>
+    <string name="settings_notification_check_period_desc">Atlasiet, cik bieži ziņot par jauniem rakstiem ziņu plūsmās</string>
+    <string name="accounts_description">Pievienojiet kontu, lai sinhronizētu ziņu plūsmas abonementus, kategorijas, lasītos un saglabātos rakstus starp ierīcēm.\n\nŠī funkcija ir beta stadijā, var rasties problēmas (piemēram, lasītie raksti var nebūt pilnībā sinhronizēti). Nākotnē ir plānots atbalstīt citus pakalpojumu sniedzējus.\n\nVienlaikus var izmantot tikai vienu kontu.</string>
+    <string name="settings_swipe_action_toggle_bookmark">Pievienot/aizvākt no saglabātiem rakstiem</string>
+    <string name="bookmarked_articles_empty_screen_message">Pagaidām šeit nav nekā, laiks kaut ko pievienot saglabātiem rakstiem!</string>
 </resources>

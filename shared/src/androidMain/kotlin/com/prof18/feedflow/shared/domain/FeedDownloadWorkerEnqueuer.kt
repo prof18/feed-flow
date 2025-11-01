@@ -48,7 +48,7 @@ class FeedDownloadWorkerEnqueuer internal constructor(
         WorkManager.getInstance(context)
             .enqueueUniquePeriodicWork(
                 WORKER_TAG,
-                ExistingPeriodicWorkPolicy.KEEP,
+                ExistingPeriodicWorkPolicy.UPDATE,
                 instructions,
             )
     }

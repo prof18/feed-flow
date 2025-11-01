@@ -21,7 +21,6 @@ class FeedDownloadWorker internal constructor(
     override suspend fun doWork(): Result {
         return try {
             feedFetcherRepository.fetchFeeds(isFetchingFromBackground = true)
-            delay(1.minutes)
             val itemsToNotify = databaseHelper.getFeedSourceToNotify()
             notifier.showNewArticlesNotification(itemsToNotify)
             databaseHelper.markFeedItemsAsNotified()

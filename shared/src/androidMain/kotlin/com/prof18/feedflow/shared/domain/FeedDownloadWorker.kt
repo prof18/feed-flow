@@ -7,8 +7,6 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.notification.Notifier
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.minutes
 
 class FeedDownloadWorker internal constructor(
     private val feedFetcherRepository: FeedFetcherRepository,

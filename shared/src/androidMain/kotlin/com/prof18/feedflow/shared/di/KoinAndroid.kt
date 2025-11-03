@@ -10,7 +10,11 @@ import com.prof18.feedflow.shared.domain.FeedDownloadWorker
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
+import com.prof18.feedflow.shared.domain.parser.AndroidFeedItemParserWorker
+import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerAndroid
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
@@ -77,6 +81,24 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     factoryOf(::ReaderModeExtractor)
 
+    single<FeedItemContentFileHandler> {
+        FeedItemContentFileHandlerAndroid(
+            appContext = get(),
+            dispatcherProvider = get(),
+            logger = getWith("FeedItemContentFileHandler"),
+        )
+    }
+
+    single<FeedItemParserWorker> {
+        AndroidFeedItemParserWorker(
+            htmlRetriever = get(),
+            appContext = get(),
+            logger = getWith("FeedItemParserWorker"),
+            dispatcherProvider = get(),
+            feedItemContentFileHandler = get(),
+        )
+    }
+
     viewModel {
         DropboxSyncViewModel(
             logger = getWith("DropboxSyncViewModel"),
@@ -110,9 +132,10 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     viewModel {
         ReaderModeViewModel(
-            readerModeExtractor = get(),
             settingsRepository = get(),
             feedActionsRepository = get(),
+            feedItemParserWorker = get(),
+            feedItemContentFileHandler = get(),
         )
     }
 

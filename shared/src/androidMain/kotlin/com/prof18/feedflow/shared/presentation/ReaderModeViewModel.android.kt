@@ -4,19 +4,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.ParsingResult
+import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.security.MessageDigest
 
 class ReaderModeViewModel internal constructor(
-    private val readerModeExtractor: ReaderModeExtractor,
     private val settingsRepository: SettingsRepository,
     private val feedActionsRepository: FeedActionsRepository,
+    private val feedItemParserWorker: FeedItemParserWorker,
+    private val feedItemContentFileHandler: FeedItemContentFileHandler,
 ) : ViewModel() {
 
     private val readerModeMutableState: MutableStateFlow<ReaderModeState> = MutableStateFlow(
@@ -36,17 +41,63 @@ class ReaderModeViewModel internal constructor(
     fun getReaderModeHtml(urlInfo: FeedItemUrlInfo) {
         viewModelScope.launch {
             readerModeMutableState.value = ReaderModeState.Loading
-            val readerModeData = readerModeExtractor.extractReaderContent(urlInfo)
-            if (readerModeData != null) {
-                readerModeMutableState.value = ReaderModeState.Success(readerModeData)
-            } else {
-                readerModeMutableState.value = ReaderModeState.HtmlNotAvailable(
-                    url = urlInfo.url,
-                    id = urlInfo.id,
-                    isBookmarked = urlInfo.isBookmarked,
+
+            val feedItemId = urlInfo.url.toFeedItemId()
+            val cachedContent = feedItemContentFileHandler.loadFeedItemContent(feedItemId)
+
+            if (cachedContent != null) {
+                readerModeMutableState.value = ReaderModeState.Success(
+                    ReaderModeData(
+                        id = FeedItemId(urlInfo.id),
+                        content = cachedContent,
+                        url = urlInfo.url,
+                        fontSize = settingsRepository.getReaderModeFontSize(),
+                        isBookmarked = urlInfo.isBookmarked,
+                        title = urlInfo.title,
+                        commentsUrl = urlInfo.commentsUrl,
+                    ),
                 )
+                return@launch
+            }
+
+            when (val result = feedItemParserWorker.triggerImmediateParsing(urlInfo.url)) {
+                is ParsingResult.Success -> {
+                    val content = result.htmlContent
+                    if (content != null) {
+                        readerModeMutableState.value = ReaderModeState.Success(
+                            ReaderModeData(
+                                id = FeedItemId(urlInfo.id),
+                                content = content,
+                                url = urlInfo.url,
+                                fontSize = settingsRepository.getReaderModeFontSize(),
+                                isBookmarked = urlInfo.isBookmarked,
+                                title = urlInfo.title,
+                                commentsUrl = urlInfo.commentsUrl,
+                            ),
+                        )
+                    } else {
+                        readerModeMutableState.value = ReaderModeState.HtmlNotAvailable(
+                            url = urlInfo.url,
+                            id = urlInfo.id,
+                            isBookmarked = urlInfo.isBookmarked,
+                        )
+                    }
+                }
+                is ParsingResult.Error -> {
+                    readerModeMutableState.value = ReaderModeState.HtmlNotAvailable(
+                        url = urlInfo.url,
+                        id = urlInfo.id,
+                        isBookmarked = urlInfo.isBookmarked,
+                    )
+                }
             }
         }
+    }
+
+    private fun String.toFeedItemId(): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hash = digest.digest(this.toByteArray())
+        return hash.joinToString("") { "%02x".format(it) }
     }
 
     fun updateFontSize(newFontSize: Int) {

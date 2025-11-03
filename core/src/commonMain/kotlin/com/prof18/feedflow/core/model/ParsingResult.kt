@@ -11,10 +11,12 @@ sealed class ParsingResult {
      * Parsing succeeded.
      *
      * @property htmlContent Cleaned HTML content (THIS is what we cache)
+     * @property title Article title (used for UI display)
      * @property siteName Source domain (kept for potential future use)
      */
     data class Success(
         val htmlContent: String?,
+        val title: String?,
         val siteName: String?,
     ) : ParsingResult()
 

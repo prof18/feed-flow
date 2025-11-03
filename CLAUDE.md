@@ -60,6 +60,14 @@ FeedFlow is a cross-platform RSS reader built with Kotlin Multiplatform, Compose
 - DO NOT excessively use try/catch blocks for every function. Use them only for the top caller or the bottom callers, depending on the cases.
 - ALWAYS run gradle tasks with the following flag: `--quiet --console=plain`
 
+### Git Commit Messages
+When creating commits:
+- Use simple, one-liner commit messages
+- DO NOT include phase numbers (e.g., "Phase 1", "Phase 2")
+- DO NOT add "Generated with Claude Code" attribution
+- DO NOT add "Co-Authored-By: Claude" attribution
+- Example: `git commit -m "Add foundation for unified article parsing system"`
+
 ### iOS Development
 The iOS app uses Xcode and requires iOS-specific setup:
 - Open `iosApp/FeedFlow.xcodeproj` in Xcode

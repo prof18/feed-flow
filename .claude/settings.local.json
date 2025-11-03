@@ -16,7 +16,9 @@
       "mcp__jetbrains__get_file_problems",
       "mcp__jetbrains__create_new_file",
       "mcp__jetbrains__get_file_text_by_path",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Read(//Users/mg/Workspace/reader-flow/**)",
+      "Bash(xargs:*)"
     ],
     "deny": []
   }

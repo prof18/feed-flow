@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.onError
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
+import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -22,6 +23,7 @@ internal class FeedImportExportRepository(
     private val feedSyncRepository: FeedSyncRepository,
     private val accountsRepository: AccountsRepository,
     private val gReaderRepository: GReaderRepository,
+    private val feedbinRepository: FeedbinRepository,
 ) {
     suspend fun addFeedsFromFile(
         opmlInput: OpmlInput,
@@ -46,6 +48,23 @@ internal class FeedImportExportRepository(
                     feedSourcesWithError = feedSourcesWithError,
                 )
             }
+
+            SyncAccounts.FEEDBIN -> {
+                for (feed in feeds) {
+                    feedbinRepository.addFeedSource(
+                        url = feed.url,
+                        categoryName = feed.category,
+                        isNotificationEnabled = false,
+                    ).onError {
+                        feedSourcesWithError.add(feed)
+                    }
+                }
+                return@withContext NotValidFeedSources(
+                    feedSources = emptyList(),
+                    feedSourcesWithError = feedSourcesWithError,
+                )
+            }
+
             else -> {
                 databaseHelper.insertCategories(categories)
                 databaseHelper.insertFeedSource(feeds)

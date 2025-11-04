@@ -178,6 +178,7 @@
 
 
 -keep class com.prof18.feedflow.feedsync.greader.data.dto.** { *; }
+-keep class com.prof18.feedflow.feedsync.feedbin.data.dto.** { *; }
 
 # Keep all kotlinx.serialization generated serializers to avoid optimizer issues
 -keep class **$$serializer { *; }

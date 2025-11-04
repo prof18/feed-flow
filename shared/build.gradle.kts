@@ -57,6 +57,7 @@ kotlin {
                 implementation(project(":feedSync:icloud"))
                 implementation(project(":feedSync:greader"))
                 implementation(project(":feedSync:networkcore"))
+                implementation(project(":feedSync:feedbin"))
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)

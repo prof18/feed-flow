@@ -7,6 +7,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.desktop.accounts.dropbox.DropboxSyncScreen
+import com.prof18.feedflow.desktop.accounts.feedbin.FeedbinSyncScreen
 import com.prof18.feedflow.desktop.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.desktop.accounts.googledrive.GoogleDriveSyncScreen
 import com.prof18.feedflow.desktop.accounts.icloud.ICloudSyncScreen
@@ -49,6 +50,9 @@ internal class AccountsScreen : Screen {
             },
             onMinifluxClick = {
                 navigator.push(MinifluxSyncScreen())
+            },
+            onFeedbinClick = {
+                navigator.push(FeedbinSyncScreen())
             },
         )
     }

@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.Search
+import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
@@ -20,6 +21,7 @@ internal class FeedActionsRepository(
     private val databaseHelper: DatabaseHelper,
     private val feedSyncRepository: FeedSyncRepository,
     private val gReaderRepository: GReaderRepository,
+    private val feedbinRepository: FeedbinRepository,
     private val accountsRepository: AccountsRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedItemParserWorker: FeedItemParserWorker,
@@ -29,6 +31,13 @@ internal class FeedActionsRepository(
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 gReaderRepository.updateReadStatus(itemsToUpdates.toList(), isRead = true)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
+                    }
+            }
+
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.updateReadStatus(itemsToUpdates.toList(), isRead = true)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
                     }
@@ -97,6 +106,13 @@ internal class FeedActionsRepository(
                     }
             }
 
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.markAllFeedAsRead(currentFilter)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkAllFeedsAsReadFailed))
+                    }
+            }
+
             else -> {
                 databaseHelper.markAllFeedAsRead(currentFilter)
                 feedSyncRepository.setIsSyncUploadRequired()
@@ -126,6 +142,13 @@ internal class FeedActionsRepository(
                     }
             }
 
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.updateBookmarkStatus(feedItemId, isBookmarked)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateBookmarkStatusFailed))
+                    }
+            }
+
             else -> {
                 databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
                 feedSyncRepository.setIsSyncUploadRequired()
@@ -146,6 +169,13 @@ internal class FeedActionsRepository(
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 gReaderRepository.updateReadStatus(listOf(feedItemId), isRead)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateReadStatusFailed))
+                    }
+            }
+
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.updateReadStatus(listOf(feedItemId), isRead)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateReadStatusFailed))
                     }

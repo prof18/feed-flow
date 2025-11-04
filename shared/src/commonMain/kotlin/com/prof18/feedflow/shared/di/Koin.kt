@@ -13,6 +13,7 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
 import com.prof18.feedflow.feedsync.dropbox.di.dropboxModule
 import com.prof18.feedflow.feedsync.googledrive.di.googleDriveModule
+import com.prof18.feedflow.feedsync.feedbin.di.getFeedbinModule
 import com.prof18.feedflow.feedsync.greader.di.getGReaderModule
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.ReviewRepository
@@ -40,6 +41,7 @@ import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
+import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
@@ -85,6 +87,7 @@ fun initKoin(
                 dropboxModule +
                 googleDriveModule(appConfig.appEnvironment) +
                 getGReaderModule(appConfig.appEnvironment) +
+                getFeedbinModule(appConfig.appEnvironment) +
                 getLoggingModule(appConfig, crashReportingLogWriter) +
                 getPlatformModule(appConfig.appEnvironment) +
                 getFeedSyncModule(appConfig.appEnvironment),
@@ -140,6 +143,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             databaseHelper = get(),
             feedSyncRepository = get(),
             gReaderRepository = get(),
+            feedbinRepository = get(),
             accountsRepository = get(),
             feedStateRepository = get(),
             feedItemParserWorker = get(),
@@ -358,6 +362,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             appConfig = appConfig,
             gReaderRepository = get(),
             networkSettings = get(),
+            feedbinRepository = get(),
         )
     }
 
@@ -407,12 +412,22 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
+    viewModel {
+        FeedbinSyncViewModel(
+            feedbinRepository = get(),
+            accountsRepository = get(),
+            dateFormatter = get(),
+            feedStateRepository = get(),
+        )
+    }
+
     factory {
         FeedImportExportRepository(
             dispatcherProvider = get(),
             feedSyncRepository = get(),
             accountsRepository = get(),
             gReaderRepository = get(),
+            feedbinRepository = get(),
             databaseHelper = get(),
             opmlFeedHandler = get(),
         )
@@ -424,6 +439,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             accountsRepository = get(),
             feedSyncRepository = get(),
             gReaderRepository = get(),
+            feedbinRepository = get(),
             dispatcherProvider = get(),
             logger = getWith("FeedSourcesRepository"),
             feedStateRepository = get(),
@@ -449,6 +465,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dispatcherProvider = get(),
             feedStateRepository = get(),
             gReaderRepository = get(),
+            feedbinRepository = get(),
             databaseHelper = get(),
             feedSyncRepository = get(),
             settingsRepository = get(),

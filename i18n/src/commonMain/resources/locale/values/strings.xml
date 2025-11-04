@@ -172,6 +172,11 @@
     <string name="miniflux_last_sync">Last sync: %s</string>
     <string name="miniflux_password_hint">The Miniflux API password (Settings &gt; Integrations &gt; Google Reader)</string>
     <string name="miniflux_url_hint">The Miniflux server URL, for example %s</string>
+    <string name="feedbin_account_connected">Your Feedbin account is successfully connected</string>
+    <string name="no_feedbin_sync_yet">Data are not synced yet</string>
+    <string name="feedbin_last_sync">Last sync: %s</string>
+    <string name="feedbin_username_hint">Your Feedbin email address</string>
+    <string name="feedbin_password_hint">Your Feedbin password</string>
     <string name="link_opening_preference">Link opening behaviour</string>
     <string name="link_opening_preference_default">Default</string>
     <string name="link_opening_preference_reader_mode">Reader mode</string>

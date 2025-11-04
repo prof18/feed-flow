@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.security.MessageDigest
 
 class ReaderModeViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
@@ -42,7 +41,8 @@ class ReaderModeViewModel internal constructor(
         viewModelScope.launch {
             readerModeMutableState.value = ReaderModeState.Loading
 
-            val feedItemId = urlInfo.url.toFeedItemId()
+            // Use feed item ID directly as filename
+            val feedItemId = urlInfo.id
             val cachedContent = feedItemContentFileHandler.loadFeedItemContent(feedItemId)
 
             if (cachedContent != null) {
@@ -60,7 +60,7 @@ class ReaderModeViewModel internal constructor(
                 return@launch
             }
 
-            when (val result = feedItemParserWorker.triggerImmediateParsing(urlInfo.url)) {
+            when (val result = feedItemParserWorker.triggerImmediateParsing(feedItemId, urlInfo.url)) {
                 is ParsingResult.Success -> {
                     val content = result.htmlContent
                     if (content != null) {
@@ -92,12 +92,6 @@ class ReaderModeViewModel internal constructor(
                 }
             }
         }
-    }
-
-    private fun String.toFeedItemId(): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        val hash = digest.digest(this.toByteArray())
-        return hash.joinToString("") { "%02x".format(it) }
     }
 
     fun updateFontSize(newFontSize: Int) {

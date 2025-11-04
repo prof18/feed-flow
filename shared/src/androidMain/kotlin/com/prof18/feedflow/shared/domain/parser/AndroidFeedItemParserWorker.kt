@@ -8,7 +8,6 @@ import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import kotlinx.coroutines.CompletableDeferred
-import java.security.MessageDigest
 
 internal class AndroidFeedItemParserWorker(
     private val htmlRetriever: HtmlRetriever,
@@ -18,12 +17,12 @@ internal class AndroidFeedItemParserWorker(
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
 ) : FeedItemParserWorker {
 
-    override suspend fun enqueueParsing(url: String) {
+    override suspend fun enqueueParsing(feedItemId: String, url: String) {
         logger.d { "Enqueue parsing not implemented yet (Phase 5): $url" }
     }
 
-    override suspend fun triggerImmediateParsing(url: String): ParsingResult {
-        logger.d { "Triggering immediate parsing for: $url" }
+    override suspend fun triggerImmediateParsing(feedItemId: String, url: String): ParsingResult {
+        logger.d { "Triggering immediate parsing for: $url (feedItemId: $feedItemId)" }
 
         val deferredResult = CompletableDeferred<ParsingResult>()
         FeedItemParser(
@@ -39,23 +38,16 @@ internal class AndroidFeedItemParserWorker(
         if (result is ParsingResult.Success) {
             val content = result.htmlContent
             if (content != null) {
-                val feedItemId = url.toFeedItemId()
                 feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, content)
-                logger.d { "Successfully parsed and cached content for: $url" }
+                logger.d { "Successfully parsed and cached content for: $url (feedItemId: $feedItemId)" }
             }
         }
 
         return result
     }
 
-    override suspend fun triggerBackgroundParsing(url: String): ParsingResult {
+    override suspend fun triggerBackgroundParsing(feedItemId: String, url: String): ParsingResult {
         logger.d { "Background parsing not implemented yet (Phase 5): $url" }
         return ParsingResult.Error
-    }
-
-    private fun String.toFeedItemId(): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        val hash = digest.digest(this.toByteArray())
-        return hash.joinToString("") { "%02x".format(it) }
     }
 }

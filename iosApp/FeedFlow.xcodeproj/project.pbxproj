@@ -147,7 +147,6 @@
 				DI/Koin.swift,
 				UI/Style/Spacing.swift,
 				Utils/IosHtmlParser.swift,
-				Utils/IOSNotifier.swift,
 				Utils/TelemetryReporter.swift,
 				Utils/VMStoreOwner.swift,
 			);

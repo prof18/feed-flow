@@ -143,6 +143,8 @@ internal fun HomeScreen(
         onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
         onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
         onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
+        onReorderPinnedFeeds = { reorderedItems -> homeViewModel.reorderPinnedFeedSources(reorderedItems) },
+        onReorderCategories = { reorderedItems -> homeViewModel.reorderCategories(reorderedItems) },
     )
 
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass

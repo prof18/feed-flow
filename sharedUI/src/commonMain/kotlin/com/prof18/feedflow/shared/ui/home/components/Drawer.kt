@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -28,6 +29,7 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -50,6 +52,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -77,6 +80,9 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import sh.calvin.reorderable.ReorderableColumn
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyColumnState
 
 @Composable
 internal fun Drawer(
@@ -140,7 +146,7 @@ internal fun Drawer(
                         style = MaterialTheme.typography.labelLarge,
                     )
 
-                    FeedSourcesList(
+                    ReorderableFeedSourcesList(
                         drawerFeedSources = displayState.navDrawerState.pinnedFeedSources
                             .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                         currentFeedFilter = displayState.currentFeedFilter,
@@ -149,6 +155,7 @@ internal fun Drawer(
                         onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
                         onPinFeedClick = feedManagementActions.onPinFeedClick,
                         onOpenWebsite = feedManagementActions.onOpenWebsite,
+                        onReorder = feedManagementActions.onReorderPinnedFeeds,
                     )
                 }
             }
@@ -160,12 +167,13 @@ internal fun Drawer(
             }
 
             item {
-                DrawerCategoriesSection(
+                ReorderableDrawerCategoriesSection(
                     navDrawerState = displayState.navDrawerState,
                     currentFeedFilter = displayState.currentFeedFilter,
                     onFeedFilterSelected = onFeedFilterSelected,
                     onEditCategoryClick = feedManagementActions.onEditCategoryClick,
                     onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
+                    onReorder = feedManagementActions.onReorderCategories,
                 )
             }
         }
@@ -355,6 +363,7 @@ private fun DrawerCategoryItem(
     onFeedFilterSelected: (FeedFilter) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = NavigationDrawerItemDefaults.colors(
         unselectedContainerColor = Color.Transparent,
@@ -373,8 +382,7 @@ private fun DrawerCategoryItem(
                 FeedFilter.Category(feedCategory = drawerCategory.category),
             )
         },
-        modifier =
-        Modifier
+        modifier = modifier
             .semantics { role = Role.Tab }
             .heightIn(min = 56.0.dp)
             .fillMaxWidth(),
@@ -784,5 +792,170 @@ fun FeedSourceDrawerItem(
                 onOpenWebsite = onOpenWebsite,
             )
         }
+    }
+}
+
+@Composable
+private fun ReorderableFeedSourcesList(
+    drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
+    currentFeedFilter: FeedFilter,
+    onFeedFilterSelected: (FeedFilter) -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
+    onDeleteFeedSourceClick: (FeedSource) -> Unit,
+    onPinFeedClick: (FeedSource) -> Unit,
+    onOpenWebsite: (String) -> Unit,
+    onReorder: (List<DrawerItem.DrawerFeedSource>) -> Unit,
+) {
+    val items = remember(drawerFeedSources) { drawerFeedSources.toMutableStateList() }
+    val lazyColumnState = rememberReorderableLazyColumnState(
+        lazyListState = androidx.compose.foundation.lazy.rememberLazyListState(),
+    ) { from, to ->
+        items.apply {
+            add(to.index, removeAt(from.index))
+        }
+    }
+
+    LazyColumn(
+        state = lazyColumnState.lazyListState,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        items(
+            count = items.size,
+            key = { index -> items[index].feedSource.id },
+        ) { index ->
+            ReorderableItem(lazyColumnState, key = items[index].feedSource.id) { isDragging ->
+                val feedSourceWrapper = items[index]
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DragHandle,
+                        contentDescription = "Drag handle",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .longPressDraggableHandle(),
+                    )
+
+                    FeedSourceDrawerItem(
+                        label = {
+                            Text(
+                                text = feedSourceWrapper.feedSource.title,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        selected = currentFeedFilter is FeedFilter.Source &&
+                            currentFeedFilter.feedSource == feedSourceWrapper.feedSource,
+                        onClick = {
+                            onFeedFilterSelected(
+                                FeedFilter.Source(
+                                    feedSource = feedSourceWrapper.feedSource,
+                                ),
+                            )
+                        },
+                        icon = {
+                            val imageUrl = feedSourceWrapper.feedSource.logoUrl
+                            if (imageUrl != null) {
+                                FeedSourceLogoImage(
+                                    size = 24.dp,
+                                    imageUrl = imageUrl,
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Category,
+                                    contentDescription = null,
+                                )
+                            }
+                        },
+                        colors = NavigationDrawerItemDefaults.colors(
+                            unselectedContainerColor = Color.Transparent,
+                        ),
+                        onEditFeedClick = onEditFeedClick,
+                        onDeleteFeedSourceClick = onDeleteFeedSourceClick,
+                        onPinFeedClick = onPinFeedClick,
+                        onOpenWebsite = onOpenWebsite,
+                        feedSource = feedSourceWrapper.feedSource,
+                        unreadCount = feedSourceWrapper.unreadCount,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+        }
+    }
+
+    if (items != drawerFeedSources) {
+        onReorder(items.toList())
+    }
+}
+
+@Composable
+private fun ReorderableDrawerCategoriesSection(
+    navDrawerState: NavDrawerState,
+    currentFeedFilter: FeedFilter,
+    onFeedFilterSelected: (FeedFilter) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
+    onReorder: (List<DrawerItem.DrawerCategory>) -> Unit,
+) {
+    val categories = navDrawerState.categories.filterIsInstance<DrawerItem.DrawerCategory>()
+    val items = remember(categories) { categories.toMutableStateList() }
+    val lazyColumnState = rememberReorderableLazyColumnState(
+        lazyListState = androidx.compose.foundation.lazy.rememberLazyListState(),
+    ) { from, to ->
+        items.apply {
+            add(to.index, removeAt(from.index))
+        }
+    }
+
+    Column {
+        Text(
+            modifier = Modifier
+                .padding(start = Spacing.regular)
+                .padding(bottom = Spacing.regular),
+            text = LocalFeedFlowStrings.current.drawerTitleCategories,
+            style = MaterialTheme.typography.labelLarge,
+        )
+
+        LazyColumn(
+            state = lazyColumnState.lazyListState,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            items(
+                count = items.size,
+                key = { index -> items[index].category.id },
+            ) { index ->
+                ReorderableItem(lazyColumnState, key = items[index].category.id) { isDragging ->
+                    val drawerCategory = items[index]
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DragHandle,
+                            contentDescription = "Drag handle",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .longPressDraggableHandle(),
+                        )
+
+                        DrawerCategoryItem(
+                            currentFeedFilter = currentFeedFilter,
+                            drawerCategory = drawerCategory,
+                            onFeedFilterSelected = onFeedFilterSelected,
+                            onEditCategoryClick = onEditCategoryClick,
+                            onDeleteCategoryClick = onDeleteCategoryClick,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    if (items != categories) {
+        onReorder(items.toList())
     }
 }

@@ -166,6 +166,8 @@ internal fun HomeScreen(
         onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
         onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
         onOpenWebsite = { url -> uriHandler.openUri(url) },
+        onReorderPinnedFeeds = { reorderedItems -> homeViewModel.reorderPinnedFeedSources(reorderedItems) },
+        onReorderCategories = { reorderedItems -> homeViewModel.reorderCategories(reorderedItems) },
     )
 
     val linkCopiedSuccess = LocalFeedFlowStrings.current.linkCopiedSuccess

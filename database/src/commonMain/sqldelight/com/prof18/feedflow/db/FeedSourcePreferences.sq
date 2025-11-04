@@ -7,6 +7,7 @@ CREATE TABLE feed_source_preferences (
     is_hidden INTEGER AS Boolean NOT NULL DEFAULT 0,
     is_pinned INTEGER AS Boolean NOT NULL DEFAULT 0,
     notifications_enabled INTEGER AS Boolean NOT NULL DEFAULT 0,
+    order_position INTEGER NOT NULL DEFAULT 0,
     FOREIGN KEY (feed_source_id) REFERENCES feed_source(url_hash) ON DELETE CASCADE
 );
 
@@ -31,7 +32,10 @@ getFeedSourceWithPreference:
 SELECT feed_source.*, feed_source_preferences.link_opening_preference, feed_source_preferences.is_pinned, feed_source_preferences.notifications_enabled
 FROM feed_source
 LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
-ORDER BY feed_source.title COLLATE NOCASE ASC;
+ORDER BY
+    CASE WHEN feed_source_preferences.order_position IS NULL THEN 1 ELSE 0 END,
+    feed_source_preferences.order_position,
+    feed_source.title COLLATE NOCASE ASC;
 
 updateNotificationEnabledStatus:
 UPDATE feed_source_preferences
@@ -40,6 +44,11 @@ WHERE feed_source_id = :feedSourceId;
 
 areNotificationsEnabled:
 SELECT EXISTS(
-    SELECT 1 FROM feed_source_preferences 
+    SELECT 1 FROM feed_source_preferences
     WHERE notifications_enabled = 1
 );
+
+updateFeedSourcePosition:
+UPDATE feed_source_preferences
+SET order_position = :position
+WHERE feed_source_id = :feedSourceId;

@@ -87,6 +87,12 @@ struct CompactView: View {
                         categoryId: CategoryId(value: categoryId),
                         newName: CategoryName(name: categoryName)
                     )
+                },
+                onReorderPinnedFeeds: { reorderedItems in
+                    homeViewModel.reorderPinnedFeedSources(reorderedItems: reorderedItems)
+                },
+                onReorderCategories: { reorderedItems in
+                    homeViewModel.reorderCategories(reorderedItems: reorderedItems)
                 }
             ).sheet(isPresented: $showAddFeedSheet) {
                 AddFeedScreen(showCloseButton: true)

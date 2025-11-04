@@ -127,6 +127,12 @@ internal class FeedSourcesRepository(
         )
     }
 
+    suspend fun updateFeedSourcePositions(feedSourceIdsInOrder: List<String>) = withContext(dispatcherProvider.io) {
+        feedSourceIdsInOrder.forEachIndexed { index, feedSourceId ->
+            databaseHelper.updateFeedSourcePosition(feedSourceId, index)
+        }
+    }
+
     suspend fun addFeedSource(
         feedUrl: String,
         categoryName: FeedSourceCategory?,

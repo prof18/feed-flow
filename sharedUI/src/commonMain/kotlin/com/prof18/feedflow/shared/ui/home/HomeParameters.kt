@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.ui.home
 import androidx.compose.runtime.Stable
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -54,6 +55,8 @@ class FeedManagementActions(
     val onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     val onDeleteCategoryClick: (CategoryId) -> Unit,
     val onOpenWebsite: (String) -> Unit,
+    val onReorderPinnedFeeds: (List<DrawerItem.DrawerFeedSource>) -> Unit,
+    val onReorderCategories: (List<DrawerItem.DrawerCategory>) -> Unit,
 )
 
 @Stable

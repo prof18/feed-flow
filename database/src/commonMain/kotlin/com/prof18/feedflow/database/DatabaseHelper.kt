@@ -361,6 +361,14 @@ class DatabaseHelper(
             dbRef.feedSourceQueries.updateCategoryId(newCategoryId = newId, oldCategoryId = oldId)
         }
 
+    suspend fun updateCategoryPosition(categoryId: String, position: Int) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceCategoryQueries.updateCategoryPosition(
+                categoryId = categoryId,
+                position = position.toLong(),
+            )
+        }
+
     suspend fun updateBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedItemQueries.updateBookmarkStatus(
@@ -384,6 +392,14 @@ class DatabaseHelper(
                 url = feedSource.url,
                 title = feedSource.title,
                 categoryId = feedSource.category?.id,
+            )
+        }
+
+    suspend fun updateFeedSourcePosition(feedSourceId: String, position: Int) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourcePreferencesQueries.updateFeedSourcePosition(
+                feedSourceId = feedSourceId,
+                position = position.toLong(),
             )
         }
 

@@ -335,5 +335,19 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun reorderPinnedFeedSources(reorderedItems: List<DrawerItem.DrawerFeedSource>) {
+        viewModelScope.launch {
+            val feedSourceIds = reorderedItems.map { it.feedSource.id }
+            feedSourcesRepository.updateFeedSourcePositions(feedSourceIds)
+        }
+    }
+
+    fun reorderCategories(reorderedItems: List<DrawerItem.DrawerCategory>) {
+        viewModelScope.launch {
+            val categoryIds = reorderedItems.map { it.category.id }
+            feedCategoryRepository.updateCategoryPositions(categoryIds)
+        }
+    }
+
     fun getCurrentThemeMode() = settingsRepository.getThemeMode()
 }

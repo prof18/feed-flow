@@ -64,6 +64,7 @@ workmanager = "2.11.0"
 compose-hotreload = "1.0.0-rc02"
 flatpack-gradle-generator = "1.5.0"
 telemetry-deck = "6.2.2"
+reorderable = "2.4.0"
 
 [libraries]
 about-libraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }
@@ -152,6 +153,7 @@ voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.
 voyager-transition = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "workmanager" }
 telemetry-deck = { module = "com.telemetrydeck:kotlin-sdk", version.ref = "telemetry-deck" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 [bundles]
 about-libraries = ["about-libraries-core", "about-libraries-compose"]

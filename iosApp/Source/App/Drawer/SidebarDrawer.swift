@@ -25,6 +25,8 @@ struct SidebarDrawer: View {
 
     @State private var showMarkAllReadDialog = false
     @State private var showClearOldArticlesDialog = false
+    @State private var pinnedFeedSources: [DrawerItem.DrawerFeedSource] = []
+    @State private var categories: [DrawerItem.DrawerCategory] = []
 
     let navDrawerState: NavDrawerState
     let onFeedFilterSelected: (FeedFilter) -> Void
@@ -39,6 +41,8 @@ struct SidebarDrawer: View {
     let onPinFeedClick: (FeedSource) -> Void
     let onDeleteCategory: (String) -> Void
     let onUpdateCategoryName: (String, String) -> Void
+    let onReorderPinnedFeeds: ([DrawerItem.DrawerFeedSource]) -> Void
+    let onReorderCategories: ([DrawerItem.DrawerCategory]) -> Void
 
     var body: some View {
         List(selection: $selectedDrawerItem) {
@@ -69,7 +73,8 @@ struct SidebarDrawer: View {
                 onSelect: { self.selectedDrawerItem = $0 },
                 onFeedFilterSelected: onFeedFilterSelected,
                 onDeleteCategory: onDeleteCategory,
-                onUpdateCategoryName: onUpdateCategoryName
+                onUpdateCategoryName: onUpdateCategoryName,
+                onReorderCategories: onReorderCategories
             )
 
             feedSourcesWithoutCategorySection
@@ -97,16 +102,26 @@ struct SidebarDrawer: View {
     private var pinnedFeedSourcesSection: some View {
         Section(
             content: {
-                ForEach(navDrawerState.pinnedFeedSources, id: \.self) { drawerItem in
-                    if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
-                        makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
-                    }
+                ForEach(pinnedFeedSources, id: \.self) { drawerFeedSource in
+                    makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
+                }
+                .onMove { fromOffsets, toOffset in
+                    var updatedSources = pinnedFeedSources
+                    updatedSources.move(fromOffsets: fromOffsets, toOffset: toOffset)
+                    pinnedFeedSources = updatedSources
+                    onReorderPinnedFeeds(updatedSources)
                 }
             },
             header: {
                 Text(feedFlowStrings.drawerTitlePinnedFeeds)
             }
         )
+        .onAppear {
+            pinnedFeedSources = navDrawerState.pinnedFeedSources.compactMap { $0 as? DrawerItem.DrawerFeedSource }
+        }
+        .onChange(of: navDrawerState.pinnedFeedSources) { _, newValue in
+            pinnedFeedSources = newValue.compactMap { $0 as? DrawerItem.DrawerFeedSource }
+        }
     }
 
     @ViewBuilder private var feedSourcesWithoutCategorySection: some View {
@@ -271,6 +286,8 @@ struct SidebarDrawer: View {
         onDeleteFeedClick: { _ in },
         onPinFeedClick: { _ in },
         onDeleteCategory: { _ in },
-        onUpdateCategoryName: { _, _ in }
+        onUpdateCategoryName: { _, _ in },
+        onReorderPinnedFeeds: { _ in },
+        onReorderCategories: { _ in }
     )
 }

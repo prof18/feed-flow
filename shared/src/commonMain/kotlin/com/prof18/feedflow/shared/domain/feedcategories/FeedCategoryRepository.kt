@@ -100,6 +100,12 @@ internal class FeedCategoryRepository(
         }
     }
 
+    suspend fun updateCategoryPositions(categoryIdsInOrder: List<String>) {
+        categoryIdsInOrder.forEachIndexed { index, categoryId ->
+            databaseHelper.updateCategoryPosition(categoryId, index)
+        }
+    }
+
     suspend fun initCategories(selectedCategoryName: CategoryName? = null) {
         this.selectedCategoryName = selectedCategoryName
         observeCategories().collect { categories ->

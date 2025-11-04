@@ -15,60 +15,72 @@ struct CategoriesSection: View {
     let onFeedFilterSelected: (FeedFilter) -> Void
     let onDeleteCategory: (String) -> Void
     let onUpdateCategoryName: (String, String) -> Void
+    let onReorderCategories: ([DrawerItem.DrawerCategory]) -> Void
 
     @State private var showDeleteCategoryDialog = false
     @State private var showEditCategoryDialog = false
     @State private var categoryToDelete: String?
     @State private var categoryToEdit: String?
     @State private var editedCategoryName: String = ""
+    @State private var categoryItems: [DrawerItem.DrawerCategory] = []
 
     var body: some View {
         if !categories.isEmpty {
             Section(
                 content: {
-                    ForEach(categories, id: \.self) { drawerItem in
-                        if let categoryItem = drawerItem as? DrawerItem.DrawerCategory {
-                            HStack {
-                                Label(categoryItem.category.title, systemImage: "tag")
-                                Spacer()
-                                if categoryItem.unreadCount > 0 {
-                                    Text("\(categoryItem.unreadCount)")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                        .padding(.horizontal, 8)
-                                        .background(Color.secondary.opacity(0.2))
-                                        .clipShape(Capsule())
-                                }
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                onSelect(categoryItem)
-                                onFeedFilterSelected(
-                                    FeedFilter.Category(feedCategory: categoryItem.category))
-                            }
-                            .contextMenu {
-                                Button {
-                                    editedCategoryName = categoryItem.category.title
-                                    categoryToEdit = categoryItem.category.id
-                                    showEditCategoryDialog = true
-                                } label: {
-                                    Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
-                                }
-
-                                Button(role: .destructive) {
-                                    categoryToDelete = categoryItem.category.id
-                                    showDeleteCategoryDialog = true
-                                } label: {
-                                    Label(feedFlowStrings.deleteFeed, systemImage: "trash")
-                                }
+                    ForEach(categoryItems, id: \.self) { categoryItem in
+                        HStack {
+                            Label(categoryItem.category.title, systemImage: "tag")
+                            Spacer()
+                            if categoryItem.unreadCount > 0 {
+                                Text("\(categoryItem.unreadCount)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .padding(.horizontal, 8)
+                                    .background(Color.secondary.opacity(0.2))
+                                    .clipShape(Capsule())
                             }
                         }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            onSelect(categoryItem)
+                            onFeedFilterSelected(
+                                FeedFilter.Category(feedCategory: categoryItem.category))
+                        }
+                        .contextMenu {
+                            Button {
+                                editedCategoryName = categoryItem.category.title
+                                categoryToEdit = categoryItem.category.id
+                                showEditCategoryDialog = true
+                            } label: {
+                                Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
+                            }
+
+                            Button(role: .destructive) {
+                                categoryToDelete = categoryItem.category.id
+                                showDeleteCategoryDialog = true
+                            } label: {
+                                Label(feedFlowStrings.deleteFeed, systemImage: "trash")
+                            }
+                        }
+                    }
+                    .onMove { fromOffsets, toOffset in
+                        var updatedCategories = categoryItems
+                        updatedCategories.move(fromOffsets: fromOffsets, toOffset: toOffset)
+                        categoryItems = updatedCategories
+                        onReorderCategories(updatedCategories)
                     }
                 },
                 header: {
                     Text(feedFlowStrings.drawerTitleCategories)
                 }
             )
+            .onAppear {
+                categoryItems = categories.compactMap { $0 as? DrawerItem.DrawerCategory }
+            }
+            .onChange(of: categories) { _, newValue in
+                categoryItems = newValue.compactMap { $0 as? DrawerItem.DrawerCategory }
+            }
             .overlay(
                 DeleteCategoryDialog(
                     isPresented: $showDeleteCategoryDialog,

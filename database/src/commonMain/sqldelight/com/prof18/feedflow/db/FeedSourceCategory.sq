@@ -1,6 +1,7 @@
 CREATE TABLE feed_source_category (
     id TEXT NOT NULL PRIMARY KEY,
-    title TEXT NOT NULL UNIQUE
+    title TEXT NOT NULL UNIQUE,
+    order_position INTEGER NOT NULL DEFAULT 0
 );
 
 insertFeedSourceCategory:
@@ -12,7 +13,7 @@ SELECT * FROM feed_source_category WHERE title = ?;
 
 selectAll:
 SELECT * FROM feed_source_category
-ORDER BY title COLLATE NOCASE ASC;
+ORDER BY order_position, title COLLATE NOCASE ASC;
 
 delete:
 DELETE FROM feed_source_category WHERE id = ?;
@@ -35,3 +36,8 @@ updateCategoryNameAndId:
 UPDATE feed_source_category
 SET title = ?, id = :newId
 WHERE id = :oldId;
+
+updateCategoryPosition:
+UPDATE feed_source_category
+SET order_position = :position
+WHERE id = :categoryId;

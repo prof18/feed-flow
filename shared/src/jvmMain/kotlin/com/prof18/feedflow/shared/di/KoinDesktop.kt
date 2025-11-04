@@ -21,6 +21,8 @@ import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.MarkdownToHtmlConverter
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.utils.CacheControlInterceptor
+import com.prof18.feedflow.shared.utils.CacheControlStore
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
 import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.PreferencesSettings
@@ -65,10 +67,15 @@ private fun getDatabaseModule(appEnvironment: AppEnvironment): Module =
 
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
     single {
+        CacheControlStore()
+    }
+
+    single {
         RssParserBuilder(
             callFactory = OkHttpClient
                 .Builder()
                 .addInterceptor(UserAgentInterceptor())
+                .addInterceptor(CacheControlInterceptor(get()))
                 .build(),
         ).build()
     }

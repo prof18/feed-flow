@@ -20,6 +20,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
+import com.prof18.feedflow.shared.utils.CacheControlStore
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.feedflow.shared.utils.skipLogging
 import com.prof18.rssparser.RssParser
@@ -44,6 +45,7 @@ class FeedFetcherRepository internal constructor(
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
+    private val cacheControlStore: CacheControlStore?,
 ) {
     private val feedToUpdate = hashSetOf<String>()
     private var isFeedSyncDone = true
@@ -194,7 +196,9 @@ class FeedFetcherRepository internal constructor(
         val currentTime = dateFormatter.currentTimeMillis()
         val timeDifference = currentTime - lastSyncTimestamp
 
-        val refreshThresholdInMillis = if (isOpenRssFeed) {
+        val refreshThresholdInMillis = feedSource.cacheControlMaxAge?.let { maxAgeSeconds ->
+            maxAgeSeconds * 1000L
+        } ?: if (isOpenRssFeed) {
             // 6 hours for openrss.org feeds
             (6 * 60 * 60) * 1000L
         } else {
@@ -232,6 +236,14 @@ class FeedFetcherRepository internal constructor(
                         logger.d { "<- Got back ${rssChannel.title}" }
                         feedToUpdate.remove(feedSource.url)
                         updateRefreshCount()
+
+                        cacheControlStore?.getMaxAge(feedSource.url)?.let { maxAge ->
+                            databaseHelper.updateFeedSourceCacheControlMaxAge(
+                                feedSourceId = feedSource.id,
+                                cacheControlMaxAge = maxAge,
+                            )
+                        }
+
                         if (feedSource.logoUrl == null) {
                             val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
                             databaseHelper.updateFeedSourceLogoUrl(feedSourceId = feedSource.id, logoUrl = logoUrl)

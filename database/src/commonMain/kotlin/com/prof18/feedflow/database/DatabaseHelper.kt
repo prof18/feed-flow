@@ -526,6 +526,7 @@ class DatabaseHelper(
                     isPinned = feedSource.is_pinned ?: false,
                     isNotificationEnabled = feedSource.notifications_enabled ?: false,
                     websiteUrl = feedSource.feed_source_website_url,
+                    cacheControlMaxAge = feedSource.cache_control_max_age,
                 )
             }
     }
@@ -727,6 +728,7 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            cacheControlMaxAge = feedSource.cache_control_max_age,
         )
     }
 
@@ -753,6 +755,7 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            cacheControlMaxAge = feedSource.cache_control_max_age,
         )
     }
 
@@ -779,6 +782,7 @@ class DatabaseHelper(
             isHiddenFromTimeline = feedSource.is_hidden ?: false,
             isPinned = feedSource.is_pinned ?: false,
             isNotificationEnabled = feedSource.notifications_enabled ?: false,
+            cacheControlMaxAge = feedSource.cache_control_max_age,
         )
     }
 
@@ -802,6 +806,14 @@ class DatabaseHelper(
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedSourceQueries.updateWebsiteUrl(
                 websiteUrl = websiteUrl,
+                urlHash = feedSourceId,
+            )
+        }
+
+    suspend fun updateFeedSourceCacheControlMaxAge(feedSourceId: String, cacheControlMaxAge: Long?) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedSourceQueries.updateCacheControlMaxAge(
+                cacheControlMaxAge = cacheControlMaxAge,
                 urlHash = feedSourceId,
             )
         }

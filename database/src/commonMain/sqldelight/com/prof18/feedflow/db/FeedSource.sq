@@ -9,7 +9,8 @@ CREATE TABLE feed_source (
     last_sync_timestamp INTEGER,
     logo_url TEXT,
     fetch_failed INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0,
-    website_url TEXT
+    website_url TEXT,
+    cache_control_max_age INTEGER
 );
 
 insertFeedSource:
@@ -95,4 +96,9 @@ WHERE url_hash = :urlHash;
 updateWebsiteUrl:
 UPDATE feed_source
 SET website_url = :websiteUrl
+WHERE url_hash = :urlHash;
+
+updateCacheControlMaxAge:
+UPDATE feed_source
+SET cache_control_max_age = :cacheControlMaxAge
 WHERE url_hash = :urlHash;

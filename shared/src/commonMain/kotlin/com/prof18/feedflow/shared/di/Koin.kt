@@ -366,6 +366,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             rssChannelMapper = get(),
             dateFormatter = get(),
             feedSourceLogoRetriever = get(),
+            cacheControlStore = getOrNull(),
         )
     }
 

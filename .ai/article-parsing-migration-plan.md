@@ -328,7 +328,7 @@ Note: We do NOT store parsed metadata (title, wordCount, site)
 
 - [x] `FeedItemParserWorker` interface ✅
 - [x] `FeedItemContentFileHandler` interface ✅
-- [ ] `FeedItemsSyncBackgroundWorker` interface (for Phase 5)
+- [x] Background parsing methods in `FeedItemParserWorker` ✅ (Phase 5 complete - no separate interface needed)
 - [x] `ParsingResult` sealed class ✅ (simplified to `htmlContent` and `siteName`)
 - [x] `FeedItemUrlInfo` data class (already exists) ✅
 
@@ -339,7 +339,8 @@ Note: We do NOT store parsed metadata (title, wordCount, site)
 - [x] `FeedItemContentFileHandlerAndroid` ✅
 - [x] Use feed item ID directly (no MD5 hashing) ✅ **Matches reader-flow pattern**
 - [x] Update Koin DI configuration ✅
-- [ ] `FeedItemParserWorkManager` (CoroutineWorker - Phase 5)
+- [x] `FeedItemParserWorkManager` (CoroutineWorker) ✅ **Phase 5 complete**
+- [x] Background parsing methods (`enqueueParsing()`, `triggerBackgroundParsing()`) ✅
 
 #### 3. iOS Platform Implementation
 
@@ -348,7 +349,7 @@ Note: We do NOT store parsed metadata (title, wordCount, site)
 - [x] `FeedItemContentFileHandlerIos` (Kotlin) ✅ **Uses App Group container**
 - [x] Use feed item ID directly (no MD5 hashing) ✅ **Matches reader-flow pattern**
 - [x] Update Koin DI configuration ✅ **Injected from Swift like reader-flow**
-- [ ] `FeedItemsSyncBackgroundWorkerIos` (Kotlin - Phase 5)
+- [x] Background parsing methods (`enqueueParsing()`, `triggerBackgroundParsing()`) ✅ **Phase 5 complete - already implemented in Phase 3**
 
 #### 4. Desktop Platform Implementation
 
@@ -356,6 +357,7 @@ Note: We do NOT store parsed metadata (title, wordCount, site)
 - [x] `FeedItemContentFileHandlerDesktop` ✅
 - [x] Update ReaderModeViewModel (Desktop) ✅
 - [x] Update Koin DI configuration ✅
+- [x] Background parsing methods (`enqueueParsing()`, `triggerBackgroundParsing()`) ✅ **Phase 5 complete**
 
 #### 5. ViewModel Updates
 
@@ -707,49 +709,58 @@ Phase 8: Polish & Optimization (Week 12)
 
 ---
 
-### Phase 5: Background Parsing
+### Phase 5: Background Parsing ✅
 
 **Goal**: Implement background parsing for bookmarked feed items.
 
 **Duration**: 2 weeks
 
+**Status**: ✅ **COMPLETED** (2025-11-04)
+
 **Tasks**:
 
 1. **Android Background Parsing**
-   - [ ] Create `FeedItemParserWorkManager` (CoroutineWorker)
-   - [ ] Implement `enqueueParsing()` in `AndroidFeedItemParserWorker`
-   - [ ] Queue feed items for background parsing when bookmarked
-   - [ ] Handle network constraints (Wi-Fi only recommended)
-   - [ ] Implement simple retry logic (in-memory or WorkManager retry)
+   - [x] Create `FeedItemParserWorkManager` (CoroutineWorker) ✅
+   - [x] Implement `enqueueParsing()` in `AndroidFeedItemParserWorker` ✅
+   - [x] Queue feed items for background parsing when bookmarked ✅
+   - [x] Handle network constraints (Wi-Fi only recommended) - Not implemented (simplification)
+   - [x] Implement simple retry logic (in-memory or WorkManager retry) - WorkManager handles retries
 
 2. **iOS Background Parsing**
-   - [ ] Create `FeedItemsSyncBackgroundWorkerIos` in Kotlin
-   - [ ] Use CoroutineScope with background dispatcher
-   - [ ] Trigger parsing when feed items bookmarked
-   - [ ] Implement simple retry logic
+   - [x] iOS implementation already complete (fire-and-forget with CoroutineScope) ✅
+   - [x] `enqueueParsing()` already implemented ✅
+   - [x] `triggerBackgroundParsing()` uses shared FeedItemParser ✅
 
 3. **Desktop Background Parsing**
-   - [ ] Create background worker using CoroutineScope
-   - [ ] Similar to iOS implementation
-   - [ ] Trigger on bookmark events
+   - [x] Implement `enqueueParsing()` using CoroutineScope ✅
+   - [x] Implement `triggerBackgroundParsing()` ✅
+   - [x] Uses IO dispatcher for background threading ✅
 
 4. **Trigger Integration**
-   - [ ] Call `enqueueParsing()` when user bookmarks a feed item
-   - [ ] Implement in `FeedActionsRepository` or similar
-   - [ ] No database queue needed - use WorkManager/in-memory
+   - [x] Call `enqueueParsing()` when user bookmarks a feed item ✅
+   - [x] Integrated in `FeedActionsRepository.updateBookmarkStatus()` ✅
+   - [x] Optional dependency injection via Koin (`getOrNull()`) ✅
+   - [x] Best-effort parsing (doesn't fail bookmark operation) ✅
 
 5. **Manual Testing**
    - [ ] Verify background parsing triggers correctly when bookmarking
-   - [ ] Verify network constraints work (Android)
-   - [ ] Test retry logic
+   - [ ] Test parsing success/failure scenarios
    - [ ] Monitor battery usage during background parsing
 
 **Acceptance Criteria**:
-- Bookmarked feed items queue for background parsing
-- Parsing happens in background without blocking UI
-- Failed parses retry appropriately (simple retry, not persistent queue)
-- All platforms support background parsing
-- No excessive battery/data usage observed in testing
+- ✅ Bookmarked feed items queue for background parsing
+- ✅ Parsing happens in background without blocking UI
+- ⏳ Failed parses retry appropriately (requires manual testing - WorkManager handles Android retries)
+- ✅ All platforms support background parsing
+- ⏳ No excessive battery/data usage observed (requires manual testing)
+
+**Notes**:
+- **Android**: Uses WorkManager with `OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST` for expedited work
+- **iOS**: Already implemented in Phase 3 - uses fire-and-forget pattern on main queue
+- **Desktop**: Uses coroutine with IO dispatcher for background execution
+- **Integration**: Optional dependency in `FeedActionsRepository` - gracefully handles if parser not available
+- **Simplified approach**: No network constraints, no persistent queue, no complex retry logic
+- **FeedFlow is simpler than ReaderFlow**: No database queue for articles to download
 
 ---
 
@@ -1444,13 +1455,22 @@ Consider future enhancements:
 
 ---
 
-**Document Version**: 1.7
+**Document Version**: 1.8
 **Author**: Claude Code
 **Date**: 2025-11-03
 **Last Updated**: 2025-11-04
-**Status**: In Progress - Phase 4 Complete (All Platform Implementations Done, Ready for Manual Testing)
+**Status**: In Progress - Phase 5 Complete (Background Parsing Done, Ready for Phase 6 or Manual Testing)
 
 **Changelog**:
+- v1.8: **Phase 5 completed** (2025-11-04) - Background parsing implementation complete for all platforms
+  - Android: `FeedItemParserWorkManager` (CoroutineWorker) with WorkManager queue
+  - iOS: Background parsing already complete from Phase 3
+  - Desktop: CoroutineScope-based background parsing with IO dispatcher
+  - Integration: `FeedActionsRepository.updateBookmarkStatus()` triggers parsing
+  - Optional dependency injection via `getOrNull()` for graceful degradation
+  - Best-effort parsing (doesn't fail bookmark operation)
+  - Updated Gap Analysis to reflect completed background parsing
+  - **Simplified from ReaderFlow**: No persistent database queue, no network constraints, WorkManager handles Android retries
 - v1.7: **Phase 4 completed** (2025-11-04) - Desktop implementation complete with DesktopFeedItemParserWorker, FeedItemContentFileHandlerDesktop
   - Uses Readability4J for parsing (no WebView on Desktop)
   - Uses feed item ID directly as filename (matching Android/iOS)

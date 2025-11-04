@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.SyncError
@@ -21,6 +22,7 @@ internal class FeedActionsRepository(
     private val gReaderRepository: GReaderRepository,
     private val accountsRepository: AccountsRepository,
     private val feedStateRepository: FeedStateRepository,
+    private val feedItemParserWorker: FeedItemParserWorker,
 ) {
     suspend fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
         feedStateRepository.markAsRead(itemsToUpdates)
@@ -81,6 +83,13 @@ internal class FeedActionsRepository(
             else -> {
                 databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
                 feedSyncRepository.setIsSyncUploadRequired()
+            }
+        }
+
+        if (isBookmarked) {
+            val urlInfo = databaseHelper.getFeedItemUrlInfo(feedItemId.id)
+            if (urlInfo != null) {
+                feedItemParserWorker.enqueueParsing(urlInfo.id, urlInfo.url)
             }
         }
     }

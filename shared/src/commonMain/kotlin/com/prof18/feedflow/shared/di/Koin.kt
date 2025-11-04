@@ -12,6 +12,7 @@ import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
 import com.prof18.feedflow.feedsync.dropbox.di.dropboxModule
+import com.prof18.feedflow.feedsync.feedbin.di.getFeedbinModule
 import com.prof18.feedflow.feedsync.greader.di.getGReaderModule
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.ReviewRepository
@@ -73,6 +74,7 @@ fun initKoin(
                 getCoreModule(appConfig) +
                 dropboxModule +
                 getGReaderModule(appConfig.appEnvironment) +
+                getFeedbinModule(appConfig.appEnvironment) +
                 getLoggingModule(appConfig, crashReportingLogWriter) +
                 getPlatformModule(appConfig.appEnvironment) +
                 getFeedSyncModule(appConfig.appEnvironment),
@@ -120,6 +122,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             databaseHelper = get(),
             feedSyncRepository = get(),
             gReaderRepository = get(),
+            feedbinRepository = get(),
             accountsRepository = get(),
             feedStateRepository = get(),
         )
@@ -284,6 +287,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             icloudSettings = get(),
             appConfig = appConfig,
             gReaderRepository = get(),
+            feedbinRepository = get(),
         )
     }
 
@@ -322,6 +326,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSyncRepository = get(),
             accountsRepository = get(),
             gReaderRepository = get(),
+            feedbinRepository = get(),
             databaseHelper = get(),
             opmlFeedHandler = get(),
         )
@@ -333,6 +338,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             accountsRepository = get(),
             feedSyncRepository = get(),
             gReaderRepository = get(),
+            feedbinRepository = get(),
             dispatcherProvider = get(),
             logger = getWith("FeedSourcesRepository"),
             feedStateRepository = get(),
@@ -358,6 +364,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             dispatcherProvider = get(),
             feedStateRepository = get(),
             gReaderRepository = get(),
+            feedbinRepository = get(),
             databaseHelper = get(),
             feedSyncRepository = get(),
             settingsRepository = get(),

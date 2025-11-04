@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.feedsync
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
+import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.domain.model.CurrentOS
@@ -16,6 +17,7 @@ internal class AccountsRepository(
     private val icloudSettings: ICloudSettings,
     private val appConfig: AppConfig,
     private val gReaderRepository: GReaderRepository,
+    private val feedbinRepository: FeedbinRepository,
 ) {
     private val currentAccountMutableState = MutableStateFlow(SyncAccounts.LOCAL)
     val currentAccountState = currentAccountMutableState.asStateFlow()
@@ -32,12 +34,14 @@ internal class AccountsRepository(
                         add(SyncAccounts.DROPBOX)
                     }
                     add(SyncAccounts.FRESH_RSS)
+                    add(SyncAccounts.FEEDBIN)
                 }
                 CurrentOS.Desktop.Linux -> {
                     if (appConfig.isDropboxSyncEnabled) {
                         add(SyncAccounts.DROPBOX)
                     }
                     add(SyncAccounts.FRESH_RSS)
+                    add(SyncAccounts.FEEDBIN)
                 }
                 CurrentOS.Desktop.Mac -> {
                     if (appConfig.isIcloudSyncEnabled) {
@@ -47,12 +51,14 @@ internal class AccountsRepository(
                         add(SyncAccounts.DROPBOX)
                     }
                     add(SyncAccounts.FRESH_RSS)
+                    add(SyncAccounts.FEEDBIN)
                 }
                 CurrentOS.Desktop.Windows -> {
                     if (appConfig.isDropboxSyncEnabled) {
                         add(SyncAccounts.DROPBOX)
                     }
                     add(SyncAccounts.FRESH_RSS)
+                    add(SyncAccounts.FEEDBIN)
                 }
                 CurrentOS.Ios -> {
                     if (appConfig.isIcloudSyncEnabled) {
@@ -62,6 +68,7 @@ internal class AccountsRepository(
                         add(SyncAccounts.DROPBOX)
                     }
                     add(SyncAccounts.FRESH_RSS)
+                    add(SyncAccounts.FEEDBIN)
                 }
             }
         }
@@ -76,6 +83,10 @@ internal class AccountsRepository(
 
     fun setFreshRssAccount() {
         currentAccountMutableState.value = SyncAccounts.FRESH_RSS
+    }
+
+    fun setFeedbinAccount() {
+        currentAccountMutableState.value = SyncAccounts.FEEDBIN
     }
 
     fun clearAccount() {
@@ -95,6 +106,9 @@ internal class AccountsRepository(
         }
         if (gReaderRepository.isAccountSet()) {
             return SyncAccounts.FRESH_RSS
+        }
+        if (feedbinRepository.isAccountSet()) {
+            return SyncAccounts.FEEDBIN
         }
         return SyncAccounts.LOCAL
     }

@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.Search
+import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -19,6 +20,7 @@ internal class FeedActionsRepository(
     private val databaseHelper: DatabaseHelper,
     private val feedSyncRepository: FeedSyncRepository,
     private val gReaderRepository: GReaderRepository,
+    private val feedbinRepository: FeedbinRepository,
     private val accountsRepository: AccountsRepository,
     private val feedStateRepository: FeedStateRepository,
 ) {
@@ -27,6 +29,13 @@ internal class FeedActionsRepository(
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.updateReadStatus(itemsToUpdates.toList(), isRead = true)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
+                    }
+            }
+
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.updateReadStatus(itemsToUpdates.toList(), isRead = true)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
                     }
@@ -44,6 +53,13 @@ internal class FeedActionsRepository(
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.markAllFeedAsRead(currentFilter)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkAllFeedsAsReadFailed))
+                    }
+            }
+
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.markAllFeedAsRead(currentFilter)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkAllFeedsAsReadFailed))
                     }
@@ -78,6 +94,13 @@ internal class FeedActionsRepository(
                     }
             }
 
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.updateBookmarkStatus(feedItemId, isBookmarked)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateBookmarkStatusFailed))
+                    }
+            }
+
             else -> {
                 databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
                 feedSyncRepository.setIsSyncUploadRequired()
@@ -91,6 +114,13 @@ internal class FeedActionsRepository(
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.updateReadStatus(listOf(feedItemId), isRead)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateReadStatusFailed))
+                    }
+            }
+
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.updateReadStatus(listOf(feedItemId), isRead)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateReadStatusFailed))
                     }

@@ -43,6 +43,7 @@ include("feedSync:googledrive")
 include("feedSync:icloud")
 include("feedSync:ikloud-macos")
 include("feedSync:greader")
+include("feedSync:feedbin")
 include("feedSync:networkcore")
 
 // includeBuild("../RSS-Parser") {

@@ -17,6 +17,7 @@ internal fun AccountsScreen(
     navigateBack: () -> Unit,
     navigateToFreshRssSync: () -> Unit,
     navigateToMinifluxSync: () -> Unit,
+    navigateToFeedbinSync: () -> Unit,
 ) {
     val context = LocalContext.current
     val viewModel = koinViewModel<AccountsViewModel>()
@@ -40,5 +41,8 @@ internal fun AccountsScreen(
         onICloudClick = {},
         onFreshRssClick = navigateToFreshRssSync,
         onMinifluxClick = navigateToMinifluxSync,
+        onFeedbinClick = navigateToFeedbinSync,
+        onMinifluxClick = navigateToMinifluxSync,
+        onFeedbinClick = navigateToFeedbinSync,
     )
 }

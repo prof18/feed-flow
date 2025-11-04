@@ -101,6 +101,16 @@ struct AddAccountScreen: View {
                                 }
                             }
 
+                        case .feedbin:
+                            NavigationLink(destination: FeedbinSyncScreen(isFromAddAccount: true)) {
+                                Label {
+                                    Text("Feedbin")
+                                } icon: {
+                                    Image(systemName: "wave.3.right")
+                                        .fontWeight(.bold)
+                                }
+                            }
+
                         case .local:
                             EmptyView()
                         }

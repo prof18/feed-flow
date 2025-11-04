@@ -4,6 +4,7 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
+import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
@@ -20,6 +21,7 @@ internal class AccountsRepository(
     private val appConfig: AppConfig,
     private val gReaderRepository: GReaderRepository,
     private val networkSettings: NetworkSettings,
+    private val feedbinRepository: FeedbinRepository,
 ) {
     private val currentAccountMutableState = MutableStateFlow(SyncAccounts.LOCAL)
     val currentAccountState = currentAccountMutableState.asStateFlow()
@@ -58,6 +60,7 @@ internal class AccountsRepository(
         }
         add(SyncAccounts.FRESH_RSS)
         add(SyncAccounts.MINIFLUX)
+        add(SyncAccounts.FEEDBIN)
     }
 
     private fun MutableList<SyncAccounts>.generateMacOSAccounts() {
@@ -72,6 +75,7 @@ internal class AccountsRepository(
         }
         add(SyncAccounts.FRESH_RSS)
         add(SyncAccounts.MINIFLUX)
+        add(SyncAccounts.FEEDBIN)
     }
 
     private fun MutableList<SyncAccounts>.generateLinuxAccounts() {
@@ -83,6 +87,7 @@ internal class AccountsRepository(
         }
         add(SyncAccounts.FRESH_RSS)
         add(SyncAccounts.MINIFLUX)
+        add(SyncAccounts.FEEDBIN)
     }
 
     private fun MutableList<SyncAccounts>.generateAndroidAccounts() {
@@ -94,6 +99,7 @@ internal class AccountsRepository(
         }
         add(SyncAccounts.FRESH_RSS)
         add(SyncAccounts.MINIFLUX)
+        add(SyncAccounts.FEEDBIN)
     }
 
     private fun MutableList<SyncAccounts>.generateIOSAccounts() {
@@ -108,6 +114,7 @@ internal class AccountsRepository(
         }
         add(SyncAccounts.FRESH_RSS)
         add(SyncAccounts.MINIFLUX)
+        add(SyncAccounts.FEEDBIN)
     }
 
     fun setDropboxAccount() {
@@ -139,6 +146,13 @@ internal class AccountsRepository(
         currentAccountMutableState.value = SyncAccounts.MINIFLUX
     }
 
+    fun setFeedbinAccount() {
+        clearOtherSyncCredentials(except = SyncAccounts.FEEDBIN)
+        networkSettings.setSyncAccountType(SyncAccounts.FEEDBIN)
+        networkSettings.clearLastSyncDate()
+        currentAccountMutableState.value = SyncAccounts.FEEDBIN
+    }
+
     fun clearAccount() {
         currentAccountMutableState.value = SyncAccounts.LOCAL
     }
@@ -153,7 +167,10 @@ internal class AccountsRepository(
         if (except != SyncAccounts.ICLOUD) {
             icloudSettings.setUseICloud(false)
         }
-        if (except != SyncAccounts.FRESH_RSS && except != SyncAccounts.MINIFLUX) {
+        if (except != SyncAccounts.FRESH_RSS &&
+            except != SyncAccounts.MINIFLUX &&
+            except != SyncAccounts.FEEDBIN
+        ) {
             networkSettings.deleteAll()
         }
     }
@@ -174,6 +191,9 @@ internal class AccountsRepository(
         }
         if (gReaderRepository.isAccountSet()) {
             return networkSettings.getSyncAccountType() ?: SyncAccounts.LOCAL
+        }
+        if (feedbinRepository.isAccountSet()) {
+            return SyncAccounts.FEEDBIN
         }
         return SyncAccounts.LOCAL
     }

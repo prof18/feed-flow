@@ -54,6 +54,7 @@ data object FreshRssSync
 
 @Serializable
 data object MinifluxSync
+data object FeedbinSync
 
 @Serializable
 data class EditFeed(

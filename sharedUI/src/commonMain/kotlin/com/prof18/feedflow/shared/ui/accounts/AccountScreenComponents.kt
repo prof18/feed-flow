@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.shared.ui.accounts.icons.Cloud
 import com.prof18.feedflow.shared.ui.accounts.icons.Dropbox
+import com.prof18.feedflow.shared.ui.accounts.icons.Feedbin
 import com.prof18.feedflow.shared.ui.accounts.icons.FreshRSS
 import com.prof18.feedflow.shared.ui.accounts.icons.GoogleDriveLogo
 import com.prof18.feedflow.shared.ui.accounts.icons.Miniflux
@@ -41,8 +42,9 @@ fun AccountsContent(
     onGoogleDriveClick: () -> Unit,
     onICloudClick: () -> Unit,
     onFreshRssClick: () -> Unit,
-    modifier: Modifier = Modifier,
     onMinifluxClick: () -> Unit,
+    onFeedbinClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         modifier = modifier,
@@ -104,6 +106,9 @@ fun AccountsContent(
                                 }
                                 SyncAccounts.FRESH_RSS -> onFreshRssClick
                                 SyncAccounts.MINIFLUX -> onMinifluxClick
+                                SyncAccounts.FEEDBIN -> onFeedbinClick
+                                SyncAccounts.MINIFLUX -> onMinifluxClick
+                                SyncAccounts.FEEDBIN -> onFeedbinClick
                             },
                         )
 
@@ -131,6 +136,9 @@ private fun SyncAccounts.getTitle() =
         SyncAccounts.ICLOUD -> "iCloud"
         SyncAccounts.FRESH_RSS -> "FreshRSS"
         SyncAccounts.MINIFLUX -> "Miniflux"
+        SyncAccounts.FEEDBIN -> "Feedbin"
+        SyncAccounts.MINIFLUX -> "Miniflux"
+        SyncAccounts.FEEDBIN -> "Feedbin"
     }
 
 private fun SyncAccounts.getIcon() =
@@ -141,6 +149,9 @@ private fun SyncAccounts.getIcon() =
         SyncAccounts.LOCAL -> Dropbox
         SyncAccounts.FRESH_RSS -> FreshRSS
         SyncAccounts.MINIFLUX -> Miniflux
+        SyncAccounts.FEEDBIN -> Feedbin
+        SyncAccounts.MINIFLUX -> Miniflux
+        SyncAccounts.FEEDBIN -> Feedbin
     }
 
 @Composable

@@ -18,6 +18,7 @@ import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
+import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -39,6 +40,7 @@ internal class FeedSourcesRepository(
     private val accountsRepository: AccountsRepository,
     private val feedSyncRepository: FeedSyncRepository,
     private val gReaderRepository: GReaderRepository,
+    private val feedbinRepository: FeedbinRepository,
     private val dispatcherProvider: DispatcherProvider,
     private val logger: Logger,
     private val feedStateRepository: FeedStateRepository,
@@ -69,6 +71,13 @@ internal class FeedSourcesRepository(
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 gReaderRepository.deleteFeedSource(feedSource.id)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.DeleteFeedSourceFailed))
+                    }
+            }
+
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.deleteFeedSource(feedSource.id)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.DeleteFeedSourceFailed))
                     }
@@ -110,6 +119,13 @@ internal class FeedSourcesRepository(
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditFeedSourceNameFailed))
                     }
             }
+
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.editFeedSourceName(feedSourceId, newName)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditFeedSourceNameFailed))
+                    }
+            }
             else -> {
                 databaseHelper.updateFeedSourceName(feedSourceId, newName)
                 feedSyncRepository.updateFeedSourceName(feedSourceId, newName)
@@ -144,6 +160,12 @@ internal class FeedSourcesRepository(
                 categoryName,
                 isNotificationEnabled,
             )
+
+            SyncAccounts.FEEDBIN -> addFeedSourceForFeedbin(
+                sanitizeUrl(feedUrl),
+                categoryName,
+                isNotificationEnabled,
+            )
             else -> addFeedSourceForLocalAccount(sanitizeUrl(feedUrl), categoryName, isNotificationEnabled)
         }
 
@@ -164,6 +186,7 @@ internal class FeedSourcesRepository(
         return when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX ->
                 editFeedSourceForFreshRss(newFeedSource, originalFeedSource)
+            SyncAccounts.FEEDBIN -> editFeedSourceForFeedbin(newFeedSource, originalFeedSource)
             else -> editFeedSourceForLocalAccount(newFeedSource, originalFeedSource)
         }
     }
@@ -308,6 +331,59 @@ internal class FeedSourcesRepository(
         originalFeedSource: FeedSource?,
     ): FeedEditedState {
         gReaderRepository.editFeedSource(
+            newFeedSource = newFeedSource,
+            originalFeedSource = originalFeedSource,
+        ).fold(
+            onFailure = {
+                return FeedEditedState.Error.GenericError
+            },
+            onSuccess = {
+                feedStateRepository.updateCurrentFilterName(newFeedSource.title)
+                return FeedEditedState.FeedEdited(newFeedSource.title)
+            },
+        )
+    }
+
+    private suspend fun addFeedSourceForFeedbin(
+        originalUrl: String,
+        categoryName: FeedSourceCategory?,
+        isNotificationEnabled: Boolean,
+    ): FeedAddedState {
+        for (suffix in knownUrlSuffix) {
+            val actualUrl = suffix.buildUrl(originalUrl).trim()
+            logger.d { "Trying with actualUrl: $actualUrl" }
+
+            val addResult = feedbinRepository.addFeedSource(
+                url = actualUrl,
+                categoryName = categoryName,
+                isNotificationEnabled = isNotificationEnabled,
+            )
+            if (addResult.isSuccess()) {
+                return FeedAddedState.FeedAdded()
+            }
+        }
+
+        logger.d { "Trying to get: $originalUrl" }
+        val url = feedUrlRetriever.getFeedUrl(originalUrl) ?: return FeedAddedState.Error.InvalidUrl
+        logger.d { "Found url: $url" }
+
+        val addResult = feedbinRepository.addFeedSource(
+            url = url,
+            categoryName = categoryName,
+            isNotificationEnabled = isNotificationEnabled,
+        )
+        if (addResult.isError()) {
+            return FeedAddedState.Error.GenericError
+        }
+
+        return FeedAddedState.FeedAdded()
+    }
+
+    private suspend fun editFeedSourceForFeedbin(
+        newFeedSource: FeedSource,
+        originalFeedSource: FeedSource?,
+    ): FeedEditedState {
+        feedbinRepository.editFeedSource(
             newFeedSource = newFeedSource,
             originalFeedSource = originalFeedSource,
         ).fold(

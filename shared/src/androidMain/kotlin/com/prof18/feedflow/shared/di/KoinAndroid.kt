@@ -113,6 +113,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             readerModeExtractor = get(),
             settingsRepository = get(),
             feedActionsRepository = get(),
+            feedStateRepository = get(),
         )
     }
 

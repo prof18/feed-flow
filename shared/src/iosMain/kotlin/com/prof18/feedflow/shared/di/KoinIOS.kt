@@ -19,11 +19,14 @@ import com.prof18.feedflow.shared.data.KeychainSettingsMigration
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
+import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
@@ -51,6 +54,7 @@ import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.module.Module
 import org.koin.core.parameter.parametersOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import platform.Foundation.NSURLSession
 import platform.Foundation.NSURLSessionConfiguration
@@ -64,6 +68,7 @@ fun initKoinIos(
     dropboxDataSource: DropboxDataSource,
     appVersion: String,
     telemetry: Telemetry,
+    feedItemParserWorker: FeedItemParserWorker,
 ): KoinApplication = initKoin(
     appConfig = AppConfig(
         appEnvironment = appEnvironment,
@@ -78,6 +83,7 @@ fun initKoinIos(
             factory { htmlParser }
             single { dropboxDataSource }
             single { telemetry }
+            single { feedItemParserWorker }
             single<FeedFlowStrings> {
                 when {
                     languageCode == null -> EnFeedFlowStrings
@@ -172,10 +178,19 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     factory<CurrentOS> { CurrentOS.Ios }
 
+    single {
+        FeedItemContentFileHandlerIos(
+            dispatcherProvider = get(),
+            logger = getWith("FeedItemContentFileHandlerIos"),
+        )
+    } bind FeedItemContentFileHandler::class
+
     viewModel {
         ReaderModeViewModel(
             settingsRepository = get(),
             feedActionsRepository = get(),
+            feedItemParserWorker = get(),
+            feedItemContentFileHandler = get(),
         )
     }
 

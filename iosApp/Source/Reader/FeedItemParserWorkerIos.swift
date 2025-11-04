@@ -1,0 +1,136 @@
+//
+//  FeedItemParserWorkerIos.swift
+//  FeedFlow
+//
+//  Created by Claude Code on 11/04/25.
+//
+
+import Foundation
+import Shared
+
+class FeedItemParserWorkerIos: FeedItemParserWorker {
+    func enqueueParsing(
+        feedItemId: String,
+        url: String,
+        completionHandler: @escaping ((any Error)?) -> Void
+    ) {
+        DispatchQueue.main.async { [weak self] in
+            guard let this = self else { return }
+            this.handleParsing(feedItemId: feedItemId, url: url, feedItemParser: FeedItemParser()) { _ in
+                completionHandler(nil)
+            }
+        }
+    }
+
+    func triggerBackgroundParsing(
+        feedItemId: String,
+        url: String,
+        completionHandler: @escaping (ParsingResult?, (any Error)?) -> Void
+    ) {
+        DispatchQueue.main.async { [weak self] in
+            guard let this = self else { return }
+            this.handleParsing(feedItemId: feedItemId, url: url, feedItemParser: FeedItemParser.shared) { result in
+                completionHandler(result, nil)
+            }
+        }
+    }
+
+    func triggerImmediateParsing(
+        feedItemId: String,
+        url: String,
+        completionHandler: @escaping (ParsingResult?, (any Error)?) -> Void
+    ) {
+        DispatchQueue.main.async { [weak self] in
+            guard let this = self else { return }
+            this.handleParsing(feedItemId: feedItemId, url: url, feedItemParser: FeedItemParser()) { result in
+                completionHandler(result, nil)
+            }
+        }
+    }
+
+    private func handleParsing(
+        feedItemId: String,
+        url: String,
+        feedItemParser: FeedItemParser,
+        completionHandler: @escaping (ParsingResult) -> Void
+    ) {
+        parseFeedItem(url: url, feedItemParser: feedItemParser) { parsingResult in
+            switch onEnum(of: parsingResult) {
+            case let .success(result):
+                let htmlContent = result.htmlContent
+                let title = result.title
+
+                var siteHtml = ""
+                if let site = result.siteName {
+                    siteHtml = "<h4>\(site)</h4>"
+                }
+
+                var htmlWithTitle: String?
+                if let htmlContent = htmlContent {
+                    if let title = title {
+                        htmlWithTitle = "<h1>\(title)</h1>\n\(siteHtml)\n\(htmlContent)"
+                    } else {
+                        htmlWithTitle = htmlContent
+                    }
+                    let fileURL = self.getContentPath(feedItemId: feedItemId)
+                    if let data = htmlWithTitle?.data(using: .utf8) {
+                        do {
+                            try data.write(to: fileURL)
+                        } catch {
+                            Deps.shared.getLogger(tag: "FeedItemParserWorkerIos").d(
+                                messageString: "Error writing to file: \(error)"
+                            )
+                        }
+                    }
+                }
+
+                let result = ParsingResult.Success(
+                    htmlContent: htmlWithTitle,
+                    title: title,
+                    siteName: result.siteName
+                )
+                completionHandler(result)
+
+            case .error:
+                completionHandler(ParsingResult.Error())
+            }
+        }
+    }
+
+    private func parseFeedItem(
+        url: String,
+        feedItemParser: FeedItemParser,
+        completionHandler: @escaping (ParsingResult) -> Void
+    ) {
+        Deps.shared.getHtmlRetriever().retrieveHtml(url: url) { html, error in
+            if error != nil {
+                completionHandler(ParsingResult.Error())
+                return
+            }
+
+            guard let html = html else {
+                completionHandler(ParsingResult.Error())
+                return
+            }
+
+            DispatchQueue.main.async {
+                feedItemParser.parseArticle(url: url, htmlContent: html) { result in
+                    completionHandler(result)
+                }
+            }
+        }
+    }
+
+    func getContentPath(feedItemId: String) -> URL {
+        guard let documentDirectoryURL = FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: "group.com.prof18.feedflow")
+        else {
+            // Fallback to regular document directory if app group fails
+            return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("\(feedItemId).html")
+        }
+
+        return documentDirectoryURL.appendingPathComponent("\(feedItemId).html")
+    }
+}
+

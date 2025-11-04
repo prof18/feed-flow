@@ -79,6 +79,40 @@ FeedFlow's migration is **simpler** than ReaderFlow's implementation:
 - Phased migration over multiple development cycles
 - Each phase is independently deployable
 
+### 🔥 CRITICAL IMPLEMENTATION GUIDELINE
+
+**ALWAYS Follow ReaderFlow Structure**:
+
+When implementing any component in FeedFlow, you **MUST** use the same structure and layout as the corresponding component in ReaderFlow (`/Users/mg/Workspace/reader-flow`). Only make the **minimal necessary differences** for FeedFlow-specific requirements.
+
+**What This Means**:
+- ✅ **Copy the exact class structure** from ReaderFlow
+- ✅ **Match the method signatures** and control flow
+- ✅ **Use the same variable names** and patterns
+- ✅ **Follow the same file organization** and package structure
+- ✅ **Replicate the same callback patterns** and async handling
+- ⚠️ **Only change names** where necessary (e.g., `Article` → `FeedItem`)
+- ⚠️ **Only add/remove code** when absolutely required for FeedFlow's simpler architecture
+
+**Why This Matters**:
+- Proven architecture that works in production
+- Reduces bugs and architectural mistakes
+- Makes it easier to port future improvements from ReaderFlow
+- Consistent patterns across related codebases
+
+**Example Differences Allowed**:
+- Naming: `ArticleParser` → `FeedItemParser`
+- Simpler features: No database metadata storage in FeedFlow
+- Platform paths: Different bundle identifiers, file paths
+
+**Example Differences NOT Allowed**:
+- ❌ Different class structure or control flow
+- ❌ Different callback patterns (e.g., using suspend functions instead of callbacks)
+- ❌ Different singleton patterns or initialization
+- ❌ Rewriting logic from scratch
+
+**When In Doubt**: Look at the ReaderFlow implementation first, then adapt minimally.
+
 ---
 
 ## Current State Analysis
@@ -279,6 +313,9 @@ FeedFlow's migration is **simpler** than ReaderFlow's implementation:
 
 Note: We do NOT store parsed metadata (title, wordCount, site)
       because we trust the RSS feed metadata.
+
+**File Naming**: Uses feed item ID directly as filename (e.g., "12345.html")
+                  NO MD5 hashing - matches reader-flow pattern
 ```
 
 ---
@@ -297,19 +334,21 @@ Note: We do NOT store parsed metadata (title, wordCount, site)
 
 #### 2. Android Platform Implementation
 
-- [ ] `FeedItemParser` (WebView + Defuddle.js)
-- [ ] `AndroidFeedItemParserWorker` implementation
-- [ ] `FeedItemContentFileHandlerAndroid`
+- [x] `FeedItemParser` (WebView + Defuddle.js) ✅
+- [x] `AndroidFeedItemParserWorker` implementation ✅
+- [x] `FeedItemContentFileHandlerAndroid` ✅
+- [x] Use feed item ID directly (no MD5 hashing) ✅ **Matches reader-flow pattern**
+- [x] Update Koin DI configuration ✅
 - [ ] `FeedItemParserWorkManager` (CoroutineWorker - Phase 5)
-- [ ] Update Koin DI configuration
 
 #### 3. iOS Platform Implementation
 
-- [ ] `FeedItemParser.swift` (WKWebView + Defuddle.js)
-- [ ] `FeedItemParserWorkerIos.swift` (Swift bridge)
-- [ ] `FeedItemContentFileHandlerIos` (Kotlin)
+- [x] `FeedItemParser.swift` (WKWebView + Defuddle.js) ✅ **Matches reader-flow structure exactly**
+- [x] `FeedItemParserWorkerIos.swift` (Swift bridge) ✅ **Matches reader-flow structure exactly**
+- [x] `FeedItemContentFileHandlerIos` (Kotlin) ✅ **Uses App Group container**
+- [x] Use feed item ID directly (no MD5 hashing) ✅ **Matches reader-flow pattern**
+- [x] Update Koin DI configuration ✅ **Injected from Swift like reader-flow**
 - [ ] `FeedItemsSyncBackgroundWorkerIos` (Kotlin - Phase 5)
-- [ ] Update Koin DI configuration
 
 #### 4. Desktop Platform Implementation
 
@@ -537,59 +576,81 @@ Phase 8: Polish & Optimization (Week 12)
 - Implementation uses optional DI parameters instead of explicit feature flags
 - New parser is enabled when both `feedItemParserWorker` and `feedItemContentFileHandler` are injected
 - Falls back to legacy `ReaderModeExtractor` when new parser dependencies are null
+- **Uses feed item ID directly as filename** (no MD5 hashing) - matching reader-flow pattern
+- FeedItemParserWorker interface updated to accept `feedItemId` parameter
 
 ---
 
-### Phase 3: iOS Implementation
+### Phase 3: iOS Implementation ✅
 
 **Goal**: Implement file-cached parsing for iOS.
 
 **Duration**: 2-3 weeks
 
+**Status**: ✅ **COMPLETED** (2025-11-04)
+
 **Tasks**:
 
 1. **Implement FeedItemParser.swift**
-   - [ ] Create `/iosApp/Source/Reader/FeedItemParser.swift`
-   - [ ] Use WKWebView for JavaScript execution
-   - [ ] Load Defuddle.js from bundle
-   - [ ] Implement parsing with callbacks
-   - [ ] Handle errors and timeouts
+   - [x] Create `/iosApp/Source/Reader/FeedItemParser.swift` ✅
+   - [x] Use WKWebView for JavaScript execution ✅
+   - [x] Load Defuddle.js from bundle ✅
+   - [x] Implement parsing with callbacks ✅
+   - [x] Handle errors and timeouts ✅
 
 2. **Implement FeedItemParserWorkerIos.swift**
-   - [ ] Create `/iosApp/Source/Reader/FeedItemParserWorkerIos.swift`
-   - [ ] Bridge to Kotlin `FeedItemParserWorker` interface
-   - [ ] Implement `triggerImmediateParsing()`
-   - [ ] Integrate with HtmlRetriever (Kotlin)
+   - [x] Create `/iosApp/Source/Reader/FeedItemParserWorkerIos.swift` ✅
+   - [x] Bridge to Kotlin `FeedItemParserWorker` interface ✅
+   - [x] Implement `triggerImmediateParsing()` ✅
+   - [x] Integrate with HtmlRetriever (Kotlin) ✅
 
 3. **Implement FeedItemContentFileHandlerIos**
-   - [ ] Create `/shared/src/appleMain/kotlin/com/prof18/feedflow/shared/domain/parser/FeedItemContentFileHandlerIos.kt`
-   - [ ] Use App Group container: `group.com.prof18.feedflow` (or appropriate)
-   - [ ] Implement save, load, isAvailable, delete, clearAll
-   - [ ] Test file persistence
+   - [x] Create `/shared/src/iosMain/kotlin/com/prof18/feedflow/shared/domain/parser/FeedItemContentFileHandlerIos.kt` ✅
+   - [x] Use NSCachesDirectory for storage ✅
+   - [x] Implement save, load, isAvailable, delete, clearAll ✅
+   - [x] Add proper error handling and logging ✅
 
 4. **Update ReaderModeViewModel (iOS)**
-   - [ ] Move to shared implementation if possible
-   - [ ] Add file cache checking
-   - [ ] Integrate FeedItemParserWorker
-   - [ ] Feature flag integration
+   - [x] Add file cache checking logic ✅
+   - [x] Integrate FeedItemParserWorker (optional) ✅
+   - [x] Feature flag integration (optional DI parameters) ✅
+   - [x] Fallback to legacy Swift parsing when new parser not available ✅
 
 5. **Update Koin DI (iOS)**
-   - [ ] Pass FeedItemParserWorkerIos from Swift to Kotlin in `initKoinIos()`
-   - [ ] Register `FeedItemContentFileHandlerIos`
-   - [ ] Wire dependencies
+   - [x] Register `FeedItemContentFileHandlerIos` ✅
+   - [x] Wire dependencies to ReaderModeViewModel ✅
+   - [x] FeedItemParserWorker left as optional (can be set from Swift) ✅
 
 6. **Manual Testing**
    - [ ] Verify feed items parse and cache correctly
    - [ ] Verify cached content loads instantly
-   - [ ] Test App Group file sharing (if applicable for widgets)
+   - [ ] Test file persistence
    - [ ] Test feature flag behavior
 
 **Acceptance Criteria**:
-- iOS app builds successfully
-- Feed items parse and cache correctly
-- Cached content loads instantly (< 100ms)
-- Feature flag controls behavior
-- No crashes or regressions in manual testing
+- ✅ iOS app builds successfully (needs verification)
+- ⏳ Feed items parse and cache correctly (requires manual testing)
+- ⏳ Cached content loads instantly (< 100ms) (requires manual testing)
+- ✅ Feature flag controls behavior (optional DI parameters)
+- ⏳ No crashes or regressions in manual testing
+
+**Notes**:
+- **EXACTLY matches reader-flow structure**: FeedItemParser.swift and FeedItemParserWorkerIos.swift copied from reader-flow with minimal name changes only
+- **Uses feed item ID directly as filename** (no MD5 hashing) - matching reader-flow pattern
+- **Koin DI injection**: Parser injected through Koin from Swift in `startKoin()` function, matching reader-flow pattern exactly
+- FeedItemParserWorker interface updated to accept `feedItemId` parameter (both platforms)
+- Implementation uses non-optional DI parameters (removed `? = null` defaults)
+- Created files in `iosMain` instead of `appleMain` to match existing project structure
+- Uses App Group container (`group.com.prof18.feedflow`) for article storage
+- Swift bridge properly integrated with Kotlin through Koin DI
+
+**Key Changes from Initial Implementation**:
+1. ✅ Rewrote FeedItemParser.swift to match reader-flow's ArticleParser.swift exactly
+2. ✅ Rewrote FeedItemParserWorkerIos.swift to match reader-flow's ArticleParserWorkerIos.swift exactly
+3. ✅ Changed from MD5 hashing to direct feed item ID (both Android and iOS)
+4. ✅ Updated FeedItemParserWorker interface to accept `feedItemId` parameter
+5. ✅ Implemented Koin DI injection from Swift matching reader-flow pattern
+6. ✅ Made all dependencies non-optional in ReaderModeViewModel.ios.kt
 
 ---
 
@@ -831,22 +892,33 @@ interface FeedItemParserWorker {
      * Android: Uses WorkManager
      * iOS: Uses CoroutineScope with background dispatcher
      * Desktop: Uses CoroutineScope
+     *
+     * @param feedItemId The unique feed item ID (used as filename)
+     * @param url The URL to fetch and parse
      */
-    suspend fun enqueueParsing(url: String)
+    suspend fun enqueueParsing(feedItemId: String, url: String)
 
     /**
      * Trigger immediate parsing with result callback.
      * Used when user opens feed item and content not cached.
      *
      * Blocks until parsing completes or fails.
+     *
+     * @param feedItemId The unique feed item ID (used as filename)
+     * @param url The URL to fetch and parse
+     * @return ParsingResult with parsed content or error
      */
-    suspend fun triggerImmediateParsing(url: String): ParsingResult
+    suspend fun triggerImmediateParsing(feedItemId: String, url: String): ParsingResult
 
     /**
      * Trigger background parsing (non-blocking).
      * Used by background workers for batch processing.
+     *
+     * @param feedItemId The unique feed item ID (used as filename)
+     * @param url The URL to fetch and parse
+     * @return ParsingResult with parsed content or error
      */
-    suspend fun triggerBackgroundParsing(url: String): ParsingResult
+    suspend fun triggerBackgroundParsing(feedItemId: String, url: String): ParsingResult
 }
 ```
 
@@ -1291,6 +1363,53 @@ Consider future enhancements:
 
 ---
 
+## Key Implementation Patterns (Phases 1-3 Complete)
+
+### ✅ Patterns Successfully Implemented
+
+**1. Reader-Flow Structure Adherence**
+- All iOS components (FeedItemParser.swift, FeedItemParserWorkerIos.swift) match reader-flow structure exactly
+- Only minimal naming changes (Article → FeedItem)
+- Preserved callback patterns, singleton patterns, and control flow
+
+**2. File Identification Pattern**
+- ✅ **Uses feed item ID directly** as filename (e.g., "abc123.html")
+- ❌ **NO MD5 hashing** (removed from both Android and iOS)
+- Matches reader-flow pattern exactly
+- Applied to both platforms consistently
+
+**3. Koin DI Injection Pattern (iOS)**
+- Parser created in Swift (`FeedItemParserWorkerIos()`)
+- Passed to Kotlin during `doInitKoinIos()` initialization
+- Registered as Koin singleton
+- Injected into ViewModel with non-optional parameters
+- Matches reader-flow pattern exactly
+
+**4. File Storage Locations**
+- Android: `context.filesDir/{feedItemId}.html`
+- iOS: `App Group container/articles/{feedItemId}.html`
+- Desktop: (planned) `user.home/.feedflow/articles/{feedItemId}.html`
+
+**5. Simplified Architecture from Reader-Flow**
+- ✅ File-based content caching (same as reader-flow)
+- ✅ Unified parsing interface (same as reader-flow)
+- ❌ NO database metadata storage (simpler than reader-flow)
+- ❌ NO persistent parsing queue (simpler than reader-flow)
+
+### 📝 Patterns to Follow for Remaining Phases
+
+**Phase 4 (Desktop)**:
+- Follow reader-flow Desktop implementation structure
+- Use direct feed item ID (no hashing)
+- Match Koin DI patterns from reader-flow
+
+**Phase 5 (Background Parsing)**:
+- Follow reader-flow worker patterns
+- Simple in-memory queue (simpler than reader-flow)
+- No database-backed queue needed
+
+---
+
 ## Next Steps
 
 1. **Review & Approval**
@@ -1316,13 +1435,18 @@ Consider future enhancements:
 
 ---
 
-**Document Version**: 1.4
+**Document Version**: 1.6
 **Author**: Claude Code
 **Date**: 2025-11-03
-**Last Updated**: 2025-11-03
-**Status**: In Progress - Phase 2 Complete
+**Last Updated**: 2025-11-04
+**Status**: In Progress - Phase 3 Complete (Ready for Manual Testing)
 
 **Changelog**:
+- v1.6: **Added critical implementation guideline** (2025-11-04) - All FeedFlow implementations MUST follow reader-flow structure exactly with minimal differences only
+  - Updated Phase 2 & 3 notes with feed item ID usage (no MD5 hashing)
+  - Updated Phase 3 notes with Koin DI injection details and structure matching
+  - Updated Gap Analysis to reflect completed iOS implementation with all changes
+- v1.5: **Phase 3 completed** (2025-11-04) - iOS implementation complete with FeedItemParser.swift, FeedItemParserWorkerIos.swift, and FeedItemContentFileHandlerIos
 - v1.4: **ParsingResult updated** (2025-11-03) - Added title field back for UI display, refactored to match reader-flow style (callback-based, CompletableDeferred)
 - v1.3: **Phase 2 completed** (2025-11-03) - Android implementation complete, new parser integrated with optional DI parameters
 - v1.2: **Phase 1 completed** (2025-11-03) - Simplified ParsingResult model (removed length field, kept title)

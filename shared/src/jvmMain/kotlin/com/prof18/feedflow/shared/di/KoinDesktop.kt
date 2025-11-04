@@ -12,10 +12,14 @@ import com.prof18.feedflow.shared.data.MigrateSettings
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
+import com.prof18.feedflow.shared.domain.parser.DesktopFeedItemParserWorker
+import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerDesktop
 import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
@@ -111,6 +115,23 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     factoryOf(::ReaderModeExtractor)
 
+    single<FeedItemContentFileHandler> {
+        FeedItemContentFileHandlerDesktop(
+            dispatcherProvider = get(),
+            logger = getWith("FeedItemContentFileHandler"),
+            appEnvironment = appEnvironment,
+        )
+    }
+
+    single<FeedItemParserWorker> {
+        DesktopFeedItemParserWorker(
+            htmlRetriever = get(),
+            logger = getWith("FeedItemParserWorker"),
+            dispatcherProvider = get(),
+            feedItemContentFileHandler = get(),
+        )
+    }
+
     viewModel {
         DropboxSyncViewModel(
             logger = getWith("DropboxSyncViewModel"),
@@ -153,7 +174,15 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    factoryOf(::ReaderModeViewModel)
+    viewModel {
+        ReaderModeViewModel(
+            settingsRepository = get(),
+            feedActionsRepository = get(),
+            feedItemParserWorker = get(),
+            feedItemContentFileHandler = get(),
+            markdownToHtmlConverter = get(),
+        )
+    }
 
     factoryOf(::DatabaseCloser)
 

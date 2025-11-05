@@ -77,6 +77,8 @@ internal fun FeedList(
     onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
+    onMarkAllAboveAsRead: (String) -> Unit = {},
+    onMarkAllBelowAsRead: (String) -> Unit = {},
 ) {
     val shouldStartPaginate = remember {
         derivedStateOf {
@@ -128,6 +130,8 @@ internal fun FeedList(
                         onShareClick = onShareClick,
                         feedLayout = feedLayout,
                         currentFeedFilter = currentFeedFilter,
+                        onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                        onMarkAllBelowAsRead = onMarkAllBelowAsRead,
                     )
                 } else {
                     SwipeableActionsBox(
@@ -148,6 +152,8 @@ internal fun FeedList(
                             onOpenFeedSettings = onOpenFeedSettings,
                             onShareClick = onShareClick,
                             currentFeedFilter = currentFeedFilter,
+                            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
                         )
                     }
                 }

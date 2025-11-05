@@ -132,6 +132,8 @@ internal fun HomeScreen(
             homeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
         },
         updateReadStatus = { feedItemId, isRead -> homeViewModel.updateReadStatus(feedItemId, isRead) },
+        markAllAboveAsRead = { feedItemId -> homeViewModel.markAllAboveAsRead(feedItemId) },
+        markAllBelowAsRead = { feedItemId -> homeViewModel.markAllBelowAsRead(feedItemId) },
     )
 
     val feedManagementActions = FeedManagementActions(

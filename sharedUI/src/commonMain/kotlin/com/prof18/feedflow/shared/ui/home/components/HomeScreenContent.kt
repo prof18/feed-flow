@@ -141,6 +141,8 @@ fun HomeScreenContent(
                             onShareClick = shareBehavior.onShareClick,
                             onOpenFeedSettings = feedManagementActions.onEditFeedClick,
                             feedLayout = displayState.feedLayout,
+                            onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
+                            onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
                         )
                     }
                 }

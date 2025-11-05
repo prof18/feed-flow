@@ -33,6 +33,7 @@ kotlin {
             dependencies {
                 api(libs.io.coil.network)
                 implementation(compose.preview)
+                implementation(libs.compose.material3)
             }
         }
 
@@ -60,6 +61,7 @@ kotlin {
             dependencies {
                 implementation(libs.jsystem.theme.detector)
                 api(libs.io.coil.network)
+                implementation(libs.compose.material3)
             }
         }
     }

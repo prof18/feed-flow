@@ -157,6 +157,12 @@ class SettingsRepository(
     fun setHideImages(value: Boolean) =
         settings.set(SettingsFields.HIDE_IMAGES.name, value)
 
+    fun getHideDate(): Boolean =
+        settings.getBoolean(SettingsFields.HIDE_DATE.name, false)
+
+    fun setHideDate(value: Boolean) =
+        settings.set(SettingsFields.HIDE_DATE.name, value)
+
     fun getCrashReportingEnabled(): Boolean =
         settings.getBoolean(SettingsFields.CRASH_REPORTING_ENABLED.name, true)
 
@@ -317,6 +323,7 @@ internal enum class SettingsFields {
     FEED_LIST_FONT_SCALE_FACTOR,
     AUTO_DELETE_PERIOD,
     HIDE_IMAGES,
+    HIDE_DATE,
     CRASH_REPORTING_ENABLED,
     SYNC_PERIOD,
     FIRST_INSTALLATION_DATE,

@@ -98,6 +98,44 @@ fun HideImagesSwitch(
 }
 
 @Composable
+fun HideDateSwitch(
+    isHideDateEnabled: Boolean,
+    modifier: Modifier = Modifier,
+    setHideDate: (Boolean) -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .clickable {
+                setHideDate(!isHideDateEnabled)
+            }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.Outlined.HideImage,
+            contentDescription = null,
+        )
+
+        Text(
+            text = LocalFeedFlowStrings.current.settingsHideDate,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f),
+        )
+        Switch(
+            interactionSource = interactionSource,
+            checked = isHideDateEnabled,
+            onCheckedChange = setHideDate,
+        )
+    }
+}
+
+@Composable
 fun RemoveTitleFromDescSwitch(
     isRemoveTitleFromDescriptionEnabled: Boolean,
     modifier: Modifier = Modifier,

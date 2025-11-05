@@ -16,6 +16,7 @@ struct FeedFontSection: View {
     @Binding var scaleFactor: Double
     @Binding var isHideDescriptionEnabled: Bool
     @Binding var isHideImagesEnabled: Bool
+    @Binding var isHideDateEnabled: Bool
     @Binding var isRemoveTitleFromDescriptionEnabled: Bool
     @Binding var leftSwipeAction: SwipeActionType
     @Binding var rightSwipeAction: SwipeActionType
@@ -113,6 +114,12 @@ struct FeedFontSection: View {
                 Label(feedFlowStrings.settingsHideImages, systemImage: "square.slash")
             }.onTapGesture {
                 isHideImagesEnabled.toggle()
+            }
+
+            Toggle(isOn: $isHideDateEnabled) {
+                Label(feedFlowStrings.settingsHideDate, systemImage: "calendar.badge.minus")
+            }.onTapGesture {
+                isHideDateEnabled.toggle()
             }
 
             Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {

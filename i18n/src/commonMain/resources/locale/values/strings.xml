@@ -127,6 +127,7 @@
     <string name="settings_hide_duplicated_title_from_desc">Hide title from article description</string>
     <string name="settings_hide_description">Hide article description</string>
     <string name="settings_hide_images">Hide article image</string>
+    <string name="settings_hide_date">Hide article date</string>
     <string name="reader_mode_font_size">Font Size</string>
     <string name="edit_feed_source_name_button">Edit</string>
     <string name="edit_feed">Edit feed</string>

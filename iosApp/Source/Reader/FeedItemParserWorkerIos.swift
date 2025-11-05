@@ -2,11 +2,11 @@
 //  FeedItemParserWorkerIos.swift
 //  FeedFlow
 //
-//  Created by Claude Code on 11/04/25.
+//  Created by Marco Gomiero on 11/04/25.
 //
 
 import Foundation
-import Shared
+import FeedFlowKit
 
 class FeedItemParserWorkerIos: FeedItemParserWorker {
     func enqueueParsing(
@@ -72,6 +72,7 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
                     } else {
                         htmlWithTitle = htmlContent
                     }
+                    
                     let fileURL = self.getContentPath(feedItemId: feedItemId)
                     if let data = htmlWithTitle?.data(using: .utf8) {
                         do {
@@ -127,10 +128,13 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
         else {
             // Fallback to regular document directory if app group fails
             return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("articles")
                 .appendingPathComponent("\(feedItemId).html")
         }
 
-        return documentDirectoryURL.appendingPathComponent("\(feedItemId).html")
+        return documentDirectoryURL
+            .appendingPathComponent("articles")
+            .appendingPathComponent("\(feedItemId).html")
     }
 }
 

@@ -120,6 +120,9 @@ struct ReaderModeScreen: View {
             view.ignoresSafeArea()
         }
         .task {
+            vmStoreOwner.instance.getReaderModeHtml(urlInfo: feedItemUrlInfo)
+        }
+        .task {
             for await state in vmStoreOwner.instance.readerFontSizeState {
                 self.fontSize = Double(truncating: state)
             }
@@ -144,7 +147,7 @@ struct ReaderModeScreen: View {
                     updateReaderHTML()
                 }
 
-                self.isBookmarked = state.getIsBookmarked()
+                self.isBookmarked = state.getIsBookmarked
             }
         }
         .onChange(of: colorScheme) { _, _ in
@@ -174,8 +177,8 @@ struct ReaderModeScreen: View {
                 borderColor: isDarkMode ? "#444444" : "#d1d9e0"
             ),
             content: content,
+            fontSize: Int32(fontSize),
             title: feedItemUrlInfo.title,
-            fontSize: Int32(fontSize)
         )
 
         self.readerStatus = .extractedContent(

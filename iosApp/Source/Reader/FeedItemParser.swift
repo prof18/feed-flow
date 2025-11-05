@@ -2,11 +2,11 @@
 //  FeedItemParser.swift
 //  FeedFlow
 //
-//  Created by Claude Code on 11/04/25.
+//  Created by Marco Gomiero on 11/04/25.
 //
 
 import Foundation
-import Shared
+import FeedFlowKit
 import WebKit
 
 class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {

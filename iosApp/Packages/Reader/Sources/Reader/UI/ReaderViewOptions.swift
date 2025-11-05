@@ -11,7 +11,7 @@ public struct ReaderViewOptions {
     public var onLinkClicked: ((URL) -> Void)?
 
     public init(
-        additionalCSS: String,
+        additionalCSS: String? = nil,
         onLinkClicked: ((URL) -> Void)? = nil
     ) {
         self.additionalCSS = additionalCSS

@@ -5,7 +5,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 
-internal class HtmlRetriever(
+class HtmlRetriever(
     private val logger: Logger,
     private val client: HttpClient,
 ) {

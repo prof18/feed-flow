@@ -145,6 +145,8 @@
 				Accounts/Dropbox/Data/DropboxDataSourceIos.swift,
 				Accounts/Dropbox/Data/DropboxErrors.swift,
 				DI/Koin.swift,
+				Reader/FeedItemParser.swift,
+				Reader/FeedItemParserWorkerIos.swift,
 				UI/Style/Spacing.swift,
 				Utils/IosHtmlParser.swift,
 				Utils/TelemetryReporter.swift,
@@ -164,6 +166,8 @@
 			membershipExceptions = (
 				Accounts/Dropbox/Data/DropboxDataSourceIos.swift,
 				Accounts/Dropbox/Data/DropboxErrors.swift,
+				Reader/FeedItemParser.swift,
+				Reader/FeedItemParserWorkerIos.swift,
 				UI/Style/Spacing.swift,
 				Utils/IosHtmlParser.swift,
 			);

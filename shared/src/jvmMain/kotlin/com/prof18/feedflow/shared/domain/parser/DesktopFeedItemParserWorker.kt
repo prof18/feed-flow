@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.parser
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
@@ -11,21 +12,17 @@ import com.prof18.feedflow.shared.presentation.MarkdownToHtmlConverter
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.extended.Readability4JExtended
 
-private const val DEFAULT_FONT_SIZE = 16
-private const val MIN_CONTENT_LENGTH = 200
-
 internal class DesktopFeedItemParserWorker(
     private val htmlRetriever: HtmlRetriever,
     private val logger: Logger,
     private val dispatcherProvider: DispatcherProvider,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val markdownToHtmlConverter: MarkdownToHtmlConverter,
+    private val settingsRepository: SettingsRepository,
 ) : FeedItemParserWorker {
 
     override suspend fun enqueueParsing(feedItemId: String, url: String) {
         logger.d { "Enqueueing parsing for feedItemId: $feedItemId, url: $url" }
-        // On Desktop, we don't have WorkManager, so just trigger parsing directly on background thread
-        // This is fire-and-forget like Android WorkManager
         withContext(dispatcherProvider.io) {
             try {
                 triggerBackgroundParsing(feedItemId, url)
@@ -75,19 +72,14 @@ internal class DesktopFeedItemParserWorker(
 
                 // Convert to styled HTML and then to markdown for Desktop
                 val title = article.title
-                val titleToUse = if (title != null && content.contains(title)) {
-                    null
-                } else {
-                    title
-                }
-
                 val styledHtml = getReaderModeStyledHtml(
                     colors = null,
                     content = content,
-                    title = titleToUse,
-                    fontSize = DEFAULT_FONT_SIZE,
+                    fontSize = settingsRepository.getReaderModeFontSize(),
+                    title = title,
                 )
                 val markdown = markdownToHtmlConverter.convertToMarkdown(styledHtml)
+                    .replace(Regex("""\s*\{#[^}]+}"""), "")
 
                 feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, markdown)
                 logger.d { "Successfully parsed and cached content for: $url (feedItemId: $feedItemId)" }
@@ -109,5 +101,9 @@ internal class DesktopFeedItemParserWorker(
         // On Desktop, background parsing is the same as immediate parsing
         // The dispatcher handles the threading
         return triggerImmediateParsing(feedItemId, url)
+    }
+
+    private companion object {
+        private const val MIN_CONTENT_LENGTH = 200
     }
 }

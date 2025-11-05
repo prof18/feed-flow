@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -38,7 +39,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -81,7 +84,7 @@ internal data class ReaderModeScreen(
         val message = LocalFeedFlowStrings.current.linkCopiedSuccess
         val uriHandler = LocalUriHandler.current
 
-        androidx.compose.material3.Scaffold(
+        Scaffold(
             topBar = {
                 ReaderModeToolbar(
                     readerModeState = state,
@@ -162,15 +165,53 @@ internal data class ReaderModeScreen(
                                 content = s.readerModeData.content,
                                 imageTransformer = Coil3ImageTransformerImpl,
                                 typography = markdownTypography(
-                                    h1 = MaterialTheme.typography.displaySmall,
-                                    h2 = MaterialTheme.typography.titleLarge,
-                                    h3 = MaterialTheme.typography.titleLarge,
-                                    h4 = MaterialTheme.typography.titleMedium,
-                                    h5 = MaterialTheme.typography.titleMedium,
-                                    h6 = MaterialTheme.typography.titleMedium,
+                                    h1 = MaterialTheme.typography.displaySmall.copy(
+                                        fontSize = (fontSize + 20).sp, // Default: 36sp (16 + 20)
+                                        lineHeight = (fontSize + 32).sp, // Default: 48sp (16 + 32)
+                                    ),
+                                    h2 = MaterialTheme.typography.titleLarge.copy(
+                                        fontSize = (fontSize + 6).sp, // Default: 22sp (16 + 6)
+                                        lineHeight = (fontSize + 16).sp, // Default: 32sp (16 + 16)
+                                    ),
+                                    h3 = MaterialTheme.typography.titleLarge.copy(
+                                        fontSize = (fontSize + 6).sp, // Default: 22sp (16 + 6)
+                                        lineHeight = (fontSize + 16).sp, // Default: 32sp (16 + 16)
+                                    ),
+                                    h4 = MaterialTheme.typography.titleMedium.copy(
+                                        fontSize = fontSize.sp, // Default: 16sp (same as base)
+                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
+                                    ),
+                                    h5 = MaterialTheme.typography.titleMedium.copy(
+                                        fontSize = fontSize.sp, // Default: 16sp (same as base)
+                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
+                                    ),
+                                    h6 = MaterialTheme.typography.titleMedium.copy(
+                                        fontSize = fontSize.sp, // Default: 16sp (same as base)
+                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
+                                    ),
                                     paragraph = MaterialTheme.typography.bodyLarge.copy(
-                                        lineHeight = (fontSize + 15).sp,
-                                        fontSize = fontSize.sp,
+                                        fontSize = fontSize.sp, // Default: 16sp (base)
+                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
+                                    ),
+                                    text = MaterialTheme.typography.bodyLarge.copy(
+                                        fontSize = fontSize.sp, // Default: 16sp (base)
+                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
+                                    ),
+                                    code = MaterialTheme.typography.bodyMedium.copy(
+                                        fontSize = (fontSize - 2).sp, // Default: 14sp (16 - 2)
+                                        lineHeight = (fontSize + 8).sp, // Default: 24sp (16 + 8)
+                                    ),
+                                    list = MaterialTheme.typography.bodyLarge.copy(
+                                        fontSize = fontSize.sp, // Default: 16sp (base)
+                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
+                                    ),
+                                    textLink = TextLinkStyles(
+                                        style = MaterialTheme.typography.bodyLarge.copy(
+                                            fontSize = fontSize.sp, // Default: 16sp (base)
+                                            lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
+                                            fontWeight = FontWeight.Bold,
+                                            textDecoration = TextDecoration.Underline,
+                                        ).toSpanStyle(),
                                     ),
                                 ),
                             )

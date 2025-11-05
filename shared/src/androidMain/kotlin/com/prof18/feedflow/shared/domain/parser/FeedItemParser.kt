@@ -26,7 +26,9 @@ internal class FeedItemParser(
     suspend fun parseFeedItem(url: String, onResult: (ParsingResult) -> Unit) {
         val js = readRawResource(appContext, com.prof18.feedflow.shared.R.raw.defuddle)
         val html = withContext(dispatcherProvider.io) {
-            htmlRetriever.retrieveHtml(url)
+            htmlRetriever.retrieveHtml(url).also {
+                it?.replace(Regex("https?://.*?placeholder\\.png"), "")
+            }
             /*
                 Maybe do also:
                  val doc = Jsoup.parse(html)

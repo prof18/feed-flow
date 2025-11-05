@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
@@ -243,6 +244,13 @@ class SettingsRepository(
     fun setDateFormat(format: DateFormat) =
         settings.set(SettingsFields.DATE_FORMAT.name, format.name)
 
+    fun getTimeFormat(): TimeFormat =
+        settings.getString(SettingsFields.TIME_FORMAT.name, TimeFormat.HOURS_24.name)
+            .let { TimeFormat.valueOf(it) }
+
+    fun setTimeFormat(format: TimeFormat) =
+        settings.set(SettingsFields.TIME_FORMAT.name, format.name)
+
     fun getFeedOrder(): FeedOrder =
         settings.getString(SettingsFields.FEED_ORDER.name, FeedOrder.NEWEST_FIRST.name)
             .let { FeedOrder.valueOf(it) }
@@ -334,6 +342,7 @@ internal enum class SettingsFields {
     LEFT_SWIPE_ACTION,
     RIGHT_SWIPE_ACTION,
     DATE_FORMAT,
+    TIME_FORMAT,
     FEED_LAYOUT,
     FEED_WIDGET_LAYOUT,
     THEME_MODE,

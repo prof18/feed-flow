@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 
@@ -16,6 +17,7 @@ internal fun SelectFeeds.toFeedItem(
     hideImages: Boolean,
     hideDate: Boolean,
     dateFormat: DateFormat,
+    timeFormat: TimeFormat,
 ) = FeedItem(
     id = url_hash,
     url = sanitizeUrl(url),
@@ -58,6 +60,7 @@ internal fun SelectFeeds.toFeedItem(
         dateFormatter.formatDateForFeed(
             millis = requireNotNull(pub_date),
             dateFormat = dateFormat,
+            timeFormat = timeFormat,
         )
     } else {
         null

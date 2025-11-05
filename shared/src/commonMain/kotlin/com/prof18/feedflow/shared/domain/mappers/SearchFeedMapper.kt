@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 
@@ -14,6 +15,7 @@ internal fun Search.toFeedItem(
     removeTitleFromDesc: Boolean,
     hideDate: Boolean,
     dateFormat: DateFormat,
+    timeFormat: TimeFormat,
 ) = FeedItem(
     id = url_hash,
     url = sanitizeUrl(url),
@@ -58,6 +60,7 @@ internal fun Search.toFeedItem(
         dateFormatter.formatDateForFeed(
             requireNotNull(pub_date),
             dateFormat = dateFormat,
+            timeFormat = timeFormat,
         )
     } else {
         null

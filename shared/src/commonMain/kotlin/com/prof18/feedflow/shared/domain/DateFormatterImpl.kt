@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.TimeFormat
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -714,7 +715,7 @@ class DateFormatterImpl(
         }
     }
 
-    override fun formatDateForFeed(millis: Long, dateFormat: DateFormat): String {
+    override fun formatDateForFeed(millis: Long, dateFormat: DateFormat, timeFormat: TimeFormat): String {
         val instant = Instant.fromEpochMilliseconds(millis)
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
 
@@ -729,12 +730,10 @@ class DateFormatterImpl(
         val isToday = today == localDate
         val isThisYear = today.year == localDate.year
 
-        val dateFormat = when {
+        val dateFormatBuilder = when {
             isToday -> {
                 LocalDateTime.Format {
-                    hour()
-                    char(':')
-                    minute()
+                    hourAndMinute(timeFormat)
                 }
             }
 
@@ -742,9 +741,7 @@ class DateFormatterImpl(
                 LocalDateTime.Format {
                     dayAndMonth(dateFormat)
                     chars(" - ")
-                    hour()
-                    char(':')
-                    minute()
+                    hourAndMinute(timeFormat)
                 }
             }
 
@@ -754,14 +751,12 @@ class DateFormatterImpl(
                     char('/')
                     year()
                     chars(" - ")
-                    hour()
-                    char(':')
-                    minute()
+                    hourAndMinute(timeFormat)
                 }
             }
         }
 
-        return dateFormat.format(dateTime)
+        return dateFormatBuilder.format(dateTime)
     }
 
     private fun DateTimeFormatBuilder.WithDateTime.dayAndMonth(dateFormat: DateFormat) {
@@ -776,6 +771,24 @@ class DateFormatterImpl(
                 monthNumber()
                 char('/')
                 day()
+            }
+        }
+    }
+
+    private fun DateTimeFormatBuilder.WithDateTime.hourAndMinute(timeFormat: TimeFormat) {
+        when (timeFormat) {
+            TimeFormat.HOURS_24 -> {
+                hour()
+                char(':')
+                minute()
+            }
+
+            TimeFormat.HOURS_12 -> {
+                amPmHour()
+                char(':')
+                minute()
+                char(' ')
+                amPmMarker("AM", "PM")
             }
         }
     }

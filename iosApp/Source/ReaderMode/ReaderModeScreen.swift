@@ -114,7 +114,21 @@ struct ReaderModeScreen: View {
                 onFontSizeChange: { newSize in
                     fontSize = newSize
                     vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                }
+                },
+                onNavigateToNext: vmStoreOwner.instance.canNavigateToNext() ? {
+                    Task {
+                        if let nextArticle = await vmStoreOwner.instance.navigateToNextArticle() {
+                            appState.navigate(route: CommonViewRoute.readerMode(feedItemUrlInfo: nextArticle))
+                        }
+                    }
+                } : nil,
+                onNavigateToPrevious: vmStoreOwner.instance.canNavigateToPrevious() ? {
+                    Task {
+                        if let previousArticle = await vmStoreOwner.instance.navigateToPreviousArticle() {
+                            appState.navigate(route: CommonViewRoute.readerMode(feedItemUrlInfo: previousArticle))
+                        }
+                    }
+                } : nil
             ),
             isBookmarked: isBookmarked,
             fontSize: fontSize,
@@ -122,6 +136,7 @@ struct ReaderModeScreen: View {
         )
         .onAppear {
             isBookmarked = feedItemUrlInfo.isBookmarked
+            vmStoreOwner.instance.setCurrentArticle(articleId: feedItemUrlInfo.id)
         }
         .if(isiOS26OrLater()) { view in
             view.ignoresSafeArea()

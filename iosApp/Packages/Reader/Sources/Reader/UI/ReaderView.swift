@@ -9,6 +9,8 @@ public struct ReaderViewActions {
     public let onFontSizeDecrease: () -> Void
     public let onFontSizeIncrease: () -> Void
     public let onFontSizeChange: (Double) -> Void
+    public let onNavigateToNext: (() -> Void)?
+    public let onNavigateToPrevious: (() -> Void)?
 
     public init(
         onBookmarkToggle: @escaping (Bool) -> Void,
@@ -18,7 +20,9 @@ public struct ReaderViewActions {
         onFontSizeMenuToggle: @escaping () -> Void,
         onFontSizeDecrease: @escaping () -> Void,
         onFontSizeIncrease: @escaping () -> Void,
-        onFontSizeChange: @escaping (Double) -> Void
+        onFontSizeChange: @escaping (Double) -> Void,
+        onNavigateToNext: (() -> Void)? = nil,
+        onNavigateToPrevious: (() -> Void)? = nil
     ) {
         self.onBookmarkToggle = onBookmarkToggle
         self.onArchive = onArchive
@@ -28,6 +32,8 @@ public struct ReaderViewActions {
         self.onFontSizeDecrease = onFontSizeDecrease
         self.onFontSizeIncrease = onFontSizeIncrease
         self.onFontSizeChange = onFontSizeChange
+        self.onNavigateToNext = onNavigateToNext
+        self.onNavigateToPrevious = onNavigateToPrevious
     }
 }
 
@@ -130,6 +136,22 @@ public struct ReaderView: View {
     @ToolbarContentBuilder
     private func makeIOS26ToolbarContent() -> some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
+            if let onNavigateToPrevious = actions.onNavigateToPrevious {
+                Button {
+                    onNavigateToPrevious()
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+            }
+
+            if let onNavigateToNext = actions.onNavigateToNext {
+                Button {
+                    onNavigateToNext()
+                } label: {
+                    Image(systemName: "chevron.right")
+                }
+            }
+
             Button {
                 let newBookmarkState = !isBookmarked
                 actions.onBookmarkToggle(newBookmarkState)
@@ -226,6 +248,22 @@ public struct ReaderView: View {
                         onComments()
                     } label: {
                         Label("Open Comments", systemImage: "bubble.left")
+                    }
+                }
+
+                if let onNavigateToPrevious = actions.onNavigateToPrevious {
+                    Button {
+                        onNavigateToPrevious()
+                    } label: {
+                        Label("Previous Article", systemImage: "chevron.left")
+                    }
+                }
+
+                if let onNavigateToNext = actions.onNavigateToNext {
+                    Button {
+                        onNavigateToNext()
+                    } label: {
+                        Label("Next Article", systemImage: "chevron.right")
                     }
                 }
             } label: {

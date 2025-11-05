@@ -9,6 +9,17 @@ import Foundation
 
 public enum ReaderStatus: Equatable {
     case fetching
-    case failedToExtractContent
-    case extractedContent(html: String, baseURL: URL, title: String?)
+    case failedToExtractContent(url: URL)
+    case extractedContent(html: String, baseURL: URL, url: URL)
+
+    public func getUrl() -> URL? {
+        switch self {
+        case .fetching:
+            return nil
+        case let .failedToExtractContent(url):
+            return url
+        case let .extractedContent(_, _, url):
+            return url
+        }
+    }
 }

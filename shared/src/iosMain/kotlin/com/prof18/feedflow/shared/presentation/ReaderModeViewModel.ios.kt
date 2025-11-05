@@ -56,7 +56,7 @@ class ReaderModeViewModel internal constructor(
                         fontSize = settingsRepository.getReaderModeFontSize(),
                         isBookmarked = urlInfo.isBookmarked,
                         commentsUrl = urlInfo.commentsUrl,
-                    )
+                    ),
                 )
                 return@launch
             }
@@ -79,7 +79,7 @@ class ReaderModeViewModel internal constructor(
                                 fontSize = settingsRepository.getReaderModeFontSize(),
                                 isBookmarked = urlInfo.isBookmarked,
                                 commentsUrl = urlInfo.commentsUrl,
-                            )
+                            ),
                         )
                     } else {
                         readerModeMutableState.value = ReaderModeState.HtmlNotAvailable(

@@ -32,41 +32,32 @@ public struct ReaderViewActions {
 }
 
 public struct ReaderView: View {
-    var url: URL
+    @Binding var readerStatus: ReaderStatus
     var options: ReaderViewOptions
     var actions: ReaderViewActions
     var isBookmarked: Bool
     var fontSize: Double
     var showFontSizeMenu: Bool
+    var openInBrowser: (URL) -> Void
 
-    @State private var status = ReaderStatus.fetching
-    @State private var titleFromFallbackWebView: String?
-
-    private var title: String? {
-        switch status {
-        case .fetching:
-            return nil
-        case .failedToExtractContent:
-            return titleFromFallbackWebView
-        case let .extractedContent(_, _, title):
-            return title
-        }
-    }
+    @State private var webContent: WebContent?
 
     public init(
-        url: URL,
+        readerStatus: Binding<ReaderStatus>,
         options: ReaderViewOptions,
         actions: ReaderViewActions,
         isBookmarked: Bool,
         fontSize: Double,
-        showFontSizeMenu: Bool
+        showFontSizeMenu: Bool,
+        openInBrowser: @escaping (URL) -> Void
     ) {
-        self.url = url
+        self._readerStatus = readerStatus
         self.options = options
         self.actions = actions
         self.isBookmarked = isBookmarked
         self.fontSize = fontSize
         self.showFontSizeMenu = showFontSizeMenu
+        self.openInBrowser = openInBrowser
     }
 
     public var body: some View {
@@ -81,50 +72,37 @@ public struct ReaderView: View {
                     makeLegacyToolbarContent()
                 }
             }
-            .task {
-                do {
-                    let result = try await Reader.fetchAndExtractContent(
-                        fromURL: url,
-                        additionalCSS: options.additionalCSS
-                    )
-                    self.status = .extractedContent(
-                        html: result.styledHTML,
-                        baseURL: result.baseURL,
-                        title: result.title
-                    )
-                } catch {
-                    status = .failedToExtractContent
-                }
-            }
     }
 
     @ViewBuilder private var content: some View {
-        switch status {
+        switch readerStatus {
         case .fetching:
             EmptyView()
-        case .failedToExtractContent:
+        case let .failedToExtractContent(url):
             FallbackWebView(
                 url: url,
-                onLinkClicked: onLinkClicked,
-                title: $titleFromFallbackWebView
+                onLinkClicked: onLinkClicked
             )
         case let .extractedContent(html, baseURL, _):
-            ReaderWebView(baseURL: baseURL, html: html, onLinkClicked: onLinkClicked)
+            ReaderWebView(
+                baseURL: baseURL,
+                html: html,
+                onLinkClicked: onLinkClicked,
+                onWebContentReady: { content in
+                    webContent = content
+                }
+            )
         }
     }
 
     @ViewBuilder private var loader: some View {
         ReaderPlaceholder()
-            .opacity(status == .fetching ? 1 : 0)
-            .animation(.default, value: status == .fetching)
+            .opacity(readerStatus == .fetching ? 1 : 0)
+            .animation(.default, value: readerStatus == .fetching)
     }
 
     private func onLinkClicked(_ url: URL) {
-        if url == .exitReaderModeLink {
-            status = .failedToExtractContent
-        } else {
-            options.onLinkClicked?(url)
-        }
+        options.onLinkClicked?(url)
     }
 
     @ToolbarContentBuilder
@@ -141,12 +119,14 @@ public struct ReaderView: View {
                 }
             }
 
-            ShareLink(
-                item: url,
-                label: {
-                    Label("Share", systemImage: "square.and.arrow.up")
-                }
-            )
+            if let url = readerStatus.getUrl() {
+                ShareLink(
+                    item: url,
+                    label: {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                )
+            }
 
             Button {
                 actions.onArchive()
@@ -155,21 +135,23 @@ public struct ReaderView: View {
             }
         }
 
-        if let onComments = actions.onComments {
-            ToolbarItem {
-                Button {
-                    onComments()
-                } label: {
-                    Image(systemName: "bubble.left")
+        if let url = readerStatus.getUrl() {
+            if let onComments = actions.onComments {
+                ToolbarItem {
+                    Button {
+                        onComments()
+                    } label: {
+                        Image(systemName: "bubble.left")
+                    }
                 }
             }
-        }
 
-        ToolbarItem {
-            Button {
-                actions.onOpenInBrowser()
-            } label: {
-                Image(systemName: "globe")
+            ToolbarItem {
+                Button {
+                    openInBrowser(url)
+                } label: {
+                    Image(systemName: "globe")
+                }
             }
         }
 
@@ -188,48 +170,50 @@ public struct ReaderView: View {
             fontSizeMenu
         }
 
-        ToolbarItem {
-            Button {
-                actions.onOpenInBrowser()
-            } label: {
-                Image(systemName: "globe")
+        if let url = readerStatus.getUrl() {
+            ToolbarItem {
+                Button {
+                    openInBrowser(url)
+                } label: {
+                    Image(systemName: "globe")
+                }
             }
-        }
 
-        ToolbarItem {
-            Menu {
-                Button {
-                    let newBookmarkState = !isBookmarked
-                    actions.onBookmarkToggle(newBookmarkState)
-                } label: {
-                    Label(
-                        isBookmarked ? "Remove Bookmark" : "Add Bookmark",
-                        systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
-                    )
-                }
-
-                ShareLink(
-                    item: url,
-                    label: {
-                        Label("Share", systemImage: "square.and.arrow.up")
-                    }
-                )
-
-                Button {
-                    actions.onArchive()
-                } label: {
-                    Label("Open in Archive", systemImage: "hammer.fill")
-                }
-
-                if let onComments = actions.onComments {
+            ToolbarItem {
+                Menu {
                     Button {
-                        onComments()
+                        let newBookmarkState = !isBookmarked
+                        actions.onBookmarkToggle(newBookmarkState)
                     } label: {
-                        Label("Open Comments", systemImage: "bubble.left")
+                        Label(
+                            isBookmarked ? "Remove Bookmark" : "Add Bookmark",
+                            systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
+                        )
                     }
+
+                    ShareLink(
+                        item: url,
+                        label: {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                        }
+                    )
+
+                    Button {
+                        actions.onArchive()
+                    } label: {
+                        Label("Open in Archive", systemImage: "hammer.fill")
+                    }
+
+                    if let onComments = actions.onComments {
+                        Button {
+                            onComments()
+                        } label: {
+                            Label("Open Comments", systemImage: "bubble.left")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
-            } label: {
-                Image(systemName: "ellipsis.circle")
             }
         }
     }

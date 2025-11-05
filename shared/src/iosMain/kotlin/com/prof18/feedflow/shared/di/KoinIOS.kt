@@ -18,6 +18,7 @@ import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.KeychainSettingsMigration
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
@@ -235,4 +236,5 @@ object Deps : KoinComponent {
     fun getReviewViewModel() = getKoin().get<ReviewViewModel>()
     fun getSerialFeedFetcherRepository() = getKoin().get<SerialFeedFetcherRepository>()
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
+    fun getHtmlRetriever() = getKoin().get<HtmlRetriever>()
 }

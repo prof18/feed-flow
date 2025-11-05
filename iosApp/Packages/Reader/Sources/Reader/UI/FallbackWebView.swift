@@ -9,7 +9,6 @@ import SwiftUI
 struct FallbackWebView: View {
     var url: URL
     var onLinkClicked: ((URL) -> Void)?
-    @Binding var title: String?
 
     @StateObject private var content = WebContent()
 
@@ -23,13 +22,14 @@ struct FallbackWebView: View {
                     content.load(url: url)
                 }
             }
-            .onChange(of: content.info.title) { self.title = $0 }
     }
 
     private func setupLinkHandler() {
         content.shouldBlockNavigation = { action -> Bool in
             if action.navigationType == .linkActivated, let url = action.request.url {
-                onLinkClicked?(url)
+                DispatchQueue.main.async {
+                    onLinkClicked?(url)
+                }
                 return true
             }
             return false

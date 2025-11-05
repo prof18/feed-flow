@@ -44,7 +44,7 @@ struct ReaderPlaceholder: View {
         }
         .modifier(ShimmerMask())
         .padding(baseFontSize * 1.5)
-        .background(Color(ReaderTheme.background).edgesIgnoringSafeArea(.all))
+        .background(Color(ReaderTheme.background))
     }
 
     private var baseFontSize: CGFloat { 19 }

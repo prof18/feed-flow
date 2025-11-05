@@ -204,7 +204,6 @@ private fun ReaderMode(
 
                 if (plainText.length >= 200) {
                     val finalHTML = getReaderModeStyledHtml(
-                        articleLink = readerModeState.readerModeData.url,
                         colors = colors,
                         content = content,
                         title = title,

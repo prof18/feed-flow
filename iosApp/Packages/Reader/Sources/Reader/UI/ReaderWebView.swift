@@ -10,6 +10,7 @@ struct ReaderWebView: View {
     var baseURL: URL
     var html: String
     var onLinkClicked: ((URL) -> Void)?
+    var onWebContentReady: ((WebContent) -> Void)?
 
     @StateObject private var content = WebContent(transparent: true)
 
@@ -17,6 +18,7 @@ struct ReaderWebView: View {
         WebView(content: content)
             .onAppear {
                 setupLinkHandler()
+                onWebContentReady?(content)
             }
             .onAppearOrChange(Model(baseURL: baseURL, html: html)) { model in
                 content.populate { content in
@@ -28,8 +30,10 @@ struct ReaderWebView: View {
     private func setupLinkHandler() {
         content.shouldBlockNavigation = { action -> Bool in
             if let url = action.request.url,
-               url == .exitReaderModeLink || action.navigationType == .linkActivated {
-                onLinkClicked?(url)
+               action.navigationType == .linkActivated {
+                DispatchQueue.main.async {
+                    onLinkClicked?(url)
+                }
                 return true
             }
             return false

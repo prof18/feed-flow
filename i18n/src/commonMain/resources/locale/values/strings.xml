@@ -124,6 +124,13 @@
     <string name="feed_sync_in_progress">Sync in progress. The app will automatically close when it\'s done.</string>
     <string name="no_dropbox_sync_yet">Data are not synced yet with Dropbox. Click the backup button to trigger a sync</string>
     <string name="error_account_sync">Sorry, something went wrong while syncing data in your account - error code: %s :(</string>
+    <string name="google_drive_sync_common_description">Connect your Google Drive account to sync feed subscriptions, categories, read and bookmarked articles between your Android, iOS, iPadOS and desktop devices. The data will be saved in an app-specific folder; FeedFlow won\'t have any access to any of your files</string>
+    <string name="google_drive_auth_code_hint">Authorization code</string>
+    <string name="google_drive_confirm_button">Confirm</string>
+    <string name="google_drive_sync_error">There was an error while connecting to Google Drive. Please try again</string>
+    <string name="google_drive_sync_success">Your Google Drive account is successfully connected</string>
+    <string name="no_google_drive_sync_yet">Data are not synced yet with Google Drive. Click the backup button to trigger a sync</string>
+    <string name="google_drive_connect_button">Connect Google Drive</string>
     <string name="icloud_sync_description">Connect your iCloud account to sync feed subscriptions, categories, read and bookmarked articles between your iOS, iPadOS and macOS devices. The data will be saved in an app-specific folder; FeedFlow won\'t have any access to any of your files</string>
     <string name="add_account_button">Add account</string>
     <string name="icloud_sync_success">Your iCloud account is successfully connected</string>

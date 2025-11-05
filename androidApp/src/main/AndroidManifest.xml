@@ -52,6 +52,8 @@
 
         <activity android:name=".accounts.dropbox.DropboxSyncActivity"/>
 
+        <activity android:name=".accounts.googledrive.GoogleDriveSyncActivity"/>
+
         <activity
             android:name="com.dropbox.core.android.AuthActivity"
             android:configChanges="orientation|keyboard"

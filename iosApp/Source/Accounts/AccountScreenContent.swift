@@ -39,6 +39,18 @@ struct AccountsScreenContent: View {
                     }
                 }
 
+            case .googleDrive:
+                NavigationLink(destination: GoogleDriveSyncScreen()) {
+                    HStack {
+                        Image(systemName: "externaldrive.fill.badge.icloud")
+                            .fontWeight(.bold)
+                        Text("Google Drive")
+                            .font(.body)
+                        Spacer()
+                        Image(systemName: "checkmark")
+                    }
+                }
+
             case .icloud:
                 NavigationLink(destination: ICloudSyncScreen(isFromAddAccount: false)) {
                     HStack {

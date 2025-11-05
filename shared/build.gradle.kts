@@ -32,6 +32,7 @@ kotlin {
             export(project(":i18n"))
             export(project(":core"))
             export(project(":feedSync:dropbox"))
+            export(project(":feedSync:googledrive"))
             export(libs.touchlab.kermit.simple)
             export(libs.androidx.lifecycle.viewModel)
         }
@@ -67,6 +68,7 @@ kotlin {
                 api(project(":core"))
                 api(project(":i18n"))
                 api(project(":feedSync:dropbox"))
+                api(project(":feedSync:googledrive"))
                 api(libs.touchlab.kermit)
                 api(libs.immutable.collections)
                 api(libs.androidx.lifecycle.viewModel)
@@ -111,6 +113,7 @@ kotlin {
                 implementation(libs.koin.android)
                 implementation(libs.workmanager)
                 implementation(libs.koin.workmanager)
+                implementation(libs.kotlinx.coroutines.play.services)
             }
         }
 

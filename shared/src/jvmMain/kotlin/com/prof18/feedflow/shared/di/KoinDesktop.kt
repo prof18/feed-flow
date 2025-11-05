@@ -22,6 +22,7 @@ import com.prof18.feedflow.shared.domain.parser.DesktopFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerDesktop
 import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
+import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.MarkdownToHtmlConverter
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
@@ -42,6 +43,7 @@ fun initKoinDesktop(
     appEnvironment: AppEnvironment,
     isICloudEnabled: Boolean,
     isDropboxEnabled: Boolean,
+    isGoogleDriveEnabled: Boolean = true,
     version: String,
     modules: List<Module>,
 ): KoinApplication = initKoin(
@@ -49,6 +51,7 @@ fun initKoinDesktop(
         appEnvironment = appEnvironment,
         isLoggingEnabled = appEnvironment.isRelease(),
         isDropboxSyncEnabled = isDropboxEnabled,
+        isGoogleDriveSyncEnabled = isGoogleDriveEnabled,
         isIcloudSyncEnabled = isICloudEnabled,
         appVersion = version,
         platformName = "${System.getProperty("os.name")}",
@@ -139,9 +142,22 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
+    viewModel {
+        GoogleDriveSyncViewModel(
+            logger = getWith("GoogleDriveSyncViewModel"),
+            googleDriveSettings = get(),
+            googleDriveDataSource = get(),
+            feedSyncRepository = get(),
+            dateFormatter = get(),
+            accountsRepository = get(),
+            feedFetcherRepository = get(),
+        )
+    }
+
     single<FeedSyncWorker> {
         FeedSyncJvmWorker(
             dropboxDataSource = get(),
+            googleDriveDataSource = get(),
             appEnvironment = appEnvironment,
             logger = getWith("FeedSyncJvmWorker"),
             feedSyncer = get(),
@@ -149,6 +165,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             settingsRepository = get(),
             dispatcherProvider = get(),
             dropboxSettings = get(),
+            googleDriveSettings = get(),
             accountsRepository = get(),
             iCloudSettings = get(),
         )

@@ -66,10 +66,6 @@ class ReaderModeViewModel internal constructor(
                 is ParsingResult.Success -> {
                     val htmlContent = result.htmlContent
                     if (htmlContent != null) {
-                        // TODO: maybe remove it from the worker
-                        // Save to cache (file is saved by parser worker, this is redundant but safe)
-                        feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, htmlContent)
-
                         readerModeMutableState.value = ReaderModeState.Success(
                             ReaderModeData(
                                 id = FeedItemId(urlInfo.id),

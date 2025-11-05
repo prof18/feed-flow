@@ -1,16 +1,11 @@
 package com.prof18.feedflow.shared.domain
 
+// Last export: 2025-05-29T14:56:02.575Z
 fun getReaderModeStyledHtml(
     colors: ReaderColors?,
     content: String,
-    title: String?,
     fontSize: Int,
 ): String {
-    val titleTag = if (title != null) {
-        "<h1>$title</h1>"
-    } else {
-        ""
-    }
     // language=html
     return """
     <html lang="en" dir='auto'>
@@ -21,13 +16,12 @@ fun getReaderModeStyledHtml(
     </style>
     </head>
     <body>
-    $titleTag
     <div id="container">
         <div id="__content">
             $content
         </div>
     </div>
-    <script>
+    <script>    
         document.addEventListener("DOMContentLoaded", function () {
            document.querySelectorAll("h1")[1].style.display = 'none';
 
@@ -37,8 +31,8 @@ fun getReaderModeStyledHtml(
                   event.preventDefault();
                   var url = event.target.getAttribute("href");
                   window.kmpJsBridge.callNative(
-                   "urlInterceptor",
-                    url,
+                   "urlInterceptor", 
+                    url, 
                     {}
                   );
               }
@@ -51,18 +45,10 @@ fun getReaderModeStyledHtml(
         .trimIndent()
 }
 
-internal fun readerModeCss(colors: ReaderColors?, fontSize: Int): String =
-    buildReaderCss(colors, fontSize)
-
-@Suppress("CyclomaticComplexMethod")
-private fun buildReaderCss(colors: ReaderColors?, fontSize: Int): String {
+internal fun readerModeCss(colors: ReaderColors?, fontSize: Int): String {
     val fontSizeCss = "${fontSize}px"
     // language=css
     return """
-html, body {
-    margin: 0;
-}
-
 body {
     overflow-wrap: break-word;
     font: -apple-system-body;
@@ -70,7 +56,7 @@ body {
     font-size: $fontSizeCss;
     line-height: 1.5em;
     padding-bottom: 112px;
-    ${colors?.let { "color: ${it.textColor};" } ?: ""}
+    ${colors?.let { "color: ${it.textColor};" }}
 }
 
 .__hero {
@@ -107,8 +93,8 @@ img, iframe, object, video {
 pre {
     max-width: 100%;
     overflow-x: auto;
-    ${colors?.let { "background-color: ${it.backgroundColor};" } ?: ""}
-    ${colors?.borderColor?.let { "border: 1px solid $it;" } ?: ""}
+    ${colors?.let { "background-color: ${it.backgroundColor};" }}
+    ${colors?.let { "border: 1px solid ${it.borderColor};" }}
     border-radius: 6px;
     padding: 12px 16px;
     margin: 16px 0;
@@ -126,8 +112,8 @@ table {
 blockquote {
     margin: 1.5em 0;
     padding: 1em 1.5em;
-    ${colors?.borderColor?.let { "border-left: 4px solid $it;" } ?: ""}
-    ${colors?.let { "background-color: ${it.backgroundColor};" } ?: ""}
+    ${colors?.let { "border-left: 4px solid ${it.borderColor};" }}
+    ${colors?.let { "background-color: ${it.backgroundColor};" }}
     border-radius: 0 6px 6px 0;
     font-style: italic;
     position: relative;
@@ -159,7 +145,7 @@ blockquote cite:before {
 }
 
 a:link {
-    ${colors?.let { "color: ${it.linkColor};" } ?: ""}
+    ${colors?.let { "color: ${it.linkColor};" }}
 }
 
 figure {
@@ -237,11 +223,11 @@ code {
     padding: 2px 4px;
     border-radius: 3px;
     line-height: 1.4em;
-    ${colors?.let { "background-color: ${it.backgroundColor};" } ?: ""}
-    ${colors?.borderColor?.let { "border: 1px solid $it;" } ?: ""}
+    ${colors?.let { "background-color: ${it.backgroundColor};" }}
+    ${colors?.let { "border: 1px solid ${it.borderColor};" }}
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
     font-size: $fontSizeCss;
-    ${colors?.let { "color: ${it.textColor};" } ?: ""}
+    ${colors?.let { "color: ${it.textColor};" }}
 }
 
 pre code {
@@ -252,41 +238,12 @@ pre code {
     padding: 0;
 }
 
-ul {
-    list-style: none;
-    padding-left: 8px;
+img, iframe, object, video {
+    max-width: 100%;
+    height: auto;
+    border-radius: 7px;
 }
 
-ul li::before {
-    content: "\\2022";
-    ${colors?.let { "color: ${it.textColor};" } ?: ""}
-    margin-right: 0.25em;
-}
-
-ul li p {
-    display: inline;
-}
-
-ol {
-    list-style: none;
-    padding-left: 8px;
-    counter-reset: item;
-}
-
-ol li::before {
-    counter-increment: item;
-    content: counters(item, ".") ".";
-    ${colors?.let { "color: ${it.textColor};" } ?: ""}
-    margin-right: 0.25em;
-}
-
-ol li p {
-    display: inline;
-}
-
-li:not(:last-of-type) {
-    margin-bottom: 1em;
-}
     """.trimIndent()
 }
 

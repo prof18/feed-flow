@@ -76,32 +76,42 @@ public struct ReaderView: View {
     }
 
     public var body: some View {
-        Color(ReaderTheme.background)
-            .overlay(content)
-            .overlay(loader)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                if isiOS26OrLater() {
-                    makeIOS26ToolbarContent()
-                } else {
-                    makeLegacyToolbarContent()
+        ZStack {
+            Color(ReaderTheme.background)
+                .overlay(content)
+                .overlay(loader)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    if isiOS26OrLater() {
+                        makeIOS26ToolbarContent()
+                    } else {
+                        makeLegacyToolbarContent()
+                    }
+                }
+                .task {
+                    do {
+                        let result = try await Reader.fetchAndExtractContent(
+                            fromURL: url,
+                            additionalCSS: options.additionalCSS
+                        )
+                        self.status = .extractedContent(
+                            html: result.styledHTML,
+                            baseURL: result.baseURL,
+                            title: result.title
+                        )
+                    } catch {
+                        status = .failedToExtractContent
+                    }
+                }
+
+            // Bottom navigation toolbar for iOS < 26
+            if !isiOS26OrLater() && (actions.onNavigateToNext != nil || actions.onNavigateToPrevious != nil) {
+                VStack {
+                    Spacer()
+                    legacyNavigationToolbar
                 }
             }
-            .task {
-                do {
-                    let result = try await Reader.fetchAndExtractContent(
-                        fromURL: url,
-                        additionalCSS: options.additionalCSS
-                    )
-                    self.status = .extractedContent(
-                        html: result.styledHTML,
-                        baseURL: result.baseURL,
-                        title: result.title
-                    )
-                } catch {
-                    status = .failedToExtractContent
-                }
-            }
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -250,26 +260,41 @@ public struct ReaderView: View {
                         Label("Open Comments", systemImage: "bubble.left")
                     }
                 }
-
-                if let onNavigateToPrevious = actions.onNavigateToPrevious {
-                    Button {
-                        onNavigateToPrevious()
-                    } label: {
-                        Label("Previous Article", systemImage: "chevron.left")
-                    }
-                }
-
-                if let onNavigateToNext = actions.onNavigateToNext {
-                    Button {
-                        onNavigateToNext()
-                    } label: {
-                        Label("Next Article", systemImage: "chevron.right")
-                    }
-                }
             } label: {
                 Image(systemName: "ellipsis.circle")
             }
         }
+    }
+
+    @ViewBuilder
+    private var legacyNavigationToolbar: some View {
+        HStack(spacing: 16) {
+            if let onNavigateToPrevious = actions.onNavigateToPrevious {
+                Button {
+                    onNavigateToPrevious()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.title3)
+                        .frame(width: 44, height: 44)
+                }
+            }
+
+            if let onNavigateToNext = actions.onNavigateToNext {
+                Button {
+                    onNavigateToNext()
+                } label: {
+                    Image(systemName: "chevron.right")
+                        .font(.title3)
+                        .frame(width: 44, height: 44)
+                }
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(.regularMaterial)
+        .clipShape(Capsule())
+        .shadow(radius: 8)
+        .padding(.bottom, 16)
     }
 
     @ViewBuilder

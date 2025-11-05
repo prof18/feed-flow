@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.ui.importexport
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,18 +10,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,11 +46,15 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun ImportExportContent(
     feedImportExportState: FeedImportExportState,
+    savedUrls: List<String>,
     navigateBack: () -> Unit,
     onRetryClick: () -> Unit,
     onDoneClick: () -> Unit,
     onImportClick: () -> Unit,
     onExportClick: () -> Unit,
+    onImportFromUrlClick: (String) -> Unit,
+    onReimportFromUrlClick: (String) -> Unit,
+    onDeleteUrlClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -53,8 +67,12 @@ fun ImportExportContent(
             is FeedImportExportState.Idle ->
                 ImportExportIdleView(
                     modifier = Modifier.padding(paddingValues),
+                    savedUrls = savedUrls,
                     onImportClick = onImportClick,
                     onExportClick = onExportClick,
+                    onImportFromUrlClick = onImportFromUrlClick,
+                    onReimportFromUrlClick = onReimportFromUrlClick,
+                    onDeleteUrlClick = onDeleteUrlClick,
                 )
 
             FeedImportExportState.Error ->
@@ -125,10 +143,16 @@ private fun ImportExportNavBar(navigateBack: () -> Unit) {
 
 @Composable
 private fun ImportExportIdleView(
+    savedUrls: List<String>,
     onImportClick: () -> Unit,
     onExportClick: () -> Unit,
+    onImportFromUrlClick: (String) -> Unit,
+    onReimportFromUrlClick: (String) -> Unit,
+    onDeleteUrlClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var urlInput by remember { mutableStateOf("") }
+
     LazyColumn(
         modifier = modifier,
     ) {
@@ -156,6 +180,119 @@ private fun ImportExportIdleView(
                 icon = Icons.Default.FileUpload,
                 onClick = onExportClick,
             )
+        }
+
+        item {
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = Spacing.regular),
+                thickness = 0.2.dp,
+                color = Color.Gray,
+            )
+        }
+
+        item {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = Spacing.regular)
+                    .padding(bottom = Spacing.small),
+                text = LocalFeedFlowStrings.current.importFromUrlTitle,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.regular),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.small),
+            ) {
+                OutlinedTextField(
+                    value = urlInput,
+                    onValueChange = { urlInput = it },
+                    modifier = Modifier.weight(1f),
+                    label = { Text(LocalFeedFlowStrings.current.importFromUrlHint) },
+                    singleLine = true,
+                )
+                OutlinedButton(
+                    onClick = {
+                        if (urlInput.isNotBlank()) {
+                            onImportFromUrlClick(urlInput)
+                            urlInput = ""
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                ) {
+                    Text(LocalFeedFlowStrings.current.importFromUrlButton)
+                }
+            }
+        }
+
+        if (savedUrls.isNotEmpty()) {
+            item {
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = Spacing.regular),
+                    thickness = 0.2.dp,
+                    color = Color.Gray,
+                )
+            }
+
+            item {
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = Spacing.regular)
+                        .padding(bottom = Spacing.small),
+                    text = LocalFeedFlowStrings.current.savedOpmlUrlsTitle,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+            }
+
+            items(savedUrls) { url ->
+                SavedUrlItem(
+                    url = url,
+                    onReimportClick = { onReimportFromUrlClick(url) },
+                    onDeleteClick = { onDeleteUrlClick(url) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SavedUrlItem(
+    url: String,
+    onReimportClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = Spacing.regular, vertical = Spacing.small),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = url,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+            maxLines = 1,
+        )
+        Row {
+            TextButton(onClick = onReimportClick) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = LocalFeedFlowStrings.current.reimportButton,
+                )
+            }
+            IconButton(onClick = onDeleteClick) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = LocalFeedFlowStrings.current.deleteUrlButton,
+                )
+            }
         }
     }
 }

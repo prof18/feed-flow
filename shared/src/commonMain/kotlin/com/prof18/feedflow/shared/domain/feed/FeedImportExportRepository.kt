@@ -7,12 +7,17 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.domain.toFeedSource
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.NotValidFeedSources
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
+import com.prof18.feedflow.shared.domain.opml.createOpmlInputFromByteArray
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.statement.readBytes
 import kotlinx.coroutines.withContext
 
 internal class FeedImportExportRepository(
@@ -22,6 +27,8 @@ internal class FeedImportExportRepository(
     private val feedSyncRepository: FeedSyncRepository,
     private val accountsRepository: AccountsRepository,
     private val gReaderRepository: GReaderRepository,
+    private val httpClient: HttpClient,
+    private val settingsRepository: SettingsRepository,
 ) {
     suspend fun addFeedsFromFile(
         opmlInput: OpmlInput,
@@ -65,5 +72,45 @@ internal class FeedImportExportRepository(
         val feeds = databaseHelper.getFeedSources()
         val feedsByCategory = feeds.groupBy { it.category }
         opmlFeedHandler.exportFeed(opmlOutput, feedsByCategory)
+    }
+
+    suspend fun addFeedsFromUrl(
+        url: String,
+        saveUrl: Boolean = true,
+    ): NotValidFeedSources = withContext(dispatcherProvider.io) {
+        val normalizedUrl = normalizeUrl(url)
+
+        val response = httpClient.get(normalizedUrl)
+        val opmlData = response.readBytes()
+
+        val opmlInput = createOpmlInputFromByteArray(opmlData)
+        val result = addFeedsFromFile(opmlInput)
+
+        if (saveUrl) {
+            settingsRepository.addOpmlImportUrl(normalizedUrl)
+        }
+
+        return@withContext result
+    }
+
+    fun getSavedOpmlUrls(): List<String> {
+        return settingsRepository.getOpmlImportUrls()
+    }
+
+    fun removeOpmlUrl(url: String) {
+        settingsRepository.removeOpmlImportUrl(url)
+    }
+
+    private fun normalizeUrl(url: String): String {
+        val trimmedUrl = url.trim()
+        return when {
+            trimmedUrl.startsWith("http://localhost", ignoreCase = true) ||
+                trimmedUrl.startsWith("http://127.0.0.1") -> trimmedUrl
+            trimmedUrl.startsWith("http://", ignoreCase = true) ->
+                trimmedUrl.replaceFirst("http://", "https://")
+            !trimmedUrl.startsWith("https://", ignoreCase = true) ->
+                "https://$trimmedUrl"
+            else -> trimmedUrl
+        }
     }
 }

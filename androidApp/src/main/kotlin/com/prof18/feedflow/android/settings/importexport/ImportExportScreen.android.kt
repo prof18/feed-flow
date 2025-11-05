@@ -50,10 +50,12 @@ fun ImportExportScreen(
     }
 
     val feedImporterState by viewModel.importExportState.collectAsStateWithLifecycle()
+    val savedUrls by viewModel.savedUrls.collectAsStateWithLifecycle()
 
     ImportExportContent(
         navigateBack = navigateBack,
         feedImportExportState = feedImporterState,
+        savedUrls = savedUrls,
         onDoneClick = onDoneClick,
         onRetryClick = {
             viewModel.clearState()
@@ -67,6 +69,17 @@ fun ImportExportScreen(
             val fileName = "feedflow-export_${formattedDate}_$deviceName.opml".lowercase()
             createFileAction.launch(fileName)
         },
+        onImportFromUrlClick = { url ->
+            viewModel.importFeedFromUrl(url)
+            Toast.makeText(context, importingFeedMessage, Toast.LENGTH_SHORT).show()
+        },
+        onReimportFromUrlClick = { url ->
+            viewModel.importFeedFromUrl(url, saveUrl = false)
+            Toast.makeText(context, importingFeedMessage, Toast.LENGTH_SHORT).show()
+        },
+        onDeleteUrlClick = { url ->
+            viewModel.removeOpmlUrl(url)
+        },
     )
 }
 
@@ -78,11 +91,15 @@ private fun ImportExportContentPreview(
     FeedFlowTheme {
         ImportExportContent(
             feedImportExportState = state,
+            savedUrls = listOf("https://example.com/feeds.opml"),
             navigateBack = {},
             onRetryClick = {},
             onDoneClick = {},
             onImportClick = {},
             onExportClick = {},
+            onImportFromUrlClick = {},
+            onReimportFromUrlClick = {},
+            onDeleteUrlClick = {},
         )
     }
 }

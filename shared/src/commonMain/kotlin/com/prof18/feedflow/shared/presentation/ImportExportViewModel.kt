@@ -25,6 +25,17 @@ class ImportExportViewModel internal constructor(
     )
     val importExportState = importerMutableState.asStateFlow()
 
+    private val savedUrlsMutableState: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+    val savedUrls = savedUrlsMutableState.asStateFlow()
+
+    init {
+        loadSavedUrls()
+    }
+
+    private fun loadSavedUrls() {
+        savedUrlsMutableState.update { feedImportExportRepository.getSavedOpmlUrls() }
+    }
+
     fun importFeed(opmlInput: OpmlInput) {
         viewModelScope.launch {
             importerMutableState.update { FeedImportExportState.LoadingImport }
@@ -70,4 +81,30 @@ class ImportExportViewModel internal constructor(
 
     fun getCurrentDateForExport(): String =
         dateFormatter.getCurrentDateForExport()
+
+    fun importFeedFromUrl(url: String, saveUrl: Boolean = true) {
+        viewModelScope.launch {
+            importerMutableState.update { FeedImportExportState.LoadingImport }
+            try {
+                val notValidFeedSources = feedImportExportRepository.addFeedsFromUrl(url, saveUrl)
+                if (saveUrl) {
+                    loadSavedUrls()
+                }
+                importerMutableState.update {
+                    FeedImportExportState.ImportSuccess(
+                        notValidFeedSources = notValidFeedSources.feedSources.toImmutableList(),
+                        feedSourceWithError = notValidFeedSources.feedSourcesWithError.toImmutableList(),
+                    )
+                }
+            } catch (e: Throwable) {
+                logger.e(e) { "Error while importing feed from URL: $url" }
+                importerMutableState.update { FeedImportExportState.Error }
+            }
+        }
+    }
+
+    fun removeOpmlUrl(url: String) {
+        feedImportExportRepository.removeOpmlUrl(url)
+        loadSavedUrls()
+    }
 }

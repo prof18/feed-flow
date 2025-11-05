@@ -67,6 +67,13 @@
     <string name="add_feed_categories_title">Categories</string>
     <string name="action_save">Save</string>
     <string name="import_export_description">FeedFlow supports the import and export of your subscriptions with an OPML file, for better interoperability with the other feed readers</string>
+    <string name="import_from_url_title">Import from URL</string>
+    <string name="import_from_url_hint">Enter OPML URL</string>
+    <string name="import_from_url_button">Import from URL</string>
+    <string name="saved_opml_urls_title">Saved OPML URLs</string>
+    <string name="reimport_button">Re-import</string>
+    <string name="delete_url_button">Delete</string>
+    <string name="no_saved_urls_message">No saved URLs yet</string>
     <string name="no_feed_modal_title">Add a new feed</string>
     <string name="no_feed_modal_message">You can manually add a feed, you can import your subscriptions from another RSS reader, or you can connect an account to sync the data from another device (this functionality is in beta).</string>
     <string name="drawer_title_read">Read</string>

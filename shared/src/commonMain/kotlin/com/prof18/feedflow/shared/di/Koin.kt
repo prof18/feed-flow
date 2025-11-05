@@ -324,6 +324,15 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             gReaderRepository = get(),
             databaseHelper = get(),
             opmlFeedHandler = get(),
+            httpClient = HttpClient {
+                defaultRequest {
+                    headers.append("User-Agent", "FeedFlow/6046 CFNetwork/3860.100.1 Darwin/24.6.0")
+                    headers.append("Accept", "*/*")
+                    headers.append("Accept-Language", "en-US,en;q=0.9")
+                    headers.append("Connection", "keep-alive")
+                }
+            },
+            settingsRepository = get(),
         )
     }
 

@@ -32,6 +32,7 @@ internal class ImportExportScreen(
     override fun Content() {
         val viewModel = desktopViewModel { DI.koin.get<ImportExportViewModel>() }
         val feedImporterState by viewModel.importExportState.collectAsState()
+        val savedUrls by viewModel.savedUrls.collectAsState()
 
         val importDialogTitle = LocalFeedFlowStrings.current.importDialogTitle
         val exportDialogTitle = LocalFeedFlowStrings.current.exportDialogTitle
@@ -83,6 +84,7 @@ internal class ImportExportScreen(
                 navigator.pop()
             },
             feedImportExportState = feedImporterState,
+            savedUrls = savedUrls,
             onDoneClick = {
                 triggerFeedFetch()
                 navigator.pop()
@@ -95,6 +97,15 @@ internal class ImportExportScreen(
             },
             onExportClick = {
                 showExportDialog = true
+            },
+            onImportFromUrlClick = { url ->
+                viewModel.importFeedFromUrl(url)
+            },
+            onReimportFromUrlClick = { url ->
+                viewModel.importFeedFromUrl(url, saveUrl = false)
+            },
+            onDeleteUrlClick = { url ->
+                viewModel.removeOpmlUrl(url)
             },
         )
     }

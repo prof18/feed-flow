@@ -14,11 +14,17 @@ struct ImportExportContent: View {
     var presentationMode
 
     @Binding var feedImportExportState: FeedImportExportState
+    @Binding var savedUrls: [String]
 
     let onImportClick: () -> Void
     let onExportClick: () -> Void
     let onRetryClick: () -> Void
     let onDoneClick: () -> Void
+    let onImportFromUrlClick: (String) -> Void
+    let onReimportFromUrlClick: (String) -> Void
+    let onDeleteUrlClick: (String) -> Void
+
+    @State private var urlInput: String = ""
 
     var body: some View {
         switch onEnum(of: feedImportExportState) {
@@ -82,6 +88,60 @@ struct ImportExportContent: View {
 
                 Button(action: onExportClick) {
                     Label(feedFlowStrings.exportFeedsButton, systemImage: "arrow.up.doc")
+                }
+
+                Section {
+                    Text(feedFlowStrings.importFromUrlTitle)
+                        .font(.headline)
+                } header: {
+                    EmptyView()
+                }
+
+                HStack {
+                    TextField(feedFlowStrings.importFromUrlHint, text: $urlInput)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .autocapitalization(.none)
+                    Button(action: {
+                        if !urlInput.isEmpty {
+                            onImportFromUrlClick(urlInput)
+                            urlInput = ""
+                        }
+                    }) {
+                        Text(feedFlowStrings.importFromUrlButton)
+                    }
+                    .buttonStyle(.bordered)
+                }
+
+                if !savedUrls.isEmpty {
+                    Section {
+                        Text(feedFlowStrings.savedOpmlUrlsTitle)
+                            .font(.headline)
+                    } header: {
+                        EmptyView()
+                    }
+
+                    ForEach(savedUrls, id: \.self) { url in
+                        HStack {
+                            Text(url)
+                                .font(.body)
+                                .lineLimit(1)
+
+                            Spacer()
+
+                            Button(action: {
+                                onReimportFromUrlClick(url)
+                            }) {
+                                Image(systemName: "arrow.clockwise")
+                            }
+
+                            Button(action: {
+                                onDeleteUrlClick(url)
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                            }
+                        }
+                    }
                 }
             }
             Spacer()
@@ -258,19 +318,27 @@ struct ImportExportContent: View {
 #Preview("With error") {
     ImportExportContent(
         feedImportExportState: .constant(feedImportSuccessWithErrorState),
+        savedUrls: .constant(["https://example.com/feeds.opml"]),
         onImportClick: {},
         onExportClick: {},
         onRetryClick: {},
-        onDoneClick: {}
+        onDoneClick: {},
+        onImportFromUrlClick: { _ in },
+        onReimportFromUrlClick: { _ in },
+        onDeleteUrlClick: { _ in }
     )
 }
 
 #Preview {
     ImportExportContent(
         feedImportExportState: .constant(feedImportSuccessState),
+        savedUrls: .constant([]),
         onImportClick: {},
         onExportClick: {},
         onRetryClick: {},
-        onDoneClick: {}
+        onDoneClick: {},
+        onImportFromUrlClick: { _ in },
+        onReimportFromUrlClick: { _ in },
+        onDeleteUrlClick: { _ in }
     )
 }

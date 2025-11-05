@@ -264,9 +264,29 @@ class SettingsRepository(
     fun setDesktopWindowYPositionDp(value: Float) =
         settings.set(SettingsFields.DESKTOP_WINDOW_Y_POSITION_DP.name, value)
 
+    fun getOpmlImportUrls(): List<String> {
+        val urlsString = settings.getStringOrNull(SettingsFields.OPML_IMPORT_URLS.name) ?: return emptyList()
+        return urlsString.split(URL_SEPARATOR).filter { it.isNotBlank() }
+    }
+
+    fun addOpmlImportUrl(url: String) {
+        val currentUrls = getOpmlImportUrls().toMutableList()
+        if (!currentUrls.contains(url)) {
+            currentUrls.add(url)
+            settings.set(SettingsFields.OPML_IMPORT_URLS.name, currentUrls.joinToString(URL_SEPARATOR))
+        }
+    }
+
+    fun removeOpmlImportUrl(url: String) {
+        val currentUrls = getOpmlImportUrls().toMutableList()
+        currentUrls.remove(url)
+        settings.set(SettingsFields.OPML_IMPORT_URLS.name, currentUrls.joinToString(URL_SEPARATOR))
+    }
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
+        const val URL_SEPARATOR = "|||"
     }
 }
 
@@ -300,4 +320,5 @@ internal enum class SettingsFields {
     DESKTOP_WINDOW_HEIGHT_DP,
     DESKTOP_WINDOW_X_POSITION_DP,
     DESKTOP_WINDOW_Y_POSITION_DP,
+    OPML_IMPORT_URLS,
 }

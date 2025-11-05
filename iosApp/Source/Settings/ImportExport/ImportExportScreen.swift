@@ -19,6 +19,7 @@ struct ImportExportScreen: View {
     @StateObject private var vmStoreOwner = VMStoreOwner<ImportExportViewModel>(Deps.shared.getImportExportViewModel())
 
     @State var feedImportExportState: FeedImportExportState = .Idle()
+    @State var savedUrls: [String] = []
     @State private var showFileImporter = false
     @State private var showFileExporter = false
     @State private var exportDocument: ExportDocument?
@@ -32,6 +33,7 @@ struct ImportExportScreen: View {
         NavigationStack {
             ImportExportContent(
                 feedImportExportState: $feedImportExportState,
+                savedUrls: $savedUrls,
                 onImportClick: {
                     showFileImporter = true
                 },
@@ -49,6 +51,15 @@ struct ImportExportScreen: View {
                 onDoneClick: {
                     fetchFeeds()
                     vmStoreOwner.instance.clearState()
+                },
+                onImportFromUrlClick: { url in
+                    vmStoreOwner.instance.importFeedFromUrl(url: url, saveUrl: true)
+                },
+                onReimportFromUrlClick: { url in
+                    vmStoreOwner.instance.importFeedFromUrl(url: url, saveUrl: false)
+                },
+                onDeleteUrlClick: { url in
+                    vmStoreOwner.instance.removeOpmlUrl(url: url)
                 }
             )
             .snackbar(messageQueue: $appState.snackbarQueue)
@@ -84,6 +95,11 @@ struct ImportExportScreen: View {
                             }
                         }
                     }
+                }
+            }
+            .task {
+                for await urls in vmStoreOwner.instance.savedUrls {
+                    self.savedUrls = urls
                 }
             }
             .fileImporter(

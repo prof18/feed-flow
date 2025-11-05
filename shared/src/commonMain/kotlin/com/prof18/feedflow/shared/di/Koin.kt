@@ -42,6 +42,7 @@ import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
@@ -226,6 +227,15 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         BlockedWordsViewModel(
             databaseHelper = get(),
             feedStateRepository = get(),
+        )
+    }
+
+    viewModel {
+        ReaderModeViewModel(
+            settingsRepository = get(),
+            feedActionsRepository = get(),
+            feedItemParserWorker = get(),
+            feedItemContentFileHandler = get(),
         )
     }
 

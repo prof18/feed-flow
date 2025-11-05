@@ -20,7 +20,6 @@ import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
-import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
 import com.prof18.rssparser.RssParserBuilder
@@ -129,15 +128,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     factory<CurrentOS> { CurrentOS.Android }
 
     workerOf(::SyncWorkManager)
-
-    viewModel {
-        ReaderModeViewModel(
-            settingsRepository = get(),
-            feedActionsRepository = get(),
-            feedItemParserWorker = get(),
-            feedItemContentFileHandler = get(),
-        )
-    }
 
     worker {
         FeedDownloadWorker(

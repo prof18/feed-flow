@@ -6,14 +6,20 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
+import com.prof18.feedflow.shared.presentation.MarkdownToHtmlConverter
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.extended.Readability4JExtended
+
+private const val DEFAULT_FONT_SIZE = 16
+private const val MIN_CONTENT_LENGTH = 200
 
 internal class DesktopFeedItemParserWorker(
     private val htmlRetriever: HtmlRetriever,
     private val logger: Logger,
     private val dispatcherProvider: DispatcherProvider,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
+    private val markdownToHtmlConverter: MarkdownToHtmlConverter,
 ) : FeedItemParserWorker {
 
     override suspend fun enqueueParsing(feedItemId: String, url: String) {
@@ -62,16 +68,32 @@ internal class DesktopFeedItemParserWorker(
                 }
 
                 val plainText = article.textContent ?: ""
-                if (plainText.length < 200) {
+                if (plainText.length < MIN_CONTENT_LENGTH) {
                     logger.w { "Content too short (${plainText.length} chars), rejecting: $url" }
                     return@withContext ParsingResult.Error
                 }
 
-                feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, content)
+                // Convert to styled HTML and then to markdown for Desktop
+                val title = article.title
+                val titleToUse = if (title != null && content.contains(title)) {
+                    null
+                } else {
+                    title
+                }
+
+                val styledHtml = getReaderModeStyledHtml(
+                    colors = null,
+                    content = content,
+                    title = titleToUse,
+                    fontSize = DEFAULT_FONT_SIZE,
+                )
+                val markdown = markdownToHtmlConverter.convertToMarkdown(styledHtml)
+
+                feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, markdown)
                 logger.d { "Successfully parsed and cached content for: $url (feedItemId: $feedItemId)" }
 
                 ParsingResult.Success(
-                    htmlContent = content,
+                    htmlContent = markdown,
                     title = article.title,
                     siteName = null,
                 )

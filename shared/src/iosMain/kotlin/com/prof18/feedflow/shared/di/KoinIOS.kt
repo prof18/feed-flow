@@ -185,15 +185,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     } bind FeedItemContentFileHandler::class
 
-    viewModel {
-        ReaderModeViewModel(
-            settingsRepository = get(),
-            feedActionsRepository = get(),
-            feedItemParserWorker = get(),
-            feedItemContentFileHandler = get(),
-        )
-    }
-
     factory {
         SerialFeedFetcherRepository(
             dispatcherProvider = get(),

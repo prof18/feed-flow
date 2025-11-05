@@ -13,6 +13,8 @@ import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
+private const val MIN_CONTENT_LENGTH = 200
+
 internal class FeedItemParser(
     private val htmlRetriever: HtmlRetriever,
     private val appContext: Context,
@@ -81,7 +83,7 @@ internal class FeedItemParser(
                                 val site = jsonResult.optString("site")
                                 val plainText = jsonResult.optString("plainText", "")
 
-                                if (plainText.length < 200) {
+                                if (plainText.length < MIN_CONTENT_LENGTH) {
                                     logger.w { "Content too short (${plainText.length} chars), rejecting" }
                                     onResult(ParsingResult.Error)
                                     return@evaluateJavascript

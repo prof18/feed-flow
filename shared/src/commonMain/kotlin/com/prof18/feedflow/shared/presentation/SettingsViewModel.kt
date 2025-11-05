@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -47,6 +48,7 @@ class SettingsViewModel internal constructor(
                 val leftSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.LEFT)
                 val rightSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.RIGHT)
                 val dateFormat = settingsRepository.getDateFormat()
+                val timeFormat = settingsRepository.getTimeFormat()
                 val feedOrder = settingsRepository.getFeedOrder()
                 val feedLayout = settingsRepository.getFeedLayout()
                 val themeMode = settingsRepository.getThemeMode()
@@ -66,6 +68,7 @@ class SettingsViewModel internal constructor(
                         leftSwipeActionType = leftSwipeAction,
                         rightSwipeActionType = rightSwipeAction,
                         dateFormat = dateFormat,
+                        timeFormat = timeFormat,
                         feedLayout = feedLayout,
                         themeMode = themeMode,
                     )
@@ -186,6 +189,16 @@ class SettingsViewModel internal constructor(
             settingsRepository.setDateFormat(format)
             settingsMutableState.update {
                 it.copy(dateFormat = format)
+            }
+            feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateTimeFormat(format: TimeFormat) {
+        viewModelScope.launch {
+            settingsRepository.setTimeFormat(format)
+            settingsMutableState.update {
+                it.copy(timeFormat = format)
             }
             feedStateRepository.getFeeds()
         }

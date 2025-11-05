@@ -33,6 +33,7 @@ struct SettingsScreen: View {
     @State private var leftSwipeActionType: SwipeActionType = .none
     @State private var rightSwipeActionType: SwipeActionType = .none
     @State private var dateFormat: DateFormat = .normal
+    @State private var timeFormat: TimeFormat = .hours24
     @State private var feedOrder: FeedOrder = .newestFirst
     @State private var feedLayout: FeedLayout = .list
     @State private var themeMode: ThemeMode = .system
@@ -63,6 +64,7 @@ struct SettingsScreen: View {
                     leftSwipeActionType = state.leftSwipeActionType
                     rightSwipeActionType = state.rightSwipeActionType
                     dateFormat = state.dateFormat
+                    timeFormat = state.timeFormat
                     feedOrder = state.feedOrder
                     feedLayout = state.feedLayout
                     themeMode = state.themeMode
@@ -127,6 +129,9 @@ struct SettingsScreen: View {
             .onChange(of: dateFormat) {
                 vmStoreOwner.instance.updateDateFormat(format: dateFormat)
             }
+            .onChange(of: timeFormat) {
+                vmStoreOwner.instance.updateTimeFormat(format: timeFormat)
+            }
             .onChange(of: feedOrder) {
                 vmStoreOwner.instance.updateFeedOrder(feedOrder: feedOrder)
             }
@@ -165,6 +170,7 @@ struct SettingsScreen: View {
                     leftSwipeAction: $leftSwipeActionType,
                     rightSwipeAction: $rightSwipeActionType,
                     dateFormat: $dateFormat,
+                    timeFormat: $timeFormat,
                     feedOrder: $feedOrder,
                     feedLayout: $feedLayout
                 ) { newValue in

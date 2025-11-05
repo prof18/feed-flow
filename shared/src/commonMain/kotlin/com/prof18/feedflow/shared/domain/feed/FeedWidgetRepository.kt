@@ -19,6 +19,7 @@ class FeedWidgetRepository internal constructor(
 ) {
     fun getFeeds(): Flow<ImmutableList<FeedItem>> {
         val dateFormat = settingsRepository.getDateFormat()
+        val timeFormat = settingsRepository.getTimeFormat()
         return databaseHelper.getFeedWidgetItems(pageSize = 15)
             .map { items ->
                 items.map { item ->
@@ -28,6 +29,7 @@ class FeedWidgetRepository internal constructor(
                         hideDescription = false,
                         hideImages = false,
                         dateFormat = dateFormat,
+                        timeFormat = timeFormat,
                     )
                 }.toImmutableList()
             }

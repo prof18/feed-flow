@@ -20,6 +20,7 @@ struct FeedFontSection: View {
     @Binding var leftSwipeAction: SwipeActionType
     @Binding var rightSwipeAction: SwipeActionType
     @Binding var dateFormat: DateFormat
+    @Binding var timeFormat: TimeFormat
     @Binding var feedOrder: FeedOrder
     @Binding var feedLayout: FeedLayout
     let onScaleFactorChange: (Double) -> Void
@@ -122,6 +123,8 @@ struct FeedFontSection: View {
             }
 
             DateFormatSection(dateFormat: $dateFormat)
+
+            TimeFormatSection(timeFormat: $timeFormat)
 
             Picker(selection: $feedOrder) {
                 Text(feedFlowStrings.settingsFeedOrderNewestFirst)

@@ -60,6 +60,7 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.Browser
@@ -76,6 +77,7 @@ import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
 import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
+import com.prof18.feedflow.shared.ui.settings.TimeFormatSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -172,6 +174,9 @@ fun SettingsScreen(
         onDateFormatSelected = { format ->
             settingsViewModel.updateDateFormat(format)
         },
+        onTimeFormatSelected = { format ->
+            settingsViewModel.updateTimeFormat(format)
+        },
         navigateToNotifications = navigateToNotifications,
         onFeedOrderSelected = { order ->
             settingsViewModel.updateFeedOrder(order)
@@ -212,6 +217,7 @@ private fun SettingsScreenContent(
     onCrashReportingEnabled: (Boolean) -> Unit,
     onSwipeActionSelected: (SwipeDirection, SwipeActionType) -> Unit,
     onDateFormatSelected: (DateFormat) -> Unit,
+    onTimeFormatSelected: (TimeFormat) -> Unit,
     navigateToNotifications: () -> Unit,
     onFeedOrderSelected: (FeedOrder) -> Unit,
     setFeedLayout: (FeedLayout) -> Unit,
@@ -397,6 +403,13 @@ private fun SettingsScreenContent(
                 DateFormatSelector(
                     currentFormat = settingsState.dateFormat,
                     onFormatSelected = onDateFormatSelected,
+                )
+            }
+
+            item {
+                TimeFormatSelector(
+                    currentFormat = settingsState.timeFormat,
+                    onFormatSelected = onTimeFormatSelected,
                 )
             }
 
@@ -803,6 +816,7 @@ private fun SettingsScreenPreview() {
             onCrashReportingEnabled = {},
             onSwipeActionSelected = { _, _ -> },
             onDateFormatSelected = {},
+            onTimeFormatSelected = {},
             navigateToNotifications = {},
             onFeedOrderSelected = {},
             setFeedLayout = {},

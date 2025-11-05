@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
@@ -53,6 +54,7 @@ class SearchViewModel internal constructor(
 
     private val isRemoveTitleFromDescriptionEnabled: Boolean = settingsRepository.getRemoveTitleFromDescription()
     private val dateFormat: DateFormat = settingsRepository.getDateFormat()
+    private val timeFormat: TimeFormat = settingsRepository.getTimeFormat()
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 
@@ -143,6 +145,7 @@ class SearchViewModel internal constructor(
                                     dateFormatter = dateFormatter,
                                     removeTitleFromDesc = isRemoveTitleFromDescriptionEnabled,
                                     dateFormat = dateFormat,
+                                    timeFormat = timeFormat,
                                 )
                             }.toImmutableList(),
                         )

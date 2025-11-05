@@ -42,6 +42,7 @@ class SettingsViewModel internal constructor(
                 val isRemoveTitleFromDescriptionEnabled = settingsRepository.getRemoveTitleFromDescription()
                 val isHideDescriptionEnabled = settingsRepository.getHideDescription()
                 val isHideImagesEnabled = settingsRepository.getHideImages()
+                val isHideDateEnabled = settingsRepository.getHideDate()
                 val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
                 val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
                 val leftSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.LEFT)
@@ -60,6 +61,7 @@ class SettingsViewModel internal constructor(
                         isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
                         isHideDescriptionEnabled = isHideDescriptionEnabled,
                         isHideImagesEnabled = isHideImagesEnabled,
+                        isHideDateEnabled = isHideDateEnabled,
                         autoDeletePeriod = autoDeletePeriod,
                         isCrashReportingEnabled = isCrashReportingEnabled,
                         syncPeriod = syncPeriod,
@@ -147,6 +149,18 @@ class SettingsViewModel internal constructor(
         settingsMutableState.update {
             it.copy(
                 isHideImagesEnabled = value,
+            )
+        }
+        viewModelScope.launch {
+            feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateHideDate(value: Boolean) {
+        settingsRepository.setHideDate(value)
+        settingsMutableState.update {
+            it.copy(
+                isHideDateEnabled = value,
             )
         }
         viewModelScope.launch {

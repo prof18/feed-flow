@@ -14,6 +14,7 @@ internal fun SelectFeeds.toFeedItem(
     removeTitleFromDesc: Boolean,
     hideDescription: Boolean,
     hideImages: Boolean,
+    hideDate: Boolean,
     dateFormat: DateFormat,
 ) = FeedItem(
     id = url_hash,
@@ -53,7 +54,7 @@ internal fun SelectFeeds.toFeedItem(
         fetchFailed = feed_source_fetch_failed,
     ),
     pubDateMillis = pub_date,
-    dateString = if (pub_date != null) {
+    dateString = if (pub_date != null && !hideDate) {
         dateFormatter.formatDateForFeed(
             millis = requireNotNull(pub_date),
             dateFormat = dateFormat,

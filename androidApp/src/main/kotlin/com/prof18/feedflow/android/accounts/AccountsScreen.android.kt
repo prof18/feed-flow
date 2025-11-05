@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.accounts.dropbox.DropboxSyncActivity
+import com.prof18.feedflow.android.accounts.googledrive.GoogleDriveSyncActivity
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.ui.accounts.AccountsContent
 import kotlinx.collections.immutable.toPersistentList
@@ -28,6 +29,11 @@ internal fun AccountsScreen(
         onDropboxCLick = {
             context.startActivity(
                 Intent(context, DropboxSyncActivity::class.java),
+            )
+        },
+        onGoogleDriveClick = {
+            context.startActivity(
+                Intent(context, GoogleDriveSyncActivity::class.java),
             )
         },
         onICloudClick = {},

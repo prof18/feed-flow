@@ -38,6 +38,7 @@ import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
+import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -314,6 +315,15 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         FreshRssSyncViewModel(
             gReaderRepository = get(),
+            accountsRepository = get(),
+            dateFormatter = get(),
+            feedStateRepository = get(),
+        )
+    }
+
+    viewModel {
+        FeedbinSyncViewModel(
+            feedbinRepository = get(),
             accountsRepository = get(),
             dateFormatter = get(),
             feedStateRepository = get(),

@@ -14,6 +14,7 @@ import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -36,6 +37,7 @@ class FeedFetcherRepository internal constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val feedStateRepository: FeedStateRepository,
     private val gReaderRepository: GReaderRepository,
+    private val feedbinRepository: FeedbinRepository,
     private val databaseHelper: DatabaseHelper,
     private val feedSyncRepository: FeedSyncRepository,
     private val settingsRepository: SettingsRepository,
@@ -59,6 +61,12 @@ class FeedFetcherRepository internal constructor(
             when {
                 gReaderRepository.isAccountSet() -> {
                     fetchFeedsWithGReader()
+                    if (!isFetchingFromBackground) {
+                        databaseHelper.markFeedItemsAsNotified()
+                    }
+                }
+                feedbinRepository.isAccountSet() -> {
+                    fetchFeedsWithFeedbin()
                     if (!isFetchingFromBackground) {
                         databaseHelper.markFeedItemsAsNotified()
                     }
@@ -87,6 +95,25 @@ class FeedFetcherRepository internal constructor(
             feedStateRepository.emitUpdateStatus(NoFeedSourcesStatus)
         } else {
             gReaderRepository.sync()
+                .onErrorSuspend {
+                    feedStateRepository.emitErrorState(SyncError(FeedSyncError.SyncFeedsFailed))
+                }
+        }
+        // If the sync is skipped quickly, sometimes the loading spinner stays out
+        delay(timeMillis = 50)
+        isFeedSyncDone = true
+        updateRefreshCount()
+        // After fetching new feeds, delete old ones based on user settings
+        cleanOldFeeds()
+        feedStateRepository.getFeeds()
+    }
+
+    private suspend fun fetchFeedsWithFeedbin() {
+        val feedSourceUrls = databaseHelper.getFeedSources()
+        if (feedSourceUrls.isEmpty()) {
+            feedStateRepository.emitUpdateStatus(NoFeedSourcesStatus)
+        } else {
+            feedbinRepository.sync()
                 .onErrorSuspend {
                     feedStateRepository.emitErrorState(SyncError(FeedSyncError.SyncFeedsFailed))
                 }

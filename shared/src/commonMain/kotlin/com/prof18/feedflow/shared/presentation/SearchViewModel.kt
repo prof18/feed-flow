@@ -52,6 +52,7 @@ class SearchViewModel internal constructor(
     val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
 
     private val isRemoveTitleFromDescriptionEnabled: Boolean = settingsRepository.getRemoveTitleFromDescription()
+    private val hideDate: Boolean = settingsRepository.getHideDate()
     private val dateFormat: DateFormat = settingsRepository.getDateFormat()
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
@@ -141,6 +142,7 @@ class SearchViewModel internal constructor(
                                 feedItem.toFeedItem(
                                     dateFormatter = dateFormatter,
                                     removeTitleFromDesc = isRemoveTitleFromDescriptionEnabled,
+                                    hideDate = hideDate,
                                     dateFormat = dateFormat,
                                 )
                             }.toImmutableList(),

@@ -30,6 +30,7 @@ struct SettingsScreen: View {
     @State private var isRemoveTitleFromDescriptionEnabled = false
     @State private var isHideDescriptionEnabled = false
     @State private var isHideImagesEnabled = false
+    @State private var isHideDateEnabled = false
     @State private var autoDeletePeriod: AutoDeletePeriod = .disabled
     @State private var isCrashReportingEnabled = true
     @State private var leftSwipeActionType: SwipeActionType = .none
@@ -62,6 +63,7 @@ struct SettingsScreen: View {
                     isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
                     isHideDescriptionEnabled = state.isHideDescriptionEnabled
                     isHideImagesEnabled = state.isHideImagesEnabled
+                    isHideDateEnabled = state.isHideDateEnabled
                     autoDeletePeriod = state.autoDeletePeriod
                     isCrashReportingEnabled = state.isCrashReportingEnabled
                     leftSwipeActionType = state.leftSwipeActionType
@@ -113,6 +115,9 @@ struct SettingsScreen: View {
                 } else {
                     imageUrl = "https://lipsum.app/200x200"
                 }
+            }
+            .onChange(of: isHideDateEnabled) {
+                vmStoreOwner.instance.updateHideDate(value: isHideDateEnabled)
             }
             .onChange(of: autoDeletePeriod) {
                 vmStoreOwner.instance.updateAutoDeletePeriod(period: autoDeletePeriod)
@@ -173,6 +178,7 @@ struct SettingsScreen: View {
                     scaleFactor: $scaleFactor,
                     isHideDescriptionEnabled: $isHideDescriptionEnabled,
                     isHideImagesEnabled: $isHideImagesEnabled,
+                    isHideDateEnabled: $isHideDateEnabled,
                     isRemoveTitleFromDescriptionEnabled: $isRemoveTitleFromDescriptionEnabled,
                     leftSwipeAction: $leftSwipeActionType,
                     rightSwipeAction: $rightSwipeActionType,

@@ -18,6 +18,7 @@ data class SettingsState(
     val isRemoveTitleFromDescriptionEnabled: Boolean = false,
     val isHideDescriptionEnabled: Boolean = false,
     val isHideImagesEnabled: Boolean = false,
+    val isHideDateEnabled: Boolean = false,
     val autoDeletePeriod: AutoDeletePeriod = AutoDeletePeriod.DISABLED,
     val isCrashReportingEnabled: Boolean = true,
     val syncPeriod: SyncPeriod = SyncPeriod.ONE_HOUR,

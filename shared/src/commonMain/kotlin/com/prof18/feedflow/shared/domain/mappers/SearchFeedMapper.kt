@@ -12,6 +12,7 @@ import com.prof18.feedflow.shared.utils.sanitizeUrl
 internal fun Search.toFeedItem(
     dateFormatter: DateFormatter,
     removeTitleFromDesc: Boolean,
+    hideDate: Boolean,
     dateFormat: DateFormat,
 ) = FeedItem(
     id = url_hash,
@@ -51,7 +52,7 @@ internal fun Search.toFeedItem(
         fetchFailed = feed_source_fetch_failed,
     ),
     pubDateMillis = pub_date,
-    dateString = if (pub_date != null) {
+    dateString = if (pub_date != null && !hideDate) {
         @Suppress("RedundantRequireNotNullCall")
         // It's required because the variables come from another module
         dateFormatter.formatDateForFeed(

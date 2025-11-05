@@ -76,6 +76,7 @@ import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.FeedListFontSettings
+import com.prof18.feedflow.shared.ui.settings.HideDateSwitch
 import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
 import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
 import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
@@ -161,6 +162,9 @@ fun SettingsScreen(
         setHideImages = { enabled ->
             settingsViewModel.updateHideImages(enabled)
         },
+        setHideDate = { enabled ->
+            settingsViewModel.updateHideDate(enabled)
+        },
         updateFontScale = { newFontSize ->
             settingsViewModel.updateFontScale(newFontSize)
         },
@@ -222,6 +226,7 @@ private fun SettingsScreenContent(
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     setHideDescription: (Boolean) -> Unit,
     setHideImages: (Boolean) -> Unit,
+    setHideDate: (Boolean) -> Unit,
     updateFontScale: (Int) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
@@ -414,6 +419,13 @@ private fun SettingsScreenContent(
                 HideImagesSwitch(
                     isHideImagesEnabled = settingsState.isHideImagesEnabled,
                     setHideImages = setHideImages,
+                )
+            }
+
+            item {
+                HideDateSwitch(
+                    isHideDateEnabled = settingsState.isHideDateEnabled,
+                    setHideDate = setHideDate,
                 )
             }
 

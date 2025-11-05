@@ -18,6 +18,9 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
+import com.prof18.feedflow.feedsync.lan.LanSyncRepository
+import com.prof18.feedflow.feedsync.lan.LanSyncServer
+import com.prof18.feedflow.feedsync.lan.LanSyncSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +42,9 @@ internal class FeedSyncJvmWorker(
     private val dropboxSettings: DropboxSettings,
     private val accountsRepository: AccountsRepository,
     private val iCloudSettings: ICloudSettings,
+    private val lanSyncRepository: LanSyncRepository,
+    private val lanSyncServer: LanSyncServer,
+    private val lanSyncSettings: LanSyncSettings,
 ) : FeedSyncWorker {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -116,6 +122,23 @@ internal class FeedSyncJvmWorker(
                 }
             }
 
+            SyncAccounts.LAN -> {
+                lanSyncRepository.initialize()
+                val deviceId = lanSyncSettings.getDeviceId()
+                if (deviceId != null) {
+                    val deviceName = lanSyncSettings.getDeviceName() ?: "FeedFlow Device"
+                    val port = lanSyncSettings.getServerPort()
+
+                    if (!lanSyncServer.isRunning()) {
+                        lanSyncServer.start()
+                    }
+
+                    lanSyncRepository.discoveryService.advertiseService(deviceId, deviceName, port)
+                    lanSyncRepository.updateLocalTimestamp()
+                    logger.d { "LAN sync upload completed - server running and advertising" }
+                }
+            }
+
             SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS -> {
                 // Do nothing
             }
@@ -185,6 +208,44 @@ internal class FeedSyncJvmWorker(
                     }
                 }
             }
+            SyncAccounts.LAN -> {
+                val devices = mutableListOf<com.prof18.feedflow.feedsync.lan.LanDevice>()
+                lanSyncRepository.getDiscoveredDevices().collect { discoveredDevices ->
+                    devices.clear()
+                    devices.addAll(discoveredDevices)
+                    return@collect
+                }
+
+                if (devices.isEmpty()) {
+                    logger.d { "No LAN devices discovered" }
+                    return SyncResult.Success
+                }
+
+                val latestDevice = devices.maxByOrNull {
+                    lanSyncRepository.syncClient.fetchMetadata(it)?.timestamp ?: 0L
+                }
+
+                if (latestDevice == null) {
+                    logger.d { "No device with valid metadata found" }
+                    return SyncResult.Success
+                }
+
+                when (val result = lanSyncRepository.syncWithDevice(latestDevice)) {
+                    is LanSyncRepository.SyncResult.Success -> {
+                        logger.d { "LAN sync download successful" }
+                        SyncResult.Success
+                    }
+                    is LanSyncRepository.SyncResult.UpToDate -> {
+                        logger.d { "Local data is up-to-date" }
+                        SyncResult.Success
+                    }
+                    is LanSyncRepository.SyncResult.Failure -> {
+                        logger.e { "LAN sync download failed: ${result.message}" }
+                        SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
+                    }
+                }
+            }
+
             SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS -> {
                 // Do nothing
                 logger.d { "current sync account local" }

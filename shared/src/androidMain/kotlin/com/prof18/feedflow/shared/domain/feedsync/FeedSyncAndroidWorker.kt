@@ -18,11 +18,15 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
+import com.prof18.feedflow.feedsync.lan.LanSyncRepository
+import com.prof18.feedflow.feedsync.lan.LanSyncServer
+import com.prof18.feedflow.feedsync.lan.LanSyncSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -40,6 +44,10 @@ internal class FeedSyncAndroidWorker(
     private val dispatcherProvider: DispatcherProvider,
     private val dropboxSettings: DropboxSettings,
     private val settingsRepository: SettingsRepository,
+    private val accountsRepository: AccountsRepository,
+    private val lanSyncRepository: LanSyncRepository,
+    private val lanSyncServer: LanSyncServer,
+    private val lanSyncSettings: LanSyncSettings,
 ) : FeedSyncWorker {
 
     override suspend fun uploadImmediate() {
@@ -63,49 +71,124 @@ internal class FeedSyncAndroidWorker(
     }
 
     internal suspend fun performUpload(): SyncResult = withContext(dispatcherProvider.io) {
-        restoreDropboxClient()
-
         try {
             feedSyncer.populateSyncDbIfEmpty()
             feedSyncer.updateFeedItemsToSyncDatabase()
             feedSyncer.closeDB()
 
-            val databaseFile = generateDatabaseFile()
-                ?: return@withContext SyncResult.General(SyncUploadError.DatabaseFileGeneration)
-            val dropboxUploadParam = DropboxUploadParam(
-                path = "/${getDatabaseNameWithExtension()}",
-                file = databaseFile,
-            )
-            dropboxDataSource.performUpload(dropboxUploadParam)
-            dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
-            logger.d { "Upload to dropbox successfully" }
+            accountSpecificUpload()
+
             emitSuccessMessage()
             settingsRepository.setIsSyncUploadRequired(false)
             return@withContext SyncResult.Success
         } catch (e: Exception) {
-            logger.e("Upload to dropbox failed", e)
+            logger.e("Upload failed", e)
             emitErrorMessage(SyncUploadError.DropboxUploadFailed)
             return@withContext SyncResult.General(SyncUploadError.DropboxUploadFailed)
         }
     }
 
+    private suspend fun accountSpecificUpload() =
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.DROPBOX -> {
+                restoreDropboxClient()
+                val databaseFile = generateDatabaseFile()
+                    ?: throw Exception("Database file generation failed")
+                val dropboxUploadParam = DropboxUploadParam(
+                    path = "/${getDatabaseNameWithExtension()}",
+                    file = databaseFile,
+                )
+                dropboxDataSource.performUpload(dropboxUploadParam)
+                dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+                logger.d { "Upload to dropbox successfully" }
+            }
+
+            SyncAccounts.LAN -> {
+                lanSyncRepository.initialize()
+                val deviceId = lanSyncSettings.getDeviceId()
+                    ?: throw Exception("Device ID not set")
+                val deviceName = lanSyncSettings.getDeviceName() ?: "FeedFlow Device"
+                val port = lanSyncSettings.getServerPort()
+
+                if (!lanSyncServer.isRunning()) {
+                    lanSyncServer.start()
+                }
+
+                lanSyncRepository.discoveryService.advertiseService(deviceId, deviceName, port)
+                lanSyncRepository.updateLocalTimestamp()
+                logger.d { "LAN sync upload completed - server running and advertising" }
+            }
+
+            else -> {
+                // Do nothing
+            }
+        }
+
     override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
-        val databaseLocalPath = databasePath()
-        val dropboxDownloadParam = DropboxDownloadParam(
-            path = "/${getDatabaseNameWithExtension()}",
-            outputStream = FileOutputStream(databaseLocalPath),
-        )
-
-        restoreDropboxClient()
-
         return@withContext try {
             feedSyncer.closeDB()
-            dropboxDataSource.performDownload(dropboxDownloadParam)
-            dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
-            SyncResult.Success
+            accountSpecificDownload()
         } catch (e: Exception) {
-            logger.e("Download from dropbox failed", e)
+            logger.e("Download failed", e)
             SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
+        }
+    }
+
+    private suspend fun accountSpecificDownload(): SyncResult {
+        return when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.DROPBOX -> {
+                val databaseLocalPath = databasePath()
+                val dropboxDownloadParam = DropboxDownloadParam(
+                    path = "/${getDatabaseNameWithExtension()}",
+                    outputStream = FileOutputStream(databaseLocalPath),
+                )
+                restoreDropboxClient()
+                dropboxDataSource.performDownload(dropboxDownloadParam)
+                dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+                SyncResult.Success
+            }
+
+            SyncAccounts.LAN -> {
+                val devices = mutableListOf<com.prof18.feedflow.feedsync.lan.LanDevice>()
+                lanSyncRepository.getDiscoveredDevices().collect { discoveredDevices ->
+                    devices.clear()
+                    devices.addAll(discoveredDevices)
+                    return@collect
+                }
+
+                if (devices.isEmpty()) {
+                    logger.d { "No LAN devices discovered" }
+                    return SyncResult.Success
+                }
+
+                val latestDevice = devices.maxByOrNull {
+                    lanSyncRepository.syncClient.fetchMetadata(it)?.timestamp ?: 0L
+                }
+
+                if (latestDevice == null) {
+                    logger.d { "No device with valid metadata found" }
+                    return SyncResult.Success
+                }
+
+                when (val result = lanSyncRepository.syncWithDevice(latestDevice)) {
+                    is LanSyncRepository.SyncResult.Success -> {
+                        logger.d { "LAN sync download successful" }
+                        SyncResult.Success
+                    }
+                    is LanSyncRepository.SyncResult.UpToDate -> {
+                        logger.d { "Local data is up-to-date" }
+                        SyncResult.Success
+                    }
+                    is LanSyncRepository.SyncResult.Failure -> {
+                        logger.e { "LAN sync download failed: ${result.message}" }
+                        SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
+                    }
+                }
+            }
+
+            SyncAccounts.LOCAL, SyncAccounts.ICLOUD, SyncAccounts.FRESH_RSS -> {
+                SyncResult.Success
+            }
         }
     }
 

@@ -200,6 +200,28 @@ internal class FeedStateRepository(
         }
     }
 
+    fun getItemsAbove(targetItemId: String): List<FeedItemId> {
+        val currentItems = feedState.value
+        val targetIndex = currentItems.indexOfFirst { it.id == targetItemId }
+
+        if (targetIndex == -1) return emptyList()
+
+        return currentItems.subList(0, targetIndex)
+            .filter { !it.isRead }
+            .map { FeedItemId(it.id) }
+    }
+
+    fun getItemsBelow(targetItemId: String): List<FeedItemId> {
+        val currentItems = feedState.value
+        val targetIndex = currentItems.indexOfFirst { it.id == targetItemId }
+
+        if (targetIndex == -1) return emptyList()
+
+        return currentItems.subList(targetIndex + 1, currentItems.size)
+            .filter { !it.isRead }
+            .map { FeedItemId(it.id) }
+    }
+
     fun getCurrentFeedFilter(): FeedFilter =
         currentFeedFilter.value
 

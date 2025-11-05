@@ -77,6 +77,8 @@
     <string name="drawer_title_bookmarks">Bookmarks</string>
     <string name="menu_mark_as_read">Mark as read</string>
     <string name="menu_mark_as_unread">Mark as unread</string>
+    <string name="menu_mark_all_above_as_read">Mark all above as read</string>
+    <string name="menu_mark_all_below_as_read">Mark all below as read</string>
     <string name="menu_open_comments">Open comments</string>
     <string name="menu_share">Share</string>
     <string name="menu_share_comments">Share comments</string>

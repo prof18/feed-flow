@@ -46,6 +46,8 @@ internal fun FeedItemView(
     disableClick: Boolean = false,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
     onShareClick: (FeedItemUrlTitle) -> Unit,
+    onMarkAllAboveAsRead: (String) -> Unit = {},
+    onMarkAllBelowAsRead: (String) -> Unit = {},
 ) {
     var showItemMenu by remember {
         mutableStateOf(
@@ -137,6 +139,8 @@ internal fun FeedItemView(
             onCommentClick = onCommentClick,
             onShareClick = onShareClick,
             onOpenFeedSettings = onOpenFeedSettings,
+            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
         )
     }
 }

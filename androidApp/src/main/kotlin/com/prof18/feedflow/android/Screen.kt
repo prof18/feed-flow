@@ -38,6 +38,9 @@ data object Accounts
 data object FreshRssSync
 
 @Serializable
+data object FeedbinSync
+
+@Serializable
 data class EditFeed(
     val id: String,
     val url: String,

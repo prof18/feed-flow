@@ -15,6 +15,7 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun AccountsScreen(
     navigateBack: () -> Unit,
     navigateToFreshRssSync: () -> Unit,
+    navigateToFeedbinSync: () -> Unit,
 ) {
     val context = LocalContext.current
     val viewModel = koinViewModel<AccountsViewModel>()
@@ -32,5 +33,6 @@ internal fun AccountsScreen(
         },
         onICloudClick = {},
         onFreshRssClick = navigateToFreshRssSync,
+        onFeedbinClick = navigateToFeedbinSync,
     )
 }

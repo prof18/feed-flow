@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.shared.ui.accounts.icons.Cloud
 import com.prof18.feedflow.shared.ui.accounts.icons.Dropbox
+import com.prof18.feedflow.shared.ui.accounts.icons.Feedbin
 import com.prof18.feedflow.shared.ui.accounts.icons.FreshRSS
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -39,6 +40,7 @@ fun AccountsContent(
     onICloudClick: () -> Unit,
     modifier: Modifier = Modifier,
     onFreshRssClick: () -> Unit,
+    onFeedbinClick: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -98,6 +100,7 @@ fun AccountsContent(
                                     { }
                                 }
                                 SyncAccounts.FRESH_RSS -> onFreshRssClick
+                                SyncAccounts.FEEDBIN -> onFeedbinClick
                             },
                         )
 
@@ -123,6 +126,7 @@ private fun SyncAccounts.getTitle() =
         SyncAccounts.LOCAL -> "Local"
         SyncAccounts.ICLOUD -> "iCloud"
         SyncAccounts.FRESH_RSS -> "FreshRSS"
+        SyncAccounts.FEEDBIN -> "Feedbin"
     }
 
 private fun SyncAccounts.getIcon() =
@@ -131,6 +135,7 @@ private fun SyncAccounts.getIcon() =
         SyncAccounts.ICLOUD -> Cloud
         SyncAccounts.LOCAL -> Dropbox
         SyncAccounts.FRESH_RSS -> FreshRSS
+        SyncAccounts.FEEDBIN -> Feedbin
     }
 
 @Composable

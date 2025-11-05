@@ -35,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.prof18.feedflow.android.accounts.AccountsScreen
+import com.prof18.feedflow.android.accounts.feedbin.FeedbinSyncScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
 import com.prof18.feedflow.android.base.BaseThemeActivity
@@ -364,6 +365,9 @@ class MainActivity : BaseThemeActivity() {
                     navigateToFreshRssSync = {
                         navController.navigate(FreshRssSync)
                     },
+                    navigateToFeedbinSync = {
+                        navController.navigate(FeedbinSync)
+                    },
                 )
             }
 
@@ -385,6 +389,14 @@ class MainActivity : BaseThemeActivity() {
 
             composable<FreshRssSync> {
                 FreshRssSyncScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<FeedbinSync> {
+                FeedbinSyncScreen(
                     navigateBack = {
                         navController.popBackStack()
                     },

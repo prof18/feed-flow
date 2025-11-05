@@ -5,7 +5,14 @@ fun getReaderModeStyledHtml(
     colors: ReaderColors?,
     content: String,
     fontSize: Int,
+    title: String? = null, // This is added only on desktop
 ): String {
+    val titleTag = if (title != null) {
+        "<h1>$title</h1>"
+    } else {
+        ""
+    }
+
     // language=html
     return """
     <html lang="en" dir='auto'>
@@ -16,6 +23,7 @@ fun getReaderModeStyledHtml(
     </style>
     </head>
     <body>
+    $titleTag
     <div id="container">
         <div id="__content">
             $content

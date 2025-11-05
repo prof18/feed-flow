@@ -129,6 +129,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dispatcherProvider = get(),
             feedItemContentFileHandler = get(),
             markdownToHtmlConverter = get(),
+            settingsRepository = get(),
         )
     }
 

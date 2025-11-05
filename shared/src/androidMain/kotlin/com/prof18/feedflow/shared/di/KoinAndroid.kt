@@ -16,6 +16,7 @@ import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
+import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
@@ -82,6 +83,19 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("DropboxSyncViewModel"),
             dropboxSettings = get(),
             dropboxDataSource = get(),
+            feedSyncRepository = get(),
+            dateFormatter = get(),
+            feedFetcherRepository = get(),
+            feedSyncMessageQueue = get(),
+            accountsRepository = get(),
+        )
+    }
+
+    viewModel {
+        GoogleDriveSyncViewModel(
+            logger = getWith("GoogleDriveSyncViewModel"),
+            googleDriveSettings = get(),
+            googleDriveDataSource = get(),
             feedSyncRepository = get(),
             dateFormatter = get(),
             feedFetcherRepository = get(),

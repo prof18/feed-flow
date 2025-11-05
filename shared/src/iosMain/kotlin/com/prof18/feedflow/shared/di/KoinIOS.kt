@@ -32,6 +32,7 @@ import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
+import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
@@ -171,6 +172,19 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
+    viewModel {
+        GoogleDriveSyncViewModel(
+            logger = getWith("GoogleDriveSyncViewModel"),
+            googleDriveSettings = get(),
+            googleDriveDataSource = get(),
+            feedSyncRepository = get(),
+            dateFormatter = get(),
+            feedFetcherRepository = get(),
+            feedSyncMessageQueue = get(),
+            accountsRepository = get(),
+        )
+    }
+
     factory<CurrentOS> { CurrentOS.Ios }
 
     viewModel {
@@ -221,6 +235,7 @@ object Deps : KoinComponent {
     fun getAccountsViewModel() = getKoin().get<AccountsViewModel>()
     fun getDropboxDataSource() = getKoin().get<DropboxDataSource>()
     fun getDropboxSyncViewModel() = getKoin().get<DropboxSyncViewModel>()
+    fun getGoogleDriveSyncViewModel() = getKoin().get<GoogleDriveSyncViewModel>()
     fun getFeedSyncRepository() = getKoin().get<FeedSyncRepository>()
     fun getICloudSyncViewModel() = getKoin().get<ICloudSyncViewModel>()
     fun getReaderModeViewModel() = getKoin().get<ReaderModeViewModel>()

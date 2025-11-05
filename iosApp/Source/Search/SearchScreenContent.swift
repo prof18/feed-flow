@@ -16,6 +16,7 @@ struct SearchScreenContent: View {
 
     @State private var isPresented = true
 
+    let readerModeViewModel: ReaderModeViewModel
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
 
@@ -51,9 +52,17 @@ struct SearchScreenContent: View {
             ForEach(Array(state.items.enumerated()), id: \.element) { index, feedItem in
                 Button(action: {
                            if browserSelector.openReaderMode(link: feedItem.url) {
-                               self.appState.navigate(
-                                   route: CommonViewRoute.readerMode(feedItem: feedItem)
+                               let urlInfo = FeedItemUrlInfo(
+                                   id: feedItem.id,
+                                   url: feedItem.url,
+                                   title: feedItem.title,
+                                   openOnlyOnBrowser: false,
+                                   isBookmarked: feedItem.isBookmarked,
+                                   linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
+                                   commentsUrl: feedItem.commentsUrl
                                )
+                               readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+                               self.appState.navigate(route: CommonViewRoute.readerMode)
                            } else if browserSelector.openInAppBrowser() {
                                if let url = URL(string: feedItem.url) {
                                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))

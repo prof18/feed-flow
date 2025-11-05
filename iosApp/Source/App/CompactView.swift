@@ -36,6 +36,7 @@ struct CompactView: View {
 
     @State var indexHolder: HomeListIndexHolder
     let homeViewModel: HomeViewModel
+    let readerModeViewModel: ReaderModeViewModel
 
     @State private var feedSourceToEdit: FeedSource?
 
@@ -104,7 +105,8 @@ struct CompactView: View {
                         showSettings: .constant(false),
                         selectedDrawerItem: $selectedDrawerItem,
                         columnVisibility: .constant(.automatic),
-                        homeViewModel: homeViewModel
+                        homeViewModel: homeViewModel,
+                        readerModeViewModel: readerModeViewModel
                     ) {
                         // Handle by the view for the compact view
                     }
@@ -113,21 +115,11 @@ struct CompactView: View {
             }
             .navigationDestination(for: CommonViewRoute.self) { route in
                 switch route {
-                case let .readerMode(feedItem):
-                    ReaderModeScreen(
-                        feedItemUrlInfo: FeedItemUrlInfo(
-                            id: feedItem.id,
-                            url: feedItem.url,
-                            title: feedItem.title,
-                            openOnlyOnBrowser: false,
-                            isBookmarked: feedItem.isBookmarked,
-                            linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
-                            commentsUrl: feedItem.commentsUrl
-                        )
-                    )
+                case .readerMode:
+                    ReaderModeScreen(viewModel: readerModeViewModel)
 
                 case .search:
-                    SearchScreen()
+                    SearchScreen(readerModeViewModel: readerModeViewModel)
 
                 case .accounts:
                     AccountsScreen()
@@ -136,7 +128,7 @@ struct CompactView: View {
                     DropboxSyncScreen()
 
                 case let .deepLinkFeed(feedId):
-                    DeepLinkFeedScreen(feedId: feedId)
+                    DeepLinkFeedScreen(feedId: feedId, readerModeViewModel: readerModeViewModel)
 
                 case let .inAppBrowser(url):
                     SFSafariView(url: url)

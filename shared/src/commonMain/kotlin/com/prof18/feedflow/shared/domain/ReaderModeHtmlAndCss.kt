@@ -92,6 +92,12 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 800;
 }
 
+body > h1 {
+    padding: 0 16px;
+    margin: 16px auto;
+    max-width: 700px;
+}
+
 img, iframe, object, video {
     max-width: 100%;
     height: auto;

@@ -175,6 +175,10 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
             canGoForward: webview.canGoForward
         )
     }
+    
+    func evaluateJavaScript(_ script: String) {
+        webview.evaluateJavaScript(script, completionHandler: nil)
+    }
 
     // MARK: - File Upload Prevention
 

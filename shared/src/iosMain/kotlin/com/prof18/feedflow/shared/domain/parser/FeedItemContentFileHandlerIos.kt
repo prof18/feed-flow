@@ -24,6 +24,20 @@ internal class FeedItemContentFileHandlerIos(
     override suspend fun saveFeedItemContentToFile(feedItemId: String, content: String) {
         withContext(dispatcherProvider.io) {
             try {
+                // Ensure articles directory exists
+                val articlesPath = getArticlesFolderPath()
+                if (articlesPath != null) {
+                    val fileManager = NSFileManager.defaultManager
+                    if (!fileManager.fileExistsAtPath(articlesPath)) {
+                        fileManager.createDirectoryAtPath(
+                            path = articlesPath,
+                            withIntermediateDirectories = true,
+                            attributes = null,
+                            error = null,
+                        )
+                    }
+                }
+
                 val path = getArticleFilePath(feedItemId)
 
                 @Suppress("CAST_NEVER_SUCCEEDS")

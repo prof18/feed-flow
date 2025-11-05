@@ -16,20 +16,11 @@ struct DeepLinkFeedScreen: View {
 
     @State private var state: DeeplinkFeedState = .Loading()
 
-    @State private var readerModeInfo: FeedItemUrlInfo?
-
     @State var feedId: String
+    let readerModeViewModel: ReaderModeViewModel
 
     var body: some View {
-        VStack {
-            if state is DeeplinkFeedState.Error {
-                Text(feedFlowStrings.genericErrorMessage)
-            } else if let readerModeInfo = readerModeInfo {
-                ReaderModeScreen(feedItemUrlInfo: readerModeInfo)
-            } else {
-                ProgressView()
-            }
-        }
+        ReaderModeScreen(viewModel: readerModeViewModel)
         .onAppear {
             vmStoreOwner.instance.getReaderModeUrl(feedItemId: FeedItemId(id: feedId))
         }
@@ -39,7 +30,7 @@ struct DeepLinkFeedScreen: View {
                 if let urlInfo = (state as? DeeplinkFeedState.Success)?.data {
                     switch urlInfo.linkOpeningPreference {
                     case .readerMode:
-                        self.readerModeInfo = urlInfo
+                        readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
                     case .internalBrowser:
                         if let url = URL(string: urlInfo.url) {
                             appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
@@ -49,7 +40,7 @@ struct DeepLinkFeedScreen: View {
                         self.dismiss()
                     case .default:
                         if browserSelector.openReaderMode(link: urlInfo.url) {
-                            self.readerModeInfo = urlInfo
+                            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
                         } else if browserSelector.openInAppBrowser() {
                             if let url = URL(string: urlInfo.url) {
                                 appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))

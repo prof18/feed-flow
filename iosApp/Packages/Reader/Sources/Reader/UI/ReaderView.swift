@@ -232,22 +232,27 @@ public struct ReaderView: View {
 
                 HStack {
                     Button {
+                        let newFontSize = fontSize - 1.0
+                        updateFontSizeWithJS(newFontSize)
                         actions.onFontSizeDecrease()
                     } label: {
                         Image(systemName: "minus")
                     }
 
                     Slider(
-                        value: .constant(fontSize),
-                        in: 12 ... 40,
-                        onEditingChanged: { isEditing in
-                            if !isEditing {
-                                actions.onFontSizeChange(fontSize)
+                        value: Binding(
+                            get: { fontSize },
+                            set: { newValue in
+                                updateFontSizeWithJS(newValue)
+                                actions.onFontSizeChange(newValue)
                             }
-                        }
+                        ),
+                        in: 12 ... 40
                     )
 
                     Button {
+                        let newFontSize = fontSize + 1.0
+                        updateFontSizeWithJS(newFontSize)
                         actions.onFontSizeIncrease()
                     } label: {
                         Image(systemName: "plus")
@@ -258,5 +263,14 @@ public struct ReaderView: View {
             .padding(.horizontal, 16)
             .presentationCompactAdaptation((.popover))
         }
+    }
+
+    private func updateFontSizeWithJS(_ newFontSize: Double) {
+        guard let webContent = webContent else { return }
+        let script = """
+            document.getElementById("container").style.fontSize = "\(Int(newFontSize))" + "px";
+            document.getElementById("container").style.lineHeight = "1.5em";
+        """
+        webContent.evaluateJavaScript(script)
     }
 }

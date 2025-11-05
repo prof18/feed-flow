@@ -13,6 +13,8 @@ struct SearchScreen: View {
 
     @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
+    let readerModeViewModel: ReaderModeViewModel
+
     var body: some View {
         @Bindable var appState = appState
 
@@ -20,6 +22,7 @@ struct SearchScreen: View {
             searchText: $searchText,
             searchState: $searchState,
             feedFontSizes: $feedFontSizes,
+            readerModeViewModel: readerModeViewModel,
             onBookmarkClick: { feedItemId, isBookmarked in
                 vmStoreOwner.instance.onBookmarkClick(feedItemId: feedItemId, bookmarked: isBookmarked)
             },
@@ -82,5 +85,5 @@ struct SearchScreen: View {
 }
 
 #Preview {
-    SearchScreen()
+    SearchScreen(readerModeViewModel: Deps.shared.getReaderModeViewModel())
 }

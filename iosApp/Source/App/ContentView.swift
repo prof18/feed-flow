@@ -13,6 +13,8 @@ struct ContentView: View {
     @State var browserSelector: BrowserSelector = .init()
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
     @StateObject private var reviewVmStoreOwner = VMStoreOwner<ReviewViewModel>(Deps.shared.getReviewViewModel())
+    @StateObject private var readerModeVmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
+        Deps.shared.getReaderModeViewModel())
 
     @State private var isAppInBackground = false
 
@@ -26,14 +28,16 @@ struct ContentView: View {
                 CompactView(
                     selectedDrawerItem: $selectedDrawerItem,
                     indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-                    homeViewModel: vmStoreOwner.instance
+                    homeViewModel: vmStoreOwner.instance,
+                    readerModeViewModel: readerModeVmStoreOwner.instance
                 )
                 .environment(browserSelector)
             } else {
                 RegularView(
                     selectedDrawerItem: $selectedDrawerItem,
                     indexHolder: HomeListIndexHolder(homeViewModel: vmStoreOwner.instance),
-                    homeViewModel: vmStoreOwner.instance
+                    homeViewModel: vmStoreOwner.instance,
+                    readerModeViewModel: readerModeVmStoreOwner.instance
                 )
                 .environment(browserSelector)
             }

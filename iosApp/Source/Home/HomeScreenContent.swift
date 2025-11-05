@@ -49,6 +49,7 @@ struct HomeContent: View {
     let deleteAllFeeds: () -> Void
     let requestNewPage: () -> Void
     let onItemClick: (FeedItemUrlInfo) -> Void
+    let onReaderModeClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
     let onBackToTimelineClick: () -> Void
@@ -72,6 +73,7 @@ struct HomeContent: View {
                 },
                 requestNewPage: requestNewPage,
                 onItemClick: onItemClick,
+                onReaderModeClick: onReaderModeClick,
                 onBookmarkClick: onBookmarkClick,
                 onReadStatusClick: onReadStatusClick,
                 onBackToTimelineClick: onBackToTimelineClick,
@@ -205,6 +207,7 @@ struct HomeContent: View {
         deleteAllFeeds: {},
         requestNewPage: {},
         onItemClick: { _ in },
+        onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {},
@@ -241,6 +244,7 @@ struct HomeContent: View {
         deleteAllFeeds: {},
         requestNewPage: {},
         onItemClick: { _ in },
+        onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {},
@@ -277,6 +281,7 @@ struct HomeContent: View {
         deleteAllFeeds: {},
         requestNewPage: {},
         onItemClick: { _ in },
+        onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {},

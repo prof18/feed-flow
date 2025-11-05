@@ -43,6 +43,8 @@ class FeedListActions(
     val openUrl: (FeedItemUrlInfo) -> Unit,
     val updateBookmarkStatus: (FeedItemId, Boolean) -> Unit,
     val updateReadStatus: (FeedItemId, Boolean) -> Unit,
+    val markAllAboveAsRead: (String) -> Unit,
+    val markAllBelowAsRead: (String) -> Unit,
 )
 
 @Stable

@@ -41,6 +41,20 @@ internal class FeedActionsRepository(
         }
     }
 
+    suspend fun markAllAboveAsRead(targetItemId: String) {
+        val itemsAbove = feedStateRepository.getItemsAbove(targetItemId)
+        if (itemsAbove.isEmpty()) return
+
+        markAsRead(itemsAbove.toHashSet())
+    }
+
+    suspend fun markAllBelowAsRead(targetItemId: String) {
+        val itemsBelow = feedStateRepository.getItemsBelow(targetItemId)
+        if (itemsBelow.isEmpty()) return
+
+        markAsRead(itemsBelow.toHashSet())
+    }
+
     suspend fun markAllCurrentFeedAsRead() {
         val currentFilter = feedStateRepository.getCurrentFeedFilter()
         when (accountsRepository.getCurrentSyncAccount()) {

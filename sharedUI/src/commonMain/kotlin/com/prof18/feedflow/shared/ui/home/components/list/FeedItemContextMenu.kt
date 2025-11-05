@@ -4,6 +4,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Forum
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
 import androidx.compose.material.icons.filled.Settings
@@ -34,6 +36,8 @@ internal fun FeedItemContextMenu(
     closeMenu: () -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
     onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
+    onMarkAllAboveAsRead: (String) -> Unit,
+    onMarkAllBelowAsRead: (String) -> Unit,
 ) {
     DropdownMenu(
         expanded = showMenu,
@@ -47,6 +51,18 @@ internal fun FeedItemContextMenu(
         ChangeReadStatusMenuItem(
             feedItem = feedItem,
             onReadStatusClick = onReadStatusClick,
+            closeMenu = closeMenu,
+        )
+
+        MarkAllAboveAsReadMenuItem(
+            feedItem = feedItem,
+            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+            closeMenu = closeMenu,
+        )
+
+        MarkAllBelowAsReadMenuItem(
+            feedItem = feedItem,
+            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
             closeMenu = closeMenu,
         )
 
@@ -261,6 +277,56 @@ private fun ChangeReadStatusMenuItem(
                 FeedItemId(feedItem.id),
                 !feedItem.isRead,
             )
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun MarkAllAboveAsReadMenuItem(
+    feedItem: FeedItem,
+    onMarkAllAboveAsRead: (String) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = LocalFeedFlowStrings.current.menuMarkAllAboveAsRead,
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.KeyboardDoubleArrowUp,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            onMarkAllAboveAsRead(feedItem.id)
+            closeMenu()
+        },
+    )
+}
+
+@Composable
+private fun MarkAllBelowAsReadMenuItem(
+    feedItem: FeedItem,
+    onMarkAllBelowAsRead: (String) -> Unit,
+    closeMenu: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = LocalFeedFlowStrings.current.menuMarkAllBelowAsRead,
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.KeyboardDoubleArrowDown,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            onMarkAllBelowAsRead(feedItem.id)
             closeMenu()
         },
     )

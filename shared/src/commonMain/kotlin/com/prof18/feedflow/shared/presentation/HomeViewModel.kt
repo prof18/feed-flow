@@ -253,6 +253,18 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun markAllAboveAsRead(feedItemId: String) {
+        viewModelScope.launch {
+            feedActionsRepository.markAllAboveAsRead(feedItemId)
+        }
+    }
+
+    fun markAllBelowAsRead(feedItemId: String) {
+        viewModelScope.launch {
+            feedActionsRepository.markAllBelowAsRead(feedItemId)
+        }
+    }
+
     fun deleteOldFeedItems() {
         viewModelScope.launch {
             feedOperationMutableState.update { FeedOperation.Deleting }

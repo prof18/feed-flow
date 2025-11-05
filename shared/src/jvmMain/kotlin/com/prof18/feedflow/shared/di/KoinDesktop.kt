@@ -39,6 +39,7 @@ fun initKoinDesktop(
     appEnvironment: AppEnvironment,
     isICloudEnabled: Boolean,
     isDropboxEnabled: Boolean,
+    isGoogleDriveEnabled: Boolean = true,
     version: String,
     modules: List<Module>,
 ): KoinApplication = initKoin(
@@ -46,6 +47,7 @@ fun initKoinDesktop(
         appEnvironment = appEnvironment,
         isLoggingEnabled = appEnvironment.isRelease(),
         isDropboxSyncEnabled = isDropboxEnabled,
+        isGoogleDriveSyncEnabled = isGoogleDriveEnabled,
         isIcloudSyncEnabled = isICloudEnabled,
         appVersion = version,
     ),

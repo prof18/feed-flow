@@ -272,4 +272,5 @@ internal data class DesktopConfig(
     val appEnvironment: AppEnvironment,
     val isIcloudEnabled: Boolean,
     val isDropboxEnabled: Boolean,
+    val isGoogleDriveEnabled: Boolean = true,
 )

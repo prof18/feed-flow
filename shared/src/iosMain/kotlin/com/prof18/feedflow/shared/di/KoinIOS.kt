@@ -69,6 +69,7 @@ fun initKoinIos(
         appEnvironment = appEnvironment,
         isLoggingEnabled = true,
         isDropboxSyncEnabled = true,
+        isGoogleDriveSyncEnabled = true,
         isIcloudSyncEnabled = true,
         appVersion = appVersion,
     ),

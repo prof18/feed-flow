@@ -12,6 +12,7 @@ import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
 import com.prof18.feedflow.feedsync.dropbox.di.dropboxModule
+import com.prof18.feedflow.feedsync.googledrive.di.googleDriveModule
 import com.prof18.feedflow.feedsync.greader.di.getGReaderModule
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.ReviewRepository
@@ -72,6 +73,7 @@ fun initKoin(
             modules +
                 getCoreModule(appConfig) +
                 dropboxModule +
+                googleDriveModule +
                 getGReaderModule(appConfig.appEnvironment) +
                 getLoggingModule(appConfig, crashReportingLogWriter) +
                 getPlatformModule(appConfig.appEnvironment) +
@@ -281,6 +283,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         AccountsRepository(
             currentOS = get(),
             dropboxSettings = get(),
+            googleDriveSettings = get(),
             icloudSettings = get(),
             appConfig = appConfig,
             gReaderRepository = get(),

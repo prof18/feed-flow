@@ -232,6 +232,11 @@
     <string name="reader_mode_archive_button_content_description">Open in archive.is</string>
     <string name="reader_mode_browser_button_content_description">Open in browser</string>
     <string name="reader_mode_comments_button_content_description">Open comments</string>
+    <string name="search_button_content_description">Search</string>
+    <string name="more_options_button_content_description">More options</string>
+    <string name="drawer_menu_button_content_description">Open navigation menu</string>
+    <string name="increase_font_size_button_content_description">Increase font size</string>
+    <string name="decrease_font_size_button_content_description">Decrease font size</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_system">System</string>
     <string name="settings_theme_light">Light</string>

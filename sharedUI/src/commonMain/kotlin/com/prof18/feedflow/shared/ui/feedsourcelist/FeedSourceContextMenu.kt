@@ -22,7 +22,11 @@ internal fun FeedSourceContextMenu(
     DropdownMenu(
         expanded = showFeedMenu,
         onDismissRequest = hideMenu,
-        properties = PopupProperties(),
+        properties = PopupProperties(
+            focusable = true,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+        ),
     ) {
         DropdownMenuItem(
             text = {

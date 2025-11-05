@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.PopupProperties
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -90,6 +91,11 @@ internal fun HomeAppBarDropdownMenu(
     DropdownMenu(
         expanded = showMenu,
         onDismissRequest = closeMenu,
+        properties = PopupProperties(
+            focusable = true,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+        ),
     ) {
         DropdownMenuItem(
             onClick = {

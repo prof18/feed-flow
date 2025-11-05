@@ -26,7 +26,11 @@ internal fun CategoryContextMenu(
     DropdownMenu(
         expanded = showMenu,
         onDismissRequest = hideMenu,
-        properties = PopupProperties(),
+        properties = PopupProperties(
+            focusable = true,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+        ),
     ) {
         DropdownMenuItem(
             text = {

@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 // Adapted from https://github.com/omnivore-app/omnivore/blob/main/android/Omnivore/app/src/main/java/app/omnivore/omnivore/feature/components/SliderWithPlusMinus.kt#L91
 @Composable
@@ -95,7 +96,7 @@ fun AddButton(
     ) {
         Icon(
             imageVector = Icons.Default.Add,
-            contentDescription = null,
+            contentDescription = LocalFeedFlowStrings.current.increaseFontSizeButtonContentDescription,
             tint = if (enabled) colors.disabledContentColor else colors.disabledContentColor,
         )
     }
@@ -118,7 +119,7 @@ fun SubtractButton(
     ) {
         Icon(
             imageVector = Icons.Default.Remove,
-            contentDescription = null,
+            contentDescription = LocalFeedFlowStrings.current.decreaseFontSizeButtonContentDescription,
             tint = if (enabled) colors.disabledContentColor else colors.disabledContentColor,
         )
     }

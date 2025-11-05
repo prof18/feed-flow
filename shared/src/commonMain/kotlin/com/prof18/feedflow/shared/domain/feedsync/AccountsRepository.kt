@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
+import com.prof18.feedflow.feedsync.lan.LanSyncSettings
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +15,7 @@ internal class AccountsRepository(
     private val currentOS: CurrentOS,
     private val dropboxSettings: DropboxSettings,
     private val icloudSettings: ICloudSettings,
+    private val lanSyncSettings: LanSyncSettings,
     private val appConfig: AppConfig,
     private val gReaderRepository: GReaderRepository,
 ) {
@@ -26,6 +28,7 @@ internal class AccountsRepository(
 
     fun getValidAccounts(): List<SyncAccounts> =
         buildList {
+            add(SyncAccounts.LAN)
             when (currentOS) {
                 CurrentOS.Android -> {
                     if (appConfig.isDropboxSyncEnabled) {
@@ -78,11 +81,18 @@ internal class AccountsRepository(
         currentAccountMutableState.value = SyncAccounts.FRESH_RSS
     }
 
+    fun setLanAccount() {
+        currentAccountMutableState.value = SyncAccounts.LAN
+    }
+
     fun clearAccount() {
         currentAccountMutableState.value = SyncAccounts.LOCAL
     }
 
     fun getCurrentSyncAccount(): SyncAccounts {
+        if (lanSyncSettings.isLanSyncEnabled()) {
+            return SyncAccounts.LAN
+        }
         val dropboxSettings = dropboxSettings.getDropboxData()
         if (dropboxSettings != null) {
             return SyncAccounts.DROPBOX
@@ -102,7 +112,8 @@ internal class AccountsRepository(
     fun isSyncEnabled(): Boolean {
         val currentSyncAccount = getCurrentSyncAccount()
         return currentSyncAccount == SyncAccounts.ICLOUD ||
-            currentSyncAccount == SyncAccounts.DROPBOX
+            currentSyncAccount == SyncAccounts.DROPBOX ||
+            currentSyncAccount == SyncAccounts.LAN
     }
 
     private fun restoreAccounts() {

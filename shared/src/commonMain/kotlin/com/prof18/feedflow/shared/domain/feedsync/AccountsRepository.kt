@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
+import com.prof18.feedflow.feedsync.nextcloud.NextcloudSettings
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +15,7 @@ internal class AccountsRepository(
     private val currentOS: CurrentOS,
     private val dropboxSettings: DropboxSettings,
     private val icloudSettings: ICloudSettings,
+    private val nextcloudSettings: NextcloudSettings,
     private val appConfig: AppConfig,
     private val gReaderRepository: GReaderRepository,
 ) {
@@ -31,12 +33,14 @@ internal class AccountsRepository(
                     if (appConfig.isDropboxSyncEnabled) {
                         add(SyncAccounts.DROPBOX)
                     }
+                    add(SyncAccounts.NEXTCLOUD)
                     add(SyncAccounts.FRESH_RSS)
                 }
                 CurrentOS.Desktop.Linux -> {
                     if (appConfig.isDropboxSyncEnabled) {
                         add(SyncAccounts.DROPBOX)
                     }
+                    add(SyncAccounts.NEXTCLOUD)
                     add(SyncAccounts.FRESH_RSS)
                 }
                 CurrentOS.Desktop.Mac -> {
@@ -46,12 +50,14 @@ internal class AccountsRepository(
                     if (appConfig.isDropboxSyncEnabled) {
                         add(SyncAccounts.DROPBOX)
                     }
+                    add(SyncAccounts.NEXTCLOUD)
                     add(SyncAccounts.FRESH_RSS)
                 }
                 CurrentOS.Desktop.Windows -> {
                     if (appConfig.isDropboxSyncEnabled) {
                         add(SyncAccounts.DROPBOX)
                     }
+                    add(SyncAccounts.NEXTCLOUD)
                     add(SyncAccounts.FRESH_RSS)
                 }
                 CurrentOS.Ios -> {
@@ -61,6 +67,7 @@ internal class AccountsRepository(
                     if (appConfig.isDropboxSyncEnabled) {
                         add(SyncAccounts.DROPBOX)
                     }
+                    add(SyncAccounts.NEXTCLOUD)
                     add(SyncAccounts.FRESH_RSS)
                 }
             }
@@ -78,6 +85,10 @@ internal class AccountsRepository(
         currentAccountMutableState.value = SyncAccounts.FRESH_RSS
     }
 
+    fun setNextcloudAccount() {
+        currentAccountMutableState.value = SyncAccounts.NEXTCLOUD
+    }
+
     fun clearAccount() {
         currentAccountMutableState.value = SyncAccounts.LOCAL
     }
@@ -93,6 +104,9 @@ internal class AccountsRepository(
                 return SyncAccounts.ICLOUD
             }
         }
+        if (nextcloudSettings.hasCredentials()) {
+            return SyncAccounts.NEXTCLOUD
+        }
         if (gReaderRepository.isAccountSet()) {
             return SyncAccounts.FRESH_RSS
         }
@@ -102,7 +116,8 @@ internal class AccountsRepository(
     fun isSyncEnabled(): Boolean {
         val currentSyncAccount = getCurrentSyncAccount()
         return currentSyncAccount == SyncAccounts.ICLOUD ||
-            currentSyncAccount == SyncAccounts.DROPBOX
+            currentSyncAccount == SyncAccounts.DROPBOX ||
+            currentSyncAccount == SyncAccounts.NEXTCLOUD
     }
 
     private fun restoreAccounts() {

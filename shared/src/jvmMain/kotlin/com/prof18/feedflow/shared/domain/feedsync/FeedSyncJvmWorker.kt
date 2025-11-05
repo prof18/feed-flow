@@ -18,6 +18,9 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
+import com.prof18.feedflow.feedsync.nextcloud.NextcloudDataSource
+import com.prof18.feedflow.feedsync.nextcloud.NextcloudDownloadParam
+import com.prof18.feedflow.feedsync.nextcloud.NextcloudUploadParam
 import com.prof18.feedflow.shared.data.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +33,7 @@ import kotlin.time.Clock
 
 internal class FeedSyncJvmWorker(
     private val dropboxDataSource: DropboxDataSource,
+    private val nextcloudDataSource: NextcloudDataSource,
     private val appEnvironment: AppEnvironment,
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
@@ -116,6 +120,15 @@ internal class FeedSyncJvmWorker(
                 }
             }
 
+            SyncAccounts.NEXTCLOUD -> {
+                val nextcloudUploadParam = NextcloudUploadParam(
+                    remotePath = "/FeedFlow/${getDatabaseNameWithExtension()}",
+                    localFilePath = databaseFile.absolutePath,
+                )
+                nextcloudDataSource.performUpload(nextcloudUploadParam)
+                logger.d { "Upload to Nextcloud successfully" }
+            }
+
             SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS -> {
                 // Do nothing
             }
@@ -184,6 +197,15 @@ internal class FeedSyncJvmWorker(
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
                 }
+            }
+            SyncAccounts.NEXTCLOUD -> {
+                val nextcloudDownloadParam = NextcloudDownloadParam(
+                    remotePath = "/FeedFlow/${getDatabaseNameWithExtension()}",
+                    destinationPath = databaseFile.absolutePath,
+                )
+                nextcloudDataSource.performDownload(nextcloudDownloadParam)
+                logger.d { "Download from Nextcloud successfully" }
+                SyncResult.Success
             }
             SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS -> {
                 // Do nothing

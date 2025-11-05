@@ -35,6 +35,7 @@ import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
+import com.prof18.feedflow.shared.presentation.NextcloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -146,6 +147,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dispatcherProvider = get(),
             feedSyncMessageQueue = get(),
             dropboxDataSource = get(),
+            nextcloudDataSource = get(),
             logger = getWith("FeedSyncIosWorker"),
             feedSyncer = get(),
             appEnvironment = appEnvironment,
@@ -162,6 +164,19 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("DropboxSyncViewModel"),
             dropboxSettings = get(),
             dropboxDataSource = get(),
+            feedSyncRepository = get(),
+            dateFormatter = get(),
+            feedFetcherRepository = get(),
+            feedSyncMessageQueue = get(),
+            accountsRepository = get(),
+        )
+    }
+
+    viewModel {
+        NextcloudSyncViewModel(
+            logger = getWith("NextcloudSyncViewModel"),
+            nextcloudSettings = get(),
+            nextcloudDataSource = get(),
             feedSyncRepository = get(),
             dateFormatter = get(),
             feedFetcherRepository = get(),
@@ -222,6 +237,7 @@ object Deps : KoinComponent {
     fun getDropboxSyncViewModel() = getKoin().get<DropboxSyncViewModel>()
     fun getFeedSyncRepository() = getKoin().get<FeedSyncRepository>()
     fun getICloudSyncViewModel() = getKoin().get<ICloudSyncViewModel>()
+    fun getNextcloudSyncViewModel() = getKoin().get<NextcloudSyncViewModel>()
     fun getReaderModeViewModel() = getKoin().get<ReaderModeViewModel>()
     fun getEditFeedViewModel() = getKoin().get<EditFeedViewModel>()
     fun getFreshRssSyncViewModel() = getKoin().get<FreshRssSyncViewModel>()

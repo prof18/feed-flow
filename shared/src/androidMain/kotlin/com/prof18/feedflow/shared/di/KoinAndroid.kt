@@ -16,6 +16,7 @@ import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
+import com.prof18.feedflow.shared.presentation.NextcloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
@@ -90,10 +91,24 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
+    viewModel {
+        NextcloudSyncViewModel(
+            logger = getWith("NextcloudSyncViewModel"),
+            nextcloudSettings = get(),
+            nextcloudDataSource = get(),
+            feedSyncRepository = get(),
+            dateFormatter = get(),
+            feedFetcherRepository = get(),
+            feedSyncMessageQueue = get(),
+            accountsRepository = get(),
+        )
+    }
+
     single {
         FeedSyncAndroidWorker(
             context = get(),
             dropboxDataSource = get(),
+            nextcloudDataSource = get(),
             appEnvironment = appEnvironment,
             logger = getWith("FeedSyncAndroidWorker"),
             feedSyncer = get(),
@@ -101,6 +116,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dispatcherProvider = get(),
             dropboxSettings = get(),
             settingsRepository = get(),
+            accountsRepository = get(),
         )
     } bind FeedSyncWorker::class
 

@@ -43,6 +43,7 @@ include("feedSync:icloud")
 include("feedSync:ikloud-macos")
 include("feedSync:greader")
 include("feedSync:networkcore")
+include("feedSync:nextcloud")
 
 // includeBuild("../RSS-Parser") {
 //    dependencySubstitution {

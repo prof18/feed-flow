@@ -20,6 +20,9 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
+import com.prof18.feedflow.feedsync.nextcloud.NextcloudDataSource
+import com.prof18.feedflow.feedsync.nextcloud.NextcloudDownloadParam
+import com.prof18.feedflow.feedsync.nextcloud.NextcloudUploadParam
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.presentation.getICloudBaseFolderURL
 import com.prof18.feedflow.shared.utils.Telemetry
@@ -48,6 +51,7 @@ internal class FeedSyncIosWorker(
     private val dispatcherProvider: DispatcherProvider,
     private val feedSyncMessageQueue: FeedSyncMessageQueue,
     private val dropboxDataSource: DropboxDataSource,
+    private val nextcloudDataSource: NextcloudDataSource,
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
     private val appEnvironment: AppEnvironment,
@@ -301,6 +305,15 @@ internal class FeedSyncIosWorker(
                 }
             }
 
+            SyncAccounts.NEXTCLOUD -> {
+                val nextcloudUploadParam = NextcloudUploadParam(
+                    remotePath = "/FeedFlow/${getDatabaseName()}.db",
+                    localFilePath = databasePath.path.toString(),
+                )
+                nextcloudDataSource.performUpload(nextcloudUploadParam)
+                logger.w { "Upload to Nextcloud successfully" }
+            }
+
             else -> {
                 // Do nothing
             }
@@ -329,6 +342,21 @@ internal class FeedSyncIosWorker(
 
             SyncAccounts.ICLOUD -> {
                 return iCloudDownload(isFirstSync)
+            }
+
+            SyncAccounts.NEXTCLOUD -> {
+                val databaseUrl = getDatabaseUrl()
+                if (databaseUrl == null) {
+                    logger.e { "Database URL is null, cannot download" }
+                    return SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
+                }
+                val nextcloudDownloadParam = NextcloudDownloadParam(
+                    remotePath = "/FeedFlow/${getDatabaseName()}.db",
+                    destinationPath = databaseUrl.path.toString(),
+                )
+                nextcloudDataSource.performDownload(nextcloudDownloadParam)
+                logger.w { "Download from Nextcloud successfully" }
+                SyncResult.Success
             }
 
             else -> {

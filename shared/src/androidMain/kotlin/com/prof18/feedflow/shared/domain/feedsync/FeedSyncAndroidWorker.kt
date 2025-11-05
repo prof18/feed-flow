@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ErrorCode
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.SyncDownloadError
 import com.prof18.feedflow.core.model.SyncFeedError
 import com.prof18.feedflow.core.model.SyncResult
@@ -23,6 +24,9 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
+import com.prof18.feedflow.feedsync.nextcloud.NextcloudDataSource
+import com.prof18.feedflow.feedsync.nextcloud.NextcloudDownloadParam
+import com.prof18.feedflow.feedsync.nextcloud.NextcloudUploadParam
 import com.prof18.feedflow.shared.data.SettingsRepository
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -33,6 +37,7 @@ import kotlin.time.Clock
 internal class FeedSyncAndroidWorker(
     private val context: Context,
     private val dropboxDataSource: DropboxDataSource,
+    private val nextcloudDataSource: NextcloudDataSource,
     private val appEnvironment: AppEnvironment,
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
@@ -40,6 +45,7 @@ internal class FeedSyncAndroidWorker(
     private val dispatcherProvider: DispatcherProvider,
     private val dropboxSettings: DropboxSettings,
     private val settingsRepository: SettingsRepository,
+    private val accountsRepository: AccountsRepository,
 ) : FeedSyncWorker {
 
     override suspend fun uploadImmediate() {
@@ -63,48 +69,80 @@ internal class FeedSyncAndroidWorker(
     }
 
     internal suspend fun performUpload(): SyncResult = withContext(dispatcherProvider.io) {
-        restoreDropboxClient()
-
         try {
             feedSyncer.populateSyncDbIfEmpty()
             feedSyncer.updateFeedItemsToSyncDatabase()
             feedSyncer.closeDB()
 
-            val databaseFile = generateDatabaseFile()
-                ?: return@withContext SyncResult.General(SyncUploadError.DatabaseFileGeneration)
-            val dropboxUploadParam = DropboxUploadParam(
-                path = "/${getDatabaseNameWithExtension()}",
-                file = databaseFile,
-            )
-            dropboxDataSource.performUpload(dropboxUploadParam)
-            dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
-            logger.d { "Upload to dropbox successfully" }
+            when (accountsRepository.getCurrentSyncAccount()) {
+                SyncAccounts.DROPBOX -> {
+                    restoreDropboxClient()
+                    val databaseFile = generateDatabaseFile()
+                        ?: return@withContext SyncResult.General(SyncUploadError.DatabaseFileGeneration)
+                    val dropboxUploadParam = DropboxUploadParam(
+                        path = "/${getDatabaseNameWithExtension()}",
+                        file = databaseFile,
+                    )
+                    dropboxDataSource.performUpload(dropboxUploadParam)
+                    dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+                    logger.d { "Upload to dropbox successfully" }
+                }
+                SyncAccounts.NEXTCLOUD -> {
+                    val databasePath = databasePath()
+                    val nextcloudUploadParam = NextcloudUploadParam(
+                        remotePath = "/FeedFlow/${getDatabaseNameWithExtension()}",
+                        localFilePath = databasePath,
+                    )
+                    nextcloudDataSource.performUpload(nextcloudUploadParam)
+                    logger.d { "Upload to Nextcloud successfully" }
+                }
+                SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS, SyncAccounts.ICLOUD -> {
+                    // Do nothing
+                }
+            }
+
             emitSuccessMessage()
             settingsRepository.setIsSyncUploadRequired(false)
             return@withContext SyncResult.Success
         } catch (e: Exception) {
-            logger.e("Upload to dropbox failed", e)
+            logger.e("Upload failed", e)
             emitErrorMessage(SyncUploadError.DropboxUploadFailed)
             return@withContext SyncResult.General(SyncUploadError.DropboxUploadFailed)
         }
     }
 
     override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
-        val databaseLocalPath = databasePath()
-        val dropboxDownloadParam = DropboxDownloadParam(
-            path = "/${getDatabaseNameWithExtension()}",
-            outputStream = FileOutputStream(databaseLocalPath),
-        )
-
-        restoreDropboxClient()
-
         return@withContext try {
             feedSyncer.closeDB()
-            dropboxDataSource.performDownload(dropboxDownloadParam)
-            dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+
+            when (accountsRepository.getCurrentSyncAccount()) {
+                SyncAccounts.DROPBOX -> {
+                    val databaseLocalPath = databasePath()
+                    val dropboxDownloadParam = DropboxDownloadParam(
+                        path = "/${getDatabaseNameWithExtension()}",
+                        outputStream = FileOutputStream(databaseLocalPath),
+                    )
+                    restoreDropboxClient()
+                    dropboxDataSource.performDownload(dropboxDownloadParam)
+                    dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+                }
+                SyncAccounts.NEXTCLOUD -> {
+                    val databaseLocalPath = databasePath()
+                    val nextcloudDownloadParam = NextcloudDownloadParam(
+                        remotePath = "/FeedFlow/${getDatabaseNameWithExtension()}",
+                        destinationPath = databaseLocalPath,
+                    )
+                    nextcloudDataSource.performDownload(nextcloudDownloadParam)
+                    logger.d { "Download from Nextcloud successfully" }
+                }
+                SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS, SyncAccounts.ICLOUD -> {
+                    // Do nothing
+                }
+            }
+
             SyncResult.Success
         } catch (e: Exception) {
-            logger.e("Download from dropbox failed", e)
+            logger.e("Download failed", e)
             SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
         }
     }

@@ -20,6 +20,7 @@ import com.prof18.feedflow.shared.logging.SentryLogWriter
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.MarkdownToHtmlConverter
+import com.prof18.feedflow.shared.presentation.NextcloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
 import com.prof18.rssparser.RssParserBuilder
@@ -123,9 +124,23 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
+    viewModel {
+        NextcloudSyncViewModel(
+            logger = getWith("NextcloudSyncViewModel"),
+            nextcloudSettings = get(),
+            nextcloudDataSource = get(),
+            feedSyncRepository = get(),
+            dateFormatter = get(),
+            accountsRepository = get(),
+            feedFetcherRepository = get(),
+            feedSyncMessageQueue = get(),
+        )
+    }
+
     single<FeedSyncWorker> {
         FeedSyncJvmWorker(
             dropboxDataSource = get(),
+            nextcloudDataSource = get(),
             appEnvironment = appEnvironment,
             logger = getWith("FeedSyncJvmWorker"),
             feedSyncer = get(),

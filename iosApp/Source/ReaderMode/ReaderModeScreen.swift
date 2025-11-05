@@ -23,11 +23,11 @@ struct ReaderModeScreen: View {
     @State private var currentContent: String?
     @State private var currentBaseUrl: String?
     @State private var articleUrl: URL?
+    @State private var feedItemId: String?
+    @State private var feedItemTitle: String?
+    @State private var commentsUrl: String?
 
-    @StateObject private var vmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
-        Deps.shared.getReaderModeViewModel())
-
-    let feedItemUrlInfo: FeedItemUrlInfo
+    let viewModel: ReaderModeViewModel
 
     var body: some View {
         ReaderView(
@@ -45,25 +45,29 @@ struct ReaderModeScreen: View {
             ),
             actions: ReaderViewActions(
                 onBookmarkToggle: { newBookmarkState in
-                    isBookmarked = newBookmarkState
-                    vmStoreOwner.instance.updateBookmarkStatus(
-                        feedItemId: FeedItemId(id: feedItemUrlInfo.id),
-                        bookmarked: isBookmarked
-                    )
+                    if let id = feedItemId {
+                        isBookmarked = newBookmarkState
+                        viewModel.updateBookmarkStatus(
+                            feedItemId: FeedItemId(id: id),
+                            bookmarked: isBookmarked
+                        )
+                    }
                 },
                 onArchive: {
-                    let archiveUrlString = getArchiveISUrl(articleUrl: feedItemUrlInfo.url)
-                    if browserSelector.openInAppBrowser() {
-                        if let archiveUrl = URL(string: archiveUrlString) {
-                            appState.navigate(
-                                route: CommonViewRoute.inAppBrowser(url: archiveUrl)
-                            )
-                        }
-                    } else {
-                        if let archiveUrl = URL(string: archiveUrlString) {
-                            openURL(
-                                browserSelector.getUrlForDefaultBrowser(
-                                    stringUrl: archiveUrl.absoluteString))
+                    if let url = articleUrl {
+                        let archiveUrlString = getArchiveISUrl(articleUrl: url.absoluteString)
+                        if browserSelector.openInAppBrowser() {
+                            if let archiveUrl = URL(string: archiveUrlString) {
+                                appState.navigate(
+                                    route: CommonViewRoute.inAppBrowser(url: archiveUrl)
+                                )
+                            }
+                        } else {
+                            if let archiveUrl = URL(string: archiveUrlString) {
+                                openURL(
+                                    browserSelector.getUrlForDefaultBrowser(
+                                        stringUrl: archiveUrl.absoluteString))
+                            }
                         }
                     }
                 },
@@ -72,19 +76,19 @@ struct ReaderModeScreen: View {
                         openInBrowser(url: url)
                     }
                 },
-                onComments: feedItemUrlInfo.commentsUrl != nil ? {
-                    if let commentsUrlString = feedItemUrlInfo.commentsUrl {
+                onComments: commentsUrl != nil ? {
+                    if let commentsUrlString = commentsUrl {
                         if browserSelector.openInAppBrowser() {
-                            if let commentsUrl = URL(string: commentsUrlString) {
+                            if let commUrl = URL(string: commentsUrlString) {
                                 appState.navigate(
-                                    route: CommonViewRoute.inAppBrowser(url: commentsUrl)
+                                    route: CommonViewRoute.inAppBrowser(url: commUrl)
                                 )
                             }
                         } else {
-                            if let commentsUrl = URL(string: commentsUrlString) {
+                            if let commUrl = URL(string: commentsUrlString) {
                                 openURL(
                                     browserSelector.getUrlForDefaultBrowser(
-                                        stringUrl: commentsUrl.absoluteString))
+                                        stringUrl: commUrl.absoluteString))
                             }
                         }
                     }
@@ -94,15 +98,15 @@ struct ReaderModeScreen: View {
                 },
                 onFontSizeDecrease: {
                     fontSize -= 1.0
-                    vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                    viewModel.updateFontSize(newFontSize: Int32(Int(fontSize)))
                 },
                 onFontSizeIncrease: {
                     fontSize += 1.0
-                    vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                    viewModel.updateFontSize(newFontSize: Int32(Int(fontSize)))
                 },
                 onFontSizeChange: { newSize in
                     fontSize = newSize
-                    vmStoreOwner.instance.updateFontSize(newFontSize: Int32(Int(fontSize)))
+                    viewModel.updateFontSize(newFontSize: Int32(Int(fontSize)))
                 }
             ),
             isBookmarked: isBookmarked,
@@ -112,25 +116,19 @@ struct ReaderModeScreen: View {
                 openInBrowser(url: url)
             }
         )
-        .onAppear {
-            isBookmarked = feedItemUrlInfo.isBookmarked
-            vmStoreOwner.instance.getReaderModeHtml(urlInfo: feedItemUrlInfo)
-        }
         .if(isiOS26OrLater()) { view in
             view.ignoresSafeArea()
         }
         .task {
-            vmStoreOwner.instance.getReaderModeHtml(urlInfo: feedItemUrlInfo)
-        }
-        .task {
-            for await state in vmStoreOwner.instance.readerFontSizeState {
+            for await state in viewModel.readerFontSizeState {
                 self.fontSize = Double(truncating: state)
             }
         }
         .task {
-            for await state in vmStoreOwner.instance.readerModeState {
+            for await state in viewModel.readerModeState {
                 switch onEnum(of: state) {
                 case let .htmlNotAvailable(data):
+                    self.feedItemId = data.id
                     let url = URL(string: data.url) ?? URL(fileURLWithPath: "")
                     self.articleUrl = url
                     self.readerStatus = .failedToExtractContent(url: url)
@@ -139,6 +137,9 @@ struct ReaderModeScreen: View {
                 case let .success(data):
                     let readerModeData = data.readerModeData
 
+                    self.feedItemId = readerModeData.id.id
+                    self.feedItemTitle = readerModeData.title
+                    self.commentsUrl = readerModeData.commentsUrl
                     self.currentContent = readerModeData.content
                     self.currentBaseUrl = readerModeData.url
                     let url = URL(string: readerModeData.url) ?? URL(fileURLWithPath: "")
@@ -178,7 +179,7 @@ struct ReaderModeScreen: View {
             ),
             content: content,
             fontSize: Int32(fontSize),
-            title: feedItemUrlInfo.title,
+            title: nil
         )
 
         self.readerStatus = .extractedContent(

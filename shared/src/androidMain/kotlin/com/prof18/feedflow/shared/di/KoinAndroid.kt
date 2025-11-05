@@ -1,7 +1,7 @@
 package com.prof18.feedflow.shared.di
 
-import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
+import android.content.Context
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider

@@ -36,6 +36,7 @@ struct FeedListView: View {
     let onAddFeedClick: () -> Void
     let requestNewPage: () -> Void
     let onItemClick: (FeedItemUrlInfo) -> Void
+    let onReaderModeClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
     let onBackToTimelineClick: () -> Void
@@ -75,6 +76,7 @@ struct FeedListView: View {
                             feedLayout: feedLayout,
                             currentFeedFilter: currentFeedFilter,
                             onItemClick: onItemClick,
+                            onReaderModeClick: onReaderModeClick,
                             onBookmarkClick: onBookmarkClick,
                             onReadStatusClick: onReadStatusClick
                         )
@@ -167,6 +169,7 @@ struct FeedListView: View {
         onAddFeedClick: {},
         requestNewPage: {},
         onItemClick: { _ in },
+        onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {},
@@ -191,6 +194,7 @@ struct FeedListView: View {
         onAddFeedClick: {},
         requestNewPage: {},
         onItemClick: { _ in },
+        onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {},
@@ -215,6 +219,7 @@ struct FeedListView: View {
         onAddFeedClick: {},
         requestNewPage: {},
         onItemClick: { _ in },
+        onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
         onBackToTimelineClick: {},

@@ -173,13 +173,27 @@
 			);
 			target = 13A571E42D747F0600F0FFB0 /* WidgetExtension */;
 		};
+		CC86CB6F2EBBFBC200CD04F9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				defuddle.js,
+			);
+			target = 13929E982D7345F0003752AE /* ShareExtension */;
+		};
+		CC86CB702EBBFBC200CD04F9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				defuddle.js,
+			);
+			target = 13A571E42D747F0600F0FFB0 /* WidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		13929E9A2D7345F0003752AE /* ShareExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13929EA42D7345F0003752AE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ShareExtension; sourceTree = "<group>"; };
 		13A571EA2D747F0600F0FFB0 /* Widget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13A571F52D747F0700F0FFB0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Widget; sourceTree = "<group>"; };
 		CC6B8A282CCE8B5600847E7F /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13929EB22D734CC9003752AE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 13A571FA2D74865B00F0FFB0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
-		CC6B8A692CCE8B8800847E7F /* Assets */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Assets; sourceTree = "<group>"; };
+		CC6B8A692CCE8B8800847E7F /* Assets */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (CC86CB6F2EBBFBC200CD04F9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, CC86CB702EBBFBC200CD04F9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Assets; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */

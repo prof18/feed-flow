@@ -17,6 +17,7 @@ struct FeedItemRowView: View {
     let feedLayout: FeedLayout
     let currentFeedFilter: FeedFilter
     let onItemClick: (FeedItemUrlInfo) -> Void
+    let onReaderModeClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
 
@@ -40,14 +41,14 @@ struct FeedItemRowView: View {
 
                 switch urlInfo.linkOpeningPreference {
                 case .readerMode:
-                    self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
+                    onReaderModeClick(urlInfo)
                 case .internalBrowser:
                     self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
                 case .preferredBrowser:
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                 case .default:
                     if browserSelector.openReaderMode(link: feedItem.url) {
-                        self.appState.navigate(route: CommonViewRoute.readerMode(feedItem: feedItem))
+                        onReaderModeClick(urlInfo)
                     } else if browserSelector.openInAppBrowser() {
                         self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
                     } else {

@@ -123,18 +123,33 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
     }
 
     func getContentPath(feedItemId: String) -> URL {
-        guard let documentDirectoryURL = FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: "group.com.prof18.feedflow")
-        else {
+        let articlesDirectory: URL
+
+        if let containerURL = FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: "group.com.prof18.feedflow") {
+            articlesDirectory = containerURL.appendingPathComponent("articles")
+        } else {
             // Fallback to regular document directory if app group fails
-            return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            articlesDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                 .appendingPathComponent("articles")
-                .appendingPathComponent("\(feedItemId).html")
         }
 
-        return documentDirectoryURL
-            .appendingPathComponent("articles")
-            .appendingPathComponent("\(feedItemId).html")
+        // Create articles directory if it doesn't exist
+        if !FileManager.default.fileExists(atPath: articlesDirectory.path) {
+            do {
+                try FileManager.default.createDirectory(
+                    at: articlesDirectory,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
+            } catch {
+                Deps.shared.getLogger(tag: "FeedItemParserWorkerIos").d(
+                    messageString: "Error creating articles directory: \(error)"
+                )
+            }
+        }
+
+        return articlesDirectory.appendingPathComponent("\(feedItemId).html")
     }
 }
 

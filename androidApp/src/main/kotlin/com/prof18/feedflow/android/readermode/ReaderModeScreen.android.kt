@@ -38,6 +38,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.ui.readermode.HorizontalFloatingToolbar
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import org.json.JSONException
@@ -53,57 +55,59 @@ internal fun ReaderModeScreen(
     navigateBack: () -> Unit,
 ) {
     val browserManager = koinInject<BrowserManager>()
+    val readerModeViewModel = koinInject<ReaderModeViewModel>()
 
     val context = LocalContext.current
     val navigator = rememberWebViewNavigator()
 
-    Scaffold(
-        topBar = {
-            ReaderModeToolbar(
-                readerModeState = readerModeState,
-                fontSize = fontSize,
-                navigateBack = {
-                    if (navigator.canGoBack) {
-                        navigator.navigateBack()
-                    } else {
-                        navigateBack()
-                    }
-                },
-                openInBrowser = { url ->
-                    if (isValidUrl(url)) {
-                        browserManager.openUrlWithFavoriteBrowser(url, context)
-                    }
-                },
-                onShareClick = { url, title ->
-                    context.openShareSheet(
-                        title = title,
-                        url = url,
-                    )
-                },
-                onArchiveClick = { articleUrl ->
-                    val archiveUrl = getArchiveISUrl(articleUrl)
-                    if (isValidUrl(archiveUrl)) {
-                        browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
-                    }
-                },
-                onCommentsClick = { commentsUrl ->
-                    if (isValidUrl(commentsUrl)) {
-                        browserManager.openUrlWithFavoriteBrowser(commentsUrl, context)
-                    }
-                },
-                onFontSizeChange = { newFontSize ->
-                    navigator.evaluateJavaScript(
-                        """
-                            document.getElementById("__reader_container").style.fontSize = "$newFontSize" + "px";
-                            document.getElementById("__reader_container").style.lineHeight = "1.5em";
-                        """.trimIndent(),
-                    )
-                    onUpdateFontSize(newFontSize)
-                },
-                onBookmarkClick = onBookmarkClick,
-            )
-        },
-    ) { contentPadding ->
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                ReaderModeToolbar(
+                    readerModeState = readerModeState,
+                    fontSize = fontSize,
+                    navigateBack = {
+                        if (navigator.canGoBack) {
+                            navigator.navigateBack()
+                        } else {
+                            navigateBack()
+                        }
+                    },
+                    openInBrowser = { url ->
+                        if (isValidUrl(url)) {
+                            browserManager.openUrlWithFavoriteBrowser(url, context)
+                        }
+                    },
+                    onShareClick = { url, title ->
+                        context.openShareSheet(
+                            title = title,
+                            url = url,
+                        )
+                    },
+                    onArchiveClick = { articleUrl ->
+                        val archiveUrl = getArchiveISUrl(articleUrl)
+                        if (isValidUrl(archiveUrl)) {
+                            browserManager.openUrlWithFavoriteBrowser(archiveUrl, context)
+                        }
+                    },
+                    onCommentsClick = { commentsUrl ->
+                        if (isValidUrl(commentsUrl)) {
+                            browserManager.openUrlWithFavoriteBrowser(commentsUrl, context)
+                        }
+                    },
+                    onFontSizeChange = { newFontSize ->
+                        navigator.evaluateJavaScript(
+                            """
+                                document.getElementById("__reader_container").style.fontSize = "$newFontSize" + "px";
+                                document.getElementById("__reader_container").style.lineHeight = "1.5em";
+                            """.trimIndent(),
+                        )
+                        onUpdateFontSize(newFontSize)
+                    },
+                    onBookmarkClick = onBookmarkClick,
+                )
+            },
+        ) { contentPadding ->
         when (readerModeState) {
             is ReaderModeState.HtmlNotAvailable -> {
                 navigateBack()
@@ -135,6 +139,22 @@ internal fun ReaderModeScreen(
                 )
             }
         }
+    }
+
+        HorizontalFloatingToolbar(
+            visible = readerModeState is ReaderModeState.Success,
+            canNavigateToPrevious = readerModeViewModel.canNavigateToPrevious(),
+            canNavigateToNext = readerModeViewModel.canNavigateToNext(),
+            onNavigateToPrevious = {
+                readerModeViewModel.navigateToPreviousArticle()
+            },
+            onNavigateToNext = {
+                readerModeViewModel.navigateToNextArticle()
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp),
+        )
     }
 }
 

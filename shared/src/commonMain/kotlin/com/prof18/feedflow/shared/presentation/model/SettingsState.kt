@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 
 data class SettingsState(
@@ -25,6 +26,7 @@ data class SettingsState(
     val leftSwipeActionType: SwipeActionType = SwipeActionType.NONE,
     val rightSwipeActionType: SwipeActionType = SwipeActionType.NONE,
     val dateFormat: DateFormat = DateFormat.NORMAL,
+    val timeFormat: TimeFormat = TimeFormat.HOURS_24,
     val feedOrder: FeedOrder = FeedOrder.NEWEST_FIRST,
     val feedLayout: FeedLayout = FeedLayout.LIST,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,

@@ -69,6 +69,7 @@ internal class FeedStateRepository(
             val hideImages = settingsRepository.getHideImages()
             val hideDate = settingsRepository.getHideDate()
             val dateFormat = settingsRepository.getDateFormat()
+            val timeFormat = settingsRepository.getTimeFormat()
 
             if (feeds.isNotEmpty()) {
                 updateMutableState.update { FinishedFeedUpdateStatus }
@@ -82,6 +83,7 @@ internal class FeedStateRepository(
                         hideImages = hideImages,
                         hideDate = hideDate,
                         dateFormat = dateFormat,
+                        timeFormat = timeFormat,
                     )
                 }.toImmutableList()
             }
@@ -113,6 +115,7 @@ internal class FeedStateRepository(
             val hideImages = settingsRepository.getHideImages()
             val hideDate = settingsRepository.getHideDate()
             val dateFormat = settingsRepository.getDateFormat()
+            val timeFormat = settingsRepository.getTimeFormat()
             mutableFeedState.update { currentItems ->
                 val newList = feeds.map {
                     it.toFeedItem(
@@ -122,6 +125,7 @@ internal class FeedStateRepository(
                         hideImages = hideImages,
                         hideDate = hideDate,
                         dateFormat = dateFormat,
+                        timeFormat = timeFormat,
                     )
                 }.toImmutableList()
                 (currentItems + newList).toImmutableList()

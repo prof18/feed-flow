@@ -94,8 +94,8 @@ internal fun ReaderModeScreen(
                 onFontSizeChange = { newFontSize ->
                     navigator.evaluateJavaScript(
                         """
-                            document.getElementById("__reader_container").style.fontSize = "$newFontSize" + "px";
-                            document.getElementById("__reader_container").style.lineHeight = "1.5em";
+                            document.getElementById("container").style.fontSize = "$newFontSize" + "px";
+                            document.getElementById("container").style.lineHeight = "1.5em";
                         """.trimIndent(),
                     )
                     onUpdateFontSize(newFontSize)
@@ -150,16 +150,6 @@ private fun ReaderMode(
     val bodyColor = MaterialTheme.colorScheme.onSurface.toArgb().toHexString().substring(2)
     val linkColor = MaterialTheme.colorScheme.primary.toArgb().toHexString().substring(2)
 
-    var isContentReady by remember {
-        mutableStateOf(false)
-    }
-    var finalContents: String? by remember {
-        mutableStateOf(null)
-    }
-    var shouldNavigateBack by remember {
-        mutableStateOf(false)
-    }
-
     val isDarkMode = isSystemInDarkTheme()
     val backgroundColor = if (isDarkMode) {
         "#1e1e1e"
@@ -180,88 +170,45 @@ private fun ReaderMode(
     )
 
     val latestOpenInBrowser by rememberUpdatedState(openInBrowser)
-    val latestNavigateBack by rememberUpdatedState(navigateBack)
 
-    LaunchedEffect(shouldNavigateBack) {
-        if (shouldNavigateBack) {
-            latestNavigateBack()
-        }
-    }
+    val content = getReaderModeStyledHtml(
+        colors = colors,
+        content = readerModeState.readerModeData.content,
+        fontSize = readerModeState.readerModeData.fontSize,
+    )
 
-    Column {
-        ParsingWebView(
-            modifier = Modifier.requiredSize(0.dp),
-            articleLink = readerModeState.readerModeData.url,
-            articleContent = readerModeState.readerModeData.content,
-            contentLoaded = { result ->
-                Logger.d { "Parsed article" }
-                Logger.d { result }
-                val jsonResult = JSONObject(result)
-
-                val title = jsonResult.getStringOrNull("title")
-                val content = jsonResult.getStringOrNull("content").orEmpty()
-                val plainText = jsonResult.getStringOrNull("plainText").orEmpty()
-
-                if (plainText.length >= 200) {
-                    val finalHTML = getReaderModeStyledHtml(
-                        colors = colors,
-                        content = content,
-                        title = title,
-                        fontSize = readerModeState.readerModeData.fontSize,
-                    )
-
-                    finalContents = finalHTML
-                    isContentReady = true
-                } else {
-                    Logger.d { "Plain text too short (${plainText.length} chars), opening in browser" }
-                    latestOpenInBrowser(readerModeState.readerModeData.url)
-                    shouldNavigateBack = true
+    val jsBridge = rememberWebViewJsBridge()
+    LaunchedEffect(jsBridge) {
+        jsBridge.register(
+            object : IJsMessageHandler {
+                override fun handle(
+                    message: JsMessage,
+                    navigator: WebViewNavigator?,
+                    callback: (String) -> Unit,
+                ) {
+                    if (message.params.isNotBlank()) {
+                        latestOpenInBrowser(message.params)
+                    }
                 }
+
+                override fun methodName(): String = "urlInterceptor"
             },
         )
-
-        if (isContentReady) {
-            val jsBridge = rememberWebViewJsBridge()
-            DisposableEffect(jsBridge) {
-                jsBridge.register(
-                    object : IJsMessageHandler {
-                        override fun handle(
-                            message: JsMessage,
-                            navigator: WebViewNavigator?,
-                            callback: (String) -> Unit,
-                        ) {
-                            if (message.params.isNotBlank()) {
-                                latestOpenInBrowser(message.params)
-                            }
-                        }
-
-                        override fun methodName(): String = "urlInterceptor"
-                    },
-                )
-
-                onDispose { jsBridge.clear() }
-            }
-
-            val webViewState = rememberWebViewStateWithHTMLData(finalContents.orEmpty())
-            webViewState.webSettings.apply {
-                this.supportZoom = false
-            }
-
-            val layoutDir = LocalLayoutDirection.current
-            WebView(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = contentPadding.calculateTopPadding())
-                    .padding(start = contentPadding.calculateLeftPadding(layoutDir))
-                    .padding(end = contentPadding.calculateRightPadding(layoutDir)),
-                state = webViewState,
-                navigator = navigator,
-                webViewJsBridge = jsBridge,
-            )
-        } else {
-            CircularProgressIndicator()
-        }
     }
+
+    val state = rememberWebViewStateWithHTMLData(content)
+
+    val layoutDir = LocalLayoutDirection.current
+    WebView(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = contentPadding.calculateTopPadding())
+            .padding(start = contentPadding.calculateLeftPadding(layoutDir))
+            .padding(end = contentPadding.calculateRightPadding(layoutDir)),
+        state = state,
+        navigator = navigator,
+        webViewJsBridge = jsBridge,
+    )
 }
 
 private fun JSONObject.getStringOrNull(key: String): String? =

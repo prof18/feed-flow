@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_FAQ
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.TRANSLATION_WEBSITE
@@ -123,6 +124,15 @@ private fun SettingsItemList(
                     uriHandler.openUri(FEED_FLOW_WEBSITE)
                 },
                 buttonText = LocalFeedFlowStrings.current.openWebsiteButton,
+            )
+        }
+
+        item {
+            AboutButtonItem(
+                onClick = {
+                    uriHandler.openUri(FEED_FLOW_FAQ)
+                },
+                buttonText = LocalFeedFlowStrings.current.aboutMenuFaq,
             )
         }
 

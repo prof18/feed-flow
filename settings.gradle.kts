@@ -31,6 +31,7 @@ plugins {
 
 rootProject.name = "FeedFlow"
 include(":androidApp")
+include(":baselineprofile")
 include(":shared")
 include(":sharedUI")
 include(":desktopApp")

@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.feedflow.detekt)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 apply(from = "../versioning.gradle.kts")
@@ -130,6 +131,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewModel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.navigation.navigation.compose)
+    implementation(libs.androidx.baselineprofile)
 
     implementation(libs.bundles.about.libraries)
 
@@ -158,6 +160,8 @@ dependencies {
     debugImplementation(compose.uiTooling)
 
     testImplementation(libs.koin.test)
+
+    baselineProfile(project(":baselineprofile"))
 }
 
 play {

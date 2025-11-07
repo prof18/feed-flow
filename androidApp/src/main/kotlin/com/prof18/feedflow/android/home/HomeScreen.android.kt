@@ -7,16 +7,19 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.BrowserManager
+import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -24,6 +27,7 @@ import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
+import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.home.AdaptiveHomeView
@@ -46,6 +50,7 @@ internal fun HomeScreen(
     onAccountsClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
     onEditFeedClick: (FeedSource) -> Unit,
+    changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject(),
 ) {
     val browserManager = koinInject<BrowserManager>()
 
@@ -60,12 +65,25 @@ internal fun HomeScreen(
     val feedLayout by homeViewModel.feedLayout.collectAsStateWithLifecycle()
     val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsStateWithLifecycle()
 
+    val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsStateWithLifecycle()
+
+    var showChangeCategorySheet by remember { mutableStateOf(false) }
+    val changeCategorySheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val strings = LocalFeedFlowStrings.current
 
     if (feedOperation != FeedOperation.None) {
         LoadingOperationDialog(feedOperation)
+    }
+
+    LaunchedEffect(Unit) {
+        changeFeedCategoryViewModel.categoryChangedState.collect {
+            showChangeCategorySheet = false
+            homeViewModel.refreshData()
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -153,6 +171,10 @@ internal fun HomeScreen(
         onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
         onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
         onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
+        onChangeFeedCategoryClick = { feedSource ->
+            changeFeedCategoryViewModel.loadFeedSource(feedSource)
+            showChangeCategorySheet = true
+        },
         onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
     )
 
@@ -195,6 +217,28 @@ internal fun HomeScreen(
         ),
         onBackupClick = homeViewModel::enqueueBackup,
     )
+
+    if (showChangeCategorySheet) {
+        EditCategorySheet(
+            sheetState = changeCategorySheetState,
+            categoryState = categoriesState,
+            onCategorySelected = { categoryId ->
+                changeFeedCategoryViewModel.onCategorySelected(categoryId)
+            },
+            onAddCategory = { categoryName ->
+                changeFeedCategoryViewModel.addNewCategory(categoryName)
+            },
+            onDeleteCategory = { categoryId ->
+                changeFeedCategoryViewModel.deleteCategory(categoryId.value)
+            },
+            onEditCategory = { categoryId, newName ->
+                changeFeedCategoryViewModel.editCategory(categoryId, newName)
+            },
+            onDismiss = {
+                changeFeedCategoryViewModel.saveCategory()
+            },
+        )
+    }
 }
 
 private fun openUrl(

@@ -211,6 +211,11 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     onClick = { settings.onAutoDeletePeriodSelected(AutoDeletePeriod.DISABLED) },
                 )
                 RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneDay,
+                    selected = state.settingsState.autoDeletePeriod == AutoDeletePeriod.ONE_DAY,
+                    onClick = { settings.onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_DAY) },
+                )
+                RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneWeek,
                     selected = state.settingsState.autoDeletePeriod == AutoDeletePeriod.ONE_WEEK,
                     onClick = { settings.onAutoDeletePeriodSelected(AutoDeletePeriod.ONE_WEEK) },

@@ -170,6 +170,7 @@ class FeedFetcherRepository internal constructor(
 
         val threshold = when (deletePeriod) {
             AutoDeletePeriod.DISABLED -> return
+            AutoDeletePeriod.ONE_DAY -> Clock.System.now().minus(1.days).toEpochMilliseconds()
             AutoDeletePeriod.ONE_WEEK -> Clock.System.now().minus(7.days).toEpochMilliseconds()
             AutoDeletePeriod.TWO_WEEKS -> Clock.System.now().minus(14.days).toEpochMilliseconds()
             AutoDeletePeriod.ONE_MONTH -> Clock.System.now().minus(30.days).toEpochMilliseconds()

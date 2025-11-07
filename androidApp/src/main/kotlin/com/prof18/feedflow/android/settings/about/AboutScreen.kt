@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.BuildConfig
+import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_FAQ
 import com.prof18.feedflow.core.utils.Websites.FEED_FLOW_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.MG_WEBSITE
 import com.prof18.feedflow.core.utils.Websites.TRANSLATION_WEBSITE
@@ -54,6 +55,12 @@ fun AboutScreen(
                 context = context,
             )
         },
+        onFaqClick = {
+            browserManager.openUrlWithDefaultBrowser(
+                url = FEED_FLOW_FAQ,
+                context = context,
+            )
+        },
         onHelpWithTranslationsClick = {
             browserManager.openUrlWithDefaultBrowser(
                 url = TRANSLATION_WEBSITE,
@@ -69,6 +76,7 @@ private fun AboutScreenContent(
     licensesClicked: () -> Unit,
     nameClicked: () -> Unit,
     onOpenWebsiteClick: () -> Unit,
+    onFaqClick: () -> Unit,
     onHelpWithTranslationsClick: () -> Unit,
     navigateBack: () -> Unit = {},
 ) {
@@ -113,6 +121,12 @@ private fun AboutScreenContent(
                 }
                 item {
                     AboutButtonItem(
+                        onClick = onFaqClick,
+                        buttonText = LocalFeedFlowStrings.current.aboutMenuFaq,
+                    )
+                }
+                item {
+                    AboutButtonItem(
                         onClick = onHelpWithTranslationsClick,
                         buttonText = LocalFeedFlowStrings.current.aboutMenuContributeTranslations,
                     )
@@ -151,6 +165,7 @@ private fun AboutScreenPreview() {
                 licensesClicked = {},
                 nameClicked = {},
                 onOpenWebsiteClick = {},
+                onFaqClick = {},
                 onHelpWithTranslationsClick = {},
             )
         }

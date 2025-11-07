@@ -16,6 +16,7 @@ internal fun FeedSourceContextMenu(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
     onRenameFeedSourceClick: ((FeedSource) -> Unit)? = null,
     onOpenWebsite: ((String) -> Unit),
 ) {
@@ -39,6 +40,18 @@ internal fun FeedSourceContextMenu(
                 hideMenu()
             },
         )
+
+        if (onChangeFeedCategoryClick != null) {
+            DropdownMenuItem(
+                text = {
+                    Text(LocalFeedFlowStrings.current.changeCategory)
+                },
+                onClick = {
+                    onChangeFeedCategoryClick(feedSource)
+                    hideMenu()
+                },
+            )
+        }
 
         DropdownMenuItem(
             text = {

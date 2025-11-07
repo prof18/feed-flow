@@ -15,6 +15,7 @@ struct FeedSourceDrawerItem: View {
     let onSelect: (DrawerItem.DrawerFeedSource) -> Void
     let onEdit: (FeedSource) -> Void
     let onPin: (FeedSource) -> Void
+    let onChangeCategory: (FeedSource) -> Void
     let onDelete: (FeedSource) -> Void
     let onOpenWebsite: (String) -> Void
 
@@ -111,6 +112,12 @@ struct FeedSourceDrawerItem: View {
                 feedSource.isPinned ? feedFlowStrings.menuRemoveFromPinned : feedFlowStrings.menuAddToPinned,
                 systemImage: feedSource.isPinned ? "pin.slash" : "pin"
             )
+        }
+
+        Button {
+            onChangeCategory(feedSource)
+        } label: {
+            Label(feedFlowStrings.changeCategory, systemImage: "folder")
         }
 
         if let websiteUrl = feedSource.websiteUrl {

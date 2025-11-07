@@ -11,6 +11,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActions
@@ -53,6 +54,7 @@ class FeedManagementActions(
     val onPinFeedClick: (FeedSource) -> Unit,
     val onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     val onDeleteCategoryClick: (CategoryId) -> Unit,
+    val onChangeFeedCategoryClick: (FeedSource, FeedSourceCategory?) -> Unit,
     val onOpenWebsite: (String) -> Unit,
 )
 

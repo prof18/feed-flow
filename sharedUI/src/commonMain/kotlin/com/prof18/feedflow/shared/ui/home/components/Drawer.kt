@@ -67,6 +67,7 @@ import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
+import com.prof18.feedflow.shared.ui.components.ChangeFeedCategoryDialog
 import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
@@ -85,6 +86,9 @@ internal fun Drawer(
     onFeedFilterSelected: (FeedFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showChangeCategoryDialog by rememberSaveable { mutableStateOf(false) }
+    var selectedFeedForCategoryChange by remember { mutableStateOf<FeedSource?>(null) }
+
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
@@ -148,6 +152,10 @@ internal fun Drawer(
                         onEditFeedClick = feedManagementActions.onEditFeedClick,
                         onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
                         onPinFeedClick = feedManagementActions.onPinFeedClick,
+                        onChangeFeedCategoryClick = { feedSource ->
+                            selectedFeedForCategoryChange = feedSource
+                            showChangeCategoryDialog = true
+                        },
                         onOpenWebsite = feedManagementActions.onOpenWebsite,
                     )
                 }
@@ -181,10 +189,34 @@ internal fun Drawer(
                     onEditFeedClick = feedManagementActions.onEditFeedClick,
                     onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
                     onPinFeedClick = feedManagementActions.onPinFeedClick,
+                    onChangeFeedCategoryClick = { feedSource ->
+                        selectedFeedForCategoryChange = feedSource
+                        showChangeCategoryDialog = true
+                    },
                     onOpenWebsite = feedManagementActions.onOpenWebsite,
                 )
             }
         }
+    }
+
+    selectedFeedForCategoryChange?.let { feedSource ->
+        ChangeFeedCategoryDialog(
+            showDialog = showChangeCategoryDialog,
+            feedSource = feedSource,
+            categories = displayState.navDrawerState.categories
+                .filterIsInstance<DrawerItem.DrawerCategory>()
+                .map { it.category }
+                .toImmutableList(),
+            onDismiss = {
+                showChangeCategoryDialog = false
+                selectedFeedForCategoryChange = null
+            },
+            onCategorySelected = { feed, category ->
+                feedManagementActions.onChangeFeedCategoryClick(feed, category)
+                showChangeCategoryDialog = false
+                selectedFeedForCategoryChange = null
+            },
+        )
     }
 }
 
@@ -461,6 +493,7 @@ private fun DrawerFeedSourcesByCategories(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
     onOpenWebsite: (String) -> Unit,
 ) {
     Column {
@@ -483,6 +516,7 @@ private fun DrawerFeedSourcesByCategories(
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onPinFeedClick = onPinFeedClick,
+                onChangeFeedCategoryClick = onChangeFeedCategoryClick,
                 onOpenWebsite = onOpenWebsite,
             )
 
@@ -504,6 +538,7 @@ private fun DrawerFeedSourcesByCategories(
                     onEditFeedClick = onEditFeedClick,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onPinFeedClick = onPinFeedClick,
+                    onChangeFeedCategoryClick = onChangeFeedCategoryClick,
                     onOpenWebsite = onOpenWebsite,
                 )
             }
@@ -522,6 +557,7 @@ private fun DrawerFeedSourceByCategoryItem(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
     onOpenWebsite: (String) -> Unit,
 ) {
     Column(
@@ -576,6 +612,7 @@ private fun DrawerFeedSourceByCategoryItem(
             onEditFeedClick = onEditFeedClick,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             onPinFeedClick = onPinFeedClick,
+            onChangeFeedCategoryClick = onChangeFeedCategoryClick,
             onOpenWebsite = onOpenWebsite,
         )
     }
@@ -590,6 +627,7 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
     onOpenWebsite: (String) -> Unit,
 ) {
     AnimatedVisibility(
@@ -609,6 +647,7 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
             onEditFeedClick = onEditFeedClick,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             onPinFeedClick = onPinFeedClick,
+            onChangeFeedCategoryClick = onChangeFeedCategoryClick,
             onOpenWebsite = onOpenWebsite,
         )
     }
@@ -622,6 +661,7 @@ private fun FeedSourcesList(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
     onOpenWebsite: (String) -> Unit,
 ) {
     Column {
@@ -664,6 +704,7 @@ private fun FeedSourcesList(
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onPinFeedClick = onPinFeedClick,
+                onChangeFeedCategoryClick = onChangeFeedCategoryClick,
                 onOpenWebsite = onOpenWebsite,
                 feedSource = feedSourceWrapper.feedSource,
                 unreadCount = feedSourceWrapper.unreadCount,
@@ -683,6 +724,7 @@ fun FeedSourceDrawerItem(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
     onOpenWebsite: (String) -> Unit,
     unreadCount: Long,
     modifier: Modifier = Modifier,
@@ -781,6 +823,7 @@ fun FeedSourceDrawerItem(
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 feedSource = feedSource,
                 onPinFeedClick = onPinFeedClick,
+                onChangeFeedCategoryClick = onChangeFeedCategoryClick,
                 onOpenWebsite = onOpenWebsite,
             )
         }

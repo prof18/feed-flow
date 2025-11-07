@@ -335,5 +335,16 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun changeFeedCategory(feedSource: FeedSource, newCategory: FeedSourceCategory?) {
+        viewModelScope.launch {
+            val updatedFeedSource = feedSource.copy(category = newCategory)
+            feedSourcesRepository.editFeedSource(
+                newFeedSource = updatedFeedSource,
+                originalFeedSource = feedSource,
+            )
+            feedStateRepository.getFeeds()
+        }
+    }
+
     fun getCurrentThemeMode() = settingsRepository.getThemeMode()
 }

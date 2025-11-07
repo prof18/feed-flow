@@ -25,6 +25,8 @@ struct SidebarDrawer: View {
 
     @State private var showMarkAllReadDialog = false
     @State private var showClearOldArticlesDialog = false
+    @State private var showChangeCategorySheet = false
+    @State private var selectedFeedForCategoryChange: FeedSource?
 
     let navDrawerState: NavDrawerState
     let onFeedFilterSelected: (FeedFilter) -> Void
@@ -37,6 +39,7 @@ struct SidebarDrawer: View {
     let onEditFeedClick: (FeedSource) -> Void
     let onDeleteFeedClick: (FeedSource) -> Void
     let onPinFeedClick: (FeedSource) -> Void
+    let onChangeFeedCategoryClick: (FeedSource, FeedSourceCategory?) -> Void
     let onDeleteCategory: (String) -> Void
     let onUpdateCategoryName: (String, String) -> Void
 
@@ -91,6 +94,28 @@ struct SidebarDrawer: View {
             }
         } message: {
             Text(feedFlowStrings.clearOldArticlesDialogMessage)
+        }
+        .sheet(isPresented: $showChangeCategorySheet) {
+            if let feedSource = selectedFeedForCategoryChange {
+                ChangeCategorySheet(
+                    feedSource: feedSource,
+                    categories: navDrawerState.categories.compactMap { item in
+                        if let drawerCategory = item as? DrawerItem.DrawerCategory {
+                            return drawerCategory.category
+                        }
+                        return nil
+                    },
+                    onCategorySelected: { category in
+                        onChangeFeedCategoryClick(feedSource, category)
+                        showChangeCategorySheet = false
+                        selectedFeedForCategoryChange = nil
+                    },
+                    onDismiss: {
+                        showChangeCategorySheet = false
+                        selectedFeedForCategoryChange = nil
+                    }
+                )
+            }
         }
     }
 
@@ -216,6 +241,10 @@ struct SidebarDrawer: View {
             },
             onEdit: onEditFeedClick,
             onPin: onPinFeedClick,
+            onChangeCategory: { feedSource in
+                selectedFeedForCategoryChange = feedSource
+                showChangeCategorySheet = true
+            },
             onDelete: onDeleteFeedClick,
             onOpenWebsite: { url in
                 // TODO: open in app?

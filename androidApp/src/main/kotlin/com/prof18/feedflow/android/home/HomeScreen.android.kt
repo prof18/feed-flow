@@ -142,6 +142,9 @@ internal fun HomeScreen(
         onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
         onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
         onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
+        onChangeFeedCategoryClick = { feedSource, category ->
+            homeViewModel.changeFeedCategory(feedSource, category)
+        },
         onOpenWebsite = { url -> browserManager.openUrlWithFavoriteBrowser(url, context) },
     )
 

@@ -83,6 +83,9 @@ struct RegularView: View {
                 onPinFeedClick: { feedSource in
                     homeViewModel.toggleFeedPin(feedSource: feedSource)
                 },
+                onChangeFeedCategoryClick: { feedSource, category in
+                    homeViewModel.changeFeedCategory(feedSource: feedSource, newCategory: category)
+                },
                 onDeleteCategory: { categoryId in
                     homeViewModel.deleteCategory(categoryId: CategoryId(value: categoryId))
                 },

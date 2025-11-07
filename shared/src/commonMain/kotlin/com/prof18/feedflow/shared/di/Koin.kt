@@ -35,6 +35,7 @@ import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
+import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
@@ -324,6 +325,14 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSourcesRepository = get(),
             accountsRepository = get(),
             databaseHelper = get(),
+            feedStateRepository = get(),
+        )
+    }
+
+    viewModel {
+        ChangeFeedCategoryViewModel(
+            categoryRepository = get(),
+            feedSourcesRepository = get(),
             feedStateRepository = get(),
         )
     }

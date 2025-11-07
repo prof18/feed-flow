@@ -168,6 +168,7 @@
     <string name="settings_auto_delete_desc">Automatically delete articles older than the selected period</string>
     <string name="settings_auto_delete_period">Delete period</string>
     <string name="settings_auto_delete_period_disabled">Disabled</string>
+    <string name="settings_auto_delete_period_one_day">One day old</string>
     <string name="settings_auto_delete_period_one_week">One week old</string>
     <string name="settings_auto_delete_period_two_weeks">Two weeks old</string>
     <string name="settings_auto_delete_period_one_month">One month old</string>

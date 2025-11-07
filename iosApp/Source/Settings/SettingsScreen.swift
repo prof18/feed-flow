@@ -277,6 +277,8 @@ private struct BehaviourSection: View {
             Picker(selection: $autoDeletePeriod) {
                 Text(feedFlowStrings.settingsAutoDeletePeriodDisabled)
                     .tag(AutoDeletePeriod.disabled)
+                Text(feedFlowStrings.settingsAutoDeletePeriodOneDay)
+                    .tag(AutoDeletePeriod.oneDay)
                 Text(feedFlowStrings.settingsAutoDeletePeriodOneWeek)
                     .tag(AutoDeletePeriod.oneWeek)
                 Text(feedFlowStrings.settingsAutoDeletePeriodTwoWeeks)

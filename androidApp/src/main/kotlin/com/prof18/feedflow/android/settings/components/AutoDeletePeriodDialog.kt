@@ -67,6 +67,16 @@ internal fun AutoDeletePeriodDialog(
                 }
                 item {
                     PeriodOption(
+                        text = strings.settingsAutoDeletePeriodOneDay,
+                        selected = currentPeriod == AutoDeletePeriod.ONE_DAY,
+                        onClick = {
+                            onPeriodSelected(AutoDeletePeriod.ONE_DAY)
+                            dismissDialog()
+                        },
+                    )
+                }
+                item {
+                    PeriodOption(
                         text = strings.settingsAutoDeletePeriodOneWeek,
                         selected = currentPeriod == AutoDeletePeriod.ONE_WEEK,
                         onClick = {

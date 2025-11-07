@@ -13,6 +13,7 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.core.utils.isLinux
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
@@ -62,6 +63,8 @@ fun FrameWindowScope.FeedFlowMenuBar(
     actions: MenuBarActions,
     settings: MenuBarSettings,
 ) {
+    val isMacOS = getDesktopOS().isMacOs()
+
     MenuBar {
         Menu(LocalFeedFlowStrings.current.fileMenu, mnemonic = 'F') {
             Item(
@@ -69,7 +72,11 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onClick = {
                     actions.onRefreshClick()
                 },
-                shortcut = KeyShortcut(Key.R, meta = true),
+                shortcut = if (isMacOS) {
+                    KeyShortcut(Key.R, meta = true)
+                } else {
+                    KeyShortcut(Key.F5)
+                },
             )
 
             Item(
@@ -77,7 +84,11 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onClick = {
                     actions.onForceRefreshClick()
                 },
-                shortcut = KeyShortcut(Key.R, meta = true, shift = true),
+                shortcut = if (isMacOS) {
+                    KeyShortcut(Key.R, meta = true, shift = true)
+                } else {
+                    KeyShortcut(Key.F5, shift = true)
+                },
             )
 
             Item(
@@ -85,12 +96,22 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onClick = {
                     actions.onMarkAllReadClick()
                 },
+                shortcut = if (isMacOS) {
+                    KeyShortcut(Key.A, meta = true, shift = true)
+                } else {
+                    KeyShortcut(Key.A, ctrl = true, shift = true)
+                },
             )
 
             Item(
                 text = LocalFeedFlowStrings.current.clearOldArticlesButton,
                 onClick = {
                     actions.onClearOldFeedClick()
+                },
+                shortcut = if (isMacOS) {
+                    KeyShortcut(Key.D, meta = true, shift = true)
+                } else {
+                    KeyShortcut(Key.D, ctrl = true, shift = true)
                 },
             )
 
@@ -139,6 +160,11 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     onClick = {
                         navigator.push(EditFeedScreen(state.feedFilter.feedSource))
                     },
+                    shortcut = if (isMacOS) {
+                        KeyShortcut(Key.E, meta = true)
+                    } else {
+                        KeyShortcut(Key.E, ctrl = true)
+                    },
                 )
             }
 
@@ -147,17 +173,32 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onClick = {
                     navigator.push(FeedSourceListScreen())
                 },
+                shortcut = if (isMacOS) {
+                    KeyShortcut(Key.L, meta = true)
+                } else {
+                    KeyShortcut(Key.L, ctrl = true)
+                },
             )
 
             Item(
                 text = LocalFeedFlowStrings.current.importExportOpml,
                 onClick = actions.onImportExportClick,
+                shortcut = if (isMacOS) {
+                    KeyShortcut(Key.I, meta = true)
+                } else {
+                    KeyShortcut(Key.I, ctrl = true)
+                },
             )
 
             Item(
                 text = LocalFeedFlowStrings.current.settingsAccounts,
                 onClick = {
                     navigator.push(AccountsScreen())
+                },
+                shortcut = if (isMacOS) {
+                    KeyShortcut(Key.Comma, meta = true)
+                } else {
+                    KeyShortcut(Key.Comma, ctrl = true)
                 },
             )
 

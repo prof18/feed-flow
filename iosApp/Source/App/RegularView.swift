@@ -111,6 +111,11 @@ struct RegularView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: CommonViewRoute.self) { route in
                 switch route {
+                case .onboarding:
+                    OnboardingScreen {
+                        appState.regularNavigationPath.removeLast()
+                    }
+
                 case let .readerMode(feedItem):
                     ReaderModeScreen(
                         feedItemUrlInfo: FeedItemUrlInfo(

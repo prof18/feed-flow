@@ -42,7 +42,9 @@ import com.prof18.feedflow.android.editfeed.EditScreen
 import com.prof18.feedflow.android.editfeed.toEditFeed
 import com.prof18.feedflow.android.editfeed.toFeedSource
 import com.prof18.feedflow.android.feedsourcelist.FeedSourceListScreen
+import com.prof18.feedflow.android.feedsuggestions.FeedSuggestionsScreen
 import com.prof18.feedflow.android.home.HomeScreen
+import com.prof18.feedflow.android.onboarding.OnboardingScreen
 import com.prof18.feedflow.android.readermode.ReaderModeScreen
 import com.prof18.feedflow.android.search.SearchScreen
 import com.prof18.feedflow.android.settings.SettingsScreen
@@ -58,6 +60,7 @@ import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -68,6 +71,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : BaseThemeActivity() {
@@ -177,9 +181,13 @@ class MainActivity : BaseThemeActivity() {
         navController: NavHostController,
         readerModeViewModel: ReaderModeViewModel,
     ) {
+        val settingsRepository = koinInject<SettingsRepository>()
+        val isOnboardingCompleted = settingsRepository.isOnboardingCompleted()
+        val startDestination = if (isOnboardingCompleted) Home() else Onboarding
+
         NavHost(
             navController = navController,
-            startDestination = Home(),
+            startDestination = startDestination,
             enterTransition = { fadeIn() + slideIntoContainer(SlideDirection.Start) },
             exitTransition = { fadeOut() + slideOutOfContainer(SlideDirection.Start) },
             popEnterTransition = { EnterTransition.None },
@@ -240,6 +248,24 @@ class MainActivity : BaseThemeActivity() {
                 )
             }
 
+            composable<Onboarding> {
+                OnboardingScreen(
+                    onOnboardingComplete = {
+                        navController.navigate(Home()) {
+                            popUpTo<Onboarding> { inclusive = true }
+                        }
+                    },
+                )
+            }
+
+            composable<FeedSuggestions> {
+                FeedSuggestionsScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
             composable<Settings> {
                 SettingsScreen(
                     onFeedListClick = {
@@ -265,6 +291,9 @@ class MainActivity : BaseThemeActivity() {
                     },
                     navigateToBlockedWords = {
                         navController.navigate(BlockedWords)
+                    },
+                    navigateToFeedSuggestions = {
+                        navController.navigate(FeedSuggestions)
                     },
                 )
             }

@@ -45,6 +45,12 @@ struct ContentView: View {
             }
             let savedThemeMode = vmStoreOwner.instance.getCurrentThemeMode()
             appState.updateTheme(savedThemeMode)
+
+            let settingsRepository = Deps.shared.getSettingsRepository()
+            let isOnboardingCompleted = settingsRepository.isOnboardingCompleted()
+            if !isOnboardingCompleted {
+                appState.navigate(route: CommonViewRoute.onboarding)
+            }
         }
         .onChange(of: horizontalSizeClass) {
             if !isAppInBackground && horizontalSizeClass != appState.sizeClass {

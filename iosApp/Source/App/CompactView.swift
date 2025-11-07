@@ -113,6 +113,11 @@ struct CompactView: View {
             }
             .navigationDestination(for: CommonViewRoute.self) { route in
                 switch route {
+                case .onboarding:
+                    OnboardingScreen {
+                        appState.compatNavigationPath.removeLast()
+                    }
+
                 case let .readerMode(feedItem):
                     ReaderModeScreen(
                         feedItemUrlInfo: FeedItemUrlInfo(

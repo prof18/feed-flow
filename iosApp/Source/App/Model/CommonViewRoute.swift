@@ -10,6 +10,7 @@ import FeedFlowKit
 import Foundation
 
 enum CommonViewRoute: Hashable {
+    case onboarding
     case readerMode(feedItem: FeedItem)
     case search
     case accounts

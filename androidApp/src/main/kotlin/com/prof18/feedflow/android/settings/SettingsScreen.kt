@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Report
@@ -94,6 +95,7 @@ fun SettingsScreen(
     navigateToAccounts: () -> Unit,
     navigateToNotifications: () -> Unit,
     navigateToBlockedWords: () -> Unit,
+    navigateToFeedSuggestions: () -> Unit,
 ) {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val feedDownloadWorkerEnqueuer = koinInject<FeedDownloadWorkerEnqueuer>()
@@ -116,6 +118,7 @@ fun SettingsScreen(
         showCrashReporting = appConfig.isLoggingEnabled,
         onFeedListClick = onFeedListClick,
         onAddFeedClick = onAddFeedClick,
+        navigateToFeedSuggestions = navigateToFeedSuggestions,
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
         },
@@ -193,6 +196,7 @@ private fun SettingsScreenContent(
     showCrashReporting: Boolean,
     onFeedListClick: () -> Unit,
     onAddFeedClick: () -> Unit,
+    navigateToFeedSuggestions: () -> Unit,
     onBrowserSelected: (Browser) -> Unit,
     navigateBack: () -> Unit,
     onAboutClick: () -> Unit,
@@ -251,6 +255,14 @@ private fun SettingsScreenContent(
                     title = LocalFeedFlowStrings.current.addFeed,
                     icon = Icons.Outlined.AddCircleOutline,
                     onClick = onAddFeedClick,
+                )
+            }
+
+            item {
+                SettingItem(
+                    title = "Feed Suggestions",
+                    icon = Icons.Outlined.Lightbulb,
+                    onClick = navigateToFeedSuggestions,
                 )
             }
 

@@ -45,6 +45,9 @@ class SettingsRepository(
     private val themeModeMutableFlow = MutableStateFlow<ThemeMode>(getThemeMode())
     val themeModeFlow: StateFlow<ThemeMode> = themeModeMutableFlow.asStateFlow()
 
+    private val reduceMotionMutableFlow = MutableStateFlow(getReduceMotion())
+    val reduceMotionFlow: StateFlow<Boolean> = reduceMotionMutableFlow.asStateFlow()
+
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
@@ -240,6 +243,14 @@ class SettingsRepository(
         themeModeMutableFlow.update { mode }
     }
 
+    fun getReduceMotion(): Boolean =
+        settings.getBoolean(SettingsFields.REDUCE_MOTION_ENABLED.name, false)
+
+    fun setReduceMotion(enabled: Boolean) {
+        settings[SettingsFields.REDUCE_MOTION_ENABLED.name] = enabled
+        reduceMotionMutableFlow.update { enabled }
+    }
+
     fun getDesktopWindowWidthDp(): Int =
         settings.getInt(SettingsFields.DESKTOP_WINDOW_WIDTH_DP.name, defaultValue = 800)
 
@@ -300,4 +311,5 @@ internal enum class SettingsFields {
     DESKTOP_WINDOW_HEIGHT_DP,
     DESKTOP_WINDOW_X_POSITION_DP,
     DESKTOP_WINDOW_Y_POSITION_DP,
+    REDUCE_MOTION_ENABLED,
 }

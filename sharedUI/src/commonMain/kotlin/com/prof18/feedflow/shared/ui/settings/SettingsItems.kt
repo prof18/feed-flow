@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Animation
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.SubtitlesOff
@@ -131,6 +132,44 @@ fun RemoveTitleFromDescSwitch(
             interactionSource = interactionSource,
             checked = isRemoveTitleFromDescriptionEnabled,
             onCheckedChange = setRemoveTitleFromDescription,
+        )
+    }
+}
+
+@Composable
+fun ReduceMotionSwitch(
+    isReduceMotionEnabled: Boolean,
+    modifier: Modifier = Modifier,
+    setReduceMotion: (Boolean) -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .clickable {
+                setReduceMotion(!isReduceMotionEnabled)
+            }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.Outlined.Animation,
+            contentDescription = null,
+        )
+
+        Text(
+            text = LocalFeedFlowStrings.current.settingsReduceMotion,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f),
+        )
+        Switch(
+            interactionSource = interactionSource,
+            checked = isReduceMotionEnabled,
+            onCheckedChange = setReduceMotion,
         )
     }
 }

@@ -67,7 +67,10 @@ fun main() {
             ThemeMode.DARK -> true
         }
 
-        FeedFlowTheme(darkTheme = isDarkTheme) {
+        FeedFlowTheme(
+            darkTheme = isDarkTheme,
+            reduceMotion = settingsState.isReduceMotionEnabled,
+        ) {
             LaunchedEffect(isDarkTheme) {
                 if (getDesktopOS().isNotMacOs()) {
                     setupLookAndFeel(isDarkTheme)

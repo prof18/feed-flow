@@ -50,6 +50,7 @@ class SettingsViewModel internal constructor(
                 val feedOrder = settingsRepository.getFeedOrder()
                 val feedLayout = settingsRepository.getFeedLayout()
                 val themeMode = settingsRepository.getThemeMode()
+                val isReduceMotionEnabled = settingsRepository.getReduceMotion()
                 settingsMutableState.update {
                     SettingsState(
                         feedOrder = feedOrder,
@@ -68,6 +69,7 @@ class SettingsViewModel internal constructor(
                         dateFormat = dateFormat,
                         feedLayout = feedLayout,
                         themeMode = themeMode,
+                        isReduceMotionEnabled = isReduceMotionEnabled,
                     )
                 }
             }
@@ -212,6 +214,13 @@ class SettingsViewModel internal constructor(
         viewModelScope.launch {
             settingsRepository.setThemeMode(mode)
             settingsMutableState.update { it.copy(themeMode = mode) }
+        }
+    }
+
+    fun updateReduceMotion(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setReduceMotion(enabled)
+            settingsMutableState.update { it.copy(isReduceMotionEnabled = enabled) }
         }
     }
 }

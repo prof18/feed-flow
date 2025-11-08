@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.ui.search
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
@@ -47,6 +46,7 @@ import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemContainer
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemView
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.delay
 
@@ -210,7 +210,7 @@ private fun SearchBar(
         ),
         onValueChange = onSearchQueryChange,
         trailingIcon = {
-            AnimatedVisibility(
+            ConditionalAnimatedVisibility(
                 visible = searchQuery.text.isNotBlank(),
                 enter = fadeIn(),
                 exit = fadeOut(),

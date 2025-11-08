@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.ui.home.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateFloatAsState
@@ -74,7 +73,9 @@ import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -530,14 +531,16 @@ private fun DrawerFeedSourceByCategoryItem(
             .fillMaxWidth(),
     ) {
         @Suppress("MagicNumber")
-        val degrees by animateFloatAsState(
-            targetValue = if (isCategoryExpanded) {
-                -90f
-            } else {
-                90f
-            },
-            label = "Category arrow animation",
-        )
+        val reduceMotion = LocalReduceMotion.current
+        val targetDegrees = if (isCategoryExpanded) -90f else 90f
+        val degrees by if (reduceMotion) {
+            remember(targetDegrees) { mutableStateOf(targetDegrees) }
+        } else {
+            animateFloatAsState(
+                targetValue = targetDegrees,
+                label = "Category arrow animation",
+            )
+        }
         Row(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)
@@ -592,7 +595,7 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
     onPinFeedClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
 ) {
-    AnimatedVisibility(
+    ConditionalAnimatedVisibility(
         visible = isCategoryExpanded,
         enter = expandVertically(
             spring(

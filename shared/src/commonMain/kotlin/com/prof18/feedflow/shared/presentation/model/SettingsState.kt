@@ -25,4 +25,5 @@ data class SettingsState(
     val feedOrder: FeedOrder = FeedOrder.NEWEST_FIRST,
     val feedLayout: FeedLayout = FeedLayout.LIST,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    val isReduceMotionEnabled: Boolean = false,
 )

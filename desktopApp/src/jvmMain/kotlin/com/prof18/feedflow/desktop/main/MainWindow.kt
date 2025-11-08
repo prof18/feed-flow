@@ -163,7 +163,10 @@ internal fun ApplicationScope.MainWindow(
         }
 
         if (showBackupLoader) {
-            FeedFlowTheme(darkTheme = isDarkTheme) {
+            FeedFlowTheme(
+                darkTheme = isDarkTheme,
+                reduceMotion = settingsState.isReduceMotionEnabled,
+            ) {
                 Scaffold {
                     Column(
                         modifier = Modifier

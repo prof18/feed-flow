@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.ui.feed
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
@@ -45,6 +44,7 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.shared.ui.components.DeleteCategoryDialog
 import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -126,7 +126,7 @@ private fun CategoriesList(
             onEditCategoryClick(categoryId, newName)
         },
     )
-    AnimatedVisibility(
+    ConditionalAnimatedVisibility(
         modifier = modifier,
         visible = categoriesState.isExpanded,
         enter = expandVertically(

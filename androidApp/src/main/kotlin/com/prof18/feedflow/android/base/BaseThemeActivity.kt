@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.prof18.feedflow.android.util.isSystemInDarkTheme
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
@@ -23,10 +24,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.java.KoinJavaComponent.inject
 
 abstract class BaseThemeActivity : ComponentActivity() {
 
     private val themeViewModel by viewModel<ThemeViewModel>()
+    private val settingsRepository by inject<SettingsRepository>(SettingsRepository::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,22 +40,29 @@ abstract class BaseThemeActivity : ComponentActivity() {
             resources.configuration.isSystemInDarkTheme,
         )
 
+        var reduceMotion by mutableStateOf(false)
+
         // Update the theme and system bars dynamically
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 combine(
                     isSystemInDarkTheme(),
                     themeViewModel.themeState,
-                ) { systemDark, themeState ->
-                    when (themeState) {
+                    settingsRepository.reduceMotionFlow,
+                ) { systemDark, themeState, reduceMotionEnabled ->
+                    val isDark = when (themeState) {
                         ThemeMode.LIGHT -> false
                         ThemeMode.DARK -> true
                         ThemeMode.SYSTEM -> systemDark
                     }
+                    isDark to reduceMotionEnabled
                 }
-                    .onEach { darkTheme = it }
+                    .onEach { (isDark, reduceMotionEnabled) ->
+                        darkTheme = isDark
+                        reduceMotion = reduceMotionEnabled
+                    }
                     .distinctUntilChanged()
-                    .collect { isDark ->
+                    .collect { (isDark, _) ->
                         // Update system bars dynamically
                         enableEdgeToEdge(
                             statusBarStyle = SystemBarStyle.auto(
@@ -71,6 +81,7 @@ abstract class BaseThemeActivity : ComponentActivity() {
         setContent {
             FeedFlowTheme(
                 darkTheme = darkTheme,
+                reduceMotion = reduceMotion,
             ) {
                 val lyricist = rememberFeedFlowStrings()
                 ProvideFeedFlowStrings(lyricist) {

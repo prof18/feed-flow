@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.ui.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.shared.ui.home.components.Drawer
 import com.prof18.feedflow.shared.ui.home.components.HomeScreenContent
+import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import kotlinx.coroutines.launch
 
 @Suppress("MultipleEmitters", "ModifierMissing")
@@ -115,7 +115,7 @@ fun AdaptiveHomeView(
         WindowSizeClass.Medium, WindowSizeClass.Expanded -> {
             var isDrawerMenuFullVisible by remember { mutableStateOf(true) }
             Row {
-                AnimatedVisibility(
+                ConditionalAnimatedVisibility(
                     modifier = Modifier.weight(1f),
                     visible = isDrawerMenuFullVisible,
                 ) {

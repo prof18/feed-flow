@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.ui.home.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -19,7 +19,7 @@ fun FeedLoader(
     loadingState: FeedUpdateStatus,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(
+    ConditionalAnimatedVisibility(
         visible = loadingState.isLoading(),
         enter = slideInVertically {
             // Enters from the top (negative initial offset)

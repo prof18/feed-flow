@@ -154,22 +154,6 @@ internal fun Drawer(
             }
         }
 
-        if (displayState.navDrawerState.categories.isNotEmpty()) {
-            item {
-                DrawerDivider()
-            }
-
-            item {
-                DrawerCategoriesSection(
-                    navDrawerState = displayState.navDrawerState,
-                    currentFeedFilter = displayState.currentFeedFilter,
-                    onFeedFilterSelected = onFeedFilterSelected,
-                    onEditCategoryClick = feedManagementActions.onEditCategoryClick,
-                    onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
-                )
-            }
-        }
-
         if (displayState.navDrawerState.feedSourcesByCategory.isNotEmpty() ||
             displayState.navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
         ) {
@@ -182,6 +166,8 @@ internal fun Drawer(
                     onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
                     onPinFeedClick = feedManagementActions.onPinFeedClick,
                     onOpenWebsite = feedManagementActions.onOpenWebsite,
+                    onEditCategoryClick = feedManagementActions.onEditCategoryClick,
+                    onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
                 )
             }
         }
@@ -320,140 +306,6 @@ private fun DrawerAddItem(
 }
 
 @Composable
-private fun DrawerCategoriesSection(
-    navDrawerState: NavDrawerState,
-    currentFeedFilter: FeedFilter,
-    onFeedFilterSelected: (FeedFilter) -> Unit,
-    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
-    onDeleteCategoryClick: (CategoryId) -> Unit,
-) {
-    Column {
-        Text(
-            modifier = Modifier
-                .padding(start = Spacing.regular)
-                .padding(bottom = Spacing.regular),
-            text = LocalFeedFlowStrings.current.drawerTitleCategories,
-            style = MaterialTheme.typography.labelLarge,
-        )
-
-        for (category in navDrawerState.categories) {
-            DrawerCategoryItem(
-                currentFeedFilter = currentFeedFilter,
-                drawerCategory = category as DrawerItem.DrawerCategory,
-                onFeedFilterSelected = onFeedFilterSelected,
-                onEditCategoryClick = onEditCategoryClick,
-                onDeleteCategoryClick = onDeleteCategoryClick,
-            )
-        }
-    }
-}
-
-@Composable
-private fun DrawerCategoryItem(
-    currentFeedFilter: FeedFilter,
-    drawerCategory: DrawerItem.DrawerCategory,
-    onFeedFilterSelected: (FeedFilter) -> Unit,
-    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
-    onDeleteCategoryClick: (CategoryId) -> Unit,
-) {
-    val colors = NavigationDrawerItemDefaults.colors(
-        unselectedContainerColor = Color.Transparent,
-    )
-
-    var showEditDialog by rememberSaveable { mutableStateOf(false) }
-    var showMenu by rememberSaveable { mutableStateOf(false) }
-
-    val selected = currentFeedFilter is FeedFilter.Category &&
-        drawerCategory.category == currentFeedFilter.feedCategory
-
-    Surface(
-        selected = selected,
-        onClick = {
-            onFeedFilterSelected(
-                FeedFilter.Category(feedCategory = drawerCategory.category),
-            )
-        },
-        modifier =
-        Modifier
-            .semantics { role = Role.Tab }
-            .heightIn(min = 56.0.dp)
-            .fillMaxWidth(),
-        shape = CircleShape,
-        color = colors.containerColor(selected).value,
-    ) {
-        Row(
-            Modifier
-                .feedSourceMenuClickModifier(
-                    onClick = {
-                        onFeedFilterSelected(
-                            FeedFilter.Category(feedCategory = drawerCategory.category),
-                        )
-                    },
-                    onLongClick = {
-                        showMenu = true
-                    },
-                )
-                .padding(start = 16.dp, end = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f),
-            ) {
-                val iconColor = colors.iconColor(selected).value
-                CompositionLocalProvider(LocalContentColor provides iconColor) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Label,
-                        contentDescription = null,
-                    )
-                }
-                Spacer(Modifier.width(12.dp))
-
-                Box(Modifier.weight(1f)) {
-                    val labelColor = colors.textColor(selected).value
-                    CompositionLocalProvider(LocalContentColor provides labelColor) {
-                        Text(
-                            text = drawerCategory.category.title,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-            }
-
-            if (drawerCategory.unreadCount > 0) {
-                Text(
-                    modifier = Modifier.padding(start = Spacing.small),
-                    text = drawerCategory.unreadCount.toString(),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = colors.textColor(selected).value,
-                )
-            }
-        }
-
-        CategoryContextMenu(
-            showMenu = showMenu,
-            hideMenu = { showMenu = false },
-            categoryId = CategoryId(drawerCategory.category.id),
-            onEditCategoryClick = {
-                showMenu = false
-                showEditDialog = true
-            },
-            onDeleteCategoryClick = onDeleteCategoryClick,
-        )
-    }
-
-    EditCategoryDialog(
-        showDialog = showEditDialog,
-        categoryId = CategoryId(drawerCategory.category.id),
-        initialCategoryName = drawerCategory.category.title,
-        onDismiss = { showEditDialog = false },
-        onEditCategory = onEditCategoryClick,
-    )
-}
-
-@Composable
 private fun DrawerFeedSourcesByCategories(
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
@@ -462,6 +314,8 @@ private fun DrawerFeedSourcesByCategories(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     Column {
         Column {
@@ -505,6 +359,8 @@ private fun DrawerFeedSourcesByCategories(
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onPinFeedClick = onPinFeedClick,
                     onOpenWebsite = onOpenWebsite,
+                    onEditCategoryClick = onEditCategoryClick,
+                    onDeleteCategoryClick = onDeleteCategoryClick,
                 )
             }
         }
@@ -523,7 +379,15 @@ private fun DrawerFeedSourceByCategoryItem(
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
+    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
+    var showEditDialog by rememberSaveable { mutableStateOf(false) }
+    var showMenu by rememberSaveable { mutableStateOf(false) }
+
+    val category = feedSourceCategoryWrapper.feedSourceCategory
+    val unreadCount = drawerFeedSources.sumOf { it.unreadCount }
+
     Column(
         modifier = Modifier
             .heightIn(min = 56.0.dp)
@@ -538,33 +402,70 @@ private fun DrawerFeedSourceByCategoryItem(
             },
             label = "Category arrow animation",
         )
+
         Row(
             modifier = Modifier
-                .clip(MaterialTheme.shapes.medium)
-                .clickable {
-                    onCategoryExpand()
-                }
                 .fillMaxWidth()
                 .padding(vertical = Spacing.regular),
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            val headerText = if (feedSourceCategoryWrapper.feedSourceCategory?.title != null) {
-                requireNotNull(feedSourceCategoryWrapper.feedSourceCategory?.title)
+            val headerText = if (category?.title != null) {
+                requireNotNull(category.title)
             } else {
                 LocalFeedFlowStrings.current.noCategory
             }
 
-            Text(
+            // Category name - clickable for filtering, supports long-press for context menu
+            Row(
                 modifier = Modifier
+                    .weight(1f)
+                    .clip(MaterialTheme.shapes.medium)
+                    .then(
+                        if (category != null) {
+                            Modifier.feedSourceMenuClickModifier(
+                                onClick = {
+                                    onFeedFilterSelected(
+                                        FeedFilter.Category(feedCategory = category),
+                                    )
+                                },
+                                onLongClick = {
+                                    showMenu = true
+                                },
+                            )
+                        } else {
+                            Modifier.clickable {
+                                onCategoryExpand()
+                            }
+                        },
+                    )
                     .padding(start = Spacing.regular),
-                text = headerText,
-                style = MaterialTheme.typography.titleMedium,
-            )
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = headerText,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f),
+                )
 
+                if (unreadCount > 0) {
+                    Text(
+                        modifier = Modifier.padding(start = Spacing.small),
+                        text = unreadCount.toString(),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                }
+            }
+
+            // Arrow icon - clickable for expand/collapse only
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                 contentDescription = null,
-                modifier = Modifier.rotate(degrees),
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .clickable { onCategoryExpand() }
+                    .padding(Spacing.regular)
+                    .rotate(degrees),
             )
         }
 
@@ -577,6 +478,27 @@ private fun DrawerFeedSourceByCategoryItem(
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             onPinFeedClick = onPinFeedClick,
             onOpenWebsite = onOpenWebsite,
+        )
+    }
+
+    if (category != null) {
+        CategoryContextMenu(
+            showMenu = showMenu,
+            hideMenu = { showMenu = false },
+            categoryId = CategoryId(category.id),
+            onEditCategoryClick = {
+                showMenu = false
+                showEditDialog = true
+            },
+            onDeleteCategoryClick = onDeleteCategoryClick,
+        )
+
+        EditCategoryDialog(
+            showDialog = showEditDialog,
+            categoryId = CategoryId(category.id),
+            initialCategoryName = category.title,
+            onDismiss = { showEditDialog = false },
+            onEditCategory = onEditCategoryClick,
         )
     }
 }

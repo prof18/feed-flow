@@ -8,6 +8,8 @@ sealed class FeedFilter {
 
     data object Bookmarks : FeedFilter()
 
+    data object Uncategorized : FeedFilter()
+
     data class Category(
         val feedCategory: FeedSourceCategory,
     ) : FeedFilter()

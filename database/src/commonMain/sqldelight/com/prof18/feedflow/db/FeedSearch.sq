@@ -45,6 +45,7 @@ LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE (:feedSourceId IS NULL OR feed_source.url_hash = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCategoryId)
+AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source.category_id IS NULL))
 AND (:isRead IS NULL OR feed_item.is_read = :isRead)
 AND (:isBookmarked IS NULL OR feed_item.is_bookmarked = :isBookmarked)
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)

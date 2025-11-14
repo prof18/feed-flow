@@ -118,6 +118,7 @@ class DatabaseHelper(
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 isRead = feedFilter.getIsReadFlag(showReadItems),
                 isBookmarked = feedFilter.getBookmarkFlag(),
+                isUncategorized = feedFilter.getIsUncategorized(),
                 isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
                 pageSize = pageSize,
                 offset = offset,
@@ -135,6 +136,7 @@ class DatabaseHelper(
                 feedSourceCategoryId = null,
                 isRead = false,
                 isBookmarked = null,
+                isUncategorized = null,
                 isHidden = 0,
                 pageSize = pageSize,
                 offset = 0,
@@ -222,6 +224,10 @@ class DatabaseHelper(
                     dbRef.feedItemQueries.markAllRead()
                 }
 
+                FeedFilter.Uncategorized -> {
+                    dbRef.feedItemQueries.markAllReadUncategorized()
+                }
+
                 FeedFilter.Read, FeedFilter.Bookmarks -> {
                     // Do nothing
                 }
@@ -235,6 +241,7 @@ class DatabaseHelper(
                     threshold = timeThreshold,
                     feedSourceId = feedFilter.getFeedSourceId(),
                     feedSourceCategoryId = feedFilter.getCategoryId(),
+                    isUncategorized = feedFilter.getIsUncategorized(),
                     isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
                 )
             }
@@ -247,6 +254,7 @@ class DatabaseHelper(
             threshold = timeThreshold,
             feedSourceId = feedFilter.getFeedSourceId(),
             feedSourceCategoryId = feedFilter.getCategoryId(),
+            isUncategorized = feedFilter.getIsUncategorized(),
             isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
         ).executeAsList().map { FeedItemId(it) }
     }
@@ -275,6 +283,7 @@ class DatabaseHelper(
                 // Marking read things already read does not make sense, that's why the hardcoded false
                 isRead = feedFilter.getIsReadFlag(false),
                 isBookmarked = feedFilter.getBookmarkFlag(),
+                isUncategorized = feedFilter.getIsUncategorized(),
                 isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             )
             .executeAsList()
@@ -335,6 +344,7 @@ class DatabaseHelper(
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
                 bookmarked = feedFilter.getBookmarkFlag(),
+                isUncategorized = feedFilter.getIsUncategorized(),
                 isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
             )
             .asFlow()
@@ -397,6 +407,7 @@ class DatabaseHelper(
                 query = searchQuery,
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
+                isUncategorized = feedFilter.getIsUncategorized(),
                 isRead = feedFilter.getIsReadFlag(showReadItems),
                 isBookmarked = feedFilter.getBookmarkFlag(),
                 isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
@@ -647,6 +658,7 @@ class DatabaseHelper(
             FeedFilter.Timeline,
             FeedFilter.Read,
             FeedFilter.Bookmarks,
+            FeedFilter.Uncategorized,
             -> null
         }
     }
@@ -659,6 +671,7 @@ class DatabaseHelper(
             FeedFilter.Timeline,
             FeedFilter.Read,
             FeedFilter.Bookmarks,
+            FeedFilter.Uncategorized,
             -> null
         }
     }
@@ -672,6 +685,7 @@ class DatabaseHelper(
             is FeedFilter.Category,
             is FeedFilter.Source,
             FeedFilter.Timeline,
+            FeedFilter.Uncategorized,
             -> if (showReadItems) {
                 null
             } else {
@@ -688,6 +702,7 @@ class DatabaseHelper(
             is FeedFilter.Category,
             is FeedFilter.Source,
             FeedFilter.Read,
+            FeedFilter.Uncategorized,
             -> null
         }
     }
@@ -700,6 +715,20 @@ class DatabaseHelper(
             is FeedFilter.Source,
             FeedFilter.Timeline,
             FeedFilter.Read,
+            FeedFilter.Uncategorized,
+            -> null
+        }
+    }
+
+    private fun FeedFilter.getIsUncategorized(): Long? {
+        return when (this) {
+            FeedFilter.Uncategorized -> 1L
+
+            is FeedFilter.Category,
+            is FeedFilter.Source,
+            FeedFilter.Timeline,
+            FeedFilter.Read,
+            FeedFilter.Bookmarks,
             -> null
         }
     }

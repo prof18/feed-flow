@@ -30,9 +30,10 @@ LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE is_read = 0
 AND (:bookmarked IS NULL OR is_bookmarked = :bookmarked)
-AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
+AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL OR :isUncategorized IS NULL)
 AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source.category_id = :feedSourceCategoryId)
+AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source.category_id IS NULL))
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
 AND is_blocked = 0;
 
@@ -46,9 +47,10 @@ LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE (:isRead IS NULL OR is_read = :isRead)
 AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
-AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
+AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL OR :isUncategorized IS NULL)
 AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId)
+AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source.category_id IS NULL))
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
 AND is_blocked = 0
 ORDER BY CASE WHEN :sortOrder = 'ASC' THEN pub_date END ASC, CASE WHEN :sortOrder = 'DESC' THEN pub_date END DESC
@@ -64,9 +66,10 @@ LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE (:isRead IS NULL OR is_read = :isRead)
 AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked)
-AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
+AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL OR :isUncategorized IS NULL)
 AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId)
+AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source.category_id IS NULL))
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
 AND is_blocked = 0;
 
@@ -96,6 +99,16 @@ WHERE feed_source_id IN (
 )
 AND is_read = 0;
 
+markAllReadUncategorized:
+UPDATE feed_item
+SET is_read = 1
+WHERE feed_source_id IN (
+  SELECT url_hash
+  FROM feed_source
+  WHERE category_id IS NULL
+)
+AND is_read = 0;
+
 
 clearOldItems:
 DELETE FROM feed_item
@@ -109,9 +122,10 @@ WHERE url_hash IN (
   ON feed_source.url_hash = feed_source_preferences.feed_source_id
   WHERE pub_date < :threshold
   AND is_bookmarked = 0
-  AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
+  AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL OR :isUncategorized IS NULL)
   AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
   AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId)
+  AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source.category_id IS NULL))
   AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
 );
 
@@ -125,9 +139,10 @@ LEFT JOIN feed_source_preferences
 ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE pub_date < :threshold
 AND is_bookmarked = 0
-AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL)
+AND (:feedSourceId IS NULL OR :feedSourceCategoryId IS NULL OR :isUncategorized IS NULL)
 AND (:feedSourceId IS NULL OR feed_item.feed_source_id = :feedSourceId)
 AND (:feedSourceCategoryId IS NULL OR feed_source_category.id = :feedSourceCategoryId)
+AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source.category_id IS NULL))
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden);
 
 deleteAll:

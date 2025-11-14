@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.ui.feedsourcelist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.PointerMatcher
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.onClick
 import androidx.compose.runtime.remember
@@ -20,7 +21,7 @@ internal actual fun Modifier.feedSourceMenuClickModifier(
         interactionSource = interactionSource,
         matcher = PointerMatcher.mouse(PointerButton.Secondary), // Right Mouse Button
         onClick = onLongClick ?: {},
-    ).onClick {
-        onClick()
-    }
+    ).clickable(
+        interactionSource = interactionSource,
+    ) { onClick() }
 }

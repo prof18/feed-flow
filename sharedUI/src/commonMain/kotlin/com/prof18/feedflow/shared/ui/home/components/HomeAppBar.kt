@@ -135,6 +135,7 @@ private fun FeedFilter.getTitle(): String =
         FeedFilter.Timeline -> LocalFeedFlowStrings.current.appName
         FeedFilter.Read -> LocalFeedFlowStrings.current.drawerTitleRead
         FeedFilter.Bookmarks -> LocalFeedFlowStrings.current.drawerTitleBookmarks
+        FeedFilter.Uncategorized -> LocalFeedFlowStrings.current.noCategory
     }
 
 @Composable

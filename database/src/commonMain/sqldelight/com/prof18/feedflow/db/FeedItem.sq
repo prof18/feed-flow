@@ -131,7 +131,7 @@ WHERE url_hash IN (
 );
 
 selectOldItems:
-SELECT feed_item.url_hash FROM feed_item
+SELECT feed_item.url_hash, feed_item.feed_source_id FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category

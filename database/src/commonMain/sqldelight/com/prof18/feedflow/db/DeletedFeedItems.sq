@@ -1,0 +1,15 @@
+CREATE TABLE deleted_feed_items (
+    url_hash TEXT NOT NULL PRIMARY KEY,
+    deleted_at INTEGER NOT NULL
+);
+
+insertDeletedFeedItem:
+INSERT OR REPLACE INTO deleted_feed_items(url_hash, deleted_at)
+VALUES (?, ?);
+
+isItemDeleted:
+SELECT EXISTS(SELECT 1 FROM deleted_feed_items WHERE url_hash = ?);
+
+cleanupOldDeletedItems:
+DELETE FROM deleted_feed_items
+WHERE deleted_at < :threshold;

@@ -38,7 +38,11 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 class DatabaseHelper(
     private val sqlDriver: SqlDriver,
     private val backgroundDispatcher: CoroutineDispatcher,
@@ -174,17 +178,21 @@ class DatabaseHelper(
         dbRef.transactionWithContext(backgroundDispatcher) {
             for (feedItem in feedItems) {
                 with(feedItem) {
-                    dbRef.feedItemQueries.insertFeedItem(
-                        url_hash = id,
-                        url = url,
-                        title = title,
-                        subtitle = subtitle,
-                        content = null,
-                        image_url = imageUrl,
-                        feed_source_id = feedSource.id,
-                        pub_date = pubDateMillis,
-                        comments_url = commentsUrl,
-                    )
+                    val isDeleted = dbRef.deletedFeedItemsQueries.isItemDeleted(id).executeAsOne()
+
+                    if (!isDeleted) {
+                        dbRef.feedItemQueries.insertFeedItem(
+                            url_hash = id,
+                            url = url,
+                            title = title,
+                            subtitle = subtitle,
+                            content = null,
+                            image_url = imageUrl,
+                            feed_source_id = feedSource.id,
+                            pub_date = pubDateMillis,
+                            comments_url = commentsUrl,
+                        )
+                    }
 
                     dbRef.feedSourceQueries.updateLastSyncTimestamp(
                         lastSyncTimestamp,
@@ -239,6 +247,23 @@ class DatabaseHelper(
     suspend fun deleteOldFeedItems(timeThreshold: Long, feedFilter: FeedFilter) =
         try {
             dbRef.transactionWithContext(backgroundDispatcher) {
+                val oldItems = dbRef.feedItemQueries.selectOldItems(
+                    threshold = timeThreshold,
+                    feedSourceId = feedFilter.getFeedSourceId(),
+                    feedSourceCategoryId = feedFilter.getCategoryId(),
+                    isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
+                    isUncategorized = feedFilter.getIsUncategorized(),
+                ).executeAsList()
+
+                val currentTimestamp = Clock.System.now().toEpochMilliseconds()
+
+                oldItems.forEach { item ->
+                    dbRef.deletedFeedItemsQueries.insertDeletedFeedItem(
+                        url_hash = item.url_hash,
+                        deleted_at = currentTimestamp,
+                    )
+                }
+
                 dbRef.feedItemQueries.clearOldItems(
                     threshold = timeThreshold,
                     feedSourceId = feedFilter.getFeedSourceId(),
@@ -258,8 +283,21 @@ class DatabaseHelper(
             feedSourceCategoryId = feedFilter.getCategoryId(),
             isUncategorized = feedFilter.getIsUncategorized(),
             isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
-        ).executeAsList().map { FeedItemId(it) }
+        ).executeAsList().map { FeedItemId(it.url_hash) }
     }
+
+    suspend fun cleanupOldDeletedItems(monthsToKeep: Int = 6) =
+        try {
+            dbRef.transactionWithContext(backgroundDispatcher) {
+                val thresholdTime = Clock.System.now()
+                    .minus(duration = (monthsToKeep * 30).days)
+                    .toEpochMilliseconds()
+
+                dbRef.deletedFeedItemsQueries.cleanupOldDeletedItems(thresholdTime)
+            }
+        } catch (_: Exception) {
+            logger.e { "Error while cleaning up old deleted items" }
+        }
 
     suspend fun deleteFeedSource(feedSourceId: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {

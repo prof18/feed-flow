@@ -1,0 +1,4 @@
+CREATE TABLE deleted_feed_items (
+    url_hash TEXT NOT NULL PRIMARY KEY,
+    deleted_at INTEGER NOT NULL
+);

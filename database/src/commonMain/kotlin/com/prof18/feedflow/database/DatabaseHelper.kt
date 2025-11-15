@@ -170,17 +170,21 @@ class DatabaseHelper(
         dbRef.transactionWithContext(backgroundDispatcher) {
             for (feedItem in feedItems) {
                 with(feedItem) {
-                    dbRef.feedItemQueries.insertFeedItem(
-                        url_hash = id,
-                        url = url,
-                        title = title,
-                        subtitle = subtitle,
-                        content = null,
-                        image_url = imageUrl,
-                        feed_source_id = feedSource.id,
-                        pub_date = pubDateMillis,
-                        comments_url = commentsUrl,
-                    )
+                    val isDeleted = dbRef.feedItemQueries.isItemDeleted(id).executeAsOne()
+
+                    if (!isDeleted) {
+                        dbRef.feedItemQueries.insertFeedItem(
+                            url_hash = id,
+                            url = url,
+                            title = title,
+                            subtitle = subtitle,
+                            content = null,
+                            image_url = imageUrl,
+                            feed_source_id = feedSource.id,
+                            pub_date = pubDateMillis,
+                            comments_url = commentsUrl,
+                        )
+                    }
 
                     dbRef.feedSourceQueries.updateLastSyncTimestamp(
                         lastSyncTimestamp,
@@ -231,6 +235,23 @@ class DatabaseHelper(
     suspend fun deleteOldFeedItems(timeThreshold: Long, feedFilter: FeedFilter) =
         try {
             dbRef.transactionWithContext(backgroundDispatcher) {
+                val oldItems = dbRef.feedItemQueries.selectOldItems(
+                    threshold = timeThreshold,
+                    feedSourceId = feedFilter.getFeedSourceId(),
+                    feedSourceCategoryId = feedFilter.getCategoryId(),
+                    isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
+                ).executeAsList()
+
+                val currentTimestamp = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+
+                oldItems.forEach { item ->
+                    dbRef.feedItemQueries.insertDeletedFeedItem(
+                        url_hash = item.url_hash,
+                        deleted_at = currentTimestamp,
+                        feed_source_id = item.feed_source_id,
+                    )
+                }
+
                 dbRef.feedItemQueries.clearOldItems(
                     threshold = timeThreshold,
                     feedSourceId = feedFilter.getFeedSourceId(),
@@ -248,8 +269,25 @@ class DatabaseHelper(
             feedSourceId = feedFilter.getFeedSourceId(),
             feedSourceCategoryId = feedFilter.getCategoryId(),
             isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
-        ).executeAsList().map { FeedItemId(it) }
+        ).executeAsList().map { FeedItemId(it.url_hash) }
     }
+
+    suspend fun isItemDeleted(urlHash: String): Boolean = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.isItemDeleted(urlHash).executeAsOne()
+    }
+
+    suspend fun cleanupOldDeletedItems(monthsToKeep: Int = 6) =
+        try {
+            dbRef.transactionWithContext(backgroundDispatcher) {
+                val thresholdTime = kotlinx.datetime.Clock.System.now()
+                    .minus(monthsToKeep * 30, kotlinx.datetime.DateTimeUnit.DAY)
+                    .toEpochMilliseconds()
+
+                dbRef.feedItemQueries.cleanupOldDeletedItems(thresholdTime)
+            }
+        } catch (_: Exception) {
+            logger.e { "Error while cleaning up old deleted items" }
+        }
 
     suspend fun deleteFeedSource(feedSourceId: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {

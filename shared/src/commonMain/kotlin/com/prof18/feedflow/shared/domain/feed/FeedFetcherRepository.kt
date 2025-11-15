@@ -175,6 +175,7 @@ class FeedFetcherRepository internal constructor(
         val oldFeedIds = databaseHelper.getOldFeedItem(timeThreshold = threshold, feedFilter = currentFilter)
         databaseHelper.deleteOldFeedItems(timeThreshold = threshold, feedFilter = currentFilter)
         feedSyncRepository.deleteFeedItems(oldFeedIds)
+        databaseHelper.cleanupOldDeletedItems(monthsToKeep = 6)
         feedStateRepository.getFeeds()
     }
 

@@ -16,6 +16,12 @@ CREATE TABLE feed_item (
     is_blocked INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
+CREATE TABLE deleted_feed_items (
+    url_hash TEXT NOT NULL PRIMARY KEY,
+    deleted_at INTEGER NOT NULL,
+    feed_source_id TEXT NOT NULL
+);
+
 insertFeedItem:
 INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date, comments_url)
 VALUES (?,?,?,?,?,?,?,?, ?);
@@ -116,7 +122,7 @@ WHERE url_hash IN (
 );
 
 selectOldItems:
-SELECT feed_item.url_hash FROM feed_item
+SELECT feed_item.url_hash, feed_item.feed_source_id FROM feed_item
 INNER JOIN feed_source
 ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_category
@@ -227,3 +233,14 @@ BEGIN
   END
   WHERE url_hash = new.url_hash;
 END;
+
+insertDeletedFeedItem:
+INSERT OR REPLACE INTO deleted_feed_items(url_hash, deleted_at, feed_source_id)
+VALUES (?, ?, ?);
+
+isItemDeleted:
+SELECT EXISTS(SELECT 1 FROM deleted_feed_items WHERE url_hash = ?);
+
+cleanupOldDeletedItems:
+DELETE FROM deleted_feed_items
+WHERE deleted_at < :threshold;

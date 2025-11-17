@@ -14,7 +14,7 @@
     <string name="force_feed_refresh">强制刷新订阅源</string>
     <string name="import_export_opml">导入和导出 OPML</string>
     <string name="import_export_opml_title">导入和导出</string>
-    <string name="wrong_link_report_title">以下订阅源无效，无法添加‌‌</string>
+    <string name="wrong_link_report_title">以下订阅源无效，无法添加</string>
     <string name="issue_report_title">报告 FeedFlow 的问题</string>
     <string name="issue_content_title">FeedFlow 的问题</string>
     <string name="issue_content_template">请描述问题，注明您使用的平台、应用版本，并提供导致问题的 RSS 订阅源链接。如果可以，请附上屏幕截图和 OPML 文件</string>
@@ -243,8 +243,8 @@
     <string name="feed_fetch_failed_tooltip_short">订阅源更新失败</string>
     <string name="support_the_project">支持项目</string>
     <string name="settings_blocked_words">屏蔽词</string>
-    <string name="add_word_placeholder">添加词‌</string>
-    <string name="blocked_words_empty_state">尚无屏蔽词‌</string>
+    <string name="add_word_placeholder">添加词</string>
+    <string name="blocked_words_empty_state">尚无屏蔽词</string>
     <string name="blocked_words_description">标题或描述中包含这些词的文章将被隐藏。</string>
     <string name="mark_all_read_dialog_message">是否确定要将所有文章标记为已读？</string>
     <string name="clear_old_articles_dialog_message">是否确定要删除旧文章？</string>

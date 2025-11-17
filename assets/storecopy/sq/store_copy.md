@@ -1,62 +1,66 @@
-# Title
+# Titull
 
-FeedFlow - RSS Reader
+FeedFlow - Lexues RSS
 
-## Short desc
+## Përshkrim shkurt
 
-Minimal, fast, uncluttered
+Minimalist, i shpejtë, i pastër
 
-## Long desc
+## Përshkrim gjatë
 
-Key Features:
+Karakteristikat kryesore:
 
-- Minimalist Design: Focus on what matters with a clutter-free interface
-- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
-  or Dropbox (all platforms)
-- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
-  management
-- Flexible Reading Options: Choose between web view, reader mode, or your
-  preferred browser
-- Privacy-Focused: Select your favorite privacy-focused browser for a separate
-  reading experience
-- Easy Migration: Import and export your RSS feeds via OPML files
+- Dizenjim minimal: Përqëndrohu tek ajo që është e rëndësishme me nje ndërfaqe
+  të pangarkuar
+- Sinkronizim pa ndërprerje: Mbaji prurjet të sinkronizuara në të gjitha
+  pajisjet me iCloud (iOS/macOS) ose Dropbox (të gjitha platformat)
+- Integrim me FreshRSS: Lidhe me serverin tënd FreshRSS për menaxhim të avancuar
+  të prurjeve
+- Opsione fleksibël leximi: Zgjidh mes pamjes në web, modalitetit të leximit ose
+  shfletuesit që preferon
+- Fokusuar te privatësia: Zgjidh shfletuesin tënd të preferuar të fokusuar te
+  privatësia për një përvojë leximi të ndarë nga shfletuesi yt i zakonshëm
+- Migrim i lehtë: Importo dhe eksporto prurjet e tua RSS përmes skedarëve OPML
 
-What Sets FeedFlow Apart:
+Çfarë e bën FeedFlow ndryshe:
 
-- Clean, intuitive interface that lets you focus on content
-- Multiple sync options to fit your workflow (Beta)
-- Customizable reading experience with reader mode
-- Fast and lightweight
-- Regular updates and active development
+- Ndërfaqe e pastër dhe intuitive që të mundëson të përqëndrohesh tek përmbajtja
+- Mundësi të shumëfishta sinkronizimi për t’iu përshtatur mënyrës tënde të punës
+  (Beta)
+- Përvojë leximi e personalizueshme me modalitetin e leximit
+- I shpejtë dhe i lehtë
+- Përditësime të rregullta dhe zhvillim aktiv
 
-Perfect for:
-- News enthusiasts who want control over their information diet
-- Privacy-conscious readers
-- Content creators tracking multiple sources
-- Anyone looking to declutter their digital reading experience
+I përsosur për:
+- Të apasionuarit pas lajmeve që duan kontroll mbi “dietën” e tyre të
+  informacionit
+- Lexues që i kushtojnë rëndësi privatësisë
+- Krijuesit e përmbajtjeve që ndjekin disa burime
+- Kushdo që kërkon të pastrojë nga rrëmuja përvojën e tij të të lexuarit
+  digjital
 
-Join thousands of readers who've chosen FeedFlow for a better way to stay
-informed.
+Bashkohu me mijëra lexues që kanë zgjedhur FeedFlow për një mënyrë më të mirë
+për të qëndruar i informuar.
 
-Note: Sync functionality is currently in beta. The experience is continuously
-improving based on user feedback.
+Shënim: Funksionaliteti i sinkronizimit është aktualisht në beta. Përvoja po
+përmirësohet vazhdimisht bazuar në reagimet e përdoruesve.
 
-## Screenshot 1
+## Pamja e ekranit 1
 
-All your feeds in your pocket
+Të gjitha prurjet e tua në xhepin tënd
 
-## Screenshot 3
+## Pamja e ekranit 3
 
-Import your existing collection
+Importo koleksionin tënd ekzistues
 
-## Screenshot 4
+## Pamja e ekranit 4
 
-Open the articles in your favourite browser
+Hapi artikujt në shfletuesin tënd të preferuar
 
-## Screenshot 5
+## Pamja e ekranit 5
 
-Enjoy a clutter-free reader mode
+Shijo një modalitet leximi pa rrëmujë
 
-## Banner image
+## Imazh baneri
 
-minimalistic RSS Reader
+Lexues RSS minimalist

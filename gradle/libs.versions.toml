@@ -36,7 +36,7 @@ kotlin = "2.2.10"
 # Because of telemetry deck still using version 0.6.x
 kotlinx-date-time = "0.7.1-0.6.x-compat"
 kotlinx-serialization = "1.9.0"
-ksp = "2.2.10-2.0.2"
+ksp = "2.3.3"
 ktor = "3.3.1"
 lifecycle = "2.9.4"
 lyricist = "1.7.0"

@@ -237,7 +237,38 @@ internal class FeedStateRepository(
         errorMutableState.emit(errorState)
     }
 
+    suspend fun getNextArticle(currentArticleId: String): FeedItem? {
+        val currentList = mutableFeedState.value
+        val currentIndex = currentList.indexOfFirst { it.id == currentArticleId }
+        if (currentIndex == -1) return null
+
+        val nextIndex = currentIndex + 1
+        if (nextIndex < currentList.size) {
+            val shouldLoadMore = nextIndex >= currentList.size - PAGINATION_THRESHOLD
+            if (shouldLoadMore) {
+                loadMoreFeeds()
+            }
+            return currentList.getOrNull(nextIndex)
+        }
+        return null
+    }
+
+    suspend fun getPreviousArticle(currentArticleId: String): FeedItem? {
+        val currentList = mutableFeedState.value
+        val currentIndex = currentList.indexOfFirst { it.id == currentArticleId }
+        if (currentIndex == -1 || currentIndex == 0) return null
+        return currentList.getOrNull(currentIndex - 1)
+    }
+
+    fun getArticlePosition(currentArticleId: String): Pair<Int, Int>? {
+        val currentList = mutableFeedState.value
+        val currentIndex = currentList.indexOfFirst { it.id == currentArticleId }
+        if (currentIndex == -1) return null
+        return Pair(currentIndex + 1, currentList.size)
+    }
+
     private companion object {
         private const val PAGE_SIZE = 40L
+        private const val PAGINATION_THRESHOLD = 5
     }
 }

@@ -107,7 +107,21 @@ struct ReaderModeScreen: View {
                 onFontSizeChange: { newSize in
                     fontSize = newSize
                     viewModel.updateFontSize(newFontSize: Int32(Int(fontSize)))
-                }
+                },
+                onNavigateToNext: viewModel.canNavigateToNext() ? {
+                    Task {
+                        if let nextArticle = await viewModel.navigateToNextArticleIos() {
+                            appState.navigate(route: CommonViewRoute.readerMode(feedItemUrlInfo: nextArticle))
+                        }
+                    }
+                } : nil,
+                onNavigateToPrevious: viewModel.canNavigateToPrevious() ? {
+                    Task {
+                        if let previousArticle = await viewModel.navigateToPreviousArticleIos() {
+                            appState.navigate(route: CommonViewRoute.readerMode(feedItemUrlInfo: previousArticle))
+                        }
+                    }
+                } : nil
             ),
             isBookmarked: isBookmarked,
             fontSize: fontSize,
@@ -129,6 +143,7 @@ struct ReaderModeScreen: View {
                 switch onEnum(of: state) {
                 case let .htmlNotAvailable(data):
                     self.feedItemId = data.id
+                    viewModel.setCurrentArticle(articleId: data.id)
                     let url = URL(string: data.url) ?? URL(fileURLWithPath: "")
                     self.articleUrl = url
                     self.readerStatus = .failedToExtractContent(url: url)
@@ -138,6 +153,7 @@ struct ReaderModeScreen: View {
                     let readerModeData = data.readerModeData
 
                     self.feedItemId = readerModeData.id.id
+                    viewModel.setCurrentArticle(articleId: readerModeData.id.id)
                     self.feedItemTitle = readerModeData.title
                     self.commentsUrl = readerModeData.commentsUrl
                     self.currentContent = readerModeData.content

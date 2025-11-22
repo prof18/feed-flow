@@ -225,6 +225,7 @@ class MainActivity : BaseThemeActivity() {
                         navController.navigate(ImportExport)
                     },
                     navigateToReaderMode = { url ->
+                        readerModeViewModel.setCurrentArticle(url.id)
                         readerModeViewModel.getReaderModeHtml(url)
                         navController.navigate(ReaderMode)
                     },
@@ -347,6 +348,7 @@ class MainActivity : BaseThemeActivity() {
                         navController.popBackStack()
                     },
                     navigateToReaderMode = { urlInfo ->
+                        readerModeViewModel.setCurrentArticle(urlInfo.id)
                         readerModeViewModel.getReaderModeHtml(urlInfo)
                         navController.navigate(ReaderMode)
                     },
@@ -452,6 +454,7 @@ class MainActivity : BaseThemeActivity() {
         navController: NavHostController,
         feedUrlInfo: FeedItemUrlInfo,
     ) {
+        readerModeViewModel.setCurrentArticle(feedUrlInfo.id)
         readerModeViewModel.getReaderModeHtml(feedUrlInfo)
         if (navController.currentDestination?.hasRoute(ReaderMode::class) == false) {
             navController.navigate(ReaderMode)

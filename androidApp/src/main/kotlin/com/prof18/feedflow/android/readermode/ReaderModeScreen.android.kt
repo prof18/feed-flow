@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.dp
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
@@ -30,6 +31,8 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
+import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.ui.readermode.HorizontalFloatingToolbar
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import org.koin.compose.koinInject
@@ -43,11 +46,13 @@ internal fun ReaderModeScreen(
     navigateBack: () -> Unit,
 ) {
     val browserManager = koinInject<BrowserManager>()
+    val readerModeViewModel = koinInject<ReaderModeViewModel>()
 
     val context = LocalContext.current
     val navigator = rememberWebViewNavigator()
 
-    Scaffold(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
         topBar = {
             ReaderModeToolbar(
                 readerModeState = readerModeState,
@@ -124,6 +129,22 @@ internal fun ReaderModeScreen(
                 )
             }
         }
+    }
+
+        HorizontalFloatingToolbar(
+            visible = readerModeState is ReaderModeState.Success,
+            canNavigateToPrevious = readerModeViewModel.canNavigateToPrevious(),
+            canNavigateToNext = readerModeViewModel.canNavigateToNext(),
+            onNavigateToPrevious = {
+                readerModeViewModel.navigateToPreviousArticle()
+            },
+            onNavigateToNext = {
+                readerModeViewModel.navigateToNextArticle()
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp),
+        )
     }
 }
 

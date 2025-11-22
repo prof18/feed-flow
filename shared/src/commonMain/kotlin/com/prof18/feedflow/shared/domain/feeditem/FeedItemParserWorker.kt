@@ -2,12 +2,6 @@ package com.prof18.feedflow.shared.domain.feeditem
 
 import com.prof18.feedflow.core.model.ParsingResult
 
-/**
- * Interface for parsing feed item content across platforms.
- *
- * Implementations handle fetching HTML and extracting feed item content
- * using platform-specific WebView/parsing libraries.
- */
 interface FeedItemParserWorker {
     suspend fun enqueueParsing(feedItemId: String, url: String)
     suspend fun triggerImmediateParsing(feedItemId: String, url: String): ParsingResult

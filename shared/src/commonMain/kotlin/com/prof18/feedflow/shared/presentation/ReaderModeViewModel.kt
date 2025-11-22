@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.ReaderModeData
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ class ReaderModeViewModel internal constructor(
     private val feedActionsRepository: FeedActionsRepository,
     private val feedItemParserWorker: FeedItemParserWorker,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
+    private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
 
     private val readerModeMutableState: MutableStateFlow<ReaderModeState> = MutableStateFlow(
@@ -33,8 +35,14 @@ class ReaderModeViewModel internal constructor(
     )
     val readerFontSizeState = readerFontSizeMutableState.asStateFlow()
 
+    private var currentArticleId: String? = null
+
     fun setLoading() {
         readerModeMutableState.value = ReaderModeState.Loading
+    }
+
+    fun setCurrentArticle(articleId: String) {
+        currentArticleId = articleId
     }
 
     fun getReaderModeHtml(urlInfo: FeedItemUrlInfo) {
@@ -106,4 +114,70 @@ class ReaderModeViewModel internal constructor(
             feedActionsRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
     }
+
+    fun navigateToNextArticle() {
+        viewModelScope.launch {
+            val articleId = currentArticleId ?: return@launch
+            val nextArticle = feedStateRepository.getNextArticle(articleId)
+            if (nextArticle != null) {
+                val urlInfo = nextArticle.toFeedItemUrlInfo()
+                currentArticleId = urlInfo.id
+                getReaderModeHtml(urlInfo)
+            }
+        }
+    }
+
+    fun navigateToPreviousArticle() {
+        viewModelScope.launch {
+            val articleId = currentArticleId ?: return@launch
+            val previousArticle = feedStateRepository.getPreviousArticle(articleId)
+            if (previousArticle != null) {
+                val urlInfo = previousArticle.toFeedItemUrlInfo()
+                currentArticleId = urlInfo.id
+                getReaderModeHtml(urlInfo)
+            }
+        }
+    }
+
+    suspend fun navigateToNextArticleIos(): FeedItemUrlInfo? {
+        val articleId = currentArticleId ?: return null
+        val nextArticle = feedStateRepository.getNextArticle(articleId)
+        if (nextArticle != null) {
+            val urlInfo = nextArticle.toFeedItemUrlInfo()
+            currentArticleId = urlInfo.id
+            return urlInfo
+        }
+        return null
+    }
+
+    suspend fun navigateToPreviousArticleIos(): FeedItemUrlInfo? {
+        val articleId = currentArticleId ?: return null
+        val previousArticle = feedStateRepository.getPreviousArticle(articleId)
+        if (previousArticle != null) {
+            val urlInfo = previousArticle.toFeedItemUrlInfo()
+            currentArticleId = urlInfo.id
+            return urlInfo
+        }
+        return null
+    }
+
+    fun canNavigateToNext(): Boolean {
+        val articleId = currentArticleId ?: return false
+        val position = feedStateRepository.getArticlePosition(articleId) ?: return false
+        return position.first < position.second
+    }
+
+    fun canNavigateToPrevious(): Boolean {
+        val articleId = currentArticleId ?: return false
+        val position = feedStateRepository.getArticlePosition(articleId) ?: return false
+        return position.first > 1
+    }
+
+    private fun com.prof18.feedflow.core.model.FeedItem.toFeedItemUrlInfo() = FeedItemUrlInfo(
+        id = id,
+        url = url ?: "",
+        title = title,
+        isBookmarked = isBookmarked,
+        commentsUrl = commentsUrl,
+    )
 }

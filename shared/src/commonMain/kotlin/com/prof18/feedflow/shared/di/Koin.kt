@@ -236,6 +236,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedActionsRepository = get(),
             feedItemParserWorker = get(),
             feedItemContentFileHandler = get(),
+            feedStateRepository = get(),
         )
     }
 

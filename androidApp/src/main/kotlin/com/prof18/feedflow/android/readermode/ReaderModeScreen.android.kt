@@ -2,29 +2,21 @@ package com.prof18.feedflow.android.readermode
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.dp
-import co.touchlab.kermit.Logger
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
@@ -40,8 +32,6 @@ import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
-import org.json.JSONException
-import org.json.JSONObject
 import org.koin.compose.koinInject
 
 @Composable
@@ -131,7 +121,6 @@ internal fun ReaderModeScreen(
                     },
                     contentPadding = contentPadding,
                     navigator = navigator,
-                    navigateBack = navigateBack,
                 )
             }
         }
@@ -145,7 +134,6 @@ private fun ReaderMode(
     openInBrowser: (String) -> Unit,
     contentPadding: PaddingValues,
     navigator: WebViewNavigator,
-    navigateBack: () -> Unit,
 ) {
     val bodyColor = MaterialTheme.colorScheme.onSurface.toArgb().toHexString().substring(2)
     val linkColor = MaterialTheme.colorScheme.primary.toArgb().toHexString().substring(2)
@@ -210,10 +198,3 @@ private fun ReaderMode(
         webViewJsBridge = jsBridge,
     )
 }
-
-private fun JSONObject.getStringOrNull(key: String): String? =
-    try {
-        getString(key)
-    } catch (_: JSONException) {
-        null
-    }

@@ -1,7 +1,7 @@
 package com.prof18.feedflow.shared.di
 
-import app.cash.sqldelight.db.SqlDriver
 import android.content.Context
+import app.cash.sqldelight.db.SqlDriver
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -13,12 +13,12 @@ import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
-import com.prof18.feedflow.shared.domain.parser.AndroidFeedItemParserWorker
-import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerAndroid
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
+import com.prof18.feedflow.shared.domain.parser.AndroidFeedItemParserWorker
+import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerAndroid
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor

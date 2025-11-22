@@ -57,6 +57,7 @@ internal class AndroidFeedItemParserWorker(
         if (result is ParsingResult.Success) {
             val content = result.htmlContent
             if (content != null) {
+                // TODO: Save content only if the settings is set to do so
                 feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, content)
                 logger.d { "Successfully parsed and cached content for: $url (feedItemId: $feedItemId)" }
             }

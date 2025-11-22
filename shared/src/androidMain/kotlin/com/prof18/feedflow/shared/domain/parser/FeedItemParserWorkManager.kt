@@ -39,6 +39,7 @@ internal class FeedItemParserWorkManager internal constructor(
             is ParsingResult.Success -> {
                 try {
                     result.htmlContent?.let {
+                        // TODO: Save content only if the settings is set to do so
                         feedItemContentFileHandler.saveFeedItemContentToFile(
                             feedItemId = feedItemId,
                             content = it,

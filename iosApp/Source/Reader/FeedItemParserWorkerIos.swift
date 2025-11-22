@@ -72,7 +72,8 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
                     } else {
                         htmlWithTitle = htmlContent
                     }
-                    
+
+                    // TODO: Save content only if the settings is set to do so
                     let fileURL = self.getContentPath(feedItemId: feedItemId)
                     if let data = htmlWithTitle?.data(using: .utf8) {
                         do {

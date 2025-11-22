@@ -1,17 +1,21 @@
 package com.prof18.feedflow.desktop.reaadermode
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.Alignment
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Comment
@@ -27,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -40,11 +45,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -59,7 +72,6 @@ import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
-import com.prof18.feedflow.shared.ui.readermode.HorizontalFloatingToolbar
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -71,6 +83,7 @@ import kotlinx.coroutines.launch
 internal data class ReaderModeScreen(
     private val feedItemUrlInfo: FeedItemUrlInfo,
 ) : Screen {
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val readerModeViewModel = desktopViewModel { DI.koin.get<ReaderModeViewModel>() }
@@ -79,7 +92,6 @@ internal data class ReaderModeScreen(
         val navigator = LocalNavigator.currentOrThrow
 
         LaunchedEffect(feedItemUrlInfo) {
-            readerModeViewModel.setCurrentArticle(feedItemUrlInfo.id)
             readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
         }
 
@@ -89,158 +101,223 @@ internal data class ReaderModeScreen(
         val message = LocalFeedFlowStrings.current.linkCopiedSuccess
         val uriHandler = LocalUriHandler.current
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            Scaffold(
-            topBar = {
-                ReaderModeToolbar(
-                    readerModeState = state,
-                    fontSize = fontSize,
-                    navigateBack = { navigator.pop() },
-                    openInBrowser = { url ->
-                        if (isValidUrl(url)) {
-                            uriHandler.openUri(url)
+        val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsState()
+        val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsState()
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .onKeyEvent { keyEvent ->
+                    if (keyEvent.type == KeyEventType.KeyDown && state is ReaderModeState.Success) {
+                        when (keyEvent.key) {
+                            Key.DirectionLeft -> {
+                                if (canNavigatePrevious) {
+                                    readerModeViewModel.navigateToPreviousArticle()
+                                }
+                                true
+                            }
+                            Key.DirectionRight -> {
+                                if (canNavigateNext) {
+                                    readerModeViewModel.navigateToNextArticle()
+                                }
+                                true
+                            }
+                            else -> false
                         }
-                    },
-                    onShareClick = { url ->
-                        val result = copyToClipboard(url)
-                        if (result) {
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    message = message,
-                                    duration = SnackbarDuration.Short,
+                    } else {
+                        false
+                    }
+                },
+        ) {
+            Scaffold(
+                topBar = {
+                    ReaderModeToolbar(
+                        readerModeState = state,
+                        fontSize = fontSize,
+                        navigateBack = { navigator.pop() },
+                        openInBrowser = { url ->
+                            if (isValidUrl(url)) {
+                                uriHandler.openUri(url)
+                            }
+                        },
+                        onShareClick = { url ->
+                            val result = copyToClipboard(url)
+                            if (result) {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = message,
+                                        duration = SnackbarDuration.Short,
+                                    )
+                                }
+                            }
+                        },
+                        onArchiveClick = { articleUrl ->
+                            val archiveUrl = getArchiveISUrl(articleUrl)
+                            if (isValidUrl(archiveUrl)) {
+                                uriHandler.openUri(archiveUrl)
+                            }
+                        },
+                        onCommentsClick = { commentsUrl ->
+                            if (isValidUrl(commentsUrl)) {
+                                uriHandler.openUri(commentsUrl)
+                            }
+                        },
+                        onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
+                        onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
+                            readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+                        },
+                    )
+                },
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+            ) { contentPadding ->
+                when (val s = state) {
+                    is ReaderModeState.HtmlNotAvailable -> {
+                        navigator.pop()
+                        if (isValidUrl(s.url)) {
+                            uriHandler.openUri(s.url)
+                        }
+                    }
+                    ReaderModeState.Loading -> {
+                        androidx.compose.foundation.layout.Box(
+                            contentAlignment = androidx.compose.ui.Alignment.Center,
+                            modifier = Modifier
+                                .padding(contentPadding)
+                                .fillMaxWidth(),
+                        ) {
+                            androidx.compose.material3.CircularProgressIndicator()
+                        }
+                    }
+                    is ReaderModeState.Success -> {
+                        Column(
+                            modifier = Modifier
+                                .padding(contentPadding)
+                                .verticalScroll(rememberScrollState()),
+
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = Spacing.regular),
+                                text = LocalFeedFlowStrings.current.readerModeWarning,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Light,
+                            )
+
+                            SelectionContainer {
+                                Markdown(
+                                    modifier = Modifier
+                                        .padding(Spacing.regular),
+                                    content = s.readerModeData.content,
+                                    imageTransformer = Coil3ImageTransformerImpl,
+                                    typography = markdownTypography(
+                                        h1 = MaterialTheme.typography.displaySmall.copy(
+                                            fontSize = (fontSize + 20).sp,
+                                            lineHeight = (fontSize + 32).sp,
+                                        ),
+                                        h2 = MaterialTheme.typography.titleLarge.copy(
+                                            fontSize = (fontSize + 6).sp,
+                                            lineHeight = (fontSize + 16).sp,
+                                        ),
+                                        h3 = MaterialTheme.typography.titleLarge.copy(
+                                            fontSize = (fontSize + 6).sp,
+                                            lineHeight = (fontSize + 16).sp,
+                                        ),
+                                        h4 = MaterialTheme.typography.titleMedium.copy(
+                                            fontSize = fontSize.sp,
+                                            lineHeight = (fontSize + 12).sp,
+                                        ),
+                                        h5 = MaterialTheme.typography.titleMedium.copy(
+                                            fontSize = fontSize.sp,
+                                            lineHeight = (fontSize + 12).sp,
+                                        ),
+                                        h6 = MaterialTheme.typography.titleMedium.copy(
+                                            fontSize = fontSize.sp,
+                                            lineHeight = (fontSize + 12).sp,
+                                        ),
+                                        paragraph = MaterialTheme.typography.bodyLarge.copy(
+                                            fontSize = fontSize.sp,
+                                            lineHeight = (fontSize + 12).sp,
+                                        ),
+                                        text = MaterialTheme.typography.bodyLarge.copy(
+                                            fontSize = fontSize.sp,
+                                            lineHeight = (fontSize + 12).sp,
+                                        ),
+                                        code = MaterialTheme.typography.bodyMedium.copy(
+                                            fontSize = (fontSize - 2).sp,
+                                            lineHeight = (fontSize + 8).sp,
+                                        ),
+                                        list = MaterialTheme.typography.bodyLarge.copy(
+                                            fontSize = fontSize.sp,
+                                            lineHeight = (fontSize + 12).sp,
+                                        ),
+                                        textLink = TextLinkStyles(
+                                            style = MaterialTheme.typography.bodyLarge.copy(
+                                                fontSize = fontSize.sp,
+                                                lineHeight = (fontSize + 12).sp,
+                                                fontWeight = FontWeight.Bold,
+                                                textDecoration = TextDecoration.Underline,
+                                            ).toSpanStyle(),
+                                        ),
+                                    ),
                                 )
                             }
-                        }
-                    },
-                    onArchiveClick = { articleUrl ->
-                        val archiveUrl = getArchiveISUrl(articleUrl)
-                        if (isValidUrl(archiveUrl)) {
-                            uriHandler.openUri(archiveUrl)
-                        }
-                    },
-                    onCommentsClick = { commentsUrl ->
-                        if (isValidUrl(commentsUrl)) {
-                            uriHandler.openUri(commentsUrl)
-                        }
-                    },
-                    onFontSizeChange = { readerModeViewModel.updateFontSize(it) },
-                    onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
-                        readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
-                    },
-                )
-            },
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-        ) { contentPadding ->
-            when (val s = state) {
-                is ReaderModeState.HtmlNotAvailable -> {
-                    navigator.pop()
-                    if (isValidUrl(s.url)) {
-                        uriHandler.openUri(s.url)
-                    }
-                }
-                ReaderModeState.Loading -> {
-                    androidx.compose.foundation.layout.Box(
-                        contentAlignment = androidx.compose.ui.Alignment.Center,
-                        modifier = Modifier
-                            .padding(contentPadding)
-                            .fillMaxWidth(),
-                    ) {
-                        androidx.compose.material3.CircularProgressIndicator()
-                    }
-                }
-                is ReaderModeState.Success -> {
-                    Column(
-                        modifier = Modifier
-                            .padding(contentPadding)
-                            .verticalScroll(rememberScrollState()),
-
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = Spacing.regular),
-                            text = LocalFeedFlowStrings.current.readerModeWarning,
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Light,
-                        )
-
-                        SelectionContainer {
-                            Markdown(
-                                modifier = Modifier
-                                    .padding(Spacing.regular),
-                                content = s.readerModeData.content,
-                                imageTransformer = Coil3ImageTransformerImpl,
-                                typography = markdownTypography(
-                                    h1 = MaterialTheme.typography.displaySmall.copy(
-                                        fontSize = (fontSize + 20).sp, // Default: 36sp (16 + 20)
-                                        lineHeight = (fontSize + 32).sp, // Default: 48sp (16 + 32)
-                                    ),
-                                    h2 = MaterialTheme.typography.titleLarge.copy(
-                                        fontSize = (fontSize + 6).sp, // Default: 22sp (16 + 6)
-                                        lineHeight = (fontSize + 16).sp, // Default: 32sp (16 + 16)
-                                    ),
-                                    h3 = MaterialTheme.typography.titleLarge.copy(
-                                        fontSize = (fontSize + 6).sp, // Default: 22sp (16 + 6)
-                                        lineHeight = (fontSize + 16).sp, // Default: 32sp (16 + 16)
-                                    ),
-                                    h4 = MaterialTheme.typography.titleMedium.copy(
-                                        fontSize = fontSize.sp, // Default: 16sp (same as base)
-                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
-                                    ),
-                                    h5 = MaterialTheme.typography.titleMedium.copy(
-                                        fontSize = fontSize.sp, // Default: 16sp (same as base)
-                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
-                                    ),
-                                    h6 = MaterialTheme.typography.titleMedium.copy(
-                                        fontSize = fontSize.sp, // Default: 16sp (same as base)
-                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
-                                    ),
-                                    paragraph = MaterialTheme.typography.bodyLarge.copy(
-                                        fontSize = fontSize.sp, // Default: 16sp (base)
-                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
-                                    ),
-                                    text = MaterialTheme.typography.bodyLarge.copy(
-                                        fontSize = fontSize.sp, // Default: 16sp (base)
-                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
-                                    ),
-                                    code = MaterialTheme.typography.bodyMedium.copy(
-                                        fontSize = (fontSize - 2).sp, // Default: 14sp (16 - 2)
-                                        lineHeight = (fontSize + 8).sp, // Default: 24sp (16 + 8)
-                                    ),
-                                    list = MaterialTheme.typography.bodyLarge.copy(
-                                        fontSize = fontSize.sp, // Default: 16sp (base)
-                                        lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
-                                    ),
-                                    textLink = TextLinkStyles(
-                                        style = MaterialTheme.typography.bodyLarge.copy(
-                                            fontSize = fontSize.sp, // Default: 16sp (base)
-                                            lineHeight = (fontSize + 12).sp, // Default: 28sp (16 + 12)
-                                            fontWeight = FontWeight.Bold,
-                                            textDecoration = TextDecoration.Underline,
-                                        ).toSpanStyle(),
-                                    ),
-                                ),
-                            )
                         }
                     }
                 }
             }
-        }
 
-            HorizontalFloatingToolbar(
-                visible = state is ReaderModeState.Success,
-                canNavigateToPrevious = readerModeViewModel.canNavigateToPrevious(),
-                canNavigateToNext = readerModeViewModel.canNavigateToNext(),
-                onNavigateToPrevious = {
-                    readerModeViewModel.navigateToPreviousArticle()
-                },
-                onNavigateToNext = {
-                    readerModeViewModel.navigateToNextArticle()
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = Spacing.regular),
-            )
+            if (state is ReaderModeState.Success) {
+                val strings = LocalFeedFlowStrings.current
+
+                Surface(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = Spacing.regular)
+                        .clip(RoundedCornerShape(12.dp)),
+                    tonalElevation = 3.dp,
+                    shadowElevation = 8.dp,
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .width(56.dp)
+                            .padding(vertical = Spacing.small),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(Spacing.small),
+                    ) {
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            state = rememberTooltipState(),
+                            tooltip = { PlainTooltip { Text(strings.previousArticle) } },
+                        ) {
+                            IconButton(
+                                onClick = { readerModeViewModel.navigateToPreviousArticle() },
+                                enabled = canNavigatePrevious,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowUpward,
+                                    contentDescription = strings.previousArticle,
+                                )
+                            }
+                        }
+
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            state = rememberTooltipState(),
+                            tooltip = { PlainTooltip { Text(strings.nextArticle) } },
+                        ) {
+                            IconButton(
+                                onClick = { readerModeViewModel.navigateToNextArticle() },
+                                enabled = canNavigateNext,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowDownward,
+                                    contentDescription = strings.nextArticle,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -18,7 +18,9 @@
       "mcp__jetbrains__get_file_text_by_path",
       "WebFetch(domain:github.com)",
       "Read(//Users/mg/Workspace/reader-flow/**)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(cat:*)",
+      "mcp__jetbrains__reformat_file"
     ],
     "deny": []
   }

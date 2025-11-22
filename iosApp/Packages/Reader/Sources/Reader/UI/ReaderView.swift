@@ -1,5 +1,8 @@
 import SwiftUI
 
+
+// TODO: inject translations here!
+
 public struct ReaderViewActions {
     public let onBookmarkToggle: (Bool) -> Void
     public let onArchive: () -> Void
@@ -43,7 +46,7 @@ public struct ReaderView: View {
     var actions: ReaderViewActions
     var isBookmarked: Bool
     var fontSize: Double
-    var showFontSizeMenu: Bool
+    @Binding var showFontSizeMenu: Bool
     var openInBrowser: (URL) -> Void
 
     @State private var webContent: WebContent?
@@ -54,7 +57,7 @@ public struct ReaderView: View {
         actions: ReaderViewActions,
         isBookmarked: Bool,
         fontSize: Double,
-        showFontSizeMenu: Bool,
+        showFontSizeMenu: Binding<Bool>,
         openInBrowser: @escaping (URL) -> Void
     ) {
         self._readerStatus = readerStatus
@@ -62,7 +65,7 @@ public struct ReaderView: View {
         self.actions = actions
         self.isBookmarked = isBookmarked
         self.fontSize = fontSize
-        self.showFontSizeMenu = showFontSizeMenu
+        self._showFontSizeMenu = showFontSizeMenu
         self.openInBrowser = openInBrowser
     }
 
@@ -79,11 +82,16 @@ public struct ReaderView: View {
                         makeLegacyToolbarContent()
                     }
                 }
+                .sheet(isPresented: $showFontSizeMenu) {
+                    fontSizeSheet
+                        .presentationDetents([.height(200)])
+                        .presentationDragIndicator(.visible)
+                }
 
             if !isiOS26OrLater() {
                 VStack {
                     Spacer()
-                    legacyNavigationToolbar
+                    compactNavigationToolbar
                 }
             }
         }
@@ -122,35 +130,43 @@ public struct ReaderView: View {
 
     @ToolbarContentBuilder
     private func makeIOS26ToolbarContent() -> some ToolbarContent {
-        ToolbarItemGroup(placement: .bottomBar) {
-            if let onNavigateToPrevious = actions.onNavigateToPrevious {
+        // Bottom bar - left edge
+        if let url = readerStatus.getUrl() {
+            ToolbarItem(placement: .bottomBar) {
                 Button {
-                    onNavigateToPrevious()
+                    openInBrowser(url)
                 } label: {
-                    Image(systemName: "chevron.left")
+                    Image(systemName: "globe")
                 }
             }
+        }
 
-            if let onNavigateToNext = actions.onNavigateToNext {
-                Button {
-                    onNavigateToNext()
-                } label: {
-                    Image(systemName: "chevron.right")
-                }
-            }
+        // Bottom bar - right edge (navigation arrows)
+        ToolbarItemGroup(placement: .bottomBar) {
+            Spacer()
 
             Button {
-                let newBookmarkState = !isBookmarked
-                actions.onBookmarkToggle(newBookmarkState)
+                actions.onNavigateToPrevious?()
             } label: {
-                if isBookmarked {
-                    Image(systemName: "bookmark.slash")
-                } else {
-                    Image(systemName: "bookmark")
-                }
+                Image(systemName: "chevron.left")
+            }
+            .disabled(actions.onNavigateToPrevious == nil)
+
+            Button {
+                actions.onNavigateToNext?()
+            } label: {
+                Image(systemName: "chevron.right")
+            }
+            .disabled(actions.onNavigateToNext == nil)
+        }
+
+        // Top bar: Share button
+        if let url = readerStatus.getUrl() {
+            if #available(iOS 26.0, *) {
+                ToolbarSpacer(.fixed)
             }
 
-            if let url = readerStatus.getUrl() {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 ShareLink(
                     item: url,
                     label: {
@@ -159,141 +175,145 @@ public struct ReaderView: View {
                 )
             }
 
-            Button {
-                actions.onArchive()
-            } label: {
-                Image(systemName: "hammer.fill")
+            if #available(iOS 26.0, *) {
+                ToolbarSpacer(.fixed)
             }
         }
 
-        if let url = readerStatus.getUrl() {
-            if let onComments = actions.onComments {
-                ToolbarItem {
+        // Top bar: Menu with other actions
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button {
+                    let newBookmarkState = !isBookmarked
+                    actions.onBookmarkToggle(newBookmarkState)
+                } label: {
+                    Label(
+                        isBookmarked ? "Remove Bookmark" : "Add Bookmark",
+                        systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
+                    )
+                }
+
+                Button {
+                    actions.onArchive()
+                } label: {
+                    Label("Open in Archive", systemImage: "hammer.fill")
+                }
+
+                if let onComments = actions.onComments {
                     Button {
                         onComments()
                     } label: {
-                        Image(systemName: "bubble.left")
+                        Label("Open Comments", systemImage: "bubble.left")
                     }
                 }
-            }
 
-            ToolbarItem {
                 Button {
-                    openInBrowser(url)
+                    actions.onFontSizeMenuToggle()
                 } label: {
-                    Image(systemName: "globe")
+                    Label("Font Size", systemImage: "textformat.size")
                 }
+            } label: {
+                Image(systemName: "ellipsis.circle")
             }
-        }
-
-        if #available(iOS 26.0, *) {
-            ToolbarSpacer(.fixed)
-        }
-
-        ToolbarItem {
-            fontSizeMenu
         }
     }
 
     @ToolbarContentBuilder
     private func makeLegacyToolbarContent() -> some ToolbarContent {
-        ToolbarItem {
-            fontSizeMenu
+        // Share button
+        if let url = readerStatus.getUrl() {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                ShareLink(
+                    item: url,
+                    label: {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                )
+            }
         }
 
-        if let url = readerStatus.getUrl() {
-            ToolbarItem {
+        // Menu with other actions
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
                 Button {
-                    openInBrowser(url)
+                    let newBookmarkState = !isBookmarked
+                    actions.onBookmarkToggle(newBookmarkState)
                 } label: {
-                    Image(systemName: "globe")
-                }
-            }
-
-            ToolbarItem {
-                Menu {
-                    Button {
-                        let newBookmarkState = !isBookmarked
-                        actions.onBookmarkToggle(newBookmarkState)
-                    } label: {
-                        Label(
-                            isBookmarked ? "Remove Bookmark" : "Add Bookmark",
-                            systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
-                        )
-                    }
-
-                    ShareLink(
-                        item: url,
-                        label: {
-                            Label("Share", systemImage: "square.and.arrow.up")
-                        }
+                    Label(
+                        isBookmarked ? "Remove Bookmark" : "Add Bookmark",
+                        systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
                     )
-
-                    Button {
-                        actions.onArchive()
-                    } label: {
-                        Label("Open in Archive", systemImage: "hammer.fill")
-                    }
-
-                    if let onComments = actions.onComments {
-                        Button {
-                            onComments()
-                        } label: {
-                            Label("Open Comments", systemImage: "bubble.left")
-                        }
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
                 }
+
+                Button {
+                    actions.onArchive()
+                } label: {
+                    Label("Open in Archive", systemImage: "hammer.fill")
+                }
+
+                if let onComments = actions.onComments {
+                    Button {
+                        onComments()
+                    } label: {
+                        Label("Open Comments", systemImage: "bubble.left")
+                    }
+                }
+
+                Button {
+                    actions.onFontSizeMenuToggle()
+                } label: {
+                    Label("Font Size", systemImage: "textformat.size")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
             }
         }
     }
 
     @ViewBuilder
-    private var fontSizeMenu: some View {
-        Button {
-            actions.onFontSizeMenuToggle()
-        } label: {
-            Image(systemName: "textformat.size")
-        }
-        .font(.title3)
-        .popover(isPresented: .constant(showFontSizeMenu)) {
-            VStack(alignment: .leading) {
-                Text("Font Size")
+    private var fontSizeSheet: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Font Size")
+                .font(.headline)
 
-                HStack {
-                    Button {
-                        let newFontSize = fontSize - 1.0
-                        updateFontSizeWithJS(newFontSize)
-                        actions.onFontSizeDecrease()
-                    } label: {
-                        Image(systemName: "minus")
-                    }
-
-                    Slider(
-                        value: Binding(
-                            get: { fontSize },
-                            set: { newValue in
-                                updateFontSizeWithJS(newValue)
-                                actions.onFontSizeChange(newValue)
-                            }
-                        ),
-                        in: 12 ... 40
-                    )
-
-                    Button {
-                        let newFontSize = fontSize + 1.0
-                        updateFontSizeWithJS(newFontSize)
-                        actions.onFontSizeIncrease()
-                    } label: {
-                        Image(systemName: "plus")
-                    }
+            HStack(spacing: 16) {
+                Button {
+                    let newFontSize = fontSize - 1.0
+                    updateFontSizeWithJS(newFontSize)
+                    actions.onFontSizeDecrease()
+                } label: {
+                    Image(systemName: "minus.circle.fill")
+                        .font(.title2)
                 }
+                .disabled(fontSize <= 12)
+
+                Slider(
+                    value: Binding(
+                        get: { fontSize },
+                        set: { newValue in
+                            updateFontSizeWithJS(newValue)
+                            actions.onFontSizeChange(newValue)
+                        }
+                    ),
+                    in: 12 ... 40
+                )
+
+                Button {
+                    let newFontSize = fontSize + 1.0
+                    updateFontSizeWithJS(newFontSize)
+                    actions.onFontSizeIncrease()
+                } label: {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title2)
+                }
+                .disabled(fontSize >= 40)
             }
-            .frame(width: 250, height: 100)
-            .padding(.horizontal, 16)
-            .presentationCompactAdaptation((.popover))
+
+            Text("\(Int(fontSize))px")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
+        .padding()
     }
 
     private func updateFontSizeWithJS(_ newFontSize: Double) {
@@ -306,35 +326,52 @@ public struct ReaderView: View {
     }
 
     @ViewBuilder
-    private var legacyNavigationToolbar: some View {
-        if actions.onNavigateToPrevious != nil || actions.onNavigateToNext != nil {
-            HStack(spacing: 16) {
-                if let onNavigateToPrevious = actions.onNavigateToPrevious {
-                    Button {
-                        onNavigateToPrevious()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.title3)
-                            .frame(width: 44, height: 44)
-                    }
+    private var compactNavigationToolbar: some View {
+        HStack(spacing: 0) {
+            // Open in browser - left edge
+            if let url = readerStatus.getUrl() {
+                Button {
+                    openInBrowser(url)
+                } label: {
+                    Image(systemName: "globe")
+                        .font(.title3)
+                        .foregroundStyle(.primary)
+                        .frame(width: 50, height: 44)
                 }
-
-                if let onNavigateToNext = actions.onNavigateToNext {
-                    Button {
-                        onNavigateToNext()
-                    } label: {
-                        Image(systemName: "chevron.right")
-                            .font(.title3)
-                            .frame(width: 44, height: 44)
-                    }
-                }
+                .background(.regularMaterial)
+                .clipShape(Capsule())
+                .shadow(radius: 8)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
+
+            Spacer()
+
+            // Navigation arrows - right edge
+            HStack(spacing: 0) {
+                Button {
+                    actions.onNavigateToPrevious?()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.title3)
+                        .foregroundStyle(.primary)
+                        .frame(width: 50, height: 44)
+                }
+                .disabled(actions.onNavigateToPrevious == nil)
+
+                Button {
+                    actions.onNavigateToNext?()
+                } label: {
+                    Image(systemName: "chevron.right")
+                        .font(.title3)
+                        .foregroundStyle(.primary)
+                        .frame(width: 50, height: 44)
+                }
+                .disabled(actions.onNavigateToNext == nil)
+            }
             .background(.regularMaterial)
             .clipShape(Capsule())
             .shadow(radius: 8)
-            .padding(.bottom, 16)
         }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 16)
     }
 }

@@ -1,15 +1,28 @@
 package com.prof18.feedflow.android.readermode
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
+import androidx.compose.material3.HorizontalFloatingToolbar
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -17,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
@@ -31,12 +44,13 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
-import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
-import com.prof18.feedflow.shared.ui.readermode.HorizontalFloatingToolbar
+import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import org.koin.compose.koinInject
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun ReaderModeScreen(
     readerModeState: ReaderModeState,
@@ -44,15 +58,17 @@ internal fun ReaderModeScreen(
     onUpdateFontSize: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     navigateBack: () -> Unit,
+    canNavigatePrevious: Boolean,
+    canNavigateNext: Boolean,
+    onNavigateToPrevious: () -> Unit,
+    onNavigateToNext: () -> Unit,
 ) {
     val browserManager = koinInject<BrowserManager>()
-    val readerModeViewModel = koinInject<ReaderModeViewModel>()
 
     val context = LocalContext.current
     val navigator = rememberWebViewNavigator()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(
+    Scaffold(
         topBar = {
             ReaderModeToolbar(
                 readerModeState = readerModeState,
@@ -89,8 +105,8 @@ internal fun ReaderModeScreen(
                 onFontSizeChange = { newFontSize ->
                     navigator.evaluateJavaScript(
                         """
-                            document.getElementById("container").style.fontSize = "$newFontSize" + "px";
-                            document.getElementById("container").style.lineHeight = "1.5em";
+                        document.getElementById("container").style.fontSize = "$newFontSize" + "px";
+                        document.getElementById("container").style.lineHeight = "1.5em";
                         """.trimIndent(),
                     )
                     onUpdateFontSize(newFontSize)
@@ -99,52 +115,82 @@ internal fun ReaderModeScreen(
             )
         },
     ) { contentPadding ->
-        when (readerModeState) {
-            is ReaderModeState.HtmlNotAvailable -> {
-                navigateBack()
-                if (isValidUrl(readerModeState.url)) {
-                    browserManager.openUrlWithFavoriteBrowser(readerModeState.url, context)
-                }
-            }
-            ReaderModeState.Loading -> {
-                Box(
-                    contentAlignment = Alignment.Center,
+        Box(
+            modifier = Modifier,
+        ) {
+            if (readerModeState is ReaderModeState.Success) {
+                val strings = LocalFeedFlowStrings.current
+
+                HorizontalFloatingToolbar(
                     modifier = Modifier
-                        .padding(contentPadding)
-                        .fillMaxSize(),
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            is ReaderModeState.Success -> {
-                ReaderMode(
-                    readerModeState = readerModeState,
-                    openInBrowser = { url ->
-                        if (isValidUrl(url)) {
-                            browserManager.openUrlWithFavoriteBrowser(url, context)
+                        .align(Alignment.BottomCenter)
+                        .offset(y = -ScreenOffset)
+                        .zIndex(1f)
+                        .padding(bottom = contentPadding.calculateBottomPadding()),
+                    expanded = true,
+                    content = {
+                        AppBarRow(
+                            modifier = Modifier,
+                        ) {
+                            clickableItem(
+                                onClick = onNavigateToPrevious,
+                                enabled = canNavigatePrevious,
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                        contentDescription = strings.previousArticle,
+                                    )
+                                },
+                                label = strings.previousArticle,
+                            )
+
+                            clickableItem(
+                                onClick = onNavigateToNext,
+                                enabled = canNavigateNext,
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        contentDescription = strings.nextArticle,
+                                    )
+                                },
+                                label = strings.nextArticle,
+                            )
                         }
                     },
-                    contentPadding = contentPadding,
-                    navigator = navigator,
                 )
             }
-        }
-    }
 
-        HorizontalFloatingToolbar(
-            visible = readerModeState is ReaderModeState.Success,
-            canNavigateToPrevious = readerModeViewModel.canNavigateToPrevious(),
-            canNavigateToNext = readerModeViewModel.canNavigateToNext(),
-            onNavigateToPrevious = {
-                readerModeViewModel.navigateToPreviousArticle()
-            },
-            onNavigateToNext = {
-                readerModeViewModel.navigateToNextArticle()
-            },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp),
-        )
+            when (readerModeState) {
+                is ReaderModeState.HtmlNotAvailable -> {
+                    navigateBack()
+                    if (isValidUrl(readerModeState.url)) {
+                        browserManager.openUrlWithFavoriteBrowser(readerModeState.url, context)
+                    }
+                }
+                ReaderModeState.Loading -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .padding(contentPadding)
+                            .fillMaxSize(),
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                is ReaderModeState.Success -> {
+                    ReaderMode(
+                        readerModeState = readerModeState,
+                        openInBrowser = { url ->
+                            if (isValidUrl(url)) {
+                                browserManager.openUrlWithFavoriteBrowser(url, context)
+                            }
+                        },
+                        contentPadding = contentPadding,
+                        navigator = navigator,
+                    )
+                }
+            }
+        }
     }
 }
 

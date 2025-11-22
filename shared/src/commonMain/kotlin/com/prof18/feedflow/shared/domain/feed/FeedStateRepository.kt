@@ -253,19 +253,27 @@ internal class FeedStateRepository(
         return null
     }
 
-    suspend fun getPreviousArticle(currentArticleId: String): FeedItem? {
+    fun getPreviousArticle(currentArticleId: String): FeedItem? {
         val currentList = mutableFeedState.value
         val currentIndex = currentList.indexOfFirst { it.id == currentArticleId }
         if (currentIndex == -1 || currentIndex == 0) return null
         return currentList.getOrNull(currentIndex - 1)
     }
 
-    fun getArticlePosition(currentArticleId: String): Pair<Int, Int>? {
+    fun getArticlePosition(currentArticleId: String): ArticlePosition? {
         val currentList = mutableFeedState.value
         val currentIndex = currentList.indexOfFirst { it.id == currentArticleId }
         if (currentIndex == -1) return null
-        return Pair(currentIndex + 1, currentList.size)
+        return ArticlePosition(
+            currentPosition = currentIndex + 1,
+            totalArticles = currentList.size,
+        )
     }
+
+    data class ArticlePosition(
+        val currentPosition: Int,
+        val totalArticles: Int,
+    )
 
     private companion object {
         private const val PAGE_SIZE = 40L

@@ -225,7 +225,6 @@ class MainActivity : BaseThemeActivity() {
                         navController.navigate(ImportExport)
                     },
                     navigateToReaderMode = { url ->
-                        readerModeViewModel.setCurrentArticle(url.id)
                         readerModeViewModel.getReaderModeHtml(url)
                         navController.navigate(ReaderMode)
                     },
@@ -326,6 +325,8 @@ class MainActivity : BaseThemeActivity() {
             composable<ReaderMode> {
                 val readerModeState by readerModeViewModel.readerModeState.collectAsStateWithLifecycle()
                 val fontSizeState by readerModeViewModel.readerFontSizeState.collectAsStateWithLifecycle()
+                val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsStateWithLifecycle()
+                val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsStateWithLifecycle()
 
                 ReaderModeScreen(
                     readerModeState = readerModeState,
@@ -339,6 +340,14 @@ class MainActivity : BaseThemeActivity() {
                     onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
                         readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
                     },
+                    canNavigatePrevious = canNavigatePrevious,
+                    canNavigateNext = canNavigateNext,
+                    onNavigateToPrevious = {
+                        readerModeViewModel.navigateToPreviousArticle()
+                    },
+                    onNavigateToNext = {
+                        readerModeViewModel.navigateToNextArticle()
+                    },
                 )
             }
 
@@ -348,7 +357,6 @@ class MainActivity : BaseThemeActivity() {
                         navController.popBackStack()
                     },
                     navigateToReaderMode = { urlInfo ->
-                        readerModeViewModel.setCurrentArticle(urlInfo.id)
                         readerModeViewModel.getReaderModeHtml(urlInfo)
                         navController.navigate(ReaderMode)
                     },
@@ -454,7 +462,6 @@ class MainActivity : BaseThemeActivity() {
         navController: NavHostController,
         feedUrlInfo: FeedItemUrlInfo,
     ) {
-        readerModeViewModel.setCurrentArticle(feedUrlInfo.id)
         readerModeViewModel.getReaderModeHtml(feedUrlInfo)
         if (navController.currentDestination?.hasRoute(ReaderMode::class) == false) {
             navController.navigate(ReaderMode)

@@ -26,6 +26,8 @@ struct ReaderModeScreen: View {
     @State private var feedItemId: String?
     @State private var feedItemTitle: String?
     @State private var commentsUrl: String?
+    @State private var canNavigatePrevious = false
+    @State private var canNavigateNext = false
 
     let viewModel: ReaderModeViewModel
 
@@ -108,24 +110,16 @@ struct ReaderModeScreen: View {
                     fontSize = newSize
                     viewModel.updateFontSize(newFontSize: Int32(Int(fontSize)))
                 },
-                onNavigateToNext: viewModel.canNavigateToNext() ? {
-                    Task {
-                        if let nextArticle = await viewModel.navigateToNextArticleIos() {
-                            appState.navigate(route: CommonViewRoute.readerMode(feedItemUrlInfo: nextArticle))
-                        }
-                    }
+                onNavigateToNext: canNavigateNext ? {
+                    viewModel.navigateToNextArticle()
                 } : nil,
-                onNavigateToPrevious: viewModel.canNavigateToPrevious() ? {
-                    Task {
-                        if let previousArticle = await viewModel.navigateToPreviousArticleIos() {
-                            appState.navigate(route: CommonViewRoute.readerMode(feedItemUrlInfo: previousArticle))
-                        }
-                    }
+                onNavigateToPrevious: canNavigatePrevious ? {
+                    viewModel.navigateToPreviousArticle()
                 } : nil
             ),
             isBookmarked: isBookmarked,
             fontSize: fontSize,
-            showFontSizeMenu: showFontSizeMenu,
+            showFontSizeMenu: $showFontSizeMenu,
             openInBrowser: { url in
                 openInBrowser(url: url)
             }
@@ -143,7 +137,6 @@ struct ReaderModeScreen: View {
                 switch onEnum(of: state) {
                 case let .htmlNotAvailable(data):
                     self.feedItemId = data.id
-                    viewModel.setCurrentArticle(articleId: data.id)
                     let url = URL(string: data.url) ?? URL(fileURLWithPath: "")
                     self.articleUrl = url
                     self.readerStatus = .failedToExtractContent(url: url)
@@ -153,7 +146,6 @@ struct ReaderModeScreen: View {
                     let readerModeData = data.readerModeData
 
                     self.feedItemId = readerModeData.id.id
-                    viewModel.setCurrentArticle(articleId: readerModeData.id.id)
                     self.feedItemTitle = readerModeData.title
                     self.commentsUrl = readerModeData.commentsUrl
                     self.currentContent = readerModeData.content
@@ -169,6 +161,16 @@ struct ReaderModeScreen: View {
         }
         .onChange(of: colorScheme) { _, _ in
             updateReaderHTML()
+        }
+        .task {
+            for await canNavigate in viewModel.canNavigateToPreviousState {
+                self.canNavigatePrevious = canNavigate.boolValue
+            }
+        }
+        .task {
+            for await canNavigate in viewModel.canNavigateToNextState {
+                self.canNavigateNext = canNavigate.boolValue
+            }
         }
     }
 

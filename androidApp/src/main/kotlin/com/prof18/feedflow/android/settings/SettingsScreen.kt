@@ -141,6 +141,9 @@ fun SettingsScreen(
         setReaderMode = { enabled ->
             settingsViewModel.updateReaderMode(enabled)
         },
+        setSaveReaderModeContent = { enabled ->
+            settingsViewModel.updateSaveReaderModeContent(enabled)
+        },
         setRemoveTitleFromDescription = { enabled ->
             settingsViewModel.updateRemoveTitleFromDescription(enabled)
         },
@@ -203,6 +206,7 @@ private fun SettingsScreenContent(
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
+    setSaveReaderModeContent: (Boolean) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     setHideDescription: (Boolean) -> Unit,
     setHideImages: (Boolean) -> Unit,
@@ -327,6 +331,13 @@ private fun SettingsScreenContent(
                 ReaderModeSwitch(
                     setReaderMode = setReaderMode,
                     isReaderModeEnabled = settingsState.isReaderModeEnabled,
+                )
+            }
+
+            item {
+                SaveReaderModeContentSwitch(
+                    setSaveReaderModeContent = setSaveReaderModeContent,
+                    isSaveReaderModeContentEnabled = settingsState.isSaveReaderModeContentEnabled,
                 )
             }
 
@@ -578,6 +589,43 @@ private fun ReaderModeSwitch(
 }
 
 @Composable
+private fun SaveReaderModeContentSwitch(
+    setSaveReaderModeContent: (Boolean) -> Unit,
+    isSaveReaderModeContentEnabled: Boolean,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable {
+                setSaveReaderModeContent(!isSaveReaderModeContentEnabled)
+            }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.AutoMirrored.Outlined.Article,
+            contentDescription = null,
+        )
+
+        Text(
+            text = LocalFeedFlowStrings.current.settingsSaveReaderModeContent,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f),
+        )
+        Switch(
+            interactionSource = interactionSource,
+            checked = isSaveReaderModeContentEnabled,
+            onCheckedChange = setSaveReaderModeContent,
+        )
+    }
+}
+
+@Composable
 private fun MarkReadWhenScrollingSwitch(
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     isMarkReadWhenScrollingEnabled: Boolean,
@@ -794,6 +842,7 @@ private fun SettingsScreenPreview() {
             setMarkReadWhenScrolling = {},
             setShowReadItem = {},
             setReaderMode = {},
+            setSaveReaderModeContent = {},
             setRemoveTitleFromDescription = {},
             setHideDescription = {},
             setHideImages = {},

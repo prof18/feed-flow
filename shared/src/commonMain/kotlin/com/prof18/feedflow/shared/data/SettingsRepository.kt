@@ -21,6 +21,7 @@ class SettingsRepository(
     private val settings: Settings,
 ) {
     private var isReaderModeEnabled: Boolean? = null
+    private var saveItemContentOnOpenEnabled: Boolean? = null
 
     private val isSyncUploadRequiredMutableFlow = MutableStateFlow(getIsSyncUploadRequired())
     val isSyncUploadRequired: StateFlow<Boolean> = isSyncUploadRequiredMutableFlow.asStateFlow()
@@ -42,7 +43,7 @@ class SettingsRepository(
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
 
-    private val themeModeMutableFlow = MutableStateFlow<ThemeMode>(getThemeMode())
+    private val themeModeMutableFlow = MutableStateFlow(getThemeMode())
     val themeModeFlow: StateFlow<ThemeMode> = themeModeMutableFlow.asStateFlow()
 
     fun getFavouriteBrowserId(): String? =
@@ -76,6 +77,21 @@ class SettingsRepository(
     internal fun setUseReaderMode(value: Boolean) {
         isReaderModeEnabled = value
         settings[SettingsFields.USE_READER_MODE.name] = value
+    }
+
+    fun isSaveItemContentOnOpenEnabled(): Boolean {
+        if (saveItemContentOnOpenEnabled != null) {
+            return requireNotNull(saveItemContentOnOpenEnabled)
+        } else {
+            val value = settings.getBoolean(SettingsFields.SAVE_ITEM_CONTENT_ON_OPEN.name, false)
+            saveItemContentOnOpenEnabled = value
+            return value
+        }
+    }
+
+    fun setSaveItemContentOnOpen(value: Boolean) {
+        saveItemContentOnOpenEnabled = value
+        settings[SettingsFields.SAVE_ITEM_CONTENT_ON_OPEN.name] = value
     }
 
     internal fun getIsSyncUploadRequired(): Boolean =
@@ -276,6 +292,7 @@ internal enum class SettingsFields {
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,
     USE_READER_MODE,
+    SAVE_ITEM_CONTENT_ON_OPEN,
     IS_SYNC_UPLOAD_REQUIRED,
     REMOVE_TITLE_FROM_DESCRIPTION,
     HIDE_DESCRIPTION,

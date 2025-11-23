@@ -374,6 +374,9 @@ internal fun ApplicationScope.MainWindow(
                                 setReaderMode = { enabled ->
                                     settingsViewModel.updateReaderMode(enabled)
                                 },
+                                setSaveReaderModeContent = { enabled ->
+                                    settingsViewModel.updateSaveReaderModeContent(enabled)
+                                },
                                 onAutoDeletePeriodSelected = { period ->
                                     settingsViewModel.updateAutoDeletePeriod(period)
                                 },

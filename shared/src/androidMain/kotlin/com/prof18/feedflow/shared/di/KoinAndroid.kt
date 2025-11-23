@@ -95,6 +95,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("FeedItemParserWorker"),
             dispatcherProvider = get(),
             feedItemContentFileHandler = get(),
+            settingsRepository = get(),
         )
     }
 

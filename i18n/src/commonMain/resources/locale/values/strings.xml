@@ -89,6 +89,7 @@
     <string name="close_menu_button">Close menu</string>
     <string name="in_app_browser">In-app browser</string>
     <string name="settings_reader_mode">Open articles on reader mode</string>
+    <string name="settings_save_reader_mode_content">Save article content on open for offline reading</string>
     <string name="search_no_data">No matches for %s.</string>
     <string name="search_placeholder">Search…</string>
     <string name="search_hint_title">Start typing…</string>

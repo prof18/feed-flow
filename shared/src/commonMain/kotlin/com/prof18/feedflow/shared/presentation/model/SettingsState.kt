@@ -12,6 +12,7 @@ data class SettingsState(
     val isMarkReadWhenScrollingEnabled: Boolean = true,
     val isShowReadItemsEnabled: Boolean = false,
     val isReaderModeEnabled: Boolean = false,
+    val isSaveReaderModeContentEnabled: Boolean = false,
     val isExperimentalParsingEnabled: Boolean = false,
     val isRemoveTitleFromDescriptionEnabled: Boolean = false,
     val isHideDescriptionEnabled: Boolean = false,

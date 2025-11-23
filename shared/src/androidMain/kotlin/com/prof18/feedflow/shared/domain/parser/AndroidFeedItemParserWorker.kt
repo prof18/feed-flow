@@ -9,6 +9,7 @@ import androidx.work.workDataOf
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
@@ -20,6 +21,7 @@ internal class AndroidFeedItemParserWorker(
     private val logger: Logger,
     private val dispatcherProvider: DispatcherProvider,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
+    private val settingsRepository: SettingsRepository,
 ) : FeedItemParserWorker {
 
     override suspend fun enqueueParsing(feedItemId: String, url: String) {
@@ -56,8 +58,7 @@ internal class AndroidFeedItemParserWorker(
 
         if (result is ParsingResult.Success) {
             val content = result.htmlContent
-            if (content != null) {
-                // TODO: Save content only if the settings is set to do so
+            if (content != null && settingsRepository.isSaveItemContentOnOpenEnabled()) {
                 feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, content)
                 logger.d { "Successfully parsed and cached content for: $url (feedItemId: $feedItemId)" }
             }

@@ -25,6 +25,7 @@ struct SettingsScreen: View {
     @State private var isMarkReadWhenScrollingEnabled = true
     @State private var isShowReadItemEnabled = false
     @State private var isReaderModeEnabled = false
+    @State private var isSaveReaderModeContentEnabled = false
     @State private var isRemoveTitleFromDescriptionEnabled = false
     @State private var isHideDescriptionEnabled = false
     @State private var isHideImagesEnabled = false
@@ -55,6 +56,7 @@ struct SettingsScreen: View {
                     isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
                     isShowReadItemEnabled = state.isShowReadItemsEnabled
                     isReaderModeEnabled = state.isReaderModeEnabled
+                    isSaveReaderModeContentEnabled = state.isSaveReaderModeContentEnabled
                     isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
                     isHideDescriptionEnabled = state.isHideDescriptionEnabled
                     isHideImagesEnabled = state.isHideImagesEnabled
@@ -83,6 +85,9 @@ struct SettingsScreen: View {
             }
             .onChange(of: isReaderModeEnabled) {
                 vmStoreOwner.instance.updateReaderMode(value: isReaderModeEnabled)
+            }
+            .onChange(of: isSaveReaderModeContentEnabled) {
+                vmStoreOwner.instance.updateSaveReaderModeContent(value: isSaveReaderModeContentEnabled)
             }
             .onChange(of: isRemoveTitleFromDescriptionEnabled) {
                 vmStoreOwner.instance.updateRemoveTitleFromDescription(
@@ -149,6 +154,7 @@ struct SettingsScreen: View {
                     browserSelector: browserSelector,
                     autoDeletePeriod: $autoDeletePeriod,
                     isReaderModeEnabled: $isReaderModeEnabled,
+                    isSaveReaderModeContentEnabled: $isSaveReaderModeContentEnabled,
                     feedOrder: $feedOrder,
                     themeMode: $themeMode,
                     isMarkReadWhenScrollingEnabled: $isMarkReadWhenScrollingEnabled,
@@ -224,6 +230,7 @@ private struct BehaviourSection: View {
     @Bindable var browserSelector: BrowserSelector
     @Binding var autoDeletePeriod: AutoDeletePeriod
     @Binding var isReaderModeEnabled: Bool
+    @Binding var isSaveReaderModeContentEnabled: Bool
     @Binding var feedOrder: FeedOrder
     @Binding var themeMode: ThemeMode
 
@@ -272,6 +279,12 @@ private struct BehaviourSection: View {
                 Label(feedFlowStrings.settingsReaderMode, systemImage: "doc.text")
             }.onTapGesture {
                 isReaderModeEnabled.toggle()
+            }
+
+            Toggle(isOn: $isSaveReaderModeContentEnabled) {
+                Label(feedFlowStrings.settingsSaveReaderModeContent, systemImage: "doc.text.fill")
+            }.onTapGesture {
+                isSaveReaderModeContentEnabled.toggle()
             }
 
             Toggle(isOn: $isMarkReadWhenScrollingEnabled) {

@@ -16,7 +16,13 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
     ) {
         DispatchQueue.main.async { [weak self] in
             guard let this = self else { return }
-            this.handleParsing(feedItemId: feedItemId, url: url, feedItemParser: FeedItemParser()) { _ in
+            let shouldSaveContent = Deps.shared.getSettingsRepository().isSaveItemContentOnOpenEnabled()
+            this.handleParsing(
+                feedItemId: feedItemId,
+                url: url,
+                feedItemParser: FeedItemParser(),
+                saveContent: shouldSaveContent
+            ) { _ in
                 completionHandler(nil)
             }
         }
@@ -29,7 +35,13 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
     ) {
         DispatchQueue.main.async { [weak self] in
             guard let this = self else { return }
-            this.handleParsing(feedItemId: feedItemId, url: url, feedItemParser: FeedItemParser.shared) { result in
+            let shouldSaveContent = Deps.shared.getSettingsRepository().isSaveItemContentOnOpenEnabled()
+            this.handleParsing(
+                feedItemId: feedItemId,
+                url: url,
+                feedItemParser: FeedItemParser.shared,
+                saveContent: shouldSaveContent
+            ) { result in
                 completionHandler(result, nil)
             }
         }
@@ -42,7 +54,13 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
     ) {
         DispatchQueue.main.async { [weak self] in
             guard let this = self else { return }
-            this.handleParsing(feedItemId: feedItemId, url: url, feedItemParser: FeedItemParser()) { result in
+            let shouldSaveContent = Deps.shared.getSettingsRepository().isSaveItemContentOnOpenEnabled()
+            this.handleParsing(
+                feedItemId: feedItemId,
+                url: url,
+                feedItemParser: FeedItemParser(),
+                saveContent: shouldSaveContent
+            ) { result in
                 completionHandler(result, nil)
             }
         }
@@ -52,6 +70,7 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
         feedItemId: String,
         url: String,
         feedItemParser: FeedItemParser,
+        saveContent: Bool,
         completionHandler: @escaping (ParsingResult) -> Void
     ) {
         parseFeedItem(url: url, feedItemParser: feedItemParser) { parsingResult in
@@ -73,15 +92,16 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
                         htmlWithTitle = htmlContent
                     }
 
-                    // TODO: Save content only if the settings is set to do so
-                    let fileURL = self.getContentPath(feedItemId: feedItemId)
-                    if let data = htmlWithTitle?.data(using: .utf8) {
-                        do {
-                            try data.write(to: fileURL)
-                        } catch {
-                            Deps.shared.getLogger(tag: "FeedItemParserWorkerIos").d(
-                                messageString: "Error writing to file: \(error)"
-                            )
+                    if saveContent {
+                        let fileURL = self.getContentPath(feedItemId: feedItemId)
+                        if let data = htmlWithTitle?.data(using: .utf8) {
+                            do {
+                                try data.write(to: fileURL)
+                            } catch {
+                                Deps.shared.getLogger(tag: "FeedItemParserWorkerIos").d(
+                                    messageString: "Error writing to file: \(error)"
+                                )
+                            }
                         }
                     }
                 }

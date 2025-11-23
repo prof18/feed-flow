@@ -81,9 +81,10 @@ internal class DesktopFeedItemParserWorker(
                 val markdown = markdownToHtmlConverter.convertToMarkdown(styledHtml)
                     .replace(Regex("""\s*\{#[^}]+}"""), "")
 
-                // TODO: Save content only if the settings is set to do so
-                feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, markdown)
-                logger.d { "Successfully parsed and cached content for: $url (feedItemId: $feedItemId)" }
+                if (settingsRepository.isSaveItemContentOnOpenEnabled()) {
+                    feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, markdown)
+                    logger.d { "Successfully parsed and cached content for: $url (feedItemId: $feedItemId)" }
+                }
 
                 ParsingResult.Success(
                     htmlContent = markdown,

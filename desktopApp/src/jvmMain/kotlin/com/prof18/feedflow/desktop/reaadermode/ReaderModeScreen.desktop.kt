@@ -332,14 +332,18 @@ private fun handleKeyEvent(
             Key.DirectionLeft -> {
                 if (canNavigatePrevious) {
                     onNavigatePrevious()
+                    true
+                } else {
+                    false
                 }
-                true
             }
             Key.DirectionRight -> {
                 if (canNavigateNext) {
                     onNavigateNext()
+                    true
+                } else {
+                    false
                 }
-                true
             }
             else -> false
         }

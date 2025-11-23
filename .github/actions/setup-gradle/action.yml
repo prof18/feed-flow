@@ -36,6 +36,6 @@ runs:
       with:
         path: |
           ~/.konan
-        key: ${{ runner.os }}-v1-${{ hashFiles('gradle/libs.versions.toml') }}
+        key: ${{ runner.os }}-konan-v2
 
 

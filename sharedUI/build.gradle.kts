@@ -61,7 +61,6 @@ kotlin {
             dependencies {
                 implementation(libs.jsystem.theme.detector)
                 api(libs.io.coil.network)
-                implementation(libs.compose.material3)
             }
         }
     }

@@ -163,7 +163,6 @@ class ReaderModeViewModel internal constructor(
         }
     }
 
-
     private fun FeedItem.toFeedItemUrlInfo() = FeedItemUrlInfo(
         id = id,
         url = url,

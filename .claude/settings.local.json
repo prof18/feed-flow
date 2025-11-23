@@ -20,7 +20,8 @@
       "Read(//Users/mg/Workspace/reader-flow/**)",
       "Bash(xargs:*)",
       "Bash(cat:*)",
-      "mcp__jetbrains__reformat_file"
+      "mcp__jetbrains__reformat_file",
+      "mcp__jetbrains__replace_text_in_file"
     ],
     "deny": []
   }

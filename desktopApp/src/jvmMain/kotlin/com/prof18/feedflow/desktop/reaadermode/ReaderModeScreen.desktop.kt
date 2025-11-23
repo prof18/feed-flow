@@ -1,5 +1,6 @@
 package com.prof18.feedflow.desktop.reaadermode
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.BookmarkAdd
@@ -48,6 +50,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -104,9 +108,17 @@ internal data class ReaderModeScreen(
         val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsState()
         val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsState()
 
+        val focusRequester = remember { FocusRequester() }
+
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .focusRequester(focusRequester)
+                .focusable()
                 .onKeyEvent { keyEvent ->
                     if (keyEvent.type == KeyEventType.KeyDown && state is ReaderModeState.Success) {
                         when (keyEvent.key) {
@@ -271,18 +283,17 @@ internal data class ReaderModeScreen(
 
                 Surface(
                     modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = Spacing.regular)
+                        .align(Alignment.BottomEnd)
+                        .padding(end = Spacing.regular, bottom = Spacing.regular)
                         .clip(RoundedCornerShape(12.dp)),
                     tonalElevation = 3.dp,
                     shadowElevation = 8.dp,
                 ) {
-                    Column(
+                    Row(
                         modifier = Modifier
-                            .width(56.dp)
-                            .padding(vertical = Spacing.small),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(Spacing.small),
+                            .padding(horizontal = Spacing.small),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.small),
                     ) {
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
@@ -294,7 +305,7 @@ internal data class ReaderModeScreen(
                                 enabled = canNavigatePrevious,
                             ) {
                                 Icon(
-                                    imageVector = Icons.Filled.ArrowUpward,
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = strings.previousArticle,
                                 )
                             }
@@ -310,7 +321,7 @@ internal data class ReaderModeScreen(
                                 enabled = canNavigateNext,
                             ) {
                                 Icon(
-                                    imageVector = Icons.Filled.ArrowDownward,
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = strings.nextArticle,
                                 )
                             }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -16,8 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Comment
@@ -120,25 +117,14 @@ internal data class ReaderModeScreen(
                 .focusRequester(focusRequester)
                 .focusable()
                 .onKeyEvent { keyEvent ->
-                    if (keyEvent.type == KeyEventType.KeyDown && state is ReaderModeState.Success) {
-                        when (keyEvent.key) {
-                            Key.DirectionLeft -> {
-                                if (canNavigatePrevious) {
-                                    readerModeViewModel.navigateToPreviousArticle()
-                                }
-                                true
-                            }
-                            Key.DirectionRight -> {
-                                if (canNavigateNext) {
-                                    readerModeViewModel.navigateToNextArticle()
-                                }
-                                true
-                            }
-                            else -> false
-                        }
-                    } else {
-                        false
-                    }
+                    handleKeyEvent(
+                        keyEvent = keyEvent,
+                        state = state,
+                        canNavigatePrevious = canNavigatePrevious,
+                        canNavigateNext = canNavigateNext,
+                        onNavigatePrevious = { readerModeViewModel.navigateToPreviousArticle() },
+                        onNavigateNext = { readerModeViewModel.navigateToNextArticle() },
+                    )
                 },
         ) {
             Scaffold(
@@ -190,8 +176,8 @@ internal data class ReaderModeScreen(
                         }
                     }
                     ReaderModeState.Loading -> {
-                        androidx.compose.foundation.layout.Box(
-                            contentAlignment = androidx.compose.ui.Alignment.Center,
+                        Box(
+                            contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .padding(contentPadding)
                                 .fillMaxWidth(),
@@ -204,7 +190,6 @@ internal data class ReaderModeScreen(
                             modifier = Modifier
                                 .padding(contentPadding)
                                 .verticalScroll(rememberScrollState()),
-
                         ) {
                             Text(
                                 modifier = Modifier
@@ -218,7 +203,8 @@ internal data class ReaderModeScreen(
                             SelectionContainer {
                                 Markdown(
                                     modifier = Modifier
-                                        .padding(Spacing.regular),
+                                        .padding(Spacing.regular)
+                                        .padding(bottom = 64.dp),
                                     content = s.readerModeData.content,
                                     imageTransformer = Coil3ImageTransformerImpl,
                                     typography = markdownTypography(
@@ -331,6 +317,34 @@ internal data class ReaderModeScreen(
             }
         }
     }
+}
+
+private fun handleKeyEvent(
+    keyEvent: androidx.compose.ui.input.key.KeyEvent,
+    state: ReaderModeState,
+    canNavigatePrevious: Boolean,
+    canNavigateNext: Boolean,
+    onNavigatePrevious: () -> Unit,
+    onNavigateNext: () -> Unit,
+): Boolean {
+    if (keyEvent.type == KeyEventType.KeyDown && state is ReaderModeState.Success) {
+        return when (keyEvent.key) {
+            Key.DirectionLeft -> {
+                if (canNavigatePrevious) {
+                    onNavigatePrevious()
+                }
+                true
+            }
+            Key.DirectionRight -> {
+                if (canNavigateNext) {
+                    onNavigateNext()
+                }
+                true
+            }
+            else -> false
+        }
+    }
+    return false
 }
 
 @Composable

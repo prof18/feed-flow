@@ -5,8 +5,8 @@
 //  Created by Marco Gomiero on 11/04/25.
 //
 
-import Foundation
 import FeedFlowKit
+import Foundation
 
 class FeedItemParserWorkerIos: FeedItemParserWorker {
     func enqueueParsing(
@@ -153,4 +153,3 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
         return articlesDirectory.appendingPathComponent("\(feedItemId).html")
     }
 }
-

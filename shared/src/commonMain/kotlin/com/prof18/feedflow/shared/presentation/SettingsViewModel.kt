@@ -39,6 +39,7 @@ class SettingsViewModel internal constructor(
                 val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
                 val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
                 val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
+                val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
                 val isExperimentalParsingEnabled = true
                 val isRemoveTitleFromDescriptionEnabled = settingsRepository.getRemoveTitleFromDescription()
                 val isHideDescriptionEnabled = settingsRepository.getHideDescription()
@@ -58,6 +59,7 @@ class SettingsViewModel internal constructor(
                         isShowReadItemsEnabled = isShowReadItemsEnabled,
                         isReaderModeEnabled = isReaderModeEnabled,
                         isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
+                        isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
                         isExperimentalParsingEnabled = isExperimentalParsingEnabled,
                         isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
                         isHideDescriptionEnabled = isHideDescriptionEnabled,
@@ -113,6 +115,15 @@ class SettingsViewModel internal constructor(
         settingsMutableState.update {
             it.copy(
                 isSaveReaderModeContentEnabled = value,
+            )
+        }
+    }
+
+    fun updatePrefetchArticleContent(value: Boolean) {
+        settingsRepository.setPrefetchArticleContent(value)
+        settingsMutableState.update {
+            it.copy(
+                isPrefetchArticleContentEnabled = value,
             )
         }
     }

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.BugReport
+import androidx.compose.material.icons.outlined.CloudDownload
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Info
@@ -27,12 +28,14 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.Sync
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -144,6 +147,9 @@ fun SettingsScreen(
         setSaveReaderModeContent = { enabled ->
             settingsViewModel.updateSaveReaderModeContent(enabled)
         },
+        setPrefetchArticleContent = { enabled ->
+            settingsViewModel.updatePrefetchArticleContent(enabled)
+        },
         setRemoveTitleFromDescription = { enabled ->
             settingsViewModel.updateRemoveTitleFromDescription(enabled)
         },
@@ -207,6 +213,7 @@ private fun SettingsScreenContent(
     setShowReadItem: (Boolean) -> Unit,
     setReaderMode: (Boolean) -> Unit,
     setSaveReaderModeContent: (Boolean) -> Unit,
+    setPrefetchArticleContent: (Boolean) -> Unit,
     setRemoveTitleFromDescription: (Boolean) -> Unit,
     setHideDescription: (Boolean) -> Unit,
     setHideImages: (Boolean) -> Unit,
@@ -338,6 +345,13 @@ private fun SettingsScreenContent(
                 SaveReaderModeContentSwitch(
                     setSaveReaderModeContent = setSaveReaderModeContent,
                     isSaveReaderModeContentEnabled = settingsState.isSaveReaderModeContentEnabled,
+                )
+            }
+
+            item {
+                PrefetchArticleContentSwitch(
+                    setPrefetchArticleContent = setPrefetchArticleContent,
+                    isPrefetchArticleContentEnabled = settingsState.isPrefetchArticleContentEnabled,
                 )
             }
 
@@ -772,6 +786,83 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
 }
 
 @Composable
+private fun PrefetchArticleContentSwitch(
+    setPrefetchArticleContent: (Boolean) -> Unit,
+    isPrefetchArticleContentEnabled: Boolean,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    var showWarningDialog by remember { mutableStateOf(false) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable {
+                if (!isPrefetchArticleContentEnabled) {
+                    showWarningDialog = true
+                } else {
+                    setPrefetchArticleContent(false)
+                }
+            }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            Icons.Outlined.CloudDownload,
+            contentDescription = null,
+        )
+
+        Text(
+            text = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f),
+        )
+        Switch(
+            interactionSource = interactionSource,
+            checked = isPrefetchArticleContentEnabled,
+            onCheckedChange = { enabled ->
+                if (enabled) {
+                    showWarningDialog = true
+                } else {
+                    setPrefetchArticleContent(false)
+                }
+            },
+        )
+    }
+
+    if (showWarningDialog) {
+        AlertDialog(
+            onDismissRequest = { showWarningDialog = false },
+            title = {
+                Text(text = LocalFeedFlowStrings.current.settingsPrefetchArticleContent)
+            },
+            text = {
+                Text(text = LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning)
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        setPrefetchArticleContent(true)
+                        showWarningDialog = false
+                    },
+                ) {
+                    Text(LocalFeedFlowStrings.current.confirmButton)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showWarningDialog = false },
+                ) {
+                    Text(LocalFeedFlowStrings.current.cancelButton)
+                }
+            },
+        )
+    }
+}
+
+@Composable
 private fun ThemeModeSelector(
     currentThemeMode: ThemeMode,
     onThemeModeSelected: (ThemeMode) -> Unit,
@@ -843,6 +934,7 @@ private fun SettingsScreenPreview() {
             setShowReadItem = {},
             setReaderMode = {},
             setSaveReaderModeContent = {},
+            setPrefetchArticleContent = {},
             setRemoveTitleFromDescription = {},
             setHideDescription = {},
             setHideImages = {},

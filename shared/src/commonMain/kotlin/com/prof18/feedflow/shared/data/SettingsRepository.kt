@@ -22,6 +22,7 @@ class SettingsRepository(
 ) {
     private var isReaderModeEnabled: Boolean? = null
     private var saveItemContentOnOpenEnabled: Boolean? = null
+    private var prefetchArticleContentEnabled: Boolean? = null
 
     private val isSyncUploadRequiredMutableFlow = MutableStateFlow(getIsSyncUploadRequired())
     val isSyncUploadRequired: StateFlow<Boolean> = isSyncUploadRequiredMutableFlow.asStateFlow()
@@ -92,6 +93,21 @@ class SettingsRepository(
     fun setSaveItemContentOnOpen(value: Boolean) {
         saveItemContentOnOpenEnabled = value
         settings[SettingsFields.SAVE_ITEM_CONTENT_ON_OPEN.name] = value
+    }
+
+    fun isPrefetchArticleContentEnabled(): Boolean {
+        if (prefetchArticleContentEnabled != null) {
+            return requireNotNull(prefetchArticleContentEnabled)
+        } else {
+            val value = settings.getBoolean(SettingsFields.PREFETCH_ARTICLE_CONTENT.name, false)
+            prefetchArticleContentEnabled = value
+            return value
+        }
+    }
+
+    fun setPrefetchArticleContent(value: Boolean) {
+        prefetchArticleContentEnabled = value
+        settings[SettingsFields.PREFETCH_ARTICLE_CONTENT.name] = value
     }
 
     internal fun getIsSyncUploadRequired(): Boolean =
@@ -293,6 +309,7 @@ internal enum class SettingsFields {
     SHOW_READ_ARTICLES_TIMELINE,
     USE_READER_MODE,
     SAVE_ITEM_CONTENT_ON_OPEN,
+    PREFETCH_ARTICLE_CONTENT,
     IS_SYNC_UPLOAD_REQUIRED,
     REMOVE_TITLE_FROM_DESCRIPTION,
     HIDE_DESCRIPTION,

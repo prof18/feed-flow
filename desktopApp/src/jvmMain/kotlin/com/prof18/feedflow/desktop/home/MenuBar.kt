@@ -40,6 +40,7 @@ data class MenuBarSettings(
     val setShowReadItem: (Boolean) -> Unit,
     val setReaderMode: (Boolean) -> Unit,
     val setSaveReaderModeContent: (Boolean) -> Unit,
+    val setPrefetchArticleContent: (Boolean) -> Unit,
     val onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     val setCrashReportingEnabled: (Boolean) -> Unit,
     val onFeedOrderSelected: (FeedOrder) -> Unit,
@@ -169,6 +170,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 text = LocalFeedFlowStrings.current.settingsSaveReaderModeContent,
                 checked = state.settingsState.isSaveReaderModeContentEnabled,
                 onCheckedChange = settings.setSaveReaderModeContent,
+            )
+
+            CheckboxItem(
+                text = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
+                checked = state.settingsState.isPrefetchArticleContentEnabled,
+                onCheckedChange = settings.setPrefetchArticleContent,
             )
 
             CheckboxItem(

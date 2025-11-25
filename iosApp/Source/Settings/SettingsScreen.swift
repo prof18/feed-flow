@@ -26,6 +26,7 @@ struct SettingsScreen: View {
     @State private var isShowReadItemEnabled = false
     @State private var isReaderModeEnabled = false
     @State private var isSaveReaderModeContentEnabled = false
+    @State private var isPrefetchArticleContentEnabled = false
     @State private var isRemoveTitleFromDescriptionEnabled = false
     @State private var isHideDescriptionEnabled = false
     @State private var isHideImagesEnabled = false
@@ -57,6 +58,7 @@ struct SettingsScreen: View {
                     isShowReadItemEnabled = state.isShowReadItemsEnabled
                     isReaderModeEnabled = state.isReaderModeEnabled
                     isSaveReaderModeContentEnabled = state.isSaveReaderModeContentEnabled
+                    isPrefetchArticleContentEnabled = state.isPrefetchArticleContentEnabled
                     isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
                     isHideDescriptionEnabled = state.isHideDescriptionEnabled
                     isHideImagesEnabled = state.isHideImagesEnabled
@@ -88,6 +90,9 @@ struct SettingsScreen: View {
             }
             .onChange(of: isSaveReaderModeContentEnabled) {
                 vmStoreOwner.instance.updateSaveReaderModeContent(value: isSaveReaderModeContentEnabled)
+            }
+            .onChange(of: isPrefetchArticleContentEnabled) {
+                vmStoreOwner.instance.updatePrefetchArticleContent(value: isPrefetchArticleContentEnabled)
             }
             .onChange(of: isRemoveTitleFromDescriptionEnabled) {
                 vmStoreOwner.instance.updateRemoveTitleFromDescription(
@@ -155,6 +160,7 @@ struct SettingsScreen: View {
                     autoDeletePeriod: $autoDeletePeriod,
                     isReaderModeEnabled: $isReaderModeEnabled,
                     isSaveReaderModeContentEnabled: $isSaveReaderModeContentEnabled,
+                    isPrefetchArticleContentEnabled: $isPrefetchArticleContentEnabled,
                     feedOrder: $feedOrder,
                     themeMode: $themeMode,
                     isMarkReadWhenScrollingEnabled: $isMarkReadWhenScrollingEnabled,
@@ -231,11 +237,14 @@ private struct BehaviourSection: View {
     @Binding var autoDeletePeriod: AutoDeletePeriod
     @Binding var isReaderModeEnabled: Bool
     @Binding var isSaveReaderModeContentEnabled: Bool
+    @Binding var isPrefetchArticleContentEnabled: Bool
     @Binding var feedOrder: FeedOrder
     @Binding var themeMode: ThemeMode
 
     @Binding var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isShowReadItemEnabled: Bool
+
+    @State private var showPrefetchWarning = false
 
     var body: some View {
         Section(feedFlowStrings.settingsBehaviourTitle) {
@@ -285,6 +294,25 @@ private struct BehaviourSection: View {
                 Label(feedFlowStrings.settingsSaveReaderModeContent, systemImage: "doc.text.fill")
             }.onTapGesture {
                 isSaveReaderModeContentEnabled.toggle()
+            }
+
+            Toggle(isOn: $isPrefetchArticleContentEnabled) {
+                Label(feedFlowStrings.settingsPrefetchArticleContent, systemImage: "cloud.fill")
+            }
+            .onChange(of: isPrefetchArticleContentEnabled) { _, newValue in
+                if newValue {
+                    showPrefetchWarning = true
+                }
+            }
+            .alert(feedFlowStrings.settingsPrefetchArticleContent, isPresented: $showPrefetchWarning) {
+                Button(feedFlowStrings.cancelButton, role: .cancel) {
+                    isPrefetchArticleContentEnabled = false
+                }
+                Button(feedFlowStrings.confirmButton) {
+                    // Keep enabled
+                }
+            } message: {
+                Text(feedFlowStrings.settingsPrefetchArticleContentWarning)
             }
 
             Toggle(isOn: $isMarkReadWhenScrollingEnabled) {

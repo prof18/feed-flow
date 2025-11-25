@@ -190,6 +190,7 @@ internal fun ApplicationScope.MainWindow(
                 var aboutDialogVisibility by remember { mutableStateOf(false) }
                 var showMarkAllReadDialog by remember { mutableStateOf(false) }
                 var showClearOldArticlesDialog by remember { mutableStateOf(false) }
+                var showPrefetchWarningDialog by remember { mutableStateOf(false) }
 
                 AboutDialog(
                     visible = aboutDialogVisibility,
@@ -274,6 +275,31 @@ internal fun ApplicationScope.MainWindow(
                         dismissButton = {
                             TextButton(
                                 onClick = { showClearOldArticlesDialog = false },
+                            ) {
+                                Text(LocalFeedFlowStrings.current.cancelButton)
+                            }
+                        },
+                    )
+                }
+
+                if (showPrefetchWarningDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showPrefetchWarningDialog = false },
+                        title = { Text(LocalFeedFlowStrings.current.settingsPrefetchArticleContent) },
+                        text = { Text(LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning) },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    settingsViewModel.updatePrefetchArticleContent(true)
+                                    showPrefetchWarningDialog = false
+                                },
+                            ) {
+                                Text(LocalFeedFlowStrings.current.confirmButton)
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = { showPrefetchWarningDialog = false },
                             ) {
                                 Text(LocalFeedFlowStrings.current.cancelButton)
                             }
@@ -376,6 +402,13 @@ internal fun ApplicationScope.MainWindow(
                                 },
                                 setSaveReaderModeContent = { enabled ->
                                     settingsViewModel.updateSaveReaderModeContent(enabled)
+                                },
+                                setPrefetchArticleContent = { enabled ->
+                                    if (enabled) {
+                                        showPrefetchWarningDialog = true
+                                    } else {
+                                        settingsViewModel.updatePrefetchArticleContent(false)
+                                    }
                                 },
                                 onAutoDeletePeriodSelected = { period ->
                                     settingsViewModel.updateAutoDeletePeriod(period)

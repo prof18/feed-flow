@@ -25,6 +25,12 @@ struct SidebarDrawer: View {
 
     @State private var showMarkAllReadDialog = false
     @State private var showClearOldArticlesDialog = false
+    @State private var expandedCategoryIds: Set<String> = []
+    @State private var showDeleteCategoryDialog = false
+    @State private var showEditCategoryDialog = false
+    @State private var categoryToDelete: String?
+    @State private var categoryToEdit: String?
+    @State private var editedCategoryName: String = ""
 
     let navDrawerState: NavDrawerState
     let onFeedFilterSelected: (FeedFilter) -> Void
@@ -64,16 +70,7 @@ struct SidebarDrawer: View {
                 pinnedFeedSourcesSection
             }
 
-            CategoriesSection(
-                categories: navDrawerState.categories,
-                onSelect: { self.selectedDrawerItem = $0 },
-                onFeedFilterSelected: onFeedFilterSelected,
-                onDeleteCategory: onDeleteCategory,
-                onUpdateCategoryName: onUpdateCategoryName
-            )
-
-            feedSourcesWithoutCategorySection
-            feedSourcesWithCategorySection
+            feedSourcesSection
         }
         .listStyle(.sidebar)
         .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
@@ -92,9 +89,26 @@ struct SidebarDrawer: View {
         } message: {
             Text(feedFlowStrings.clearOldArticlesDialogMessage)
         }
+        .background(
+            DeleteCategoryDialog(
+                isPresented: $showDeleteCategoryDialog,
+                categoryToDelete: $categoryToDelete,
+                onDelete: onDeleteCategory
+            )
+        )
+        .background(
+            EditCategoryDialog(
+                isPresented: $showEditCategoryDialog,
+                categoryToEdit: $categoryToEdit,
+                editedCategoryName: $editedCategoryName,
+                onSave: onUpdateCategoryName
+            )
+        )
     }
+}
 
-    private var pinnedFeedSourcesSection: some View {
+private extension SidebarDrawer {
+    var pinnedFeedSourcesSection: some View {
         Section(
             content: {
                 ForEach(navDrawerState.pinnedFeedSources, id: \.self) { drawerItem in
@@ -109,13 +123,35 @@ struct SidebarDrawer: View {
         )
     }
 
-    @ViewBuilder private var feedSourcesWithoutCategorySection: some View {
-        if !navDrawerState.feedSourcesWithoutCategory.isEmpty {
+    @ViewBuilder var feedSourcesSection: some View {
+        if !navDrawerState.feedSourcesByCategory.isEmpty || !navDrawerState.feedSourcesWithoutCategory.isEmpty {
+            let uncategorizedFromMap = navDrawerState.feedSourcesByCategory
+                .filter { $0.key.feedSourceCategory == nil }
+                .flatMap { $0.value }
+            let uncategorizedItems: [DrawerItem] =
+                Array(navDrawerState.feedSourcesWithoutCategory) + uncategorizedFromMap
+
             Section(
                 content: {
-                    ForEach(navDrawerState.feedSourcesWithoutCategory, id: \.self) { drawerItem in
-                        if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
-                            makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
+                    makeUncategorizedDropdown(drawerItems: uncategorizedItems)
+
+                    ForEach(
+                        navDrawerState.feedSourcesByCategory.keys.sorted {
+                            $0.feedSourceCategory?.title ?? "" < $1.feedSourceCategory?.title ?? ""
+                        },
+                        id: \.self
+                    ) { category in
+                        let categoryWrapper =
+                            category as DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
+
+                        if categoryWrapper.feedSourceCategory != nil {
+                            let drawerItems = navDrawerState.feedSourcesByCategory[categoryWrapper] ?? []
+                            makeCategoryDropdown(
+                                drawerItems: drawerItems,
+                                categoryWrapper: categoryWrapper
+                            )
+                        } else {
+                            EmptyView()
                         }
                     }
                 },
@@ -126,35 +162,8 @@ struct SidebarDrawer: View {
         }
     }
 
-    @ViewBuilder private var feedSourcesWithCategorySection: some View {
-        if !navDrawerState.feedSourcesByCategory.isEmpty {
-            Section(
-                content: {
-                    ForEach(
-                        navDrawerState.feedSourcesByCategory.keys.sorted {
-                            $0.feedSourceCategory?.title ?? "" < $1.feedSourceCategory?.title ?? ""
-                        },
-                        id: \.self
-                    ) { category in
-                        let categoryWrapper =
-                            category as DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
-
-                        let title = categoryWrapper.feedSourceCategory?.title ?? feedFlowStrings.noCategory
-                        makeCategoryDropdown(
-                            drawerItems: navDrawerState.feedSourcesByCategory[categoryWrapper] ?? [],
-                            title: title
-                        )
-                    }
-                },
-                header: {
-                    makeAddFeedButton(title: feedFlowStrings.drawerTitleFeedSources)
-                }
-            )
-        }
-    }
-
     @ViewBuilder
-    private func makeAddFeedButton(title: String) -> some View {
+    func makeAddFeedButton(title: String) -> some View {
         HStack {
             Text(title)
             Spacer()
@@ -207,7 +216,7 @@ struct SidebarDrawer: View {
     }
 
     @ViewBuilder
-    private func makeFeedSourceDrawerItem(drawerItem: DrawerItem.DrawerFeedSource) -> some View {
+    func makeFeedSourceDrawerItem(drawerItem: DrawerItem.DrawerFeedSource) -> some View {
         FeedSourceDrawerItem(
             drawerItem: drawerItem,
             onSelect: { item in
@@ -227,50 +236,253 @@ struct SidebarDrawer: View {
                 }
             }
         )
+        .tag(drawerItem)
     }
 
     @ViewBuilder
-    private func makeCategoryDropdown(drawerItems: [DrawerItem], title: String) -> some View {
-        DisclosureGroup(
-            content: {
-                ForEach(drawerItems, id: \.self) { drawerItem in
-                    if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
-                        makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
-                            .listRowInsets(
-                                EdgeInsets(
-                                    top: Spacing.small,
-                                    leading: .zero,
-                                    bottom: Spacing.small,
-                                    trailing: Spacing.small
-                                )
-                            )
-                    } else {
-                        EmptyView()
-                    }
+    func makeCategoryDropdown(
+        drawerItems: [DrawerItem],
+        categoryWrapper: DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
+    ) -> some View {
+        if let categoryItem = categoryItem(for: categoryWrapper) {
+            let categoryId = categoryIdentifier(for: categoryWrapper)
+            let isExpanded = expandedCategoryIds.contains(categoryId)
+            let isSelected = selectedDrawerItem == categoryItem
+
+            Group {
+                categoryHeader(
+                    categoryItem: categoryItem,
+                    categoryId: categoryId,
+                    isExpanded: isExpanded,
+                    isSelected: isSelected
+                )
+
+                if isExpanded {
+                    feedSourcesList(drawerItems: drawerItems, trailingInset: Spacing.regular)
                 }
-            },
-            label: {
-                Text(title)
             }
+        } else {
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    func makeUncategorizedDropdown(drawerItems: [DrawerItem]) -> some View {
+        if drawerItems.isEmpty {
+            EmptyView()
+        } else {
+            let categoryId = categoryIdentifier(for: nil)
+            let isExpanded = expandedCategoryIds.contains(categoryId)
+            let unreadCount = drawerItems
+                .compactMap { $0 as? DrawerItem.DrawerFeedSource }
+                .map(\.unreadCount)
+                .reduce(0 as Int64, +)
+            let uncategorizedCategory = DrawerItem.DrawerCategory(
+                category: FeedSourceCategory(id: categoryId, title: feedFlowStrings.noCategory),
+                unreadCount: 0
+            )
+            let isSelected = selectedDrawerItem == uncategorizedCategory
+
+            Group {
+                uncategorizedHeader(
+                    categoryId: categoryId,
+                    unreadCount: unreadCount,
+                    isExpanded: isExpanded,
+                    isSelected: isSelected,
+                    uncategorizedCategory: uncategorizedCategory
+                )
+
+                if isExpanded {
+                    feedSourcesList(drawerItems: drawerItems, trailingInset: Spacing.small)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    func categoryHeader(
+        categoryItem: DrawerItem.DrawerCategory,
+        categoryId: String,
+        isExpanded: Bool,
+        isSelected: Bool
+    ) -> some View {
+        HStack(spacing: Spacing.xsmall) {
+            HStack {
+                Text(categoryItem.category.title)
+                Spacer()
+                makeCategoryUnreadBadge(unreadCount: categoryItem.unreadCount)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                selectCategory(categoryItem)
+            }
+            .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+            .contextMenu {
+                categoryContextMenu(categoryItem: categoryItem)
+            }
+
+            expansionToggleButton(isExpanded: isExpanded) {
+                toggleCategoryExpansion(for: categoryId)
+            }
+        }
+        .tag(categoryItem)
+        .listRowBackground(
+            selectionBackground(isSelected: isSelected)
         )
     }
-}
 
-#Preview {
-    SidebarDrawer(
-        selectedDrawerItem: .constant(nil),
-        navDrawerState: navDrawerState,
-        onFeedFilterSelected: { _ in },
-        onMarkAllReadClick: {},
-        onDeleteOldFeedClick: {},
-        onForceRefreshClick: {},
-        deleteAllFeeds: {},
-        onShowSettingsClick: {},
-        onAddFeedClick: {},
-        onEditFeedClick: { _ in },
-        onDeleteFeedClick: { _ in },
-        onPinFeedClick: { _ in },
-        onDeleteCategory: { _ in },
-        onUpdateCategoryName: { _, _ in }
-    )
+    @ViewBuilder
+    func uncategorizedHeader(
+        categoryId: String,
+        unreadCount: Int64,
+        isExpanded: Bool,
+        isSelected: Bool,
+        uncategorizedCategory: DrawerItem.DrawerCategory
+    ) -> some View {
+        HStack(spacing: Spacing.xsmall) {
+            HStack {
+                Text(feedFlowStrings.noCategory)
+                Spacer()
+                makeCategoryUnreadBadge(unreadCount: unreadCount)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                self.selectedDrawerItem = uncategorizedCategory
+                self.onFeedFilterSelected(FeedFilter.Uncategorized())
+            }
+            .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+
+            expansionToggleButton(isExpanded: isExpanded) {
+                toggleCategoryExpansion(for: categoryId)
+            }
+        }
+        .tag(uncategorizedCategory)
+        .listRowBackground(
+            selectionBackground(isSelected: isSelected)
+        )
+    }
+
+    @ViewBuilder
+    func feedSourcesList(drawerItems: [DrawerItem], trailingInset: CGFloat) -> some View {
+        ForEach(drawerItems, id: \.self) { drawerItem in
+            if let drawerFeedSource = drawerItem as? DrawerItem.DrawerFeedSource {
+                makeFeedSourceDrawerItem(drawerItem: drawerFeedSource)
+                    .listRowInsets(
+                        EdgeInsets(
+                            top: Spacing.small,
+                            leading: Spacing.medium,
+                            bottom: Spacing.small,
+                            trailing: trailingInset
+                        )
+                    )
+            } else {
+                EmptyView()
+            }
+        }
+    }
+
+    @ViewBuilder
+    func expansionToggleButton(isExpanded: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .padding(.leading, Spacing.medium)
+                .padding(.trailing, Spacing.small)
+                .padding(.vertical, Spacing.xxsmall)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    func categoryContextMenu(categoryItem: DrawerItem.DrawerCategory) -> some View {
+        Button {
+            editedCategoryName = categoryItem.category.title
+            categoryToEdit = categoryItem.category.id
+            showEditCategoryDialog = true
+        } label: {
+            Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
+        }
+
+        Button(role: .destructive) {
+            categoryToDelete = categoryItem.category.id
+            showDeleteCategoryDialog = true
+        } label: {
+            Label(feedFlowStrings.deleteFeed, systemImage: "trash")
+        }
+    }
+
+    func selectCategory(_ categoryItem: DrawerItem.DrawerCategory) {
+        self.selectedDrawerItem = categoryItem
+        self.onFeedFilterSelected(FeedFilter.Category(feedCategory: categoryItem.category))
+    }
+
+    func toggleCategoryExpansion(for categoryId: String) {
+        if expandedCategoryIds.contains(categoryId) {
+            expandedCategoryIds.remove(categoryId)
+        } else {
+            expandedCategoryIds.insert(categoryId)
+        }
+    }
+
+    func categoryIdentifier(
+        for wrapper: DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper?
+    ) -> String {
+        wrapper?.feedSourceCategory?.id ?? "uncategorized"
+    }
+
+    func categoryItem(
+        for wrapper: DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper
+    ) -> DrawerItem.DrawerCategory? {
+        guard let feedSourceCategory = wrapper.feedSourceCategory else {
+            return nil
+        }
+
+        if let category = navDrawerState.categories
+            .compactMap({ $0 as? DrawerItem.DrawerCategory })
+            .first(where: { $0.category.id == feedSourceCategory.id }) {
+            return category
+        }
+
+        return DrawerItem.DrawerCategory(category: feedSourceCategory, unreadCount: 0)
+    }
+
+    @ViewBuilder
+    func makeCategoryUnreadBadge(unreadCount: Int64) -> some View {
+        if unreadCount > 0 {
+            Text("\(unreadCount)")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .padding(.horizontal, 8)
+                .background(Color.secondary.opacity(0.2))
+                .clipShape(Capsule())
+        }
+    }
+
+    @ViewBuilder
+    func selectionOverlay(isSelected: Bool) -> some View {
+        if isSelected {
+            if appState.sizeClass == .compact {
+                Color(.systemGray5)
+            } else {
+                RoundedRectangle(cornerRadius: 36, style: .continuous)
+                    .fill(Color(.systemGray5))
+                    .padding(.horizontal, Spacing.xsmall)
+                    .padding(.vertical, Spacing.xxsmall)
+            }
+        } else {
+            Color.clear
+        }
+    }
+
+    @ViewBuilder
+    func selectionBackground(isSelected: Bool) -> some View {
+        if appState.sizeClass == .compact {
+            Color(.systemBackground)
+                .overlay(selectionOverlay(isSelected: isSelected))
+        } else {
+            selectionOverlay(isSelected: isSelected)
+        }
+    }
 }

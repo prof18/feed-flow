@@ -1,9 +1,7 @@
 import SwiftUI
 
-
-// TODO: inject translations here!
-
 public struct ReaderViewActions {
+    public let strings: ReaderViewStrings
     public let onBookmarkToggle: (Bool) -> Void
     public let onArchive: () -> Void
     public let onOpenInBrowser: () -> Void
@@ -16,6 +14,7 @@ public struct ReaderViewActions {
     public let onNavigateToPrevious: (() -> Void)?
 
     public init(
+        strings: ReaderViewStrings,
         onBookmarkToggle: @escaping (Bool) -> Void,
         onArchive: @escaping () -> Void,
         onOpenInBrowser: @escaping () -> Void,
@@ -27,6 +26,7 @@ public struct ReaderViewActions {
         onNavigateToNext: (() -> Void)? = nil,
         onNavigateToPrevious: (() -> Void)? = nil
     ) {
+        self.strings = strings
         self.onBookmarkToggle = onBookmarkToggle
         self.onArchive = onArchive
         self.onOpenInBrowser = onOpenInBrowser
@@ -170,7 +170,7 @@ public struct ReaderView: View {
                 ShareLink(
                     item: url,
                     label: {
-                        Label("Share", systemImage: "square.and.arrow.up")
+                        Label(actions.strings.share, systemImage: "square.and.arrow.up")
                     }
                 )
             }
@@ -188,7 +188,7 @@ public struct ReaderView: View {
                     actions.onBookmarkToggle(newBookmarkState)
                 } label: {
                     Label(
-                        isBookmarked ? "Remove Bookmark" : "Add Bookmark",
+                        isBookmarked ? actions.strings.removeBookmark : actions.strings.addBookmark,
                         systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
                     )
                 }
@@ -196,21 +196,21 @@ public struct ReaderView: View {
                 Button {
                     actions.onArchive()
                 } label: {
-                    Label("Open in Archive", systemImage: "hammer.fill")
+                    Label(actions.strings.openInArchive, systemImage: "hammer.fill")
                 }
 
                 if let onComments = actions.onComments {
                     Button {
                         onComments()
                     } label: {
-                        Label("Open Comments", systemImage: "bubble.left")
+                        Label(actions.strings.openComments, systemImage: "bubble.left")
                     }
                 }
 
                 Button {
                     actions.onFontSizeMenuToggle()
                 } label: {
-                    Label("Font Size", systemImage: "textformat.size")
+                    Label(actions.strings.fontSize, systemImage: "textformat.size")
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
@@ -226,7 +226,7 @@ public struct ReaderView: View {
                 ShareLink(
                     item: url,
                     label: {
-                        Label("Share", systemImage: "square.and.arrow.up")
+                        Label(actions.strings.share, systemImage: "square.and.arrow.up")
                     }
                 )
             }
@@ -240,7 +240,7 @@ public struct ReaderView: View {
                     actions.onBookmarkToggle(newBookmarkState)
                 } label: {
                     Label(
-                        isBookmarked ? "Remove Bookmark" : "Add Bookmark",
+                        isBookmarked ? actions.strings.removeBookmark : actions.strings.addBookmark,
                         systemImage: isBookmarked ? "bookmark.slash" : "bookmark"
                     )
                 }
@@ -248,21 +248,21 @@ public struct ReaderView: View {
                 Button {
                     actions.onArchive()
                 } label: {
-                    Label("Open in Archive", systemImage: "hammer.fill")
+                    Label(actions.strings.openInArchive, systemImage: "hammer.fill")
                 }
 
                 if let onComments = actions.onComments {
                     Button {
                         onComments()
                     } label: {
-                        Label("Open Comments", systemImage: "bubble.left")
+                        Label(actions.strings.openComments, systemImage: "bubble.left")
                     }
                 }
 
                 Button {
                     actions.onFontSizeMenuToggle()
                 } label: {
-                    Label("Font Size", systemImage: "textformat.size")
+                    Label(actions.strings.fontSize, systemImage: "textformat.size")
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
@@ -273,7 +273,7 @@ public struct ReaderView: View {
     @ViewBuilder
     private var fontSizeSheet: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Font Size")
+            Text(actions.strings.fontSize)
                 .font(.headline)
 
             HStack(spacing: 16) {

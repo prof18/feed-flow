@@ -46,6 +46,16 @@ struct ReaderModeScreen: View {
                 }
             ),
             actions: ReaderViewActions(
+                strings: ReaderViewStrings(
+                    share: feedFlowStrings.menuShare,
+                    addBookmark: feedFlowStrings.menuAddToBookmark,
+                    removeBookmark: feedFlowStrings.menuRemoveFromBookmark,
+                    openInArchive: feedFlowStrings.readerModeArchiveButton,
+                    openComments: feedFlowStrings.menuOpenComments,
+                    fontSize: feedFlowStrings.readerModeFontSize,
+                    previousArticle: feedFlowStrings.previousArticle,
+                    nextArticle: feedFlowStrings.nextArticle
+                ),
                 onBookmarkToggle: { newBookmarkState in
                     if let id = feedItemId {
                         isBookmarked = newBookmarkState

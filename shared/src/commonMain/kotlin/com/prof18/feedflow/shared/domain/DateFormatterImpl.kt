@@ -30,6 +30,55 @@ class DateFormatterImpl(
         ISO_DATE_TIME_OFFSET,
         RFC_1123,
 
+        // Sunday, 10 Aug 2025 19:00:01 GMT (GMT will be normalized to +0000)
+        // Accept full day-of-week names
+        Format {
+            alternativeParsing({
+                // the day of week may be missing
+            }) {
+                alternativeParsing({
+                    dayOfWeek(DayOfWeekNames.ENGLISH_FULL)
+                }) {
+                    // also accept lowercase full names
+                    dayOfWeek(
+                        DayOfWeekNames(
+                            DayOfWeekNames.ENGLISH_FULL.names.map { it.lowercase() }
+                        )
+                    )
+                }
+                chars(", ")
+            }
+
+            alternativeParsing({
+                day(Padding.ZERO)
+            }) {
+                day(Padding.NONE)
+            }
+            char(' ')
+            alternativeParsing({
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+            }) {
+                monthName(MonthNames.ENGLISH_FULL)
+            }
+            char(' ')
+            year()
+            char(' ')
+            alternativeParsing({
+                hour(padding = Padding.NONE)
+            }) {
+                hour()
+            }
+            char(':')
+            minute()
+            optional {
+                char(':')
+                second()
+            }
+            chars(" ")
+            // timezone already normalized (e.g., +0000)
+            offset(UtcOffset.Formats.FOUR_DIGITS)
+        },
+
         // Tue, 5 Sep 2017 09:58:38 +0000
         Format {
             alternativeParsing({
@@ -573,6 +622,27 @@ class DateFormatterImpl(
             minute()
             amPmMarker(am = "am", pm = "pm")
         },
+
+        // 21:02 | 22-11-2025
+        Format {
+            alternativeParsing({
+                hour(padding = Padding.NONE)
+            }) {
+                hour()
+            }
+            char(':')
+            minute()
+            chars(" | ")
+            alternativeParsing({
+                day(Padding.NONE)
+            }) {
+                day()
+            }
+            char('-')
+            monthNumber()
+            char('-')
+            year()
+        },
     )
 
     private val timezoneReplacements = mapOf(
@@ -596,6 +666,11 @@ class DateFormatterImpl(
             val regex = Regex("\\b$abbrev\\b")
             normalized = regex.replace(normalized, offset)
         }
+
+        // Normalize non-standard month abbreviation "Sept" -> "Sep" (case-insensitive)
+        // This helps parse inputs like: "Fri, 18 Sept 2020 10:30:00 -0600"
+        normalized = Regex("\\bsept\\b", RegexOption.IGNORE_CASE)
+            .replace(normalized, "Sep")
 
         return normalized
     }

@@ -72,6 +72,9 @@ class DateFormatterTest {
         "Mon., 16 Jun 2025 15:08:44 +0200",
         "Fri, 15 Oct 2021, 16:15:00 -0600",
         "Oct 1, 2025 8:30am",
+        "Sunday, 10 Aug 2025 19:00:01 GMT",
+        "Fri, 18 Sept 2020 10:30:00 -0600",
+        "21:02 | 22-11-2025"
     )
 
     @Test

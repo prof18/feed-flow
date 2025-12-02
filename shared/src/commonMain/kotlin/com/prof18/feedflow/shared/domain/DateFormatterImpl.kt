@@ -42,8 +42,8 @@ class DateFormatterImpl(
                     // also accept lowercase full names
                     dayOfWeek(
                         DayOfWeekNames(
-                            DayOfWeekNames.ENGLISH_FULL.names.map { it.lowercase() }
-                        )
+                            DayOfWeekNames.ENGLISH_FULL.names.map { it.lowercase() },
+                        ),
                     )
                 }
                 chars(", ")

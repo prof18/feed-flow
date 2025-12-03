@@ -19,6 +19,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.utils.isTemporaryNetworkError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -74,7 +75,9 @@ internal class FeedSyncJvmWorker(
             settingsRepository.setIsSyncUploadRequired(false)
             emitSuccessMessage()
         } catch (e: Exception) {
-            logger.e("Upload to dropbox failed", e)
+            if (!e.isTemporaryNetworkError()) {
+                logger.e("Upload to dropbox failed", e)
+            }
             emitErrorMessage()
         }
     }
@@ -132,7 +135,9 @@ internal class FeedSyncJvmWorker(
             feedSyncer.closeDB()
             accountSpecificDownload()
         } catch (e: Exception) {
-            logger.e("Download from dropbox failed", e)
+            if (!e.isTemporaryNetworkError()) {
+                logger.e("Download from dropbox failed", e)
+            }
             SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
         }
     }

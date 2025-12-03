@@ -3,6 +3,7 @@ package com.prof18.feedflow.feedsync.dropbox
 import co.touchlab.kermit.Logger
 import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
+import com.dropbox.core.NetworkIOException
 import com.dropbox.core.oauth.DbxCredential
 import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.WriteMode
@@ -11,6 +12,8 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -84,6 +87,18 @@ internal class DropboxDataSourceJvm(
         }
     }
 
+    private fun isTemporaryNetworkError(exception: Exception): Boolean {
+        return when (exception) {
+            is NetworkIOException -> true
+            is SocketTimeoutException -> true
+            is UnknownHostException -> true
+            else -> {
+                val cause = exception.cause
+                cause != null && isTemporaryNetworkError(cause as? Exception ?: return false)
+            }
+        }
+    }
+
     override suspend fun performUpload(uploadParam: DropboxUploadParam): DropboxUploadResult =
         suspendCancellableCoroutine { continuation ->
             try {
@@ -112,7 +127,9 @@ internal class DropboxDataSourceJvm(
                     continuation.resumeWithException(DropboxUploadException("Metadata from Dropbox are null"))
                 }
             } catch (e: Exception) {
-                logger.e(e) { "Error while uploading data on Dropbox" }
+                if (!isTemporaryNetworkError(e)) {
+                    logger.e(e) { "Error while uploading data on Dropbox" }
+                }
                 continuation.resumeWithException(DropboxUploadException(exceptionCause = e))
             }
         }
@@ -141,7 +158,9 @@ internal class DropboxDataSourceJvm(
                     continuation.resumeWithException(DropboxDownloadException("Metadata from Dropbox are null"))
                 }
             } catch (e: Exception) {
-                logger.e(e) { "Error while downloading data from Dropbox" }
+                if (!isTemporaryNetworkError(e)) {
+                    logger.e(e) { "Error while downloading data from Dropbox" }
+                }
                 continuation.resumeWithException(DropboxDownloadException(exceptionCause = e))
             }
         }

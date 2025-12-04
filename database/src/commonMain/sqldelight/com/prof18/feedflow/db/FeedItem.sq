@@ -13,7 +13,8 @@ CREATE TABLE feed_item (
     pub_date INTEGER,
     comments_url TEXT,
     notification_sent INTEGER AS Boolean NOT NULL DEFAULT 0,
-    is_blocked INTEGER AS Boolean NOT NULL DEFAULT 0
+    is_blocked INTEGER AS Boolean NOT NULL DEFAULT 0,
+    content_fetched INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
 insertFeedItem:
@@ -242,3 +243,15 @@ BEGIN
   END
   WHERE url_hash = new.url_hash;
 END;
+
+updateContentFetchedStatus:
+UPDATE feed_item
+SET content_fetched = :contentFetched
+WHERE url_hash = :urlHash;
+
+selectUnfetchedItems:
+SELECT feed_item.url_hash, feed_item.url
+FROM feed_item
+WHERE content_fetched = 0 AND is_blocked = 0
+ORDER BY pub_date DESC
+LIMIT :pageSize OFFSET :offset;

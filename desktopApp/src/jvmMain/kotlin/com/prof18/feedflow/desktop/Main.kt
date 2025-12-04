@@ -28,6 +28,7 @@ import com.prof18.feedflow.desktop.main.MainWindow
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManager
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -55,6 +56,8 @@ fun main() {
 
         val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
         val searchViewModel = desktopViewModel { DI.koin.get<SearchViewModel>() }
+        val contentPrefetchManager: ContentPrefetchManager = koin.get()
+        contentPrefetchManager.startBackgroundFetching()
 
         val feedSyncRepo = DI.koin.get<FeedSyncRepository>()
         val messageQueue = DI.koin.get<FeedSyncMessageQueue>()

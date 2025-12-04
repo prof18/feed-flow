@@ -68,6 +68,7 @@ struct FeedFlowApp: App {
                     switch scenePhase {
                     case .active:
                         feedSyncTimer.scheduleTimer()
+                        Deps.shared.getContentPrefetchManager().startBackgroundFetching()
                     case .background:
                         feedSyncTimer.invalidate()
                         scheduleAppRefresh()

@@ -19,6 +19,8 @@ import com.prof18.feedflow.shared.data.KeychainSettingsMigration
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManager
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManagerIos
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
@@ -211,6 +213,17 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("ICloudSyncViewModel"),
         )
     }
+
+    single<ContentPrefetchManager> {
+        ContentPrefetchManagerIos(
+            dispatcherProvider = get(),
+            settingsRepository = get(),
+            databaseHelper = get(),
+            feedItemParserWorker = get(),
+            feedItemContentFileHandler = get(),
+            logger = getWith("ContentPrefetchManagerIos"),
+        )
+    }
 }
 
 @Suppress("unused") // Called from Swift
@@ -237,4 +250,5 @@ object Deps : KoinComponent {
     fun getSerialFeedFetcherRepository() = getKoin().get<SerialFeedFetcherRepository>()
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
     fun getHtmlRetriever() = getKoin().get<HtmlRetriever>()
+    fun getContentPrefetchManager() = getKoin().get<ContentPrefetchManager>()
 }

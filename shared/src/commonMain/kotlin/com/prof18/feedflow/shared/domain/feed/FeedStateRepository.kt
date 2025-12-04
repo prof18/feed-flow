@@ -57,7 +57,7 @@ internal class FeedStateRepository(
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
                     feedFilter = currentFeedFilterMutableState.value,
-                    pageSize = PAGE_SIZE,
+                    pageSize = FEED_DB_PAGE_SIZE,
                     offset = 0,
                     showReadItems = settingsRepository.getShowReadArticlesTimeline(),
                     sortOrder = feedOrder,
@@ -91,7 +91,7 @@ internal class FeedStateRepository(
 
     suspend fun loadMoreFeeds() {
         // Stop loading if there are no more items
-        if (mutableFeedState.value.size % PAGE_SIZE != 0L) {
+        if (mutableFeedState.value.size % FEED_DB_PAGE_SIZE != 0L) {
             return
         }
         try {
@@ -99,8 +99,8 @@ internal class FeedStateRepository(
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
                     feedFilter = currentFeedFilterMutableState.value,
-                    pageSize = PAGE_SIZE,
-                    offset = currentPage * PAGE_SIZE,
+                    pageSize = FEED_DB_PAGE_SIZE,
+                    offset = currentPage * FEED_DB_PAGE_SIZE,
                     showReadItems = settingsRepository.getShowReadArticlesTimeline(),
                     sortOrder = feedOrder,
                 )
@@ -275,8 +275,8 @@ internal class FeedStateRepository(
         val totalArticles: Int,
     )
 
-    private companion object {
-        private const val PAGE_SIZE = 40L
+    companion object {
+        internal const val FEED_DB_PAGE_SIZE = 40L
         private const val PAGINATION_THRESHOLD = 5
     }
 }

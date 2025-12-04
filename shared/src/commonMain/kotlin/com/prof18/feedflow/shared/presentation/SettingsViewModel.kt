@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -25,6 +26,7 @@ class SettingsViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val fontSizeRepository: FeedFontSizeRepository,
     private val feedStateRepository: FeedStateRepository,
+    private val databaseHelper: DatabaseHelper,
 ) : ViewModel() {
 
     private val settingsMutableState = MutableStateFlow(SettingsState())
@@ -125,6 +127,12 @@ class SettingsViewModel internal constructor(
             it.copy(
                 isPrefetchArticleContentEnabled = value,
             )
+        }
+
+        if (!value) {
+            viewModelScope.launch {
+                databaseHelper.clearPrefetchQueue()
+            }
         }
     }
 

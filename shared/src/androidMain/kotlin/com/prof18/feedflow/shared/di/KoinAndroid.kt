@@ -10,6 +10,9 @@ import com.prof18.feedflow.shared.domain.FeedDownloadWorker
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManager
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManagerAndroid
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchWorker
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
@@ -145,6 +148,30 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         FeedDownloadWorkerEnqueuer(
             settingsRepository = get(),
             context = get(),
+        )
+    }
+
+    worker {
+        ContentPrefetchWorker(
+            appContext = get(),
+            workerParams = get(),
+            databaseHelper = get(),
+            dispatcherProvider = get(),
+            htmlRetriever = get(),
+            feedItemContentFileHandler = get(),
+            logger = getWith("ContentPrefetchWorker"),
+        )
+    }
+
+    single<ContentPrefetchManager> {
+        ContentPrefetchManagerAndroid(
+            logger = getWith("ContentPrefetchManagerAndroid"),
+            settingsRepository = get(),
+            databaseHelper = get(),
+            dispatcherProvider = get(),
+            htmlRetriever = get(),
+            appContext = get(),
+            feedItemContentFileHandler = get(),
         )
     }
 

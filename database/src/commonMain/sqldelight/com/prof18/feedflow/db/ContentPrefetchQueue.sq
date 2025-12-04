@@ -1,0 +1,29 @@
+import kotlin.Boolean;
+
+CREATE TABLE content_prefetch_queue (
+    feed_item_id TEXT NOT NULL PRIMARY KEY,
+    url TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY (feed_item_id) REFERENCES feed_item(url_hash) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_prefetch_created_at ON content_prefetch_queue(created_at);
+
+insertQueueItem:
+INSERT OR IGNORE INTO content_prefetch_queue(feed_item_id, url, created_at)
+VALUES (?, ?, ?);
+
+selectNextBatch:
+SELECT feed_item_id, url
+FROM content_prefetch_queue
+ORDER BY created_at ASC;
+
+deleteQueueItem:
+DELETE FROM content_prefetch_queue
+WHERE feed_item_id = :feedItemId;
+
+clearQueue:
+DELETE FROM content_prefetch_queue;
+
+countQueue:
+SELECT COUNT(*) FROM content_prefetch_queue;

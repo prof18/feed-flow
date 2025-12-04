@@ -25,7 +25,7 @@ internal class DesktopFeedItemParserWorker(
         logger.d { "Enqueueing parsing for feedItemId: $feedItemId, url: $url" }
         withContext(dispatcherProvider.io) {
             try {
-                triggerBackgroundParsing(feedItemId, url)
+                triggerImmediateParsing(feedItemId, url)
             } catch (e: Exception) {
                 logger.e(e) { "Error enqueueing parsing for: $url" }
             }

@@ -204,6 +204,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             settingsRepository = get(),
             fontSizeRepository = get(),
             feedStateRepository = get(),
+            databaseHelper = get(),
         )
     }
 
@@ -378,6 +379,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             rssChannelMapper = get(),
             dateFormatter = get(),
             feedSourceLogoRetriever = get(),
+            contentPrefetchManager = get(),
         )
     }
 

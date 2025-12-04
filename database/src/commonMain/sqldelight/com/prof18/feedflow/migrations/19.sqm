@@ -1,0 +1,10 @@
+ALTER TABLE feed_item ADD COLUMN content_fetched INTEGER AS Boolean NOT NULL DEFAULT 0;
+
+CREATE TABLE content_prefetch_queue (
+    feed_item_id TEXT NOT NULL PRIMARY KEY,
+    url TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY (feed_item_id) REFERENCES feed_item(url_hash) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_prefetch_created_at ON content_prefetch_queue(created_at);

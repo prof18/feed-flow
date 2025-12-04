@@ -12,6 +12,7 @@ import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemToPrefetch
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
@@ -20,6 +21,7 @@ import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.PrefetchQueueItem
 import com.prof18.feedflow.core.model.SyncedFeedItem
 import com.prof18.feedflow.db.FeedFlowDB
 import com.prof18.feedflow.db.Feed_item_status
@@ -833,6 +835,63 @@ class DatabaseHelper(
                 websiteUrl = websiteUrl,
                 urlHash = feedSourceId,
             )
+        }
+
+    suspend fun updateContentFetchedStatus(feedItemId: String, fetched: Boolean) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.updateContentFetchedStatus(
+                contentFetched = fetched,
+                urlHash = feedItemId,
+            )
+        }
+
+    suspend fun insertPrefetchQueueItems(items: List<PrefetchQueueItem>, currentTimeMillis: Long) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            items.forEach { item ->
+                dbRef.contentPrefetchQueueQueries.insertQueueItem(
+                    feed_item_id = item.feedItemId,
+                    url = item.url,
+                    created_at = currentTimeMillis,
+                )
+            }
+        }
+
+    suspend fun getNextPrefetchBatch(): List<PrefetchQueueItem> =
+        withContext(backgroundDispatcher) {
+            dbRef.contentPrefetchQueueQueries
+                .selectNextBatch()
+                .executeAsList()
+                .map { result ->
+                    PrefetchQueueItem(
+                        feedItemId = result.feed_item_id,
+                        url = result.url,
+                    )
+                }
+        }
+
+    suspend fun removePrefetchQueueItem(feedItemId: String) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.contentPrefetchQueueQueries.deleteQueueItem(feedItemId)
+        }
+
+    suspend fun clearPrefetchQueue() =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.contentPrefetchQueueQueries.clearQueue()
+        }
+
+    suspend fun countPrefetchQueue(): Long =
+        withContext(backgroundDispatcher) {
+            dbRef.contentPrefetchQueueQueries
+                .countQueue()
+                .executeAsOne()
+        }
+
+    suspend fun getUnfetchedItems(pageSize: Long, offset: Long): List<FeedItemToPrefetch> =
+        withContext(backgroundDispatcher) {
+            dbRef.feedItemQueries
+                .selectUnfetchedItems(pageSize = pageSize, offset = offset)
+                .executeAsList()
+                .map { FeedItemToPrefetch(feedItemId = it.url_hash, url = it.url) }
         }
 
     companion object {

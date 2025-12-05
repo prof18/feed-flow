@@ -32,9 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
+import coil3.SingletonImageLoader
+import coil3.compose.LocalPlatformContext
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import co.touchlab.kermit.Logger
+import coil3.ImageLoader
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
@@ -191,6 +194,8 @@ internal fun ApplicationScope.MainWindow(
                 var showMarkAllReadDialog by remember { mutableStateOf(false) }
                 var showClearOldArticlesDialog by remember { mutableStateOf(false) }
                 var showPrefetchWarningDialog by remember { mutableStateOf(false) }
+                var showClearDownloadedArticlesDialog by remember { mutableStateOf(false) }
+                var showClearImageCacheDialog by remember { mutableStateOf(false) }
 
                 AboutDialog(
                     visible = aboutDialogVisibility,
@@ -306,6 +311,26 @@ internal fun ApplicationScope.MainWindow(
                         },
                     )
                 }
+
+                ClearDownloadedArticlesDialog(
+                    visible = showClearDownloadedArticlesDialog,
+                    onDismiss = { showClearDownloadedArticlesDialog = false },
+                    onConfirm = {
+                        settingsViewModel.clearDownloadedArticleContent()
+                        showClearDownloadedArticlesDialog = false
+                    },
+                )
+                
+                ClearImageCacheDialog(
+                    visible = showClearImageCacheDialog,
+                    onDismiss = { showClearImageCacheDialog = false },
+                    onConfirm = {
+                        val imageLoader = DI.koin.get<ImageLoader>()
+                        imageLoader.diskCache?.clear()
+                        imageLoader.memoryCache?.clear()
+                        showClearImageCacheDialog = false
+                    },
+                )
 
                 val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
 
@@ -433,6 +458,12 @@ internal fun ApplicationScope.MainWindow(
                                 onThemeModeSelected = { mode ->
                                     settingsViewModel.updateThemeMode(mode)
                                 },
+                                onClearDownloadedArticles = {
+                                    showClearDownloadedArticlesDialog = true
+                                },
+                                onClearImageCache = {
+                                    showClearImageCacheDialog = true
+                                },
                             ),
                         )
 
@@ -450,5 +481,67 @@ internal fun ApplicationScope.MainWindow(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ClearDownloadedArticlesDialog(
+    visible: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (visible) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogTitle) },
+            text = { Text(LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogMessage) },
+            confirmButton = {
+                TextButton(onClick = onConfirm) {
+                    Text(LocalFeedFlowStrings.current.confirmButton)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(LocalFeedFlowStrings.current.cancelButton)
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun ClearImageCacheDialog(
+    visible: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (visible) {
+        val context = LocalPlatformContext.current
+        val scope = rememberCoroutineScope()
+        
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(LocalFeedFlowStrings.current.settingsClearImageCacheDialogTitle) },
+            text = { Text(LocalFeedFlowStrings.current.settingsClearImageCacheDialogMessage) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            val imageLoader = SingletonImageLoader.get(context)
+                            imageLoader.memoryCache?.clear()
+                            imageLoader.diskCache?.clear()
+                        }
+                        onConfirm()
+                    }
+                ) {
+                    Text(LocalFeedFlowStrings.current.confirmButton)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(LocalFeedFlowStrings.current.cancelButton)
+                }
+            },
+        )
     }
 }

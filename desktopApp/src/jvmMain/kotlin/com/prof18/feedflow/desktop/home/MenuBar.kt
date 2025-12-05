@@ -45,6 +45,8 @@ data class MenuBarSettings(
     val setCrashReportingEnabled: (Boolean) -> Unit,
     val onFeedOrderSelected: (FeedOrder) -> Unit,
     val onThemeModeSelected: (ThemeMode) -> Unit,
+    val onClearDownloadedArticles: () -> Unit,
+    val onClearImageCache: () -> Unit,
 )
 
 data class MenuBarState(
@@ -108,6 +110,18 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     onClick = { settings.onThemeModeSelected(ThemeMode.DARK) },
                 )
             }
+
+            Separator()
+            
+            Item(
+                text = LocalFeedFlowStrings.current.settingsClearDownloadedArticles,
+                onClick = settings.onClearDownloadedArticles,
+            )
+            
+            Item(
+                text = LocalFeedFlowStrings.current.settingsClearImageCache,
+                onClick = settings.onClearImageCache,
+            )
 
             DebugMenu(
                 showDebugMenu = state.showDebugMenu,

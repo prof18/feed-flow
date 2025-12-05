@@ -14,6 +14,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,7 @@ class SettingsViewModel internal constructor(
     private val fontSizeRepository: FeedFontSizeRepository,
     private val feedStateRepository: FeedStateRepository,
     private val contentPrefetchRepository: ContentPrefetchRepository,
+    private val feedItemContentFileHandler: FeedItemContentFileHandler,
 ) : ViewModel() {
 
     private val settingsMutableState = MutableStateFlow(SettingsState())
@@ -242,6 +244,12 @@ class SettingsViewModel internal constructor(
         viewModelScope.launch {
             settingsRepository.setThemeMode(mode)
             settingsMutableState.update { it.copy(themeMode = mode) }
+        }
+    }
+
+    fun clearDownloadedArticleContent() {
+        viewModelScope.launch {
+            feedItemContentFileHandler.clearAllContent()
         }
     }
 }

@@ -256,6 +256,13 @@
     <string name="clear_old_articles_dialog_message">Are you sure you want to delete old articles?</string>
     <string name="confirm_button">Confirm</string>
     <string name="cancel_button">Cancel</string>
+    <string name="settings_danger_title">Danger</string>
+    <string name="settings_clear_downloaded_articles">Clear downloaded articles</string>
+    <string name="settings_clear_downloaded_articles_dialog_title">Clear downloaded articles?</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">This will delete all downloaded article content for offline reading. This action cannot be undone.</string>
+    <string name="settings_clear_image_cache">Clear image cache</string>
+    <string name="settings_clear_image_cache_dialog_title">Clear image cache?</string>
+    <string name="settings_clear_image_cache_dialog_message">This will delete all cached images. The images will be downloaded again when you browse through your articles.</string>
     <string name="reader_mode_fallback_title">Unable to parse article</string>
     <string name="reader_mode_fallback_message">The content of this page could not be extracted for reader mode. You can open the page directly in your browser.</string>
     <string name="reader_mode_fallback_open_browser_button">Open in browser</string>

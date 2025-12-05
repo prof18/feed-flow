@@ -35,7 +35,8 @@ internal class ContentPrefetchWorker(
                 prefetchItem(item, webView)
             }
             Result.success()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            logger.e(e) { "Error in background prefetch worker" }
             Result.failure()
         }
     }

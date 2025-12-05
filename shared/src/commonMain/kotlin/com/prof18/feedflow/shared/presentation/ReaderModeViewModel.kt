@@ -89,7 +89,7 @@ class ReaderModeViewModel internal constructor(
             }
 
             // Content not cached, trigger parsing
-            when (val result = feedItemParserWorker.triggerImmediateParsing(feedItemId, urlInfo.url)) {
+            when (val result = feedItemParserWorker.parse(feedItemId, urlInfo.url)) {
                 is ParsingResult.Success -> {
                     val htmlContent = result.htmlContent
                     if (htmlContent != null) {

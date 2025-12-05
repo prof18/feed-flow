@@ -89,7 +89,7 @@ internal class FeedActionsRepository(
         if (isBookmarked) {
             val urlInfo = databaseHelper.getFeedItemUrlInfo(feedItemId.id)
             if (urlInfo != null) {
-                feedItemParserWorker.enqueueParsing(urlInfo.id, urlInfo.url)
+                feedItemParserWorker.parse(urlInfo.id, urlInfo.url)
             }
         }
     }

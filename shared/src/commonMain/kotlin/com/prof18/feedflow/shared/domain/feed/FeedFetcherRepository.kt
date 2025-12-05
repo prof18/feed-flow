@@ -16,7 +16,7 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManager
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
@@ -40,7 +40,7 @@ class FeedFetcherRepository internal constructor(
     private val databaseHelper: DatabaseHelper,
     private val feedSyncRepository: FeedSyncRepository,
     private val settingsRepository: SettingsRepository,
-    private val contentPrefetchManager: ContentPrefetchManager,
+    private val contentPrefetchRepository: ContentPrefetchRepository,
     private val logger: Logger,
     private val rssParser: RssParser,
     private val rssChannelMapper: RssChannelMapper,
@@ -95,7 +95,7 @@ class FeedFetcherRepository internal constructor(
         }
         // If the sync is skipped quickly, sometimes the loading spinner stays out
         delay(timeMillis = 50)
-        contentPrefetchManager.prefetchContent()
+        contentPrefetchRepository.prefetchContent()
         isFeedSyncDone = true
         updateRefreshCount()
         // After fetching new feeds, delete old ones based on user settings
@@ -134,7 +134,7 @@ class FeedFetcherRepository internal constructor(
             feedSyncRepository.syncFeedItems()
             // If the sync is skipped quickly, sometimes the loading spinner stays out
             delay(timeMillis = 50)
-            contentPrefetchManager.prefetchContent()
+            contentPrefetchRepository.prefetchContent()
             isFeedSyncDone = true
             // After fetching new feeds, delete old ones based on user settings
             cleanOldFeeds()

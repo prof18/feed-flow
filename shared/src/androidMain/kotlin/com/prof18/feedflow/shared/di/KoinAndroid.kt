@@ -10,8 +10,8 @@ import com.prof18.feedflow.shared.domain.FeedDownloadWorker
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManager
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManagerAndroid
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryAndroid
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchWorker
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
@@ -163,8 +163,8 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single<ContentPrefetchManager> {
-        ContentPrefetchManagerAndroid(
+    single<ContentPrefetchRepository> {
+        ContentPrefetchRepositoryAndroid(
             logger = getWith("ContentPrefetchManagerAndroid"),
             settingsRepository = get(),
             databaseHelper = get(),

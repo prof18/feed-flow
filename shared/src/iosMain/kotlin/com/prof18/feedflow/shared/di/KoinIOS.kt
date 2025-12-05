@@ -19,8 +19,8 @@ import com.prof18.feedflow.shared.data.KeychainSettingsMigration
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManager
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManagerIos
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIos
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
@@ -214,8 +214,8 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single<ContentPrefetchManager> {
-        ContentPrefetchManagerIos(
+    single<ContentPrefetchRepository> {
+        ContentPrefetchRepositoryIos(
             dispatcherProvider = get(),
             settingsRepository = get(),
             databaseHelper = get(),
@@ -250,5 +250,5 @@ object Deps : KoinComponent {
     fun getSerialFeedFetcherRepository() = getKoin().get<SerialFeedFetcherRepository>()
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
     fun getHtmlRetriever() = getKoin().get<HtmlRetriever>()
-    fun getContentPrefetchManager() = getKoin().get<ContentPrefetchManager>()
+    fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
 }

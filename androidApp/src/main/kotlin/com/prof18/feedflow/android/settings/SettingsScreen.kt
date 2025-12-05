@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.CloudDownload
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.Notifications
@@ -48,6 +49,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.imageLoader
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.CrashlyticsHelper
 import com.prof18.feedflow.android.settings.components.AutoDeletePeriodDialog
@@ -191,6 +193,9 @@ fun SettingsScreen(
         onThemeModeSelected = { themeMode ->
             settingsViewModel.updateThemeMode(themeMode)
         },
+        onClearDownloadedArticles = {
+            settingsViewModel.clearDownloadedArticleContent()
+        },
     )
 }
 
@@ -227,6 +232,7 @@ private fun SettingsScreenContent(
     onFeedOrderSelected: (FeedOrder) -> Unit,
     setFeedLayout: (FeedLayout) -> Unit,
     onThemeModeSelected: (ThemeMode) -> Unit,
+    onClearDownloadedArticles: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -453,6 +459,12 @@ private fun SettingsScreenContent(
             }
 
             item {
+                DangerSection(
+                    onClearDownloadedArticles = onClearDownloadedArticles,
+                )
+            }
+
+            item {
                 Text(
                     text = LocalFeedFlowStrings.current.settingsAppTitle,
                     style = MaterialTheme.typography.labelMedium,
@@ -512,6 +524,98 @@ private fun SettingsScreenContent(
             item {
                 Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
             }
+        }
+    }
+}
+
+@Composable
+private fun DangerSection(
+    onClearDownloadedArticles: () -> Unit,
+) {
+    var showClearDialog by remember { mutableStateOf(false) }
+    var showClearImageCacheDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    Column {
+        Text(
+            text = LocalFeedFlowStrings.current.settingsDangerTitle,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
+            modifier = Modifier.padding(Spacing.regular),
+        )
+
+        SettingItem(
+            title = LocalFeedFlowStrings.current.settingsClearDownloadedArticles,
+            icon = Icons.Outlined.DeleteSweep,
+            onClick = { showClearDialog = true },
+        )
+
+        SettingItem(
+            title = LocalFeedFlowStrings.current.settingsClearImageCache,
+            icon = Icons.Outlined.Image,
+            onClick = { showClearImageCacheDialog = true },
+        )
+
+        if (showClearDialog) {
+            AlertDialog(
+                onDismissRequest = { showClearDialog = false },
+                title = {
+                    Text(text = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogTitle)
+                },
+                text = {
+                    Text(text = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogMessage)
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onClearDownloadedArticles()
+                            showClearDialog = false
+                        },
+                    ) {
+                        Text(LocalFeedFlowStrings.current.confirmButton)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showClearDialog = false },
+                    ) {
+                        Text(LocalFeedFlowStrings.current.cancelButton)
+                    }
+                },
+            )
+        }
+
+        if (showClearImageCacheDialog) {
+            AlertDialog(
+                onDismissRequest = { showClearImageCacheDialog = false },
+                title = {
+                    Text(text = LocalFeedFlowStrings.current.settingsClearImageCacheDialogTitle)
+                },
+                text = {
+                    Text(
+                        text = LocalFeedFlowStrings.current.settingsClearImageCacheDialogMessage,
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            val imageLoader = context.applicationContext.imageLoader
+                            imageLoader.memoryCache?.clear()
+                            imageLoader.diskCache?.clear()
+                            showClearImageCacheDialog = false
+                        },
+                    ) {
+                        Text(LocalFeedFlowStrings.current.confirmButton)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showClearImageCacheDialog = false },
+                    ) {
+                        Text(LocalFeedFlowStrings.current.cancelButton)
+                    }
+                },
+            )
         }
     }
 }
@@ -948,6 +1052,7 @@ private fun SettingsScreenPreview() {
             onFeedOrderSelected = {},
             setFeedLayout = {},
             onThemeModeSelected = {},
+            onClearDownloadedArticles = {},
         )
     }
 }

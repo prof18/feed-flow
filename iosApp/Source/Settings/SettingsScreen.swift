@@ -182,6 +182,9 @@ struct SettingsScreen: View {
                 ) { newValue in
                     vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
                 }
+                DangerSection {
+                    vmStoreOwner.instance.clearDownloadedArticleContent()
+                }
                 AppSection(openURL: openURL, isCrashReportingEnabled: $isCrashReportingEnabled)
             }
             .scrollContentBackground(.hidden)
@@ -367,6 +370,34 @@ private struct AppSection: View {
 
             NavigationLink(destination: AboutScreen()) {
                 Label(feedFlowStrings.aboutButton, systemImage: "info.circle")
+            }
+        }
+    }
+}
+
+private struct DangerSection: View {
+    let onClearDownloadedArticles: () -> Void
+
+    @State private var showClearDialog = false
+
+    var body: some View {
+        Section(header: Text(feedFlowStrings.settingsDangerTitle)
+            .foregroundColor(.red.opacity(0.8))) {
+            Button {
+                showClearDialog = true
+            } label: {
+                Label(feedFlowStrings.settingsClearDownloadedArticles, systemImage: "trash")
+            }
+            .alert(
+                feedFlowStrings.settingsClearDownloadedArticlesDialogTitle,
+                isPresented: $showClearDialog
+            ) {
+                Button(feedFlowStrings.cancelButton, role: .cancel) { }
+                Button(feedFlowStrings.confirmButton, role: .destructive) {
+                    onClearDownloadedArticles()
+                }
+            } message: {
+                Text(feedFlowStrings.settingsClearDownloadedArticlesDialogMessage)
             }
         }
     }

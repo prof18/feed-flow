@@ -205,6 +205,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             fontSizeRepository = get(),
             feedStateRepository = get(),
             contentPrefetchRepository = get(),
+            feedItemContentFileHandler = get(),
         )
     }
 

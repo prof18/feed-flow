@@ -9,26 +9,7 @@ import FeedFlowKit
 import Foundation
 
 class FeedItemParserWorkerIos: FeedItemParserWorker {
-    func enqueueParsing(
-        feedItemId: String,
-        url: String,
-        completionHandler: @escaping ((any Error)?) -> Void
-    ) {
-        DispatchQueue.main.async { [weak self] in
-            guard let this = self else { return }
-            let shouldSaveContent = Deps.shared.getSettingsRepository().isSaveItemContentOnOpenEnabled()
-            this.handleParsing(
-                feedItemId: feedItemId,
-                url: url,
-                feedItemParser: FeedItemParser(),
-                saveContent: shouldSaveContent
-            ) { _ in
-                completionHandler(nil)
-            }
-        }
-    }
-
-    func triggerBackgroundParsing(
+    func parse(
         feedItemId: String,
         url: String,
         completionHandler: @escaping (ParsingResult?, (any Error)?) -> Void
@@ -40,25 +21,6 @@ class FeedItemParserWorkerIos: FeedItemParserWorker {
                 feedItemId: feedItemId,
                 url: url,
                 feedItemParser: FeedItemParser.shared,
-                saveContent: shouldSaveContent
-            ) { result in
-                completionHandler(result, nil)
-            }
-        }
-    }
-
-    func triggerImmediateParsing(
-        feedItemId: String,
-        url: String,
-        completionHandler: @escaping (ParsingResult?, (any Error)?) -> Void
-    ) {
-        DispatchQueue.main.async { [weak self] in
-            guard let this = self else { return }
-            let shouldSaveContent = Deps.shared.getSettingsRepository().isSaveItemContentOnOpenEnabled()
-            this.handleParsing(
-                feedItemId: feedItemId,
-                url: url,
-                feedItemParser: FeedItemParser(),
                 saveContent: shouldSaveContent
             ) { result in
                 completionHandler(result, nil)

@@ -85,7 +85,7 @@ class ContentPrefetchManagerIos(
     private suspend fun prefetchSingleItem(item: PrefetchQueueItem) {
         logger.d { "Prefetching: ${item.feedItemId}" }
 
-        val result = feedItemParserWorker.triggerImmediateParsing(
+        val result = feedItemParserWorker.parse(
             feedItemId = item.feedItemId,
             url = item.url,
         )

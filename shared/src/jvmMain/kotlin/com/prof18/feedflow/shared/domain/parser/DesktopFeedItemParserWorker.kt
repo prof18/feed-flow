@@ -20,19 +20,7 @@ internal class DesktopFeedItemParserWorker(
     private val markdownToHtmlConverter: MarkdownToHtmlConverter,
     private val settingsRepository: SettingsRepository,
 ) : FeedItemParserWorker {
-
-    override suspend fun enqueueParsing(feedItemId: String, url: String) {
-        logger.d { "Enqueueing parsing for feedItemId: $feedItemId, url: $url" }
-        withContext(dispatcherProvider.io) {
-            try {
-                triggerImmediateParsing(feedItemId, url)
-            } catch (e: Exception) {
-                logger.e(e) { "Error enqueueing parsing for: $url" }
-            }
-        }
-    }
-
-    override suspend fun triggerImmediateParsing(feedItemId: String, url: String): ParsingResult {
+    override suspend fun parse(feedItemId: String, url: String): ParsingResult {
         logger.d { "Triggering immediate parsing for: $url (feedItemId: $feedItemId)" }
 
         return withContext(dispatcherProvider.io) {
@@ -96,13 +84,6 @@ internal class DesktopFeedItemParserWorker(
                 ParsingResult.Error
             }
         }
-    }
-
-    override suspend fun triggerBackgroundParsing(feedItemId: String, url: String): ParsingResult {
-        logger.d { "Triggering background parsing for: $url (feedItemId: $feedItemId)" }
-        // On Desktop, background parsing is the same as immediate parsing
-        // The dispatcher handles the threading
-        return triggerImmediateParsing(feedItemId, url)
     }
 
     private companion object {

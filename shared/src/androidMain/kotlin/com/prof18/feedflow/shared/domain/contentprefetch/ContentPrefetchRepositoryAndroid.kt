@@ -15,15 +15,14 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManager.Companion.FIRST_PAGE_SIZE
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository.Companion.FIRST_PAGE_SIZE
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.parser.FeedItemParser
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 
-// TODO: rename to repository
-class ContentPrefetchManagerAndroid(
+class ContentPrefetchRepositoryAndroid(
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
     private val databaseHelper: DatabaseHelper,
@@ -31,7 +30,7 @@ class ContentPrefetchManagerAndroid(
     private val htmlRetriever: HtmlRetriever,
     private val appContext: Context,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
-) : ContentPrefetchManager {
+) : ContentPrefetchRepository {
     override suspend fun prefetchContent() {
         if (!settingsRepository.isPrefetchArticleContentEnabled()) {
             logger.d { "Content prefetch is disabled" }

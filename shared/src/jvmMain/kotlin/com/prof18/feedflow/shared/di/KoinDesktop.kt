@@ -12,8 +12,8 @@ import com.prof18.feedflow.shared.data.MigrateSettings
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.ReaderModeExtractor
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManager
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManagerDesktop
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryDesktop
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
@@ -190,8 +190,8 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single<ContentPrefetchManager> {
-        ContentPrefetchManagerDesktop(
+    single<ContentPrefetchRepository> {
+        ContentPrefetchRepositoryDesktop(
             dispatcherProvider = get(),
             settingsRepository = get(),
             databaseHelper = get(),

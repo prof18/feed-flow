@@ -6,7 +6,7 @@ import com.prof18.feedflow.core.model.PrefetchQueueItem
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchManager.Companion.FIRST_PAGE_SIZE
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository.Companion.FIRST_PAGE_SIZE
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import kotlinx.coroutines.CoroutineScope
@@ -14,15 +14,14 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
 
-// TODO: rename to repository
-class ContentPrefetchManagerDesktop(
+class ContentPrefetchRepositoryDesktop(
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
     private val databaseHelper: DatabaseHelper,
     private val feedItemParserWorker: FeedItemParserWorker,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
     private val dispatcherProvider: DispatcherProvider,
-) : ContentPrefetchManager {
+) : ContentPrefetchRepository {
 
     private val coroutineScope = CoroutineScope(SupervisorJob() + dispatcherProvider.io)
 

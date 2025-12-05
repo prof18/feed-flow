@@ -1,7 +1,7 @@
 package com.prof18.feedflow.shared.domain.contentprefetch
 
 // TODO: rename to repository
-interface ContentPrefetchManager {
+interface ContentPrefetchRepository {
     suspend fun prefetchContent()
     fun startBackgroundFetching()
 

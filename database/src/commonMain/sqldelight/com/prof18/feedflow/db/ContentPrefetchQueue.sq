@@ -24,6 +24,3 @@ WHERE feed_item_id = :feedItemId;
 
 clearQueue:
 DELETE FROM content_prefetch_queue;
-
-countQueue:
-SELECT COUNT(*) FROM content_prefetch_queue;

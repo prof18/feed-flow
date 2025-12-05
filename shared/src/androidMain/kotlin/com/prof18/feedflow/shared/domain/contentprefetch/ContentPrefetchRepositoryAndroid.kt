@@ -36,19 +36,17 @@ class ContentPrefetchRepositoryAndroid(
             logger.d { "Content prefetch is disabled" }
             return
         }
-
+        val webView = withContext(dispatcherProvider.main) {
+            WebView(appContext)
+        }
         try {
-            val immediateItems = databaseHelper.getUnfetchedItems(pageSize = FIRST_PAGE_SIZE, offset = 0L)
+            val immediateItems = databaseHelper.getFirstUnfetchedItemsBatch(pageSize = FIRST_PAGE_SIZE)
             logger.d { "Found ${immediateItems.size} items for immediate prefetch" }
-
-            val webView = withContext(dispatcherProvider.main) {
-                WebView(appContext)
-            }
 
             for (item in immediateItems) {
                 prefetchItem(item, webView)
             }
-            val allUnfetched = databaseHelper.getUnfetchedItems(pageSize = -1, offset = 0L)
+            val allUnfetched = databaseHelper.getUnfetchedItems()
 
             val queueItems = allUnfetched.map { item ->
                 PrefetchQueueItem(
@@ -65,6 +63,10 @@ class ContentPrefetchRepositoryAndroid(
             startBackgroundFetching()
         } catch (e: Exception) {
             logger.e(e) { "Error in onFeedSyncCompleted" }
+        } finally {
+            withContext(dispatcherProvider.main) {
+                webView.destroy()
+            }
         }
     }
 

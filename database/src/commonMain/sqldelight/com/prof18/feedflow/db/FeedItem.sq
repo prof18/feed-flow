@@ -249,9 +249,15 @@ UPDATE feed_item
 SET content_fetched = :contentFetched
 WHERE url_hash = :urlHash;
 
-selectUnfetchedItems:
+selectFirstUnfetchedItemsBatch:
 SELECT feed_item.url_hash, feed_item.url
 FROM feed_item
 WHERE content_fetched = 0 AND is_blocked = 0
 ORDER BY pub_date DESC
-LIMIT :pageSize OFFSET :offset;
+LIMIT :pageSize;
+
+selectUnfetchedItems:
+SELECT feed_item.url_hash, feed_item.url
+FROM feed_item
+WHERE content_fetched = 0 AND is_blocked = 0
+ORDER BY pub_date DESC;

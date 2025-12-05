@@ -33,9 +33,8 @@ class ContentPrefetchRepositoryIosDesktop(
         }
 
         try {
-            val immediateItems = databaseHelper.getUnfetchedItems(
+            val immediateItems = databaseHelper.getFirstUnfetchedItemsBatch(
                 pageSize = ContentPrefetchRepository.FIRST_PAGE_SIZE,
-                offset = 0L,
             )
             logger.d { "Found ${immediateItems.size} items for immediate prefetch" }
 
@@ -48,7 +47,7 @@ class ContentPrefetchRepositoryIosDesktop(
                     ),
                 )
             }
-            val allUnfetched = databaseHelper.getUnfetchedItems(pageSize = -1, offset = 0L)
+            val allUnfetched = databaseHelper.getUnfetchedItems()
 
             val queueItems = allUnfetched.map { item ->
                 PrefetchQueueItem(

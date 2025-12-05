@@ -26,18 +26,21 @@ internal class ContentPrefetchWorker(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
+        val webView = withContext(dispatcherProvider.main) {
+            WebView(appContext)
+        }
         return try {
             val queuedItems = databaseHelper.getNextPrefetchBatch()
-            val webView = withContext(dispatcherProvider.main) {
-                WebView(appContext)
-            }
             for (item in queuedItems) {
                 prefetchItem(item, webView)
             }
             Result.success()
-        } catch (e: Exception) {
-            logger.e(e) { "Error in background prefetch worker" }
+        } catch (_: Exception) {
             Result.failure()
+        } finally {
+            withContext(dispatcherProvider.main) {
+                webView.destroy()
+            }
         }
     }
 

@@ -74,7 +74,7 @@ jobs:
           p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
 
       - name: download provisioning profiles
-        uses: apple-actions/download-provisioning-profiles@v4
+        uses: apple-actions/download-provisioning-profiles@v5
         with:
           bundle-id: ${{ secrets.BUNDLE_ID }}
           issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
@@ -82,7 +82,7 @@ jobs:
           api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
 
       - name: download provisioning profiles for widget
-        uses: apple-actions/download-provisioning-profiles@v4
+        uses: apple-actions/download-provisioning-profiles@v5
         with:
           bundle-id: ${{ secrets.BUNDLE_ID }}.ShareExtension
           issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
@@ -90,7 +90,7 @@ jobs:
           api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
 
       - name: download provisioning profiles for widget
-        uses: apple-actions/download-provisioning-profiles@v4
+        uses: apple-actions/download-provisioning-profiles@v5
         with:
           bundle-id: ${{ secrets.BUNDLE_ID }}.Widget
           issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}

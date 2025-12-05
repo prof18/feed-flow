@@ -879,17 +879,18 @@ class DatabaseHelper(
             dbRef.contentPrefetchQueueQueries.clearQueue()
         }
 
-    suspend fun countPrefetchQueue(): Long =
-        withContext(backgroundDispatcher) {
-            dbRef.contentPrefetchQueueQueries
-                .countQueue()
-                .executeAsOne()
-        }
-
-    suspend fun getUnfetchedItems(pageSize: Long, offset: Long): List<FeedItemToPrefetch> =
+    suspend fun getFirstUnfetchedItemsBatch(pageSize: Long): List<FeedItemToPrefetch> =
         withContext(backgroundDispatcher) {
             dbRef.feedItemQueries
-                .selectUnfetchedItems(pageSize = pageSize, offset = offset)
+                .selectFirstUnfetchedItemsBatch(pageSize = pageSize)
+                .executeAsList()
+                .map { FeedItemToPrefetch(feedItemId = it.url_hash, url = it.url) }
+        }
+
+    suspend fun getUnfetchedItems(): List<FeedItemToPrefetch> =
+        withContext(backgroundDispatcher) {
+            dbRef.feedItemQueries
+                .selectUnfetchedItems()
                 .executeAsList()
                 .map { FeedItemToPrefetch(feedItemId = it.url_hash, url = it.url) }
         }

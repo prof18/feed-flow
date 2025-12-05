@@ -124,7 +124,7 @@ jobs:
           path: |
             **/build/compose/logs/*  
 
-      - uses: Apple-Actions/upload-testflight-build@v3
+      - uses: Apple-Actions/upload-testflight-build@v4
         with:
           app-type: 'osx'
           app-path: ${{ env.RELEASE_PATH }}

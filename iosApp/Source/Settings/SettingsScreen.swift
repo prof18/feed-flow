@@ -296,20 +296,22 @@ private struct BehaviourSection: View {
                 isSaveReaderModeContentEnabled.toggle()
             }
 
-            Toggle(isOn: $isPrefetchArticleContentEnabled) {
+            Toggle(isOn: Binding(
+                get: { isPrefetchArticleContentEnabled },
+                set: { newValue in
+                    if newValue {
+                        showPrefetchWarning = true
+                    } else {
+                        isPrefetchArticleContentEnabled = false
+                    }
+                }
+            )) {
                 Label(feedFlowStrings.settingsPrefetchArticleContent, systemImage: "cloud.fill")
             }
-            .onChange(of: isPrefetchArticleContentEnabled) { _, newValue in
-                if newValue {
-                    showPrefetchWarning = true
-                }
-            }
             .alert(feedFlowStrings.settingsPrefetchArticleContent, isPresented: $showPrefetchWarning) {
-                Button(feedFlowStrings.cancelButton, role: .cancel) {
-                    isPrefetchArticleContentEnabled = false
-                }
+                Button(feedFlowStrings.cancelButton, role: .cancel) { }
                 Button(feedFlowStrings.confirmButton) {
-                    // Keep enabled
+                    isPrefetchArticleContentEnabled = true
                 }
             } message: {
                 Text(feedFlowStrings.settingsPrefetchArticleContentWarning)

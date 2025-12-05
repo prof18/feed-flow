@@ -204,7 +204,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             settingsRepository = get(),
             fontSizeRepository = get(),
             feedStateRepository = get(),
-            databaseHelper = get(),
+            contentPrefetchRepository = get(),
         )
     }
 

@@ -165,7 +165,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     single<ContentPrefetchRepository> {
         ContentPrefetchRepositoryAndroid(
-            logger = getWith("ContentPrefetchManagerAndroid"),
+            logger = getWith("ContentPrefetchRepositoryAndroid"),
             settingsRepository = get(),
             databaseHelper = get(),
             dispatcherProvider = get(),

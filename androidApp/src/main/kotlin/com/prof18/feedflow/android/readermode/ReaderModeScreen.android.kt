@@ -41,6 +41,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
+import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
@@ -119,9 +120,10 @@ internal fun ReaderModeScreen(
 
                 HorizontalFloatingToolbar(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.BottomEnd)
                         .offset(y = -ScreenOffset)
                         .zIndex(1f)
+                        .padding(end = Spacing.regular)
                         .padding(bottom = contentPadding.calculateBottomPadding()),
                     expanded = true,
                     content = {

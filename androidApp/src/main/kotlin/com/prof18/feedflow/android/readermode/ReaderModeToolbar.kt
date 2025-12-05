@@ -74,41 +74,19 @@ internal fun ReaderModeToolbar(
                     TooltipBox(
                         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                         state = rememberTooltipState(),
-                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeFontSize) } },
+                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.menuShare) } },
                     ) {
                         IconButton(
                             onClick = {
-                                showFontSizeMenu = true
+                                onShareClick(
+                                    readerModeState.readerModeData.url,
+                                    readerModeState.readerModeData.title,
+                                )
                             },
                         ) {
                             Icon(
-                                imageVector = Icons.Outlined.TextFields,
+                                imageVector = Icons.Default.Share,
                                 contentDescription = null,
-                            )
-                        }
-                    }
-
-                    DropdownMenu(
-                        expanded = showFontSizeMenu,
-                        onDismissRequest = {
-                            showFontSizeMenu = false
-                        },
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(Spacing.regular),
-                        ) {
-                            Text(
-                                text = LocalFeedFlowStrings.current.readerModeFontSize,
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-
-                            SliderWithPlusMinus(
-                                value = fontSize.toFloat(),
-                                onValueChange = {
-                                    onFontSizeChange(it.toInt())
-                                },
-                                valueRange = 12f..40f,
-                                steps = 40,
                             )
                         }
                     }
@@ -155,6 +133,20 @@ internal fun ReaderModeToolbar(
                             },
                         ) {
                             DropdownMenuItem(
+                                text = { Text(text = LocalFeedFlowStrings.current.readerModeFontSize) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.TextFields,
+                                        contentDescription = null,
+                                    )
+                                },
+                                onClick = {
+                                    showOverflowMenu = false
+                                    showFontSizeMenu = true
+                                },
+                            )
+
+                            DropdownMenuItem(
                                 text = {
                                     val tooltipText = if (isBookmarked) {
                                         LocalFeedFlowStrings.current.menuRemoveFromBookmark
@@ -177,23 +169,6 @@ internal fun ReaderModeToolbar(
                                     showOverflowMenu = false
                                     isBookmarked = !isBookmarked
                                     onBookmarkClick(readerModeState.readerModeData.id, isBookmarked)
-                                },
-                            )
-
-                            DropdownMenuItem(
-                                text = { Text(text = LocalFeedFlowStrings.current.menuShare) },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Share,
-                                        contentDescription = null,
-                                    )
-                                },
-                                onClick = {
-                                    showOverflowMenu = false
-                                    onShareClick(
-                                        readerModeState.readerModeData.url,
-                                        readerModeState.readerModeData.title,
-                                    )
                                 },
                             )
 
@@ -235,6 +210,31 @@ internal fun ReaderModeToolbar(
                                     },
                                 )
                             }
+                        }
+                    }
+
+                    DropdownMenu(
+                        expanded = showFontSizeMenu,
+                        onDismissRequest = {
+                            showFontSizeMenu = false
+                        },
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(Spacing.regular),
+                        ) {
+                            Text(
+                                text = LocalFeedFlowStrings.current.readerModeFontSize,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+
+                            SliderWithPlusMinus(
+                                value = fontSize.toFloat(),
+                                onValueChange = {
+                                    onFontSizeChange(it.toInt())
+                                },
+                                valueRange = 12f..40f,
+                                steps = 40,
+                            )
                         }
                     }
                 }

@@ -17,9 +17,6 @@ dependencyResolutionManagement {
             url = uri("https://jitpack.io")
             content {
                 includeModule("com.github.Dansoftowner", "jSystemThemeDetector")
-                // TODO: Delete when/if https://github.com/adrielcafe/lyricist/pull/45
-                //  and https://github.com/adrielcafe/lyricist/pull/46 gets merged
-                includeModule("com.github.prof18", "lyricist")
             }
         }
     }

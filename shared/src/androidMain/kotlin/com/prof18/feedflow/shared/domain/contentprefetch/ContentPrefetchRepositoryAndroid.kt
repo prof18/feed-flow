@@ -124,6 +124,11 @@ class ContentPrefetchRepositoryAndroid(
             )
     }
 
+    override suspend fun cancelFetching() {
+        databaseHelper.clearPrefetchQueue()
+        WorkManager.getInstance(appContext).cancelUniqueWork(WORKER_TAG)
+    }
+
     private companion object {
         const val WORKER_TAG = "ContentPrefetchWorker"
     }

@@ -6,15 +6,15 @@ import com.prof18.feedflow.core.model.PrefetchQueueItem
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository.Companion.FIRST_PAGE_SIZE
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
 
-class ContentPrefetchRepositoryDesktop(
+class ContentPrefetchRepositoryIosDesktop(
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
     private val databaseHelper: DatabaseHelper,
@@ -23,6 +23,7 @@ class ContentPrefetchRepositoryDesktop(
     private val dispatcherProvider: DispatcherProvider,
 ) : ContentPrefetchRepository {
 
+    private var backgroundJob: Job? = null
     private val coroutineScope = CoroutineScope(SupervisorJob() + dispatcherProvider.io)
 
     override suspend fun prefetchContent() {
@@ -32,7 +33,10 @@ class ContentPrefetchRepositoryDesktop(
         }
 
         try {
-            val immediateItems = databaseHelper.getUnfetchedItems(pageSize = FIRST_PAGE_SIZE, offset = 0L)
+            val immediateItems = databaseHelper.getUnfetchedItems(
+                pageSize = ContentPrefetchRepository.FIRST_PAGE_SIZE,
+                offset = 0L,
+            )
             logger.d { "Found ${immediateItems.size} items for immediate prefetch" }
 
             for (item in immediateItems) {
@@ -60,12 +64,24 @@ class ContentPrefetchRepositoryDesktop(
             logger.d { "Queued ${queueItems.size} items for background prefetch" }
             startBackgroundFetching()
         } catch (e: Exception) {
-            logger.e(e) { "Error in onFeedSyncCompleted" }
+            logger.e(e) { "Error in prefetchContent" }
         }
     }
 
+    override suspend fun cancelFetching() {
+        backgroundJob?.cancel()
+        databaseHelper.clearPrefetchQueue()
+    }
+
     override fun startBackgroundFetching() {
-        coroutineScope.launch(dispatcherProvider.io) {
+        if (!settingsRepository.isPrefetchArticleContentEnabled()) {
+            logger.d { "Content prefetch is disabled" }
+            return
+        }
+
+        if (backgroundJob?.isActive == true) return
+
+        backgroundJob = coroutineScope.launch(dispatcherProvider.io) {
             try {
                 val queuedItems = databaseHelper.getNextPrefetchBatch()
 

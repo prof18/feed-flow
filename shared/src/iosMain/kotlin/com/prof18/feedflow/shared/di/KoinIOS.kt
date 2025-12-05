@@ -20,7 +20,7 @@ import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIos
+import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
@@ -215,13 +215,13 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single<ContentPrefetchRepository> {
-        ContentPrefetchRepositoryIos(
+        ContentPrefetchRepositoryIosDesktop(
             dispatcherProvider = get(),
             settingsRepository = get(),
             databaseHelper = get(),
             feedItemParserWorker = get(),
             feedItemContentFileHandler = get(),
-            logger = getWith("ContentPrefetchManagerIos"),
+            logger = getWith("ContentPrefetchRepositoryIosDesktop"),
         )
     }
 }

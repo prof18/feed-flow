@@ -34,6 +34,7 @@ import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
+import com.multiplatform.webview.web.rememberWebViewState
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.openShareSheet
@@ -199,7 +200,7 @@ private fun FallbackWebView(
     contentPadding: PaddingValues,
     navigator: WebViewNavigator,
 ) {
-    val state = com.multiplatform.webview.web.rememberWebViewState(url)
+    val state = rememberWebViewState(url)
     WebView(
         modifier = Modifier
             .fillMaxSize()

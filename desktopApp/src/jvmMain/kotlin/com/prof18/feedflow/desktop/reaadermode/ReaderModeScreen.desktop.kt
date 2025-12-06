@@ -386,7 +386,6 @@ private fun ReaderModeToolbar(
         },
         actions = {
             Row {
-                // Show actions for both Success and HtmlNotAvailable states
                 if (readerModeState !is ReaderModeState.Loading) {
                     val url = readerModeState.getUrl
                     val id = readerModeState.getId
@@ -394,7 +393,6 @@ private fun ReaderModeToolbar(
                         mutableStateOf(readerModeState.getIsBookmarked)
                     }
 
-                    // Bookmark button - show for both states
                     if (id != null) {
                         BookmarkButton(
                             isBookmarked = isBookmarked,
@@ -405,7 +403,6 @@ private fun ReaderModeToolbar(
                         )
                     }
 
-                    // Share button - show for both states
                     if (url != null) {
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
@@ -424,7 +421,6 @@ private fun ReaderModeToolbar(
                             }
                         }
 
-                        // Archive button - show for both states
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                             state = rememberTooltipState(),
@@ -449,7 +445,6 @@ private fun ReaderModeToolbar(
                         }
                     }
 
-                    // Comments button - only for Success state
                     if (readerModeState is ReaderModeState.Success) {
                         readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
                             TooltipBox(
@@ -476,7 +471,6 @@ private fun ReaderModeToolbar(
                             }
                         }
 
-                        // Open in browser button - only for Success state
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                             state = rememberTooltipState(),
@@ -500,7 +494,6 @@ private fun ReaderModeToolbar(
                             }
                         }
 
-                        // Font size button - only for Success state
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                             state = rememberTooltipState(),

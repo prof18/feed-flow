@@ -199,7 +199,6 @@ public struct ReaderView: View {
                     Label(actions.strings.openInArchive, systemImage: "hammer.fill")
                 }
 
-                // Only show comments button for successfully extracted content
                 if case .extractedContent = readerStatus,
                    let onComments = actions.onComments {
                     Button {
@@ -209,7 +208,6 @@ public struct ReaderView: View {
                     }
                 }
 
-                // Only show font size adjustment for successfully extracted content
                 if case .extractedContent = readerStatus {
                     Button {
                         actions.onFontSizeMenuToggle()
@@ -256,7 +254,6 @@ public struct ReaderView: View {
                     Label(actions.strings.openInArchive, systemImage: "hammer.fill")
                 }
 
-                // Only show comments button for successfully extracted content
                 if case .extractedContent = readerStatus,
                    let onComments = actions.onComments {
                     Button {
@@ -266,7 +263,6 @@ public struct ReaderView: View {
                     }
                 }
 
-                // Only show font size adjustment for successfully extracted content
                 if case .extractedContent = readerStatus {
                     Button {
                         actions.onFontSizeMenuToggle()

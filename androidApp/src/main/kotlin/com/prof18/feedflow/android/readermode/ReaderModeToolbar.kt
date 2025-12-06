@@ -66,7 +66,6 @@ internal fun ReaderModeToolbar(
         },
         actions = {
             Row {
-                // Show actions for both Success and HtmlNotAvailable states
                 if (readerModeState !is ReaderModeState.Loading) {
                     val url = readerModeState.getUrl
                     val id = readerModeState.getId
@@ -93,8 +92,6 @@ internal fun ReaderModeToolbar(
                             }
                         }
 
-                        // Open in browser button
-                        // Open in browser button
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                             state = rememberTooltipState(),
@@ -119,7 +116,6 @@ internal fun ReaderModeToolbar(
                         }
                     }
 
-                    // Overflow menu
                     Box {
                         IconButton(
                             onClick = {
@@ -138,7 +134,6 @@ internal fun ReaderModeToolbar(
                                 showOverflowMenu = false
                             },
                         ) {
-                            // Font size menu item - only show for Success state
                             if (readerModeState is ReaderModeState.Success) {
                                 DropdownMenuItem(
                                     text = { Text(text = LocalFeedFlowStrings.current.readerModeFontSize) },
@@ -155,7 +150,6 @@ internal fun ReaderModeToolbar(
                                 )
                             }
 
-                            // Bookmark menu item - show for both Success and HtmlNotAvailable
                             if (id != null) {
                                 DropdownMenuItem(
                                     text = {
@@ -205,7 +199,6 @@ internal fun ReaderModeToolbar(
                                 )
                             }
 
-                            // Comments menu item - only for Success state when commentsUrl exists
                             if (readerModeState is ReaderModeState.Success) {
                                 readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
                                     DropdownMenuItem(
@@ -231,7 +224,6 @@ internal fun ReaderModeToolbar(
                         }
                     }
 
-                    // Font size dialog - only show for Success state
                     if (readerModeState is ReaderModeState.Success) {
                         DropdownMenu(
                             expanded = showFontSizeMenu,

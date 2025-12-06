@@ -249,4 +249,10 @@
     <string name="confirm_button">确认</string>
     <string name="cancel_button">取消</string>
     <string name="reader_mode_comments_button_content_description">打开评论</string>
+    <string name="settings_save_reader_mode_content">打开时保存文章内容以便离线阅读</string>
+    <string name="settings_prefetch_article_content">预先获取文章内容便于离线阅读</string>
+    <string name="settings_prefetch_article_content_warning">启用此选项会增加同步时间和数据使用量，因为在更新订阅源时会下载完整的文章内容。如果文章数量较多，这还可能影响性能。仅在需要离线访问文章内容时才启用此选项。</string>
+    <string name="reader_mode_archive_button">在 archive.is 中打开</string>
+    <string name="previous_article">上一篇文章</string>
+    <string name="next_article">下一篇文章</string>
 </resources>

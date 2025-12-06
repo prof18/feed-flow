@@ -9,6 +9,8 @@ import FeedFlowKit
 import Foundation
 import WebKit
 
+private let minContentLength = 200
+
 class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
     static let shared = FeedItemParser()
 
@@ -63,10 +65,23 @@ class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
         if let htmlContent = htmlContent, let url = url {
             let script = """
                 console.log('Parsing content');
-                new Defuddle(
+                const result = new Defuddle(
                     new DOMParser().parseFromString(\(htmlContent.asJSString), 'text/html'),
                     { url: \(url.asJSString) }
                 ).parse();
+
+                // Extract plain text from content
+                let plainText = '';
+                if (result.content) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = result.content;
+                    plainText = (tempDiv.textContent || tempDiv.innerText || '').trim();
+                }
+
+                // Add plainText to result for validation
+                result.plainText = plainText;
+
+                result;
             """
 
             webview.evaluateJavaScript(script) { result, error in
@@ -79,8 +94,22 @@ class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
                 if let parsedJson = result as? [String: Any] {
                     let title = parsedJson["title"] as? String
                     let siteName = parsedJson["site"] as? String
+                    let htmlContent = parsedJson["content"] as? String
+                    let plainText = parsedJson["plainText"] as? String ?? ""
+
+                    // Check minimum content length
+                    if plainText.count < minContentLength {
+                        print("Content too short (\(plainText.count) chars), rejecting")
+                        Deps.shared.getLogger(tag: "FeedItemParser").w(
+                            messageString: "Content too short (\(plainText.count) chars), rejecting: \(self.url ?? "")"
+                        )
+                        self.onResult?(ParsingResult.Error())
+                        return
+                    }
+
+                    // Content length is valid, return success
                     let parsingResult = ParsingResult.Success(
-                        htmlContent: parsedJson["content"] as? String,
+                        htmlContent: htmlContent,
                         title: title,
                         siteName: siteName
                     )

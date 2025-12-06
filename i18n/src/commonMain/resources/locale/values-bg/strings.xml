@@ -251,4 +251,10 @@
     <string name="confirm_button">Потвърди</string>
     <string name="cancel_button">Отказ</string>
     <string name="reader_mode_comments_button_content_description">Отваряне на коментари</string>
+    <string name="settings_save_reader_mode_content">Запазване на съдържанието на статията при отваряне за четене офлайн</string>
+    <string name="settings_prefetch_article_content">Предварително извличане на съдържанието на статията за четене офлайн</string>
+    <string name="settings_prefetch_article_content_warning">Активирането на тази опция ще увеличи времето за синхронизация и използването на данни, тъй като пълното съдържание на статиите ще бъде изтеглено по време на актуализациите на емисията. Ако имате голям брой статии, това може да повлияе и на производителността. Включете това само ако имате нужда от офлайн достъп до съдържанието на статиите.</string>
+    <string name="reader_mode_archive_button">Отваряне в archive.is</string>
+    <string name="previous_article">Предишна статия</string>
+    <string name="next_article">Следваща статия</string>
 </resources>

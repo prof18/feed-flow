@@ -222,7 +222,6 @@
     <string name="settings_swipe_action_toggle_bookmark">Přepnout záložku</string>
     <string name="settings_swipe_action_none">Vypnuté</string>
     <string name="settings_sync_period_one_day">Každý den</string>
-    <string name="reader_mode_archive_button_content_description">Otevřete v archivu.is</string>
     <string name="settings_feed_layout_list">Seznam</string>
     <string name="settings_feed_layout_card">Jako karty</string>
     <string name="feed_layout_title">Způsob zobrazení časové osy</string>

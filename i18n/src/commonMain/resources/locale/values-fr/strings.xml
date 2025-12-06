@@ -224,7 +224,6 @@
     <string name="settings_feed_order_title">Trier par date</string>
     <string name="settings_feed_order_newest_first">Plus récents d\'abord</string>
     <string name="settings_feed_order_oldest_first">Plus anciens d\'abord</string>
-    <string name="reader_mode_archive_button_content_description">Ouvrir dans archive.is</string>
     <string name="settings_feed_layout_card">Cartes</string>
     <string name="feed_layout_title">Mise en page</string>
     <string name="settings_swipe_action_toggle_read">Changer l\'état de lecture</string>

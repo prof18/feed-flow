@@ -11,7 +11,6 @@ import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.data.MigrateSettings
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
-import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
@@ -113,8 +112,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         }
         PreferencesSettings(preferences.node(nodeName))
     }
-
-    factoryOf(::ReaderModeExtractor)
 
     single<FeedItemContentFileHandler> {
         FeedItemContentFileHandlerDesktop(

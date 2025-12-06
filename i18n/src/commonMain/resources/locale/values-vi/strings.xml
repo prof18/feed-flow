@@ -225,7 +225,6 @@
     <string name="settings_feed_order_title">Xếp theo ngày</string>
     <string name="settings_feed_order_newest_first">Mới nhất trước</string>
     <string name="settings_feed_order_oldest_first">Cũ nhất trước</string>
-    <string name="reader_mode_archive_button_content_description">Mở trong archive.is</string>
     <string name="settings_feed_layout_list">Danh sách</string>
     <string name="settings_feed_layout_card">Thẻ</string>
     <string name="feed_layout_title">Bố cục bảng tin</string>

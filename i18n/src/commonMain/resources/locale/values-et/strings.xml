@@ -225,7 +225,6 @@
     <string name="settings_feed_order_newest_first">Esmalt uuemad</string>
     <string name="settings_feed_order_title">Järjesta kuupäeva alusel</string>
     <string name="settings_feed_order_oldest_first">Esmalt vanemad</string>
-    <string name="reader_mode_archive_button_content_description">Ava teenuses archive.is</string>
     <string name="settings_feed_layout_card">Kaart</string>
     <string name="feed_layout_title">Uudisvoo paigutus</string>
     <string name="settings_feed_layout_list">Loend</string>

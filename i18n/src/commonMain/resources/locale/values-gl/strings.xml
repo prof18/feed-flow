@@ -224,7 +224,6 @@
     <string name="settings_experimental_parsing">Usar motor experimental no modo lectura</string>
     <string name="settings_feed_order_title">Orde por data</string>
     <string name="settings_feed_order_newest_first">Primeiro máis recente</string>
-    <string name="reader_mode_archive_button_content_description">Abrir en archive.is</string>
     <string name="settings_feed_order_oldest_first">Primeiro máis antigo</string>
     <string name="settings_feed_layout_list">Lista</string>
     <string name="settings_feed_layout_card">Tarxeta</string>

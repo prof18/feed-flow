@@ -228,7 +228,6 @@
     <string name="settings_feed_order_title">Tarihe Göre Sırala</string>
     <string name="settings_feed_order_newest_first">Yeniden Eskiye</string>
     <string name="settings_feed_order_oldest_first">Eskiden Yeniye</string>
-    <string name="reader_mode_archive_button_content_description">archive.is\'te aç</string>
     <string name="settings_theme">Tema</string>
     <string name="settings_theme_system">Sistem</string>
     <string name="settings_theme_light">Açık</string>

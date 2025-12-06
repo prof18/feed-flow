@@ -197,7 +197,6 @@
     <string name="settings_feed_order_title">Ordenar por fecha</string>
     <string name="settings_feed_order_newest_first">Recientes primero</string>
     <string name="settings_feed_order_oldest_first">Antiguos primero</string>
-    <string name="reader_mode_archive_button_content_description">Abrir en archive.is</string>
     <string name="clear_old_articles_button">Eliminar artículos de más de una semana</string>
     <string name="account_text_field_password">Contraseña</string>
     <string name="account_text_field_username">Usuario</string>

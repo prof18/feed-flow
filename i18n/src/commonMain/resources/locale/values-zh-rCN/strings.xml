@@ -225,7 +225,6 @@
     <string name="settings_feed_order_title">按日期排序</string>
     <string name="settings_feed_order_newest_first">从新到旧</string>
     <string name="settings_feed_order_oldest_first">从旧到新</string>
-    <string name="reader_mode_archive_button_content_description">在 archive.is 中打开</string>
     <string name="feed_layout_title">订阅源布局</string>
     <string name="settings_feed_layout_list">列表</string>
     <string name="settings_feed_layout_card">卡片</string>

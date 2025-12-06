@@ -158,6 +158,7 @@ class ReaderModeViewModel internal constructor(
             val previousArticle = feedStateRepository.getPreviousArticle(articleId)
             if (previousArticle != null) {
                 val urlInfo = previousArticle.toFeedItemUrlInfo()
+                feedActionsRepository.markAsRead(hashSetOf(FeedItemId(urlInfo.id)))
                 getReaderModeHtml(urlInfo)
             }
         }

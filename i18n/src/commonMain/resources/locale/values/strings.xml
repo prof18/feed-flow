@@ -232,7 +232,6 @@
     <string name="settings_feed_order_title">Sort by Date</string>
     <string name="settings_feed_order_newest_first">Newest First</string>
     <string name="settings_feed_order_oldest_first">Oldest First</string>
-    <string name="reader_mode_archive_button_content_description">Open in archive.is</string>
     <string name="reader_mode_archive_button">Open in archive.is</string>
     <string name="reader_mode_browser_button_content_description">Open in browser</string>
     <string name="reader_mode_comments_button_content_description">Open comments</string>
@@ -257,4 +256,7 @@
     <string name="clear_old_articles_dialog_message">Are you sure you want to delete old articles?</string>
     <string name="confirm_button">Confirm</string>
     <string name="cancel_button">Cancel</string>
+    <string name="reader_mode_fallback_title">Unable to parse article</string>
+    <string name="reader_mode_fallback_message">The content of this page could not be extracted for reader mode. You can open the page directly in your browser.</string>
+    <string name="reader_mode_fallback_open_browser_button">Open in browser</string>
 </resources>

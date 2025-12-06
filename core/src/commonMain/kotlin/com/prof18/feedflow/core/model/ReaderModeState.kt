@@ -15,4 +15,18 @@ sealed interface ReaderModeState {
             is Success -> readerModeData.isBookmarked
             is HtmlNotAvailable -> isBookmarked
         }
+
+    val getUrl: String?
+        get() = when (this) {
+            is Loading -> null
+            is Success -> readerModeData.url
+            is HtmlNotAvailable -> url
+        }
+
+    val getId: String?
+        get() = when (this) {
+            is Loading -> null
+            is Success -> readerModeData.id.id
+            is HtmlNotAvailable -> id
+        }
 }

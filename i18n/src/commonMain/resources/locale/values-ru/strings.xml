@@ -229,7 +229,6 @@
     <string name="settings_feed_order_title">Сортировка по дате</string>
     <string name="settings_feed_order_newest_first">Сначала новые</string>
     <string name="settings_feed_order_oldest_first">Сначала старые</string>
-    <string name="reader_mode_archive_button_content_description">Открыть в archive.is</string>
     <string name="reader_mode_browser_button_content_description">Открыть в браузере</string>
     <string name="reader_mode_comments_button_content_description">Открыть комментарии</string>
     <string name="settings_theme">Тема</string>

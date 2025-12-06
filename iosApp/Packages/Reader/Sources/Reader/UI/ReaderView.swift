@@ -199,7 +199,9 @@ public struct ReaderView: View {
                     Label(actions.strings.openInArchive, systemImage: "hammer.fill")
                 }
 
-                if let onComments = actions.onComments {
+                // Only show comments button for successfully extracted content
+                if case .extractedContent = readerStatus,
+                   let onComments = actions.onComments {
                     Button {
                         onComments()
                     } label: {
@@ -207,10 +209,13 @@ public struct ReaderView: View {
                     }
                 }
 
-                Button {
-                    actions.onFontSizeMenuToggle()
-                } label: {
-                    Label(actions.strings.fontSize, systemImage: "textformat.size")
+                // Only show font size adjustment for successfully extracted content
+                if case .extractedContent = readerStatus {
+                    Button {
+                        actions.onFontSizeMenuToggle()
+                    } label: {
+                        Label(actions.strings.fontSize, systemImage: "textformat.size")
+                    }
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
@@ -251,7 +256,9 @@ public struct ReaderView: View {
                     Label(actions.strings.openInArchive, systemImage: "hammer.fill")
                 }
 
-                if let onComments = actions.onComments {
+                // Only show comments button for successfully extracted content
+                if case .extractedContent = readerStatus,
+                   let onComments = actions.onComments {
                     Button {
                         onComments()
                     } label: {
@@ -259,10 +266,13 @@ public struct ReaderView: View {
                     }
                 }
 
-                Button {
-                    actions.onFontSizeMenuToggle()
-                } label: {
-                    Label(actions.strings.fontSize, systemImage: "textformat.size")
+                // Only show font size adjustment for successfully extracted content
+                if case .extractedContent = readerStatus {
+                    Button {
+                        actions.onFontSizeMenuToggle()
+                    } label: {
+                        Label(actions.strings.fontSize, systemImage: "textformat.size")
+                    }
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")

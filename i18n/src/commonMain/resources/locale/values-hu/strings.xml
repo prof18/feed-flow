@@ -229,7 +229,6 @@
     <string name="settings_feed_order_title">Rendezés dátum szerint</string>
     <string name="settings_feed_order_newest_first">Legújabb elől</string>
     <string name="settings_feed_order_oldest_first">Legrégebbi elől</string>
-    <string name="reader_mode_archive_button_content_description">Megnyitás itt: archive.is</string>
     <string name="reader_mode_browser_button_content_description">Megnyitás böngészőben</string>
     <string name="settings_theme">Téma</string>
     <string name="settings_theme_system">Rendszer</string>

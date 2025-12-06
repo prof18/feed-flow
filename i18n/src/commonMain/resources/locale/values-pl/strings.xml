@@ -228,7 +228,6 @@
     <string name="settings_feed_order_title">Sortuj według daty</string>
     <string name="settings_feed_order_newest_first">Od najnowszych</string>
     <string name="settings_feed_order_oldest_first">Od najstarszych</string>
-    <string name="reader_mode_archive_button_content_description">Otwórz w archive.is</string>
     <string name="settings_theme">Motyw</string>
     <string name="settings_theme_system">Systemowy</string>
     <string name="settings_theme_light">Jasny</string>

@@ -66,54 +66,60 @@ internal fun ReaderModeToolbar(
         },
         actions = {
             Row {
-                if (readerModeState is ReaderModeState.Success) {
-                    var isBookmarked by remember {
-                        mutableStateOf(readerModeState.readerModeData.isBookmarked)
+                // Show actions for both Success and HtmlNotAvailable states
+                if (readerModeState !is ReaderModeState.Loading) {
+                    val url = readerModeState.getUrl
+                    val id = readerModeState.getId
+                    var isBookmarked by remember(readerModeState) {
+                        mutableStateOf(readerModeState.getIsBookmarked)
                     }
 
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                        state = rememberTooltipState(),
-                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.menuShare) } },
-                    ) {
-                        IconButton(
-                            onClick = {
-                                onShareClick(
-                                    readerModeState.readerModeData.url,
-                                    readerModeState.readerModeData.title,
-                                )
-                            },
+                    if (url != null) {
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            state = rememberTooltipState(),
+                            tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.menuShare) } },
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = null,
-                            )
-                        }
-                    }
-
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                        state = rememberTooltipState(),
-                        tooltip = {
-                            PlainTooltip {
-                                Text(
-                                    LocalFeedFlowStrings.current.readerModeBrowserButtonContentDescription,
+                            IconButton(
+                                onClick = {
+                                    val title = (readerModeState as? ReaderModeState.Success)?.readerModeData?.title
+                                    onShareClick(url, title)
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = null,
                                 )
                             }
-                        },
-                    ) {
-                        IconButton(
-                            onClick = {
-                                openInBrowser(readerModeState.readerModeData.url)
+                        }
+
+                        // Open in browser button
+                        // Open in browser button
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            state = rememberTooltipState(),
+                            tooltip = {
+                                PlainTooltip {
+                                    Text(
+                                        LocalFeedFlowStrings.current.readerModeBrowserButtonContentDescription,
+                                    )
+                                }
                             },
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Language,
-                                contentDescription = null,
-                            )
+                            IconButton(
+                                onClick = {
+                                    openInBrowser(url)
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Language,
+                                    contentDescription = null,
+                                )
+                            }
                         }
                     }
 
+                    // Overflow menu
                     Box {
                         IconButton(
                             onClick = {
@@ -132,109 +138,124 @@ internal fun ReaderModeToolbar(
                                 showOverflowMenu = false
                             },
                         ) {
-                            DropdownMenuItem(
-                                text = { Text(text = LocalFeedFlowStrings.current.readerModeFontSize) },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Outlined.TextFields,
-                                        contentDescription = null,
-                                    )
-                                },
-                                onClick = {
-                                    showOverflowMenu = false
-                                    showFontSizeMenu = true
-                                },
-                            )
-
-                            DropdownMenuItem(
-                                text = {
-                                    val tooltipText = if (isBookmarked) {
-                                        LocalFeedFlowStrings.current.menuRemoveFromBookmark
-                                    } else {
-                                        LocalFeedFlowStrings.current.menuAddToBookmark
-                                    }
-                                    Text(text = tooltipText)
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = if (isBookmarked) {
-                                            Icons.Default.BookmarkRemove
-                                        } else {
-                                            Icons.Default.BookmarkAdd
-                                        },
-                                        contentDescription = null,
-                                    )
-                                },
-                                onClick = {
-                                    showOverflowMenu = false
-                                    isBookmarked = !isBookmarked
-                                    onBookmarkClick(readerModeState.readerModeData.id, isBookmarked)
-                                },
-                            )
-
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
-                                    )
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = hammerIcon,
-                                        contentDescription = null,
-                                    )
-                                },
-                                onClick = {
-                                    showOverflowMenu = false
-                                    onArchiveClick(readerModeState.readerModeData.url)
-                                },
-                            )
-
-                            readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
+                            // Font size menu item - only show for Success state
+                            if (readerModeState is ReaderModeState.Success) {
                                 DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = LocalFeedFlowStrings.current
-                                                .readerModeCommentsButtonContentDescription,
-                                        )
-                                    },
+                                    text = { Text(text = LocalFeedFlowStrings.current.readerModeFontSize) },
                                     leadingIcon = {
                                         Icon(
-                                            imageVector = Icons.Default.Comment,
+                                            imageVector = Icons.Outlined.TextFields,
                                             contentDescription = null,
                                         )
                                     },
                                     onClick = {
                                         showOverflowMenu = false
-                                        onCommentsClick(commentsUrl)
+                                        showFontSizeMenu = true
                                     },
                                 )
+                            }
+
+                            // Bookmark menu item - show for both Success and HtmlNotAvailable
+                            if (id != null) {
+                                DropdownMenuItem(
+                                    text = {
+                                        val tooltipText = if (isBookmarked) {
+                                            LocalFeedFlowStrings.current.menuRemoveFromBookmark
+                                        } else {
+                                            LocalFeedFlowStrings.current.menuAddToBookmark
+                                        }
+                                        Text(text = tooltipText)
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = if (isBookmarked) {
+                                                Icons.Default.BookmarkRemove
+                                            } else {
+                                                Icons.Default.BookmarkAdd
+                                            },
+                                            contentDescription = null,
+                                        )
+                                    },
+                                    onClick = {
+                                        showOverflowMenu = false
+                                        isBookmarked = !isBookmarked
+                                        onBookmarkClick(FeedItemId(id), isBookmarked)
+                                    },
+                                )
+                            }
+
+                            val archiveLabel = LocalFeedFlowStrings.current.readerModeArchiveButton
+                            if (url != null) {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = archiveLabel,
+                                        )
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = hammerIcon,
+                                            contentDescription = null,
+                                        )
+                                    },
+                                    onClick = {
+                                        showOverflowMenu = false
+                                        onArchiveClick(url)
+                                    },
+                                )
+                            }
+
+                            // Comments menu item - only for Success state when commentsUrl exists
+                            if (readerModeState is ReaderModeState.Success) {
+                                readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                text = LocalFeedFlowStrings.current
+                                                    .readerModeCommentsButtonContentDescription,
+                                            )
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Default.Comment,
+                                                contentDescription = null,
+                                            )
+                                        },
+                                        onClick = {
+                                            showOverflowMenu = false
+                                            onCommentsClick(commentsUrl)
+                                        },
+                                    )
+                                }
                             }
                         }
                     }
 
-                    DropdownMenu(
-                        expanded = showFontSizeMenu,
-                        onDismissRequest = {
-                            showFontSizeMenu = false
-                        },
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(Spacing.regular),
+                    // Font size dialog - only show for Success state
+                    if (readerModeState is ReaderModeState.Success) {
+                        DropdownMenu(
+                            expanded = showFontSizeMenu,
+                            onDismissRequest = {
+                                showFontSizeMenu = false
+                            },
                         ) {
-                            Text(
-                                text = LocalFeedFlowStrings.current.readerModeFontSize,
-                                style = MaterialTheme.typography.titleMedium,
-                            )
+                            Column(
+                                modifier = Modifier.padding(Spacing.regular),
+                            ) {
+                                Text(
+                                    text = LocalFeedFlowStrings.current.readerModeFontSize,
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
 
-                            SliderWithPlusMinus(
-                                value = fontSize.toFloat(),
-                                onValueChange = {
-                                    onFontSizeChange(it.toInt())
-                                },
-                                valueRange = 12f..40f,
-                                steps = 40,
-                            )
+                                SliderWithPlusMinus(
+                                    value = fontSize.toFloat(),
+                                    onValueChange = {
+                                        onFontSizeChange(it.toInt())
+                                    },
+                                    valueRange = 12f..40f,
+                                    steps = 40,
+                                )
+                            }
                         }
                     }
                 }

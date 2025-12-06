@@ -170,10 +170,16 @@ internal data class ReaderModeScreen(
             ) { contentPadding ->
                 when (val s = state) {
                     is ReaderModeState.HtmlNotAvailable -> {
-                        navigator.pop()
-                        if (isValidUrl(s.url)) {
-                            uriHandler.openUri(s.url)
-                        }
+                        ReaderModeFallbackContent(
+                            modifier = Modifier
+                                .padding(contentPadding)
+                                .fillMaxSize(),
+                            onOpenInBrowser = {
+                                if (isValidUrl(s.url)) {
+                                    uriHandler.openUri(s.url)
+                                }
+                            },
+                        )
                     }
                     ReaderModeState.Loading -> {
                         Box(
@@ -264,7 +270,7 @@ internal data class ReaderModeScreen(
                 }
             }
 
-            if (state is ReaderModeState.Success) {
+            if (state is ReaderModeState.Success || state is ReaderModeState.HtmlNotAvailable) {
                 val strings = LocalFeedFlowStrings.current
 
                 Surface(
@@ -327,7 +333,8 @@ private fun handleKeyEvent(
     onNavigatePrevious: () -> Unit,
     onNavigateNext: () -> Unit,
 ): Boolean {
-    if (keyEvent.type == KeyEventType.KeyDown && state is ReaderModeState.Success) {
+    val canNavigate = state is ReaderModeState.Success || state is ReaderModeState.HtmlNotAvailable
+    if (keyEvent.type == KeyEventType.KeyDown && canNavigate) {
         return when (keyEvent.key) {
             Key.DirectionLeft -> {
                 if (canNavigatePrevious) {
@@ -379,160 +386,161 @@ private fun ReaderModeToolbar(
         },
         actions = {
             Row {
-                if (readerModeState is ReaderModeState.HtmlNotAvailable) {
-                    var isBookmarked by remember {
-                        mutableStateOf(readerModeState.isBookmarked)
-                    }
-                    BookmarkButton(
-                        isBookmarked = isBookmarked,
-                        onClick = {
-                            isBookmarked = !isBookmarked
-                            onBookmarkClick(FeedItemId(readerModeState.id), isBookmarked)
-                        },
-                    )
-                }
-
-                if (readerModeState is ReaderModeState.Success) {
-                    var isBookmarked by remember {
-                        mutableStateOf(readerModeState.readerModeData.isBookmarked)
+                // Show actions for both Success and HtmlNotAvailable states
+                if (readerModeState !is ReaderModeState.Loading) {
+                    val url = readerModeState.getUrl
+                    val id = readerModeState.getId
+                    var isBookmarked by remember(readerModeState) {
+                        mutableStateOf(readerModeState.getIsBookmarked)
                     }
 
-                    BookmarkButton(
-                        isBookmarked = isBookmarked,
-                        onClick = {
-                            isBookmarked = !isBookmarked
-                            onBookmarkClick(readerModeState.readerModeData.id, isBookmarked)
-                        },
-                    )
-
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                        state = rememberTooltipState(),
-                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.menuShare) } },
-                    ) {
-                        IconButton(
+                    // Bookmark button - show for both states
+                    if (id != null) {
+                        BookmarkButton(
+                            isBookmarked = isBookmarked,
                             onClick = {
-                                onShareClick(readerModeState.readerModeData.url)
+                                isBookmarked = !isBookmarked
+                                onBookmarkClick(FeedItemId(id), isBookmarked)
                             },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = null,
-                            )
-                        }
+                        )
                     }
 
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                        state = rememberTooltipState(),
-                        tooltip = {
-                            PlainTooltip {
-                                Text(
-                                    LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription,
+                    // Share button - show for both states
+                    if (url != null) {
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            state = rememberTooltipState(),
+                            tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.menuShare) } },
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    onShareClick(url)
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = null,
                                 )
                             }
-                        },
-                    ) {
-                        IconButton(
-                            onClick = {
-                                onArchiveClick(readerModeState.readerModeData.url)
-                            },
-                        ) {
-                            val label = LocalFeedFlowStrings.current.readerModeArchiveButtonContentDescription
-                            Icon(
-                                imageVector = hammerIcon,
-                                contentDescription = label,
-                            )
                         }
-                    }
 
-                    readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
+                        // Archive button - show for both states
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                             state = rememberTooltipState(),
                             tooltip = {
                                 PlainTooltip {
                                     Text(
-                                        LocalFeedFlowStrings.current.readerModeCommentsButtonContentDescription,
+                                        LocalFeedFlowStrings.current.readerModeArchiveButton,
                                     )
                                 }
                             },
                         ) {
                             IconButton(
                                 onClick = {
-                                    onCommentsClick(commentsUrl)
+                                    onArchiveClick(url)
                                 },
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Comment,
+                                    imageVector = hammerIcon,
+                                    contentDescription = LocalFeedFlowStrings.current.readerModeArchiveButton,
+                                )
+                            }
+                        }
+                    }
+
+                    // Comments button - only for Success state
+                    if (readerModeState is ReaderModeState.Success) {
+                        readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
+                            TooltipBox(
+                                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                state = rememberTooltipState(),
+                                tooltip = {
+                                    PlainTooltip {
+                                        Text(
+                                            LocalFeedFlowStrings.current.readerModeCommentsButtonContentDescription,
+                                        )
+                                    }
+                                },
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        onCommentsClick(commentsUrl)
+                                    },
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Comment,
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+                        }
+
+                        // Open in browser button - only for Success state
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            state = rememberTooltipState(),
+                            tooltip = {
+                                PlainTooltip {
+                                    Text(
+                                        LocalFeedFlowStrings.current.readerModeBrowserButtonContentDescription,
+                                    )
+                                }
+                            },
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    openInBrowser(readerModeState.readerModeData.url)
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Language,
                                     contentDescription = null,
                                 )
                             }
                         }
-                    }
 
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                        state = rememberTooltipState(),
-                        tooltip = {
-                            PlainTooltip {
-                                Text(
-                                    LocalFeedFlowStrings.current.readerModeBrowserButtonContentDescription,
+                        // Font size button - only for Success state
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            state = rememberTooltipState(),
+                            tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeFontSize) } },
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    showMenu = true
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.TextFields,
+                                    contentDescription = null,
                                 )
                             }
-                        },
-                    ) {
-                        IconButton(
-                            onClick = {
-                                openInBrowser(readerModeState.readerModeData.url)
+                        }
+
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = {
+                                showMenu = false
                             },
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Language,
-                                contentDescription = null,
-                            )
-                        }
-                    }
+                            Column(
+                                modifier = Modifier.padding(Spacing.regular),
+                            ) {
+                                Text(
+                                    text = LocalFeedFlowStrings.current.readerModeFontSize,
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
 
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                        state = rememberTooltipState(),
-                        tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeFontSize) } },
-                    ) {
-                        IconButton(
-                            onClick = {
-                                showMenu = true
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.TextFields,
-                                contentDescription = null,
-                            )
-                        }
-                    }
-
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = {
-                            showMenu = false
-                        },
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(Spacing.regular),
-                        ) {
-                            Text(
-                                text = LocalFeedFlowStrings.current.readerModeFontSize,
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-
-                            SliderWithPlusMinus(
-                                value = fontSize.toFloat(),
-                                onValueChange = {
-                                    onFontSizeChange(it.toInt())
-                                },
-                                valueRange = 12f..40f,
-                                steps = 40,
-                            )
+                                SliderWithPlusMinus(
+                                    value = fontSize.toFloat(),
+                                    onValueChange = {
+                                        onFontSizeChange(it.toInt())
+                                    },
+                                    valueRange = 12f..40f,
+                                    steps = 40,
+                                )
+                            }
                         }
                     }
                 }
@@ -567,6 +575,54 @@ private fun BookmarkButton(
                 },
                 contentDescription = null,
             )
+        }
+    }
+}
+
+@Composable
+private fun ReaderModeFallbackContent(
+    modifier: Modifier = Modifier,
+    onOpenInBrowser: () -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            imageVector = Icons.Default.Language,
+            contentDescription = null,
+            modifier = Modifier.padding(bottom = Spacing.regular),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        Text(
+            text = strings.readerModeFallbackTitle,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = Spacing.small),
+        )
+
+        Text(
+            text = strings.readerModeFallbackMessage,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .padding(start = Spacing.large, end = Spacing.large)
+                .padding(bottom = Spacing.regular),
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+
+        androidx.compose.material3.Button(
+            onClick = onOpenInBrowser,
+        ) {
+            Icon(
+                imageVector = Icons.Default.Language,
+                contentDescription = null,
+                modifier = Modifier.padding(end = Spacing.small),
+            )
+            Text(strings.readerModeFallbackOpenBrowserButton)
         }
     }
 }

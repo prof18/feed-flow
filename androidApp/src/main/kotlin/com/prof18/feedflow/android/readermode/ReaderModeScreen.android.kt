@@ -115,7 +115,7 @@ internal fun ReaderModeScreen(
         Box(
             modifier = Modifier,
         ) {
-            if (readerModeState is ReaderModeState.Success) {
+            if (readerModeState !is ReaderModeState.Loading) {
                 val strings = LocalFeedFlowStrings.current
 
                 HorizontalFloatingToolbar(
@@ -160,10 +160,11 @@ internal fun ReaderModeScreen(
 
             when (readerModeState) {
                 is ReaderModeState.HtmlNotAvailable -> {
-                    navigateBack()
-                    if (isValidUrl(readerModeState.url)) {
-                        browserManager.openUrlWithFavoriteBrowser(readerModeState.url, context)
-                    }
+                    FallbackWebView(
+                        url = readerModeState.url,
+                        contentPadding = contentPadding,
+                        navigator = navigator,
+                    )
                 }
                 ReaderModeState.Loading -> {
                     Box(
@@ -190,6 +191,22 @@ internal fun ReaderModeScreen(
             }
         }
     }
+}
+
+@Composable
+private fun FallbackWebView(
+    url: String,
+    contentPadding: PaddingValues,
+    navigator: WebViewNavigator,
+) {
+    val state = com.multiplatform.webview.web.rememberWebViewState(url)
+    WebView(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(contentPadding),
+        state = state,
+        navigator = navigator,
+    )
 }
 
 @OptIn(ExperimentalStdlibApi::class)

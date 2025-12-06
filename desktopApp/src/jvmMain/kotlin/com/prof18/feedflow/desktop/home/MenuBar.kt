@@ -112,12 +112,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
             }
 
             Separator()
-            
+
             Item(
                 text = LocalFeedFlowStrings.current.settingsClearDownloadedArticles,
                 onClick = settings.onClearDownloadedArticles,
             )
-            
+
             Item(
                 text = LocalFeedFlowStrings.current.settingsClearImageCache,
                 onClick = settings.onClearImageCache,

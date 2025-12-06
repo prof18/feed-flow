@@ -32,12 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
-import coil3.SingletonImageLoader
-import coil3.compose.LocalPlatformContext
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import co.touchlab.kermit.Logger
 import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.compose.LocalPlatformContext
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
@@ -320,7 +320,7 @@ internal fun ApplicationScope.MainWindow(
                         showClearDownloadedArticlesDialog = false
                     },
                 )
-                
+
                 ClearImageCacheDialog(
                     visible = showClearImageCacheDialog,
                     onDismiss = { showClearImageCacheDialog = false },
@@ -518,7 +518,7 @@ private fun ClearImageCacheDialog(
     if (visible) {
         val context = LocalPlatformContext.current
         val scope = rememberCoroutineScope()
-        
+
         AlertDialog(
             onDismissRequest = onDismiss,
             title = { Text(LocalFeedFlowStrings.current.settingsClearImageCacheDialogTitle) },
@@ -532,7 +532,7 @@ private fun ClearImageCacheDialog(
                             imageLoader.diskCache?.clear()
                         }
                         onConfirm()
-                    }
+                    },
                 ) {
                     Text(LocalFeedFlowStrings.current.confirmButton)
                 }

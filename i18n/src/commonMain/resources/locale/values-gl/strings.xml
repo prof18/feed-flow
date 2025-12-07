@@ -251,4 +251,10 @@
     <string name="clear_old_articles_dialog_message">Tes certeza de querer eliiminar todos os artigos antigos?</string>
     <string name="confirm_button">Confirmar</string>
     <string name="cancel_button">Cancelar</string>
+    <string name="settings_save_reader_mode_content">Gardar contido do artigo ao abrir para lectura sen conexión</string>
+    <string name="settings_prefetch_article_content">Obter con anterioridade contido do artigo para lectura sen conexión</string>
+    <string name="settings_prefetch_article_content_warning">Ao activar esta opción vas aumentar o tempo para a sincronización e o uso de datos, porque se vai descargar o contido completo do artigo nas actualizacións. Se tes moitos artigos isto podo influir no rendemento. Activa a opción só se queres ter os artigos para ler sen conexión.</string>
+    <string name="reader_mode_archive_button">Abrir en archive.is</string>
+    <string name="previous_article">Artigo anterior</string>
+    <string name="next_article">Artigo seguinte</string>
 </resources>

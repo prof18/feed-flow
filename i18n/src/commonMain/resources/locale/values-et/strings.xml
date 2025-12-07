@@ -249,4 +249,5 @@
     <string name="confirm_button">Kinnita</string>
     <string name="cancel_button">Katkesta</string>
     <string name="reader_mode_comments_button_content_description">Vaata kommentaare</string>
+    <string name="settings_save_reader_mode_content">Avamisel salvesta artikli sisu lugemiseks ilma võrguühendust kasutamata</string>
 </resources>

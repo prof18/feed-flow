@@ -43,5 +43,11 @@ struct ReaderWebView: View {
     private struct Model: Equatable {
         var baseURL: URL
         var html: String
+
+        // Compare only by URL to prevent unnecessary reloads when the same content
+        // is re-emitted (e.g., when app goes to background), which would reset scroll position
+        static func == (lhs: Model, rhs: Model) -> Bool {
+            lhs.baseURL == rhs.baseURL
+        }
     }
 }

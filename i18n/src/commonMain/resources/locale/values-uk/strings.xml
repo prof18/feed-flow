@@ -249,4 +249,10 @@
     <string name="confirm_button">Підтвердити</string>
     <string name="cancel_button">Скасувати</string>
     <string name="reader_mode_comments_button_content_description">Відкрити коментарі</string>
+    <string name="settings_save_reader_mode_content">Зберегти вміст статті при відкритті для читання офлайн</string>
+    <string name="settings_prefetch_article_content">Попереднє завантаження вмісту статті для читання офлайн</string>
+    <string name="settings_prefetch_article_content_warning">Увімкнення цієї опції збільшить час синхронізації та використання даних, оскільки повний вміст статті завантажуватиметься під час оновлень стрічки. Якщо у вас велика кількість статей, це також може вплинути на продуктивність. Увімкніть цю опцію, лише якщо вам потрібен офлайн-доступ до вмісту статті.</string>
+    <string name="reader_mode_archive_button">Відкрити в archive.is</string>
+    <string name="previous_article">Попередня стаття</string>
+    <string name="next_article">Наступна стаття</string>
 </resources>

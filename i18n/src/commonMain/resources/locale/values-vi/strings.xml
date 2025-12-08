@@ -249,4 +249,10 @@
     <string name="confirm_button">Xác nhận</string>
     <string name="cancel_button">Hủy bỏ</string>
     <string name="reader_mode_comments_button_content_description">Mở bình luận</string>
+    <string name="settings_save_reader_mode_content">Lưu nội dung bài viết khi mở để đọc offline</string>
+    <string name="settings_prefetch_article_content">Tải trước nội dung bài viết để đọc offline</string>
+    <string name="settings_prefetch_article_content_warning">Bật tùy chọn này sẽ làm tăng thời gian đồng bộ hóa và mức sử dụng dữ liệu, vì toàn bộ nội dung bài viết sẽ được tải xuống trong quá trình cập nhật nguồn cấp dữ liệu. Nếu bạn có nhiều bài viết, điều này cũng có thể ảnh hưởng đến hiệu suất. Chỉ bật tùy chọn này nếu bạn cần truy cập offline nội dung bài viết.</string>
+    <string name="reader_mode_archive_button">Mở trong archive.is</string>
+    <string name="previous_article">Bài viết trước</string>
+    <string name="next_article">Bài viết tiếp</string>
 </resources>

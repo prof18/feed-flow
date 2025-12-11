@@ -250,4 +250,9 @@
     <string name="cancel_button">Katkesta</string>
     <string name="reader_mode_comments_button_content_description">Vaata kommentaare</string>
     <string name="settings_save_reader_mode_content">Avamisel salvesta artikli sisu lugemiseks ilma võrguühendust kasutamata</string>
+    <string name="settings_prefetch_article_content">Laadi artikli sisu ennetavalt vallasrežiimis lugemiseks</string>
+    <string name="settings_prefetch_article_content_warning">Kuna artiklite sisu laaditakse uudisvoogude uuendamisel alla, siis selle eelistuse sisselülitamisel pikeneb sünkroonimise aeg ja suureneb andmemaht. Kui artikleid on väga palju, siis kahaneb ka jõudlus. Kasuta seda võimalust vaid siis, kui tahad sisu lugeda vallasrežiimis (ehk ilma võrguühenduseta).</string>
+    <string name="reader_mode_archive_button">Ava teenuses archive.is</string>
+    <string name="previous_article">Näita eelmist artiklit</string>
+    <string name="next_article">Näita järgmist artiklit</string>
 </resources>

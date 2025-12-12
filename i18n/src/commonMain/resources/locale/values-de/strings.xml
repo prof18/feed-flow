@@ -252,4 +252,7 @@
     <string name="next_article">Nächster Artikel</string>
     <string name="reader_mode_archive_button">In archive.is öffnen</string>
     <string name="previous_article">Vorheriger Artikel</string>
+    <string name="settings_save_reader_mode_content">Artikelinhalt beim Öffnen speichern</string>
+    <string name="settings_prefetch_article_content">Artikelinhalt zum Offline-Lesen vorab laden</string>
+    <string name="settings_prefetch_article_content_warning">Die Aktivierung dieser Option wird die Synchronisationsdauer und den Datenverbrauch erhöhen, weil der vollständige Artikelinhalt beim Updaten der Feeds heruntergeladen wird. Bei einer großen Artikelanzahl kann auch die Leistung betroffen sein. Nutzen sie diese Funktion nur wenn sie einen Offline-Zugang zum Artikelinhalt benötigen.</string>
 </resources>

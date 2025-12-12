@@ -55,7 +55,7 @@ internal fun SearchScreen(
 
                 is UIErrorState.FeedErrorState -> {
                     snackbarHostState.showSnackbar(
-                        strings.feedErrorMessage(errorState.feedName, errorState.errorCode.code),
+                        strings.feedErrorMessageImproved(errorState.feedName),
                         duration = SnackbarDuration.Short,
                     )
                 }

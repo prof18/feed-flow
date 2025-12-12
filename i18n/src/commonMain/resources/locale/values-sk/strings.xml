@@ -33,7 +33,6 @@
     <string name="export_dialog_title">Uložiť OPML súbor</string>
     <string name="load_file_error_message">Nie je možné načítať súbor</string>
     <string name="default_browser">Predvolený prehliadač</string>
-    <string name="feed_error_message">Niečo nie je v poriadku s: %s - error code: %s :(</string>
     <string name="author_label">Vytvoril s ❤️</string>
     <string name="open_source_licenses">Open Source licencie</string>
     <string name="about_nav_bar">O aplikácii</string>

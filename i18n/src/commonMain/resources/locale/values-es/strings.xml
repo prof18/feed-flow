@@ -24,7 +24,6 @@
     <string name="generic_error_message">Disculpa, algo salió mal :(</string>
     <string name="load_file_error_message">No se puede cargar el archivo</string>
     <string name="default_browser">Navegador por defecto</string>
-    <string name="feed_error_message">Algo anda mal con: %s - error code: %s :(</string>
     <string name="author_label">Desarrollado con ❤️ por</string>
     <string name="about_nav_bar">Acerca de</string>
     <string name="report_issue_button">Informar de un error</string>

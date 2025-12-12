@@ -28,7 +28,6 @@
     <string name="generic_error_message">عذرًا، حدث خطأ ما :(</string>
     <string name="load_file_error_message">تعذّر تحميل الملف</string>
     <string name="default_browser">المتصفح الافتراضي</string>
-    <string name="feed_error_message">حدث خطأ ما بخصوص: %s - رمز الخطأ: %s :(</string>
     <string name="author_label">تم تطويره بكل ❤️ بواسطة</string>
     <string name="show_on_github">العرض على GitHub</string>
     <string name="open_source_licenses">تراخيص مفتوحة المصدر</string>

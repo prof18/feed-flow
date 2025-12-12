@@ -29,7 +29,6 @@
     <string name="generic_error_message">Przepraszam, coś poszło nie tak :(</string>
     <string name="load_file_error_message">Nie można załadować pliku</string>
     <string name="default_browser">Domyślna przeglądarka</string>
-    <string name="feed_error_message">Coś jest nie tak z: %s - error code: %s :(</string>
     <string name="author_label">Stworzone z ❤️ przez</string>
     <string name="show_on_github">Pokaż na GitHub</string>
     <string name="open_source_licenses">Licencje open source</string>

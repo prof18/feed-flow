@@ -100,7 +100,6 @@ class FeedSourceListViewModel internal constructor(
                             mutableUIErrorState.emit(
                                 UIErrorState.FeedErrorState(
                                     feedName = error.failingSourceName,
-                                    errorCode = error.errorCode,
                                 ),
                             )
                         }

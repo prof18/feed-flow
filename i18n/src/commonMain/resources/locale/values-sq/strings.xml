@@ -28,7 +28,6 @@
     <string name="generic_error_message">Ndjesë, diçka nuk shkoi siç duhet :(</string>
     <string name="load_file_error_message">S’është e mundur të ngarkohet skedari</string>
     <string name="default_browser">Shfletuesi i parazgjedhur</string>
-    <string name="feed_error_message">Diçka nuk shkon me: %s - kodi i gabimit: %s :(</string>
     <string name="author_label">Krijuar me ❤️ nga</string>
     <string name="show_on_github">Shfaq në GitHub</string>
     <string name="open_source_licenses">Licencat open source</string>

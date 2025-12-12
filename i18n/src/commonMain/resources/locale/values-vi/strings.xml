@@ -78,7 +78,6 @@
     <string name="no_icloud_sync_yet">Dữ liệu chưa được đồng bộ hóa với iCloud. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
     <string name="settings_toggle_show_read_articles">Vẫn hiện các bài viết đã đọc</string>
     <string name="about_button">Giới thiệu</string>
-    <string name="feed_error_message">Xảy ra lỗi với: %s - error code: %s :(</string>
     <string name="dropbox_sync_common_description">Kết nối tài khoản Dropbox của bạn để đồng bộ hóa các nguồn tin, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn.</string>
     <string name="last_download">Tải xuống lần cuối: %s</string>
     <string name="wrong_link_report_title">Các nguồn tin sau đây không được thêm vào vì chúng không hợp lệ</string>

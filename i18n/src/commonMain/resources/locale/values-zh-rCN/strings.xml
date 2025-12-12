@@ -71,7 +71,6 @@
     <string name="default_browser">默认浏览器</string>
     <string name="export_started_message">正在生成导出</string>
     <string name="load_file_error_message">无法加载文件</string>
-    <string name="feed_error_message">%s 出了点问题 - 错误代码：%s :(</string>
     <string name="open_source_licenses">开放源代码许可</string>
     <string name="about_the_app">FeedFlow 是一款秉承作者个人理念设计的简约 RSS 阅读器。文章在原始网站上打开，您可以选用您信赖的隐私浏览器，与日常浏览互不干扰。另外，FeedFlow 还提供阅读模式，畅享沉浸式阅读体验。\n您可以从 OPML 文件导入或导出您的 RSS 收藏。</string>
     <string name="retry_button">重试</string>

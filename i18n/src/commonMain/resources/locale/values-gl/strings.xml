@@ -33,7 +33,6 @@
     <string name="export_started_message">Creando a exportación</string>
     <string name="generic_error_message">Lamentámolo, pero houbo un fallo :(</string>
     <string name="default_browser">Navegador predeterminado</string>
-    <string name="feed_error_message">Houbo un fallo con: %s - error code: %s :(</string>
     <string name="author_label">Creada con ❤️ por</string>
     <string name="show_on_github">Mostrar en GitHub</string>
     <string name="open_source_licenses">Licenzas de código aberto</string>

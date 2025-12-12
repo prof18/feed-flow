@@ -13,7 +13,6 @@
     <string name="export_feeds_button">Изнасяне на емисии в OPML</string>
     <string name="about_button">Относно</string>
     <string name="default_browser">Браузър по подразбиране</string>
-    <string name="feed_error_message">Нещо не е наред с: %s - error code: %s :(</string>
     <string name="author_label">Разработено с ❤️ от</string>
     <string name="show_on_github">Вижте в GitHub</string>
     <string name="open_source_licenses">Лицензи с отворен код</string>

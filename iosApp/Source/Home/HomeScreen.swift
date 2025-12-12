@@ -131,28 +131,28 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.errorState {
                 switch onEnum(of: state) {
-                case .databaseError:
+                case let .databaseError(errorState):
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: feedFlowStrings.databaseError(state.errorCode.code),
+                            title: feedFlowStrings.databaseError(errorState.errorCode.code),
                             subtitle: nil,
                             showBanner: true
                         )
                     )
 
-                case let .feedErrorState(state):
+                case let .feedErrorState(feedError):
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: feedFlowStrings.feedErrorMessage(state.feedName, state.errorCode.code),
+                            title: feedFlowStrings.feedErrorMessageImproved(feedError.feedName),
                             subtitle: nil,
                             showBanner: true
                         )
                     )
 
-                case .syncError:
+                case let .syncError(errorState):
                     self.appState.snackbarQueue.append(
                         SnackbarData(
-                            title: feedFlowStrings.syncErrorMessage(state.errorCode.code),
+                            title: feedFlowStrings.syncErrorMessage(errorState.errorCode.code),
                             subtitle: nil,
                             showBanner: true
                         )

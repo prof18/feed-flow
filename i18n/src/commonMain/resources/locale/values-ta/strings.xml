@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_error_message">ஏதோ தவறு: %s - error code: %s :(</string>
     <string name="report_issue_button">சிக்கல் அறிக்கை</string>
     <string name="import_export_opml_title">இறக்குமதி மற்றும் ஏற்றுமதி</string>
     <string name="new_release_available_title">ஃபீட்ஃப்ளோவின் புதிய பதிப்பு கிடைக்கிறது:</string>

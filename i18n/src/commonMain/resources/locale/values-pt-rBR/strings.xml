@@ -28,7 +28,6 @@
     <string name="generic_error_message">Desculpe, algo deu errado :(</string>
     <string name="load_file_error_message">O arquivo foi incapaz de carregar</string>
     <string name="default_browser">Navegador padrão</string>
-    <string name="feed_error_message">Algo está errado com: %s - error code: %s :(</string>
     <string name="author_label">Desenvolvido com ❤️ por</string>
     <string name="show_on_github">Mostrar no GitHub</string>
     <string name="open_source_licenses">Licenças Open source</string>

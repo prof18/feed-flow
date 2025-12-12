@@ -29,7 +29,7 @@
     <string name="generic_error_message">Sorry, something went wrong :(</string>
     <string name="load_file_error_message">Unable to load file</string>
     <string name="default_browser">Default browser</string>
-    <string name="feed_error_message">Something is wrong with: %s - error code: %s :(</string>
+    <string name="feed_error_message_improved">Couldn’t load "%s". It may be unavailable, or your internet connection might be down.</string>
     <string name="author_label">Developed with ❤️ by</string>
     <string name="show_on_github">Show on GitHub</string>
     <string name="open_source_licenses">Open source licenses</string>

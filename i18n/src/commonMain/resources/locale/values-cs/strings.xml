@@ -30,7 +30,6 @@
     <string name="export_started_message">Generování exportu</string>
     <string name="generic_error_message">Omlouváme se, něco se pokazilo :(</string>
     <string name="load_file_error_message">Nelze načíst soubor</string>
-    <string name="feed_error_message">Vyskytla se chyba: %s - error code: %s :(</string>
     <string name="author_label">Vytvořeno s ❤️</string>
     <string name="show_on_github">Zobrazit na GitHubu</string>
     <string name="open_source_licenses">Open source licence</string>

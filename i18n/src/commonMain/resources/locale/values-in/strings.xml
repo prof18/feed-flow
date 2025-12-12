@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_done">Selesai</string>
-    <string name="feed_error_message">Ada yang salah dengan: %s - error code: %s :(</string>
     <string name="icloud_sync_description">Hubungkan akun iCloud Anda untuk menyelaraskan langganan umpan, kategori, artikel yang telah dibaca dan ditandai antara perangkat iOS, iPadOS, dan macOS Anda. Data akan disimpan dalam folder khusus aplikasi; FeedFlow tidak akan memiliki akses ke berkas Anda</string>
     <string name="feed_added_message">Umpan %s ditambahkan</string>
     <string name="about_the_app">FeedFlow adalah Pembaca RSS minimalis yang didasarkan pada pendapat pribadi penulis. Artikel dibuka di situs web masing-masing, dan Anda dapat memilih peramban favorit yang berfokus pada privasi untuk memisahkan pengalaman membaca Anda dari peramban utama. Jika Anda ingin menghindari peramban, FeedFlow menawarkan mode pembaca untuk menikmati konten artikel tanpa gangguan apa pun.\nAnda dapat mengimpor dan mengekspor koleksi RSS Anda dari dan ke berkas OPML.</string>

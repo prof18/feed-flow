@@ -25,7 +25,6 @@
     <string name="export_feeds_button">יצוא עדכונים ל-OPML</string>
     <string name="load_file_error_message">לא ניתן לטעון את הקובץ</string>
     <string name="default_browser">דפדפן ברירת מחדל</string>
-    <string name="feed_error_message">משהו לא בסדר עם: %s - error code: %s :(</string>
     <string name="open_source_licenses">רישיונות קוד פתוח</string>
     <string name="open_website_button">פתח אתר</string>
     <string name="database_error">משהו השתבש במהלך אחזור העדכונים. אנא נסה שוב או הפעל את האפליקציה מחדש - error code: %s :(</string>

@@ -23,7 +23,6 @@
     <string name="delete_feed">Slett</string>
     <string name="about_nav_bar">Om</string>
     <string name="open_source_licenses">Frie lisenser</string>
-    <string name="feed_error_message">Noe er galt med %s - error code: %s :(</string>
     <string name="export_dialog_title">Lagre OPML-fil</string>
     <string name="empty_feed_message">Intet mer å lese her.</string>
     <string name="export_feeds_button">Eksporter informasjonskanaler til OPML</string>

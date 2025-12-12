@@ -7,6 +7,10 @@ sealed interface ErrorCode {
     val code: String
 }
 
+data object NoCode : ErrorCode {
+    override val code: String = ""
+}
+
 // Sync Upload Errors (SU)
 sealed class SyncUploadError(override val code: String) : ErrorCode {
     data object DatabaseFileGeneration : SyncUploadError("SU1")
@@ -55,9 +59,4 @@ sealed class FeedSyncError(override val code: String) : ErrorCode {
     data object EditCategoryNameFailed : FeedSyncError("FS9")
     data object DeleteCategoryFailed : FeedSyncError("FS9")
     data object SyncFeedsFailed : FeedSyncError("FS10")
-}
-
-// Feed Fetch Errors (FF)
-sealed class FeedFetchError(override val code: String) : ErrorCode {
-    data object RSSFeedFetchFailed : FeedFetchError("FF1")
 }

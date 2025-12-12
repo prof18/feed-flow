@@ -29,7 +29,6 @@
     <string name="generic_error_message">問題が発生しました :(</string>
     <string name="load_file_error_message">ファイルを読み込めませんでした</string>
     <string name="default_browser">デフォルトのブラウザ</string>
-    <string name="feed_error_message">%s で問題が発生しました - error code: %s :(</string>
     <string name="author_label">❤️ によって開発されています。開発者:</string>
     <string name="show_on_github">GitHubで表示</string>
     <string name="open_source_licenses">オープンソースライセンス</string>

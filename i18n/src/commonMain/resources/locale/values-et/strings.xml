@@ -21,7 +21,6 @@
     <string name="generic_error_message">Vabandust, midagi läks valesti :(</string>
     <string name="load_file_error_message">Faili laadimine ei õnnestu</string>
     <string name="default_browser">Vaikimisi brauser</string>
-    <string name="feed_error_message">Midagi läks siin valesti: %s - error code: %s :(</string>
     <string name="author_label">Suure ❤️\'ga arendanud</string>
     <string name="show_on_github">Vaata GitHubis</string>
     <string name="open_source_licenses">Avatud lähtekoodiga tarkvara litsentsid</string>

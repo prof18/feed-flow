@@ -21,7 +21,6 @@
     <string name="export_started_message">Генерація експорту</string>
     <string name="load_file_error_message">Не вдалося завантажити файл</string>
     <string name="default_browser">Стандартний переглядач</string>
-    <string name="feed_error_message">Щось не так з: %s - error code: %s :(</string>
     <string name="author_label">Розроблено з ❤️</string>
     <string name="about_nav_bar">Про</string>
     <string name="report_issue_button">Повідомити про проблему</string>

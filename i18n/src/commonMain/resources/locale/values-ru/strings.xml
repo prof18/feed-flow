@@ -21,7 +21,6 @@
     <string name="export_started_message">Генерация экспорта</string>
     <string name="generic_error_message">Извините, что-то пошло не так :(</string>
     <string name="load_file_error_message">Невозможно загрузить файл</string>
-    <string name="feed_error_message">Что-то не так с: %s - error code: %s :(</string>
     <string name="author_label">Разработано с ❤️ от</string>
     <string name="show_on_github">Глянуть на Гитхабе</string>
     <string name="open_source_licenses">Открытые лицензии</string>

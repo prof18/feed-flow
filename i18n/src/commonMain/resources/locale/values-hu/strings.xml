@@ -31,7 +31,6 @@
     <string name="wrong_link_report_title">A következő hírforrások nem lettek hozzáadva, mert érvénytelenek</string>
     <string name="open_source_licenses">Nyílt forráskódú licencek</string>
     <string name="browser_selection_button">Böngésző</string>
-    <string name="feed_error_message">Hiba történt a következővel: %s - hibakód: %s :(</string>
     <string name="issue_report_title">FeedFlow alkalmazással kapcsolatos probléma jelentése</string>
     <string name="export_dialog_title">OPML-fájl mentése</string>
     <string name="new_release_available_title">A FeedFlow új verziója érhető el:</string>

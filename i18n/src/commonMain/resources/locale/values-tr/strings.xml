@@ -29,7 +29,6 @@
     <string name="generic_error_message">Üzgünüz, bir şeyler ters gitti :(</string>
     <string name="load_file_error_message">Dosya yüklenemedi</string>
     <string name="default_browser">Varsayılan tarayıcı</string>
-    <string name="feed_error_message">Şunda bir sorun var: %s - error code: %s :(</string>
     <string name="author_label">❤️ ile geliştiren</string>
     <string name="show_on_github">GitHub\'da göster</string>
     <string name="open_source_licenses">Açık kaynak lisansları</string>

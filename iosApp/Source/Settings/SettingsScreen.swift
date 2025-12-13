@@ -50,8 +50,7 @@ struct SettingsScreen: View {
 
     var body: some View {
         @Bindable var appState = appState
-
-        settingsContent
+        let viewWithTasks = settingsContent
             .snackbar(messageQueue: $appState.snackbarQueue)
             .task {
                 for await state in vmStoreOwner.instance.settingsState {
@@ -80,6 +79,19 @@ struct SettingsScreen: View {
                     self.scaleFactor = Double(state.scaleFactor)
                 }
             }
+
+        return viewWithTasks
+            .applying(applyPreferenceChangeHandlers)
+            .applying(applyVisibilityChangeHandlers)
+            .applying(applyLayoutChangeHandlers)
+            .applying { view in
+                applyThemeChangeHandler(to: view, appState: appState)
+            }
+    }
+
+    @ViewBuilder
+    private func applyPreferenceChangeHandlers<V: View>(to view: V) -> some View {
+        view
             .onChange(of: isMarkReadWhenScrollingEnabled) {
                 vmStoreOwner.instance.updateMarkReadWhenScrolling(
                     value: isMarkReadWhenScrollingEnabled)
@@ -100,6 +112,21 @@ struct SettingsScreen: View {
                 vmStoreOwner.instance.updateRemoveTitleFromDescription(
                     value: isRemoveTitleFromDescriptionEnabled)
             }
+            .onChange(of: autoDeletePeriod) {
+                vmStoreOwner.instance.updateAutoDeletePeriod(period: autoDeletePeriod)
+            }
+            .onChange(of: isCrashReportingEnabled) {
+                vmStoreOwner.instance.updateCrashReporting(value: isCrashReportingEnabled)
+                #if !DEBUG
+                    Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(
+                        isCrashReportingEnabled)
+                #endif
+            }
+    }
+
+    @ViewBuilder
+    private func applyVisibilityChangeHandlers<V: View>(to view: V) -> some View {
+        view
             .onChange(of: isHideDescriptionEnabled) {
                 vmStoreOwner.instance.updateHideDescription(value: isHideDescriptionEnabled)
                 if isHideDescriptionEnabled {
@@ -119,16 +146,11 @@ struct SettingsScreen: View {
             .onChange(of: isHideDateEnabled) {
                 vmStoreOwner.instance.updateHideDate(value: isHideDateEnabled)
             }
-            .onChange(of: autoDeletePeriod) {
-                vmStoreOwner.instance.updateAutoDeletePeriod(period: autoDeletePeriod)
-            }
-            .onChange(of: isCrashReportingEnabled) {
-                vmStoreOwner.instance.updateCrashReporting(value: isCrashReportingEnabled)
-                #if !DEBUG
-                    Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(
-                        isCrashReportingEnabled)
-                #endif
-            }
+    }
+
+    @ViewBuilder
+    private func applyLayoutChangeHandlers<V: View>(to view: V) -> some View {
+        view
             .onChange(of: leftSwipeActionType) {
                 vmStoreOwner.instance.updateSwipeAction(
                     direction: .left, action: leftSwipeActionType
@@ -148,6 +170,14 @@ struct SettingsScreen: View {
             .onChange(of: feedLayout) {
                 vmStoreOwner.instance.updateFeedLayout(feedLayout: feedLayout)
             }
+    }
+
+    @ViewBuilder
+    private func applyThemeChangeHandler<V: View>(
+        to view: V,
+        appState: AppState
+    ) -> some View {
+        view
             .onChange(of: themeMode) {
                 vmStoreOwner.instance.updateThemeMode(mode: themeMode)
                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -408,5 +438,12 @@ private struct DangerSection: View {
                 Text(feedFlowStrings.settingsClearDownloadedArticlesDialogMessage)
             }
         }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func applying<T: View>(_ transform: (Self) -> T) -> T {
+        transform(self)
     }
 }

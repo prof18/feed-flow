@@ -225,6 +225,9 @@ internal fun ApplicationScope.MainWindow(
                         onHideImagesUpdate = { enabled ->
                             settingsViewModel.updateHideImages(enabled)
                         },
+                        onHideDateUpdate = { enabled ->
+                            settingsViewModel.updateHideDate(enabled)
+                        },
                         onRemoveTitleFromDescUpdate = { enabled ->
                             settingsViewModel.updateRemoveTitleFromDescription(enabled)
                         },

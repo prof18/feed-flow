@@ -21,6 +21,7 @@ import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.FeedListFontSettings
+import com.prof18.feedflow.shared.ui.settings.HideDateSwitch
 import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
 import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
 import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
@@ -61,6 +62,7 @@ internal fun FeedListAppearanceDialog(
                     },
                     isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
                     isHideImagesEnabled = settingsState.isHideImagesEnabled,
+                    isHideDateEnabled = settingsState.isHideDateEnabled,
                     dateFormat = settingsState.dateFormat,
                     feedLayout = settingsState.feedLayout,
                 )
@@ -87,6 +89,13 @@ internal fun FeedListAppearanceDialog(
                     isHideImagesEnabled = settingsState.isHideImagesEnabled,
                     setHideImages = {
                         callbacks.onHideImagesUpdate(!settingsState.isHideImagesEnabled)
+                    },
+                )
+
+                HideDateSwitch(
+                    isHideDateEnabled = settingsState.isHideDateEnabled,
+                    setHideDate = {
+                        callbacks.onHideDateUpdate(!settingsState.isHideDateEnabled)
                     },
                 )
 
@@ -132,6 +141,7 @@ internal data class FeedListAppearanceCallbacks(
     val onFeedLayoutUpdate: (FeedLayout) -> Unit,
     val onHideDescriptionUpdate: (Boolean) -> Unit,
     val onHideImagesUpdate: (Boolean) -> Unit,
+    val onHideDateUpdate: (Boolean) -> Unit,
     val onRemoveTitleFromDescUpdate: (Boolean) -> Unit,
     val onDateFormatUpdate: (DateFormat) -> Unit,
     val onSwipeActionUpdate: (SwipeDirection, SwipeActionType) -> Unit,

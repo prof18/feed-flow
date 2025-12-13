@@ -53,7 +53,7 @@ struct FeedFontSection: View {
                             ),
                             pubDateMillis: nil,
                             isRead: false,
-                            dateString: dateFormat == .normal ? "25/12" : "12/25",
+                            dateString: isHideDateEnabled ? nil : (dateFormat == .normal ? "25/12" : "12/25"),
                             commentsUrl: nil,
                             isBookmarked: false
                         ),

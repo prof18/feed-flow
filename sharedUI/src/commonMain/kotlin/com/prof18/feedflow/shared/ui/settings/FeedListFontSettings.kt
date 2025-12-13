@@ -26,6 +26,7 @@ fun FeedListFontSettings(
     feedLayout: FeedLayout,
     isHideDescriptionEnabled: Boolean,
     isHideImagesEnabled: Boolean,
+    isHideDateEnabled: Boolean,
     dateFormat: DateFormat,
     modifier: Modifier = Modifier,
     updateFontScale: (Int) -> Unit,
@@ -66,9 +67,13 @@ fun FeedListFontSettings(
                             fetchFailed = false,
                         ),
                         pubDateMillis = null,
-                        dateString = when (dateFormat) {
-                            DateFormat.NORMAL -> "25/12"
-                            DateFormat.AMERICAN -> "12/25"
+                        dateString = if (isHideDateEnabled) {
+                            null
+                        } else {
+                            when (dateFormat) {
+                                DateFormat.NORMAL -> "25/12"
+                                DateFormat.AMERICAN -> "12/25"
+                            }
                         },
                         commentsUrl = null,
                         isRead = false,

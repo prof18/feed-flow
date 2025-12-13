@@ -3,6 +3,7 @@ package com.prof18.feedflow.desktop.home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuScope
@@ -22,6 +23,7 @@ import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import java.awt.Desktop
 import java.net.URI
+import java.util.*
 
 data class MenuBarActions(
     val onRefreshClick: () -> Unit,
@@ -256,6 +258,18 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 text = LocalFeedFlowStrings.current.settingsCrashReporting,
                 checked = state.settingsState.isCrashReportingEnabled,
                 onCheckedChange = settings.setCrashReportingEnabled,
+            )
+
+            val uriHandler = LocalUriHandler.current
+            Item(
+                text = LocalFeedFlowStrings.current.aboutMenuFaq,
+                onClick = {
+                    runCatching {
+                        val languageCode = Locale.getDefault().language
+                        val faqUrl = "https://feedflow.dev/$languageCode/faq"
+                        uriHandler.openUri(faqUrl)
+                    }
+                },
             )
 
             if (getDesktopOS().isLinux()) {

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+{{ partial "head.html" . }}
+
+<body>
+    <div id="content">
+        {{ block "main" . }}{{ end }}
+    </div>
+
+    <!-- Scripts and Styles from footer.html (but no footer UI) -->
+    {{ $style := resources.Get "scss/non-critical.scss" | css.Sass | minify }}
+    <link href="{{ $style.Permalink }}" rel="stylesheet" />
+    {{ $vendor := resources.Get "js/vendor.js" | minify }}
+    <script src="{{ $vendor.Permalink }}"></script>
+    {{ $script := resources.Get "js/script.js" | minify }}
+    <script src="{{ $script.Permalink }}"></script>
+
+</body>
+
+</html>

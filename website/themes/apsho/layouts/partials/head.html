@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="{{ "themify/themify.css" | absURL }}">
 
   {{ "<!-- Critical CSS -->" | safeHTML }}
-  {{ $stylex := resources.Get "scss/critical.scss" | resources.ToCSS | minify }}
+  {{ $stylex := resources.Get "scss/critical.scss" | css.Sass | minify }}
   <link href="{{ $stylex.Permalink }}" rel="stylesheet" />
 
   {{ "<!--Favicon-->" | safeHTML }}

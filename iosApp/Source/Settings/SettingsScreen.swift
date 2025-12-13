@@ -227,7 +227,7 @@ struct SettingsScreen: View {
                 DangerSection {
                     vmStoreOwner.instance.clearDownloadedArticleContent()
                 }
-                AppSection(openURL: openURL, isCrashReportingEnabled: $isCrashReportingEnabled)
+                AppSection(openURL: openURL, isCrashReportingEnabled: $isCrashReportingEnabled, appState: appState, dismiss: dismiss)
             }
             .scrollContentBackground(.hidden)
             .toolbar {
@@ -382,6 +382,8 @@ private struct BehaviourSection: View {
 private struct AppSection: View {
     let openURL: OpenURLAction
     @Binding var isCrashReportingEnabled: Bool
+    let appState: AppState
+    let dismiss: DismissAction
 
     var body: some View {
         Section(feedFlowStrings.settingsAppTitle) {
@@ -410,6 +412,18 @@ private struct AppSection: View {
                 )
             }.onTapGesture {
                 isCrashReportingEnabled.toggle()
+            }
+
+            Button {
+                let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
+                let faqUrl = "https://feedflow.dev/\(languageCode)/faq"
+
+                if let url = URL(string: faqUrl) {
+                    dismiss()
+                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                }
+            } label: {
+                Label(feedFlowStrings.aboutMenuFaq, systemImage: "questionmark")
             }
 
             NavigationLink(destination: AboutScreen()) {

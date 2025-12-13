@@ -1,6 +1,7 @@
 # MAIN base
 baseURL = "https://www.feedflow.dev/"
 defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false
 title = "FeedFlow | RSS Reader"
 description = "FeedFlow - RSS Reader for Android, iOS and MacOS"
 theme = "apsho"
@@ -10,28 +11,31 @@ theme = "apsho"
   [languages.en]
     languageCode = "en-us"
     languageName = "English"
+    contentDir = "content/en"
     weight = 1
     title = "FeedFlow | RSS Reader"
     [languages.en.params]
       description = "FeedFlow - RSS Reader for Android, iOS and MacOS"
 
   # Additional languages can be added here following Weblate translations
-  # Example:
-  # [languages.it]
-  #   languageCode = "it"
-  #   languageName = "Italiano"
-  #   weight = 2
-  #   title = "FeedFlow | Lettore RSS"
+  [languages.it]
+    languageCode = "it"
+    languageName = "Italiano"
+    contentDir = "content/it"
+    weight = 2
+    title = "FeedFlow | Lettore RSS"
 
 # Footer Sitemap
 [[menu.sitemap]]
     name = "Home"
     url = "#"
     weight = 1
-[[menu.sitemap]]
-    name = "FAQ"
-    url = "/faq/"
-    weight = 2
+#[[menu.sitemap]]
+#    name = "FAQ"
+#    url = "/faq/"
+#    weight = 2
+#    [menu.sitemap.params]
+#        newTab = true
 [[menu.sitemap]]
     name = "Show on Github"
     url = "https://github.com/prof18/feed-flow"

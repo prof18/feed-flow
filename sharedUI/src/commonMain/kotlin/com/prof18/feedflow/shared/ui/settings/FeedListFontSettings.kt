@@ -14,6 +14,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemContainer
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemView
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
@@ -28,6 +29,7 @@ fun FeedListFontSettings(
     isHideImagesEnabled: Boolean,
     isHideDateEnabled: Boolean,
     dateFormat: DateFormat,
+    timeFormat: TimeFormat,
     modifier: Modifier = Modifier,
     updateFontScale: (Int) -> Unit,
 ) {
@@ -70,10 +72,15 @@ fun FeedListFontSettings(
                         dateString = if (isHideDateEnabled) {
                             null
                         } else {
-                            when (dateFormat) {
+                            val datePart = when (dateFormat) {
                                 DateFormat.NORMAL -> "25/12"
                                 DateFormat.AMERICAN -> "12/25"
                             }
+                            val timePart = when (timeFormat) {
+                                TimeFormat.HOURS_24 -> "14:30"
+                                TimeFormat.HOURS_12 -> "2:30 PM"
+                            }
+                            "$datePart - $timePart"
                         },
                         commentsUrl = null,
                         isRead = false,

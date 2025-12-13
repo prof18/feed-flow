@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
@@ -26,6 +27,7 @@ import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
 import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
 import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
 import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
+import com.prof18.feedflow.shared.ui.settings.TimeFormatSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -64,6 +66,7 @@ internal fun FeedListAppearanceDialog(
                     isHideImagesEnabled = settingsState.isHideImagesEnabled,
                     isHideDateEnabled = settingsState.isHideDateEnabled,
                     dateFormat = settingsState.dateFormat,
+                    timeFormat = settingsState.timeFormat,
                     feedLayout = settingsState.feedLayout,
                 )
 
@@ -116,6 +119,13 @@ internal fun FeedListAppearanceDialog(
                     },
                 )
 
+                TimeFormatSelector(
+                    currentFormat = settingsState.timeFormat,
+                    onFormatSelected = { format ->
+                        callbacks.onTimeFormatUpdate(format)
+                    },
+                )
+
                 SwipeActionSelector(
                     direction = SwipeDirection.LEFT,
                     currentAction = settingsState.leftSwipeActionType,
@@ -144,5 +154,6 @@ internal data class FeedListAppearanceCallbacks(
     val onHideDateUpdate: (Boolean) -> Unit,
     val onRemoveTitleFromDescUpdate: (Boolean) -> Unit,
     val onDateFormatUpdate: (DateFormat) -> Unit,
+    val onTimeFormatUpdate: (TimeFormat) -> Unit,
     val onSwipeActionUpdate: (SwipeDirection, SwipeActionType) -> Unit,
 )

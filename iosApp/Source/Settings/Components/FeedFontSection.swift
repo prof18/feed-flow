@@ -54,7 +54,7 @@ struct FeedFontSection: View {
                             ),
                             pubDateMillis: nil,
                             isRead: false,
-                            dateString: isHideDateEnabled ? nil : (dateFormat == .normal ? "25/12" : "12/25"),
+                            dateString: isHideDateEnabled ? nil : formatDateTimeExample(dateFormat: dateFormat, timeFormat: timeFormat),
                             commentsUrl: nil,
                             isBookmarked: false
                         ),
@@ -165,4 +165,10 @@ struct FeedFontSection: View {
             }
         }
     }
+}
+
+private func formatDateTimeExample(dateFormat: DateFormat, timeFormat: TimeFormat) -> String {
+    let datePart = dateFormat == .normal ? "25/12" : "12/25"
+    let timePart = timeFormat == .hours24 ? "14:30" : "2:30 PM"
+    return "\(datePart) - \(timePart)"
 }

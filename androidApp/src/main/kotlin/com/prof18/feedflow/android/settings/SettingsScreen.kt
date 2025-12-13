@@ -403,6 +403,7 @@ private fun SettingsScreenContent(
                     fontSizes = fontSizes,
                     updateFontScale = updateFontScale,
                     dateFormat = settingsState.dateFormat,
+                    timeFormat = settingsState.timeFormat,
                     feedLayout = settingsState.feedLayout,
                 )
             }

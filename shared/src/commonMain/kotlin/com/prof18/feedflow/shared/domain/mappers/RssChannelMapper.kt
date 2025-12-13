@@ -28,13 +28,9 @@ internal class RssChannelMapper(
                 // Check for URL in enclosures (e.g., podcasts, media items)
                 rssItem.rawEnclosure?.url
             }
-            val pubDate = rssItem.pubDate
-
-            val dateMillis = if (pubDate != null) {
-                dateFormatter.getDateMillisFromString(pubDate)
-            } else {
-                null
-            }
+            val dateMillis: Long = rssItem.pubDate?.let {
+                dateFormatter.getDateMillisFromString(it)
+            } ?: dateFormatter.currentTimeMillis()
 
             val imageUrl = when {
                 rssItem.youtubeItemData?.thumbnailUrl != null -> {

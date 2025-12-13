@@ -3,7 +3,6 @@ package com.prof18.feedflow.desktop.home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuScope
@@ -260,17 +259,18 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onCheckedChange = settings.setCrashReportingEnabled,
             )
 
-            val uriHandler = LocalUriHandler.current
-            Item(
-                text = LocalFeedFlowStrings.current.aboutMenuFaq,
-                onClick = {
-                    runCatching {
-                        val languageCode = Locale.getDefault().language
-                        val faqUrl = "https://feedflow.dev/$languageCode/faq"
-                        uriHandler.openUri(faqUrl)
-                    }
-                },
-            )
+// TODO: Enabled FAQ button when faqs are ready on the website
+//            val uriHandler = LocalUriHandler.current
+//            Item(
+//                text = LocalFeedFlowStrings.current.aboutMenuFaq,
+//                onClick = {
+//                    runCatching {
+//                        val languageCode = Locale.getDefault().language
+//                        val faqUrl = "https://feedflow.dev/$languageCode/faq"
+//                        uriHandler.openUri(faqUrl)
+//                    }
+//                },
+//            )
 
             if (getDesktopOS().isLinux()) {
                 Separator()

@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Feed
 import androidx.compose.material.icons.automirrored.outlined.Article
-import androidx.compose.material.icons.automirrored.outlined.Help
 import androidx.compose.material.icons.automirrored.outlined.PlaylistAddCheck
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.outlined.AddCircleOutline
@@ -23,7 +22,6 @@ import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.CloudDownload
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
-import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MarkAsUnread
@@ -209,10 +207,11 @@ fun SettingsScreen(
         },
         openInAppBrowser = { faqUrl ->
             browserManager.openWithInAppBrowser(faqUrl, context)
-        }
+        },
     )
 }
 
+@Suppress("UnusedParameter")
 @Composable
 private fun SettingsScreenContent(
     browsers: ImmutableList<Browser>,
@@ -546,17 +545,18 @@ private fun SettingsScreenContent(
                 }
             }
 
-            item {
-                SettingItem(
-                    title = LocalFeedFlowStrings.current.aboutMenuFaq,
-                    icon = Icons.Outlined.QuestionMark,
-                    onClick = {
-                        val languageCode = java.util.Locale.getDefault().language
-                        val faqUrl = "https://feedflow.dev/$languageCode/faq"
-                        openInAppBrowser(faqUrl)
-                    },
-                )
-            }
+// TODO: Enabled FAQ button when faqs are ready on the website
+//            item {
+//                SettingItem(
+//                    title = LocalFeedFlowStrings.current.aboutMenuFaq,
+//                    icon = Icons.Outlined.QuestionMark,
+//                    onClick = {
+//                        val languageCode = java.util.Locale.getDefault().language
+//                        val faqUrl = "https://feedflow.dev/$languageCode/faq"
+//                        openInAppBrowser(faqUrl)
+//                    },
+//                )
+//            }
 
             item {
                 SettingItem(

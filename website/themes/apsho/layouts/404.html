@@ -1,0 +1,38 @@
+{{ define "main" }}
+<section class="section-padding" style="padding: 100px 0; text-align: center;">
+  <div class="container">
+    <h1 style="font-size: 4rem; margin-bottom: 20px;">404</h1>
+    <h2 style="margin-bottom: 30px;">Page Not Found</h2>
+    <p style="margin-bottom: 40px; font-size: 1.2rem;">The page you are looking for does not exist.</p>
+    <a href="/"
+      style="padding: 12px 30px; background-color: #667eea; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">Go
+      Home</a>
+  </div>
+</section>
+
+<script>
+  (function () {
+    // Check if the path starts with a language code (e.g. /fr/, /pt-br/, /pt_BR/)
+    var path = window.location.pathname;
+    // Match /xx/ or /xx-xx/ or /xx_xx/ at the start
+    var langRegex = /^\/[a-z]{2,3}(?:[-_][a-zA-Z0-9]+)?\/(.*)/;
+    var match = path.match(langRegex);
+
+    if (match) {
+      // It's a localized path (e.g. /fr/faq/) that doesn't exist
+      // Redirect to the English version (root relative, e.g. /faq/)
+      var newPath = "/" + match[1];
+
+      // Optional: Prevent redirect loops if the english page is also 404
+      // But since we are already on the 404 page, we can just try.
+      // If /faq/ also 404s, the regex won't match on the next load (since /faq/ has no lang prefix)
+      // so it will show the 404 page normally.
+
+      console.log("Redirecting to English version: " + newPath);
+
+      // Replace current history entry so back button works better
+      window.location.replace(newPath);
+    }
+  })();
+</script>
+{{ end }}

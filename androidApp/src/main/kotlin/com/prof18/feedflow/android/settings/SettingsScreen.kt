@@ -849,6 +849,7 @@ private fun AutoDeletePeriodSelector(
             Text(
                 text = when (currentPeriod) {
                     AutoDeletePeriod.DISABLED -> strings.settingsAutoDeletePeriodDisabled
+                    AutoDeletePeriod.ONE_DAY -> strings.settingsAutoDeletePeriodOneDay
                     AutoDeletePeriod.ONE_WEEK -> strings.settingsAutoDeletePeriodOneWeek
                     AutoDeletePeriod.TWO_WEEKS -> strings.settingsAutoDeletePeriodTwoWeeks
                     AutoDeletePeriod.ONE_MONTH -> strings.settingsAutoDeletePeriodOneMonth

@@ -13,8 +13,8 @@ import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.utils.getDesktopOS
-import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.core.utils.isLinux
+import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
@@ -23,7 +23,6 @@ import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import java.awt.Desktop
 import java.net.URI
-import java.util.*
 
 data class MenuBarActions(
     val onRefreshClick: () -> Unit,
@@ -148,6 +147,24 @@ fun FrameWindowScope.FeedFlowMenuBar(
             DebugMenu(
                 showDebugMenu = state.showDebugMenu,
                 deleteFeeds = actions.deleteFeeds,
+            )
+
+            Separator()
+
+            if (getDesktopOS().isLinux()) {
+                Item(
+                    text = LocalFeedFlowStrings.current.supportTheProject,
+                    onClick = {
+                        runCatching {
+                            Desktop.getDesktop().browse(URI("https://www.paypal.me/MarcoGomiero"))
+                        }
+                    },
+                )
+            }
+
+            Item(
+                text = LocalFeedFlowStrings.current.aboutButton,
+                onClick = actions.onAboutClick,
             )
         }
 
@@ -300,35 +317,18 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onCheckedChange = settings.setCrashReportingEnabled,
             )
 
-// TODO: Enabled FAQ button when faqs are ready on the website
-//            val uriHandler = LocalUriHandler.current
-//            Item(
-//                text = LocalFeedFlowStrings.current.aboutMenuFaq,
-//                onClick = {
-//                    runCatching {
-//                        val languageCode = Locale.getDefault().language
-//                        val faqUrl = "https://feedflow.dev/$languageCode/faq"
-//                        uriHandler.openUri(faqUrl)
-//                    }
-//                },
-//            )
-
-            if (getDesktopOS().isLinux()) {
-                Separator()
-                Item(
-                    text = LocalFeedFlowStrings.current.supportTheProject,
-                    onClick = {
-                        runCatching {
-                            Desktop.getDesktop().browse(URI("https://www.paypal.me/MarcoGomiero"))
-                        }
-                    },
-                )
-            }
-
-            Item(
-                text = LocalFeedFlowStrings.current.aboutButton,
-                onClick = actions.onAboutClick,
-            )
+            // TODO: Enabled FAQ button when faqs are ready on the website
+            //            val uriHandler = LocalUriHandler.current
+            //            Item(
+            //                text = LocalFeedFlowStrings.current.aboutMenuFaq,
+            //                onClick = {
+            //                    runCatching {
+            //                        val languageCode = Locale.getDefault().language
+            //                        val faqUrl = "https://feedflow.dev/$languageCode/faq"
+            //                        uriHandler.openUri(faqUrl)
+            //                    }
+            //                },
+            //            )
         }
     }
 }

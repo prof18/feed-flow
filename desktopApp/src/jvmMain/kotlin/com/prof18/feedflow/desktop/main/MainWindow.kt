@@ -234,6 +234,9 @@ internal fun ApplicationScope.MainWindow(
                         onDateFormatUpdate = { format ->
                             settingsViewModel.updateDateFormat(format)
                         },
+                        onTimeFormatUpdate = { format ->
+                            settingsViewModel.updateTimeFormat(format)
+                        },
                         onSwipeActionUpdate = { direction, action ->
                             settingsViewModel.updateSwipeAction(direction, action)
                         },

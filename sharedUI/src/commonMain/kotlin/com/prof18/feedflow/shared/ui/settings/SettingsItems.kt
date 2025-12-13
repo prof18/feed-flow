@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.EventBusy
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.SubtitlesOff
@@ -117,7 +118,7 @@ fun HideDateSwitch(
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
         Icon(
-            Icons.Outlined.HideImage,
+            Icons.Outlined.EventBusy,
             contentDescription = null,
         )
 

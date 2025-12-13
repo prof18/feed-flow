@@ -393,6 +393,7 @@ private fun SettingsScreenContent(
                 FeedListFontSettings(
                     isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
                     isHideImagesEnabled = settingsState.isHideImagesEnabled,
+                    isHideDateEnabled = settingsState.isHideDateEnabled,
                     fontSizes = fontSizes,
                     updateFontScale = updateFontScale,
                     dateFormat = settingsState.dateFormat,
@@ -1066,6 +1067,7 @@ private fun SettingsScreenPreview() {
             setFeedLayout = {},
             onThemeModeSelected = {},
             onClearDownloadedArticles = {},
+            setHideDate = {},
         )
     }
 }

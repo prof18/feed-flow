@@ -34,6 +34,7 @@ import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.utils.copyToClipboard
+import com.prof18.feedflow.desktop.utils.sanitizeUrl
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.home.AdaptiveHomeView
@@ -146,7 +147,7 @@ internal fun HomeScreen(
                     if (browserManager.openReaderMode() && !feedItemUrlInfo.shouldOpenInBrowser()) {
                         navigateToReaderMode(feedItemUrlInfo)
                     } else {
-                        uriHandler.openUri(feedItemUrlInfo.url)
+                        uriHandler.openUri(feedItemUrlInfo.url.sanitizeUrl())
                     }
                 }
             }
@@ -165,7 +166,7 @@ internal fun HomeScreen(
         onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
         onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
         onDeleteCategoryClick = { categoryId -> homeViewModel.deleteCategory(categoryId) },
-        onOpenWebsite = { url -> uriHandler.openUri(url) },
+        onOpenWebsite = { url -> uriHandler.openUri(url.sanitizeUrl()) },
     )
 
     val linkCopiedSuccess = LocalFeedFlowStrings.current.linkCopiedSuccess

@@ -68,6 +68,12 @@ kotlin {
                 implementation(libs.flatlaf)
             }
         }
+
+        jvmTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 

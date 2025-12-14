@@ -108,7 +108,6 @@ internal class FeedCategoryRepository(
             }
             categoriesMutableState.update {
                 it.copy(
-                    header = this.selectedCategoryName?.name,
                     categories = categoriesWithEmpty,
                 )
             }
@@ -157,9 +156,6 @@ internal class FeedCategoryRepository(
                 }
             }
             state.copy(
-                // TODO: maybe simplify the state, as we don't need expanded and header fields
-                header = selectedCategoryName,
-                isExpanded = false,
                 categories = updatedCategories,
             )
         }

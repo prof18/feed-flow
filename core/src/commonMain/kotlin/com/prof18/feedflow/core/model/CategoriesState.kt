@@ -1,9 +1,6 @@
 package com.prof18.feedflow.core.model
 
-// TODO: maybe delete isExpanded and header
 data class CategoriesState(
-    val isExpanded: Boolean = false,
-    val header: String? = null,
     val categories: List<CategoryItem> = listOf(),
     val isLoading: Boolean = false,
 ) {

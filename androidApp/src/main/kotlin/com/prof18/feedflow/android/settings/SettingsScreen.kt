@@ -108,6 +108,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val browserManager = koinInject<BrowserManager>()
     val appConfig = koinInject<AppConfig>()
+    val userFeedbackReported = koinInject<UserFeedbackReporter>()
 
     val browserListState by browserManager.browserListState.collectAsStateWithLifecycle()
     val settingState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
@@ -130,7 +131,7 @@ fun SettingsScreen(
         navigateBack = navigateBack,
         onAboutClick = onAboutClick,
         onBugReportClick = {
-            val uri = UserFeedbackReporter.getEmailUrl(
+            val uri = userFeedbackReported.getEmailUrl(
                 subject = emailSubject,
                 content = emailContent,
             ).toUri()

@@ -55,6 +55,8 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
             isDropboxSyncEnabled = isGooglePlayFlavor,
             isIcloudSyncEnabled = false,
             appVersion = BuildConfig.VERSION_NAME,
+            platformName = "Android",
+            platformVersion = "${android.os.Build.VERSION.RELEASE} - API ${android.os.Build.VERSION.SDK_INT}",
         )
 
         if (isGooglePlayFlavor && appEnvironment.isRelease()) {

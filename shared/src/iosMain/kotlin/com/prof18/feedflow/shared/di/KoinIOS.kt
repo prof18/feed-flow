@@ -46,6 +46,7 @@ import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.utils.Telemetry
+import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
@@ -61,6 +62,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import platform.Foundation.NSURLSession
 import platform.Foundation.NSURLSessionConfiguration
+import platform.UIKit.UIDevice
 
 @OptIn(ExperimentalKermitApi::class)
 fun initKoinIos(
@@ -79,6 +81,8 @@ fun initKoinIos(
         isDropboxSyncEnabled = true,
         isIcloudSyncEnabled = true,
         appVersion = appVersion,
+        platformName = UIDevice.currentDevice.systemName(),
+        platformVersion = UIDevice.currentDevice.systemVersion,
     ),
     crashReportingLogWriter = CrashlyticsLogWriter(),
     modules = listOf(
@@ -251,4 +255,5 @@ object Deps : KoinComponent {
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
     fun getHtmlRetriever() = getKoin().get<HtmlRetriever>()
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
+    fun getUserFeedbackReporter() = getKoin().get<UserFeedbackReporter>()
 }

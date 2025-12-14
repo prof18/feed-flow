@@ -393,7 +393,7 @@ private struct AppSection: View {
                     let content = feedFlowStrings.issueContentTemplate
 
                     if let url = URL(
-                        string: UserFeedbackReporter.shared.getEmailUrl(
+                        string: Deps.shared.getUserFeedbackReporter().getEmailUrl(
                             subject: subject, content: content
                         )
                     ) {

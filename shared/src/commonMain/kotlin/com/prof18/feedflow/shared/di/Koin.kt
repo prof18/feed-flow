@@ -46,6 +46,7 @@ import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
+import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.defaultRequest
 import kotlinx.coroutines.Dispatchers
@@ -113,6 +114,12 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             sqlDriver = get(),
             backgroundDispatcher = Dispatchers.IO.limitedParallelism(1),
             logger = getWith("DatabaseHelper"),
+        )
+    }
+
+    factory {
+        UserFeedbackReporter(
+            appConfig = appConfig,
         )
     }
 

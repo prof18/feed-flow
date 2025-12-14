@@ -52,6 +52,8 @@ fun initKoinDesktop(
         isDropboxSyncEnabled = isDropboxEnabled,
         isIcloudSyncEnabled = isICloudEnabled,
         appVersion = version,
+        platformName = "${System.getProperty("os.name")}",
+        platformVersion = "${System.getProperty("os.version")}",
     ),
     crashReportingLogWriter = SentryLogWriter(),
     modules = modules + getDatabaseModule(appEnvironment),

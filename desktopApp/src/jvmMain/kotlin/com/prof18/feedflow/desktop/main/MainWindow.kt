@@ -90,6 +90,8 @@ internal fun ApplicationScope.MainWindow(
     var showBackupLoader by remember { mutableStateOf(false) }
     val icon = painterResource(Res.drawable.icon)
 
+    val userFeedbackReporter = DI.koin.get<UserFeedbackReporter>()
+
     Window(
         onCloseRequest = {
             scope.launch {
@@ -398,7 +400,7 @@ internal fun ApplicationScope.MainWindow(
                                 onBugReportClick = {
                                     val desktop = Desktop.getDesktop()
                                     val uri = URI.create(
-                                        UserFeedbackReporter.getEmailUrl(
+                                        userFeedbackReporter.getEmailUrl(
                                             subject = emailSubject,
                                             content = emailContent,
                                         ),

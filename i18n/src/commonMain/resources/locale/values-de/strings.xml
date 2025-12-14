@@ -251,7 +251,24 @@
     <string name="next_article">Nächster Artikel</string>
     <string name="reader_mode_archive_button">In archive.is öffnen</string>
     <string name="previous_article">Vorheriger Artikel</string>
-    <string name="settings_save_reader_mode_content">Artikelinhalt beim Öffnen speichern</string>
+    <string name="settings_save_reader_mode_content">Artikelinhalt sofort beim Öffnen speichern</string>
     <string name="settings_prefetch_article_content">Artikelinhalt zum Offline-Lesen vorab laden</string>
     <string name="settings_prefetch_article_content_warning">Die Aktivierung dieser Option wird die Synchronisationsdauer und den Datenverbrauch erhöhen, weil der vollständige Artikelinhalt beim Updaten der Feeds heruntergeladen wird. Bei einer großen Artikelanzahl kann auch die Leistung betroffen sein. Nutzen sie diese Funktion nur wenn sie einen Offline-Zugang zum Artikelinhalt benötigen.</string>
+    <string name="feed_error_message_improved">%s konnte nicht geladen werden. Vielleicht steht es nicht zur Verfügung oder ihre Internetverbindung ist unterbrochen.</string>
+    <string name="about_menu_faq">FAQ</string>
+    <string name="settings_hide_date">Artikeldatum ausblenden</string>
+    <string name="settings_auto_delete_period_one_day">Einen Tag alt</string>
+    <string name="time_format_title">Zeitformat</string>
+    <string name="time_format_hours_24">24 Stunden</string>
+    <string name="time_format_hours_12">12 Stunden</string>
+    <string name="settings_danger_title">Achtung</string>
+    <string name="settings_clear_downloaded_articles">Heruntergeladene Artikel löschen</string>
+    <string name="settings_clear_downloaded_articles_dialog_title">Heruntergeladene Artikel löschen?</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">Der gesamte, zum Offline-Lesen heruntergeladene Artikelinhalt wird gelöscht. Das kann nicht rückgängig gemacht werden.</string>
+    <string name="settings_clear_image_cache">Bilder-Cache löschen</string>
+    <string name="settings_clear_image_cache_dialog_title">Bilder-Cache löschen?</string>
+    <string name="settings_clear_image_cache_dialog_message">Alle zwischengespeicherten Bilder werden gelöscht. Diese werden wieder heruntergeladen, wenn sie durch ihre Artikel blättern.</string>
+    <string name="reader_mode_fallback_title">Artikel kann nicht geparst (ausgelesen) werden</string>
+    <string name="reader_mode_fallback_message">Der Inhalt dieser Seite kann nicht für den Lesemodus verwendet werden. Sie können die Seite direkt in ihrem Browser öffnen.</string>
+    <string name="reader_mode_fallback_open_browser_button">Im Browser öffnen</string>
 </resources>

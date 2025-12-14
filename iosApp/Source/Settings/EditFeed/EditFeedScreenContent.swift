@@ -13,30 +13,24 @@ struct EditFeedScreenContent: View {
     @Environment(\.presentationMode)
     private var presentationMode
 
-    @State private var newCategory: String = ""
-    @State private var showDeleteCategoryDialog = false
-    @State private var showEditCategoryDialog = false
+    @State private var showCategorySheet = false
     @State private var showDeleteFeedDialog = false
-    @State private var categoryToDelete: String?
-    @State private var categoryToEdit: String?
-    @State private var editedCategoryName: String = ""
+    @FocusState private var isTextFieldFocused: Bool
 
     @Binding var feedURL: String
     @Binding var feedName: String
     @Binding var showError: Bool
     @Binding var errorMessage: String
-    @Binding var categoryItems: [CategoriesState.CategoryItem]
     @Binding var isAddingFeed: Bool
     @Binding var linkOpeningPreference: LinkOpeningPreference
     @Binding var isHidden: Bool
     @Binding var isPinned: Bool
 
     var categorySelectorObserver: CategorySelectorObserver
+    let viewModel: EditFeedViewModel
 
     let updateFeedUrlTextFieldValue: (String) -> Void
     let updateFeedNameTextFieldValue: (String) -> Void
-    let deleteCategory: (String) -> Void
-    let addNewCategory: (CategoryName) -> Void
     let updateLinkOpeningPreference: (LinkOpeningPreference) -> Void
     let onHiddenToggled: (Bool) -> Void
     let onPinnedToggled: (Bool) -> Void
@@ -54,6 +48,7 @@ struct EditFeedScreenContent: View {
                     )
                     .disableAutocorrection(true)
                     .hoverEffect()
+                    .focused($isTextFieldFocused)
                 },
                 header: {
                     Text(feedFlowStrings.feedName)
@@ -67,6 +62,7 @@ struct EditFeedScreenContent: View {
                         .textContentType(.URL)
                         .disableAutocorrection(true)
                         .hoverEffect()
+                        .focused($isTextFieldFocused)
                 },
                 header: {
                     Text(feedFlowStrings.feedUrl)
@@ -115,23 +111,36 @@ struct EditFeedScreenContent: View {
                 }
             }
 
-            Section(feedFlowStrings.addFeedCategoryTitle) {
-                @Bindable var categorySelectorObserver = categorySelectorObserver
-                Picker(
-                    selection: $categorySelectorObserver.selectedCategory,
-                    label: Text(feedFlowStrings.addFeedCategoryTitle)
-                ) {
-                    ForEach(categoryItems, id: \.self.id) { categoryItem in
-                        let title = categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader
-                        Text(title)
-                            .tag(categoryItem as CategoriesState.CategoryItem?)
-                    }
-                }
-                .hoverEffect()
-            }
+            Section {
+                Button(
+                    action: {
+                        showCategorySheet = true
+                    },
+                    label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(feedFlowStrings.addFeedCategoryTitle)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
 
-            if !categoryItems.isEmpty {
-                categoriesSection
+                                Text(
+                                    categorySelectorObserver.selectedCategory?.name ??
+                                    feedFlowStrings.noCategorySelectedHeader
+                                )
+                                .font(.body)
+                                .foregroundColor(.primary)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .contentShape(Rectangle())
+                    }
+                )
+                .buttonStyle(.plain)
             }
 
             Section {
@@ -151,19 +160,11 @@ struct EditFeedScreenContent: View {
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
         .background(Color.secondaryBackgroundColor)
-        .overlay {
-            DeleteCategoryDialog(
-                isPresented: $showDeleteCategoryDialog,
-                categoryToDelete: $categoryToDelete,
-                onDelete: deleteCategory
-            )
-        }
-        .overlay {
-            EditCategoryDialog(
-                isPresented: $showEditCategoryDialog,
-                categoryToEdit: $categoryToEdit,
-                editedCategoryName: $editedCategoryName,
-                onSave: updateCategoryName
+        .sheet(isPresented: $showCategorySheet) {
+            EditCategorySheetContainerForEdit(
+                viewModel: viewModel,
+                categorySelectorObserver: categorySelectorObserver,
+                onSave: {}
             )
         }
         .alert(feedFlowStrings.deleteFeedConfirmationTitle, isPresented: $showDeleteFeedDialog) {
@@ -189,54 +190,9 @@ struct EditFeedScreenContent: View {
         }
     }
 
-    private var categoriesSection: some View {
-        Section(feedFlowStrings.addFeedCategoriesTitle) {
-            ForEach(categoryItems, id: \.self.id) { categoryItem in
-                if let name = categoryItem.name {
-                    Text(name)
-                        .contextMenu {
-                            Button {
-                                editedCategoryName = name
-                                categoryToEdit = categoryItem.id
-                                showEditCategoryDialog = true
-                            } label: {
-                                Label(feedFlowStrings.editCategory, systemImage: "pencil")
-                            }
-
-                            Button(role: .destructive) {
-                                categoryToDelete = categoryItem.id
-                                showDeleteCategoryDialog = true
-                            } label: {
-                                Label(feedFlowStrings.deleteFeed, systemImage: "trash")
-                            }
-                        }
-                }
-            }
-
-            HStack {
-                TextField(feedFlowStrings.newCategoryHint, text: $newCategory, axis: .horizontal)
-                    .onSubmit {
-                        addNewCategory(CategoryName(name: newCategory))
-                        newCategory = ""
-                    }
-                    .hoverEffect()
-            }
-
-            if !newCategory.isEmpty {
-                Button {
-                    addNewCategory(CategoryName(name: newCategory))
-                    newCategory = ""
-                } label: {
-                    Image(systemName: "checkmark.circle.fill")
-                        .tint(.green)
-                }
-                .hoverEffect()
-            }
-        }
-    }
-
     private var saveButton: some View {
         Button {
+            isTextFieldFocused = false
             isAddingFeed.toggle()
             addFeed()
         } label: {

@@ -10,8 +10,9 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
+// TODO: maybe revert
 @Composable
-internal fun FeedNameTextField(
+fun FeedNameTextField(
     feedName: String,
     modifier: Modifier = Modifier,
     onFeedNameUpdated: (String) -> Unit,

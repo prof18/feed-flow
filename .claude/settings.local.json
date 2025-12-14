@@ -21,7 +21,8 @@
       "Bash(xargs:*)",
       "Bash(cat:*)",
       "mcp__jetbrains__reformat_file",
-      "mcp__jetbrains__replace_text_in_file"
+      "mcp__jetbrains__replace_text_in_file",
+      "Bash(ffmpeg:*)"
     ],
     "deny": []
   }

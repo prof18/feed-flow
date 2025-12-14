@@ -134,8 +134,8 @@ class EditFeedViewModel internal constructor(
         }
     }
 
-    fun onExpandCategoryClick() {
-        categoryUseCase.onExpandCategoryClick()
+    fun onCategorySelected(categoryId: CategoryId) {
+        categoryUseCase.onCategorySelected(categoryId)
     }
 
     fun addNewCategory(categoryName: CategoryName) {

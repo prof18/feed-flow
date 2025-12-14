@@ -30,12 +30,6 @@ internal class FeedCategoryRepository(
     val categoriesState = categoriesMutableState
     private var selectedCategoryName: CategoryName? = null
 
-    fun onExpandCategoryClick() {
-        categoriesMutableState.update { state ->
-            state.copy(isExpanded = state.isExpanded.not())
-        }
-    }
-
     fun getSelectedCategory(): FeedSourceCategory? {
         val category = categoriesState.value.categories.firstOrNull { it.isSelected }
         if (category == null || category.id == EMPTY_CATEGORY_ID) {
@@ -81,6 +75,12 @@ internal class FeedCategoryRepository(
     }
 
     suspend fun updateCategoryName(categoryId: CategoryId, newName: CategoryName) {
+        // If the category being edited is currently selected, update selectedCategoryName
+        val selectedCategory = categoriesState.value.categories.firstOrNull { it.isSelected }
+        if (selectedCategory?.id == categoryId.value) {
+            selectedCategoryName = newName
+        }
+
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.editCategoryName(categoryId, newName)
@@ -141,7 +141,7 @@ internal class FeedCategoryRepository(
         feedSyncRepository.insertFeedSourceCategories(listOf(category))
     }
 
-    private fun onCategorySelected(categoryId: CategoryId) {
+    fun onCategorySelected(categoryId: CategoryId) {
         categoriesMutableState.update { state ->
             var selectedCategoryName: String? = null
             val updatedCategories = state.categories.map { categoryItem ->
@@ -157,6 +157,7 @@ internal class FeedCategoryRepository(
                 }
             }
             state.copy(
+                // TODO: maybe simplify the state, as we don't need expanded and header fields
                 header = selectedCategoryName,
                 isExpanded = false,
                 categories = updatedCategories,
@@ -169,18 +170,12 @@ internal class FeedCategoryRepository(
             id = id,
             name = title,
             isSelected = selectedCategoryName?.name == title,
-            onClick = { categoryId ->
-                onCategorySelected(categoryId)
-            },
         )
 
     private fun getEmptyCategory() = CategoriesState.CategoryItem(
         id = EMPTY_CATEGORY_ID,
         name = null,
         isSelected = selectedCategoryName?.name == null,
-        onClick = { categoryId ->
-            onCategorySelected(categoryId)
-        },
     )
 
     private companion object {

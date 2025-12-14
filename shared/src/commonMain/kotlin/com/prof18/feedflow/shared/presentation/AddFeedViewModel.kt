@@ -74,8 +74,8 @@ class AddFeedViewModel internal constructor(
         }
     }
 
-    fun onExpandCategoryClick() {
-        categoryRepository.onExpandCategoryClick()
+    fun onCategorySelected(categoryId: CategoryId) {
+        categoryRepository.onCategorySelected(categoryId)
     }
 
     fun addNewCategory(categoryName: CategoryName) {

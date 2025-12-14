@@ -50,7 +50,7 @@ import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.ui.components.EditCategoryDialog as SharedEditCategoryDialog
+import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog as SharedEditCategoryDialog
 
 // TODO: find shared code with EditCategorySheet
 @Composable

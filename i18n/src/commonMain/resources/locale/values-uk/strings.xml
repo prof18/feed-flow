@@ -255,4 +255,21 @@
     <string name="reader_mode_archive_button">Відкрити в archive.is</string>
     <string name="previous_article">Попередня стаття</string>
     <string name="next_article">Наступна стаття</string>
+    <string name="feed_error_message_improved">Не вдалося завантажити %s. Можливо, він недоступний або ваше інтернет-з’єднання відсутнє.</string>
+    <string name="about_menu_faq">FAQ</string>
+    <string name="settings_hide_date">Приховати дату статті</string>
+    <string name="settings_auto_delete_period_one_day">Один день</string>
+    <string name="time_format_title">Формат часу</string>
+    <string name="time_format_hours_24">24 години</string>
+    <string name="time_format_hours_12">12 годин</string>
+    <string name="settings_danger_title">Небезпека</string>
+    <string name="settings_clear_downloaded_articles">Очистити завантажені статті</string>
+    <string name="settings_clear_downloaded_articles_dialog_title">Очистити завантажені статті?</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">Це видалить весь завантажений вміст статті для читання офлайн. Цю дію не можна скасувати.</string>
+    <string name="settings_clear_image_cache">Очистити кеш зображень</string>
+    <string name="settings_clear_image_cache_dialog_title">Очистити кеш зображень?</string>
+    <string name="settings_clear_image_cache_dialog_message">Це видалить усі кешовані зображення. Зображення будуть завантажені знову, коли ви переглядатимете свої статті.</string>
+    <string name="reader_mode_fallback_title">Не вдалося проаналізувати статтю</string>
+    <string name="reader_mode_fallback_message">Не вдалося видобути вміст цієї сторінки для режиму читання. Ви можете відкрити сторінку безпосередньо у вашому браузері.</string>
+    <string name="reader_mode_fallback_open_browser_button">Відкрити у браузері</string>
 </resources>

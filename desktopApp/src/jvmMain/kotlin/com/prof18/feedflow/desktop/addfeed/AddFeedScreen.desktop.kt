@@ -19,6 +19,7 @@ import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
+import com.prof18.feedflow.shared.ui.feed.addfeed.AddFeedContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -89,7 +90,7 @@ fun AddFeedScreenContent(
 
     var showCategoryDialog by remember { mutableStateOf(false) }
 
-    AddFeedContentDesktop(
+    AddFeedContent(
         modifier = modifier,
         feedUrl = feedUrl,
         showError = showError,
@@ -141,7 +142,7 @@ fun AddFeedScreenContent(
 @Composable
 private fun AddScreenContentPreview() {
     FeedFlowTheme {
-        AddFeedContentDesktop(
+        AddFeedContent(
             feedUrl = "https://www.ablog.com/feed",
             showError = false,
             showLoading = false,

@@ -29,6 +29,7 @@ import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
+import com.prof18.feedflow.shared.ui.feed.editfeed.EditFeedContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
@@ -107,7 +108,7 @@ internal data class EditFeedScreen(
 
         var showCategoryDialog by remember { mutableStateOf(false) }
 
-        EditFeedContentDesktop(
+        EditFeedContent(
             feedUrl = feedUrl,
             feedName = feedName,
             showError = showError,
@@ -194,7 +195,7 @@ internal data class EditFeedScreen(
 @Composable
 private fun EditScreenPreview() {
     FeedFlowTheme {
-        EditFeedContentDesktop(
+        EditFeedContent(
             feedUrl = "https://www.ablog.com/feed",
             feedName = "Feed Name",
             showError = false,

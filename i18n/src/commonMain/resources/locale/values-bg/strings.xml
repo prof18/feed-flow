@@ -255,4 +255,21 @@
     <string name="reader_mode_archive_button">Отваряне в archive.is</string>
     <string name="previous_article">Предишна статия</string>
     <string name="next_article">Следваща статия</string>
+    <string name="feed_error_message_improved">Не можа да се зареди %s. Възможно е да не е наличен или интернет връзката ви да е прекъсната.</string>
+    <string name="about_menu_faq">ЧЗВ</string>
+    <string name="settings_hide_date">Скриване на датата на статията</string>
+    <string name="settings_auto_delete_period_one_day">На един ден</string>
+    <string name="time_format_title">Формат на времето</string>
+    <string name="time_format_hours_24">24 часа</string>
+    <string name="time_format_hours_12">12 часа</string>
+    <string name="settings_danger_title">Опасност</string>
+    <string name="settings_clear_downloaded_articles">Изчистване на изтеглените статии</string>
+    <string name="settings_clear_downloaded_articles_dialog_title">Изчистване на изтеглените статии?</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">Това ще изтрие цялото изтеглено съдържание на статиите за четене офлайн. Това действие не може да бъде отменено.</string>
+    <string name="settings_clear_image_cache">Изчистване на кеша на изображенията</string>
+    <string name="settings_clear_image_cache_dialog_title">Изчистване на кеша на изображенията?</string>
+    <string name="settings_clear_image_cache_dialog_message">Това ще изтрие всички кеширани изображения. Изображенията ще бъдат изтеглени отново, когато разглеждате статиите си.</string>
+    <string name="reader_mode_fallback_title">Не може да се анализира статията</string>
+    <string name="reader_mode_fallback_message">Съдържанието на тази страница не можа да бъде извлечено за режим на четене. Можете да отворите страницата директно в браузъра си.</string>
+    <string name="reader_mode_fallback_open_browser_button">Отвори в браузър</string>
 </resources>

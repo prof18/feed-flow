@@ -40,6 +40,9 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
+      - name: Refresh translations
+        run: bash .scripts/refresh-translations.sh
+
       # Developer ID Application
       - name: Import signing certificate
         uses: apple-actions/import-codesign-certs@v5

@@ -34,6 +34,10 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
+      - name: Refresh translations
+        shell: bash
+        run: bash .scripts/refresh-translations.sh
+
       - name: Read version from properties
         id: version
         shell: pwsh

@@ -19,6 +19,9 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
+      - name: Refresh translations
+        run: bash .scripts/refresh-translations.sh
+
       - name: Install Swift Lint
         run: |
           brew install swiftlint
@@ -57,6 +60,9 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
+      - name: Refresh translations
+        run: bash .scripts/refresh-translations.sh
+
       - name: Create dummy Firebase json
         run: |
           cp config/dummy-google-services.json androidApp/src/debug/google-services.json
@@ -76,6 +82,9 @@ jobs:
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+
+      - name: Refresh translations
+        run: bash .scripts/refresh-translations.sh
 
       - name: Build Desktop App
         run: ./gradlew :desktopApp:packageDistributionForCurrentOS
@@ -103,6 +112,9 @@ jobs:
         uses: ./.github/actions/setup-gradle
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+
+      - name: Refresh translations
+        run: bash .scripts/refresh-translations.sh
 
       - name: Create Dummy Firebase Plist
         run: |

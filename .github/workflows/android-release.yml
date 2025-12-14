@@ -34,6 +34,9 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
+      - name: Refresh translations
+        run: bash .scripts/refresh-translations.sh
+
       - name: Configure Keystore
         run: |
           echo '${{ secrets.KEYSTORE_FILE }}' > release.keystore.asc

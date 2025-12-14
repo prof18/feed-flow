@@ -49,6 +49,9 @@ jobs:
         with:
           gradle-cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
 
+      - name: Refresh translations
+        run: bash .scripts/refresh-translations.sh
+
       - name: Create Dummy Firebase Plist
         run: |
           cp config/dummy-google-service.plist iosApp/GoogleService-Info-dev.plist

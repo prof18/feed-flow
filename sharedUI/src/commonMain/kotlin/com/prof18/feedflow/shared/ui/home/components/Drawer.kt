@@ -68,7 +68,7 @@ import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
-import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
+import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
 import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
@@ -556,7 +556,7 @@ private fun DrawerFeedSourceByCategoryItem(
             onDeleteCategoryClick = onDeleteCategoryClick,
         )
 
-        EditCategoryDialog(
+        EditCategoryNameDialog(
             showDialog = showEditDialog,
             categoryId = CategoryId(category.id),
             initialCategoryName = category.title,

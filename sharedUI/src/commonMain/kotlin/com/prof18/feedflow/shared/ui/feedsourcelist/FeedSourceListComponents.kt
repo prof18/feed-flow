@@ -70,8 +70,7 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 
-// TODO: Rename to a generic name
-expect fun Modifier.feedSourceMenuClickModifier(
+expect fun Modifier.singleAndLongClickModifier(
     onClick: () -> Unit = {},
     onLongClick: (() -> Unit)?,
 ): Modifier
@@ -284,7 +283,7 @@ private fun FeedSourceItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .feedSourceMenuClickModifier(
+                .singleAndLongClickModifier(
                     onLongClick = if (isEditEnabled) {
                         null
                     } else {

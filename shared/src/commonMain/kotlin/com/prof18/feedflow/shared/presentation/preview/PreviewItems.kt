@@ -271,7 +271,7 @@ val importExportStates = listOf(
 )
 
 val categoriesExpandedState = CategoriesState(
-    categories = listOf(
+    categories = persistentListOf(
         CategoryItem(
             id = "0",
             name = "Android",
@@ -291,7 +291,7 @@ val categoriesExpandedState = CategoriesState(
 )
 
 val categoriesCollapsedState = CategoriesState(
-    categories = listOf(
+    categories = persistentListOf(
         CategoryItem(
             id = "0",
             name = "Android",

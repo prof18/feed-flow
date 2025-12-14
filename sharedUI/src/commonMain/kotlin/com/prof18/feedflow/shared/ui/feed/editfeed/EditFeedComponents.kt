@@ -234,7 +234,7 @@ fun EditFeedContent(
                             modifier = Modifier.size(ButtonDefaults.IconSize),
                         )
                     } else {
-                        Text(LocalFeedFlowStrings.current.editFeed)
+                        Text(LocalFeedFlowStrings.current.actionSave)
                     }
                 }
             }

@@ -70,7 +70,8 @@ import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
 
-internal expect fun Modifier.feedSourceMenuClickModifier(
+// TODO: Rename to a generic name
+expect fun Modifier.feedSourceMenuClickModifier(
     onClick: () -> Unit = {},
     onLongClick: (() -> Unit)?,
 ): Modifier

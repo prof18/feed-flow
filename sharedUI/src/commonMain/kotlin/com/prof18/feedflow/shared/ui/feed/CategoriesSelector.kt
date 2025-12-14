@@ -1,262 +1,113 @@
 package com.prof18.feedflow.shared.ui.feed
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AddCircleOutline
-import androidx.compose.material.icons.outlined.DeleteOutline
+import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoriesState
-import com.prof18.feedflow.core.model.CategoryId
-import com.prof18.feedflow.core.model.CategoryName
-import com.prof18.feedflow.shared.ui.components.DeleteCategoryDialog
-import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-internal fun CategoriesSelector(
+fun CategoriesSelector(
     categoriesState: CategoriesState,
-    onExpandClick: () -> Unit,
-    onAddCategoryClick: (CategoryName) -> Unit,
-    onDeleteCategoryClick: (CategoryId) -> Unit,
-    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ExposedDropdownMenuBox(
-        expanded = categoriesState.isExpanded,
-        onExpandedChange = { onExpandClick() },
-        modifier = modifier,
-    ) {
-        val header = if (categoriesState.header == null) {
-            LocalFeedFlowStrings.current.noCategorySelectedHeader
-        } else {
-            requireNotNull(categoriesState.header)
-        }
+    val selectedCategory = categoriesState.categories.find { it.isSelected }
 
-        Column {
-            OutlinedTextField(
-                value = header,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text(LocalFeedFlowStrings.current.addFeedCategoryTitle) },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoriesState.isExpanded) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor(type = MenuAnchorType.PrimaryNotEditable),
-            )
-
-            CategoriesList(
-                categoriesState = categoriesState,
-                onAddCategoryClick = onAddCategoryClick,
-                onDeleteCategoryClick = onDeleteCategoryClick,
-                onEditCategoryClick = onEditCategoryClick,
-                modifier = Modifier
-                    .padding(top = Spacing.small),
-            )
-        }
-    }
+    CategorySelectorChip(
+        selectedCategory = selectedCategory,
+        onClick = onClick,
+        modifier = modifier.padding(bottom = Spacing.regular),
+    )
 }
 
 @Composable
-private fun CategoriesList(
-    categoriesState: CategoriesState,
-    onAddCategoryClick: (CategoryName) -> Unit,
-    onDeleteCategoryClick: (CategoryId) -> Unit,
+private fun CategorySelectorChip(
+    selectedCategory: CategoriesState.CategoryItem?,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
 ) {
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var categoryToDelete by remember { mutableStateOf<CategoryId?>(null) }
-    var categoryToEdit by remember { mutableStateOf<CategoriesState.CategoryItem?>(null) }
+    val categoryText = selectedCategory?.name ?: LocalFeedFlowStrings.current.noCategorySelectedHeader
+    val hasCategory = selectedCategory?.name != null
 
-    DeleteCategoryDialog(
-        showDialog = showDeleteDialog && categoryToDelete != null,
-        categoryId = categoryToDelete ?: CategoryId(""),
-        onDismiss = {
-            showDeleteDialog = false
-            categoryToDelete = null
-        },
-        onDeleteCategory = { categoryId ->
-            onDeleteCategoryClick(categoryId)
-        },
-    )
-
-    EditCategoryDialog(
-        showDialog = categoryToEdit != null,
-        categoryId = categoryToEdit?.let { CategoryId(it.id) } ?: CategoryId(""),
-        initialCategoryName = categoryToEdit?.name ?: "",
-        onDismiss = {
-            categoryToEdit = null
-        },
-        onEditCategory = { categoryId, newName ->
-            onEditCategoryClick(categoryId, newName)
-        },
-    )
-    AnimatedVisibility(
+    Column(
         modifier = modifier,
-        visible = categoriesState.isExpanded,
-        enter = expandVertically(
-            spring(
-                stiffness = Spring.StiffnessMediumLow,
-                visibilityThreshold = IntSize.VisibilityThreshold,
-            ),
-        ),
-        exit = shrinkVertically(),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Column {
-            categoriesState.categories.forEach { category ->
-                Row(
-                    modifier = Modifier
-                        .clip(MaterialTheme.shapes.medium)
-                        .clickable {
-                            category.onClick(CategoryId(category.id))
-                        }
-                        .fillMaxWidth()
-                        .padding(vertical = Spacing.small),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RadioButton(
-                        modifier = Modifier
-                            .padding(vertical = Spacing.small)
-                            .padding(end = Spacing.small),
-                        selected = category.isSelected,
-                        onClick = null,
-                    )
-                    Text(
-                        text = category.name
-                            ?: LocalFeedFlowStrings.current.noCategorySelectedHeader,
-                    )
+        Text(
+            text = LocalFeedFlowStrings.current.addFeedCategoryTitle,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
 
-                    Spacer(Modifier.weight(1f))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    if (hasCategory) {
+                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+                )
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.Label,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = if (hasCategory) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                )
 
-                    val categoryName = category.name
-                    if (categoryName != null) {
-                        Row {
-                            IconButton(
-                                onClick = {
-                                    categoryToEdit = category
-                                },
-                            ) {
-                                Icon(
-                                    Icons.Outlined.Edit,
-                                    contentDescription = null,
-                                )
-                            }
-
-                            IconButton(
-                                onClick = {
-                                    showDeleteDialog = true
-                                    categoryToDelete = CategoryId(category.id)
-                                },
-                            ) {
-                                Icon(
-                                    Icons.Outlined.DeleteOutline,
-                                    contentDescription = null,
-                                )
-                            }
-                        }
-                    }
-                }
+                Text(
+                    text = categoryText,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = if (hasCategory) FontWeight.Medium else FontWeight.Normal,
+                    color = if (hasCategory) {
+                        MaterialTheme.colorScheme.onSurface
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                )
             }
 
-            NewCategoryComposer(
-                modifier = Modifier
-                    .padding(bottom = Spacing.regular),
-                onAddClick = { categoryName ->
-                    onAddCategoryClick(categoryName)
-                },
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = LocalFeedFlowStrings.current.editCategory,
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-    }
-}
-
-@Composable
-internal fun NewCategoryComposer(
-    modifier: Modifier = Modifier,
-    onAddClick: (CategoryName) -> Unit,
-) {
-    var categoryName by remember {
-        mutableStateOf("")
-    }
-    val isAddAllowed = categoryName.isNotBlank()
-
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = Spacing.small),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.small),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        OutlinedTextField(
-            modifier = Modifier
-                .weight(1f),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done,
-            ),
-            keyboardActions = KeyboardActions(
-                onSend = {
-                    if (isAddAllowed) {
-                        onAddClick(CategoryName(name = categoryName))
-                    }
-                },
-            ),
-            value = categoryName,
-            onValueChange = { categoryName = it },
-            placeholder = {
-                Text(
-                    text = LocalFeedFlowStrings.current.newCategoryHint,
-                )
-            },
-            trailingIcon = {
-                IconButton(
-                    onClick = {
-                        onAddClick(CategoryName(name = categoryName))
-                        categoryName = ""
-                    },
-                    enabled = isAddAllowed,
-                ) {
-                    Icon(
-                        Icons.Outlined.AddCircleOutline,
-                        contentDescription = null,
-                    )
-                }
-            },
-        )
     }
 }

@@ -13,173 +13,122 @@ struct AddFeedScreenContent: View {
     @Environment(\.presentationMode)
     private var presentationMode
 
-    @State private var newCategory: String = ""
-    @State private var showDeleteCategoryDialog = false
-    @State private var showEditCategoryDialog = false
-    @State private var categoryToDelete: String?
-    @State private var categoryToEdit: String?
-    @State private var editedCategoryName: String = ""
+    @State private var showCategorySheet = false
+    @FocusState private var isTextFieldFocused: Bool
 
     @Binding var feedURL: String
     @Binding var showError: Bool
     @Binding var errorMessage: String
-    @Binding var categoryItems: [CategoriesState.CategoryItem]
     @Binding var isAddingFeed: Bool
 
     var categorySelectorObserver: CategorySelectorObserver
+    let viewModel: AddFeedViewModel
 
     let showCloseButton: Bool
     let updateFeedUrlTextFieldValue: (String) -> Void
-    let deleteCategory: (String) -> Void
-    let addNewCategory: (CategoryName) -> Void
     let addFeed: () -> Void
-    let updateCategoryName: (String, String) -> Void
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(feedFlowStrings.feedUrlHelpText)
-                .padding(.horizontal, Spacing.regular)
-                .padding(.top, Spacing.regular)
-                .foregroundColor(.secondary)
+        Form {
+            Section(
+                content: {
+                    TextField(feedFlowStrings.feedUrl, text: $feedURL)
+                        .keyboardType(.URL)
+                        .textContentType(.URL)
+                        .disableAutocorrection(true)
+                        .hoverEffect()
+                        .focused($isTextFieldFocused)
+                },
+                header: {
+                    Text(feedFlowStrings.feedUrl)
+                },
+                footer: {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(feedFlowStrings.feedUrlHelpText)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
 
-            Form {
-                Section(
-                    content: {
-                        TextField(feedFlowStrings.feedUrl, text: $feedURL)
-                            .keyboardType(.URL)
-                            .textContentType(.URL)
-                            .disableAutocorrection(true)
-                            .hoverEffect()
-                    },
-                    header: {
-                        Text(feedFlowStrings.feedUrl)
-                    },
-                    footer: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            if showError {
-                                Text(errorMessage)
-                                    .font(.caption)
-                                    .foregroundColor(.red)
-                            }
+                        if showError {
+                            Text(errorMessage)
+                                .font(.caption)
+                                .foregroundColor(.red)
                         }
+                    }
+                }
+            )
+
+            Section {
+                Button(
+                    action: {
+                        showCategorySheet = true
+                    },
+                    label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(feedFlowStrings.addFeedCategoryTitle)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+
+                                Text(
+                                    categorySelectorObserver.selectedCategory?.name ??
+                                    feedFlowStrings.noCategorySelectedHeader
+                                )
+                                .font(.body)
+                                .foregroundColor(.primary)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .contentShape(Rectangle())
                     }
                 )
-
-                Section(feedFlowStrings.addFeedCategoryTitle) {
-                    @Bindable var categorySelectorObserver = categorySelectorObserver
-                    Picker(
-                        selection: $categorySelectorObserver.selectedCategory,
-                        label: Text(feedFlowStrings.addFeedCategoryTitle)
-                    ) {
-                        ForEach(categoryItems, id: \.self.id) { categoryItem in
-                            let title =
-                                categoryItem.name ?? feedFlowStrings.noCategorySelectedHeader
-                            Text(title)
-                                .tag(categoryItem as CategoriesState.CategoryItem?)
-                        }
-                    }
-                    .hoverEffect()
-                }
-
-                if !categoryItems.isEmpty {
-                    categoriesSection
-                }
+                .buttonStyle(.plain)
             }
         }
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
         .background(Color.secondaryBackgroundColor)
-        .overlay {
-            DeleteCategoryDialog(
-                isPresented: $showDeleteCategoryDialog,
-                categoryToDelete: $categoryToDelete,
-                onDelete: deleteCategory
-            )
-        }
-        .overlay {
-            EditCategoryDialog(
-                isPresented: $showEditCategoryDialog,
-                categoryToEdit: $categoryToEdit,
-                editedCategoryName: $editedCategoryName,
-                onSave: updateCategoryName
-            )
-        }
         .navigationTitle(feedFlowStrings.addFeed)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: feedURL) {
             updateFeedUrlTextFieldValue(feedURL)
         }
+        .sheet(isPresented: $showCategorySheet) {
+            EditCategorySheetContainer(
+                viewModel: viewModel,
+                categorySelectorObserver: categorySelectorObserver,
+                onSave: {}
+            )
+        }
         .toolbar {
-            if showCloseButton {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
+            ToolbarItemGroup(placement: .navigationBarLeading) {
+                if showCloseButton {
+                    Button(action: {
                         presentationMode.wrappedValue.dismiss()
-                    } label: {
+                    }, label: {
                         if isiOS26OrLater() {
                             Image(systemName: "xmark")
+                                .scaleEffect(0.8)
                         } else {
                             Image(systemName: "xmark.circle")
                         }
-                    }
+                    })
                 }
             }
 
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
                 saveButton
-            }
-        }
-    }
-
-    private var categoriesSection: some View {
-        Section(feedFlowStrings.addFeedCategoriesTitle) {
-            ForEach(categoryItems, id: \.self.id) { categoryItem in
-                if let name = categoryItem.name {
-                    Text(name)
-                        .contextMenu {
-                            Button {
-                                editedCategoryName = name
-                                categoryToEdit = categoryItem.id
-                                showEditCategoryDialog = true
-                            } label: {
-                                Label(feedFlowStrings.editCategory, systemImage: "pencil")
-                            }
-
-                            Button(role: .destructive) {
-                                categoryToDelete = categoryItem.id
-                                showDeleteCategoryDialog = true
-                            } label: {
-                                Label(feedFlowStrings.deleteFeed, systemImage: "trash")
-                            }
-                        }
-                }
-            }
-
-            HStack {
-                TextField(feedFlowStrings.newCategoryHint, text: $newCategory, axis: .horizontal)
-                    .onSubmit {
-                        addNewCategory(CategoryName(name: newCategory))
-                        newCategory = ""
-                    }
-                    .hoverEffect()
-
-                Spacer()
-
-                if !newCategory.isEmpty {
-                    Button {
-                        addNewCategory(CategoryName(name: newCategory))
-                        newCategory = ""
-                    } label: {
-                        Image(systemName: "checkmark.circle.fill")
-                            .tint(.green)
-                    }
-                    .hoverEffect()
-                }
             }
         }
     }
 
     private var saveButton: some View {
         Button {
+            isTextFieldFocused = false
             isAddingFeed.toggle()
             addFeed()
         } label: {
@@ -193,36 +142,4 @@ struct AddFeedScreenContent: View {
     }
 }
 
-#Preview {
-    AddFeedScreenContent(
-        feedURL: .constant("https://marcogomiero.com/feed"),
-        showError: .constant(false),
-        errorMessage: .constant(""),
-        categoryItems: .constant(categoryItems),
-        isAddingFeed: .constant(false),
-        categorySelectorObserver: CategorySelectorObserver(),
-        showCloseButton: true,
-        updateFeedUrlTextFieldValue: { _ in },
-        deleteCategory: { _ in },
-        addNewCategory: { _ in },
-        addFeed: {},
-        updateCategoryName: { _, _ in }
-    )
-}
-
-#Preview {
-    AddFeedScreenContent(
-        feedURL: .constant("https://marcogomiero.com"),
-        showError: .constant(true),
-        errorMessage: .constant("The provided link is not a RSS feed"),
-        categoryItems: .constant(categoryItems),
-        isAddingFeed: .constant(false),
-        categorySelectorObserver: CategorySelectorObserver(),
-        showCloseButton: true,
-        updateFeedUrlTextFieldValue: { _ in },
-        deleteCategory: { _ in },
-        addNewCategory: { _ in },
-        addFeed: {},
-        updateCategoryName: { _, _ in }
-    )
-}
+// Previews disabled - require AddFeedViewModel instance

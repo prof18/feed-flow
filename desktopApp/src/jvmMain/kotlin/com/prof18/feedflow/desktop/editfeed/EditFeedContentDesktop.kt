@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.feed.editfeed
+package com.prof18.feedflow.desktop.editfeed
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,8 +34,9 @@ import com.prof18.feedflow.shared.ui.feed.LinkOpeningPreferenceSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
+// TODO: check what can be shared
 @Composable
-fun EditFeedContent(
+fun EditFeedContentDesktop(
     feedUrl: String,
     feedName: String,
     showError: Boolean,
@@ -204,8 +205,7 @@ fun EditFeedContent(
 
             item {
                 CategoriesSelector(
-                    modifier = Modifier
-                        .padding(vertical = Spacing.regular),
+                    modifier = Modifier.padding(vertical = Spacing.regular),
                     categoriesState = categoriesState,
                     onClick = onCategorySelectorClick,
                 )
@@ -226,7 +226,7 @@ fun EditFeedContent(
                             modifier = Modifier.size(ButtonDefaults.IconSize),
                         )
                     } else {
-                        Text(LocalFeedFlowStrings.current.actionSave)
+                        Text(LocalFeedFlowStrings.current.editFeed)
                     }
                 }
             }

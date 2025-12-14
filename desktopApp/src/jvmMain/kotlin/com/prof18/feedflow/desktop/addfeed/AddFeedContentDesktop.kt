@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.feed.addfeed
+package com.prof18.feedflow.desktop.addfeed
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -26,8 +26,9 @@ import com.prof18.feedflow.shared.ui.feed.FeedUrlTextField
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
+// TODO: check if same as android and what can be shared
 @Composable
-fun AddFeedContent(
+fun AddFeedContentDesktop(
     feedUrl: String,
     showError: Boolean,
     showLoading: Boolean,
@@ -59,8 +60,7 @@ fun AddFeedContent(
             item {
                 Text(
                     text = LocalFeedFlowStrings.current.feedUrlHelpText,
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -78,8 +78,7 @@ fun AddFeedContent(
 
             item {
                 CategoriesSelector(
-                    modifier = Modifier
-                        .padding(vertical = Spacing.regular),
+                    modifier = Modifier.padding(top = Spacing.regular),
                     categoriesState = categoriesState,
                     onClick = onCategorySelectorClick,
                 )

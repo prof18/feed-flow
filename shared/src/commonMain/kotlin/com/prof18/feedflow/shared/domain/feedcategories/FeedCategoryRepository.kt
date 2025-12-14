@@ -15,6 +15,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.SyncError
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -108,7 +109,7 @@ internal class FeedCategoryRepository(
             }
             categoriesMutableState.update {
                 it.copy(
-                    categories = categoriesWithEmpty,
+                    categories = categoriesWithEmpty.toPersistentList(),
                 )
             }
         }
@@ -156,7 +157,7 @@ internal class FeedCategoryRepository(
                 }
             }
             state.copy(
-                categories = updatedCategories,
+                categories = updatedCategories.toPersistentList(),
             )
         }
     }

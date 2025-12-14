@@ -5,7 +5,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalFoundationApi::class)
-actual fun Modifier.feedSourceMenuClickModifier(
+actual fun Modifier.singleAndLongClickModifier(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)?,
 ): Modifier =

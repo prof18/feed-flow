@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
-import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
+import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.components.EditCategoryDialog as SharedEditCategoryDialog
@@ -281,7 +281,7 @@ private fun CategoryChipItem(
 
     Box {
         Surface(
-            modifier = Modifier.feedSourceMenuClickModifier(
+            modifier = Modifier.singleAndLongClickModifier(
                 onClick = onCategoryClick,
                 onLongClick = if (hasContextMenu) {
                     { showContextMenu = true }

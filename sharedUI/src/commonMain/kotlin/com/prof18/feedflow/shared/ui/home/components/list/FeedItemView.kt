@@ -24,7 +24,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedLayout
-import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
+import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.PreviewHelper
@@ -59,7 +59,7 @@ internal fun FeedItemView(
                 if (disableClick) {
                     Modifier
                 } else {
-                    Modifier.feedSourceMenuClickModifier(
+                    Modifier.singleAndLongClickModifier(
                         onClick = {
                             onFeedItemClick(
                                 FeedItemUrlInfo(

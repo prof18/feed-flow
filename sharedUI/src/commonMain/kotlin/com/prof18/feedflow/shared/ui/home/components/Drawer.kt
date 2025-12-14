@@ -44,7 +44,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -72,7 +71,7 @@ import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.shared.ui.components.EditCategoryDialog
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
-import com.prof18.feedflow.shared.ui.feedsourcelist.feedSourceMenuClickModifier
+import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -438,7 +437,7 @@ private fun DrawerFeedSourceByCategoryItem(
                 ) {
                     Row(
                         modifier = Modifier
-                            .feedSourceMenuClickModifier(
+                            .singleAndLongClickModifier(
                                 onClick = { onFeedFilterSelected(FeedFilter.Category(feedCategory = category)) },
                                 onLongClick = { showMenu = true },
                             )
@@ -722,7 +721,7 @@ fun FeedSourceDrawerItem(
             }
             Row(
                 Modifier
-                    .feedSourceMenuClickModifier(
+                    .singleAndLongClickModifier(
                         onClick = {
                             onClick()
                         },

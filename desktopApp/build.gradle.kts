@@ -210,6 +210,9 @@ val macExtraPlistKeys: String
           <string>cs</string>
           <string>lv</string>
           <string>tr</string>
+          <string>ar</string>
+          <string>sq</string>
+          <string>ca</string>
         </array>
         <key>NSUbiquitousContainers</key>
         <dict>

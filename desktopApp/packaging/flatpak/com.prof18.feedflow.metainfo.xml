@@ -64,6 +64,18 @@
   </content_rating>
 
   <releases>
+      <release version="1.8.0" date="2025-12-12">
+          <description>
+              <p>Added offline reading - articles can be automatically saved during sync</p>
+              <p>Navigate between articles directly in reader mode</p>
+              <p>Added cache management options to clear article content and images</p>
+              <p>Improved reader mode layout and navigation</p>
+              <p>Streamlined navigation drawer interface</p>
+              <p>Fixed date parsing issues with some RSS feeds</p>
+              <p>Improved error handling when articles fail to load</p>
+              <p>Bug fixes and performance improvements</p>
+          </description>
+      </release>
       <release version="1.7.0" date="2025-10-28">
           <description>
               <p>Added ability to open article comments directly from Reader Mode</p>

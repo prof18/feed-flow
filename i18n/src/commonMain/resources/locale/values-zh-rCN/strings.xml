@@ -254,4 +254,21 @@
     <string name="reader_mode_archive_button">在 archive.is 中打开</string>
     <string name="previous_article">上一篇文章</string>
     <string name="next_article">下一篇文章</string>
+    <string name="feed_error_message_improved">无法加载 %s。它可能不可用，或者您的互联网连接有故障。</string>
+    <string name="about_menu_faq">常见问题</string>
+    <string name="settings_hide_date">隐藏文章日期</string>
+    <string name="settings_auto_delete_period_one_day">一天前</string>
+    <string name="time_format_title">时间格式</string>
+    <string name="time_format_hours_24">24 小时</string>
+    <string name="time_format_hours_12">12 小时</string>
+    <string name="settings_danger_title">危险</string>
+    <string name="settings_clear_downloaded_articles">清除已下载的文章</string>
+    <string name="settings_clear_downloaded_articles_dialog_title">清除已下载的文章吗？</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">这会删除所有用于离线阅读的一下哎文章内容。此操作无法撤销。</string>
+    <string name="settings_clear_image_cache">清除图片缓存</string>
+    <string name="settings_clear_image_cache_dialog_title">清除图片缓存吗？</string>
+    <string name="settings_clear_image_cache_dialog_message">这会删除所有已缓存的图片。当你翻阅文章时，应用会再次下载这些图片。</string>
+    <string name="reader_mode_fallback_title">无法解析文章</string>
+    <string name="reader_mode_fallback_message">无法提取此页面的内容用于阅读模式。可以在浏览器中直接打开页面。</string>
+    <string name="reader_mode_fallback_open_browser_button">在浏览器中打开</string>
 </resources>

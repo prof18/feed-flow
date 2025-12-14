@@ -9,9 +9,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
-// TODO: maybe revert
 @Composable
-fun FeedUrlTextField(
+internal fun FeedUrlTextField(
     feedUrl: String,
     showError: Boolean,
     errorMessage: String,

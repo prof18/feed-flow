@@ -143,10 +143,8 @@ internal class FeedCategoryRepository(
 
     fun onCategorySelected(categoryId: CategoryId) {
         categoriesMutableState.update { state ->
-            var selectedCategoryName: String? = null
             val updatedCategories = state.categories.map { categoryItem ->
                 if (categoryId.value == categoryItem.id) {
-                    selectedCategoryName = categoryItem.name
                     categoryItem.copy(
                         isSelected = true,
                     )

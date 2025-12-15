@@ -673,10 +673,20 @@ class DateFormatterImpl(
         normalized = Regex("\\bsept\\b", RegexOption.IGNORE_CASE)
             .replace(normalized, "Sep")
 
+        // Handle double spaces
+        normalized = normalized.replace("  ", " ")
+
+        // Remove appended timestamp (garbage)
+        // e.g. "Mar, 09 Dic 2025 13:46:55 +0000 2025-12-09 13:46:55"
+        normalized = normalized.replace(Regex("\\s\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}$"), "")
+
         return normalized
     }
 
     override fun getDateMillisFromString(dateString: String): Long? {
+        if (dateString == "Date:") {
+            return null
+        }
         var exception: Throwable? = null
         var errorMessage: String? = null
 

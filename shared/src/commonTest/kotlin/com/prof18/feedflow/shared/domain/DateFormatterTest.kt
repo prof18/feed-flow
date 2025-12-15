@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain
 import com.prof18.feedflow.shared.testLogger
 import kotlin.test.Test
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class DateFormatterTest {
 
@@ -75,6 +76,8 @@ class DateFormatterTest {
         "Sunday, 10 Aug 2025 19:00:01 GMT",
         "Fri, 18 Sept 2020 10:30:00 -0600",
         "21:02 | 22-11-2025",
+        "Thu, 11 Dec 2025 10:23:40  Z",
+        "Tue, 09 Dec 2025 13:46:55 +0000 2025-12-09 13:46:55",
     )
 
     @Test
@@ -83,5 +86,12 @@ class DateFormatterTest {
             println(input)
             assertNotNull(dateFormatter.getDateMillisFromString(input))
         }
+    }
+
+    @Test
+    fun `getDateMillisFromString returns null for invalid input`() {
+        val input = "Date:"
+        val result = dateFormatter.getDateMillisFromString(input)
+        assertNull(result)
     }
 }

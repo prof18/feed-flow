@@ -9,14 +9,13 @@
 import FeedFlowKit
 import SwiftUI
 
-// TODO: simplify after using repository directly
 // MARK: - Container that observes ViewModel directly
 struct EditCategorySheetContainer: View {
     let viewModel: AddFeedViewModel
     let categorySelectorObserver: CategorySelectorObserver
     let onSave: () -> Void
 
-    @State private var categoryState = CategoriesState(isExpanded: false, header: nil, categories: [], isLoading: false)
+    @State private var categoryState = CategoriesState(categories: [], isLoading: false)
     @State private var showAddCategoryDialog = false
     @State private var categoryToDelete: String?
     @State private var categoryToEdit: CategoriesState.CategoryItem?
@@ -60,7 +59,7 @@ struct EditCategorySheetContainerForEdit: View {
     let categorySelectorObserver: CategorySelectorObserver
     let onSave: () -> Void
 
-    @State private var categoryState = CategoriesState(isExpanded: false, header: nil, categories: [], isLoading: false)
+    @State private var categoryState = CategoriesState(categories: [], isLoading: false)
     @State private var showAddCategoryDialog = false
     @State private var categoryToDelete: String?
     @State private var categoryToEdit: CategoriesState.CategoryItem?

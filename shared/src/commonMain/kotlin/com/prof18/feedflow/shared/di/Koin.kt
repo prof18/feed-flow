@@ -99,7 +99,8 @@ private fun getLoggingModule(
             ),
             tag = "FeedFlow",
         )
-        factory { (tag: String?) ->
+        factory {
+            val tag = it.getOrNull<String>()
             if (tag != null) {
                 baseLogger.withTag(tag)
             } else {

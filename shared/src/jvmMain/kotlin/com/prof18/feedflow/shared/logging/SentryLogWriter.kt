@@ -7,6 +7,7 @@ import co.touchlab.kermit.MessageStringFormatter
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Tag
 import io.sentry.Sentry
+import com.dropbox.core.NetworkIOException
 
 class SentryLogWriter(
     private val minSeverity: Severity = Severity.Info,
@@ -26,6 +27,10 @@ class SentryLogWriter(
     override fun isLoggable(tag: String, severity: Severity): Boolean = severity >= minSeverity
 
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
+        if (throwable is NetworkIOException) {
+            return
+        }
+
         if (Sentry.isEnabled()) {
             Sentry.captureMessage(
                 messageStringFormatter.formatMessage(severity, Tag(tag), Message(message)),

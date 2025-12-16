@@ -79,7 +79,7 @@ internal class DesktopFeedItemParserWorker(
                     title = article.title,
                     siteName = null,
                 )
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 logger.e(e) { "Error parsing content for: $url" }
                 ParsingResult.Error
             }

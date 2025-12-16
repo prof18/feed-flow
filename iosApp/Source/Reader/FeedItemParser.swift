@@ -14,7 +14,7 @@ private let minContentLength = 200
 class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
     static let shared = FeedItemParser()
 
-    let webview = WKWebView()
+    let webview: WKWebView
 
     private var requestQueue: [ParsingRequest] = []
     private var currentRequest: ParsingRequest?
@@ -22,6 +22,12 @@ class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
     private var isReady = false
 
     override init() {
+        let config = WKWebViewConfiguration()
+        config.allowsInlineMediaPlayback = false
+        config.mediaTypesRequiringUserActionForPlayback = .all
+        
+        self.webview = WKWebView(frame: .zero, configuration: config)
+        
         super.init()
         webview.uiDelegate = self
         webview.navigationDelegate = self

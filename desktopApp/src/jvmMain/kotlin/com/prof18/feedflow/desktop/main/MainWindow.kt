@@ -29,7 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.window.ApplicationScope
+import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import cafe.adriel.voyager.navigator.Navigator
@@ -74,7 +76,7 @@ import java.awt.event.WindowFocusListener
 import java.net.URI
 import kotlin.math.roundToInt
 
-@Suppress("CyclomaticComplexMethod")
+@Suppress("ViewModelForwarding")
 @Composable
 internal fun ApplicationScope.MainWindow(
     feedSyncRepo: FeedSyncRepository,
@@ -112,7 +114,73 @@ internal fun ApplicationScope.MainWindow(
         state = windowState,
         icon = icon,
     ) {
-        val listener = object : WindowFocusListener {
+        val snackbarHostState = remember { SnackbarHostState() }
+
+        MainWindowEffects(
+            composeWindow = window,
+            feedSyncRepo = feedSyncRepo,
+            windowState = windowState,
+            settingsRepository = settingsRepository,
+            messageQueue = messageQueue,
+            snackbarHostState = snackbarHostState,
+        )
+
+        if (showBackupLoader) {
+            BackupInProgressScreen(isDarkTheme = isDarkTheme)
+        } else {
+            MainWindowContent(
+                snackbarHostState = snackbarHostState,
+                isDarkTheme = isDarkTheme,
+                appConfig = appConfig,
+                frameWindowScope = this@Window,
+                composeWindow = window,
+                settingsViewModel = settingsViewModel,
+                settingsState = settingsState,
+                homeViewModel = homeViewModel,
+                searchViewModel = searchViewModel,
+                userFeedbackReporter = userFeedbackReporter,
+            )
+        }
+    }
+}
+
+@Composable
+private fun BackupInProgressScreen(
+    isDarkTheme: Boolean,
+) {
+    FeedFlowTheme(darkTheme = isDarkTheme) {
+        Scaffold {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                CircularProgressIndicator()
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.regular),
+                    text = LocalFeedFlowStrings.current.feedSyncInProgress,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MainWindowEffects(
+    composeWindow: ComposeWindow,
+    feedSyncRepo: FeedSyncRepository,
+    windowState: WindowState,
+    settingsRepository: SettingsRepository,
+    messageQueue: FeedSyncMessageQueue,
+    snackbarHostState: SnackbarHostState,
+) {
+    val scope = rememberCoroutineScope()
+    val flowStrings = LocalFeedFlowStrings.current
+
+    val listener = remember(feedSyncRepo) {
+        object : WindowFocusListener {
             override fun windowGainedFocus(e: WindowEvent) {
                 // Do nothing
             }
@@ -123,385 +191,404 @@ internal fun ApplicationScope.MainWindow(
                 }
             }
         }
+    }
 
-        LaunchedEffect(window.rootPane) {
-            if (getDesktopOS().isMacOs()) {
-                with(window.rootPane) {
-                    putClientProperty("apple.awt.transparentTitleBar", true)
-                    putClientProperty("apple.awt.fullWindowContent", true)
-                }
+    LaunchedEffect(composeWindow.rootPane) {
+        if (getDesktopOS().isMacOs()) {
+            with(composeWindow.rootPane) {
+                putClientProperty("apple.awt.transparentTitleBar", true)
+                putClientProperty("apple.awt.fullWindowContent", true)
             }
         }
+    }
 
-        DisposableEffect(Unit) {
-            window.addWindowFocusListener(listener)
-            onDispose {
-                window.removeWindowFocusListener(listener)
+    DisposableEffect(listener) {
+        composeWindow.addWindowFocusListener(listener)
+        onDispose {
+            composeWindow.removeWindowFocusListener(listener)
+        }
+    }
+
+    LaunchedEffect(windowState) {
+        snapshotFlow { windowState.size }
+            .collect { size ->
+                settingsRepository.setDesktopWindowWidthDp(size.width.value.roundToInt())
+                settingsRepository.setDesktopWindowHeightDp(size.height.value.roundToInt())
             }
-        }
+    }
 
-        val snackbarHostState = remember { SnackbarHostState() }
-
-        LaunchedEffect(windowState) {
-            snapshotFlow { windowState.size }
-                .collect { size ->
-                    settingsRepository.setDesktopWindowWidthDp(size.width.value.roundToInt())
-                    settingsRepository.setDesktopWindowHeightDp(size.height.value.roundToInt())
-                }
-        }
-
-        LaunchedEffect(windowState) {
-            snapshotFlow { windowState.position }
-                .collect { position ->
-                    settingsRepository.setDesktopWindowXPositionDp(position.x.value)
-                    settingsRepository.setDesktopWindowYPositionDp(position.y.value)
-                }
-        }
-
-        val flowStrings = LocalFeedFlowStrings.current
-        LaunchedEffect(Unit) {
-            messageQueue.messageQueue.collect { message ->
-                if (message is SyncResult.Error) {
-                    snackbarHostState.showSnackbar(
-                        message = flowStrings.errorAccountSync(message.errorCode.code),
-                    )
-                }
+    LaunchedEffect(windowState) {
+        snapshotFlow { windowState.position }
+            .collect { position ->
+                settingsRepository.setDesktopWindowXPositionDp(position.x.value)
+                settingsRepository.setDesktopWindowYPositionDp(position.y.value)
             }
-        }
+    }
 
-        LaunchedEffect(Unit) {
-            DesktopDatabaseErrorState.errorState.collect { show ->
-                if (show) {
-                    snackbarHostState.showSnackbar(
-                        message = flowStrings.databaseErrorReset,
-                    )
-                    DesktopDatabaseErrorState.setError(false)
-                }
-            }
-        }
-
-        if (showBackupLoader) {
-            FeedFlowTheme(darkTheme = isDarkTheme) {
-                Scaffold {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        CircularProgressIndicator()
-                        Text(
-                            modifier = Modifier
-                                .padding(top = Spacing.regular),
-                            text = LocalFeedFlowStrings.current.feedSyncInProgress,
-                        )
-                    }
-                }
-            }
-        } else {
-            CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
-                val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
-                val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
-
-                val listState = rememberLazyListState()
-
-                var aboutDialogVisibility by remember { mutableStateOf(false) }
-                var showMarkAllReadDialog by remember { mutableStateOf(false) }
-                var showClearOldArticlesDialog by remember { mutableStateOf(false) }
-                var showPrefetchWarningDialog by remember { mutableStateOf(false) }
-                var showClearDownloadedArticlesDialog by remember { mutableStateOf(false) }
-                var showClearImageCacheDialog by remember { mutableStateOf(false) }
-
-                AboutDialog(
-                    visible = aboutDialogVisibility,
-                    onCloseRequest = { aboutDialogVisibility = false },
-                    version = appConfig.version ?: "N/A",
-                    isDarkTheme = isDarkTheme,
+    LaunchedEffect(messageQueue) {
+        messageQueue.messageQueue.collect { message ->
+            if (message is SyncResult.Error) {
+                snackbarHostState.showSnackbar(
+                    message = flowStrings.errorAccountSync(message.errorCode.code),
                 )
+            }
+        }
+    }
 
-                var feedListFontDialogState by remember { mutableStateOf(false) }
-                val fontSizesState by settingsViewModel.feedFontSizeState.collectAsState()
+    LaunchedEffect(Unit) {
+        DesktopDatabaseErrorState.errorState.collect { show ->
+            if (show) {
+                snackbarHostState.showSnackbar(
+                    message = flowStrings.databaseErrorReset,
+                )
+                DesktopDatabaseErrorState.setError(false)
+            }
+        }
+    }
+}
 
-                FeedListAppearanceDialog(
-                    visible = feedListFontDialogState,
-                    onCloseRequest = { feedListFontDialogState = false },
-                    fontSizesState = fontSizesState,
-                    settingsState = settingsState,
-                    callbacks = FeedListAppearanceCallbacks(
-                        onFontScaleUpdate = { fontScale ->
-                            settingsViewModel.updateFontScale(fontScale)
+@Composable
+private fun MainWindowContent(
+    snackbarHostState: SnackbarHostState,
+    isDarkTheme: Boolean,
+    appConfig: DesktopConfig,
+    frameWindowScope: FrameWindowScope,
+    composeWindow: ComposeWindow,
+    settingsViewModel: SettingsViewModel,
+    settingsState: SettingsState,
+    homeViewModel: HomeViewModel,
+    searchViewModel: SearchViewModel,
+    userFeedbackReporter: UserFeedbackReporter,
+) {
+    CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
+        val scope = rememberCoroutineScope()
+        val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
+        val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
+
+        val listState = rememberLazyListState()
+
+        var aboutDialogVisibility by remember { mutableStateOf(false) }
+        var showMarkAllReadDialog by remember { mutableStateOf(false) }
+        var showClearOldArticlesDialog by remember { mutableStateOf(false) }
+        var showPrefetchWarningDialog by remember { mutableStateOf(false) }
+        var showClearDownloadedArticlesDialog by remember { mutableStateOf(false) }
+        var showClearImageCacheDialog by remember { mutableStateOf(false) }
+
+        AboutDialog(
+            visible = aboutDialogVisibility,
+            onCloseRequest = { aboutDialogVisibility = false },
+            version = appConfig.version ?: "N/A",
+            isDarkTheme = isDarkTheme,
+        )
+
+        var feedListFontDialogState by remember { mutableStateOf(false) }
+        val fontSizesState by settingsViewModel.feedFontSizeState.collectAsState()
+
+        FeedListAppearanceDialog(
+            visible = feedListFontDialogState,
+            onCloseRequest = { feedListFontDialogState = false },
+            fontSizesState = fontSizesState,
+            settingsState = settingsState,
+            callbacks = FeedListAppearanceCallbacks(
+                onFontScaleUpdate = { fontScale ->
+                    settingsViewModel.updateFontScale(fontScale)
+                },
+                onFeedLayoutUpdate = { feedLayout ->
+                    settingsViewModel.updateFeedLayout(feedLayout)
+                },
+                onHideDescriptionUpdate = { enabled ->
+                    settingsViewModel.updateHideDescription(enabled)
+                },
+                onHideImagesUpdate = { enabled ->
+                    settingsViewModel.updateHideImages(enabled)
+                },
+                onHideDateUpdate = { enabled ->
+                    settingsViewModel.updateHideDate(enabled)
+                },
+                onRemoveTitleFromDescUpdate = { enabled ->
+                    settingsViewModel.updateRemoveTitleFromDescription(enabled)
+                },
+                onDateFormatUpdate = { format ->
+                    settingsViewModel.updateDateFormat(format)
+                },
+                onTimeFormatUpdate = { format ->
+                    settingsViewModel.updateTimeFormat(format)
+                },
+                onSwipeActionUpdate = { direction, action ->
+                    settingsViewModel.updateSwipeAction(direction, action)
+                },
+            ),
+        )
+
+        MarkAllReadDialog(
+            visible = showMarkAllReadDialog,
+            onDismiss = { showMarkAllReadDialog = false },
+            onConfirm = {
+                homeViewModel.markAllRead()
+                showMarkAllReadDialog = false
+            },
+        )
+
+        ClearOldArticlesDialog(
+            visible = showClearOldArticlesDialog,
+            onDismiss = { showClearOldArticlesDialog = false },
+            onConfirm = {
+                homeViewModel.deleteOldFeedItems()
+                showClearOldArticlesDialog = false
+            },
+        )
+
+        PrefetchWarningDialog(
+            visible = showPrefetchWarningDialog,
+            onDismiss = { showPrefetchWarningDialog = false },
+            onConfirm = {
+                settingsViewModel.updatePrefetchArticleContent(true)
+                showPrefetchWarningDialog = false
+            },
+        )
+
+        ClearDownloadedArticlesDialog(
+            visible = showClearDownloadedArticlesDialog,
+            onDismiss = { showClearDownloadedArticlesDialog = false },
+            onConfirm = {
+                settingsViewModel.clearDownloadedArticleContent()
+                showClearDownloadedArticlesDialog = false
+            },
+        )
+
+        ClearImageCacheDialog(
+            visible = showClearImageCacheDialog,
+            onDismiss = { showClearImageCacheDialog = false },
+            onConfirm = {
+                val imageLoader = DI.koin.get<ImageLoader>()
+                imageLoader.diskCache?.clear()
+                imageLoader.memoryCache?.clear()
+                showClearImageCacheDialog = false
+            },
+        )
+
+        val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
+
+        Surface(
+            modifier = Modifier
+                .then(
+                    if (getDesktopOS().isMacOs()) {
+                        Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(top = Spacing.regular)
+                    } else {
+                        Modifier
+                    },
+                ),
+        ) {
+            Navigator(
+                @Suppress("ViewModelForwarding")
+                MainScreen(
+                    frameWindowScope = frameWindowScope,
+                    appEnvironment = appConfig.appEnvironment,
+                    version = appConfig.version,
+                    homeViewModel = homeViewModel,
+                    searchViewModel = searchViewModel,
+                    listState = listState,
+                ),
+            ) { navigator ->
+                frameWindowScope.FeedFlowMenuBar(
+                    state = MenuBarState(
+                        showDebugMenu = appConfig.appEnvironment.isDebug(),
+                        feedFilter = currentFeedFilter,
+                        settingsState = settingsState,
+                    ),
+                    actions = MenuBarActions(
+                        onRefreshClick = {
+                            scope.launch {
+                                listState.animateScrollToItem(0)
+                                homeViewModel.getNewFeeds()
+                            }
                         },
-                        onFeedLayoutUpdate = { feedLayout ->
-                            settingsViewModel.updateFeedLayout(feedLayout)
+                        onMarkAllReadClick = {
+                            showMarkAllReadDialog = true
                         },
-                        onHideDescriptionUpdate = { enabled ->
-                            settingsViewModel.updateHideDescription(enabled)
+                        onImportExportClick = {
+                            navigator.push(
+                                ImportExportScreen(
+                                    composeWindow = composeWindow,
+                                    triggerFeedFetch = {
+                                        homeViewModel.getNewFeeds()
+                                    },
+                                ),
+                            )
                         },
-                        onHideImagesUpdate = { enabled ->
-                            settingsViewModel.updateHideImages(enabled)
+                        onClearOldFeedClick = {
+                            showClearOldArticlesDialog = true
                         },
-                        onHideDateUpdate = { enabled ->
-                            settingsViewModel.updateHideDate(enabled)
+                        onAboutClick = {
+                            aboutDialogVisibility = true
                         },
-                        onRemoveTitleFromDescUpdate = { enabled ->
-                            settingsViewModel.updateRemoveTitleFromDescription(enabled)
+                        onBugReportClick = {
+                            val desktop = Desktop.getDesktop()
+                            val uri = URI.create(
+                                userFeedbackReporter.getEmailUrl(
+                                    subject = emailSubject,
+                                    content = emailContent,
+                                ),
+                            )
+                            desktop.mail(uri)
                         },
-                        onDateFormatUpdate = { format ->
-                            settingsViewModel.updateDateFormat(format)
+                        onForceRefreshClick = {
+                            scope.launch {
+                                listState.animateScrollToItem(0)
+                                homeViewModel.forceFeedRefresh()
+                            }
                         },
-                        onTimeFormatUpdate = { format ->
-                            settingsViewModel.updateTimeFormat(format)
+                        onFeedFontScaleClick = {
+                            feedListFontDialogState = true
                         },
-                        onSwipeActionUpdate = { direction, action ->
-                            settingsViewModel.updateSwipeAction(direction, action)
+                        deleteFeeds = {
+                            homeViewModel.deleteAllFeeds()
+                        },
+                    ),
+                    settings = MenuBarSettings(
+                        onFeedOrderSelected = { order ->
+                            settingsViewModel.updateFeedOrder(order)
+                        },
+                        setMarkReadWhenScrolling = { enabled ->
+                            settingsViewModel.updateMarkReadWhenScrolling(enabled)
+                        },
+                        setShowReadItem = { enabled ->
+                            settingsViewModel.updateShowReadItemsOnTimeline(enabled)
+                        },
+                        setReaderMode = { enabled ->
+                            settingsViewModel.updateReaderMode(enabled)
+                        },
+                        setSaveReaderModeContent = { enabled ->
+                            settingsViewModel.updateSaveReaderModeContent(enabled)
+                        },
+                        setPrefetchArticleContent = { enabled ->
+                            if (enabled) {
+                                showPrefetchWarningDialog = true
+                            } else {
+                                settingsViewModel.updatePrefetchArticleContent(false)
+                            }
+                        },
+                        onAutoDeletePeriodSelected = { period ->
+                            settingsViewModel.updateAutoDeletePeriod(period)
+                        },
+                        setCrashReportingEnabled = { enabled ->
+                            settingsViewModel.updateCrashReporting(enabled)
+                            if (enabled) {
+                                if (
+                                    appConfig.appEnvironment.isRelease() &&
+                                    appConfig.sentryDns != null &&
+                                    appConfig.version != null
+                                ) {
+                                    initSentry(
+                                        dns = appConfig.sentryDns,
+                                        version = appConfig.version,
+                                    )
+                                }
+                            } else {
+                                disableSentry()
+                            }
+                        },
+                        onThemeModeSelected = { mode ->
+                            settingsViewModel.updateThemeMode(mode)
+                        },
+                        onClearDownloadedArticles = {
+                            showClearDownloadedArticlesDialog = true
+                        },
+                        onClearImageCache = {
+                            showClearImageCacheDialog = true
                         },
                     ),
                 )
 
-                if (showMarkAllReadDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showMarkAllReadDialog = false },
-                        title = { Text(LocalFeedFlowStrings.current.markAllReadButton) },
-                        text = { Text(LocalFeedFlowStrings.current.markAllReadDialogMessage) },
-                        confirmButton = {
-                            TextButton(
-                                onClick = {
-                                    homeViewModel.markAllRead()
-                                    showMarkAllReadDialog = false
-                                },
-                            ) {
-                                Text(LocalFeedFlowStrings.current.confirmButton)
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(
-                                onClick = { showMarkAllReadDialog = false },
-                            ) {
-                                Text(LocalFeedFlowStrings.current.cancelButton)
-                            }
-                        },
-                    )
-                }
-
-                if (showClearOldArticlesDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showClearOldArticlesDialog = false },
-                        title = { Text(LocalFeedFlowStrings.current.clearOldArticlesButton) },
-                        text = { Text(LocalFeedFlowStrings.current.clearOldArticlesDialogMessage) },
-                        confirmButton = {
-                            TextButton(
-                                onClick = {
-                                    homeViewModel.deleteOldFeedItems()
-                                    showClearOldArticlesDialog = false
-                                },
-                            ) {
-                                Text(LocalFeedFlowStrings.current.confirmButton)
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(
-                                onClick = { showClearOldArticlesDialog = false },
-                            ) {
-                                Text(LocalFeedFlowStrings.current.cancelButton)
-                            }
-                        },
-                    )
-                }
-
-                if (showPrefetchWarningDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showPrefetchWarningDialog = false },
-                        title = { Text(LocalFeedFlowStrings.current.settingsPrefetchArticleContent) },
-                        text = { Text(LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning) },
-                        confirmButton = {
-                            TextButton(
-                                onClick = {
-                                    settingsViewModel.updatePrefetchArticleContent(true)
-                                    showPrefetchWarningDialog = false
-                                },
-                            ) {
-                                Text(LocalFeedFlowStrings.current.confirmButton)
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(
-                                onClick = { showPrefetchWarningDialog = false },
-                            ) {
-                                Text(LocalFeedFlowStrings.current.cancelButton)
-                            }
-                        },
-                    )
-                }
-
-                ClearDownloadedArticlesDialog(
-                    visible = showClearDownloadedArticlesDialog,
-                    onDismiss = { showClearDownloadedArticlesDialog = false },
-                    onConfirm = {
-                        settingsViewModel.clearDownloadedArticleContent()
-                        showClearDownloadedArticlesDialog = false
-                    },
-                )
-
-                ClearImageCacheDialog(
-                    visible = showClearImageCacheDialog,
-                    onDismiss = { showClearImageCacheDialog = false },
-                    onConfirm = {
-                        val imageLoader = DI.koin.get<ImageLoader>()
-                        imageLoader.diskCache?.clear()
-                        imageLoader.memoryCache?.clear()
-                        showClearImageCacheDialog = false
-                    },
-                )
-
-                val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
-
-                Surface(
-                    modifier = Modifier
-                        .then(
-                            if (getDesktopOS().isMacOs()) {
-                                Modifier
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .padding(top = Spacing.regular)
-                            } else {
-                                Modifier
-                            },
-                        ),
-                ) {
-                    Navigator(
-                        @Suppress("ViewModelForwarding")
-                        MainScreen(
-                            frameWindowScope = this@Window,
-                            appEnvironment = appConfig.appEnvironment,
-                            version = appConfig.version,
-                            homeViewModel = homeViewModel,
-                            searchViewModel = searchViewModel,
-                            listState = listState,
-                        ),
-                    ) { navigator ->
-                        FeedFlowMenuBar(
-                            state = MenuBarState(
-                                showDebugMenu = appConfig.appEnvironment.isDebug(),
-                                feedFilter = currentFeedFilter,
-                                settingsState = settingsState,
-                            ),
-                            actions = MenuBarActions(
-                                onRefreshClick = {
-                                    scope.launch {
-                                        listState.animateScrollToItem(0)
-                                        homeViewModel.getNewFeeds()
-                                    }
-                                },
-                                onMarkAllReadClick = {
-                                    showMarkAllReadDialog = true
-                                },
-                                onImportExportClick = {
-                                    navigator.push(
-                                        ImportExportScreen(
-                                            composeWindow = window,
-                                            triggerFeedFetch = {
-                                                homeViewModel.getNewFeeds()
-                                            },
-                                        ),
-                                    )
-                                },
-                                onClearOldFeedClick = {
-                                    showClearOldArticlesDialog = true
-                                },
-                                onAboutClick = {
-                                    aboutDialogVisibility = true
-                                },
-                                onBugReportClick = {
-                                    val desktop = Desktop.getDesktop()
-                                    val uri = URI.create(
-                                        userFeedbackReporter.getEmailUrl(
-                                            subject = emailSubject,
-                                            content = emailContent,
-                                        ),
-                                    )
-                                    desktop.mail(uri)
-                                },
-                                onForceRefreshClick = {
-                                    scope.launch {
-                                        listState.animateScrollToItem(0)
-                                        homeViewModel.forceFeedRefresh()
-                                    }
-                                },
-                                onFeedFontScaleClick = {
-                                    feedListFontDialogState = true
-                                },
-                                deleteFeeds = {
-                                    homeViewModel.deleteAllFeeds()
-                                },
-                            ),
-                            settings = MenuBarSettings(
-                                onFeedOrderSelected = { order ->
-                                    settingsViewModel.updateFeedOrder(order)
-                                },
-                                setMarkReadWhenScrolling = { enabled ->
-                                    settingsViewModel.updateMarkReadWhenScrolling(enabled)
-                                },
-                                setShowReadItem = { enabled ->
-                                    settingsViewModel.updateShowReadItemsOnTimeline(enabled)
-                                },
-                                setReaderMode = { enabled ->
-                                    settingsViewModel.updateReaderMode(enabled)
-                                },
-                                setSaveReaderModeContent = { enabled ->
-                                    settingsViewModel.updateSaveReaderModeContent(enabled)
-                                },
-                                setPrefetchArticleContent = { enabled ->
-                                    if (enabled) {
-                                        showPrefetchWarningDialog = true
-                                    } else {
-                                        settingsViewModel.updatePrefetchArticleContent(false)
-                                    }
-                                },
-                                onAutoDeletePeriodSelected = { period ->
-                                    settingsViewModel.updateAutoDeletePeriod(period)
-                                },
-                                setCrashReportingEnabled = { enabled ->
-                                    settingsViewModel.updateCrashReporting(enabled)
-                                    if (enabled) {
-                                        if (
-                                            appConfig.appEnvironment.isRelease() &&
-                                            appConfig.sentryDns != null &&
-                                            appConfig.version != null
-                                        ) {
-                                            initSentry(
-                                                dns = appConfig.sentryDns,
-                                                version = appConfig.version,
-                                            )
-                                        }
-                                    } else {
-                                        disableSentry()
-                                    }
-                                },
-                                onThemeModeSelected = { mode ->
-                                    settingsViewModel.updateThemeMode(mode)
-                                },
-                                onClearDownloadedArticles = {
-                                    showClearDownloadedArticlesDialog = true
-                                },
-                                onClearImageCache = {
-                                    showClearImageCacheDialog = true
-                                },
-                            ),
-                        )
-
-                        ScaleTransition(navigator)
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom,
-                ) {
-                    SnackbarHost(snackbarHostState)
-                }
+                ScaleTransition(navigator)
             }
         }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom,
+        ) {
+            SnackbarHost(snackbarHostState)
+        }
+    }
+}
+
+@Composable
+private fun MarkAllReadDialog(
+    visible: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (visible) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(LocalFeedFlowStrings.current.markAllReadButton) },
+            text = { Text(LocalFeedFlowStrings.current.markAllReadDialogMessage) },
+            confirmButton = {
+                TextButton(onClick = onConfirm) {
+                    Text(LocalFeedFlowStrings.current.confirmButton)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(LocalFeedFlowStrings.current.cancelButton)
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun ClearOldArticlesDialog(
+    visible: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (visible) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(LocalFeedFlowStrings.current.clearOldArticlesButton) },
+            text = { Text(LocalFeedFlowStrings.current.clearOldArticlesDialogMessage) },
+            confirmButton = {
+                TextButton(onClick = onConfirm) {
+                    Text(LocalFeedFlowStrings.current.confirmButton)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(LocalFeedFlowStrings.current.cancelButton)
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun PrefetchWarningDialog(
+    visible: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (visible) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(LocalFeedFlowStrings.current.settingsPrefetchArticleContent) },
+            text = { Text(LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning) },
+            confirmButton = {
+                TextButton(onClick = onConfirm) {
+                    Text(LocalFeedFlowStrings.current.confirmButton)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(LocalFeedFlowStrings.current.cancelButton)
+                }
+            },
+        )
     }
 }
 

@@ -28,6 +28,33 @@ struct FeedFlowApp: App {
                 dropboxDataSource.setup(apiKey: key)
             }
         }
+
+        registerBackgroundTask()
+    }
+
+    private func registerBackgroundTask() {
+        BGTaskScheduler.shared.register(
+            forTaskWithIdentifier: "com.prof18.feedflow.articlesync",
+            using: nil
+        ) { task in
+            scheduleAppRefresh()
+
+            let backgroundTask = Task {
+                do {
+                    let repo = Deps.shared.getSerialFeedFetcherRepository()
+                    try await repo.fetchFeeds()
+                    WidgetCenter.shared.reloadAllTimelines()
+                    task.setTaskCompleted(success: true)
+                } catch {
+                    task.setTaskCompleted(success: false)
+                }
+            }
+
+            task.expirationHandler = {
+                backgroundTask.cancel()
+                task.setTaskCompleted(success: false)
+            }
+        }
     }
 
     var body: some Scene {
@@ -113,31 +140,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             configureFirebase()
         #endif
 
-        BGTaskScheduler.shared.register(
-            forTaskWithIdentifier: "com.prof18.feedflow.articlesync",
-            using: nil
-        ) { task in
-            scheduleAppRefresh()
-
-            let backgroundTask = Task {
-                do {
-                    let repo = Deps.shared.getSerialFeedFetcherRepository()
-                    try await repo.fetchFeeds()
-                    WidgetCenter.shared.reloadAllTimelines()
-                    task.setTaskCompleted(success: true)
-                } catch {
-                    task.setTaskCompleted(success: false)
-                }
-            }
-
-            task.expirationHandler = {
-                backgroundTask.cancel()
-                task.setTaskCompleted(success: false)
-            }
-        }
-
         return true
     }
+
 
     func application(
         _: UIApplication,

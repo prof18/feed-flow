@@ -11,7 +11,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.PointerButton
 
 @OptIn(ExperimentalFoundationApi::class)
-internal actual fun Modifier.feedSourceMenuClickModifier(
+actual fun Modifier.singleAndLongClickModifier(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)?,
 ): Modifier = composed {

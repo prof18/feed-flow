@@ -24,7 +24,6 @@ struct EditFeedScreen: View {
 
     @State private var showError = false
     @State private var errorMessage = ""
-    @State private var categoryItems: [CategoriesState.CategoryItem] = []
     @State private var isAddingFeed = false
     @State var feedURL = ""
     @State var feedName = ""
@@ -41,23 +40,17 @@ struct EditFeedScreen: View {
                 feedName: $feedName,
                 showError: $showError,
                 errorMessage: $errorMessage,
-                categoryItems: $categoryItems,
                 isAddingFeed: $isAddingFeed,
                 linkOpeningPreference: $linkOpeningPreference,
                 isHidden: $isHidden,
                 isPinned: $isPinned,
                 categorySelectorObserver: categorySelectorObserver,
+                viewModel: vmStoreOwner.instance,
                 updateFeedUrlTextFieldValue: { value in
                     vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
                 },
                 updateFeedNameTextFieldValue: { value in
                     vmStoreOwner.instance.updateFeedNameTextFieldValue(feedNameTextFieldValue: value)
-                },
-                deleteCategory: { categoryId in
-                    vmStoreOwner.instance.deleteCategory(categoryId: categoryId)
-                },
-                addNewCategory: { categoryName in
-                    vmStoreOwner.instance.addNewCategory(categoryName: categoryName)
                 },
                 updateLinkOpeningPreference: { preference in
                     vmStoreOwner.instance.updateLinkOpeningPreference(preference: preference)
@@ -84,6 +77,10 @@ struct EditFeedScreen: View {
             .snackbar(messageQueue: $appState.snackbarQueue)
             .onAppear {
                 vmStoreOwner.instance.loadFeedToEdit(feedSource: feedSource)
+
+                categorySelectorObserver.onCategorySelected = { categoryId in
+                    vmStoreOwner.instance.onCategorySelected(categoryId: CategoryId(value: categoryId))
+                }
             }
             .task {
                 for await state in vmStoreOwner.instance.feedUrlState {
@@ -136,7 +133,6 @@ struct EditFeedScreen: View {
             .task {
                 for await state in vmStoreOwner.instance.categoriesState {
                     self.categorySelectorObserver.selectedCategory = state.categories.first { $0.isSelected }
-                    self.categoryItems = state.categories
                 }
             }
             .task {

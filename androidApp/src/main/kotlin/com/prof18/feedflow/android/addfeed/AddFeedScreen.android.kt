@@ -3,20 +3,24 @@ package com.prof18.feedflow.android.addfeed
 import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
@@ -24,8 +28,10 @@ import com.prof18.feedflow.shared.ui.feed.addfeed.AddFeedContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFeedScreen(
     navigateBack: () -> Unit,
@@ -42,6 +48,10 @@ fun AddFeedScreen(
 
     val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
     val isNotificationEnabled by viewModel.isNotificationEnabledState.collectAsState()
+
+    val scope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showCategorySheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.feedAddedState.collect { feedAddedState ->
@@ -98,17 +108,8 @@ fun AddFeedScreen(
         addFeed = {
             viewModel.addFeed()
         },
-        onExpandClick = {
-            viewModel.onExpandCategoryClick()
-        },
-        onAddCategoryClick = { categoryName ->
-            viewModel.addNewCategory(categoryName)
-        },
-        onDeleteCategoryClick = { categoryId ->
-            viewModel.deleteCategory(categoryId.value)
-        },
-        onEditCategoryClick = { categoryId, newName ->
-            viewModel.editCategory(categoryId, newName)
+        onCategorySelectorClick = {
+            showCategorySheet = true
         },
         showNotificationToggle = showNotificationToggle,
         isNotificationEnabled = isNotificationEnabled,
@@ -135,6 +136,32 @@ fun AddFeedScreen(
             )
         },
     )
+
+    if (showCategorySheet) {
+        EditCategorySheet(
+            sheetState = sheetState,
+            categoryState = categoriesState,
+            onCategorySelected = { categoryId ->
+                viewModel.onCategorySelected(categoryId)
+            },
+            onAddCategory = { categoryName ->
+                viewModel.addNewCategory(categoryName)
+            },
+            onDeleteCategory = { categoryId ->
+                viewModel.deleteCategory(categoryId.value)
+            },
+            onEditCategory = { categoryId, newName ->
+                viewModel.editCategory(categoryId, newName)
+            },
+            onDismiss = {
+                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        showCategorySheet = false
+                    }
+                }
+            },
+        )
+    }
 }
 
 @PreviewPhone
@@ -149,10 +176,7 @@ private fun AddScreenContentPreview() {
             categoriesState = categoriesExpandedState,
             onFeedUrlUpdated = {},
             addFeed = { },
-            onExpandClick = {},
-            onAddCategoryClick = {},
-            onDeleteCategoryClick = {},
-            onEditCategoryClick = { _, _ -> },
+            onCategorySelectorClick = {},
             showNotificationToggle = true,
             isNotificationEnabled = false,
             onNotificationToggleChanged = {},

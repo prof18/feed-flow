@@ -124,7 +124,8 @@ class EditFeedViewModel internal constructor(
             }
 
             val categoryName = feedSource.category?.title?.let { CategoryName(it) }
-            categoryUseCase.initCategories(categoryName)
+            categoryUseCase.setInitialSelection(categoryName)
+            categoryUseCase.initCategories()
         }
     }
 
@@ -134,8 +135,8 @@ class EditFeedViewModel internal constructor(
         }
     }
 
-    fun onExpandCategoryClick() {
-        categoryUseCase.onExpandCategoryClick()
+    fun onCategorySelected(categoryId: CategoryId) {
+        categoryUseCase.onCategorySelected(categoryId)
     }
 
     fun addNewCategory(categoryName: CategoryName) {

@@ -25,8 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import com.prof18.feedflow.core.model.CategoriesState
-import com.prof18.feedflow.core.model.CategoryId
-import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.shared.ui.feed.CategoriesSelector
@@ -52,10 +50,7 @@ fun EditFeedContent(
     onHiddenToggled: (Boolean) -> Unit,
     onPinnedToggled: (Boolean) -> Unit,
     editFeed: () -> Unit,
-    onExpandClick: () -> Unit,
-    onAddCategoryClick: (CategoryName) -> Unit,
-    onDeleteCategoryClick: (CategoryId) -> Unit,
-    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onCategorySelectorClick: () -> Unit,
     showDeleteDialog: Boolean,
     onShowDeleteDialog: () -> Unit,
     onDismissDeleteDialog: () -> Unit,
@@ -212,10 +207,7 @@ fun EditFeedContent(
                     modifier = Modifier
                         .padding(vertical = Spacing.regular),
                     categoriesState = categoriesState,
-                    onExpandClick = onExpandClick,
-                    onAddCategoryClick = onAddCategoryClick,
-                    onDeleteCategoryClick = onDeleteCategoryClick,
-                    onEditCategoryClick = onEditCategoryClick,
+                    onClick = onCategorySelectorClick,
                 )
             }
 

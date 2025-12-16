@@ -22,6 +22,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
+import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.generateUniqueKey
@@ -105,6 +106,8 @@ internal data class EditFeedScreen(
             }
         }
 
+        var showCategoryDialog by remember { mutableStateOf(false) }
+
         EditFeedContent(
             feedUrl = feedUrl,
             feedName = feedName,
@@ -136,17 +139,8 @@ internal data class EditFeedScreen(
             editFeed = {
                 viewModel.editFeed()
             },
-            onExpandClick = {
-                viewModel.onExpandCategoryClick()
-            },
-            onAddCategoryClick = { categoryName ->
-                viewModel.addNewCategory(categoryName)
-            },
-            onDeleteCategoryClick = { categoryId ->
-                viewModel.deleteCategory(categoryId.value)
-            },
-            onEditCategoryClick = { categoryId, newName ->
-                viewModel.editCategory(categoryId, newName)
+            onCategorySelectorClick = {
+                showCategoryDialog = true
             },
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topAppBar = {
@@ -173,6 +167,27 @@ internal data class EditFeedScreen(
             onDismissDeleteDialog = { showDeleteDialog = false },
             onConfirmDelete = { viewModel.deleteFeed() },
         )
+
+        if (showCategoryDialog) {
+            EditCategoryDialog(
+                categoryState = categoriesState,
+                onCategorySelected = { categoryId ->
+                    viewModel.onCategorySelected(categoryId)
+                },
+                onAddCategory = { categoryName ->
+                    viewModel.addNewCategory(categoryName)
+                },
+                onDeleteCategory = { categoryId ->
+                    viewModel.deleteCategory(categoryId.value)
+                },
+                onEditCategory = { categoryId, newName ->
+                    viewModel.editCategory(categoryId, newName)
+                },
+                onDismiss = {
+                    showCategoryDialog = false
+                },
+            )
+        }
     }
 }
 
@@ -197,10 +212,7 @@ private fun EditScreenPreview() {
             showNotificationToggle = true,
             onNotificationToggleChanged = {},
             editFeed = { },
-            onExpandClick = {},
-            onAddCategoryClick = {},
-            onDeleteCategoryClick = {},
-            onEditCategoryClick = { _, _ -> },
+            onCategorySelectorClick = {},
             showDeleteDialog = true,
             onShowDeleteDialog = {},
             onDismissDeleteDialog = {},

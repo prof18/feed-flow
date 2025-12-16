@@ -19,7 +19,6 @@ struct AddFeedScreen: View {
 
     @State private var showError = false
     @State private var errorMessage = ""
-    @State private var categoryItems: [CategoriesState.CategoryItem] = []
     @State private var isAddingFeed = false
     @State var feedURL = ""
 
@@ -37,30 +36,23 @@ struct AddFeedScreen: View {
                 feedURL: $feedURL,
                 showError: $showError,
                 errorMessage: $errorMessage,
-                categoryItems: $categoryItems,
                 isAddingFeed: $isAddingFeed,
                 categorySelectorObserver: categorySelectorObserver,
+                viewModel: vmStoreOwner.instance,
                 showCloseButton: showCloseButton,
                 updateFeedUrlTextFieldValue: { value in
                     vmStoreOwner.instance.updateFeedUrlTextFieldValue(feedUrlTextFieldValue: value)
                 },
-                deleteCategory: { categoryId in
-                    vmStoreOwner.instance.deleteCategory(categoryId: categoryId)
-                },
-                addNewCategory: { categoryName in
-                    vmStoreOwner.instance.addNewCategory(categoryName: categoryName)
-                },
                 addFeed: {
                     vmStoreOwner.instance.addFeed()
-                },
-                updateCategoryName: { categoryId, categoryName in
-                    vmStoreOwner.instance.editCategory(
-                        categoryId: CategoryId(value: categoryId),
-                        newName: CategoryName(name: categoryName)
-                    )
                 }
             )
             .snackbar(messageQueue: $appState.snackbarQueue)
+        }
+        .onAppear {
+            categorySelectorObserver.onCategorySelected = { categoryId in
+                vmStoreOwner.instance.onCategorySelected(categoryId: CategoryId(value: categoryId))
+            }
         }
         .task {
             for await state in vmStoreOwner.instance.feedAddedState {
@@ -112,7 +104,6 @@ struct AddFeedScreen: View {
                 self.categorySelectorObserver.selectedCategory = state.categories.first {
                     $0.isSelected
                 }
-                self.categoryItems = state.categories
             }
         }
     }

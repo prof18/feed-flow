@@ -3,21 +3,25 @@ package com.prof18.feedflow.android.editfeed
 import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
@@ -26,7 +30,9 @@ import com.prof18.feedflow.shared.ui.feed.editfeed.EditFeedContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditScreen(
     viewModel: EditFeedViewModel,
@@ -48,6 +54,10 @@ internal fun EditScreen(
     val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
 
     val latestNavigateBack by rememberUpdatedState(navigateBack)
+
+    val scope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showCategorySheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.feedEditedState.collect { feedAddedState ->
@@ -124,17 +134,8 @@ internal fun EditScreen(
         editFeed = {
             viewModel.editFeed()
         },
-        onExpandClick = {
-            viewModel.onExpandCategoryClick()
-        },
-        onAddCategoryClick = { categoryName ->
-            viewModel.addNewCategory(categoryName)
-        },
-        onDeleteCategoryClick = { categoryId ->
-            viewModel.deleteCategory(categoryId.value)
-        },
-        onEditCategoryClick = { categoryId, newName ->
-            viewModel.editCategory(categoryId, newName)
+        onCategorySelectorClick = {
+            showCategorySheet = true
         },
         showDeleteDialog = showDeleteDialog,
         onShowDeleteDialog = { showDeleteDialog = true },
@@ -160,6 +161,32 @@ internal fun EditScreen(
             )
         },
     )
+
+    if (showCategorySheet) {
+        EditCategorySheet(
+            sheetState = sheetState,
+            categoryState = categoriesState,
+            onCategorySelected = { categoryId ->
+                viewModel.onCategorySelected(categoryId)
+            },
+            onAddCategory = { categoryName ->
+                viewModel.addNewCategory(categoryName)
+            },
+            onDeleteCategory = { categoryId ->
+                viewModel.deleteCategory(categoryId.value)
+            },
+            onEditCategory = { categoryId, newName ->
+                viewModel.editCategory(categoryId, newName)
+            },
+            onDismiss = {
+                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        showCategorySheet = false
+                    }
+                }
+            },
+        )
+    }
 }
 
 @PreviewPhone
@@ -183,10 +210,7 @@ private fun EditScreenPreview() {
             showNotificationToggle = true,
             onNotificationToggleChanged = {},
             editFeed = { },
-            onExpandClick = {},
-            onAddCategoryClick = {},
-            onDeleteCategoryClick = {},
-            onEditCategoryClick = { _, _ -> },
+            onCategorySelectorClick = {},
             showDeleteDialog = true,
             onShowDeleteDialog = {},
             onDismissDeleteDialog = {},

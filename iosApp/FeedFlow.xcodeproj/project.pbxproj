@@ -384,7 +384,6 @@
 				13929EA82D7345F0003752AE /* Embed Foundation Extensions */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
 				CCEA11BF2A6D2C6600C661AC /* Crashlytics */,
-				CCEA11C12A6D454C00C661AC /* Crashlytics KMP */,
 			);
 			buildRules = (
 			);
@@ -620,26 +619,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  \"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\nfi\n\n";
-		};
-		CCEA11C12A6D454C00C661AC /* Crashlytics KMP */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Crashlytics KMP";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n    find ../shared/build -name \"*.dSYM\" | xargs -I \\{\\} ${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols -gsp ${SRCROOT}/GoogleService-Info.plist -p ios \\{\\}\nfi\n";
+			shellScript = "# Upload dSYMs to Firebase Crashlytics\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  SCRIPT_PATH=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n  \n  if [ ! -f \"$SCRIPT_PATH\" ]; then\n    echo \"error: Firebase Crashlytics script not found at: $SCRIPT_PATH\"\n    echo \"BUILD_DIR: ${BUILD_DIR}\"\n    exit 1\n  fi\n  \n  echo \"Running Crashlytics script from: $SCRIPT_PATH\"\n  \"$SCRIPT_PATH\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -118,6 +118,29 @@ jobs:
             CODE_SIGN_STYLE="Manual" \
             archive | xcbeautify --renderer github-actions
 
+      - name: Upload dSYMs to Crashlytics
+        run: |
+          DSYM_PATH="${RUNNER_TEMP}/Build/Archives/FeedFlow.xcarchive/dSYMs"
+          UPLOAD_SCRIPT="${RUNNER_TEMP}/Build/DerivedData/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols"
+
+          echo "Looking for dSYMs at: $DSYM_PATH"
+          echo "Upload script at: $UPLOAD_SCRIPT"
+
+          if [ ! -f "$UPLOAD_SCRIPT" ]; then
+            echo "Error: upload-symbols script not found"
+            exit 1
+          fi
+
+          if [ -d "$DSYM_PATH" ]; then
+            find "$DSYM_PATH" -name "*.dSYM" | while read dsym; do
+              echo "Uploading: $dsym"
+              "$UPLOAD_SCRIPT" -gsp "${{ github.workspace }}/iosApp/GoogleService-Info.plist" -p ios "$dsym"
+            done
+          else
+            echo "Warning: No dSYMs directory found at: $DSYM_PATH"
+            ls -la "${RUNNER_TEMP}/Build/Archives/FeedFlow.xcarchive/" || true
+          fi
+
       - name: "Generate ExportOptions.plist"
         run: |
           cat <<EOF > ${RUNNER_TEMP}/Build/ExportOptions.plist

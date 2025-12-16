@@ -89,6 +89,7 @@ struct FeedListView: View {
                                         onReadStatusClick: onReadStatusClick,
                                         onOpenFeedSettings: onOpenFeedSettings
                                     )
+                                    .environment(browserSelector)
                                 } preview: {
                                     FeedItemView(
                                         feedItem: feedItem,
@@ -110,6 +111,7 @@ struct FeedListView: View {
                                         onReadStatusClick: onReadStatusClick,
                                         onOpenFeedSettings: onOpenFeedSettings
                                     )
+                                    .environment(browserSelector)
                                 }
                         }
                         .listRowSeparator(feedLayout == .card ? .hidden : .automatic)

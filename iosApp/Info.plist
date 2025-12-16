@@ -92,6 +92,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>FeedFlow needs permission to save images for you.</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>iCloud.com.prof18.feedflow</key>

@@ -86,6 +86,7 @@ struct SearchScreenContent: View {
                                makeBookmarkButton(feedItem: feedItem)
                                makeCommentsButton(feedItem: feedItem)
                            }
+                           .environment(browserSelector)
                        }
             }
         }

@@ -124,4 +124,8 @@ class BrowserSelector {
             return URL(string: stringUrl) ?? URL(fileURLWithPath: "")
         }
     }
+
+    func isValidForInAppBrowser(_ url: URL) -> Bool {
+        return url.scheme == "http" || url.scheme == "https"
+    }
 }

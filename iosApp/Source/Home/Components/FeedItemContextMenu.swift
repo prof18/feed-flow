@@ -56,9 +56,11 @@ struct FeedItemContextMenu: View {
     private func makeCommentsButton(feedItem: FeedItem) -> some View {
         if let commentsUrl = feedItem.commentsUrl {
             Button {
-                if browserSelector.openInAppBrowser() {
-                    if let url = URL(string: commentsUrl) {
+                if let url = URL(string: commentsUrl), browserSelector.openInAppBrowser() {
+                    if browserSelector.isValidForInAppBrowser(url) {
                         appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                    } else {
+                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
                     }
                 } else {
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))

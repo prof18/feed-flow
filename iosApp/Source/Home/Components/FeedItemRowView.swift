@@ -43,14 +43,22 @@ struct FeedItemRowView: View {
                 case .readerMode:
                     onReaderModeClick(urlInfo)
                 case .internalBrowser:
-                    self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                    if browserSelector.isValidForInAppBrowser(url) {
+                        self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                    } else {
+                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                    }
                 case .preferredBrowser:
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                 case .default:
                     if browserSelector.openReaderMode(link: feedItem.url) {
                         onReaderModeClick(urlInfo)
                     } else if browserSelector.openInAppBrowser() {
-                        self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                        if browserSelector.isValidForInAppBrowser(url) {
+                            self.appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                        } else {
+                            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                        }
                     } else {
                         openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
                     }

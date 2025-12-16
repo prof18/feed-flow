@@ -143,7 +143,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
 
-
     func application(
         _: UIApplication,
         handleEventsForBackgroundURLSession identifier: String,

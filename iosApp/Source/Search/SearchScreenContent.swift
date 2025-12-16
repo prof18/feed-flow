@@ -65,7 +65,11 @@ struct SearchScreenContent: View {
                                self.appState.navigate(route: CommonViewRoute.readerMode)
                            } else if browserSelector.openInAppBrowser() {
                                if let url = URL(string: feedItem.url) {
-                                   appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                                   if browserSelector.isValidForInAppBrowser(url) {
+                                       appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                                   } else {
+                                       openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                                   }
                                }
                            } else {
                                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
@@ -125,7 +129,11 @@ struct SearchScreenContent: View {
             Button {
                 if browserSelector.openInAppBrowser() {
                     if let url = URL(string: commentsUrl) {
-                        appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                        if browserSelector.isValidForInAppBrowser(url) {
+                            appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                        } else {
+                            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))
+                        }
                     }
                 } else {
                     openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: commentsUrl))

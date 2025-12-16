@@ -33,7 +33,12 @@ struct DeepLinkFeedScreen: View {
                         readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
                     case .internalBrowser:
                         if let url = URL(string: urlInfo.url) {
-                            appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                            if browserSelector.isValidForInAppBrowser(url) {
+                                appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                            } else {
+                                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
+                                self.dismiss()
+                            }
                         }
                     case .preferredBrowser:
                         openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
@@ -43,7 +48,12 @@ struct DeepLinkFeedScreen: View {
                             readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
                         } else if browserSelector.openInAppBrowser() {
                             if let url = URL(string: urlInfo.url) {
-                                appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                                if browserSelector.isValidForInAppBrowser(url) {
+                                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                                } else {
+                                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
+                                    self.dismiss()
+                                }
                             }
                         } else {
                             openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))

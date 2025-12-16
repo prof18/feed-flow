@@ -14,7 +14,7 @@ class CategorySelectorObserver {
     var selectedCategory: CategoriesState.CategoryItem?
     var onCategorySelected: ((String) -> Void)?
 
-    func selectCategory(_ category: CategoriesState.CategoryItem) {
+    func updateSelectedCategory(_ category: CategoriesState.CategoryItem) {
         selectedCategory = category
         onCategorySelected?(category.id)
     }

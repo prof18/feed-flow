@@ -82,11 +82,6 @@ struct EditFeedScreen: View {
                     vmStoreOwner.instance.onCategorySelected(categoryId: CategoryId(value: categoryId))
                 }
             }
-            .onChange(of: categorySelectorObserver.selectedCategory) { _, newCategory in
-                if let newCategory = newCategory {
-                    vmStoreOwner.instance.onCategorySelected(categoryId: CategoryId(value: newCategory.id))
-                }
-            }
             .task {
                 for await state in vmStoreOwner.instance.feedUrlState {
                     self.feedURL = state

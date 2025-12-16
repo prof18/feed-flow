@@ -101,8 +101,11 @@ internal class FeedCategoryRepository(
         }
     }
 
-    suspend fun initCategories(selectedCategoryName: CategoryName? = null) {
-        this.selectedCategoryName = selectedCategoryName
+    fun setInitialSelection(categoryName: CategoryName?) {
+        this.selectedCategoryName = categoryName
+    }
+
+    suspend fun initCategories() {
         observeCategories().collect { categories ->
             val categoriesWithEmpty = listOf(getEmptyCategory()) + categories.map { feedSourceCategory ->
                 feedSourceCategory.toCategoryItem()
@@ -142,6 +145,9 @@ internal class FeedCategoryRepository(
     }
 
     fun onCategorySelected(categoryId: CategoryId) {
+        val selectedCategory = categoriesMutableState.value.categories.firstOrNull { it.id == categoryId.value }
+        selectedCategoryName = selectedCategory?.name?.let { CategoryName(it) }
+
         categoriesMutableState.update { state ->
             val updatedCategories = state.categories.map { categoryItem ->
                 if (categoryId.value == categoryItem.id) {

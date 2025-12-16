@@ -399,7 +399,6 @@ struct FlowLayout: Layout {
         var currentX: CGFloat = 0
         var currentY: CGFloat = 0
         var lineHeight: CGFloat = 0
-        var maxWidth: CGFloat = 0
 
         let proposedWidth = proposal.replacingUnspecifiedDimensions().width
 
@@ -416,10 +415,9 @@ struct FlowLayout: Layout {
 
             currentX += size.width + spacing
             lineHeight = max(lineHeight, size.height)
-            maxWidth = max(maxWidth, currentX - spacing)
         }
 
-        return (CGSize(width: maxWidth, height: currentY + lineHeight), positions)
+        return (CGSize(width: proposedWidth, height: currentY + lineHeight), positions)
     }
 }
 

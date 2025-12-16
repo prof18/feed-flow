@@ -1,62 +1,56 @@
-# Title
+# 標題
 
-FeedFlow - RSS Reader
+FeedFlow - RSS閱讀器
 
-## Short desc
+## 簡短描述
 
-Minimal, fast, uncluttered
+簡約、快速、簡潔
 
-## Long desc
+## 詳細描述
 
-Key Features:
+主要特點：
 
-- Minimalist Design: Focus on what matters with a clutter-free interface
-- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
-  or Dropbox (all platforms)
-- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
-  management
-- Flexible Reading Options: Choose between web view, reader mode, or your
-  preferred browser
-- Privacy-Focused: Select your favorite privacy-focused browser for a separate
-  reading experience
-- Easy Migration: Import and export your RSS feeds via OPML files
+- 極簡設計：介面簡潔，專注於內容本身
+- 無縫同步：透過iCloud（iOS/macOS）或Dropbox（全平台）跨裝置同步您的訂閱源
+- FreshRSS集成：連接到您的FreshRSS伺服器，實現進階訂閱源管理
+- 靈活的閱讀選項：在網頁檢視、閱讀模式或您的首選瀏覽器之間進行選擇
+- 注重隱私：選用您信賴的隱私瀏覽器，享受獨立的閱讀體驗
+- 輕鬆遷移：透過OPML檔案匯入和匯出您的RSS訂閱源
 
-What Sets FeedFlow Apart:
+FeedFlow的獨特之處：
 
-- Clean, intuitive interface that lets you focus on content
-- Multiple sync options to fit your workflow (Beta)
-- Customizable reading experience with reader mode
-- Fast and lightweight
-- Regular updates and active development
+- 簡潔、直觀的介面，讓您專注於內容
+- 多種同步選項，以適應您的workflow（Beta）
+- 透過閱讀模式自訂您的閱讀體驗
+- 快速、輕量
+- 定期更新且積極開發
 
-Perfect for:
-- News enthusiasts who want control over their information diet
-- Privacy-conscious readers
-- Content creators tracking multiple sources
-- Anyone looking to declutter their digital reading experience
+非常適合：
+- 想要精準管理資訊攝取的新聞愛好者
+- 關注隱私的讀者
+- 追蹤多種來源的內容創作者
+- 想要簡化數位閱讀體驗的讀者
 
-Join thousands of readers who've chosen FeedFlow for a better way to stay
-informed.
+加入萬千選擇FeedFlow的讀者行列，以更好的方式獲取資訊。
 
-Note: Sync functionality is currently in beta. The experience is continuously
-improving based on user feedback.
+注意：同步功能目前處於測試階段。我們將根據用戶的回饋不斷改進體驗。
 
-## Screenshot 1
+## 螢幕截圖1
 
-All your feeds in your pocket
+所有訂閱源盡在掌握
 
-## Screenshot 3
+## 螢幕截圖3
 
-Import your existing collection
+匯入您現有的收藏
 
-## Screenshot 4
+## 螢幕截圖4
 
-Open the articles in your favourite browser
+在您喜歡的瀏覽器中打開文章
 
-## Screenshot 5
+## 螢幕截圖5
 
-Enjoy a clutter-free reader mode
+享受純淨閱讀模式
 
-## Banner image
+## 橫幅圖片
 
-minimalistic RSS Reader
+簡約RSS閱讀器

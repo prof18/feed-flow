@@ -186,8 +186,12 @@ private fun MainWindowEffects(
             }
 
             override fun windowLostFocus(e: WindowEvent) {
-                scope.launch {
-                    feedSyncRepo.performBackup()
+                try {
+                    scope.launch {
+                        feedSyncRepo.performBackup()
+                    }
+                } catch (_: Exception) {
+                    // Ignore ForgottenCoroutineScopeException when window is closing
                 }
             }
         }

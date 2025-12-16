@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -209,64 +210,66 @@ internal data class ReaderModeScreen(
                                 fontWeight = FontWeight.Light,
                             )
 
-                            SelectionContainer {
-                                Markdown(
-                                    modifier = Modifier
-                                        .padding(Spacing.regular)
-                                        .padding(bottom = 64.dp),
-                                    content = s.readerModeData.content,
-                                    imageTransformer = Coil3ImageTransformerImpl,
-                                    typography = markdownTypography(
-                                        h1 = MaterialTheme.typography.displaySmall.copy(
-                                            fontSize = (fontSize + 20).sp,
-                                            lineHeight = (fontSize + 32).sp,
-                                        ),
-                                        h2 = MaterialTheme.typography.titleLarge.copy(
-                                            fontSize = (fontSize + 6).sp,
-                                            lineHeight = (fontSize + 16).sp,
-                                        ),
-                                        h3 = MaterialTheme.typography.titleLarge.copy(
-                                            fontSize = (fontSize + 6).sp,
-                                            lineHeight = (fontSize + 16).sp,
-                                        ),
-                                        h4 = MaterialTheme.typography.titleMedium.copy(
-                                            fontSize = fontSize.sp,
-                                            lineHeight = (fontSize + 12).sp,
-                                        ),
-                                        h5 = MaterialTheme.typography.titleMedium.copy(
-                                            fontSize = fontSize.sp,
-                                            lineHeight = (fontSize + 12).sp,
-                                        ),
-                                        h6 = MaterialTheme.typography.titleMedium.copy(
-                                            fontSize = fontSize.sp,
-                                            lineHeight = (fontSize + 12).sp,
-                                        ),
-                                        paragraph = MaterialTheme.typography.bodyLarge.copy(
-                                            fontSize = fontSize.sp,
-                                            lineHeight = (fontSize + 12).sp,
-                                        ),
-                                        text = MaterialTheme.typography.bodyLarge.copy(
-                                            fontSize = fontSize.sp,
-                                            lineHeight = (fontSize + 12).sp,
-                                        ),
-                                        code = MaterialTheme.typography.bodyMedium.copy(
-                                            fontSize = (fontSize - 2).sp,
-                                            lineHeight = (fontSize + 8).sp,
-                                        ),
-                                        list = MaterialTheme.typography.bodyLarge.copy(
-                                            fontSize = fontSize.sp,
-                                            lineHeight = (fontSize + 12).sp,
-                                        ),
-                                        textLink = TextLinkStyles(
-                                            style = MaterialTheme.typography.bodyLarge.copy(
+                            key(s.readerModeData.content, fontSize) {
+                                SelectionContainer {
+                                    Markdown(
+                                        modifier = Modifier
+                                            .padding(Spacing.regular)
+                                            .padding(bottom = 64.dp),
+                                        content = s.readerModeData.content,
+                                        imageTransformer = Coil3ImageTransformerImpl,
+                                        typography = markdownTypography(
+                                            h1 = MaterialTheme.typography.displaySmall.copy(
+                                                fontSize = (fontSize + 20).sp,
+                                                lineHeight = (fontSize + 32).sp,
+                                            ),
+                                            h2 = MaterialTheme.typography.titleLarge.copy(
+                                                fontSize = (fontSize + 6).sp,
+                                                lineHeight = (fontSize + 16).sp,
+                                            ),
+                                            h3 = MaterialTheme.typography.titleLarge.copy(
+                                                fontSize = (fontSize + 6).sp,
+                                                lineHeight = (fontSize + 16).sp,
+                                            ),
+                                            h4 = MaterialTheme.typography.titleMedium.copy(
                                                 fontSize = fontSize.sp,
                                                 lineHeight = (fontSize + 12).sp,
-                                                fontWeight = FontWeight.Bold,
-                                                textDecoration = TextDecoration.Underline,
-                                            ).toSpanStyle(),
+                                            ),
+                                            h5 = MaterialTheme.typography.titleMedium.copy(
+                                                fontSize = fontSize.sp,
+                                                lineHeight = (fontSize + 12).sp,
+                                            ),
+                                            h6 = MaterialTheme.typography.titleMedium.copy(
+                                                fontSize = fontSize.sp,
+                                                lineHeight = (fontSize + 12).sp,
+                                            ),
+                                            paragraph = MaterialTheme.typography.bodyLarge.copy(
+                                                fontSize = fontSize.sp,
+                                                lineHeight = (fontSize + 12).sp,
+                                            ),
+                                            text = MaterialTheme.typography.bodyLarge.copy(
+                                                fontSize = fontSize.sp,
+                                                lineHeight = (fontSize + 12).sp,
+                                            ),
+                                            code = MaterialTheme.typography.bodyMedium.copy(
+                                                fontSize = (fontSize - 2).sp,
+                                                lineHeight = (fontSize + 8).sp,
+                                            ),
+                                            list = MaterialTheme.typography.bodyLarge.copy(
+                                                fontSize = fontSize.sp,
+                                                lineHeight = (fontSize + 12).sp,
+                                            ),
+                                            textLink = TextLinkStyles(
+                                                style = MaterialTheme.typography.bodyLarge.copy(
+                                                    fontSize = fontSize.sp,
+                                                    lineHeight = (fontSize + 12).sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    textDecoration = TextDecoration.Underline,
+                                                ).toSpanStyle(),
+                                            ),
                                         ),
-                                    ),
-                                )
+                                    )
+                                }
                             }
                         }
                     }

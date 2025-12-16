@@ -39,6 +39,7 @@ import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.compose.LocalPlatformContext
 import com.prof18.feedflow.core.model.SyncResult
+import com.prof18.feedflow.core.utils.DesktopDatabaseErrorState
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
@@ -73,6 +74,7 @@ import java.awt.event.WindowFocusListener
 import java.net.URI
 import kotlin.math.roundToInt
 
+@Suppress("CyclomaticComplexMethod")
 @Composable
 internal fun ApplicationScope.MainWindow(
     feedSyncRepo: FeedSyncRepository,
@@ -163,6 +165,17 @@ internal fun ApplicationScope.MainWindow(
                     snackbarHostState.showSnackbar(
                         message = flowStrings.errorAccountSync(message.errorCode.code),
                     )
+                }
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            DesktopDatabaseErrorState.errorState.collect { show ->
+                if (show) {
+                    snackbarHostState.showSnackbar(
+                        message = flowStrings.databaseErrorReset,
+                    )
+                    DesktopDatabaseErrorState.setError(false)
                 }
             }
         }

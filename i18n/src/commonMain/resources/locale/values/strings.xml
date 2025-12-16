@@ -273,4 +273,5 @@
     <string name="reader_mode_fallback_message">The content of this page could not be extracted for reader mode. You can open the page directly in your browser.</string>
     <string name="reader_mode_fallback_open_browser_button">Open in browser</string>
     <string name="dropbox_auth_code_expired">The authentication code is not valid anymore. Please try again.</string>
+    <string name="database_error_reset">We had trouble loading your data and had to start fresh. Sorry about that.</string>
 </resources>

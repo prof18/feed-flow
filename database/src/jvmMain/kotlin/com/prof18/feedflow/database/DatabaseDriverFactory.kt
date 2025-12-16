@@ -6,6 +6,7 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DesktopDatabaseErrorState
 import com.prof18.feedflow.db.FeedFlowDB
 import java.io.File
 import java.util.Properties
@@ -18,13 +19,32 @@ fun createDatabaseDriver(
 
     val databasePath = File(appPath, "/${DatabaseHelper.DB_FILE_NAME_WITH_EXTENSION}")
 
-    val properties = Properties().apply {
-        setProperty("journal_mode", "WAL")
-        setProperty("synchronous", "NORMAL")
-        setProperty("busy_timeout", "5000")
+    fun createDriver(): JdbcSqliteDriver {
+        val properties = Properties().apply {
+            setProperty("journal_mode", "WAL")
+            setProperty("synchronous", "NORMAL")
+            setProperty("busy_timeout", "5000")
+        }
+        return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY + databasePath.absolutePath, properties)
     }
-    val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY + databasePath.absolutePath, properties)
 
+    var driver = createDriver()
+
+    try {
+        return initDatabase(driver, logger)
+    } catch (e: java.sql.SQLException) {
+        DesktopDatabaseErrorState.setError(true)
+        logger.e(e) { "Error while creating database. Recreating it" }
+        driver.close()
+        if (databasePath.exists()) {
+            databasePath.delete()
+        }
+        driver = createDriver()
+        return initDatabase(driver, logger)
+    }
+}
+
+private fun initDatabase(driver: SqlDriver, logger: Logger): SqlDriver {
     val sqlCursor = driver.executeQuery(
         null,
         "PRAGMA user_version;",

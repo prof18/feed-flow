@@ -68,7 +68,6 @@ class AddFeedViewModel internal constructor(
                 feedAddedMutableState.emit(feedAddedState)
                 if (feedAddedState is FeedAddedState.FeedAdded) {
                     isNotificationEnabledMutableStateFlow.update { false }
-                    categoryRepository.initCategories()
                 }
             }
         }

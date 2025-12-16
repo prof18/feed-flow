@@ -124,7 +124,8 @@ class EditFeedViewModel internal constructor(
             }
 
             val categoryName = feedSource.category?.title?.let { CategoryName(it) }
-            categoryUseCase.initCategories(categoryName)
+            categoryUseCase.setInitialSelection(categoryName)
+            categoryUseCase.initCategories()
         }
     }
 

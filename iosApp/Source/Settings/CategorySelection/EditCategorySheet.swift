@@ -528,8 +528,8 @@ struct CategoryChip: View {
         )
     ]
     @Previewable @State var showAddDialog = false
-    @Previewable @State var categoryToDelete: String? = nil
-    @Previewable @State var categoryToEdit: CategoriesState.CategoryItem? = nil
+    @Previewable @State var categoryToDelete: String?
+    @Previewable @State var categoryToEdit: CategoriesState.CategoryItem?
     @Previewable @State var newCategoryName = ""
     return EditCategorySheet(
         categoryItems: categoryItems,
@@ -546,4 +546,3 @@ struct CategoryChip: View {
     )
 }
 #endif
-

@@ -41,17 +41,6 @@ struct AboutScreen: View {
 
                     Button(
                         action: {
-                            if let url = URL(string: Websites.shared.FEED_FLOW_FAQ) {
-                                openURL(url)
-                            }
-                        },
-                        label: {
-                            Label(feedFlowStrings.aboutMenuFaq, systemImage: "questionmark.circle")
-                        }
-                    )
-
-                    Button(
-                        action: {
                             if let url = URL(string: Websites.shared.TRANSLATION_WEBSITE) {
                                 openURL(url)
                             }

@@ -264,7 +264,7 @@
     <string name="settings_danger_title">危险</string>
     <string name="settings_clear_downloaded_articles">清除已下载的文章</string>
     <string name="settings_clear_downloaded_articles_dialog_title">清除已下载的文章吗？</string>
-    <string name="settings_clear_downloaded_articles_dialog_message">这会删除所有用于离线阅读的一下哎文章内容。此操作无法撤销。</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">这会删除所有用于离线阅读的已下载文章内容。此操作无法撤销。</string>
     <string name="settings_clear_image_cache">清除图片缓存</string>
     <string name="settings_clear_image_cache_dialog_title">清除图片缓存吗？</string>
     <string name="settings_clear_image_cache_dialog_message">这会删除所有已缓存的图片。当你翻阅文章时，应用会再次下载这些图片。</string>

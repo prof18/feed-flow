@@ -20,6 +20,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.utils.isTemporaryNetworkError
+import com.prof18.feedflow.shared.utils.skipLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -214,7 +215,9 @@ internal class FeedSyncJvmWorker(
             feedSyncer.syncFeedItem()
             SyncResult.Success
         } catch (e: Exception) {
-            logger.e("Sync feed items failed", e)
+            if (!e.skipLogging()) {
+                logger.e("Sync feed items failed", e)
+            }
             SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
         }
     }

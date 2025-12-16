@@ -32,9 +32,8 @@ fun createDatabaseDriver(
 
     try {
         return initDatabase(driver, logger)
-    } catch (e: java.sql.SQLException) {
+    } catch (_: java.sql.SQLException) {
         DesktopDatabaseErrorState.setError(true)
-        logger.e(e) { "Error while creating database. Recreating it" }
         driver.close()
         if (databasePath.exists()) {
             databasePath.delete()

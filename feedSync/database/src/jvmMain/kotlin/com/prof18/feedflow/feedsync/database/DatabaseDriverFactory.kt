@@ -36,41 +36,67 @@ internal fun createDatabaseDriver(
         setProperty("temp_store", "memory")
     }
 
-    var driver = JdbcSqliteDriver("jdbc:sqlite:${databasePath.absolutePath}", properties)
+    var driver: JdbcSqliteDriver? = null
+    try {
+        driver = JdbcSqliteDriver("jdbc:sqlite:${databasePath.absolutePath}", properties)
 
-    applyPragmaSettings(driver, logger)
+        applyPragmaSettings(driver, logger)
 
-    // Check database integrity and recover if needed
-    driver = checkIntegrityAndRecover(
-        originalDriver = driver, databasePath = databasePath, properties = properties, logger = logger,
-    )
+        // Check database integrity and recover if needed
+        driver = checkIntegrityAndRecover(
+            originalDriver = driver, databasePath = databasePath, properties = properties, logger = logger,
+        )
 
-    val sqlCursor = driver.executeQuery(
-        null,
-        "PRAGMA user_version;",
-        {
-            QueryResult.Value(it.getLong(0))
-        },
-        0,
-        null,
-    )
-    val currentVer: Long = sqlCursor.value ?: -1L
+        val sqlCursor = driver.executeQuery(
+            null,
+            "PRAGMA user_version;",
+            {
+                QueryResult.Value(it.getLong(0))
+            },
+            0,
+            null,
+        )
+        val currentVer: Long = sqlCursor.value ?: -1L
 
-    if (currentVer == 0L) {
-        FeedFlowFeedSyncDB.Schema.create(driver)
-        setVersion(driver, FeedFlowFeedSyncDB.Schema.version)
-        logger.d("init: created tables, setVersion to ${FeedFlowFeedSyncDB.Schema.version}")
-    } else {
-        val schemaVer = FeedFlowFeedSyncDB.Schema.version
-        if (schemaVer > currentVer) {
-            FeedFlowFeedSyncDB.Schema.migrate(driver, oldVersion = currentVer, newVersion = schemaVer)
-            setVersion(driver, schemaVer)
-            logger.d("init: migrated from $currentVer to $schemaVer")
+        if (currentVer == 0L) {
+            FeedFlowFeedSyncDB.Schema.create(driver)
+            setVersion(driver, FeedFlowFeedSyncDB.Schema.version)
+            logger.d("init: created tables, setVersion to ${FeedFlowFeedSyncDB.Schema.version}")
         } else {
-            logger.d("init with existing sync database")
+            val schemaVer = FeedFlowFeedSyncDB.Schema.version
+            if (schemaVer > currentVer) {
+                FeedFlowFeedSyncDB.Schema.migrate(driver, oldVersion = currentVer, newVersion = schemaVer)
+                setVersion(driver, schemaVer)
+                logger.d("init: migrated from $currentVer to $schemaVer")
+            } else {
+                logger.d("init with existing sync database")
+            }
         }
+
+        val checkTableCursor = driver.executeQuery(
+            null,
+            "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='synced_feed_item';",
+            {
+                QueryResult.Value(it.getLong(0))
+            },
+            0,
+            null,
+        )
+        val tableCount: Long = checkTableCursor.value ?: 0L
+        if (tableCount == 0L) {
+            throw java.sql.SQLException("synced_feed_item table missing despite non-zero version")
+        }
+
+        return driver
+    } catch (_: java.sql.SQLException) {
+        driver?.close()
+        deleteDatabaseFiles(databasePath, logger)
+        val newDriver = JdbcSqliteDriver("jdbc:sqlite:${databasePath.absolutePath}", properties)
+        applyPragmaSettings(newDriver, logger)
+        FeedFlowFeedSyncDB.Schema.create(newDriver)
+        setVersion(newDriver, FeedFlowFeedSyncDB.Schema.version)
+        return newDriver
     }
-    return driver
 }
 
 private fun checkIntegrityAndRecover(
@@ -88,9 +114,6 @@ private fun checkIntegrityAndRecover(
             null,
         )
         if (integrityCheck.value != "ok") {
-            logger.w("Database integrity check failed: ${integrityCheck.value}")
-            logger.i("Attempting to recover corrupted sync database by recreating it")
-
             // Close the corrupted driver
             originalDriver.close()
 
@@ -101,7 +124,6 @@ private fun checkIntegrityAndRecover(
             val newDriver = JdbcSqliteDriver("jdbc:sqlite:${databasePath.absolutePath}", properties)
             applyPragmaSettings(newDriver, logger)
 
-            logger.i("Successfully recovered sync database - will continue with normal initialization")
             return newDriver
         }
     } catch (e: Exception) {

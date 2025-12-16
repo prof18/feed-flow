@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.dropbox.core.BadRequestException
 import com.dropbox.core.DbxAppInfo
 import com.dropbox.core.DbxPKCEWebAuth
 import com.dropbox.core.DbxRequestConfig
@@ -123,6 +124,16 @@ class DropboxSyncViewModel internal constructor(
                     feedFetcherRepository.fetchFeeds()
                     emitLastSyncUpdate()
                 } else {
+                    dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)
+                    dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
+                }
+            } catch (e: BadRequestException) {
+                if (e.message?.contains("invalid_grant") == true) {
+                    logger.d(e) { "Invalid grant Code" }
+                    dropboxSyncMessageMutableState.emit(DropboxSynMessages.CodeExpired)
+                    dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
+                } else {
+                    logger.e(e) { "Error while trying to auth with Dropbox after getting the code" }
                     dropboxSyncMessageMutableState.emit(DropboxSynMessages.Error)
                     dropboxSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
                 }

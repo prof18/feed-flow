@@ -51,6 +51,7 @@ internal class DropboxSyncScreen : Screen {
         val uriHandler = LocalUriHandler.current
 
         val errorMessage = LocalFeedFlowStrings.current.dropboxSyncError
+        val codeExpiredMessage = LocalFeedFlowStrings.current.dropboxAuthCodeExpired
 
         LaunchedEffect(Unit) {
             viewModel.dropboxSyncMessageState.collect { event ->
@@ -59,6 +60,15 @@ internal class DropboxSyncScreen : Screen {
                         scope.launch {
                             snackbarHostState.showSnackbar(
                                 message = errorMessage,
+                                duration = SnackbarDuration.Short,
+                            )
+                        }
+                    }
+
+                    DropboxSynMessages.CodeExpired -> {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = codeExpiredMessage,
                                 duration = SnackbarDuration.Short,
                             )
                         }

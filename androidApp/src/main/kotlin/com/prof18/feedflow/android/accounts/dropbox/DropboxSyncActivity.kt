@@ -56,6 +56,10 @@ class DropboxSyncActivity : BaseThemeActivity() {
                     is DropboxSynMessages.ProceedToAuth -> {
                         // no-op
                     }
+
+                    is DropboxSynMessages.CodeExpired -> {
+                        // no-op
+                    }
                 }
             }
         }

@@ -28,6 +28,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.DropboxSynMessages
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.ui.accounts.dropbox.DropboxSyncContent
 import com.prof18.feedflow.shared.ui.settings.SettingItem
@@ -36,6 +37,8 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 
 internal class DropboxSyncScreen : Screen {
+
+    override val key: String = generateUniqueKey()
 
     @Composable
     override fun Content() {

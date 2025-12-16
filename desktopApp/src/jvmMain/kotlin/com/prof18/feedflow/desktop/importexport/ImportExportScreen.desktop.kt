@@ -13,6 +13,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.desktop.utils.getUnixDeviceName
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
@@ -27,6 +28,8 @@ internal class ImportExportScreen(
     private val composeWindow: ComposeWindow,
     private val triggerFeedFetch: () -> Unit,
 ) : Screen {
+
+    override val key: String = generateUniqueKey()
 
     @Composable
     override fun Content() {

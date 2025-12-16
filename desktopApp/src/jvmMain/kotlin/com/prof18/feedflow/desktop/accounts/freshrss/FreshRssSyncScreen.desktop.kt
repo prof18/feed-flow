@@ -16,12 +16,15 @@ import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.NetworkFailure
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.ui.accounts.freshrss.FreshRssSyncContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 
 internal class FreshRssSyncScreen : Screen {
+
+    override val key: String = generateUniqueKey()
 
     @Composable
     override fun Content() {

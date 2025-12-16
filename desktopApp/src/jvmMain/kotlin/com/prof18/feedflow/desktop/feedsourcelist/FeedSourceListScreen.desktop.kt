@@ -21,6 +21,7 @@ import com.prof18.feedflow.desktop.addfeed.AddFeedScreenContent
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
@@ -30,6 +31,8 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
 
 class FeedSourceListScreen : Screen {
+
+    override val key: String = generateUniqueKey()
 
     @Composable
     override fun Content() {

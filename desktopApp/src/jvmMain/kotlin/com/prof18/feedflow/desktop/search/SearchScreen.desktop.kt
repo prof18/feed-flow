@@ -21,6 +21,7 @@ import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.utils.copyToClipboard
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.search.SearchScreenContent
@@ -30,6 +31,8 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 internal data class SearchScreen(
     private val viewModel: SearchViewModel,
 ) : Screen {
+    override val key: String = generateUniqueKey()
+
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow

@@ -72,6 +72,7 @@ import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
@@ -84,6 +85,8 @@ import kotlinx.coroutines.launch
 internal data class ReaderModeScreen(
     private val feedItemUrlInfo: FeedItemUrlInfo,
 ) : Screen {
+    override val key: String = generateUniqueKey()
+
     @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {

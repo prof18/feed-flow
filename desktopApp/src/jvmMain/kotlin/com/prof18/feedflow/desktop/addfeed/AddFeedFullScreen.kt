@@ -10,11 +10,14 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 internal data class AddFeedFullScreen(
     private val onFeedAdded: () -> Unit,
 ) : Screen {
+
+    override val key: String = generateUniqueKey()
 
     @Composable
     override fun Content() {

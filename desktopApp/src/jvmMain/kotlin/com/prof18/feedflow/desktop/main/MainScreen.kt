@@ -15,6 +15,7 @@ import com.prof18.feedflow.desktop.home.HomeScreen
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.search.SearchScreen
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 
@@ -27,6 +28,8 @@ internal data class MainScreen(
     private val appEnvironment: AppEnvironment,
     private val listState: LazyListState,
 ) : Screen {
+    override val key: String = generateUniqueKey()
+
     @Composable
     override fun Content() {
         val snackbarHostState = remember { SnackbarHostState() }

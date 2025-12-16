@@ -36,6 +36,7 @@ import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.ui.settings.SettingItem
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -43,6 +44,8 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 
 internal class ICloudSyncScreen : Screen {
+    override val key: String = generateUniqueKey()
+
     @Composable
     override fun Content() {
         val viewModel = desktopViewModel { DI.koin.get<ICloudSyncViewModel>() }

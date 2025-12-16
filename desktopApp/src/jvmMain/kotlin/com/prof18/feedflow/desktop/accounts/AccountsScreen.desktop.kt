@@ -11,11 +11,14 @@ import com.prof18.feedflow.desktop.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.desktop.accounts.icloud.ICloudSyncScreen
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.ui.accounts.AccountsContent
 import kotlinx.collections.immutable.toPersistentList
 
 internal class AccountsScreen : Screen {
+
+    override val key: String = generateUniqueKey()
 
     @Composable
     override fun Content() {

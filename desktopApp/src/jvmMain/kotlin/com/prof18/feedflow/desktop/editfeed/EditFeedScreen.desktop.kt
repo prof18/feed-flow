@@ -24,6 +24,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceSettings
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
@@ -34,6 +35,8 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 internal data class EditFeedScreen(
     private val feedSource: FeedSource,
 ) : Screen {
+
+    override val key: String = generateUniqueKey()
 
     @Composable
     override fun Content() {

@@ -7,10 +7,13 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.ui.settings.BlockedWordsScreenContent
 
 internal class BlockedWordsScreen : Screen {
+
+    override val key: String = generateUniqueKey()
 
     @Composable
     override fun Content() {

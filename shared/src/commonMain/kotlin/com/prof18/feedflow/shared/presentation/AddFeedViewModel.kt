@@ -68,14 +68,13 @@ class AddFeedViewModel internal constructor(
                 feedAddedMutableState.emit(feedAddedState)
                 if (feedAddedState is FeedAddedState.FeedAdded) {
                     isNotificationEnabledMutableStateFlow.update { false }
-                    categoryRepository.initCategories()
                 }
             }
         }
     }
 
-    fun onExpandCategoryClick() {
-        categoryRepository.onExpandCategoryClick()
+    fun onCategorySelected(categoryId: CategoryId) {
+        categoryRepository.onCategorySelected(categoryId)
     }
 
     fun addNewCategory(categoryName: CategoryName) {

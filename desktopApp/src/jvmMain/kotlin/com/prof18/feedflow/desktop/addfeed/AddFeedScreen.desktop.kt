@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
@@ -87,6 +88,8 @@ fun AddFeedScreenContent(
     val showNotificationToggle by viewModel.showNotificationToggleState.collectAsState()
     val isNotificationEnabled by viewModel.isNotificationEnabledState.collectAsState()
 
+    var showCategoryDialog by remember { mutableStateOf(false) }
+
     AddFeedContent(
         modifier = modifier,
         feedUrl = feedUrl,
@@ -101,17 +104,8 @@ fun AddFeedScreenContent(
             viewModel.addFeed()
         },
         categoriesState = categoriesState,
-        onExpandClick = {
-            viewModel.onExpandCategoryClick()
-        },
-        onAddCategoryClick = { categoryName ->
-            viewModel.addNewCategory(categoryName)
-        },
-        onDeleteCategoryClick = { categoryId ->
-            viewModel.deleteCategory(categoryId.value)
-        },
-        onEditCategoryClick = { categoryId, newName ->
-            viewModel.editCategory(categoryId, newName)
+        onCategorySelectorClick = {
+            showCategoryDialog = true
         },
         showNotificationToggle = showNotificationToggle,
         isNotificationEnabled = isNotificationEnabled,
@@ -121,6 +115,27 @@ fun AddFeedScreenContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topAppBar = topAppBar,
     )
+
+    if (showCategoryDialog) {
+        EditCategoryDialog(
+            categoryState = categoriesState,
+            onCategorySelected = { categoryId ->
+                viewModel.onCategorySelected(categoryId)
+            },
+            onAddCategory = { categoryName ->
+                viewModel.addNewCategory(categoryName)
+            },
+            onDeleteCategory = { categoryId ->
+                viewModel.deleteCategory(categoryId.value)
+            },
+            onEditCategory = { categoryId, newName ->
+                viewModel.editCategory(categoryId, newName)
+            },
+            onDismiss = {
+                showCategoryDialog = false
+            },
+        )
+    }
 }
 
 @Preview
@@ -136,10 +151,7 @@ private fun AddScreenContentPreview() {
             categoriesState = categoriesExpandedState,
             onFeedUrlUpdated = {},
             addFeed = { },
-            onExpandClick = {},
-            onAddCategoryClick = {},
-            onDeleteCategoryClick = {},
-            onEditCategoryClick = { _, _ -> },
+            onCategorySelectorClick = {},
             showNotificationToggle = true,
             isNotificationEnabled = false,
             onNotificationToggleChanged = {},

@@ -11,11 +11,11 @@ import SwiftUI
 
 @Observable
 class CategorySelectorObserver {
-    var selectedCategory: CategoriesState.CategoryItem? {
-        didSet {
-            if let selectedCategory = selectedCategory {
-                selectedCategory.onClick(CategoryId(value: selectedCategory.id))
-            }
-        }
+    var selectedCategory: CategoriesState.CategoryItem?
+    var onCategorySelected: ((String) -> Void)?
+
+    func updateSelectedCategory(_ category: CategoriesState.CategoryItem) {
+        selectedCategory = category
+        onCategorySelected?(category.id)
     }
 }

@@ -17,7 +17,7 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
-fun EditCategoryDialog(
+fun EditCategoryNameDialog(
     showDialog: Boolean,
     categoryId: CategoryId,
     initialCategoryName: String,

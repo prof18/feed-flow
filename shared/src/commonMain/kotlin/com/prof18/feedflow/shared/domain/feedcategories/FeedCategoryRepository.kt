@@ -15,6 +15,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.model.SyncError
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -29,12 +30,6 @@ internal class FeedCategoryRepository(
     private val categoriesMutableState: MutableStateFlow<CategoriesState> = MutableStateFlow(CategoriesState())
     val categoriesState = categoriesMutableState
     private var selectedCategoryName: CategoryName? = null
-
-    fun onExpandCategoryClick() {
-        categoriesMutableState.update { state ->
-            state.copy(isExpanded = state.isExpanded.not())
-        }
-    }
 
     fun getSelectedCategory(): FeedSourceCategory? {
         val category = categoriesState.value.categories.firstOrNull { it.isSelected }
@@ -81,6 +76,12 @@ internal class FeedCategoryRepository(
     }
 
     suspend fun updateCategoryName(categoryId: CategoryId, newName: CategoryName) {
+        // If the category being edited is currently selected, update selectedCategoryName
+        val selectedCategory = categoriesState.value.categories.firstOrNull { it.isSelected }
+        if (selectedCategory?.id == categoryId.value) {
+            selectedCategoryName = newName
+        }
+
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
                 gReaderRepository.editCategoryName(categoryId, newName)
@@ -100,16 +101,18 @@ internal class FeedCategoryRepository(
         }
     }
 
-    suspend fun initCategories(selectedCategoryName: CategoryName? = null) {
-        this.selectedCategoryName = selectedCategoryName
+    fun setInitialSelection(categoryName: CategoryName?) {
+        this.selectedCategoryName = categoryName
+    }
+
+    suspend fun initCategories() {
         observeCategories().collect { categories ->
             val categoriesWithEmpty = listOf(getEmptyCategory()) + categories.map { feedSourceCategory ->
                 feedSourceCategory.toCategoryItem()
             }
             categoriesMutableState.update {
                 it.copy(
-                    header = this.selectedCategoryName?.name,
-                    categories = categoriesWithEmpty,
+                    categories = categoriesWithEmpty.toPersistentList(),
                 )
             }
         }
@@ -141,12 +144,13 @@ internal class FeedCategoryRepository(
         feedSyncRepository.insertFeedSourceCategories(listOf(category))
     }
 
-    private fun onCategorySelected(categoryId: CategoryId) {
+    fun onCategorySelected(categoryId: CategoryId) {
+        val selectedCategory = categoriesMutableState.value.categories.firstOrNull { it.id == categoryId.value }
+        selectedCategoryName = selectedCategory?.name?.let { CategoryName(it) }
+
         categoriesMutableState.update { state ->
-            var selectedCategoryName: String? = null
             val updatedCategories = state.categories.map { categoryItem ->
                 if (categoryId.value == categoryItem.id) {
-                    selectedCategoryName = categoryItem.name
                     categoryItem.copy(
                         isSelected = true,
                     )
@@ -157,9 +161,7 @@ internal class FeedCategoryRepository(
                 }
             }
             state.copy(
-                header = selectedCategoryName,
-                isExpanded = false,
-                categories = updatedCategories,
+                categories = updatedCategories.toPersistentList(),
             )
         }
     }
@@ -169,18 +171,12 @@ internal class FeedCategoryRepository(
             id = id,
             name = title,
             isSelected = selectedCategoryName?.name == title,
-            onClick = { categoryId ->
-                onCategorySelected(categoryId)
-            },
         )
 
     private fun getEmptyCategory() = CategoriesState.CategoryItem(
         id = EMPTY_CATEGORY_ID,
         name = null,
         isSelected = selectedCategoryName?.name == null,
-        onClick = { categoryId ->
-            onCategorySelected(categoryId)
-        },
     )
 
     private companion object {

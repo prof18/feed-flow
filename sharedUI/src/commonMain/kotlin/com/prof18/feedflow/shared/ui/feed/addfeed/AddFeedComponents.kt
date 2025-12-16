@@ -21,8 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import com.prof18.feedflow.core.model.CategoriesState
-import com.prof18.feedflow.core.model.CategoryId
-import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.shared.ui.feed.CategoriesSelector
 import com.prof18.feedflow.shared.ui.feed.FeedUrlTextField
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -37,10 +35,7 @@ fun AddFeedContent(
     categoriesState: CategoriesState,
     onFeedUrlUpdated: (String) -> Unit,
     addFeed: () -> Unit,
-    onExpandClick: () -> Unit,
-    onAddCategoryClick: (CategoryName) -> Unit,
-    onDeleteCategoryClick: (CategoryId) -> Unit,
-    onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onCategorySelectorClick: () -> Unit,
     isNotificationEnabled: Boolean,
     modifier: Modifier = Modifier,
     showNotificationToggle: Boolean = false,
@@ -86,10 +81,7 @@ fun AddFeedContent(
                     modifier = Modifier
                         .padding(vertical = Spacing.regular),
                     categoriesState = categoriesState,
-                    onExpandClick = onExpandClick,
-                    onAddCategoryClick = onAddCategoryClick,
-                    onDeleteCategoryClick = onDeleteCategoryClick,
-                    onEditCategoryClick = onEditCategoryClick,
+                    onClick = onCategorySelectorClick,
                 )
             }
 

@@ -271,51 +271,41 @@ val importExportStates = listOf(
 )
 
 val categoriesExpandedState = CategoriesState(
-    isExpanded = true,
-    header = "No category selected",
-    categories = listOf(
+    categories = persistentListOf(
         CategoryItem(
             id = "0",
             name = "Android",
             isSelected = true,
-            onClick = {},
         ),
         CategoryItem(
             id = "0",
             name = "Apple",
             isSelected = false,
-            onClick = {},
         ),
         CategoryItem(
             id = "0",
             name = "Tech",
             isSelected = false,
-            onClick = {},
         ),
     ),
 )
 
 val categoriesCollapsedState = CategoriesState(
-    isExpanded = false,
-    header = "Android",
-    categories = listOf(
+    categories = persistentListOf(
         CategoryItem(
             id = "0",
             name = "Android",
             isSelected = true,
-            onClick = {},
         ),
         CategoryItem(
             id = "0",
             name = "Apple",
             isSelected = false,
-            onClick = {},
         ),
         CategoryItem(
             id = "0",
             name = "Tech",
             isSelected = false,
-            onClick = {},
         ),
     ),
 )
@@ -448,18 +438,15 @@ val categoryItems = listOf(
         id = "0",
         name = "Android",
         isSelected = true,
-        onClick = {},
     ),
     CategoryItem(
         id = "1",
         name = "Apple",
         isSelected = false,
-        onClick = {},
     ),
     CategoryItem(
         id = "2",
         name = "Tech",
         isSelected = false,
-        onClick = {},
     ),
 )

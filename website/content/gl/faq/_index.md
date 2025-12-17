@@ -6,5 +6,5 @@ layout: "list"
 heading: "Frequently Asked Questions"
 ---
 
-Welcome to FeedFlow's FAQ section. Here you'll find answers to the most common
-questions about using FeedFlow.
+Benvida á sección PMF de FeedFlow. Aquí podes ler as respostas ás preguntas que
+con máis frecuencia se fan sobre usar FeedFlow.

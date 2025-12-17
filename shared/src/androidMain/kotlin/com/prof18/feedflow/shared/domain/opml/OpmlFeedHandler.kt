@@ -11,7 +11,6 @@ import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlSerializer
-import java.io.InputStreamReader
 import java.io.Reader
 
 internal actual class OpmlFeedHandler(
@@ -26,7 +25,14 @@ internal actual class OpmlFeedHandler(
             factory.isNamespaceAware = false
 
             val xmlPullParser = factory.newPullParser()
-            val reader: Reader = InputStreamReader(inputStream)
+
+            // Read the full content first to sanitize
+            val content = inputStream?.bufferedReader()?.use { it.readText() }
+            val cleanContent = content?.replace("\uFEFF", "")
+                ?.replace("&(?!(?:amp|lt|gt|apos|quot|#[0-9]+);)".toRegex(), "&amp;") // Fix unescaped &
+                ?.trimStart()
+
+            val reader: Reader = java.io.StringReader(cleanContent ?: "")
 
             xmlPullParser.setInput(reader)
 

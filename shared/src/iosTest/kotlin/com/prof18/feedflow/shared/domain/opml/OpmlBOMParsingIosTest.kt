@@ -1,0 +1,69 @@
+package com.prof18.feedflow.shared.domain.opml
+
+import com.prof18.feedflow.shared.TestDispatcherProvider
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.test.runTest
+import platform.Foundation.NSString
+import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.dataUsingEncoding
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+@OptIn(ExperimentalForeignApi::class)
+class OpmlBOMParsingIosTest {
+
+    private val parser = OpmlFeedHandler(
+        dispatcherProvider = TestDispatcherProvider,
+    )
+
+    private val opmlContent = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <opml version="1.0">
+        <head>
+        <title>Subscriptions from FeedFlow</title>
+        </head>
+        <body>
+        <outline text="Tech" title="Tech">
+        <outline type="rss" text="Hacker News" title="Hacker News" xmlUrl="https://news.ycombinator.com/rss" htmlUrl="https://news.ycombinator.com/rss"/>
+        </outline>
+        </body>
+        </opml>
+    """.trimIndent()
+
+    @Test
+    fun `iOS OPML with BOM should parse correctly`() = runTest {
+        val contentWithBom = "\uFEFF$opmlContent"
+
+        @OptIn(BetaInteropApi::class)
+        val data = (contentWithBom as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+
+        val opmlInput = OpmlInput(opmlData = data!!)
+
+        val feedSources = parser.generateFeedSources(opmlInput)
+        assertTrue(feedSources.isNotEmpty())
+    }
+
+    @Test
+    fun `iOS OPML with ampersand should parse correctly`() = runTest {
+        val opmlWithAmpersand = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <opml version="1.0">
+            <head><title>Subs</title></head>
+            <body>
+            <outline text="R & D" title="R & D" xmlUrl="http://example.com/rss?a=1&b=2" />
+            <outline text="Unknown &unknown;" title="Unknown &unknown;" xmlUrl="http://example.com/rss" />
+            </body>
+            </opml>
+        """.trimIndent()
+
+        @OptIn(BetaInteropApi::class)
+        val data = (opmlWithAmpersand as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+
+        val opmlInput = OpmlInput(opmlData = data!!)
+
+        val feedSources = parser.generateFeedSources(opmlInput)
+        assertEquals(feedSources.size, 2)
+    }
+}

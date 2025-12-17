@@ -24,14 +24,17 @@ internal actual class OpmlFeedHandler(
             val feed = opmlInput.file.readText()
 
             try {
+                // Remove BOM and leading whitespace
+                val cleanFeed = feed.replace("\uFEFF", "").trimStart()
+
                 // Remove any existing XML declaration
-                val xmlContent = feed.replace(Regex("<\\?xml.*?\\?>"), "")
+                val xmlContent = cleanFeed.replace(Regex("<\\?xml.*?\\?>"), "")
 
                 // Add a proper XML declaration
                 val sanitizedFeed = """<?xml version="1.0" encoding="UTF-8"?>
                     |$xmlContent
                 """.trimMargin()
-                    .replace("&(?![a-zA-Z]+;|#[0-9]+;)".toRegex(), "&amp;") // Fix unescaped &
+                    .replace("&(?!(?:amp|lt|gt|apos|quot|#[0-9]+);)".toRegex(), "&amp;") // Fix unescaped &
                     .replace("[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]".toRegex(), "") // Remove control chars
 
                 val factory = SAXParserFactory.newInstance()

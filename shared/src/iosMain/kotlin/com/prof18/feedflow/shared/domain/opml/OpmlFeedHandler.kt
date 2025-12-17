@@ -6,26 +6,39 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.shared.utils.getValueOrNull
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import platform.Foundation.NSError
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSXMLParser
 import platform.Foundation.NSXMLParserDelegateProtocol
+import platform.Foundation.create
+import platform.Foundation.dataUsingEncoding
 import platform.Foundation.writeToURL
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @OptIn(ExperimentalForeignApi::class)
 internal actual class OpmlFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {
+    @OptIn(BetaInteropApi::class)
     actual suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.default) {
-            suspendCoroutine { continuation ->
-                NSXMLParser(opmlInput.opmlData).apply {
+            suspendCancellableCoroutine { continuation ->
+                val data = opmlInput.opmlData
+                val string = NSString.create(data, NSUTF8StringEncoding) as String
+
+                val cleanString = string.replace("\uFEFF", "")
+                    .replace("&(?!(?:amp|lt|gt|apos|quot|#[0-9]+);)".toRegex(), "&amp;") // Fix unescaped &
+                    .trimStart()
+
+                val cleanData = (cleanString as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+
+                NSXMLParser(cleanData ?: data).apply {
                     delegate = NSXMLParserDelegate { continuation.resume(it) }
                 }.parse()
             }

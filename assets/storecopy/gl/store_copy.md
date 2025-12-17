@@ -8,20 +8,20 @@ Simple, rápido, lixeiro
 
 ## Descr. longa
 
-Key Features:
+Principais características:
 
-- Minimalist Design: Focus on what matters with a clutter-free interface
-- Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)
-  or Dropbox (all platforms)
-- FreshRSS Integration: Connect to your FreshRSS server for advanced feed
-  management
-- Flexible Reading Options: Choose between web view, reader mode, or your
-  preferred browser
-- Privacy-Focused: Select your favorite privacy-focused browser for a separate
-  reading experience
-- Easy Migration: Import and export your RSS feeds via OPML files
+- Deseño minimalista: para centrarse no que importa, cunha interface limpa
+- Sincronización fluída: mantén as canles sincronizadas entre dispositivos con
+  iCloud (iOS/macOS) ou Dropbox (todas as plataformas)
+- Integración con FreshRSS: conecta co teu servidor FreshRSS para a xestión
+  avanzada das canles
+- Opcións flexibles de lectura: elixe entre a vista web, modo lectura ou o teu
+  navegador preferido
+- Orientada á Privacidades: elixe o teu navegador privado favorito para unha
+  experiencia de lectura externa
+- Migración doada: importa e exporta as túas canles RSS usando ficheiros OPML
 
-What Sets FeedFlow Apart:
+Que é o que diferencia a FeedFlow:
 
 - Clean, intuitive interface that lets you focus on content
 - Multiple sync options to fit your workflow (Beta)

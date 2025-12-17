@@ -9,7 +9,6 @@ import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.domain.FeedDownloadWorker
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
-import com.prof18.feedflow.shared.domain.ReaderModeExtractor
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryAndroid
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchWorker
@@ -34,7 +33,6 @@ import okhttp3.OkHttpClient
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -80,8 +78,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             override val io: CoroutineDispatcher = Dispatchers.IO
         }
     }
-
-    factoryOf(::ReaderModeExtractor)
 
     single<FeedItemContentFileHandler> {
         FeedItemContentFileHandlerAndroid(

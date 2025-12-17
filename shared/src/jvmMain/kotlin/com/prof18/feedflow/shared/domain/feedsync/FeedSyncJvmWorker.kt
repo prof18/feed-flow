@@ -75,9 +75,9 @@ internal class FeedSyncJvmWorker(
                 feedSyncer.updateFeedItemsToSyncDatabase()
                 feedSyncer.closeDB()
 
-            accountSpecificUpload()
+                accountSpecificUpload()
 
-            settingsRepository.setIsSyncUploadRequired(false)
+                settingsRepository.setIsSyncUploadRequired(false)
                 emitSuccessMessage()
             } catch (e: Exception) {
                 if (!e.isTemporaryNetworkError()) {

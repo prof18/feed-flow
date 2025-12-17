@@ -67,7 +67,7 @@
     <string name="import_export_description">FeedFlowは他のフィードリーダーとの相互運用性を高めるため、あなたの購読しているフィードをOPMLファイルとしてインポート、エクスポートできます。</string>
     <string name="no_feed_modal_title">新しいフィードを追加</string>
     <string name="no_feed_modal_message">フィードを手動で追加、他のRSSリーダーからインポート、またはアカウントに接続して他の端末と同期できます(この機能は現在ベータ版です)。</string>
-    <string name="drawer_title_read">読む</string>
+    <string name="drawer_title_read">既読</string>
     <string name="settings_toggle_show_read_articles">タイムラインに既読記事を表示する</string>
     <string name="menu_add_to_bookmark">ブックマークに追加</string>
     <string name="menu_remove_from_bookmark">ブックマークから削除</string>
@@ -189,4 +189,24 @@
     <string name="widget_configuration_description">バックグラウンドで新しい記事をチェックし、ウィジェットを更新する頻度を選択します。</string>
     <string name="widget_configuration_confirm">ウィジェットを追加</string>
     <string name="open_feed_settings">フィードの設定を開く</string>
+    <string name="about_menu_faq">よくある質問</string>
+    <string name="settings_hide_date">記事の日付を隠す</string>
+    <string name="settings_auto_delete_period_one_day">1日前</string>
+    <string name="settings_sync_period_one_day">毎日</string>
+    <string name="file_menu">ファイル</string>
+    <string name="settings_title_notifications">通知</string>
+    <string name="settings_notifications_enable_all_title">すべての通知を有効にする</string>
+    <string name="notification_channel_name">新しい記事</string>
+    <string name="settings_notifications_title">通知</string>
+    <string name="settings_open_settings">設定を開く</string>
+    <string name="date_format_normal">日/月</string>
+    <string name="date_format_american">月/日</string>
+    <string name="time_format_hours_24">24時制</string>
+    <string name="time_format_hours_12">12時制</string>
+    <string name="reader_mode_browser_button_content_description">ブラウザで開く</string>
+    <string name="reader_mode_archive_button">archive.isで開く</string>
+    <string name="previous_article">前の記事</string>
+    <string name="next_article">次の記事</string>
+    <string name="time_format_title">時刻表記</string>
+    <string name="date_format_title">日付表記</string>
 </resources>

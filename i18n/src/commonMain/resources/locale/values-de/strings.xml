@@ -2,7 +2,6 @@
 <resources>
     <string name="feed_added_message">Feed %s hinzugefügt</string>
     <string name="feed_url_placeholder">https://meinwunschblog.com/feed</string>
-    <string name="feed_add_in_progress_message">Bitte warte, die Verfügbarkeit aller Feeds wird geprüft. Der Vorgang kann eine Weile dauern, je nach der Anzahl der Feeds, die importiert werden</string>
     <string name="drawer_title_timeline">Zeitleiste</string>
     <string name="force_feed_refresh">Feeds auffrischen erzwingen</string>
     <string name="database_error">Beim Abrufen der Feeds gab es ein Problem. Bitte versuche es erneut oder starte die App neu - error code: %s :(</string>

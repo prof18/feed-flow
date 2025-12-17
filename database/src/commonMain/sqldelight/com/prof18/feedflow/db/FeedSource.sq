@@ -43,10 +43,6 @@ UPDATE feed_source
 SET last_sync_timestamp = :lastSyncTimestamp, fetch_failed = 0
 WHERE url_hash = :urlHash;
 
-deleteAllLastSync:
-UPDATE feed_source
-SET last_sync_timestamp = NULL;
-
 resetCategory:
 UPDATE feed_source
 SET category_id = NULL

@@ -372,12 +372,6 @@ class DatabaseHelper(
                 }
         }
 
-    fun deleteAllFeeds() =
-        dbRef.transaction {
-            dbRef.feedItemQueries.deleteAll()
-            dbRef.feedSourceQueries.deleteAllLastSync()
-        }
-
     fun getUnreadFeedCountFlow(feedFilter: FeedFilter): Flow<Long> =
         dbRef.feedItemQueries
             .countUnreadFeeds(

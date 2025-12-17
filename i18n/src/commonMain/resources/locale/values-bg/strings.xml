@@ -85,7 +85,6 @@
     <string name="retry_button">Опитайте отново</string>
     <string name="new_release_available_title">Налична е нова версия на FeedFlow:</string>
     <string name="wrong_link_report_title">Следните емисии не бяха добавени, защото са невалидни</string>
-    <string name="feed_add_in_progress_message">Моля, изчакайте, всяка наличност на емисия се проверява. Операцията може да отнеме известно време в зависимост от количеството емисии, които внасяте</string>
     <string name="issue_content_title">Проблем с FeedFlow</string>
     <string name="missing_title_and_link">Възникна грешка при получаване на заглавието на емисията</string>
     <string name="no_category_selected_header">Без категория</string>

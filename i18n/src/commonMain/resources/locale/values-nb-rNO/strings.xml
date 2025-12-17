@@ -37,7 +37,6 @@
     <string name="feeds_title">Informasjonskanaler</string>
     <string name="load_file_error_message">Kunne ikke laste inn fil</string>
     <string name="add_feed">Legg til informasjonskanal</string>
-    <string name="feed_add_in_progress_message">Vent mens informasjonskanalenes tilgjengelighet sjekkes. Dette kan ta en stund hvis det dreier seg om mange informasjonskanaler å importere.</string>
     <string name="force_feed_refresh">Påtving gjenoppfrisking av informasjonskanaler</string>
     <string name="database_error">Kunne ikke hente informasjonskanalene. Prøv igjen eller start programmet på ny - error code: %s :(</string>
     <string name="invalid_rss_url">Lenken du angav er ikke en gyldig RSS-informasjonskanal</string>

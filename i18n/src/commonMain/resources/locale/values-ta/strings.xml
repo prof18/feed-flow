@@ -67,7 +67,6 @@
     <string name="no_category">வகைப்படுத்தப்படாதது</string>
     <string name="drawer_title_timeline">காலவரிசை</string>
     <string name="drawer_title_categories">வகைகள்</string>
-    <string name="feed_add_in_progress_message">தயவுசெய்து காத்திருங்கள், ஒவ்வொரு தீவனமும் கிடைக்கும். நீங்கள் இறக்குமதி செய்யும் ஊட்டங்களின் அளவைப் பொறுத்து செயல்பாடு சிறிது நேரம் ஆகலாம்</string>
     <string name="toggle_mark_read_when_scrolling">ச்க்ரோலிங் செய்யும் போது படித்ததைக் குறிக்கவும்</string>
     <string name="action_done">முடிந்தது</string>
     <string name="settings_app_title">பயன்பாடு</string>

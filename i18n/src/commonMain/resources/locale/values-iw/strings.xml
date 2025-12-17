@@ -49,7 +49,6 @@
     <string name="wrong_link_report_title">העדכונים הבאים לא נוספו כי הם לא חוקיים</string>
     <string name="new_release_available_title">גרסה חדשה של FeedFlow זמינה:</string>
     <string name="new_release_available_link">הורד כאן</string>
-    <string name="feed_add_in_progress_message">אנא המתן, כל זמינות עדכונים נבדקת. הפעולה עשויה להימשך זמן מה בהתאם לכמות העדכונים שאתה מייבא</string>
     <string name="dropbox_sync_desktop_description">על ידי לחיצה על כפתור החיבור תופנה לאתר דרופבוקס. לאחר חיבור החשבון, העתק את קוד ההרשאה והזן אותו כאן באפליקציה</string>
     <string name="reader_mode_warning">ℹ מצב הקורא מנסה לקבל את תוכן המאמר. עשויות להיות כמה תקלות או גליצ\'ים לא רצויים.</string>
     <string name="feed_name">שם העדכון</string>

@@ -47,7 +47,6 @@
     <string name="wrong_link_report_title">Aşağıdaki akışlar geçersiz oldukları için eklenmedi</string>
     <string name="new_release_available_title">FeedFlow\'un yeni bir sürümü mevcut:</string>
     <string name="new_release_available_link">Buradan indirin</string>
-    <string name="feed_add_in_progress_message">Lütfen bekleyin, her akışın kullanılabilirliği kontrol ediliyor. İşlem, içe aktardığınız akışların miktarına bağlı olarak biraz zaman alabilir</string>
     <string name="issue_report_title">FeedFlow ile ilgili bir sorun bildirin</string>
     <string name="issue_content_title">FeedFlow ile ilgili sorun</string>
     <string name="issue_content_template">Lütfen sorunu açıklayın ve soruna neden olan RSS Akışının bağlantısını sağlayın. Mümkünse, lütfen bir ekran görüntüsü ve OPML dosyasını ekleyin</string>

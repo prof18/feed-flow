@@ -26,7 +26,6 @@
     <string name="missing_title_and_link">Đã xảy ra lỗi khi lấy tên của nguồn tin</string>
     <string name="import_dialog_title">Chọn file OPML</string>
     <string name="new_release_available_link">Tải ở đây</string>
-    <string name="feed_add_in_progress_message">Vui lòng đợi trong lúc kiểm tra nguồn tin. Thao tác này có thể tốn thời gian tùy thuộc vào số lượng nguồn tin mà bạn đang nhập</string>
     <string name="action_save">Lưu</string>
     <string name="rename_feed_source_name_button">Đổi tên</string>
     <string name="settings_reader_mode">Mở bài viết trong chế độ đọc</string>

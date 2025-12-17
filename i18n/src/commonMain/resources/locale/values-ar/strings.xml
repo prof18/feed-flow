@@ -46,7 +46,6 @@
     <string name="wrong_link_report_title">لم تتم إضافة الخلاصات التالية لأنها غير صالحة</string>
     <string name="new_release_available_title">يتوفر إصدار جديد من FeedFlow:</string>
     <string name="new_release_available_link">حمل من هنا</string>
-    <string name="feed_add_in_progress_message">يرجى الانتظار، جارٍ التحقق من توفر كل خلاصة</string>
     <string name="issue_report_title">الإبلاغ عن مشكلة في FeedFlow</string>
     <string name="issue_content_title">مشكلة في FeedFlow</string>
     <string name="issue_content_template">يرجى وصف المشكلة، وتحديد المنصة التي تستخدمها، وإصدار التطبيق، وتزويدنا برابط خلاصة RSS الذي يسبب المشكلة. إذا أمكن، يرجى إرفاق لقطة شاشة (Screenshot) وملف OPML</string>

@@ -75,7 +75,6 @@
     <string name="about_the_app">FeedFlow 是一款秉承作者个人理念设计的简约 RSS 阅读器。文章在原始网站上打开，您可以选用您信赖的隐私浏览器，与日常浏览互不干扰。另外，FeedFlow 还提供阅读模式，畅享沉浸式阅读体验。\n您可以从 OPML 文件导入或导出您的 RSS 收藏。</string>
     <string name="retry_button">重试</string>
     <string name="done_button">确定</string>
-    <string name="feed_add_in_progress_message">请稍候，正在检查每个订阅源的可用性。此操作可能需要一段时间，具体取决于您导入的订阅源数量</string>
     <string name="database_error">检索订阅源时出了点问题，请重试或重启应用 - 错误代码：%s :(</string>
     <string name="invalid_rss_url">您提供的链接不是有效的 RSS 订阅源</string>
     <string name="new_release_available_title">FeedFlow 有可用的新版本：</string>

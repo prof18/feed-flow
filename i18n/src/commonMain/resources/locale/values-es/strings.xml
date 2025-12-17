@@ -72,7 +72,6 @@
     <string name="wrong_link_report_title">Los siguientes feeds no se agregaron porque no son válidos</string>
     <string name="new_release_available_title">Hay una nueva versión de FeedFlow:</string>
     <string name="new_release_available_link">Descargar aquí</string>
-    <string name="feed_add_in_progress_message">Por favor espera, se están verificando la disponibilidad de cada feeds. La operación puede tardar un poco dependiendo de la cantidad de feeds que estés importando</string>
     <string name="action_done">Hecho</string>
     <string name="issue_content_template">Por favor describe el problema y proporcione un enlace a la fuente RSS que causa los problemas. Si puede, adjunte una captura de pantalla y el archivo OPML</string>
     <string name="import_export_description">FeedFlow admite la importación y exportación de tus suscripciones con un archivo OPML, para una mejor interoperabilidad con los otros lectores de feeds</string>

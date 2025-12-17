@@ -92,7 +92,6 @@
     <string name="add_feed_categories_title">Categorías</string>
     <string name="dropbox_sync_desktop_description">Ao premer no botón Conectar ímoste redirixir ao sitio web de Dropbox. Despois de acceder á conta, copia o código de autorización e escríbeo aquí na app</string>
     <string name="add_account_button">Engadir conta</string>
-    <string name="feed_add_in_progress_message">Agarda, estáse a comprobar a dispoñibilidade de cada canle. Podería levarlle un anaco dependendo da cantidade de canles que esteas a importar</string>
     <string name="dropbox_confirm_button">Confirmar</string>
     <string name="feed_sync_in_progress">Sincronizando. A app vaise pechar automáticamente ao rematar.</string>
     <string name="issue_content_template">Describe o problema, indica a plataforma que estás a usar, a versión da app, e proporciona a ligazón á canle RSS que causa a incidencia. Se é posible, anexa unha captura de pantalla e o ficheiro OPML</string>

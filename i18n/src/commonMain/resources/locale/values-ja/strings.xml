@@ -47,7 +47,6 @@
     <string name="wrong_link_report_title">以下のフィードは正しくないため追加されませんでした</string>
     <string name="new_release_available_title">新しいバージョンのFeedFlowが入手できます:</string>
     <string name="new_release_available_link">ここからダウンロード</string>
-    <string name="feed_add_in_progress_message">全てのフィードが利用可能か確認しているためしばらくお待ちください。インポートするフィードの量によっては時間がかかる場合があります。</string>
     <string name="issue_report_title">FeedFlowの問題を報告</string>
     <string name="issue_content_title">FeedFlowの問題</string>
     <string name="issue_content_template">問題を説明し、問題が発生したRSSフィードのリンクを提供してください。可能であれば、スクリーンショットとOPMLファイルを添付してください。</string>

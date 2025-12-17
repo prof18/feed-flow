@@ -151,7 +151,6 @@
     <string name="export_dialog_title">Uložit soubor OPML</string>
     <string name="loading_feed_message">Načítání zdrojů %s</string>
     <string name="feeds_export_done_message">Export dokončen</string>
-    <string name="feed_add_in_progress_message">Vyčkejte prosím, dostupnost každého zdroje se kontroluje. Operace může chvíli trvat v závislosti na množství importovaných zdrojů</string>
     <string name="import_feed_button">Importovat z OPML</string>
     <string name="search_hint_title">Začněte psát…</string>
     <string name="dropbox_sync_desktop_description">Kliknutím na tlačítko Připojit budete přesměrováni na webovou stránku služby Dropbox. Po připojení účtu zkopírujte autorizační kód a zadejte jej zde v aplikaci</string>

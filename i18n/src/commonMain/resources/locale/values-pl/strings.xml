@@ -47,7 +47,6 @@
     <string name="wrong_link_report_title">Następujące kanały nie zostały dodane, ponieważ są nieprawidłowe</string>
     <string name="new_release_available_title">Dostępna jest nowa wersja FeedFlow:</string>
     <string name="new_release_available_link">Pobierz tutaj</string>
-    <string name="feed_add_in_progress_message">Proszę czekać, sprawdzana jest dostępność każdego kanału. Operacja może potrwać chwilę, w zależności od liczby importowanych kanałów</string>
     <string name="issue_report_title">Zgłoś problem z FeedFlow</string>
     <string name="issue_content_title">Problem z FeedFlow</string>
     <string name="issue_content_template">Opisz problem i podaj link do kanału RSS, który go powoduje. Jeśli to możliwe, załącz zrzut ekranu i plik OPML</string>

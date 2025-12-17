@@ -47,7 +47,6 @@
     <string name="retry_button">Skúsiť znova</string>
     <string name="import_export_opml">Import a export OPML</string>
     <string name="new_release_available_link">Stiahnuť tu</string>
-    <string name="feed_add_in_progress_message">Počkaj, prosím, kontroluje sa dostupnosť každého feedu. Operácia môže chvíľu trvať v závislosti od množstva importovaných feedov</string>
     <string name="wrong_link_report_title">Nasledujúce feedy neboli pridané, pretože nie sú platné</string>
     <string name="new_release_available_title">K dispozícii je nová verzia FeedFlow:</string>
     <string name="issue_report_title">Nahlásiť problém s FeedFlow</string>

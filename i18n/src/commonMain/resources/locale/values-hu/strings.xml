@@ -2,7 +2,6 @@
 <resources>
     <string name="feed_added_message">%s hírforrás hozzáadva</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
-    <string name="feed_add_in_progress_message">Kis türelmet, az összes hírforrás elérhetőségének ellenőrzése folyamatban van. Ez a művelet eltarthat egy ideig, attól függően, hogy hány hírforrást importál</string>
     <string name="force_feed_refresh">Hírforrások frissítésének kényszerítése</string>
     <string name="database_error">Hiba történt a hírforrások betöltésekor. Próbálja újra, vagy indítsa újra az alkalmazást. - hibakód: %s :(</string>
     <string name="import_dialog_title">OPML-fájl kiválasztása</string>

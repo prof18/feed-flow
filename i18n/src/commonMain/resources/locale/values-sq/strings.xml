@@ -46,7 +46,6 @@
     <string name="wrong_link_report_title">Prurjet e mëposhtme nuk u shtuan sepse nuk janë të vlefshme</string>
     <string name="new_release_available_title">Një version i ri i FeedFlow është i disponueshëm:</string>
     <string name="new_release_available_link">Shkarko këtu</string>
-    <string name="feed_add_in_progress_message">Të lutem prit, po kontrollohet disponueshmëria e çdo prurjeje. Ky proces mund të zgjasë, në varësi të numrit të prurjeve që po importon</string>
     <string name="issue_report_title">Raporto një problem me FeedFlow</string>
     <string name="issue_content_title">Problem me FeedFlow</string>
     <string name="issue_content_template">Të lutem përshkruaj problemin, specifiko platformën që po përdor, versionin e aplikacionit dhe jep një lidhje të prurjes RSS që shkakton problemet. Nëse mundesh, bashkëngjit edhe një pamje të ekranit dhe skedarin OPML</string>

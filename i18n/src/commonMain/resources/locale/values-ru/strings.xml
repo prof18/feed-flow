@@ -89,7 +89,6 @@
     <string name="database_error">Что-то пошло не так при получении лент. Пожалуйста, попробуйте еще раз или перезапустите приложение - error code: %s :(</string>
     <string name="done_button">ОК</string>
     <string name="wrong_link_report_title">Следующие ленты не были добавлены, так как они недействительны</string>
-    <string name="feed_add_in_progress_message">Пожалуйста, подождите, идет проверка доступности каждой ленты. Операция может занять некоторое время в зависимости от количества лент, которые вы импортируете</string>
     <string name="issue_content_template">Пожалуйста, опишите проблему, укажите используемую платформу и версию приложения и дайте ссылку на ленту RSS, которая вызывает проблемы. Если возможно, пришлите снимок экрана и файл OPML</string>
     <string name="no_category_selected_header">Нет категории</string>
     <string name="no_category">Без категории</string>

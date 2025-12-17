@@ -37,7 +37,6 @@
     <string name="wrong_link_report_title">Kuna järgnevad uudisvood polnud korrektsed, siis jäid lisamata</string>
     <string name="new_release_available_title">FeedFlow uus versioon on saadaval:</string>
     <string name="new_release_available_link">Laadi siit alla</string>
-    <string name="feed_add_in_progress_message">Kontrollime iga uudisvoo saadavust... palun oota. Sõltuvalt imporditavate uudisvoogude arvust võib selleks aega kuluda</string>
     <string name="issue_report_title">Teata FeedFlow veast või probleemist</string>
     <string name="issue_content_title">FeedFlow viga või probleem</string>
     <string name="missing_title_and_link">Uudisvoo pealkirja tuvastamisel tekkis viga</string>

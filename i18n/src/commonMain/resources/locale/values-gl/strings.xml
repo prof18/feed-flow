@@ -255,4 +255,21 @@
     <string name="reader_mode_archive_button">Abrir en archive.is</string>
     <string name="previous_article">Artigo anterior</string>
     <string name="next_article">Artigo seguinte</string>
+    <string name="feed_error_message_improved">Non se puido cargar %s. Pode non estar dispoñible ou que se perdese a conexión a internet.</string>
+    <string name="about_menu_faq">PMF</string>
+    <string name="settings_hide_date">Ocultar data do artigo</string>
+    <string name="settings_auto_delete_period_one_day">Un día de antigüidade</string>
+    <string name="time_format_title">Formato da hora</string>
+    <string name="time_format_hours_24">24 horas</string>
+    <string name="time_format_hours_12">12 horas</string>
+    <string name="settings_danger_title">Perigo</string>
+    <string name="settings_clear_downloaded_articles">Limpar artigos descargados</string>
+    <string name="settings_clear_downloaded_articles_dialog_title">Limpar os artigos descargados?</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">Isto vai eliminar todo o contido dos artigos descargados para lectura sen conexión. A acción non ten volta.</string>
+    <string name="settings_clear_image_cache">Limpar memoria tobo de imaxes</string>
+    <string name="settings_clear_image_cache_dialog_title">Limpar a memoria todo de imaxes?</string>
+    <string name="settings_clear_image_cache_dialog_message">Isto vai eliminar todas as imaxes da memoria tobo. As imaxes volveranse a descargar se volves a ler os artigos.</string>
+    <string name="reader_mode_fallback_title">Non se puido procesar o artigo</string>
+    <string name="reader_mode_fallback_message">O contido desta páxina non se puido extraer para o modo lectura. Podes abrir a páxina directamente no navegador.</string>
+    <string name="reader_mode_fallback_open_browser_button">Abrir no navegador</string>
 </resources>

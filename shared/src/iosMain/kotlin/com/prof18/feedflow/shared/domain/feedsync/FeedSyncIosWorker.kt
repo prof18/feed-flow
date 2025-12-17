@@ -35,6 +35,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSError
@@ -58,6 +60,7 @@ internal class FeedSyncIosWorker(
     private val telemetry: Telemetry,
 ) : FeedSyncWorker {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val mutex = Mutex()
 
     override fun upload() {
         scope.launch {
@@ -73,117 +76,125 @@ internal class FeedSyncIosWorker(
 
     @OptIn(ExperimentalForeignApi::class)
     private suspend fun performUpload() = withContext(dispatcherProvider.io) {
-        try {
-            logger.w { "Starting upload" }
-            feedSyncer.populateSyncDbIfEmpty()
-            feedSyncer.updateFeedItemsToSyncDatabase()
-            feedSyncer.closeDB()
-            logger.w { "Sync database populated and closed" }
-
-            val databasePath = getDatabaseUrl()
-            if (databasePath == null) {
-                logger.e { "Database URL is null, cannot perform upload" }
-                telemetry.trackError(
-                    id = "FeedSyncIosWorker.performUpload",
-                    message = "Database URL is null, cannot perform upload",
-                )
-                emitErrorMessage()
-                return@withContext
-            }
-            accountSpecificUpload(databasePath)
-            settingsRepository.setIsSyncUploadRequired(false)
-            emitSuccessMessage()
-        } catch (e: SQLiteException) {
-            logger.e(e) { "SQLiteException during upload" }
-            telemetry.trackError(
-                id = "FeedSyncIosWorker.performUpload",
-                message = "SQLiteException during upload: ${e.message}",
-            )
+        mutex.withLock {
             try {
+                logger.w { "Starting upload" }
+                feedSyncer.populateSyncDbIfEmpty()
+                feedSyncer.updateFeedItemsToSyncDatabase()
                 feedSyncer.closeDB()
-                logger.e { "Sync database closed after error" }
-                getDatabaseUrl()?.let { path ->
-                    NSFileManager.defaultManager.removeItemAtURL(path, null)
-                    feedSyncer.populateSyncDbIfEmpty()
-                    logger.e { "Sync database recreated after error" }
-                    telemetry.signal("FeedSyncIosWorker.performUpload.recreateDatabase")
+                logger.w { "Sync database populated and closed" }
+
+                val databasePath = getDatabaseUrl()
+                if (databasePath == null) {
+                    logger.e { "Database URL is null, cannot perform upload" }
+                    telemetry.trackError(
+                        id = "FeedSyncIosWorker.performUpload",
+                        message = "Database URL is null, cannot perform upload",
+                    )
+                    emitErrorMessage()
+                    return@withLock
                 }
-            } catch (_: Exception) {
-                // best effort
-                logger.e { "Database recreation after error failed" }
+                accountSpecificUpload(databasePath)
+                settingsRepository.setIsSyncUploadRequired(false)
+                emitSuccessMessage()
+            } catch (e: SQLiteException) {
+                logger.e(e) { "SQLiteException during upload" }
                 telemetry.trackError(
                     id = "FeedSyncIosWorker.performUpload",
-                    message = "Database recreation after error failed",
+                    message = "SQLiteException during upload: ${e.message}",
                 )
-            }
-        } catch (e: Exception) {
-            logger.e("Upload failed", e)
-            telemetry.trackError(
-                id = "FeedSyncIosWorker.performUpload",
-                message = "Upload failed: ${e.message}",
-            )
-            if (e.message?.contains("FeedFlow.DropboxErrors") == true) {
-                feedSyncMessageQueue.emitResult(SyncResult.General(SyncUploadError.DropboxAPIError))
-            } else {
-                emitErrorMessage()
+                try {
+                    feedSyncer.closeDB()
+                    logger.e { "Sync database closed after error" }
+                    getDatabaseUrl()?.let { path ->
+                        NSFileManager.defaultManager.removeItemAtURL(path, null)
+                        feedSyncer.populateSyncDbIfEmpty()
+                        logger.e { "Sync database recreated after error" }
+                        telemetry.signal("FeedSyncIosWorker.performUpload.recreateDatabase")
+                    }
+                } catch (_: Exception) {
+                    // best effort
+                    logger.e { "Database recreation after error failed" }
+                    telemetry.trackError(
+                        id = "FeedSyncIosWorker.performUpload",
+                        message = "Database recreation after error failed",
+                    )
+                }
+            } catch (e: Exception) {
+                logger.e("Upload failed", e)
+                telemetry.trackError(
+                    id = "FeedSyncIosWorker.performUpload",
+                    message = "Upload failed: ${e.message}",
+                )
+                if (e.message?.contains("FeedFlow.DropboxErrors") == true) {
+                    feedSyncMessageQueue.emitResult(SyncResult.General(SyncUploadError.DropboxAPIError))
+                } else {
+                    emitErrorMessage()
+                }
             }
         }
     }
 
     override suspend fun download(isFirstSync: Boolean): SyncResult = withContext(dispatcherProvider.io) {
-        return@withContext try {
-            feedSyncer.closeDB()
-            accountSpecificDownload(isFirstSync)
-        } catch (e: Exception) {
-            if (!isFirstSync) {
-                logger.e("Download failed", e)
-                if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
-                    telemetry.trackError(
-                        id = "FeedSyncIosWorker.download",
-                        message = "Download failed: ${e.message}",
-                    )
+        return@withContext mutex.withLock {
+            try {
+                feedSyncer.closeDB()
+                accountSpecificDownload(isFirstSync)
+            } catch (e: Exception) {
+                if (!isFirstSync) {
+                    logger.e("Download failed", e)
+                    if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
+                        telemetry.trackError(
+                            id = "FeedSyncIosWorker.download",
+                            message = "Download failed: ${e.message}",
+                        )
+                    }
                 }
+                SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
             }
-            SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
         }
     }
 
     override suspend fun syncFeedSources(): SyncResult = withContext(dispatcherProvider.io) {
-        try {
-            logger.w { "Start syncing feed sources" }
-            feedSyncer.syncFeedSourceCategory()
-            feedSyncer.syncFeedSource()
-            logger.w { "Syncing feed sources finished" }
-            if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
-                telemetry.signal("FeedSyncIosWorker.syncFeedSources.iCloud")
+        mutex.withLock {
+            try {
+                logger.w { "Start syncing feed sources" }
+                feedSyncer.syncFeedSourceCategory()
+                feedSyncer.syncFeedSource()
+                logger.w { "Syncing feed sources finished" }
+                if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
+                    telemetry.signal("FeedSyncIosWorker.syncFeedSources.iCloud")
+                }
+                SyncResult.Success
+            } catch (e: Exception) {
+                logger.e("Sync feed sources failed", e)
+                telemetry.trackError(
+                    id = "FeedSyncIosWorker.syncFeedSources",
+                    message = "Sync feed sources failed: ${e.message}",
+                )
+                SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
             }
-            SyncResult.Success
-        } catch (e: Exception) {
-            logger.e("Sync feed sources failed", e)
-            telemetry.trackError(
-                id = "FeedSyncIosWorker.syncFeedSources",
-                message = "Sync feed sources failed: ${e.message}",
-            )
-            SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
         }
     }
 
     override suspend fun syncFeedItems(): SyncResult = withContext(dispatcherProvider.io) {
-        try {
-            logger.w { "Start syncing feed items" }
-            feedSyncer.syncFeedItem()
-            logger.w { "Syncing feed items finished" }
-            if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
-                telemetry.signal("FeedSyncIosWorker.syncFeedItems.iCloud")
+        mutex.withLock {
+            try {
+                logger.w { "Start syncing feed items" }
+                feedSyncer.syncFeedItem()
+                logger.w { "Syncing feed items finished" }
+                if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
+                    telemetry.signal("FeedSyncIosWorker.syncFeedItems.iCloud")
+                }
+                SyncResult.Success
+            } catch (e: Exception) {
+                logger.e("Sync feed items failed", e)
+                telemetry.trackError(
+                    id = "FeedSyncIosWorker.syncFeedItems",
+                    message = "Sync feed items failed: ${e.message}",
+                )
+                SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
             }
-            SyncResult.Success
-        } catch (e: Exception) {
-            logger.e("Sync feed items failed", e)
-            telemetry.trackError(
-                id = "FeedSyncIosWorker.syncFeedItems",
-                message = "Sync feed items failed: ${e.message}",
-            )
-            SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
         }
     }
 

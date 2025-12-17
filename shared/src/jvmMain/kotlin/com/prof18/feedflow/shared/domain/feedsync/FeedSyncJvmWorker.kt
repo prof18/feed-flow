@@ -25,6 +25,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -44,6 +46,7 @@ internal class FeedSyncJvmWorker(
 ) : FeedSyncWorker {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val mutex = Mutex()
 
     private val appPath = AppDataPathBuilder.getAppDataPath(appEnvironment)
     private val databaseName = if (appEnvironment.isDebug()) {
@@ -66,20 +69,22 @@ internal class FeedSyncJvmWorker(
     }
 
     private suspend fun performUpload() = withContext(dispatcherProvider.io) {
-        try {
-            feedSyncer.populateSyncDbIfEmpty()
-            feedSyncer.updateFeedItemsToSyncDatabase()
-            feedSyncer.closeDB()
+        mutex.withLock {
+            try {
+                feedSyncer.populateSyncDbIfEmpty()
+                feedSyncer.updateFeedItemsToSyncDatabase()
+                feedSyncer.closeDB()
 
             accountSpecificUpload()
 
             settingsRepository.setIsSyncUploadRequired(false)
-            emitSuccessMessage()
-        } catch (e: Exception) {
-            if (!e.isTemporaryNetworkError()) {
-                logger.e("Upload to dropbox failed", e)
+                emitSuccessMessage()
+            } catch (e: Exception) {
+                if (!e.isTemporaryNetworkError()) {
+                    logger.e("Upload to dropbox failed", e)
+                }
+                emitErrorMessage()
             }
-            emitErrorMessage()
         }
     }
 
@@ -132,14 +137,16 @@ internal class FeedSyncJvmWorker(
             // do nothing
         }
 
-        return@withContext try {
-            feedSyncer.closeDB()
-            accountSpecificDownload()
-        } catch (e: Exception) {
-            if (!e.isTemporaryNetworkError()) {
-                logger.e("Download from dropbox failed", e)
+        return@withContext mutex.withLock {
+            try {
+                feedSyncer.closeDB()
+                accountSpecificDownload()
+            } catch (e: Exception) {
+                if (!e.isTemporaryNetworkError()) {
+                    logger.e("Download from dropbox failed", e)
+                }
+                SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
             }
-            SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
         }
     }
 
@@ -200,25 +207,29 @@ internal class FeedSyncJvmWorker(
     }
 
     override suspend fun syncFeedSources(): SyncResult = withContext(dispatcherProvider.io) {
-        try {
-            feedSyncer.syncFeedSourceCategory()
-            feedSyncer.syncFeedSource()
-            SyncResult.Success
-        } catch (e: Exception) {
-            logger.e("Sync feed sources failed", e)
-            SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
+        mutex.withLock {
+            try {
+                feedSyncer.syncFeedSourceCategory()
+                feedSyncer.syncFeedSource()
+                SyncResult.Success
+            } catch (e: Exception) {
+                logger.e("Sync feed sources failed", e)
+                SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
+            }
         }
     }
 
     override suspend fun syncFeedItems(): SyncResult = withContext(dispatcherProvider.io) {
-        try {
-            feedSyncer.syncFeedItem()
-            SyncResult.Success
-        } catch (e: Exception) {
-            if (!e.skipLogging()) {
-                logger.e("Sync feed items failed", e)
+        mutex.withLock {
+            try {
+                feedSyncer.syncFeedItem()
+                SyncResult.Success
+            } catch (e: Exception) {
+                if (!e.skipLogging()) {
+                    logger.e("Sync feed items failed", e)
+                }
+                SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
             }
-            SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
         }
     }
 

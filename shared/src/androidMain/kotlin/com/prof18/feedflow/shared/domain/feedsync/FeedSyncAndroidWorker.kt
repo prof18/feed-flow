@@ -24,6 +24,8 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.shared.data.SettingsRepository
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
@@ -42,6 +44,8 @@ internal class FeedSyncAndroidWorker(
     private val settingsRepository: SettingsRepository,
 ) : FeedSyncWorker {
 
+    private val mutex = Mutex()
+
     override suspend fun uploadImmediate() {
         logger.d { "Start Immediate upload" }
         performUpload()
@@ -49,15 +53,14 @@ internal class FeedSyncAndroidWorker(
 
     override fun upload() {
         logger.d { "Enqueue upload" }
-        val uploadWorkRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<SyncWorkManager>()
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .setConstraints(
-                    Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .build(),
-                )
-                .build()
+        val uploadWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<SyncWorkManager>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build(),
+            )
+            .build()
 
         WorkManager.getInstance(context).enqueue(uploadWorkRequest)
     }
@@ -65,27 +68,29 @@ internal class FeedSyncAndroidWorker(
     internal suspend fun performUpload(): SyncResult = withContext(dispatcherProvider.io) {
         restoreDropboxClient()
 
-        try {
-            feedSyncer.populateSyncDbIfEmpty()
-            feedSyncer.updateFeedItemsToSyncDatabase()
-            feedSyncer.closeDB()
+        mutex.withLock {
+            try {
+                feedSyncer.populateSyncDbIfEmpty()
+                feedSyncer.updateFeedItemsToSyncDatabase()
+                feedSyncer.closeDB()
 
-            val databaseFile = generateDatabaseFile()
-                ?: return@withContext SyncResult.General(SyncUploadError.DatabaseFileGeneration)
-            val dropboxUploadParam = DropboxUploadParam(
-                path = "/${getDatabaseNameWithExtension()}",
-                file = databaseFile,
-            )
-            dropboxDataSource.performUpload(dropboxUploadParam)
-            dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
-            logger.d { "Upload to dropbox successfully" }
-            emitSuccessMessage()
-            settingsRepository.setIsSyncUploadRequired(false)
-            return@withContext SyncResult.Success
-        } catch (e: Exception) {
-            logger.e("Upload to dropbox failed", e)
-            emitErrorMessage(SyncUploadError.DropboxUploadFailed)
-            return@withContext SyncResult.General(SyncUploadError.DropboxUploadFailed)
+                val databaseFile = generateDatabaseFile()
+                    ?: return@withContext SyncResult.General(SyncUploadError.DatabaseFileGeneration)
+                val dropboxUploadParam = DropboxUploadParam(
+                    path = "/${getDatabaseNameWithExtension()}",
+                    file = databaseFile,
+                )
+                dropboxDataSource.performUpload(dropboxUploadParam)
+                dropboxSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+                logger.d { "Upload to dropbox successfully" }
+                emitSuccessMessage()
+                settingsRepository.setIsSyncUploadRequired(false)
+                return@withContext SyncResult.Success
+            } catch (e: Exception) {
+                logger.e("Upload to dropbox failed", e)
+                emitErrorMessage(SyncUploadError.DropboxUploadFailed)
+                return@withLock SyncResult.General(SyncUploadError.DropboxUploadFailed)
+            }
         }
     }
 
@@ -98,35 +103,41 @@ internal class FeedSyncAndroidWorker(
 
         restoreDropboxClient()
 
-        return@withContext try {
-            feedSyncer.closeDB()
-            dropboxDataSource.performDownload(dropboxDownloadParam)
-            dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
-            SyncResult.Success
-        } catch (e: Exception) {
-            logger.e("Download from dropbox failed", e)
-            SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
+        return@withContext mutex.withLock {
+            try {
+                feedSyncer.closeDB()
+                dropboxDataSource.performDownload(dropboxDownloadParam)
+                dropboxSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+                SyncResult.Success
+            } catch (e: Exception) {
+                logger.e("Download from dropbox failed", e)
+                SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
+            }
         }
     }
 
     override suspend fun syncFeedSources(): SyncResult = withContext(dispatcherProvider.io) {
-        try {
-            feedSyncer.syncFeedSourceCategory()
-            feedSyncer.syncFeedSource()
-            SyncResult.Success
-        } catch (e: Exception) {
-            logger.e("Sync feed sources failed", e)
-            SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
+        mutex.withLock {
+            try {
+                feedSyncer.syncFeedSourceCategory()
+                feedSyncer.syncFeedSource()
+                SyncResult.Success
+            } catch (e: Exception) {
+                logger.e("Sync feed sources failed", e)
+                SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
+            }
         }
     }
 
     override suspend fun syncFeedItems(): SyncResult = withContext(dispatcherProvider.io) {
-        try {
-            feedSyncer.syncFeedItem()
-            SyncResult.Success
-        } catch (e: Exception) {
-            logger.e("Sync feed items failed", e)
-            SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
+        mutex.withLock {
+            try {
+                feedSyncer.syncFeedItem()
+                SyncResult.Success
+            } catch (e: Exception) {
+                logger.e("Sync feed items failed", e)
+                SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
+            }
         }
     }
 

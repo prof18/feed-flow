@@ -10,6 +10,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +46,14 @@ fun HomeScreenContent(
     showDropdownMenu: Boolean = false,
 ) {
     val scope = rememberCoroutineScope()
+
+    @Suppress("MagicNumber")
+    val showScrollToTopButton by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 1
+        }
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -78,6 +89,16 @@ fun HomeScreenContent(
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        floatingActionButton = {
+            ScrollToTopButton(
+                visible = showScrollToTopButton,
+                onClick = {
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                },
+            )
+        },
     ) { innerPadding ->
         val layoutDir = LocalLayoutDirection.current
 

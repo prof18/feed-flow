@@ -255,4 +255,21 @@
     <string name="reader_mode_archive_button">Mở trong archive.is</string>
     <string name="previous_article">Bài viết trước</string>
     <string name="next_article">Bài viết tiếp</string>
+    <string name="feed_error_message_improved">Không thể tải %s. Có thể trang web không khả dụng hoặc do kết nối internet của bạn.</string>
+    <string name="about_menu_faq">FAQ</string>
+    <string name="settings_hide_date">Ẩn ngày bài viết</string>
+    <string name="settings_auto_delete_period_one_day">Một ngày</string>
+    <string name="time_format_title">Định dạng thời gian</string>
+    <string name="time_format_hours_24">24 giờ</string>
+    <string name="time_format_hours_12">12 giờ</string>
+    <string name="settings_danger_title">Nguy hiểm</string>
+    <string name="settings_clear_downloaded_articles">Xóa những bài viết đã tải</string>
+    <string name="settings_clear_downloaded_articles_dialog_title">Xóa những bài viết đã tải xuống?</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">Thao tác này sẽ xóa toàn bộ nội dung bài viết đã tải xuống để đọc offline. Không thể hoàn tác.</string>
+    <string name="settings_clear_image_cache">Xóa bộ nhớ đệm hình ảnh</string>
+    <string name="settings_clear_image_cache_dialog_title">Xóa bộ nhớ đệm hình ảnh?</string>
+    <string name="settings_clear_image_cache_dialog_message">Thao tác này sẽ xóa tất cả hình ảnh đã lưu trong bộ nhớ đệm. Hình ảnh sẽ được tải xuống lại khi bạn xem lại các bài viết.</string>
+    <string name="reader_mode_fallback_title">Không thể phân tích bài viết</string>
+    <string name="reader_mode_fallback_message">Không thể trích xuất nội dung trang này ở chế độ đọc. Bạn có thể mở trực tiếp trong trình duyệt của mình.</string>
+    <string name="reader_mode_fallback_open_browser_button">Mở trong trình duyệt</string>
 </resources>

@@ -12,4 +12,6 @@ sealed class UIErrorState {
     data class SyncError(
         val errorCode: ErrorCode,
     ) : UIErrorState()
+
+    data object DeleteFeedSourceError : UIErrorState()
 }

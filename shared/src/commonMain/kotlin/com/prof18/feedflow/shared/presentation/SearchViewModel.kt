@@ -15,6 +15,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
+import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
@@ -95,6 +96,10 @@ class SearchViewModel internal constructor(
                         mutableUIErrorState.emit(
                             UIErrorState.SyncError(errorCode = error.errorCode),
                         )
+                    }
+
+                    is DeleteFeedSourceError -> {
+                        mutableUIErrorState.emit(UIErrorState.DeleteFeedSourceError)
                     }
                 }
             }

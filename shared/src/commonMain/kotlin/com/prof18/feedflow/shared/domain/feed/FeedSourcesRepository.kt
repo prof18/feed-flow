@@ -25,6 +25,7 @@ import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.model.AddFeedResponse
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
+import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.sanitizeUrl
 import com.prof18.rssparser.RssParser
@@ -74,7 +75,12 @@ internal class FeedSourcesRepository(
             }
 
             else -> {
-                databaseHelper.deleteFeedSource(feedSource.id)
+                try {
+                    databaseHelper.deleteFeedSource(feedSource.id)
+                } catch (e: Exception) {
+                    logger.e(e) { "Error while deleting feed source" }
+                    feedStateRepository.emitErrorState(DeleteFeedSourceError())
+                }
                 feedSyncRepository.deleteFeedSource(feedSource)
                 feedSyncRepository.performBackup()
             }

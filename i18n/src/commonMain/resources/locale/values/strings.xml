@@ -146,6 +146,7 @@
     <string name="open_feed_settings">Open feed settings</string>
     <string name="feed_added_message_without_name">Feed added</string>
     <string name="sync_error_message">There was an error while syncing the feeds - error code: %s :(. Please retry.</string>
+    <string name="delete_feed_source_error">Couldn\'t delete the feed. Please try again.</string>
     <string name="wrong_credentials_error_message">The credentials are not correct. Please try again.</string>
     <string name="wrong_url_error_message">The provided link is not correct. Please try again.</string>
     <string name="link_with_error_report_title">The following feeds were not added because of an error</string>
@@ -153,7 +154,7 @@
     <string name="account_text_field_username">Username</string>
     <string name="account_text_field_password">Password</string>
     <string name="account_login">Login</string>
-    <string name="fresh_rss_account_connected">Your FreshRss account is successfully connected</string>
+    <string name="fresh_rss_account_connected">Your FreshRSS account is successfully connected</string>
     <string name="no_fresh_rss_sync_yet">Data are not synced yet</string>
     <string name="fresh_rss_last_sync">Last sync: %s</string>
     <string name="fresh_rss_password_hint">The FreshRSS API password (Settings &gt; Profile)</string>

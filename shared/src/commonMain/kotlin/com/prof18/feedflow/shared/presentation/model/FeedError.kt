@@ -15,3 +15,7 @@ internal data class FeedErrorState(
 internal data class DatabaseError(override val errorCode: ErrorCode) : ErrorState
 
 internal data class SyncError(override val errorCode: ErrorCode) : ErrorState
+
+internal data class DeleteFeedSourceError(
+    override val errorCode: ErrorCode = NoCode,
+) : ErrorState

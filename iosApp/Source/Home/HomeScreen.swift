@@ -157,6 +157,15 @@ struct HomeScreen: View {
                             showBanner: true
                         )
                     )
+
+                case .deleteFeedSourceError:
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.deleteFeedSourceError,
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    )
                 }
             }
         }

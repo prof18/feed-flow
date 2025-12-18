@@ -4,20 +4,20 @@ import SwiftUI
 struct SearchScreen: View {
     @Environment(AppState.self)
     private var appState
-
+    
     @StateObject private var vmStoreOwner = VMStoreOwner<SearchViewModel>(Deps.shared.getSearchViewModel())
-
+    
     @State var searchText = ""
-
+    
     @State var searchState: SearchState = .EmptyState()
-
+    
     @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
-
+    
     let readerModeViewModel: ReaderModeViewModel
-
+    
     var body: some View {
         @Bindable var appState = appState
-
+        
         SearchScreenContent(
             searchText: $searchText,
             searchState: $searchState,
@@ -60,7 +60,7 @@ struct SearchScreen: View {
                             showBanner: true
                         )
                     )
-
+                    
                 case let .feedErrorState(feedError):
                     self.appState.snackbarQueue.append(
                         SnackbarData(
@@ -69,11 +69,20 @@ struct SearchScreen: View {
                             showBanner: true
                         )
                     )
-
+                    
                 case let .syncError(errorState):
                     self.appState.snackbarQueue.append(
                         SnackbarData(
                             title: feedFlowStrings.syncErrorMessage(errorState.errorCode.code),
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    )
+                    
+                case .deleteFeedSourceError:
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.deleteFeedSourceError,
                             subtitle: nil,
                             showBanner: true
                         )

@@ -103,6 +103,13 @@ internal fun HomeScreen(
                         duration = SnackbarDuration.Short,
                     )
                 }
+
+                is UIErrorState.DeleteFeedSourceError -> {
+                    snackbarHostState.showSnackbar(
+                        strings.deleteFeedSourceError,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
             }
         }
     }

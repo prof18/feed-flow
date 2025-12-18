@@ -11,6 +11,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
+import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
@@ -115,6 +116,10 @@ class FeedSourceListViewModel internal constructor(
                             mutableUIErrorState.emit(
                                 UIErrorState.SyncError(errorCode = error.errorCode),
                             )
+                        }
+
+                        is DeleteFeedSourceError -> {
+                            mutableUIErrorState.emit(UIErrorState.DeleteFeedSourceError)
                         }
                     }
                 }

@@ -301,12 +301,8 @@ class DatabaseHelper(
 
     suspend fun deleteFeedSource(feedSourceId: String) =
         dbRef.transactionWithContext(backgroundDispatcher) {
-            try {
-                dbRef.feedItemQueries.deleteAllWithFeedSource(feedSourceId)
-                dbRef.feedSourceQueries.deleteFeedSource(feedSourceId)
-            } catch (e: Exception) {
-                logger.e(e) { "Error while deleting feed source" }
-            }
+            dbRef.feedItemQueries.deleteAllWithFeedSource(feedSourceId)
+            dbRef.feedSourceQueries.deleteFeedSource(feedSourceId)
         }
 
     suspend fun deleteFeedSourceExcept(feedSourceIds: List<String>) =

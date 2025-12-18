@@ -121,6 +121,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     factory {
         UserFeedbackReporter(
             appConfig = appConfig,
+            accountsRepository = get(),
         )
     }
 

@@ -12,6 +12,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 fun ScrollToTopButton(
@@ -32,7 +33,7 @@ fun ScrollToTopButton(
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowUpward,
-                contentDescription = null,
+                contentDescription = LocalFeedFlowStrings.current.scrollToTopButtonContentDescription,
             )
         }
     }

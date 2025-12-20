@@ -38,7 +38,11 @@ internal fun FeedItemContextMenu(
     DropdownMenu(
         expanded = showMenu,
         onDismissRequest = closeMenu,
-        properties = PopupProperties(),
+        properties = PopupProperties(
+            focusable = true,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+        ),
     ) {
         ChangeReadStatusMenuItem(
             feedItem = feedItem,

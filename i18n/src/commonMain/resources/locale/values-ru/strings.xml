@@ -216,7 +216,7 @@
     <string name="settings_sync_period_fifteen_minutes">Каждые 15 минут</string>
     <string name="settings_sync_period_thirty_minutes">Каждые 30 минут</string>
     <string name="settings_sync_period_one_day">Каждый день</string>
-    <string name="settings_left_swipe_action">Свайп влево</string>
+    <string name="settings_left_swipe_action">Смахивание влево</string>
     <string name="settings_right_swipe_action">Смахивание вправо</string>
     <string name="settings_swipe_action_toggle_read">Отметить прочитанным</string>
     <string name="settings_swipe_action_toggle_bookmark">Добавить/удалить закладку</string>
@@ -249,4 +249,6 @@
     <string name="clear_old_articles_dialog_message">Вы уверены, что хотите удалить старые статьи?</string>
     <string name="confirm_button">Подтвердить</string>
     <string name="cancel_button">Отменить</string>
+    <string name="settings_save_reader_mode_content">Открывая статью, сохранить ее содержание в ситуациях, когда нет доступа к интернету</string>
+    <string name="settings_prefetch_article_content">Заранее сохранить содержание статьи для ситуаций, когда нет доступа к интернету</string>
 </resources>

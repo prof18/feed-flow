@@ -88,12 +88,39 @@ class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
                     { url: \(request.url.asJSString) }
                 ).parse();
 
+                // Convert relative URLs to absolute
+                if (result.content) {
+                    const baseUrl = \(request.url.asJSString);
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = result.content;
+
+                    tempDiv.querySelectorAll('[src]').forEach(el => {
+                        const src = el.getAttribute('src');
+                        if (src && !src.startsWith('http') && !src.startsWith('data:')) {
+                            try {
+                                el.setAttribute('src', new URL(src, baseUrl).href);
+                            } catch (e) {}
+                        }
+                    });
+
+                    tempDiv.querySelectorAll('[href]').forEach(el => {
+                        const href = el.getAttribute('href');
+                        if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+                            try {
+                                el.setAttribute('href', new URL(href, baseUrl).href);
+                            } catch (e) {}
+                        }
+                    });
+
+                    result.content = tempDiv.innerHTML;
+                }
+
                 // Extract plain text from content
                 let plainText = '';
                 if (result.content) {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = result.content;
-                    plainText = (tempDiv.textContent || tempDiv.innerText || '').trim();
+                    const tempDiv2 = document.createElement('div');
+                    tempDiv2.innerHTML = result.content;
+                    plainText = (tempDiv2.textContent || tempDiv2.innerText || '').trim();
                 }
 
                 // Add plainText to result for validation

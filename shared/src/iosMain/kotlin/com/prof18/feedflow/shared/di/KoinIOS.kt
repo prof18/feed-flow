@@ -7,15 +7,12 @@ import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
-import com.prof18.feedflow.core.utils.DatabaseFileMigration
 import com.prof18.feedflow.core.utils.DispatcherProvider
-import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
-import com.prof18.feedflow.shared.data.KeychainSettingsMigration
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
@@ -49,7 +46,6 @@ import com.prof18.feedflow.shared.utils.Telemetry
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.ExperimentalSettingsImplementation
-import com.russhwolf.settings.KeychainSettings
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -120,13 +116,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single<SqlDriver> {
-        DatabaseFileMigration(
-            databaseName = if (appEnvironment.isDebug()) {
-                DatabaseHelper.APP_DATABASE_NAME_DEBUG
-            } else {
-                DatabaseHelper.APP_DATABASE_NAME_PROD
-            },
-        ).migrate()
         createDatabaseDriver(appEnvironment)
     }
 
@@ -145,13 +134,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single<Settings> {
-        val oldSettings = KeychainSettings(service = "FeedFlow")
-        val newSettings = KeychainSettingsWrapper.settings
-        KeychainSettingsMigration(
-            oldSettings = oldSettings,
-            newSettings = newSettings,
-        ).performMigrationIfNeeded()
-        newSettings
+        KeychainSettingsWrapper.settings
     }
 
     factory<FeedSyncWorker> {

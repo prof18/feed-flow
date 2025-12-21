@@ -1,6 +1,6 @@
 package com.prof18.feedflow.shared.domain
 
-// Last export: 2025-05-29T14:56:02.575Z
+// Last export: 2025-12-21T11:48:48.756Z
 fun getReaderModeStyledHtml(
     colors: ReaderColors?,
     content: String,
@@ -29,7 +29,7 @@ fun getReaderModeStyledHtml(
             $content
         </div>
     </div>
-    <script>    
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
            document.querySelectorAll("h1")[1].style.display = 'none';
 
@@ -39,8 +39,8 @@ fun getReaderModeStyledHtml(
                   event.preventDefault();
                   var url = event.target.getAttribute("href");
                   window.kmpJsBridge.callNative(
-                   "urlInterceptor", 
-                    url, 
+                   "urlInterceptor",
+                    url,
                     {}
                   );
               }

@@ -17,12 +17,10 @@ import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
 import com.prof18.feedflow.desktop.search.SearchScreen
 import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.HomeViewModel
-import com.prof18.feedflow.shared.presentation.SearchViewModel
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 internal data class MainScreen(
     private val homeViewModel: HomeViewModel,
-    private val searchViewModel: SearchViewModel,
     private val frameWindowScope: FrameWindowScope,
     private val version: String?,
     private val appEnvironment: AppEnvironment,
@@ -52,7 +50,7 @@ internal data class MainScreen(
                 )
             },
             onSearchClick = {
-                navigator.push(SearchScreen(searchViewModel))
+                navigator.push(SearchScreen())
             },
             navigateToReaderMode = { feedItemUrlInfo ->
                 navigator.push(ReaderModeScreen(feedItemUrlInfo))

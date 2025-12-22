@@ -8,7 +8,6 @@ import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.database.createDatabaseDriver
-import com.prof18.feedflow.shared.data.MigrateSettings
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
@@ -105,12 +104,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             "feedflow"
         } else {
             "feedflow-dev"
-        }
-        if (!preferences.nodeExists(nodeName)) {
-            MigrateSettings(
-                oldSettings = PreferencesSettings(preferences),
-                newSettings = PreferencesSettings(preferences.node(nodeName)),
-            ).migrate()
         }
         PreferencesSettings(preferences.node(nodeName))
     }

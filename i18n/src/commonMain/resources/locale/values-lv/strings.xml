@@ -215,4 +215,5 @@
     <string name="search_no_data">Nekas nav atrasts, kas atbilstu %s.</string>
     <string name="search_hint_subtitle">rezultāti parādīsies automātiski</string>
     <string name="backup_button">Veidot rezerves kopiju</string>
+    <string name="reader_mode_fallback_open_browser_button">Atvērt pārlūkā</string>
 </resources>

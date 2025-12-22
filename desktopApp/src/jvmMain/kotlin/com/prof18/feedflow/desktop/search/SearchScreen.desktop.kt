@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.desktop.BrowserManager
+import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
@@ -28,15 +29,14 @@ import com.prof18.feedflow.shared.ui.search.SearchScreenContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
-internal data class SearchScreen(
-    private val viewModel: SearchViewModel,
-) : Screen {
+internal class SearchScreen : Screen {
     override val key: String = generateUniqueKey()
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val browserManager = DI.koin.get<BrowserManager>()
+        val viewModel = desktopViewModel { DI.koin.get<SearchViewModel>() }
 
         val state: SearchState by viewModel.searchState.collectAsState()
         val searchQuery by viewModel.searchQueryState.collectAsState()

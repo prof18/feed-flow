@@ -2,109 +2,124 @@ package com.prof18.feedflow.desktop
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import coil3.ImageLoader
-import coil3.compose.setSingletonImageLoaderFactory
-import com.formdev.flatlaf.FlatDarkLaf
-import com.formdev.flatlaf.FlatLaf
-import com.formdev.flatlaf.FlatLightLaf
-import com.formdev.flatlaf.FlatPropertiesLaf
-import com.prof18.feedflow.core.model.ThemeMode
+import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.AppEnvironment
-import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
-import com.prof18.feedflow.core.utils.isNotMacOs
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.main.MainWindow
+import com.prof18.feedflow.desktop.resources.Res
+import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
-import com.prof18.feedflow.shared.presentation.HomeViewModel
-import com.prof18.feedflow.shared.presentation.SearchViewModel
-import com.prof18.feedflow.shared.presentation.SettingsViewModel
-import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
-import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
-import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
-import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.skiko.SkikoProperties.libraryPath
 import java.awt.Toolkit
 import java.io.File
 import java.io.InputStream
 import java.util.Properties
-import javax.swing.UIManager
 
 fun main() {
-    val appConfig = initializeApp()
-
     application {
-        val settingsRepository = DI.koin.get<SettingsRepository>()
-        val windowState = windowState(settingsRepository)
+        val properties = loadProperties()
+        val appConfig = createAppConfig(properties)
 
-        val koin = DI.koin
-        setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
+        var isInitialized by remember { mutableStateOf(false) }
+        var showMainWindow by remember { mutableStateOf(false) }
+        var initProgress by remember { mutableStateOf(value = 0.1f) }
 
-        val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
-        val searchViewModel = desktopViewModel { DI.koin.get<SearchViewModel>() }
-        val contentPrefetchRepository: ContentPrefetchRepository = koin.get()
-        contentPrefetchRepository.startBackgroundFetching()
-
-        val feedSyncRepo = DI.koin.get<FeedSyncRepository>()
-        val messageQueue = DI.koin.get<FeedSyncMessageQueue>()
-
-        val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
-        val settingsState by settingsViewModel.settingsState.collectAsState()
-        val isDarkTheme = when (settingsState.themeMode) {
-            ThemeMode.SYSTEM -> rememberDesktopDarkTheme()
-            ThemeMode.LIGHT -> false
-            ThemeMode.DARK -> true
-        }
-
-        FeedFlowTheme(darkTheme = isDarkTheme) {
-            LaunchedEffect(isDarkTheme) {
-                if (getDesktopOS().isNotMacOs()) {
-                    setupLookAndFeel(isDarkTheme)
+        @Suppress("MagicNumber")
+        LaunchedEffect(Unit) {
+            delay(100)
+            initProgress = 0.2f
+            launch(Dispatchers.IO) {
+                setupSandboxEnvironment()
+                initializeDependencies(appConfig)
+                withContext(Dispatchers.Main) { initProgress = 0.6f }
+                setupTelemetryAndCrashReporting(appConfig)
+                withContext(Dispatchers.Main) {
+                    isInitialized = true
                 }
             }
+        }
 
-            val lyricist = rememberFeedFlowStrings()
-            ProvideFeedFlowStrings(lyricist) {
-                MainWindow(
-                    feedSyncRepo = feedSyncRepo,
+        val scope = rememberCoroutineScope()
+        val icon = painterResource(Res.drawable.icon)
+
+        if (!showMainWindow) {
+            Window(
+                onCloseRequest = ::exitApplication,
+                title = "FeedFlow",
+                state = rememberWindowState(
+                    size = DpSize(400.dp, 300.dp),
+                    position = WindowPosition.Aligned(Alignment.Center),
+                ),
+                icon = icon,
+                resizable = false,
+                undecorated = true,
+                transparent = true,
+            ) {
+                SplashContent(progress = initProgress)
+            }
+        }
+
+        if (isInitialized) {
+            val settingsRepository = remember { DI.koin.get<SettingsRepository>() }
+            val windowState = windowState(settingsRepository)
+            var showBackupLoader by remember { mutableStateOf(false) }
+
+            Window(
+                onCloseRequest = {
+                    scope.launch {
+                        showBackupLoader = true
+                        try {
+                            DI.koin.get<FeedSyncRepository>().performBackup()
+                        } catch (e: Exception) {
+                            DI.koin.get<Logger>().e("Error during cleanup", e)
+                        } finally {
+                            exitApplication()
+                        }
+                    }
+                },
+                title = "",
+                state = windowState,
+                icon = icon,
+                visible = showMainWindow,
+                onPreviewKeyEvent = { false },
+            ) {
+                LaunchedEffect(Unit) {
+                    initProgress = 1f
+                    delay(timeMillis = 100)
+                    showMainWindow = true
+                }
+
+                AppContent(
+                    showBackupLoader = showBackupLoader,
                     windowState = windowState,
-                    settingsRepository = settingsRepository,
-                    messageQueue = messageQueue,
-                    isDarkTheme = isDarkTheme,
                     appConfig = appConfig,
-                    settingsViewModel = settingsViewModel,
-                    settingsState = settingsState,
-                    homeViewModel = homeViewModel,
-                    searchViewModel = searchViewModel,
                 )
             }
         }
     }
-}
-
-private fun initializeApp(): DesktopConfig {
-    val properties = loadProperties()
-    val appConfig = createAppConfig(properties)
-
-    setupSandboxEnvironment()
-    initializeDependencies(appConfig)
-    setupTelemetryAndCrashReporting(appConfig)
-
-    return appConfig
 }
 
 private fun loadProperties(): Properties {
@@ -222,51 +237,10 @@ private fun windowState(settingsRepository: SettingsRepository): WindowState {
         WindowPosition.PlatformDefault
     }
 
-    val windowState = rememberWindowState(
+    return rememberWindowState(
         size = DpSize(width, height),
         position = position,
     )
-    return windowState
-}
-
-private fun setupLookAndFeel(isDarkMode: Boolean) {
-    System.setProperty("flatlaf.useWindowDecorations", "true")
-    System.setProperty("flatlaf.menuBarEmbedded", "false")
-
-    try {
-        val themeFileName = if (isDarkMode) {
-            "feedflow-dark.properties"
-        } else {
-            "feedflow-light.properties"
-        }
-
-        // Load custom properties theme
-        val themeStream = DI::class.java.classLoader?.getResourceAsStream(themeFileName)
-
-        if (themeStream != null) {
-            val customLaf = FlatPropertiesLaf(themeFileName, themeStream)
-            UIManager.setLookAndFeel(customLaf)
-        } else {
-            // Fallback to standard themes if properties file not found
-            val newLaf = if (isDarkMode) {
-                FlatDarkLaf()
-            } else {
-                FlatLightLaf()
-            }
-            UIManager.setLookAndFeel(newLaf)
-            UIManager.put("MenuBar.border", null)
-        }
-
-        FlatLaf.updateUI()
-    } catch (_: Exception) {
-        // Fallback to default theme
-        val newLaf = if (isDarkMode) {
-            FlatDarkLaf()
-        } else {
-            FlatLightLaf()
-        }
-        UIManager.setLookAndFeel(newLaf)
-    }
 }
 
 internal data class DesktopConfig(

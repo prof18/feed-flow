@@ -30,13 +30,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.FrameWindowScope
-import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
-import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.compose.LocalPlatformContext
@@ -46,22 +43,19 @@ import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.DesktopConfig
+import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.home.FeedFlowMenuBar
 import com.prof18.feedflow.desktop.home.MenuBarActions
 import com.prof18.feedflow.desktop.home.MenuBarSettings
 import com.prof18.feedflow.desktop.home.MenuBarState
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
-import com.prof18.feedflow.desktop.resources.Res
-import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
 import com.prof18.feedflow.desktop.utils.disableSentry
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.HomeViewModel
-import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -69,7 +63,6 @@ import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.painterResource
 import java.awt.Desktop
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
@@ -78,69 +71,40 @@ import kotlin.math.roundToInt
 
 @Suppress("ViewModelForwarding")
 @Composable
-internal fun ApplicationScope.MainWindow(
-    feedSyncRepo: FeedSyncRepository,
+internal fun FrameWindowScope.MainWindow(
     windowState: WindowState,
-    settingsRepository: SettingsRepository,
-    messageQueue: FeedSyncMessageQueue,
     isDarkTheme: Boolean,
     appConfig: DesktopConfig,
     settingsViewModel: SettingsViewModel,
     settingsState: SettingsState,
-    homeViewModel: HomeViewModel,
-    searchViewModel: SearchViewModel,
+    showBackupLoader: Boolean,
 ) {
-    val scope = rememberCoroutineScope()
-    var showBackupLoader by remember { mutableStateOf(false) }
-    val icon = painterResource(Res.drawable.icon)
-
+    val settingsRepository = DI.koin.get<SettingsRepository>()
     val userFeedbackReporter = DI.koin.get<UserFeedbackReporter>()
+    val feedSyncRepo = DI.koin.get<FeedSyncRepository>()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val messageQueue = DI.koin.get<FeedSyncMessageQueue>()
 
-    Window(
-        onCloseRequest = {
-            scope.launch {
-                showBackupLoader = true
-                try {
-                    feedSyncRepo.performBackup()
-                    DI.koin.get<DatabaseCloser>().close()
-                } catch (e: Exception) {
-                    DI.koin.get<Logger>().e("Error during cleanup", e)
-                } finally {
-                    exitApplication()
-                }
-            }
-        },
-        title = "",
-        state = windowState,
-        icon = icon,
-    ) {
-        val snackbarHostState = remember { SnackbarHostState() }
+    MainWindowEffects(
+        composeWindow = window,
+        feedSyncRepo = feedSyncRepo,
+        windowState = windowState,
+        settingsRepository = settingsRepository,
+        messageQueue = messageQueue,
+        snackbarHostState = snackbarHostState,
+    )
 
-        MainWindowEffects(
-            composeWindow = window,
-            feedSyncRepo = feedSyncRepo,
-            windowState = windowState,
-            settingsRepository = settingsRepository,
-            messageQueue = messageQueue,
+    if (showBackupLoader) {
+        BackupInProgressScreen(isDarkTheme = isDarkTheme)
+    } else {
+        MainWindowContent(
             snackbarHostState = snackbarHostState,
+            isDarkTheme = isDarkTheme,
+            appConfig = appConfig,
+            settingsViewModel = settingsViewModel,
+            settingsState = settingsState,
+            userFeedbackReporter = userFeedbackReporter,
         )
-
-        if (showBackupLoader) {
-            BackupInProgressScreen(isDarkTheme = isDarkTheme)
-        } else {
-            MainWindowContent(
-                snackbarHostState = snackbarHostState,
-                isDarkTheme = isDarkTheme,
-                appConfig = appConfig,
-                frameWindowScope = this@Window,
-                composeWindow = window,
-                settingsViewModel = settingsViewModel,
-                settingsState = settingsState,
-                homeViewModel = homeViewModel,
-                searchViewModel = searchViewModel,
-                userFeedbackReporter = userFeedbackReporter,
-            )
-        }
     }
 }
 
@@ -252,18 +216,16 @@ private fun MainWindowEffects(
 }
 
 @Composable
-private fun MainWindowContent(
+private fun FrameWindowScope.MainWindowContent(
     snackbarHostState: SnackbarHostState,
     isDarkTheme: Boolean,
     appConfig: DesktopConfig,
-    frameWindowScope: FrameWindowScope,
-    composeWindow: ComposeWindow,
     settingsViewModel: SettingsViewModel,
     settingsState: SettingsState,
-    homeViewModel: HomeViewModel,
-    searchViewModel: SearchViewModel,
     userFeedbackReporter: UserFeedbackReporter,
 ) {
+    val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
+
     CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
         val scope = rememberCoroutineScope()
         val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
@@ -388,15 +350,14 @@ private fun MainWindowContent(
             Navigator(
                 @Suppress("ViewModelForwarding")
                 MainScreen(
-                    frameWindowScope = frameWindowScope,
+                    frameWindowScope = this@MainWindowContent,
                     appEnvironment = appConfig.appEnvironment,
                     version = appConfig.version,
                     homeViewModel = homeViewModel,
-                    searchViewModel = searchViewModel,
                     listState = listState,
                 ),
             ) { navigator ->
-                frameWindowScope.FeedFlowMenuBar(
+                FeedFlowMenuBar(
                     state = MenuBarState(
                         showDebugMenu = appConfig.appEnvironment.isDebug(),
                         feedFilter = currentFeedFilter,
@@ -415,7 +376,7 @@ private fun MainWindowContent(
                         onImportExportClick = {
                             navigator.push(
                                 ImportExportScreen(
-                                    composeWindow = composeWindow,
+                                    composeWindow = window,
                                     triggerFeedFetch = {
                                         homeViewModel.getNewFeeds()
                                     },

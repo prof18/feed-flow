@@ -22,7 +22,8 @@
       "Bash(cat:*)",
       "mcp__jetbrains__reformat_file",
       "mcp__jetbrains__replace_text_in_file",
-      "Bash(ffmpeg:*)"
+      "Bash(ffmpeg:*)",
+      "Bash(.scripts/ios-format.sh:*)"
     ],
     "deny": []
   }

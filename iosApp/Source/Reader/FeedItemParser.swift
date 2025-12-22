@@ -74,131 +74,141 @@ class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
 
         isParsing = true
         currentRequest = requestQueue.removeFirst()
-        
+
         guard let request = currentRequest else {
             isParsing = false
             return
         }
 
-        let script = """
-            (function() {
-                console.log('Parsing content');
-                const result = new Defuddle(
-                    new DOMParser().parseFromString(\(request.htmlContent.asJSString), 'text/html'),
-                    { url: \(request.url.asJSString) }
-                ).parse();
-
-                // Convert relative URLs to absolute
-                if (result.content) {
-                    const baseUrl = \(request.url.asJSString);
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = result.content;
-
-                    tempDiv.querySelectorAll('[src]').forEach(el => {
-                        const src = el.getAttribute('src');
-                        if (src && !src.startsWith('http') && !src.startsWith('data:')) {
-                            try {
-                                el.setAttribute('src', new URL(src, baseUrl).href);
-                            } catch (e) {}
-                        }
-                    });
-
-                    tempDiv.querySelectorAll('[href]').forEach(el => {
-                        const href = el.getAttribute('href');
-                        if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
-                            try {
-                                el.setAttribute('href', new URL(href, baseUrl).href);
-                            } catch (e) {}
-                        }
-                    });
-
-                    result.content = tempDiv.innerHTML;
-                }
-
-                // Extract plain text from content
-                let plainText = '';
-                if (result.content) {
-                    const tempDiv2 = document.createElement('div');
-                    tempDiv2.innerHTML = result.content;
-                    plainText = (tempDiv2.textContent || tempDiv2.innerText || '').trim();
-                }
-
-                // Add plainText to result for validation
-                result.plainText = plainText;
-
-                return result;
-            })();
-        """
+        let script = buildParsingScript(for: request)
 
         webview.evaluateJavaScript(script) { [weak self] result, error in
             guard let self = self else { return }
-            
-            // "Claim" the current request to avoid race conditions with process termination
-            guard var request = self.currentRequest else {
-                return
+            self.handleJavaScriptResult(result: result, error: error)
+        }
+    }
+
+    private func buildParsingScript(for request: ParsingRequest) -> String {
+        """
+        (function() {
+            console.log('Parsing content');
+            const result = new Defuddle(
+                new DOMParser().parseFromString(\(request.htmlContent.asJSString), 'text/html'),
+                { url: \(request.url.asJSString) }
+            ).parse();
+
+            // Convert relative URLs to absolute
+            if (result.content) {
+                const baseUrl = \(request.url.asJSString);
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = result.content;
+
+                tempDiv.querySelectorAll('[src]').forEach(el => {
+                    const src = el.getAttribute('src');
+                    if (src && !src.startsWith('http') && !src.startsWith('data:')) {
+                        try {
+                            el.setAttribute('src', new URL(src, baseUrl).href);
+                        } catch (e) {}
+                    }
+                });
+
+                tempDiv.querySelectorAll('[href]').forEach(el => {
+                    const href = el.getAttribute('href');
+                    if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+                        try {
+                            el.setAttribute('href', new URL(href, baseUrl).href);
+                        } catch (e) {}
+                    }
+                });
+
+                result.content = tempDiv.innerHTML;
             }
-            self.currentRequest = nil
-            
-            // Re-usable finish block
-            let finish = {
-                self.isParsing = false
-                self.processQueue()
+
+            // Extract plain text from content
+            let plainText = '';
+            if (result.content) {
+                const tempDiv2 = document.createElement('div');
+                tempDiv2.innerHTML = result.content;
+                plainText = (tempDiv2.textContent || tempDiv2.innerText || '').trim();
             }
 
-            if let error = error {
-                print("JavaScript error:", error)
+            // Add plainText to result for validation
+            result.plainText = plainText;
 
-                // Attempt recovery if we haven't retried yet
-                if request.retryCount < 1 {
-                    print("Attempting to recover from WebView error/crash...")
-                    request.retryCount += 1
-                    
-                    self.requestQueue.insert(request, at: 0)
-                    self.isParsing = false
-                    self.isReady = false
-                    self.initializeWebView()
-                    return
-                } else {
-                    // Already retried, fail the request
-                    print("Recovery failed or max retries reached.")
-                    request.onResult(ParsingResult.Error())
-                    
-                    self.isReady = false
-                    self.initializeWebView()
-                    finish() 
-                    return
-                }
-            }
+            return result;
+        })();
+        """
+    }
 
-            if let parsedJson = result as? [String: Any] {
-                let title = parsedJson["title"] as? String
-                let siteName = parsedJson["site"] as? String
-                let htmlContent = parsedJson["content"] as? String
-                let plainText = parsedJson["plainText"] as? String ?? ""
+    private func handleJavaScriptResult(result: Any?, error: Error?) {
+        guard var request = currentRequest else {
+            return
+        }
+        currentRequest = nil
 
-                if plainText.count < minContentLength {
-                    print("Content too short (\(plainText.count) chars), rejecting")
-                    Deps.shared.getLogger(tag: "FeedItemParser").w(
-                        messageString: "Content too short (\(plainText.count) chars), rejecting: \(request.url)"
-                    )
-                    request.onResult(ParsingResult.Error())
-                    finish()
-                    return
-                }
+        let finish = {
+            self.isParsing = false
+            self.processQueue()
+        }
 
-                let parsingResult = ParsingResult.Success(
-                    htmlContent: htmlContent,
-                    title: title,
-                    siteName: siteName
-                )
-                print("Parsed content: \(title ?? "")")
-                request.onResult(parsingResult)
-            } else {
-                request.onResult(ParsingResult.Error())
-            }
-            
+        if let error = error {
+            handleJavaScriptError(error: error, request: &request, finish: finish)
+            return
+        }
+
+        processParsingResult(result: result, request: request, finish: finish)
+    }
+
+    private func handleJavaScriptError(error: Error, request: inout ParsingRequest, finish: @escaping () -> Void) {
+        print("JavaScript error:", error)
+
+        if request.retryCount < 1 {
+            print("Attempting to recover from WebView error/crash...")
+            request.retryCount += 1
+
+            self.requestQueue.insert(request, at: 0)
+            self.isParsing = false
+            self.isReady = false
+            self.initializeWebView()
+        } else {
+            print("Recovery failed or max retries reached.")
+            request.onResult(ParsingResult.Error())
+
+            self.isReady = false
+            self.initializeWebView()
             finish()
         }
+    }
+
+    private func processParsingResult(result: Any?, request: ParsingRequest, finish: @escaping () -> Void) {
+        if let parsedJson = result as? [String: Any] {
+            let title = parsedJson["title"] as? String
+            let siteName = parsedJson["site"] as? String
+            let htmlContent = parsedJson["content"] as? String
+            let plainText = parsedJson["plainText"] as? String ?? ""
+
+            if plainText.count < minContentLength {
+                print("Content too short (\(plainText.count) chars), rejecting")
+                Deps.shared.getLogger(tag: "FeedItemParser").w(
+                    messageString: "Content too short (\(plainText.count) chars), rejecting: \(request.url)"
+                )
+                request.onResult(ParsingResult.Error())
+                finish()
+                return
+            }
+
+            let parsingResult = ParsingResult.Success(
+                htmlContent: htmlContent,
+                title: title,
+                siteName: siteName
+            )
+            print("Parsed content: \(title ?? "")")
+            request.onResult(parsingResult)
+        } else {
+            request.onResult(ParsingResult.Error())
+        }
+
+        finish()
     }
 
     func webView(_: WKWebView, didFinish _: WKNavigation!) {
@@ -238,7 +248,7 @@ extension String {
     var asJSString: String {
         do {
             let data = try JSONSerialization.data(withJSONObject: self, options: .fragmentsAllowed)
-            return String(decoding: data, as: UTF8.self)
+            return String(bytes: data, encoding: .utf8) ?? ""
         } catch {
             return ""
         }

@@ -222,15 +222,16 @@ struct EditCategorySheet: View {
             isPresented: $showAddCategoryDialog,
             onDismiss: {
                 newCategoryName = ""
+            },
+            content: {
+                AddCategoryNameSheet(
+                    categoryName: $newCategoryName,
+                    onConfirm: { categoryName in
+                        onAddCategory(CategoryName(name: categoryName))
+                    }
+                )
             }
-        ) {
-            AddCategoryNameSheet(
-                categoryName: $newCategoryName,
-                onConfirm: { categoryName in
-                    onAddCategory(CategoryName(name: categoryName))
-                }
-            )
-        }
+        )
         .confirmationDialog(
             feedFlowStrings.deleteCategoryConfirmationTitle,
             isPresented: Binding(

@@ -54,7 +54,9 @@ struct FeedFontSection: View {
                             ),
                             pubDateMillis: nil,
                             isRead: false,
-                            dateString: isHideDateEnabled ? nil : formatDateTimeExample(dateFormat: dateFormat, timeFormat: timeFormat),
+                            dateString: isHideDateEnabled
+                                ? nil
+                                : formatDateTimeExample(dateFormat: dateFormat, timeFormat: timeFormat),
                             commentsUrl: nil,
                             isBookmarked: false
                         ),

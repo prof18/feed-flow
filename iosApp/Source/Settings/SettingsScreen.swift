@@ -227,7 +227,12 @@ struct SettingsScreen: View {
                 DangerSection {
                     vmStoreOwner.instance.clearDownloadedArticleContent()
                 }
-                AppSection(openURL: openURL, isCrashReportingEnabled: $isCrashReportingEnabled, appState: appState, dismiss: dismiss)
+                AppSection(
+                    openURL: openURL,
+                    isCrashReportingEnabled: $isCrashReportingEnabled,
+                    appState: appState,
+                    dismiss: dismiss
+                )
             }
             .scrollContentBackground(.hidden)
             .toolbar {

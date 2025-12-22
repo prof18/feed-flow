@@ -26,4 +26,3 @@ struct ExportDocument: FileDocument {
         FileWrapper(regularFileWithContents: data)
     }
 }
-

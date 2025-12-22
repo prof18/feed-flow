@@ -36,4 +36,3 @@ struct FilePickerController: UIViewControllerRepresentable {
         func documentPickerWasCancelled(_: UIDocumentPickerViewController) {}
     }
 }
-

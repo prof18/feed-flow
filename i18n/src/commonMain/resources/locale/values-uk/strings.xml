@@ -106,7 +106,7 @@
     <string name="account_text_field_username">Ім\'я користувача</string>
     <string name="account_text_field_password">Пароль</string>
     <string name="account_login">Логін</string>
-    <string name="fresh_rss_account_connected">Ваш обліковий запис FreshRss успішно підключено</string>
+    <string name="fresh_rss_account_connected">Ваш обліковий запис FreshRSS успішно підключено</string>
     <string name="no_fresh_rss_sync_yet">Дані ще не синхронізовано</string>
     <string name="fresh_rss_last_sync">Остання синхронізація: %s</string>
     <string name="drawer_title_read">Прочитане</string>
@@ -265,4 +265,14 @@
     <string name="reader_mode_fallback_title">Не вдалося проаналізувати статтю</string>
     <string name="reader_mode_fallback_message">Не вдалося видобути вміст цієї сторінки для режиму читання. Ви можете відкрити сторінку безпосередньо у вашому браузері.</string>
     <string name="reader_mode_fallback_open_browser_button">Відкрити у браузері</string>
+    <string name="feed_add_in_progress_message">Імпортування стрічки...</string>
+    <string name="delete_feed_source_error">Не вдалося видалити стрічку. Спробуйте ще раз.</string>
+    <string name="search_button_content_description">Пошук</string>
+    <string name="more_options_button_content_description">Більше опцій</string>
+    <string name="drawer_menu_button_content_description">Відкрити меню навігації</string>
+    <string name="increase_font_size_button_content_description">Збільшити розмір шрифту</string>
+    <string name="decrease_font_size_button_content_description">Зменшити розмір шрифту</string>
+    <string name="scroll_to_top_button_content_description">Прокрутити вгору</string>
+    <string name="dropbox_auth_code_expired">Код автентифікації більше недійсний. Спробуйте ще раз.</string>
+    <string name="database_error_reset">Виникли проблеми із завантаженням ваших даних і довелося починати все спочатку. Вибачте.</string>
 </resources>

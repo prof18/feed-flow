@@ -26,6 +26,7 @@ import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -93,6 +94,7 @@ fun main() {
                         showBackupLoader = true
                         try {
                             DI.koin.get<FeedSyncRepository>().performBackup()
+                            DI.koin.get<DatabaseCloser>().close()
                         } catch (e: Exception) {
                             DI.koin.get<Logger>().e("Error during cleanup", e)
                         } finally {

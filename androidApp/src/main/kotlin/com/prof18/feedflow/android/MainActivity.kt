@@ -42,6 +42,7 @@ import com.prof18.feedflow.android.editfeed.EditScreen
 import com.prof18.feedflow.android.editfeed.toEditFeed
 import com.prof18.feedflow.android.editfeed.toFeedSource
 import com.prof18.feedflow.android.feedsourcelist.FeedSourceListScreen
+import com.prof18.feedflow.android.feedsuggestions.FeedSuggestionsScreen
 import com.prof18.feedflow.android.home.HomeScreen
 import com.prof18.feedflow.android.readermode.ReaderModeScreen
 import com.prof18.feedflow.android.search.SearchScreen
@@ -68,6 +69,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : BaseThemeActivity() {
@@ -194,6 +196,14 @@ class MainActivity : BaseThemeActivity() {
                 )
             },
         ) {
+            composable<FeedSuggestions> {
+                FeedSuggestionsScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
             composable<Home>(
                 deepLinks = listOf(
                     navDeepLink {
@@ -269,6 +279,9 @@ class MainActivity : BaseThemeActivity() {
                     },
                     navigateToBlockedWords = {
                         navController.navigate(BlockedWords)
+                    },
+                    navigateToFeedSuggestions = {
+                        navController.navigate(FeedSuggestions)
                     },
                 )
             }

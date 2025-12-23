@@ -3,6 +3,12 @@ package com.prof18.feedflow.android
 import kotlinx.serialization.Serializable
 
 @Serializable
+data object Onboarding
+
+@Serializable
+data object FeedSuggestions
+
+@Serializable
 data class Home(
     val feedSourceId: String? = null,
 )

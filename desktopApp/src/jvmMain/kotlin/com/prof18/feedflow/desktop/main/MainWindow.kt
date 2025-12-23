@@ -349,7 +349,7 @@ private fun FrameWindowScope.MainWindowContent(
         ) {
             Navigator(
                 @Suppress("ViewModelForwarding")
-                MainScreen(
+                HomeScreenContainer(
                     frameWindowScope = this@MainWindowContent,
                     appEnvironment = appConfig.appEnvironment,
                     version = appConfig.version,

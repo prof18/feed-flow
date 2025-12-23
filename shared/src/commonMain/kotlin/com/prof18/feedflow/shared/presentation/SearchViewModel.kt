@@ -122,6 +122,48 @@ class SearchViewModel internal constructor(
         }
     }
 
+    fun markAllAboveAsRead(targetItemId: String) {
+        viewModelScope.launch {
+            val currentState = searchMutableState.value
+            if (currentState is SearchState.DataFound) {
+                val items = currentState.items
+                val targetIndex = items.indexOfFirst { it.id == targetItemId }
+
+                if (targetIndex != -1) {
+                    // Get all items from the beginning up to and including the target item
+                    val itemsToMark = items.subList(0, targetIndex + 1)
+                        .filter { !it.isRead }
+                        .map { FeedItemId(it.id) }
+
+                    if (itemsToMark.isNotEmpty()) {
+                        feedActionsRepository.markAsRead(itemsToMark.toHashSet())
+                    }
+                }
+            }
+        }
+    }
+
+    fun markAllBelowAsRead(targetItemId: String) {
+        viewModelScope.launch {
+            val currentState = searchMutableState.value
+            if (currentState is SearchState.DataFound) {
+                val items = currentState.items
+                val targetIndex = items.indexOfFirst { it.id == targetItemId }
+
+                if (targetIndex != -1) {
+                    // Get all items from the target item to the end
+                    val itemsToMark = items.subList(targetIndex, items.size)
+                        .filter { !it.isRead }
+                        .map { FeedItemId(it.id) }
+
+                    if (itemsToMark.isNotEmpty()) {
+                        feedActionsRepository.markAsRead(itemsToMark.toHashSet())
+                    }
+                }
+            }
+        }
+    }
+
     private fun clearSearch() {
         searchMutableState.update { SearchState.EmptyState }
     }

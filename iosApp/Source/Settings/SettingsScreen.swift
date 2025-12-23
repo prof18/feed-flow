@@ -240,6 +240,13 @@ private struct FeedSection: View {
             NavigationLink(destination: BlockedWordsScreen()) {
                 Label(feedFlowStrings.settingsBlockedWords, systemImage: "exclamationmark.triangle")
             }
+
+            Button {
+                dismiss()
+                appState.navigate(route: CommonViewRoute.feedSuggestions)
+            } label: {
+                Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb")
+            }
         }
     }
 }

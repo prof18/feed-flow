@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Report
@@ -102,6 +103,7 @@ fun SettingsScreen(
     navigateToAccounts: () -> Unit,
     navigateToNotifications: () -> Unit,
     navigateToBlockedWords: () -> Unit,
+    navigateToFeedSuggestions: () -> Unit,
 ) {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val feedDownloadWorkerEnqueuer = koinInject<FeedDownloadWorkerEnqueuer>()
@@ -285,6 +287,14 @@ private fun SettingsScreenContent(
                     title = LocalFeedFlowStrings.current.addFeed,
                     icon = Icons.Outlined.AddCircleOutline,
                     onClick = onAddFeedClick,
+                )
+            }
+
+            item {
+                SettingItem(
+                    title = stringResource(Res.string.feed_suggestions_title),
+                    icon = Icons.Outlined.Lightbulb,
+                    onClick = navigateToFeedSuggestions,
                 )
             }
 

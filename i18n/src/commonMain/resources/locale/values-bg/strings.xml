@@ -134,7 +134,7 @@
     <string name="wrong_url_error_message">Предоставената връзка е неправилна. Моля, опитайте отново.</string>
     <string name="sync_error_message">Имаше грешка при синхронизирането на емисиите - error code: %s :(Моля, опитайте отново.</string>
     <string name="account_text_field_password">Парола</string>
-    <string name="fresh_rss_account_connected">Вашият профил в FreshRss е успешно свързан</string>
+    <string name="fresh_rss_account_connected">Вашият профил в FreshRSS е успешно свързан</string>
     <string name="edit_feed_generic_error">Нещо се обърка при редактирането на емисията. Моля, опитайте отново.</string>
     <string name="account_text_field_username">Потребителско име</string>
     <string name="fresh_rss_last_sync">Последна синхронизация: %s</string>
@@ -265,4 +265,14 @@
     <string name="reader_mode_fallback_title">Не може да се анализира статията</string>
     <string name="reader_mode_fallback_message">Съдържанието на тази страница не можа да бъде извлечено за режим на четене. Можете да отворите страницата директно в браузъра си.</string>
     <string name="reader_mode_fallback_open_browser_button">Отвори в браузър</string>
+    <string name="feed_add_in_progress_message">Внасяне на емисия...</string>
+    <string name="delete_feed_source_error">Не може да се изтрие емисията. Моля, опитайте отново.</string>
+    <string name="search_button_content_description">Търсене</string>
+    <string name="more_options_button_content_description">Още опции</string>
+    <string name="drawer_menu_button_content_description">Отваряне на менюто за навигация</string>
+    <string name="increase_font_size_button_content_description">Увеличаване на размера на шрифта</string>
+    <string name="decrease_font_size_button_content_description">Намаляване на размера на шрифта</string>
+    <string name="scroll_to_top_button_content_description">Превъртете до горе</string>
+    <string name="dropbox_auth_code_expired">Кодът за удостоверяване вече не е валиден. Моля, опитайте отново.</string>
+    <string name="database_error_reset">Имахме проблеми със зареждането на данните ви и трябваше да започнем отначало. Извиняваме се за това.</string>
 </resources>

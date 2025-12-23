@@ -22,24 +22,28 @@ struct SettingsScreen: View {
 
     @StateObject private var vmStoreOwner = VMStoreOwner<SettingsViewModel>(Deps.shared.getSettingsViewModel())
 
-    @State private var isMarkReadWhenScrollingEnabled = true
-    @State private var isShowReadItemEnabled = false
-    @State private var isReaderModeEnabled = false
-    @State private var isSaveReaderModeContentEnabled = false
-    @State private var isPrefetchArticleContentEnabled = false
-    @State private var isRemoveTitleFromDescriptionEnabled = false
-    @State private var isHideDescriptionEnabled = false
-    @State private var isHideImagesEnabled = false
-    @State private var isHideDateEnabled = false
-    @State private var autoDeletePeriod: AutoDeletePeriod = .disabled
-    @State private var isCrashReportingEnabled = true
-    @State private var leftSwipeActionType: SwipeActionType = .none
-    @State private var rightSwipeActionType: SwipeActionType = .none
-    @State private var dateFormat: DateFormat = .normal
-    @State private var timeFormat: TimeFormat = .hours24
-    @State private var feedOrder: FeedOrder = .newestFirst
-    @State private var feedLayout: FeedLayout = .list
-    @State private var themeMode: ThemeMode = .system
+    @State private var settingsState = SettingsState(
+        isMarkReadWhenScrollingEnabled: true,
+        isShowReadItemsEnabled: false,
+        isReaderModeEnabled: false,
+        isSaveReaderModeContentEnabled: false,
+        isPrefetchArticleContentEnabled: false,
+        isExperimentalParsingEnabled: false,
+        isRemoveTitleFromDescriptionEnabled: false,
+        isHideDescriptionEnabled: false,
+        isHideImagesEnabled: false,
+        isHideDateEnabled: false,
+        autoDeletePeriod: .disabled,
+        isCrashReportingEnabled: true,
+        syncPeriod: .oneHour,
+        leftSwipeActionType: .none,
+        rightSwipeActionType: .none,
+        dateFormat: .normal,
+        timeFormat: .hours24,
+        feedOrder: .newestFirst,
+        feedLayout: .list,
+        themeMode: .system
+    )
     @State private var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
     @State private var scaleFactor = 0.0
 
@@ -55,24 +59,7 @@ struct SettingsScreen: View {
             .snackbar(messageQueue: $appState.snackbarQueue)
             .task {
                 for await state in vmStoreOwner.instance.settingsState {
-                    isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled
-                    isShowReadItemEnabled = state.isShowReadItemsEnabled
-                    isReaderModeEnabled = state.isReaderModeEnabled
-                    isSaveReaderModeContentEnabled = state.isSaveReaderModeContentEnabled
-                    isPrefetchArticleContentEnabled = state.isPrefetchArticleContentEnabled
-                    isRemoveTitleFromDescriptionEnabled = state.isRemoveTitleFromDescriptionEnabled
-                    isHideDescriptionEnabled = state.isHideDescriptionEnabled
-                    isHideImagesEnabled = state.isHideImagesEnabled
-                    isHideDateEnabled = state.isHideDateEnabled
-                    autoDeletePeriod = state.autoDeletePeriod
-                    isCrashReportingEnabled = state.isCrashReportingEnabled
-                    leftSwipeActionType = state.leftSwipeActionType
-                    rightSwipeActionType = state.rightSwipeActionType
-                    dateFormat = state.dateFormat
-                    timeFormat = state.timeFormat
-                    feedOrder = state.feedOrder
-                    feedLayout = state.feedLayout
-                    themeMode = state.themeMode
+                    self.settingsState = state
                 }
             }
             .task {
@@ -83,112 +70,6 @@ struct SettingsScreen: View {
             }
 
         return viewWithTasks
-            .applying(applyPreferenceChangeHandlers)
-            .applying(applyVisibilityChangeHandlers)
-            .applying(applyLayoutChangeHandlers)
-            .applying { view in
-                applyThemeChangeHandler(to: view, appState: appState)
-            }
-    }
-
-    @ViewBuilder
-    private func applyPreferenceChangeHandlers<V: View>(to view: V) -> some View {
-        view
-            .onChange(of: isMarkReadWhenScrollingEnabled) {
-                vmStoreOwner.instance.updateMarkReadWhenScrolling(
-                    value: isMarkReadWhenScrollingEnabled)
-            }
-            .onChange(of: isShowReadItemEnabled) {
-                vmStoreOwner.instance.updateShowReadItemsOnTimeline(value: isShowReadItemEnabled)
-            }
-            .onChange(of: isReaderModeEnabled) {
-                vmStoreOwner.instance.updateReaderMode(value: isReaderModeEnabled)
-            }
-            .onChange(of: isSaveReaderModeContentEnabled) {
-                vmStoreOwner.instance.updateSaveReaderModeContent(value: isSaveReaderModeContentEnabled)
-            }
-            .onChange(of: isPrefetchArticleContentEnabled) {
-                vmStoreOwner.instance.updatePrefetchArticleContent(value: isPrefetchArticleContentEnabled)
-            }
-            .onChange(of: isRemoveTitleFromDescriptionEnabled) {
-                vmStoreOwner.instance.updateRemoveTitleFromDescription(
-                    value: isRemoveTitleFromDescriptionEnabled)
-            }
-            .onChange(of: autoDeletePeriod) {
-                vmStoreOwner.instance.updateAutoDeletePeriod(period: autoDeletePeriod)
-            }
-            .onChange(of: isCrashReportingEnabled) {
-                vmStoreOwner.instance.updateCrashReporting(value: isCrashReportingEnabled)
-                #if !DEBUG
-                    Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(
-                        isCrashReportingEnabled)
-                #endif
-            }
-    }
-
-    @ViewBuilder
-    private func applyVisibilityChangeHandlers<V: View>(to view: V) -> some View {
-        view
-            .onChange(of: isHideDescriptionEnabled) {
-                vmStoreOwner.instance.updateHideDescription(value: isHideDescriptionEnabled)
-                if isHideDescriptionEnabled {
-                    articleDescription = nil
-                } else {
-                    articleDescription = feedFlowStrings.settingsFontScaleSubtitleExample
-                }
-            }
-            .onChange(of: isHideImagesEnabled) {
-                vmStoreOwner.instance.updateHideImages(value: isHideImagesEnabled)
-                if isHideImagesEnabled {
-                    imageUrl = nil
-                } else {
-                    imageUrl = "https://lipsum.app/200x200"
-                }
-            }
-            .onChange(of: isHideDateEnabled) {
-                vmStoreOwner.instance.updateHideDate(value: isHideDateEnabled)
-            }
-    }
-
-    @ViewBuilder
-    private func applyLayoutChangeHandlers<V: View>(to view: V) -> some View {
-        view
-            .onChange(of: leftSwipeActionType) {
-                vmStoreOwner.instance.updateSwipeAction(
-                    direction: .left, action: leftSwipeActionType
-                )
-            }
-            .onChange(of: rightSwipeActionType) {
-                vmStoreOwner.instance.updateSwipeAction(
-                    direction: .right, action: rightSwipeActionType
-                )
-            }
-            .onChange(of: dateFormat) {
-                vmStoreOwner.instance.updateDateFormat(format: dateFormat)
-            }
-            .onChange(of: timeFormat) {
-                vmStoreOwner.instance.updateTimeFormat(format: timeFormat)
-            }
-            .onChange(of: feedOrder) {
-                vmStoreOwner.instance.updateFeedOrder(feedOrder: feedOrder)
-            }
-            .onChange(of: feedLayout) {
-                vmStoreOwner.instance.updateFeedLayout(feedLayout: feedLayout)
-            }
-    }
-
-    @ViewBuilder
-    private func applyThemeChangeHandler<V: View>(
-        to view: V,
-        appState: AppState
-    ) -> some View {
-        view
-            .onChange(of: themeMode) {
-                vmStoreOwner.instance.updateThemeMode(mode: themeMode)
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    appState.updateTheme(themeMode)
-                }
-            }
     }
 
     private var settingsContent: some View {
@@ -197,30 +78,103 @@ struct SettingsScreen: View {
                 FeedSection(dismiss: dismiss, appState: appState, fetchFeeds: fetchFeeds)
                 BehaviourSection(
                     browserSelector: browserSelector,
-                    autoDeletePeriod: $autoDeletePeriod,
-                    isReaderModeEnabled: $isReaderModeEnabled,
-                    isSaveReaderModeContentEnabled: $isSaveReaderModeContentEnabled,
-                    isPrefetchArticleContentEnabled: $isPrefetchArticleContentEnabled,
-                    feedOrder: $feedOrder,
-                    themeMode: $themeMode,
-                    isMarkReadWhenScrollingEnabled: $isMarkReadWhenScrollingEnabled,
-                    isShowReadItemEnabled: $isShowReadItemEnabled
+                    autoDeletePeriod: Binding(
+                        get: { settingsState.autoDeletePeriod },
+                        set: { vmStoreOwner.instance.updateAutoDeletePeriod(period: $0) }
+                    ),
+                    isReaderModeEnabled: Binding(
+                        get: { settingsState.isReaderModeEnabled },
+                        set: { vmStoreOwner.instance.updateReaderMode(value: $0) }
+                    ),
+                    isSaveReaderModeContentEnabled: Binding(
+                        get: { settingsState.isSaveReaderModeContentEnabled },
+                        set: { vmStoreOwner.instance.updateSaveReaderModeContent(value: $0) }
+                    ),
+                    isPrefetchArticleContentEnabled: Binding(
+                        get: { settingsState.isPrefetchArticleContentEnabled },
+                        set: { vmStoreOwner.instance.updatePrefetchArticleContent(value: $0) }
+                    ),
+                    feedOrder: Binding(
+                        get: { settingsState.feedOrder },
+                        set: { vmStoreOwner.instance.updateFeedOrder(feedOrder: $0) }
+                    ),
+                    themeMode: Binding(
+                        get: { settingsState.themeMode },
+                        set: { newValue in
+                            vmStoreOwner.instance.updateThemeMode(mode: newValue)
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                appState.updateTheme(newValue)
+                            }
+                        }
+                    ),
+                    isMarkReadWhenScrollingEnabled: Binding(
+                        get: { settingsState.isMarkReadWhenScrollingEnabled },
+                        set: { vmStoreOwner.instance.updateMarkReadWhenScrolling(value: $0) }
+                    ),
+                    isShowReadItemEnabled: Binding(
+                        get: { settingsState.isShowReadItemsEnabled },
+                        set: { vmStoreOwner.instance.updateShowReadItemsOnTimeline(value: $0) }
+                    )
                 )
                 FeedFontSection(
                     feedFontSizes: feedFontSizes,
                     imageUrl: imageUrl,
                     articleDescription: articleDescription,
                     scaleFactor: $scaleFactor,
-                    isHideDescriptionEnabled: $isHideDescriptionEnabled,
-                    isHideImagesEnabled: $isHideImagesEnabled,
-                    isHideDateEnabled: $isHideDateEnabled,
-                    isRemoveTitleFromDescriptionEnabled: $isRemoveTitleFromDescriptionEnabled,
-                    leftSwipeAction: $leftSwipeActionType,
-                    rightSwipeAction: $rightSwipeActionType,
-                    dateFormat: $dateFormat,
-                    timeFormat: $timeFormat,
-                    feedOrder: $feedOrder,
-                    feedLayout: $feedLayout
+                    isHideDescriptionEnabled: Binding(
+                        get: { settingsState.isHideDescriptionEnabled },
+                        set: { newValue in
+                            vmStoreOwner.instance.updateHideDescription(value: newValue)
+                            if newValue {
+                                articleDescription = nil
+                            } else {
+                                articleDescription = feedFlowStrings.settingsFontScaleSubtitleExample
+                            }
+                        }
+                    ),
+                    isHideImagesEnabled: Binding(
+                        get: { settingsState.isHideImagesEnabled },
+                        set: { newValue in
+                            vmStoreOwner.instance.updateHideImages(value: newValue)
+                            if newValue {
+                                imageUrl = nil
+                            } else {
+                                imageUrl = "https://lipsum.app/200x200"
+                            }
+                        }
+                    ),
+                    isHideDateEnabled: Binding(
+                        get: { settingsState.isHideDateEnabled },
+                        set: { vmStoreOwner.instance.updateHideDate(value: $0) }
+                    ),
+                    isRemoveTitleFromDescriptionEnabled: Binding(
+                        get: { settingsState.isRemoveTitleFromDescriptionEnabled },
+                        set: { vmStoreOwner.instance.updateRemoveTitleFromDescription(value: $0) }
+                    ),
+                    leftSwipeAction: Binding(
+                        get: { settingsState.leftSwipeActionType },
+                        set: { vmStoreOwner.instance.updateSwipeAction(direction: .left, action: $0) }
+                    ),
+                    rightSwipeAction: Binding(
+                        get: { settingsState.rightSwipeActionType },
+                        set: { vmStoreOwner.instance.updateSwipeAction(direction: .right, action: $0) }
+                    ),
+                    dateFormat: Binding(
+                        get: { settingsState.dateFormat },
+                        set: { vmStoreOwner.instance.updateDateFormat(format: $0) }
+                    ),
+                    timeFormat: Binding(
+                        get: { settingsState.timeFormat },
+                        set: { vmStoreOwner.instance.updateTimeFormat(format: $0) }
+                    ),
+                    feedOrder: Binding(
+                        get: { settingsState.feedOrder },
+                        set: { vmStoreOwner.instance.updateFeedOrder(feedOrder: $0) }
+                    ),
+                    feedLayout: Binding(
+                        get: { settingsState.feedLayout },
+                        set: { vmStoreOwner.instance.updateFeedLayout(feedLayout: $0) }
+                    )
                 ) { newValue in
                     vmStoreOwner.instance.updateFontScale(value: Int32(newValue))
                 }
@@ -229,7 +183,15 @@ struct SettingsScreen: View {
                 }
                 AppSection(
                     openURL: openURL,
-                    isCrashReportingEnabled: $isCrashReportingEnabled,
+                    isCrashReportingEnabled: Binding(
+                        get: { settingsState.isCrashReportingEnabled },
+                        set: { newValue in
+                            vmStoreOwner.instance.updateCrashReporting(value: newValue)
+                            #if !DEBUG
+                                Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(newValue)
+                            #endif
+                        }
+                    ),
                     appState: appState,
                     dismiss: dismiss
                 )

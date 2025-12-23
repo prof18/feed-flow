@@ -135,7 +135,7 @@
     <string name="add_feed_generic_error">Uudisvoo laadimisel tekkis viga. Palun proovi uuesti</string>
     <string name="account_text_field_username">Kasutajanimi</string>
     <string name="wrong_credentials_error_message">Salasõna ja/või kasutajanimi pole õiged. Palun proovi uuesti.</string>
-    <string name="fresh_rss_account_connected">Ühenduse loomine sinu FreshRssi kontoga õnnestus</string>
+    <string name="fresh_rss_account_connected">Ühenduse loomine sinu FreshRSS-i kontoga õnnestus</string>
     <string name="account_text_field_server_url">Serveri võrguaadress</string>
     <string name="account_login">Logi sisse</string>
     <string name="fresh_rss_url_hint">FreshRSS API otspunkt, näiteks %s</string>
@@ -265,4 +265,14 @@
     <string name="reader_mode_fallback_title">Artikli töötlemine ei õnnestu</string>
     <string name="reader_mode_fallback_message">Selle lehe sisu pole võimalik lugemisvaateks ette valmistada. Sa võid lehe avada otse veebibrauserist.</string>
     <string name="reader_mode_fallback_open_browser_button">Ava veebibrauseris</string>
+    <string name="feed_add_in_progress_message">Impordin uudisvoogu...</string>
+    <string name="delete_feed_source_error">Uudisvoo kustutamine ei õnnestunud. Palun proovi uuesti.</string>
+    <string name="search_button_content_description">Otsi</string>
+    <string name="more_options_button_content_description">Lisavalikud</string>
+    <string name="drawer_menu_button_content_description">Ava menüü</string>
+    <string name="increase_font_size_button_content_description">Suurenda teksti suurust</string>
+    <string name="decrease_font_size_button_content_description">Vähenda teksti suurust</string>
+    <string name="scroll_to_top_button_content_description">Keri loendi algusesse</string>
+    <string name="dropbox_auth_code_expired">Autentimiskood pole enam kehtiv. Palun kontrolli koodi ja proovi siis uuesti.</string>
+    <string name="database_error_reset">Me ei suutnud sinu andmeid laadida ja pidime uuesti alustama. Vabandust, et nii juhtus.</string>
 </resources>

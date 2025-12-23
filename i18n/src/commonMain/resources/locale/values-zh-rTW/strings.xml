@@ -45,7 +45,7 @@
     <string name="retry_button">重試</string>
     <string name="done_button">確定</string>
     <string name="wrong_link_report_title">以下訂閱源無效，無法添加</string>
-    <string name="feed_add_in_progress_message">請稍候，正在檢查每個訂閱源的可用性。此操作可能需要一段時間，具體取決於您匯入的訂閱源數量</string>
+    <string name="feed_add_in_progress_message">正在匯入訂閱源…</string>
     <string name="issue_report_title">報告FeedFlow的問題</string>
     <string name="issue_content_title">FeedFlow的問題</string>
     <string name="issue_content_template">請描述問題，註明您使用的平台、應用程式版本，並提供導致問題的RSS訂閱源連結。如果可以，請附上螢幕截圖和OPML檔案</string>
@@ -265,4 +265,13 @@
     <string name="reader_mode_fallback_title">無法解析文章</string>
     <string name="reader_mode_fallback_message">無法提取此頁面的內容以用於閱讀模式。可以在瀏覽器中直接打開頁面。</string>
     <string name="reader_mode_fallback_open_browser_button">在瀏覽器中打開</string>
+    <string name="delete_feed_source_error">無法刪除訂閱源，請重試。</string>
+    <string name="search_button_content_description">搜尋</string>
+    <string name="more_options_button_content_description">更多選項</string>
+    <string name="drawer_menu_button_content_description">打開導覽選單</string>
+    <string name="database_error_reset">我們載入您的資料時遇到問題，因此需要重新開始。對此我們深表歉意。</string>
+    <string name="dropbox_auth_code_expired">授權碼已失效。請重試。</string>
+    <string name="scroll_to_top_button_content_description">捲動到頂部</string>
+    <string name="decrease_font_size_button_content_description">減小字體大小</string>
+    <string name="increase_font_size_button_content_description">增大字體大小</string>
 </resources>

@@ -177,6 +177,36 @@ UPDATE feed_item
 SET is_read = :isRead
 WHERE url_hash IN :urlHash;
 
+markAllAboveAsRead:
+UPDATE feed_item
+SET is_read = 1
+WHERE is_read = 0
+AND pub_date >= (
+    SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId
+)
+AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source_id IN (
+    SELECT url_hash FROM feed_source WHERE category_id = :feedSourceCategoryId
+))
+AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
+    SELECT url_hash FROM feed_source WHERE category_id IS NULL
+)));
+
+markAllBelowAsRead:
+UPDATE feed_item
+SET is_read = 1
+WHERE is_read = 0
+AND pub_date <= (
+    SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId
+)
+AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source_id IN (
+    SELECT url_hash FROM feed_source WHERE category_id = :feedSourceCategoryId
+))
+AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
+    SELECT url_hash FROM feed_source WHERE category_id IS NULL
+)));
+
 getFeedUrl:
 SELECT feed_item.url_hash, feed_item.url, feed_item.title, is_bookmarked, feed_source_preferences.link_opening_preference AS feed_source_link_opening_preference, feed_item.comments_url FROM feed_item
 INNER JOIN feed_source

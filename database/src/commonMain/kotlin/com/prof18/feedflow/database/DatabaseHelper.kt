@@ -244,6 +244,26 @@ class DatabaseHelper(
             }
         }
 
+    suspend fun markAllAboveAsRead(targetItemId: String, feedFilter: FeedFilter) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.markAllAboveAsRead(
+                targetItemId = targetItemId,
+                feedSourceId = feedFilter.getFeedSourceId(),
+                feedSourceCategoryId = feedFilter.getCategoryId(),
+                isUncategorized = feedFilter.getIsUncategorized(),
+            )
+        }
+
+    suspend fun markAllBelowAsRead(targetItemId: String, feedFilter: FeedFilter) =
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.markAllBelowAsRead(
+                targetItemId = targetItemId,
+                feedSourceId = feedFilter.getFeedSourceId(),
+                feedSourceCategoryId = feedFilter.getCategoryId(),
+                isUncategorized = feedFilter.getIsUncategorized(),
+            )
+        }
+
     suspend fun deleteOldFeedItems(timeThreshold: Long, feedFilter: FeedFilter) =
         try {
             dbRef.transactionWithContext(backgroundDispatcher) {

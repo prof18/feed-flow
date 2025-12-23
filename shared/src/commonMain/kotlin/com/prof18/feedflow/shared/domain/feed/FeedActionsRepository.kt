@@ -42,17 +42,53 @@ internal class FeedActionsRepository(
     }
 
     suspend fun markAllAboveAsRead(targetItemId: String) {
-        val itemsAbove = feedStateRepository.getItemsAbove(targetItemId)
-        if (itemsAbove.isEmpty()) return
+        val currentFilter = feedStateRepository.getCurrentFeedFilter()
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                // For FreshRSS, we need to get the items and mark them individually
+                // Since FreshRSS API might not support bulk operations based on dates
+                val itemsAbove = feedStateRepository.getItemsAbove(targetItemId)
+                if (itemsAbove.isNotEmpty()) {
+                    gReaderRepository.updateReadStatus(itemsAbove, isRead = true)
+                        .onErrorSuspend {
+                            feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
+                        }
+                }
+            }
 
-        markAsRead(itemsAbove.toHashSet())
+            else -> {
+                // Use the database query that marks all items above based on pub_date
+                databaseHelper.markAllAboveAsRead(targetItemId, currentFilter)
+                feedSyncRepository.setIsSyncUploadRequired()
+            }
+        }
+        // Refresh the feed list to reflect the changes
+        feedStateRepository.getFeeds()
     }
 
     suspend fun markAllBelowAsRead(targetItemId: String) {
-        val itemsBelow = feedStateRepository.getItemsBelow(targetItemId)
-        if (itemsBelow.isEmpty()) return
+        val currentFilter = feedStateRepository.getCurrentFeedFilter()
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                // For FreshRSS, we need to get the items and mark them individually
+                // Since FreshRSS API might not support bulk operations based on dates
+                val itemsBelow = feedStateRepository.getItemsBelow(targetItemId)
+                if (itemsBelow.isNotEmpty()) {
+                    gReaderRepository.updateReadStatus(itemsBelow, isRead = true)
+                        .onErrorSuspend {
+                            feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
+                        }
+                }
+            }
 
-        markAsRead(itemsBelow.toHashSet())
+            else -> {
+                // Use the database query that marks all items below based on pub_date
+                databaseHelper.markAllBelowAsRead(targetItemId, currentFilter)
+                feedSyncRepository.setIsSyncUploadRequired()
+            }
+        }
+        // Refresh the feed list to reflect the changes
+        feedStateRepository.getFeeds()
     }
 
     suspend fun markAllCurrentFeedAsRead() {

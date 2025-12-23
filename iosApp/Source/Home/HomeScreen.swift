@@ -109,6 +109,12 @@ struct HomeScreen: View {
             onReadStatusClick: { feedItemId, isRead in
                 homeViewModel.updateReadStatus(feedItemId: feedItemId, read: isRead)
             },
+            onMarkAllAboveAsRead: { feedItemId in
+                homeViewModel.markAllAboveAsRead(feedItemId: feedItemId)
+            },
+            onMarkAllBelowAsRead: { feedItemId in
+                homeViewModel.markAllBelowAsRead(feedItemId: feedItemId)
+            },
             onBackToTimelineClick: {
                 homeViewModel.onFeedFilterSelected(selectedFeedFilter: FeedFilter.Timeline())
             },

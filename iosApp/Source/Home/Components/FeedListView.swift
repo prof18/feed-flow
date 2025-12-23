@@ -39,6 +39,8 @@ struct FeedListView: View {
     let onReaderModeClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
+    let onMarkAllAboveAsRead: (String) -> Void
+    let onMarkAllBelowAsRead: (String) -> Void
     let onBackToTimelineClick: () -> Void
     let onMarkAllAsReadClick: () -> Void
     let openDrawer: () -> Void
@@ -87,6 +89,8 @@ struct FeedListView: View {
                                         feedItem: feedItem,
                                         onBookmarkClick: onBookmarkClick,
                                         onReadStatusClick: onReadStatusClick,
+                                        onMarkAllAboveAsRead: onMarkAllAboveAsRead,
+                                        onMarkAllBelowAsRead: onMarkAllBelowAsRead,
                                         onOpenFeedSettings: onOpenFeedSettings
                                     )
                                     .environment(browserSelector)
@@ -109,6 +113,8 @@ struct FeedListView: View {
                                         feedItem: feedItem,
                                         onBookmarkClick: onBookmarkClick,
                                         onReadStatusClick: onReadStatusClick,
+                                        onMarkAllAboveAsRead: onMarkAllAboveAsRead,
+                                        onMarkAllBelowAsRead: onMarkAllBelowAsRead,
                                         onOpenFeedSettings: onOpenFeedSettings
                                     )
                                     .environment(browserSelector)
@@ -174,6 +180,8 @@ struct FeedListView: View {
         onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
+        onMarkAllAboveAsRead: { _ in },
+        onMarkAllBelowAsRead: { _ in },
         onBackToTimelineClick: {},
         onMarkAllAsReadClick: {},
         openDrawer: {},
@@ -199,6 +207,8 @@ struct FeedListView: View {
         onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
+        onMarkAllAboveAsRead: { _ in },
+        onMarkAllBelowAsRead: { _ in },
         onBackToTimelineClick: {},
         onMarkAllAsReadClick: {},
         openDrawer: {},
@@ -224,6 +234,8 @@ struct FeedListView: View {
         onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
+        onMarkAllAboveAsRead: { _ in },
+        onMarkAllBelowAsRead: { _ in },
         onBackToTimelineClick: {},
         onMarkAllAsReadClick: {},
         openDrawer: {},

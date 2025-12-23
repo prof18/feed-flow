@@ -13,10 +13,14 @@ struct FeedItemContextMenu: View {
     let feedItem: FeedItem
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
+    let onMarkAllAboveAsRead: (String) -> Void
+    let onMarkAllBelowAsRead: (String) -> Void
     let onOpenFeedSettings: (FeedSource) -> Void
 
     var body: some View {
         makeReadUnreadButton(feedItem: feedItem)
+        makeMarkAllAboveAsReadButton(feedItem: feedItem)
+        makeMarkAllBelowAsReadButton(feedItem: feedItem)
         makeBookmarkButton(feedItem: feedItem)
         makeCommentsButton(feedItem: feedItem)
         makeShareButton(feedItem: feedItem)
@@ -36,6 +40,24 @@ struct FeedItemContextMenu: View {
             } else {
                 Label(feedFlowStrings.menuMarkAsRead, systemImage: "envelope.open")
             }
+        }
+    }
+
+    @ViewBuilder
+    private func makeMarkAllAboveAsReadButton(feedItem: FeedItem) -> some View {
+        Button {
+            onMarkAllAboveAsRead(feedItem.id)
+        } label: {
+            Label(feedFlowStrings.menuMarkAllAboveAsRead, systemImage: "chevron.up.2")
+        }
+    }
+
+    @ViewBuilder
+    private func makeMarkAllBelowAsReadButton(feedItem: FeedItem) -> some View {
+        Button {
+            onMarkAllBelowAsRead(feedItem.id)
+        } label: {
+            Label(feedFlowStrings.menuMarkAllBelowAsRead, systemImage: "chevron.down.2")
         }
     }
 

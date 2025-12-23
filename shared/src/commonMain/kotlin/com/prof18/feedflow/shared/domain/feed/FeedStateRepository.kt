@@ -206,7 +206,7 @@ internal class FeedStateRepository(
 
         if (targetIndex == -1) return emptyList()
 
-        return currentItems.subList(0, targetIndex)
+        return currentItems.subList(0, targetIndex + 1)
             .filter { !it.isRead }
             .map { FeedItemId(it.id) }
     }
@@ -217,7 +217,7 @@ internal class FeedStateRepository(
 
         if (targetIndex == -1) return emptyList()
 
-        return currentItems.subList(targetIndex + 1, currentItems.size)
+        return currentItems.subList(targetIndex, currentItems.size)
             .filter { !it.isRead }
             .map { FeedItemId(it.id) }
     }

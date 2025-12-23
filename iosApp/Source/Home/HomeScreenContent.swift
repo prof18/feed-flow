@@ -52,6 +52,8 @@ struct HomeContent: View {
     let onReaderModeClick: (FeedItemUrlInfo) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
+    let onMarkAllAboveAsRead: (String) -> Void
+    let onMarkAllBelowAsRead: (String) -> Void
     let onBackToTimelineClick: () -> Void
     let onFeedSyncClick: () -> Void
     let openDrawer: () -> Void
@@ -76,6 +78,8 @@ struct HomeContent: View {
                 onReaderModeClick: onReaderModeClick,
                 onBookmarkClick: onBookmarkClick,
                 onReadStatusClick: onReadStatusClick,
+                onMarkAllAboveAsRead: onMarkAllAboveAsRead,
+                onMarkAllBelowAsRead: onMarkAllBelowAsRead,
                 onBackToTimelineClick: onBackToTimelineClick,
                 onMarkAllAsReadClick: onMarkAllReadClick,
                 openDrawer: openDrawer,
@@ -210,6 +214,8 @@ struct HomeContent: View {
         onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
+        onMarkAllAboveAsRead: { _ in },
+        onMarkAllBelowAsRead: { _ in },
         onBackToTimelineClick: {},
         onFeedSyncClick: {},
         openDrawer: {}
@@ -247,6 +253,8 @@ struct HomeContent: View {
         onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
+        onMarkAllAboveAsRead: { _ in },
+        onMarkAllBelowAsRead: { _ in },
         onBackToTimelineClick: {},
         onFeedSyncClick: {},
         openDrawer: {}
@@ -284,6 +292,8 @@ struct HomeContent: View {
         onReaderModeClick: { _ in },
         onBookmarkClick: { _, _ in },
         onReadStatusClick: { _, _ in },
+        onMarkAllAboveAsRead: { _ in },
+        onMarkAllBelowAsRead: { _ in },
         onBackToTimelineClick: {},
         onFeedSyncClick: {},
         openDrawer: {}

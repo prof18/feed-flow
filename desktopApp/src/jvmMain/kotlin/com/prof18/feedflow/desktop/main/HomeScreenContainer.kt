@@ -19,7 +19,7 @@ import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-internal data class MainScreen(
+internal data class HomeScreenContainer(
     private val homeViewModel: HomeViewModel,
     private val frameWindowScope: FrameWindowScope,
     private val version: String?,

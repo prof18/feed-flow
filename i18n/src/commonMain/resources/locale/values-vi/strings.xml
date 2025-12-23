@@ -265,4 +265,14 @@
     <string name="reader_mode_fallback_title">Không thể phân tích bài viết</string>
     <string name="reader_mode_fallback_message">Không thể trích xuất nội dung trang này ở chế độ đọc. Bạn có thể mở trực tiếp trong trình duyệt của mình.</string>
     <string name="reader_mode_fallback_open_browser_button">Mở trong trình duyệt</string>
+    <string name="feed_add_in_progress_message">Đang nhập nguồn tin...</string>
+    <string name="delete_feed_source_error">Không thể xóa nguồn tin. Vui lòng thử lại.</string>
+    <string name="search_button_content_description">Tìm kiếm</string>
+    <string name="more_options_button_content_description">Tùy chọn khác</string>
+    <string name="drawer_menu_button_content_description">Mở menu điều hướng</string>
+    <string name="increase_font_size_button_content_description">Tăng cỡ phông</string>
+    <string name="decrease_font_size_button_content_description">Giảm cỡ phông</string>
+    <string name="scroll_to_top_button_content_description">Cuộn lên trên</string>
+    <string name="dropbox_auth_code_expired">Mã xác thực không còn hiệu lực. Vui lòng thử lại.</string>
+    <string name="database_error_reset">Chúng tôi gặp sự cố khi tải dữ liệu của bạn và phải bắt đầu lại từ đầu. Xin lỗi nha.</string>
 </resources>

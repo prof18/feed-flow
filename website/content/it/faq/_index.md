@@ -1,9 +1,10 @@
 ---
-title: "Domande Frequenti | FeedFlow"
-description: "Trova le risposte alle domande comuni su FeedFlow"
+title: "Frequently Asked Questions | FeedFlow"
+description: "Find answers to common questions about FeedFlow RSS Reader"
 type: "faq"
 layout: "list"
-heading: "Domande Frequenti"
+heading: "Frequently Asked Questions"
 ---
 
-Benvenuto nella sezione FAQ di FeedFlow. Qui troverai le risposte alle domande più comuni sull'utilizzo di FeedFlow.
+Welcome to FeedFlow's FAQ section. Here you'll find answers to the most common
+questions about using FeedFlow.

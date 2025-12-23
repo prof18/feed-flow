@@ -101,6 +101,12 @@ internal fun SearchScreen(
         onReadStatusClick = { feedItemId, isRead ->
             viewModel.onReadStatusClick(feedItemId, isRead)
         },
+        onMarkAllAboveAsRead = { feedItemId ->
+            viewModel.markAllAboveAsRead(feedItemId)
+        },
+        onMarkAllBelowAsRead = { feedItemId ->
+            viewModel.markAllBelowAsRead(feedItemId)
+        },
         onCommentClick = { urlInfo ->
             browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
             viewModel.onReadStatusClick(FeedItemId(urlInfo.id), true)
@@ -133,6 +139,8 @@ private fun Preview() {
             onFeedItemClick = {},
             onBookmarkClick = { _, _ -> },
             onReadStatusClick = { _, _ -> },
+            onMarkAllAboveAsRead = { _ -> },
+            onMarkAllBelowAsRead = { _ -> },
             onCommentClick = {},
             onShareClick = { _ -> },
             onOpenFeedSettings = {},

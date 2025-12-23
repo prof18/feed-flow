@@ -97,6 +97,8 @@ fun FeedListFontSettings(
                     onShareClick = {},
                     onOpenFeedSettings = {},
                     feedLayout = feedLayout,
+                    onMarkAllAboveAsRead = {},
+                    onMarkAllBelowAsRead = {},
                 )
             }
         }

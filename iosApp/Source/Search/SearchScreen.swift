@@ -28,6 +28,12 @@ struct SearchScreen: View {
             },
             onReadStatusClick: { feedItemId, isRead in
                 vmStoreOwner.instance.onReadStatusClick(feedItemId: feedItemId, read: isRead)
+            },
+            onMarkAllAboveAsRead: { feedItemId in
+                vmStoreOwner.instance.markAllAboveAsRead(targetItemId: feedItemId)
+            },
+            onMarkAllBelowAsRead: { feedItemId in
+                vmStoreOwner.instance.markAllBelowAsRead(targetItemId: feedItemId)
             }
         )
         .snackbar(messageQueue: $appState.snackbarQueue)

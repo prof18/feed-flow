@@ -62,6 +62,8 @@ fun SearchScreenContent(
     onFeedItemClick: (FeedItemUrlInfo) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
+    onMarkAllAboveAsRead: (String) -> Unit,
+    onMarkAllBelowAsRead: (String) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
     onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
@@ -137,6 +139,8 @@ fun SearchScreenContent(
                                     onOpenFeedSettings = onOpenFeedSettings,
                                     feedLayout = searchState.feedLayout,
                                     onShareClick = onShareClick,
+                                    onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                                    onMarkAllBelowAsRead = onMarkAllBelowAsRead,
                                 )
                             }
                         }

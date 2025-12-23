@@ -24,6 +24,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -41,13 +42,13 @@ internal fun FeedItemView(
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
-    onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
+    onOpenFeedSettings: (FeedSource) -> Unit,
+    onShareClick: (FeedItemUrlTitle) -> Unit,
+    onMarkAllAboveAsRead: (String) -> Unit,
     modifier: Modifier = Modifier,
     disableClick: Boolean = false,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
-    onShareClick: (FeedItemUrlTitle) -> Unit,
-    onMarkAllAboveAsRead: (String) -> Unit = {},
-    onMarkAllBelowAsRead: (String) -> Unit = {},
+    onMarkAllBelowAsRead: (String) -> Unit,
 ) {
     var showItemMenu by remember {
         mutableStateOf(
@@ -162,6 +163,8 @@ internal fun FeedItemListViewPreview() {
             onShareClick = {},
             onOpenFeedSettings = {},
             disableClick = true,
+            onMarkAllAboveAsRead = {},
+            onMarkAllBelowAsRead = {},
         )
     }
 }

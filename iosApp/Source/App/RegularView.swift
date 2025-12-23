@@ -113,6 +113,11 @@ struct RegularView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: CommonViewRoute.self) { route in
                 switch route {
+                case .feedSuggestions:
+                    FeedSuggestionsScreen {
+                        appState.regularNavigationPath.removeLast()
+                    }
+
                 case .readerMode:
                     ReaderModeScreen(viewModel: readerModeViewModel)
 

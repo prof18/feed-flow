@@ -115,6 +115,11 @@ struct CompactView: View {
             }
             .navigationDestination(for: CommonViewRoute.self) { route in
                 switch route {
+                case .feedSuggestions:
+                    FeedSuggestionsScreen {
+                        appState.compatNavigationPath.removeLast()
+                    }
+
                 case .readerMode:
                     ReaderModeScreen(viewModel: readerModeViewModel)
 

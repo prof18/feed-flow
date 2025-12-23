@@ -18,6 +18,7 @@ import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
+import com.prof18.feedflow.desktop.feedsuggestions.FeedSuggestionsScreen
 import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -244,6 +245,13 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 text = LocalFeedFlowStrings.current.settingsBlockedWords,
                 onClick = {
                     navigator.push(BlockedWordsScreen())
+                },
+            )
+
+            Item(
+                text = LocalFeedFlowStrings.current.feedSuggestionsTitle,
+                onClick = {
+                    navigator.push(FeedSuggestionsScreen())
                 },
             )
         }

@@ -27,6 +27,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
+import com.prof18.feedflow.shared.domain.feed.SuggestedFeedsRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -42,6 +43,7 @@ import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
+import com.prof18.feedflow.shared.presentation.OnboardingViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -160,6 +162,16 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSourcesRepository = get(),
             categoryRepository = get(),
             databaseHelper = get(),
+        )
+    }
+
+    singleOf(::SuggestedFeedsRepository)
+
+    viewModel {
+        OnboardingViewModel(
+            suggestedFeedsRepository = get(),
+            feedSourcesRepository = get(),
+            settingsRepository = get(),
         )
     }
 

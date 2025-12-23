@@ -31,7 +31,6 @@ internal data class HomeScreenContainer(
     @Composable
     override fun Content() {
         val snackbarHostState = remember { SnackbarHostState() }
-
         val navigator = LocalNavigator.currentOrThrow
 
         @Suppress("ViewModelForwarding")

@@ -42,7 +42,6 @@ struct ContentView: View {
                 .environment(browserSelector)
             }
         }
-        .snackbar(messageQueue: $appState.snackbarQueue)
         .onAppear {
             if appState.sizeClass == nil {
                 appState.sizeClass = horizontalSizeClass

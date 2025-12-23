@@ -34,8 +34,10 @@ internal fun FrameWindowScope.AppContent(
     val koin = DI.koin
     setSingletonImageLoaderFactory { koin.get<ImageLoader>() }
 
-    val contentPrefetchRepository: ContentPrefetchRepository = koin.get()
-    contentPrefetchRepository.startBackgroundFetching()
+    LaunchedEffect(Unit) {
+        val contentPrefetchRepository: ContentPrefetchRepository = koin.get()
+        contentPrefetchRepository.startBackgroundFetching()
+    }
 
     val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
     val settingsState by settingsViewModel.settingsState.collectAsState()

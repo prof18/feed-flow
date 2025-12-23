@@ -34,6 +34,7 @@ data class MenuBarActions(
     val onForceRefreshClick: () -> Unit,
     val onFeedFontScaleClick: () -> Unit,
     val deleteFeeds: () -> Unit,
+    val onBackupClick: () -> Unit,
 )
 
 data class MenuBarSettings(
@@ -54,6 +55,7 @@ data class MenuBarState(
     val showDebugMenu: Boolean,
     val feedFilter: FeedFilter,
     val settingsState: SettingsState,
+    val isSyncUploadRequired: Boolean,
 )
 
 @Composable
@@ -89,6 +91,20 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     KeyShortcut(Key.F5, shift = true)
                 },
             )
+
+            if (state.isSyncUploadRequired) {
+                Item(
+                    text = LocalFeedFlowStrings.current.triggerFeedSync,
+                    onClick = {
+                        actions.onBackupClick()
+                    },
+                    shortcut = if (isMacOS) {
+                        KeyShortcut(Key.S, meta = true)
+                    } else {
+                        KeyShortcut(Key.S, ctrl = true)
+                    },
+                )
+            }
 
             Item(
                 text = LocalFeedFlowStrings.current.markAllReadButton,

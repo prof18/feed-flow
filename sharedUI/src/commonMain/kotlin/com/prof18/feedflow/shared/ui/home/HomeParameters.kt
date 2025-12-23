@@ -26,6 +26,7 @@ class HomeDisplayState(
     val currentFeedFilter: FeedFilter,
     val swipeActions: SwipeActions,
     val feedLayout: FeedLayout,
+    val isSyncUploadRequired: Boolean = false,
 )
 
 @Stable

@@ -37,6 +37,7 @@ fun AdaptiveHomeView(
     windowSizeClass: WindowSizeClass = WindowSizeClass.Compact,
     showDropdownMenu: Boolean = false,
     feedContentWrapper: @Composable (@Composable () -> Unit) -> Unit = { content -> content() },
+    onBackupClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
 
@@ -63,6 +64,7 @@ fun AdaptiveHomeView(
             showDropdownMenu = showDropdownMenu,
             feedContentWrapper = feedContentWrapper,
             shareBehavior = shareBehavior,
+            onBackupClick = onBackupClick,
         )
     }
 

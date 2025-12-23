@@ -334,6 +334,7 @@ private fun FrameWindowScope.MainWindowContent(
         )
 
         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
+        val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsState()
 
         Surface(
             modifier = Modifier
@@ -362,6 +363,7 @@ private fun FrameWindowScope.MainWindowContent(
                         showDebugMenu = appConfig.appEnvironment.isDebug(),
                         feedFilter = currentFeedFilter,
                         settingsState = settingsState,
+                        isSyncUploadRequired = isSyncUploadRequired,
                     ),
                     actions = MenuBarActions(
                         onRefreshClick = {
@@ -410,6 +412,9 @@ private fun FrameWindowScope.MainWindowContent(
                         },
                         deleteFeeds = {
                             homeViewModel.deleteAllFeeds()
+                        },
+                        onBackupClick = {
+                            homeViewModel.enqueueBackup()
                         },
                     ),
                     settings = MenuBarSettings(

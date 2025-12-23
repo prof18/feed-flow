@@ -40,6 +40,7 @@
     <string name="open_website_button">Open website</string>
     <string name="database_error">Something went wrong during the retrieval of the feeds. Please retry or restart the app  - error code: %s :(</string>
     <string name="force_feed_refresh">Force feeds refresh</string>
+    <string name="trigger_feed_sync">Trigger upload to your account</string>
     <string name="invalid_rss_url">The link you provided is not a valid RSS feed</string>
     <string name="import_export_opml">Import and export OPML</string>
     <string name="import_export_opml_title">Import and export</string>

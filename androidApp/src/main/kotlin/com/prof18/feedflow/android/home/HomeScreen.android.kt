@@ -58,6 +58,7 @@ internal fun HomeScreen(
     val swipeActions by homeViewModel.swipeActions.collectAsStateWithLifecycle()
     val feedOperation by homeViewModel.feedOperationState.collectAsStateWithLifecycle()
     val feedLayout by homeViewModel.feedLayout.collectAsStateWithLifecycle()
+    val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -122,6 +123,7 @@ internal fun HomeScreen(
         currentFeedFilter = currentFeedFilter,
         swipeActions = swipeActions,
         feedLayout = feedLayout,
+        isSyncUploadRequired = isSyncUploadRequired,
     )
 
     val feedListActions = FeedListActions(
@@ -189,6 +191,7 @@ internal fun HomeScreen(
             shareLinkTitle = strings.menuShare,
             shareCommentsTitle = strings.menuShareComments,
         ),
+        onBackupClick = homeViewModel::enqueueBackup,
     )
 }
 

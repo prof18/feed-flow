@@ -324,9 +324,6 @@ private extension HomeContent {
         if #available(iOS 26.0, *) {
             ToolbarSpacer(.fixed)
         }
-        if showFeedSyncButton {
-            makeFeedSynToolbarView()
-        }
 
         makeMenuToolbarView(proxy: proxy)
     }
@@ -335,9 +332,6 @@ private extension HomeContent {
     func makeLegacyToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
         makeToolbarHeaderView(proxy: proxy)
 
-        if showFeedSyncButton {
-            makeFeedSynToolbarView()
-        }
         makeSearchToolbarView()
         makeMenuToolbarView(proxy: proxy)
     }
@@ -378,17 +372,6 @@ private extension HomeContent {
     }
 
     @ToolbarContentBuilder
-    func makeFeedSynToolbarView() -> some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                self.onFeedSyncClick()
-            } label: {
-                Image(systemName: "arrow.uturn.up")
-            }
-        }
-    }
-
-    @ToolbarContentBuilder
     func makeSearchToolbarView() -> some ToolbarContent {
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
@@ -405,6 +388,14 @@ private extension HomeContent {
     func makeMenuToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Menu {
+                if showFeedSyncButton {
+                    Button {
+                        self.onFeedSyncClick()
+                    } label: {
+                        Label(feedFlowStrings.triggerFeedSync, systemImage: "arrow.uturn.up")
+                    }
+                }
+
                 Button {
                     showMarkAllReadDialog = true
                 } label: {

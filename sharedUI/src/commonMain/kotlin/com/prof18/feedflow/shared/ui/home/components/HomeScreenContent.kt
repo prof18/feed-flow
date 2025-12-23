@@ -44,6 +44,7 @@ fun HomeScreenContent(
     toolbarContent: @Composable () -> Unit = {},
     feedContentWrapper: @Composable (@Composable () -> Unit) -> Unit = { content -> content() },
     showDropdownMenu: Boolean = false,
+    onBackupClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
 
@@ -86,6 +87,8 @@ fun HomeScreenContent(
                         onRefresh()
                     }
                 },
+                isSyncUploadRequired = displayState.isSyncUploadRequired,
+                onBackupClick = onBackupClick,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },

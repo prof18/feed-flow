@@ -42,6 +42,8 @@ internal fun HomeAppBar(
     onForceRefreshClick: () -> Unit,
     onSearchClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
+    isSyncUploadRequired: Boolean,
+    onBackupClick: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -113,6 +115,11 @@ internal fun HomeAppBar(
                     onEditFeedClick = { feedSource ->
                         showMenu = false
                         onEditFeedClick(feedSource)
+                    },
+                    isSyncUploadRequired = isSyncUploadRequired,
+                    onBackupClick = {
+                        showMenu = false
+                        onBackupClick()
                     },
                 )
             }

@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -32,6 +33,8 @@ internal fun HomeAppBarDropdownMenu(
     onSettingsButtonClicked: () -> Unit,
     onForceRefreshClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
+    isSyncUploadRequired: Boolean,
+    onBackupClick: () -> Unit,
 ) {
     var showMarkAllReadDialog by remember { mutableStateOf(false) }
     var showClearOldArticlesDialog by remember { mutableStateOf(false) }
@@ -97,6 +100,24 @@ internal fun HomeAppBarDropdownMenu(
             dismissOnClickOutside = true,
         ),
     ) {
+        if (isSyncUploadRequired) {
+            DropdownMenuItem(
+                onClick = {
+                    onBackupClick()
+                    closeMenu()
+                },
+                text = {
+                    Text(LocalFeedFlowStrings.current.triggerFeedSync)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Upload,
+                        contentDescription = null,
+                    )
+                },
+            )
+        }
+
         DropdownMenuItem(
             onClick = {
                 showMarkAllReadDialog = true

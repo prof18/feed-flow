@@ -68,7 +68,6 @@ import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
-import com.prof18.feedflow.shared.ui.components.ChangeFeedCategoryDialog
 import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
@@ -317,9 +316,9 @@ private fun DrawerFeedSourcesByCategories(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
-    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
     onOpenWebsite: (String) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit),
     onDeleteCategoryClick: (CategoryId) -> Unit,
 ) {
     Column {
@@ -385,7 +384,7 @@ private fun DrawerFeedSourceByCategoryItem(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
-    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit),
     onOpenWebsite: (String) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
@@ -583,7 +582,7 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
-    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit),
     onOpenWebsite: (String) -> Unit,
 ) {
     AnimatedVisibility(
@@ -617,7 +616,7 @@ private fun FeedSourcesList(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
-    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit),
     onOpenWebsite: (String) -> Unit,
 ) {
     Column {
@@ -680,7 +679,7 @@ fun FeedSourceDrawerItem(
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
-    onChangeFeedCategoryClick: ((FeedSource) -> Unit)? = null,
+    onChangeFeedCategoryClick: ((FeedSource) -> Unit),
     onOpenWebsite: (String) -> Unit,
     unreadCount: Long,
     modifier: Modifier = Modifier,

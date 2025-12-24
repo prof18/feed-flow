@@ -30,6 +30,7 @@ import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
+import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
@@ -239,4 +240,5 @@ object Deps : KoinComponent {
     fun getHtmlRetriever() = getKoin().get<HtmlRetriever>()
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
     fun getUserFeedbackReporter() = getKoin().get<UserFeedbackReporter>()
+    fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()
 }

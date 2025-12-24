@@ -20,6 +20,12 @@ class ChangeFeedCategoryViewModel internal constructor(
 
     val categoriesState = categoryRepository.categoriesState
 
+    init {
+        viewModelScope.launch {
+            categoryRepository.initCategories()
+        }
+    }
+
     private val categoryChangedMutableState: MutableSharedFlow<Unit> = MutableSharedFlow()
     val categoryChangedState = categoryChangedMutableState.asSharedFlow()
 

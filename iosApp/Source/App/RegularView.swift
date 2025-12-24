@@ -42,12 +42,6 @@ struct RegularView: View {
 
     @State private var showEditFeedSheet = false
     @State private var feedSourceToEdit: FeedSource?
-    @State private var showChangeCategorySheet = false
-    @State private var changeFeedCategoryViewModel = ChangeFeedCategoryViewModel(
-        categoryRepository: DIContainer.shared.get(type: FeedCategoryRepository.self),
-        feedSourcesRepository: DIContainer.shared.get(type: FeedSourcesRepository.self),
-        feedStateRepository: DIContainer.shared.get(type: FeedStateRepository.self)
-    )
 
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
@@ -89,10 +83,6 @@ struct RegularView: View {
                 },
                 onPinFeedClick: { feedSource in
                     homeViewModel.toggleFeedPin(feedSource: feedSource)
-                },
-                onChangeFeedCategoryClick: { feedSource in
-                    changeFeedCategoryViewModel.loadFeedSource(feedSource: feedSource)
-                    showChangeCategorySheet = true
                 },
                 onDeleteCategory: { categoryId in
                     homeViewModel.deleteCategory(categoryId: CategoryId(value: categoryId))
@@ -153,24 +143,10 @@ struct RegularView: View {
                 EditFeedScreen(feedSource: feedSource)
             }
         }
-        .sheet(isPresented: $showChangeCategorySheet) {
-            EditCategorySheetContainerForChangeCategory(
-                viewModel: changeFeedCategoryViewModel,
-                onSave: {
-                    changeFeedCategoryViewModel.saveCategory()
-                }
-            )
-        }
         .navigationSplitViewStyle(.balanced)
         .task {
             for await state in homeViewModel.navDrawerState {
                 self.navDrawerState = state
-            }
-        }
-        .task {
-            for await _ in changeFeedCategoryViewModel.categoryChangedState {
-                showChangeCategorySheet = false
-                homeViewModel.refreshData()
             }
         }
     }

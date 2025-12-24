@@ -177,6 +177,34 @@ UPDATE feed_item
 SET is_read = :isRead
 WHERE url_hash IN :urlHash;
 
+selectItemsAbove:
+SELECT url_hash FROM feed_item
+WHERE is_read = 0
+AND pub_date >= (
+    SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId
+)
+AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source_id IN (
+    SELECT url_hash FROM feed_source WHERE category_id = :feedSourceCategoryId
+))
+AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
+    SELECT url_hash FROM feed_source WHERE category_id IS NULL
+)));
+
+selectItemsBelow:
+SELECT url_hash FROM feed_item
+WHERE is_read = 0
+AND pub_date <= (
+    SELECT pub_date FROM feed_item WHERE url_hash = :targetItemId
+)
+AND (:feedSourceId IS NULL OR feed_source_id = :feedSourceId)
+AND (:feedSourceCategoryId IS NULL OR feed_source_id IN (
+    SELECT url_hash FROM feed_source WHERE category_id = :feedSourceCategoryId
+))
+AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
+    SELECT url_hash FROM feed_source WHERE category_id IS NULL
+)));
+
 markAllAboveAsRead:
 UPDATE feed_item
 SET is_read = 1

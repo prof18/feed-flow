@@ -71,7 +71,7 @@ jobs:
           DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
 
       - name: import certs
-        uses: apple-actions/import-codesign-certs@v5
+        uses: apple-actions/import-codesign-certs@v6
         with:
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}

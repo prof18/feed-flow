@@ -45,7 +45,6 @@ internal class FeedActionsRepository(
         val currentFilter = feedStateRepository.getCurrentFeedFilter()
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
-                // For FreshRSS, query the database to get ALL items above (not just loaded ones)
                 val itemIds = databaseHelper.getItemsAbove(targetItemId, currentFilter)
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
@@ -57,20 +56,18 @@ internal class FeedActionsRepository(
             }
 
             else -> {
-                // Use the database query that marks all items above based on pub_date
                 databaseHelper.markAllAboveAsRead(targetItemId, currentFilter)
                 feedSyncRepository.setIsSyncUploadRequired()
             }
         }
-        // Refresh the feed list to reflect the changes
-        feedStateRepository.getFeeds()
+        // Update the in-memory state without reloading everything
+        feedStateRepository.markItemsAboveAsRead(targetItemId)
     }
 
     suspend fun markAllBelowAsRead(targetItemId: String) {
         val currentFilter = feedStateRepository.getCurrentFeedFilter()
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
-                // For FreshRSS, query the database to get ALL items below (not just loaded ones)
                 val itemIds = databaseHelper.getItemsBelow(targetItemId, currentFilter)
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
@@ -82,13 +79,12 @@ internal class FeedActionsRepository(
             }
 
             else -> {
-                // Use the database query that marks all items below based on pub_date
                 databaseHelper.markAllBelowAsRead(targetItemId, currentFilter)
                 feedSyncRepository.setIsSyncUploadRequired()
             }
         }
-        // Refresh the feed list to reflect the changes
-        feedStateRepository.getFeeds()
+        // Update the in-memory state without reloading everything
+        feedStateRepository.markItemsBelowAsRead(targetItemId)
     }
 
     suspend fun markAllCurrentFeedAsRead() {

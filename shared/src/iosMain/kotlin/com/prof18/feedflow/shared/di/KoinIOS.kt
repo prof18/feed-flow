@@ -37,6 +37,7 @@ import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
+import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -272,4 +273,5 @@ object Deps : KoinComponent {
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
     fun getUserFeedbackReporter() = getKoin().get<UserFeedbackReporter>()
     fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()
+    fun getFeedSuggestionsViewModel() = getKoin().get<FeedSuggestionsViewModel>()
 }

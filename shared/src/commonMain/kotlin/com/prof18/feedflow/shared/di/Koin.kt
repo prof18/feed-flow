@@ -45,7 +45,7 @@ import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
-import com.prof18.feedflow.shared.presentation.OnboardingViewModel
+import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -171,7 +171,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     singleOf(::SuggestedFeedsRepository)
 
     viewModel {
-        OnboardingViewModel(
+        FeedSuggestionsViewModel(
             suggestedFeedsRepository = get(),
             feedSourcesRepository = get(),
             settingsRepository = get(),

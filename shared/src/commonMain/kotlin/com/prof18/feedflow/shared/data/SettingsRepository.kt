@@ -310,12 +310,6 @@ class SettingsRepository(
     fun setDesktopWindowYPositionDp(value: Float) =
         settings.set(SettingsFields.DESKTOP_WINDOW_Y_POSITION_DP.name, value)
 
-    fun isOnboardingCompleted(): Boolean =
-        settings.getBoolean(SettingsFields.IS_ONBOARDING_COMPLETED.name, false)
-
-    fun setOnboardingCompleted(value: Boolean) =
-        settings.set(SettingsFields.IS_ONBOARDING_COMPLETED.name, value)
-
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -355,5 +349,4 @@ internal enum class SettingsFields {
     DESKTOP_WINDOW_HEIGHT_DP,
     DESKTOP_WINDOW_X_POSITION_DP,
     DESKTOP_WINDOW_Y_POSITION_DP,
-    IS_ONBOARDING_COMPLETED,
 }

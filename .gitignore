@@ -124,3 +124,10 @@ bin/
 buildServer.json
 iosApp/buildServer.json
 /crashes/
+
+# xcode-build-server files
+iosApp/.compile
+/.compile
+
+# Local build artifacts
+iosApp/.build/

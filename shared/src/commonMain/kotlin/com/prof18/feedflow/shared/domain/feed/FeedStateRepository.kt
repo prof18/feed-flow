@@ -257,6 +257,40 @@ internal class FeedStateRepository(
         }
     }
 
+    fun markItemsAboveAsRead(targetItemId: String) {
+        mutableFeedState.update { currentItems ->
+            val targetIndex = currentItems.indexOfFirst { it.id == targetItemId }
+            if (targetIndex == -1) {
+                currentItems
+            } else {
+                currentItems.mapIndexed { index, feedItem ->
+                    if (index <= targetIndex && !feedItem.isRead) {
+                        feedItem.copy(isRead = true)
+                    } else {
+                        feedItem
+                    }
+                }.toImmutableList()
+            }
+        }
+    }
+
+    fun markItemsBelowAsRead(targetItemId: String) {
+        mutableFeedState.update { currentItems ->
+            val targetIndex = currentItems.indexOfFirst { it.id == targetItemId }
+            if (targetIndex == -1) {
+                currentItems
+            } else {
+                currentItems.mapIndexed { index, feedItem ->
+                    if (index >= targetIndex && !feedItem.isRead) {
+                        feedItem.copy(isRead = true)
+                    } else {
+                        feedItem
+                    }
+                }.toImmutableList()
+            }
+        }
+    }
+
     fun emitUpdateStatus(status: FeedUpdateStatus) {
         updateMutableState.update {
             status

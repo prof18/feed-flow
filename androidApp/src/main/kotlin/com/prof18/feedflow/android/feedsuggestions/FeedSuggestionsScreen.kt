@@ -5,14 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.prof18.feedflow.shared.presentation.OnboardingViewModel
+import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.ui.onboarding.FeedSuggestionsContent
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FeedSuggestionsScreen(
     navigateBack: () -> Unit,
-    viewModel: OnboardingViewModel = koinViewModel(),
+    viewModel: FeedSuggestionsViewModel = koinViewModel(),
 ) {
     val categories by viewModel.suggestedCategoriesState.collectAsState()
     val selectedFeeds by viewModel.selectedFeedsState.collectAsState()
@@ -28,6 +28,7 @@ fun FeedSuggestionsScreen(
         onCategoryToggle = viewModel::toggleCategoryExpansion,
         onAddFeeds = {
             viewModel.completeOnboarding()
+            // TODO: Navigate back only after the import is done
             navigateBack()
         },
         onNavigateBack = navigateBack,

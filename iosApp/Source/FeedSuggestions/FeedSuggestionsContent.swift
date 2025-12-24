@@ -2,7 +2,7 @@
 //  FeedSuggestionsContent.swift
 //  FeedFlow
 //
-//  Created by Claude Code
+//  Created by Marco Gomiero
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
@@ -11,9 +11,9 @@ import SwiftUI
 
 struct FeedSuggestionsContent: View {
     @Environment(\.colorScheme) var colorScheme
-
-    let viewModel: OnboardingViewModel
-    let onBackClick: () -> Void
+    
+    // TODO: do not inject the view model, but data and callbacks
+    let viewModel: FeedSuggestionsViewModel
 
     @State private var suggestedCategories: [SuggestedFeedCategory] = []
     @State private var selectedFeeds: [String] = []
@@ -59,7 +59,7 @@ struct FeedSuggestionsContent: View {
                             HStack {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.green)
-                                Text(String(format: feedFlowStrings.feedSuggestionsSelectedCount, selectedFeeds.count))
+                                Text(feedFlowStrings.feedSuggestionsSelectedCount("\(selectedFeeds.count)"))
                                     .fontWeight(.medium)
                             }
                             .padding()
@@ -69,7 +69,7 @@ struct FeedSuggestionsContent: View {
 
                             Button(action: {
                                 viewModel.completeOnboarding()
-                                onBackClick()
+                                // TODO: navigate back when the adding is complete
                             }) {
                                 HStack {
                                     if isLoading {
@@ -98,7 +98,9 @@ struct FeedSuggestionsContent: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: onBackClick) {
+                    Button(action: {
+                        // TODO: implement back action
+                    }) {
                         Text(feedFlowStrings.actionDone)
                             .fontWeight(.semibold)
                     }
@@ -107,17 +109,17 @@ struct FeedSuggestionsContent: View {
         }
         .task {
             for await categories in viewModel.suggestedCategoriesState {
-                self.suggestedCategories = categories.compactMap { $0 as? SuggestedFeedCategory }
+                self.suggestedCategories = categories.compactMap { $0 }
             }
         }
         .task {
             for await feeds in viewModel.selectedFeedsState {
-                self.selectedFeeds = feeds.compactMap { $0 as? String }
+                self.selectedFeeds = feeds.compactMap { $0 }
             }
         }
         .task {
             for await expanded in viewModel.expandedCategoriesState {
-                self.expandedCategories = expanded.compactMap { $0 as? String }
+                self.expandedCategories = expanded.compactMap { $0 }
             }
         }
         .task {

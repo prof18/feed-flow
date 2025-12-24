@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -45,14 +43,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -61,98 +57,95 @@ import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
 import com.prof18.feedflow.shared.ui.style.Spacing
 
+// TODO: Redesign it
+//  don't use set, but immutable lists
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OnboardingContent(
+fun FeedSuggestionsContent(
     categories: List<SuggestedFeedCategory>,
     selectedFeeds: Set<String>,
     expandedCategories: Set<String>,
     isLoading: Boolean,
     onFeedToggle: (String) -> Unit,
     onCategoryToggle: (String) -> Unit,
-    onComplete: () -> Unit,
-    onSkip: () -> Unit,
+    onAddFeeds: () -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
-        OnboardingHeroSection(
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        LazyColumn(
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "Feed Suggestions",
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                        )
+                    }
+                },
+            )
+        },
+        modifier = modifier,
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            contentPadding = PaddingValues(Spacing.large),
-            verticalArrangement = Arrangement.spacedBy(Spacing.regular),
+                .fillMaxSize()
+                .padding(paddingValues),
         ) {
-            items(
-                items = categories,
-                key = { it.id },
-            ) { category ->
-                ModernCategoryCard(
-                    category = category,
-                    isExpanded = expandedCategories.contains(category.id),
-                    selectedFeeds = selectedFeeds,
-                    onCategoryToggle = { onCategoryToggle(category.id) },
-                    onFeedToggle = onFeedToggle,
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
+                    )
+                    .padding(Spacing.large),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "Discover new feeds from our curated collection",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Medium,
                 )
             }
 
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(Spacing.large),
+                verticalArrangement = Arrangement.spacedBy(Spacing.regular),
+            ) {
+                items(
+                    items = categories,
+                    key = { it.id },
+                ) { category ->
+                    ModernCategoryCard(
+                        category = category,
+                        isExpanded = expandedCategories.contains(category.id),
+                        selectedFeeds = selectedFeeds,
+                        onCategoryToggle = { onCategoryToggle(category.id) },
+                        onFeedToggle = onFeedToggle,
+                    )
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
             }
-        }
 
-        ModernOnboardingFooter(
-            selectedFeedsCount = selectedFeeds.size,
-            isLoading = isLoading,
-            onComplete = onComplete,
-            onSkip = onSkip,
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
-}
-
-@Composable
-private fun OnboardingHeroSection(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
-                        MaterialTheme.colorScheme.surface,
-                    ),
-                ),
-            )
-            .padding(vertical = Spacing.extraLarge, horizontal = Spacing.large),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Spacing.regular),
-        ) {
-            Text(
-                text = "👋",
-                style = MaterialTheme.typography.displayLarge,
-            )
-
-            Text(
-                text = "Welcome to FeedFlow",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-
-            Text(
-                text = "Discover quality content from curated sources.\nSelect your interests to get started!",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.4,
+            FeedSuggestionsFooter(
+                selectedFeedsCount = selectedFeeds.size,
+                isLoading = isLoading,
+                onAddFeeds = onAddFeeds,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
@@ -304,182 +297,6 @@ private fun ModernFeedList(
                     selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 ),
-            )
-        }
-    }
-}
-
-@Composable
-private fun ModernOnboardingFooter(
-    selectedFeedsCount: Int,
-    isLoading: Boolean,
-    onComplete: () -> Unit,
-    onSkip: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        modifier = modifier,
-        shadowElevation = 12.dp,
-        tonalElevation = 3.dp,
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-    ) {
-        Column(
-            modifier = Modifier.padding(Spacing.large),
-            verticalArrangement = Arrangement.spacedBy(Spacing.regular),
-        ) {
-            if (selectedFeedsCount > 0) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = "✨ ",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Text(
-                        text = "$selectedFeedsCount feed${if (selectedFeedsCount > 1) "s" else ""} selected",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-            ) {
-                TextButton(
-                    onClick = onSkip,
-                    enabled = !isLoading,
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
-                ) {
-                    Text(
-                        "Skip",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Medium,
-                    )
-                }
-
-                Button(
-                    onClick = onComplete,
-                    enabled = selectedFeedsCount > 0 && !isLoading,
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(vertical = 16.dp),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 2.dp,
-                        pressedElevation = 6.dp,
-                    ),
-                ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            strokeWidth = 2.dp,
-                        )
-                    } else {
-                        Text(
-                            "Continue",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FeedSuggestionsContent(
-    categories: List<SuggestedFeedCategory>,
-    selectedFeeds: Set<String>,
-    expandedCategories: Set<String>,
-    isLoading: Boolean,
-    onFeedToggle: (String) -> Unit,
-    onCategoryToggle: (String) -> Unit,
-    onAddFeeds: () -> Unit,
-    onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Feed Suggestions",
-                        fontWeight = FontWeight.Bold,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                        )
-                    }
-                },
-            )
-        },
-        modifier = modifier,
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
-                    )
-                    .padding(Spacing.large),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "Discover new feeds from our curated collection",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Medium,
-                )
-            }
-
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(Spacing.large),
-                verticalArrangement = Arrangement.spacedBy(Spacing.regular),
-            ) {
-                items(
-                    items = categories,
-                    key = { it.id },
-                ) { category ->
-                    ModernCategoryCard(
-                        category = category,
-                        isExpanded = expandedCategories.contains(category.id),
-                        selectedFeeds = selectedFeeds,
-                        onCategoryToggle = { onCategoryToggle(category.id) },
-                        onFeedToggle = onFeedToggle,
-                    )
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(80.dp))
-                }
-            }
-
-            FeedSuggestionsFooter(
-                selectedFeedsCount = selectedFeeds.size,
-                isLoading = isLoading,
-                onAddFeeds = onAddFeeds,
-                modifier = Modifier.fillMaxWidth(),
             )
         }
     }

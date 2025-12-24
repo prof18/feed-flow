@@ -2,7 +2,6 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
@@ -13,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class OnboardingViewModel internal constructor(
+class FeedSuggestionsViewModel internal constructor(
     private val suggestedFeedsRepository: SuggestedFeedsRepository,
     private val feedSourcesRepository: FeedSourcesRepository,
     private val settingsRepository: SettingsRepository,
@@ -75,12 +74,7 @@ class OnboardingViewModel internal constructor(
                 )
             }
 
-            settingsRepository.setOnboardingCompleted(true)
             isLoadingMutableState.update { false }
         }
-    }
-
-    fun skipOnboarding() {
-        settingsRepository.setOnboardingCompleted(true)
     }
 }

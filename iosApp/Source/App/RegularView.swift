@@ -114,9 +114,7 @@ struct RegularView: View {
             .navigationDestination(for: CommonViewRoute.self) { route in
                 switch route {
                 case .feedSuggestions:
-                    FeedSuggestionsScreen {
-                        appState.regularNavigationPath.removeLast()
-                    }
+                    FeedSuggestionsScreen()
 
                 case .readerMode:
                     ReaderModeScreen(viewModel: readerModeViewModel)

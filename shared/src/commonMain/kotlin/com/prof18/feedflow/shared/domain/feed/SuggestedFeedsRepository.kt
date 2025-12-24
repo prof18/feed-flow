@@ -3,6 +3,8 @@ package com.prof18.feedflow.shared.domain.feed
 import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
 
+// TODO: move outside the repository to a file without class
+//  make a single file by category
 class SuggestedFeedsRepository {
 
     fun getSuggestedFeeds(): List<SuggestedFeedCategory> {

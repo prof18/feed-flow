@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.imageLoader
@@ -211,11 +212,13 @@ fun SettingsScreen(
         openInAppBrowser = { faqUrl ->
             browserManager.openWithInAppBrowser(faqUrl, context)
         },
+        navigateToFeedSuggestions = navigateToFeedSuggestions,
     )
 }
 
 @Suppress("UnusedParameter")
 @Composable
+// TODO: add navigation to feed suggestions
 private fun SettingsScreenContent(
     browsers: ImmutableList<Browser>,
     settingsState: SettingsState,
@@ -252,6 +255,7 @@ private fun SettingsScreenContent(
     onThemeModeSelected: (ThemeMode) -> Unit,
     onClearDownloadedArticles: () -> Unit,
     openInAppBrowser: (String) -> Unit,
+    navigateToFeedSuggestions: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -292,7 +296,7 @@ private fun SettingsScreenContent(
 
             item {
                 SettingItem(
-                    title = stringResource(Res.string.feed_suggestions_title),
+                    title = LocalFeedFlowStrings.current.feedSuggestionsTitle,
                     icon = Icons.Outlined.Lightbulb,
                     onClick = navigateToFeedSuggestions,
                 )
@@ -1113,6 +1117,7 @@ private fun SettingsScreenPreview() {
             onClearDownloadedArticles = {},
             setHideDate = {},
             openInAppBrowser = {},
+            navigateToFeedSuggestions = {},
         )
     }
 }

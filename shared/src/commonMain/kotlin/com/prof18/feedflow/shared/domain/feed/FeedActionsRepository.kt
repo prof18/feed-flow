@@ -45,11 +45,11 @@ internal class FeedActionsRepository(
         val currentFilter = feedStateRepository.getCurrentFeedFilter()
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
-                // For FreshRSS, we need to get the items and mark them individually
-                // Since FreshRSS API might not support bulk operations based on dates
-                val itemsAbove = feedStateRepository.getItemsAbove(targetItemId)
-                if (itemsAbove.isNotEmpty()) {
-                    gReaderRepository.updateReadStatus(itemsAbove, isRead = true)
+                // For FreshRSS, query the database to get ALL items above (not just loaded ones)
+                val itemIds = databaseHelper.getItemsAbove(targetItemId, currentFilter)
+                if (itemIds.isNotEmpty()) {
+                    val feedItemIds = itemIds.map { FeedItemId(it) }
+                    gReaderRepository.updateReadStatus(feedItemIds, isRead = true)
                         .onErrorSuspend {
                             feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
                         }
@@ -70,11 +70,11 @@ internal class FeedActionsRepository(
         val currentFilter = feedStateRepository.getCurrentFeedFilter()
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS -> {
-                // For FreshRSS, we need to get the items and mark them individually
-                // Since FreshRSS API might not support bulk operations based on dates
-                val itemsBelow = feedStateRepository.getItemsBelow(targetItemId)
-                if (itemsBelow.isNotEmpty()) {
-                    gReaderRepository.updateReadStatus(itemsBelow, isRead = true)
+                // For FreshRSS, query the database to get ALL items below (not just loaded ones)
+                val itemIds = databaseHelper.getItemsBelow(targetItemId, currentFilter)
+                if (itemIds.isNotEmpty()) {
+                    val feedItemIds = itemIds.map { FeedItemId(it) }
+                    gReaderRepository.updateReadStatus(feedItemIds, isRead = true)
                         .onErrorSuspend {
                             feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
                         }

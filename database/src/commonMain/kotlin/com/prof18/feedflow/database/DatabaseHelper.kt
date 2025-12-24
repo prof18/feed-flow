@@ -244,6 +244,26 @@ class DatabaseHelper(
             }
         }
 
+    suspend fun getItemsAbove(targetItemId: String, feedFilter: FeedFilter): List<String> =
+        withContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.selectItemsAbove(
+                targetItemId = targetItemId,
+                feedSourceId = feedFilter.getFeedSourceId(),
+                feedSourceCategoryId = feedFilter.getCategoryId(),
+                isUncategorized = feedFilter.getIsUncategorized(),
+            ).executeAsList()
+        }
+
+    suspend fun getItemsBelow(targetItemId: String, feedFilter: FeedFilter): List<String> =
+        withContext(backgroundDispatcher) {
+            dbRef.feedItemQueries.selectItemsBelow(
+                targetItemId = targetItemId,
+                feedSourceId = feedFilter.getFeedSourceId(),
+                feedSourceCategoryId = feedFilter.getCategoryId(),
+                isUncategorized = feedFilter.getIsUncategorized(),
+            ).executeAsList()
+        }
+
     suspend fun markAllAboveAsRead(targetItemId: String, feedFilter: FeedFilter) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             dbRef.feedItemQueries.markAllAboveAsRead(

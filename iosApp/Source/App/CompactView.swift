@@ -39,12 +39,6 @@ struct CompactView: View {
     let readerModeViewModel: ReaderModeViewModel
 
     @State private var feedSourceToEdit: FeedSource?
-    @State private var showChangeCategorySheet = false
-    @State private var changeFeedCategoryViewModel = ChangeFeedCategoryViewModel(
-        categoryRepository: DIContainer.shared.get(type: FeedCategoryRepository.self),
-        feedSourcesRepository: DIContainer.shared.get(type: FeedSourcesRepository.self),
-        feedStateRepository: DIContainer.shared.get(type: FeedStateRepository.self)
-    )
 
     var body: some View {
         @Bindable var appState = appState
@@ -86,10 +80,6 @@ struct CompactView: View {
                 onPinFeedClick: { feedSource in
                     homeViewModel.toggleFeedPin(feedSource: feedSource)
                 },
-                onChangeFeedCategoryClick: { feedSource in
-                    changeFeedCategoryViewModel.loadFeedSource(feedSource: feedSource)
-                    showChangeCategorySheet = true
-                },
                 onDeleteCategory: { categoryId in
                     homeViewModel.deleteCategory(categoryId: CategoryId(value: categoryId))
                 },
@@ -106,14 +96,6 @@ struct CompactView: View {
                 if let feedSource = feedSourceToEdit {
                     EditFeedScreen(feedSource: feedSource)
                 }
-            }
-            .sheet(isPresented: $showChangeCategorySheet) {
-                EditCategorySheetContainerForChangeCategory(
-                    viewModel: changeFeedCategoryViewModel,
-                    onSave: {
-                        changeFeedCategoryViewModel.saveCategory()
-                    }
-                )
             }
             .navigationDestination(for: CompactViewRoute.self) { route in
                 switch route {
@@ -159,12 +141,6 @@ struct CompactView: View {
         .task {
             for await state in homeViewModel.navDrawerState {
                 self.navDrawerState = state
-            }
-        }
-        .task {
-            for await _ in changeFeedCategoryViewModel.categoryChangedState {
-                showChangeCategorySheet = false
-                homeViewModel.refreshData()
             }
         }
     }

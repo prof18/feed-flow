@@ -23,6 +23,8 @@ struct SidebarDrawer: View {
 
     @Binding var selectedDrawerItem: DrawerItem?
 
+    @StateObject private var categoryVMStoreOwner = VMStoreOwner<ChangeFeedCategoryViewModel>(Deps.shared.getChangeFeedCategoryViewModel()) 
+
     @State private var showMarkAllReadDialog = false
     @State private var showClearOldArticlesDialog = false
     @State private var expandedCategoryIds: Set<String> = []
@@ -45,7 +47,6 @@ struct SidebarDrawer: View {
     let onEditFeedClick: (FeedSource) -> Void
     let onDeleteFeedClick: (FeedSource) -> Void
     let onPinFeedClick: (FeedSource) -> Void
-    let onChangeFeedCategoryClick: (FeedSource) -> Void
     let onDeleteCategory: (String) -> Void
     let onUpdateCategoryName: (String, String) -> Void
 
@@ -108,25 +109,17 @@ struct SidebarDrawer: View {
             )
         )
         .sheet(isPresented: $showChangeCategorySheet) {
-            if let feedSource = selectedFeedForCategoryChange {
-                ChangeCategorySheet(
-                    feedSource: feedSource,
-                    categories: navDrawerState.categories.compactMap { item in
-                        if let drawerCategory = item as? DrawerItem.DrawerCategory {
-                            return drawerCategory.category
-                        }
-                        return nil
-                    },
-                    onCategorySelected: { _ in
-                        onChangeFeedCategoryClick(feedSource)
-                        showChangeCategorySheet = false
-                        selectedFeedForCategoryChange = nil
-                    },
-                    onDismiss: {
-                        showChangeCategorySheet = false
-                        selectedFeedForCategoryChange = nil
-                    }
-                )
+            EditCategorySheetContainerForChangeCategory(
+                viewModel: categoryVMStoreOwner.instance,
+                onSave: {
+                    categoryVMStoreOwner.instance.saveCategory()
+                }
+            )
+        }
+        .task {
+            for await _ in categoryVMStoreOwner.instance.categoryChangedState {
+                showChangeCategorySheet = false
+                selectedFeedForCategoryChange = nil
             }
         }
     }
@@ -252,6 +245,7 @@ private extension SidebarDrawer {
             onPin: onPinFeedClick,
             onChangeCategory: { feedSource in
                 selectedFeedForCategoryChange = feedSource
+                categoryVMStoreOwner.instance.loadFeedSource(feedSource: feedSource)
                 showChangeCategorySheet = true
             },
             onDelete: onDeleteFeedClick,

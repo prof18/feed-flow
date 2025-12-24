@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -27,13 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.desktop.BrowserManager
+import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
+import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.utils.copyToClipboard
@@ -63,9 +63,10 @@ internal fun HomeScreen(
     onAccountsClick: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
-    changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = DI.koin.get(),
 ) {
     val scope = rememberCoroutineScope()
+    val changeFeedCategoryViewModel = desktopViewModel { DI.koin.get<ChangeFeedCategoryViewModel>() }
+
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()
     val navDrawerState by homeViewModel.navDrawerState.collectAsState()
@@ -79,7 +80,6 @@ internal fun HomeScreen(
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsState()
 
     var showChangeCategorySheet by remember { mutableStateOf(false) }
-    val changeCategorySheetState = rememberModalBottomSheetState()
 
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
@@ -93,7 +93,6 @@ internal fun HomeScreen(
     LaunchedEffect(Unit) {
         changeFeedCategoryViewModel.categoryChangedState.collect {
             showChangeCategorySheet = false
-            homeViewModel.refreshData()
         }
     }
 
@@ -248,8 +247,7 @@ internal fun HomeScreen(
     )
 
     if (showChangeCategorySheet) {
-        EditCategorySheet(
-            sheetState = changeCategorySheetState,
+        EditCategoryDialog(
             categoryState = categoriesState,
             onCategorySelected = { categoryId ->
                 changeFeedCategoryViewModel.onCategorySelected(categoryId)
@@ -265,6 +263,7 @@ internal fun HomeScreen(
             },
             onDismiss = {
                 changeFeedCategoryViewModel.saveCategory()
+                showChangeCategorySheet = false
             },
         )
     }

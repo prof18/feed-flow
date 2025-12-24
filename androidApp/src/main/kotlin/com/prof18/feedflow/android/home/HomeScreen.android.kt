@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -50,9 +49,9 @@ internal fun HomeScreen(
     onAccountsClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
     onEditFeedClick: (FeedSource) -> Unit,
-    changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject(),
 ) {
     val browserManager = koinInject<BrowserManager>()
+    val changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject()
 
     val loadingState by homeViewModel.loadingState.collectAsStateWithLifecycle()
     val feedState by homeViewModel.feedState.collectAsStateWithLifecycle()
@@ -69,7 +68,6 @@ internal fun HomeScreen(
 
     var showChangeCategorySheet by remember { mutableStateOf(false) }
     val changeCategorySheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -82,7 +80,6 @@ internal fun HomeScreen(
     LaunchedEffect(Unit) {
         changeFeedCategoryViewModel.categoryChangedState.collect {
             showChangeCategorySheet = false
-            homeViewModel.refreshData()
         }
     }
 

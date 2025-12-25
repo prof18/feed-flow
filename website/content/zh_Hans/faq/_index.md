@@ -6,5 +6,4 @@ layout: "list"
 heading: "Frequently Asked Questions"
 ---
 
-Welcome to FeedFlow's FAQ section. Here you'll find answers to the most common
-questions about using FeedFlow.
+欢迎来到 FeedFlow 的常见问题专区，这里汇集了使用 FeedFlow 的高频问题解答。

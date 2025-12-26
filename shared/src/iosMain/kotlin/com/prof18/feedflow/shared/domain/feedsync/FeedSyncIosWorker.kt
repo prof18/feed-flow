@@ -19,6 +19,10 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceIos
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadParam
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.presentation.getICloudBaseFolderURL
@@ -35,6 +39,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -44,16 +49,19 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.NSFileManagerItemReplacementUsingNewMetadataOnly
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
+import kotlin.coroutines.resume
 import kotlin.time.Clock
 
 internal class FeedSyncIosWorker(
     private val dispatcherProvider: DispatcherProvider,
     private val feedSyncMessageQueue: FeedSyncMessageQueue,
     private val dropboxDataSource: DropboxDataSource,
+    private val googleDriveDataSource: GoogleDriveDataSourceIos,
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
     private val appEnvironment: AppEnvironment,
     private val dropboxSettings: DropboxSettings,
+    private val googleDriveSettings: GoogleDriveSettings,
     private val settingsRepository: SettingsRepository,
     private val accountsRepository: AccountsRepository,
     private val iCloudSettings: ICloudSettings,
@@ -210,6 +218,20 @@ internal class FeedSyncIosWorker(
         }
     }
 
+    private suspend fun restoreGoogleDriveClient() {
+        if (!googleDriveDataSource.isServiceSet()) {
+            val restored = suspendCancellableCoroutine { continuation ->
+                googleDriveDataSource.restorePreviousSignIn { success ->
+                    continuation.resume(success)
+                }
+            }
+            if (!restored) {
+                logger.d { "Google Drive service could not be restored" }
+                feedSyncMessageQueue.emitResult(SyncResult.General(SyncUploadError.GoogleDriveClientRestoreError))
+            }
+        }
+    }
+
     private suspend fun emitErrorMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.General(SyncUploadError.DropboxUploadFailed))
 
@@ -312,6 +334,11 @@ internal class FeedSyncIosWorker(
                 }
             }
 
+            SyncAccounts.GOOGLE_DRIVE -> {
+                restoreGoogleDriveClient()
+                googleDriveUpload(databasePath)
+            }
+
             else -> {
                 // Do nothing
             }
@@ -340,6 +367,11 @@ internal class FeedSyncIosWorker(
 
             SyncAccounts.ICLOUD -> {
                 return iCloudDownload(isFirstSync)
+            }
+
+            SyncAccounts.GOOGLE_DRIVE -> {
+                restoreGoogleDriveClient()
+                return googleDriveDownload()
             }
 
             else -> {
@@ -423,5 +455,33 @@ internal class FeedSyncIosWorker(
         val databaseUrl = documentsDirectory?.URLByAppendingPathComponent(getDatabaseName())
 
         return databaseUrl
+    }
+
+    private suspend fun googleDriveUpload(databasePath: NSURL) {
+        val uploadParam = GoogleDriveUploadParam(
+            fileName = "${getDatabaseName()}.db",
+            url = databasePath,
+        )
+        googleDriveDataSource.performUpload(uploadParam)
+        googleDriveSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+        logger.d { "Upload to Google Drive successfully" }
+    }
+
+    private suspend fun googleDriveDownload(): SyncResult {
+        val downloadParam = GoogleDriveDownloadParam(
+            fileName = "${getDatabaseName()}.db",
+            outputName = "${getDatabaseName()}.db",
+        )
+        val result = googleDriveDataSource.performDownload(downloadParam)
+        val destinationUrl = result.destinationUrl
+        return if (destinationUrl == null) {
+            logger.e { "Google Drive download: destination URL is null" }
+            SyncResult.General(SyncDownloadError.GoogleDriveDownloadFailed)
+        } else {
+            replaceDatabase(destinationUrl.url)
+            googleDriveSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+            logger.d { "Download from Google Drive successfully" }
+            SyncResult.Success
+        }
     }
 }

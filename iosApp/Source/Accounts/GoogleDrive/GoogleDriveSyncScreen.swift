@@ -2,7 +2,7 @@
 //  GoogleDriveSyncScreen.swift
 //  FeedFlow
 //
-//  Created by Claude on 05/11/25.
+//  Created by Marco Gomiero on 05/11/25.
 //  Copyright © 2025 FeedFlow. All rights reserved.
 //
 
@@ -11,12 +11,15 @@ import SwiftUI
 
 struct GoogleDriveSyncScreen: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppState.self) private var appState
 
     @StateObject private var vmStoreOwner = VMStoreOwner<GoogleDriveSyncViewModel>(
         Deps.shared.getGoogleDriveSyncViewModel()
     )
 
-    @State private var googleDriveConnectionUiState: AccountConnectionUiState = .unlinked
+    private let googleDriveDataSource = Deps.shared.getGoogleDriveDataSource()
+
+    @State private var googleDriveConnectionUiState: AccountConnectionUiState = AccountConnectionUiState.Loading()
     @State private var snackbarMessage: String?
     @State private var showSnackbar = false
 
@@ -25,6 +28,15 @@ struct GoogleDriveSyncScreen: View {
             googleDriveConnectionUiState: googleDriveConnectionUiState,
             onBackClick: {
                 dismiss()
+            },
+            onConnectClick: {
+                googleDriveDataSource.authenticate { success in
+                    if success.boolValue {
+                        vmStoreOwner.instance.onAuthorizationSuccess()
+                    } else {
+                        vmStoreOwner.instance.onAuthorizationFailed()
+                    }
+                }
             },
             onBackupClick: {
                 vmStoreOwner.instance.triggerBackup()
@@ -46,31 +58,30 @@ struct GoogleDriveSyncScreen: View {
             }
         }
         .task {
-            for await message in vmStoreOwner.instance.syncMessageQueue {
-                handleSyncMessage(message: message)
+            for await state in vmStoreOwner.instance.syncMessageQueue where state.isError() {
+                if let errorState = state as? any SyncResultError {
+                    self.appState.snackbarQueue.append(
+                        SnackbarData(
+                            title: feedFlowStrings.errorAccountSync(errorState.errorCode.code),
+                            subtitle: nil,
+                            showBanner: true
+                        )
+                    )
+                }
             }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .didGoogleDriveSuccess)) { _ in
-            // Google Drive auth succeeded
-            if let accessToken = getGoogleDriveAccessToken() {
-                vmStoreOwner.instance.saveGoogleDriveAuth(accessToken: accessToken)
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .didGoogleDriveCancel)) { _ in
-            snackbarMessage = "Google Drive authentication cancelled"
-            showSnackbar = true
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .didGoogleDriveError)) { _ in
-            snackbarMessage = "Google Drive authentication error"
-            showSnackbar = true
         }
     }
 
     private func handleMessage(message: GoogleDriveSynMessages) {
         switch message {
         case is GoogleDriveSynMessages.Error:
-            snackbarMessage = "Google Drive sync error"
-            showSnackbar = true
+            appState.snackbarQueue.append(
+                SnackbarData(
+                    title: feedFlowStrings.googleDriveSyncError,
+                    subtitle: nil,
+                    showBanner: true
+                )
+            )
         case is GoogleDriveSynMessages.ProceedToAuth:
             // OAuth is handled natively on iOS
             break
@@ -78,29 +89,4 @@ struct GoogleDriveSyncScreen: View {
             break
         }
     }
-
-    private func handleSyncMessage(message: FeedSyncMessage) {
-        switch message {
-        case is FeedSyncMessage.BackupSuccess:
-            snackbarMessage = "Backup completed successfully"
-            showSnackbar = true
-        case is FeedSyncMessage.BackupError:
-            snackbarMessage = "Backup failed"
-            showSnackbar = true
-        default:
-            break
-        }
-    }
-
-    private func getGoogleDriveAccessToken() -> String? {
-        // This would retrieve the access token from Google Sign-In
-        // For now, return a placeholder
-        return "google_drive_access_token"
-    }
-}
-
-extension Notification.Name {
-    static let didGoogleDriveSuccess = Notification.Name("didGoogleDriveSuccess")
-    static let didGoogleDriveCancel = Notification.Name("didGoogleDriveCancel")
-    static let didGoogleDriveError = Notification.Name("didGoogleDriveError")
 }

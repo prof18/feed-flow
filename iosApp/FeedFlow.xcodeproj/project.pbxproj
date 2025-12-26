@@ -44,6 +44,12 @@
 		CC23293029D63038005D0E06 /* commonMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292E29D63038005D0E06 /* commonMain */; };
 		CC23293129D63038005D0E06 /* iosMain in Resources */ = {isa = PBXBuildFile; fileRef = CC23292F29D63038005D0E06 /* iosMain */; };
 		CC23293C29D85208005D0E06 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = CC23293B29D85208005D0E06 /* SwiftSoup */; };
+		CC3A71762EFEE0A100CAACD1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = CC3A71752EFEE0A100CAACD1 /* GoogleSignIn */; };
+		CC3A71792EFEE13200CAACD1 /* GoogleAPIClientForREST_Drive in Frameworks */ = {isa = PBXBuildFile; productRef = CC3A71782EFEE13200CAACD1 /* GoogleAPIClientForREST_Drive */; };
+		CC3A717D2EFEEADF00CAACD1 /* GoogleAPIClientForREST_Drive in Frameworks */ = {isa = PBXBuildFile; productRef = CC3A717C2EFEEADF00CAACD1 /* GoogleAPIClientForREST_Drive */; };
+		CC3A717F2EFEEB4500CAACD1 /* GoogleAPIClientForREST_Drive in Frameworks */ = {isa = PBXBuildFile; productRef = CC3A717E2EFEEB4500CAACD1 /* GoogleAPIClientForREST_Drive */; };
+		CC3A71812EFEEB7F00CAACD1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = CC3A71802EFEEB7F00CAACD1 /* GoogleSignIn */; };
+		CC3A71832EFEEB8A00CAACD1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = CC3A71822EFEEB8A00CAACD1 /* GoogleSignIn */; };
 		CC4B803B29D98BB20004A0AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803A29D98BB20004A0AB /* Nuke */; };
 		CC4B803D29D98BB20004A0AB /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = CC4B803C29D98BB20004A0AB /* NukeUI */; };
 		CCEA11BB2A6D2AC300C661AC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCEA11BA2A6D2AC300C661AC /* GoogleService-Info.plist */; };
@@ -144,6 +150,7 @@
 			membershipExceptions = (
 				Accounts/Dropbox/Data/DropboxDataSourceIos.swift,
 				Accounts/Dropbox/Data/DropboxErrors.swift,
+				Accounts/GoogleDrive/Data/GoogleDrivePlatformClient.swift,
 				DI/Koin.swift,
 				Reader/FeedItemParser.swift,
 				Reader/FeedItemParserWorkerIos.swift,
@@ -166,6 +173,7 @@
 			membershipExceptions = (
 				Accounts/Dropbox/Data/DropboxDataSourceIos.swift,
 				Accounts/Dropbox/Data/DropboxErrors.swift,
+				Accounts/GoogleDrive/Data/GoogleDrivePlatformClient.swift,
 				Reader/FeedItemParser.swift,
 				Reader/FeedItemParserWorkerIos.swift,
 				UI/Style/Spacing.swift,
@@ -205,6 +213,8 @@
 				1378B0432D735968004E9424 /* SwiftyDropbox in Frameworks */,
 				1378B0452D735977004E9424 /* SwiftSoup in Frameworks */,
 				133E7E312E4F2BD800B2232E /* TelemetryDeck in Frameworks */,
+				CC3A717F2EFEEB4500CAACD1 /* GoogleAPIClientForREST_Drive in Frameworks */,
+				CC3A71812EFEEB7F00CAACD1 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,6 +222,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC3A717D2EFEEADF00CAACD1 /* GoogleAPIClientForREST_Drive in Frameworks */,
+				CC3A71832EFEEB8A00CAACD1 /* GoogleSignIn in Frameworks */,
 				13A571E92D747F0600F0FFB0 /* SwiftUI.framework in Frameworks */,
 				13A572012D7486E300F0FFB0 /* SwiftSoup in Frameworks */,
 				13A572032D7486F700F0FFB0 /* FirebaseCrashlytics in Frameworks */,
@@ -230,10 +242,12 @@
 				139C09DC2C668E3700A5E3E8 /* Collections in Frameworks */,
 				CC4B803D29D98BB20004A0AB /* NukeUI in Frameworks */,
 				CC23293C29D85208005D0E06 /* SwiftSoup in Frameworks */,
+				CC3A71762EFEE0A100CAACD1 /* GoogleSignIn in Frameworks */,
 				13929EB52D734E6E003752AE /* FirebaseCrashlytics in Frameworks */,
 				CC4B803B29D98BB20004A0AB /* Nuke in Frameworks */,
 				CC0799422C29B74600067E06 /* SwiftyDropbox in Frameworks */,
 				CCEBF1422E2CFEDD004CE2B2 /* TelemetryDeck in Frameworks */,
+				CC3A71792EFEE13200CAACD1 /* GoogleAPIClientForREST_Drive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +354,8 @@
 				1378B0422D735968004E9424 /* SwiftyDropbox */,
 				1378B0442D735977004E9424 /* SwiftSoup */,
 				133E7E302E4F2BD800B2232E /* TelemetryDeck */,
+				CC3A717E2EFEEB4500CAACD1 /* GoogleAPIClientForREST_Drive */,
+				CC3A71802EFEEB7F00CAACD1 /* GoogleSignIn */,
 			);
 			productName = ShareExtension;
 			productReference = 13929E992D7345F0003752AE /* ShareExtension.appex */;
@@ -368,6 +384,8 @@
 				13A572002D7486E300F0FFB0 /* SwiftSoup */,
 				13A572022D7486F700F0FFB0 /* FirebaseCrashlytics */,
 				13A572042D74870A00F0FFB0 /* Nuke */,
+				CC3A717C2EFEEADF00CAACD1 /* GoogleAPIClientForREST_Drive */,
+				CC3A71822EFEEB8A00CAACD1 /* GoogleSignIn */,
 			);
 			productName = WidgetExtension;
 			productReference = 13A571E52D747F0600F0FFB0 /* WidgetExtension.appex */;
@@ -407,6 +425,8 @@
 				13929EB42D734E6E003752AE /* FirebaseCrashlytics */,
 				132B595D2DB28E8D0005D0D7 /* Reader */,
 				CCEBF1412E2CFEDD004CE2B2 /* TelemetryDeck */,
+				CC3A71752EFEE0A100CAACD1 /* GoogleSignIn */,
+				CC3A71782EFEE13200CAACD1 /* GoogleAPIClientForREST_Drive */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* FeedFlow.app */;
@@ -479,6 +499,8 @@
 				CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */,
 				13929EB32D734E6E003752AE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				CCEBF1402E2CFEDD004CE2B2 /* XCRemoteSwiftPackageReference "SwiftSDK" */,
+				CC3A71742EFEE0A000CAACD1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				CC3A71772EFEE13200CAACD1 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -1153,6 +1175,22 @@
 				version = 2.11.1;
 			};
 		};
+		CC3A71742EFEE0A000CAACD1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+		CC3A71772EFEE13200CAACD1 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/google-api-objectivec-client-for-rest";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		CC4B803929D98BB20004A0AB /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
@@ -1238,6 +1276,36 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CC23293A29D85208005D0E06 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
 			productName = SwiftSoup;
+		};
+		CC3A71752EFEE0A100CAACD1 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC3A71742EFEE0A000CAACD1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		CC3A71782EFEE13200CAACD1 /* GoogleAPIClientForREST_Drive */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC3A71772EFEE13200CAACD1 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_Drive;
+		};
+		CC3A717C2EFEEADF00CAACD1 /* GoogleAPIClientForREST_Drive */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC3A71772EFEE13200CAACD1 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_Drive;
+		};
+		CC3A717E2EFEEB4500CAACD1 /* GoogleAPIClientForREST_Drive */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC3A71772EFEE13200CAACD1 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_Drive;
+		};
+		CC3A71802EFEEB7F00CAACD1 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC3A71742EFEE0A000CAACD1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		CC3A71822EFEEB8A00CAACD1 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC3A71742EFEE0A000CAACD1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 		CC4B803A29D98BB20004A0AB /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -3,13 +3,13 @@ package com.prof18.feedflow.feedsync.googledrive
 import platform.Foundation.NSURL
 
 actual class GoogleDriveUploadParam(
-    val path: String,
+    val fileName: String,
     val url: NSURL,
 )
 
 actual class GoogleDriveDownloadParam(
+    val fileName: String,
     val outputName: String,
-    val path: String,
 )
 
 actual class DatabaseDestinationUrl(

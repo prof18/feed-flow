@@ -1,203 +1,180 @@
 package com.prof18.feedflow.feedsync.googledrive
 
 import co.touchlab.kermit.Logger
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
-import com.google.api.client.googleapis.auth.oauth2.GoogleRefreshTokenRequest
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
 import com.google.api.client.http.FileContent
+import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
-import com.prof18.feedflow.core.model.GoogleDriveClientStatus
+import com.google.api.client.util.store.FileDataStoreFactory
+import com.google.api.services.drive.Drive
+import com.google.api.services.drive.DriveScopes
+import com.prof18.feedflow.core.utils.AppDataPathBuilder
+import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
-import kotlinx.coroutines.suspendCancellableCoroutine
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveConstants.GOOGLE_DRIVE_CLIENT_APPLICATION_NAME
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
+import java.io.File
+import java.io.InputStreamReader
+import java.util.*
+import com.google.api.services.drive.model.File as GoogleDriveFile
 
-// TODO: divide android and JVM desktop only.
-internal class GoogleDriveDataSourceJvm(
+// TODO: handle errors properly
+class GoogleDriveDataSourceJvm(
     private val logger: Logger,
     private val dispatcherProvider: DispatcherProvider,
     private val googleDriveSettings: GoogleDriveSettings,
-    private val clientId: String,
-    private val clientSecret: String,
-) : GoogleDriveDataSource {
+    private val appEnvironment: AppEnvironment,
+) {
 
     private var driveService: Drive? = null
+
+    private val httpTransport = NetHttpTransport()
     private val jsonFactory = GsonFactory.getDefaultInstance()
-    private val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
+    private val dataPath: File
+        get() = File("${AppDataPathBuilder.getAppDataPath(appEnvironment)}/gdata")
 
-    override fun setup(clientId: String) {
-        // No op, nothing required on JVM side
-    }
+    suspend fun startAuthFlow(): Boolean = withContext(dispatcherProvider.io) {
+        try {
+            val flow = buildAuthFlow()
+            val receiver = LocalServerReceiver.Builder().setPort(8888).build()
+            val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
 
-    override fun startAuthorization(platformAuthHandler: () -> Unit) = platformAuthHandler()
+            driveService = Drive.Builder(httpTransport, jsonFactory, credential)
+                .setApplicationName(GOOGLE_DRIVE_CLIENT_APPLICATION_NAME)
+                .build()
 
-    override fun handleOAuthResponse(platformOAuthResponseHandler: () -> Unit) {
-        // no-op on JVM
-    }
-
-    override fun saveAuth(stringCredentials: GoogleDriveStringCredentials) {
-        val credential = getCredentialsFromString(stringCredentials.value)
-        credential?.let { driveService = createDriveService(it) }
-    }
-
-    override fun restoreAuth(stringCredentials: GoogleDriveStringCredentials): GoogleDriveClientStatus {
-        if (driveService != null) {
-            return GoogleDriveClientStatus.LINKED
-        }
-        val credential = getCredentialsFromString(stringCredentials.value)
-        return if (credential != null) {
-            driveService = createDriveService(credential)
-            GoogleDriveClientStatus.LINKED
-        } else {
-            GoogleDriveClientStatus.NOT_LINKED
+            googleDriveSettings.setGoogleDriveData("linked")
+            true
+        } catch (e: Exception) {
+            logger.e(e) { "Error during Google Drive auth flow" }
+            false
         }
     }
 
-    private fun createDriveService(credential: GoogleCredential): Drive {
-        return Drive.Builder(httpTransport, jsonFactory, credential)
-            .setApplicationName(GoogleDriveConstants.GOOGLE_DRIVE_CLIENT_APPLICATION_NAME)
+    fun restoreAuth(): Boolean {
+        if (googleDriveSettings.getGoogleDriveData() == null) {
+            return false
+        }
+        return try {
+            val flow = buildAuthFlow()
+            val credential = flow.loadCredential("user")
+            if (credential != null && (credential.refreshToken != null || credential.expiresInSeconds == null || credential.expiresInSeconds > 60)) {
+                driveService = Drive.Builder(httpTransport, jsonFactory, credential)
+                    .setApplicationName(GOOGLE_DRIVE_CLIENT_APPLICATION_NAME)
+                    .build()
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            logger.e(e) { "Error restoring Google Drive auth" }
+            false
+        }
+    }
+
+    suspend fun revokeAccess() = withContext(dispatcherProvider.io) {
+        try {
+            driveService = null
+            googleDriveSettings.clearAll()
+            val tokensFolder = dataPath
+            if (tokensFolder.exists()) {
+                tokensFolder.deleteRecursively()
+            }
+        } catch (e: Exception) {
+            logger.e(e) { "Error revoking Google Drive access" }
+            throw GoogleDriveException(e, "Error revoking access")
+        }
+    }
+
+    fun isClientSet(): Boolean = driveService != null
+
+    private fun buildAuthFlow(): GoogleAuthorizationCodeFlow {
+        val inStream = GoogleDriveDataSourceJvm::class.java.getResourceAsStream("/credentials.json")
+            ?: throw Exception("Resource not found: /credentials.json")
+
+        val clientSecrets = GoogleClientSecrets.load(jsonFactory, InputStreamReader(inStream))
+
+        return GoogleAuthorizationCodeFlow.Builder(
+            httpTransport,
+            jsonFactory,
+            clientSecrets,
+            Collections.singleton(DriveScopes.DRIVE_APPDATA),
+        )
+            .setDataStoreFactory(FileDataStoreFactory(dataPath))
+            .setAccessType("offline")
             .build()
     }
 
-    override suspend fun revokeAccess() = withContext(dispatcherProvider.io) {
-        try {
-            driveService = null
-        } catch (e: Exception) {
-            val message = "Error during revoking Google Drive access"
-            logger.e(e) { message }
-            throw GoogleDriveException(e as? Exception ?: Exception(e), e.message ?: message)
+    private suspend fun <T> withDriveClient(block: (Drive) -> T): T {
+        if (driveService == null) {
+            restoreAuth()
+        }
+        val client = driveService
+            ?: throw GoogleDriveException(IllegalStateException("Drive client not initialized"), "Drive client not initialized")
+        return withContext(dispatcherProvider.io) {
+            block(client)
         }
     }
 
-    override fun isClientSet(): Boolean = driveService != null
-
-    private suspend fun ensureValidToken() = withContext(dispatcherProvider.io) {
-        val credentials = googleDriveSettings.getGoogleDriveCredentials() ?: return@withContext
-
-        if (credentials.expiresAtMillis < System.currentTimeMillis() + 60_000) {
-            val refreshToken = credentials.refreshToken
-            if (refreshToken != null && clientId.isNotEmpty() && clientSecret.isNotEmpty()) {
+    suspend fun performUpload(uploadParam: GoogleDriveUploadParam): GoogleDriveUploadResult =
+        withDriveClient { client ->
+            val cachedFileId = googleDriveSettings.getBackupFileId()
+            val mediaContent = FileContent("application/x-sqlite3", uploadParam.file)
+            if (cachedFileId != null) {
                 try {
-                    logger.d { "Refreshing expired Google Drive access token" }
-                    val tokenResponse = GoogleRefreshTokenRequest(
-                        httpTransport,
-                        jsonFactory,
-                        refreshToken,
-                        clientId,
-                        clientSecret,
-                    ).execute()
-
-                    val newCredentials = credentials.copy(
-                        accessToken = tokenResponse.accessToken,
-                        expiresAtMillis = System.currentTimeMillis() + (tokenResponse.expiresInSeconds * 1000),
-                    )
-
-                    googleDriveSettings.setGoogleDriveCredentials(newCredentials)
-
-                    val newGoogleCredential = GoogleCredential().setAccessToken(newCredentials.accessToken)
-                    driveService = createDriveService(newGoogleCredential)
-
-                    logger.d { "Successfully refreshed Google Drive access token" }
+                    val metadata = GoogleDriveFile().setName(uploadParam.fileName)
+                    client.files().update(cachedFileId, metadata, mediaContent).execute()
                 } catch (e: Exception) {
-                    logger.e(e) { "Failed to refresh Google Drive access token" }
-                    throw GoogleDriveException(e, "Failed to refresh access token")
+                    logger.w { "Failed to update existing file, creating new one" }
+                    createNewFile(client, uploadParam.fileName, mediaContent)
                 }
             } else {
-                // On Android, refresh tokens are managed by Google Play Services.
-                // Token refresh should be handled externally before calling API methods.
-                // If we reach here with an expired token, the API call may fail.
-                logger.w { "Token may be expired and no refresh token available. On Android, ensure getFreshAccessToken() is called before sync operations." }
+                createNewFile(client, uploadParam.fileName, mediaContent)
             }
+            GoogleDriveUploadResult
         }
+
+    private fun createNewFile(client: Drive, fileName: String, mediaContent: FileContent) {
+        val fileMetadata = GoogleDriveFile()
+            .setName(fileName)
+            .setParents(listOf("appDataFolder"))
+
+        val newFile = client.files().create(fileMetadata, mediaContent)
+            .setFields("id")
+            .execute()
+
+        googleDriveSettings.setBackupFileId(newFile.id)
     }
 
-    private fun getCredentialsFromString(stringCredentials: String): GoogleCredential? {
-        return try {
-            val accessToken = stringCredentials
-            GoogleCredential().setAccessToken(accessToken)
-        } catch (e: Exception) {
-            logger.e("Unable to create credentials from string", e)
-            null
-        }
-    }
+    suspend fun performDownload(downloadParam: GoogleDriveDownloadParam): GoogleDriveDownloadResult =
+        withDriveClient { client ->
+            var fileId = googleDriveSettings.getBackupFileId()
 
-    override suspend fun performUpload(uploadParam: GoogleDriveUploadParam): GoogleDriveUploadResult {
-        ensureValidToken()
-        return suspendCancellableCoroutine { continuation ->
-            try {
-                val service = requireNotNull(driveService)
-
-                val fileMetadata = File().apply {
-                    name = uploadParam.path.substringAfterLast('/')
-                    parents = listOf("appDataFolder")
-                }
-
-                val mediaContent = FileContent("application/octet-stream", uploadParam.file)
-
-                val existingFiles = service.files().list()
+            if (fileId == null) {
+                val result = client.files().list()
                     .setSpaces("appDataFolder")
-                    .setQ("name='${fileMetadata.name}'")
+                    .setQ("name = '${downloadParam.fileName}' and trashed = false")
+                    .setFields("files(id)")
                     .execute()
-                    .files
 
-                val uploadedFile = if (existingFiles.isNotEmpty()) {
-                    service.files().update(existingFiles[0].id, fileMetadata, mediaContent)
-                        .setFields("id, modifiedTime, size")
-                        .execute()
-                } else {
-                    service.files().create(fileMetadata, mediaContent)
-                        .setFields("id, modifiedTime, size")
-                        .execute()
+                fileId = result.files.firstOrNull()?.id
+
+                if (fileId != null) {
+                    googleDriveSettings.setBackupFileId(fileId)
                 }
-
-                val uploadResult = GoogleDriveUploadResult(
-                    id = uploadedFile.id,
-                    editDateMillis = uploadedFile.modifiedTime?.value ?: System.currentTimeMillis(),
-                    sizeInByte = uploadedFile.getSize() ?: 0L,
-                )
-                continuation.resume(uploadResult)
-            } catch (e: Exception) {
-                logger.e(e) { "Error while uploading data to Google Drive" }
-                continuation.resumeWithException(GoogleDriveUploadException(exceptionCause = e))
             }
-        }
-    }
 
-    override suspend fun performDownload(downloadParam: GoogleDriveDownloadParam): GoogleDriveDownloadResult {
-        ensureValidToken()
-        return suspendCancellableCoroutine { continuation ->
-            try {
-                val service = requireNotNull(driveService)
-
-                val fileName = downloadParam.path.substringAfterLast('/')
-                val files = service.files().list()
-                    .setSpaces("appDataFolder")
-                    .setQ("name='$fileName'")
-                    .setFields("files(id, size)")
-                    .execute()
-                    .files
-
-                if (files.isEmpty()) {
-                    continuation.resumeWithException(
-                        GoogleDriveDownloadException("File not found in Google Drive")
-                    )
-                    return@suspendCancellableCoroutine
-                }
-
-                val file = files[0]
-                service.files().get(file.id)
-                    .executeMediaAndDownloadTo(downloadParam.outputStream)
-
-                val downloadResult = GoogleDriveDownloadResult(
-                    id = file.id,
-                    sizeInByte = file.getSize() ?: 0L,
-                )
-                continuation.resume(downloadResult)
-            } catch (e: Exception) {
-                logger.e(e) { "Error while downloading data from Google Drive" }
-                continuation.resumeWithException(GoogleDriveDownloadException(exceptionCause = e))
+            if (fileId == null) {
+                throw GoogleDriveDownloadException("No backup file found in Drive")
             }
+
+            val inputStream = client.files().get(fileId).executeMediaAsInputStream()
+            downloadParam.outputStream.use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+            GoogleDriveDownloadResult()
         }
-    }
 }

@@ -131,6 +131,7 @@
     <string name="google_drive_sync_success">Your Google Drive account is successfully connected</string>
     <string name="no_google_drive_sync_yet">Data are not synced yet with Google Drive. Click the backup button to trigger a sync</string>
     <string name="google_drive_connect_button">Connect Google Drive</string>
+    <string name="google_drive_desktop_sync_description">Click the button below to connect your Google Drive account. A browser window will open for authentication. Once you\'ve completed the sign-in, you can return to this app.</string>
     <string name="icloud_sync_description">Connect your iCloud account to sync feed subscriptions, categories, read and bookmarked articles between your iOS, iPadOS and macOS devices. The data will be saved in an app-specific folder; FeedFlow won\'t have any access to any of your files</string>
     <string name="add_account_button">Add account</string>
     <string name="icloud_sync_success">Your iCloud account is successfully connected</string>

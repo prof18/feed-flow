@@ -17,7 +17,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
-import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSource
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceJvm
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
@@ -38,7 +38,7 @@ import kotlin.time.Clock
 
 internal class FeedSyncJvmWorker(
     private val dropboxDataSource: DropboxDataSource,
-    private val googleDriveDataSource: GoogleDriveDataSource,
+    private val googleDriveDataSource: GoogleDriveDataSourceJvm,
     private val appEnvironment: AppEnvironment,
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
@@ -132,8 +132,10 @@ internal class FeedSyncJvmWorker(
             }
 
             SyncAccounts.GOOGLE_DRIVE -> {
+                restoreGoogleDriveClient()
+
                 val googleDriveUploadParam = GoogleDriveUploadParam(
-                    path = "/${getDatabaseNameWithExtension()}",
+                    fileName = getDatabaseNameWithExtension(),
                     file = databaseFile,
                 )
 
@@ -216,8 +218,10 @@ internal class FeedSyncJvmWorker(
                 }
             }
             SyncAccounts.GOOGLE_DRIVE -> {
+                restoreGoogleDriveClient()
+
                 val googleDriveDownloadParam = GoogleDriveDownloadParam(
-                    path = "/${getDatabaseNameWithExtension()}",
+                    fileName = getDatabaseNameWithExtension(),
                     outputStream = FileOutputStream(databaseFile),
                 )
 
@@ -272,6 +276,15 @@ internal class FeedSyncJvmWorker(
             if (!dropboxDataSource.isClientSet()) {
                 logger.d { "Dropbox client is null" }
                 emitErrorMessage()
+            }
+        }
+    }
+
+    private fun restoreGoogleDriveClient() {
+        if (!googleDriveDataSource.isClientSet()) {
+            val restored = googleDriveDataSource.restoreAuth()
+            if (!restored) {
+                logger.d { "Google Drive client could not be restored" }
             }
         }
     }

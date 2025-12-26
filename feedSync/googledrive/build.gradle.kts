@@ -54,6 +54,8 @@ kotlin {
 
             dependencies {
                 api("com.google.api-client:google-api-client:2.2.0")
+                api("com.google.oauth-client:google-oauth-client-jetty:1.34.1") // Handles "Open Browser" auth
+                api("com.google.apis:google-api-services-drive:v3-rev20240123-2.0.0")
             }
         }
     }

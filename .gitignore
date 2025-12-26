@@ -115,6 +115,7 @@ bin/
 /iosApp/Assets/Config.xcconfig
 /iosApp/Assets/FeedFlow.xcconfig
 /desktopApp/src/jvmMain/resources/props.properties
+/desktopApp/src/jvmMain/resources/credentials.json
 /desktopApp/embedded.provisionprofile
 /desktopApp/runtime.provisionprofile
 /website/public/

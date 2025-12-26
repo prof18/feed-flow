@@ -1,7 +1,6 @@
 package com.prof18.feedflow.feedsync.googledrive
 
 object GoogleDriveConstants {
-    // TODO: maybe delete and use FeedFlow directly
     const val GOOGLE_DRIVE_CLIENT_APPLICATION_NAME = "FeedFlow"
 
 

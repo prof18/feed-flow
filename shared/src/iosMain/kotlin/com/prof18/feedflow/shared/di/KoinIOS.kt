@@ -10,6 +10,9 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceIos
+import com.prof18.feedflow.feedsync.googledrive.GoogleDrivePlatformClientIos
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
@@ -69,6 +72,7 @@ fun initKoinIos(
     languageCode: String?,
     regionCode: String?,
     dropboxDataSource: DropboxDataSource,
+    googleDrivePlatformClient: GoogleDrivePlatformClientIos,
     appVersion: String,
     telemetry: Telemetry,
     feedItemParserWorker: FeedItemParserWorker,
@@ -88,6 +92,7 @@ fun initKoinIos(
         module {
             factory { htmlParser }
             single { dropboxDataSource }
+            single { googleDrivePlatformClient }
             single { telemetry }
             single { feedItemParserWorker }
             single<FeedFlowStrings> {
@@ -140,15 +145,26 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         KeychainSettingsWrapper.settings
     }
 
+    single {
+        GoogleDriveDataSourceIos(
+            platformClient = get(),
+            googleDriveSettings = get(),
+            logger = getWith("GoogleDriveDataSourceIos"),
+            dispatcherProvider = get(),
+        )
+    }
+
     factory<FeedSyncWorker> {
         FeedSyncIosWorker(
             dispatcherProvider = get(),
             feedSyncMessageQueue = get(),
             dropboxDataSource = get(),
+            googleDriveDataSource = get(),
             logger = getWith("FeedSyncIosWorker"),
             feedSyncer = get(),
             appEnvironment = appEnvironment,
             dropboxSettings = get(),
+            googleDriveSettings = get(),
             settingsRepository = get(),
             accountsRepository = get(),
             iCloudSettings = get(),
@@ -257,4 +273,6 @@ object Deps : KoinComponent {
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
     fun getUserFeedbackReporter() = getKoin().get<UserFeedbackReporter>()
     fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()
+    fun getGoogleDriveSettings() = getKoin().get<GoogleDriveSettings>()
+    fun getGoogleDriveDataSource() = getKoin().get<GoogleDriveDataSourceIos>()
 }

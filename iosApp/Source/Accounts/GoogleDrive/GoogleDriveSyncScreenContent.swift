@@ -12,6 +12,7 @@ import SwiftUI
 struct GoogleDriveSyncScreenContent: View {
     let googleDriveConnectionUiState: AccountConnectionUiState
     let onBackClick: () -> Void
+    let onConnectClick: () -> Void
     let onBackupClick: () -> Void
     let onDisconnectClick: () -> Void
     @Binding var snackbarMessage: String?
@@ -21,16 +22,18 @@ struct GoogleDriveSyncScreenContent: View {
         NavigationView {
             ZStack {
                 switch googleDriveConnectionUiState {
-                case .unlinked:
-                    DisconnectedView()
-                case .loading:
+                case is AccountConnectionUiState.Unlinked:
+                    DisconnectedView(onConnectClick: onConnectClick)
+                case is AccountConnectionUiState.Loading:
                     LoadingView()
-                case let .linked(syncState):
+                case let state as AccountConnectionUiState.Linked:
                     ConnectedView(
-                        syncState: syncState,
+                        syncState: state.syncState,
                         onBackupClick: onBackupClick,
                         onDisconnectClick: onDisconnectClick
                     )
+                default:
+                    EmptyView()
                 }
 
                 if showSnackbar, let message = snackbarMessage {
@@ -72,16 +75,16 @@ private struct LoadingView: View {
 }
 
 private struct DisconnectedView: View {
+    let onConnectClick: () -> Void
+
     var body: some View {
         Form {
             Section {
-                Text("Sync your feeds across devices using Google Drive. Your data will be stored in your Google Drive app data folder.")
+                Text(feedFlowStrings.googleDriveSyncCommonDescription)
                     .font(.body)
 
-                Button(action: {
-                    GoogleDriveDataSourceIos.startAuth()
-                }) {
-                    Text("Connect to Google Drive")
+                Button(action: onConnectClick) {
+                    Label(feedFlowStrings.googleDriveConnectButton, systemImage: "link")
                 }
             }
         }
@@ -96,42 +99,44 @@ private struct ConnectedView: View {
     var body: some View {
         Form {
             Section {
-                Text("Successfully connected to Google Drive")
+                Text(feedFlowStrings.googleDriveSyncSuccess)
                     .font(.body)
 
                 switch syncState {
-                case .loading:
+                case is AccountSyncUIState.Loading:
                     HStack {
                         ProgressView()
-                        Text("Syncing...")
+                        Text(feedFlowStrings.accountRefreshProgress)
                             .font(.body)
                     }
-                case .none:
-                    Text("No sync performed yet")
+                case is AccountSyncUIState.None:
+                    Text(feedFlowStrings.noGoogleDriveSyncYet)
                         .font(.caption)
                         .foregroundColor(.secondary)
-                case let .synced(lastDownloadDate, lastUploadDate):
-                    if let lastUpload = lastUploadDate {
-                        Text("Last upload: \(lastUpload)")
+                case let synced as AccountSyncUIState.Synced:
+                    if let lastUpload = synced.lastUploadDate {
+                        Text(feedFlowStrings.lastUpload(lastUpload))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    if let lastDownload = lastDownloadDate {
-                        Text("Last download: \(lastDownload)")
+                    if let lastDownload = synced.lastDownloadDate {
+                        Text(feedFlowStrings.lastDownload(lastDownload))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
+                default:
+                    EmptyView()
                 }
             }
 
             Section {
                 Button(action: onBackupClick) {
-                    Label("Backup Now", systemImage: "arrow.up.doc")
+                    Label(feedFlowStrings.backupButton, systemImage: "arrow.up.doc")
                 }
                 .disabled(syncState is AccountSyncUIState.Loading)
 
                 Button(action: onDisconnectClick) {
-                    Label("Disconnect", systemImage: "link.badge.minus")
+                    Label(feedFlowStrings.accountDisconnectButton, systemImage: "link.badge.minus")
                         .foregroundColor(.red)
                 }
                 .disabled(syncState is AccountSyncUIState.Loading)

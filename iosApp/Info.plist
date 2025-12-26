@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>GIDClientID</key>
+	<string>725880195722-1cda3ct6mbis83j9cb9vnh3bvk9o2851.apps.googleusercontent.com</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.prof18.feedflow.articlesync</string>
@@ -56,6 +58,7 @@
 			<string></string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>com.googleusercontent.apps.725880195722-1cda3ct6mbis83j9cb9vnh3bvk9o2851</string>
 				<string>$(DROPBOX_URL_SCHEME)</string>
 			</array>
 		</dict>

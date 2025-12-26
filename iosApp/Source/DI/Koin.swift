@@ -27,6 +27,7 @@ func startKoin() {
         languageCode: languageCode,
         regionCode: regionCode,
         dropboxDataSource: DropboxDataSourceIos(),
+        googleDrivePlatformClient: GoogleDrivePlatformClient(),
         appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
         telemetry: TelemetryReporter(),
         feedItemParserWorker: FeedItemParserWorkerIos()

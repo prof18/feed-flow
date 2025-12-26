@@ -64,6 +64,20 @@ struct AddAccountScreen: View {
                                 }
                             }
 
+                        case .googleDrive:
+                            NavigationLink(destination: GoogleDriveSyncScreen()) {
+                                Label {
+                                    Text("Google Drive")
+                                } icon: {
+                                    Image("google_drive")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 22, height: 22)
+                                        .foregroundStyle(.primary)
+                                }
+                            }
+
                         case .local:
                             EmptyView()
                         }

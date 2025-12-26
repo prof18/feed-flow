@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 class GoogleDriveSettings(
     private val settings: Settings,
 ) {
+    // TODO: validate which data are actually necessary
     private val json = Json { ignoreUnknownKeys = true }
 
     fun setGoogleDriveData(data: String) =
@@ -27,7 +28,7 @@ class GoogleDriveSettings(
         val jsonString = getGoogleDriveData() ?: return null
         return try {
             json.decodeFromString<GoogleDriveCredentials>(jsonString)
-        } catch (e: SerializationException) {
+        } catch (_: SerializationException) {
             null
         }
     }
@@ -43,9 +44,28 @@ class GoogleDriveSettings(
     fun setLastDownloadTimestamp(timestamp: Long) =
         settings.putLong(GoogleDriveSettingsFields.LAST_DOWNLOAD_TIMESTAMP.name, timestamp)
 
-    fun getLastDownloadTimestamp(): Long? = settings.getLongOrNull(GoogleDriveSettingsFields.LAST_DOWNLOAD_TIMESTAMP.name)
+    fun getLastDownloadTimestamp(): Long? = settings.getLongOrNull(
+        GoogleDriveSettingsFields.LAST_DOWNLOAD_TIMESTAMP.name,
+    )
+
+
+    fun setBackupFileId(fileId: String) =
+        settings.putString(GoogleDriveSettingsFields.BACKUP_FILE_ID.name, fileId)
+
+    fun getBackupFileId(): String? =
+        settings.getStringOrNull(GoogleDriveSettingsFields.BACKUP_FILE_ID.name)
+
+    fun clearAll() {
+        GoogleDriveSettingsFields.entries.forEach {
+            settings.remove(it.name)
+        }
+    }
+
 
     private enum class GoogleDriveSettingsFields {
-        GOOGLE_DRIVE_DATA, LAST_UPLOAD_TIMESTAMP, LAST_DOWNLOAD_TIMESTAMP,
+        LAST_UPLOAD_TIMESTAMP,
+        LAST_DOWNLOAD_TIMESTAMP,
+        BACKUP_FILE_ID,
+        GOOGLE_DRIVE_DATA,
     }
 }

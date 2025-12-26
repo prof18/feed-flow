@@ -4,12 +4,12 @@ import java.io.File
 import java.io.OutputStream
 
 actual class GoogleDriveUploadParam(
-    val path: String,
+    val fileName: String,
     val file: File,
 )
 
 actual class GoogleDriveDownloadParam(
-    val path: String,
+    val fileName: String,
     val outputStream: OutputStream,
 )
 

@@ -6,17 +6,14 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleRefreshTokenRequest
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.FileContent
 import com.google.api.client.json.gson.GsonFactory
-import com.google.api.services.drive.Drive
-import com.google.api.services.drive.model.File
 import com.prof18.feedflow.core.model.GoogleDriveClientStatus
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
+// TODO: divide android and JVM desktop only.
 internal class GoogleDriveDataSourceJvm(
     private val logger: Logger,
     private val dispatcherProvider: DispatcherProvider,
@@ -59,7 +56,7 @@ internal class GoogleDriveDataSourceJvm(
 
     private fun createDriveService(credential: GoogleCredential): Drive {
         return Drive.Builder(httpTransport, jsonFactory, credential)
-            .setApplicationName(GoogleDriveConstants.GOOGLE_DRIVE_CLIENT_IDENTIFIER)
+            .setApplicationName(GoogleDriveConstants.GOOGLE_DRIVE_CLIENT_APPLICATION_NAME)
             .build()
     }
 

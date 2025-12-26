@@ -108,8 +108,7 @@ internal class AccountsRepository(
         if (dropboxSettings != null) {
             return SyncAccounts.DROPBOX
         }
-        val googleDriveSettings = googleDriveSettings.getGoogleDriveData()
-        if (googleDriveSettings != null) {
+        if (googleDriveSettings.getGoogleDriveData() != null) {
             return SyncAccounts.GOOGLE_DRIVE
         }
         if (currentOS == CurrentOS.Ios || currentOS == CurrentOS.Desktop.Mac) {

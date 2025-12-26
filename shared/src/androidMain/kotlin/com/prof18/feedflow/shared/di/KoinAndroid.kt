@@ -129,13 +129,16 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         FeedSyncAndroidWorker(
             context = get(),
             dropboxDataSource = get(),
+            googleDriveDataSource = get(),
             appEnvironment = appEnvironment,
             logger = getWith("FeedSyncAndroidWorker"),
             feedSyncer = get(),
             feedSyncMessageQueue = get(),
             dispatcherProvider = get(),
             dropboxSettings = get(),
+            googleDriveSettings = get(),
             settingsRepository = get(),
+            accountsRepository = get(),
         )
     } bind FeedSyncWorker::class
 

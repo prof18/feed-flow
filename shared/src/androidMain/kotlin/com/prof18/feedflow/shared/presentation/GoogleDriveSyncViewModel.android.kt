@@ -8,11 +8,8 @@ import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.GoogleDriveSynMessages
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
-import com.prof18.feedflow.feedsync.googledrive.GoogleDriveCredentials
-import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSource
-import com.prof18.feedflow.feedsync.googledrive.GoogleDriveException
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceAndroid
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
-import com.prof18.feedflow.feedsync.googledrive.GoogleDriveStringCredentials
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -25,12 +22,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// TODO: old shared one, check later if it makes sense to keep it
-/*
 class GoogleDriveSyncViewModel internal constructor(
     private val logger: Logger,
     private val googleDriveSettings: GoogleDriveSettings,
-    private val googleDriveDataSource: GoogleDriveDataSource,
+    private val googleDriveDataSource: GoogleDriveDataSourceAndroid,
     private val feedSyncRepository: FeedSyncRepository,
     private val dateFormatter: DateFormatter,
     private val accountsRepository: AccountsRepository,
@@ -49,52 +44,49 @@ class GoogleDriveSyncViewModel internal constructor(
     val syncMessageQueue = feedSyncMessageQueue.messageQueue
 
     init {
-        restoreGoogleDriveAuth()
+        restoreAccount()
     }
 
-    fun saveGoogleDriveAuth(accessToken: String) {
+    fun onAuthorizationSuccess() {
         viewModelScope.launch {
-            try {
-                val credentials = GoogleDriveCredentials(
-                    accessToken = accessToken,
-                    refreshToken = null,
-                    expiresAtMillis = 0L,
-                )
+            completeSetup()
+        }
+    }
 
-                googleDriveSettings.setGoogleDriveCredentials(credentials)
-                googleDriveDataSource.saveAuth(GoogleDriveStringCredentials(accessToken))
+    fun onAuthorizationFailed() {
+        viewModelScope.launch {
+            googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+            googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
+        }
+    }
+
+    private fun restoreAccount() {
+        viewModelScope.launch {
+            if (googleDriveDataSource.isAuthorized()) {
                 googleDriveSyncUiMutableState.update {
-                    AccountConnectionUiState.Linked(
-                        syncState = getSyncState(),
-                    )
+                    AccountConnectionUiState.Linked(syncState = getSyncState())
                 }
-                emitSyncLoading()
-                accountsRepository.setGoogleDriveAccount()
-                feedSyncRepository.firstSync()
-                feedFetcherRepository.fetchFeeds()
-                emitLastSyncUpdate()
-            } catch (e: Throwable) {
-                logger.e(e) { "Error while trying to auth with Google Drive after getting the code" }
-                googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+            } else {
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             }
         }
     }
 
-    fun updateAccessToken(accessToken: String) {
-        viewModelScope.launch {
-            try {
-                val credentials = GoogleDriveCredentials(
-                    accessToken = accessToken,
-                    refreshToken = null,
-                    expiresAtMillis = 0L,
-                )
-
-                googleDriveSettings.setGoogleDriveCredentials(credentials)
-                googleDriveDataSource.saveAuth(GoogleDriveStringCredentials(accessToken))
-            } catch (e: Throwable) {
-                logger.e(e) { "Error while updating Google Drive access token" }
+    private suspend fun completeSetup() {
+        try {
+            googleDriveSyncUiMutableState.update {
+                AccountConnectionUiState.Linked(syncState = getSyncState())
             }
+            emitSyncLoading()
+            googleDriveSettings.setGoogleDriveData("connected")
+            accountsRepository.setGoogleDriveAccount()
+            feedSyncRepository.firstSync()
+            feedFetcherRepository.fetchFeeds()
+            emitLastSyncUpdate()
+        } catch (e: Exception) {
+            logger.e(e) { "Error while trying to setup Google Drive" }
+            googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+            googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
         }
     }
 
@@ -111,40 +103,24 @@ class GoogleDriveSyncViewModel internal constructor(
             try {
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
                 googleDriveDataSource.revokeAccess()
-                googleDriveSettings.clearGoogleDriveData()
                 feedSyncRepository.deleteAll()
                 accountsRepository.clearAccount()
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
-            } catch (_: GoogleDriveException) {
+            } catch (_: Throwable) {
                 googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
             }
         }
     }
 
-    private fun restoreGoogleDriveAuth() {
-        googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
-        val credentials = googleDriveSettings.getGoogleDriveCredentials()
-        if (credentials != null) {
-            googleDriveDataSource.restoreAuth(GoogleDriveStringCredentials(credentials.accessToken))
-            googleDriveSyncUiMutableState.update {
-                AccountConnectionUiState.Linked(
-                    syncState = getSyncState(),
-                )
-            }
-        } else {
-            googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
-        }
-    }
-
     private fun getSyncState(): AccountSyncUIState {
         return when {
-            googleDriveSettings.getLastDownloadTimestamp() != null || googleDriveSettings.getLastUploadTimestamp() != null -> {
+            googleDriveSettings.getLastDownloadTimestamp() != null ||
+                googleDriveSettings.getLastUploadTimestamp() != null -> {
                 AccountSyncUIState.Synced(
                     lastDownloadDate = getLastDownloadDate(),
                     lastUploadDate = getLastUploadDate(),
                 )
             }
-
             else -> AccountSyncUIState.None
         }
     }
@@ -162,9 +138,7 @@ class GoogleDriveSyncViewModel internal constructor(
     private fun emitSyncLoading() {
         googleDriveSyncUiMutableState.update { oldState ->
             if (oldState is AccountConnectionUiState.Linked) {
-                AccountConnectionUiState.Linked(
-                    syncState = AccountSyncUIState.Loading,
-                )
+                AccountConnectionUiState.Linked(syncState = AccountSyncUIState.Loading)
             } else {
                 oldState
             }
@@ -174,13 +148,10 @@ class GoogleDriveSyncViewModel internal constructor(
     private fun emitLastSyncUpdate() {
         googleDriveSyncUiMutableState.update { oldState ->
             if (oldState is AccountConnectionUiState.Linked) {
-                AccountConnectionUiState.Linked(
-                    syncState = getSyncState(),
-                )
+                AccountConnectionUiState.Linked(syncState = getSyncState())
             } else {
                 oldState
             }
         }
     }
 }
-*/

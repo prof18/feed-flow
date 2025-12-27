@@ -51,7 +51,7 @@ class GoogleDriveSyncViewModel internal constructor(
         googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
         googleDriveDataSource.restorePreviousSignIn { success ->
             if (success) {
-                googleDriveSettings.setGoogleDriveData("connected")
+                googleDriveSettings.setGoogleDriveLinked(true)
                 googleDriveSyncUiMutableState.update {
                     AccountConnectionUiState.Linked(syncState = getSyncState())
                 }

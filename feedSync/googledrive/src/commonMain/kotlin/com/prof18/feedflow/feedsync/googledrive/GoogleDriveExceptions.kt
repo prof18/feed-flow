@@ -14,3 +14,7 @@ data class GoogleDriveException(
     val causeException: Exception,
     val errorMessage: String,
 ) : Exception(errorMessage, causeException)
+
+data class GoogleDriveNeedsReAuthException(
+    val errorMessage: String,
+) : Exception(errorMessage)

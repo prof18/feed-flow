@@ -34,7 +34,7 @@ class GoogleDriveSyncViewModel internal constructor(
 ) : ViewModel() {
 
     private val googleDriveSyncUiMutableState = MutableStateFlow<AccountConnectionUiState>(
-        AccountConnectionUiState.Unlinked,
+        AccountConnectionUiState.Loading,
     )
     val googleDriveConnectionUiState: StateFlow<AccountConnectionUiState> = googleDriveSyncUiMutableState.asStateFlow()
 
@@ -49,42 +49,26 @@ class GoogleDriveSyncViewModel internal constructor(
 
     fun onAuthorizationSuccess() {
         viewModelScope.launch {
-            completeSetup()
-        }
-    }
-
-    fun onAuthorizationFailed() {
-        viewModelScope.launch {
-            googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
-            googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
-        }
-    }
-
-    private fun restoreAccount() {
-        viewModelScope.launch {
-            if (googleDriveDataSource.isAuthorized()) {
+            try {
                 googleDriveSyncUiMutableState.update {
                     AccountConnectionUiState.Linked(syncState = getSyncState())
                 }
-            } else {
+                emitSyncLoading()
+                googleDriveSettings.setGoogleDriveLinked(true)
+                accountsRepository.setGoogleDriveAccount()
+                feedSyncRepository.firstSync()
+                feedFetcherRepository.fetchFeeds()
+                emitLastSyncUpdate()
+            } catch (e: Exception) {
+                logger.e(e) { "Error while trying to setup Google Drive" }
+                googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             }
         }
     }
 
-    private suspend fun completeSetup() {
-        try {
-            googleDriveSyncUiMutableState.update {
-                AccountConnectionUiState.Linked(syncState = getSyncState())
-            }
-            emitSyncLoading()
-            googleDriveSettings.setGoogleDriveData("connected")
-            accountsRepository.setGoogleDriveAccount()
-            feedSyncRepository.firstSync()
-            feedFetcherRepository.fetchFeeds()
-            emitLastSyncUpdate()
-        } catch (e: Exception) {
-            logger.e(e) { "Error while trying to setup Google Drive" }
+    fun onAuthorizationFailed() {
+        viewModelScope.launch {
             googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
             googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
         }
@@ -108,6 +92,23 @@ class GoogleDriveSyncViewModel internal constructor(
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             } catch (_: Throwable) {
                 googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+            }
+        }
+    }
+
+    fun showLoading() {
+        googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
+
+    }
+
+    private fun restoreAccount() {
+        viewModelScope.launch {
+            if (googleDriveDataSource.isAuthorized()) {
+                googleDriveSyncUiMutableState.update {
+                    AccountConnectionUiState.Linked(syncState = getSyncState())
+                }
+            } else {
+                googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             }
         }
     }

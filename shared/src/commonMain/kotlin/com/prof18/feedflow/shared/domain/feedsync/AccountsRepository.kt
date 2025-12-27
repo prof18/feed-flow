@@ -108,7 +108,7 @@ internal class AccountsRepository(
         if (dropboxSettings != null) {
             return SyncAccounts.DROPBOX
         }
-        if (googleDriveSettings.getGoogleDriveData() != null) {
+        if (googleDriveSettings.isGoogleDriveLinked()) {
             return SyncAccounts.GOOGLE_DRIVE
         }
         if (currentOS == CurrentOS.Ios || currentOS == CurrentOS.Desktop.Mac) {

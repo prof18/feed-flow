@@ -280,11 +280,13 @@ internal class FeedSyncJvmWorker(
         }
     }
 
-    private fun restoreGoogleDriveClient() {
+    private suspend fun restoreGoogleDriveClient() {
         if (!googleDriveDataSource.isClientSet()) {
-            val restored = googleDriveDataSource.restoreAuth()
-            if (!restored) {
-                logger.d { "Google Drive client could not be restored" }
+            googleDriveDataSource.restoreAuth().also { restored ->
+                if (!restored) {
+                    logger.d { "Google Drive client could not be restored" }
+                    feedSyncMessageQueue.emitResult(SyncResult.GoogleDriveNeedReAuth())
+                }
             }
         }
     }

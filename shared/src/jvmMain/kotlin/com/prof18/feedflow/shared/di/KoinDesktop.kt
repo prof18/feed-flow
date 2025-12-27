@@ -144,7 +144,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
     viewModel {
         GoogleDriveSyncViewModel(
-            logger = getWith("GoogleDriveSyncViewModel"),
             googleDriveSettings = get(),
             googleDriveDataSource = get(),
             feedSyncRepository = get(),

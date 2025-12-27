@@ -92,6 +92,7 @@ jobs:
     secrets:
       GRADLE_CACHE_ENCRYPTION_KEY: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
       DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
+      GID_CLIENT_ID: ${{ secrets.GID_CLIENT_ID_IOS }}
       FIREBASE_PLIST: ${{ secrets.FIREBASE_PLIST }}
       CERTIFICATES_P12: ${{ secrets.CERTIFICATES_P12 }}
       CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}

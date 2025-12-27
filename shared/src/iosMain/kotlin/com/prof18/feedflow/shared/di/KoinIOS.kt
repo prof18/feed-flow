@@ -272,5 +272,4 @@ object Deps : KoinComponent {
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
     fun getUserFeedbackReporter() = getKoin().get<UserFeedbackReporter>()
     fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()
-    fun getGoogleDriveDataSource() = getKoin().get<GoogleDriveDataSourceIos>()
 }

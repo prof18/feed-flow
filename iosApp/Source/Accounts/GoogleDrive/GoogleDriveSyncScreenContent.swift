@@ -2,7 +2,7 @@
 //  GoogleDriveSyncScreenContent.swift
 //  FeedFlow
 //
-//  Created by Claude on 05/11/25.
+//  Created by Marco Gomiero on 05/11/25.
 //  Copyright © 2025 FeedFlow. All rights reserved.
 //
 
@@ -10,137 +10,169 @@ import FeedFlowKit
 import SwiftUI
 
 struct GoogleDriveSyncScreenContent: View {
-    let googleDriveConnectionUiState: AccountConnectionUiState
-    let onBackClick: () -> Void
+    var connectionState: AccountConnectionUiState
     let onConnectClick: () -> Void
     let onBackupClick: () -> Void
     let onDisconnectClick: () -> Void
-    @Binding var snackbarMessage: String?
-    @Binding var showSnackbar: Bool
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                switch googleDriveConnectionUiState {
-                case is AccountConnectionUiState.Unlinked:
-                    DisconnectedView(onConnectClick: onConnectClick)
-                case is AccountConnectionUiState.Loading:
-                    LoadingView()
-                case let state as AccountConnectionUiState.Linked:
-                    ConnectedView(
-                        syncState: state.syncState,
-                        onBackupClick: onBackupClick,
-                        onDisconnectClick: onDisconnectClick
-                    )
-                default:
-                    EmptyView()
-                }
-
-                if showSnackbar, let message = snackbarMessage {
-                    VStack {
-                        Spacer()
-                        Text(message)
-                            .padding()
-                            .background(Color.secondary)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                            .padding()
-                    }
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            showSnackbar = false
-                        }
-                    }
-                }
-            }
+        content
             .navigationTitle("Google Drive")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: onBackClick) {
-                        Image(systemName: "chevron.left")
+    }
+
+    @ViewBuilder private var content: some View {
+        switch connectionState {
+        case is AccountConnectionUiState.Loading:
+            ProgressView()
+
+        case is AccountConnectionUiState.Unlinked:
+            disconnectedView
+
+        case let state as AccountConnectionUiState.Linked:
+            makeLinkedScreen(state: state)
+
+        default:
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private func makeLinkedScreen(state: AccountConnectionUiState.Linked) -> some View {
+        VStack {
+            Form {
+                makeSyncInfoView(state: state)
+
+                Section {
+                    switch onEnum(of: state.syncState) {
+                    case .loading:
+                        HStack {
+                            ProgressView()
+                                .padding(.leading, 0)
+
+                            Text(feedFlowStrings.accountRefreshProgress)
+                                .font(.body)
+                                .padding(.horizontal, Spacing.regular)
+                        }
+
+                    case .none:
+                        Text(feedFlowStrings.noGoogleDriveSyncYet)
+                            .font(.body)
+
+                    case .synced:
+                        EmptyView()
                     }
                 }
+
+                Button(
+                    action: {
+                        onBackupClick()
+                    },
+                    label: {
+                        Label(feedFlowStrings.backupButton, systemImage: "square.and.arrow.up")
+                    }
+                )
+                .disabled(state.syncState is AccountSyncUIState.Loading)
+
+                Button(
+                    action: {
+                        onDisconnectClick()
+                    },
+                    label: {
+                        Label(feedFlowStrings.accountDisconnectButton, systemImage: "square.slash")
+                    }
+                )
+                .disabled(state.syncState is AccountSyncUIState.Loading)
             }
         }
     }
-}
 
-private struct LoadingView: View {
-    var body: some View {
-        VStack {
-            ProgressView()
-        }
-    }
-}
-
-private struct DisconnectedView: View {
-    let onConnectClick: () -> Void
-
-    var body: some View {
-        Form {
-            Section {
-                Text(feedFlowStrings.googleDriveSyncCommonDescription)
-                    .font(.body)
-
-                Button(action: onConnectClick) {
-                    Label(feedFlowStrings.googleDriveConnectButton, systemImage: "link")
-                }
-            }
-        }
-    }
-}
-
-private struct ConnectedView: View {
-    let syncState: AccountSyncUIState
-    let onBackupClick: () -> Void
-    let onDisconnectClick: () -> Void
-
-    var body: some View {
-        Form {
-            Section {
+    @ViewBuilder
+    private func makeSyncInfoView(state: AccountConnectionUiState.Linked) -> some View {
+        Section {
+            VStack(alignment: .leading) {
                 Text(feedFlowStrings.googleDriveSyncSuccess)
                     .font(.body)
+                    .multilineTextAlignment(.leading)
 
-                switch syncState {
-                case is AccountSyncUIState.Loading:
-                    HStack {
-                        ProgressView()
-                        Text(feedFlowStrings.accountRefreshProgress)
-                            .font(.body)
-                    }
-                case is AccountSyncUIState.None:
-                    Text(feedFlowStrings.noGoogleDriveSyncYet)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                case let synced as AccountSyncUIState.Synced:
-                    if let lastUpload = synced.lastUploadDate {
-                        Text(feedFlowStrings.lastUpload(lastUpload))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    if let lastDownload = synced.lastDownloadDate {
-                        Text(feedFlowStrings.lastDownload(lastDownload))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                default:
-                    EmptyView()
-                }
-            }
+                if let syncedState = state.syncState as? AccountSyncUIState.Synced {
+                    VStack(alignment: .leading) {
+                        if let lastUploadDate = syncedState.lastUploadDate {
+                            Text(feedFlowStrings.lastUpload(lastUploadDate))
+                                .font(.footnote)
+                        }
 
-            Section {
-                Button(action: onBackupClick) {
-                    Label(feedFlowStrings.backupButton, systemImage: "arrow.up.doc")
+                        if let lastDownloadDate = syncedState.lastDownloadDate {
+                            Text(feedFlowStrings.lastDownload(lastDownloadDate))
+                                .font(.footnote)
+                                .padding(.top, Spacing.xxsmall)
+                        }
+                    }
+                    .padding(.top, Spacing.regular)
                 }
-                .disabled(syncState is AccountSyncUIState.Loading)
-
-                Button(action: onDisconnectClick) {
-                    Label(feedFlowStrings.accountDisconnectButton, systemImage: "link.badge.minus")
-                        .foregroundColor(.red)
-                }
-                .disabled(syncState is AccountSyncUIState.Loading)
             }
         }
     }
+
+    @ViewBuilder private var disconnectedView: some View {
+        VStack {
+            Form {
+                Section {
+                    VStack(alignment: .leading) {
+                        Text(feedFlowStrings.googleDriveSyncCommonDescription)
+                            .font(.body)
+                    }
+                }
+
+                Button(
+                    action: {
+                        onConnectClick()
+                    },
+                    label: {
+                        Label(feedFlowStrings.accountConnectButton, systemImage: "link")
+                    }
+                )
+            }
+        }
+    }
+}
+
+#Preview("Unlinked") {
+    GoogleDriveSyncScreenContent(
+        connectionState: AccountConnectionUiState.Unlinked(),
+        onConnectClick: {},
+        onBackupClick: {},
+        onDisconnectClick: {}
+    )
+}
+
+#Preview("Loading") {
+    GoogleDriveSyncScreenContent(
+        connectionState: AccountConnectionUiState.Linked(syncState: AccountSyncUIState.Loading()),
+        onConnectClick: {},
+        onBackupClick: {},
+        onDisconnectClick: {}
+    )
+}
+
+#Preview("None") {
+    GoogleDriveSyncScreenContent(
+        connectionState: AccountConnectionUiState.Linked(syncState: AccountSyncUIState.None()),
+        onConnectClick: {},
+        onBackupClick: {},
+        onDisconnectClick: {}
+    )
+}
+
+#Preview("Synced") {
+    GoogleDriveSyncScreenContent(
+        connectionState: AccountConnectionUiState.Linked(
+            syncState: AccountSyncUIState.Synced(
+                lastDownloadDate: "2024-06-29T10:00:00Z",
+                lastUploadDate: "2024-06-29T10:00:00Z"
+            )
+        ),
+        onConnectClick: {},
+        onBackupClick: {},
+        onDisconnectClick: {}
+    )
 }

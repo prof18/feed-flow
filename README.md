@@ -82,7 +82,7 @@ cp config/dummy-google-service.plist iosApp/GoogleService-Info-dev.plist
 cp config/dummy-google-service.plist iosApp/GoogleService-Info.plist
 ```
 
-The dropbox sync won't work because the Dropbox API key is not included in the repository.
+The dropbox and Google Drive sync won't work because the Dropbox API key is not included in the repository.
 You can generate your own key and add it on the `Config.xcconfig` file. You can generate the file with the following command:
 
 ```bash

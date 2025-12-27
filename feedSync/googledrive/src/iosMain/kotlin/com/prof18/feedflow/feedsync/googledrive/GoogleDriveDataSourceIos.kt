@@ -3,6 +3,7 @@ package com.prof18.feedflow.feedsync.googledrive
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.getAppGroupDatabasePath
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import platform.Foundation.NSData
@@ -10,6 +11,7 @@ import platform.Foundation.NSURL
 import platform.Foundation.create
 import platform.Foundation.writeToURL
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class GoogleDriveDataSourceIos(
     private val platformClient: GoogleDrivePlatformClientIos,
@@ -35,13 +37,13 @@ class GoogleDriveDataSourceIos(
         googleDriveSettings.clearAll()
     }
 
+    @OptIn(BetaInteropApi::class)
     suspend fun performUpload(uploadParam: GoogleDriveUploadParam): GoogleDriveUploadResult =
         withContext(dispatcherProvider.io) {
             suspendCancellableCoroutine { continuation ->
                 val url = uploadParam.url
                 val data = NSData.create(contentsOfURL = url) ?: run {
-                    logger.e { "Failed to read file data from URL" }
-                    continuation.resume(GoogleDriveUploadResult)
+                    continuation.resumeWithException(GoogleDriveUploadException("Failed to read file data from URL: $url"))
                     return@suspendCancellableCoroutine
                 }
 
@@ -54,10 +56,11 @@ class GoogleDriveDataSourceIos(
                 ) { fileId, error ->
                     if (error != null) {
                         logger.e { "Upload failed: ${error.message}" }
-                    } else if (fileId != null) {
-                        googleDriveSettings.setBackupFileId(fileId)
+                        continuation.resumeWithException(error)
+                    } else {
+                        fileId?.let { id -> googleDriveSettings.setBackupFileId(id) }
+                        continuation.resume(GoogleDriveUploadResult)
                     }
-                    continuation.resume(GoogleDriveUploadResult)
                 }
             }
         }
@@ -72,14 +75,11 @@ class GoogleDriveDataSourceIos(
                     existingFileId = cachedFileId,
                 ) { data, error ->
                     if (error != null) {
-                        logger.e { "Download failed: ${error.message}" }
-                        continuation.resume(GoogleDriveDownloadResult(destinationUrl = null))
-                        return@downloadFile
+                        continuation.resumeWithException(error)
                     }
 
                     if (data == null) {
-                        logger.e { "Download returned null data" }
-                        continuation.resume(GoogleDriveDownloadResult(destinationUrl = null))
+                        continuation.resumeWithException(GoogleDriveDownloadException("Download returned null data"))
                         return@downloadFile
                     }
 
@@ -91,7 +91,7 @@ class GoogleDriveDataSourceIos(
                         data.writeToURL(destUrl, atomically = true)
                         continuation.resume(GoogleDriveDownloadResult(destinationUrl = DatabaseDestinationUrl(destUrl)))
                     } else {
-                        continuation.resume(GoogleDriveDownloadResult(destinationUrl = null))
+                        continuation.resumeWithException(GoogleDriveDownloadException("Failed to create destination URL"))
                     }
                 }
             }

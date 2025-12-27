@@ -227,7 +227,7 @@ internal class FeedSyncIosWorker(
             }
             if (!restored) {
                 logger.d { "Google Drive service could not be restored" }
-                feedSyncMessageQueue.emitResult(SyncResult.General(SyncUploadError.GoogleDriveClientRestoreError))
+                feedSyncMessageQueue.emitResult(SyncResult.GoogleDriveNeedReAuth())
             }
         }
     }

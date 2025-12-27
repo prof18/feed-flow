@@ -197,6 +197,55 @@
 # This keeps other optimizations enabled
 -optimizations !code/simplification/cast
 
+# Google API Client
+# Needed for JSON parsing via reflection (GoogleClientSecrets, etc.)
+-keepclassmembers class * {
+  @com.google.api.client.util.Key <fields>;
+}
+
+# Keep Google API client classes that use reflection for JSON parsing
+-keep class com.google.api.client.googleapis.auth.oauth2.** { *; }
+-keep class com.google.api.client.googleapis.auth.oauth2.**$* { *; }
+-keep class com.google.api.client.json.** { *; }
+-keep class com.google.api.client.util.** { *; }
+-keep class com.google.api.client.http.** { *; }
+
+# Keep GenericData and GenericJson for JSON serialization
+-keep class com.google.api.client.json.GenericJson { *; }
+-keep class com.google.api.client.util.GenericData { *; }
+
+# Keep StoredCredential for serialization compatibility
+-keep class com.google.api.client.auth.oauth2.StoredCredential { *; }
+-keepclassmembers class com.google.api.client.auth.oauth2.StoredCredential {
+  static final long serialVersionUID;
+  private static final java.io.ObjectStreamField[] serialPersistentFields;
+  !static !transient <fields>;
+  private void writeObject(java.io.ObjectOutputStream);
+  private void readObject(java.io.ObjectInputStream);
+  java.lang.Object writeReplace();
+  java.lang.Object readResolve();
+}
+-keepclassmembers class * extends com.google.api.client.json.GenericJson {
+  <fields>;
+  <init>(...);
+}
+-keepclassmembers class * extends com.google.api.client.util.GenericData {
+  <fields>;
+  <init>(...);
+}
+
+# Google Drive API
+-keep class com.google.api.services.drive.** { *; }
+
+# Keep Gson classes used by Google API client
+-keep class com.google.gson.** { *; }
+
+-dontwarn com.google.api.client.extensions.android.**
+-dontwarn com.google.api.client.googleapis.extensions.android.**
+-dontnote java.nio.file.Files, java.nio.file.Path
+-dontnote sun.misc.Unsafe
+-dontwarn sun.misc.Unsafe
+
 # FlatLaF Look and Feel
 -keep class com.formdev.flatlaf.** { *; }
 -keep class com.formdev.flatlaf.extras.** { *; }

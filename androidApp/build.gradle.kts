@@ -103,6 +103,22 @@ android {
             excludeFields.set(listOf("generated"))
         }
     }
+
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0",
+                "META-INF/INDEX.LIST",
+            )
+        }
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -154,6 +170,8 @@ dependencies {
     "googlePlayImplementation"(libs.touchlab.kermit.crash)
     "googlePlayImplementation"(libs.play.review)
     "googlePlayImplementation"(libs.telemetry.deck)
+    "googlePlayImplementation"(libs.google.identity.googleid)
+    "googlePlayImplementation"(libs.google.play.services.auth)
 
     debugImplementation(compose.uiTooling)
 

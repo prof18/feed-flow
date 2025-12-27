@@ -26,6 +26,7 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.shared.ui.accounts.icons.Cloud
 import com.prof18.feedflow.shared.ui.accounts.icons.Dropbox
 import com.prof18.feedflow.shared.ui.accounts.icons.FreshRSS
+import com.prof18.feedflow.shared.ui.accounts.icons.GoogleDriveLogo
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
@@ -36,6 +37,7 @@ fun AccountsContent(
     accounts: ImmutableList<SyncAccounts>,
     onBackClick: () -> Unit,
     onDropboxCLick: () -> Unit,
+    onGoogleDriveClick: () -> Unit,
     onICloudClick: () -> Unit,
     modifier: Modifier = Modifier,
     onFreshRssClick: () -> Unit,
@@ -93,6 +95,7 @@ fun AccountsContent(
                             isClickEnabled = isEnabled,
                             onClick = when (account) {
                                 SyncAccounts.DROPBOX -> onDropboxCLick
+                                SyncAccounts.GOOGLE_DRIVE -> onGoogleDriveClick
                                 SyncAccounts.ICLOUD -> onICloudClick
                                 SyncAccounts.LOCAL -> {
                                     { }
@@ -120,6 +123,7 @@ fun AccountsContent(
 private fun SyncAccounts.getTitle() =
     when (this) {
         SyncAccounts.DROPBOX -> "Dropbox"
+        SyncAccounts.GOOGLE_DRIVE -> "Google Drive"
         SyncAccounts.LOCAL -> "Local"
         SyncAccounts.ICLOUD -> "iCloud"
         SyncAccounts.FRESH_RSS -> "FreshRSS"
@@ -128,6 +132,7 @@ private fun SyncAccounts.getTitle() =
 private fun SyncAccounts.getIcon() =
     when (this) {
         SyncAccounts.DROPBOX -> Dropbox
+        SyncAccounts.GOOGLE_DRIVE -> GoogleDriveLogo
         SyncAccounts.ICLOUD -> Cloud
         SyncAccounts.LOCAL -> Dropbox
         SyncAccounts.FRESH_RSS -> FreshRSS

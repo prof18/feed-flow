@@ -121,6 +121,7 @@ class DropboxSyncViewModel internal constructor(
                         )
                     }
                     emitSyncLoading()
+                    feedSyncRepository.firstSync()
                     feedFetcherRepository.fetchFeeds()
                     emitLastSyncUpdate()
                 } else {

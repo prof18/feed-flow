@@ -10,6 +10,8 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceIos
+import com.prof18.feedflow.feedsync.googledrive.GoogleDrivePlatformClientIos
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
@@ -36,6 +38,7 @@ import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
+import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
@@ -68,6 +71,7 @@ fun initKoinIos(
     languageCode: String?,
     regionCode: String?,
     dropboxDataSource: DropboxDataSource,
+    googleDrivePlatformClient: GoogleDrivePlatformClientIos,
     appVersion: String,
     telemetry: Telemetry,
     feedItemParserWorker: FeedItemParserWorker,
@@ -76,6 +80,7 @@ fun initKoinIos(
         appEnvironment = appEnvironment,
         isLoggingEnabled = true,
         isDropboxSyncEnabled = true,
+        isGoogleDriveSyncEnabled = true,
         isIcloudSyncEnabled = true,
         appVersion = appVersion,
         platformName = UIDevice.currentDevice.systemName(),
@@ -86,6 +91,7 @@ fun initKoinIos(
         module {
             factory { htmlParser }
             single { dropboxDataSource }
+            single { googleDrivePlatformClient }
             single { telemetry }
             single { feedItemParserWorker }
             single<FeedFlowStrings> {
@@ -138,15 +144,26 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         KeychainSettingsWrapper.settings
     }
 
+    single {
+        GoogleDriveDataSourceIos(
+            platformClient = get(),
+            googleDriveSettings = get(),
+            logger = getWith("GoogleDriveDataSourceIos"),
+            dispatcherProvider = get(),
+        )
+    }
+
     factory<FeedSyncWorker> {
         FeedSyncIosWorker(
             dispatcherProvider = get(),
             feedSyncMessageQueue = get(),
             dropboxDataSource = get(),
+            googleDriveDataSource = get(),
             logger = getWith("FeedSyncIosWorker"),
             feedSyncer = get(),
             appEnvironment = appEnvironment,
             dropboxSettings = get(),
+            googleDriveSettings = get(),
             settingsRepository = get(),
             accountsRepository = get(),
             iCloudSettings = get(),
@@ -159,6 +176,19 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("DropboxSyncViewModel"),
             dropboxSettings = get(),
             dropboxDataSource = get(),
+            feedSyncRepository = get(),
+            dateFormatter = get(),
+            feedFetcherRepository = get(),
+            feedSyncMessageQueue = get(),
+            accountsRepository = get(),
+        )
+    }
+
+    viewModel {
+        GoogleDriveSyncViewModel(
+            logger = getWith("GoogleDriveSyncViewModel"),
+            googleDriveSettings = get(),
+            googleDriveDataSource = get(),
             feedSyncRepository = get(),
             dateFormatter = get(),
             feedFetcherRepository = get(),
@@ -228,6 +258,7 @@ object Deps : KoinComponent {
     fun getAccountsViewModel() = getKoin().get<AccountsViewModel>()
     fun getDropboxDataSource() = getKoin().get<DropboxDataSource>()
     fun getDropboxSyncViewModel() = getKoin().get<DropboxSyncViewModel>()
+    fun getGoogleDriveSyncViewModel() = getKoin().get<GoogleDriveSyncViewModel>()
     fun getFeedSyncRepository() = getKoin().get<FeedSyncRepository>()
     fun getICloudSyncViewModel() = getKoin().get<ICloudSyncViewModel>()
     fun getReaderModeViewModel() = getKoin().get<ReaderModeViewModel>()

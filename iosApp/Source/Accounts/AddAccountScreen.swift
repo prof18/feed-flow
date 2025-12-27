@@ -28,17 +28,25 @@ struct AddAccountScreen: View {
                                 self.dismiss()
                                 self.appState.navigate(route: CommonViewRoute.dropboxSync)
                             } label: {
-                                Label {
-                                    Text("Dropbox")
-                                } icon: {
-                                    Image("dropbox")
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 32, height: 32)
-                                        .foregroundStyle(.primary)
+                                HStack {
+                                    Label {
+                                        Text("Dropbox")
+                                    } icon: {
+                                        Image("dropbox")
+                                            .renderingMode(.template)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 32, height: 32)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.footnote.weight(.semibold))
+                                        .foregroundStyle(.tertiary)
                                 }
+                                .contentShape(Rectangle())
+                                .foregroundStyle(.primary)
                             }
+                            .buttonStyle(.plain)
 
                         case .icloud:
                             NavigationLink(destination: ICloudSyncScreen(isFromAddAccount: true)) {
@@ -47,6 +55,7 @@ struct AddAccountScreen: View {
                                 } icon: {
                                     Image(systemName: "icloud")
                                         .fontWeight(.bold)
+                                        .foregroundStyle(.primary)
                                 }
                             }
 
@@ -56,6 +65,20 @@ struct AddAccountScreen: View {
                                     Text("FreshRSS")
                                 } icon: {
                                     Image("freshrss")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 22, height: 22)
+                                        .foregroundStyle(.primary)
+                                }
+                            }
+
+                        case .googleDrive:
+                            NavigationLink(destination: GoogleDriveSyncScreen()) {
+                                Label {
+                                    Text("Google Drive")
+                                } icon: {
+                                    Image("googledrive")
                                         .renderingMode(.template)
                                         .resizable()
                                         .scaledToFit()

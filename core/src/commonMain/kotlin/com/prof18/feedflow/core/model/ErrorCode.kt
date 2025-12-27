@@ -17,12 +17,15 @@ sealed class SyncUploadError(override val code: String) : ErrorCode {
     data object DropboxUploadFailed : SyncUploadError("SU2")
     data object DropboxAPIError : SyncUploadError("SU3")
     data object DropboxClientRestoreError : SyncUploadError("SU4")
+    data object GoogleDriveClientRestoreError : SyncUploadError("SU5")
 }
 
 // Sync Download Errors (SD)
 sealed class SyncDownloadError(override val code: String) : ErrorCode {
     data object DropboxDownloadFailed : SyncDownloadError("SD1")
     data object ICloudDownloadFailed : SyncDownloadError("SD2")
+    data object GoogleDriveDownloadFailed : SyncDownloadError("SD3")
+    data object GoogleDriveNeedsReAuth : SyncDownloadError("SD4")
 }
 
 // Sync Feed Errors (SF)

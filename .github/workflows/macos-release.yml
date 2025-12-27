@@ -23,6 +23,8 @@ on:
         required: true
       TDECK_APP_ID:
         required: true
+      GOOGLE_CREDENTIALS_JSON:
+        required: true
 
 jobs:
   build:
@@ -74,6 +76,14 @@ jobs:
           echo "ARTIFACT_NAME=$name" >> $GITHUB_ENV
         env:
           VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Create Google credentials.json
+        run: |
+          echo "$GOOGLE_CREDENTIALS_JSON" > desktopApp/src/jvmMain/resources/credentials.json.b64
+          base64 -d -i desktopApp/src/jvmMain/resources/credentials.json.b64 > desktopApp/src/jvmMain/resources/credentials.json
+          rm desktopApp/src/jvmMain/resources/credentials.json.b64
+        env:
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
 
       - name: Create Properties file
         run: |

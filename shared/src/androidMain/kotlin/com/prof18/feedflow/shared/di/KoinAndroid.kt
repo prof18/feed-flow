@@ -22,6 +22,7 @@ import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.parser.AndroidFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerAndroid
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
+import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.utils.UserAgentInterceptor
 import com.prof18.rssparser.RssParserBuilder
@@ -111,17 +112,33 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
+    viewModel {
+        GoogleDriveSyncViewModel(
+            logger = getWith("GoogleDriveSyncViewModel"),
+            googleDriveSettings = get(),
+            googleDriveDataSource = get(),
+            feedSyncRepository = get(),
+            dateFormatter = get(),
+            feedFetcherRepository = get(),
+            feedSyncMessageQueue = get(),
+            accountsRepository = get(),
+        )
+    }
+
     single {
         FeedSyncAndroidWorker(
             context = get(),
             dropboxDataSource = get(),
+            googleDriveDataSource = get(),
             appEnvironment = appEnvironment,
             logger = getWith("FeedSyncAndroidWorker"),
             feedSyncer = get(),
             feedSyncMessageQueue = get(),
             dispatcherProvider = get(),
             dropboxSettings = get(),
+            googleDriveSettings = get(),
             settingsRepository = get(),
+            accountsRepository = get(),
         )
     } bind FeedSyncWorker::class
 

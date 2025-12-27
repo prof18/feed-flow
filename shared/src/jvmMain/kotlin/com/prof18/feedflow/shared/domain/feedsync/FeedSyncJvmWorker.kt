@@ -17,6 +17,10 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceJvm
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadParam
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.utils.isTemporaryNetworkError
@@ -34,6 +38,7 @@ import kotlin.time.Clock
 
 internal class FeedSyncJvmWorker(
     private val dropboxDataSource: DropboxDataSource,
+    private val googleDriveDataSource: GoogleDriveDataSourceJvm,
     private val appEnvironment: AppEnvironment,
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
@@ -41,6 +46,7 @@ internal class FeedSyncJvmWorker(
     private val settingsRepository: SettingsRepository,
     private val dispatcherProvider: DispatcherProvider,
     private val dropboxSettings: DropboxSettings,
+    private val googleDriveSettings: GoogleDriveSettings,
     private val accountsRepository: AccountsRepository,
     private val iCloudSettings: ICloudSettings,
 ) : FeedSyncWorker {
@@ -125,6 +131,19 @@ internal class FeedSyncJvmWorker(
                 }
             }
 
+            SyncAccounts.GOOGLE_DRIVE -> {
+                restoreGoogleDriveClient()
+
+                val googleDriveUploadParam = GoogleDriveUploadParam(
+                    fileName = getDatabaseNameWithExtension(),
+                    file = databaseFile,
+                )
+
+                googleDriveDataSource.performUpload(googleDriveUploadParam)
+                googleDriveSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+                logger.d { "Upload to Google Drive successfully" }
+            }
+
             SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS -> {
                 // Do nothing
             }
@@ -198,6 +217,20 @@ internal class FeedSyncJvmWorker(
                     }
                 }
             }
+            SyncAccounts.GOOGLE_DRIVE -> {
+                restoreGoogleDriveClient()
+
+                val googleDriveDownloadParam = GoogleDriveDownloadParam(
+                    fileName = getDatabaseNameWithExtension(),
+                    outputStream = FileOutputStream(databaseFile),
+                )
+
+                googleDriveDataSource.performDownload(googleDriveDownloadParam)
+                googleDriveSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+                logger.d { "Download from Google Drive successfully" }
+                SyncResult.Success
+            }
+
             SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS -> {
                 // Do nothing
                 logger.d { "current sync account local" }
@@ -243,6 +276,17 @@ internal class FeedSyncJvmWorker(
             if (!dropboxDataSource.isClientSet()) {
                 logger.d { "Dropbox client is null" }
                 emitErrorMessage()
+            }
+        }
+    }
+
+    private suspend fun restoreGoogleDriveClient() {
+        if (!googleDriveDataSource.isClientSet()) {
+            googleDriveDataSource.restoreAuth().also { restored ->
+                if (!restored) {
+                    logger.d { "Google Drive client could not be restored" }
+                    feedSyncMessageQueue.emitResult(SyncResult.GoogleDriveNeedReAuth())
+                }
             }
         }
     }

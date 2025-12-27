@@ -195,7 +195,11 @@ private fun MainWindowEffects(
 
     LaunchedEffect(messageQueue) {
         messageQueue.messageQueue.collect { message ->
-            if (message is SyncResult.Error) {
+            if (message is SyncResult.GoogleDriveNeedReAuth) {
+                snackbarHostState.showSnackbar(
+                    message = flowStrings.googleDriveAuthRetry,
+                )
+            } else if (message is SyncResult.Error) {
                 snackbarHostState.showSnackbar(
                     message = flowStrings.errorAccountSync(message.errorCode.code),
                 )

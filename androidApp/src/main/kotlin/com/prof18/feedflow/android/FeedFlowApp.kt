@@ -53,6 +53,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
             appEnvironment = appEnvironment,
             isLoggingEnabled = isGooglePlayFlavor,
             isDropboxSyncEnabled = isGooglePlayFlavor,
+            isGoogleDriveSyncEnabled = isGooglePlayFlavor,
             isIcloudSyncEnabled = false,
             appVersion = BuildConfig.VERSION_NAME,
             platformName = "Android",

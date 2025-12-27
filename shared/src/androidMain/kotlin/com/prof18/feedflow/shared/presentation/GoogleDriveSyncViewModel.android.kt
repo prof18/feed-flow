@@ -1,0 +1,157 @@
+package com.prof18.feedflow.shared.presentation
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.AccountConnectionUiState
+import com.prof18.feedflow.core.model.AccountSyncUIState
+import com.prof18.feedflow.core.model.GoogleDriveSynMessages
+import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceAndroid
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
+import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
+import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+class GoogleDriveSyncViewModel internal constructor(
+    private val logger: Logger,
+    private val googleDriveSettings: GoogleDriveSettings,
+    private val googleDriveDataSource: GoogleDriveDataSourceAndroid,
+    private val feedSyncRepository: FeedSyncRepository,
+    private val dateFormatter: DateFormatter,
+    private val accountsRepository: AccountsRepository,
+    private val feedFetcherRepository: FeedFetcherRepository,
+    feedSyncMessageQueue: FeedSyncMessageQueue,
+) : ViewModel() {
+
+    private val googleDriveSyncUiMutableState = MutableStateFlow<AccountConnectionUiState>(
+        AccountConnectionUiState.Loading,
+    )
+    val googleDriveConnectionUiState: StateFlow<AccountConnectionUiState> = googleDriveSyncUiMutableState.asStateFlow()
+
+    private val gDriveSyncMessageMutableState = MutableSharedFlow<GoogleDriveSynMessages>()
+    val googleDriveSyncMessageState: SharedFlow<GoogleDriveSynMessages> = gDriveSyncMessageMutableState.asSharedFlow()
+
+    val syncMessageQueue = feedSyncMessageQueue.messageQueue
+
+    init {
+        restoreAccount()
+    }
+
+    fun onAuthorizationSuccess() {
+        viewModelScope.launch {
+            try {
+                googleDriveSyncUiMutableState.update {
+                    AccountConnectionUiState.Linked(syncState = getSyncState())
+                }
+                emitSyncLoading()
+                googleDriveSettings.setGoogleDriveLinked(true)
+                accountsRepository.setGoogleDriveAccount()
+                feedSyncRepository.firstSync()
+                feedFetcherRepository.fetchFeeds()
+                emitLastSyncUpdate()
+            } catch (e: Exception) {
+                logger.e(e) { "Error while trying to setup Google Drive" }
+                gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+                googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
+            }
+        }
+    }
+
+    fun onAuthorizationFailed() {
+        viewModelScope.launch {
+            gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+            googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
+        }
+    }
+
+    fun triggerBackup() {
+        viewModelScope.launch {
+            emitSyncLoading()
+            feedSyncRepository.performBackup(forceBackup = true)
+            emitLastSyncUpdate()
+        }
+    }
+
+    fun unlink() {
+        viewModelScope.launch {
+            try {
+                googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
+                googleDriveDataSource.revokeAccess()
+                feedSyncRepository.deleteAll()
+                accountsRepository.clearAccount()
+                googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
+            } catch (_: Throwable) {
+                gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+            }
+        }
+    }
+
+    fun showLoading() {
+        googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
+    }
+
+    private fun restoreAccount() {
+        viewModelScope.launch {
+            if (googleDriveDataSource.isAuthorized()) {
+                googleDriveSyncUiMutableState.update {
+                    AccountConnectionUiState.Linked(syncState = getSyncState())
+                }
+            } else {
+                googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
+            }
+        }
+    }
+
+    private fun getSyncState(): AccountSyncUIState {
+        return when {
+            googleDriveSettings.getLastDownloadTimestamp() != null ||
+                googleDriveSettings.getLastUploadTimestamp() != null -> {
+                AccountSyncUIState.Synced(
+                    lastDownloadDate = getLastDownloadDate(),
+                    lastUploadDate = getLastUploadDate(),
+                )
+            }
+            else -> AccountSyncUIState.None
+        }
+    }
+
+    private fun getLastUploadDate(): String? =
+        googleDriveSettings.getLastUploadTimestamp()?.let { timestamp ->
+            dateFormatter.formatDateForLastRefresh(timestamp)
+        }
+
+    private fun getLastDownloadDate(): String? =
+        googleDriveSettings.getLastDownloadTimestamp()?.let { timestamp ->
+            dateFormatter.formatDateForLastRefresh(timestamp)
+        }
+
+    private fun emitSyncLoading() {
+        googleDriveSyncUiMutableState.update { oldState ->
+            if (oldState is AccountConnectionUiState.Linked) {
+                AccountConnectionUiState.Linked(syncState = AccountSyncUIState.Loading)
+            } else {
+                oldState
+            }
+        }
+    }
+
+    private fun emitLastSyncUpdate() {
+        googleDriveSyncUiMutableState.update { oldState ->
+            if (oldState is AccountConnectionUiState.Linked) {
+                AccountConnectionUiState.Linked(syncState = getSyncState())
+            } else {
+                oldState
+            }
+        }
+    }
+}

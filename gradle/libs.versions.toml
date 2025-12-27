@@ -19,6 +19,12 @@ detekt-compose-rules = "0.4.27"
 dropbox-core = "7.0.0"
 firebase-bom = "34.6.0"
 flatlaf = "3.6.2"
+google-api-client = "2.2.0"
+google-api-client-android = "2.8.1"
+google-api-services-drive = "v3-rev20240123-2.0.0"
+google-oauth-client-jetty = "1.34.1"
+google-identity-googleid = "1.1.1"
+google-play-services-auth = "21.4.0"
 flexmarkHtml2mdConverter = "0.64.8"
 glance = "1.1.1"
 google-services = "4.4.4"
@@ -95,6 +101,12 @@ flatlaf = { module = "com.formdev:flatlaf", version.ref = "flatlaf" }
 flexmark-html2md-converter = { module = "com.vladsch.flexmark:flexmark-html2md-converter", version.ref = "flexmarkHtml2mdConverter" }
 glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 glance-material = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+google-api-client = { module = "com.google.api-client:google-api-client", version.ref = "google-api-client" }
+google-api-client-android = { module = "com.google.api-client:google-api-client-android", version.ref = "google-api-client-android" }
+google-api-services-drive = { module = "com.google.apis:google-api-services-drive", version.ref = "google-api-services-drive" }
+google-identity-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "google-identity-googleid" }
+google-oauth-client-jetty = { module = "com.google.oauth-client:google-oauth-client-jetty", version.ref = "google-oauth-client-jetty" }
+google-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "google-play-services-auth" }
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
 io-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "io-coil" }
 io-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "io-coil" }

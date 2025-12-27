@@ -93,7 +93,7 @@ class GoogleDriveDataSourceAndroid(
 
             if (result.hasResolution()) {
                 // User needs to re-authorize via UI - can't do this in background
-                logger.e { "Authorization requires user interaction" }
+                logger.d { "Authorization requires user interaction" }
                 throw GoogleDriveNeedsReAuthException("Authorization requires user interaction")
             } else {
                 result.accessToken

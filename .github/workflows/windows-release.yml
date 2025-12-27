@@ -15,6 +15,8 @@ on:
         required: true
       TDECK_APP_ID:
         required: true
+      GOOGLE_CREDENTIALS_JSON:
+        required: true
 
 jobs:
   deploy:
@@ -70,6 +72,14 @@ jobs:
           "NAME_MSIX=$name_msix" >> $env:GITHUB_ENV
         env:
           VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Create Google credentials.json
+        shell: pwsh
+        run: |
+          $bytes = [Convert]::FromBase64String($env:GOOGLE_CREDENTIALS_JSON)
+          [System.IO.File]::WriteAllBytes("desktopApp/src/jvmMain/resources/credentials.json", $bytes)
+        env:
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
 
       - name: Create Properties file
         shell: pwsh

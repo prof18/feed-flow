@@ -156,8 +156,8 @@ private fun IconPreview() {
                 imageVector = GoogleDriveLogo,
                 contentDescription = null,
                 modifier = Modifier
-                    .width((800.0).dp)
-                    .height((800.0).dp),
+                    .width(800.0.dp)
+                    .height(800.0.dp),
             )
         }
     }

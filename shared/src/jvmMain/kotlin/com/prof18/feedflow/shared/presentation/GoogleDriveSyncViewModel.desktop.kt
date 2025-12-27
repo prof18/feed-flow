@@ -34,8 +34,8 @@ class GoogleDriveSyncViewModel internal constructor(
         MutableStateFlow<AccountConnectionUiState>(AccountConnectionUiState.Unlinked)
     val googleDriveConnectionUiState: StateFlow<AccountConnectionUiState> = googleDriveSyncUiMutableState.asStateFlow()
 
-    private val googleDriveSyncMessageMutableState = MutableSharedFlow<GoogleDriveSynMessages>()
-    val googleDriveSyncMessageState: SharedFlow<GoogleDriveSynMessages> = googleDriveSyncMessageMutableState.asSharedFlow()
+    private val gDriveSyncMessageMutableState = MutableSharedFlow<GoogleDriveSynMessages>()
+    val googleDriveSyncMessageState: SharedFlow<GoogleDriveSynMessages> = gDriveSyncMessageMutableState.asSharedFlow()
 
     init {
         restoreGoogleDriveAuth()
@@ -55,7 +55,7 @@ class GoogleDriveSyncViewModel internal constructor(
                 feedFetcherRepository.fetchFeeds()
                 emitLastSyncUpdate()
             } else {
-                googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+                gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             }
         }
@@ -90,7 +90,7 @@ class GoogleDriveSyncViewModel internal constructor(
                 accountsRepository.clearAccount()
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             } catch (_: GoogleDriveException) {
-                googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+                gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
             }
         }
     }
@@ -119,7 +119,8 @@ class GoogleDriveSyncViewModel internal constructor(
 
     private fun getSyncState(): AccountSyncUIState {
         return when {
-            googleDriveSettings.getLastDownloadTimestamp() != null || googleDriveSettings.getLastUploadTimestamp() != null -> {
+            googleDriveSettings.getLastDownloadTimestamp() != null ||
+                googleDriveSettings.getLastUploadTimestamp() != null -> {
                 AccountSyncUIState.Synced(
                     lastDownloadDate = getLastDownloadDate(),
                     lastUploadDate = getLastUploadDate(),

@@ -30,58 +30,78 @@ internal class AccountsRepository(
         buildList {
             when (currentOS) {
                 CurrentOS.Android -> {
-                    if (appConfig.isDropboxSyncEnabled) {
-                        add(SyncAccounts.DROPBOX)
-                    }
-                    if (appConfig.isGoogleDriveSyncEnabled) {
-                        add(SyncAccounts.GOOGLE_DRIVE)
-                    }
-                    add(SyncAccounts.FRESH_RSS)
+                    generateAndroidAccounts()
                 }
                 CurrentOS.Desktop.Linux -> {
-                    if (appConfig.isDropboxSyncEnabled) {
-                        add(SyncAccounts.DROPBOX)
-                    }
-                    if (appConfig.isGoogleDriveSyncEnabled) {
-                        add(SyncAccounts.GOOGLE_DRIVE)
-                    }
-                    add(SyncAccounts.FRESH_RSS)
+                    generateLinuxAccounts()
                 }
                 CurrentOS.Desktop.Mac -> {
-                    if (appConfig.isIcloudSyncEnabled) {
-                        add(SyncAccounts.ICLOUD)
-                    }
-                    if (appConfig.isDropboxSyncEnabled) {
-                        add(SyncAccounts.DROPBOX)
-                    }
-                    if (appConfig.isGoogleDriveSyncEnabled) {
-                        add(SyncAccounts.GOOGLE_DRIVE)
-                    }
-                    add(SyncAccounts.FRESH_RSS)
+                    generateMacOSAccounts()
                 }
                 CurrentOS.Desktop.Windows -> {
-                    if (appConfig.isDropboxSyncEnabled) {
-                        add(SyncAccounts.DROPBOX)
-                    }
-                    if (appConfig.isGoogleDriveSyncEnabled) {
-                        add(SyncAccounts.GOOGLE_DRIVE)
-                    }
-                    add(SyncAccounts.FRESH_RSS)
+                    generateWindowsAccounts()
                 }
                 CurrentOS.Ios -> {
-                    if (appConfig.isIcloudSyncEnabled) {
-                        add(SyncAccounts.ICLOUD)
-                    }
-                    if (appConfig.isDropboxSyncEnabled) {
-                        add(SyncAccounts.DROPBOX)
-                    }
-                    if (appConfig.isGoogleDriveSyncEnabled) {
-                        add(SyncAccounts.GOOGLE_DRIVE)
-                    }
-                    add(SyncAccounts.FRESH_RSS)
+                    generateIOSAccounts()
                 }
             }
         }
+
+    private fun MutableList<SyncAccounts>.generateWindowsAccounts() {
+        if (appConfig.isDropboxSyncEnabled) {
+            add(SyncAccounts.DROPBOX)
+        }
+        if (appConfig.isGoogleDriveSyncEnabled) {
+            add(SyncAccounts.GOOGLE_DRIVE)
+        }
+        add(SyncAccounts.FRESH_RSS)
+    }
+
+    private fun MutableList<SyncAccounts>.generateMacOSAccounts() {
+        if (appConfig.isIcloudSyncEnabled) {
+            add(SyncAccounts.ICLOUD)
+        }
+        if (appConfig.isDropboxSyncEnabled) {
+            add(SyncAccounts.DROPBOX)
+        }
+        if (appConfig.isGoogleDriveSyncEnabled) {
+            add(SyncAccounts.GOOGLE_DRIVE)
+        }
+        add(SyncAccounts.FRESH_RSS)
+    }
+
+    private fun MutableList<SyncAccounts>.generateLinuxAccounts() {
+        if (appConfig.isDropboxSyncEnabled) {
+            add(SyncAccounts.DROPBOX)
+        }
+        if (appConfig.isGoogleDriveSyncEnabled) {
+            add(SyncAccounts.GOOGLE_DRIVE)
+        }
+        add(SyncAccounts.FRESH_RSS)
+    }
+
+    private fun MutableList<SyncAccounts>.generateAndroidAccounts() {
+        if (appConfig.isDropboxSyncEnabled) {
+            add(SyncAccounts.DROPBOX)
+        }
+        if (appConfig.isGoogleDriveSyncEnabled) {
+            add(SyncAccounts.GOOGLE_DRIVE)
+        }
+        add(SyncAccounts.FRESH_RSS)
+    }
+
+    private fun MutableList<SyncAccounts>.generateIOSAccounts() {
+        if (appConfig.isIcloudSyncEnabled) {
+            add(SyncAccounts.ICLOUD)
+        }
+        if (appConfig.isDropboxSyncEnabled) {
+            add(SyncAccounts.DROPBOX)
+        }
+        if (appConfig.isGoogleDriveSyncEnabled) {
+            add(SyncAccounts.GOOGLE_DRIVE)
+        }
+        add(SyncAccounts.FRESH_RSS)
+    }
 
     fun setDropboxAccount() {
         currentAccountMutableState.value = SyncAccounts.DROPBOX

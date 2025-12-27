@@ -8,11 +8,10 @@
 
 import FeedFlowKit
 import Foundation
-import GoogleSignIn
 import GoogleAPIClientForREST_Drive
+import GoogleSignIn
 
 class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
-
     private var service: GTLRDriveService?
 
     func authenticate(onResult: @escaping (KotlinBoolean) -> Void) {

@@ -38,8 +38,8 @@ class GoogleDriveSyncViewModel internal constructor(
     )
     val googleDriveConnectionUiState: StateFlow<AccountConnectionUiState> = googleDriveSyncUiMutableState.asStateFlow()
 
-    private val googleDriveSyncMessageMutableState = MutableSharedFlow<GoogleDriveSynMessages>()
-    val googleDriveSyncMessageState: SharedFlow<GoogleDriveSynMessages> = googleDriveSyncMessageMutableState.asSharedFlow()
+    private val gDriveSyncMessageMutableState = MutableSharedFlow<GoogleDriveSynMessages>()
+    val googleDriveSyncMessageState: SharedFlow<GoogleDriveSynMessages> = gDriveSyncMessageMutableState.asSharedFlow()
 
     val syncMessageQueue = feedSyncMessageQueue.messageQueue
 
@@ -61,7 +61,7 @@ class GoogleDriveSyncViewModel internal constructor(
                 emitLastSyncUpdate()
             } catch (e: Exception) {
                 logger.e(e) { "Error while trying to setup Google Drive" }
-                googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+                gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             }
         }
@@ -69,7 +69,7 @@ class GoogleDriveSyncViewModel internal constructor(
 
     fun onAuthorizationFailed() {
         viewModelScope.launch {
-            googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+            gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
             googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
         }
     }
@@ -91,14 +91,13 @@ class GoogleDriveSyncViewModel internal constructor(
                 accountsRepository.clearAccount()
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             } catch (_: Throwable) {
-                googleDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
+                gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
             }
         }
     }
 
     fun showLoading() {
         googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
-
     }
 
     private fun restoreAccount() {

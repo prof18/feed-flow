@@ -24,7 +24,8 @@
       "mcp__jetbrains__replace_text_in_file",
       "Bash(ffmpeg:*)",
       "Bash(.scripts/ios-format.sh:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "WebSearch"
     ],
     "deny": []
   }

@@ -36,6 +36,8 @@ class GoogleDriveDataSourceJvm(
     suspend fun startAuthFlow(): Boolean = withContext(dispatcherProvider.io) {
         try {
             val flow = buildAuthFlow()
+
+            @Suppress("MagicNumber")
             val receiver = LocalServerReceiver.Builder().setPort(8888).build()
             val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
 
@@ -58,7 +60,14 @@ class GoogleDriveDataSourceJvm(
         return try {
             val flow = buildAuthFlow()
             val credential = flow.loadCredential("user")
-            if (credential != null && (credential.refreshToken != null || credential.expiresInSeconds == null || credential.expiresInSeconds > 60)) {
+            @Suppress("MagicNumber")
+            if (credential != null &&
+                (
+                    credential.refreshToken != null ||
+                        credential.expiresInSeconds == null ||
+                        credential.expiresInSeconds > 60
+                    )
+            ) {
                 driveService = Drive.Builder(httpTransport, jsonFactory, credential)
                     .setApplicationName(GOOGLE_DRIVE_CLIENT_APPLICATION_NAME)
                     .build()

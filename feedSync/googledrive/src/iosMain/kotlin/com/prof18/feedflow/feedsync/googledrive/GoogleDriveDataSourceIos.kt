@@ -43,7 +43,9 @@ class GoogleDriveDataSourceIos(
             suspendCancellableCoroutine { continuation ->
                 val url = uploadParam.url
                 val data = NSData.create(contentsOfURL = url) ?: run {
-                    continuation.resumeWithException(GoogleDriveUploadException("Failed to read file data from URL: $url"))
+                    continuation.resumeWithException(
+                        GoogleDriveUploadException("Failed to read file data from URL: $url"),
+                    )
                     return@suspendCancellableCoroutine
                 }
 
@@ -91,7 +93,9 @@ class GoogleDriveDataSourceIos(
                         data.writeToURL(destUrl, atomically = true)
                         continuation.resume(GoogleDriveDownloadResult(destinationUrl = DatabaseDestinationUrl(destUrl)))
                     } else {
-                        continuation.resumeWithException(GoogleDriveDownloadException("Failed to create destination URL"))
+                        continuation.resumeWithException(
+                            GoogleDriveDownloadException("Failed to create destination URL"),
+                        )
                     }
                 }
             }

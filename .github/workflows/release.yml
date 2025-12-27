@@ -112,6 +112,7 @@ jobs:
       MSIX_PUBLISHER_DISPLAY_NAME: ${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}
       TDECK_SALT: ${{ secrets.TDECK_SALT }}
       TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
+      GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON_DESKTOP }}
       
   linux:
     if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'linux')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-linux')))
@@ -122,6 +123,7 @@ jobs:
       SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
       TDECK_SALT: ${{ secrets.TDECK_SALT }}
       TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
+      GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON_DESKTOP }}
 
   macos-testflight:
     if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'macos')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-macos')))
@@ -142,6 +144,7 @@ jobs:
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
       TDECK_SALT: ${{ secrets.TDECK_SALT }}
       TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
+      GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON_DESKTOP }}
 
   macos:
     if: (github.event_name == 'workflow_dispatch' && (github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'macos')) || (github.event_name == 'push' && (endsWith(github.ref, '-all') || endsWith(github.ref, '-macos')))
@@ -157,6 +160,7 @@ jobs:
       APPSTORE_TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
       TDECK_SALT: ${{ secrets.TDECK_SALT }}
       TDECK_APP_ID: ${{ secrets.TDECK_APP_ID }}
+      GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON_DESKTOP }}
 
   create-release:
     needs: [windows, linux, macos]

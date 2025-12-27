@@ -9,6 +9,8 @@ on:
         required: true
       GID_CLIENT_ID:
         required: true
+      GID_REVERSED_CLIENT_ID:
+        required: true
       FIREBASE_PLIST:
         required: true
       CERTIFICATES_P12:
@@ -69,11 +71,12 @@ jobs:
         run: |
           echo "DROPBOX_URL_SCHEME=db-$DROPBOX_API_KEY" >> iosApp/Assets/Config.xcconfig
           echo "DROPBOX_API_KEY=$DROPBOX_API_KEY" >> iosApp/Assets/Config.xcconfig
-          echo "GID_CLIENT_ID=${GID_CLIENT_ID}.apps.googleusercontent.com" >> iosApp/Assets/Config.xcconfig
-          echo "GID_REVERSED_CLIENT_ID=com.googleusercontent.apps.${GID_CLIENT_ID}" >> iosApp/Assets/Config.xcconfig
+          echo "GID_CLIENT_ID=$GID_CLIENT_ID" >> iosApp/Assets/Config.xcconfig
+          echo "GID_REVERSED_CLIENT_ID=$GID_REVERSED_CLIENT_ID" >> iosApp/Assets/Config.xcconfig
         env:
           DROPBOX_API_KEY: ${{ secrets.DROPBOX_API_KEY }}
           GID_CLIENT_ID: ${{ secrets.GID_CLIENT_ID }}
+          GID_REVERSED_CLIENT_ID: ${{ secrets.GID_REVERSED_CLIENT_ID }}
 
       - name: import certs
         uses: apple-actions/import-codesign-certs@v5

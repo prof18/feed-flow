@@ -25,6 +25,7 @@ sealed class SyncDownloadError(override val code: String) : ErrorCode {
     data object DropboxDownloadFailed : SyncDownloadError("SD1")
     data object ICloudDownloadFailed : SyncDownloadError("SD2")
     data object GoogleDriveDownloadFailed : SyncDownloadError("SD3")
+    data object GoogleDriveNeedsReAuth : SyncDownloadError("SD4")
 }
 
 // Sync Feed Errors (SF)

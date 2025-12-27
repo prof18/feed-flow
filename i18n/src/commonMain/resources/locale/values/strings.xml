@@ -293,4 +293,5 @@
     <string name="reader_mode_fallback_open_browser_button">Open in browser</string>
     <string name="dropbox_auth_code_expired">The authentication code is not valid anymore. Please try again.</string>
     <string name="database_error_reset">We had trouble loading your data and had to start fresh. Sorry about that.</string>
+    <string name="google_drive_auth_retry">You need to re-authenticate to continue using Google Drive sync. Go to Accounts and unlink and link again.</string>
 </resources>

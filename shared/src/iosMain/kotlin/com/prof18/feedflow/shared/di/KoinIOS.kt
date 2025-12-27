@@ -12,7 +12,6 @@ import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceIos
 import com.prof18.feedflow.feedsync.googledrive.GoogleDrivePlatformClientIos
-import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
@@ -273,6 +272,5 @@ object Deps : KoinComponent {
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
     fun getUserFeedbackReporter() = getKoin().get<UserFeedbackReporter>()
     fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()
-    fun getGoogleDriveSettings() = getKoin().get<GoogleDriveSettings>()
     fun getGoogleDriveDataSource() = getKoin().get<GoogleDriveDataSourceIos>()
 }

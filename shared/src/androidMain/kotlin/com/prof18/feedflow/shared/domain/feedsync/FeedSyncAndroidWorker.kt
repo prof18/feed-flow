@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ErrorCode
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.SyncDownloadError
 import com.prof18.feedflow.core.model.SyncFeedError
 import com.prof18.feedflow.core.model.SyncResult
@@ -18,7 +19,6 @@ import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
-import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
@@ -26,6 +26,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxStringCredentials
 import com.prof18.feedflow.feedsync.dropbox.DropboxUploadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceAndroid
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadParam
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveNeedsReAuthException
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -87,6 +88,9 @@ internal class FeedSyncAndroidWorker(
                 emitSuccessMessage()
                 settingsRepository.setIsSyncUploadRequired(false)
                 return@withContext SyncResult.Success
+            } catch (e: GoogleDriveNeedsReAuthException) {
+                logger.e("Google Drive needs re-authorization", e)
+                SyncResult.GoogleDriveNeedReAuth()
             } catch (e: Exception) {
                 logger.e("Upload failed", e)
                 emitErrorMessage(SyncUploadError.DropboxUploadFailed)
@@ -129,6 +133,9 @@ internal class FeedSyncAndroidWorker(
             try {
                 feedSyncer.closeDB()
                 accountSpecificDownload()
+            } catch (e: GoogleDriveNeedsReAuthException) {
+                logger.e("Google Drive needs re-authorization", e)
+                SyncResult.GoogleDriveNeedReAuth()
             } catch (e: Exception) {
                 logger.e("Download failed", e)
                 SyncResult.General(SyncDownloadError.DropboxDownloadFailed)

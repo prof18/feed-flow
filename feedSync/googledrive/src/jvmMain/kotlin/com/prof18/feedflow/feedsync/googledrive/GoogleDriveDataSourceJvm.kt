@@ -14,7 +14,6 @@ import com.google.api.services.drive.DriveScopes
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
-import com.prof18.feedflow.feedsync.googledrive.GoogleDriveConstants.GOOGLE_DRIVE_CLIENT_APPLICATION_NAME
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.InputStreamReader
@@ -46,7 +45,7 @@ class GoogleDriveDataSourceJvm(
                 .setApplicationName(GOOGLE_DRIVE_CLIENT_APPLICATION_NAME)
                 .build()
 
-            googleDriveSettings.setGoogleDriveData("linked")
+            googleDriveSettings.setGoogleDriveLinked(true)
             true
         } catch (e: Exception) {
             logger.e(e) { "Error during Google Drive auth flow" }
@@ -55,7 +54,7 @@ class GoogleDriveDataSourceJvm(
     }
 
     fun restoreAuth(): Boolean {
-        if (googleDriveSettings.getGoogleDriveData() == null) {
+        if (!googleDriveSettings.isGoogleDriveLinked()) {
             return false
         }
         return try {

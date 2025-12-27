@@ -52,10 +52,6 @@ internal class GoogleDriveSyncScreen : Screen {
                             )
                         }
                     }
-
-                    is GoogleDriveSynMessages.ProceedToAuth -> {
-                        // No-op on desktop, browser opens automatically
-                    }
                 }
             }
         }
@@ -74,7 +70,6 @@ internal class GoogleDriveSyncScreen : Screen {
             onDisconnectClick = {
                 viewModel.disconnect()
             },
-            // TODO: we don't need custom platform UI anymore on gdrive
             customPlatformUI = {
                 Column(
                     modifier = Modifier.padding(top = Spacing.regular),

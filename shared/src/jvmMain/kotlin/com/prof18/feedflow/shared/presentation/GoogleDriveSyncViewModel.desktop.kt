@@ -2,7 +2,6 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
@@ -23,7 +22,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class GoogleDriveSyncViewModel internal constructor(
-    private val logger: Logger,
     private val googleDriveSettings: GoogleDriveSettings,
     private val googleDriveDataSource: GoogleDriveDataSourceJvm,
     private val feedSyncRepository: FeedSyncRepository,
@@ -53,6 +51,7 @@ class GoogleDriveSyncViewModel internal constructor(
                     AccountConnectionUiState.Linked(syncState = getSyncState())
                 }
                 emitSyncLoading()
+                feedSyncRepository.firstSync()
                 feedFetcherRepository.fetchFeeds()
                 emitLastSyncUpdate()
             } else {

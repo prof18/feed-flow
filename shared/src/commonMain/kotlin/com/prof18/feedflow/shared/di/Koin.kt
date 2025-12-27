@@ -76,7 +76,7 @@ fun initKoin(
             modules +
                 getCoreModule(appConfig) +
                 dropboxModule +
-                googleDriveModule +
+                googleDriveModule(appConfig.appEnvironment) +
                 getGReaderModule(appConfig.appEnvironment) +
                 getLoggingModule(appConfig, crashReportingLogWriter) +
                 getPlatformModule(appConfig.appEnvironment) +

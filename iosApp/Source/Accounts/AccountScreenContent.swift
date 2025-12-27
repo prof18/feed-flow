@@ -42,8 +42,12 @@ struct AccountsScreenContent: View {
             case .googleDrive:
                 NavigationLink(destination: GoogleDriveSyncScreen()) {
                     HStack {
-                        Image(systemName: "externaldrive.fill.badge.icloud")
-                            .fontWeight(.bold)
+                        Image("googledrive")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
+                            .foregroundStyle(.primary)
                         Text("Google Drive")
                             .font(.body)
                         Spacer()

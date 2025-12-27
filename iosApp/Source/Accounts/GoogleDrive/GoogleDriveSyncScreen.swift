@@ -10,51 +10,45 @@ import FeedFlowKit
 import SwiftUI
 
 struct GoogleDriveSyncScreen: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(AppState.self) private var appState
+    @Environment(AppState.self)
+    private var appState
 
     @StateObject private var vmStoreOwner = VMStoreOwner<GoogleDriveSyncViewModel>(
         Deps.shared.getGoogleDriveSyncViewModel()
     )
 
-    private let googleDriveDataSource = Deps.shared.getGoogleDriveDataSource()
-
-    @State private var googleDriveConnectionUiState: AccountConnectionUiState = AccountConnectionUiState.Loading()
-    @State private var snackbarMessage: String?
-    @State private var showSnackbar = false
+    @State private var uiState: AccountConnectionUiState = .Loading()
 
     var body: some View {
+        @Bindable var appState = appState
+
         GoogleDriveSyncScreenContent(
-            googleDriveConnectionUiState: googleDriveConnectionUiState,
-            onBackClick: {
-                dismiss()
-            },
+            connectionState: uiState,
             onConnectClick: {
-                googleDriveDataSource.authenticate { success in
-                    if success.boolValue {
-                        vmStoreOwner.instance.onAuthorizationSuccess()
-                    } else {
-                        vmStoreOwner.instance.onAuthorizationFailed()
-                    }
-                }
+                vmStoreOwner.instance.startAuthentication()
             },
             onBackupClick: {
                 vmStoreOwner.instance.triggerBackup()
             },
             onDisconnectClick: {
                 vmStoreOwner.instance.unlink()
-            },
-            snackbarMessage: $snackbarMessage,
-            showSnackbar: $showSnackbar
+            }
         )
+        .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
             for await state in vmStoreOwner.instance.googleDriveConnectionUiState {
-                googleDriveConnectionUiState = state
+                self.uiState = state
             }
         }
         .task {
-            for await message in vmStoreOwner.instance.googleDriveSyncMessageState {
-                handleMessage(message: message)
+            for await state in vmStoreOwner.instance.googleDriveSyncMessageState where state is GoogleDriveSynMessages.Error {
+                self.appState.snackbarQueue.append(
+                    SnackbarData(
+                        title: feedFlowStrings.googleDriveSyncError,
+                        subtitle: nil,
+                        showBanner: true
+                    )
+                )
             }
         }
         .task {
@@ -69,24 +63,6 @@ struct GoogleDriveSyncScreen: View {
                     )
                 }
             }
-        }
-    }
-
-    private func handleMessage(message: GoogleDriveSynMessages) {
-        switch message {
-        case is GoogleDriveSynMessages.Error:
-            appState.snackbarQueue.append(
-                SnackbarData(
-                    title: feedFlowStrings.googleDriveSyncError,
-                    subtitle: nil,
-                    showBanner: true
-                )
-            )
-        case is GoogleDriveSynMessages.ProceedToAuth:
-            // OAuth is handled natively on iOS
-            break
-        default:
-            break
         }
     }
 }

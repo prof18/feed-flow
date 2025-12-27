@@ -6,6 +6,8 @@
 //  Copyright © 2024 FeedFlow. All rights reserved.
 //
 
-// Rename the file to Config.xcconfig and fill the values with an api key from Dropbox
+// Rename the file to Config.xcconfig and fill the values with an api key from Dropbox and Google Drive
 DROPBOX_URL_SCHEME=db-<key>
 DROPBOX_API_KEY=<key>
+GID_CLIENT_ID=YOUR_CLIENT_ID.apps.googleusercontent.com
+GID_REVERSED_CLIENT_ID=com.googleusercontent.apps.YOUR_CLIENT_ID

@@ -59,15 +59,10 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
             }
 
             if let user = user {
-                let scopes = user.grantedScopes ?? []
-                if scopes.contains(kGTLRAuthScopeDriveAppdata) {
-                    let newService = GTLRDriveService()
-                    newService.authorizer = user.fetcherAuthorizer
-                    self?.service = newService
-                    onResult(KotlinBoolean(value: true))
-                } else {
-                    onResult(KotlinBoolean(value: false))
-                }
+                let newService = GTLRDriveService()
+                newService.authorizer = user.fetcherAuthorizer
+                self?.service = newService
+                onResult(KotlinBoolean(value: true))
             } else {
                 onResult(KotlinBoolean(value: false))
             }
@@ -84,7 +79,6 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
 
     func signOut() {
         GIDSignIn.sharedInstance.signOut()
-        service?.authorizer = nil
         service = nil
     }
 
@@ -103,6 +97,23 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
             updateFile(service: service, fileId: fileId, fileName: fileName, data: data, completionHandler: completionHandler)
         } else {
             searchAndUpload(service: service, fileName: fileName, data: data, completionHandler: completionHandler)
+        }
+    }
+    
+    func downloadFile(
+        fileName: String,
+        existingFileId: String?,
+        completionHandler: @escaping @Sendable (Data?, KotlinThrowable?) -> Void
+    ) {
+        guard let service = service else {
+            completionHandler(nil, GoogleDriveDownloadException(errorMessage: "Drive service not initialized", exceptionCause: nil))
+            return
+        }
+
+        if let fileId = existingFileId {
+            downloadFileById(service: service, fileId: fileId, completionHandler: completionHandler)
+        } else {
+            searchAndDownload(service: service, fileName: fileName, completionHandler: completionHandler)
         }
     }
 
@@ -188,23 +199,6 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
         }
     }
 
-    func downloadFile(
-        fileName: String,
-        existingFileId: String?,
-        completionHandler: @escaping @Sendable (Data?, KotlinThrowable?) -> Void
-    ) {
-        guard let service = service else {
-            completionHandler(nil, GoogleDriveDownloadException(errorMessage: "Drive service not initialized", exceptionCause: nil))
-            return
-        }
-
-        if let fileId = existingFileId {
-            downloadFileById(service: service, fileId: fileId, completionHandler: completionHandler)
-        } else {
-            searchAndDownload(service: service, fileName: fileName, completionHandler: completionHandler)
-        }
-    }
-
     private func searchAndDownload(
         service: GTLRDriveService,
         fileName: String,
@@ -254,7 +248,8 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
         }
     }
 
-    static func handleOAuthResponse(url: URL) -> Bool {
-        return GIDSignIn.sharedInstance.handle(url)
-    }
+    // TODO: delete?
+//    static func handleOAuthResponse(url: URL) -> Bool {
+//        return GIDSignIn.sharedInstance.handle(url)
+//    }
 }

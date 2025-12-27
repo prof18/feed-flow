@@ -132,3 +132,5 @@ iosApp/.compile
 
 # Local build artifacts
 iosApp/.build/
+
+/iosApp/Assets/Config-Debug.xcconfig

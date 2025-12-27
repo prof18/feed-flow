@@ -47,11 +47,22 @@ class GoogleDriveSyncViewModel internal constructor(
         restoreAccount()
     }
 
+    fun startAuthentication() {
+        googleDriveDataSource.authenticate { success ->
+            if (success) {
+                onAuthorizationSuccess()
+            } else {
+                onAuthorizationFailed()
+            }
+        }
+    }
+
     private fun restoreAccount() {
         googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
         googleDriveDataSource.restorePreviousSignIn { success ->
             if (success) {
                 googleDriveSettings.setGoogleDriveLinked(true)
+                accountsRepository.setGoogleDriveAccount()
                 googleDriveSyncUiMutableState.update {
                     AccountConnectionUiState.Linked(syncState = getSyncState())
                 }
@@ -80,7 +91,7 @@ class GoogleDriveSyncViewModel internal constructor(
                 AccountConnectionUiState.Linked(syncState = getSyncState())
             }
             emitSyncLoading()
-            googleDriveSettings.setGoogleDriveData("connected")
+            googleDriveSettings.setGoogleDriveLinked(true)
             accountsRepository.setGoogleDriveAccount()
             feedSyncRepository.firstSync()
             feedFetcherRepository.fetchFeeds()

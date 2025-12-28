@@ -40,6 +40,8 @@ import java.io.InputStream
 import java.util.Properties
 
 fun main() {
+    setupSandboxEnvironment()
+
     application {
         val properties = loadProperties()
         val appConfig = createAppConfig(properties)
@@ -53,7 +55,6 @@ fun main() {
             delay(100)
             initProgress = 0.2f
             launch(Dispatchers.IO) {
-                setupSandboxEnvironment()
                 initializeDependencies(appConfig)
                 withContext(Dispatchers.Main) { initProgress = 0.6f }
                 setupTelemetryAndCrashReporting(appConfig)

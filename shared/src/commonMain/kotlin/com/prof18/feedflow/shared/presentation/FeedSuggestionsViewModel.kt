@@ -2,79 +2,81 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
-import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.SuggestedFeedsRepository
+import com.prof18.feedflow.core.model.FeedAddState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedSuggestionsViewModel internal constructor(
     private val suggestedFeedsRepository: SuggestedFeedsRepository,
     private val feedSourcesRepository: FeedSourcesRepository,
-    private val settingsRepository: SettingsRepository,
+    private val feedFetcherRepository: FeedFetcherRepository,
 ) : ViewModel() {
 
     private val suggestedCategoriesMutableState = MutableStateFlow<List<SuggestedFeedCategory>>(emptyList())
     val suggestedCategoriesState: StateFlow<List<SuggestedFeedCategory>> = suggestedCategoriesMutableState.asStateFlow()
 
-    private val selectedFeedsMutableState = MutableStateFlow<Set<String>>(emptySet())
-    val selectedFeedsState: StateFlow<Set<String>> = selectedFeedsMutableState.asStateFlow()
+    private val selectedCategoryIdMutableState = MutableStateFlow<String?>(null)
+    val selectedCategoryIdState: StateFlow<String?> = selectedCategoryIdMutableState.asStateFlow()
 
-    private val isLoadingMutableState = MutableStateFlow(false)
-    val isLoadingState: StateFlow<Boolean> = isLoadingMutableState.asStateFlow()
-
-    private val expandedCategoriesMutableState = MutableStateFlow<Set<String>>(emptySet())
-    val expandedCategoriesState: StateFlow<Set<String>> = expandedCategoriesMutableState.asStateFlow()
+    private val feedStatesMapMutableState = MutableStateFlow<Map<String, FeedAddState>>(emptyMap())
+    val feedStatesMapState: StateFlow<Map<String, FeedAddState>> = feedStatesMapMutableState.asStateFlow()
 
     init {
         loadSuggestedFeeds()
+        loadExistingFeeds()
     }
 
     private fun loadSuggestedFeeds() {
         val categories = suggestedFeedsRepository.getSuggestedFeeds()
         suggestedCategoriesMutableState.update { categories }
         if (categories.isNotEmpty()) {
-            expandedCategoriesMutableState.update { setOf(categories.first().id) }
+            selectedCategoryIdMutableState.update { categories.first().id }
         }
     }
 
-    fun toggleFeedSelection(feedUrl: String) {
-        selectedFeedsMutableState.update { currentSelection ->
-            if (currentSelection.contains(feedUrl)) {
-                currentSelection - feedUrl
-            } else {
-                currentSelection + feedUrl
-            }
-        }
-    }
-
-    fun toggleCategoryExpansion(categoryId: String) {
-        expandedCategoriesMutableState.update { currentExpanded ->
-            if (currentExpanded.contains(categoryId)) {
-                currentExpanded - categoryId
-            } else {
-                currentExpanded + categoryId
-            }
-        }
-    }
-
-    fun completeOnboarding() {
+    private fun loadExistingFeeds() {
         viewModelScope.launch {
-            isLoadingMutableState.update { true }
+            val existingFeeds = feedSourcesRepository.getFeedSources().firstOrNull() ?: emptyList()
+            val stateMap = existingFeeds.associate { it.url to FeedAddState.Added }
+            feedStatesMapMutableState.update { stateMap }
+        }
+    }
 
-            selectedFeedsMutableState.value.forEach { feedUrl ->
-                feedSourcesRepository.addFeedSource(
-                    feedUrl = feedUrl,
-                    categoryName = null,
-                    isNotificationEnabled = false,
+    fun selectCategory(categoryId: String) {
+        selectedCategoryIdMutableState.update { categoryId }
+    }
+
+    fun addFeed(feed: SuggestedFeed, categoryName: String) {
+        viewModelScope.launch {
+            feedStatesMapMutableState.update { it + (feed.url to FeedAddState.Adding) }
+
+            try {
+                val category = FeedSourceCategory(
+                    title = categoryName,
+                    id = categoryName.hashCode().toString(),
                 )
-            }
 
-            isLoadingMutableState.update { false }
+                feedSourcesRepository.addFeedSourceWithoutFetching(
+                    feedUrl = feed.url,
+                    feedTitle = feed.name,
+                    category = category,
+                    logoUrl = feed.logoUrl,
+                )
+                feedStatesMapMutableState.update { it + (feed.url to FeedAddState.Added) }
+                feedFetcherRepository.fetchFeeds()
+            } catch (_: Exception) {
+                feedStatesMapMutableState.update { it + (feed.url to FeedAddState.NotAdded) }
+            }
         }
     }
 }

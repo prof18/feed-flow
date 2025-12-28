@@ -8,205 +8,270 @@
 
 import FeedFlowKit
 import SwiftUI
+import NukeUI
 
+@MainActor
 struct FeedSuggestionsContent: View {
-    @Environment(\.colorScheme) var colorScheme
-    
-    // TODO: do not inject the view model, but data and callbacks
     let viewModel: FeedSuggestionsViewModel
 
     @State private var suggestedCategories: [SuggestedFeedCategory] = []
-    @State private var selectedFeeds: [String] = []
-    @State private var expandedCategories: [String] = []
-    @State private var isLoading = false
+    @State private var selectedCategoryId: String = ""
+    @State private var feedStatesMap: [String: FeedAddState] = [:]
+
+    @Environment(\.dismiss) private var dismiss
+
+    private var selectedCategory: SuggestedFeedCategory? {
+        suggestedCategories.first(where: { $0.id == selectedCategoryId }) ?? suggestedCategories.first
+    }
+
+    private var filteredFeeds: [SuggestedFeed] {
+        selectedCategory?.feeds ?? []
+    }
+
+    private func getFeedState(_ feedUrl: String) -> FeedAddState {
+        feedStatesMap[feedUrl] ?? .notAdded
+    }
 
     var body: some View {
-        NavigationStack {
+        VStack(spacing: 0) {
+            CategoryFilterRow(
+                categories: suggestedCategories,
+                selectedCategoryId: selectedCategoryId,
+                onCategorySelected: { categoryId in
+                    selectedCategoryId = categoryId
+                }
+            )
+            .padding(.vertical, Spacing.regular)
+
+            Divider()
+
             ScrollView {
-                VStack(spacing: 24) {
-                    // Header
-                    VStack(spacing: 12) {
-                        Text(feedFlowStrings.feedSuggestionsTitle)
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-
-                        Text(feedFlowStrings.feedSuggestionsDescription)
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                    }
-                    .padding(.top, 24)
-
-                    // Categories
-                    ForEach(suggestedCategories, id: \.id) { category in
-                        CategoryCard(
-                            category: category,
-                            isExpanded: expandedCategories.contains(category.id),
-                            selectedFeeds: selectedFeeds,
-                            onToggle: {
-                                viewModel.toggleCategoryExpansion(categoryId: category.id)
-                            },
-                            onFeedToggle: { feedUrl in
-                                viewModel.toggleFeedSelection(feedUrl: feedUrl)
+                LazyVStack(spacing: 0) {
+                    ForEach(filteredFeeds, id: \.url) { feed in
+                        SuggestedFeedRow(
+                            feed: feed,
+                            feedState: getFeedState(feed.url),
+                            onAddFeed: {
+                                if let categoryName = selectedCategory?.name {
+                                    viewModel.addFeed(feed: feed, categoryName: categoryName)
+                                }
                             }
                         )
-                    }
 
-                    // Footer with action button
-                    if !selectedFeeds.isEmpty {
-                        VStack(spacing: 16) {
-                            HStack {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
-                                Text(feedFlowStrings.feedSuggestionsSelectedCount("\(selectedFeeds.count)"))
-                                    .fontWeight(.medium)
-                            }
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.green.opacity(0.1))
-                            .cornerRadius(12)
-
-                            Button(action: {
-                                viewModel.completeOnboarding()
-                                // TODO: navigate back when the adding is complete
-                            }) {
-                                HStack {
-                                    if isLoading {
-                                        ProgressView()
-                                            .tint(.white)
-                                    } else {
-                                        Text(feedFlowStrings.feedSuggestionsAddButton)
-                                            .fontWeight(.semibold)
-                                        Image(systemName: "arrow.right")
-                                    }
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.accentColor)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                            }
-                            .disabled(isLoading)
+                        if feed.url != filteredFeeds.last?.url {
+                            Divider()
+                                .padding(.leading, 64)
                         }
-                        .padding(.horizontal)
-                        .padding(.bottom, 24)
-                    }
-                }
-                .padding()
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        // TODO: implement back action
-                    }) {
-                        Text(feedFlowStrings.actionDone)
-                            .fontWeight(.semibold)
                     }
                 }
             }
         }
+        .navigationTitle(feedFlowStrings.feedSuggestionsTitle)
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             for await categories in viewModel.suggestedCategoriesState {
                 self.suggestedCategories = categories.compactMap { $0 }
-            }
-        }
-        .task {
-            for await feeds in viewModel.selectedFeedsState {
-                self.selectedFeeds = feeds.compactMap { $0 }
-            }
-        }
-        .task {
-            for await expanded in viewModel.expandedCategoriesState {
-                self.expandedCategories = expanded.compactMap { $0 }
-            }
-        }
-        .task {
-            for await loading in viewModel.isLoadingState {
-                if let loadingValue = loading as? Bool {
-                    self.isLoading = loadingValue
+                if selectedCategoryId.isEmpty, let first = categories.first {
+                    selectedCategoryId = first.id
                 }
+            }
+        }
+        .task {
+            for await categoryId in viewModel.selectedCategoryIdState {
+                if let id = categoryId {
+                    self.selectedCategoryId = id
+                }
+            }
+        }
+        .task {
+            for await statesMap in viewModel.feedStatesMapState {
+                self.feedStatesMap = statesMap
             }
         }
     }
 }
 
-private struct CategoryCard: View {
-    let category: SuggestedFeedCategory
-    let isExpanded: Bool
-    let selectedFeeds: [String]
-    let onToggle: () -> Void
-    let onFeedToggle: (String) -> Void
+private struct CategoryFilterRow: View {
+    let categories: [SuggestedFeedCategory]
+    let selectedCategoryId: String
+    let onCategorySelected: (String) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Button(action: onToggle) {
-                HStack {
-                    Text(category.icon)
-                        .font(.title2)
-
-                    Text(category.name)
-                        .font(.headline)
-
-                    Spacer()
-
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.secondary)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: Spacing.small) {
+                ForEach(categories, id: \.id) { category in
+                    CategoryFilterChip(
+                        category: category,
+                        isSelected: category.id == selectedCategoryId,
+                        onTap: { onCategorySelected(category.id) }
+                    )
                 }
-                .padding()
-                .background(Color.secondary.opacity(0.1))
-                .cornerRadius(12)
             }
-            .buttonStyle(PlainButtonStyle())
+            .padding(.horizontal, Spacing.regular)
+        }
+    }
+}
 
-            if isExpanded {
-                VStack(spacing: 8) {
-                    ForEach(category.feeds, id: \.url) { feed in
-                        FeedChip(
-                            feed: feed,
-                            isSelected: selectedFeeds.contains(feed.url),
-                            onToggle: {
-                                onFeedToggle(feed.url)
-                            }
-                        )
+private struct CategoryFilterChip: View {
+    let category: SuggestedFeedCategory
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 6) {
+                Text(category.icon)
+                    .font(.subheadline)
+                Text(category.name)
+                    .font(.subheadline)
+                    .fontWeight(isSelected ? .semibold : .medium)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(isSelected ? Color.accentColor.opacity(colorScheme == .dark ? 0.25 : 0.15) : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(isSelected ? Color.accentColor : Color(UIColor.separator), lineWidth: isSelected ? 2 : 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .foregroundColor(isSelected ? .accentColor : .primary)
+    }
+}
+
+private struct SuggestedFeedRow: View {
+    let feed: SuggestedFeed
+    let feedState: FeedAddState
+    let onAddFeed: () -> Void
+
+    var body: some View {
+        HStack(spacing: Spacing.regular) {
+            if let logoUrl = feed.logoUrl, let url = URL(string: logoUrl) {
+                LazyImage(url: url) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 40, height: 40)
+                            .cornerRadius(8)
+                    } else if state.isLoading {
+                        ProgressView()
+                            .frame(width: 40, height: 40)
+                    } else {
+                        FeedPlaceholderIcon()
                     }
                 }
-                .padding(.horizontal)
+            } else {
+                FeedPlaceholderIcon()
             }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(feed.name)
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .lineLimit(1)
+
+                Text(feed.description_)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+            }
+
+            Spacer()
+
+            AddButton(feedState: feedState, onTap: onAddFeed)
         }
-        .padding(.horizontal)
+        .padding(.horizontal, Spacing.regular)
+        .padding(.vertical, Spacing.small)
     }
 }
 
-private struct FeedChip: View {
-    let feed: SuggestedFeed
-    let isSelected: Bool
-    let onToggle: () -> Void
+private struct FeedPlaceholderIcon: View {
+    var body: some View {
+        Image(systemName: "square.stack.3d.up")
+            .font(.system(size: 24))
+            .foregroundColor(.secondary)
+            .frame(width: 40, height: 40)
+            .background(Color(UIColor.secondarySystemBackground))
+            .cornerRadius(8)
+    }
+}
+
+private struct AddButton: View {
+    let feedState: FeedAddState
+    let onTap: () -> Void
 
     var body: some View {
-        Button(action: onToggle) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(feed.name)
+        switch feedState {
+        case .added:
+            Button(action: {}) {
+                HStack(spacing: 4) {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 12, weight: .semibold))
+                    Text("Added")
                         .font(.subheadline)
                         .fontWeight(.medium)
-
-                    Text(feed.description_)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
                 }
-
-                Spacer()
-
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(isSelected ? .accentColor : .secondary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(UIColor.secondarySystemFill))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(Color(UIColor.separator), lineWidth: 1)
+                )
             }
-            .padding()
-            .background(isSelected ? Color.accentColor.opacity(0.1) : Color.secondary.opacity(0.05))
-            .cornerRadius(8)
+            .buttonStyle(.plain)
+            .foregroundColor(.secondary)
+            .disabled(true)
+
+        case .adding:
+            Button(action: {}) {
+                ProgressView()
+                    .controlSize(.small)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.clear)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(Color(UIColor.separator), lineWidth: 1)
+                    )
+            }
+            .buttonStyle(.plain)
+            .disabled(true)
+
+        case .notAdded:
+            Button(action: onTap) {
+                HStack(spacing: 4) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 12, weight: .semibold))
+                    Text("Add")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.clear)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(Color(UIColor.separator), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .foregroundColor(.primary)
         }
-        .buttonStyle(PlainButtonStyle())
     }
 }

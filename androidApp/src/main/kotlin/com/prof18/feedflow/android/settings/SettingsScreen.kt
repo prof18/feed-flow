@@ -218,7 +218,6 @@ fun SettingsScreen(
 
 @Suppress("UnusedParameter")
 @Composable
-// TODO: add navigation to feed suggestions
 private fun SettingsScreenContent(
     browsers: ImmutableList<Browser>,
     settingsState: SettingsState,

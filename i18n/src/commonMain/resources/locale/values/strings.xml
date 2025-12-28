@@ -273,8 +273,6 @@
     <string name="blocked_words_description">Articles containing these words in the title or description will be hidden.</string>
     <string name="feed_suggestions_title">Feed Suggestions</string>
     <string name="feed_suggestions_description">Browse and add feeds to your collection</string>
-    <string name="feed_suggestions_selected_count">%s feed(s) selected</string>
-    <string name="feed_suggestions_add_button">Add Selected Feeds</string>
     <string name="mark_all_read_dialog_message">Are you sure you want to mark all articles as read?</string>
     <string name="clear_old_articles_dialog_message">Are you sure you want to delete old articles?</string>
     <string name="confirm_button">Confirm</string>

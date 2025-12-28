@@ -133,4 +133,5 @@
     <string name="add_feed_generic_error">Pati një gabim gjatë shtimit të prurjes. Të lutem provo përsëri</string>
     <string name="edit_feed_generic_error">Diçka shkoi keq gjatë modifikimit të prurjes. Të lutem provo përsëri.</string>
     <string name="open_feed_settings">Hap cilësimet e prurjes</string>
+    <string name="feed_add_in_progress_message"></string>
 </resources>

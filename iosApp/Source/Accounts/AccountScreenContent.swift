@@ -83,6 +83,22 @@ struct AccountsScreenContent: View {
                     }
                 }
 
+            case .miniflux:
+                NavigationLink(destination: MinifluxSyncScreen(isFromAddAccount: false)) {
+                    HStack {
+                        Image("freshrss")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
+                            .foregroundStyle(.primary)
+                        Text("Miniflux")
+                            .font(.body)
+                        Spacer()
+                        Image(systemName: "checkmark")
+                    }
+                }
+
             case .local:
                 EmptyView()
             }

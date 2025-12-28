@@ -6,4 +6,5 @@ enum class SyncAccounts {
     LOCAL,
     ICLOUD,
     FRESH_RSS,
+    MINIFLUX,
 }

@@ -57,6 +57,7 @@ internal class AccountsRepository(
             add(SyncAccounts.GOOGLE_DRIVE)
         }
         add(SyncAccounts.FRESH_RSS)
+        add(SyncAccounts.MINIFLUX)
     }
 
     private fun MutableList<SyncAccounts>.generateMacOSAccounts() {
@@ -70,6 +71,7 @@ internal class AccountsRepository(
             add(SyncAccounts.GOOGLE_DRIVE)
         }
         add(SyncAccounts.FRESH_RSS)
+        add(SyncAccounts.MINIFLUX)
     }
 
     private fun MutableList<SyncAccounts>.generateLinuxAccounts() {
@@ -80,6 +82,7 @@ internal class AccountsRepository(
             add(SyncAccounts.GOOGLE_DRIVE)
         }
         add(SyncAccounts.FRESH_RSS)
+        add(SyncAccounts.MINIFLUX)
     }
 
     private fun MutableList<SyncAccounts>.generateAndroidAccounts() {
@@ -90,6 +93,7 @@ internal class AccountsRepository(
             add(SyncAccounts.GOOGLE_DRIVE)
         }
         add(SyncAccounts.FRESH_RSS)
+        add(SyncAccounts.MINIFLUX)
     }
 
     private fun MutableList<SyncAccounts>.generateIOSAccounts() {
@@ -103,6 +107,7 @@ internal class AccountsRepository(
             add(SyncAccounts.GOOGLE_DRIVE)
         }
         add(SyncAccounts.FRESH_RSS)
+        add(SyncAccounts.MINIFLUX)
     }
 
     fun setDropboxAccount() {
@@ -122,7 +127,14 @@ internal class AccountsRepository(
 
     fun setFreshRssAccount() {
         clearOtherSyncCredentials(except = SyncAccounts.FRESH_RSS)
+        networkSettings.setSyncAccountType("FRESH_RSS")
         currentAccountMutableState.value = SyncAccounts.FRESH_RSS
+    }
+
+    fun setMinifluxAccount() {
+        clearOtherSyncCredentials(except = SyncAccounts.MINIFLUX)
+        networkSettings.setSyncAccountType("MINIFLUX")
+        currentAccountMutableState.value = SyncAccounts.MINIFLUX
     }
 
     fun clearAccount() {
@@ -139,7 +151,7 @@ internal class AccountsRepository(
         if (except != SyncAccounts.ICLOUD) {
             icloudSettings.setUseICloud(false)
         }
-        if (except != SyncAccounts.FRESH_RSS) {
+        if (except != SyncAccounts.FRESH_RSS && except != SyncAccounts.MINIFLUX) {
             networkSettings.deleteAll()
         }
     }
@@ -159,7 +171,11 @@ internal class AccountsRepository(
             }
         }
         if (gReaderRepository.isAccountSet()) {
-            return SyncAccounts.FRESH_RSS
+            val accountType = networkSettings.getSyncAccountType()
+            return when (accountType) {
+                "MINIFLUX" -> SyncAccounts.MINIFLUX
+                else -> SyncAccounts.FRESH_RSS
+            }
         }
         return SyncAccounts.LOCAL
     }

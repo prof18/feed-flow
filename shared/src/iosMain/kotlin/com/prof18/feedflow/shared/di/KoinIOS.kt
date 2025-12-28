@@ -39,6 +39,7 @@ import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
+import com.prof18.feedflow.shared.presentation.MinifluxSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
@@ -265,6 +266,7 @@ object Deps : KoinComponent {
     fun getReaderModeViewModel() = getKoin().get<ReaderModeViewModel>()
     fun getEditFeedViewModel() = getKoin().get<EditFeedViewModel>()
     fun getFreshRssSyncViewModel() = getKoin().get<FreshRssSyncViewModel>()
+    fun getMinifluxSyncViewModel() = getKoin().get<MinifluxSyncViewModel>()
     fun getDeeplinkFeedViewModel() = getKoin().get<DeeplinkFeedViewModel>()
     fun getReviewViewModel() = getKoin().get<ReviewViewModel>()
     fun getSerialFeedFetcherRepository() = getKoin().get<SerialFeedFetcherRepository>()

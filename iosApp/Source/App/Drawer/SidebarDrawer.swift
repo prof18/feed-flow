@@ -23,7 +23,9 @@ struct SidebarDrawer: View {
 
     @Binding var selectedDrawerItem: DrawerItem?
 
-    @StateObject private var categoryVMStoreOwner = VMStoreOwner<ChangeFeedCategoryViewModel>(Deps.shared.getChangeFeedCategoryViewModel()) 
+    @StateObject private var categoryVMStoreOwner = VMStoreOwner<ChangeFeedCategoryViewModel>(
+        Deps.shared.getChangeFeedCategoryViewModel()
+    )
 
     @State private var showMarkAllReadDialog = false
     @State private var showClearOldArticlesDialog = false

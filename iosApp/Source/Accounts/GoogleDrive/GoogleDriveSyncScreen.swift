@@ -41,7 +41,8 @@ struct GoogleDriveSyncScreen: View {
             }
         }
         .task {
-            for await state in vmStoreOwner.instance.googleDriveSyncMessageState where state is GoogleDriveSynMessages.Error {
+            for await state in vmStoreOwner.instance.googleDriveSyncMessageState
+             where state is GoogleDriveSynMessages.Error {
                 self.appState.snackbarQueue.append(
                     SnackbarData(
                         title: feedFlowStrings.googleDriveSyncError,

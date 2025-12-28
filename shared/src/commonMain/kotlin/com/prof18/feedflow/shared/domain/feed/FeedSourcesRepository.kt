@@ -406,6 +406,45 @@ internal class FeedSourcesRepository(
             else -> "$originalUrl/$this"
         }
 
+    suspend fun
+            addFeedSourceWithoutFetching(
+        feedUrl: String,
+        feedTitle: String,
+        category: FeedSourceCategory?,
+        logoUrl: String?,
+    ) = withContext(dispatcherProvider.io) {
+        when (accountsRepository.getCurrentSyncAccount()) {
+            SyncAccounts.FRESH_RSS -> {
+                gReaderRepository.addFeedSource(
+                    url = feedUrl,
+                    categoryName = category,
+                    isNotificationEnabled = false,
+                )
+            }
+            else -> {
+                val parsedFeedSource = ParsedFeedSource(
+                    id = feedUrl.hashCode().toString(),
+                    url = feedUrl,
+                    title = feedTitle,
+                    category = category,
+                    logoUrl = logoUrl,
+                )
+
+                if (category != null) {
+                    databaseHelper.insertCategories(listOf(category))
+                }
+
+                databaseHelper.insertFeedSource(listOf(parsedFeedSource))
+
+                feedSyncRepository.addSourceAndCategories(
+                    listOf(parsedFeedSource.toFeedSource()),
+                    category?.let { listOf(it) } ?: emptyList(),
+                )
+                feedSyncRepository.performBackup()
+            }
+        }
+    }
+
     private data class AddResult(
         val channel: RssChannel,
         val usedUrl: String,

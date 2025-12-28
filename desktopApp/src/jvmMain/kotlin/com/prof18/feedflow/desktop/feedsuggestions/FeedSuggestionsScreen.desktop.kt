@@ -10,7 +10,7 @@ import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
-import com.prof18.feedflow.shared.ui.onboarding.FeedSuggestionsContent
+import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsContent
 import kotlinx.collections.immutable.toPersistentList
 
 internal class FeedSuggestionsScreen : Screen {
@@ -21,27 +21,18 @@ internal class FeedSuggestionsScreen : Screen {
     override fun Content() {
         val viewModel = desktopViewModel { DI.koin.get<FeedSuggestionsViewModel>() }
         val suggestedCategories by viewModel.suggestedCategoriesState.collectAsState()
-        val selectedFeeds by viewModel.selectedFeedsState.collectAsState()
-        val isLoading by viewModel.isLoadingState.collectAsState()
-        val expandedCategories by viewModel.expandedCategoriesState.collectAsState()
+        val selectedCategoryId by viewModel.selectedCategoryIdState.collectAsState()
+        val feedStatesMap by viewModel.feedStatesMapState.collectAsState()
 
         val navigator = LocalNavigator.currentOrThrow
 
         FeedSuggestionsContent(
             categories = suggestedCategories.toPersistentList(),
-            selectedFeeds = selectedFeeds.toSet(),
-            expandedCategories = expandedCategories.toSet(),
-            isLoading = isLoading,
-            onFeedToggle = { feedUrl ->
-                viewModel.toggleFeedSelection(feedUrl)
-            },
-            onCategoryToggle = { categoryId ->
-                viewModel.toggleCategoryExpansion(categoryId)
-            },
-            onAddFeeds = {
-                viewModel.completeOnboarding()
-                // TODO: navigate only when the adding process is done
-                navigator.pop()
+            selectedCategoryId = selectedCategoryId,
+            feedStatesMap = feedStatesMap,
+            onCategorySelected = viewModel::selectCategory,
+            onAddFeed = { feed, categoryName ->
+                viewModel.addFeed(feed, categoryName)
             },
             onNavigateBack = {
                 navigator.pop()

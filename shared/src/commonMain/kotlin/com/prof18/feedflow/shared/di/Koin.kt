@@ -174,7 +174,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         FeedSuggestionsViewModel(
             suggestedFeedsRepository = get(),
             feedSourcesRepository = get(),
-            settingsRepository = get(),
+            feedFetcherRepository = get(),
         )
     }
 

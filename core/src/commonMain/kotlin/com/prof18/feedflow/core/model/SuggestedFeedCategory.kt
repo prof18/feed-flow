@@ -11,4 +11,5 @@ data class SuggestedFeed(
     val name: String,
     val url: String,
     val description: String,
+    val logoUrl: String? = null,
 )

@@ -6,7 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
-import com.prof18.feedflow.shared.ui.onboarding.FeedSuggestionsContent
+import com.prof18.feedflow.shared.ui.feedsuggestions.FeedSuggestionsContent
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -15,21 +15,16 @@ fun FeedSuggestionsScreen(
     viewModel: FeedSuggestionsViewModel = koinViewModel(),
 ) {
     val categories by viewModel.suggestedCategoriesState.collectAsState()
-    val selectedFeeds by viewModel.selectedFeedsState.collectAsState()
-    val expandedCategories by viewModel.expandedCategoriesState.collectAsState()
-    val isLoading by viewModel.isLoadingState.collectAsState()
+    val selectedCategoryId by viewModel.selectedCategoryIdState.collectAsState()
+    val feedStatesMap by viewModel.feedStatesMapState.collectAsState()
 
     FeedSuggestionsContent(
         categories = categories,
-        selectedFeeds = selectedFeeds,
-        expandedCategories = expandedCategories,
-        isLoading = isLoading,
-        onFeedToggle = viewModel::toggleFeedSelection,
-        onCategoryToggle = viewModel::toggleCategoryExpansion,
-        onAddFeeds = {
-            viewModel.completeOnboarding()
-            // TODO: Navigate back only after the import is done
-            navigateBack()
+        selectedCategoryId = selectedCategoryId,
+        feedStatesMap = feedStatesMap,
+        onCategorySelected = viewModel::selectCategory,
+        onAddFeed = { feed, categoryName ->
+            viewModel.addFeed(feed, categoryName)
         },
         onNavigateBack = navigateBack,
         modifier = Modifier.fillMaxSize(),

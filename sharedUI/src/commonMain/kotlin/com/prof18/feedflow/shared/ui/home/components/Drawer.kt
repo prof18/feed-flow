@@ -346,7 +346,7 @@ private fun DrawerFeedSourcesByCategories(
             )
 
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
-                var isCategoryExpanded by remember {
+                var isCategoryExpanded by rememberSaveable {
                     mutableStateOf(false)
                 }
 

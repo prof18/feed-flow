@@ -1,20 +1,24 @@
 package com.prof18.feedflow.shared.domain.feed.suggestions
 
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
-import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.businessCategory
-import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.designCategory
-import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.newsCategory
-import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.programmingCategory
-import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.scienceCategory
-import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.techCategory
+import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.businessFeeds
+import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.entertainmentFeeds
+import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.gamingFeeds
+import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.lifestyleFeeds
+import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.newsFeeds
+import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.programmingFeeds
+import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.scienceFeeds
+import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.sportsFeeds
+import com.prof18.feedflow.shared.domain.feed.suggestions.bycategory.technologyFeeds
 
-fun getSuggestedFeeds(): List<SuggestedFeedCategory> {
-    return listOf(
-        techCategory,
-        newsCategory,
-        programmingCategory,
-        scienceCategory,
-        designCategory,
-        businessCategory,
-    )
-}
+val suggestedFeeds: List<SuggestedFeedCategory> = listOf(
+    businessFeeds,
+    programmingFeeds,
+    entertainmentFeeds,
+    gamingFeeds,
+    lifestyleFeeds,
+    newsFeeds,
+    scienceFeeds,
+    sportsFeeds,
+    technologyFeeds,
+)

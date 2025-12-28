@@ -8,7 +8,7 @@ import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
-import com.prof18.feedflow.shared.domain.feed.suggestions.getSuggestedFeeds
+import com.prof18.feedflow.shared.domain.feed.suggestions.suggestedFeeds
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
@@ -47,10 +47,9 @@ class FeedSuggestionsViewModel internal constructor(
     }
 
     private fun loadSuggestedFeeds() {
-        val categories = getSuggestedFeeds()
-        suggestedCategoriesMutableState.update { categories.toPersistentList() }
-        if (categories.isNotEmpty()) {
-            selectedCategoryIdMutableState.update { categories.first().id }
+        suggestedCategoriesMutableState.update { suggestedFeeds.toPersistentList() }
+        if (suggestedFeeds.isNotEmpty()) {
+            selectedCategoryIdMutableState.update { suggestedFeeds.first().id }
         }
     }
 

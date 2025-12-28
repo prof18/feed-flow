@@ -10,7 +10,6 @@
     <string name="invalid_rss_url">A megadott hivatkozás nem egy érvényes RSS-hírforrás</string>
     <string name="no_feeds_found_message">Nem találhatók hírforrások, adjon hozzá egyet!</string>
     <string name="no_feeds_add_one_message">Nem találhatók hírforrások, adjon hozzá egyet</string>
-    <string name="new_release_available_link">Letöltés innen</string>
     <string name="refresh_feeds">Hírforrások frissítése</string>
     <string name="done_button">OK</string>
     <string name="issue_content_template">Írja le a problémát, adja meg a használt platformot, az alkalmazás verzióját, és küldjön egy hivatkozást ahhoz az RSS-hírforráshoz, amely a problémát okozza. Ha lehetséges, csatoljon egy képernyőképet és az OPML-fájlt is</string>
@@ -32,7 +31,6 @@
     <string name="browser_selection_button">Böngésző</string>
     <string name="issue_report_title">FeedFlow alkalmazással kapcsolatos probléma jelentése</string>
     <string name="export_dialog_title">OPML-fájl mentése</string>
-    <string name="new_release_available_title">A FeedFlow új verziója érhető el:</string>
     <string name="empty_feed_message">Itt nincs semi olvasnivaló!</string>
     <string name="export_feeds_button">Hírforrások exportálása OPML-fájlba</string>
     <string name="settings_button">Beállítások</string>
@@ -52,7 +50,6 @@
     <string name="empty_screen_back_to_timeline">Vissza az idővonalra</string>
     <string name="action_done">Kész</string>
     <string name="import_export_description">A FeedFlow támogatja a feliratkozások importálását és exportálását OPML-fájlként, a többi RSS-olvasóval való jobb átjárhatóság érdekében</string>
-    <string name="close_menu_button">Menü bezárása</string>
     <string name="import_export_opml_title">Adatok importálása és exportálása</string>
     <string name="missing_title_and_link">Hiba történt a hírforrás címének lekérésekor</string>
     <string name="new_category_hint">Új kategória neve</string>
@@ -145,7 +142,6 @@
     <string name="settings_notifications_permission_status_denied">Megtagadva</string>
     <string name="settings_notifications_permission_request_button">Engedély kérése</string>
     <string name="new_articles_notification_title">Új cikkek érhetőek el</string>
-    <string name="new_articles_notification_content">Új cikkek innen: %s</string>
     <string name="settings_notifications_title">Értesítések</string>
     <string name="marking_all_read_dialog_title">Összes megjelölése olvasottként…</string>
     <string name="date_format_title">Dátumformátum</string>
@@ -170,7 +166,6 @@
     <string name="last_download">Utoljára letöltve: %s</string>
     <string name="feed_sync_in_progress">Szinkronizálás folyamatban. Az alkalmazás automatikusan bezárul, amikor elkészült.</string>
     <string name="widget_configuration_title">Modulbeállítások</string>
-    <string name="settings_open_settings">Beállítások megnyitása</string>
     <string name="settings_hide_images">Cikk képének elrejtése</string>
     <string name="feed_name">Hírforrás neve</string>
     <string name="feed_edited_message">%s hírforrás frissítve</string>
@@ -219,7 +214,6 @@
     <string name="settings_sync_period_fifteen_minutes">15 percenként</string>
     <string name="settings_feed_list_title">Hírforráslista</string>
     <string name="widget_configuration_description">Válassza ki, hogy milyen időközönként szeretné ellenőrizni az új cikkeket a háttérben, és frissíteni a madult.</string>
-    <string name="settings_notifications_settings_instructions">Engedélyezze az értesítéseket ehhez az alkalmazáshoz az iOS beállításaiban.</string>
     <string name="open_feed_settings">Hírforrás-beállítások megnyitása</string>
     <string name="settings_feed_layout_list">Lista</string>
     <string name="settings_feed_layout_card">Kártya</string>

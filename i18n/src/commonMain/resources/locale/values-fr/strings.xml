@@ -9,7 +9,6 @@
     <string name="invalid_rss_url">Le lien que vous avez fourni n\'est pas un flux RSS valide</string>
     <string name="no_feeds_found_message">Aucun flux trouvé. Veuillez ajouter un nouveau flux !</string>
     <string name="no_feeds_add_one_message">Aucun flux, ajoutez-en un</string>
-    <string name="new_release_available_link">Télécharger ici</string>
     <string name="refresh_feeds">Actualiser le flux</string>
     <string name="done_button">OK</string>
     <string name="issue_content_template">Veuillez décrire le problème et fournir un lien vers le flux RSS à l\'origine du problème. Veuillez préciser la plateforme que vous utilisez ainsi que la version de l\'application. Si vous le pouvez, veuillez joindre une capture d\'écran et le fichier OPML</string>
@@ -31,7 +30,6 @@
     <string name="browser_selection_button">Navigateur</string>
     <string name="issue_report_title">Signaler un problème avec FeedFlow</string>
     <string name="export_dialog_title">Enregistrer un fichier OPML</string>
-    <string name="new_release_available_title">Une nouvelle version de FeedFlow est disponible :</string>
     <string name="empty_feed_message">Il n\'y a rien d\'autre à lire ici !</string>
     <string name="export_feeds_button">Exporter les flux vers OPML</string>
     <string name="settings_button">Paramètres</string>
@@ -61,7 +59,6 @@
     <string name="clear_old_articles_button">Supprimer les posts de plus d\'une semaine</string>
     <string name="import_export_description">FeedFlow supporte l\'importation et l\'exportation de vos abonnements depuis / vers un fichier OPML, pour une meilleure interopérabilité avec les autres lecteurs de flux RSS</string>
     <string name="account_disconnect_button">Déconnecter</string>
-    <string name="close_menu_button">Fermer le menu</string>
     <string name="no_feed_modal_message">Vous pouvez ajouter un nouveau flux manuellement, vous pouvez importer vos abonnements depuis un autre lecteur RSS, ou vous pouvez connecter un compte pour synchroniser les données depuis un autre appareil (cette fonctionnalité est en beta).</string>
     <string name="empty_screen_back_to_timeline">Retour à la chronologie</string>
     <string name="search_no_data">Aucune correspondance pour %s.</string>
@@ -202,7 +199,6 @@
     <string name="settings_notifications_permission_status_denied">Refusée</string>
     <string name="notification_channel_name">Nouveaux articles</string>
     <string name="settings_notifications_title">Notifications</string>
-    <string name="settings_notifications_settings_instructions">Veuillez activer les notifications pour cette application dans les réglages iOS.</string>
     <string name="settings_left_swipe_action">Balayage vers la gauche</string>
     <string name="settings_right_swipe_action">Balayage vers la droite</string>
     <string name="settings_swipe_action_none">Désactivé</string>
@@ -214,9 +210,7 @@
     <string name="enable_notifications_for_feed">Activer les notifications pour les nouveaux articles</string>
     <string name="settings_notifications_permission_status_title">Statut des permissions</string>
     <string name="settings_notifications_permission_request_button">Demander la permission</string>
-    <string name="new_articles_notification_content">Nouveaux articles de %s</string>
     <string name="settings_notifications_warning_reliability">Les notifications sont activées sur votre appareil, mais pourraient ne pas apparaître avec fiabilité dû à des limitations système.</string>
-    <string name="settings_open_settings">Ouvrir les paramètres</string>
     <string name="settings_experimental_parsing">Utiliser un moteur expérimental pour le mode lecture</string>
     <string name="settings_feed_layout_list">Liste</string>
     <string name="settings_feed_order_title">Trier par date</string>

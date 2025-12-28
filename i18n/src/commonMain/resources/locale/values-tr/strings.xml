@@ -45,8 +45,6 @@
     <string name="retry_button">Tekrar dene</string>
     <string name="done_button">Tamam</string>
     <string name="wrong_link_report_title">Aşağıdaki akışlar geçersiz oldukları için eklenmedi</string>
-    <string name="new_release_available_title">FeedFlow\'un yeni bir sürümü mevcut:</string>
-    <string name="new_release_available_link">Buradan indirin</string>
     <string name="issue_report_title">FeedFlow ile ilgili bir sorun bildirin</string>
     <string name="issue_content_title">FeedFlow ile ilgili sorun</string>
     <string name="issue_content_template">Lütfen sorunu açıklayın ve soruna neden olan RSS Akışının bağlantısını sağlayın. Mümkünse, lütfen bir ekran görüntüsü ve OPML dosyasını ekleyin</string>
@@ -84,7 +82,6 @@
     <string name="empty_screen_back_to_timeline">Zaman tüneline dön</string>
     <string name="about_menu_contribute_translations">Çevirilere yardım et</string>
     <string name="rename_feed_source_name_button">Yeniden adlandır</string>
-    <string name="close_menu_button">Menüyü kapat</string>
     <string name="in_app_browser">Uygulama içi tarayıcı</string>
     <string name="settings_reader_mode">Makaleleri okuyucu modunda aç</string>
     <string name="search_no_data">\"%s\" için eşleşme bulunamadı.</string>
@@ -209,11 +206,8 @@
     <string name="settings_notifications_permission_request_button">İzin İste</string>
     <string name="new_articles_notification_title">Yeni makaleler mevcut</string>
     <string name="notification_channel_name">Yeni Makaleler</string>
-    <string name="new_articles_notification_content">\"%s\" kaynağından yeni makaleler</string>
     <string name="settings_notifications_title">Bildirimler</string>
     <string name="settings_notifications_warning_reliability">Bildirimler cihazınızda kontrol edilir, ancak sistem sınırlamaları nedeniyle her zaman güvenilir bir şekilde çalışmayabilir.</string>
-    <string name="settings_open_settings">Ayarları Aç</string>
-    <string name="settings_notifications_settings_instructions">Lütfen iOS Ayarları\'nda bu uygulama için bildirimleri etkinleştirin.</string>
     <string name="marking_all_read_dialog_title">Tümü okundu olarak işaretleniyor...</string>
     <string name="date_format_title">Tarih formatı</string>
     <string name="date_format_normal">Gün/Ay</string>

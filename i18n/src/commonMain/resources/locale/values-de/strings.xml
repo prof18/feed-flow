@@ -11,7 +11,6 @@
     <string name="invalid_rss_url">Der angegebene Link ist kein gültiger RSS-Feed</string>
     <string name="no_feeds_found_message">Keine Feeds gefunden. Füge bitte einen neuen hinzu!</string>
     <string name="no_feeds_add_one_message">Keine Feeds gefunden, bitte füge einen hinzu</string>
-    <string name="new_release_available_link">Hier herunterladen</string>
     <string name="refresh_feeds">Feeds auffrischen</string>
     <string name="done_button">OK</string>
     <string name="issue_content_template">Bitte beschreibe den Fehler, die benutzte Plattform, die Version der App und gib einen Link zu dem RSS-Feed an, der den Fehler verursacht. Wenn möglich, hänge bitte einen Screenshot und die OPML-Datei an</string>
@@ -34,7 +33,6 @@
     <string name="drawer_title_feed_sources">Feed-Quellen</string>
     <string name="issue_report_title">Fehler mit FeedFlow melden</string>
     <string name="export_dialog_title">OPML-Datei speichern</string>
-    <string name="new_release_available_title">Es gibt eine neue Version von FeedFlow:</string>
     <string name="no_category_selected_header">Keine Kategorie</string>
     <string name="empty_feed_message">Hier gibt es nichts mehr zu lesen!</string>
     <string name="export_feeds_button">Feeds nach OPML exportieren</string>
@@ -55,7 +53,6 @@
     <string name="in_app_browser">In-App-Browser</string>
     <string name="feeds_import_done_message">Import abgeschlossen</string>
     <string name="feeds_export_done_message">Export abgeschlossen</string>
-    <string name="close_menu_button">Menü schließen</string>
     <string name="add_feed_category_title">Kategorie</string>
     <string name="about_app_version">App-Version: %s</string>
     <string name="action_save">Speichern</string>
@@ -209,11 +206,8 @@
     <string name="settings_notifications_permission_request_button">Berechtigung anfordern</string>
     <string name="new_articles_notification_title">Neue Artikel sind verfügbar</string>
     <string name="notification_channel_name">Neue Artikel</string>
-    <string name="new_articles_notification_content">Neue Artikel von %s</string>
     <string name="settings_notifications_title">Benachrichtigungen</string>
     <string name="settings_notifications_warning_reliability">Benachrichtigungen auf ihrem Gerät werden geprüft, sind aber wegen Systembeschränkungen vielleicht nicht immer zuverlässig.</string>
-    <string name="settings_open_settings">Einstellungen öffnen</string>
-    <string name="settings_notifications_settings_instructions">Bitte aktivieren sie für diese App die Benachrichtigungen in den iOS Einstellungen.</string>
     <string name="marking_all_read_dialog_title">Alle als gelesen markieren...</string>
     <string name="date_format_title">Datumsformat</string>
     <string name="date_format_american">Monat/Tag</string>

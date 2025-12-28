@@ -29,8 +29,6 @@
     <string name="import_export_opml">Імпорт та експорт OPML</string>
     <string name="import_export_opml_title">Імпортування та експортування</string>
     <string name="done_button">Гаразд</string>
-    <string name="new_release_available_title">Доступна нова версія FeedFlow:</string>
-    <string name="new_release_available_link">Завантажте тут</string>
     <string name="issue_report_title">Повідомте про проблему з FeedFlow</string>
     <string name="issue_content_title">Проблема з FeedFlow</string>
     <string name="no_category_selected_header">Немає категорій</string>
@@ -68,7 +66,6 @@
     <string name="bookmarked_articles_empty_screen_message">Тут нічого немає, час додати щось у закладки!</string>
     <string name="empty_screen_back_to_timeline">Повернутись до хронології</string>
     <string name="rename_feed_source_name_button">Перейменувати</string>
-    <string name="close_menu_button">Закрити меню</string>
     <string name="settings_reader_mode">Відкривати статті в режимі читання</string>
     <string name="search_no_data">Немає збігів для %s.</string>
     <string name="search_placeholder">Шукати…</string>
@@ -206,14 +203,11 @@
     <string name="settings_notifications_permission_request_button">Запит на дозвіл</string>
     <string name="new_articles_notification_title">Доступні нові статті</string>
     <string name="notification_channel_name">Нові статті</string>
-    <string name="new_articles_notification_content">Нові статті від %s</string>
     <string name="settings_notifications_title">Сповіщення</string>
-    <string name="settings_open_settings">Відкрийте налаштування</string>
     <string name="settings_title_notifications">Сповіщення</string>
     <string name="settings_notification_check_period">Частота перевірки повідомлень</string>
     <string name="settings_notification_check_period_desc">Виберіть, як часто перевіряти сповіщення про нові статті</string>
     <string name="settings_notifications_warning_reliability">Сповіщення перевіряються на вашому пристрої, але можуть не завжди надходити надійно через системні обмеження.</string>
-    <string name="settings_notifications_settings_instructions">Увімкніть сповіщення для цієї програми в налаштуваннях iOS.</string>
     <string name="date_format_american">Місяць/День</string>
     <string name="marking_all_read_dialog_title">Позначення всіх як прочитаних...</string>
     <string name="date_format_title">Формат дати</string>

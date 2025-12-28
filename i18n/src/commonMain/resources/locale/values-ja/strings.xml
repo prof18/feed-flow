@@ -45,8 +45,6 @@
     <string name="retry_button">再試行</string>
     <string name="done_button">了解</string>
     <string name="wrong_link_report_title">以下のフィードは正しくないため追加されませんでした</string>
-    <string name="new_release_available_title">新しいバージョンのFeedFlowが入手できます:</string>
-    <string name="new_release_available_link">ここからダウンロード</string>
     <string name="issue_report_title">FeedFlowの問題を報告</string>
     <string name="issue_content_title">FeedFlowの問題</string>
     <string name="issue_content_template">問題を説明し、問題が発生したRSSフィードのリンクを提供してください。可能であれば、スクリーンショットとOPMLファイルを添付してください。</string>
@@ -84,7 +82,6 @@
     <string name="empty_screen_back_to_timeline">タイムラインに戻る</string>
     <string name="about_menu_contribute_translations">翻訳を手伝う</string>
     <string name="rename_feed_source_name_button">名前を変更</string>
-    <string name="close_menu_button">メニューを閉じる</string>
     <string name="in_app_browser">アプリ内蔵のブラウザ</string>
     <string name="settings_reader_mode">記事をリーダーモードで開く</string>
     <string name="search_no_data">%sにマッチするものはありませんでした。</string>
@@ -198,7 +195,6 @@
     <string name="settings_notifications_enable_all_title">すべての通知を有効にする</string>
     <string name="notification_channel_name">新しい記事</string>
     <string name="settings_notifications_title">通知</string>
-    <string name="settings_open_settings">設定を開く</string>
     <string name="date_format_normal">日/月</string>
     <string name="date_format_american">月/日</string>
     <string name="time_format_hours_24">24時制</string>

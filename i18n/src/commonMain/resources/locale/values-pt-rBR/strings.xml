@@ -43,8 +43,6 @@
     <string name="retry_button">Tentar novamente</string>
     <string name="done_button">OK</string>
     <string name="wrong_link_report_title">Os seguintes feeds não foram adicionados porque são inválidos</string>
-    <string name="new_release_available_title">Uma nova versão do FeedFlow está disponível:</string>
-    <string name="new_release_available_link">Baixar aqui</string>
     <string name="issue_report_title">Relate um problema com FeedFlow</string>
     <string name="issue_content_title">Problema com FeedFlow</string>
     <string name="issue_content_template">Por favor, descreva o problema e forneça um link para o Feed RSS que está o causando. Se você puder, anexe uma captura de tela e o arquivo OPML</string>
@@ -80,6 +78,5 @@
     <string name="menu_open_comments">Abrir comentários</string>
     <string name="rename_feed_source_name_button">Renomear</string>
     <string name="in_app_browser">Navegador interno</string>
-    <string name="close_menu_button">Fechar menu</string>
     <string name="settings_reader_mode">Abrir artigos no modo leitor</string>
 </resources>

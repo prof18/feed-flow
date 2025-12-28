@@ -19,7 +19,6 @@
     <string name="issue_content_title">FeedFlow 的问题</string>
     <string name="issue_content_template">请描述问题，注明您使用的平台、应用版本，并提供导致问题的 RSS 订阅源链接。如果可以，请附上屏幕截图和 OPML 文件</string>
     <string name="missing_title_and_link">获取订阅源标题时出错</string>
-    <string name="new_release_available_link">在此下载</string>
     <string name="drawer_title_timeline">时间线</string>
     <string name="drawer_title_categories">分类</string>
     <string name="drawer_title_feed_sources">订阅源</string>
@@ -77,7 +76,6 @@
     <string name="done_button">确定</string>
     <string name="database_error">检索订阅源时出了点问题，请重试或重启应用 - 错误代码：%s :(</string>
     <string name="invalid_rss_url">您提供的链接不是有效的 RSS 订阅源</string>
-    <string name="new_release_available_title">FeedFlow 有可用的新版本：</string>
     <string name="no_category_selected_header">无分类</string>
     <string name="new_category_hint">新分类名称</string>
     <string name="no_category">未分类</string>
@@ -86,7 +84,6 @@
     <string name="settings_toggle_show_read_articles">在时间线显示已读文章</string>
     <string name="rename_feed_source_name_button">重命名</string>
     <string name="drawer_title_read">已读</string>
-    <string name="close_menu_button">关闭菜单</string>
     <string name="no_feed_modal_message">您可以手动添加订阅源，可以从其他 RSS 阅读器导入订阅内容，也可以连接账号从其他设备同步数据（此功能处于测试阶段）。</string>
     <string name="menu_add_to_bookmark">添加到收藏</string>
     <string name="menu_remove_from_bookmark">从收藏中移除</string>
@@ -207,13 +204,10 @@
     <string name="settings_notifications_permission_request_button">请求权限</string>
     <string name="new_articles_notification_title">有新文章</string>
     <string name="notification_channel_name">新文章</string>
-    <string name="settings_notifications_settings_instructions">请在 iOS 设置中启用此应用的通知。</string>
-    <string name="settings_open_settings">打开设置</string>
     <string name="settings_notifications_warning_reliability">通知会在您的设备上进行检查，但由于系统限制，可能无法始终可靠地发出通知。</string>
     <string name="settings_notification_no_feed">您似乎尚未添加任何订阅源。请添加一些以开始接收通知！</string>
     <string name="settings_notification_check_period_desc">选择检查新文章通知的频率</string>
     <string name="settings_notifications_title">通知</string>
-    <string name="new_articles_notification_content">来自 %s 的新文章</string>
     <string name="date_format_american">月/日</string>
     <string name="date_format_title">日期格式</string>
     <string name="date_format_normal">日/月</string>

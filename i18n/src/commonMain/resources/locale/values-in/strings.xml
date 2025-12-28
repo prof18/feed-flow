@@ -44,7 +44,6 @@
     <string name="retry_button">Coba lagi</string>
     <string name="done_button">Oke</string>
     <string name="wrong_link_report_title">Umpan berikut tidak ditambahkan karena tidak valid</string>
-    <string name="new_release_available_link">Download disini</string>
     <string name="issue_report_title">Laporkan masalah dengan FeedFlow</string>
     <string name="issue_content_title">Masalah dengan FeedFlow</string>
     <string name="issue_content_template">Jelaskan masalahnya dan berikan tautan ke Umpan RSS yang menyebabkan masalah tersebut. Jika memungkinkan, lampirkan tangkapan layar dan berkas OPML</string>
@@ -74,7 +73,6 @@
     <string name="empty_screen_back_to_timeline">Kembali ke garis waktu</string>
     <string name="about_menu_contribute_translations">Bantuan dengan terjemahan</string>
     <string name="rename_feed_source_name_button">Ganti nama</string>
-    <string name="close_menu_button">Tutup menu</string>
     <string name="in_app_browser">Peramban dalam aplikasi</string>
     <string name="settings_reader_mode">Buka artikel dalam mode pembaca</string>
     <string name="search_no_data">Tidak ada kecocokan untuk %s.</string>
@@ -123,7 +121,6 @@
     <string name="no_feeds_add_one_message">Tidak ada umpan, silakan tambahkan</string>
     <string name="clear_old_articles_button">Hapus postingan yang sudah berumur seminggu</string>
     <string name="toggle_mark_read_when_scrolling">Tandai sebagai telah dibaca saat menggulir</string>
-    <string name="new_release_available_title">Versi baru FeedFlow tersedia:</string>
     <string name="about_button">Tentang</string>
     <string name="open_source_licenses">Lisensi sumber terbuka</string>
     <string name="no_feed_modal_message">Anda dapat menambahkan umpan secara manual, mengimpor langganan dari pembaca RSS lain, atau menghubungkan akun untuk menyinkronkan data dari perangkat lain (fungsi ini masih dalam versi beta).</string>

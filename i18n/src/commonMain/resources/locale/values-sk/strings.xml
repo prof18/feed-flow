@@ -46,9 +46,7 @@
     <string name="import_export_opml_title">Import a export</string>
     <string name="retry_button">Skúsiť znova</string>
     <string name="import_export_opml">Import a export OPML</string>
-    <string name="new_release_available_link">Stiahnuť tu</string>
     <string name="wrong_link_report_title">Nasledujúce feedy neboli pridané, pretože nie sú platné</string>
-    <string name="new_release_available_title">K dispozícii je nová verzia FeedFlow:</string>
     <string name="issue_report_title">Nahlásiť problém s FeedFlow</string>
     <string name="issue_content_title">Problém s FeedFlow</string>
     <string name="issue_content_template">Popíš problém a poskytni odkaz na RSS feed, ktorý spôsobuje problémy. Ak môžeš, prilož snímku obrazovky a OPML súbor</string>
@@ -80,7 +78,6 @@
     <string name="bookmarked_articles_empty_screen_message">Nie je tu nič, je čas si niečo pridať do záložiek!</string>
     <string name="rename_feed_source_name_button">Premenovať</string>
     <string name="in_app_browser">Prehliadač v aplikácii</string>
-    <string name="close_menu_button">Zatvoriť menu</string>
     <string name="settings_reader_mode">Otvárať články v režime čítačky</string>
     <string name="search_hint_title">Začni písať…</string>
     <string name="search_hint_subtitle">výsledky sa zobrazia automaticky</string>

@@ -44,8 +44,6 @@
     <string name="retry_button">إعادة المحاولة</string>
     <string name="done_button">موافق</string>
     <string name="wrong_link_report_title">لم تتم إضافة الخلاصات التالية لأنها غير صالحة</string>
-    <string name="new_release_available_title">يتوفر إصدار جديد من FeedFlow:</string>
-    <string name="new_release_available_link">حمل من هنا</string>
     <string name="issue_report_title">الإبلاغ عن مشكلة في FeedFlow</string>
     <string name="issue_content_title">مشكلة في FeedFlow</string>
     <string name="issue_content_template">يرجى وصف المشكلة، وتحديد المنصة التي تستخدمها، وإصدار التطبيق، وتزويدنا برابط خلاصة RSS الذي يسبب المشكلة. إذا أمكن، يرجى إرفاق لقطة شاشة (Screenshot) وملف OPML</string>
@@ -83,7 +81,6 @@
     <string name="empty_screen_back_to_timeline">العودة إلى الجدول الزمني</string>
     <string name="about_menu_contribute_translations">المساعدة في الترجمة</string>
     <string name="rename_feed_source_name_button">إعادة تسمية</string>
-    <string name="close_menu_button">إغلاق القائمة</string>
     <string name="in_app_browser">متصفح داخل التطبيق</string>
     <string name="settings_reader_mode">فتح المقالات في وضع القارئ</string>
     <string name="search_no_data">لا توجد نتائج مطابقة لـ %s.</string>

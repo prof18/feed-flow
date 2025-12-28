@@ -45,8 +45,6 @@
     <string name="retry_button">重試</string>
     <string name="done_button">確定</string>
     <string name="wrong_link_report_title">以下訂閱源無效，無法添加</string>
-    <string name="new_release_available_title">FeedFlow有可用的新版本：</string>
-    <string name="new_release_available_link">在此下載</string>
     <string name="feed_add_in_progress_message">請稍候，正在檢查每個訂閱源的可用性。此操作可能需要一段時間，具體取決於您匯入的訂閱源數量</string>
     <string name="issue_report_title">報告FeedFlow的問題</string>
     <string name="issue_content_title">FeedFlow的問題</string>
@@ -86,7 +84,6 @@
     <string name="about_menu_contribute_translations">幫助翻譯</string>
     <string name="about_menu_faq">常見問題</string>
     <string name="rename_feed_source_name_button">重命名</string>
-    <string name="close_menu_button">關閉菜單</string>
     <string name="in_app_browser">應用程式内瀏覽器</string>
     <string name="settings_reader_mode">以閲讀模式打開文章</string>
     <string name="settings_save_reader_mode_content">打開時保存文章內容以便離線閱讀</string>
@@ -217,11 +214,8 @@
     <string name="settings_notifications_permission_request_button">請求權限</string>
     <string name="new_articles_notification_title">有新文章</string>
     <string name="notification_channel_name">新文章</string>
-    <string name="new_articles_notification_content">來自%s的新文章</string>
     <string name="settings_notifications_title">通知</string>
     <string name="settings_notifications_warning_reliability">通知會在您的裝置上進行檢查，但由於系統限制，可能無法始終可靠地發出通知。</string>
-    <string name="settings_open_settings">打開設定</string>
-    <string name="settings_notifications_settings_instructions">請在iOS設定中啟用此應用程式的通知。</string>
     <string name="marking_all_read_dialog_title">正在全部標記為已讀…</string>
     <string name="date_format_title">日期格式</string>
     <string name="date_format_normal">日/月</string>

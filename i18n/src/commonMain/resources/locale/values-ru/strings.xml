@@ -31,8 +31,6 @@
     <string name="import_export_opml">Импорт и экспорт OPML</string>
     <string name="import_export_opml_title">Импорт и экспорт</string>
     <string name="retry_button">Снова</string>
-    <string name="new_release_available_title">Доступна новая версия FeedFlow:</string>
-    <string name="new_release_available_link">Скачать сюда</string>
     <string name="missing_title_and_link">Возникла ошибка при получении заголовка ленты</string>
     <string name="issue_report_title">Сообщить о проблеме в FeedFlow</string>
     <string name="issue_content_title">Проблема в FeedFlow</string>
@@ -52,7 +50,6 @@
     <string name="read_articles_empty_screen_message">Здесь ничего нет. Пора начинать чтение!</string>
     <string name="empty_screen_back_to_timeline">Назад к хронике</string>
     <string name="about_menu_contribute_translations">Помогите с переводом</string>
-    <string name="close_menu_button">Закрыть меню</string>
     <string name="search_placeholder">Найти…</string>
     <string name="search_hint_title">Начните печатать…</string>
     <string name="search_hint_subtitle">результаты появятся автоматически</string>
@@ -198,10 +195,7 @@
     <string name="settings_notifications_permission_request_button">Запросить разрешение</string>
     <string name="new_articles_notification_title">Доступны новые статьи</string>
     <string name="notification_channel_name">Новые статьи</string>
-    <string name="new_articles_notification_content">Новые статьи из %s</string>
     <string name="settings_notifications_warning_reliability">Уведомления проверяются на вашем устройстве, но из-за системных ограничений они не всегда могут быть достоверными.</string>
-    <string name="settings_open_settings">Открыть настройки</string>
-    <string name="settings_notifications_settings_instructions">Пожалуйста, включите уведомления для этого приложения в Настройках iOS.</string>
     <string name="marking_all_read_dialog_title">Отметить все как прочитанное...</string>
     <string name="date_format_title">Формат даты</string>
     <string name="date_format_normal">День/Месяц</string>

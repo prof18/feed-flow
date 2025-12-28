@@ -35,8 +35,6 @@
     <string name="retry_button">Proovi uuesti</string>
     <string name="done_button">Sobib</string>
     <string name="wrong_link_report_title">Kuna järgnevad uudisvood polnud korrektsed, siis jäid lisamata</string>
-    <string name="new_release_available_title">FeedFlow uus versioon on saadaval:</string>
-    <string name="new_release_available_link">Laadi siit alla</string>
     <string name="issue_report_title">Teata FeedFlow veast või probleemist</string>
     <string name="issue_content_title">FeedFlow viga või probleem</string>
     <string name="missing_title_and_link">Uudisvoo pealkirja tuvastamisel tekkis viga</string>
@@ -93,7 +91,6 @@
     <string name="empty_screen_back_to_timeline">Tagasi ajajoonele</string>
     <string name="menu_mark_as_unread">Märgi mitteloetuks</string>
     <string name="rename_feed_source_name_button">Muuda nime</string>
-    <string name="close_menu_button">Sulge menüü</string>
     <string name="settings_reader_mode">Ava artiklid lugemisvaates</string>
     <string name="search_hint_subtitle">tulemused ilmuvad automaatselt</string>
     <string name="link_copied_success">Lingi kopeerimine õnnestus!</string>
@@ -209,11 +206,8 @@
     <string name="settings_notifications_permission_request_button">Küsi õigusi</string>
     <string name="new_articles_notification_title">Saadaval on uusi artikleid</string>
     <string name="notification_channel_name">Uued artiklid</string>
-    <string name="settings_notifications_settings_instructions">Palun lülita iOS-i seadistustest selle rakenduse teavitused sisse.</string>
     <string name="date_format_american">Kuu/Päev</string>
-    <string name="new_articles_notification_content">Uued artiklid: %s</string>
     <string name="settings_notifications_title">Teavitused</string>
-    <string name="settings_open_settings">Ava seadistused</string>
     <string name="date_format_title">Kuupäeva vorming</string>
     <string name="settings_notifications_warning_reliability">Teavitused toimivad sinu nutiseadmes, kuid süsteemi piirangute tõttu ei pruugi alati olla nähtavad.</string>
     <string name="marking_all_read_dialog_title">Märgin kõiki loetuks...</string>

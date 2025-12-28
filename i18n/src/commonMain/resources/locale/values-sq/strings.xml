@@ -44,8 +44,6 @@
     <string name="retry_button">Provo sërish</string>
     <string name="done_button">OK</string>
     <string name="wrong_link_report_title">Prurjet e mëposhtme nuk u shtuan sepse nuk janë të vlefshme</string>
-    <string name="new_release_available_title">Një version i ri i FeedFlow është i disponueshëm:</string>
-    <string name="new_release_available_link">Shkarko këtu</string>
     <string name="issue_report_title">Raporto një problem me FeedFlow</string>
     <string name="issue_content_title">Problem me FeedFlow</string>
     <string name="issue_content_template">Të lutem përshkruaj problemin, specifiko platformën që po përdor, versionin e aplikacionit dhe jep një lidhje të prurjes RSS që shkakton problemet. Nëse mundesh, bashkëngjit edhe një pamje të ekranit dhe skedarin OPML</string>
@@ -83,7 +81,6 @@
     <string name="empty_screen_back_to_timeline">Kthehu në kohështrirje</string>
     <string name="about_menu_contribute_translations">Ndihmo me përkthimin</string>
     <string name="rename_feed_source_name_button">Riemërto</string>
-    <string name="close_menu_button">Mbyll menunë</string>
     <string name="in_app_browser">Shfletues brenda aplikacionit</string>
     <string name="settings_reader_mode">Hap artikujt në modalitet leximi</string>
     <string name="search_no_data">Nuk ka përputhje për %s.</string>

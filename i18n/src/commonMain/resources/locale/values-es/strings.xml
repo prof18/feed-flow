@@ -51,7 +51,6 @@
     <string name="bookmarked_articles_empty_screen_message">¡Nada por aquí, es hora de marcar algo!</string>
     <string name="empty_screen_back_to_timeline">Volver a la línea de tiempo</string>
     <string name="rename_feed_source_name_button">Cambiar de nombre</string>
-    <string name="close_menu_button">Cerrar el menú</string>
     <string name="search_no_data">No hay coincidencias para %s .</string>
     <string name="search_placeholder">Buscando…</string>
     <string name="link_copied_success">¡Enlace copiado correctamente!</string>
@@ -70,8 +69,6 @@
     <string name="retry_button">Reintentar</string>
     <string name="done_button">De acuerdo</string>
     <string name="wrong_link_report_title">Los siguientes feeds no se agregaron porque no son válidos</string>
-    <string name="new_release_available_title">Hay una nueva versión de FeedFlow:</string>
-    <string name="new_release_available_link">Descargar aquí</string>
     <string name="action_done">Hecho</string>
     <string name="issue_content_template">Por favor describe el problema y proporcione un enlace a la fuente RSS que causa los problemas. Si puede, adjunte una captura de pantalla y el archivo OPML</string>
     <string name="import_export_description">FeedFlow admite la importación y exportación de tus suscripciones con un archivo OPML, para una mejor interoperabilidad con los otros lectores de feeds</string>
@@ -178,11 +175,8 @@
     <string name="settings_notifications_permission_request_button">Solicitar permiso</string>
     <string name="new_articles_notification_title">Nuevos artículos disponibles</string>
     <string name="notification_channel_name">Nuevos artículos</string>
-    <string name="new_articles_notification_content">Nuevos artículos de %s</string>
     <string name="settings_notifications_title">Notificaciones</string>
     <string name="settings_notifications_warning_reliability">Las notificaciones están habilitadas en tu dispositivo pero puede que no siempre se activen de forma fiable por limitaciones del sistema.</string>
-    <string name="settings_open_settings">Abrir configuración</string>
-    <string name="settings_notifications_settings_instructions">Por favor, habilita las notificaciones para esta aplicación en los ajustes de iOS.</string>
     <string name="marking_all_read_dialog_title">Marcando todo como leído…</string>
     <string name="date_format_title">Formato de fecha</string>
     <string name="date_format_normal">Día/Mes</string>

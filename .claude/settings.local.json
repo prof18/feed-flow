@@ -25,7 +25,8 @@
       "Bash(ffmpeg:*)",
       "Bash(.scripts/ios-format.sh:*)",
       "Bash(ls:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

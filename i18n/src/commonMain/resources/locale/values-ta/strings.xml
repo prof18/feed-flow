@@ -2,7 +2,6 @@
 <resources>
     <string name="report_issue_button">சிக்கல் அறிக்கை</string>
     <string name="import_export_opml_title">இறக்குமதி மற்றும் ஏற்றுமதி</string>
-    <string name="new_release_available_title">ஃபீட்ஃப்ளோவின் புதிய பதிப்பு கிடைக்கிறது:</string>
     <string name="issue_content_title">ஃபீட்ஃப்ளோவுடன் சிக்கல்</string>
     <string name="missing_title_and_link">ஊட்டத்தின் தலைப்பைப் பெறும்போது ஒரு பிழை ஏற்பட்டது</string>
     <string name="no_category_selected_header">வகை இல்லை</string>
@@ -59,7 +58,6 @@
     <string name="retry_button">மீண்டும் முயற்சிக்கவும்</string>
     <string name="done_button">சரி</string>
     <string name="wrong_link_report_title">அவை செல்லுபடியாகாததால் பின்வரும் ஊட்டங்கள் சேர்க்கப்படவில்லை</string>
-    <string name="new_release_available_link">இங்கே பதிவிறக்கவும்</string>
     <string name="database_error">ஊட்டங்களை மீட்டெடுக்கும் போது ஏதோ தவறு ஏற்பட்டது. பயன்பாட்டை மீண்டும் முயற்சிக்கவும் அல்லது மறுதொடக்கம் செய்யவும் - error code: %s :(</string>
     <string name="issue_report_title">ஃபீட்ஃப்ளோவுடன் ஒரு சிக்கலைப் புகாரளிக்கவும்</string>
     <string name="issue_content_template">தயவுசெய்து சிக்கலை விவரிக்கவும், சிக்கல்களை ஏற்படுத்தும் RSS ஊட்டத்திற்கு ஒரு இணைப்பை வழங்கவும். உங்களால் முடிந்தால், தயவுசெய்து ஒரு திரை காட்சி மற்றும் OPML கோப்பை இணைக்கவும்</string>
@@ -91,7 +89,6 @@
     <string name="bookmarked_articles_empty_screen_message">இங்கே எதுவும் இல்லை, எதையாவது புக்மார்க்கு செய்ய நேரம்!</string>
     <string name="about_menu_contribute_translations">மொழிபெயர்ப்புகளுக்கு உதவுங்கள்</string>
     <string name="rename_feed_source_name_button">மறுபெயரிடுங்கள்</string>
-    <string name="close_menu_button">பட்டியல் மூடு</string>
     <string name="search_placeholder">தேடுங்கள்…</string>
     <string name="search_hint_title">தட்டச்சு செய்யத் தொடங்குங்கள்…</string>
     <string name="search_hint_subtitle">முடிவுகள் தானாகவே தோன்றும்</string>

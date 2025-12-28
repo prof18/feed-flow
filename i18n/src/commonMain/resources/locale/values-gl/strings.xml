@@ -41,8 +41,6 @@
     <string name="import_export_opml">Importar e exportar OPML</string>
     <string name="retry_button">Volver a intentar</string>
     <string name="done_button">OK</string>
-    <string name="new_release_available_title">Hai dispoñible unha nova versión de FeedFlow:</string>
-    <string name="new_release_available_link">Descargar desde aquí</string>
     <string name="issue_report_title">Informa dunha incidencia con FeedFlow</string>
     <string name="new_category_hint">Novo nome da categoría</string>
     <string name="no_category">Sen categorizar</string>
@@ -82,7 +80,6 @@
     <string name="open_source_nav_bar">Licenzas de código aberto</string>
     <string name="no_category_selected_header">Sen categoría</string>
     <string name="bookmarked_articles_empty_screen_message">Nada por aquí, hora de engadir algún marcador!</string>
-    <string name="close_menu_button">Pechar menú</string>
     <string name="in_app_browser">Navegador da app</string>
     <string name="database_error">Algo fallo ao actualizar as canles. Volve a intentalo ou reinicia a app - error code: %s :(</string>
     <string name="invalid_rss_url">O enderezo proporcionado non é unha canle RSS válida</string>
@@ -209,11 +206,8 @@
     <string name="settings_notifications_permission_request_button">Solicitar permiso</string>
     <string name="new_articles_notification_title">Hai novos artigos</string>
     <string name="notification_channel_name">Novos artigos</string>
-    <string name="new_articles_notification_content">Novos artigos en %s</string>
     <string name="settings_notifications_title">Notificacións</string>
     <string name="settings_notifications_warning_reliability">As notificacións compróbanse no teu dispositivos, pero poderían fallar debido a limitacións do sistema.</string>
-    <string name="settings_open_settings">Abrir Axustes</string>
-    <string name="settings_notifications_settings_instructions">Por favor activa as notificacións para a app nos Axustes de iOS.</string>
     <string name="marking_all_read_dialog_title">Marcando todo como lido…</string>
     <string name="date_format_title">Formato da data</string>
     <string name="date_format_normal">Día/Mes</string>

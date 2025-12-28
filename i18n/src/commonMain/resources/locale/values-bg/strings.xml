@@ -23,7 +23,6 @@
     <string name="import_export_opml">Внасяне и Изнасяне на OPML</string>
     <string name="import_export_opml_title">Внасяне и Изнасяне</string>
     <string name="done_button">Добре</string>
-    <string name="new_release_available_link">Изтеглете тук</string>
     <string name="issue_report_title">Докладване на проблем с FeedFlow</string>
     <string name="new_category_hint">Ново име на категория</string>
     <string name="no_category">Некатегоризирани</string>
@@ -83,7 +82,6 @@
     <string name="issue_content_template">Моля, опишете проблема, посочете платформата, която използвате, версията на приложението и предоставете връзка към RSS емисията, която причинява проблемите. Ако е възможно, моля, прикачете екранна снимка и OPML файла.</string>
     <string name="invalid_rss_url">Предоставената от вас връзка е невалидна RSS емисия</string>
     <string name="retry_button">Опитайте отново</string>
-    <string name="new_release_available_title">Налична е нова версия на FeedFlow:</string>
     <string name="wrong_link_report_title">Следните емисии не бяха добавени, защото са невалидни</string>
     <string name="issue_content_title">Проблем с FeedFlow</string>
     <string name="missing_title_and_link">Възникна грешка при получаване на заглавието на емисията</string>
@@ -100,7 +98,6 @@
     <string name="menu_mark_as_read">Маркиране като прочетено</string>
     <string name="read_articles_empty_screen_message">Тук няма нищо, време е да започнете да четете!</string>
     <string name="bookmarked_articles_empty_screen_message">Тук няма нищо, време е да отметнете нещо!</string>
-    <string name="close_menu_button">Затваряне на менюто</string>
     <string name="settings_reader_mode">Отваряне на статии в режим на четене</string>
     <string name="search_no_data">Няма съвпадения за %s.</string>
     <string name="feed_sync_in_progress">Извършва се синхронизиране. Приложението ще се затвори автоматично, когато приключи.</string>
@@ -207,13 +204,10 @@
     <string name="settings_notifications_permission_request_button">Искане на разрешение</string>
     <string name="notification_channel_name">Нови статии</string>
     <string name="new_articles_notification_title">Налични нови статии</string>
-    <string name="settings_open_settings">Отвори Настройки</string>
-    <string name="settings_notifications_settings_instructions">Моля, активирайте известията за това приложение в настройките на iOS.</string>
     <string name="settings_notifications_warning_reliability">Известията се проверяват на вашето устройство, но може не винаги да се появяват надеждно поради системни ограничения.</string>
     <string name="settings_notifications_enable_all_title">Активиране на всички известия</string>
     <string name="settings_notification_check_period">Честота на проверка на известията</string>
     <string name="notification_channel_description">Известия за нови статии във вашите емисии</string>
-    <string name="new_articles_notification_content">Нови статии от %s</string>
     <string name="marking_all_read_dialog_title">Маркиране на всичко като прочетено...</string>
     <string name="date_format_normal">Ден/Месец</string>
     <string name="date_format_title">Формат на дата</string>

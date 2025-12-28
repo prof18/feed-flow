@@ -47,8 +47,6 @@
     <string name="retry_button">Retry</string>
     <string name="done_button">OK</string>
     <string name="wrong_link_report_title">The following feeds were not added because they are not valid</string>
-    <string name="new_release_available_title">A new version of FeedFlow is available:</string>
-    <string name="new_release_available_link">Download here</string>
     <string name="feed_add_in_progress_message">Importing feed...</string>
     <string name="issue_report_title">Report an issue with FeedFlow</string>
     <string name="issue_content_title">Issue with FeedFlow</string>
@@ -90,7 +88,6 @@
     <string name="about_menu_contribute_translations">Help with translations</string>
     <string name="about_menu_faq">FAQ</string>
     <string name="rename_feed_source_name_button">Rename</string>
-    <string name="close_menu_button">Close menu</string>
     <string name="in_app_browser">In-app browser</string>
     <string name="settings_reader_mode">Open articles on reader mode</string>
     <string name="settings_save_reader_mode_content">Save article content on open for offline reading</string>
@@ -231,11 +228,8 @@
     <string name="settings_notifications_permission_request_button">Request Permission</string>
     <string name="new_articles_notification_title">New articles available</string>
     <string name="notification_channel_name">New Articles</string>
-    <string name="new_articles_notification_content">New articles from %s</string>
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_notifications_warning_reliability">Notifications are checked on your device, but may not always occur reliably due to system limitations.</string>
-    <string name="settings_open_settings">Open Settings</string>
-    <string name="settings_notifications_settings_instructions">Please enable notifications for this app in the iOS Settings.</string>
     <string name="marking_all_read_dialog_title">Marking all as read...</string>
     <string name="date_format_title">Date format</string>
     <string name="date_format_normal">Day/Month</string>

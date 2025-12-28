@@ -47,8 +47,6 @@
     <string name="import_export_opml">ייבוא וייצוא של OPML</string>
     <string name="done_button">בסדר</string>
     <string name="wrong_link_report_title">העדכונים הבאים לא נוספו כי הם לא חוקיים</string>
-    <string name="new_release_available_title">גרסה חדשה של FeedFlow זמינה:</string>
-    <string name="new_release_available_link">הורד כאן</string>
     <string name="dropbox_sync_desktop_description">על ידי לחיצה על כפתור החיבור תופנה לאתר דרופבוקס. לאחר חיבור החשבון, העתק את קוד ההרשאה והזן אותו כאן באפליקציה</string>
     <string name="reader_mode_warning">ℹ מצב הקורא מנסה לקבל את תוכן המאמר. עשויות להיות כמה תקלות או גליצ\'ים לא רצויים.</string>
     <string name="feed_name">שם העדכון</string>
@@ -96,7 +94,6 @@
     <string name="icloud_sync_success">חשבון iCloud שלך חובר בהצלחה</string>
     <string name="read_articles_empty_screen_message">אין כאן כלום, הגיע הזמן להתחיל לקרוא!</string>
     <string name="search_hint_subtitle">התוצאות יופיעו אוטומטית</string>
-    <string name="close_menu_button">סגור תפריט</string>
     <string name="about_app_version">גרסת אפליקציה: %s</string>
     <string name="menu_add_to_bookmark">הוסף לסימניות</string>
     <string name="menu_mark_as_read">סמן כנקרא</string>

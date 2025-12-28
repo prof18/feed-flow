@@ -25,7 +25,6 @@
     <string name="drawer_title_feed_sources">Danh sách nguồn tin</string>
     <string name="missing_title_and_link">Đã xảy ra lỗi khi lấy tên của nguồn tin</string>
     <string name="import_dialog_title">Chọn file OPML</string>
-    <string name="new_release_available_link">Tải ở đây</string>
     <string name="action_save">Lưu</string>
     <string name="rename_feed_source_name_button">Đổi tên</string>
     <string name="settings_reader_mode">Mở bài viết trong chế độ đọc</string>
@@ -62,8 +61,6 @@
     <string name="show_on_github">GitHub</string>
     <string name="open_website_button">Trang chủ</string>
     <string name="database_error">Đã xảy ra lỗi trong quá trình truy xuất nguồn tin. Hãy thử lại hoặc khởi động lại ứng dụng - error code: %s :(</string>
-    <string name="new_release_available_title">FeedFlow đã có phiên bản mới:</string>
-    <string name="close_menu_button">Đóng menu</string>
     <string name="settings_app_title">Ứng dụng</string>
     <string name="about_the_app">FeedFlow là một trình đọc RSS tối giản theo quan điểm riêng của tác giả. Các bài viết được mở trên trang web của chúng thông qua trình duyệt của bạn. Nếu không thích bị phân tâm, FeedFlow có chế độ đọc các bài viết ngay trong ứng dụng.\nBạn có thể nhập và xuất bộ sưu tập RSS của mình bằng file OPML.</string>
     <string name="force_feed_refresh">Làm mới nguồn tin ngay</string>
@@ -209,11 +206,8 @@
     <string name="settings_notifications_permission_request_button">Cho phép</string>
     <string name="new_articles_notification_title">Có bài viết mới</string>
     <string name="notification_channel_name">Những bài viết mới</string>
-    <string name="new_articles_notification_content">Bài viết mới từ %s</string>
-    <string name="settings_open_settings">Mở cài đặt</string>
     <string name="settings_notifications_title">Thông báo</string>
     <string name="settings_notifications_warning_reliability">Thông báo được kiểm tra trên thiết bị của bạn. Nhưng có thể hoạt động không chính xác do hạn chế của hệ thống.</string>
-    <string name="settings_notifications_settings_instructions">Vui lòng bật thông báo app trong cài đặt iOS.</string>
     <string name="marking_all_read_dialog_title">Đánh dấu đã đọc tất cả...</string>
     <string name="date_format_title">Định dạng ngày</string>
     <string name="date_format_normal">Ngày/Tháng</string>

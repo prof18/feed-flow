@@ -13,7 +13,6 @@
     <string name="no_feeds_found_message">Nessun feed trovato. Aggiungi un nuovo feed!</string>
     <string name="clear_old_articles_button">Elimina post vecchi di 7 giorni</string>
     <string name="no_feeds_add_one_message">Nessun feed, per favore aggiungine uno</string>
-    <string name="new_release_available_link">Scarica qui</string>
     <string name="refresh_feeds">Ricarica feed</string>
     <string name="done_button">OK</string>
     <string name="issue_content_template">Descrivi il problema, specifica la piattaforma che stai usando, la versione dell'app, e fornisci un link al feed RSS che causa i problemi. Se puoi, allega uno screenshot e il file OPML</string>
@@ -35,7 +34,6 @@
     <string name="browser_selection_button">Web browser</string>
     <string name="issue_report_title">Segnala un problema con FeedFlow</string>
     <string name="export_dialog_title">Salve file OPML</string>
-    <string name="new_release_available_title">Una nuova versione di FeedFlow è disponibile:</string>
     <string name="no_category_selected_header">Nessuna categoria</string>
     <string name="empty_feed_message">Niente da leggere qui!</string>
     <string name="export_feeds_button">Esporta feed da OPML</string>
@@ -80,7 +78,6 @@
     <string name="drawer_title_read">Letti</string>
     <string name="settings_toggle_show_read_articles">Mostra articoli letti nella timeline</string>
     <string name="rename_feed_source_name_button">Rinomina</string>
-    <string name="close_menu_button">Chiudi il menu</string>
     <string name="in_app_browser">Browser integrato</string>
     <string name="search_no_data">Impossibile trovare \"%s\".</string>
     <string name="search_hint_subtitle">i risultati appariranno automaticamente</string>
@@ -201,9 +198,7 @@
     <string name="settings_notifications_permission_status_denied">Non consentito</string>
     <string name="settings_notifications_permission_request_button">Richiedi Permesso</string>
     <string name="notification_channel_name">Nuovi articoli</string>
-    <string name="new_articles_notification_content">Nuovi articoli da %s</string>
     <string name="settings_notifications_warning_reliability">Le notifiche vengono controllate sul tuo dispositivo, ma potrebbero non essere sempre affidabili a causa di limitazioni del sistema.</string>
-    <string name="settings_open_settings">Apri impostazioni</string>
     <string name="date_format_title">Formato data</string>
     <string name="date_format_normal">Giorno/Mese</string>
     <string name="settings_right_swipe_action">Swipe a destra</string>
@@ -218,7 +213,6 @@
     <string name="new_articles_notification_title">Nuovi articoli disponibili</string>
     <string name="settings_notifications_title">Notifiche</string>
     <string name="settings_feed_order_newest_first">Più recenti prima</string>
-    <string name="settings_notifications_settings_instructions">Per favore, abilita le notifiche per questa app nelle Impostazioni iOS.</string>
     <string name="settings_feed_order_oldest_first">Più vecchi prima</string>
     <string name="settings_experimental_parsing">Usa il la modalità lettura sperimentale</string>
     <string name="enable_notifications_for_feed">Attiva le notifiche per i nuovi articoli</string>

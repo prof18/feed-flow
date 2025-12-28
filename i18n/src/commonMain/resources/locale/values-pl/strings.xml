@@ -45,8 +45,6 @@
     <string name="retry_button">Spróbuj ponownie</string>
     <string name="done_button">OK</string>
     <string name="wrong_link_report_title">Następujące kanały nie zostały dodane, ponieważ są nieprawidłowe</string>
-    <string name="new_release_available_title">Dostępna jest nowa wersja FeedFlow:</string>
-    <string name="new_release_available_link">Pobierz tutaj</string>
     <string name="issue_report_title">Zgłoś problem z FeedFlow</string>
     <string name="issue_content_title">Problem z FeedFlow</string>
     <string name="issue_content_template">Opisz problem i podaj link do kanału RSS, który go powoduje. Jeśli to możliwe, załącz zrzut ekranu i plik OPML</string>
@@ -84,7 +82,6 @@
     <string name="empty_screen_back_to_timeline">Powrót do osi czasu</string>
     <string name="about_menu_contribute_translations">Pomoc z tłumaczeniami</string>
     <string name="rename_feed_source_name_button">Zmień nazwę</string>
-    <string name="close_menu_button">Zamknij menu</string>
     <string name="in_app_browser">Przeglądarka w aplikacji</string>
     <string name="settings_reader_mode">Otwórz artykuły w trybie czytania</string>
     <string name="search_no_data">Brak wyników dla %s.</string>
@@ -209,11 +206,8 @@
     <string name="settings_notifications_permission_request_button">Poproś o pozwolenie</string>
     <string name="new_articles_notification_title">Dostępne nowe artykuły</string>
     <string name="notification_channel_name">Nowe artykuły</string>
-    <string name="new_articles_notification_content">Nowe artykuły z %s</string>
     <string name="settings_notifications_title">Powiadomienia</string>
     <string name="settings_notifications_warning_reliability">Powiadomienia są sprawdzane na Twoim urządzeniu, ale mogą nie zawsze pojawiać się niezawodnie ze względu na ograniczenia systemu.</string>
-    <string name="settings_open_settings">Otwórz Ustawienia</string>
-    <string name="settings_notifications_settings_instructions">Włącz powiadomienia dla tej aplikacji w Ustawieniach iOS.</string>
     <string name="marking_all_read_dialog_title">Oznaczanie wszystkich jako przeczytane...</string>
     <string name="date_format_title">Format daty</string>
     <string name="date_format_normal">Dzień/Miesiąc</string>

@@ -20,8 +20,6 @@
     <string name="report_issue_button">Ziņot par problēmu</string>
     <string name="import_export_opml_title">Ievietot un izgūt</string>
     <string name="retry_button">Mēģināt vēlreiz</string>
-    <string name="new_release_available_title">Ir pieejama jauna FeedFlow versija:</string>
-    <string name="new_release_available_link">Lejupielādēt var šeit</string>
     <string name="no_category_selected_header">Nav kategorijas</string>
     <string name="new_category_hint">Jaunās kategorijas nosaukums</string>
     <string name="no_category">Nekategorizētie</string>
@@ -97,7 +95,6 @@
     <string name="action_save">Saglabāt</string>
     <string name="menu_copy_link">Kopēt saiti</string>
     <string name="rename_feed_source_name_button">Pārsaukt</string>
-    <string name="close_menu_button">Aizvērt izvēlni</string>
     <string name="dropbox_confirm_button">Apstiprināt</string>
     <string name="edit_feed_source_name_button">Rediģēt</string>
     <string name="deleting_feed_dialog_title">Dzēš…</string>
@@ -134,7 +131,6 @@
     <string name="empty_screen_back_to_timeline">Atpakaļ uz rakstu hroniku</string>
     <string name="hide_feed_from_timeline_description">Nerādīt šīs ziņu plūsmas rakstus rakstu hronikā</string>
     <string name="new_articles_notification_title">Pieejami jauni raksti</string>
-    <string name="new_articles_notification_content">Jauni raksti no %s</string>
     <string name="drawer_title_read">Lasītie</string>
     <string name="menu_share">Dalīties</string>
     <string name="link_opening_preference_default">Noklusējuma lietotnē</string>
@@ -148,7 +144,6 @@
     <string name="settings_sync_period_one_hour">Ik stundu</string>
     <string name="settings_sync_period_one_day">Katru dienu</string>
     <string name="notification_channel_name">Jauni raksti</string>
-    <string name="settings_open_settings">Atvērt iestatījumus</string>
     <string name="menu_mark_as_read">Atzīmēt kā lasītu</string>
     <string name="menu_mark_as_unread">Atzīmēt kā nelasītu</string>
     <string name="menu_copy_link_comments">Kopēt komentāru saiti</string>

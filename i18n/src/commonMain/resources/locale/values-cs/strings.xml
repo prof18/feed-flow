@@ -42,8 +42,6 @@
     <string name="import_export_opml">Import a export OPML</string>
     <string name="import_export_opml_title">Import a export</string>
     <string name="retry_button">Znovu</string>
-    <string name="new_release_available_title">K dispozici je nová verze FeedFlow:</string>
-    <string name="new_release_available_link">Ke stažení zde</string>
     <string name="done_button">Ok</string>
     <string name="issue_report_title">Nahlásit problém s FeedFlow</string>
     <string name="issue_content_title">Problém s FeedFlow</string>
@@ -175,7 +173,6 @@
     <string name="settings_auto_delete_period_one_week">Automatické mazání článků starých jeden týden</string>
     <string name="feed_url_help_text">Přidejte libovolný přímý kanál, webovou stránku nebo odkaz na kanál YouTube. Pokud je to možné, zdroj se rozpozná automaticky</string>
     <string name="import_export_description">FeedFlow podporuje import a export vašich odběrů pomocí souboru OPML pro lepší interoperabilitu s ostatními čtečkami</string>
-    <string name="close_menu_button">Zavřít menu</string>
     <string name="dropbox_sync_mobile_description">Kliknutím na tlačítko Připojit budete přesměrováni na aplikaci nebo webovou stránku Dropbox. Po připojení účtu se můžete vrátit do služby FeedFlow</string>
     <string name="menu_remove_from_bookmark">Odebrat z záložek</string>
     <string name="settings_sync_period_desc">Zvolte, jak často se mají na pozadí kontrolovat nové články</string>
@@ -200,14 +197,11 @@
     <string name="settings_notifications_permission_request_button">Žádost o povolení</string>
     <string name="new_articles_notification_title">Dostupné nové články</string>
     <string name="notification_channel_name">Nové články</string>
-    <string name="settings_open_settings">Otevřít nastavení</string>
-    <string name="settings_notifications_settings_instructions">V nastavení iOS povolte upozornění.</string>
     <string name="marking_all_read_dialog_title">Označit vše jako přečtené...</string>
     <string name="date_format_title">Formát data</string>
     <string name="date_format_normal">Den/Měsíc</string>
     <string name="date_format_american">Měsíc/Den</string>
     <string name="file_menu">Soubor</string>
-    <string name="new_articles_notification_content">Nové články z %s</string>
     <string name="settings_notifications_title">Upozornění</string>
     <string name="settings_notifications_warning_reliability">Oznámení jsou kontrolovány ve vašem zařízení, ale nemusí být vždy spolehlivě z důvodu omezení systému.</string>
     <string name="settings_sync_period_thirty_minutes">Každých 30 minut</string>

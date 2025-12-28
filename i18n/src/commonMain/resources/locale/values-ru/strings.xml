@@ -245,4 +245,5 @@
     <string name="settings_save_reader_mode_content">Открывая статью, сохранить ее содержание в ситуациях, когда нет доступа к интернету</string>
     <string name="settings_prefetch_article_content">Заранее сохранить содержание статьи для ситуаций, когда нет доступа к интернету</string>
     <string name="reader_mode_fallback_open_browser_button">Открыть в браузере</string>
+    <string name="feed_add_in_progress_message"></string>
 </resources>

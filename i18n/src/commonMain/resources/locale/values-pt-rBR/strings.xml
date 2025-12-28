@@ -273,4 +273,6 @@
     <string name="settings_auto_delete_period"></string>
     <string name="feed_add_in_progress_message"></string>
     <string name="clear_old_articles_button"></string>
+    <string name="search_placeholder"></string>
+    <string name="search_hint_title"></string>
 </resources>

@@ -123,4 +123,5 @@
     <string name="edit_feed">ערוך עדכון</string>
     <string name="settings_font_scale_title_example">כותרת המאמר</string>
     <string name="settings_font_scale_subtitle_example">זו כותרת המשנה של המאמר</string>
+    <string name="feed_add_in_progress_message"></string>
 </resources>

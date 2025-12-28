@@ -115,4 +115,5 @@
     <string name="add_account_button">إضافة حساب</string>
     <string name="icloud_sync_success">تم ربط حسابك في iCloud بنجاح</string>
     <string name="no_icloud_sync_yet">لم تتم مزامنة البيانات مع iCloud بعد. انقر على زر \"نسخ احتياطي\" لبدء المزامنة.</string>
+    <string name="feed_add_in_progress_message"></string>
 </resources>

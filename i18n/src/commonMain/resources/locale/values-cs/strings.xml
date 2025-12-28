@@ -265,4 +265,5 @@
     <string name="reader_mode_fallback_title">Nelze analyzovat článek</string>
     <string name="reader_mode_fallback_message">Obsah této stránky nemohl být extrahován v režimu čtečky. Můžete otevřít stránku přímo v prohlížeči.</string>
     <string name="reader_mode_fallback_open_browser_button">Otevřít v prohlížeči</string>
+    <string name="feed_add_in_progress_message"></string>
 </resources>

@@ -246,9 +246,4 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
             completionHandler(data, nil)
         }
     }
-
-    // TODO: delete?
-//    static func handleOAuthResponse(url: URL) -> Bool {
-//        return GIDSignIn.sharedInstance.handle(url)
-//    }
 }

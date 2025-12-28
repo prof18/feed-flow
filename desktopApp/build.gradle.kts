@@ -110,7 +110,7 @@ compose {
                     }
                 }
 
-                modules("java.instrument", "java.sql", "jdk.unsupported")
+                modules("java.instrument", "java.sql", "jdk.unsupported", "jdk.httpserver")
 
                 targetFormats(
                     TargetFormat.Dmg,

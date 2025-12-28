@@ -271,4 +271,6 @@
     <string name="new_articles_notification_title"></string>
     <string name="settings_clear_image_cache"></string>
     <string name="settings_auto_delete_period"></string>
+    <string name="search_placeholder"></string>
+    <string name="search_hint_title"></string>
 </resources>

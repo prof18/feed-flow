@@ -242,4 +242,5 @@
     <string name="confirm_button">Megerősítés</string>
     <string name="cancel_button">Mégse</string>
     <string name="reader_mode_comments_button_content_description">Megjegyzések megnyitása</string>
+    <string name="feed_add_in_progress_message"></string>
 </resources>

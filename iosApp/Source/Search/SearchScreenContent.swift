@@ -88,11 +88,29 @@ struct SearchScreenContent: View {
                        .hoverEffect()
                        .contextMenu {
                            VStack {
-                               makeReadUnreadButton(feedItem: feedItem)
+                               // 1. Mark all above as read
                                makeMarkAllAboveAsReadButton(feedItem: feedItem)
+
+                               // 2. Mark all below as read
                                makeMarkAllBelowAsReadButton(feedItem: feedItem)
+
+                               // Separator
+                               Divider()
+
+                               // Comments section (only if available)
+                               if feedItem.commentsUrl != nil {
+                                   // 3. Open comments
+                                   makeCommentsButton(feedItem: feedItem)
+
+                                   // Separator after comments section
+                                   Divider()
+                               }
+
+                               // 4. Add to bookmarks
                                makeBookmarkButton(feedItem: feedItem)
-                               makeCommentsButton(feedItem: feedItem)
+
+                               // 5. Mark as read (most frequent - at bottom for thumb reach)
+                               makeReadUnreadButton(feedItem: feedItem)
                            }
                            .environment(browserSelector)
                        }

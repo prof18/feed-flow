@@ -29,57 +29,18 @@ internal fun FeedSourceContextMenu(
             dismissOnClickOutside = true,
         ),
     ) {
+        // 1. Delete (least frequent + destructive - keep far from accidental taps)
         DropdownMenuItem(
             text = {
-                Text(
-                    if (feedSource.isPinned) {
-                        LocalFeedFlowStrings.current.menuRemoveFromPinned
-                    } else {
-                        LocalFeedFlowStrings.current.menuAddToPinned
-                    },
-                )
+                Text(LocalFeedFlowStrings.current.deleteFeed)
             },
             onClick = {
-                onPinFeedClick(feedSource)
+                onDeleteFeedSourceClick(feedSource)
                 hideMenu()
             },
         )
 
-        if (onChangeFeedCategoryClick != null) {
-            DropdownMenuItem(
-                text = {
-                    Text(LocalFeedFlowStrings.current.changeCategory)
-                },
-                onClick = {
-                    onChangeFeedCategoryClick(feedSource)
-                    hideMenu()
-                },
-            )
-        }
-
-        DropdownMenuItem(
-            text = {
-                Text(LocalFeedFlowStrings.current.editFeedSourceNameButton)
-            },
-            onClick = {
-                onEditFeedClick(feedSource)
-                hideMenu()
-            },
-        )
-
-        if (onRenameFeedSourceClick != null) {
-            DropdownMenuItem(
-                text = {
-                    Text(LocalFeedFlowStrings.current.renameFeedSourceNameButton)
-                },
-                onClick = {
-                    onRenameFeedSourceClick(feedSource)
-                    hideMenu()
-                },
-            )
-        }
-
-        // Open website (if available and callback provided)
+        // 2. Open website (rare - only for checking if feed/website is still alive)
         val websiteUrl = feedSource.websiteUrl
         if (websiteUrl != null) {
             DropdownMenuItem(
@@ -93,12 +54,56 @@ internal fun FeedSourceContextMenu(
             )
         }
 
+        // 3. Rename feed (if available)
+        if (onRenameFeedSourceClick != null) {
+            DropdownMenuItem(
+                text = {
+                    Text(LocalFeedFlowStrings.current.renameFeedSourceNameButton)
+                },
+                onClick = {
+                    onRenameFeedSourceClick(feedSource)
+                    hideMenu()
+                },
+            )
+        }
+
+        // 4. Edit feed (medium frequency - occasional settings adjustment)
         DropdownMenuItem(
             text = {
-                Text(LocalFeedFlowStrings.current.deleteFeed)
+                Text(LocalFeedFlowStrings.current.editFeedSourceNameButton)
             },
             onClick = {
-                onDeleteFeedSourceClick(feedSource)
+                onEditFeedClick(feedSource)
+                hideMenu()
+            },
+        )
+
+        // 5. Change category (frequent - organizing feeds)
+        if (onChangeFeedCategoryClick != null) {
+            DropdownMenuItem(
+                text = {
+                    Text(LocalFeedFlowStrings.current.changeCategory)
+                },
+                onClick = {
+                    onChangeFeedCategoryClick(feedSource)
+                    hideMenu()
+                },
+            )
+        }
+
+        // 6. Pin (most frequent - at bottom for easy thumb reach)
+        DropdownMenuItem(
+            text = {
+                Text(
+                    if (feedSource.isPinned) {
+                        LocalFeedFlowStrings.current.menuRemoveFromPinned
+                    } else {
+                        LocalFeedFlowStrings.current.menuAddToPinned
+                    },
+                )
+            },
+            onClick = {
+                onPinFeedClick(feedSource)
                 hideMenu()
             },
         )

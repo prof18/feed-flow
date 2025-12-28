@@ -57,7 +57,7 @@
     <string name="dropbox_confirm_button">Потвърждение</string>
     <string name="dropbox_sync_success">Вашият профил в Dropbox е свързан успешно</string>
     <string name="last_upload">Последно качване: %s</string>
-    <string name="error_account_sync">Съжаляваме, нещо се обърка при синхронизирането на данните във вашия профил  - error code: %s :(</string>
+    <string name="error_account_sync">Съжаляваме, нещо се обърка при синхронизирането на данните във вашия профил - error code: %s :(</string>
     <string name="settings_hide_duplicated_title_from_desc">Скриване на заглавието от описанието на статията</string>
     <string name="reader_mode_font_size">Размер на шрифта</string>
     <string name="feed_added_message">Емисията %s е добавена</string>

@@ -406,8 +406,7 @@ internal class FeedSourcesRepository(
             else -> "$originalUrl/$this"
         }
 
-    suspend fun
-            addFeedSourceWithoutFetching(
+    suspend fun addFeedSourceWithoutFetching(
         feedUrl: String,
         feedTitle: String,
         category: FeedSourceCategory?,

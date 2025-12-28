@@ -7,8 +7,8 @@
 //
 
 import FeedFlowKit
-import SwiftUI
 import NukeUI
+import SwiftUI
 
 @MainActor
 struct FeedSuggestionsContent: View {

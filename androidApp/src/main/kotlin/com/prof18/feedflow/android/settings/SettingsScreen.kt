@@ -27,6 +27,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.Sync
@@ -48,7 +49,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.imageLoader
@@ -89,6 +89,7 @@ import com.prof18.feedflow.shared.ui.settings.TimeFormatSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.utils.FeatureFlags
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.compose.koinInject
@@ -216,7 +217,6 @@ fun SettingsScreen(
     )
 }
 
-@Suppress("UnusedParameter")
 @Composable
 private fun SettingsScreenContent(
     browsers: ImmutableList<Browser>,
@@ -293,12 +293,14 @@ private fun SettingsScreenContent(
                 )
             }
 
-            item {
-                SettingItem(
-                    title = LocalFeedFlowStrings.current.feedSuggestionsTitle,
-                    icon = Icons.Outlined.Lightbulb,
-                    onClick = navigateToFeedSuggestions,
-                )
+            if (FeatureFlags.ENABLE_FEED_SUGGESTIONS) {
+                item {
+                    SettingItem(
+                        title = LocalFeedFlowStrings.current.feedSuggestionsTitle,
+                        icon = Icons.Outlined.Lightbulb,
+                        onClick = navigateToFeedSuggestions,
+                    )
+                }
             }
 
             item {
@@ -559,18 +561,19 @@ private fun SettingsScreenContent(
                 }
             }
 
-// TODO: Enabled FAQ button when faqs are ready on the website
-//            item {
-//                SettingItem(
-//                    title = LocalFeedFlowStrings.current.aboutMenuFaq,
-//                    icon = Icons.Outlined.QuestionMark,
-//                    onClick = {
-//                        val languageCode = java.util.Locale.getDefault().language
-//                        val faqUrl = "https://feedflow.dev/$languageCode/faq"
-//                        openInAppBrowser(faqUrl)
-//                    },
-//                )
-//            }
+            if (FeatureFlags.ENABLE_FAQ) {
+                item {
+                    SettingItem(
+                        title = LocalFeedFlowStrings.current.aboutMenuFaq,
+                        icon = Icons.Outlined.QuestionMark,
+                        onClick = {
+                            val languageCode = java.util.Locale.getDefault().language
+                            val faqUrl = "https://feedflow.dev/$languageCode/faq"
+                            openInAppBrowser(faqUrl)
+                        },
+                    )
+                }
+            }
 
             item {
                 SettingItem(

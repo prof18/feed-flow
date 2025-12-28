@@ -2,13 +2,19 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedAddState
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.suggestions.getSuggestedFeeds
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,14 +27,16 @@ class FeedSuggestionsViewModel internal constructor(
     private val feedFetcherRepository: FeedFetcherRepository,
 ) : ViewModel() {
 
-    private val suggestedCategoriesMutableState = MutableStateFlow<List<SuggestedFeedCategory>>(emptyList())
-    val suggestedCategoriesState: StateFlow<List<SuggestedFeedCategory>> = suggestedCategoriesMutableState.asStateFlow()
+    private val suggestedCategoriesMutableState =
+        MutableStateFlow<ImmutableList<SuggestedFeedCategory>>(persistentListOf())
+    val suggestedCategoriesState: StateFlow<ImmutableList<SuggestedFeedCategory>> =
+        suggestedCategoriesMutableState.asStateFlow()
 
     private val selectedCategoryIdMutableState = MutableStateFlow<String?>(null)
     val selectedCategoryIdState: StateFlow<String?> = selectedCategoryIdMutableState.asStateFlow()
 
-    private val feedStatesMapMutableState = MutableStateFlow<Map<String, FeedAddState>>(emptyMap())
-    val feedStatesMapState: StateFlow<Map<String, FeedAddState>> = feedStatesMapMutableState.asStateFlow()
+    private val feedStatesMapMutableState = MutableStateFlow<ImmutableMap<String, FeedAddState>>(persistentMapOf())
+    val feedStatesMapState: StateFlow<ImmutableMap<String, FeedAddState>> = feedStatesMapMutableState.asStateFlow()
 
     private val isLoadingMutableState = MutableStateFlow(true)
     val isLoadingState: StateFlow<Boolean> = isLoadingMutableState.asStateFlow()
@@ -40,7 +48,7 @@ class FeedSuggestionsViewModel internal constructor(
 
     private fun loadSuggestedFeeds() {
         val categories = getSuggestedFeeds()
-        suggestedCategoriesMutableState.update { categories }
+        suggestedCategoriesMutableState.update { categories.toPersistentList() }
         if (categories.isNotEmpty()) {
             selectedCategoryIdMutableState.update { categories.first().id }
         }
@@ -50,7 +58,7 @@ class FeedSuggestionsViewModel internal constructor(
         viewModelScope.launch {
             val existingFeeds = feedSourcesRepository.getFeedSources().firstOrNull() ?: emptyList()
             val stateMap = existingFeeds.associate { it.url to FeedAddState.Added }
-            feedStatesMapMutableState.update { stateMap }
+            feedStatesMapMutableState.update { stateMap.toPersistentMap() }
             isLoadingMutableState.update { false }
         }
     }
@@ -61,7 +69,7 @@ class FeedSuggestionsViewModel internal constructor(
 
     fun addFeed(feed: SuggestedFeed, categoryName: String) {
         viewModelScope.launch {
-            feedStatesMapMutableState.update { it + (feed.url to FeedAddState.Adding) }
+            feedStatesMapMutableState.update { (it + (feed.url to FeedAddState.Adding)).toPersistentMap() }
 
             try {
                 val category = FeedSourceCategory(
@@ -75,10 +83,10 @@ class FeedSuggestionsViewModel internal constructor(
                     category = category,
                     logoUrl = feed.logoUrl,
                 )
-                feedStatesMapMutableState.update { it + (feed.url to FeedAddState.Added) }
+                feedStatesMapMutableState.update { (it + (feed.url to FeedAddState.Added)).toPersistentMap() }
                 feedFetcherRepository.fetchFeeds()
             } catch (_: Exception) {
-                feedStatesMapMutableState.update { it + (feed.url to FeedAddState.NotAdded) }
+                feedStatesMapMutableState.update { (it + (feed.url to FeedAddState.NotAdded)).toPersistentMap() }
             }
         }
     }

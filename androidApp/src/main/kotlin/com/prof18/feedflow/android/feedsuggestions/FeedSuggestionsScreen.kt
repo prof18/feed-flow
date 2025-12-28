@@ -12,6 +12,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun FeedSuggestionsScreen(
     navigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: FeedSuggestionsViewModel = koinViewModel(),
 ) {
     val categories by viewModel.suggestedCategoriesState.collectAsState()
@@ -29,6 +30,6 @@ fun FeedSuggestionsScreen(
             viewModel.addFeed(feed, categoryName)
         },
         onNavigateBack = navigateBack,
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     )
 }

@@ -4,7 +4,7 @@
     <string name="feed_added_message">Feed %s aggiunto</string>
     <string name="feed_url_placeholder">https://ilmioblogpreferito.it/feed</string>
     <string name="force_feed_refresh">Forza l\'aggiornamento dei feed</string>
-    <string name="database_error">Qualcosa è andato storto durante lo scaricamento dei feed. Riprova o riavvia l\'applicazione  - error code: %s :(</string>
+    <string name="database_error">Qualcosa è andato storto durante lo scaricamento dei feed. Riprova o riavvia l\'applicazione - error code: %s :(</string>
     <string name="no_category">Non categorizzato</string>
     <string name="import_dialog_title">Seleziona file OPML</string>
     <string name="feeds_import_done_message">Importazione effettuata</string>
@@ -15,7 +15,7 @@
     <string name="no_feeds_add_one_message">Nessun feed, per favore aggiungine uno</string>
     <string name="refresh_feeds">Ricarica feed</string>
     <string name="done_button">OK</string>
-    <string name="issue_content_template">Descrivi il problema, specifica la piattaforma che stai usando, la versione dell'app, e fornisci un link al feed RSS che causa i problemi. Se puoi, allega uno screenshot e il file OPML</string>
+    <string name="issue_content_template">Descrivi il problema, specifica la piattaforma che stai usando, la versione dell\'app, e fornisci un link al feed RSS che causa i problemi. Se puoi, allega uno screenshot e il file OPML</string>
     <string name="about_button">Informazioni</string>
     <string name="report_issue_button">Segnala problema</string>
     <string name="export_started_message">Esportazione in corso</string>
@@ -222,4 +222,5 @@
     <string name="settings_swipe_action_toggle_bookmark">Aggiungi/rimuovi segnalibro</string>
     <string name="settings_theme">Tema</string>
     <string name="dropbox_auth_code_expired">Il codice di autenticazione non è più valido. Per favore riprova.</string>
+    <string name="feed_add_in_progress_message"></string>
 </resources>

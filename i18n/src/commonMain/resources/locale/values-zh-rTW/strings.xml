@@ -274,4 +274,5 @@
     <string name="scroll_to_top_button_content_description">捲動到頂部</string>
     <string name="decrease_font_size_button_content_description">減小字體大小</string>
     <string name="increase_font_size_button_content_description">增大字體大小</string>
+    <string name="app_name" translatable="false"></string>
 </resources>

@@ -28,7 +28,6 @@ import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
-import com.prof18.feedflow.shared.domain.feed.SuggestedFeedsRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -168,11 +167,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
-    singleOf(::SuggestedFeedsRepository)
-
     viewModel {
         FeedSuggestionsViewModel(
-            suggestedFeedsRepository = get(),
             feedSourcesRepository = get(),
             feedFetcherRepository = get(),
         )

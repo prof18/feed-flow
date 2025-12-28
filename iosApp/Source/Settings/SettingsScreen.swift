@@ -241,11 +241,13 @@ private struct FeedSection: View {
                 Label(feedFlowStrings.settingsBlockedWords, systemImage: "exclamationmark.triangle")
             }
 
-            Button {
-                dismiss()
-                appState.navigate(route: CommonViewRoute.feedSuggestions)
-            } label: {
-                Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb")
+            if FeatureFlags.shared.ENABLE_FEED_SUGGESTIONS {
+                Button {
+                    dismiss()
+                    appState.navigate(route: CommonViewRoute.feedSuggestions)
+                } label: {
+                    Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb")
+                }
             }
         }
     }
@@ -388,18 +390,19 @@ private struct AppSection: View {
                 isCrashReportingEnabled.toggle()
             }
 
-// TODO: Enabled FAQ button when faqs are ready on the website
-//             Button {
-//                 let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
-//                 let faqUrl = "https://feedflow.dev/\(languageCode)/faq"
-//
-//                 if let url = URL(string: faqUrl) {
-//                     dismiss()
-//                     appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
-//                 }
-//             } label: {
-//                 Label(feedFlowStrings.aboutMenuFaq, systemImage: "questionmark")
-//             }
+            if FeatureFlags.shared.ENABLE_FAQ {
+                Button {
+                    let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
+                    let faqUrl = "https://feedflow.dev/\(languageCode)/faq"
+
+                    if let url = URL(string: faqUrl) {
+                        dismiss()
+                        appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                    }
+                } label: {
+                    Label(feedFlowStrings.aboutMenuFaq, systemImage: "questionmark")
+                }
+            }
 
             NavigationLink(destination: AboutScreen()) {
                 Label(feedFlowStrings.aboutButton, systemImage: "info.circle")

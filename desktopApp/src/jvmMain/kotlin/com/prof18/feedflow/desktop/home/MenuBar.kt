@@ -22,6 +22,7 @@ import com.prof18.feedflow.desktop.feedsuggestions.FeedSuggestionsScreen
 import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.utils.FeatureFlags
 import java.awt.Desktop
 import java.net.URI
 
@@ -248,12 +249,14 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 },
             )
 
-            Item(
-                text = LocalFeedFlowStrings.current.feedSuggestionsTitle,
-                onClick = {
-                    navigator.push(FeedSuggestionsScreen())
-                },
-            )
+            if (FeatureFlags.ENABLE_FEED_SUGGESTIONS) {
+                Item(
+                    text = LocalFeedFlowStrings.current.feedSuggestionsTitle,
+                    onClick = {
+                        navigator.push(FeedSuggestionsScreen())
+                    },
+                )
+            }
         }
 
         Menu(LocalFeedFlowStrings.current.settingsBehaviourTitle, mnemonic = 'B') {
@@ -341,18 +344,18 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onCheckedChange = settings.setCrashReportingEnabled,
             )
 
-            // TODO: Enabled FAQ button when faqs are ready on the website
-            //            val uriHandler = LocalUriHandler.current
-            //            Item(
-            //                text = LocalFeedFlowStrings.current.aboutMenuFaq,
-            //                onClick = {
-            //                    runCatching {
-            //                        val languageCode = Locale.getDefault().language
-            //                        val faqUrl = "https://feedflow.dev/$languageCode/faq"
-            //                        uriHandler.openUri(faqUrl)
-            //                    }
-            //                },
-            //            )
+            if (FeatureFlags.ENABLE_FAQ) {
+                Item(
+                    text = LocalFeedFlowStrings.current.aboutMenuFaq,
+                    onClick = {
+                        runCatching {
+                            val languageCode = java.util.Locale.getDefault().language
+                            val faqUrl = "https://feedflow.dev/$languageCode/faq"
+                            Desktop.getDesktop().browse(URI(faqUrl))
+                        }
+                    },
+                )
+            }
         }
     }
 }

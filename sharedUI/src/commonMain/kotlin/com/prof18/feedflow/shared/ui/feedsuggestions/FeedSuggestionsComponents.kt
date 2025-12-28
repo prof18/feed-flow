@@ -46,13 +46,15 @@ import com.prof18.feedflow.core.model.SuggestedFeedCategory
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedSuggestionsContent(
-    categories: List<SuggestedFeedCategory>,
+    categories: ImmutableList<SuggestedFeedCategory>,
     selectedCategoryId: String?,
-    feedStatesMap: Map<String, FeedAddState>,
+    feedStatesMap: ImmutableMap<String, FeedAddState>,
     isLoading: Boolean,
     onCategorySelected: (String) -> Unit,
     onAddFeed: (SuggestedFeed, String) -> Unit,
@@ -148,7 +150,7 @@ fun FeedSuggestionsContent(
 
 @Composable
 private fun CategoryFilterRow(
-    categories: List<SuggestedFeedCategory>,
+    categories: ImmutableList<SuggestedFeedCategory>,
     selectedCategoryId: String?,
     onCategorySelected: (String) -> Unit,
     modifier: Modifier = Modifier,

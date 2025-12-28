@@ -167,6 +167,11 @@
     <string name="fresh_rss_last_sync">Last sync: %s</string>
     <string name="fresh_rss_password_hint">The FreshRSS API password (Settings &gt; Profile)</string>
     <string name="fresh_rss_url_hint">The FreshRSS API endpoint, for example %s</string>
+    <string name="miniflux_account_connected">Your Miniflux account is successfully connected</string>
+    <string name="no_miniflux_sync_yet">Data are not synced yet</string>
+    <string name="miniflux_last_sync">Last sync: %s</string>
+    <string name="miniflux_password_hint">The Miniflux API password (Settings &gt; Integrations &gt; Google Reader)</string>
+    <string name="miniflux_url_hint">The Miniflux server URL, for example %s</string>
     <string name="link_opening_preference">Link opening behaviour</string>
     <string name="link_opening_preference_default">Default</string>
     <string name="link_opening_preference_reader_mode">Reader mode</string>

@@ -73,6 +73,20 @@ struct AddAccountScreen: View {
                                 }
                             }
 
+                        case .miniflux:
+                            NavigationLink(destination: MinifluxSyncScreen(isFromAddAccount: true)) {
+                                Label {
+                                    Text("Miniflux")
+                                } icon: {
+                                    Image("freshrss")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 22, height: 22)
+                                        .foregroundStyle(.primary)
+                                }
+                            }
+
                         case .googleDrive:
                             NavigationLink(destination: GoogleDriveSyncScreen()) {
                                 Label {

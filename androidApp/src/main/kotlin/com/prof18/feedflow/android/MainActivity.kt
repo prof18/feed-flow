@@ -36,6 +36,7 @@ import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
+import com.prof18.feedflow.android.accounts.miniflux.MinifluxSyncScreen
 import com.prof18.feedflow.android.addfeed.AddFeedScreen
 import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.android.editfeed.EditScreen
@@ -390,6 +391,9 @@ class MainActivity : BaseThemeActivity() {
                     navigateToFreshRssSync = {
                         navController.navigate(FreshRssSync)
                     },
+                    navigateToMinifluxSync = {
+                        navController.navigate(MinifluxSync)
+                    },
                 )
             }
 
@@ -411,6 +415,14 @@ class MainActivity : BaseThemeActivity() {
 
             composable<FreshRssSync> {
                 FreshRssSyncScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<MinifluxSync> {
+                MinifluxSyncScreen(
                     navigateBack = {
                         navController.popBackStack()
                     },

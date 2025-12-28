@@ -30,6 +30,12 @@ class NetworkSettings(
     fun setLastSyncDate(value: Long) =
         settings.set(SettingsField.LAST_SYNC_DATE.name, value)
 
+    fun getSyncAccountType(): String =
+        settings.getString(SettingsField.SYNC_ACCOUNT_TYPE.name, "")
+
+    fun setSyncAccountType(value: String) =
+        settings.set(SettingsField.SYNC_ACCOUNT_TYPE.name, value)
+
     fun deleteAll() {
         SettingsField.entries.forEach {
             settings.remove(it.name)
@@ -42,4 +48,5 @@ internal enum class SettingsField {
     SYNC_USERNAME,
     SYNC_URL,
     LAST_SYNC_DATE,
+    SYNC_ACCOUNT_TYPE,
 }

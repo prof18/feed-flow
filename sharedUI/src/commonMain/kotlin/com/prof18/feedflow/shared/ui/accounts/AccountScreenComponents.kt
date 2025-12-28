@@ -41,6 +41,7 @@ fun AccountsContent(
     onICloudClick: () -> Unit,
     modifier: Modifier = Modifier,
     onFreshRssClick: () -> Unit,
+    onMinifluxClick: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -101,6 +102,7 @@ fun AccountsContent(
                                     { }
                                 }
                                 SyncAccounts.FRESH_RSS -> onFreshRssClick
+                                SyncAccounts.MINIFLUX -> onMinifluxClick
                             },
                         )
 
@@ -127,6 +129,7 @@ private fun SyncAccounts.getTitle() =
         SyncAccounts.LOCAL -> "Local"
         SyncAccounts.ICLOUD -> "iCloud"
         SyncAccounts.FRESH_RSS -> "FreshRSS"
+        SyncAccounts.MINIFLUX -> "Miniflux"
     }
 
 private fun SyncAccounts.getIcon() =
@@ -136,6 +139,7 @@ private fun SyncAccounts.getIcon() =
         SyncAccounts.ICLOUD -> Cloud
         SyncAccounts.LOCAL -> Dropbox
         SyncAccounts.FRESH_RSS -> FreshRSS
+        SyncAccounts.MINIFLUX -> FreshRSS
     }
 
 @Composable

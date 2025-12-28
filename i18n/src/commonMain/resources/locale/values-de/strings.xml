@@ -265,14 +265,4 @@
     <string name="reader_mode_fallback_title">Artikel kann nicht geparst (ausgelesen) werden</string>
     <string name="reader_mode_fallback_message">Der Inhalt dieser Seite kann nicht für den Lesemodus verwendet werden. Sie können die Seite direkt in ihrem Browser öffnen.</string>
     <string name="reader_mode_fallback_open_browser_button">Im Browser öffnen</string>
-    <string name="scroll_to_top_button_content_description"></string>
-    <string name="drawer_menu_button_content_description"></string>
-    <string name="more_options_button_content_description"></string>
-    <string name="decrease_font_size_button_content_description"></string>
-    <string name="dropbox_auth_code_expired"></string>
-    <string name="search_button_content_description"></string>
-    <string name="delete_feed_source_error"></string>
-    <string name="database_error_reset"></string>
-    <string name="increase_font_size_button_content_description"></string>
-    <string name="feed_add_in_progress_message"></string>
 </resources>

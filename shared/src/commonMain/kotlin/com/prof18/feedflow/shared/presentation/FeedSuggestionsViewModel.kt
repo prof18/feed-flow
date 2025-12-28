@@ -3,12 +3,12 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FeedAddState
 import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
-import com.prof18.feedflow.shared.domain.feed.SuggestedFeedsRepository
-import com.prof18.feedflow.core.model.FeedAddState
+import com.prof18.feedflow.shared.domain.feed.suggestions.getSuggestedFeeds
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedSuggestionsViewModel internal constructor(
-    private val suggestedFeedsRepository: SuggestedFeedsRepository,
     private val feedSourcesRepository: FeedSourcesRepository,
     private val feedFetcherRepository: FeedFetcherRepository,
 ) : ViewModel() {
@@ -31,13 +30,16 @@ class FeedSuggestionsViewModel internal constructor(
     private val feedStatesMapMutableState = MutableStateFlow<Map<String, FeedAddState>>(emptyMap())
     val feedStatesMapState: StateFlow<Map<String, FeedAddState>> = feedStatesMapMutableState.asStateFlow()
 
+    private val isLoadingMutableState = MutableStateFlow(true)
+    val isLoadingState: StateFlow<Boolean> = isLoadingMutableState.asStateFlow()
+
     init {
         loadSuggestedFeeds()
         loadExistingFeeds()
     }
 
     private fun loadSuggestedFeeds() {
-        val categories = suggestedFeedsRepository.getSuggestedFeeds()
+        val categories = getSuggestedFeeds()
         suggestedCategoriesMutableState.update { categories }
         if (categories.isNotEmpty()) {
             selectedCategoryIdMutableState.update { categories.first().id }
@@ -49,6 +51,7 @@ class FeedSuggestionsViewModel internal constructor(
             val existingFeeds = feedSourcesRepository.getFeedSources().firstOrNull() ?: emptyList()
             val stateMap = existingFeeds.associate { it.url to FeedAddState.Added }
             feedStatesMapMutableState.update { stateMap }
+            isLoadingMutableState.update { false }
         }
     }
 

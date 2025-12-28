@@ -17,11 +17,13 @@ fun FeedSuggestionsScreen(
     val categories by viewModel.suggestedCategoriesState.collectAsState()
     val selectedCategoryId by viewModel.selectedCategoryIdState.collectAsState()
     val feedStatesMap by viewModel.feedStatesMapState.collectAsState()
+    val isLoading by viewModel.isLoadingState.collectAsState()
 
     FeedSuggestionsContent(
         categories = categories,
         selectedCategoryId = selectedCategoryId,
         feedStatesMap = feedStatesMap,
+        isLoading = isLoading,
         onCategorySelected = viewModel::selectCategory,
         onAddFeed = { feed, categoryName ->
             viewModel.addFeed(feed, categoryName)

@@ -23,6 +23,7 @@ internal class FeedSuggestionsScreen : Screen {
         val suggestedCategories by viewModel.suggestedCategoriesState.collectAsState()
         val selectedCategoryId by viewModel.selectedCategoryIdState.collectAsState()
         val feedStatesMap by viewModel.feedStatesMapState.collectAsState()
+        val isLoading by viewModel.isLoadingState.collectAsState()
 
         val navigator = LocalNavigator.currentOrThrow
 
@@ -30,6 +31,7 @@ internal class FeedSuggestionsScreen : Screen {
             categories = suggestedCategories.toPersistentList(),
             selectedCategoryId = selectedCategoryId,
             feedStatesMap = feedStatesMap,
+            isLoading = isLoading,
             onCategorySelected = viewModel::selectCategory,
             onAddFeed = { feed, categoryName ->
                 viewModel.addFeed(feed, categoryName)

@@ -17,6 +17,7 @@ struct FeedSuggestionsContent: View {
     @State private var suggestedCategories: [SuggestedFeedCategory] = []
     @State private var selectedCategoryId: String = ""
     @State private var feedStatesMap: [String: FeedAddState] = [:]
+    @State private var isLoading: Bool = true
 
     @Environment(\.dismiss) private var dismiss
 
@@ -33,34 +34,40 @@ struct FeedSuggestionsContent: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            CategoryFilterRow(
-                categories: suggestedCategories,
-                selectedCategoryId: selectedCategoryId,
-                onCategorySelected: { categoryId in
-                    selectedCategoryId = categoryId
-                }
-            )
-            .padding(.vertical, Spacing.regular)
+        Group {
+            if isLoading {
+                ProgressView()
+            } else {
+                VStack(spacing: 0) {
+                    CategoryFilterRow(
+                        categories: suggestedCategories,
+                        selectedCategoryId: selectedCategoryId,
+                        onCategorySelected: { categoryId in
+                            selectedCategoryId = categoryId
+                        }
+                    )
+                    .padding(.vertical, Spacing.regular)
 
-            Divider()
+                    Divider()
 
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(filteredFeeds, id: \.url) { feed in
-                        SuggestedFeedRow(
-                            feed: feed,
-                            feedState: getFeedState(feed.url),
-                            onAddFeed: {
-                                if let categoryName = selectedCategory?.name {
-                                    viewModel.addFeed(feed: feed, categoryName: categoryName)
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(filteredFeeds, id: \.url) { feed in
+                                SuggestedFeedRow(
+                                    feed: feed,
+                                    feedState: getFeedState(feed.url),
+                                    onAddFeed: {
+                                        if let categoryName = selectedCategory?.name {
+                                            viewModel.addFeed(feed: feed, categoryName: categoryName)
+                                        }
+                                    }
+                                )
+
+                                if feed.url != filteredFeeds.last?.url {
+                                    Divider()
+                                        .padding(.leading, 64)
                                 }
                             }
-                        )
-
-                        if feed.url != filteredFeeds.last?.url {
-                            Divider()
-                                .padding(.leading, 64)
                         }
                     }
                 }
@@ -86,6 +93,11 @@ struct FeedSuggestionsContent: View {
         .task {
             for await statesMap in viewModel.feedStatesMapState {
                 self.feedStatesMap = statesMap
+            }
+        }
+        .task {
+            for await loading in viewModel.isLoadingState {
+                self.isLoading = loading as? Bool ?? false
             }
         }
     }

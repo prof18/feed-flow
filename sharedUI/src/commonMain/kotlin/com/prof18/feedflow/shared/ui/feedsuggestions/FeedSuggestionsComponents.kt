@@ -53,6 +53,7 @@ fun FeedSuggestionsContent(
     categories: List<SuggestedFeedCategory>,
     selectedCategoryId: String?,
     feedStatesMap: Map<String, FeedAddState>,
+    isLoading: Boolean,
     onCategorySelected: (String) -> Unit,
     onAddFeed: (SuggestedFeed, String) -> Unit,
     onNavigateBack: () -> Unit,
@@ -82,51 +83,63 @@ fun FeedSuggestionsContent(
         },
         modifier = modifier,
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-        ) {
-            Text(
-                text = LocalFeedFlowStrings.current.feedSuggestionsDescription,
-                style = MaterialTheme.typography.bodyMedium,
+        if (isLoading) {
+            Column(
                 modifier = Modifier
-                    .padding(horizontal = Spacing.regular)
-                    .padding(bottom = Spacing.small),
-            )
-
-            CategoryFilterRow(
-                categories = categories,
-                selectedCategoryId = selectedCategoryId,
-                onCategorySelected = onCategorySelected,
-            )
-
-            HorizontalDivider(
-                thickness = 0.5.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                modifier = Modifier.padding(top = Spacing.small),
-            )
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentPadding = PaddingValues(vertical = Spacing.small),
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                items(
-                    items = filteredFeeds,
-                    key = { it.url },
-                ) { feed ->
-                    val feedState = feedStatesMap[feed.url] ?: FeedAddState.NotAdded
-                    SuggestedFeedListItem(
-                        feed = feed,
-                        feedState = feedState,
-                        onAddFeed = {
-                            selectedCategory?.name?.let { categoryName ->
-                                onAddFeed(feed, categoryName)
-                            }
-                        },
-                    )
+                CircularProgressIndicator()
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+            ) {
+                Text(
+                    text = LocalFeedFlowStrings.current.feedSuggestionsDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .padding(horizontal = Spacing.regular)
+                        .padding(bottom = Spacing.small),
+                )
+
+                CategoryFilterRow(
+                    categories = categories,
+                    selectedCategoryId = selectedCategoryId,
+                    onCategorySelected = onCategorySelected,
+                )
+
+                HorizontalDivider(
+                    thickness = 0.5.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    modifier = Modifier.padding(top = Spacing.small),
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentPadding = PaddingValues(vertical = Spacing.small),
+                ) {
+                    items(
+                        items = filteredFeeds,
+                        key = { it.url },
+                    ) { feed ->
+                        val feedState = feedStatesMap[feed.url] ?: FeedAddState.NotAdded
+                        SuggestedFeedListItem(
+                            feed = feed,
+                            feedState = feedState,
+                            onAddFeed = {
+                                selectedCategory?.name?.let { categoryName ->
+                                    onAddFeed(feed, categoryName)
+                                }
+                            },
+                        )
+                    }
                 }
             }
         }

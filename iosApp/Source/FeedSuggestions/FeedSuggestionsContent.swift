@@ -18,8 +18,8 @@ struct FeedSuggestionsContent: View {
     @State private var selectedCategoryId: String = ""
     @State private var feedStatesMap: [String: FeedAddState] = [:]
     @State private var isLoading: Bool = true
-
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss)
+    private var dismiss
 
     private var selectedCategory: SuggestedFeedCategory? {
         suggestedCategories.first(where: { $0.id == selectedCategoryId }) ?? suggestedCategories.first
@@ -128,8 +128,8 @@ private struct CategoryFilterChip: View {
     let category: SuggestedFeedCategory
     let isSelected: Bool
     let onTap: () -> Void
-
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorScheme)
+    private var colorScheme
 
     var body: some View {
         Button(action: onTap) {
@@ -148,7 +148,10 @@ private struct CategoryFilterChip: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(isSelected ? Color.accentColor : Color(UIColor.separator), lineWidth: isSelected ? 2 : 1)
+                    .strokeBorder(
+                        isSelected ? Color.accentColor : Color(UIColor.separator),
+                        lineWidth: isSelected ? 2 : 1
+                    )
             )
         }
         .buttonStyle(.plain)
@@ -221,7 +224,7 @@ private struct AddButton: View {
     var body: some View {
         switch feedState {
         case .added:
-            Button(action: {}) {
+            Button {} label: {
                 HStack(spacing: 4) {
                     Image(systemName: "checkmark")
                         .font(.system(size: 12, weight: .semibold))
@@ -245,7 +248,7 @@ private struct AddButton: View {
             .disabled(true)
 
         case .adding:
-            Button(action: {}) {
+            Button {} label: {
                 ProgressView()
                     .controlSize(.small)
                     .padding(.horizontal, 12)

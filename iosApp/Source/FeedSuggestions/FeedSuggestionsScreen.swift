@@ -10,7 +10,9 @@ import FeedFlowKit
 import SwiftUI
 
 struct FeedSuggestionsScreen: View {
-    @StateObject private var vmStoreOwner = VMStoreOwner<FeedSuggestionsViewModel>(Deps.shared.getFeedSuggestionsViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<FeedSuggestionsViewModel>(
+        Deps.shared.getFeedSuggestionsViewModel()
+    )
 
     var body: some View {
         FeedSuggestionsContent(

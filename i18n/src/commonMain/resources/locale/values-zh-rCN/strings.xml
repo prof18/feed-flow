@@ -275,4 +275,17 @@
     <string name="scroll_to_top_button_content_description">滚动到顶部</string>
     <string name="dropbox_auth_code_expired">授权码已失效。请重试。</string>
     <string name="database_error_reset">我们加载您的数据时遇到问题，因此需要重新开始。对此我们深表歉意。</string>
+    <string name="google_drive_auth_code_hint">授权码</string>
+    <string name="google_drive_confirm_button">确认</string>
+    <string name="google_drive_connect_button">连接 Google Drive</string>
+    <string name="change_category">更改类别</string>
+    <string name="trigger_feed_sync">触发上传至您的账号</string>
+    <string name="menu_mark_all_above_as_read">将以上所有内容标记为已读</string>
+    <string name="menu_mark_all_below_as_read">将以下所有内容标记为已读</string>
+    <string name="google_drive_sync_common_description">连接您的 Google Drive 账号，在 Android、iOS、iPadOS 和桌面设备之间同步订阅内容、类别、已读和收藏的文章。数据将保存在应用特定文件夹中，FeedFlow 不会访问您的任何文件</string>
+    <string name="google_drive_sync_error">连接到 Google Drive 时出错，请重试</string>
+    <string name="google_drive_sync_success">已成功连接您的 Google Drive 账号</string>
+    <string name="no_google_drive_sync_yet">数据尚未与 Google Drive 同步，请点击备份按钮触发同步</string>
+    <string name="google_drive_desktop_sync_description">点击下方按钮连接您的 Google Drive 账号。浏览器窗口将打开以进行身份验证。完成登录后，您可以返回此应用。</string>
+    <string name="google_drive_auth_retry">您需要重新进行身份验证才能继续使用 Google Drive 同步功能。请前往账号并取消关联，然后重新关联。</string>
 </resources>

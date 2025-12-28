@@ -3,16 +3,28 @@ package com.prof18.feedflow.shared.domain.feed.suggestions.bycategory
 import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
 
-internal val programmingCategory = SuggestedFeedCategory(
+internal val programmingFeeds = SuggestedFeedCategory(
     id = "programming",
     name = "Programming",
-    icon = "👨‍💻",
+    icon = "👩‍💻",
     feeds = listOf(
         SuggestedFeed(
-            name = "CSS Tricks",
+            name = "Android Developers",
+            url = "https://android-developers.googleblog.com/feeds/posts/default?alt=rss",
+            description = "The latest Android news and tips",
+            logoUrl = "https://www.google.com/s2/favicons?domain=developer.android.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "CSS-Tricks",
             url = "https://css-tricks.com/feed/",
             description = "Tips, tricks, and techniques on using CSS",
             logoUrl = "https://www.google.com/s2/favicons?domain=css-tricks.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Hacker News",
+            url = "https://news.ycombinator.com/rss",
+            description = "Links for the intellectually curious, ranked by readers",
+            logoUrl = "https://www.google.com/s2/favicons?domain=news.ycombinator.com&sz=64",
         ),
         SuggestedFeed(
             name = "JavaScript Weekly",
@@ -24,13 +36,7 @@ internal val programmingCategory = SuggestedFeedCategory(
             name = "Kotlin Blog",
             url = "https://blog.jetbrains.com/kotlin/feed/",
             description = "Official Kotlin programming language blog",
-            logoUrl = "https://www.google.com/s2/favicons?domain=kotlinlang.org&sz=64",
-        ),
-        SuggestedFeed(
-            name = "Android Developers Blog",
-            url = "https://android-developers.googleblog.com/feeds/posts/default",
-            description = "The latest Android and Google Play news",
-            logoUrl = "https://www.google.com/s2/favicons?domain=developer.android.com&sz=64",
+            logoUrl = "https://www.google.com/s2/favicons?domain=jetbrains.com&sz=64",
         ),
     ),
 )

@@ -18,16 +18,41 @@ struct FeedItemContextMenu: View {
     let onOpenFeedSettings: (FeedSource) -> Void
 
     var body: some View {
-        makeReadUnreadButton(feedItem: feedItem)
-        makeMarkAllAboveAsReadButton(feedItem: feedItem)
-        makeMarkAllBelowAsReadButton(feedItem: feedItem)
-        makeBookmarkButton(feedItem: feedItem)
-        makeCommentsButton(feedItem: feedItem)
-        makeShareButton(feedItem: feedItem)
-        if let commentUrl = feedItem.commentsUrl {
-            makeShareCommentsButton(commentsUrl: commentUrl)
-        }
+        // 1. Open feed settings
         makeFeedSettingsButton(feedItem: feedItem)
+
+        // Separator
+        Divider()
+
+        // 2. Mark all above as read
+        makeMarkAllAboveAsReadButton(feedItem: feedItem)
+
+        // 3. Mark all below as read
+        makeMarkAllBelowAsReadButton(feedItem: feedItem)
+
+        // Separator
+        Divider()
+
+        // Comments section (only if comments are available)
+        if let commentUrl = feedItem.commentsUrl {
+            // 4. Open comments
+            makeCommentsButton(feedItem: feedItem)
+
+            // 5. Share comments
+            makeShareCommentsButton(commentsUrl: commentUrl)
+
+            // Separator after comments section
+            Divider()
+        }
+
+        // 6. Share
+        makeShareButton(feedItem: feedItem)
+
+        // 7. Add to bookmarks
+        makeBookmarkButton(feedItem: feedItem)
+
+        // 8. Mark as read (most frequent - at bottom for thumb reach)
+        makeReadUnreadButton(feedItem: feedItem)
     }
 
     @ViewBuilder

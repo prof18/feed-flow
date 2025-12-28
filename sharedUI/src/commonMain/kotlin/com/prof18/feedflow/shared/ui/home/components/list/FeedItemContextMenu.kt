@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,54 +49,7 @@ internal fun FeedItemContextMenu(
             dismissOnClickOutside = true,
         ),
     ) {
-        ChangeReadStatusMenuItem(
-            feedItem = feedItem,
-            onReadStatusClick = onReadStatusClick,
-            closeMenu = closeMenu,
-        )
-
-        MarkAllAboveAsReadMenuItem(
-            feedItem = feedItem,
-            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
-            closeMenu = closeMenu,
-        )
-
-        MarkAllBelowAsReadMenuItem(
-            feedItem = feedItem,
-            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
-            closeMenu = closeMenu,
-        )
-
-        ChangeBookmarkStatusMenuItem(
-            feedItem = feedItem,
-            onBookmarkClick = onBookmarkClick,
-            closeMenu = closeMenu,
-        )
-
-        if (feedItem.commentsUrl != null) {
-            OpenCommentsMenuItem(
-                feedItem = feedItem,
-                closeMenu = closeMenu,
-                onCommentClick = onCommentClick,
-            )
-        }
-
-        ShareMenuItem(
-            feedItem = feedItem,
-            shareMenuLabel = shareMenuLabel,
-            onShareClick = onShareClick,
-            closeMenu = closeMenu,
-        )
-
-        if (feedItem.commentsUrl != null) {
-            ShareCommentsMenuItem(
-                feedItem = feedItem,
-                shareCommentsMenuLabel = shareCommentsMenuLabel,
-                onShareClick = onShareClick,
-                closeMenu = closeMenu,
-            )
-        }
-
+        // 1. Open feed settings
         DropdownMenuItem(
             text = { Text(LocalFeedFlowStrings.current.openFeedSettings) },
             leadingIcon = { Icon(imageVector = Icons.Default.Settings, contentDescription = null) },
@@ -103,6 +57,69 @@ internal fun FeedItemContextMenu(
                 onOpenFeedSettings(feedItem.feedSource)
                 closeMenu()
             },
+        )
+
+        // Separator
+        HorizontalDivider()
+
+        // 2. Mark all above as read
+        MarkAllAboveAsReadMenuItem(
+            feedItem = feedItem,
+            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+            closeMenu = closeMenu,
+        )
+
+        // 3. Mark all below as read
+        MarkAllBelowAsReadMenuItem(
+            feedItem = feedItem,
+            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+            closeMenu = closeMenu,
+        )
+
+        // Separator
+        HorizontalDivider()
+
+        // Comments section (only if comments are available)
+        if (feedItem.commentsUrl != null) {
+            // 4. Share comments
+            ShareCommentsMenuItem(
+                feedItem = feedItem,
+                shareCommentsMenuLabel = shareCommentsMenuLabel,
+                onShareClick = onShareClick,
+                closeMenu = closeMenu,
+            )
+
+            // 5. Open comments
+            OpenCommentsMenuItem(
+                feedItem = feedItem,
+                closeMenu = closeMenu,
+                onCommentClick = onCommentClick,
+            )
+
+            // Separator after comments section
+            HorizontalDivider()
+        }
+
+        // 6. Share / Copy link
+        ShareMenuItem(
+            feedItem = feedItem,
+            shareMenuLabel = shareMenuLabel,
+            onShareClick = onShareClick,
+            closeMenu = closeMenu,
+        )
+
+        // 7. Add to bookmarks
+        ChangeBookmarkStatusMenuItem(
+            feedItem = feedItem,
+            onBookmarkClick = onBookmarkClick,
+            closeMenu = closeMenu,
+        )
+
+        // 8. Mark as read (most frequent - at bottom for thumb reach)
+        ChangeReadStatusMenuItem(
+            feedItem = feedItem,
+            onReadStatusClick = onReadStatusClick,
+            closeMenu = closeMenu,
         )
     }
 }

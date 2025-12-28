@@ -92,34 +92,22 @@ struct FeedSourceDrawerItem: View {
 
     @ViewBuilder
     private func makeFeedSourceContextMenu(feedSource: FeedSource) -> some View {
+        // Fetch failed warning (informational - keep at top)
         if feedSource.fetchFailed {
             Label(
                 feedFlowStrings.feedFetchFailedTooltipShort,
                 systemImage: "exclamationmark.triangle.fill"
             )
         }
-        
+
+        // 1. Delete (least frequent + destructive - keep far from accidental taps)
         Button {
-            onEdit(feedSource)
+            onDelete(feedSource)
         } label: {
-            Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
+            Label(feedFlowStrings.deleteFeed, systemImage: "trash")
         }
 
-        Button {
-            onPin(feedSource)
-        } label: {
-            Label(
-                feedSource.isPinned ? feedFlowStrings.menuRemoveFromPinned : feedFlowStrings.menuAddToPinned,
-                systemImage: feedSource.isPinned ? "pin.slash" : "pin"
-            )
-        }
-
-        Button {
-            onChangeCategory(feedSource)
-        } label: {
-            Label(feedFlowStrings.changeCategory, systemImage: "folder")
-        }
-
+        // 2. Open website (rare - only for checking if feed/website is still alive)
         if let websiteUrl = feedSource.websiteUrl {
             Button {
                 onOpenWebsite(websiteUrl)
@@ -128,10 +116,28 @@ struct FeedSourceDrawerItem: View {
             }
         }
 
+        // 3. Edit feed (medium frequency - occasional settings adjustment)
         Button {
-            onDelete(feedSource)
+            onEdit(feedSource)
         } label: {
-            Label(feedFlowStrings.deleteFeed, systemImage: "trash")
+            Label(feedFlowStrings.editFeedSourceNameButton, systemImage: "pencil")
+        }
+
+        // 4. Change category (frequent - organizing feeds)
+        Button {
+            onChangeCategory(feedSource)
+        } label: {
+            Label(feedFlowStrings.changeCategory, systemImage: "folder")
+        }
+
+        // 5. Pin (most frequent - at bottom for easy thumb reach)
+        Button {
+            onPin(feedSource)
+        } label: {
+            Label(
+                feedSource.isPinned ? feedFlowStrings.menuRemoveFromPinned : feedFlowStrings.menuAddToPinned,
+                systemImage: feedSource.isPinned ? "pin.slash" : "pin"
+            )
         }
     }
 }

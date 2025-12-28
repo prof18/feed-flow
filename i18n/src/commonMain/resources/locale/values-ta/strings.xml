@@ -116,4 +116,6 @@
     <string name="edit_feed">ஊட்டத்தைத் திருத்து</string>
     <string name="feed_name">உணவுப் பெயர்</string>
     <string name="feed_edited_message">ஊட்டி %s புதுப்பிக்கப்பட்டன</string>
+    <string name="feed_add_in_progress_message"></string>
+    <string name="clear_old_articles_button"></string>
 </resources>

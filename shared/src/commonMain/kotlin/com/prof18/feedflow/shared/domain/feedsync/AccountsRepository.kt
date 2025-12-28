@@ -6,6 +6,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
+import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +19,7 @@ internal class AccountsRepository(
     private val icloudSettings: ICloudSettings,
     private val appConfig: AppConfig,
     private val gReaderRepository: GReaderRepository,
+    private val networkSettings: NetworkSettings,
 ) {
     private val currentAccountMutableState = MutableStateFlow(SyncAccounts.LOCAL)
     val currentAccountState = currentAccountMutableState.asStateFlow()
@@ -104,23 +106,42 @@ internal class AccountsRepository(
     }
 
     fun setDropboxAccount() {
+        clearOtherSyncCredentials(except = SyncAccounts.DROPBOX)
         currentAccountMutableState.value = SyncAccounts.DROPBOX
     }
 
     fun setGoogleDriveAccount() {
+        clearOtherSyncCredentials(except = SyncAccounts.GOOGLE_DRIVE)
         currentAccountMutableState.value = SyncAccounts.GOOGLE_DRIVE
     }
 
     fun setICloudAccount() {
+        clearOtherSyncCredentials(except = SyncAccounts.ICLOUD)
         currentAccountMutableState.value = SyncAccounts.ICLOUD
     }
 
     fun setFreshRssAccount() {
+        clearOtherSyncCredentials(except = SyncAccounts.FRESH_RSS)
         currentAccountMutableState.value = SyncAccounts.FRESH_RSS
     }
 
     fun clearAccount() {
         currentAccountMutableState.value = SyncAccounts.LOCAL
+    }
+
+    private fun clearOtherSyncCredentials(except: SyncAccounts) {
+        if (except != SyncAccounts.DROPBOX) {
+            dropboxSettings.clearDropboxData()
+        }
+        if (except != SyncAccounts.GOOGLE_DRIVE) {
+            googleDriveSettings.clearAll()
+        }
+        if (except != SyncAccounts.ICLOUD) {
+            icloudSettings.setUseICloud(false)
+        }
+        if (except != SyncAccounts.FRESH_RSS) {
+            networkSettings.deleteAll()
+        }
     }
 
     fun getCurrentSyncAccount(): SyncAccounts {

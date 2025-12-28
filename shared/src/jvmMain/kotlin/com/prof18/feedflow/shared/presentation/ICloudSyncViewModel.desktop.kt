@@ -46,7 +46,6 @@ class ICloudSyncViewModel internal constructor(
                 )
             }
             emitSyncLoading()
-            accountsRepository.setICloudAccount()
             feedSyncRepository.firstSync()
             feedFetcherRepository.fetchFeeds()
             emitLastSyncUpdate()

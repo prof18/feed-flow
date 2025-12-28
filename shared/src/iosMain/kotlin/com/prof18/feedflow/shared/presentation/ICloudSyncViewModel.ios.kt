@@ -57,7 +57,6 @@ class ICloudSyncViewModel internal constructor(
                 }
                 emitSyncLoading()
                 logger.d { "iCloud base folder URL: $iCloudBaseFolderURL" }
-                accountsRepository.setICloudAccount()
                 feedSyncRepository.firstSync()
                 feedFetcherRepository.fetchFeeds()
                 emitLastSyncUpdate()

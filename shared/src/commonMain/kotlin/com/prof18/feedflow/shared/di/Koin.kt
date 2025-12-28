@@ -311,6 +311,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             icloudSettings = get(),
             appConfig = appConfig,
             gReaderRepository = get(),
+            networkSettings = get(),
         )
     }
 

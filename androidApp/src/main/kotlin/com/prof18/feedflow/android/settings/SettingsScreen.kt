@@ -89,7 +89,7 @@ import com.prof18.feedflow.shared.ui.settings.TimeFormatSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.utils.FeatureFlags
+import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.compose.koinInject

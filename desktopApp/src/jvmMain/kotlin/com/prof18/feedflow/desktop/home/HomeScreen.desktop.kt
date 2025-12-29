@@ -35,6 +35,7 @@ import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.sanitizeUrl
@@ -131,16 +132,7 @@ internal fun HomeScreen(
         }
     }
 
-    var showDialog by remember { mutableStateOf(false) }
-    NoFeedsDialog(
-        showDialog = showDialog,
-        onDismissRequest = {
-            showDialog = false
-        },
-        onImportExportClick = onImportExportClick,
-        onAccountsClick = onAccountsClick,
-        onFeedSuggestionsClick = onFeedSuggestionsClick,
-    )
+
 
     val homeDisplayState = HomeDisplayState(
         feedItems = feedState,
@@ -186,7 +178,15 @@ internal fun HomeScreen(
     )
 
     val feedManagementActions = FeedManagementActions(
-        onAddFeedClick = { showDialog = true },
+        onAddFeedClick = {
+            navigator.push(
+                AddFeedFullScreen(
+                    onFeedAdded = {
+                        homeViewModel.getNewFeeds()
+                    },
+                ),
+            )
+        },
         onFeedFilterSelected = { feedFilter -> homeViewModel.onFeedFilterSelected(feedFilter) },
         onEditFeedClick = { feedSource -> navigator.push(EditFeedScreen(feedSource)) }, // Pass the navigator action
         onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },

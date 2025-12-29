@@ -31,7 +31,21 @@ fun getReaderModeStyledHtml(
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-           document.querySelectorAll("h1")[1].style.display = 'none';
+            // Get the title from the first h1 (which we inject)
+            var firstH1 = document.querySelector("h1");
+            if (firstH1) {
+                var titleText = firstH1.textContent.trim().toLowerCase();
+                // Check all h1 and h2 elements for duplicates
+                document.querySelectorAll("h1, h2").forEach(function(el) {
+                    // Skip the first h1 (our injected title)
+                    if (el === firstH1) return;
+                    var elText = el.textContent.trim().toLowerCase();
+                    // Hide if text matches the title
+                    if (elText === titleText) {
+                        el.style.display = 'none';
+                    }
+                });
+            }
 
           document.body.addEventListener("click", function(event) {
               if (event.target.tagName.toLowerCase() === "a") {

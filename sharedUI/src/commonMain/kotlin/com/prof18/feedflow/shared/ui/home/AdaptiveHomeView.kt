@@ -38,6 +38,7 @@ fun AdaptiveHomeView(
     showDropdownMenu: Boolean = false,
     feedContentWrapper: @Composable (@Composable () -> Unit) -> Unit = { content -> content() },
     onBackupClick: () -> Unit = {},
+    onFeedSuggestionsClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
 
@@ -78,6 +79,7 @@ fun AdaptiveHomeView(
             displayState = displayState,
             feedManagementActions = feedManagementActions,
             onFeedFilterSelected = onFeedFilterSelectedLambda,
+            onFeedSuggestionsClick = onFeedSuggestionsClick,
         )
     }
 

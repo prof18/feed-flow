@@ -49,6 +49,7 @@ internal fun HomeScreen(
     onAccountsClick: () -> Unit,
     onImportExportClick: () -> Unit = {},
     onEditFeedClick: (FeedSource) -> Unit,
+    onFeedSuggestionsClick: () -> Unit = {},
 ) {
     val browserManager = koinInject<BrowserManager>()
     val changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject()
@@ -126,6 +127,7 @@ internal fun HomeScreen(
             onAddFeedClick = onAddFeedClick,
             onImportExportClick = onImportExportClick,
             onAccountsClick = onAccountsClick,
+            onFeedSuggestionsClick = onFeedSuggestionsClick,
         )
     }
 
@@ -213,6 +215,7 @@ internal fun HomeScreen(
             shareCommentsTitle = strings.menuShareComments,
         ),
         onBackupClick = homeViewModel::enqueueBackup,
+        onFeedSuggestionsClick = onFeedSuggestionsClick,
     )
 
     if (showChangeCategorySheet) {

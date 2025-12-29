@@ -11,6 +11,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
+import com.prof18.feedflow.desktop.feedsuggestions.FeedSuggestionsScreen
 import com.prof18.feedflow.desktop.home.HomeScreen
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
@@ -59,6 +60,9 @@ internal data class HomeScreenContainer(
             },
             onSettingsButtonClicked = {
                 // There's not settings screen in desktop
+            },
+            onFeedSuggestionsClick = {
+                navigator.push(FeedSuggestionsScreen())
             },
         )
     }

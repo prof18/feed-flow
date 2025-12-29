@@ -63,6 +63,7 @@ internal fun HomeScreen(
     onAccountsClick: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
+    onFeedSuggestionsClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val changeFeedCategoryViewModel = desktopViewModel { DI.koin.get<ChangeFeedCategoryViewModel>() }
@@ -138,6 +139,7 @@ internal fun HomeScreen(
         },
         onImportExportClick = onImportExportClick,
         onAccountsClick = onAccountsClick,
+        onFeedSuggestionsClick = onFeedSuggestionsClick,
     )
 
     val homeDisplayState = HomeDisplayState(
@@ -244,6 +246,7 @@ internal fun HomeScreen(
                 )
             }
         },
+        onFeedSuggestionsClick = onFeedSuggestionsClick,
     )
 
     if (showChangeCategorySheet) {

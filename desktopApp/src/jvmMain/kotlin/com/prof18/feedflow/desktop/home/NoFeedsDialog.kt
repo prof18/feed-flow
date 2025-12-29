@@ -32,6 +32,7 @@ internal fun NoFeedsDialog(
     onDismissRequest: () -> Unit,
     onImportExportClick: () -> Unit,
     onAccountsClick: () -> Unit,
+    onFeedSuggestionsClick: () -> Unit = {},
 ) {
     val dialogTitle = LocalFeedFlowStrings.current.noFeedModalTitle
     val navigator = LocalNavigator.currentOrThrow
@@ -75,6 +76,10 @@ internal fun NoFeedsDialog(
                     onAccountsClick = {
                         onDismissRequest()
                         onAccountsClick()
+                    },
+                    onFeedSuggestionsClick = {
+                        onDismissRequest()
+                        onFeedSuggestionsClick()
                     },
                 )
 

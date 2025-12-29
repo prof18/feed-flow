@@ -167,6 +167,10 @@ struct HomeContent: View {
                     },
                     onImportExportClick: {
                         self.sheetToShow = .importExport
+                    },
+                    onFeedSuggestionsClick: {
+                        self.sheetToShow = nil
+                        appState.navigate(route: CommonViewRoute.feedSuggestions)
                     }
                 )
 

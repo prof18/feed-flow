@@ -250,6 +250,9 @@ class MainActivity : BaseThemeActivity() {
                     onEditFeedClick = { feedSource ->
                         navController.navigate(feedSource.toEditFeed())
                     },
+                    onFeedSuggestionsClick = {
+                        navController.navigate(FeedSuggestions)
+                    },
                 )
             }
 

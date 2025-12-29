@@ -46,6 +46,7 @@ struct SidebarDrawer: View {
     let deleteAllFeeds: () -> Void
     let onShowSettingsClick: () -> Void
     let onAddFeedClick: () -> Void
+    let onFeedSuggestionsClick: () -> Void
     let onEditFeedClick: (FeedSource) -> Void
     let onDeleteFeedClick: (FeedSource) -> Void
     let onPinFeedClick: (FeedSource) -> Void
@@ -71,6 +72,10 @@ struct SidebarDrawer: View {
                 onSelect: { self.selectedDrawerItem = $0 },
                 onFeedFilterSelected: onFeedFilterSelected
             )
+
+            if FeatureFlags.shared.ENABLE_FEED_SUGGESTIONS {
+                FeedSuggestionsSection(onFeedSuggestionsClick: onFeedSuggestionsClick)
+            }
 
             if !navDrawerState.pinnedFeedSources.isEmpty {
                 pinnedFeedSourcesSection

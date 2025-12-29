@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.readermode
 
+import android.webkit.CookieManager
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -279,5 +280,9 @@ private fun ReaderMode(
         state = state,
         navigator = navigator,
         webViewJsBridge = jsBridge,
+        onCreated = { webView ->
+            CookieManager.getInstance().setAcceptCookie(true)
+            CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
+        },
     )
 }

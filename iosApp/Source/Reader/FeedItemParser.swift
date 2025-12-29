@@ -25,7 +25,9 @@ class FeedItemParser: NSObject, WKUIDelegate, WKNavigationDelegate {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = false
         config.mediaTypesRequiringUserActionForPlayback = .all
-        
+        // Enable shared HTTP cookie storage to access Safari cookies
+        config.websiteDataStore = .default()
+
         self.webview = WKWebView(frame: .zero, configuration: config)
         
         super.init()

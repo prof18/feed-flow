@@ -282,9 +282,6 @@ class MainActivity : BaseThemeActivity() {
                     navigateToBlockedWords = {
                         navController.navigate(BlockedWords)
                     },
-                    navigateToFeedSuggestions = {
-                        navController.navigate(FeedSuggestions)
-                    },
                 )
             }
 

@@ -73,9 +73,7 @@ struct SidebarDrawer: View {
                 onFeedFilterSelected: onFeedFilterSelected
             )
 
-            if FeatureFlags.shared.ENABLE_FEED_SUGGESTIONS {
-                FeedSuggestionsSection(onFeedSuggestionsClick: onFeedSuggestionsClick)
-            }
+            FeedSuggestionsSection(onFeedSuggestionsClick: onFeedSuggestionsClick)
 
             if !navDrawerState.pinnedFeedSources.isEmpty {
                 pinnedFeedSourcesSection

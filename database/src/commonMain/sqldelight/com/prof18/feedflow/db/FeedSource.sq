@@ -12,6 +12,8 @@ CREATE TABLE feed_source (
     website_url TEXT
 );
 
+CREATE INDEX idx_feed_source_category_id ON feed_source(category_id);
+
 insertFeedSource:
 INSERT OR REPLACE INTO feed_source(url_hash, url, title, category_id, logo_url)
 VALUES (?,?,?,?, ?);

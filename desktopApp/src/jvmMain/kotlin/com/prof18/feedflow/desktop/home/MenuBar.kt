@@ -12,17 +12,16 @@ import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isLinux
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
-import com.prof18.feedflow.desktop.feedsuggestions.FeedSuggestionsScreen
 import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.utils.FeatureFlags
 import java.awt.Desktop
 import java.net.URI
 
@@ -248,15 +247,6 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     navigator.push(BlockedWordsScreen())
                 },
             )
-
-            if (FeatureFlags.ENABLE_FEED_SUGGESTIONS) {
-                Item(
-                    text = LocalFeedFlowStrings.current.feedSuggestionsTitle,
-                    onClick = {
-                        navigator.push(FeedSuggestionsScreen())
-                    },
-                )
-            }
         }
 
         Menu(LocalFeedFlowStrings.current.settingsBehaviourTitle, mnemonic = 'B') {

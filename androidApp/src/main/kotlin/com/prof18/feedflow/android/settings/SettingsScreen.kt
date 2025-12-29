@@ -24,7 +24,6 @@ import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.QuestionMark
@@ -69,6 +68,7 @@ import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.core.utils.AppConfig
+import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.Browser
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
@@ -89,7 +89,6 @@ import com.prof18.feedflow.shared.ui.settings.TimeFormatSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.compose.koinInject
@@ -105,7 +104,6 @@ fun SettingsScreen(
     navigateToAccounts: () -> Unit,
     navigateToNotifications: () -> Unit,
     navigateToBlockedWords: () -> Unit,
-    navigateToFeedSuggestions: () -> Unit,
 ) {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val feedDownloadWorkerEnqueuer = koinInject<FeedDownloadWorkerEnqueuer>()
@@ -213,7 +211,6 @@ fun SettingsScreen(
         openInAppBrowser = { faqUrl ->
             browserManager.openWithInAppBrowser(faqUrl, context)
         },
-        navigateToFeedSuggestions = navigateToFeedSuggestions,
     )
 }
 
@@ -254,7 +251,6 @@ private fun SettingsScreenContent(
     onThemeModeSelected: (ThemeMode) -> Unit,
     onClearDownloadedArticles: () -> Unit,
     openInAppBrowser: (String) -> Unit,
-    navigateToFeedSuggestions: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -1109,7 +1105,6 @@ private fun SettingsScreenPreview() {
             onClearDownloadedArticles = {},
             setHideDate = {},
             openInAppBrowser = {},
-            navigateToFeedSuggestions = {},
         )
     }
 }

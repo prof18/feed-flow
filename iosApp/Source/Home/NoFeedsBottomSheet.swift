@@ -19,7 +19,7 @@ struct NoFeedsBottomSheet: View {
 
     let onAddFeedClick: () -> Void
     let onImportExportClick: () -> Void
-    let onFeedSuggestionsClick: (() -> Void)?
+    let onFeedSuggestionsClick: () -> Void
 
     var body: some View {
         NavigationStack {
@@ -50,12 +50,10 @@ struct NoFeedsBottomSheet: View {
                         Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
                     }
 
-                    if let onFeedSuggestionsClick = onFeedSuggestionsClick, FeatureFlags.shared.ENABLE_FEED_SUGGESTIONS {
-                        Button {
-                            onFeedSuggestionsClick()
-                        } label: {
-                            Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb")
-                        }
+                    Button {
+                        onFeedSuggestionsClick()
+                    } label: {
+                        Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb")
                     }
                 }
             }
@@ -81,5 +79,5 @@ struct NoFeedsBottomSheet: View {
 }
 
 #Preview {
-    NoFeedsBottomSheet(onAddFeedClick: {}, onImportExportClick: {}, onFeedSuggestionsClick: nil)
+    NoFeedsBottomSheet(onAddFeedClick: {}, onImportExportClick: {}, onFeedSuggestionsClick: {})
 }

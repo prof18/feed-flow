@@ -5,6 +5,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.EventBusy
+import androidx.compose.material.icons.outlined.HideImage
+import androidx.compose.material.icons.outlined.HideSource
+import androidx.compose.material.icons.outlined.SubtitlesOff
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,10 +27,7 @@ import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.FeedListFontSettings
-import com.prof18.feedflow.shared.ui.settings.HideDateSwitch
-import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
-import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
-import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
+import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
 import com.prof18.feedflow.shared.ui.settings.TimeFormatSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -79,37 +81,32 @@ internal fun FeedListAppearanceDialog(
                     },
                 )
 
-                HideDescriptionSwitch(
-                    isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
-                    setHideDescription = {
-                        callbacks.onHideDescriptionUpdate(
-                            !settingsState.isHideDescriptionEnabled,
-                        )
-                    },
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsHideDescription,
+                    icon = Icons.Outlined.SubtitlesOff,
+                    isChecked = settingsState.isHideDescriptionEnabled,
+                    onCheckedChange = { callbacks.onHideDescriptionUpdate(it) },
                 )
 
-                HideImagesSwitch(
-                    isHideImagesEnabled = settingsState.isHideImagesEnabled,
-                    setHideImages = {
-                        callbacks.onHideImagesUpdate(!settingsState.isHideImagesEnabled)
-                    },
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsHideImages,
+                    icon = Icons.Outlined.HideImage,
+                    isChecked = settingsState.isHideImagesEnabled,
+                    onCheckedChange = { callbacks.onHideImagesUpdate(it) },
                 )
 
-                HideDateSwitch(
-                    isHideDateEnabled = settingsState.isHideDateEnabled,
-                    setHideDate = {
-                        callbacks.onHideDateUpdate(!settingsState.isHideDateEnabled)
-                    },
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsHideDate,
+                    icon = Icons.Outlined.EventBusy,
+                    isChecked = settingsState.isHideDateEnabled,
+                    onCheckedChange = { callbacks.onHideDateUpdate(it) },
                 )
 
-                RemoveTitleFromDescSwitch(
-                    isRemoveTitleFromDescriptionEnabled =
-                    settingsState.isRemoveTitleFromDescriptionEnabled,
-                    setRemoveTitleFromDescription = {
-                        callbacks.onRemoveTitleFromDescUpdate(
-                            !settingsState.isRemoveTitleFromDescriptionEnabled,
-                        )
-                    },
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
+                    icon = Icons.Outlined.HideSource,
+                    isChecked = settingsState.isRemoveTitleFromDescriptionEnabled,
+                    onCheckedChange = { callbacks.onRemoveTitleFromDescUpdate(it) },
                 )
 
                 DateFormatSelector(

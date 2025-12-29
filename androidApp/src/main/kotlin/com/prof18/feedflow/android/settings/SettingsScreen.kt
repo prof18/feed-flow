@@ -1,13 +1,8 @@
 package com.prof18.feedflow.android.settings
 
 import android.content.Intent
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,29 +17,29 @@ import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.CloudDownload
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
+import androidx.compose.material.icons.outlined.EventBusy
+import androidx.compose.material.icons.outlined.HideImage
+import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MarkAsUnread
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material.icons.outlined.Report
+import androidx.compose.material.icons.outlined.SubtitlesOff
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.Sync
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -76,14 +71,14 @@ import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
+import com.prof18.feedflow.shared.ui.settings.ConfirmationDialogConfig
+import com.prof18.feedflow.shared.ui.settings.ConfirmationSettingItem
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
 import com.prof18.feedflow.shared.ui.settings.FeedListFontSettings
-import com.prof18.feedflow.shared.ui.settings.HideDateSwitch
-import com.prof18.feedflow.shared.ui.settings.HideDescriptionSwitch
-import com.prof18.feedflow.shared.ui.settings.HideImagesSwitch
-import com.prof18.feedflow.shared.ui.settings.RemoveTitleFromDescSwitch
 import com.prof18.feedflow.shared.ui.settings.SettingItem
+import com.prof18.feedflow.shared.ui.settings.SettingSelectorItem
+import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
 import com.prof18.feedflow.shared.ui.settings.TimeFormatSelector
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -214,6 +209,7 @@ fun SettingsScreen(
     )
 }
 
+@Suppress("CyclomaticComplexMethod")
 @Composable
 private fun SettingsScreenContent(
     browsers: ImmutableList<Browser>,
@@ -331,10 +327,27 @@ private fun SettingsScreenContent(
             }
 
             item {
-                ThemeModeSelector(
-                    currentThemeMode = settingsState.themeMode,
-                    onThemeModeSelected = onThemeModeSelected,
+                val themeModeLabel = when (settingsState.themeMode) {
+                    ThemeMode.LIGHT -> LocalFeedFlowStrings.current.settingsThemeLight
+                    ThemeMode.DARK -> LocalFeedFlowStrings.current.settingsThemeDark
+                    ThemeMode.SYSTEM -> LocalFeedFlowStrings.current.settingsThemeSystem
+                }
+                var showDialog by remember { mutableStateOf(false) }
+
+                SettingSelectorItem(
+                    title = LocalFeedFlowStrings.current.settingsTheme,
+                    currentValueLabel = themeModeLabel,
+                    icon = Icons.Outlined.DarkMode,
+                    onClick = { showDialog = true },
                 )
+
+                if (showDialog) {
+                    ThemeModeDialog(
+                        currentThemeMode = settingsState.themeMode,
+                        onThemeModeSelected = onThemeModeSelected,
+                        dismissDialog = { showDialog = false },
+                    )
+                }
             }
 
             item {
@@ -352,44 +365,77 @@ private fun SettingsScreenContent(
             }
 
             item {
-                AutoDeletePeriodSelector(
-                    currentPeriod = settingsState.autoDeletePeriod,
-                    onPeriodSelected = onAutoDeletePeriodSelected,
+                val autoDeleteLabel = when (settingsState.autoDeletePeriod) {
+                    AutoDeletePeriod.DISABLED -> LocalFeedFlowStrings.current.settingsAutoDeletePeriodDisabled
+                    AutoDeletePeriod.ONE_DAY -> LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneDay
+                    AutoDeletePeriod.ONE_WEEK -> LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneWeek
+                    AutoDeletePeriod.TWO_WEEKS -> LocalFeedFlowStrings.current.settingsAutoDeletePeriodTwoWeeks
+                    AutoDeletePeriod.ONE_MONTH -> LocalFeedFlowStrings.current.settingsAutoDeletePeriodOneMonth
+                }
+                var showDialog by remember { mutableStateOf(false) }
+
+                SettingSelectorItem(
+                    title = LocalFeedFlowStrings.current.settingsAutoDelete,
+                    currentValueLabel = autoDeleteLabel,
+                    icon = Icons.Outlined.DeleteSweep,
+                    onClick = { showDialog = true },
+                )
+
+                if (showDialog) {
+                    AutoDeletePeriodDialog(
+                        currentPeriod = settingsState.autoDeletePeriod,
+                        onPeriodSelected = onAutoDeletePeriodSelected,
+                        dismissDialog = { showDialog = false },
+                    )
+                }
+            }
+
+            item {
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsReaderMode,
+                    icon = Icons.AutoMirrored.Outlined.Article,
+                    isChecked = settingsState.isReaderModeEnabled,
+                    onCheckedChange = setReaderMode,
                 )
             }
 
             item {
-                ReaderModeSwitch(
-                    setReaderMode = setReaderMode,
-                    isReaderModeEnabled = settingsState.isReaderModeEnabled,
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsSaveReaderModeContent,
+                    icon = Icons.AutoMirrored.Outlined.Article,
+                    isChecked = settingsState.isSaveReaderModeContentEnabled,
+                    onCheckedChange = setSaveReaderModeContent,
                 )
             }
 
             item {
-                SaveReaderModeContentSwitch(
-                    setSaveReaderModeContent = setSaveReaderModeContent,
-                    isSaveReaderModeContentEnabled = settingsState.isSaveReaderModeContentEnabled,
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
+                    icon = Icons.Outlined.CloudDownload,
+                    isChecked = settingsState.isPrefetchArticleContentEnabled,
+                    onCheckedChange = setPrefetchArticleContent,
+                    confirmationDialog = ConfirmationDialogConfig(
+                        title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
+                        message = LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning,
+                    ),
                 )
             }
 
             item {
-                PrefetchArticleContentSwitch(
-                    setPrefetchArticleContent = setPrefetchArticleContent,
-                    isPrefetchArticleContentEnabled = settingsState.isPrefetchArticleContentEnabled,
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.toggleMarkReadWhenScrolling,
+                    icon = Icons.Outlined.MarkAsUnread,
+                    isChecked = settingsState.isMarkReadWhenScrollingEnabled,
+                    onCheckedChange = setMarkReadWhenScrolling,
                 )
             }
 
             item {
-                MarkReadWhenScrollingSwitch(
-                    setMarkReadWhenScrolling = setMarkReadWhenScrolling,
-                    isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
-                )
-            }
-
-            item {
-                ShowReadItemOnTimelineSwitch(
-                    isShowReadItemEnabled = settingsState.isShowReadItemsEnabled,
-                    setShowReadItem = setShowReadItem,
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
+                    icon = Icons.AutoMirrored.Outlined.PlaylistAddCheck,
+                    isChecked = settingsState.isShowReadItemsEnabled,
+                    onCheckedChange = setShowReadItem,
                 )
             }
 
@@ -424,30 +470,38 @@ private fun SettingsScreenContent(
             }
 
             item {
-                HideDescriptionSwitch(
-                    isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
-                    setHideDescription = setHideDescription,
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsHideDescription,
+                    icon = Icons.Outlined.SubtitlesOff,
+                    isChecked = settingsState.isHideDescriptionEnabled,
+                    onCheckedChange = setHideDescription,
                 )
             }
 
             item {
-                HideImagesSwitch(
-                    isHideImagesEnabled = settingsState.isHideImagesEnabled,
-                    setHideImages = setHideImages,
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsHideImages,
+                    icon = Icons.Outlined.HideImage,
+                    isChecked = settingsState.isHideImagesEnabled,
+                    onCheckedChange = setHideImages,
                 )
             }
 
             item {
-                HideDateSwitch(
-                    isHideDateEnabled = settingsState.isHideDateEnabled,
-                    setHideDate = setHideDate,
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsHideDate,
+                    icon = Icons.Outlined.EventBusy,
+                    isChecked = settingsState.isHideDateEnabled,
+                    onCheckedChange = setHideDate,
                 )
             }
 
             item {
-                RemoveTitleFromDescSwitch(
-                    isRemoveTitleFromDescriptionEnabled = settingsState.isRemoveTitleFromDescriptionEnabled,
-                    setRemoveTitleFromDescription = setRemoveTitleFromDescription,
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
+                    icon = Icons.Outlined.HideSource,
+                    isChecked = settingsState.isRemoveTitleFromDescriptionEnabled,
+                    onCheckedChange = setRemoveTitleFromDescription,
                 )
             }
 
@@ -466,10 +520,26 @@ private fun SettingsScreenContent(
             }
 
             item {
-                FeedOrderSelector(
-                    currentFeedOrder = settingsState.feedOrder,
-                    onFeedOrderSelected = onFeedOrderSelected,
+                val feedOrderLabel = when (settingsState.feedOrder) {
+                    FeedOrder.NEWEST_FIRST -> LocalFeedFlowStrings.current.settingsFeedOrderNewestFirst
+                    FeedOrder.OLDEST_FIRST -> LocalFeedFlowStrings.current.settingsFeedOrderOldestFirst
+                }
+                var showDialog by remember { mutableStateOf(false) }
+
+                SettingSelectorItem(
+                    title = LocalFeedFlowStrings.current.settingsFeedOrderTitle,
+                    currentValueLabel = feedOrderLabel,
+                    icon = Icons.AutoMirrored.Outlined.Sort,
+                    onClick = { showDialog = true },
                 )
+
+                if (showDialog) {
+                    FeedOrderSelectionDialog(
+                        currentFeedOrder = settingsState.feedOrder,
+                        onFeedOrderSelected = onFeedOrderSelected,
+                        dismissDialog = { showDialog = false },
+                    )
+                }
             }
 
             item {
@@ -517,33 +587,12 @@ private fun SettingsScreenContent(
 
             if (showCrashReporting) {
                 item {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .clickable {
-                                onCrashReportingEnabled(!settingsState.isCrashReportingEnabled)
-                            }
-                            .fillMaxWidth()
-                            .padding(vertical = Spacing.xsmall)
-                            .padding(horizontal = Spacing.regular),
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-                    ) {
-                        Icon(
-                            Icons.Outlined.Report,
-                            contentDescription = null,
-                        )
-
-                        Text(
-                            text = LocalFeedFlowStrings.current.settingsCrashReporting,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.weight(1f),
-                        )
-                        Switch(
-                            checked = settingsState.isCrashReportingEnabled,
-                            onCheckedChange = onCrashReportingEnabled,
-                            interactionSource = remember { MutableInteractionSource() },
-                        )
-                    }
+                    SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsCrashReporting,
+                        icon = Icons.Outlined.Report,
+                        isChecked = settingsState.isCrashReportingEnabled,
+                        onCheckedChange = onCrashReportingEnabled,
+                    )
                 }
             }
 
@@ -580,8 +629,6 @@ private fun SettingsScreenContent(
 private fun DangerSection(
     onClearDownloadedArticles: () -> Unit,
 ) {
-    var showClearDialog by remember { mutableStateOf(false) }
-    var showClearImageCacheDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column {
@@ -592,327 +639,24 @@ private fun DangerSection(
             modifier = Modifier.padding(Spacing.regular),
         )
 
-        SettingItem(
+        ConfirmationSettingItem(
             title = LocalFeedFlowStrings.current.settingsClearDownloadedArticles,
             icon = Icons.Outlined.DeleteSweep,
-            onClick = { showClearDialog = true },
+            dialogTitle = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogTitle,
+            dialogMessage = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogMessage,
+            onConfirm = onClearDownloadedArticles,
         )
 
-        SettingItem(
+        ConfirmationSettingItem(
             title = LocalFeedFlowStrings.current.settingsClearImageCache,
             icon = Icons.Outlined.Image,
-            onClick = { showClearImageCacheDialog = true },
-        )
-
-        if (showClearDialog) {
-            AlertDialog(
-                onDismissRequest = { showClearDialog = false },
-                title = {
-                    Text(text = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogTitle)
-                },
-                text = {
-                    Text(text = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogMessage)
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            onClearDownloadedArticles()
-                            showClearDialog = false
-                        },
-                    ) {
-                        Text(LocalFeedFlowStrings.current.confirmButton)
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = { showClearDialog = false },
-                    ) {
-                        Text(LocalFeedFlowStrings.current.cancelButton)
-                    }
-                },
-            )
-        }
-
-        if (showClearImageCacheDialog) {
-            AlertDialog(
-                onDismissRequest = { showClearImageCacheDialog = false },
-                title = {
-                    Text(text = LocalFeedFlowStrings.current.settingsClearImageCacheDialogTitle)
-                },
-                text = {
-                    Text(
-                        text = LocalFeedFlowStrings.current.settingsClearImageCacheDialogMessage,
-                    )
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            val imageLoader = context.applicationContext.imageLoader
-                            imageLoader.memoryCache?.clear()
-                            imageLoader.diskCache?.clear()
-                            showClearImageCacheDialog = false
-                        },
-                    ) {
-                        Text(LocalFeedFlowStrings.current.confirmButton)
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = { showClearImageCacheDialog = false },
-                    ) {
-                        Text(LocalFeedFlowStrings.current.cancelButton)
-                    }
-                },
-            )
-        }
-    }
-}
-
-@Composable
-private fun FeedOrderSelector(
-    currentFeedOrder: FeedOrder,
-    onFeedOrderSelected: (FeedOrder) -> Unit,
-) {
-    var showDialog by remember { mutableStateOf(false) }
-    val strings = LocalFeedFlowStrings.current
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable { showDialog = true }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.small)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.AutoMirrored.Outlined.Sort,
-            contentDescription = null,
-        )
-
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
-            Text(
-                text = strings.settingsFeedOrderTitle,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Text(
-                text = when (currentFeedOrder) {
-                    FeedOrder.NEWEST_FIRST -> strings.settingsFeedOrderNewestFirst
-                    FeedOrder.OLDEST_FIRST -> strings.settingsFeedOrderOldestFirst
-                },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-
-    if (showDialog) {
-        FeedOrderSelectionDialog(
-            currentFeedOrder = currentFeedOrder,
-            onFeedOrderSelected = onFeedOrderSelected,
-            dismissDialog = { showDialog = false },
-        )
-    }
-}
-
-@Composable
-private fun ReaderModeSwitch(
-    setReaderMode: (Boolean) -> Unit,
-    isReaderModeEnabled: Boolean,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable {
-                setReaderMode(!isReaderModeEnabled)
-            }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.AutoMirrored.Outlined.Article,
-            contentDescription = null,
-        )
-
-        Text(
-            text = LocalFeedFlowStrings.current.settingsReaderMode,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .weight(1f),
-        )
-        Switch(
-            interactionSource = interactionSource,
-            checked = isReaderModeEnabled,
-            onCheckedChange = setReaderMode,
-        )
-    }
-}
-
-@Composable
-private fun SaveReaderModeContentSwitch(
-    setSaveReaderModeContent: (Boolean) -> Unit,
-    isSaveReaderModeContentEnabled: Boolean,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable {
-                setSaveReaderModeContent(!isSaveReaderModeContentEnabled)
-            }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.AutoMirrored.Outlined.Article,
-            contentDescription = null,
-        )
-
-        Text(
-            text = LocalFeedFlowStrings.current.settingsSaveReaderModeContent,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .weight(1f),
-        )
-        Switch(
-            interactionSource = interactionSource,
-            checked = isSaveReaderModeContentEnabled,
-            onCheckedChange = setSaveReaderModeContent,
-        )
-    }
-}
-
-@Composable
-private fun MarkReadWhenScrollingSwitch(
-    setMarkReadWhenScrolling: (Boolean) -> Unit,
-    isMarkReadWhenScrollingEnabled: Boolean,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable {
-                setMarkReadWhenScrolling(!isMarkReadWhenScrollingEnabled)
-            }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.Outlined.MarkAsUnread,
-            contentDescription = null,
-        )
-
-        Text(
-            text = LocalFeedFlowStrings.current.toggleMarkReadWhenScrolling,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .weight(1f),
-        )
-        Switch(
-            interactionSource = interactionSource,
-            checked = isMarkReadWhenScrollingEnabled,
-            onCheckedChange = setMarkReadWhenScrolling,
-        )
-    }
-}
-
-@Composable
-private fun ShowReadItemOnTimelineSwitch(
-    setShowReadItem: (Boolean) -> Unit,
-    isShowReadItemEnabled: Boolean,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable {
-                setShowReadItem(!isShowReadItemEnabled)
-            }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.AutoMirrored.Outlined.PlaylistAddCheck,
-            contentDescription = null,
-        )
-
-        Text(
-            text = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .weight(1f),
-        )
-        Switch(
-            interactionSource = interactionSource,
-            checked = isShowReadItemEnabled,
-            onCheckedChange = setShowReadItem,
-        )
-    }
-}
-
-@Composable
-private fun AutoDeletePeriodSelector(
-    currentPeriod: AutoDeletePeriod,
-    onPeriodSelected: (AutoDeletePeriod) -> Unit,
-) {
-    var showDialog by remember { mutableStateOf(false) }
-    val strings = LocalFeedFlowStrings.current
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable { showDialog = true }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.Outlined.DeleteSweep,
-            contentDescription = null,
-        )
-
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
-            Text(
-                text = strings.settingsAutoDelete,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Text(
-                text = when (currentPeriod) {
-                    AutoDeletePeriod.DISABLED -> strings.settingsAutoDeletePeriodDisabled
-                    AutoDeletePeriod.ONE_DAY -> strings.settingsAutoDeletePeriodOneDay
-                    AutoDeletePeriod.ONE_WEEK -> strings.settingsAutoDeletePeriodOneWeek
-                    AutoDeletePeriod.TWO_WEEKS -> strings.settingsAutoDeletePeriodTwoWeeks
-                    AutoDeletePeriod.ONE_MONTH -> strings.settingsAutoDeletePeriodOneMonth
-                },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-
-    if (showDialog) {
-        AutoDeletePeriodDialog(
-            currentPeriod = currentPeriod,
-            onPeriodSelected = onPeriodSelected,
-            dismissDialog = { showDialog = false },
+            dialogTitle = LocalFeedFlowStrings.current.settingsClearImageCacheDialogTitle,
+            dialogMessage = LocalFeedFlowStrings.current.settingsClearImageCacheDialogMessage,
+            onConfirm = {
+                val imageLoader = context.applicationContext.imageLoader
+                imageLoader.memoryCache?.clear()
+                imageLoader.diskCache?.clear()
+            },
         )
     }
 }
@@ -936,133 +680,6 @@ private fun SettingsNavBar(navigateBack: () -> Unit) {
             }
         },
     )
-}
-
-@Composable
-private fun PrefetchArticleContentSwitch(
-    setPrefetchArticleContent: (Boolean) -> Unit,
-    isPrefetchArticleContentEnabled: Boolean,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    var showWarningDialog by remember { mutableStateOf(false) }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable {
-                if (!isPrefetchArticleContentEnabled) {
-                    showWarningDialog = true
-                } else {
-                    setPrefetchArticleContent(false)
-                }
-            }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.Outlined.CloudDownload,
-            contentDescription = null,
-        )
-
-        Text(
-            text = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .weight(1f),
-        )
-        Switch(
-            interactionSource = interactionSource,
-            checked = isPrefetchArticleContentEnabled,
-            onCheckedChange = { enabled ->
-                if (enabled) {
-                    showWarningDialog = true
-                } else {
-                    setPrefetchArticleContent(false)
-                }
-            },
-        )
-    }
-
-    if (showWarningDialog) {
-        AlertDialog(
-            onDismissRequest = { showWarningDialog = false },
-            title = {
-                Text(text = LocalFeedFlowStrings.current.settingsPrefetchArticleContent)
-            },
-            text = {
-                Text(text = LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning)
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        setPrefetchArticleContent(true)
-                        showWarningDialog = false
-                    },
-                ) {
-                    Text(LocalFeedFlowStrings.current.confirmButton)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showWarningDialog = false },
-                ) {
-                    Text(LocalFeedFlowStrings.current.cancelButton)
-                }
-            },
-        )
-    }
-}
-
-@Composable
-private fun ThemeModeSelector(
-    currentThemeMode: ThemeMode,
-    onThemeModeSelected: (ThemeMode) -> Unit,
-) {
-    var showDialog by remember { mutableStateOf(false) }
-    val strings = LocalFeedFlowStrings.current
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable { showDialog = true }
-            .fillMaxWidth()
-            .padding(vertical = Spacing.small)
-            .padding(horizontal = Spacing.regular),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
-    ) {
-        Icon(
-            Icons.Outlined.DarkMode,
-            contentDescription = null,
-        )
-
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
-            Text(
-                text = strings.settingsTheme,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Text(
-                text = when (currentThemeMode) {
-                    ThemeMode.LIGHT -> strings.settingsThemeLight
-                    ThemeMode.DARK -> strings.settingsThemeDark
-                    ThemeMode.SYSTEM -> strings.settingsThemeSystem
-                },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-
-    if (showDialog) {
-        ThemeModeDialog(
-            currentThemeMode = currentThemeMode,
-            onThemeModeSelected = onThemeModeSelected,
-            dismissDialog = { showDialog = false },
-        )
-    }
 }
 
 @PreviewPhone

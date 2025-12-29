@@ -49,7 +49,7 @@ fun PreviewColumn(
 
 @Composable
 fun PreviewTheme(
-    darkTheme: Boolean,
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {

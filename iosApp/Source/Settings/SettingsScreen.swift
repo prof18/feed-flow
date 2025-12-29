@@ -256,8 +256,6 @@ private struct BehaviourSection: View {
     @Binding var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isShowReadItemEnabled: Bool
 
-    @State private var showPrefetchWarning = false
-
     var body: some View {
         Section(feedFlowStrings.settingsBehaviourTitle) {
             Picker(selection: $themeMode) {
@@ -298,50 +296,39 @@ private struct BehaviourSection: View {
                 Label(feedFlowStrings.settingsAutoDelete, systemImage: "arrow.3.trianglepath")
             }
 
-            Toggle(isOn: $isReaderModeEnabled) {
-                Label(feedFlowStrings.settingsReaderMode, systemImage: "doc.text")
-            }.onTapGesture {
-                isReaderModeEnabled.toggle()
-            }
+            SettingToggleItem(
+                isOn: $isReaderModeEnabled,
+                title: feedFlowStrings.settingsReaderMode,
+                systemImage: "doc.text",
+            )
 
-            Toggle(isOn: $isSaveReaderModeContentEnabled) {
-                Label(feedFlowStrings.settingsSaveReaderModeContent, systemImage: "doc.text.fill")
-            }.onTapGesture {
-                isSaveReaderModeContentEnabled.toggle()
-            }
+            SettingToggleItem(
+                isOn: $isSaveReaderModeContentEnabled,
+                title: feedFlowStrings.settingsSaveReaderModeContent,
+                systemImage: "doc.text.fill",
+            )
 
-            Toggle(isOn: Binding(
-                get: { isPrefetchArticleContentEnabled },
-                set: { newValue in
-                    if newValue {
-                        showPrefetchWarning = true
-                    } else {
-                        isPrefetchArticleContentEnabled = false
-                    }
-                }
-            )) {
-                Label(feedFlowStrings.settingsPrefetchArticleContent, systemImage: "cloud.fill")
-            }
-            .alert(feedFlowStrings.settingsPrefetchArticleContent, isPresented: $showPrefetchWarning) {
-                Button(feedFlowStrings.cancelButton, role: .cancel) { }
-                Button(feedFlowStrings.confirmButton) {
-                    isPrefetchArticleContentEnabled = true
-                }
-            } message: {
-                Text(feedFlowStrings.settingsPrefetchArticleContentWarning)
-            }
+            SettingToggleItem(
+                isOn: $isPrefetchArticleContentEnabled,
+                title: feedFlowStrings.settingsPrefetchArticleContent,
+                systemImage: "cloud.fill",
+                confirmationDialog: ConfirmationDialogConfig(
+                    title: feedFlowStrings.settingsPrefetchArticleContent,
+                    message: feedFlowStrings.settingsPrefetchArticleContentWarning
+                )
+            )
 
-            Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
-                Label(feedFlowStrings.toggleMarkReadWhenScrolling, systemImage: "scroll")
-            }.onTapGesture {
-                isMarkReadWhenScrollingEnabled.toggle()
-            }
+            SettingToggleItem(
+                isOn: $isMarkReadWhenScrollingEnabled,
+                title: feedFlowStrings.toggleMarkReadWhenScrolling,
+                systemImage: "scroll",
+            )
 
-            Toggle(isOn: $isShowReadItemEnabled) {
-                Label(feedFlowStrings.settingsToggleShowReadArticles, systemImage: "eye")
-            }.onTapGesture {
-                isShowReadItemEnabled.toggle()
-            }
+            SettingToggleItem(
+                isOn: $isShowReadItemEnabled,
+                title: feedFlowStrings.settingsToggleShowReadArticles,
+                systemImage: "eye",
+            )
         }
     }
 }
@@ -372,14 +359,11 @@ private struct AppSection: View {
                 }
             )
 
-            Toggle(isOn: $isCrashReportingEnabled) {
-                Label(
-                    feedFlowStrings.settingsCrashReporting,
-                    systemImage: "exclamationmark.bubble.fill"
-                )
-            }.onTapGesture {
-                isCrashReportingEnabled.toggle()
-            }
+            SettingToggleItem(
+                isOn: $isCrashReportingEnabled,
+                title: feedFlowStrings.settingsCrashReporting,
+                systemImage: "exclamationmark.bubble.fill",
+            )
 
             if FeatureFlags.shared.ENABLE_FAQ {
                 Button {
@@ -405,27 +389,16 @@ private struct AppSection: View {
 private struct DangerSection: View {
     let onClearDownloadedArticles: () -> Void
 
-    @State private var showClearDialog = false
-
     var body: some View {
         Section(header: Text(feedFlowStrings.settingsDangerTitle)
             .foregroundColor(.red.opacity(0.8))) {
-            Button {
-                showClearDialog = true
-            } label: {
-                Label(feedFlowStrings.settingsClearDownloadedArticles, systemImage: "trash")
-            }
-            .alert(
-                feedFlowStrings.settingsClearDownloadedArticlesDialogTitle,
-                isPresented: $showClearDialog
-            ) {
-                Button(feedFlowStrings.cancelButton, role: .cancel) { }
-                Button(feedFlowStrings.confirmButton, role: .destructive) {
-                    onClearDownloadedArticles()
-                }
-            } message: {
-                Text(feedFlowStrings.settingsClearDownloadedArticlesDialogMessage)
-            }
+            ConfirmationButton(
+                title: feedFlowStrings.settingsClearDownloadedArticles,
+                systemImage: "trash",
+                dialogTitle: feedFlowStrings.settingsClearDownloadedArticlesDialogTitle,
+                dialogMessage: feedFlowStrings.settingsClearDownloadedArticlesDialogMessage,
+                onConfirm: onClearDownloadedArticles
+            )
         }
     }
 }

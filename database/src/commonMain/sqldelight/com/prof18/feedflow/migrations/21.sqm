@@ -1,0 +1,22 @@
+-- Performance indexes for feed_item table
+-- These indexes significantly improve query performance for the main timeline,
+-- unread counts, and filtering operations
+
+-- Index for JOIN operations on feed_source_id (used in nearly every query)
+CREATE INDEX idx_feed_item_feed_source_id ON feed_item(feed_source_id);
+
+-- Index for pub_date ordering (used in timeline sorting)
+CREATE INDEX idx_feed_item_pub_date ON feed_item(pub_date DESC);
+
+-- Composite index for common filter combinations (is_read, is_blocked)
+CREATE INDEX idx_feed_item_read_blocked ON feed_item(is_read, is_blocked);
+
+-- Composite index for the main timeline query pattern
+-- Covers: JOIN on feed_source_id, filter on is_read/is_blocked, ORDER BY pub_date
+CREATE INDEX idx_feed_item_timeline ON feed_item(feed_source_id, is_read, is_blocked, pub_date DESC);
+
+-- Index for feed_source category lookups
+CREATE INDEX idx_feed_source_category_id ON feed_source(category_id);
+
+-- Index for deleted items cleanup queries
+CREATE INDEX idx_deleted_feed_items_deleted_at ON deleted_feed_items(deleted_at);

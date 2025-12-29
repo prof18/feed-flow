@@ -118,18 +118,7 @@ internal fun HomeScreen(
         }
     }
 
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        NoFeedsBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-            },
-            onAddFeedClick = onAddFeedClick,
-            onImportExportClick = onImportExportClick,
-            onAccountsClick = onAccountsClick,
-            onFeedSuggestionsClick = onFeedSuggestionsClick,
-        )
-    }
+
 
     val homeDisplayState = HomeDisplayState(
         feedItems = feedState,
@@ -163,7 +152,7 @@ internal fun HomeScreen(
     )
 
     val feedManagementActions = FeedManagementActions(
-        onAddFeedClick = { showBottomSheet = true },
+        onAddFeedClick = onAddFeedClick,
         onFeedFilterSelected = { feedFilter -> homeViewModel.onFeedFilterSelected(feedFilter) },
         onEditFeedClick = onEditFeedClick,
         onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },

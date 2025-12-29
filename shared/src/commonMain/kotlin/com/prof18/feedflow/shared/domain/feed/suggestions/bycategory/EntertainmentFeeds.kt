@@ -21,6 +21,12 @@ internal val entertainmentFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=billboard.com&sz=64",
         ),
         SuggestedFeed(
+            name = "BuzzFeed",
+            url = "https://www.buzzfeed.com/index.xml",
+            description = "Entertainment and pop culture",
+            logoUrl = "https://www.google.com/s2/favicons?domain=buzzfeed.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "IndieWire",
             url = "https://www.indiewire.com/feed/",
             description = "Film industry news and independent cinema",

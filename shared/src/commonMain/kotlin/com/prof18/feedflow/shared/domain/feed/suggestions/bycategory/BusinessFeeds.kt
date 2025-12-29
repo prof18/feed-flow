@@ -51,10 +51,22 @@ internal val businessFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=marketwatch.com&sz=64",
         ),
         SuggestedFeed(
+            name = "Not Boring",
+            url = "https://www.notboring.co/feed",
+            description = "Business strategy newsletter",
+            logoUrl = "https://www.google.com/s2/favicons?domain=notboring.co&sz=64",
+        ),
+        SuggestedFeed(
             name = "TIME Business",
             url = "https://feeds.feedburner.com/time/business",
             description = "Business and economic coverage",
             logoUrl = "https://www.google.com/s2/favicons?domain=time.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Wall Street Journal",
+            url = "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml",
+            description = "US business news",
+            logoUrl = "https://www.google.com/s2/favicons?domain=wsj.com&sz=64",
         ),
         SuggestedFeed(
             name = "Yahoo Finance",

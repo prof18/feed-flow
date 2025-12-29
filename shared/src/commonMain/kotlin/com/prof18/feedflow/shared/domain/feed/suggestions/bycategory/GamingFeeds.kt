@@ -32,5 +32,11 @@ internal val gamingFeeds = SuggestedFeedCategory(
             description = "PC gaming news and reviews",
             logoUrl = "https://www.google.com/s2/favicons?domain=pcgamer.com&sz=64",
         ),
+        SuggestedFeed(
+            name = "Polygon",
+            url = "https://www.polygon.com/feed/",
+            description = "Gaming news and culture",
+            logoUrl = "https://www.google.com/s2/favicons?domain=polygon.com&sz=64",
+        ),
     ),
 )

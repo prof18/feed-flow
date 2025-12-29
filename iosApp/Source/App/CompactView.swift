@@ -70,6 +70,9 @@ struct CompactView: View {
                 onAddFeedClick: {
                     showAddFeedSheet.toggle()
                 },
+                onFeedSuggestionsClick: {
+                    appState.navigate(route: CommonViewRoute.feedSuggestions)
+                },
                 onEditFeedClick: { feedSource in
                     feedSourceToEdit = feedSource
                     showEditFeedSheet.toggle()

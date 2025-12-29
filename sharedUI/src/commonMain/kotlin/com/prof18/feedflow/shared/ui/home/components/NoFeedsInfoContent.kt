@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.utils.FeatureFlags
 
 @Composable
 fun NoFeedsInfoContent(
@@ -19,6 +20,7 @@ fun NoFeedsInfoContent(
     onAccountsClick: () -> Unit,
     modifier: Modifier = Modifier,
     showTitle: Boolean = true,
+    onFeedSuggestionsClick: () -> Unit = {},
 ) {
     Column(
         modifier = modifier,
@@ -50,6 +52,21 @@ fun NoFeedsInfoContent(
             },
         ) {
             Text(LocalFeedFlowStrings.current.addFeed)
+        }
+
+        if (FeatureFlags.ENABLE_FEED_SUGGESTIONS) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = Spacing.regular)
+                    .padding(horizontal = Spacing.regular),
+                onClick = {
+                    onDismissRequest()
+                    onFeedSuggestionsClick()
+                },
+            ) {
+                Text(LocalFeedFlowStrings.current.feedSuggestionsTitle)
+            }
         }
 
         Button(

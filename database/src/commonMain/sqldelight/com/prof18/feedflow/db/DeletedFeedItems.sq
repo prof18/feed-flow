@@ -3,6 +3,8 @@ CREATE TABLE deleted_feed_items (
     deleted_at INTEGER NOT NULL
 );
 
+CREATE INDEX idx_deleted_feed_items_deleted_at ON deleted_feed_items(deleted_at);
+
 insertDeletedFeedItem:
 INSERT OR REPLACE INTO deleted_feed_items(url_hash, deleted_at)
 VALUES (?, ?);

@@ -17,6 +17,11 @@ CREATE TABLE feed_item (
     content_fetched INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
+CREATE INDEX idx_feed_item_feed_source_id ON feed_item(feed_source_id);
+CREATE INDEX idx_feed_item_pub_date ON feed_item(pub_date DESC);
+CREATE INDEX idx_feed_item_read_blocked ON feed_item(is_read, is_blocked);
+CREATE INDEX idx_feed_item_timeline ON feed_item(feed_source_id, is_read, is_blocked, pub_date DESC);
+
 insertFeedItem:
 INSERT OR IGNORE INTO feed_item(url_hash, url, title, subtitle, content, image_url, feed_source_id, pub_date, comments_url)
 VALUES (?,?,?,?,?,?,?,?, ?);

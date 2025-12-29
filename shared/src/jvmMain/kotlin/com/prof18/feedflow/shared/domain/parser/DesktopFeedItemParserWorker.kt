@@ -11,6 +11,7 @@ import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.presentation.MarkdownToHtmlConverter
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.extended.Readability4JExtended
+import org.jsoup.Jsoup
 
 internal class DesktopFeedItemParserWorker(
     private val htmlRetriever: HtmlRetriever,
@@ -60,9 +61,10 @@ internal class DesktopFeedItemParserWorker(
 
                 // Convert to styled HTML and then to markdown for Desktop
                 val title = article.title
+                val cleanedContent = stripDuplicateTitles(content, title)
                 val styledHtml = getReaderModeStyledHtml(
                     colors = null,
-                    content = content,
+                    content = cleanedContent,
                     fontSize = settingsRepository.getReaderModeFontSize(),
                     title = title,
                 )
@@ -84,6 +86,18 @@ internal class DesktopFeedItemParserWorker(
                 ParsingResult.Error
             }
         }
+    }
+
+    private fun stripDuplicateTitles(content: String, title: String?): String {
+        if (title.isNullOrBlank()) return content
+        val normalizedTitle = title.trim().lowercase()
+        val doc = Jsoup.parse(content)
+        doc.select("h1, h2").forEach { element ->
+            if (element.text().trim().lowercase() == normalizedTitle) {
+                element.remove()
+            }
+        }
+        return doc.body().html()
     }
 
     private companion object {

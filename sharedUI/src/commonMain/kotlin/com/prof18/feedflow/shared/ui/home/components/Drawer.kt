@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -76,6 +77,7 @@ import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.utils.FeatureFlags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -85,6 +87,7 @@ internal fun Drawer(
     feedManagementActions: FeedManagementActions,
     onFeedFilterSelected: (FeedFilter) -> Unit,
     modifier: Modifier = Modifier,
+    onFeedSuggestionsClick: () -> Unit = {},
 ) {
     LazyColumn(
         modifier = modifier
@@ -118,6 +121,14 @@ internal fun Drawer(
                     .firstOrNull()
                     ?: DrawerItem.Bookmarks(unreadCount = 0),
             )
+        }
+
+        if (FeatureFlags.ENABLE_FEED_SUGGESTIONS) {
+            item {
+                DrawerFeedSuggestionsItem(
+                    onFeedSuggestionsClick = onFeedSuggestionsClick,
+                )
+            }
         }
 
         item {
@@ -280,6 +291,30 @@ private fun DrawerBookmarksItem(
         colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
         onClick = {
             onFeedFilterSelected(FeedFilter.Bookmarks)
+        },
+    )
+}
+
+@Composable
+private fun DrawerFeedSuggestionsItem(
+    onFeedSuggestionsClick: () -> Unit,
+) {
+    NavigationDrawerItem(
+        selected = false,
+        label = {
+            Text(
+                text = LocalFeedFlowStrings.current.feedSuggestionsTitle,
+            )
+        },
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.Lightbulb,
+                contentDescription = null,
+            )
+        },
+        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+        onClick = {
+            onFeedSuggestionsClick()
         },
     )
 }

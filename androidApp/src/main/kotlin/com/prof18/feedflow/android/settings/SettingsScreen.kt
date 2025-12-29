@@ -293,16 +293,6 @@ private fun SettingsScreenContent(
                 )
             }
 
-            if (FeatureFlags.ENABLE_FEED_SUGGESTIONS) {
-                item {
-                    SettingItem(
-                        title = LocalFeedFlowStrings.current.feedSuggestionsTitle,
-                        icon = Icons.Outlined.Lightbulb,
-                        onClick = navigateToFeedSuggestions,
-                    )
-                }
-            }
-
             item {
                 SettingItem(
                     title = LocalFeedFlowStrings.current.importExportOpml,

@@ -18,6 +18,7 @@ internal fun NoFeedsBottomSheet(
     onImportExportClick: () -> Unit,
     onAccountsClick: () -> Unit,
     sheetState: SheetState = rememberModalBottomSheetState(),
+    onFeedSuggestionsClick: () -> Unit = {},
 ) {
     ModalBottomSheet(
         containerColor = if (isSystemInDarkTheme()) {
@@ -33,6 +34,7 @@ internal fun NoFeedsBottomSheet(
             onAddFeedClick = onAddFeedClick,
             onImportExportClick = onImportExportClick,
             onAccountsClick = onAccountsClick,
+            onFeedSuggestionsClick = onFeedSuggestionsClick,
         )
     }
 }

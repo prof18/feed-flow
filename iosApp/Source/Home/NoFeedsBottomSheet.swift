@@ -37,14 +37,6 @@ struct NoFeedsBottomSheet: View {
                         Label(feedFlowStrings.addFeed, systemImage: "plus.app")
                     }
 
-                    if let onFeedSuggestionsClick = onFeedSuggestionsClick, FeatureFlags.shared.ENABLE_FEED_SUGGESTIONS {
-                        Button {
-                            onFeedSuggestionsClick()
-                        } label: {
-                            Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb")
-                        }
-                    }
-
                     Button {
                         onImportExportClick()
                     } label: {
@@ -56,6 +48,14 @@ struct NoFeedsBottomSheet: View {
                         appState.navigate(route: CommonViewRoute.accounts)
                     } label: {
                         Label(feedFlowStrings.settingsAccounts, systemImage: "arrow.triangle.2.circlepath")
+                    }
+
+                    if let onFeedSuggestionsClick = onFeedSuggestionsClick, FeatureFlags.shared.ENABLE_FEED_SUGGESTIONS {
+                        Button {
+                            onFeedSuggestionsClick()
+                        } label: {
+                            Label(feedFlowStrings.feedSuggestionsTitle, systemImage: "lightbulb")
+                        }
                     }
                 }
             }

@@ -8,9 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.utils.FeatureFlags
 
 @Composable
 fun NoFeedsInfoContent(
@@ -54,21 +54,6 @@ fun NoFeedsInfoContent(
             Text(LocalFeedFlowStrings.current.addFeed)
         }
 
-        if (FeatureFlags.ENABLE_FEED_SUGGESTIONS) {
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = Spacing.regular)
-                    .padding(horizontal = Spacing.regular),
-                onClick = {
-                    onDismissRequest()
-                    onFeedSuggestionsClick()
-                },
-            ) {
-                Text(LocalFeedFlowStrings.current.feedSuggestionsTitle)
-            }
-        }
-
         Button(
             modifier = Modifier
                 .fillMaxWidth()
@@ -86,7 +71,6 @@ fun NoFeedsInfoContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = Spacing.regular)
-                .padding(bottom = Spacing.medium)
                 .padding(horizontal = Spacing.regular),
             onClick = {
                 onDismissRequest()
@@ -94,6 +78,22 @@ fun NoFeedsInfoContent(
             },
         ) {
             Text(LocalFeedFlowStrings.current.settingsAccounts)
+        }
+
+        if (FeatureFlags.ENABLE_FEED_SUGGESTIONS) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = Spacing.regular)
+                    .padding(bottom = Spacing.medium)
+                    .padding(horizontal = Spacing.regular),
+                onClick = {
+                    onDismissRequest()
+                    onFeedSuggestionsClick()
+                },
+            ) {
+                Text(LocalFeedFlowStrings.current.feedSuggestionsTitle)
+            }
         }
     }
 }

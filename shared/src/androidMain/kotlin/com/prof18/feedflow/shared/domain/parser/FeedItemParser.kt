@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.parser
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import co.touchlab.kermit.Logger
@@ -44,6 +45,11 @@ internal class FeedItemParser(
 
         withContext(dispatcherProvider.main) {
             val webView = webView ?: WebView(appContext)
+
+            // Enable shared HTTP cookie storage to access browser cookies
+            CookieManager.getInstance().setAcceptCookie(true)
+            CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
+
             webView.apply {
                 setWebViewClient(object : WebViewClient() {
                     override fun onPageFinished(view: WebView, url: String) {

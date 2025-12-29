@@ -29,6 +29,8 @@ class WebContent: NSObject, WKNavigationDelegate, WKUIDelegate, ObservableObject
         if autoplayAllowed {
             config.mediaTypesRequiringUserActionForPlayback = []
         }
+        // Enable shared HTTP cookie storage to access Safari cookies
+        config.websiteDataStore = .default()
         webview = WKWebView(frame: .zero, configuration: config)
         webview.allowsBackForwardNavigationGestures = true
         self.transparent = transparent

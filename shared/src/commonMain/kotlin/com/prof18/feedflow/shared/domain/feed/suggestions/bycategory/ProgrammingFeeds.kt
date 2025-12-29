@@ -3,9 +3,9 @@ package com.prof18.feedflow.shared.domain.feed.suggestions.bycategory
 import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
 
-internal val programmingFeeds = SuggestedFeedCategory(
-    id = "programming",
-    name = "Programming",
+internal val developmentFeeds = SuggestedFeedCategory(
+    id = "development",
+    name = "Development",
     icon = "👩‍💻",
     feeds = listOf(
         SuggestedFeed(
@@ -37,6 +37,12 @@ internal val programmingFeeds = SuggestedFeedCategory(
             url = "https://blog.jetbrains.com/kotlin/feed/",
             description = "Official Kotlin programming language blog",
             logoUrl = "https://www.google.com/s2/favicons?domain=jetbrains.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Product Hunt",
+            url = "https://www.producthunt.com/feed",
+            description = "Latest product launches",
+            logoUrl = "https://www.google.com/s2/favicons?domain=producthunt.com&sz=64",
         ),
     ),
 )

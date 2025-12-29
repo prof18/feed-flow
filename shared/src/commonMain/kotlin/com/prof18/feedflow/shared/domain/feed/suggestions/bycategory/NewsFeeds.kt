@@ -27,6 +27,36 @@ internal val newsFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=cnbc.com&sz=64",
         ),
         SuggestedFeed(
+            name = "Euronews",
+            url = "http://feeds.feedburner.com/euronews/en/home/",
+            description = "European news coverage",
+            logoUrl = "https://www.google.com/s2/favicons?domain=euronews.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Foreign Affairs",
+            url = "https://www.foreignaffairs.com/rss.xml",
+            description = "International relations and foreign policy",
+            logoUrl = "https://www.google.com/s2/favicons?domain=foreignaffairs.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Foreign Policy",
+            url = "https://foreignpolicy.com/feed/",
+            description = "Global affairs and policy",
+            logoUrl = "https://www.google.com/s2/favicons?domain=foreignpolicy.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "New York Times",
+            url = "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+            description = "Global news and in-depth analysis",
+            logoUrl = "https://www.google.com/s2/favicons?domain=nytimes.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "New York Times - World",
+            url = "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+            description = "Global news and in-depth analysis",
+            logoUrl = "https://www.google.com/s2/favicons?domain=nytimes.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "NPR News",
             url = "https://feeds.npr.org/1001/rss.xml",
             description = "US and international news from NPR",
@@ -39,6 +69,12 @@ internal val newsFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=skynews.com&sz=64",
         ),
         SuggestedFeed(
+            name = "The Atlantic",
+            url = "http://feeds.feedburner.com/TheAtlantic",
+            description = "News, politics, and culture",
+            logoUrl = "https://www.google.com/s2/favicons?domain=theatlantic.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "The Guardian – World",
             url = "https://www.theguardian.com/world/rss",
             description = "Independent global news and reporting",
@@ -49,18 +85,6 @@ internal val newsFeeds = SuggestedFeedCategory(
             url = "https://www.independent.co.uk/news/rss",
             description = "UK independent news coverage",
             logoUrl = "https://www.google.com/s2/favicons?domain=independent.co.uk&sz=64",
-        ),
-        SuggestedFeed(
-            name = "The New York Times ",
-            url = "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
-            description = "Global news and in-depth analysis",
-            logoUrl = "https://www.google.com/s2/favicons?domain=nytimes.com&sz=64",
-        ),
-        SuggestedFeed(
-            name = "The New York Times - World",
-            url = "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
-            description = "Global news and in-depth analysis",
-            logoUrl = "https://www.google.com/s2/favicons?domain=nytimes.com&sz=64",
         ),
         SuggestedFeed(
             name = "The New Yorker - News",

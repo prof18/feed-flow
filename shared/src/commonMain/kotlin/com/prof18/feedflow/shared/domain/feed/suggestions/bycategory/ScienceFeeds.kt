@@ -9,6 +9,12 @@ internal val scienceFeeds = SuggestedFeedCategory(
     icon = "🧠",
     feeds = listOf(
         SuggestedFeed(
+            name = "Ars Technica Space",
+            url = "https://arstechnica.com/author/ericberger/feed/",
+            description = "Space and rocket science news",
+            logoUrl = "https://www.google.com/s2/favicons?domain=arstechnica.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "Astronomy Magazine",
             url = "https://astronomy.com/rss",
             description = "Astronomy news and features",
@@ -51,6 +57,12 @@ internal val scienceFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=newscientist.com&sz=64",
         ),
         SuggestedFeed(
+            name = "Popular Science",
+            url = "https://www.popsci.com/feed/",
+            description = "Science and technology news",
+            logoUrl = "https://www.google.com/s2/favicons?domain=popsci.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "ScienceDaily",
             url = "https://www.sciencedaily.com/rss/all.xml",
             description = "Latest science news across all disciplines",
@@ -69,16 +81,16 @@ internal val scienceFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=bps.org.uk&sz=64",
         ),
         SuggestedFeed(
-            name = "WIRED Science",
-            url = "https://www.wired.com/feed/category/science/latest/rss",
-            description = "Science and technology features",
-            logoUrl = "https://www.google.com/s2/favicons?domain=wired.com&sz=64",
-        ),
-        SuggestedFeed(
             name = "Universe Today",
             url = "https://www.universetoday.com/feed/",
             description = "Space exploration updates",
             logoUrl = "https://www.google.com/s2/favicons?domain=universetoday.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "WIRED Science",
+            url = "https://www.wired.com/feed/category/science/latest/rss",
+            description = "Science and technology features",
+            logoUrl = "https://www.google.com/s2/favicons?domain=wired.com&sz=64",
         ),
     ),
 )

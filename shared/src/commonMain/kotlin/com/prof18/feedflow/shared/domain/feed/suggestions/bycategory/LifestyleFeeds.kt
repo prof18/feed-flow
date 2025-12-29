@@ -9,10 +9,22 @@ internal val lifestyleFeeds = SuggestedFeedCategory(
     icon = "🏡",
     feeds = listOf(
         SuggestedFeed(
+            name = "Artnet News",
+            url = "https://news.artnet.com/feed",
+            description = "International art news",
+            logoUrl = "https://www.google.com/s2/favicons?domain=artnet.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "Atlas Obscura",
             url = "https://www.atlasobscura.com/feeds/latest",
             description = "Unusual destinations and stories",
             logoUrl = "https://www.google.com/s2/favicons?domain=atlasobscura.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Bon Appétit",
+            url = "https://www.bonappetit.com/feed/rss",
+            description = "Recipes and cooking",
+            logoUrl = "https://www.google.com/s2/favicons?domain=bonappetit.com&sz=64",
         ),
         SuggestedFeed(
             name = "Condé Nast Traveler",
@@ -51,6 +63,12 @@ internal val lifestyleFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=hypebeast.com&sz=64",
         ),
         SuggestedFeed(
+            name = "Jalopnik",
+            url = "https://www.jalopnik.com/feed/",
+            description = "Cars and automotive culture",
+            logoUrl = "https://www.google.com/s2/favicons?domain=jalopnik.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "Lifehacker",
             url = "https://lifehacker.com/rss",
             description = "Tips and tricks for getting things done",
@@ -63,10 +81,22 @@ internal val lifestyleFeeds = SuggestedFeedCategory(
             logoUrl = "https://www.google.com/s2/favicons?domain=nomadicmatt.com&sz=64",
         ),
         SuggestedFeed(
+            name = "PetaPixel",
+            url = "https://petapixel.com/feed/",
+            description = "Photography news and tutorials",
+            logoUrl = "https://www.google.com/s2/favicons?domain=petapixel.com&sz=64",
+        ),
+        SuggestedFeed(
             name = "Smashing Magazine",
             url = "https://www.smashingmagazine.com/feed/",
             description = "Web design and development",
             logoUrl = "https://www.google.com/s2/favicons?domain=smashingmagazine.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "The New Yorker",
+            url = "https://www.newyorker.com/feed/everything",
+            description = "Culture, politics, and commentary",
+            logoUrl = "https://www.google.com/s2/favicons?domain=newyorker.com&sz=64",
         ),
         SuggestedFeed(
             name = "The Points Guy",
@@ -79,6 +109,12 @@ internal val lifestyleFeeds = SuggestedFeedCategory(
             url = "https://www.vox.com/rss/index.xml",
             description = "Explanatory journalism and news",
             logoUrl = "https://www.google.com/s2/favicons?domain=vox.com&sz=64",
+        ),
+        SuggestedFeed(
+            name = "Wallpaper*",
+            url = "http://feeds.feedburner.com/Wallpaperfeed",
+            description = "Design, architecture, and lifestyle",
+            logoUrl = "https://www.google.com/s2/favicons?domain=wallpaper.com&sz=64",
         ),
     ),
 )

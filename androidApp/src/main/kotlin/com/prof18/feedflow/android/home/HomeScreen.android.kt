@@ -47,9 +47,9 @@ internal fun HomeScreen(
     onAddFeedClick: () -> Unit,
     onSearchClick: () -> Unit,
     onAccountsClick: () -> Unit,
-    onImportExportClick: () -> Unit = {},
     onEditFeedClick: (FeedSource) -> Unit,
-    onFeedSuggestionsClick: () -> Unit = {},
+    onImportExportClick: () -> Unit = {},
+    onFeedSuggestionsClick: () -> Unit,
 ) {
     val browserManager = koinInject<BrowserManager>()
     val changeFeedCategoryViewModel: ChangeFeedCategoryViewModel = koinInject()

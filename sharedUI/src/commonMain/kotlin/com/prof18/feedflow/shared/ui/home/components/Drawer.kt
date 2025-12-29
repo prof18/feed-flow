@@ -69,7 +69,6 @@ import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.NavDrawerState
-import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
@@ -123,12 +122,10 @@ internal fun Drawer(
             )
         }
 
-        if (FeatureFlags.ENABLE_FEED_SUGGESTIONS) {
-            item {
-                DrawerFeedSuggestionsItem(
-                    onFeedSuggestionsClick = onFeedSuggestionsClick,
-                )
-            }
+        item {
+            DrawerFeedSuggestionsItem(
+                onFeedSuggestionsClick = onFeedSuggestionsClick,
+            )
         }
 
         item {

@@ -119,9 +119,7 @@ struct CompactView: View {
             .navigationDestination(for: CommonViewRoute.self) { route in
                 switch route {
                 case .feedSuggestions:
-                    if FeatureFlags.shared.ENABLE_FEED_SUGGESTIONS {
-                        FeedSuggestionsScreen()
-                    }
+                    FeedSuggestionsScreen()
 
                 case .readerMode:
                     ReaderModeScreen(viewModel: readerModeViewModel)

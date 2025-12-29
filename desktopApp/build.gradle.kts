@@ -3,6 +3,18 @@ import org.gradle.kotlin.dsl.flatpakGradleGenerator
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val javafxVersion = "23.0.1"
+val javafxPlatform: String = run {
+    val osName = System.getProperty("os.name").lowercase()
+    val osArch = System.getProperty("os.arch").lowercase()
+    when {
+        osName.contains("win") -> "win"
+        osName.contains("mac") -> if (osArch.contains("aarch64") || osArch.contains("arm")) "mac-aarch64" else "mac"
+        osName.contains("linux") -> if (osArch.contains("aarch64") || osArch.contains("arm")) "linux-aarch64" else "linux"
+        else -> "linux"
+    }
+}
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose.multiplatform)
@@ -66,6 +78,13 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.flatlaf)
+
+                // JavaFX for WebView support in reader mode
+                implementation("org.openjfx:javafx-base:$javafxVersion:$javafxPlatform")
+                implementation("org.openjfx:javafx-graphics:$javafxVersion:$javafxPlatform")
+                implementation("org.openjfx:javafx-controls:$javafxVersion:$javafxPlatform")
+                implementation("org.openjfx:javafx-swing:$javafxVersion:$javafxPlatform")
+                implementation("org.openjfx:javafx-web:$javafxVersion:$javafxPlatform")
             }
         }
 

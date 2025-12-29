@@ -1,11 +1,13 @@
 package com.prof18.feedflow.desktop.reaadermode
 
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -50,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -70,10 +73,13 @@ import com.mikepenz.markdown.m3.markdownTypography
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.generateUniqueKey
+import com.prof18.feedflow.shared.domain.ReaderColors
+import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
@@ -196,81 +202,23 @@ internal data class ReaderModeScreen(
                         }
                     }
                     is ReaderModeState.Success -> {
-                        Column(
-                            modifier = Modifier
-                                .padding(contentPadding)
-                                .verticalScroll(rememberScrollState()),
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = Spacing.regular),
-                                text = LocalFeedFlowStrings.current.readerModeWarning,
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Light,
+                        if (FeatureFlags.USE_JAVAFX_WEBVIEW_FOR_READER_MODE) {
+                            ReaderModeWebViewContent(
+                                readerModeState = s,
+                                fontSize = fontSize,
+                                contentPadding = contentPadding,
+                                openInBrowser = { url ->
+                                    if (isValidUrl(url)) {
+                                        uriHandler.openUri(url)
+                                    }
+                                },
                             )
-
-                            key(s.readerModeData.content, fontSize) {
-                                SelectionContainer {
-                                    Markdown(
-                                        modifier = Modifier
-                                            .padding(Spacing.regular)
-                                            .padding(bottom = 64.dp),
-                                        content = s.readerModeData.content,
-                                        imageTransformer = Coil3ImageTransformerImpl,
-                                        typography = markdownTypography(
-                                            h1 = MaterialTheme.typography.displaySmall.copy(
-                                                fontSize = (fontSize + 20).sp,
-                                                lineHeight = (fontSize + 32).sp,
-                                            ),
-                                            h2 = MaterialTheme.typography.titleLarge.copy(
-                                                fontSize = (fontSize + 6).sp,
-                                                lineHeight = (fontSize + 16).sp,
-                                            ),
-                                            h3 = MaterialTheme.typography.titleLarge.copy(
-                                                fontSize = (fontSize + 6).sp,
-                                                lineHeight = (fontSize + 16).sp,
-                                            ),
-                                            h4 = MaterialTheme.typography.titleMedium.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            h5 = MaterialTheme.typography.titleMedium.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            h6 = MaterialTheme.typography.titleMedium.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            paragraph = MaterialTheme.typography.bodyLarge.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            text = MaterialTheme.typography.bodyLarge.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            code = MaterialTheme.typography.bodyMedium.copy(
-                                                fontSize = (fontSize - 2).sp,
-                                                lineHeight = (fontSize + 8).sp,
-                                            ),
-                                            list = MaterialTheme.typography.bodyLarge.copy(
-                                                fontSize = fontSize.sp,
-                                                lineHeight = (fontSize + 12).sp,
-                                            ),
-                                            textLink = TextLinkStyles(
-                                                style = MaterialTheme.typography.bodyLarge.copy(
-                                                    fontSize = fontSize.sp,
-                                                    lineHeight = (fontSize + 12).sp,
-                                                    fontWeight = FontWeight.Bold,
-                                                    textDecoration = TextDecoration.Underline,
-                                                ).toSpanStyle(),
-                                            ),
-                                        ),
-                                    )
-                                }
-                            }
+                        } else {
+                            ReaderModeMarkdownContent(
+                                readerModeState = s,
+                                fontSize = fontSize,
+                                contentPadding = contentPadding,
+                            )
                         }
                     }
                 }
@@ -625,3 +573,132 @@ private fun ReaderModeFallbackContent(
         }
     }
 }
+
+@Composable
+private fun ReaderModeWebViewContent(
+    readerModeState: ReaderModeState.Success,
+    fontSize: Int,
+    contentPadding: PaddingValues,
+    openInBrowser: (String) -> Unit,
+) {
+    val bodyColor = MaterialTheme.colorScheme.onSurface.toArgb().toHexString().substring(2)
+    val linkColor = MaterialTheme.colorScheme.primary.toArgb().toHexString().substring(2)
+
+    val isDarkMode = isSystemInDarkTheme()
+    val backgroundColor = if (isDarkMode) "#1e1e1e" else "#fafafa"
+    val borderColor = if (isDarkMode) "#444444" else "#d1d9e0"
+
+    val colors = ReaderColors(
+        textColor = "#$bodyColor",
+        linkColor = "#$linkColor",
+        backgroundColor = backgroundColor,
+        borderColor = borderColor,
+    )
+
+    val styledHtml = remember(readerModeState.readerModeData.content, fontSize, colors) {
+        getReaderModeStyledHtml(
+            colors = colors,
+            content = readerModeState.readerModeData.content,
+            fontSize = fontSize,
+            title = readerModeState.readerModeData.title,
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .padding(contentPadding)
+            .fillMaxSize(),
+    ) {
+        JavaFxWebView(
+            htmlContent = styledHtml,
+            modifier = Modifier.fillMaxSize(),
+            onLinkClick = openInBrowser,
+        )
+    }
+}
+
+@Composable
+private fun ReaderModeMarkdownContent(
+    readerModeState: ReaderModeState.Success,
+    fontSize: Int,
+    contentPadding: PaddingValues,
+) {
+    Column(
+        modifier = Modifier
+            .padding(contentPadding)
+            .verticalScroll(rememberScrollState()),
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Spacing.regular),
+            text = LocalFeedFlowStrings.current.readerModeWarning,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Light,
+        )
+
+        key(readerModeState.readerModeData.content, fontSize) {
+            SelectionContainer {
+                Markdown(
+                    modifier = Modifier
+                        .padding(Spacing.regular)
+                        .padding(bottom = 64.dp),
+                    content = readerModeState.readerModeData.content,
+                    imageTransformer = Coil3ImageTransformerImpl,
+                    typography = markdownTypography(
+                        h1 = MaterialTheme.typography.displaySmall.copy(
+                            fontSize = (fontSize + 20).sp,
+                            lineHeight = (fontSize + 32).sp,
+                        ),
+                        h2 = MaterialTheme.typography.titleLarge.copy(
+                            fontSize = (fontSize + 6).sp,
+                            lineHeight = (fontSize + 16).sp,
+                        ),
+                        h3 = MaterialTheme.typography.titleLarge.copy(
+                            fontSize = (fontSize + 6).sp,
+                            lineHeight = (fontSize + 16).sp,
+                        ),
+                        h4 = MaterialTheme.typography.titleMedium.copy(
+                            fontSize = fontSize.sp,
+                            lineHeight = (fontSize + 12).sp,
+                        ),
+                        h5 = MaterialTheme.typography.titleMedium.copy(
+                            fontSize = fontSize.sp,
+                            lineHeight = (fontSize + 12).sp,
+                        ),
+                        h6 = MaterialTheme.typography.titleMedium.copy(
+                            fontSize = fontSize.sp,
+                            lineHeight = (fontSize + 12).sp,
+                        ),
+                        paragraph = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = fontSize.sp,
+                            lineHeight = (fontSize + 12).sp,
+                        ),
+                        text = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = fontSize.sp,
+                            lineHeight = (fontSize + 12).sp,
+                        ),
+                        code = MaterialTheme.typography.bodyMedium.copy(
+                            fontSize = (fontSize - 2).sp,
+                            lineHeight = (fontSize + 8).sp,
+                        ),
+                        list = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = fontSize.sp,
+                            lineHeight = (fontSize + 12).sp,
+                        ),
+                        textLink = TextLinkStyles(
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = fontSize.sp,
+                                lineHeight = (fontSize + 12).sp,
+                                fontWeight = FontWeight.Bold,
+                                textDecoration = TextDecoration.Underline,
+                            ).toSpanStyle(),
+                        ),
+                    ),
+                )
+            }
+        }
+    }
+}
+
+private fun Int.toHexString(): String = Integer.toHexString(this)

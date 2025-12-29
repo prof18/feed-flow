@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.parser
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.model.ParsingResult
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
@@ -58,24 +59,30 @@ internal class DesktopFeedItemParserWorker(
                     return@withContext ParsingResult.Error
                 }
 
-                // Convert to styled HTML and then to markdown for Desktop
                 val title = article.title
-                val styledHtml = getReaderModeStyledHtml(
-                    colors = null,
-                    content = content,
-                    fontSize = settingsRepository.getReaderModeFontSize(),
-                    title = title,
-                )
-                val markdown = markdownToHtmlConverter.convertToMarkdown(styledHtml)
-                    .replace(Regex("""\s*\{#[^}]+}"""), "")
+                val resultContent = if (FeatureFlags.USE_JAVAFX_WEBVIEW_FOR_READER_MODE) {
+                    // For WebView mode, return raw HTML content
+                    // The styled HTML wrapping will be done in the UI layer
+                    content
+                } else {
+                    // Convert to styled HTML and then to markdown for Markdown renderer
+                    val styledHtml = getReaderModeStyledHtml(
+                        colors = null,
+                        content = content,
+                        fontSize = settingsRepository.getReaderModeFontSize(),
+                        title = title,
+                    )
+                    markdownToHtmlConverter.convertToMarkdown(styledHtml)
+                        .replace(Regex("""\s*\{#[^}]+}"""), "")
+                }
 
                 if (settingsRepository.isSaveItemContentOnOpenEnabled()) {
-                    feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, markdown)
+                    feedItemContentFileHandler.saveFeedItemContentToFile(feedItemId, resultContent)
                     logger.d { "Successfully parsed and cached content for: $url (feedItemId: $feedItemId)" }
                 }
 
                 ParsingResult.Success(
-                    htmlContent = markdown,
+                    htmlContent = resultContent,
                     title = article.title,
                     siteName = null,
                 )

@@ -32,10 +32,10 @@ import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.desktop.BrowserManager
+import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.sanitizeUrl
@@ -82,6 +82,7 @@ internal fun HomeScreen(
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsState()
 
     var showChangeCategorySheet by remember { mutableStateOf(false) }
+    var showNoFeedsBottomSheet by remember { mutableStateOf(false) }
 
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
@@ -131,8 +132,6 @@ internal fun HomeScreen(
             }
         }
     }
-
-
 
     val homeDisplayState = HomeDisplayState(
         feedItems = feedState,
@@ -247,6 +246,9 @@ internal fun HomeScreen(
             }
         },
         onFeedSuggestionsClick = onFeedSuggestionsClick,
+        onEmptyStateClick = {
+            showNoFeedsBottomSheet = true
+        },
     )
 
     if (showChangeCategorySheet) {
@@ -270,4 +272,23 @@ internal fun HomeScreen(
             },
         )
     }
+
+    NoFeedsDialog(
+        showDialog = showNoFeedsBottomSheet,
+        onDismissRequest = {
+            showNoFeedsBottomSheet = false
+        },
+        onImportExportClick = {
+            showNoFeedsBottomSheet = false
+            onImportExportClick()
+        },
+        onAccountsClick = {
+            showNoFeedsBottomSheet = false
+            onAccountsClick()
+        },
+        onFeedSuggestionsClick = {
+            showNoFeedsBottomSheet = false
+            onFeedSuggestionsClick()
+        },
+    )
 }

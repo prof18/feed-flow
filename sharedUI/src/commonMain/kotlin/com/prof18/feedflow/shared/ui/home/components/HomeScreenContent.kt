@@ -45,6 +45,7 @@ fun HomeScreenContent(
     feedContentWrapper: @Composable (@Composable () -> Unit) -> Unit = { content -> content() },
     showDropdownMenu: Boolean = false,
     onBackupClick: () -> Unit = {},
+    onEmptyStateClick: (() -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -115,7 +116,7 @@ fun HomeScreenContent(
 
             when {
                 displayState.feedUpdateStatus is NoFeedSourcesStatus -> NoFeedsSourceView(
-                    onAddFeedClick = feedManagementActions.onAddFeedClick,
+                    onAddFeedClick = onEmptyStateClick ?: feedManagementActions.onAddFeedClick,
                 )
 
                 !displayState.feedUpdateStatus.isLoading() && displayState.feedItems.isEmpty() -> EmptyFeedView(

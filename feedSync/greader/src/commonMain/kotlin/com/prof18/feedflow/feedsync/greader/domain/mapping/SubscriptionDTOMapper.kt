@@ -9,5 +9,5 @@ internal fun SubscriptionDTO.toFeedSource(): ParsedFeedSource =
         url = url,
         title = title,
         category = categories.firstOrNull()?.toFeedSourceCategory(),
-        logoUrl = iconUrl,
+        logoUrl = iconUrl.ifBlank { null },
     )

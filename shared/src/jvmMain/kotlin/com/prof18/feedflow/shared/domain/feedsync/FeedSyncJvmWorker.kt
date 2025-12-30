@@ -144,7 +144,7 @@ internal class FeedSyncJvmWorker(
                 logger.d { "Upload to Google Drive successfully" }
             }
 
-            SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 // Do nothing
             }
         }
@@ -231,7 +231,7 @@ internal class FeedSyncJvmWorker(
                 SyncResult.Success
             }
 
-            SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.LOCAL, SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 // Do nothing
                 logger.d { "current sync account local" }
                 SyncResult.Success

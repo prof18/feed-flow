@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal data class StreamItemIdDTO(
     val itemRefs: List<ItemDTO>,
-    val continuation: String?,
+    val continuation: String? = null,
 )
 
 @Serializable

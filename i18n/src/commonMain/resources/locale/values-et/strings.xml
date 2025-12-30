@@ -275,4 +275,19 @@
     <string name="scroll_to_top_button_content_description">Keri loendi algusesse</string>
     <string name="dropbox_auth_code_expired">Autentimiskood pole enam kehtiv. Palun kontrolli koodi ja proovi siis uuesti.</string>
     <string name="database_error_reset">Me ei suutnud sinu andmeid laadida ja pidime uuesti alustama. Vabandust, et nii juhtus.</string>
+    <string name="trigger_feed_sync">Käivita üleslaadimine oma kontole</string>
+    <string name="menu_mark_all_above_as_read">Märgi kõik ülaltoodu loetuks</string>
+    <string name="menu_mark_all_below_as_read">Märgi kõik alltoodu loetuks</string>
+    <string name="google_drive_auth_code_hint">Tuvastuskood</string>
+    <string name="google_drive_confirm_button">Kinnita</string>
+    <string name="google_drive_sync_error">Ühendamisel Google Drive\'iga tekkis viga. Palun proovi uuesti</string>
+    <string name="google_drive_sync_success">Sinu Google Drive\'i konto ühendamine õnnestus</string>
+    <string name="google_drive_connect_button">Ühenda Google Drive\'iga</string>
+    <string name="no_google_drive_sync_yet">Andmed pole veel Google Drive\'iga sünkroonitud. Selle käivitamiseks klõpsa varunduse nuppu</string>
+    <string name="change_category">Muuda kategooriat</string>
+    <string name="feed_suggestions_title">Uudisvoogude soovitused</string>
+    <string name="feed_suggestions_description">Sirvi ja lisa uudisvooge oma kogusse</string>
+    <string name="google_drive_auth_retry">Kasutamaks sünkroonimist Google Drive\'i pead ennast uuesti tuvastama. Ava „Kasutajakontod“, eemalda vastav link ning lisa ta uuesti.</string>
+    <string name="google_drive_sync_common_description">Ühenda oma Google Drive\'i kontoga ja sünkrooni oma uudisvoogude tellimused, kategooriad, loetuse ja järjehoidjaks märgituse olek oma Androidi, iOS-i, iPadOS-i ja töölauaseadmete vahel. Andmed salvestatakse rakendusekohasesse kausta ja FeedFlow ei näe muid sinu faile</string>
+    <string name="google_drive_desktop_sync_description">Klõpsa järgnevat nuppu ja ühenda oma Google Drive\'i kontoga. Avaneb veebibrauser, kus saad jätkata autentimist. Kui oled selle lõpetanud, siis pöördu tagasi rakenduse juurde.</string>
 </resources>

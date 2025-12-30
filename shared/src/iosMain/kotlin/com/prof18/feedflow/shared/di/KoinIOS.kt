@@ -29,6 +29,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
+import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
@@ -36,6 +37,7 @@ import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
+import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
@@ -45,9 +47,11 @@ import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.MinifluxSyncViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.ReadingBehaviorSettingsViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
+import com.prof18.feedflow.shared.presentation.SyncAndStorageSettingsViewModel
 import com.prof18.feedflow.shared.utils.Telemetry
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import com.prof18.rssparser.RssParserBuilder
@@ -254,7 +258,12 @@ object Deps : KoinComponent {
     fun getLogger(tag: String? = null) = getKoin().get<Logger> { parametersOf(tag) }
     fun getImportExportViewModel() = getKoin().get<ImportExportViewModel>()
     fun getSettingsViewModel() = getKoin().get<SettingsViewModel>()
+    fun getFeedListSettingsViewModel() = getKoin().get<FeedListSettingsViewModel>()
+    fun getReadingBehaviorSettingsViewModel() = getKoin().get<ReadingBehaviorSettingsViewModel>()
+    fun getSyncAndStorageSettingsViewModel() = getKoin().get<SyncAndStorageSettingsViewModel>()
+    fun getAboutAndSupportSettingsViewModel() = getKoin().get<AboutAndSupportSettingsViewModel>()
     fun getFeedFlowStrings() = getKoin().get<FeedFlowStrings>()
+    fun getStrings() = getKoin().get<FeedFlowStrings>()
     fun getSettingsRepository() = getKoin().get<SettingsRepository>()
     fun getSearchViewModel() = getKoin().get<SearchViewModel>()
     fun getAccountsViewModel() = getKoin().get<AccountsViewModel>()

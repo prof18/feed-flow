@@ -48,11 +48,16 @@ import com.prof18.feedflow.android.home.HomeScreen
 import com.prof18.feedflow.android.readermode.ReaderModeScreen
 import com.prof18.feedflow.android.search.SearchScreen
 import com.prof18.feedflow.android.settings.SettingsScreen
-import com.prof18.feedflow.android.settings.about.AboutScreen
-import com.prof18.feedflow.android.settings.about.LicensesScreen
-import com.prof18.feedflow.android.settings.blocked.BlockedWordsScreen
-import com.prof18.feedflow.android.settings.importexport.ImportExportScreen
-import com.prof18.feedflow.android.settings.notifications.NotificationsSettingsScreen
+import com.prof18.feedflow.android.settings.about.AboutAndSupportScreen
+import com.prof18.feedflow.android.settings.about.subpages.AboutScreen
+import com.prof18.feedflow.android.settings.about.subpages.LicensesScreen
+import com.prof18.feedflow.android.settings.feedlist.FeedListSettingsScreen
+import com.prof18.feedflow.android.settings.feedsandaccounts.FeedsAndAccountsScreen
+import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.BlockedWordsScreen
+import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.ImportExportScreen
+import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.NotificationsSettingsScreen
+import com.prof18.feedflow.android.settings.readingbehavior.ReadingBehaviorScreen
+import com.prof18.feedflow.android.settings.syncstorage.SyncAndStorageScreen
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
@@ -259,17 +264,37 @@ class MainActivity : BaseThemeActivity() {
 
             composable<Settings> {
                 SettingsScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                    navigateToFeedsAndAccounts = {
+                        navController.navigate(FeedsAndAccounts)
+                    },
+                    navigateToFeedListSettings = {
+                        navController.navigate(FeedListSettings)
+                    },
+                    navigateToReadingBehavior = {
+                        navController.navigate(ReadingBehavior)
+                    },
+                    navigateToSyncAndStorage = {
+                        navController.navigate(SyncAndStorage)
+                    },
+                    navigateToAboutAndSupport = {
+                        navController.navigate(AboutAndSupport)
+                    },
+                )
+            }
+
+            composable<FeedsAndAccounts> {
+                FeedsAndAccountsScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
                     onFeedListClick = {
                         navController.navigate(FeedList)
                     },
                     onAddFeedClick = {
                         navController.navigate(AddFeed)
-                    },
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                    onAboutClick = {
-                        navController.navigate(About)
                     },
                     navigateToImportExport = {
                         navController.navigate(ImportExport)
@@ -282,6 +307,41 @@ class MainActivity : BaseThemeActivity() {
                     },
                     navigateToBlockedWords = {
                         navController.navigate(BlockedWords)
+                    },
+                )
+            }
+
+            composable<FeedListSettings> {
+                FeedListSettingsScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<ReadingBehavior> {
+                ReadingBehaviorScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<SyncAndStorage> {
+                SyncAndStorageScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<AboutAndSupport> {
+                AboutAndSupportScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                    onAboutClick = {
+                        navController.navigate(About)
                     },
                 )
             }

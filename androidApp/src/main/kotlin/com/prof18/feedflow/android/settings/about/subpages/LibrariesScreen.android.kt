@@ -1,4 +1,4 @@
-package com.prof18.feedflow.android.settings.about
+package com.prof18.feedflow.android.settings.about.subpages
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons

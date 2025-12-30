@@ -33,12 +33,14 @@ import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
+import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
+import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
@@ -47,9 +49,11 @@ import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.MinifluxSyncViewModel
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
+import com.prof18.feedflow.shared.presentation.ReadingBehaviorSettingsViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.SettingsViewModel
+import com.prof18.feedflow.shared.presentation.SyncAndStorageSettingsViewModel
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.defaultRequest
@@ -227,6 +231,32 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedStateRepository = get(),
             contentPrefetchRepository = get(),
             feedItemContentFileHandler = get(),
+        )
+    }
+
+    viewModel {
+        FeedListSettingsViewModel(
+            settingsRepository = get(),
+            fontSizeRepository = get(),
+        )
+    }
+
+    viewModel {
+        ReadingBehaviorSettingsViewModel(
+            settingsRepository = get(),
+        )
+    }
+
+    viewModel {
+        SyncAndStorageSettingsViewModel(
+            settingsRepository = get(),
+            feedItemContentFileHandler = get(),
+        )
+    }
+
+    viewModel {
+        AboutAndSupportSettingsViewModel(
+            settingsRepository = get(),
         )
     }
 

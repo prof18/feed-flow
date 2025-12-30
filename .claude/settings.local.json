@@ -28,7 +28,8 @@
       "WebSearch",
       "Bash(grep:*)",
       "Bash(.scripts/ios-format.sh:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(./.scripts/refresh-translations.sh:*)"
     ],
     "deny": []
   }

@@ -11,6 +11,21 @@ data class Home(
 data object Settings
 
 @Serializable
+data object FeedsAndAccounts
+
+@Serializable
+data object FeedListSettings
+
+@Serializable
+data object ReadingBehavior
+
+@Serializable
+data object SyncAndStorage
+
+@Serializable
+data object AboutAndSupport
+
+@Serializable
 data object AddFeed
 
 @Serializable

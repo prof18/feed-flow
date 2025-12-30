@@ -585,14 +585,16 @@ private fun ReaderModeWebViewContent(
     val linkColor = MaterialTheme.colorScheme.primary.toArgb().toHexString().substring(2)
 
     val isDarkMode = isSystemInDarkTheme()
-    val backgroundColor = if (isDarkMode) "#1e1e1e" else "#fafafa"
+    val bodyBackgroundColor = if (isDarkMode) "#1e1e1e" else "#fafafa"
+    val codeBackgroundColor = if (isDarkMode) "#2d2d2d" else "#f0f0f0"
     val borderColor = if (isDarkMode) "#444444" else "#d1d9e0"
 
     val colors = ReaderColors(
         textColor = "#$bodyColor",
         linkColor = "#$linkColor",
-        backgroundColor = backgroundColor,
+        backgroundColor = codeBackgroundColor,
         borderColor = borderColor,
+        bodyBackgroundColor = bodyBackgroundColor,
     )
 
     val styledHtml = remember(readerModeState.readerModeData.content, fontSize, colors) {

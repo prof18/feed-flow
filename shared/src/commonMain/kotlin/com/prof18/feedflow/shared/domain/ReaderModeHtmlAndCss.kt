@@ -65,6 +65,7 @@ body {
     line-height: 1.5em;
     padding-bottom: 112px;
     ${colors?.let { "color: ${it.textColor};" }}
+    ${colors?.bodyBackgroundColor?.let { "background-color: $it;" }}
 }
 
 .__hero {
@@ -266,4 +267,5 @@ data class ReaderColors(
     val linkColor: String,
     val backgroundColor: String,
     val borderColor: String? = null,
+    val bodyBackgroundColor: String? = null,
 )

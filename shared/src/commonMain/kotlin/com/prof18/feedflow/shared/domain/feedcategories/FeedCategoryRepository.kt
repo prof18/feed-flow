@@ -49,7 +49,7 @@ internal class FeedCategoryRepository(
 
     suspend fun deleteCategory(categoryId: String) {
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 gReaderRepository.deleteCategory(categoryId)
                     .fold(
                         onSuccess = {
@@ -83,7 +83,7 @@ internal class FeedCategoryRepository(
         }
 
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 gReaderRepository.editCategoryName(categoryId, newName)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditCategoryNameFailed))
@@ -126,9 +126,7 @@ internal class FeedCategoryRepository(
 
     suspend fun createCategory(categoryName: CategoryName) {
         val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
-                "user/-/label/${categoryName.name}"
-            }
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> gReaderRepository.buildCategoryId(categoryName)
 
             else -> categoryName.name.hashCode().toString()
         }

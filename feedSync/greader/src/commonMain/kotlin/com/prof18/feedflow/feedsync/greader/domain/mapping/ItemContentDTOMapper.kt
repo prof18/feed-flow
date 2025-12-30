@@ -17,14 +17,15 @@ internal class ItemContentDTOMapper(
         itemContentDTO: ItemContentDTO,
         feedSource: FeedSource,
     ): FeedItem? {
-        val url = itemContentDTO.canonical.firstOrNull()?.href ?: return null
+        val url = itemContentDTO.canonical?.firstOrNull()?.href ?: return null
+        val content = itemContentDTO.content?.content ?: itemContentDTO.summary?.content
         return FeedItem(
             id = itemContentDTO.hexID,
             url = url,
             title = itemContentDTO.title,
-            subtitle = htmlParser.getTextFromHTML(itemContentDTO.summary.content),
+            subtitle = content?.let { htmlParser.getTextFromHTML(it) },
             content = null,
-            imageUrl = itemContentDTO.image?.href ?: getImageFromContent(itemContentDTO.summary.content),
+            imageUrl = itemContentDTO.image?.href ?: getImageFromContent(content),
             feedSource = feedSource,
             pubDateMillis = itemContentDTO.published * 1000,
             isRead = itemContentDTO.read,

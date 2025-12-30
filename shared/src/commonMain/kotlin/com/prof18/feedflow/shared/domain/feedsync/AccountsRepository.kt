@@ -127,13 +127,15 @@ internal class AccountsRepository(
 
     fun setFreshRssAccount() {
         clearOtherSyncCredentials(except = SyncAccounts.FRESH_RSS)
-        networkSettings.setSyncAccountType("FRESH_RSS")
+        networkSettings.setSyncAccountType(SyncAccounts.FRESH_RSS)
+        networkSettings.clearLastSyncDate()
         currentAccountMutableState.value = SyncAccounts.FRESH_RSS
     }
 
     fun setMinifluxAccount() {
         clearOtherSyncCredentials(except = SyncAccounts.MINIFLUX)
-        networkSettings.setSyncAccountType("MINIFLUX")
+        networkSettings.setSyncAccountType(SyncAccounts.MINIFLUX)
+        networkSettings.clearLastSyncDate()
         currentAccountMutableState.value = SyncAccounts.MINIFLUX
     }
 
@@ -171,11 +173,7 @@ internal class AccountsRepository(
             }
         }
         if (gReaderRepository.isAccountSet()) {
-            val accountType = networkSettings.getSyncAccountType()
-            return when (accountType) {
-                "MINIFLUX" -> SyncAccounts.MINIFLUX
-                else -> SyncAccounts.FRESH_RSS
-            }
+            return networkSettings.getSyncAccountType() ?: SyncAccounts.LOCAL
         }
         return SyncAccounts.LOCAL
     }

@@ -31,7 +31,7 @@ internal class FeedImportExportRepository(
 
         val feedSourcesWithError = mutableListOf<ParsedFeedSource>()
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 for (feed in feeds) {
                     gReaderRepository.addFeedSource(
                         url = feed.url,

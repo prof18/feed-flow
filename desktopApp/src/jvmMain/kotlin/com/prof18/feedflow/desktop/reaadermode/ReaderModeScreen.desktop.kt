@@ -71,7 +71,6 @@ import com.mikepenz.markdown.m3.markdownTypography
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
-import com.prof18.feedflow.core.utils.FeatureFlags
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
@@ -199,33 +198,18 @@ internal data class ReaderModeScreen(
                         }
                     }
                     is ReaderModeState.Success -> {
-                        when {
-                            NativeWebViewState.isEnabled -> {
-                                ReaderModeNativeWebViewContent(
-                                    readerModeState = s,
-                                    fontSize = fontSize,
-                                    contentPadding = contentPadding,
-                                )
-                            }
-                            FeatureFlags.USE_RICH_TEXT_FOR_READER_MODE -> {
-                                ReaderModeRichTextContent(
-                                    readerModeState = s,
-                                    fontSize = fontSize,
-                                    contentPadding = contentPadding,
-                                    openInBrowser = { url ->
-                                        if (isValidUrl(url)) {
-                                            uriHandler.openUri(url)
-                                        }
-                                    },
-                                )
-                            }
-                            else -> {
-                                ReaderModeMarkdownContent(
-                                    readerModeState = s,
-                                    fontSize = fontSize,
-                                    contentPadding = contentPadding,
-                                )
-                            }
+                        if (NativeWebViewState.isEnabled) {
+                            ReaderModeNativeWebViewContent(
+                                readerModeState = s,
+                                fontSize = fontSize,
+                                contentPadding = contentPadding,
+                            )
+                        } else {
+                            ReaderModeMarkdownContent(
+                                readerModeState = s,
+                                fontSize = fontSize,
+                                contentPadding = contentPadding,
+                            )
                         }
                     }
                 }
@@ -606,45 +590,6 @@ private fun ReaderModeNativeWebViewContent(
             title = readerModeState.readerModeData.title,
             fontSize = fontSize,
             modifier = Modifier.fillMaxSize(),
-        )
-    }
-}
-
-@Composable
-private fun ReaderModeRichTextContent(
-    readerModeState: ReaderModeState.Success,
-    fontSize: Int,
-    contentPadding: PaddingValues,
-    openInBrowser: (String) -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .padding(contentPadding)
-            .fillMaxSize(),
-    ) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Spacing.regular),
-            text = LocalFeedFlowStrings.current.readerModeWarning,
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Light,
-        )
-
-        Text(
-            text = readerModeState.readerModeData.title,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(horizontal = Spacing.regular)
-                .padding(top = Spacing.regular, bottom = Spacing.small),
-        )
-
-        RichTextContent(
-            htmlContent = readerModeState.readerModeData.content,
-            fontSize = fontSize,
-            modifier = Modifier.fillMaxSize(),
-            onLinkClick = openInBrowser,
         )
     }
 }

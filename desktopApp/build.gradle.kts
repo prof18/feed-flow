@@ -66,9 +66,6 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.flatlaf)
-
-                // Compose Rich Editor for HTML rendering in reader mode
-                implementation(libs.compose.richeditor)
             }
         }
 

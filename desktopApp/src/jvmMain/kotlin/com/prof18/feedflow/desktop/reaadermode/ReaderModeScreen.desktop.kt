@@ -1,7 +1,6 @@
 package com.prof18.feedflow.desktop.reaadermode
 
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,7 +51,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -78,8 +76,6 @@ import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.generateUniqueKey
-import com.prof18.feedflow.shared.domain.ReaderColors
-import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
@@ -202,8 +198,8 @@ internal data class ReaderModeScreen(
                         }
                     }
                     is ReaderModeState.Success -> {
-                        if (FeatureFlags.USE_JAVAFX_WEBVIEW_FOR_READER_MODE) {
-                            ReaderModeWebViewContent(
+                        if (FeatureFlags.USE_RICH_TEXT_FOR_READER_MODE) {
+                            ReaderModeRichTextContent(
                                 readerModeState = s,
                                 fontSize = fontSize,
                                 contentPadding = contentPadding,
@@ -575,48 +571,39 @@ private fun ReaderModeFallbackContent(
 }
 
 @Composable
-private fun ReaderModeWebViewContent(
+private fun ReaderModeRichTextContent(
     readerModeState: ReaderModeState.Success,
     fontSize: Int,
     contentPadding: PaddingValues,
     openInBrowser: (String) -> Unit,
 ) {
-    val bodyColor = MaterialTheme.colorScheme.onSurface.toArgb().toHexString().substring(2)
-    val linkColor = MaterialTheme.colorScheme.primary.toArgb().toHexString().substring(2)
-
-    val isDarkMode = isSystemInDarkTheme()
-    val bodyBackgroundColor = if (isDarkMode) "#1e1e1e" else "#fafafa"
-    val codeBackgroundColor = if (isDarkMode) "#2d2d2d" else "#f0f0f0"
-    val borderColor = if (isDarkMode) "#444444" else "#d1d9e0"
-
-    val colors = ReaderColors(
-        textColor = "#$bodyColor",
-        linkColor = "#$linkColor",
-        backgroundColor = codeBackgroundColor,
-        borderColor = borderColor,
-        bodyBackgroundColor = bodyBackgroundColor,
-    )
-
-    val styledHtml = remember(readerModeState.readerModeData.content, fontSize, colors) {
-        getReaderModeStyledHtml(
-            colors = colors,
-            content = readerModeState.readerModeData.content,
-            fontSize = fontSize,
-            title = readerModeState.readerModeData.title,
-        )
-    }
-
-    val surfaceColor = MaterialTheme.colorScheme.surface
-
-    Box(
+    Column(
         modifier = Modifier
             .padding(contentPadding)
             .fillMaxSize(),
     ) {
-        JavaFxWebView(
-            htmlContent = styledHtml,
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Spacing.regular),
+            text = LocalFeedFlowStrings.current.readerModeWarning,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Light,
+        )
+
+        Text(
+            text = readerModeState.readerModeData.title,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .padding(horizontal = Spacing.regular)
+                .padding(top = Spacing.regular, bottom = Spacing.small),
+        )
+
+        RichTextContent(
+            htmlContent = readerModeState.readerModeData.content,
+            fontSize = fontSize,
             modifier = Modifier.fillMaxSize(),
-            backgroundColor = surfaceColor,
             onLinkClick = openInBrowser,
         )
     }
@@ -705,5 +692,3 @@ private fun ReaderModeMarkdownContent(
         }
     }
 }
-
-private fun Int.toHexString(): String = Integer.toHexString(this)

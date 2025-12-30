@@ -27,6 +27,7 @@ google-identity-googleid = "1.1.1"
 google-play-services-auth = "21.4.0"
 flexmarkHtml2mdConverter = "0.64.8"
 javafx = "23.0.2"
+compose-richeditor = "1.0.0-rc13"
 glance = "1.1.1"
 google-services = "4.4.4"
 immutable-collections = "0.4.0"
@@ -111,6 +112,7 @@ google-play-services-auth = { module = "com.google.android.gms:play-services-aut
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
 io-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "io-coil" }
 io-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "io-coil" }
+compose-richeditor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "compose-richeditor" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 jsystem-theme-detector = { module = "com.github.Dansoftowner:jSystemThemeDetector", version.ref = "jsystem-theme-detector" }
 junit = { module = "junit:junit", version.ref = "junit" }

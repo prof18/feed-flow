@@ -604,6 +604,8 @@ private fun ReaderModeWebViewContent(
         )
     }
 
+    val surfaceColor = MaterialTheme.colorScheme.surface
+
     Box(
         modifier = Modifier
             .padding(contentPadding)
@@ -612,6 +614,7 @@ private fun ReaderModeWebViewContent(
         JavaFxWebView(
             htmlContent = styledHtml,
             modifier = Modifier.fillMaxSize(),
+            backgroundColor = surfaceColor,
             onLinkClick = openInBrowser,
         )
     }

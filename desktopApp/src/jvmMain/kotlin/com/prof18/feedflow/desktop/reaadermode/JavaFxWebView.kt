@@ -6,17 +6,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.SwingPanel
+import androidx.compose.ui.graphics.Color
 import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Scene
+import javafx.scene.paint.Paint
 import javafx.scene.web.WebView
-import javax.swing.JPanel
 import java.awt.BorderLayout
+import javax.swing.JPanel
 
 @Composable
 internal fun JavaFxWebView(
     htmlContent: String,
     modifier: Modifier = Modifier,
+    backgroundColor: Color = Color.Transparent,
     onLinkClick: (String) -> Unit = {},
 ) {
     val jfxPanel = remember { JFXPanel() }
@@ -31,7 +34,7 @@ internal fun JavaFxWebView(
         }
     }
 
-    LaunchedEffect(htmlContent) {
+    LaunchedEffect(htmlContent, backgroundColor) {
         Platform.runLater {
             if (webViewHolder.webView == null) {
                 val webView = WebView()
@@ -47,7 +50,10 @@ internal fun JavaFxWebView(
                 }
 
                 val scene = Scene(webView)
+                scene.fill = backgroundColor.toJavaFxColor()
                 jfxPanel.scene = scene
+            } else {
+                jfxPanel.scene?.fill = backgroundColor.toJavaFxColor()
             }
 
             webViewHolder.webView?.engine?.loadContent(htmlContent, "text/html")
@@ -59,6 +65,7 @@ internal fun JavaFxWebView(
         factory = {
             JPanel(BorderLayout()).apply {
                 add(jfxPanel, BorderLayout.CENTER)
+                isOpaque = false
             }
         },
     )
@@ -75,4 +82,13 @@ private fun initializeJavaFx() {
         javaFxInitialized = true
         Platform.setImplicitExit(false)
     }
+}
+
+private fun Color.toJavaFxColor(): Paint {
+    return javafx.scene.paint.Color.rgb(
+        (red * 255).toInt(),
+        (green * 255).toInt(),
+        (blue * 255).toInt(),
+        alpha.toDouble(),
+    )
 }

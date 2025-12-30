@@ -84,6 +84,7 @@ kotlin {
                 implementation("org.openjfx:javafx-graphics:$javafxVersion:$javafxPlatform")
                 implementation("org.openjfx:javafx-controls:$javafxVersion:$javafxPlatform")
                 implementation("org.openjfx:javafx-swing:$javafxVersion:$javafxPlatform")
+                implementation("org.openjfx:javafx-media:$javafxVersion:$javafxPlatform")
                 implementation("org.openjfx:javafx-web:$javafxVersion:$javafxPlatform")
             }
         }

@@ -33,7 +33,9 @@ class NetworkSettings(
     }
 
     fun getSyncAccountType(): SyncAccounts? =
-        settings.getStringOrNull(SettingsField.SYNC_ACCOUNT_TYPE.name)?.let { SyncAccounts.valueOf(it) }
+        settings.getStringOrNull(SettingsField.SYNC_ACCOUNT_TYPE.name)?.let {
+            runCatching { SyncAccounts.valueOf(it) }.getOrNull()
+        }
 
     fun setSyncAccountType(value: SyncAccounts) =
         settings.set(SettingsField.SYNC_ACCOUNT_TYPE.name, value.name)

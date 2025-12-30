@@ -78,7 +78,7 @@ struct AddAccountScreen: View {
                                 Label {
                                     Text("Miniflux")
                                 } icon: {
-                                    Image("freshrss")
+                                    Image("miniflux")
                                         .renderingMode(.template)
                                         .resizable()
                                         .scaledToFit()

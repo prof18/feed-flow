@@ -228,7 +228,33 @@ internal class GReaderClient internal constructor(
     ): DataResult<StreamItemsContentsDTO> = withContext(dispatcherProvider.io) {
         executeNetwork {
             getOrCreateHttpClient()
-                .get(ReaderResource.Api.Zero.StreamRes.Contents.Starred(n = maxNumber, ot = since, c = continuation))
+                .get(
+                    ReaderResource.Api.Zero.StreamRes.Contents.Starred(
+                        n = maxNumber,
+                        ot = since,
+                        c = continuation,
+                    ),
+                )
+        }
+    }
+
+    suspend fun getItemContents(
+        itemIds: List<String>,
+    ): DataResult<StreamItemsContentsDTO> = withContext(dispatcherProvider.io) {
+        withPostToken {
+            executeNetwork {
+                getOrCreateHttpClient()
+                    .post(ReaderResource.Api.Zero.StreamRes.Items.Contents()) {
+                        contentType(ContentType.Application.FormUrlEncoded)
+                        val formData = Parameters.build {
+                            appendAll("i", itemIds)
+                            postToken.get()?.let { token ->
+                                append("T", token)
+                            }
+                        }
+                        setBody(FormDataContent(formData))
+                    }
+            }
         }
     }
 

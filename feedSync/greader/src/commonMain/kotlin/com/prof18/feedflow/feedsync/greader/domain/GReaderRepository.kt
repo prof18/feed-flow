@@ -12,6 +12,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.NetworkFailure
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.allSuccess
 import com.prof18.feedflow.core.model.error
 import com.prof18.feedflow.core.model.firstError
@@ -60,6 +61,7 @@ class GReaderRepository internal constructor(
             networkSettings.setSyncPwd(authToken)
             networkSettings.setSyncUsername(username)
             networkSettings.setSyncUrl(baseURL)
+            networkSettings.clearLastSyncDate()
             databaseHelper.deleteAll()
         }
 
@@ -74,31 +76,51 @@ class GReaderRepository internal constructor(
         val lastUpdate = networkSettings.getLastSyncDate()
         val feedSources = databaseHelper.getFeedSources()
 
-        val readingListResult = fetchContent(
-            block = { continuation ->
-                gReaderClient.getItems(
-                    continuation = continuation,
-                    lastModified = lastUpdate,
-                    excludeTargets = listOf(Stream.Read().id, Stream.Starred().id),
-                    max = PAGE_SIZE,
-                )
-            },
-            feedSources = feedSources,
-        )
+        val readingListResult = if (isMinifluxAccount()) {
+            fetchContentWithItemIds(
+                stream = Stream.ReadingList(),
+                excludedStream = Stream.Read(),
+                since = lastUpdate,
+                feedSources = feedSources,
+            )
+        } else {
+            fetchContent(
+                block = { continuation ->
+                    gReaderClient.getItems(
+                        continuation = continuation,
+                        lastModified = lastUpdate,
+                        excludeTargets = listOf(
+                            Stream.Read().id,
+                            Stream.Starred().id,
+                        ),
+                        max = PAGE_SIZE,
+                    )
+                },
+                feedSources = feedSources,
+            )
+        }
         if (readingListResult.isError()) {
             return@withContext readingListResult
         }
 
-        val starredResult = fetchContent(
-            block = { continuation ->
-                gReaderClient.getStarredItemsContent(
-                    since = lastUpdate,
-                    maxNumber = PAGE_SIZE,
-                    continuation = continuation,
-                )
-            },
-            feedSources = feedSources,
-        )
+        val starredResult = if (isMinifluxAccount()) {
+            fetchContentWithItemIds(
+                stream = Stream.Starred(),
+                since = lastUpdate,
+                feedSources = feedSources,
+            )
+        } else {
+            fetchContent(
+                block = { continuation ->
+                    gReaderClient.getStarredItemsContent(
+                        since = lastUpdate,
+                        maxNumber = PAGE_SIZE,
+                        continuation = continuation,
+                    )
+                },
+                feedSources = feedSources,
+            )
+        }
         if (starredResult.isError()) {
             return@withContext starredResult
         }
@@ -211,7 +233,9 @@ class GReaderRepository internal constructor(
     suspend fun fetchFeedSourcesAndCategories(): DataResult<Unit> =
         gReaderClient.getFeedSourcesAndCategories()
             .map { response ->
-                val feedSources = response.subscriptions.map { it.toFeedSource() }
+                val feedSources = response.subscriptions.map { subscription ->
+                    subscription.toFeedSource()
+                }
                 val categories = feedSources.mapNotNull { it.category }
 
                 databaseHelper.insertCategories(categories)
@@ -287,7 +311,7 @@ class GReaderRepository internal constructor(
     }
 
     suspend fun editCategoryName(categoryId: CategoryId, newName: CategoryName): DataResult<Unit> {
-        val newCategoryId = "user/-/label/${newName.name}"
+        val newCategoryId = buildCategoryId(categoryId, newName)
         val result = gReaderClient.renameTag(
             old = categoryId.value,
             new = newCategoryId,
@@ -380,6 +404,90 @@ class GReaderRepository internal constructor(
         return Unit.success()
     }
 
+    private suspend fun fetchContentWithItemIds(
+        stream: Stream,
+        excludedStream: Stream? = null,
+        since: Long?,
+        feedSources: List<FeedSource>,
+    ): DataResult<Unit> {
+        var idsResult = fetchItemIds(stream = stream, excludedStream = excludedStream, since = since)
+        if (idsResult.isError()) {
+            logger.d { "Failed to fetch item IDs: $idsResult" }
+            return idsResult.failure.error()
+        }
+
+        var itemIds = idsResult.requireSuccess().map { it.getHexID() }
+        if (itemIds.isEmpty() && since != null && !databaseHelper.hasFeedItems()) {
+            logger.d { "No items with since filter and empty DB; retrying without since" }
+            idsResult = fetchItemIds(stream = stream, excludedStream = excludedStream, since = null)
+            if (idsResult.isError()) {
+                logger.e { "Failed to fetch item IDs without since: $idsResult" }
+                return idsResult.failure.error()
+            }
+            itemIds = idsResult.requireSuccess().map { it.getHexID() }
+        }
+        if (itemIds.isEmpty()) {
+            return Unit.success()
+        }
+
+        val itemsToSave = mutableListOf<ItemContentDTO>()
+        for (chunk in itemIds.chunked(ITEM_CONTENTS_CHUNK_SIZE)) {
+            val contentResult = gReaderClient.getItemContents(chunk)
+            if (contentResult.isError()) {
+                logger.e { "Failed to fetch item contents: $contentResult" }
+                return contentResult.failure.error()
+            }
+            contentResult.onSuccessSuspend { items ->
+                itemsToSave.addAll(items.items)
+            }
+        }
+
+        val feedItems = itemsToSave.mapNotNull { item ->
+            val feedSource = feedSources.firstOrNull {
+                it.id == item.origin.streamId
+            } ?: return@mapNotNull null
+            itemContentDTOMapper.mapToFeedItem(
+                itemContentDTO = item,
+                feedSource = feedSource,
+            )
+        }
+        databaseHelper.insertFeedItems(feedItems, dateFormatter.currentTimeMillis())
+
+        return Unit.success()
+    }
+
+    private suspend fun fetchItemIds(
+        stream: Stream,
+        excludedStream: Stream?,
+        since: Long?,
+    ): DataResult<List<ItemDTO>> {
+        var continuation: String? = null
+        var page = 0
+        val items = mutableListOf<ItemDTO>()
+
+        do {
+            val result = gReaderClient.getStreamItemsIDs(
+                stream = stream,
+                since = since,
+                continuation = continuation,
+                count = PAGE_SIZE,
+                excludedStream = excludedStream,
+            )
+
+            if (result.isError()) {
+                return result.failure.error()
+            }
+
+            result.onSuccessSuspend { response ->
+                items.addAll(response.itemRefs)
+                continuation = response.continuation
+                page++
+            }
+        } while (continuation != null && page < MAX_PAGES)
+
+        return items.success()
+    }
+
     private fun getAuthToken(responseBody: String): String? =
         responseBody
             .split("\n")
@@ -389,9 +497,26 @@ class GReaderRepository internal constructor(
             }
             .getOrElse("Auth") { null }
 
+    private fun isMinifluxAccount(): Boolean =
+        networkSettings.getSyncAccountType() == SyncAccounts.MINIFLUX
+
+    fun buildCategoryId(categoryName: CategoryName): String =
+        "user/-/label/${categoryName.name}"
+
+    private fun buildCategoryId(categoryId: CategoryId, newName: CategoryName): String {
+        val existingPrefix = categoryId.value.substringBefore("/label/")
+        val userPrefix = if (categoryId.value.contains("/label/")) {
+            existingPrefix
+        } else {
+            "user/-"
+        }
+        return "$userPrefix/label/${newName.name}"
+    }
+
     companion object {
         private const val UNAUTHORIZED_MESSAGE = "Unauthorized"
         private const val PAGE_SIZE = 500
         private const val MAX_PAGES = 2
+        private const val ITEM_CONTENTS_CHUNK_SIZE = 200
     }
 }

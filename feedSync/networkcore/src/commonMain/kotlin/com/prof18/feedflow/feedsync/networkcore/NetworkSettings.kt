@@ -1,5 +1,6 @@
 package com.prof18.feedflow.feedsync.networkcore
 
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 
@@ -11,9 +12,6 @@ class NetworkSettings(
 
     fun setSyncPwd(value: String) =
         settings.set(SettingsField.SYNC_PWD.name, value)
-
-    fun getSyncUsername(): String =
-        settings.getString(SettingsField.SYNC_USERNAME.name, "")
 
     fun setSyncUsername(value: String) =
         settings.set(SettingsField.SYNC_USERNAME.name, value)
@@ -30,11 +28,15 @@ class NetworkSettings(
     fun setLastSyncDate(value: Long) =
         settings.set(SettingsField.LAST_SYNC_DATE.name, value)
 
-    fun getSyncAccountType(): String =
-        settings.getString(SettingsField.SYNC_ACCOUNT_TYPE.name, "")
+    fun clearLastSyncDate() {
+        settings.remove(SettingsField.LAST_SYNC_DATE.name)
+    }
 
-    fun setSyncAccountType(value: String) =
-        settings.set(SettingsField.SYNC_ACCOUNT_TYPE.name, value)
+    fun getSyncAccountType(): SyncAccounts? =
+        settings.getStringOrNull(SettingsField.SYNC_ACCOUNT_TYPE.name)?.let { SyncAccounts.valueOf(it) }
+
+    fun setSyncAccountType(value: SyncAccounts) =
+        settings.set(SettingsField.SYNC_ACCOUNT_TYPE.name, value.name)
 
     fun deleteAll() {
         SettingsField.entries.forEach {

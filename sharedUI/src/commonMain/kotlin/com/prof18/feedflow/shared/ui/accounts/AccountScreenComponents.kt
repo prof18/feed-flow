@@ -27,6 +27,7 @@ import com.prof18.feedflow.shared.ui.accounts.icons.Cloud
 import com.prof18.feedflow.shared.ui.accounts.icons.Dropbox
 import com.prof18.feedflow.shared.ui.accounts.icons.FreshRSS
 import com.prof18.feedflow.shared.ui.accounts.icons.GoogleDriveLogo
+import com.prof18.feedflow.shared.ui.accounts.icons.Miniflux
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.ImmutableList
@@ -39,8 +40,8 @@ fun AccountsContent(
     onDropboxCLick: () -> Unit,
     onGoogleDriveClick: () -> Unit,
     onICloudClick: () -> Unit,
-    modifier: Modifier = Modifier,
     onFreshRssClick: () -> Unit,
+    modifier: Modifier = Modifier,
     onMinifluxClick: () -> Unit,
 ) {
     Scaffold(
@@ -139,7 +140,7 @@ private fun SyncAccounts.getIcon() =
         SyncAccounts.ICLOUD -> Cloud
         SyncAccounts.LOCAL -> Dropbox
         SyncAccounts.FRESH_RSS -> FreshRSS
-        SyncAccounts.MINIFLUX -> FreshRSS
+        SyncAccounts.MINIFLUX -> Miniflux
     }
 
 @Composable

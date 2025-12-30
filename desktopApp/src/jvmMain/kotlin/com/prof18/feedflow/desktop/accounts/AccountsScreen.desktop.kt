@@ -9,8 +9,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.desktop.accounts.dropbox.DropboxSyncScreen
 import com.prof18.feedflow.desktop.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.desktop.accounts.googledrive.GoogleDriveSyncScreen
-import com.prof18.feedflow.desktop.accounts.miniflux.MinifluxSyncScreen
 import com.prof18.feedflow.desktop.accounts.icloud.ICloudSyncScreen
+import com.prof18.feedflow.desktop.accounts.miniflux.MinifluxSyncScreen
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.generateUniqueKey

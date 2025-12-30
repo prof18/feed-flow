@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 internal data class ItemContentDTO(
     val id: String,
     val published: Long,
-    val title: String,
-    val canonical: List<Link>,
-    val summary: Summary,
+    val title: String? = null,
+    val canonical: List<Link>? = null,
+    val summary: Summary? = null,
     val origin: Origin,
     val content: Content? = null,
     val author: String? = null,
@@ -33,27 +33,27 @@ internal data class ItemContentDTO(
 
     @Serializable
     data class Summary(
-        val content: String,
+        val content: String? = null,
     )
 
     @Serializable
     data class Content(
-        val content: String,
+        val content: String? = null,
     )
 
     @Serializable
     data class Enclosure(
-        val href: String,
-        val type: String,
+        val href: String? = null,
+        val type: String? = null,
     )
 
     @Serializable
     data class Link(
-        val href: String,
+        val href: String? = null,
     )
 
     val image: Enclosure?
-        get() = enclosure?.find { it.type.startsWith("image") }
+        get() = enclosure?.find { it.type?.startsWith("image") == true }
 }
 
 /** open for testing */

@@ -202,6 +202,10 @@ class DatabaseHelper(
             }
         }
 
+    suspend fun hasFeedItems(): Boolean = withContext(backgroundDispatcher) {
+        dbRef.feedItemQueries.countFeedItems().executeAsOne() > 0
+    }
+
     suspend fun markAsRead(itemsToUpdates: List<FeedItemId>) =
         dbRef.transactionWithContext(backgroundDispatcher) {
             for (item in itemsToUpdates) {

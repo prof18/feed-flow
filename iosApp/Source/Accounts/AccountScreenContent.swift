@@ -86,7 +86,7 @@ struct AccountsScreenContent: View {
             case .miniflux:
                 NavigationLink(destination: MinifluxSyncScreen(isFromAddAccount: false)) {
                     HStack {
-                        Image("freshrss")
+                        Image("miniflux")
                             .renderingMode(.template)
                             .resizable()
                             .scaledToFit()

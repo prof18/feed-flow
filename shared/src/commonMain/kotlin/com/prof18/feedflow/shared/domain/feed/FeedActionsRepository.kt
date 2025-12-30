@@ -27,7 +27,7 @@ internal class FeedActionsRepository(
     suspend fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
         feedStateRepository.markAsRead(itemsToUpdates)
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 gReaderRepository.updateReadStatus(itemsToUpdates.toList(), isRead = true)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
@@ -44,7 +44,7 @@ internal class FeedActionsRepository(
     suspend fun markAllAboveAsRead(targetItemId: String) {
         val currentFilter = feedStateRepository.getCurrentFeedFilter()
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 val itemIds = databaseHelper.getItemsAbove(targetItemId, currentFilter)
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
@@ -67,7 +67,7 @@ internal class FeedActionsRepository(
     suspend fun markAllBelowAsRead(targetItemId: String) {
         val currentFilter = feedStateRepository.getCurrentFeedFilter()
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 val itemIds = databaseHelper.getItemsBelow(targetItemId, currentFilter)
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
@@ -90,7 +90,7 @@ internal class FeedActionsRepository(
     suspend fun markAllCurrentFeedAsRead() {
         val currentFilter = feedStateRepository.getCurrentFeedFilter()
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 gReaderRepository.markAllFeedAsRead(currentFilter)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkAllFeedsAsReadFailed))
@@ -119,7 +119,7 @@ internal class FeedActionsRepository(
         feedStateRepository.updateBookmarkStatus(feedItemId, isBookmarked)
 
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 gReaderRepository.updateBookmarkStatus(feedItemId, isBookmarked)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateBookmarkStatusFailed))
@@ -144,7 +144,7 @@ internal class FeedActionsRepository(
         feedStateRepository.updateReadStatus(feedItemId, isRead)
 
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 gReaderRepository.updateReadStatus(listOf(feedItemId), isRead)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.UpdateReadStatusFailed))

@@ -1,4 +1,4 @@
-package com.prof18.feedflow.android.settings.blocked
+package com.prof18.feedflow.android.settings.feedsandaccounts.subpages
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

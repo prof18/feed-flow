@@ -10,7 +10,9 @@ import androidx.compose.material.icons.outlined.EventBusy
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.HideSource
 import androidx.compose.material.icons.outlined.SubtitlesOff
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -24,9 +26,10 @@ import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.presentation.model.SettingsState
+import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
+import com.prof18.feedflow.shared.ui.settings.FeedItemPreview
 import com.prof18.feedflow.shared.ui.settings.FeedLayoutSelector
-import com.prof18.feedflow.shared.ui.settings.FeedListFontSettings
 import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.settings.SwipeActionSelector
 import com.prof18.feedflow.shared.ui.settings.TimeFormatSelector
@@ -55,89 +58,103 @@ internal fun FeedListAppearanceDialog(
             val scrollableState = rememberScrollState()
             Column(
                 modifier = Modifier
-                    .verticalScroll(scrollableState),
+                    .padding(paddingValues),
             ) {
-                FeedListFontSettings(
+                FeedItemPreview(
                     fontSizes = fontSizesState,
-                    modifier = Modifier
-                        .padding(paddingValues),
-                    updateFontScale = { fontScale ->
-                        callbacks.onFontScaleUpdate(fontScale)
-                    },
+                    feedLayout = settingsState.feedLayout,
                     isHideDescriptionEnabled = settingsState.isHideDescriptionEnabled,
                     isHideImagesEnabled = settingsState.isHideImagesEnabled,
                     isHideDateEnabled = settingsState.isHideDateEnabled,
                     dateFormat = settingsState.dateFormat,
                     timeFormat = settingsState.timeFormat,
-                    feedLayout = settingsState.feedLayout,
                 )
 
-                Spacer(modifier = Modifier.padding(top = Spacing.regular))
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(scrollableState),
+                ) {
+                    Text(
+                        text = LocalFeedFlowStrings.current.settingsFeedListScaleTitle,
+                        modifier = Modifier.padding(Spacing.regular),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
 
-                FeedLayoutSelector(
-                    feedLayout = settingsState.feedLayout,
-                    onFeedLayoutSelected = { feedLayout ->
-                        callbacks.onFeedLayoutUpdate(feedLayout)
-                    },
-                )
+                    SliderWithPlusMinus(
+                        modifier = Modifier.padding(horizontal = Spacing.regular),
+                        value = fontSizesState.scaleFactor.toFloat(),
+                        onValueChange = { callbacks.onFontScaleUpdate(it.toInt()) },
+                        valueRange = -4f..16f,
+                        steps = 20,
+                    )
 
-                SettingSwitchItem(
-                    title = LocalFeedFlowStrings.current.settingsHideDescription,
-                    icon = Icons.Outlined.SubtitlesOff,
-                    isChecked = settingsState.isHideDescriptionEnabled,
-                    onCheckedChange = { callbacks.onHideDescriptionUpdate(it) },
-                )
+                    Spacer(modifier = Modifier.padding(top = Spacing.regular))
 
-                SettingSwitchItem(
-                    title = LocalFeedFlowStrings.current.settingsHideImages,
-                    icon = Icons.Outlined.HideImage,
-                    isChecked = settingsState.isHideImagesEnabled,
-                    onCheckedChange = { callbacks.onHideImagesUpdate(it) },
-                )
+                    FeedLayoutSelector(
+                        feedLayout = settingsState.feedLayout,
+                        onFeedLayoutSelected = { feedLayout ->
+                            callbacks.onFeedLayoutUpdate(feedLayout)
+                        },
+                    )
 
-                SettingSwitchItem(
-                    title = LocalFeedFlowStrings.current.settingsHideDate,
-                    icon = Icons.Outlined.EventBusy,
-                    isChecked = settingsState.isHideDateEnabled,
-                    onCheckedChange = { callbacks.onHideDateUpdate(it) },
-                )
+                    SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideDescription,
+                        icon = Icons.Outlined.SubtitlesOff,
+                        isChecked = settingsState.isHideDescriptionEnabled,
+                        onCheckedChange = { callbacks.onHideDescriptionUpdate(it) },
+                    )
 
-                SettingSwitchItem(
-                    title = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
-                    icon = Icons.Outlined.HideSource,
-                    isChecked = settingsState.isRemoveTitleFromDescriptionEnabled,
-                    onCheckedChange = { callbacks.onRemoveTitleFromDescUpdate(it) },
-                )
+                    SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideImages,
+                        icon = Icons.Outlined.HideImage,
+                        isChecked = settingsState.isHideImagesEnabled,
+                        onCheckedChange = { callbacks.onHideImagesUpdate(it) },
+                    )
 
-                DateFormatSelector(
-                    currentFormat = settingsState.dateFormat,
-                    onFormatSelected = { format ->
-                        callbacks.onDateFormatUpdate(format)
-                    },
-                )
+                    SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideDate,
+                        icon = Icons.Outlined.EventBusy,
+                        isChecked = settingsState.isHideDateEnabled,
+                        onCheckedChange = { callbacks.onHideDateUpdate(it) },
+                    )
 
-                TimeFormatSelector(
-                    currentFormat = settingsState.timeFormat,
-                    onFormatSelected = { format ->
-                        callbacks.onTimeFormatUpdate(format)
-                    },
-                )
+                    SettingSwitchItem(
+                        title = LocalFeedFlowStrings.current.settingsHideDuplicatedTitleFromDesc,
+                        icon = Icons.Outlined.HideSource,
+                        isChecked = settingsState.isRemoveTitleFromDescriptionEnabled,
+                        onCheckedChange = { callbacks.onRemoveTitleFromDescUpdate(it) },
+                    )
 
-                SwipeActionSelector(
-                    direction = SwipeDirection.LEFT,
-                    currentAction = settingsState.leftSwipeActionType,
-                    onActionSelected = { action ->
-                        callbacks.onSwipeActionUpdate(SwipeDirection.LEFT, action)
-                    },
-                )
+                    DateFormatSelector(
+                        currentFormat = settingsState.dateFormat,
+                        onFormatSelected = { format ->
+                            callbacks.onDateFormatUpdate(format)
+                        },
+                    )
 
-                SwipeActionSelector(
-                    direction = SwipeDirection.RIGHT,
-                    currentAction = settingsState.rightSwipeActionType,
-                    onActionSelected = { action ->
-                        callbacks.onSwipeActionUpdate(SwipeDirection.RIGHT, action)
-                    },
-                )
+                    TimeFormatSelector(
+                        currentFormat = settingsState.timeFormat,
+                        onFormatSelected = { format ->
+                            callbacks.onTimeFormatUpdate(format)
+                        },
+                    )
+
+                    SwipeActionSelector(
+                        direction = SwipeDirection.LEFT,
+                        currentAction = settingsState.leftSwipeActionType,
+                        onActionSelected = { action ->
+                            callbacks.onSwipeActionUpdate(SwipeDirection.LEFT, action)
+                        },
+                    )
+
+                    SwipeActionSelector(
+                        direction = SwipeDirection.RIGHT,
+                        currentAction = settingsState.rightSwipeActionType,
+                        onActionSelected = { action ->
+                            callbacks.onSwipeActionUpdate(SwipeDirection.RIGHT, action)
+                        },
+                    )
+                }
             }
         }
     }

@@ -284,6 +284,11 @@
     <string name="confirm_button">Confirm</string>
     <string name="cancel_button">Cancel</string>
     <string name="settings_danger_title">Danger</string>
+    <string name="settings_feeds_and_accounts">Feeds &amp; Accounts</string>
+    <string name="settings_reading_behavior">Reading Behavior</string>
+    <string name="settings_advanced">Advanced</string>
+    <string name="settings_sync_and_storage">Sync &amp; Storage</string>
+    <string name="settings_about_and_support">About &amp; Support</string>
     <string name="settings_clear_downloaded_articles">Clear downloaded articles</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Clear downloaded articles?</string>
     <string name="settings_clear_downloaded_articles_dialog_message">This will delete all downloaded article content for offline reading. This action cannot be undone.</string>

@@ -1,4 +1,4 @@
-package com.prof18.feedflow.android.settings.notifications
+package com.prof18.feedflow.android.settings.feedsandaccounts.subpages
 
 import android.Manifest
 import android.app.Activity

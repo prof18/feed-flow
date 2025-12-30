@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+// TODO: it can be broken down
 class SettingsViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val fontSizeRepository: FeedFontSizeRepository,

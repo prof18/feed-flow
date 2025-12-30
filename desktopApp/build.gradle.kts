@@ -3,7 +3,7 @@ import org.gradle.kotlin.dsl.flatpakGradleGenerator
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val javafxVersion = "23.0.1"
+val javafxVersion = "23.0.2"
 val javafxPlatform: String = run {
     val osName = System.getProperty("os.name").lowercase()
     val osArch = System.getProperty("os.arch").lowercase()

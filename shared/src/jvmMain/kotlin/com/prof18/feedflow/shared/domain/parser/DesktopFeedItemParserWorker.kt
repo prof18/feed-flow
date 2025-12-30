@@ -60,8 +60,8 @@ internal class DesktopFeedItemParserWorker(
                 }
 
                 val title = article.title
-                val resultContent = if (FeatureFlags.USE_RICH_TEXT_FOR_READER_MODE) {
-                    // For RichText mode, return raw HTML content
+                val resultContent = if (FeatureFlags.USE_NATIVE_WEBVIEW_FOR_READER_MODE) {
+                    // For native WebView mode, return raw HTML content
                     content
                 } else {
                     // Convert to styled HTML and then to markdown for Markdown renderer

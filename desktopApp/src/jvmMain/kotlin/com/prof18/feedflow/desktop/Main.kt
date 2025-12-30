@@ -144,8 +144,8 @@ private fun createAppConfig(properties: Properties): DesktopConfig {
     val isIcloudEnabled = setupICloudSupport()
     val isWebViewEnabled = setupWebViewSupport()
 
-    // Set the global state for native WebView availability
-    NativeWebViewState.isEnabled = isWebViewEnabled
+    // Set the global state for native WebView library availability
+    NativeWebViewState.setLibraryLoaded(isWebViewEnabled)
 
     return DesktopConfig(
         sentryDns = sentryDns,

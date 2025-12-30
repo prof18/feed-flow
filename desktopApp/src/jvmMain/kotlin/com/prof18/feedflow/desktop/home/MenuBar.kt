@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isLinux
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.accounts.AccountsScreen
+import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.feedsourcelist.FeedSourceListScreen
 import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
@@ -66,14 +67,13 @@ fun FrameWindowScope.FeedFlowMenuBar(
     settings: MenuBarSettings,
 ) {
     val isMacOS = getDesktopOS().isMacOs()
+    val navigator = LocalNavigator.currentOrThrow
 
     MenuBar {
         Menu(LocalFeedFlowStrings.current.fileMenu, mnemonic = 'F') {
             Item(
                 text = LocalFeedFlowStrings.current.refreshFeeds,
-                onClick = {
-                    actions.onRefreshClick()
-                },
+                onClick = { actions.onRefreshClick() },
                 shortcut = if (isMacOS) {
                     KeyShortcut(Key.R, meta = true)
                 } else {
@@ -83,9 +83,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
 
             Item(
                 text = LocalFeedFlowStrings.current.forceFeedRefresh,
-                onClick = {
-                    actions.onForceRefreshClick()
-                },
+                onClick = { actions.onForceRefreshClick() },
                 shortcut = if (isMacOS) {
                     KeyShortcut(Key.R, meta = true, shift = true)
                 } else {
@@ -94,11 +92,10 @@ fun FrameWindowScope.FeedFlowMenuBar(
             )
 
             if (state.isSyncUploadRequired) {
+                Separator()
                 Item(
                     text = LocalFeedFlowStrings.current.triggerFeedSync,
-                    onClick = {
-                        actions.onBackupClick()
-                    },
+                    onClick = { actions.onBackupClick() },
                     shortcut = if (isMacOS) {
                         KeyShortcut(Key.S, meta = true)
                     } else {
@@ -107,11 +104,11 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 )
             }
 
+            Separator()
+
             Item(
                 text = LocalFeedFlowStrings.current.markAllReadButton,
-                onClick = {
-                    actions.onMarkAllReadClick()
-                },
+                onClick = { actions.onMarkAllReadClick() },
                 shortcut = if (isMacOS) {
                     KeyShortcut(Key.A, meta = true, shift = true)
                 } else {
@@ -121,9 +118,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
 
             Item(
                 text = LocalFeedFlowStrings.current.clearOldArticlesButton,
-                onClick = {
-                    actions.onClearOldFeedClick()
-                },
+                onClick = { actions.onClearOldFeedClick() },
                 shortcut = if (isMacOS) {
                     KeyShortcut(Key.D, meta = true, shift = true)
                 } else {
@@ -131,6 +126,75 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 },
             )
 
+            Separator()
+
+            Item(
+                text = LocalFeedFlowStrings.current.importExportOpml,
+                onClick = actions.onImportExportClick,
+                shortcut = if (isMacOS) {
+                    KeyShortcut(Key.I, meta = true)
+                } else {
+                    KeyShortcut(Key.I, ctrl = true)
+                },
+            )
+
+            DebugMenu(
+                showDebugMenu = state.showDebugMenu,
+                deleteFeeds = actions.deleteFeeds,
+            )
+        }
+
+        Menu(LocalFeedFlowStrings.current.settingsTitleFeed, mnemonic = 'E') {
+            Item(
+                text = LocalFeedFlowStrings.current.addFeed,
+                onClick = {
+                    navigator.push(
+                        AddFeedFullScreen(
+                            onFeedAdded = actions.onRefreshClick,
+                        ),
+                    )
+                },
+                shortcut = if (isMacOS) {
+                    KeyShortcut(Key.N, meta = true)
+                } else {
+                    KeyShortcut(Key.N, ctrl = true)
+                },
+            )
+
+            if (state.feedFilter is FeedFilter.Source) {
+                Item(
+                    text = LocalFeedFlowStrings.current.editFeed,
+                    onClick = {
+                        navigator.push(EditFeedScreen(state.feedFilter.feedSource))
+                    },
+                    shortcut = if (isMacOS) {
+                        KeyShortcut(Key.E, meta = true)
+                    } else {
+                        KeyShortcut(Key.E, ctrl = true)
+                    },
+                )
+                Separator()
+            }
+
+            Item(
+                text = LocalFeedFlowStrings.current.feedsTitle,
+                onClick = { navigator.push(FeedSourceListScreen()) },
+                shortcut = if (isMacOS) {
+                    KeyShortcut(Key.L, meta = true)
+                } else {
+                    KeyShortcut(Key.L, ctrl = true)
+                },
+            )
+
+            Separator()
+
+            Item(
+                text = LocalFeedFlowStrings.current.settingsBlockedWords,
+                onClick = { navigator.push(BlockedWordsScreen()) },
+            )
+        }
+
+        Menu(LocalFeedFlowStrings.current.menuView, mnemonic = 'V') {
             Menu(LocalFeedFlowStrings.current.settingsTheme) {
                 RadioButtonItem(
                     text = LocalFeedFlowStrings.current.settingsThemeSystem,
@@ -149,86 +213,37 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 )
             }
 
-            Separator()
-
             Item(
-                text = LocalFeedFlowStrings.current.settingsClearDownloadedArticles,
-                onClick = settings.onClearDownloadedArticles,
-            )
-
-            Item(
-                text = LocalFeedFlowStrings.current.settingsClearImageCache,
-                onClick = settings.onClearImageCache,
-            )
-
-            DebugMenu(
-                showDebugMenu = state.showDebugMenu,
-                deleteFeeds = actions.deleteFeeds,
+                text = LocalFeedFlowStrings.current.feedListAppearance,
+                onClick = actions.onFeedFontScaleClick,
             )
 
             Separator()
 
-            if (getDesktopOS().isLinux()) {
-                Item(
-                    text = LocalFeedFlowStrings.current.supportTheProject,
-                    onClick = {
-                        runCatching {
-                            Desktop.getDesktop().browse(URI("https://www.paypal.me/MarcoGomiero"))
-                        }
-                    },
+            CheckboxItem(
+                text = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
+                checked = state.settingsState.isShowReadItemsEnabled,
+                onCheckedChange = settings.setShowReadItem,
+            )
+
+            Menu(LocalFeedFlowStrings.current.settingsFeedOrderTitle) {
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsFeedOrderNewestFirst,
+                    selected = state.settingsState.feedOrder == FeedOrder.NEWEST_FIRST,
+                    onClick = { settings.onFeedOrderSelected(FeedOrder.NEWEST_FIRST) },
+                )
+                RadioButtonItem(
+                    text = LocalFeedFlowStrings.current.settingsFeedOrderOldestFirst,
+                    selected = state.settingsState.feedOrder == FeedOrder.OLDEST_FIRST,
+                    onClick = { settings.onFeedOrderSelected(FeedOrder.OLDEST_FIRST) },
                 )
             }
-
-            Item(
-                text = LocalFeedFlowStrings.current.aboutButton,
-                onClick = actions.onAboutClick,
-            )
         }
 
-        Menu(LocalFeedFlowStrings.current.settingsTitleFeed) {
-            val navigator = LocalNavigator.currentOrThrow
-
-            if (state.feedFilter is FeedFilter.Source) {
-                Item(
-                    text = LocalFeedFlowStrings.current.editFeed,
-                    onClick = {
-                        navigator.push(EditFeedScreen(state.feedFilter.feedSource))
-                    },
-                    shortcut = if (isMacOS) {
-                        KeyShortcut(Key.E, meta = true)
-                    } else {
-                        KeyShortcut(Key.E, ctrl = true)
-                    },
-                )
-            }
-
-            Item(
-                text = LocalFeedFlowStrings.current.feedsTitle,
-                onClick = {
-                    navigator.push(FeedSourceListScreen())
-                },
-                shortcut = if (isMacOS) {
-                    KeyShortcut(Key.L, meta = true)
-                } else {
-                    KeyShortcut(Key.L, ctrl = true)
-                },
-            )
-
-            Item(
-                text = LocalFeedFlowStrings.current.importExportOpml,
-                onClick = actions.onImportExportClick,
-                shortcut = if (isMacOS) {
-                    KeyShortcut(Key.I, meta = true)
-                } else {
-                    KeyShortcut(Key.I, ctrl = true)
-                },
-            )
-
+        Menu(LocalFeedFlowStrings.current.settingsBehaviourTitle, mnemonic = 'S') {
             Item(
                 text = LocalFeedFlowStrings.current.settingsAccounts,
-                onClick = {
-                    navigator.push(AccountsScreen())
-                },
+                onClick = { navigator.push(AccountsScreen()) },
                 shortcut = if (isMacOS) {
                     KeyShortcut(Key.Comma, meta = true)
                 } else {
@@ -236,20 +251,8 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 },
             )
 
-            Item(
-                text = LocalFeedFlowStrings.current.feedListAppearance,
-                onClick = actions.onFeedFontScaleClick,
-            )
+            Separator()
 
-            Item(
-                text = LocalFeedFlowStrings.current.settingsBlockedWords,
-                onClick = {
-                    navigator.push(BlockedWordsScreen())
-                },
-            )
-        }
-
-        Menu(LocalFeedFlowStrings.current.settingsBehaviourTitle, mnemonic = 'B') {
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.settingsReaderMode,
                 checked = state.settingsState.isReaderModeEnabled,
@@ -268,16 +271,12 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 onCheckedChange = settings.setPrefetchArticleContent,
             )
 
+            Separator()
+
             CheckboxItem(
                 text = LocalFeedFlowStrings.current.toggleMarkReadWhenScrolling,
                 checked = state.settingsState.isMarkReadWhenScrollingEnabled,
                 onCheckedChange = settings.setMarkReadWhenScrolling,
-            )
-
-            CheckboxItem(
-                text = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
-                checked = state.settingsState.isShowReadItemsEnabled,
-                onCheckedChange = settings.setShowReadItem,
             )
 
             Menu(LocalFeedFlowStrings.current.settingsAutoDelete) {
@@ -308,32 +307,20 @@ fun FrameWindowScope.FeedFlowMenuBar(
                 )
             }
 
-            Menu(LocalFeedFlowStrings.current.settingsFeedOrderTitle) {
-                RadioButtonItem(
-                    text = LocalFeedFlowStrings.current.settingsFeedOrderNewestFirst,
-                    selected = state.settingsState.feedOrder == FeedOrder.NEWEST_FIRST,
-                    onClick = { settings.onFeedOrderSelected(FeedOrder.NEWEST_FIRST) },
-                )
-                RadioButtonItem(
-                    text = LocalFeedFlowStrings.current.settingsFeedOrderOldestFirst,
-                    selected = state.settingsState.feedOrder == FeedOrder.OLDEST_FIRST,
-                    onClick = { settings.onFeedOrderSelected(FeedOrder.OLDEST_FIRST) },
-                )
-            }
+            Separator()
+
+            Item(
+                text = LocalFeedFlowStrings.current.settingsClearDownloadedArticles,
+                onClick = settings.onClearDownloadedArticles,
+            )
+
+            Item(
+                text = LocalFeedFlowStrings.current.settingsClearImageCache,
+                onClick = settings.onClearImageCache,
+            )
         }
 
-        Menu(LocalFeedFlowStrings.current.settingsHelpTitle, mnemonic = 'B') {
-            Item(
-                text = LocalFeedFlowStrings.current.reportIssueButton,
-                onClick = actions.onBugReportClick,
-            )
-
-            CheckboxItem(
-                text = LocalFeedFlowStrings.current.settingsCrashReporting,
-                checked = state.settingsState.isCrashReportingEnabled,
-                onCheckedChange = settings.setCrashReportingEnabled,
-            )
-
+        Menu(LocalFeedFlowStrings.current.settingsHelpTitle, mnemonic = 'H') {
             if (FeatureFlags.ENABLE_FAQ) {
                 Item(
                     text = LocalFeedFlowStrings.current.aboutMenuFaq,
@@ -346,6 +333,35 @@ fun FrameWindowScope.FeedFlowMenuBar(
                     },
                 )
             }
+
+            Item(
+                text = LocalFeedFlowStrings.current.reportIssueButton,
+                onClick = actions.onBugReportClick,
+            )
+
+            CheckboxItem(
+                text = LocalFeedFlowStrings.current.settingsCrashReporting,
+                checked = state.settingsState.isCrashReportingEnabled,
+                onCheckedChange = settings.setCrashReportingEnabled,
+            )
+
+            Separator()
+
+            if (getDesktopOS().isLinux()) {
+                Item(
+                    text = LocalFeedFlowStrings.current.supportTheProject,
+                    onClick = {
+                        runCatching {
+                            Desktop.getDesktop().browse(URI("https://www.paypal.me/MarcoGomiero"))
+                        }
+                    },
+                )
+            }
+
+            Item(
+                text = LocalFeedFlowStrings.current.aboutButton,
+                onClick = actions.onAboutClick,
+            )
         }
     }
 }

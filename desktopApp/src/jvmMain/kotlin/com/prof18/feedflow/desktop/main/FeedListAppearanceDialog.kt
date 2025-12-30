@@ -25,7 +25,7 @@ import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
-import com.prof18.feedflow.shared.presentation.model.SettingsState
+import com.prof18.feedflow.shared.presentation.model.FeedListSettingsState
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.settings.DateFormatSelector
 import com.prof18.feedflow.shared.ui.settings.FeedItemPreview
@@ -41,7 +41,7 @@ internal fun FeedListAppearanceDialog(
     visible: Boolean,
     onCloseRequest: () -> Unit,
     fontSizesState: FeedFontSizes,
-    settingsState: SettingsState,
+    settingsState: FeedListSettingsState,
     callbacks: FeedListAppearanceCallbacks,
 ) {
     val dialogState = rememberDialogState(

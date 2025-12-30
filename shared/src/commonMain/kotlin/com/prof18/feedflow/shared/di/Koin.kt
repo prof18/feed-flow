@@ -46,13 +46,14 @@ import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
+import com.prof18.feedflow.shared.presentation.MainSettingsViewModel
+import com.prof18.feedflow.shared.presentation.MenuBarViewModel
 import com.prof18.feedflow.shared.presentation.MinifluxSyncViewModel
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReadingBehaviorSettingsViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
-import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.presentation.SyncAndStorageSettingsViewModel
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import io.ktor.client.HttpClient
@@ -225,9 +226,14 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     }
 
     viewModel {
-        SettingsViewModel(
+        MainSettingsViewModel(
             settingsRepository = get(),
-            fontSizeRepository = get(),
+        )
+    }
+
+    viewModel {
+        MenuBarViewModel(
+            settingsRepository = get(),
             feedStateRepository = get(),
             contentPrefetchRepository = get(),
             feedItemContentFileHandler = get(),
@@ -238,6 +244,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         FeedListSettingsViewModel(
             settingsRepository = get(),
             fontSizeRepository = get(),
+            feedStateRepository = get(),
         )
     }
 

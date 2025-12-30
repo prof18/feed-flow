@@ -34,9 +34,6 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowState
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
-import coil3.ImageLoader
-import coil3.SingletonImageLoader
-import coil3.compose.LocalPlatformContext
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.DesktopDatabaseErrorState
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
@@ -45,28 +42,21 @@ import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.home.FeedFlowMenuBar
-import com.prof18.feedflow.desktop.home.MenuBarActions
-import com.prof18.feedflow.desktop.home.MenuBarSettings
-import com.prof18.feedflow.desktop.home.MenuBarState
+import com.prof18.feedflow.desktop.home.menubar.FeedFlowMenuBar
+import com.prof18.feedflow.desktop.home.menubar.MenuBarActions
+import com.prof18.feedflow.desktop.home.menubar.MenuBarState
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
-import com.prof18.feedflow.desktop.utils.disableSentry
-import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
-import com.prof18.feedflow.shared.presentation.SettingsViewModel
-import com.prof18.feedflow.shared.presentation.model.SettingsState
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import kotlinx.coroutines.launch
-import java.awt.Desktop
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
-import java.net.URI
 import kotlin.math.roundToInt
 
 @Suppress("ViewModelForwarding")
@@ -75,22 +65,13 @@ internal fun FrameWindowScope.MainWindow(
     windowState: WindowState,
     isDarkTheme: Boolean,
     appConfig: DesktopConfig,
-    settingsViewModel: SettingsViewModel,
-    settingsState: SettingsState,
     showBackupLoader: Boolean,
 ) {
-    val settingsRepository = DI.koin.get<SettingsRepository>()
-    val userFeedbackReporter = DI.koin.get<UserFeedbackReporter>()
-    val feedSyncRepo = DI.koin.get<FeedSyncRepository>()
     val snackbarHostState = remember { SnackbarHostState() }
-    val messageQueue = DI.koin.get<FeedSyncMessageQueue>()
 
     MainWindowEffects(
         composeWindow = window,
-        feedSyncRepo = feedSyncRepo,
         windowState = windowState,
-        settingsRepository = settingsRepository,
-        messageQueue = messageQueue,
         snackbarHostState = snackbarHostState,
     )
 
@@ -101,9 +82,6 @@ internal fun FrameWindowScope.MainWindow(
             snackbarHostState = snackbarHostState,
             isDarkTheme = isDarkTheme,
             appConfig = appConfig,
-            settingsViewModel = settingsViewModel,
-            settingsState = settingsState,
-            userFeedbackReporter = userFeedbackReporter,
         )
     }
 }
@@ -134,14 +112,14 @@ private fun BackupInProgressScreen(
 @Composable
 private fun MainWindowEffects(
     composeWindow: ComposeWindow,
-    feedSyncRepo: FeedSyncRepository,
     windowState: WindowState,
-    settingsRepository: SettingsRepository,
-    messageQueue: FeedSyncMessageQueue,
     snackbarHostState: SnackbarHostState,
 ) {
     val scope = rememberCoroutineScope()
     val flowStrings = LocalFeedFlowStrings.current
+    val settingsRepository = DI.koin.get<SettingsRepository>()
+    val feedSyncRepo = DI.koin.get<FeedSyncRepository>()
+    val messageQueue = DI.koin.get<FeedSyncMessageQueue>()
 
     val listener = remember(feedSyncRepo) {
         object : WindowFocusListener {
@@ -224,25 +202,17 @@ private fun FrameWindowScope.MainWindowContent(
     snackbarHostState: SnackbarHostState,
     isDarkTheme: Boolean,
     appConfig: DesktopConfig,
-    settingsViewModel: SettingsViewModel,
-    settingsState: SettingsState,
-    userFeedbackReporter: UserFeedbackReporter,
 ) {
     val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
+    val feedListSettingsViewModel = desktopViewModel { DI.koin.get<FeedListSettingsViewModel>() }
 
     CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
         val scope = rememberCoroutineScope()
-        val emailSubject = LocalFeedFlowStrings.current.issueContentTitle
-        val emailContent = LocalFeedFlowStrings.current.issueContentTemplate
-
         val listState = rememberLazyListState()
 
         var aboutDialogVisibility by remember { mutableStateOf(false) }
         var showMarkAllReadDialog by remember { mutableStateOf(false) }
         var showClearOldArticlesDialog by remember { mutableStateOf(false) }
-        var showPrefetchWarningDialog by remember { mutableStateOf(false) }
-        var showClearDownloadedArticlesDialog by remember { mutableStateOf(false) }
-        var showClearImageCacheDialog by remember { mutableStateOf(false) }
 
         AboutDialog(
             visible = aboutDialogVisibility,
@@ -252,40 +222,41 @@ private fun FrameWindowScope.MainWindowContent(
         )
 
         var feedListFontDialogState by remember { mutableStateOf(false) }
-        val fontSizesState by settingsViewModel.feedFontSizeState.collectAsState()
+        val fontSizesState by feedListSettingsViewModel.feedFontSizeState.collectAsState()
+        val feedListSettingsState by feedListSettingsViewModel.state.collectAsState()
 
         FeedListAppearanceDialog(
             visible = feedListFontDialogState,
             onCloseRequest = { feedListFontDialogState = false },
             fontSizesState = fontSizesState,
-            settingsState = settingsState,
+            settingsState = feedListSettingsState,
             callbacks = FeedListAppearanceCallbacks(
                 onFontScaleUpdate = { fontScale ->
-                    settingsViewModel.updateFontScale(fontScale)
+                    feedListSettingsViewModel.updateFontScale(fontScale)
                 },
                 onFeedLayoutUpdate = { feedLayout ->
-                    settingsViewModel.updateFeedLayout(feedLayout)
+                    feedListSettingsViewModel.updateFeedLayout(feedLayout)
                 },
                 onHideDescriptionUpdate = { enabled ->
-                    settingsViewModel.updateHideDescription(enabled)
+                    feedListSettingsViewModel.updateHideDescription(enabled)
                 },
                 onHideImagesUpdate = { enabled ->
-                    settingsViewModel.updateHideImages(enabled)
+                    feedListSettingsViewModel.updateHideImages(enabled)
                 },
                 onHideDateUpdate = { enabled ->
-                    settingsViewModel.updateHideDate(enabled)
+                    feedListSettingsViewModel.updateHideDate(enabled)
                 },
                 onRemoveTitleFromDescUpdate = { enabled ->
-                    settingsViewModel.updateRemoveTitleFromDescription(enabled)
+                    feedListSettingsViewModel.updateRemoveTitleFromDescription(enabled)
                 },
                 onDateFormatUpdate = { format ->
-                    settingsViewModel.updateDateFormat(format)
+                    feedListSettingsViewModel.updateDateFormat(format)
                 },
                 onTimeFormatUpdate = { format ->
-                    settingsViewModel.updateTimeFormat(format)
+                    feedListSettingsViewModel.updateTimeFormat(format)
                 },
                 onSwipeActionUpdate = { direction, action ->
-                    settingsViewModel.updateSwipeAction(direction, action)
+                    feedListSettingsViewModel.updateSwipeAction(direction, action)
                 },
             ),
         )
@@ -305,35 +276,6 @@ private fun FrameWindowScope.MainWindowContent(
             onConfirm = {
                 homeViewModel.deleteOldFeedItems()
                 showClearOldArticlesDialog = false
-            },
-        )
-
-        PrefetchWarningDialog(
-            visible = showPrefetchWarningDialog,
-            onDismiss = { showPrefetchWarningDialog = false },
-            onConfirm = {
-                settingsViewModel.updatePrefetchArticleContent(true)
-                showPrefetchWarningDialog = false
-            },
-        )
-
-        ClearDownloadedArticlesDialog(
-            visible = showClearDownloadedArticlesDialog,
-            onDismiss = { showClearDownloadedArticlesDialog = false },
-            onConfirm = {
-                settingsViewModel.clearDownloadedArticleContent()
-                showClearDownloadedArticlesDialog = false
-            },
-        )
-
-        ClearImageCacheDialog(
-            visible = showClearImageCacheDialog,
-            onDismiss = { showClearImageCacheDialog = false },
-            onConfirm = {
-                val imageLoader = DI.koin.get<ImageLoader>()
-                imageLoader.diskCache?.clear()
-                imageLoader.memoryCache?.clear()
-                showClearImageCacheDialog = false
             },
         )
 
@@ -366,7 +308,6 @@ private fun FrameWindowScope.MainWindowContent(
                     state = MenuBarState(
                         showDebugMenu = appConfig.appEnvironment.isDebug(),
                         feedFilter = currentFeedFilter,
-                        settingsState = settingsState,
                         isSyncUploadRequired = isSyncUploadRequired,
                     ),
                     actions = MenuBarActions(
@@ -395,16 +336,6 @@ private fun FrameWindowScope.MainWindowContent(
                         onAboutClick = {
                             aboutDialogVisibility = true
                         },
-                        onBugReportClick = {
-                            val desktop = Desktop.getDesktop()
-                            val uri = URI.create(
-                                userFeedbackReporter.getEmailUrl(
-                                    subject = emailSubject,
-                                    content = emailContent,
-                                ),
-                            )
-                            desktop.mail(uri)
-                        },
                         onForceRefreshClick = {
                             scope.launch {
                                 listState.animateScrollToItem(0)
@@ -419,59 +350,6 @@ private fun FrameWindowScope.MainWindowContent(
                         },
                         onBackupClick = {
                             homeViewModel.enqueueBackup()
-                        },
-                    ),
-                    settings = MenuBarSettings(
-                        onFeedOrderSelected = { order ->
-                            settingsViewModel.updateFeedOrder(order)
-                        },
-                        setMarkReadWhenScrolling = { enabled ->
-                            settingsViewModel.updateMarkReadWhenScrolling(enabled)
-                        },
-                        setShowReadItem = { enabled ->
-                            settingsViewModel.updateShowReadItemsOnTimeline(enabled)
-                        },
-                        setReaderMode = { enabled ->
-                            settingsViewModel.updateReaderMode(enabled)
-                        },
-                        setSaveReaderModeContent = { enabled ->
-                            settingsViewModel.updateSaveReaderModeContent(enabled)
-                        },
-                        setPrefetchArticleContent = { enabled ->
-                            if (enabled) {
-                                showPrefetchWarningDialog = true
-                            } else {
-                                settingsViewModel.updatePrefetchArticleContent(false)
-                            }
-                        },
-                        onAutoDeletePeriodSelected = { period ->
-                            settingsViewModel.updateAutoDeletePeriod(period)
-                        },
-                        setCrashReportingEnabled = { enabled ->
-                            settingsViewModel.updateCrashReporting(enabled)
-                            if (enabled) {
-                                if (
-                                    appConfig.appEnvironment.isRelease() &&
-                                    appConfig.sentryDns != null &&
-                                    appConfig.version != null
-                                ) {
-                                    initSentry(
-                                        dns = appConfig.sentryDns,
-                                        version = appConfig.version,
-                                    )
-                                }
-                            } else {
-                                disableSentry()
-                            }
-                        },
-                        onThemeModeSelected = { mode ->
-                            settingsViewModel.updateThemeMode(mode)
-                        },
-                        onClearDownloadedArticles = {
-                            showClearDownloadedArticlesDialog = true
-                        },
-                        onClearImageCache = {
-                            showClearImageCacheDialog = true
                         },
                     ),
                 )
@@ -529,93 +407,6 @@ private fun ClearOldArticlesDialog(
             text = { Text(LocalFeedFlowStrings.current.clearOldArticlesDialogMessage) },
             confirmButton = {
                 TextButton(onClick = onConfirm) {
-                    Text(LocalFeedFlowStrings.current.confirmButton)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(LocalFeedFlowStrings.current.cancelButton)
-                }
-            },
-        )
-    }
-}
-
-@Composable
-private fun PrefetchWarningDialog(
-    visible: Boolean,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-) {
-    if (visible) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(LocalFeedFlowStrings.current.settingsPrefetchArticleContent) },
-            text = { Text(LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning) },
-            confirmButton = {
-                TextButton(onClick = onConfirm) {
-                    Text(LocalFeedFlowStrings.current.confirmButton)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(LocalFeedFlowStrings.current.cancelButton)
-                }
-            },
-        )
-    }
-}
-
-@Composable
-private fun ClearDownloadedArticlesDialog(
-    visible: Boolean,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-) {
-    if (visible) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogTitle) },
-            text = { Text(LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogMessage) },
-            confirmButton = {
-                TextButton(onClick = onConfirm) {
-                    Text(LocalFeedFlowStrings.current.confirmButton)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(LocalFeedFlowStrings.current.cancelButton)
-                }
-            },
-        )
-    }
-}
-
-@Composable
-private fun ClearImageCacheDialog(
-    visible: Boolean,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-) {
-    if (visible) {
-        val context = LocalPlatformContext.current
-        val scope = rememberCoroutineScope()
-
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(LocalFeedFlowStrings.current.settingsClearImageCacheDialogTitle) },
-            text = { Text(LocalFeedFlowStrings.current.settingsClearImageCacheDialogMessage) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        scope.launch {
-                            val imageLoader = SingletonImageLoader.get(context)
-                            imageLoader.memoryCache?.clear()
-                            imageLoader.diskCache?.clear()
-                        }
-                        onConfirm()
-                    },
-                ) {
                     Text(LocalFeedFlowStrings.current.confirmButton)
                 }
             },

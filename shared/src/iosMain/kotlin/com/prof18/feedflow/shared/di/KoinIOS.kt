@@ -46,11 +46,11 @@ import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
 import com.prof18.feedflow.shared.presentation.MinifluxSyncViewModel
+import com.prof18.feedflow.shared.presentation.MainSettingsViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReadingBehaviorSettingsViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
-import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.presentation.SyncAndStorageSettingsViewModel
 import com.prof18.feedflow.shared.utils.Telemetry
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
@@ -257,7 +257,7 @@ object Deps : KoinComponent {
     fun getAddFeedViewModel() = getKoin().get<AddFeedViewModel>()
     fun getLogger(tag: String? = null) = getKoin().get<Logger> { parametersOf(tag) }
     fun getImportExportViewModel() = getKoin().get<ImportExportViewModel>()
-    fun getSettingsViewModel() = getKoin().get<SettingsViewModel>()
+    fun getMainSettingsViewModel() = getKoin().get<MainSettingsViewModel>()
     fun getFeedListSettingsViewModel() = getKoin().get<FeedListSettingsViewModel>()
     fun getReadingBehaviorSettingsViewModel() = getKoin().get<ReadingBehaviorSettingsViewModel>()
     fun getSyncAndStorageSettingsViewModel() = getKoin().get<SyncAndStorageSettingsViewModel>()

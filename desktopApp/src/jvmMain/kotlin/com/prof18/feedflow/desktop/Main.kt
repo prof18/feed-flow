@@ -183,10 +183,7 @@ private fun setupICloudSupport(): Boolean {
 
 private fun initializeDependencies(appConfig: DesktopConfig) {
     DI.initKoin(
-        appEnvironment = appConfig.appEnvironment,
-        isICloudEnabled = appConfig.isIcloudEnabled,
-        version = appConfig.version ?: "",
-        isDropboxEnabled = appConfig.isDropboxEnabled,
+        appConfig = appConfig,
     )
 }
 
@@ -246,7 +243,7 @@ private fun windowState(settingsRepository: SettingsRepository): WindowState {
     )
 }
 
-internal data class DesktopConfig(
+data class DesktopConfig(
     val sentryDns: String?,
     val version: String?,
     val appEnvironment: AppEnvironment,

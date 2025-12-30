@@ -2,8 +2,12 @@ import FeedFlowKit
 import SwiftUI
 
 struct FeedListSettingsScreen: View {
-    @Environment(AppState.self) private var appState
-    @StateObject private var vmStoreOwner = VMStoreOwner<FeedListSettingsViewModel>(Deps.shared.getFeedListSettingsViewModel())
+    @Environment(AppState.self) 
+    private var appState
+    
+    @StateObject private var vmStoreOwner = VMStoreOwner<FeedListSettingsViewModel>(
+        Deps.shared.getFeedListSettingsViewModel()
+    )
     private let feedFlowStrings = Deps.shared.getStrings()
 
     @State private var settingsState = FeedListSettingsState(

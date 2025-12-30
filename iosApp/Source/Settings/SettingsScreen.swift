@@ -4,31 +4,10 @@ import SwiftUI
 struct SettingsScreen: View {
     @Environment(AppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var vmStoreOwner = VMStoreOwner<SettingsViewModel>(Deps.shared.getSettingsViewModel())
+    @StateObject private var vmStoreOwner = VMStoreOwner<MainSettingsViewModel>(Deps.shared.getMainSettingsViewModel())
     private let feedFlowStrings = Deps.shared.getStrings()
 
-    @State private var settingsState = SettingsState(
-        isMarkReadWhenScrollingEnabled: true,
-        isShowReadItemsEnabled: false,
-        isReaderModeEnabled: false,
-        isSaveReaderModeContentEnabled: false,
-        isPrefetchArticleContentEnabled: false,
-        isExperimentalParsingEnabled: false,
-        isRemoveTitleFromDescriptionEnabled: false,
-        isHideDescriptionEnabled: false,
-        isHideImagesEnabled: false,
-        isHideDateEnabled: false,
-        autoDeletePeriod: .disabled,
-        isCrashReportingEnabled: true,
-        syncPeriod: .oneHour,
-        leftSwipeActionType: .none,
-        rightSwipeActionType: .none,
-        dateFormat: .normal,
-        timeFormat: .hours24,
-        feedOrder: .newestFirst,
-        feedLayout: .list,
-        themeMode: .system
-    )
+    @State private var settingsState = MainSettingsState(themeMode: .system)
     let fetchFeeds: () -> Void
 
     var body: some View {

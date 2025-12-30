@@ -2,8 +2,12 @@ import FeedFlowKit
 import SwiftUI
 
 struct FeedsAndAccountsScreen: View {
-    @Environment(AppState.self) private var appState
-    @Environment(\.dismiss) private var dismiss
+    @Environment(AppState.self) 
+    private var appState
+    
+    @Environment(\.dismiss) 
+    private var dismiss
+    
     private let feedFlowStrings = Deps.shared.getStrings()
     let fetchFeeds: () -> Void
     let onClose: () -> Void

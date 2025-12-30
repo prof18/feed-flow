@@ -39,6 +39,7 @@ fun AdaptiveHomeView(
     feedContentWrapper: @Composable (@Composable () -> Unit) -> Unit = { content -> content() },
     onBackupClick: () -> Unit = {},
     onFeedSuggestionsClick: () -> Unit = {},
+    onEmptyStateClick: (() -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -66,6 +67,7 @@ fun AdaptiveHomeView(
             feedContentWrapper = feedContentWrapper,
             shareBehavior = shareBehavior,
             onBackupClick = onBackupClick,
+            onEmptyStateClick = onEmptyStateClick,
         )
     }
 

@@ -68,6 +68,7 @@ internal fun HomeScreen(
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsStateWithLifecycle()
 
     var showChangeCategorySheet by remember { mutableStateOf(false) }
+    var showNoFeedsBottomSheet by remember { mutableStateOf(false) }
     val changeCategorySheetState = rememberModalBottomSheetState()
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -117,8 +118,6 @@ internal fun HomeScreen(
             }
         }
     }
-
-
 
     val homeDisplayState = HomeDisplayState(
         feedItems = feedState,
@@ -205,6 +204,9 @@ internal fun HomeScreen(
         ),
         onBackupClick = homeViewModel::enqueueBackup,
         onFeedSuggestionsClick = onFeedSuggestionsClick,
+        onEmptyStateClick = {
+            showNoFeedsBottomSheet = true
+        },
     )
 
     if (showChangeCategorySheet) {
@@ -225,6 +227,32 @@ internal fun HomeScreen(
             },
             onDismiss = {
                 changeFeedCategoryViewModel.saveCategory()
+            },
+        )
+    }
+
+    if (showNoFeedsBottomSheet) {
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        NoFeedsBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = {
+                showNoFeedsBottomSheet = false
+            },
+            onAddFeedClick = {
+                showNoFeedsBottomSheet = false
+                onAddFeedClick()
+            },
+            onImportExportClick = {
+                showNoFeedsBottomSheet = false
+                onImportExportClick()
+            },
+            onAccountsClick = {
+                showNoFeedsBottomSheet = false
+                onAccountsClick()
+            },
+            onFeedSuggestionsClick = {
+                showNoFeedsBottomSheet = false
+                onFeedSuggestionsClick()
             },
         )
     }

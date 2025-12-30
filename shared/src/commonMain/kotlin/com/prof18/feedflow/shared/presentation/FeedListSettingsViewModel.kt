@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.FeedListSettingsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 class FeedListSettingsViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val fontSizeRepository: FeedFontSizeRepository,
+    private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
 
     private val stateMutableFlow = MutableStateFlow(FeedListSettingsState())
@@ -67,6 +69,7 @@ class FeedListSettingsViewModel internal constructor(
             stateMutableFlow.update {
                 it.copy(isHideDescriptionEnabled = value)
             }
+            feedStateRepository.getFeeds()
         }
     }
 
@@ -76,6 +79,7 @@ class FeedListSettingsViewModel internal constructor(
             stateMutableFlow.update {
                 it.copy(isHideImagesEnabled = value)
             }
+            feedStateRepository.getFeeds()
         }
     }
 
@@ -85,6 +89,7 @@ class FeedListSettingsViewModel internal constructor(
             stateMutableFlow.update {
                 it.copy(isHideDateEnabled = value)
             }
+            feedStateRepository.getFeeds()
         }
     }
 
@@ -94,6 +99,7 @@ class FeedListSettingsViewModel internal constructor(
             stateMutableFlow.update {
                 it.copy(dateFormat = format)
             }
+            feedStateRepository.getFeeds()
         }
     }
 
@@ -103,6 +109,7 @@ class FeedListSettingsViewModel internal constructor(
             stateMutableFlow.update {
                 it.copy(timeFormat = format)
             }
+            feedStateRepository.getFeeds()
         }
     }
 
@@ -151,6 +158,7 @@ class FeedListSettingsViewModel internal constructor(
             stateMutableFlow.update {
                 it.copy(feedOrder = feedOrder)
             }
+            feedStateRepository.getFeeds()
         }
     }
 }

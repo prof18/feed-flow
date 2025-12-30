@@ -3,8 +3,9 @@ import SwiftUI
 
 struct AboutAndSupportScreenContent: View {
     @Binding var isCrashReportingEnabled: Bool
-    @Environment(\.dismiss) private var dismiss
-
+    @Environment(\.dismiss) 
+    private var dismiss
+    
     let openURL: OpenURLAction
     let appState: AppState
 

@@ -17,8 +17,8 @@ import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isNotMacOs
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.main.MainWindow
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
-import com.prof18.feedflow.shared.presentation.SettingsViewModel
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
@@ -39,9 +39,9 @@ internal fun FrameWindowScope.AppContent(
         contentPrefetchRepository.startBackgroundFetching()
     }
 
-    val settingsViewModel = desktopViewModel { DI.koin.get<SettingsViewModel>() }
-    val settingsState by settingsViewModel.settingsState.collectAsState()
-    val isDarkTheme = when (settingsState.themeMode) {
+    val settingsRepository = DI.koin.get<SettingsRepository>()
+    val themeMode by settingsRepository.themeModeFlow.collectAsState()
+    val isDarkTheme = when (themeMode) {
         ThemeMode.SYSTEM -> rememberDesktopDarkTheme()
         ThemeMode.LIGHT -> false
         ThemeMode.DARK -> true
@@ -59,10 +59,8 @@ internal fun FrameWindowScope.AppContent(
             this.MainWindow(
                 showBackupLoader = showBackupLoader,
                 isDarkTheme = isDarkTheme,
-                settingsViewModel = settingsViewModel,
                 windowState = windowState,
                 appConfig = appConfig,
-                settingsState = settingsState,
             )
         }
     }

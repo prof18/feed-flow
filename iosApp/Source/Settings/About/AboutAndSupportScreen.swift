@@ -6,9 +6,15 @@ import SwiftUI
 #endif
 
 struct AboutAndSupportScreen: View {
-    @Environment(AppState.self) private var appState
-    @Environment(\.openURL) var openURL
-    @StateObject private var vmStoreOwner = VMStoreOwner<AboutAndSupportSettingsViewModel>(Deps.shared.getAboutAndSupportSettingsViewModel())
+    @Environment(AppState.self) 
+    private var appState
+    
+    @Environment(\.openURL) 
+    private var openURL
+    
+    @StateObject private var vmStoreOwner = VMStoreOwner<AboutAndSupportSettingsViewModel>(
+        Deps.shared.getAboutAndSupportSettingsViewModel()
+    )
     private let feedFlowStrings = Deps.shared.getStrings()
 
     @State private var settingsState = AboutAndSupportState(

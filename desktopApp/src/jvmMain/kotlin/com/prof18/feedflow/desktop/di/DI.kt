@@ -1,8 +1,8 @@
 package com.prof18.feedflow.desktop.di
 
 import coil3.PlatformContext
-import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.desktop.BrowserManager
+import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoinDesktop
@@ -16,22 +16,24 @@ object DI {
     lateinit var koin: Koin
 
     fun initKoin(
-        appEnvironment: AppEnvironment,
-        isICloudEnabled: Boolean,
-        version: String,
-        isDropboxEnabled: Boolean,
+        appConfig: DesktopConfig,
     ) {
         koin = initKoinDesktop(
-            appEnvironment = appEnvironment,
-            isICloudEnabled = isICloudEnabled,
-            isDropboxEnabled = isDropboxEnabled,
-            version = version,
+            appEnvironment = appConfig.appEnvironment,
+            isICloudEnabled = appConfig.isIcloudEnabled,
+            isDropboxEnabled = appConfig.isDropboxEnabled,
+            isGoogleDriveEnabled = appConfig.isGoogleDriveEnabled,
+            version = appConfig.version ?: "",
             modules = listOf(
                 module {
                     single {
+                        appConfig
+                    }
+
+                    single {
                         coilImageLoader(
                             context = PlatformContext.INSTANCE,
-                            debug = appEnvironment.isDebug(),
+                            debug = appConfig.appEnvironment.isDebug(),
                         )
                     }
 
@@ -48,7 +50,7 @@ object DI {
                     single<TelemetryDeckClient> {
                         TelemetryDeckClient(
                             httpClient = HttpClient(),
-                            appEnvironment = appEnvironment,
+                            appEnvironment = appConfig.appEnvironment,
                             logger = getWith("TelemetryDeckClient"),
                         )
                     }

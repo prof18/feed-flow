@@ -2,8 +2,12 @@ import FeedFlowKit
 import SwiftUI
 
 struct ReadingBehaviorScreen: View {
-    @Environment(AppState.self) private var appState
-    @StateObject private var vmStoreOwner = VMStoreOwner<ReadingBehaviorSettingsViewModel>(Deps.shared.getReadingBehaviorSettingsViewModel())
+    @Environment(AppState.self) 
+    private var appState
+
+    @StateObject private var vmStoreOwner = VMStoreOwner<ReadingBehaviorSettingsViewModel>(
+        Deps.shared.getReadingBehaviorSettingsViewModel()
+    )
     @State private var browserSelector = BrowserSelector()
     private let feedFlowStrings = Deps.shared.getStrings()
 

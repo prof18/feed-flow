@@ -2,8 +2,12 @@ import FeedFlowKit
 import SwiftUI
 
 struct SyncAndStorageScreen: View {
-    @Environment(AppState.self) private var appState
-    @StateObject private var vmStoreOwner = VMStoreOwner<SyncAndStorageSettingsViewModel>(Deps.shared.getSyncAndStorageSettingsViewModel())
+    @Environment(AppState.self) 
+    private var appState
+    
+    @StateObject private var vmStoreOwner = VMStoreOwner<SyncAndStorageSettingsViewModel>(
+        Deps.shared.getSyncAndStorageSettingsViewModel()
+    )
     private let feedFlowStrings = Deps.shared.getStrings()
 
     @State private var settingsState = SyncAndStorageState(

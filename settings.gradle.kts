@@ -44,6 +44,7 @@ include("feedSync:icloud")
 include("feedSync:ikloud-macos")
 include("feedSync:greader")
 include("feedSync:networkcore")
+include("webview-macos")
 
 // includeBuild("../RSS-Parser") {
 //    dependencySubstitution {

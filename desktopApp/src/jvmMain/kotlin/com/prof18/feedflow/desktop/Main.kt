@@ -24,6 +24,7 @@ import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
+import com.prof18.feedflow.desktop.utils.NativeWebViewState
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
@@ -141,6 +142,10 @@ private fun createAppConfig(properties: Properties): DesktopConfig {
 
     val appEnvironment = if (isRelease) AppEnvironment.Release else AppEnvironment.Debug
     val isIcloudEnabled = setupICloudSupport()
+    val isWebViewEnabled = setupWebViewSupport()
+
+    // Set the global state for native WebView availability
+    NativeWebViewState.isEnabled = isWebViewEnabled
 
     return DesktopConfig(
         sentryDns = sentryDns,
@@ -148,6 +153,7 @@ private fun createAppConfig(properties: Properties): DesktopConfig {
         appEnvironment = appEnvironment,
         isIcloudEnabled = isIcloudEnabled,
         isDropboxEnabled = dropboxKey != null,
+        isWebViewEnabled = isWebViewEnabled,
     )
 }
 
@@ -177,6 +183,21 @@ private fun setupICloudSupport(): Boolean {
     } catch (_: UnsatisfiedLinkError) {
         System.err.println("Failed to load iCloud library")
         System.err.println("Failed to load library. Path: $libraryPath")
+        false
+    }
+}
+
+@Suppress("UnsafeDynamicallyLoadedCode")
+internal fun setupWebViewSupport(): Boolean {
+    if (!getDesktopOS().isMacOs()) return false
+
+    return try {
+        val resourcesDir = System.getProperty("compose.application.resources.dir")
+        val webViewLibPath = resourcesDir + File.separator + System.mapLibraryName("webview")
+        System.load(webViewLibPath)
+        true
+    } catch (_: UnsatisfiedLinkError) {
+        System.err.println("Failed to load WebView library")
         false
     }
 }
@@ -253,4 +274,5 @@ internal data class DesktopConfig(
     val isIcloudEnabled: Boolean,
     val isDropboxEnabled: Boolean,
     val isGoogleDriveEnabled: Boolean = true,
+    val isWebViewEnabled: Boolean = false,
 )

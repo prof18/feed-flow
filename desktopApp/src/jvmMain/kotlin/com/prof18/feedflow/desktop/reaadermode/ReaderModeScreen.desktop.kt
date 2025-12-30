@@ -81,6 +81,7 @@ import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.desktop.utils.NativeWebViewState
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.launch
@@ -198,23 +199,33 @@ internal data class ReaderModeScreen(
                         }
                     }
                     is ReaderModeState.Success -> {
-                        if (FeatureFlags.USE_RICH_TEXT_FOR_READER_MODE) {
-                            ReaderModeRichTextContent(
-                                readerModeState = s,
-                                fontSize = fontSize,
-                                contentPadding = contentPadding,
-                                openInBrowser = { url ->
-                                    if (isValidUrl(url)) {
-                                        uriHandler.openUri(url)
-                                    }
-                                },
-                            )
-                        } else {
-                            ReaderModeMarkdownContent(
-                                readerModeState = s,
-                                fontSize = fontSize,
-                                contentPadding = contentPadding,
-                            )
+                        when {
+                            NativeWebViewState.isEnabled -> {
+                                ReaderModeNativeWebViewContent(
+                                    readerModeState = s,
+                                    fontSize = fontSize,
+                                    contentPadding = contentPadding,
+                                )
+                            }
+                            FeatureFlags.USE_RICH_TEXT_FOR_READER_MODE -> {
+                                ReaderModeRichTextContent(
+                                    readerModeState = s,
+                                    fontSize = fontSize,
+                                    contentPadding = contentPadding,
+                                    openInBrowser = { url ->
+                                        if (isValidUrl(url)) {
+                                            uriHandler.openUri(url)
+                                        }
+                                    },
+                                )
+                            }
+                            else -> {
+                                ReaderModeMarkdownContent(
+                                    readerModeState = s,
+                                    fontSize = fontSize,
+                                    contentPadding = contentPadding,
+                                )
+                            }
                         }
                     }
                 }
@@ -567,6 +578,35 @@ private fun ReaderModeFallbackContent(
             )
             Text(strings.readerModeFallbackOpenBrowserButton)
         }
+    }
+}
+
+@Composable
+private fun ReaderModeNativeWebViewContent(
+    readerModeState: ReaderModeState.Success,
+    fontSize: Int,
+    contentPadding: PaddingValues,
+) {
+    Column(
+        modifier = Modifier
+            .padding(contentPadding)
+            .fillMaxSize(),
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Spacing.regular),
+            text = LocalFeedFlowStrings.current.readerModeWarning,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Light,
+        )
+
+        NativeWebViewContent(
+            htmlContent = readerModeState.readerModeData.content,
+            title = readerModeState.readerModeData.title,
+            fontSize = fontSize,
+            modifier = Modifier.fillMaxSize(),
+        )
     }
 }
 

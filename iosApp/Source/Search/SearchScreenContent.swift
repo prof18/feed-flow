@@ -52,71 +52,70 @@ struct SearchScreenContent: View {
     private func makeSearchFoundContent(state: SearchState.DataFound) -> some View {
         List {
             ForEach(Array(state.items.enumerated()), id: \.element) { index, feedItem in
-                Button(action: {
-                           if browserSelector.openReaderMode(link: feedItem.url) {
-                               let urlInfo = FeedItemUrlInfo(
-                                   id: feedItem.id,
-                                   url: feedItem.url,
-                                   title: feedItem.title,
-                                   openOnlyOnBrowser: false,
-                                   isBookmarked: feedItem.isBookmarked,
-                                   linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
-                                   commentsUrl: feedItem.commentsUrl
-                               )
-                               readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
-                               self.appState.navigate(route: CommonViewRoute.readerMode)
-                           } else if browserSelector.openInAppBrowser() {
-                               if let url = URL(string: feedItem.url) {
-                                   if browserSelector.isValidForInAppBrowser(url) {
-                                       appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
-                                   } else {
-                                       openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                                   }
-                               }
-                           } else {
-                               openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-                           }
-                           onReadStatusClick(FeedItemId(id: feedItem.id), true)
-                       },
-                       label: {
-                           FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)
-                       })
-                       .buttonStyle(.plain)
-                       .id(feedItem.id)
-                       .contentShape(Rectangle())
-                       .listRowInsets(EdgeInsets())
-                       .hoverEffect()
-                       .contextMenu {
-                           VStack {
-                               // 1. Mark all above as read
-                               makeMarkAllAboveAsReadButton(feedItem: feedItem)
-
-                               // 2. Mark all below as read
-                               makeMarkAllBelowAsReadButton(feedItem: feedItem)
-
-                               // Separator
-                               Divider()
-
-                               // Comments section (only if available)
-                               if feedItem.commentsUrl != nil {
-                                   // 3. Open comments
-                                   makeCommentsButton(feedItem: feedItem)
-
-                                   // Separator after comments section
-                                   Divider()
-                               }
-
-                               // 4. Add to bookmarks
-                               makeBookmarkButton(feedItem: feedItem)
-
-                               // 5. Mark as read (most frequent - at bottom for thumb reach)
-                               makeReadUnreadButton(feedItem: feedItem)
-                           }
-                           .environment(browserSelector)
-                       }
+                makeSearchResultRow(feedItem: feedItem, index: index)
             }
         }
         .listStyle(PlainListStyle())
+    }
+
+    @ViewBuilder
+    private func makeSearchResultRow(feedItem: FeedItem, index: Int) -> some View {
+        Button {
+            handleSearchItemTap(feedItem: feedItem)
+        } label: {
+            FeedItemView(feedItem: feedItem, index: index, feedFontSizes: feedFontSizes)
+        }
+        .buttonStyle(.plain)
+        .id(feedItem.id)
+        .contentShape(Rectangle())
+        .listRowInsets(EdgeInsets())
+        .hoverEffect()
+        .contextMenu {
+            makeSearchItemContextMenu(feedItem: feedItem)
+                .environment(browserSelector)
+        }
+    }
+
+    private func handleSearchItemTap(feedItem: FeedItem) {
+        if browserSelector.openReaderMode(link: feedItem.url) {
+            let urlInfo = FeedItemUrlInfo(
+                id: feedItem.id,
+                url: feedItem.url,
+                title: feedItem.title,
+                openOnlyOnBrowser: false,
+                isBookmarked: feedItem.isBookmarked,
+                linkOpeningPreference: feedItem.feedSource.linkOpeningPreference,
+                commentsUrl: feedItem.commentsUrl
+            )
+            readerModeViewModel.getReaderModeHtml(urlInfo: urlInfo)
+            self.appState.navigate(route: CommonViewRoute.readerMode)
+        } else if browserSelector.openInAppBrowser() {
+            if let url = URL(string: feedItem.url) {
+                if browserSelector.isValidForInAppBrowser(url) {
+                    appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+                } else {
+                    openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                }
+            }
+        } else {
+            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+        }
+        onReadStatusClick(FeedItemId(id: feedItem.id), true)
+    }
+
+    @ViewBuilder
+    private func makeSearchItemContextMenu(feedItem: FeedItem) -> some View {
+        VStack {
+            makeMarkAllAboveAsReadButton(feedItem: feedItem)
+            makeMarkAllBelowAsReadButton(feedItem: feedItem)
+            Divider()
+            if feedItem.commentsUrl != nil {
+                makeCommentsButton(feedItem: feedItem)
+                Divider()
+            }
+            makeBookmarkButton(feedItem: feedItem)
+            makeReadUnreadButton(feedItem: feedItem)
+        }
     }
 
     @ViewBuilder

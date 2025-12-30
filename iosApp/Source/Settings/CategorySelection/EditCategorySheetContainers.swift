@@ -98,7 +98,7 @@ struct EditCategorySheetContainerForEdit: View {
 }
 
 // MARK: - Container for ChangeFeedCategoryViewModel
-struct EditCategorySheetContainerForChangeCategory: View {
+struct EditCategorySheetForChangeCategory: View {
     let viewModel: ChangeFeedCategoryViewModel
     let onSave: () -> Void
 

@@ -587,7 +587,7 @@ private fun ReaderModeNativeWebViewContent(
 
         NativeWebViewContent(
             htmlContent = readerModeState.readerModeData.content,
-            title = readerModeState.readerModeData.title,
+            title = readerModeState.readerModeData.title.orEmpty(), // todo: fix me
             fontSize = fontSize,
             modifier = Modifier.fillMaxSize(),
         )

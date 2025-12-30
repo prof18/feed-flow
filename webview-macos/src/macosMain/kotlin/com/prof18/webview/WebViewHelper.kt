@@ -59,7 +59,7 @@ fun createWebView(env: CPointer<JNIEnvVar>, clazz: jclass): Int {
         defer = false
     )
 
-    window.isOpaque = false
+    window.setOpaque(false)
     window.backgroundColor = NSColor.clearColor
     window.contentView = wkWebView
     window.level = 0
@@ -150,7 +150,7 @@ fun showWebView(
 fun hideWebView(env: CPointer<JNIEnvVar>, clazz: jclass): Int {
     val window = webViewWindow ?: return 1
 
-    window.parent?.removeChildWindow(window)
+    window.parentWindow?.removeChildWindow(window)
     window.orderOut(null)
 
     return 0
@@ -167,7 +167,7 @@ fun destroyWebView(env: CPointer<JNIEnvVar>, clazz: jclass): Int {
     val window = webViewWindow
 
     if (window != null) {
-        window.parent?.removeChildWindow(window)
+        window.parentWindow()?.removeChildWindow(window)
         window.orderOut(null)
         window.close()
     }
@@ -176,7 +176,6 @@ fun destroyWebView(env: CPointer<JNIEnvVar>, clazz: jclass): Int {
     webView = null
     webViewWindow = null
     navigationDelegate = null
-    currentHtmlFilePath = null
 
     return 0
 }

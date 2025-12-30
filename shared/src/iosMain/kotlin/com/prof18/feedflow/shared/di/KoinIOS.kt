@@ -45,8 +45,8 @@ import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
-import com.prof18.feedflow.shared.presentation.MinifluxSyncViewModel
 import com.prof18.feedflow.shared.presentation.MainSettingsViewModel
+import com.prof18.feedflow.shared.presentation.MinifluxSyncViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReadingBehaviorSettingsViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel

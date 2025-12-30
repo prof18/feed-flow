@@ -2,8 +2,10 @@ import FeedFlowKit
 import SwiftUI
 
 struct SettingsScreen: View {
-    @Environment(AppState.self) private var appState
-    @Environment(\.dismiss) private var dismiss
+    @Environment(AppState.self)
+    private var appState
+    @Environment(\.dismiss)
+    private var dismiss
     @StateObject private var vmStoreOwner = VMStoreOwner<MainSettingsViewModel>(Deps.shared.getMainSettingsViewModel())
     private let feedFlowStrings = Deps.shared.getStrings()
 

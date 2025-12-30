@@ -60,67 +60,7 @@ struct HomeContent: View {
 
     var body: some View {
         ScrollViewReader { proxy in
-            FeedListView(
-                loadingState: loadingState,
-                feedState: feedState,
-                showLoading: showLoading,
-                currentFeedFilter: currentFeedFilter,
-                columnVisibility: columnVisibility,
-                feedFontSizes: feedFontSizes,
-                swipeActions: swipeActions,
-                feedLayout: feedLayout,
-                onReloadClick: onRefresh,
-                onAddFeedClick: {
-                    self.sheetToShow = .noFeedSource
-                },
-                requestNewPage: requestNewPage,
-                onItemClick: onItemClick,
-                onReaderModeClick: onReaderModeClick,
-                onBookmarkClick: onBookmarkClick,
-                onReadStatusClick: onReadStatusClick,
-                onMarkAllAboveAsRead: onMarkAllAboveAsRead,
-                onMarkAllBelowAsRead: onMarkAllBelowAsRead,
-                onBackToTimelineClick: onBackToTimelineClick,
-                onMarkAllAsReadClick: onMarkAllReadClick,
-                openDrawer: openDrawer,
-                onScrollPositionChanged: { shouldShow in
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showScrollToTop = shouldShow
-                    }
-                },
-                onOpenFeedSettings: { feedSource in
-                    sheetToShow = .editFeed(feedSource)
-                }
-            )
-            .onChange(of: toggleListScroll) {
-                proxy.scrollTo(feedState.first?.id)
-                showScrollToTop = false
-            }
-            .onChange(of: showSettings) {
-                sheetToShow = .settings
-            }
-            .if(appState.sizeClass == .compact) { view in
-                view.navigationBarBackButtonHidden(true)
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .if(isiOS26OrLater()) { view in
-                view.navigationTitle(getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount))
-            }
-            .toolbar {
-                if isToolbarVisible {
-                    if isiOS26OrLater() {
-                        makeIOS26ToolbarContent(proxy: proxy)
-                    } else {
-                        makeLegacyToolbarContent(proxy: proxy)
-                    }
-                }
-            }
-            .showsScrollToTop(isVisible: showScrollToTop, onScrollToTop: {
-                withAnimation {
-                    proxy.scrollTo(feedState.first?.id)
-                    showScrollToTop = false
-                }
-            })
+            feedListView(proxy: proxy)
         }
         .alert(feedFlowStrings.markAllReadButton, isPresented: $showMarkAllReadDialog) {
             Button(feedFlowStrings.cancelButton, role: .cancel) {}
@@ -154,161 +94,114 @@ struct HomeContent: View {
             }
         }
         .sheet(item: $sheetToShow) { item in
-            switch item {
-            case .settings:
-                SettingsScreen(fetchFeeds: onRefresh)
-                    .environment(appState)
-                    .preferredColorScheme(appState.colorScheme)
-
-            case .noFeedSource:
-                NoFeedsBottomSheet(
-                    onAddFeedClick: {
-                        self.sheetToShow = .addFeed
-                    },
-                    onImportExportClick: {
-                        self.sheetToShow = .importExport
-                    },
-                    onFeedSuggestionsClick: {
-                        self.sheetToShow = nil
-                        appState.navigate(route: CommonViewRoute.feedSuggestions)
-                    }
-                )
-
-            case .addFeed:
-                AddFeedScreen(showCloseButton: true)
-
-            case .importExport:
-                ImportExportScreen(showCloseButton: true, fetchFeeds: onRefresh)
-
-            case let .editFeed(source):
-                EditFeedScreen(feedSource: source)
-            }
+            sheetContent(item)
         }
     }
 }
 
-#Preview("HomeContentLoading") {
-    HomeContent(
-        loadingState: .constant(
-            InProgressFeedUpdateStatus(
-                refreshedFeedCount: Int32(10),
-                totalFeedCount: Int32(42)
-            )
-        ),
-        feedState: .constant(feedItemsForPreview),
-        showLoading: .constant(true),
-        unreadCount: .constant(42),
-        sheetToShow: .constant(nil),
-        toggleListScroll: .constant(false),
-        currentFeedFilter: .constant(FeedFilter.Timeline()),
-        showSettings: .constant(false),
-        showFeedSyncButton: .constant(false),
-        columnVisibility: .constant(.all),
-        feedFontSizes: .constant(defaultFeedFontSizes()),
-        swipeActions: .constant(SwipeActions(leftSwipeAction: .none, rightSwipeAction: .none)),
-        feedLayout: .constant(.list),
-        onRefresh: {},
-        updateReadStatus: { _ in },
-        onMarkAllReadClick: {},
-        onDeleteOldFeedClick: {},
-        onForceRefreshClick: {},
-        deleteAllFeeds: {},
-        requestNewPage: {},
-        onItemClick: { _ in },
-        onReaderModeClick: { _ in },
-        onBookmarkClick: { _, _ in },
-        onReadStatusClick: { _, _ in },
-        onMarkAllAboveAsRead: { _ in },
-        onMarkAllBelowAsRead: { _ in },
-        onBackToTimelineClick: {},
-        onFeedSyncClick: {},
-        openDrawer: {}
-    )
-    .environment(HomeListIndexHolder(fakeHomeViewModel: true))
-    .environment(AppState())
-    .environment(BrowserSelector())
-}
-
-#Preview("HomeContentLoaded") {
-    HomeContent(
-        loadingState: .constant(
-            FinishedFeedUpdateStatus()
-        ),
-        feedState: .constant(feedItemsForPreview),
-        showLoading: .constant(false),
-        unreadCount: .constant(42),
-        sheetToShow: .constant(nil),
-        toggleListScroll: .constant(false),
-        currentFeedFilter: .constant(FeedFilter.Timeline()),
-        showSettings: .constant(false),
-        showFeedSyncButton: .constant(false),
-        columnVisibility: .constant(.all),
-        feedFontSizes: .constant(defaultFeedFontSizes()),
-        swipeActions: .constant(SwipeActions(leftSwipeAction: .none, rightSwipeAction: .none)),
-        feedLayout: .constant(.list),
-        onRefresh: {},
-        updateReadStatus: { _ in },
-        onMarkAllReadClick: {},
-        onDeleteOldFeedClick: {},
-        onForceRefreshClick: {},
-        deleteAllFeeds: {},
-        requestNewPage: {},
-        onItemClick: { _ in },
-        onReaderModeClick: { _ in },
-        onBookmarkClick: { _, _ in },
-        onReadStatusClick: { _, _ in },
-        onMarkAllAboveAsRead: { _ in },
-        onMarkAllBelowAsRead: { _ in },
-        onBackToTimelineClick: {},
-        onFeedSyncClick: {},
-        openDrawer: {}
-    )
-    .environment(HomeListIndexHolder(fakeHomeViewModel: true))
-    .environment(AppState())
-    .environment(BrowserSelector())
-}
-
-#Preview("HomeContentSettings") {
-    HomeContent(
-        loadingState: .constant(
-            FinishedFeedUpdateStatus()
-        ),
-        feedState: .constant(feedItemsForPreview),
-        showLoading: .constant(false),
-        unreadCount: .constant(42),
-        sheetToShow: .constant(HomeSheetToShow.noFeedSource),
-        toggleListScroll: .constant(false),
-        currentFeedFilter: .constant(FeedFilter.Timeline()),
-        showSettings: .constant(false),
-        showFeedSyncButton: .constant(false),
-        columnVisibility: .constant(.all),
-        feedFontSizes: .constant(defaultFeedFontSizes()),
-        swipeActions: .constant(SwipeActions(leftSwipeAction: .none, rightSwipeAction: .none)),
-        feedLayout: .constant(.list),
-        onRefresh: {},
-        updateReadStatus: { _ in },
-        onMarkAllReadClick: {},
-        onDeleteOldFeedClick: {},
-        onForceRefreshClick: {},
-        deleteAllFeeds: {},
-        requestNewPage: {},
-        onItemClick: { _ in },
-        onReaderModeClick: { _ in },
-        onBookmarkClick: { _, _ in },
-        onReadStatusClick: { _, _ in },
-        onMarkAllAboveAsRead: { _ in },
-        onMarkAllBelowAsRead: { _ in },
-        onBackToTimelineClick: {},
-        onFeedSyncClick: {},
-        openDrawer: {}
-    )
-    .environment(HomeListIndexHolder(fakeHomeViewModel: true))
-    .environment(AppState())
-    .environment(BrowserSelector())
-}
-
 // MARK: - HomeContent Toolbar Extension
 private extension HomeContent {
+    var feedListBaseView: some View {
+        FeedListView(
+            loadingState: loadingState,
+            feedState: feedState,
+            showLoading: showLoading,
+            currentFeedFilter: currentFeedFilter,
+            columnVisibility: columnVisibility,
+            feedFontSizes: feedFontSizes,
+            swipeActions: swipeActions,
+            feedLayout: feedLayout,
+            onReloadClick: onRefresh,
+            onAddFeedClick: {
+                self.sheetToShow = .noFeedSource
+            },
+            requestNewPage: requestNewPage,
+            onItemClick: onItemClick,
+            onReaderModeClick: onReaderModeClick,
+            onBookmarkClick: onBookmarkClick,
+            onReadStatusClick: onReadStatusClick,
+            onMarkAllAboveAsRead: onMarkAllAboveAsRead,
+            onMarkAllBelowAsRead: onMarkAllBelowAsRead,
+            onBackToTimelineClick: onBackToTimelineClick,
+            onMarkAllAsReadClick: onMarkAllReadClick,
+            openDrawer: openDrawer,
+            onScrollPositionChanged: { shouldShow in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showScrollToTop = shouldShow
+                }
+            },
+            onOpenFeedSettings: { feedSource in
+                sheetToShow = .editFeed(feedSource)
+            }
+        )
+    }
+
+    func feedListView(proxy: ScrollViewProxy) -> some View {
+        feedListBaseView
+            .onChange(of: toggleListScroll) {
+                proxy.scrollTo(feedState.first?.id)
+                showScrollToTop = false
+            }
+            .onChange(of: showSettings) {
+                sheetToShow = .settings
+            }
+            .if(appState.sizeClass == .compact) { view in
+                view.navigationBarBackButtonHidden(true)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .if(isiOS26OrLater()) { view in
+                view.navigationTitle(getNavBarTitleWithCount(feedFilter: currentFeedFilter, unreadCount: unreadCount))
+            }
+            .toolbar {
+                if isToolbarVisible {
+                    if isiOS26OrLater() {
+                        makeIOS26ToolbarContent(proxy: proxy)
+                    } else {
+                        makeLegacyToolbarContent(proxy: proxy)
+                    }
+                }
+            }
+            .showsScrollToTop(isVisible: showScrollToTop, onScrollToTop: {
+                withAnimation {
+                    proxy.scrollTo(feedState.first?.id)
+                    showScrollToTop = false
+                }
+            })
+    }
+
+    @ViewBuilder
+    func sheetContent(_ item: HomeSheetToShow) -> some View {
+        switch item {
+        case .settings:
+            SettingsScreen(fetchFeeds: onRefresh)
+                .environment(appState)
+                .preferredColorScheme(appState.colorScheme)
+
+        case .noFeedSource:
+            NoFeedsBottomSheet(
+                onAddFeedClick: {
+                    self.sheetToShow = .addFeed
+                },
+                onImportExportClick: {
+                    self.sheetToShow = .importExport
+                },
+                onFeedSuggestionsClick: {
+                    self.sheetToShow = nil
+                    appState.navigate(route: CommonViewRoute.feedSuggestions)
+                }
+            )
+
+        case .addFeed:
+            AddFeedScreen(showCloseButton: true)
+
+        case .importExport:
+            ImportExportScreen(showCloseButton: true, fetchFeeds: onRefresh)
+
+        case let .editFeed(source):
+            EditFeedScreen(feedSource: source)
+        }
+    }
+
     @ToolbarContentBuilder
     func makeIOS26ToolbarContent(proxy: ScrollViewProxy) -> some ToolbarContent {
         if appState.sizeClass == .compact {
@@ -402,54 +295,7 @@ private extension HomeContent {
     func makeMenuToolbarView(proxy: ScrollViewProxy) -> some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Menu {
-                if showFeedSyncButton {
-                    Button {
-                        self.onFeedSyncClick()
-                    } label: {
-                        Label(feedFlowStrings.triggerFeedSync, systemImage: "arrow.uturn.up")
-                    }
-                }
-
-                Button {
-                    showMarkAllReadDialog = true
-                } label: {
-                    Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
-                }
-
-                Button {
-                    showClearOldArticlesDialog = true
-                } label: {
-                    Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
-                }
-
-                Button {
-                    proxy.scrollTo(feedState.first?.id)
-                    onForceRefreshClick()
-                } label: {
-                    Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
-                }
-
-                if let source = (currentFeedFilter as? FeedFilter.Source)?.feedSource {
-                    Button {
-                        self.sheetToShow = .editFeed(source)
-                    } label: {
-                        Label(feedFlowStrings.editFeed, systemImage: "pencil")
-                    }
-                }
-
-                Button {
-                    self.sheetToShow = .settings
-                } label: {
-                    Label(feedFlowStrings.settingsButton, systemImage: "gear")
-                }
-
-                #if DEBUG
-                    Button {
-                        deleteAllFeeds()
-                    } label: {
-                        Label("Delete Database", systemImage: "trash")
-                    }
-                #endif
+                makeMenuActions(proxy: proxy)
             } label: {
                 if isiOS26OrLater() {
                     Image(systemName: "ellipsis")
@@ -458,6 +304,58 @@ private extension HomeContent {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    func makeMenuActions(proxy: ScrollViewProxy) -> some View {
+        if showFeedSyncButton {
+            Button {
+                self.onFeedSyncClick()
+            } label: {
+                Label(feedFlowStrings.triggerFeedSync, systemImage: "arrow.uturn.up")
+            }
+        }
+
+        Button {
+            showMarkAllReadDialog = true
+        } label: {
+            Label(feedFlowStrings.markAllReadButton, systemImage: "checkmark")
+        }
+
+        Button {
+            showClearOldArticlesDialog = true
+        } label: {
+            Label(feedFlowStrings.clearOldArticlesButton, systemImage: "trash")
+        }
+
+        Button {
+            proxy.scrollTo(feedState.first?.id)
+            onForceRefreshClick()
+        } label: {
+            Label(feedFlowStrings.forceFeedRefresh, systemImage: "arrow.clockwise")
+        }
+
+        if let source = (currentFeedFilter as? FeedFilter.Source)?.feedSource {
+            Button {
+                self.sheetToShow = .editFeed(source)
+            } label: {
+                Label(feedFlowStrings.editFeed, systemImage: "pencil")
+            }
+        }
+
+        Button {
+            self.sheetToShow = .settings
+        } label: {
+            Label(feedFlowStrings.settingsButton, systemImage: "gear")
+        }
+
+        #if DEBUG
+            Button {
+                deleteAllFeeds()
+            } label: {
+                Label("Delete Database", systemImage: "trash")
+            }
+        #endif
     }
 
     func getNavBarTitleWithCount(feedFilter: FeedFilter, unreadCount: Int) -> String {

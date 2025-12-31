@@ -16,6 +16,9 @@ class NetworkSettings(
     fun setSyncUsername(value: String) =
         settings.set(SettingsField.SYNC_USERNAME.name, value)
 
+    fun getSyncUsername(): String =
+        settings.getString(SettingsField.SYNC_USERNAME.name, "")
+
     fun getSyncUrl(): String =
         settings.getString(SettingsField.SYNC_URL.name, "")
 

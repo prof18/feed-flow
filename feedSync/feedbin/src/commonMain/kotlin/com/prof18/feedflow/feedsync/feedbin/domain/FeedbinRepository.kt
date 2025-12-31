@@ -5,31 +5,31 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
+import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.DataResult
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.allSuccess
+import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.error
-import com.prof18.feedflow.core.model.firstError
 import com.prof18.feedflow.core.model.isError
+import com.prof18.feedflow.core.model.isSuccess
 import com.prof18.feedflow.core.model.map
 import com.prof18.feedflow.core.model.onSuccessSuspend
-import com.prof18.feedflow.core.model.plus
+import com.prof18.feedflow.core.model.requireError
 import com.prof18.feedflow.core.model.requireSuccess
 import com.prof18.feedflow.core.model.success
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.feedbin.data.FeedbinClient
 import com.prof18.feedflow.feedsync.feedbin.data.dto.EntryDTO
-import com.prof18.feedflow.feedsync.feedbin.data.dto.SubscriptionDTO
-import com.prof18.feedflow.feedsync.feedbin.data.dto.TaggingDTO
 import com.prof18.feedflow.feedsync.feedbin.domain.mapping.EntryDTOMapper
 import com.prof18.feedflow.feedsync.feedbin.domain.mapping.toFeedSource
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import kotlinx.coroutines.withContext
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 
 class FeedbinRepository internal constructor(
     private val feedbinClient: FeedbinClient,
@@ -40,7 +40,9 @@ class FeedbinRepository internal constructor(
     private val dateFormatter: DateFormatter,
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    fun isAccountSet(): Boolean = networkSettings.getSyncPwd().isNotEmpty()
+    fun isAccountSet(): Boolean =
+        networkSettings.getSyncAccountType() == SyncAccounts.FEEDBIN &&
+            networkSettings.getSyncPwd().isNotEmpty()
 
     suspend fun login(
         username: String,
@@ -53,6 +55,70 @@ class FeedbinRepository internal constructor(
             databaseHelper.deleteAll()
         }
 
+    /**
+     * This is done after a login, to fetch synchronously just the unread and starred entries.
+     * A later background sync will fetch the rest of the entries with a window of 2 months:
+     * the [FeedbinHistorySyncScheduler] will call [syncHistoryFromBackground].
+     *
+     */
+    suspend fun syncUnreadAndStarredAfterLogin(): DataResult<Unit> = withContext(dispatcherProvider.io) {
+        logger.d { "Quick sync started" }
+
+        val categoriesResult = fetchFeedSourcesAndCategories()
+        if (categoriesResult.isError()) {
+            return@withContext categoriesResult
+        }
+
+        val feedSources = databaseHelper.getFeedSources()
+        val statusIdsResult = fetchUnreadAndStarredIds()
+        if (statusIdsResult.isError()) {
+            return@withContext statusIdsResult.requireError().error()
+        }
+        val statusIds = statusIdsResult.requireSuccess()
+        val entryIds = (statusIds.unreadIds + statusIds.starredIds).toSet()
+
+        if (entryIds.isNotEmpty()) {
+            val entriesResult = fetchEntriesByIds(
+                feedSources = feedSources,
+                statusIds = statusIds,
+                entryIds = entryIds,
+            )
+            if (entriesResult.isError()) {
+                return@withContext entriesResult
+            }
+        }
+        updateStatuses(statusIds)
+        networkSettings.setLastSyncDate(Clock.System.now().epochSeconds)
+        return@withContext Unit.success()
+    }
+
+    // This is called after the initial sync to get history entries in the background
+    suspend fun syncHistoryFromBackground(): DataResult<Unit> = withContext(dispatcherProvider.io) {
+        logger.d { "History sync started" }
+
+        val feedSources = databaseHelper.getFeedSources()
+        val statusIdsResult = fetchUnreadAndStarredIds()
+        if (statusIdsResult.isError()) {
+            return@withContext statusIdsResult.requireError().error()
+        }
+        val statusIds = statusIdsResult.requireSuccess()
+        val since = buildHistorySince()
+
+        val entriesResult = fetchEntriesByPages(
+            feedSources = feedSources,
+            statusIds = statusIds,
+            since = since,
+        )
+        if (entriesResult.isError()) {
+            return@withContext entriesResult
+        }
+
+        updateStatuses(statusIds)
+        networkSettings.setLastSyncDate(Clock.System.now().epochSeconds)
+        return@withContext Unit.success()
+    }
+
+    // This is called during the regular sync
     suspend fun sync(): DataResult<Unit> = withContext(dispatcherProvider.io) {
         logger.d { "Sync started" }
 
@@ -62,29 +128,29 @@ class FeedbinRepository internal constructor(
         }
 
         val feedSources = databaseHelper.getFeedSources()
+        val statusIdsResult = fetchUnreadAndStarredIds()
+        if (statusIdsResult.isError()) {
+            return@withContext statusIdsResult.requireError().error()
+        }
+        val statusIds = statusIdsResult.requireSuccess()
+        val since = buildSinceForRegularSync()
 
-        val entriesResult = fetchEntries(feedSources)
+        val entriesResult = fetchEntriesByPages(
+            feedSources = feedSources,
+            statusIds = statusIds,
+            since = since,
+        )
         if (entriesResult.isError()) {
             return@withContext entriesResult
         }
 
-        parZip(
-            ctx = dispatcherProvider.io,
-            { fetchStarredEntries() },
-            { fetchUnreadEntries() },
-        ) { starredEntriesResult, unreadEntriesResult ->
-            val results = starredEntriesResult + unreadEntriesResult
-
-            if (results.allSuccess()) {
-                databaseHelper.updateFeedItemReadStatus(
-                    unreadEntriesResult.requireSuccess().map { it.toString() },
-                )
-                databaseHelper.updateFeedItemBookmarkStatus(
-                    starredEntriesResult.requireSuccess().map { it.toString() },
-                )
-            } else {
-                return@parZip results.firstError()?.error()
-            }
+        val missingStarredResult = fetchMissingStarredEntries(
+            feedSources = feedSources,
+            statusIds = statusIds,
+        )
+        updateStatuses(statusIds)
+        if (missingStarredResult.isError()) {
+            return@withContext missingStarredResult
         }
 
         networkSettings.setLastSyncDate(Clock.System.now().epochSeconds)
@@ -99,7 +165,7 @@ class FeedbinRepository internal constructor(
     }
 
     suspend fun updateBookmarkStatus(feedItemId: FeedItemId, isBookmarked: Boolean): DataResult<Unit> {
-        val entryId = feedItemId.id.toLongOrNull() ?: return Unit.success()
+        val entryId = feedItemId.id.toLongOrNull() ?: return DataNotFound.error()
 
         val result = if (isBookmarked) {
             feedbinClient.starEntries(listOf(entryId))
@@ -118,14 +184,23 @@ class FeedbinRepository internal constructor(
     suspend fun updateReadStatus(feedItemIds: List<FeedItemId>, isRead: Boolean): DataResult<Unit> {
         val entryIds = feedItemIds.mapNotNull { it.id.toLongOrNull() }
 
-        val result = if (isRead) {
-            feedbinClient.markAsRead(entryIds)
-        } else {
-            feedbinClient.markAsUnread(entryIds)
+        if (entryIds.isEmpty()) {
+            return Unit.success()
         }
 
-        if (result.isError()) {
-            return result
+        val batches = entryIds.chunked(MAX_MARK_BATCH_SIZE)
+        for (batch in batches) {
+            if (isRead) {
+                val result = feedbinClient.markAsRead(batch)
+                if (result.isError()) {
+                    return result
+                }
+            } else {
+                val result = feedbinClient.markAsUnread(batch)
+                if (result.isError()) {
+                    return result.failure.error()
+                }
+            }
         }
 
         databaseHelper.updateReadStatus(feedItemIds, isRead = isRead)
@@ -163,9 +238,13 @@ class FeedbinRepository internal constructor(
     }
 
     suspend fun deleteFeedSource(feedSourceId: String): DataResult<Unit> {
-        val subscriptionId = feedSourceId.removePrefix("feed/").toLongOrNull() ?: return Unit.success()
+        val feedbinIds = parseFeedbinIds(feedSourceId) ?: return DataNotFound.error()
+        val subscriptionIdResult = resolveSubscriptionId(feedbinIds)
+        if (subscriptionIdResult.isError()) {
+            return subscriptionIdResult.failure.error()
+        }
 
-        val result = feedbinClient.deleteSubscription(subscriptionId)
+        val result = feedbinClient.deleteSubscription(subscriptionIdResult.requireSuccess())
         if (result.isError()) {
             return result
         }
@@ -179,7 +258,8 @@ class FeedbinRepository internal constructor(
             ctx = dispatcherProvider.io,
             { feedbinClient.getSubscriptions() },
             { feedbinClient.getTaggings() },
-        ) { subscriptionsResult, taggingsResult ->
+            { feedbinClient.getIcons() },
+        ) { subscriptionsResult, taggingsResult, iconsResult ->
             if (subscriptionsResult.isError()) {
                 return@parZip subscriptionsResult
             }
@@ -189,8 +269,13 @@ class FeedbinRepository internal constructor(
 
             val subscriptions = subscriptionsResult.requireSuccess()
             val taggings = taggingsResult.requireSuccess()
+            val icons = if (iconsResult.isSuccess()) {
+                iconsResult.requireSuccess()
+            } else {
+                emptyList()
+            }
 
-            val feedSources = subscriptions.map { it.toFeedSource(taggings) }
+            val feedSources = subscriptions.map { it.toFeedSource(taggings, icons) }
             val categories = feedSources.mapNotNull { it.category }
 
             databaseHelper.insertCategories(categories)
@@ -212,7 +297,10 @@ class FeedbinRepository internal constructor(
         }
 
         val subscription = result.requireSuccess()
-        val feedSourceId = "feed/${subscription.feedId}"
+        val feedSourceId = feedbinFeedSourceId(
+            subscriptionId = subscription.id,
+            feedId = subscription.feedId,
+        )
 
         databaseHelper.updateNotificationEnabledStatus(feedSourceId, isNotificationEnabled)
 
@@ -233,32 +321,32 @@ class FeedbinRepository internal constructor(
         newFeedSource: FeedSource,
         originalFeedSource: FeedSource?,
     ): DataResult<Unit> {
-        val feedId = newFeedSource.id.removePrefix("feed/").toLongOrNull() ?: return Unit.success()
+        val feedbinIds = parseFeedbinIds(newFeedSource.id) ?: return DataNotFound.error()
+        val feedId = feedbinIds.feedId
 
-        val taggingsResult = feedbinClient.getTaggings()
-        if (taggingsResult.isError()) {
-            return taggingsResult
+        val titleResult = updateFeedSourceTitleIfNeeded(feedbinIds, newFeedSource, originalFeedSource)
+        if (titleResult.isError()) {
+            return titleResult
         }
 
-        val taggings = taggingsResult.requireSuccess()
-        val existingTagging = taggings.firstOrNull { it.feedId == feedId }
-
-        if (originalFeedSource?.category != null && originalFeedSource.category != newFeedSource.category) {
-            existingTagging?.let {
-                val deleteResult = feedbinClient.deleteTagging(it.id)
-                if (deleteResult.isError()) {
-                    return deleteResult
-                }
+        if (originalFeedSource?.category != newFeedSource.category) {
+            val taggingsResult = feedbinClient.getTaggings()
+            if (taggingsResult.isError()) {
+                return taggingsResult
             }
-        }
 
-        if (newFeedSource.category != null && newFeedSource.category != originalFeedSource?.category) {
-            val createResult = feedbinClient.createTagging(
+            val existingTaggingId = taggingsResult.requireSuccess()
+                .firstOrNull { it.feedId == feedId }
+                ?.id
+
+            val categoryResult = updateFeedSourceCategoryIfNeeded(
                 feedId = feedId,
-                name = newFeedSource.category.title,
+                newFeedSource = newFeedSource,
+                originalFeedSource = originalFeedSource,
+                existingTaggingId = existingTaggingId,
             )
-            if (createResult.isError()) {
-                return createResult
+            if (categoryResult.isError()) {
+                return categoryResult
             }
         }
 
@@ -271,6 +359,19 @@ class FeedbinRepository internal constructor(
         feedSourceId: String,
         newName: String,
     ): DataResult<Unit> {
+        val feedbinIds = parseFeedbinIds(feedSourceId) ?: return DataNotFound.error()
+        val subscriptionIdResult = resolveSubscriptionId(feedbinIds)
+        if (subscriptionIdResult.isError()) {
+            return subscriptionIdResult.failure.error()
+        }
+
+        val updateResult = feedbinClient.updateSubscription(
+            subscriptionId = subscriptionIdResult.requireSuccess(),
+            title = newName,
+        )
+        if (updateResult.isError()) {
+            return updateResult.failure.error()
+        }
         databaseHelper.updateFeedSourceName(feedSourceId, newName)
         return Unit.success()
     }
@@ -292,87 +393,93 @@ class FeedbinRepository internal constructor(
         return Unit.success()
     }
 
-    private suspend fun fetchStarredEntries(): DataResult<List<Long>> {
-        logger.d { "Fetching starred entries" }
-
-        val result = feedbinClient.getStarredEntries()
-
-        logger.d { "Result: $result" }
-
-        if (result.isError()) {
-            logger.e { "Failed to fetch starred entries: $result" }
-            return result.failure.error()
-        }
-
-        return result
-    }
-
-    private suspend fun fetchUnreadEntries(): DataResult<List<Long>> {
-        logger.d { "Fetching unread entries" }
-
-        val result = feedbinClient.getUnreadEntries()
-
-        if (result.isError()) {
-            logger.e { "Failed to fetch unread entries: $result" }
-            return result.failure.error()
-        }
-
-        return result
-    }
-
-    private suspend fun fetchEntries(feedSources: List<FeedSource>): DataResult<Unit> {
-        logger.d { "Fetching entries" }
-
-        val lastUpdate = networkSettings.getLastSyncDate()
-        val since = if (lastUpdate != null) {
-            kotlinx.datetime.Instant.fromEpochSeconds(lastUpdate).toString()
-        } else {
-            null
-        }
-
-        var currentPage = 1
-        var hasMore = true
-        val allEntries = mutableListOf<EntryDTO>()
-        val feedSourcesMap = feedSources.associateBy { it.id.removePrefix("feed/").toLongOrNull() }
-
-        var unreadIds: Set<Long> = emptySet()
-        var starredIds: Set<Long> = emptySet()
-
-        parZip(
-            ctx = dispatcherProvider.io,
-            { feedbinClient.getUnreadEntries() },
-            { feedbinClient.getStarredEntries() },
-        ) { unreadResult, starredResult ->
-            if (unreadResult.isError() || starredResult.isError()) {
-                return@parZip
+    private suspend fun updateFeedSourceTitleIfNeeded(
+        feedbinIds: FeedbinIds,
+        newFeedSource: FeedSource,
+        originalFeedSource: FeedSource?,
+    ): DataResult<Unit> {
+        if (originalFeedSource?.title != null && originalFeedSource.title != newFeedSource.title) {
+            val subscriptionIdResult = resolveSubscriptionId(feedbinIds)
+            if (subscriptionIdResult.isError()) {
+                return subscriptionIdResult.failure.error()
             }
-            unreadIds = unreadResult.requireSuccess().toSet()
-            starredIds = starredResult.requireSuccess().toSet()
+
+            val updateResult = feedbinClient.updateSubscription(
+                subscriptionId = subscriptionIdResult.requireSuccess(),
+                title = newFeedSource.title,
+            )
+            if (updateResult.isError()) {
+                return updateResult.failure.error()
+            }
         }
 
-        while (hasMore && currentPage <= MAX_PAGES) {
-            val result = feedbinClient.getEntries(
-                page = currentPage,
-                since = since,
-            )
+        return Unit.success()
+    }
 
+    private suspend fun updateFeedSourceCategoryIfNeeded(
+        feedId: Long,
+        newFeedSource: FeedSource,
+        originalFeedSource: FeedSource?,
+        existingTaggingId: Long?,
+    ): DataResult<Unit> {
+        if (originalFeedSource?.category != null && originalFeedSource.category != newFeedSource.category) {
+            existingTaggingId?.let {
+                val deleteResult = feedbinClient.deleteTagging(it)
+                if (deleteResult.isError()) {
+                    return deleteResult
+                }
+            }
+        }
+
+        val newCategory = newFeedSource.category
+        if (newCategory != null && newCategory != originalFeedSource?.category) {
+            val createResult = feedbinClient.createTagging(
+                feedId = feedId,
+                name = newCategory.title,
+            )
+            if (createResult.isError()) {
+                return createResult
+            }
+        }
+
+        return Unit.success()
+    }
+
+    private suspend fun fetchEntriesByIds(
+        feedSources: List<FeedSource>,
+        statusIds: FeedbinEntryStatusIds,
+        entryIds: Set<Long>,
+    ): DataResult<Unit> {
+        if (entryIds.isEmpty()) {
+            return Unit.success()
+        }
+
+        logger.d { "Fetching entries by id" }
+
+        val feedSourcesMap = feedSources.mapNotNull { feedSource ->
+            val feedId = parseFeedbinIds(feedSource.id)?.feedId ?: return@mapNotNull null
+            feedId to feedSource
+        }.toMap()
+
+        val allEntries = mutableListOf<EntryDTO>()
+        for (chunk in entryIds.chunked(ENTRY_IDS_CHUNK_SIZE)) {
+            val result = feedbinClient.getEntries(
+                ids = chunk,
+                mode = ENTRY_MODE_EXTENDED,
+            )
             if (result.isError()) {
                 logger.e { "Failed to fetch entries: $result" }
                 return result.failure.error()
             }
-
             result.onSuccessSuspend { entries ->
-                logger.d { "Fetched ${entries.size} entries on page $currentPage" }
                 allEntries.addAll(entries)
-                hasMore = entries.size >= PAGE_SIZE
-                currentPage++
             }
         }
 
         val feedItems = allEntries.mapNotNull { entry ->
             val feedSource = feedSourcesMap[entry.feedId] ?: return@mapNotNull null
-            val isRead = !unreadIds.contains(entry.id)
-            val isBookmarked = starredIds.contains(entry.id)
+            val isRead = !statusIds.unreadIds.contains(entry.id)
+            val isBookmarked = statusIds.starredIds.contains(entry.id)
 
             entryDTOMapper.mapToFeedItem(
                 entryDTO = entry,
@@ -387,8 +494,157 @@ class FeedbinRepository internal constructor(
         return Unit.success()
     }
 
+    private suspend fun fetchEntriesByPages(
+        feedSources: List<FeedSource>,
+        statusIds: FeedbinEntryStatusIds,
+        since: String?,
+    ): DataResult<Unit> {
+        logger.d { "Fetching entries by page" }
+
+        val feedSourcesMap = feedSources.mapNotNull { feedSource ->
+            val feedId = parseFeedbinIds(feedSource.id)?.feedId ?: return@mapNotNull null
+            feedId to feedSource
+        }.toMap()
+
+        val allEntries = mutableListOf<EntryDTO>()
+        var nextPage: Int? = 1
+        while (nextPage != null) {
+            val result = feedbinClient.getEntriesPage(
+                page = nextPage,
+                since = since,
+                perPage = PAGE_SIZE,
+                mode = ENTRY_MODE_EXTENDED,
+            )
+
+            if (result.isError()) {
+                logger.e { "Failed to fetch entries: $result" }
+                return result.failure.error()
+            }
+
+            result.onSuccessSuspend { entriesPage ->
+                val entries = entriesPage.entries
+                logger.d { "Fetched ${entries.size} entries on page $nextPage" }
+                allEntries.addAll(entries)
+                nextPage = entriesPage.nextPage
+            }
+        }
+
+        val feedItems = allEntries.mapNotNull { entry ->
+            val feedSource = feedSourcesMap[entry.feedId] ?: return@mapNotNull null
+            val isRead = !statusIds.unreadIds.contains(entry.id)
+            val isBookmarked = statusIds.starredIds.contains(entry.id)
+
+            entryDTOMapper.mapToFeedItem(
+                entryDTO = entry,
+                feedSource = feedSource,
+                isRead = isRead,
+                isBookmarked = isBookmarked,
+            )
+        }
+
+        databaseHelper.insertFeedItems(feedItems, dateFormatter.currentTimeMillis())
+
+        return Unit.success()
+    }
+
+    private suspend fun fetchMissingStarredEntries(
+        feedSources: List<FeedSource>,
+        statusIds: FeedbinEntryStatusIds,
+    ): DataResult<Unit> {
+        if (statusIds.starredIds.isEmpty()) {
+            return Unit.success()
+        }
+
+        val missingStarredIds = databaseHelper
+            .getMissingFeedItemIds(statusIds.starredIds.map { it.toString() })
+            .mapNotNull { it.toLongOrNull() }
+            .toSet()
+        if (missingStarredIds.isEmpty()) {
+            return Unit.success()
+        }
+
+        return fetchEntriesByIds(
+            feedSources = feedSources,
+            statusIds = statusIds,
+            entryIds = missingStarredIds,
+        )
+    }
+
+    private suspend fun fetchUnreadAndStarredIds(): DataResult<FeedbinEntryStatusIds> {
+        logger.d { "Fetching starred entries" }
+        val starredResult = feedbinClient.getStarredEntries()
+        if (starredResult.isError()) {
+            logger.d { "Failed to fetch starred entries: $starredResult" }
+            return starredResult.failure.error()
+        }
+
+        logger.d { "Fetching unread entries" }
+        val unreadResult = feedbinClient.getUnreadEntries()
+        if (unreadResult.isError()) {
+            logger.d { "Failed to fetch unread entries: $unreadResult" }
+            return unreadResult.failure.error()
+        }
+
+        return FeedbinEntryStatusIds(
+            unreadIds = unreadResult.requireSuccess().toSet(),
+            starredIds = starredResult.requireSuccess().toSet(),
+        ).success()
+    }
+
+    private suspend fun updateStatuses(statusIds: FeedbinEntryStatusIds) {
+        databaseHelper.updateFeedItemReadStatus(
+            statusIds.unreadIds.map { it.toString() },
+        )
+        databaseHelper.updateFeedItemBookmarkStatus(
+            statusIds.starredIds.map { it.toString() },
+        )
+    }
+
+    private suspend fun buildSinceForRegularSync(): String? {
+        val lastUpdate = networkSettings.getLastSyncDate()
+        return if (lastUpdate != null) {
+            kotlinx.datetime.Instant.fromEpochSeconds(lastUpdate).toString()
+        } else if (!databaseHelper.hasFeedItems()) {
+            buildHistorySince()
+        } else {
+            null
+        }
+    }
+
+    private fun buildHistorySince(): String {
+        val cutoffSeconds = Clock.System.now().epochSeconds - FIRST_SYNC_CUTOFF.inWholeSeconds
+        return kotlinx.datetime.Instant.fromEpochSeconds(cutoffSeconds).toString()
+    }
+
+    private data class FeedbinEntryStatusIds(
+        val unreadIds: Set<Long>,
+        val starredIds: Set<Long>,
+    )
+
+    private suspend fun resolveSubscriptionId(feedbinIds: FeedbinIds): DataResult<Long> {
+        feedbinIds.subscriptionId?.let { return it.success() }
+
+        val subscriptionsResult = feedbinClient.getSubscriptions()
+        if (subscriptionsResult.isError()) {
+            return subscriptionsResult.requireError().error()
+        }
+
+        val subscriptionId = subscriptionsResult.requireSuccess()
+            .firstOrNull { it.feedId == feedbinIds.feedId }
+            ?.id
+
+        return subscriptionId?.success() ?: DataNotFound.error()
+    }
+
+    fun buildCategoryId(categoryName: CategoryName): String {
+        return categoryName.name
+    }
+
     companion object {
         private const val PAGE_SIZE = 100
-        private const val MAX_PAGES = 10
+        private const val ENTRY_MODE_EXTENDED = "extended"
+        private const val MAX_MARK_BATCH_SIZE = 1000
+        private const val ENTRY_IDS_CHUNK_SIZE = 100
+        private val FIRST_SYNC_CUTOFF = 60.days
     }
 }

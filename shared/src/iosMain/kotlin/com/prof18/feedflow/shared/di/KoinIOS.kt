@@ -23,6 +23,8 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIosDesktop
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
@@ -40,6 +42,7 @@ import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
+import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
 import com.prof18.feedflow.shared.presentation.FreshRssSyncViewModel
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -138,6 +141,14 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             override val default: CoroutineDispatcher = Dispatchers.Default
             override val io: CoroutineDispatcher = Dispatchers.IO
         }
+    }
+
+    single<FeedbinHistorySyncScheduler> {
+        FeedbinHistorySyncSchedulerIosDesktop(
+            feedbinRepository = get(),
+            dispatcherProvider = get(),
+            logger = getWith("FeedbinHistorySyncSchedulerIosDesktop"),
+        )
     }
 
     factory {
@@ -285,4 +296,5 @@ object Deps : KoinComponent {
     fun getUserFeedbackReporter() = getKoin().get<UserFeedbackReporter>()
     fun getChangeFeedCategoryViewModel() = getKoin().get<ChangeFeedCategoryViewModel>()
     fun getFeedSuggestionsViewModel() = getKoin().get<FeedSuggestionsViewModel>()
+    fun getFeedbinSyncViewModel() = getKoin().get<FeedbinSyncViewModel>()
 }

@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.feedsync.feedbin.data.dto.EntryDTO
 import kotlinx.datetime.Instant
 
@@ -39,6 +40,7 @@ internal class EntryDTOMapper(
                 dateFormatter.formatDateForFeed(
                     millis = it / 1000,
                     dateFormat = DateFormat.NORMAL,
+                    timeFormat = TimeFormat.HOURS_24,
                 )
             },
             commentsUrl = null,

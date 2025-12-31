@@ -1,0 +1,18 @@
+CREATE TABLE feed_item_ids_for_checks(
+    url_hash TEXT NOT NULL PRIMARY KEY
+);
+
+clearTempFeedItemIds:
+DELETE FROM feed_item_ids_for_checks;
+
+insertTempFeedItemId:
+INSERT OR REPLACE INTO feed_item_ids_for_checks(url_hash) VALUES (?);
+
+selectMissingFeedItemIds:
+SELECT feed_item_ids_for_checks.url_hash
+FROM feed_item_ids_for_checks
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM feed_item
+    WHERE feed_item.url_hash = feed_item_ids_for_checks.url_hash
+);

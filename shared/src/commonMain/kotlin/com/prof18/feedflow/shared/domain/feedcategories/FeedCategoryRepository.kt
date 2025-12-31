@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.core.model.onErrorSuspend
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
@@ -26,6 +27,7 @@ internal class FeedCategoryRepository(
     private val feedSyncRepository: FeedSyncRepository,
     private val gReaderRepository: GReaderRepository,
     private val feedStateRepository: FeedStateRepository,
+    private val feedbinRepository: FeedbinRepository,
 ) {
     private val categoriesMutableState: MutableStateFlow<CategoriesState> = MutableStateFlow(CategoriesState())
     val categoriesState = categoriesMutableState
@@ -68,6 +70,25 @@ internal class FeedCategoryRepository(
                     )
             }
 
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.deleteCategory(categoryId)
+                    .fold(
+                        onSuccess = {
+                            feedbinRepository.fetchFeedSourcesAndCategories()
+                                .onErrorSuspend {
+                                    feedStateRepository.emitErrorState(
+                                        SyncError(errorCode = FeedSyncError.FetchFeedSourcesAndCategoriesFailed),
+                                    )
+                                }
+                        },
+                        onFailure = {
+                            feedStateRepository.emitErrorState(
+                                SyncError(errorCode = FeedSyncError.DeleteCategoryFailed),
+                            )
+                        },
+                    )
+            }
+
             else -> {
                 databaseHelper.deleteCategory(categoryId)
                 feedSyncRepository.deleteFeedSourceCategory(categoryId)
@@ -85,6 +106,13 @@ internal class FeedCategoryRepository(
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
                 gReaderRepository.editCategoryName(categoryId, newName)
+                    .onErrorSuspend {
+                        feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditCategoryNameFailed))
+                    }
+            }
+
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.editCategoryName(categoryId, newName)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditCategoryNameFailed))
                     }
@@ -127,7 +155,7 @@ internal class FeedCategoryRepository(
     suspend fun createCategory(categoryName: CategoryName) {
         val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> gReaderRepository.buildCategoryId(categoryName)
-
+            SyncAccounts.FEEDBIN -> feedbinRepository.buildCategoryId(categoryName)
             else -> categoryName.name.hashCode().toString()
         }
 

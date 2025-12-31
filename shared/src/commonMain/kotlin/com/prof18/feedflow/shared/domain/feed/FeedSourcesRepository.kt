@@ -497,6 +497,15 @@ internal class FeedSourcesRepository(
                     isNotificationEnabled = false,
                 )
             }
+
+            SyncAccounts.FEEDBIN -> {
+                feedbinRepository.addFeedSource(
+                    url = feedUrl,
+                    categoryName = category,
+                    isNotificationEnabled = false,
+                )
+            }
+
             else -> {
                 val parsedFeedSource = ParsedFeedSource(
                     id = feedUrl.hashCode().toString(),

@@ -43,7 +43,15 @@ class GReaderRepository internal constructor(
     private val dateFormatter: DateFormatter,
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    fun isAccountSet(): Boolean = networkSettings.getSyncPwd().isNotEmpty()
+    fun isAccountSet(): Boolean {
+        val hasCredentials = networkSettings.getSyncPwd().isNotEmpty() &&
+            networkSettings.getSyncUrl().isNotEmpty()
+        return when (networkSettings.getSyncAccountType()) {
+            SyncAccounts.FRESH_RSS,
+            SyncAccounts.MINIFLUX -> hasCredentials
+            else -> false
+        }
+    }
 
     suspend fun login(
         username: String,

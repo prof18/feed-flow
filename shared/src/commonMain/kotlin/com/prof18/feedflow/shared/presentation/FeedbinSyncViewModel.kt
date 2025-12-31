@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.Failure
 import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,6 +23,7 @@ class FeedbinSyncViewModel internal constructor(
     private val accountsRepository: AccountsRepository,
     private val dateFormatter: DateFormatter,
     private val feedStateRepository: FeedStateRepository,
+    private val feedbinHistorySyncScheduler: FeedbinHistorySyncScheduler,
 ) : ViewModel() {
 
     private val uiMutableState: MutableStateFlow<AccountConnectionUiState> = MutableStateFlow(
@@ -64,10 +66,13 @@ class FeedbinSyncViewModel internal constructor(
                 },
                 onSuccess = {
                     accountsRepository.setFeedbinAccount()
-                    feedbinRepository.sync()
+                    uiMutableState.update {
+                        AccountConnectionUiState.Linked(syncState = AccountSyncUIState.Loading)
+                    }
+                    loginLoadingMutableState.update { false }
+                    feedbinRepository.syncUnreadAndStarredAfterLogin()
                         .fold(
                             onFailure = {
-                                loginLoadingMutableState.update { false }
                                 errorMutableState.emit(it)
                                 uiMutableState.update {
                                     AccountConnectionUiState.Linked(
@@ -76,13 +81,13 @@ class FeedbinSyncViewModel internal constructor(
                                 }
                             },
                             onSuccess = {
-                                loginLoadingMutableState.update { false }
                                 feedStateRepository.getFeeds()
                                 uiMutableState.update {
                                     AccountConnectionUiState.Linked(
                                         syncState = getSyncState(),
                                     )
                                 }
+                                feedbinHistorySyncScheduler.startInitialSync()
                             },
                         )
                 },

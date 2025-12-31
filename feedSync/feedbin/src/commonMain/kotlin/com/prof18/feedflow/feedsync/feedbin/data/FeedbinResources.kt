@@ -23,6 +23,7 @@ class FeedbinV2Resource {
         val page: Int? = null,
         val since: String? = null,
         val ids: String? = null,
+        val mode: String? = null,
         val read: Boolean? = null,
         val starred: Boolean? = null,
         val per_page: Int? = null,
@@ -75,6 +76,11 @@ class FeedbinV2Resource {
 
     @Resource("tags.json")
     class Tags(
+        val parent: FeedbinV2Resource = FeedbinV2Resource(),
+    )
+
+    @Resource("icons.json")
+    class Icons(
         val parent: FeedbinV2Resource = FeedbinV2Resource(),
     )
 }

@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlin.collections.emptySet
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
@@ -205,6 +206,17 @@ class DatabaseHelper(
     suspend fun hasFeedItems(): Boolean = withContext(backgroundDispatcher) {
         dbRef.feedItemQueries.countFeedItems().executeAsOne() > 0
     }
+
+    suspend fun getMissingFeedItemIds(feedItemIds: List<String>): Set<String> =
+        withContext(backgroundDispatcher)  {
+            dbRef.feedItemTempQueries.clearTempFeedItemIds()
+            feedItemIds.forEach { feedItemId ->
+                dbRef.feedItemTempQueries.insertTempFeedItemId(feedItemId)
+            }
+            val missingIds = dbRef.feedItemTempQueries.selectMissingFeedItemIds().executeAsList().toSet()
+            dbRef.feedItemTempQueries.clearTempFeedItemIds()
+            missingIds
+        }
 
     suspend fun markAsRead(itemsToUpdates: List<FeedItemId>) =
         dbRef.transactionWithContext(backgroundDispatcher) {

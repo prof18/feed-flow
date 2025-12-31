@@ -14,6 +14,9 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchWorker
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerAndroid
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
@@ -78,6 +81,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             override val default: CoroutineDispatcher = Dispatchers.Default
             override val io: CoroutineDispatcher = Dispatchers.IO
         }
+    }
+
+    single<FeedbinHistorySyncScheduler> {
+        FeedbinHistorySyncSchedulerAndroid(
+            appContext = get(),
+        )
     }
 
     single<FeedItemContentFileHandler> {
@@ -145,6 +154,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     factory<CurrentOS> { CurrentOS.Android }
 
     workerOf(::SyncWorkManager)
+    workerOf(::FeedbinHistorySyncWorker)
 
     worker {
         FeedDownloadWorker(

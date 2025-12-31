@@ -64,6 +64,17 @@ internal class FeedActionsRepository(
                 }
             }
 
+            SyncAccounts.FEEDBIN -> {
+                val itemIds = databaseHelper.getItemsAbove(targetItemId, currentFilter)
+                if (itemIds.isNotEmpty()) {
+                    val feedItemIds = itemIds.map { FeedItemId(it) }
+                    feedbinRepository.updateReadStatus(feedItemIds, isRead = true)
+                        .onErrorSuspend {
+                            feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
+                        }
+                }
+            }
+
             else -> {
                 databaseHelper.markAllAboveAsRead(targetItemId, currentFilter)
                 feedSyncRepository.setIsSyncUploadRequired()
@@ -81,6 +92,17 @@ internal class FeedActionsRepository(
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
                     gReaderRepository.updateReadStatus(feedItemIds, isRead = true)
+                        .onErrorSuspend {
+                            feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
+                        }
+                }
+            }
+
+            SyncAccounts.FEEDBIN -> {
+                val itemIds = databaseHelper.getItemsBelow(targetItemId, currentFilter)
+                if (itemIds.isNotEmpty()) {
+                    val feedItemIds = itemIds.map { FeedItemId(it) }
+                    feedbinRepository.updateReadStatus(feedItemIds, isRead = true)
                         .onErrorSuspend {
                             feedStateRepository.emitErrorState(SyncError(FeedSyncError.MarkItemsAsReadFailed))
                         }

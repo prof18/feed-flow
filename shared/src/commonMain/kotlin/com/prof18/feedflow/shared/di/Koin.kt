@@ -418,6 +418,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             accountsRepository = get(),
             dateFormatter = get(),
             feedStateRepository = get(),
+            feedbinHistorySyncScheduler = get(),
         )
     }
 

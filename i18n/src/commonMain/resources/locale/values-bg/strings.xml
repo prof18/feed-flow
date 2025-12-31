@@ -226,7 +226,7 @@
     <string name="settings_theme_dark">Тъмна</string>
     <string name="icloud_connection_error">За съжаление не можем да се свържем с iCloud. Моля, проверете дали сте влезли в профила си, iCloud Drive е включен и имате свободно място - error code: %s.</string>
     <string name="open_feed_settings">Отваряне на настройките на емисията</string>
-    <string name="reader_mode_browser_button_content_description">Отвори в браузър</string>
+    <string name="reader_mode_browser_button_content_description">Отваряне в браузър</string>
     <string name="delete_feed_confirmation_title">Изтриване на емисия?</string>
     <string name="delete_feed_confirmation_message">Сигурни ли сте, че искате да изтриете тази емисия? Това действие не може да бъде отменено.</string>
     <string name="delete_feed_button">Изтриване на емисия</string>
@@ -239,7 +239,7 @@
     <string name="blocked_words_description">Статиите, съдържащи тези думи в заглавието или описанието, ще бъдат скрити.</string>
     <string name="mark_all_read_dialog_message">Сигурни ли сте, че искате да маркирате всички статии като прочетени?</string>
     <string name="clear_old_articles_dialog_message">Сигурни ли сте, че искате да изтриете стари статии?</string>
-    <string name="confirm_button">Потвърди</string>
+    <string name="confirm_button">Потвърдете</string>
     <string name="cancel_button">Отказ</string>
     <string name="reader_mode_comments_button_content_description">Отваряне на коментари</string>
     <string name="settings_save_reader_mode_content">Запазване на съдържанието на статията при отваряне за четене офлайн</string>
@@ -264,7 +264,7 @@
     <string name="settings_clear_image_cache_dialog_message">Това ще изтрие всички кеширани изображения. Изображенията ще бъдат изтеглени отново, когато разглеждате статиите си.</string>
     <string name="reader_mode_fallback_title">Не може да се анализира статията</string>
     <string name="reader_mode_fallback_message">Съдържанието на тази страница не можа да бъде извлечено за режим на четене. Можете да отворите страницата директно в браузъра си.</string>
-    <string name="reader_mode_fallback_open_browser_button">Отвори в браузър</string>
+    <string name="reader_mode_fallback_open_browser_button">Отваряне в браузър</string>
     <string name="feed_add_in_progress_message">Внасяне на емисия...</string>
     <string name="delete_feed_source_error">Не може да се изтрие емисията. Моля, опитайте отново.</string>
     <string name="search_button_content_description">Търсене</string>
@@ -275,4 +275,25 @@
     <string name="scroll_to_top_button_content_description">Превъртете до горе</string>
     <string name="dropbox_auth_code_expired">Кодът за удостоверяване вече не е валиден. Моля, опитайте отново.</string>
     <string name="database_error_reset">Имахме проблеми със зареждането на данните ви и трябваше да започнем отначало. Извиняваме се за това.</string>
+    <string name="trigger_feed_sync">Задействане на качване в профила ви</string>
+    <string name="menu_mark_all_above_as_read">Маркиране на всичко по-горе като прочетено</string>
+    <string name="menu_mark_all_below_as_read">Маркиране на всички по-долу като прочетени</string>
+    <string name="google_drive_sync_common_description">Свържете акаунта си в Google Drive, за да синхронизирате абонаменти за емисии, категории, прочетени и маркирани статии между вашите устройства с Android, iOS, iPadOS и настолни компютри. Данните ще бъдат запазени в папка, специфична за приложението; FeedFlow няма да има достъп до нито един от вашите файлове</string>
+    <string name="google_drive_auth_code_hint">Код за удостоверяване</string>
+    <string name="google_drive_confirm_button">Потвърждение</string>
+    <string name="google_drive_sync_error">Възникна грешка при свързването с Google Диск. Моля, опитайте отново</string>
+    <string name="google_drive_sync_success">Вашият акаунт в Google Диск е успешно свързан</string>
+    <string name="no_google_drive_sync_yet">Данните все още не са синхронизирани с Google Диск. Кликнете върху бутона за архивиране, за да задействате синхронизирането</string>
+    <string name="google_drive_connect_button">Свързване на Google Диск</string>
+    <string name="google_drive_desktop_sync_description">Кликнете върху бутона по-долу, за да свържете своя акаунт в Google Drive. Ще се отвори прозорец на браузъра за удостоверяване. След като приключите с влизането, можете да се върнете към това приложение.</string>
+    <string name="miniflux_account_connected">Вашият Miniflux акаунт е успешно свързан</string>
+    <string name="no_miniflux_sync_yet">Данните все още не са синхронизирани</string>
+    <string name="miniflux_last_sync">Последна синхронизация: %s</string>
+    <string name="miniflux_password_hint">Паролата за Miniflux API (Настройки &gt; Интеграции &gt; Google Reader)</string>
+    <string name="miniflux_url_hint">URL адресът на сървъра Miniflux, например %s</string>
+    <string name="change_category">Промяна на категорията</string>
+    <string name="menu_view">Преглед</string>
+    <string name="feed_suggestions_title">Предложения за емисия</string>
+    <string name="feed_suggestions_description">Разглеждайте и добавяйте емисии към вашата колекция</string>
+    <string name="google_drive_auth_retry">Трябва да се удостоверите отново, за да продължите да използвате синхронизирането с Google Диск. Отидете в „Профили“, прекратете връзката и я свържете отново.</string>
 </resources>

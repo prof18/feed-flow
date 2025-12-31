@@ -65,7 +65,7 @@ slf4jNop = "2.0.17"
 # https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
 sql-delight = "2.1.0"
 stately-concurrency = "2.1.0"
-triplet-play = "3.12.2"
+triplet-play = "3.13.0"
 voyager = "1.0.1"
 workmanager = "2.11.0"
 compose-hotreload = "1.0.0"

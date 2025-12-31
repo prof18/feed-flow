@@ -219,6 +219,7 @@ val macExtraPlistKeys: String
           <string>ar</string>
           <string>sq</string>
           <string>ca</string>
+          <string>zh-Hant</string>
         </array>
         <key>NSUbiquitousContainers</key>
         <dict>

@@ -22,6 +22,10 @@ val feedFlowStrings: Map<String, FeedFlowStrings> = mapOf(
     "zh-CN" to ZhCnFeedFlowStrings,
     "zh-Hans-CN" to ZhCnFeedFlowStrings,
 
+    Locales.ZhTw to ZhTwFeedFlowStrings,
+    "zh-Hant" to ZhTwFeedFlowStrings,
+    "zh-Hant-TW" to ZhTwFeedFlowStrings,
+
     Locales.Gl to GlFeedFlowStrings,
     Locales.Bg to BgFeedFlowStrings,
     Locales.Vi to ViFeedFlowStrings,

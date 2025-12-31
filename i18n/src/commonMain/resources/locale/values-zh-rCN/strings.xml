@@ -290,4 +290,10 @@
     <string name="google_drive_auth_retry">您需要重新进行身份验证才能继续使用 Google Drive 同步功能。请前往账号并取消关联，然后重新关联。</string>
     <string name="feed_suggestions_title">源建议</string>
     <string name="feed_suggestions_description">浏览并将源添加到收藏集</string>
+    <string name="menu_view">查看</string>
+    <string name="miniflux_account_connected">已成功连接您的 Miniflux 账号</string>
+    <string name="no_miniflux_sync_yet">数据尚未同步</string>
+    <string name="miniflux_last_sync">上次同步：%s</string>
+    <string name="miniflux_password_hint">Miniflux API 密码（设置 &gt; 集成 &gt; Google 阅读器）</string>
+    <string name="miniflux_url_hint">Miniflux 服务器 URL，例如 %s</string>
 </resources>

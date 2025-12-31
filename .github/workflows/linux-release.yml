@@ -27,7 +27,7 @@ jobs:
       rpm_name: ${{ steps.path_variables.outputs.rpm_name }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Setup environment
         uses: ./.github/actions/setup-gradle

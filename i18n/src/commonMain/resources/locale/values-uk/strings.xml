@@ -275,4 +275,19 @@
     <string name="scroll_to_top_button_content_description">Прокрутити вгору</string>
     <string name="dropbox_auth_code_expired">Код автентифікації більше недійсний. Спробуйте ще раз.</string>
     <string name="database_error_reset">Виникли проблеми із завантаженням ваших даних і довелося починати все спочатку. Вибачте.</string>
+    <string name="trigger_feed_sync">Активувати завантаження у ваш обліковий запис</string>
+    <string name="menu_mark_all_above_as_read">Позначити все вищезазначене як прочитане</string>
+    <string name="menu_mark_all_below_as_read">Позначити все нижче як прочитане</string>
+    <string name="google_drive_sync_common_description">Підключіть свій обліковий запис Google Диска, щоб синхронізувати підписки на стрічки, категорії, прочитані та додані до закладок статті між вашими пристроями Android, iOS, iPadOS та настільними комп’ютерами. Дані будуть збережені в папці, окремій для програми; FeedFlow не матиме доступу до жодного з ваших файлів</string>
+    <string name="google_drive_auth_code_hint">Код авторизації</string>
+    <string name="google_drive_confirm_button">Підтвердити</string>
+    <string name="google_drive_sync_error">Під час підключення до Google Диска сталася помилка. Спробуйте ще раз</string>
+    <string name="google_drive_sync_success">Ваш обліковий запис Google Диска успішно підключено</string>
+    <string name="no_google_drive_sync_yet">Дані ще не синхронізовано з Google Диском. Натисніть кнопку резервного копіювання, щоб розпочати синхронізацію</string>
+    <string name="google_drive_connect_button">Підключити Google Диск</string>
+    <string name="google_drive_desktop_sync_description">Натисніть кнопку нижче, щоб підключити свій обліковий запис Google Диска. Відкриється вікно браузера для автентифікації. Після завершення входу ви можете повернутися до цієї програми.</string>
+    <string name="change_category">Змінити категорію</string>
+    <string name="feed_suggestions_title">Пропозиції щодо стрічки</string>
+    <string name="feed_suggestions_description">Переглядайте та додавайте стрічки до своєї колекції</string>
+    <string name="google_drive_auth_retry">Щоб продовжити синхронізацію з Google Диском, потрібно повторно автентифікуватися. Перейдіть до розділу \"Облікові записи\", від’єднайте облікові записи та знову під’єднайте їх.</string>
 </resources>

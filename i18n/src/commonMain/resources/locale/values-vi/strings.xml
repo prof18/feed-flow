@@ -275,4 +275,19 @@
     <string name="scroll_to_top_button_content_description">Cuộn lên trên</string>
     <string name="dropbox_auth_code_expired">Mã xác thực không còn hiệu lực. Vui lòng thử lại.</string>
     <string name="database_error_reset">Chúng tôi gặp sự cố khi tải dữ liệu của bạn và phải bắt đầu lại từ đầu. Xin lỗi nha.</string>
+    <string name="trigger_feed_sync">Bật tính năng tải lên tài khoản của bạn</string>
+    <string name="menu_mark_all_above_as_read">Đánh dấu đã đọc tất cả nội dung trên</string>
+    <string name="menu_mark_all_below_as_read">Đánh dấu đã đọc tất cả nội dung dưới</string>
+    <string name="google_drive_sync_common_description">Kết nối tài khoản Google Drive của bạn để đồng bộ hóa các nguồn tin đăng ký, danh mục, bài viết đã đọc và đánh dấu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong thư mục dành riêng cho ứng dụng; FeedFlow sẽ không có quyền truy cập vào bất kỳ tệp nào của bạn</string>
+    <string name="google_drive_auth_code_hint">Mã xác thực</string>
+    <string name="google_drive_confirm_button">Xác nhận</string>
+    <string name="google_drive_sync_error">Đã xảy ra lỗi khi kết nối với Google Drive. Vui lòng thử lại</string>
+    <string name="google_drive_sync_success">Tài khoản Google Drive của bạn đã được kết nối thành công</string>
+    <string name="no_google_drive_sync_yet">Dữ liệu chưa được đồng bộ hóa với Google Drive. Nhấn vào nút sao lưu để bắt đầu đồng bộ hóa</string>
+    <string name="google_drive_connect_button">Kết nối Google Drive</string>
+    <string name="google_drive_desktop_sync_description">Nhấn vào nút bên dưới để kết nối tài khoản Google Drive của bạn. Một cửa sổ trình duyệt sẽ mở ra để xác thực. Sau khi hoàn tất đăng nhập, bạn có thể quay lại ứng dụng này.</string>
+    <string name="change_category">Đổi danh mục</string>
+    <string name="feed_suggestions_title">Đề xuất bảng tin</string>
+    <string name="feed_suggestions_description">Duyệt và thêm nguồn tin vào bộ sưu tập của bạn</string>
+    <string name="google_drive_auth_retry">Bạn cần xác thực lại để tiếp tục sử dụng tính năng đồng bộ hóa Google Drive. Vào mục Tài khoản, hủy liên kết rồi liên kết lại.</string>
 </resources>

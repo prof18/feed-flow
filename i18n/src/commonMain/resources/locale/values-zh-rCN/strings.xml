@@ -288,4 +288,6 @@
     <string name="no_google_drive_sync_yet">数据尚未与 Google Drive 同步，请点击备份按钮触发同步</string>
     <string name="google_drive_desktop_sync_description">点击下方按钮连接您的 Google Drive 账号。浏览器窗口将打开以进行身份验证。完成登录后，您可以返回此应用。</string>
     <string name="google_drive_auth_retry">您需要重新进行身份验证才能继续使用 Google Drive 同步功能。请前往账号并取消关联，然后重新关联。</string>
+    <string name="feed_suggestions_title">源建议</string>
+    <string name="feed_suggestions_description">浏览并将源添加到收藏集</string>
 </resources>

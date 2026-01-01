@@ -29,7 +29,8 @@
       "Bash(grep:*)",
       "Bash(.scripts/ios-format.sh:*)",
       "Bash(grep:*)",
-      "Bash(./.scripts/refresh-translations.sh:*)"
+      "Bash(./.scripts/refresh-translations.sh:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ],
     "deny": []
   }

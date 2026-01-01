@@ -68,6 +68,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
+import com.mikepenz.markdown.model.markdownAnimations
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.ReaderModeState
@@ -219,6 +220,12 @@ internal data class ReaderModeScreen(
                                             .padding(bottom = 64.dp),
                                         content = s.readerModeData.content,
                                         imageTransformer = Coil3ImageTransformerImpl,
+                                        animations = markdownAnimations(
+                                            animateTextSize = {
+                                                this
+                                                /** No animation */
+                                            },
+                                        ),
                                         typography = markdownTypography(
                                             h1 = MaterialTheme.typography.displaySmall.copy(
                                                 fontSize = (fontSize + 20).sp,

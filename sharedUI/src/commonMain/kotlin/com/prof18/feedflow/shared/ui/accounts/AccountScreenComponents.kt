@@ -135,8 +135,6 @@ private fun SyncAccounts.getTitle() =
         SyncAccounts.FRESH_RSS -> "FreshRSS"
         SyncAccounts.MINIFLUX -> "Miniflux"
         SyncAccounts.FEEDBIN -> "Feedbin"
-        SyncAccounts.MINIFLUX -> "Miniflux"
-        SyncAccounts.FEEDBIN -> "Feedbin"
     }
 
 private fun SyncAccounts.getIcon() =
@@ -146,8 +144,6 @@ private fun SyncAccounts.getIcon() =
         SyncAccounts.ICLOUD -> Cloud
         SyncAccounts.LOCAL -> Dropbox
         SyncAccounts.FRESH_RSS -> FreshRSS
-        SyncAccounts.MINIFLUX -> Miniflux
-        SyncAccounts.FEEDBIN -> Feedbin
         SyncAccounts.MINIFLUX -> Miniflux
         SyncAccounts.FEEDBIN -> Feedbin
     }

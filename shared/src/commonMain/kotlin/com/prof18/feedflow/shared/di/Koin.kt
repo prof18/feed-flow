@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
-import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
@@ -41,7 +40,6 @@ import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
-import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
@@ -102,7 +100,7 @@ private fun getLoggingModule(
     crashReportingLogWriter: LogWriter,
 ): Module =
     module {
-        val loggers = mutableListOf(platformLogWriter())
+        val loggers = platformLogWriters().toMutableList()
         if (appConfig.appEnvironment.isRelease() && appConfig.isLoggingEnabled) {
             loggers.add(crashReportingLogWriter)
         }
@@ -502,6 +500,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 }
+
+internal expect fun platformLogWriters(): List<LogWriter>
 
 internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module
 

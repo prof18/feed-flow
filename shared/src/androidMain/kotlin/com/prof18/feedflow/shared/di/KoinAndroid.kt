@@ -2,6 +2,8 @@ package com.prof18.feedflow.shared.di
 
 import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
+import co.touchlab.kermit.LogWriter
+import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -204,3 +206,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 }
+
+internal actual fun platformLogWriters(): List<LogWriter> =
+    listOf(platformLogWriter())

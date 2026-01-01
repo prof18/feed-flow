@@ -3,8 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:configure="com.prof18.feedflow.android.widget.WidgetConfigurationActivity"
     android:initialLayout="@layout/glance_default_loading_layout"
-    android:maxResizeWidth="700dp"
-    android:maxResizeHeight="700dp"
     android:minWidth="256dp"
     android:minHeight="128dp"
     android:minResizeWidth="256dp"
@@ -15,4 +13,3 @@
     android:targetCellHeight="3"
     android:updatePeriodMillis="3600000">
 </appwidget-provider>
-

@@ -290,4 +290,10 @@
     <string name="feed_suggestions_title">Пропозиції щодо стрічки</string>
     <string name="feed_suggestions_description">Переглядайте та додавайте стрічки до своєї колекції</string>
     <string name="google_drive_auth_retry">Щоб продовжити синхронізацію з Google Диском, потрібно повторно автентифікуватися. Перейдіть до розділу \"Облікові записи\", від’єднайте облікові записи та знову під’єднайте їх.</string>
+    <string name="miniflux_account_connected">Ваш обліковий запис Miniflux успішно підключено</string>
+    <string name="no_miniflux_sync_yet">Дані ще не синхронізовано</string>
+    <string name="miniflux_last_sync">Остання синхронізація: %s</string>
+    <string name="miniflux_password_hint">Пароль API Miniflux (Налаштування &gt; Інтеграції &gt; Google Reader)</string>
+    <string name="miniflux_url_hint">URL-адреса сервера Miniflux, наприклад %s</string>
+    <string name="menu_view">Переглянути</string>
 </resources>

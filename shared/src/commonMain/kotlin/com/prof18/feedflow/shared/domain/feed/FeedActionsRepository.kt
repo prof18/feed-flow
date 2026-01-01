@@ -43,7 +43,11 @@ internal class FeedActionsRepository(
                     }
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 databaseHelper.markAsRead(itemsToUpdates.toList())
                 feedSyncRepository.setIsSyncUploadRequired()
             }
@@ -75,7 +79,11 @@ internal class FeedActionsRepository(
                 }
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 databaseHelper.markAllAboveAsRead(targetItemId, currentFilter)
                 feedSyncRepository.setIsSyncUploadRequired()
             }
@@ -109,7 +117,11 @@ internal class FeedActionsRepository(
                 }
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 databaseHelper.markAllBelowAsRead(targetItemId, currentFilter)
                 feedSyncRepository.setIsSyncUploadRequired()
             }
@@ -135,7 +147,11 @@ internal class FeedActionsRepository(
                     }
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 databaseHelper.markAllFeedAsRead(currentFilter)
                 feedSyncRepository.setIsSyncUploadRequired()
             }
@@ -171,7 +187,11 @@ internal class FeedActionsRepository(
                     }
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 databaseHelper.updateBookmarkStatus(feedItemId, isBookmarked)
                 feedSyncRepository.setIsSyncUploadRequired()
             }
@@ -203,7 +223,11 @@ internal class FeedActionsRepository(
                     }
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 databaseHelper.updateReadStatus(feedItemId, isRead)
                 feedSyncRepository.setIsSyncUploadRequired()
             }

@@ -122,7 +122,12 @@ internal class FeedSyncAndroidWorker(
                 logger.d { "Upload to Google Drive successfully" }
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.ICLOUD,
+            SyncAccounts.FRESH_RSS,
+            SyncAccounts.MINIFLUX,
+            SyncAccounts.FEEDBIN,
+            -> {
                 // Do nothing
             }
         }
@@ -170,7 +175,12 @@ internal class FeedSyncAndroidWorker(
                 SyncResult.Success
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.ICLOUD,
+            SyncAccounts.FRESH_RSS,
+            SyncAccounts.MINIFLUX,
+            SyncAccounts.FEEDBIN,
+            -> {
                 SyncResult.Success
             }
         }

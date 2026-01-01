@@ -22,7 +22,7 @@ internal class EntryDTOMapper(
     ): FeedItem? {
         val pubDateMillis = try {
             Instant.parse(entryDTO.published).toEpochMilliseconds()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
 

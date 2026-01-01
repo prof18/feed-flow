@@ -8,9 +8,9 @@ import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.Failure
 import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
-import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow

@@ -65,7 +65,11 @@ internal class FeedImportExportRepository(
                 )
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 databaseHelper.insertCategories(categories)
                 databaseHelper.insertFeedSource(feeds)
 

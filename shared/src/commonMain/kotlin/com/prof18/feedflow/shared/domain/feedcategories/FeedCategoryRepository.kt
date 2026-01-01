@@ -89,7 +89,11 @@ internal class FeedCategoryRepository(
                     )
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 databaseHelper.deleteCategory(categoryId)
                 feedSyncRepository.deleteFeedSourceCategory(categoryId)
             }
@@ -118,7 +122,11 @@ internal class FeedCategoryRepository(
                     }
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 databaseHelper.updateCategoryName(categoryId.value, newName.name)
                 val category = FeedSourceCategory(
                     id = categoryId.value,
@@ -156,7 +164,11 @@ internal class FeedCategoryRepository(
         val categoryId = when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> gReaderRepository.buildCategoryId(categoryName)
             SyncAccounts.FEEDBIN -> feedbinRepository.buildCategoryId(categoryName)
-            else -> categoryName.name.hashCode().toString()
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> categoryName.name.hashCode().toString()
         }
 
         val category = FeedSourceCategory(

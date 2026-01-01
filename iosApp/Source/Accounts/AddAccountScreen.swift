@@ -106,8 +106,12 @@ struct AddAccountScreen: View {
                                 Label {
                                     Text("Feedbin")
                                 } icon: {
-                                    Image(systemName: "wave.3.right")
-                                        .fontWeight(.bold)
+                                    Image("feedbin")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 22, height: 22)
+                                        .foregroundStyle(.primary)
                                 }
                             }
 

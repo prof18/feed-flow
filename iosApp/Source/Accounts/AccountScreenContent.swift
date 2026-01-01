@@ -99,6 +99,22 @@ struct AccountsScreenContent: View {
                     }
                 }
 
+            case .feedbin:
+                NavigationLink(destination: FeedbinSyncScreen(isFromAddAccount: false)) {
+                    HStack {
+                        Image("feedbin")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
+                            .foregroundStyle(.primary)
+                        Text("Feedbin")
+                            .font(.body)
+                        Spacer()
+                        Image(systemName: "checkmark")
+                    }
+                }    
+
             case .local:
                 EmptyView()
             }

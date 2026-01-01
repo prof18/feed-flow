@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.LocalLibrary
 import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.Sync
+import androidx.compose.material.icons.outlined.Widgets
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +48,9 @@ internal fun SettingsScreenContent(
     navigateToFeedListSettings: () -> Unit,
     navigateToReadingBehavior: () -> Unit,
     navigateToSyncAndStorage: () -> Unit,
+    navigateToWidgetSettings: () -> Unit,
     navigateToAboutAndSupport: () -> Unit,
+    showWidgetSettings: Boolean,
 ) {
     Scaffold(
         topBar = {
@@ -99,6 +102,16 @@ internal fun SettingsScreenContent(
                     icon = Icons.Outlined.Layers,
                     onClick = navigateToFeedListSettings,
                 )
+            }
+
+            if (showWidgetSettings) {
+                item {
+                    SettingItem(
+                        title = LocalFeedFlowStrings.current.widgetConfigurationTitle,
+                        icon = Icons.Outlined.Widgets,
+                        onClick = navigateToWidgetSettings,
+                    )
+                }
             }
 
             item {
@@ -181,7 +194,9 @@ private fun SettingsScreenPreview() {
             navigateToFeedListSettings = {},
             navigateToReadingBehavior = {},
             navigateToSyncAndStorage = {},
+            navigateToWidgetSettings = {},
             navigateToAboutAndSupport = {},
+            showWidgetSettings = true,
         )
     }
 }

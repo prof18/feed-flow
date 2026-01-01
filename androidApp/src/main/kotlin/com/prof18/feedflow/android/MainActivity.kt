@@ -59,6 +59,7 @@ import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.ImportExpo
 import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.NotificationsSettingsScreen
 import com.prof18.feedflow.android.settings.readingbehavior.ReadingBehaviorScreen
 import com.prof18.feedflow.android.settings.syncstorage.SyncAndStorageScreen
+import com.prof18.feedflow.android.settings.widget.WidgetSettingsScreen
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedSource
@@ -280,6 +281,9 @@ class MainActivity : BaseThemeActivity() {
                     navigateToSyncAndStorage = {
                         navController.navigate(SyncAndStorage)
                     },
+                    navigateToWidgetSettings = {
+                        navController.navigate(WidgetSettings)
+                    },
                     navigateToAboutAndSupport = {
                         navController.navigate(AboutAndSupport)
                     },
@@ -330,6 +334,14 @@ class MainActivity : BaseThemeActivity() {
 
             composable<SyncAndStorage> {
                 SyncAndStorageScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<WidgetSettings> {
+                WidgetSettingsScreen(
                     navigateBack = {
                         navController.popBackStack()
                     },

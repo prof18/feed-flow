@@ -219,6 +219,7 @@
     <string name="widget_latest_items">Most Recent</string>
     <string name="widget_configuration_title">Widget Configuration</string>
     <string name="widget_configuration_description">Choose how often to check for new articles in the background and update the widget.</string>
+    <string name="widget_settings_header">Customize the widget behavior here. Changes are reflected automatically.</string>
     <string name="widget_configuration_confirm">Add Widget</string>
     <string name="file_menu">File</string>
     <string name="menu_view">View</string>

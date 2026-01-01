@@ -11,6 +11,7 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.prof18.feedflow.android.notifications.AndroidNotifier
+import com.prof18.feedflow.android.settings.widget.WidgetSettingsViewModel
 import com.prof18.feedflow.android.widget.FeedFlowWidget
 import com.prof18.feedflow.android.widget.WidgetConfigurationViewModel
 import com.prof18.feedflow.core.utils.AppConfig
@@ -96,6 +97,13 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                         WidgetConfigurationViewModel(
                             settingsRepository = get(),
                             feedDownloadWorkerEnqueuer = get(),
+                        )
+                    }
+                    viewModel {
+                        WidgetSettingsViewModel(
+                            settingsRepository = get(),
+                            feedDownloadWorkerEnqueuer = get(),
+                            widgetUpdater = get(),
                         )
                     }
                     single<Notifier> {

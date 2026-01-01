@@ -23,6 +23,9 @@ data object ReadingBehavior
 data object SyncAndStorage
 
 @Serializable
+data object WidgetSettings
+
+@Serializable
 data object AboutAndSupport
 
 @Serializable

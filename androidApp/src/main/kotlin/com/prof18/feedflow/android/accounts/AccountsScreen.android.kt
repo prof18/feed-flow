@@ -42,7 +42,5 @@ internal fun AccountsScreen(
         onFreshRssClick = navigateToFreshRssSync,
         onMinifluxClick = navigateToMinifluxSync,
         onFeedbinClick = navigateToFeedbinSync,
-        onMinifluxClick = navigateToMinifluxSync,
-        onFeedbinClick = navigateToFeedbinSync,
     )
 }

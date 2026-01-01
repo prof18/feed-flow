@@ -339,7 +339,11 @@ internal class FeedSyncIosWorker(
                 googleDriveUpload(databasePath)
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.FRESH_RSS,
+            SyncAccounts.MINIFLUX,
+            SyncAccounts.FEEDBIN,
+            -> {
                 // Do nothing
             }
         }
@@ -374,7 +378,11 @@ internal class FeedSyncIosWorker(
                 return googleDriveDownload()
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.FRESH_RSS,
+            SyncAccounts.MINIFLUX,
+            SyncAccounts.FEEDBIN,
+            -> {
                 // Do nothing
                 SyncResult.Success
             }

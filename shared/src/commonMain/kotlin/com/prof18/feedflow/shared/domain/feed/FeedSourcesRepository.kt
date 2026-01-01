@@ -83,7 +83,11 @@ internal class FeedSourcesRepository(
                     }
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 try {
                     databaseHelper.deleteFeedSource(feedSource.id)
                 } catch (e: Exception) {
@@ -126,7 +130,11 @@ internal class FeedSourcesRepository(
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditFeedSourceNameFailed))
                     }
             }
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 databaseHelper.updateFeedSourceName(feedSourceId, newName)
                 feedSyncRepository.updateFeedSourceName(feedSourceId, newName)
                 feedSyncRepository.performBackup()
@@ -166,7 +174,15 @@ internal class FeedSourcesRepository(
                 categoryName,
                 isNotificationEnabled,
             )
-            else -> addFeedSourceForLocalAccount(sanitizeUrl(feedUrl), categoryName, isNotificationEnabled)
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> addFeedSourceForLocalAccount(
+                sanitizeUrl(feedUrl),
+                categoryName,
+                isNotificationEnabled,
+            )
         }
 
     suspend fun editFeedSource(
@@ -187,7 +203,11 @@ internal class FeedSourcesRepository(
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX ->
                 editFeedSourceForFreshRss(newFeedSource, originalFeedSource)
             SyncAccounts.FEEDBIN -> editFeedSourceForFeedbin(newFeedSource, originalFeedSource)
-            else -> editFeedSourceForLocalAccount(newFeedSource, originalFeedSource)
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> editFeedSourceForLocalAccount(newFeedSource, originalFeedSource)
         }
     }
 
@@ -506,7 +526,11 @@ internal class FeedSourcesRepository(
                 )
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.ICLOUD,
+            -> {
                 val parsedFeedSource = ParsedFeedSource(
                     id = feedUrl.hashCode().toString(),
                     url = feedUrl,

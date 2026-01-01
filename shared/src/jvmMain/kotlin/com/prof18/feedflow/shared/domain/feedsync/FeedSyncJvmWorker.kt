@@ -144,7 +144,11 @@ internal class FeedSyncJvmWorker(
                 logger.d { "Upload to Google Drive successfully" }
             }
 
-            else -> {
+            SyncAccounts.LOCAL,
+            SyncAccounts.FRESH_RSS,
+            SyncAccounts.MINIFLUX,
+            SyncAccounts.FEEDBIN,
+            -> {
                 // Do nothing
             }
         }
@@ -231,9 +235,12 @@ internal class FeedSyncJvmWorker(
                 SyncResult.Success
             }
 
-            else -> {
-                // Do nothing
-                logger.d { "current sync account local" }
+            SyncAccounts.LOCAL,
+            SyncAccounts.FRESH_RSS,
+            SyncAccounts.MINIFLUX,
+            SyncAccounts.FEEDBIN,
+            -> {
+                logger.d { "current sync account does not require cloud download" }
                 SyncResult.Success
             }
         }

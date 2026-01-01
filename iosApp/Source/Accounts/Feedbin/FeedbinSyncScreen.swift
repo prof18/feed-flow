@@ -45,14 +45,6 @@ struct FeedbinSyncScreen: View {
         .task {
             for await state in vmStoreOwner.instance.uiState {
                 self.uiState = state
-                if uiState is AccountConnectionUiState.Linked {
-                    if isFromAddAccount {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                            dismiss()
-                            dismiss()
-                        }
-                    }
-                }
             }
         }
         .task {

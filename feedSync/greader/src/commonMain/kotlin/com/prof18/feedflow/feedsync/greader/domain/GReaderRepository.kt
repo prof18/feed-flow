@@ -48,8 +48,15 @@ class GReaderRepository internal constructor(
             networkSettings.getSyncUrl().isNotEmpty()
         return when (networkSettings.getSyncAccountType()) {
             SyncAccounts.FRESH_RSS,
-            SyncAccounts.MINIFLUX -> hasCredentials
-            else -> false
+            SyncAccounts.MINIFLUX,
+            -> hasCredentials
+
+            SyncAccounts.DROPBOX,
+            SyncAccounts.GOOGLE_DRIVE,
+            SyncAccounts.LOCAL,
+            SyncAccounts.ICLOUD,
+            SyncAccounts.FEEDBIN, null,
+            -> false
         }
     }
 

@@ -14,11 +14,11 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchWorker
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
+import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerAndroid
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncWorker
-import com.prof18.feedflow.shared.domain.feedsync.FeedSyncAndroidWorker
-import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler

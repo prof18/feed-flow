@@ -23,11 +23,11 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
-import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
-import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIosDesktop
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncIosWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIosDesktop
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos

@@ -1,7 +1,11 @@
 package com.prof18.feedflow.feedsync.feedbin.data
 
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.DataResult
+import com.prof18.feedflow.core.model.NetworkFailure
+import com.prof18.feedflow.core.model.Unhandled
+import com.prof18.feedflow.core.model.success
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.feedsync.feedbin.data.dto.CreateSubscriptionRequest
@@ -15,14 +19,11 @@ import com.prof18.feedflow.feedsync.feedbin.data.dto.SubscriptionDTO
 import com.prof18.feedflow.feedsync.feedbin.data.dto.TaggingDTO
 import com.prof18.feedflow.feedsync.feedbin.data.dto.UnreadEntriesRequest
 import com.prof18.feedflow.feedsync.feedbin.data.dto.UpdateSubscriptionRequest
-import com.prof18.feedflow.core.model.DataNotFound
-import com.prof18.feedflow.core.model.NetworkFailure
-import com.prof18.feedflow.core.model.Unhandled
-import com.prof18.feedflow.core.model.success
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.feedsync.networkcore.executeNetwork
 import com.prof18.feedflow.feedsync.networkcore.isMissingConnectionError
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
 import io.ktor.client.plugins.auth.providers.basic
@@ -35,7 +36,6 @@ import io.ktor.client.plugins.resources.delete
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.plugins.resources.patch
 import io.ktor.client.plugins.resources.post
-import io.ktor.client.call.body
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -268,7 +268,9 @@ internal class FeedbinClient internal constructor(
         }
     }
 
-    suspend fun renameTag(oldName: String, newName: String): DataResult<List<TaggingDTO>> = withContext(dispatcherProvider.io) {
+    suspend fun renameTag(oldName: String, newName: String): DataResult<List<TaggingDTO>> = withContext(
+        dispatcherProvider.io,
+    ) {
         val client = getOrCreateHttpClient()
         return@withContext executeNetwork {
             client.post(FeedbinV2Resource.Tags()) {

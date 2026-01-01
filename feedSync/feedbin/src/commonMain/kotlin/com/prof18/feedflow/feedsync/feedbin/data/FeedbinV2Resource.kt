@@ -2,6 +2,7 @@ package com.prof18.feedflow.feedsync.feedbin.data
 
 import io.ktor.resources.Resource
 
+@Suppress("ConstructorParameterNaming", "unused")
 @Resource("v2")
 class FeedbinV2Resource {
 

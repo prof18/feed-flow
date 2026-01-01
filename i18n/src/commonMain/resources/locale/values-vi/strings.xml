@@ -290,4 +290,10 @@
     <string name="feed_suggestions_title">Đề xuất bảng tin</string>
     <string name="feed_suggestions_description">Duyệt và thêm nguồn tin vào bộ sưu tập của bạn</string>
     <string name="google_drive_auth_retry">Bạn cần xác thực lại để tiếp tục sử dụng tính năng đồng bộ hóa Google Drive. Vào mục Tài khoản, hủy liên kết rồi liên kết lại.</string>
+    <string name="miniflux_account_connected">Tài khoản Miniflux của bạn đã được kết nối thành công</string>
+    <string name="no_miniflux_sync_yet">Dữ liệu chưa được đồng bộ hóa</string>
+    <string name="miniflux_last_sync">Lần cuối đồng bộ: %s</string>
+    <string name="miniflux_password_hint">Mật khẩu API của Miniflux (Cài đặt &gt; Tích hợp &gt; Google Reader)</string>
+    <string name="miniflux_url_hint">URL máy chủ Miniflux, ví dụ %s</string>
+    <string name="menu_view">Xem</string>
 </resources>

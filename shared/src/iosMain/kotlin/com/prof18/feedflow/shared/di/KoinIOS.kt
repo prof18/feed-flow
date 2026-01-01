@@ -2,7 +2,9 @@ package com.prof18.feedflow.shared.di
 
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.ExperimentalKermitApi
+import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
+import co.touchlab.kermit.NSLogWriter
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppConfig
@@ -259,6 +261,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             logger = getWith("ContentPrefetchRepositoryIosDesktop"),
         )
     }
+}
+
+internal actual fun platformLogWriters(): List<LogWriter> {
+    return listOf(
+        NSLogWriter(),
+    )
 }
 
 @Suppress("unused") // Called from Swift

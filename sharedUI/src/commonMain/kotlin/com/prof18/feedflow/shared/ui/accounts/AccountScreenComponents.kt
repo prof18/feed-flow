@@ -107,8 +107,6 @@ fun AccountsContent(
                                 SyncAccounts.FRESH_RSS -> onFreshRssClick
                                 SyncAccounts.MINIFLUX -> onMinifluxClick
                                 SyncAccounts.FEEDBIN -> onFeedbinClick
-                                SyncAccounts.MINIFLUX -> onMinifluxClick
-                                SyncAccounts.FEEDBIN -> onFeedbinClick
                             },
                         )
 

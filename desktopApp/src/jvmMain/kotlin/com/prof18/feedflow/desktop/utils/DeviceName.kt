@@ -6,14 +6,18 @@ import java.io.InputStreamReader
 
 @Suppress("SwallowedException")
 fun getUnixDeviceName(): String = try {
-    executeCommand("uname -n") ?: "desktop"
+    executeCommand(listOf("uname", "-n")) ?: "desktop"
 } catch (e: IOException) {
     "desktop"
 }
 
-private fun executeCommand(command: String): String? {
-    val process = Runtime.getRuntime().exec(command)
+private fun executeCommand(command: List<String>): String? {
+    val process = ProcessBuilder(command)
+        .redirectErrorStream(true)
+        .start()
     BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
-        return reader.readLine()?.trim()
+        val output = reader.readLine()?.trim()
+        process.waitFor()
+        return output
     }
 }

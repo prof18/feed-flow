@@ -15,9 +15,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.TextFields
@@ -32,6 +32,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
@@ -294,7 +295,9 @@ internal data class ReaderModeScreen(
                         horizontalArrangement = Arrangement.spacedBy(Spacing.small),
                     ) {
                         TooltipBox(
-                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Above,
+                            ),
                             state = rememberTooltipState(),
                             tooltip = { PlainTooltip { Text(strings.previousArticle) } },
                         ) {
@@ -310,7 +313,9 @@ internal data class ReaderModeScreen(
                         }
 
                         TooltipBox(
-                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Above,
+                            ),
                             state = rememberTooltipState(),
                             tooltip = { PlainTooltip { Text(strings.nextArticle) } },
                         ) {
@@ -411,7 +416,9 @@ private fun ReaderModeToolbar(
 
                     if (url != null) {
                         TooltipBox(
-                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Above,
+                            ),
                             state = rememberTooltipState(),
                             tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.menuShare) } },
                         ) {
@@ -428,7 +435,9 @@ private fun ReaderModeToolbar(
                         }
 
                         TooltipBox(
-                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Above,
+                            ),
                             state = rememberTooltipState(),
                             tooltip = {
                                 PlainTooltip {
@@ -454,7 +463,9 @@ private fun ReaderModeToolbar(
                     if (readerModeState is ReaderModeState.Success) {
                         readerModeState.readerModeData.commentsUrl?.let { commentsUrl ->
                             TooltipBox(
-                                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                    positioning = TooltipAnchorPosition.Above,
+                                ),
                                 state = rememberTooltipState(),
                                 tooltip = {
                                     PlainTooltip {
@@ -470,7 +481,7 @@ private fun ReaderModeToolbar(
                                     },
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Comment,
+                                        imageVector = Icons.AutoMirrored.Filled.Comment,
                                         contentDescription = null,
                                     )
                                 }
@@ -478,7 +489,9 @@ private fun ReaderModeToolbar(
                         }
 
                         TooltipBox(
-                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Above,
+                            ),
                             state = rememberTooltipState(),
                             tooltip = {
                                 PlainTooltip {
@@ -501,7 +514,9 @@ private fun ReaderModeToolbar(
                         }
 
                         TooltipBox(
-                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Above,
+                            ),
                             state = rememberTooltipState(),
                             tooltip = { PlainTooltip { Text(LocalFeedFlowStrings.current.readerModeFontSize) } },
                         ) {
@@ -559,7 +574,9 @@ private fun BookmarkButton(
         LocalFeedFlowStrings.current.menuAddToBookmark
     }
     TooltipBox(
-        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Above,
+        ),
         state = rememberTooltipState(),
         tooltip = { PlainTooltip { Text(tooltipText) } },
     ) {

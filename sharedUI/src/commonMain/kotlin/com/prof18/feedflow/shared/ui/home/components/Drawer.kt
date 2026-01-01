@@ -42,6 +42,7 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
@@ -731,7 +732,7 @@ fun FeedSourceDrawerItem(
             TooltipBox(
                 modifier = Modifier
                     .padding(start = Spacing.regular),
-                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
                 tooltip = {
                     PlainTooltip {
                         Text(LocalFeedFlowStrings.current.feedFetchFailedTooltip)

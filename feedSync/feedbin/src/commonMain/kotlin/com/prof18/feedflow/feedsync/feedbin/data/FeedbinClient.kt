@@ -5,6 +5,7 @@ import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.DataResult
 import com.prof18.feedflow.core.model.NetworkFailure
 import com.prof18.feedflow.core.model.Unhandled
+import com.prof18.feedflow.core.model.ignoreResultOnSuccess
 import com.prof18.feedflow.core.model.success
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
@@ -62,9 +63,9 @@ internal class FeedbinClient internal constructor(
         val client = createHttpClient(baseURL, username, password)
         httpClient = client
 
-        return@withContext executeNetwork {
-            client.get(FeedbinV2Resource.Subscriptions())
-        }
+        return@withContext executeNetwork<Unit> {
+            client.get(FeedbinV2Resource.Authentication())
+        }.ignoreResultOnSuccess()
     }
 
     suspend fun getSubscriptions(): DataResult<List<SubscriptionDTO>> = withContext(dispatcherProvider.io) {

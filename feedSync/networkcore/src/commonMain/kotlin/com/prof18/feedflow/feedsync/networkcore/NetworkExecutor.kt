@@ -38,7 +38,7 @@ suspend inline fun <reified A> executeNetwork(
             }
         }
 
-        val res: A = response.call.bodyNullable(typeInfo<A>()) as A ?: return DataResult.Error(DataNotFound)
+        val res: A = response.call.bodyNullable(typeInfo<A>()) as? A ?: return DataResult.Error(DataNotFound)
 
         return DataResult.Success(res)
     } catch (e: Throwable) {

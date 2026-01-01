@@ -84,4 +84,9 @@ class FeedbinV2Resource {
     class Icons(
         val parent: FeedbinV2Resource = FeedbinV2Resource(),
     )
+
+    @Resource("authentication.json")
+    class Authentication(
+        val parent: FeedbinV2Resource = FeedbinV2Resource(),
+    )
 }

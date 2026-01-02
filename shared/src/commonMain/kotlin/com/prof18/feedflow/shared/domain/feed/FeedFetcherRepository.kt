@@ -29,8 +29,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
 
 class FeedFetcherRepository internal constructor(
     private val dispatcherProvider: DispatcherProvider,
@@ -259,7 +261,9 @@ class FeedFetcherRepository internal constructor(
                 suspend {
                     logger.d { "-> Getting ${feedSource.url}" }
                     try {
-                        val rssChannel = rssParser.getRssChannel(feedSource.url)
+                        val rssChannel = withTimeout(1.minutes) {
+                            rssParser.getRssChannel(feedSource.url)
+                        }
                         logger.d { "<- Got back ${rssChannel.title}" }
                         feedToUpdate.remove(feedSource.url)
                         updateRefreshCount()

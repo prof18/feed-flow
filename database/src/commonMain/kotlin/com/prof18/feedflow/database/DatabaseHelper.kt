@@ -8,10 +8,12 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrDefault
 import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.ArticleExportFilter
 import com.prof18.feedflow.core.model.CategoryWithUnreadCount
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemImportData
 import com.prof18.feedflow.core.model.FeedItemToPrefetch
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOrder
@@ -516,6 +518,56 @@ class DatabaseHelper(
 
     suspend fun getAllFeedSourceIds(): List<String> = withContext(backgroundDispatcher) {
         dbRef.feedSourceQueries.selectAllUrlHashes().executeAsList()
+    }
+
+    suspend fun getFeedItemsForExport(filter: ArticleExportFilter) = withContext(backgroundDispatcher) {
+        val isRead = when (filter) {
+            ArticleExportFilter.Read -> true
+            ArticleExportFilter.Unread -> false
+            else -> null
+        }
+        val isBookmarked = if (filter == ArticleExportFilter.Bookmarked) {
+            true
+        } else {
+            null
+        }
+        dbRef.feedItemQueries
+            .selectFeedItemsForExport(
+                isRead = isRead,
+                isBookmarked = isBookmarked,
+            )
+            .executeAsList()
+    }
+
+    suspend fun importFeedItemsFromCsv(
+        feedItems: List<FeedItemImportData>,
+        existingFeedSourceIds: Set<String>,
+    ) {
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            feedItems.forEach { item ->
+                if (!existingFeedSourceIds.contains(item.feedSourceId)) {
+                    logger.d { "Skipping feed item with title: ${item.title} due to missing feed source" }
+                    return@forEach
+                }
+
+                dbRef.feedItemQueries.insertOrReplaceFeedItem(
+                    url_hash = item.urlHash,
+                    url = item.url,
+                    title = item.title,
+                    subtitle = item.subtitle,
+                    content = null,
+                    image_url = item.imageUrl,
+                    feed_source_id = item.feedSourceId,
+                    is_read = item.isRead,
+                    is_bookmarked = item.isBookmarked,
+                    pub_date = item.pubDateMillis,
+                    comments_url = item.commentsUrl,
+                    notification_sent = item.notificationSent,
+                    is_blocked = item.isBlocked,
+                    content_fetched = false,
+                )
+            }
+        }
     }
 
     suspend fun getAllCategoryIds(): List<String> = withContext(backgroundDispatcher) {

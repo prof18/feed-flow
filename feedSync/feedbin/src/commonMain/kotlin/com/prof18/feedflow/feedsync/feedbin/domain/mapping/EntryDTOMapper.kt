@@ -7,7 +7,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.feedsync.feedbin.data.dto.EntryDTO
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 internal class EntryDTOMapper(
     private val htmlParser: HtmlParser,
@@ -19,7 +19,7 @@ internal class EntryDTOMapper(
         feedSource: FeedSource,
         isRead: Boolean,
         isBookmarked: Boolean,
-    ): FeedItem? {
+    ): FeedItem {
         val pubDateMillis = try {
             Instant.parse(entryDTO.published).toEpochMilliseconds()
         } catch (_: Exception) {

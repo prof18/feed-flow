@@ -40,7 +40,7 @@ struct NoFeedsBottomSheet: View {
                     Button {
                         onImportExportClick()
                     } label: {
-                        Label(feedFlowStrings.importExportOpml, systemImage: "arrow.up.arrow.down")
+                        Label(feedFlowStrings.importExportLabel, systemImage: "arrow.up.arrow.down")
                     }
 
                     Button {

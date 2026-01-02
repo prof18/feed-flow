@@ -72,7 +72,7 @@ internal fun MenuBarScope.FileMenu(
         Separator()
 
         Item(
-            text = LocalFeedFlowStrings.current.importExportOpml,
+            text = LocalFeedFlowStrings.current.importExportLabel,
             onClick = actions.onImportExportClick,
             shortcut = if (isMacOS) {
                 KeyShortcut(Key.I, meta = true)

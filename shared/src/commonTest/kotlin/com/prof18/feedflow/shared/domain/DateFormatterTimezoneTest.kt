@@ -1,12 +1,12 @@
 package com.prof18.feedflow.shared.domain
 
 import com.prof18.feedflow.shared.testLogger
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.time.Instant
 
 class DateFormatterTimezoneTest {
 

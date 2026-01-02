@@ -82,6 +82,30 @@ AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source.category_
 AND (:isHidden IS NULL OR COALESCE(feed_source_preferences.is_hidden, 0) = :isHidden)
 AND is_blocked = 0;
 
+selectFeedItemsForExport:
+SELECT url_hash, url, title, subtitle, image_url, feed_source_id, is_read, is_bookmarked, pub_date, comments_url, notification_sent, is_blocked
+FROM feed_item
+WHERE (:isRead IS NULL OR is_read = :isRead)
+AND (:isBookmarked IS NULL OR is_bookmarked = :isBookmarked);
+
+insertOrReplaceFeedItem:
+INSERT OR REPLACE INTO feed_item(
+    url_hash,
+    url,
+    title,
+    subtitle,
+    content,
+    image_url,
+    feed_source_id,
+    is_read,
+    is_bookmarked,
+    pub_date,
+    comments_url,
+    notification_sent,
+    is_blocked,
+    content_fetched
+) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
 updateReadStatus:
 UPDATE feed_item
 SET is_read = :isRead

@@ -6,8 +6,13 @@ sealed class FeedImportExportState {
 
     data object Idle : FeedImportExportState()
 
-    data object LoadingImport : FeedImportExportState()
-    data object LoadingExport : FeedImportExportState()
+    data class LoadingImport(
+        val contentType: ImportExportContentType,
+    ) : FeedImportExportState()
+
+    data class LoadingExport(
+        val contentType: ImportExportContentType,
+    ) : FeedImportExportState()
 
     data object Error : FeedImportExportState()
 
@@ -17,4 +22,8 @@ sealed class FeedImportExportState {
     ) : FeedImportExportState()
 
     data object ExportSuccess : FeedImportExportState()
+
+    data object ArticleImportSuccess : FeedImportExportState()
+
+    data object ArticleExportSuccess : FeedImportExportState()
 }

@@ -30,6 +30,7 @@ import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Instant
 
 class FeedbinRepository internal constructor(
     private val feedbinClient: FeedbinClient,
@@ -603,7 +604,7 @@ class FeedbinRepository internal constructor(
     private suspend fun buildSinceForRegularSync(): String? {
         val lastUpdate = networkSettings.getLastSyncDate()
         return if (lastUpdate != null) {
-            kotlinx.datetime.Instant.fromEpochSeconds(lastUpdate).toString()
+            Instant.fromEpochSeconds(lastUpdate).toString()
         } else if (!databaseHelper.hasFeedItems()) {
             buildHistorySince()
         } else {
@@ -613,7 +614,7 @@ class FeedbinRepository internal constructor(
 
     private fun buildHistorySince(): String {
         val cutoffSeconds = Clock.System.now().epochSeconds - FIRST_SYNC_CUTOFF.inWholeSeconds
-        return kotlinx.datetime.Instant.fromEpochSeconds(cutoffSeconds).toString()
+        return Instant.fromEpochSeconds(cutoffSeconds).toString()
     }
 
     private data class FeedbinEntryStatusIds(

@@ -63,7 +63,7 @@ fun NoFeedsInfoContent(
                 onImportExportClick()
             },
         ) {
-            Text(LocalFeedFlowStrings.current.importExportOpml)
+            Text(LocalFeedFlowStrings.current.importExportLabel)
         }
 
         Button(

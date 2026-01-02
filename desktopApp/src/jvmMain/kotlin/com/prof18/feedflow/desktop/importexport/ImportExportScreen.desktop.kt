@@ -11,10 +11,14 @@ import androidx.compose.ui.awt.ComposeWindow
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.core.model.ArticleExportFilter
+import com.prof18.feedflow.core.model.ImportExportContentType
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.desktop.utils.getUnixDeviceName
+import com.prof18.feedflow.shared.domain.csv.CsvInput
+import com.prof18.feedflow.shared.domain.csv.CsvOutput
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
@@ -38,9 +42,14 @@ internal class ImportExportScreen(
 
         val importDialogTitle = LocalFeedFlowStrings.current.importDialogTitle
         val exportDialogTitle = LocalFeedFlowStrings.current.exportDialogTitle
+        val importArticlesDialogTitle = LocalFeedFlowStrings.current.importArticlesDialogTitle
+        val exportArticlesDialogTitle = LocalFeedFlowStrings.current.exportArticlesDialogTitle
 
         var showImportDialog by remember { mutableStateOf(false) }
         var showExportDialog by remember { mutableStateOf(false) }
+        var showImportArticlesDialog by remember { mutableStateOf(false) }
+        var showExportArticlesDialog by remember { mutableStateOf(false) }
+        var articleExportFilter by remember { mutableStateOf(ArticleExportFilter.All) }
 
         val navigator = LocalNavigator.currentOrThrow
 
@@ -81,6 +90,51 @@ internal class ImportExportScreen(
             )
         }
 
+        if (showImportArticlesDialog) {
+            FileDialog(
+                parent = composeWindow,
+                dialogTitle = importArticlesDialogTitle,
+                isLoadDialog = true,
+                onCloseRequest = { result ->
+                    showImportArticlesDialog = false
+                    if (result != null) {
+                        viewModel.importArticles(CsvInput(result))
+                    }
+                },
+            )
+        }
+
+        if (showExportArticlesDialog) {
+            val deviceName = getUnixDeviceName()
+            val formattedDate = viewModel.getCurrentDateForExport()
+            val fileName =
+                """
+                    feedflow-articles-export_${formattedDate}_${deviceName}_${articleExportFilter.name.lowercase()}.csv
+                """.trimIndent()
+
+            FileDialog(
+                parent = composeWindow,
+                dialogTitle = exportArticlesDialogTitle,
+                exportFileName = fileName,
+                onCloseRequest = { result ->
+                    showExportArticlesDialog = false
+                    if (result != null) {
+                        var outputFile = result
+
+                        if (!outputFile.name.endsWith(".csv")) {
+                            outputFile = File(outputFile.absolutePath + ".csv")
+                        }
+                        viewModel.exportArticles(
+                            csvOutput = CsvOutput(outputFile),
+                            filter = articleExportFilter,
+                        )
+                    } else {
+                        viewModel.clearState()
+                    }
+                },
+            )
+        }
+
         ImportExportContent(
             navigateBack = {
                 navigator.pop()
@@ -98,6 +152,14 @@ internal class ImportExportScreen(
             },
             onExportClick = {
                 showExportDialog = true
+            },
+            onImportArticlesClick = {
+                showImportArticlesDialog = true
+            },
+            onExportArticlesClick = { filter ->
+                articleExportFilter = filter
+                viewModel.startExport(ImportExportContentType.ArticlesCsv)
+                showExportArticlesDialog = true
             },
         )
     }

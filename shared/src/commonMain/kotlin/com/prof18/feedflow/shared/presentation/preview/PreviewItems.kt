@@ -11,6 +11,7 @@ import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceState
+import com.prof18.feedflow.core.model.ImportExportContentType
 import com.prof18.feedflow.core.model.InProgressFeedUpdateStatus
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.NavDrawerState
@@ -242,13 +243,15 @@ val feedSourcesForPreview = persistentListOf(
 val importExportStates = listOf(
     FeedImportExportState.Idle,
     FeedImportExportState.Error,
-    FeedImportExportState.LoadingImport,
-    FeedImportExportState.LoadingExport,
+    FeedImportExportState.LoadingImport(ImportExportContentType.FeedsOpml),
+    FeedImportExportState.LoadingExport(ImportExportContentType.FeedsOpml),
     FeedImportExportState.ExportSuccess,
     FeedImportExportState.ImportSuccess(
         notValidFeedSources = persistentListOf(),
         feedSourceWithError = persistentListOf(),
     ),
+    FeedImportExportState.ArticleExportSuccess,
+    FeedImportExportState.ArticleImportSuccess,
     FeedImportExportState.ImportSuccess(
         feedSourceWithError = persistentListOf(),
         notValidFeedSources = persistentListOf(

@@ -1,12 +1,15 @@
 import Foundation
 
 enum ImportExportSheetToShow: Identifiable {
-    case filePicker
+    case opmlFilePicker
+    case csvFilePicker
 
     var id: String {
         switch self {
-        case .filePicker:
-            return "filePicker"
+        case .opmlFilePicker:
+            return "opmlFilePicker"
+        case .csvFilePicker:
+            return "csvFilePicker"
         }
     }
 }

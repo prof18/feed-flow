@@ -62,6 +62,7 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.com.prof18.rss.parser)
+                implementation(libs.csv)
                 implementation(libs.multiplatform.settings)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.ktor.client.core)

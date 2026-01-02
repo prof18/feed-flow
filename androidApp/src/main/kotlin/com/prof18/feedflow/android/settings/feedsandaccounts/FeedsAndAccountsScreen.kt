@@ -75,7 +75,7 @@ internal fun FeedsAndAccountsScreen(
 
             item {
                 SettingItem(
-                    title = LocalFeedFlowStrings.current.importExportOpml,
+                    title = LocalFeedFlowStrings.current.importExportLabel,
                     icon = Icons.Outlined.SwapVert,
                     onClick = navigateToImportExport,
                 )

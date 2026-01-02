@@ -26,7 +26,7 @@ struct FeedsAndAccountsScreen: View {
                 }
 
                 NavigationLink(destination: ImportExportScreen(fetchFeeds: fetchFeeds)) {
-                    Label(feedFlowStrings.importExportOpml, systemImage: "arrow.up.arrow.down")
+                    Label(feedFlowStrings.importExportLabel, systemImage: "arrow.up.arrow.down")
                 }
 
                 Button {

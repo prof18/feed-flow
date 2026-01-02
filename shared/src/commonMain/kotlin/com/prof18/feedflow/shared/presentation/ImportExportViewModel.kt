@@ -4,7 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.model.ArticleExportFilter
 import com.prof18.feedflow.core.model.FeedImportExportState
+import com.prof18.feedflow.core.model.ImportExportContentType
+import com.prof18.feedflow.shared.domain.csv.CsvInput
+import com.prof18.feedflow.shared.domain.csv.CsvOutput
 import com.prof18.feedflow.shared.domain.feed.FeedImportExportRepository
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
@@ -27,7 +31,9 @@ class ImportExportViewModel internal constructor(
 
     fun importFeed(opmlInput: OpmlInput) {
         viewModelScope.launch {
-            importerMutableState.update { FeedImportExportState.LoadingImport }
+            importerMutableState.update {
+                FeedImportExportState.LoadingImport(ImportExportContentType.FeedsOpml)
+            }
             try {
                 val notValidFeedSources = feedImportExportRepository.addFeedsFromFile(opmlInput)
                 importerMutableState.update {
@@ -45,7 +51,9 @@ class ImportExportViewModel internal constructor(
 
     fun exportFeed(opmlOutput: OpmlOutput) {
         viewModelScope.launch {
-            importerMutableState.update { FeedImportExportState.LoadingImport }
+            importerMutableState.update {
+                FeedImportExportState.LoadingExport(ImportExportContentType.FeedsOpml)
+            }
             try {
                 feedImportExportRepository.exportFeedsAsOpml(opmlOutput)
                 importerMutableState.update { FeedImportExportState.ExportSuccess }
@@ -56,12 +64,50 @@ class ImportExportViewModel internal constructor(
         }
     }
 
+    fun importArticles(csvInput: CsvInput) {
+        viewModelScope.launch {
+            importerMutableState.update {
+                FeedImportExportState.LoadingImport(ImportExportContentType.ArticlesCsv)
+            }
+            try {
+                feedImportExportRepository.importArticlesFromCsv(csvInput)
+                importerMutableState.update {
+                    FeedImportExportState.ArticleImportSuccess
+                }
+            } catch (e: Throwable) {
+                logger.e(e) { "Error while importing articles" }
+                importerMutableState.update { FeedImportExportState.Error }
+            }
+        }
+    }
+
+    fun exportArticles(
+        csvOutput: CsvOutput,
+        filter: ArticleExportFilter,
+    ) {
+        viewModelScope.launch {
+            importerMutableState.update {
+                FeedImportExportState.LoadingExport(ImportExportContentType.ArticlesCsv)
+            }
+            try {
+                feedImportExportRepository.exportArticlesAsCsv(
+                    csvOutput = csvOutput,
+                    filter = filter,
+                )
+                importerMutableState.update { FeedImportExportState.ArticleExportSuccess }
+            } catch (e: Throwable) {
+                logger.e(e) { "Error while exporting articles" }
+                importerMutableState.update { FeedImportExportState.Error }
+            }
+        }
+    }
+
     fun clearState() {
         importerMutableState.update { FeedImportExportState.Idle }
     }
 
-    fun startExport() {
-        importerMutableState.update { FeedImportExportState.LoadingExport }
+    fun startExport(contentType: ImportExportContentType) {
+        importerMutableState.update { FeedImportExportState.LoadingExport(contentType) }
     }
 
     fun reportExportError() {

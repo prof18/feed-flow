@@ -6,8 +6,6 @@ import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.shared.utils.getValueOrNull
-import kotlinx.cinterop.BetaInteropApi
-import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import platform.Foundation.NSError
@@ -21,11 +19,9 @@ import platform.Foundation.writeToURL
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 
-@OptIn(ExperimentalForeignApi::class)
 internal actual class OpmlFeedHandler(
     private val dispatcherProvider: DispatcherProvider,
 ) {
-    @OptIn(BetaInteropApi::class)
     actual suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.default) {
             suspendCancellableCoroutine { continuation ->

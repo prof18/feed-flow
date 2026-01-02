@@ -2,7 +2,6 @@ package com.prof18.feedflow.shared.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -11,7 +10,6 @@ import androidx.compose.ui.platform.LocalContext
 import com.prof18.feedflow.shared.ui.style.DarkColorScheme
 import com.prof18.feedflow.shared.ui.style.LightColorScheme
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FeedFlowTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

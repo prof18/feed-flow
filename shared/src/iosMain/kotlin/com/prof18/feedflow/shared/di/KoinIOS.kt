@@ -1,7 +1,6 @@
 package com.prof18.feedflow.shared.di
 
 import app.cash.sqldelight.db.SqlDriver
-import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.NSLogWriter
@@ -60,7 +59,6 @@ import com.prof18.feedflow.shared.presentation.SyncAndStorageSettingsViewModel
 import com.prof18.feedflow.shared.utils.Telemetry
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import com.prof18.rssparser.RssParserBuilder
-import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -75,7 +73,6 @@ import platform.Foundation.NSURLSession
 import platform.Foundation.NSURLSessionConfiguration
 import platform.UIKit.UIDevice
 
-@OptIn(ExperimentalKermitApi::class)
 fun initKoinIos(
     htmlParser: HtmlParser,
     appEnvironment: AppEnvironment,
@@ -119,7 +116,6 @@ fun initKoinIos(
     ),
 )
 
-@OptIn(ExperimentalSettingsImplementation::class)
 internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = module {
     single {
         RssParserBuilder(

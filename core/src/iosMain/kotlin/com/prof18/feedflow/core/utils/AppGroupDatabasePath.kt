@@ -1,9 +1,7 @@
 package com.prof18.feedflow.core.utils
 
-import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSFileManager
 
-@OptIn(ExperimentalForeignApi::class)
 fun getAppGroupDatabasePath(): String {
     val fileManager = NSFileManager.defaultManager()
     val containerURL = fileManager.containerURLForSecurityApplicationGroupIdentifier(IOS_APP_GROUP)

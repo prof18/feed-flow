@@ -7,6 +7,10 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
+        matching { it.name.startsWith("ios") }.all {
+            languageSettings.optIn("kotlinx.cinterop.BetaInteropApi")
+        }
+
         commonMain {
             dependencies {
                 implementation(project(":core"))

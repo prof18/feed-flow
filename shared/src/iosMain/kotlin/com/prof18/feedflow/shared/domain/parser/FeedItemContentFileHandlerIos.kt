@@ -3,8 +3,6 @@ package com.prof18.feedflow.shared.domain.parser
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
-import kotlinx.cinterop.BetaInteropApi
-import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.withContext
 import platform.Foundation.NSData
 import platform.Foundation.NSFileManager
@@ -15,7 +13,6 @@ import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
 import platform.Foundation.dataWithContentsOfFile
 
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 internal class FeedItemContentFileHandlerIos(
     private val dispatcherProvider: DispatcherProvider,
     private val logger: Logger,

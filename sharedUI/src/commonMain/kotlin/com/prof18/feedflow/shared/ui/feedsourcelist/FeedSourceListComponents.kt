@@ -29,7 +29,6 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -223,7 +222,6 @@ private fun FeedSourcesList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedSourceItem(
     feedSource: FeedSource,

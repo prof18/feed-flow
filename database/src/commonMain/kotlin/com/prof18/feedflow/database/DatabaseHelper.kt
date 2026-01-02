@@ -42,9 +42,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 class DatabaseHelper(
     private val sqlDriver: SqlDriver,
     private val backgroundDispatcher: CoroutineDispatcher,

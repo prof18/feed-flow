@@ -2,7 +2,6 @@ package com.prof18.feedflow.desktop.main
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.FrameWindowScope
@@ -19,7 +18,6 @@ import com.prof18.feedflow.desktop.search.SearchScreen
 import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 internal data class HomeScreenContainer(
     private val homeViewModel: HomeViewModel,
     private val frameWindowScope: FrameWindowScope,

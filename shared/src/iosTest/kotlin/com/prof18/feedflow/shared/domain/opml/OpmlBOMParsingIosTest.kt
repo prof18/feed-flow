@@ -1,8 +1,6 @@
 package com.prof18.feedflow.shared.domain.opml
 
 import com.prof18.feedflow.shared.TestDispatcherProvider
-import kotlinx.cinterop.BetaInteropApi
-import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.test.runTest
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
@@ -11,7 +9,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalForeignApi::class)
 class OpmlBOMParsingIosTest {
 
     private val parser = OpmlFeedHandler(
@@ -36,7 +33,6 @@ class OpmlBOMParsingIosTest {
     fun `iOS OPML with BOM should parse correctly`() = runTest {
         val contentWithBom = "\uFEFF$opmlContent"
 
-        @OptIn(BetaInteropApi::class)
         val data = (contentWithBom as NSString).dataUsingEncoding(NSUTF8StringEncoding)
 
         val opmlInput = OpmlInput(opmlData = data!!)
@@ -58,7 +54,6 @@ class OpmlBOMParsingIosTest {
             </opml>
         """.trimIndent()
 
-        @OptIn(BetaInteropApi::class)
         val data = (opmlWithAmpersand as NSString).dataUsingEncoding(NSUTF8StringEncoding)
 
         val opmlInput = OpmlInput(opmlData = data!!)

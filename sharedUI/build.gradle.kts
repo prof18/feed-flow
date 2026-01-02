@@ -19,16 +19,20 @@ kotlin {
         languageVersion = JavaLanguageVersion.of(21)
     }
 
+
+    compilerOptions {
+        optIn.add("kotlin.experimental.ExperimentalObjCName")
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
+        optIn.add("androidx.compose.foundation.ExperimentalFoundationApi")
+        optIn.add("androidx.compose.foundation.layout.ExperimentalLayoutApi")
+        optIn.add("kotlinx.coroutines.FlowPreview")
+    }
+
     androidTarget()
     jvm()
 
     sourceSets {
-
-        all {
-            languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
-            languageSettings.optIn("androidx.compose.material3.ExperimentalMaterial3Api")
-        }
-
         androidMain {
             dependencies {
                 api(libs.io.coil.network)

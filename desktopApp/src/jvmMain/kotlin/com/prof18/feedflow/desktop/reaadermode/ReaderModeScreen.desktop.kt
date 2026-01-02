@@ -90,7 +90,6 @@ internal data class ReaderModeScreen(
 ) : Screen {
     override val key: String = generateUniqueKey()
 
-    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val readerModeViewModel = desktopViewModel { DI.koin.get<ReaderModeViewModel>() }

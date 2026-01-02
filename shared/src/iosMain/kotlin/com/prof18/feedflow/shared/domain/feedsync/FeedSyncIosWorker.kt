@@ -27,8 +27,6 @@ import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.presentation.getICloudBaseFolderURL
 import com.prof18.feedflow.shared.utils.Telemetry
-import kotlinx.cinterop.BetaInteropApi
-import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
@@ -82,7 +80,6 @@ internal class FeedSyncIosWorker(
         performUpload()
     }
 
-    @OptIn(ExperimentalForeignApi::class)
     private suspend fun performUpload() = withContext(dispatcherProvider.io) {
         mutex.withLock {
             try {
@@ -250,7 +247,6 @@ internal class FeedSyncIosWorker(
         NSURL.fileURLWithPath(getAppGroupDatabasePath())
             .URLByAppendingPathComponent(getDatabaseName())
 
-    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
     private fun replaceDatabase(url: NSURL): Boolean {
         val dbUrl = getDatabaseUrl()
         if (dbUrl != null) {
@@ -281,7 +277,6 @@ internal class FeedSyncIosWorker(
         return false
     }
 
-    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
     private suspend fun accountSpecificUpload(databasePath: NSURL) =
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.DROPBOX -> {
@@ -389,7 +384,6 @@ internal class FeedSyncIosWorker(
         }
     }
 
-    @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
     private suspend fun iCloudDownload(isFirstSync: Boolean): SyncResult {
         val iCloudUrl = getICloudFolderURL()
         val tempUrl = getTemporaryFileUrl()

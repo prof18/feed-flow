@@ -48,6 +48,17 @@ kotlin {
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
             languageSettings.optIn("kotlin.time.ExperimentalTime")
+            languageSettings.optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+            languageSettings.optIn("kotlinx.coroutines.FlowPreview")
+            languageSettings.optIn("co.touchlab.kermit.ExperimentalKermitApi")
+        }
+
+        matching { it.name.startsWith("ios") }.all {
+            languageSettings.optIn("com.russhwolf.settings.ExperimentalSettingsApi")
+            languageSettings.optIn("com.russhwolf.settings.ExperimentalSettingsImplementation")
+            languageSettings.optIn("kotlin.experimental.ExperimentalNativeApi")
+            languageSettings.optIn("kotlinx.cinterop.BetaInteropApi")
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
 
         commonMain {

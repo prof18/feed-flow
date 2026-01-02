@@ -25,7 +25,6 @@ import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.feedflow.shared.utils.skipLogging
 import com.prof18.rssparser.RssParser
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
@@ -33,7 +32,6 @@ import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class FeedFetcherRepository internal constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val feedStateRepository: FeedStateRepository,

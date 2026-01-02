@@ -125,6 +125,9 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     compilerOptions {
         freeCompilerArgs = listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
+            "-opt-in=co.touchlab.kermit.ExperimentalKermitApi",
+            "-opt-in=kotlin.ExperimentalStdlibApi",
         )
         jvmTarget.set(JvmTarget.JVM_21)
     }

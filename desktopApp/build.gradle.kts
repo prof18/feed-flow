@@ -35,6 +35,11 @@ kotlin {
         languageVersion = JavaLanguageVersion.of(21)
     }
 
+    compilerOptions {
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
+        optIn.add("androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi")
+    }
+
     jvm()
 
     sourceSets {

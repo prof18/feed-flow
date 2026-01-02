@@ -48,7 +48,6 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.PreviewColumn
 import com.prof18.feedflow.shared.ui.utils.PreviewHelper
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import me.saket.swipe.SwipeAction
@@ -56,7 +55,6 @@ import me.saket.swipe.SwipeableActionsBox
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Suppress("MagicNumber")
-@OptIn(FlowPreview::class)
 @Composable
 internal fun FeedList(
     feedItems: ImmutableList<FeedItem>,

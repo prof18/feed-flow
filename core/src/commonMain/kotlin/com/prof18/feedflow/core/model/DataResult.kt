@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalContracts::class)
-
 package com.prof18.feedflow.core.model
 
-import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 

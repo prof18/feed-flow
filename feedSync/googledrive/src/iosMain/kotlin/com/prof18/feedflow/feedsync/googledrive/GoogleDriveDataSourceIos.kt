@@ -3,7 +3,6 @@ package com.prof18.feedflow.feedsync.googledrive
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.getAppGroupDatabasePath
-import kotlinx.cinterop.BetaInteropApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import platform.Foundation.NSData
@@ -37,7 +36,6 @@ class GoogleDriveDataSourceIos(
         googleDriveSettings.clearAll()
     }
 
-    @OptIn(BetaInteropApi::class)
     suspend fun performUpload(uploadParam: GoogleDriveUploadParam): GoogleDriveUploadResult =
         withContext(dispatcherProvider.io) {
             suspendCancellableCoroutine { continuation ->

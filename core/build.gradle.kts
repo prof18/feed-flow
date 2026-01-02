@@ -5,6 +5,11 @@ plugins {
 }
 
 kotlin {
+
+    compilerOptions {
+        optIn.add("kotlin.contracts.ExperimentalContracts")
+    }
+
     sourceSets {
         commonMain {
             dependencies {
@@ -14,6 +19,10 @@ kotlin {
                 implementation(libs.touchlab.kermit)
                 implementation(libs.kotlinx.date.time)
             }
+        }
+
+        matching { it.name.startsWith("ios") }.all {
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
     }
 }

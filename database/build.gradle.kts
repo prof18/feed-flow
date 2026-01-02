@@ -4,6 +4,11 @@ plugins {
 }
 
 kotlin {
+
+    compilerOptions {
+        optIn.add("kotlin.time.ExperimentalTime")
+    }
+
     sourceSets {
         commonMain {
             dependencies {

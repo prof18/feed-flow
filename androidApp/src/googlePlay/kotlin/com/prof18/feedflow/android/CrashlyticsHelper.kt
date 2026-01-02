@@ -1,7 +1,6 @@
 package com.prof18.feedflow.android
 
 import co.touchlab.crashkios.crashlytics.enableCrashlytics
-import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import com.google.firebase.Firebase
@@ -16,6 +15,5 @@ object CrashlyticsHelper {
         Firebase.crashlytics.isCrashlyticsCollectionEnabled = enabled
     }
 
-    @OptIn(ExperimentalKermitApi::class)
     fun crashReportingLogWriter(): LogWriter = CrashlyticsLogWriter()
 }

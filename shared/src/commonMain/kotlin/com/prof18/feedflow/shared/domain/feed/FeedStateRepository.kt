@@ -16,7 +16,6 @@ import com.prof18.feedflow.shared.utils.executeWithRetry
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +26,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import com.prof18.feedflow.core.model.DatabaseError as DatabaseErrorCode
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedStateRepository(
     private val databaseHelper: DatabaseHelper,
     private val logger: Logger,

@@ -71,7 +71,3 @@ struct AboutScreen: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
-#Preview {
-    AboutScreen()
-}

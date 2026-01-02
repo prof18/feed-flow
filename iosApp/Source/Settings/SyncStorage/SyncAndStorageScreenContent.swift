@@ -60,18 +60,3 @@ struct SyncAndStorageScreenContent: View {
         .background(Color.secondaryBackgroundColor)
     }
 }
-
-#Preview {
-    @Previewable @State var syncPeriod = SyncPeriod.oneHour
-    @Previewable @State var autoDeletePeriod = AutoDeletePeriod.disabled
-
-    NavigationStack {
-        SyncAndStorageScreenContent(
-            syncPeriod: $syncPeriod,
-            autoDeletePeriod: $autoDeletePeriod,
-            onClearDownloadedArticles: {}
-        )
-        .navigationTitle(Text("Sync & Storage"))
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}

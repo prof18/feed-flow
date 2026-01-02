@@ -138,31 +138,3 @@ struct FeedItemView: View {
         }
     }
 }
-
-#Preview {
-    VStack {
-        Text("List Layout")
-            .font(.headline)
-            .padding()
-
-        FeedItemView(
-            feedItem: feedItemsForPreview[2],
-            index: 0,
-            feedFontSizes: defaultFeedFontSizes(),
-            feedLayout: .list,
-            currentFeedFilter: FeedFilter.Timeline()
-        )
-
-        Text("Card Layout")
-            .font(.headline)
-            .padding()
-
-        FeedItemView(
-            feedItem: feedItemsForPreview[2],
-            index: 0,
-            feedFontSizes: defaultFeedFontSizes(),
-            feedLayout: .card,
-            currentFeedFilter: FeedFilter.Timeline()
-        )
-    }
-}

@@ -145,13 +145,3 @@ struct AccountsScreenContent: View {
         }
     }
 }
-
-#Preview {
-    AccountsScreenContent(
-        syncAccount: SyncAccounts.local,
-        supportedAccounts: [
-            SyncAccounts.dropbox,
-            SyncAccounts.icloud
-        ]
-    )
-}

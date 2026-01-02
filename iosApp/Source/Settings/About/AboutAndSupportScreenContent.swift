@@ -61,18 +61,3 @@ struct AboutAndSupportScreenContent: View {
         .background(Color.secondaryBackgroundColor)
     }
 }
-
-#Preview {
-    @Previewable @State var isCrashReportingEnabled = true
-    @Previewable @State var appState = AppState()
-
-    NavigationStack {
-        AboutAndSupportScreenContent(
-            isCrashReportingEnabled: $isCrashReportingEnabled,
-            openURL: OpenURLAction { _ in .systemAction },
-            appState: appState
-        )
-        .navigationTitle(Text("About & Support"))
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}

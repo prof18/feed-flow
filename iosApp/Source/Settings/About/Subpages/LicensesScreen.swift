@@ -36,9 +36,3 @@ struct LicensesScreen: View {
         }
     }
 }
-
-#Preview {
-    LicensesScreen(
-        htmlContent: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
-    )
-}

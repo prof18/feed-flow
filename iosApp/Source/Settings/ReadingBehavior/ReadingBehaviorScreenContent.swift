@@ -65,25 +65,3 @@ struct ReadingBehaviorScreenContent: View {
         .background(Color.secondaryBackgroundColor)
     }
 }
-
-#Preview {
-    @Previewable @State var browserSelector = BrowserSelector()
-    @Previewable @State var isReaderModeEnabled = true
-    @Previewable @State var isSaveReaderModeContentEnabled = false
-    @Previewable @State var isPrefetchArticleContentEnabled = false
-    @Previewable @State var isMarkReadWhenScrollingEnabled = true
-    @Previewable @State var isShowReadItemEnabled = true
-
-    NavigationStack {
-        ReadingBehaviorScreenContent(
-            browserSelector: browserSelector,
-            isReaderModeEnabled: $isReaderModeEnabled,
-            isSaveReaderModeContentEnabled: $isSaveReaderModeContentEnabled,
-            isPrefetchArticleContentEnabled: $isPrefetchArticleContentEnabled,
-            isMarkReadWhenScrollingEnabled: $isMarkReadWhenScrollingEnabled,
-            isShowReadItemEnabled: $isShowReadItemEnabled
-        )
-        .navigationTitle(Text("Reading Behavior"))
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}

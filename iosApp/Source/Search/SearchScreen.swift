@@ -98,7 +98,3 @@ struct SearchScreen: View {
         }
     }
 }
-
-#Preview {
-    SearchScreen(readerModeViewModel: Deps.shared.getReaderModeViewModel())
-}

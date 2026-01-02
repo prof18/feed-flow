@@ -77,7 +77,3 @@ struct NoFeedsBottomSheet: View {
         .background(Color.secondaryBackgroundColor)
     }
 }
-
-#Preview {
-    NoFeedsBottomSheet(onAddFeedClick: {}, onImportExportClick: {}, onFeedSuggestionsClick: {})
-}

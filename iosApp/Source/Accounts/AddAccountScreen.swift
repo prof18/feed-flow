@@ -139,9 +139,3 @@ struct AddAccountScreen: View {
         }
     }
 }
-
-#Preview {
-    AddAccountScreen(
-        supportedAccounts: [SyncAccounts.dropbox, SyncAccounts.icloud]
-    )
-}

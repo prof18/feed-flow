@@ -248,29 +248,3 @@ private struct FeedSourceListItem: View {
             .padding(.trailing, Spacing.small)
     }
 }
-
-#Preview {
-    FeedSourceListScreenContent(
-        feedState: .constant(
-            FeedSourceListState(
-                feedSourcesWithoutCategory: [],
-                feedSourcesWithCategory: feedSourcesState
-            )
-        ),
-        deleteFeedSource: { _ in },
-        renameFeedSource: { _, _ in }
-    )
-}
-
-#Preview {
-    FeedSourceListScreenContent(
-        feedState: .constant(
-            FeedSourceListState(
-                feedSourcesWithoutCategory: [],
-                feedSourcesWithCategory: []
-            )
-        ),
-        deleteFeedSource: { _ in },
-        renameFeedSource: { _, _ in }
-    )
-}

@@ -32,7 +32,3 @@ struct NoFeedsSourceView: View {
         }
     }
 }
-
-#Preview {
-    NoFeedsSourceView {}
-}

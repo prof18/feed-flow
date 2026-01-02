@@ -91,33 +91,3 @@ private extension FeedFilter {
         }
     }
 }
-
-#Preview {
-    EmptyFeedView(
-        currentFeedFilter: FeedFilter.Timeline(),
-        onReloadClick: {},
-        onBackToTimelineClick: {},
-        openDrawer: {},
-        columnVisibility: .all
-    )
-}
-
-#Preview("Bookmarks") {
-    EmptyFeedView(
-        currentFeedFilter: FeedFilter.Bookmarks(),
-        onReloadClick: {},
-        onBackToTimelineClick: {},
-        openDrawer: {},
-        columnVisibility: .all
-    )
-}
-
-#Preview("Read") {
-    EmptyFeedView(
-        currentFeedFilter: FeedFilter.Read(),
-        onReloadClick: {},
-        onBackToTimelineClick: {},
-        openDrawer: {},
-        columnVisibility: .all
-    )
-}

@@ -26,7 +26,3 @@ struct AccountsScreen: View {
         }
     }
 }
-
-#Preview {
-    AccountsScreen()
-}

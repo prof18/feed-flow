@@ -19,41 +19,38 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
 internal fun WidgetPreviewSection(
-    feedLayout: FeedLayout,
-    headerText: String?,
+    settingsState: WidgetSettingsState,
     modifier: Modifier = Modifier,
 ) {
-    val hasHeader = !headerText.isNullOrBlank()
-    val previewTopPadding = if (hasHeader) Spacing.small else Spacing.regular
+    val baseBackgroundColor = settingsState.backgroundColor?.let { Color(it) }
+        ?: MaterialTheme.colorScheme.surface
+
+    @Suppress("MagicNumber")
+    val backgroundAlpha = settingsState.backgroundOpacityPercent.coerceIn(minimumValue = 0, maximumValue = 100) / 100f
+    val previewBackgroundColor = baseBackgroundColor.copy(alpha = backgroundAlpha)
+    val fontSizes = widgetFontSizes(settingsState.fontScale)
 
     Column(
         modifier = modifier,
     ) {
-        if (hasHeader) {
-            Text(
-                text = headerText,
-                modifier = Modifier
-                    .padding(horizontal = Spacing.regular)
-                    .padding(top = Spacing.small),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-
         WidgetPreviewWallpaper(
-            feedLayout = feedLayout,
+            feedLayout = settingsState.feedLayout,
+            showWidgetHeader = settingsState.showHeader,
+            fontSizes = fontSizes,
+            backgroundColor = previewBackgroundColor,
             modifier = Modifier
-                .padding(top = previewTopPadding)
-                .padding(bottom = Spacing.small),
+                .padding(vertical = Spacing.small),
         )
     }
 }
@@ -61,6 +58,9 @@ internal fun WidgetPreviewSection(
 @Composable
 private fun WidgetPreviewWallpaper(
     feedLayout: FeedLayout,
+    showWidgetHeader: Boolean,
+    fontSizes: WidgetFontSizes,
+    backgroundColor: Color,
     modifier: Modifier = Modifier,
 ) {
     val wallpaperColors = listOf(
@@ -74,7 +74,7 @@ private fun WidgetPreviewWallpaper(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = Spacing.regular)
-            .height(280.dp)
+            .height(230.dp)
             .background(
                 brush = Brush.linearGradient(wallpaperColors),
                 shape = wallpaperShape,
@@ -84,6 +84,9 @@ private fun WidgetPreviewWallpaper(
     ) {
         WidgetPreview(
             feedLayout = feedLayout,
+            showWidgetHeader = showWidgetHeader,
+            fontSizes = fontSizes,
+            backgroundColor = backgroundColor,
             modifier = Modifier.fillMaxWidth(fraction = 0.9f),
         )
     }
@@ -92,6 +95,9 @@ private fun WidgetPreviewWallpaper(
 @Composable
 private fun WidgetPreview(
     feedLayout: FeedLayout,
+    showWidgetHeader: Boolean,
+    fontSizes: WidgetFontSizes,
+    backgroundColor: Color,
     modifier: Modifier = Modifier,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -101,32 +107,30 @@ private fun WidgetPreview(
         modifier = modifier
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
         shape = shape,
-        color = MaterialTheme.colorScheme.surface,
+        color = backgroundColor,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(Spacing.medium),
         ) {
-            Text(
-                text = strings.widgetLatestItems,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
+            if (showWidgetHeader) {
+                Text(
+                    text = strings.widgetLatestItems,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = fontSizes.header.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
 
-            Spacer(modifier = Modifier.height(Spacing.small))
+                Spacer(modifier = Modifier.height(Spacing.small))
+            }
 
             val items = listOf(
                 WidgetPreviewItem(
                     feedSource = strings.settingsFontScaleFeedSourceExample,
                     title = strings.settingsFontScaleTitleExample,
                     date = "25/12 - 14:30",
-                ),
-                WidgetPreviewItem(
-                    feedSource = strings.settingsFontScaleFeedSourceExample,
-                    title = strings.settingsFontScaleSubtitleExample,
-                    date = "25/12 - 12:15",
                 ),
             )
 
@@ -135,8 +139,8 @@ private fun WidgetPreview(
             ) {
                 items.forEach { item ->
                     when (feedLayout) {
-                        FeedLayout.LIST -> WidgetPreviewListItem(item)
-                        FeedLayout.CARD -> WidgetPreviewCardItem(item)
+                        FeedLayout.LIST -> WidgetPreviewListItem(item, fontSizes)
+                        FeedLayout.CARD -> WidgetPreviewCardItem(item, fontSizes)
                     }
                 }
             }
@@ -153,6 +157,7 @@ private data class WidgetPreviewItem(
 @Composable
 private fun WidgetPreviewListItem(
     item: WidgetPreviewItem,
+    fontSizes: WidgetFontSizes,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -164,6 +169,7 @@ private fun WidgetPreviewListItem(
     ) {
         WidgetPreviewTextContent(
             item = item,
+            fontSizes = fontSizes,
             modifier = Modifier.weight(1f),
         )
         WidgetPreviewImage()
@@ -173,6 +179,7 @@ private fun WidgetPreviewListItem(
 @Composable
 private fun WidgetPreviewCardItem(
     item: WidgetPreviewItem,
+    fontSizes: WidgetFontSizes,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -189,6 +196,7 @@ private fun WidgetPreviewCardItem(
         ) {
             WidgetPreviewTextContent(
                 item = item,
+                fontSizes = fontSizes,
                 modifier = Modifier.weight(1f),
             )
             WidgetPreviewImage()
@@ -199,6 +207,7 @@ private fun WidgetPreviewCardItem(
 @Composable
 private fun WidgetPreviewTextContent(
     item: WidgetPreviewItem,
+    fontSizes: WidgetFontSizes,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -208,6 +217,7 @@ private fun WidgetPreviewTextContent(
         Text(
             text = item.feedSource,
             style = MaterialTheme.typography.bodySmall,
+            fontSize = fontSizes.meta.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -215,6 +225,7 @@ private fun WidgetPreviewTextContent(
         Text(
             text = item.title,
             style = MaterialTheme.typography.bodyMedium,
+            fontSize = fontSizes.title.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 2,
@@ -223,6 +234,7 @@ private fun WidgetPreviewTextContent(
         Text(
             text = item.date,
             style = MaterialTheme.typography.bodySmall,
+            fontSize = fontSizes.meta.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

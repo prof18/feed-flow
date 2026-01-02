@@ -17,38 +17,67 @@ class WidgetConfigurationViewModel(
     private val feedDownloadWorkerEnqueuer: FeedDownloadWorkerEnqueuer,
 ) : ViewModel() {
 
-    private val _syncPeriodState = MutableStateFlow<SyncPeriod>(SyncPeriod.ONE_HOUR)
-    val syncPeriodState: StateFlow<SyncPeriod> = _syncPeriodState.asStateFlow()
-
-    private val _feedLayoutState = MutableStateFlow<FeedLayout>(FeedLayout.LIST)
-    val feedLayoutState: StateFlow<FeedLayout> = _feedLayoutState.asStateFlow()
+    private val _settingsState = MutableStateFlow(WidgetSettingsState())
+    val settingsState: StateFlow<WidgetSettingsState> = _settingsState.asStateFlow()
 
     init {
         viewModelScope.launch {
             val currentPeriod = settingsRepository.getSyncPeriod()
             val currentFeedLayout = settingsRepository.getFeedWidgetLayout()
-            _syncPeriodState.update {
-                if (currentPeriod == SyncPeriod.NEVER) {
-                    SyncPeriod.ONE_HOUR
-                } else {
-                    currentPeriod
-                }
+            val currentShowHeader = settingsRepository.getWidgetShowHeader()
+            val currentFontScale = settingsRepository.getWidgetFontScaleFactor()
+            val currentBackgroundColor = settingsRepository.getWidgetBackgroundColor()
+            val currentBackgroundOpacity = settingsRepository.getWidgetBackgroundOpacityPercent()
+
+            _settingsState.update {
+                it.copy(
+                    syncPeriod = if (currentPeriod == SyncPeriod.NEVER) {
+                        SyncPeriod.ONE_HOUR
+                    } else {
+                        currentPeriod
+                    },
+                    feedLayout = currentFeedLayout,
+                    showHeader = currentShowHeader,
+                    fontScale = currentFontScale,
+                    backgroundColor = currentBackgroundColor,
+                    backgroundOpacityPercent = currentBackgroundOpacity,
+                )
             }
-            _feedLayoutState.update { currentFeedLayout }
         }
     }
 
     fun updateSyncPeriod(period: SyncPeriod) {
-        _syncPeriodState.update { period }
+        _settingsState.update { it.copy(syncPeriod = period) }
     }
 
     fun updateFeedLayout(feedLayout: FeedLayout) {
-        _feedLayoutState.update { feedLayout }
+        _settingsState.update { it.copy(feedLayout = feedLayout) }
+    }
+
+    fun updateShowHeader(showHeader: Boolean) {
+        _settingsState.update { it.copy(showHeader = showHeader) }
+    }
+
+    fun updateFontScale(scaleFactor: Int) {
+        _settingsState.update { it.copy(fontScale = scaleFactor) }
+    }
+
+    fun updateBackgroundColor(colorArgb: Int?) {
+        _settingsState.update { it.copy(backgroundColor = colorArgb) }
+    }
+
+    fun updateBackgroundOpacityPercent(opacityPercent: Int) {
+        _settingsState.update { it.copy(backgroundOpacityPercent = opacityPercent) }
     }
 
     fun enqueueWorker() {
-        settingsRepository.setSyncPeriod(syncPeriodState.value)
-        settingsRepository.setFeedWidgetLayout(feedLayoutState.value)
-        feedDownloadWorkerEnqueuer.updateWorker(syncPeriodState.value)
+        val state = settingsState.value
+        settingsRepository.setSyncPeriod(state.syncPeriod)
+        settingsRepository.setFeedWidgetLayout(state.feedLayout)
+        settingsRepository.setWidgetShowHeader(state.showHeader)
+        settingsRepository.setWidgetFontScaleFactor(state.fontScale)
+        settingsRepository.setWidgetBackgroundColor(state.backgroundColor)
+        settingsRepository.setWidgetBackgroundOpacityPercent(state.backgroundOpacityPercent)
+        feedDownloadWorkerEnqueuer.updateWorker(state.syncPeriod)
     }
 }

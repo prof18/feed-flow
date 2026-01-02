@@ -20,11 +20,25 @@ internal class FeedFlowWidget(
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             val lyricist = rememberFeedFlowStrings()
+
             ProvideFeedFlowStrings(lyricist) {
                 val feedLayout by repository.getFeedLayout().collectAsState()
                 val feedItems by repository.getFeeds().collectAsState(persistentListOf())
+                val showHeader by repository.getShowHeader().collectAsState()
+                val fontScale by repository.getFontScale().collectAsState()
+                val backgroundColor by repository.getBackgroundColor().collectAsState()
+                val backgroundOpacity by repository.getBackgroundOpacityPercent().collectAsState()
+
                 GlanceTheme {
-                    Content(feedItems, feedLayout, browserManager)
+                    WidgetContent(
+                        feedItems = feedItems,
+                        feedLayout = feedLayout,
+                        browserManager = browserManager,
+                        showHeader = showHeader,
+                        fontScale = fontScale,
+                        backgroundColor = backgroundColor,
+                        backgroundOpacityPercent = backgroundOpacity,
+                    )
                 }
             }
         }

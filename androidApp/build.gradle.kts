@@ -151,6 +151,7 @@ dependencies {
 
     implementation(libs.androidx.browser)
     implementation(libs.compose.webview)
+    implementation(libs.colorpicker.compose)
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)

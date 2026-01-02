@@ -25,11 +25,13 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 @Composable
 fun WidgetSettingsScaffold(
     title: String,
-    syncPeriod: SyncPeriod,
-    feedLayout: FeedLayout,
-    headerText: String?,
+    settingsState: WidgetSettingsState,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onFeedLayoutSelected: (FeedLayout) -> Unit,
+    onShowHeaderSelected: (Boolean) -> Unit,
+    onFontScaleSelected: (Int) -> Unit,
+    onBackgroundColorSelected: (Int?) -> Unit,
+    onBackgroundOpacitySelected: (Int) -> Unit,
     showConfirmButton: Boolean,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
@@ -61,8 +63,7 @@ fun WidgetSettingsScaffold(
                 .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
             WidgetPreviewSection(
-                feedLayout = feedLayout,
-                headerText = headerText,
+                settingsState = settingsState,
             )
 
             LazyColumn(
@@ -70,10 +71,13 @@ fun WidgetSettingsScaffold(
             ) {
                 item {
                     WidgetSettingsContent(
-                        syncPeriod = syncPeriod,
-                        feedLayout = feedLayout,
+                        settingsState = settingsState,
                         onSyncPeriodSelected = onSyncPeriodSelected,
                         onFeedLayoutSelected = onFeedLayoutSelected,
+                        onShowHeaderSelected = onShowHeaderSelected,
+                        onFontScaleSelected = onFontScaleSelected,
+                        onBackgroundColorSelected = onBackgroundColorSelected,
+                        onBackgroundOpacitySelected = onBackgroundOpacitySelected,
                         showConfirmButton = showConfirmButton,
                         onConfirm = onConfirm,
                         modifier = Modifier.fillMaxWidth(),
@@ -95,11 +99,20 @@ private fun WidgetSettingsScaffoldPreview() {
     FeedFlowTheme {
         WidgetSettingsScaffold(
             title = strings.widgetConfigurationTitle,
-            syncPeriod = SyncPeriod.ONE_HOUR,
-            feedLayout = FeedLayout.CARD,
-            headerText = strings.widgetSettingsHeader,
+            settingsState = WidgetSettingsState(
+                syncPeriod = SyncPeriod.ONE_HOUR,
+                feedLayout = FeedLayout.CARD,
+                showHeader = true,
+                fontScale = 0,
+                backgroundColor = null,
+                backgroundOpacityPercent = 100,
+            ),
             onSyncPeriodSelected = {},
             onFeedLayoutSelected = {},
+            onShowHeaderSelected = {},
+            onFontScaleSelected = {},
+            onBackgroundColorSelected = {},
+            onBackgroundOpacitySelected = {},
             showConfirmButton = true,
             onConfirm = {},
             onNavigateBack = {},

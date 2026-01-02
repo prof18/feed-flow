@@ -12,16 +12,17 @@ fun WidgetSettingsScreen(
     navigateBack: () -> Unit,
 ) {
     val viewModel = koinViewModel<WidgetSettingsViewModel>()
-    val syncPeriod by viewModel.syncPeriodState.collectAsStateWithLifecycle()
-    val feedLayout by viewModel.feedLayoutState.collectAsStateWithLifecycle()
+    val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
 
     WidgetSettingsScaffold(
         title = LocalFeedFlowStrings.current.widgetConfigurationTitle,
-        syncPeriod = syncPeriod,
-        feedLayout = feedLayout,
-        headerText = LocalFeedFlowStrings.current.widgetSettingsHeader,
+        settingsState = settingsState,
         onSyncPeriodSelected = viewModel::updateSyncPeriod,
         onFeedLayoutSelected = viewModel::updateFeedLayout,
+        onShowHeaderSelected = viewModel::updateShowHeader,
+        onFontScaleSelected = viewModel::updateFontScale,
+        onBackgroundColorSelected = viewModel::updateBackgroundColor,
+        onBackgroundOpacitySelected = viewModel::updateBackgroundOpacityPercent,
         showConfirmButton = false,
         onConfirm = {},
         onNavigateBack = navigateBack,

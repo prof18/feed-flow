@@ -39,16 +39,18 @@ class WidgetConfigurationActivity : BaseThemeActivity() {
 
     @Composable
     override fun Content() {
-        val syncPeriod by viewModel.syncPeriodState.collectAsStateWithLifecycle()
-        val feedLayout by viewModel.feedLayoutState.collectAsStateWithLifecycle()
+        val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
         val strings = LocalFeedFlowStrings.current
+
         WidgetSettingsScaffold(
             title = strings.widgetConfigurationTitle,
-            syncPeriod = syncPeriod,
-            feedLayout = feedLayout,
-            headerText = null,
+            settingsState = settingsState,
             onSyncPeriodSelected = viewModel::updateSyncPeriod,
             onFeedLayoutSelected = viewModel::updateFeedLayout,
+            onShowHeaderSelected = viewModel::updateShowHeader,
+            onFontScaleSelected = viewModel::updateFontScale,
+            onBackgroundColorSelected = viewModel::updateBackgroundColor,
+            onBackgroundOpacitySelected = viewModel::updateBackgroundOpacityPercent,
             showConfirmButton = true,
             onConfirm = {
                 viewModel.enqueueWorker()

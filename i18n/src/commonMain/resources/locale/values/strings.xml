@@ -219,8 +219,14 @@
     <string name="widget_latest_items">Most Recent</string>
     <string name="widget_configuration_title">Widget Configuration</string>
     <string name="widget_configuration_description">Choose how often to check for new articles in the background and update the widget.</string>
-    <string name="widget_settings_header">Customize the widget behavior here. Changes are reflected automatically.</string>
     <string name="widget_configuration_confirm">Add Widget</string>
+    <string name="widget_appearance_title">Appearance</string>
+    <string name="widget_show_header_title">Show header title</string>
+    <string name="widget_background_color_title">Background color</string>
+    <string name="widget_background_color_default">System</string>
+    <string name="widget_background_color_preview">Preview</string>
+    <string name="widget_background_opacity_title">Background opacity: %s%</string>
+    <string name="widget_font_size_title">Font size</string>
     <string name="file_menu">File</string>
     <string name="menu_view">View</string>
     <string name="settings_left_swipe_action">Left swipe</string>
@@ -289,6 +295,7 @@
     <string name="clear_old_articles_dialog_message">Are you sure you want to delete old articles?</string>
     <string name="confirm_button">Confirm</string>
     <string name="cancel_button">Cancel</string>
+    <string name="reset_button">Reset</string>
     <string name="settings_danger_title">Danger</string>
     <string name="settings_feeds_and_accounts">Feeds &amp; Accounts</string>
     <string name="settings_reading_behavior">Reading Behavior</string>

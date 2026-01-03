@@ -169,9 +169,8 @@ class GReaderRepository internal constructor(
     suspend fun updateFavicons() =
         withContext(dispatcherProvider.io) {
             gReaderClient.getFeedSourcesAndCategories().onSuccessSuspend { results ->
-                val urlMaps = results.subscriptions.mapNotNull { source ->
-                    if (source.htmlUrl == null) return@mapNotNull null
-                    source.htmlUrl to feedSourceLogoRetriever.getFeedSourceLogoUrl(source.htmlUrl)
+                val urlMaps = results.subscriptions.map { source ->
+                    source.id to feedSourceLogoRetriever.getFeedSourceLogoUrl(source.htmlUrl)
                 }
                 databaseHelper.updateFeedSourceLogoUrls(urlMaps)
             }

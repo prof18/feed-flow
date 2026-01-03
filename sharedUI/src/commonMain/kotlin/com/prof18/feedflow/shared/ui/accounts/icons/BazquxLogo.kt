@@ -23,7 +23,7 @@ val Bazqux: ImageVector
         if (current != null) return current
 
         return ImageVector.Builder(
-            name = "your.app.package.theme.YourAppComposeTheme.OutputIconFile",
+            name = "Bazqux",
             defaultWidth = 32.0.dp,
             defaultHeight = 32.0.dp,
             viewportWidth = 512.0f,

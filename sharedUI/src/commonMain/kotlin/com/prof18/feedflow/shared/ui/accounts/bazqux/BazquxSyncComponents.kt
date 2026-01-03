@@ -109,7 +109,7 @@ private fun LoadingView() {
 }
 
 @Composable
-fun DisconnectedView(
+private fun DisconnectedView(
     isLoginLoading: Boolean,
     modifier: Modifier = Modifier,
     onLoginClick: (username: String, password: String) -> Unit,

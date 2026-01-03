@@ -5,58 +5,43 @@ import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.rssparser.model.RssChannel
 
-// todo: improve
 internal class FeedSourceLogoRetrieverImpl(
     private val htmlRetriever: HtmlRetriever,
     private val htmlParser: HtmlParser,
 ) : FeedSourceLogoRetriever {
+    private val baseDomainRegex = "^.+?[^/:](?=[?/]|\$)".toRegex()
+
     override suspend fun getFeedSourceLogoUrl(rssChannel: RssChannel): String? {
-        val regex = "^.+?[^/:](?=[?/]|\$)".toRegex()
-        val baseDomain = rssChannel.link?.let { link ->
-            regex.find(link)?.value
-        }
-
-        var logoUrl = when {
-            rssChannel.image?.url != null -> rssChannel.image?.url
-            baseDomain != null -> {
-                val html = htmlRetriever.retrieveHtml(baseDomain)
-                if (html != null) {
-                    htmlParser.getFaviconUrl(html) ?: getFaviconFromGoogle(baseDomain)
-                } else {
-                    getFaviconFromGoogle(baseDomain)
-                }
-            }
-
-            else -> null
-        }
-
-        if (baseDomain != null && (logoUrl == null || logoUrl.startsWith("/"))) {
-            logoUrl = "$baseDomain/favicon.ico"
-        }
-        return logoUrl
+        val baseDomain = extractBaseDomain(rssChannel.link)
+        val logoUrl = rssChannel.image?.url ?: resolveLogoUrlFromWebsite(baseDomain)
+        return normalizeLogoUrl(baseDomain, logoUrl)
     }
 
     override suspend fun getFeedSourceLogoUrl(websiteLink: String?): String? {
-        val regex = "^.+?[^/:](?=[?/]|\$)".toRegex()
-        val baseDomain = websiteLink?.let { link ->
-            regex.find(link)?.value
+        val baseDomain = extractBaseDomain(websiteLink)
+        val logoUrl = resolveLogoUrlFromWebsite(baseDomain)
+        return normalizeLogoUrl(baseDomain, logoUrl)
+    }
+
+    private fun extractBaseDomain(link: String?): String? =
+        link?.let { value -> baseDomainRegex.find(value)?.value }
+
+    private suspend fun resolveLogoUrlFromWebsite(baseDomain: String?): String? {
+        if (baseDomain == null) {
+            return null
         }
 
-        var logoUrl = when {
-            baseDomain != null -> {
-                val html = htmlRetriever.retrieveHtml(baseDomain)
-                if (html != null) {
-                    htmlParser.getFaviconUrl(html) ?: getFaviconFromGoogle(baseDomain)
-                } else {
-                    getFaviconFromGoogle(baseDomain)
-                }
-            }
-
-            else -> null
+        val html = htmlRetriever.retrieveHtml(baseDomain)
+        return if (html != null) {
+            htmlParser.getFaviconUrl(html) ?: getFaviconFromGoogle(baseDomain)
+        } else {
+            getFaviconFromGoogle(baseDomain)
         }
+    }
 
+    private fun normalizeLogoUrl(baseDomain: String?, logoUrl: String?): String? {
         if (baseDomain != null && (logoUrl == null || logoUrl.startsWith("/"))) {
-            logoUrl = "$baseDomain/favicon.ico"
+            return "$baseDomain/favicon.ico"
         }
         return logoUrl
     }

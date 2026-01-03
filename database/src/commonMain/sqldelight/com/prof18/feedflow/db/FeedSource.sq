@@ -18,6 +18,10 @@ insertFeedSource:
 INSERT OR REPLACE INTO feed_source(url_hash, url, title, category_id, logo_url)
 VALUES (?,?,?,?, ?);
 
+insertFeedSourceWithWebsite:
+INSERT OR REPLACE INTO feed_source(url_hash, url, title, category_id, logo_url, website_url)
+VALUES (?,?,?,?, ?, ?);
+
 deleteAllExcept:
 DELETE FROM feed_source WHERE url_hash NOT IN :urlHashes;
 

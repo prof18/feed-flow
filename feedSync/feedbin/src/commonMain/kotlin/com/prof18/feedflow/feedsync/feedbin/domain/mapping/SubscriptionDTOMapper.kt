@@ -21,9 +21,10 @@ internal fun SubscriptionDTO.toFeedSource(
         title = title,
         category = tagging?.toFeedSourceCategory(),
         logoUrl = logoUrl,
+        websiteUrl = siteUrl,
     )
 }
 
 private fun SubscriptionDTO.getHost(): String? = runCatching {
-    Url(feedUrl).host
+    Url(siteUrl).host
 }.getOrNull()

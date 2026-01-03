@@ -2,6 +2,8 @@ package com.prof18.feedflow.feedsync.greader.domain.mapping
 
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.feedsync.greader.data.dto.SubscriptionDTO
+import io.ktor.http.Url
+import io.ktor.http.hostWithPortIfSpecified
 
 internal fun SubscriptionDTO.toFeedSource(): ParsedFeedSource =
     ParsedFeedSource(
@@ -10,6 +12,7 @@ internal fun SubscriptionDTO.toFeedSource(): ParsedFeedSource =
         title = title,
         category = categories.firstOrNull()?.toFeedSourceCategory(),
         logoUrl = iconUrl?.ifBlank { null },
+        websiteUrl = getHost(),
     )
 
 private fun SubscriptionDTO.resolveFeedUrl(): String {
@@ -24,3 +27,9 @@ private fun SubscriptionDTO.resolveFeedUrl(): String {
         id
     }
 }
+
+private fun SubscriptionDTO.getHost(): String? = runCatching {
+    val parsedUrl = htmlUrl?.let { Url(it) }
+    val host = parsedUrl?.hostWithPortIfSpecified
+    "https://$host"
+}.getOrNull()

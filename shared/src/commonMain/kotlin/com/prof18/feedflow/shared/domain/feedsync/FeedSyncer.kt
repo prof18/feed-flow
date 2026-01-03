@@ -64,6 +64,7 @@ internal class FeedSyncer(
                             )
                         },
                         logoUrl = syncedFeedSource.logoUrl,
+                        websiteUrl = null,
                     )
                 },
             )

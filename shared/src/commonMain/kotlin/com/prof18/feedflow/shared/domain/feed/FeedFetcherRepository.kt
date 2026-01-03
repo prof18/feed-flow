@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.feed
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource

@@ -78,6 +78,7 @@ class BazquxSyncViewModel internal constructor(
                             },
                             onSuccess = {
                                 loginLoadingMutableState.update { false }
+                                gReaderRepository.updateFavicons()
                                 feedStateRepository.getFeeds()
                                 uiMutableState.update {
                                     AccountConnectionUiState.Linked(

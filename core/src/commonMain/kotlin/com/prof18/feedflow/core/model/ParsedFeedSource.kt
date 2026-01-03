@@ -6,12 +6,14 @@ data class ParsedFeedSource(
     val title: String,
     val category: FeedSourceCategory?,
     val logoUrl: String?,
+    val websiteUrl: String?,
 ) {
     data class Builder(
         private var url: String? = null,
         private var title: String? = null,
         private var category: String? = null,
         private var logoUrl: String? = null,
+        private var websiteUrl: String? = null,
     ) {
         fun url(url: String?) = apply { this.url = url?.replace("http://", "https://") }
         fun title(title: String?) = apply { this.title = title }
@@ -24,6 +26,8 @@ data class ParsedFeedSource(
         fun category(category: String?) = apply { this.category = category }
 
         fun logoUrl(url: String?) = apply { this.logoUrl = url }
+
+        fun websiteUrl(url: String?) = apply { this.websiteUrl = url }
 
         fun build(): ParsedFeedSource? {
             if (url == null || title == null) {
@@ -40,6 +44,7 @@ data class ParsedFeedSource(
                     )
                 },
                 logoUrl = logoUrl,
+                websiteUrl = websiteUrl,
             )
         }
     }

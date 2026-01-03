@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.feed
 
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
@@ -296,6 +297,7 @@ internal class FeedSourcesRepository(
                 title = title,
                 category = category,
                 logoUrl = logoUrl,
+                websiteUrl = rssChannel.link,
             )
 
             return@withContext AddFeedResponse.FeedFound(
@@ -448,7 +450,9 @@ internal class FeedSourcesRepository(
 
         databaseHelper.insertFeedSource(
             listOf(
-                parsedFeedSource,
+                parsedFeedSource.copy(
+                    websiteUrl = rssChannel.link,
+                ),
             ),
         )
         databaseHelper.updateNotificationEnabledStatus(feedSource.id, isNotificationEnabled)
@@ -537,6 +541,7 @@ internal class FeedSourcesRepository(
                     title = feedTitle,
                     category = category,
                     logoUrl = logoUrl,
+                    websiteUrl = null,
                 )
 
                 if (category != null) {

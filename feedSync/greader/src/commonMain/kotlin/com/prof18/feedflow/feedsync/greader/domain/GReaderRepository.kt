@@ -3,6 +3,7 @@ package com.prof18.feedflow.feedsync.greader.domain
 import arrow.fx.coroutines.parZip
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.DataNotFound
@@ -42,6 +43,7 @@ class GReaderRepository internal constructor(
     private val itemContentDTOMapper: ItemContentDTOMapper,
     private val dateFormatter: DateFormatter,
     private val dispatcherProvider: DispatcherProvider,
+    private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
 ) {
     fun isAccountSet(): Boolean {
         val hasCredentials = networkSettings.getSyncPwd().isNotEmpty() &&
@@ -163,6 +165,17 @@ class GReaderRepository internal constructor(
         networkSettings.setLastSyncDate(Clock.System.now().epochSeconds)
         return@withContext Unit.success()
     }
+
+    suspend fun updateFavicons() =
+        withContext(dispatcherProvider.io) {
+            gReaderClient.getFeedSourcesAndCategories().onSuccessSuspend { results ->
+                val urlMaps = results.subscriptions.mapNotNull { source ->
+                    if (source.htmlUrl == null) return@mapNotNull null
+                    source.htmlUrl to feedSourceLogoRetriever.getFeedSourceLogoUrl(source.htmlUrl)
+                }
+                databaseHelper.updateFeedSourceLogoUrls(urlMaps)
+            }
+        }
 
     fun getLastSyncDate(): Long? = networkSettings.getLastSyncDate()
 

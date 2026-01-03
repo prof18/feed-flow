@@ -163,13 +163,24 @@ class DatabaseHelper(
     suspend fun insertFeedSource(feedSource: List<ParsedFeedSource>) {
         dbRef.transactionWithContext(backgroundDispatcher) {
             feedSource.forEach { feedSource ->
-                dbRef.feedSourceQueries.insertFeedSource(
-                    url_hash = feedSource.id,
-                    url = feedSource.url,
-                    title = feedSource.title,
-                    category_id = feedSource.category?.id,
-                    logo_url = feedSource.logoUrl,
-                )
+                if (feedSource.websiteUrl != null) {
+                    dbRef.feedSourceQueries.insertFeedSourceWithWebsite(
+                        url_hash = feedSource.id,
+                        url = feedSource.url,
+                        title = feedSource.title,
+                        category_id = feedSource.category?.id,
+                        logo_url = feedSource.logoUrl,
+                        website_url = feedSource.websiteUrl,
+                    )
+                } else {
+                    dbRef.feedSourceQueries.insertFeedSource(
+                        url_hash = feedSource.id,
+                        url = feedSource.url,
+                        title = feedSource.title,
+                        category_id = feedSource.category?.id,
+                        logo_url = feedSource.logoUrl,
+                    )
+                }
             }
         }
     }
@@ -961,6 +972,17 @@ class DatabaseHelper(
                 urlHash = feedSourceId,
             )
         }
+
+    suspend fun updateFeedSourceLogoUrls(urls: List<Pair<String, String?>>) {
+        dbRef.transactionWithContext(backgroundDispatcher) {
+            urls.forEach { (urlHash, logoUrl) ->
+                dbRef.feedSourceQueries.updateLogoUrl(
+                    logoUrl = logoUrl,
+                    urlHash = urlHash,
+                )
+            }
+        }
+    }
 
     suspend fun updateFeedSourceWebsiteUrl(feedSourceId: String, websiteUrl: String?) =
         dbRef.transactionWithContext(backgroundDispatcher) {

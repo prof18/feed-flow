@@ -26,6 +26,7 @@ fun getGReaderModule(appEnvironment: AppEnvironment) = module {
             ),
             dateFormatter = get(),
             dispatcherProvider = get(),
+            feedSourceLogoRetriever = get(),
         )
     }
 

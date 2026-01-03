@@ -5,6 +5,7 @@ import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
 import com.prof18.feedflow.core.domain.DateFormatter
+import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
@@ -23,7 +24,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedImportExportRepository
-import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetriever
+import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetrieverImpl
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feed.FeedUrlRetriever
@@ -222,8 +223,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
-    factory {
-        FeedSourceLogoRetriever(
+    factory<FeedSourceLogoRetriever> {
+        FeedSourceLogoRetrieverImpl(
             htmlRetriever = get(),
             htmlParser = get(),
         )

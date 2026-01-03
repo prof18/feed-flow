@@ -6,5 +6,5 @@ layout: "list"
 heading: "Frequently Asked Questions"
 ---
 
-Welcome to FeedFlow's FAQ section. Here you'll find answers to the most common
-questions about using FeedFlow.
+Tere tulemast FeedFlow KKK alajaotusse. Siin leiad vastuseid korduma kippuvatele
+küsimustele FeedFlow uudisvoogude lugeja kohta.

@@ -69,7 +69,7 @@ internal class FeedSourcesRepository(
 
     suspend fun deleteFeed(feedSource: FeedSource) {
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
                 gReaderRepository.deleteFeedSource(feedSource.id)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.DeleteFeedSourceFailed))
@@ -117,7 +117,7 @@ internal class FeedSourcesRepository(
 
     suspend fun updateFeedSourceName(feedSourceId: String, newName: String) =
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
                 gReaderRepository.editFeedSourceName(feedSourceId, newName)
                     .onErrorSuspend {
                         feedStateRepository.emitErrorState(SyncError(FeedSyncError.EditFeedSourceNameFailed))
@@ -163,7 +163,7 @@ internal class FeedSourcesRepository(
         isNotificationEnabled: Boolean,
     ): FeedAddedState =
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> addFeedSourceForFreshRss(
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> addFeedSourceForFreshRss(
                 sanitizeUrl(feedUrl),
                 categoryName,
                 isNotificationEnabled,
@@ -200,7 +200,7 @@ internal class FeedSourcesRepository(
             feedStateRepository.getFeeds()
         }
         return when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX ->
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX ->
                 editFeedSourceForFreshRss(newFeedSource, originalFeedSource)
             SyncAccounts.FEEDBIN -> editFeedSourceForFeedbin(newFeedSource, originalFeedSource)
             SyncAccounts.LOCAL,
@@ -510,7 +510,7 @@ internal class FeedSourcesRepository(
         logoUrl: String?,
     ) = withContext(dispatcherProvider.io) {
         when (accountsRepository.getCurrentSyncAccount()) {
-            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX -> {
+            SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
                 gReaderRepository.addFeedSource(
                     url = feedUrl,
                     categoryName = category,

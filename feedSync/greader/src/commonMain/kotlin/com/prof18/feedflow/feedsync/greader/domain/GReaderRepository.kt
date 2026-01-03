@@ -49,6 +49,7 @@ class GReaderRepository internal constructor(
         return when (networkSettings.getSyncAccountType()) {
             SyncAccounts.FRESH_RSS,
             SyncAccounts.MINIFLUX,
+            SyncAccounts.BAZQUX,
             -> hasCredentials
 
             SyncAccounts.DROPBOX,
@@ -91,7 +92,7 @@ class GReaderRepository internal constructor(
         val lastUpdate = networkSettings.getLastSyncDate()
         val feedSources = databaseHelper.getFeedSources()
 
-        val readingListResult = if (isMinifluxAccount()) {
+        val readingListResult = if (usesItemIdsSync()) {
             fetchContentWithItemIds(
                 stream = Stream.ReadingList(),
                 excludedStream = Stream.Read(),
@@ -118,7 +119,7 @@ class GReaderRepository internal constructor(
             return@withContext readingListResult
         }
 
-        val starredResult = if (isMinifluxAccount()) {
+        val starredResult = if (usesItemIdsSync()) {
             fetchContentWithItemIds(
                 stream = Stream.Starred(),
                 since = lastUpdate,
@@ -175,7 +176,7 @@ class GReaderRepository internal constructor(
         val removeTag = if (isBookmarked) null else Stream.Starred()
 
         val result = gReaderClient.editTag(
-            itemIds = listOf(feedItemId.id),
+            itemIds = formatItemIdsForTagging(listOf(feedItemId)),
             addTag = addTag,
             removeTag = removeTag,
         )
@@ -192,7 +193,7 @@ class GReaderRepository internal constructor(
         val removeTag = if (isRead) null else Stream.Read()
 
         val result = gReaderClient.editTag(
-            itemIds = feedItemIds.map { it.id },
+            itemIds = formatItemIdsForTagging(feedItemIds),
             addTag = addTag,
             removeTag = removeTag,
         )
@@ -431,7 +432,13 @@ class GReaderRepository internal constructor(
             return idsResult.failure.error()
         }
 
-        var itemIds = idsResult.requireSuccess().map { it.getHexID() }
+        var itemIds = idsResult.requireSuccess().map { item ->
+            if (isBazquxAccount()) {
+                item.id
+            } else {
+                item.getHexID()
+            }
+        }
         if (itemIds.isEmpty() && since != null && !databaseHelper.hasFeedItems()) {
             logger.d { "No items with since filter and empty DB; retrying without since" }
             idsResult = fetchItemIds(stream = stream, excludedStream = excludedStream, since = null)
@@ -439,7 +446,13 @@ class GReaderRepository internal constructor(
                 logger.e { "Failed to fetch item IDs without since: $idsResult" }
                 return idsResult.failure.error()
             }
-            itemIds = idsResult.requireSuccess().map { it.getHexID() }
+            itemIds = idsResult.requireSuccess().map { item ->
+                if (isBazquxAccount()) {
+                    item.id
+                } else {
+                    item.getHexID()
+                }
+            }
         }
         if (itemIds.isEmpty()) {
             return Unit.success()
@@ -512,8 +525,27 @@ class GReaderRepository internal constructor(
             }
             .getOrElse("Auth") { null }
 
-    private fun isMinifluxAccount(): Boolean =
-        networkSettings.getSyncAccountType() == SyncAccounts.MINIFLUX
+    private fun usesItemIdsSync(): Boolean =
+        networkSettings.getSyncAccountType() == SyncAccounts.MINIFLUX ||
+            networkSettings.getSyncAccountType() == SyncAccounts.BAZQUX
+
+    private fun isBazquxAccount(): Boolean =
+        networkSettings.getSyncAccountType() == SyncAccounts.BAZQUX
+
+    private fun formatItemIdsForTagging(feedItemIds: List<FeedItemId>): List<String> {
+        if (!isBazquxAccount()) {
+            return feedItemIds.map { it.id }
+        }
+
+        return feedItemIds.map { feedItemId ->
+            val id = feedItemId.id
+            if (id.startsWith(BAZQUX_ITEM_ID_PREFIX)) {
+                id
+            } else {
+                "$BAZQUX_ITEM_ID_PREFIX$id"
+            }
+        }
+    }
 
     fun buildCategoryId(categoryName: CategoryName): String =
         "user/-/label/${categoryName.name}"
@@ -533,5 +565,6 @@ class GReaderRepository internal constructor(
         private const val PAGE_SIZE = 500
         private const val MAX_PAGES = 2
         private const val ITEM_CONTENTS_CHUNK_SIZE = 200
+        private const val BAZQUX_ITEM_ID_PREFIX = "tag:google.com,2005:reader/item/"
     }
 }

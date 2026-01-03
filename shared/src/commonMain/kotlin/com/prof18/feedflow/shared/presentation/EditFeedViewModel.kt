@@ -57,7 +57,9 @@ class EditFeedViewModel internal constructor(
 
     fun canEditUrl(): Boolean =
         accountsRepository.getCurrentSyncAccount() != SyncAccounts.FRESH_RSS &&
-            accountsRepository.getCurrentSyncAccount() != SyncAccounts.MINIFLUX
+            accountsRepository.getCurrentSyncAccount() != SyncAccounts.MINIFLUX &&
+            accountsRepository.getCurrentSyncAccount() != SyncAccounts.FEEDBIN &&
+            accountsRepository.getCurrentSyncAccount() != SyncAccounts.BAZQUX
 
     fun updateFeedUrlTextFieldValue(feedUrlTextFieldValue: String) {
         feedUrlMutableState.update { feedUrlTextFieldValue }

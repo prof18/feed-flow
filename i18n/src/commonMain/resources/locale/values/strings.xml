@@ -189,6 +189,13 @@
     <string name="miniflux_last_sync">Last sync: %s</string>
     <string name="miniflux_password_hint">The Miniflux API password (Settings &gt; Integrations &gt; Google Reader)</string>
     <string name="miniflux_url_hint">The Miniflux server URL, for example %s</string>
+    <string name="bazqux_account_connected">Your BazQux account is successfully connected</string>
+    <string name="no_bazqux_sync_yet">Data are not synced yet</string>
+    <string name="bazqux_last_sync">Last sync: %s</string>
+    <string name="bazqux_username_hint">Your BazQux account email address</string>
+    <string name="bazqux_password_hint">Your BazQux account password</string>
+    <string name="bazqux_login_subscription_expired">Login failed: your subscription has expired</string>
+    <string name="bazqux_login_free_trial_expired">Login failed: your free trial has expired</string>
     <string name="feedbin_account_connected">Your Feedbin account is successfully connected</string>
     <string name="no_feedbin_sync_yet">Data are not synced yet</string>
     <string name="feedbin_last_sync">Last sync: %s</string>

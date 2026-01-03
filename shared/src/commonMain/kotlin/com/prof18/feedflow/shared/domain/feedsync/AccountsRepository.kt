@@ -61,6 +61,7 @@ internal class AccountsRepository(
         add(SyncAccounts.FRESH_RSS)
         add(SyncAccounts.MINIFLUX)
         add(SyncAccounts.FEEDBIN)
+        add(SyncAccounts.BAZQUX)
     }
 
     private fun MutableList<SyncAccounts>.generateMacOSAccounts() {
@@ -76,6 +77,7 @@ internal class AccountsRepository(
         add(SyncAccounts.FRESH_RSS)
         add(SyncAccounts.MINIFLUX)
         add(SyncAccounts.FEEDBIN)
+        add(SyncAccounts.BAZQUX)
     }
 
     private fun MutableList<SyncAccounts>.generateLinuxAccounts() {
@@ -88,6 +90,7 @@ internal class AccountsRepository(
         add(SyncAccounts.FRESH_RSS)
         add(SyncAccounts.MINIFLUX)
         add(SyncAccounts.FEEDBIN)
+        add(SyncAccounts.BAZQUX)
     }
 
     private fun MutableList<SyncAccounts>.generateAndroidAccounts() {
@@ -100,6 +103,7 @@ internal class AccountsRepository(
         add(SyncAccounts.FRESH_RSS)
         add(SyncAccounts.MINIFLUX)
         add(SyncAccounts.FEEDBIN)
+        add(SyncAccounts.BAZQUX)
     }
 
     private fun MutableList<SyncAccounts>.generateIOSAccounts() {
@@ -115,6 +119,7 @@ internal class AccountsRepository(
         add(SyncAccounts.FRESH_RSS)
         add(SyncAccounts.MINIFLUX)
         add(SyncAccounts.FEEDBIN)
+        add(SyncAccounts.BAZQUX)
     }
 
     fun setDropboxAccount() {
@@ -153,6 +158,13 @@ internal class AccountsRepository(
         currentAccountMutableState.value = SyncAccounts.FEEDBIN
     }
 
+    fun setBazquxAccount() {
+        clearOtherSyncCredentials(except = SyncAccounts.BAZQUX)
+        networkSettings.setSyncAccountType(SyncAccounts.BAZQUX)
+        networkSettings.clearLastSyncDate()
+        currentAccountMutableState.value = SyncAccounts.BAZQUX
+    }
+
     fun clearAccount() {
         currentAccountMutableState.value = SyncAccounts.LOCAL
     }
@@ -169,6 +181,7 @@ internal class AccountsRepository(
         }
         if (except != SyncAccounts.FRESH_RSS &&
             except != SyncAccounts.MINIFLUX &&
+            except != SyncAccounts.BAZQUX &&
             except != SyncAccounts.FEEDBIN
         ) {
             networkSettings.deleteAll()

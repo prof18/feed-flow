@@ -87,6 +87,20 @@ struct AddAccountScreen: View {
                                 }
                             }
 
+                        case .bazqux:
+                            NavigationLink(destination: BazquxSyncScreen(isFromAddAccount: true)) {
+                                Label {
+                                    Text("BazQux")
+                                } icon: {
+                                    Image("bazqux")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 22, height: 22)
+                                        .foregroundStyle(.primary)
+                                }
+                            }
+
                         case .googleDrive:
                             NavigationLink(destination: GoogleDriveSyncScreen()) {
                                 Label {

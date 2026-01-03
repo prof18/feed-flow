@@ -35,6 +35,7 @@ import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerIos
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
+import com.prof18.feedflow.shared.presentation.BazquxSyncViewModel
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
@@ -291,6 +292,7 @@ object Deps : KoinComponent {
     fun getEditFeedViewModel() = getKoin().get<EditFeedViewModel>()
     fun getFreshRssSyncViewModel() = getKoin().get<FreshRssSyncViewModel>()
     fun getMinifluxSyncViewModel() = getKoin().get<MinifluxSyncViewModel>()
+    fun getBazquxSyncViewModel() = getKoin().get<BazquxSyncViewModel>()
     fun getDeeplinkFeedViewModel() = getKoin().get<DeeplinkFeedViewModel>()
     fun getReviewViewModel() = getKoin().get<ReviewViewModel>()
     fun getSerialFeedFetcherRepository() = getKoin().get<SerialFeedFetcherRepository>()

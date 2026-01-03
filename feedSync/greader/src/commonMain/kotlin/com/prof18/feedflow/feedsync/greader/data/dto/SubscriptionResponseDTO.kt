@@ -12,9 +12,9 @@ internal data class SubscriptionDTO(
     val id: String,
     val title: String,
     val categories: List<TagDTO>,
-    val url: String,
-    val htmlUrl: String,
-    val iconUrl: String,
+    val url: String? = null,
+    val htmlUrl: String? = null,
+    val iconUrl: String? = null,
 )
 
 @Serializable

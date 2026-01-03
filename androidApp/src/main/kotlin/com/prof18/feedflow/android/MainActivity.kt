@@ -35,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.prof18.feedflow.android.accounts.AccountsScreen
+import com.prof18.feedflow.android.accounts.bazqux.BazquxSyncScreen
 import com.prof18.feedflow.android.accounts.feedbin.FeedbinSyncScreen
 import com.prof18.feedflow.android.accounts.freshrss.FreshRssSyncScreen
 import com.prof18.feedflow.android.accounts.miniflux.MinifluxSyncScreen
@@ -467,6 +468,9 @@ class MainActivity : BaseThemeActivity() {
                     navigateToMinifluxSync = {
                         navController.navigate(MinifluxSync)
                     },
+                    navigateToBazquxSync = {
+                        navController.navigate(BazquxSync)
+                    },
                     navigateToFeedbinSync = {
                         navController.navigate(FeedbinSync)
                     },
@@ -499,6 +503,14 @@ class MainActivity : BaseThemeActivity() {
 
             composable<MinifluxSync> {
                 MinifluxSyncScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<BazquxSync> {
+                BazquxSyncScreen(
                     navigateBack = {
                         navController.popBackStack()
                     },

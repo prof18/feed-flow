@@ -147,6 +147,7 @@ internal class FeedSyncJvmWorker(
             SyncAccounts.LOCAL,
             SyncAccounts.FRESH_RSS,
             SyncAccounts.MINIFLUX,
+            SyncAccounts.BAZQUX,
             SyncAccounts.FEEDBIN,
             -> {
                 // Do nothing
@@ -238,6 +239,7 @@ internal class FeedSyncJvmWorker(
             SyncAccounts.LOCAL,
             SyncAccounts.FRESH_RSS,
             SyncAccounts.MINIFLUX,
+            SyncAccounts.BAZQUX,
             SyncAccounts.FEEDBIN,
             -> {
                 logger.d { "current sync account does not require cloud download" }

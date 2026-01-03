@@ -126,6 +126,7 @@ internal class FeedSyncAndroidWorker(
             SyncAccounts.ICLOUD,
             SyncAccounts.FRESH_RSS,
             SyncAccounts.MINIFLUX,
+            SyncAccounts.BAZQUX,
             SyncAccounts.FEEDBIN,
             -> {
                 // Do nothing
@@ -179,6 +180,7 @@ internal class FeedSyncAndroidWorker(
             SyncAccounts.ICLOUD,
             SyncAccounts.FRESH_RSS,
             SyncAccounts.MINIFLUX,
+            SyncAccounts.BAZQUX,
             SyncAccounts.FEEDBIN,
             -> {
                 SyncResult.Success

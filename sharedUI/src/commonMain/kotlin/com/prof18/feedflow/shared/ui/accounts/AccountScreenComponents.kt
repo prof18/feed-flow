@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.shared.ui.accounts.icons.Bazqux
 import com.prof18.feedflow.shared.ui.accounts.icons.Cloud
 import com.prof18.feedflow.shared.ui.accounts.icons.Dropbox
 import com.prof18.feedflow.shared.ui.accounts.icons.Feedbin
@@ -43,6 +44,7 @@ fun AccountsContent(
     onICloudClick: () -> Unit,
     onFreshRssClick: () -> Unit,
     onMinifluxClick: () -> Unit,
+    onBazquxClick: () -> Unit,
     onFeedbinClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -106,6 +108,7 @@ fun AccountsContent(
                                 }
                                 SyncAccounts.FRESH_RSS -> onFreshRssClick
                                 SyncAccounts.MINIFLUX -> onMinifluxClick
+                                SyncAccounts.BAZQUX -> onBazquxClick
                                 SyncAccounts.FEEDBIN -> onFeedbinClick
                             },
                         )
@@ -134,6 +137,7 @@ private fun SyncAccounts.getTitle() =
         SyncAccounts.ICLOUD -> "iCloud"
         SyncAccounts.FRESH_RSS -> "FreshRSS"
         SyncAccounts.MINIFLUX -> "Miniflux"
+        SyncAccounts.BAZQUX -> "BazQux"
         SyncAccounts.FEEDBIN -> "Feedbin"
     }
 
@@ -145,6 +149,7 @@ private fun SyncAccounts.getIcon() =
         SyncAccounts.LOCAL -> Dropbox
         SyncAccounts.FRESH_RSS -> FreshRSS
         SyncAccounts.MINIFLUX -> Miniflux
+        SyncAccounts.BAZQUX -> Bazqux
         SyncAccounts.FEEDBIN -> Feedbin
     }
 

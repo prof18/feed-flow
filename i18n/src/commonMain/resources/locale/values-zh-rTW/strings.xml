@@ -63,7 +63,7 @@
     <string name="add_feed_category_title">分類</string>
     <string name="add_feed_categories_title">分類</string>
     <string name="action_save">保存</string>
-    <string name="import_export_description">FeedFlow支援透過OPML檔案匯入和匯出訂閱內容，以增強與其他RSS閱讀器的互通性</string>
+    <string name="import_export_description">FeedFlow支援透過OPML檔案匯入和匯出訂閱內容，以增強與其他RSS閱讀器的互通性。</string>
     <string name="no_feed_modal_title">添加新訂閱源</string>
     <string name="no_feed_modal_message">您可以手動添加新的訂閱源，可以從其他RSS閱讀器匯入訂閱內容，也可以連接帳號從其他裝置同步資料（此功能處於測試階段）。</string>
     <string name="drawer_title_read">已讀</string>
@@ -274,4 +274,8 @@
     <string name="scroll_to_top_button_content_description">捲動到頂部</string>
     <string name="decrease_font_size_button_content_description">減小字體大小</string>
     <string name="increase_font_size_button_content_description">增大字體大小</string>
+    <string name="trigger_feed_sync">觸發上傳至帳號</string>
+    <string name="import_export_label">匯入與匯出</string>
+    <string name="import_export_opml_section_title">訂閱（OPML）</string>
+    <string name="import_export_articles_section_title">文章（CSV）</string>
 </resources>

@@ -36,6 +36,7 @@ import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
+import com.prof18.feedflow.shared.presentation.BazquxSyncViewModel
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
@@ -404,6 +405,15 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     viewModel {
         MinifluxSyncViewModel(
+            gReaderRepository = get(),
+            accountsRepository = get(),
+            dateFormatter = get(),
+            feedStateRepository = get(),
+        )
+    }
+
+    viewModel {
+        BazquxSyncViewModel(
             gReaderRepository = get(),
             accountsRepository = get(),
             dateFormatter = get(),

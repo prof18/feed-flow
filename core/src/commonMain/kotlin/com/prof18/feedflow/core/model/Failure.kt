@@ -18,6 +18,14 @@ sealed class NetworkFailure : Failure() {
     data object BadToken : NetworkFailure()
 }
 
+sealed class BazquxLoginFailure : Failure() {
+    data object YearSubscriptionExpired : BazquxLoginFailure()
+
+    data object FreeTrialExpired : BazquxLoginFailure()
+
+    data object Unknown : BazquxLoginFailure()
+}
+
 data object DataNotFound : Failure()
 
 data object InvalidData : Failure()

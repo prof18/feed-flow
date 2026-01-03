@@ -17,6 +17,7 @@ internal fun AccountsScreen(
     navigateBack: () -> Unit,
     navigateToFreshRssSync: () -> Unit,
     navigateToMinifluxSync: () -> Unit,
+    navigateToBazquxSync: () -> Unit,
     navigateToFeedbinSync: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -41,6 +42,7 @@ internal fun AccountsScreen(
         onICloudClick = {},
         onFreshRssClick = navigateToFreshRssSync,
         onMinifluxClick = navigateToMinifluxSync,
+        onBazquxClick = navigateToBazquxSync,
         onFeedbinClick = navigateToFeedbinSync,
     )
 }

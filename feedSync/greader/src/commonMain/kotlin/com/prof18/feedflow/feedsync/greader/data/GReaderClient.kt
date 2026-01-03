@@ -2,8 +2,11 @@ package com.prof18.feedflow.feedsync.greader.data
 
 import co.touchlab.kermit.Logger
 import co.touchlab.stately.concurrency.AtomicReference
+import com.prof18.feedflow.core.model.BazquxLoginFailure
+import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.DataResult
 import com.prof18.feedflow.core.model.NetworkFailure
+import com.prof18.feedflow.core.model.Unhandled
 import com.prof18.feedflow.core.model.isError
 import com.prof18.feedflow.core.model.onSuccess
 import com.prof18.feedflow.core.utils.AppEnvironment
@@ -16,7 +19,9 @@ import com.prof18.feedflow.feedsync.greader.domain.Stream
 import com.prof18.feedflow.feedsync.greader.domain.SubscriptionEditAction
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.feedsync.networkcore.executeNetwork
+import com.prof18.feedflow.feedsync.networkcore.isMissingConnectionError
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -27,9 +32,11 @@ import io.ktor.client.plugins.resources.post
 import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.header
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.Parameters
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -55,7 +62,7 @@ internal class GReaderClient internal constructor(
             Email = username,
             Passwd = password,
         )
-        return@withContext executeNetwork {
+        return@withContext executeLogin {
             client.post(loginRes)
         }
     }
@@ -332,4 +339,47 @@ internal class GReaderClient internal constructor(
                 }
             }
         }
+
+    private suspend fun executeLogin(
+        block: suspend () -> HttpResponse,
+    ): DataResult<String> {
+        try {
+            val response = block()
+
+            if (!response.status.isSuccess()) {
+                response.headers[BAZQUX_LOGIN_ERROR_HEADER]?.let { header ->
+                    return DataResult.Error(header.toBazquxLoginFailure())
+                }
+
+                return when (response.status) {
+                    io.ktor.http.HttpStatusCode.Unauthorized -> DataResult.Error(NetworkFailure.Unauthorised)
+                    io.ktor.http.HttpStatusCode.NotFound -> DataResult.Error(DataNotFound)
+                    io.ktor.http.HttpStatusCode.ServiceUnavailable,
+                    io.ktor.http.HttpStatusCode.InternalServerError,
+                    -> DataResult.Error(NetworkFailure.ServerFailure)
+                    else -> DataResult.Error(NetworkFailure.UnhandledNetworkFailure)
+                }
+            }
+
+            val res: String = response.body()
+            return DataResult.Success(res)
+        } catch (e: Throwable) {
+            return if (e.isMissingConnectionError()) {
+                DataResult.Error(NetworkFailure.NoConnection)
+            } else {
+                DataResult.Error(Unhandled(e))
+            }
+        }
+    }
+
+    private fun String.toBazquxLoginFailure(): BazquxLoginFailure =
+        when (trim()) {
+            "YearSubscriptionExpired" -> BazquxLoginFailure.YearSubscriptionExpired
+            "FreeTrialExpired" -> BazquxLoginFailure.FreeTrialExpired
+            else -> BazquxLoginFailure.Unknown
+        }
+
+    companion object {
+        private const val BAZQUX_LOGIN_ERROR_HEADER = "X-BQ-LoginErrorReason"
+    }
 }

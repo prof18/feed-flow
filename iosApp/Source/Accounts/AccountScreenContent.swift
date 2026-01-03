@@ -99,6 +99,23 @@ struct AccountsScreenContent: View {
                     }
                 }
 
+            case .bazqux:
+                NavigationLink(destination: BazquxSyncScreen(isFromAddAccount: false)) {
+                    HStack {
+                        Image("bazqux")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
+                            .foregroundStyle(.primary)
+
+                        Text("BazQux")
+                            .font(.body)
+                        Spacer()
+                        Image(systemName: "checkmark")
+                    }
+                }
+
             case .feedbin:
                 NavigationLink(destination: FeedbinSyncScreen(isFromAddAccount: false)) {
                     HStack {

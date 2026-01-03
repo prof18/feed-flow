@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./gradlew :i18n:kspCommonMainKotlinMetadata --rerun-tasks
+./gradlew :i18n:kspCommonMainKotlinMetadata --rerun-tasks --quiet --console=plain

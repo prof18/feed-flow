@@ -337,6 +337,7 @@ internal class FeedSyncIosWorker(
             SyncAccounts.LOCAL,
             SyncAccounts.FRESH_RSS,
             SyncAccounts.MINIFLUX,
+            SyncAccounts.BAZQUX,
             SyncAccounts.FEEDBIN,
             -> {
                 // Do nothing
@@ -376,6 +377,7 @@ internal class FeedSyncIosWorker(
             SyncAccounts.LOCAL,
             SyncAccounts.FRESH_RSS,
             SyncAccounts.MINIFLUX,
+            SyncAccounts.BAZQUX,
             SyncAccounts.FEEDBIN,
             -> {
                 // Do nothing

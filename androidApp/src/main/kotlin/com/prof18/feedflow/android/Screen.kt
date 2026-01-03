@@ -59,6 +59,9 @@ data object FreshRssSync
 data object MinifluxSync
 
 @Serializable
+data object BazquxSync
+
+@Serializable
 data object FeedbinSync
 
 @Serializable

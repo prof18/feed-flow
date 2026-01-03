@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.desktop.accounts.bazqux.BazquxSyncScreen
 import com.prof18.feedflow.desktop.accounts.dropbox.DropboxSyncScreen
 import com.prof18.feedflow.desktop.accounts.feedbin.FeedbinSyncScreen
 import com.prof18.feedflow.desktop.accounts.freshrss.FreshRssSyncScreen
@@ -50,6 +51,9 @@ internal class AccountsScreen : Screen {
             },
             onMinifluxClick = {
                 navigator.push(MinifluxSyncScreen())
+            },
+            onBazquxClick = {
+                navigator.push(BazquxSyncScreen())
             },
             onFeedbinClick = {
                 navigator.push(FeedbinSyncScreen())

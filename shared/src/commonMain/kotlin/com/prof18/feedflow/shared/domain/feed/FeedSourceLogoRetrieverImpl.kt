@@ -61,7 +61,7 @@ internal class FeedSourceLogoRetrieverImpl(
         return logoUrl
     }
 
-    fun getFaviconFromGoogle(websiteLink: String): String {
+    private fun getFaviconFromGoogle(websiteLink: String): String {
         val websiteDomain = websiteLink
             .replace("https://", "")
             .replace("http://", "")

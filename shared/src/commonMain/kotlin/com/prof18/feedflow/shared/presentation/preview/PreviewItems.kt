@@ -103,6 +103,7 @@ val importExportStates = listOf(
                 title = "Il Post",
                 category = null,
                 logoUrl = null,
+                websiteUrl = null,
             ),
             ParsedFeedSource(
                 id = "1",
@@ -110,6 +111,7 @@ val importExportStates = listOf(
                 title = "Tech Crunch",
                 category = null,
                 logoUrl = null,
+                websiteUrl = null,
             ),
         ),
     ),

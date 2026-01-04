@@ -249,7 +249,7 @@
     <string name="widget_background_color_title">Background color</string>
     <string name="widget_background_color_default">System</string>
     <string name="widget_background_color_preview">Preview</string>
-    <string name="widget_background_opacity_title">Background opacity: %s%</string>
+    <string name="widget_background_opacity_title">Background opacity: %s%%</string>
     <string name="widget_font_size_title">Font size</string>
     <string name="file_menu">File</string>
     <string name="menu_view">View</string>

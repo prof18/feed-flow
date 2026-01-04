@@ -26,6 +26,7 @@ struct ReaderModeScreen: View {
     @State private var feedItemId: String?
     @State private var feedItemTitle: String?
     @State private var commentsUrl: String?
+    @State private var imageViewerUrl: URL?
     @State private var canNavigatePrevious = false
     @State private var canNavigateNext = false
 
@@ -43,6 +44,9 @@ struct ReaderModeScreen: View {
                             browserSelector.getUrlForDefaultBrowser(
                                 stringUrl: url.absoluteString))
                     }
+                },
+                onImageClicked: { url in
+                    imageViewerUrl = url
                 }
             ),
             actions: ReaderViewActions(
@@ -136,6 +140,19 @@ struct ReaderModeScreen: View {
         )
         .if(isiOS26OrLater()) { view in
             view.ignoresSafeArea()
+        }
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { imageViewerUrl != nil },
+                set: { if !$0 { imageViewerUrl = nil } }
+            )
+        ) {
+            if let imageUrl = imageViewerUrl {
+                ReaderImageViewer(
+                    imageUrl: imageUrl,
+                    onClose: { imageViewerUrl = nil }
+                )
+            }
         }
         .task {
             for await state in viewModel.readerFontSizeState {

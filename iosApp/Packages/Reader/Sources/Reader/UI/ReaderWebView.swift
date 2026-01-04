@@ -4,12 +4,14 @@
 //
 //  Created by Marco Gomiero on 18/04/25.
 //
+import Foundation
 import SwiftUI
 
 struct ReaderWebView: View {
     var baseURL: URL
     var html: String
     var onLinkClicked: ((URL) -> Void)?
+    var onImageClicked: ((URL) -> Void)?
     var onWebContentReady: ((WebContent) -> Void)?
 
     @StateObject private var content = WebContent(transparent: true)
@@ -29,6 +31,19 @@ struct ReaderWebView: View {
 
     private func setupLinkHandler() {
         content.shouldBlockNavigation = { action -> Bool in
+            if let url = action.request.url,
+               url.scheme == "feedflow-image" {
+                if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                   let src = components.queryItems?.first(where: { $0.name == "src" })?.value,
+                   let imageUrl = URL(string: src),
+                   isValidImageUrl(imageUrl) {
+                    DispatchQueue.main.async {
+                        onImageClicked?(imageUrl)
+                    }
+                }
+                return true
+            }
+
             if let url = action.request.url,
                action.navigationType == .linkActivated {
                 DispatchQueue.main.async {
@@ -50,4 +65,17 @@ struct ReaderWebView: View {
             lhs.baseURL == rhs.baseURL
         }
     }
+}
+
+private func isValidImageUrl(_ url: URL) -> Bool {
+    let scheme = url.scheme?.lowercased()
+    let isHttpUrl = scheme == "http" || scheme == "https"
+
+    let host = url.host?.lowercased() ?? ""
+    let isLocalhost = host.contains("localhost") ||
+                     host.contains("127.0.0.1") ||
+                     host.contains("0.0.0.0") ||
+                     host.contains("::1")
+
+    return isHttpUrl && !isLocalhost
 }

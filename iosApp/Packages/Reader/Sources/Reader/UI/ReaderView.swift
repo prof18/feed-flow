@@ -111,6 +111,7 @@ public struct ReaderView: View {
                 baseURL: baseURL,
                 html: html,
                 onLinkClicked: onLinkClicked,
+                onImageClicked: options.onImageClicked,
                 onWebContentReady: { content in
                     webContent = content
                 }

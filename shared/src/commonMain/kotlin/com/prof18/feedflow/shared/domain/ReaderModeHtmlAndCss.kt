@@ -48,15 +48,52 @@ fun getReaderModeStyledHtml(
             }
 
           document.body.addEventListener("click", function(event) {
-              if (event.target.tagName.toLowerCase() === "a") {
-                  // Prevent the default behavior of the link
-                  event.preventDefault();
-                  var url = event.target.getAttribute("href");
+              let anchor = event.target.closest("a");
+              if (anchor) {
+                  let url = anchor.getAttribute("href");
+                  if (url && window.kmpJsBridge && window.kmpJsBridge.callNative) {
+                      event.preventDefault();
+                      window.kmpJsBridge.callNative(
+                       "urlInterceptor",
+                        url,
+                        {}
+                      );
+                  }
+                  return;
+              }
+
+              let image = event.target.closest("img");
+              if (!image) return;
+
+              let imageUrl = image.currentSrc ||
+                  image.getAttribute("src") ||
+                  image.getAttribute("data-src") ||
+                  image.getAttribute("data-lazy-src") ||
+                  image.getAttribute("data-original") ||
+                  "";
+              if (!imageUrl) return;
+
+              // Validate URL for security - only allow http(s) URLs
+              let isValidUrl = imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
+              let isLocalhost = imageUrl.includes("localhost") ||
+                               imageUrl.includes("127.0.0.1") ||
+                               imageUrl.includes("0.0.0.0") ||
+                               imageUrl.includes("::1");
+
+              if (!isValidUrl || isLocalhost) {
+                  return;
+              }
+
+              event.preventDefault();
+              if (window.kmpJsBridge && window.kmpJsBridge.callNative) {
                   window.kmpJsBridge.callNative(
-                   "urlInterceptor",
-                    url,
+                   "imageInterceptor",
+                    imageUrl,
                     {}
                   );
+              } else {
+                  let encodedUrl = encodeURIComponent(imageUrl);
+                  window.location.href = "feedflow-image://?src=" + encodedUrl;
               }
           });
         });

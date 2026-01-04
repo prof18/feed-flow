@@ -43,6 +43,7 @@ abstract class BaseThemeActivity : ComponentActivity() {
         var darkTheme by mutableStateOf(
             resources.configuration.isSystemInDarkTheme,
         )
+        var useOledTheme by mutableStateOf(false)
 
         // Update the theme and system bars dynamically
         lifecycleScope.launch {
@@ -51,15 +52,25 @@ abstract class BaseThemeActivity : ComponentActivity() {
                     isSystemInDarkTheme(),
                     themeViewModel.themeState,
                 ) { systemDark, themeState ->
-                    when (themeState) {
+                    val isDarkTheme = when (themeState) {
                         ThemeMode.LIGHT -> false
                         ThemeMode.DARK -> true
+                        ThemeMode.OLED -> true
                         ThemeMode.SYSTEM -> systemDark
                     }
+                    isDarkTheme to (themeState == ThemeMode.OLED)
                 }
-                    .onEach { darkTheme = it }
+                    .onEach { (isDarkTheme, isOledTheme) ->
+                        darkTheme = isDarkTheme
+                        useOledTheme = isOledTheme
+                    }
                     .distinctUntilChanged()
-                    .collect { isDark ->
+                    .collect { (isDark, isOled) ->
+                        val navigationDarkScrim = if (isOled) {
+                            android.graphics.Color.BLACK
+                        } else {
+                            darkScrim
+                        }
                         // Update system bars dynamically
                         enableEdgeToEdge(
                             statusBarStyle = SystemBarStyle.auto(
@@ -68,7 +79,7 @@ abstract class BaseThemeActivity : ComponentActivity() {
                             ) { isDark },
                             navigationBarStyle = SystemBarStyle.auto(
                                 lightScrim = lightScrim,
-                                darkScrim = darkScrim,
+                                darkScrim = navigationDarkScrim,
                             ) { isDark },
                         )
                     }
@@ -82,6 +93,7 @@ abstract class BaseThemeActivity : ComponentActivity() {
 
             FeedFlowTheme(
                 darkTheme = darkTheme,
+                useOledTheme = useOledTheme,
             ) {
                 val lyricist = rememberFeedFlowStrings()
                 ProvideFeedFlowStrings(lyricist) {

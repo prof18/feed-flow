@@ -307,6 +307,7 @@
     <string name="settings_theme_system">System</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_oled">Black</string>
     <string name="icloud_connection_error">Sorry but we are unable to connect to iCloud. Please check if you\'re signed in, iCloud Drive is turned on and you have space available - error code: %s.</string>
     <string name="delete_feed_confirmation_title">Delete feed?</string>
     <string name="delete_feed_confirmation_message">Are you sure you want to delete this feed? This action cannot be undone.</string>

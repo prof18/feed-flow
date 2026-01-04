@@ -70,6 +70,7 @@ internal fun SettingsScreenContent(
                 val themeModeLabel = when (themeMode) {
                     ThemeMode.LIGHT -> LocalFeedFlowStrings.current.settingsThemeLight
                     ThemeMode.DARK -> LocalFeedFlowStrings.current.settingsThemeDark
+                    ThemeMode.OLED -> LocalFeedFlowStrings.current.settingsThemeOled
                     ThemeMode.SYSTEM -> LocalFeedFlowStrings.current.settingsThemeSystem
                 }
                 var showDialog by remember { mutableStateOf(false) }

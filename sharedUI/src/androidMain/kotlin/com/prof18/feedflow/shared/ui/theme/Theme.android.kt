@@ -9,15 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.prof18.feedflow.shared.ui.style.DarkColorScheme
 import com.prof18.feedflow.shared.ui.style.LightColorScheme
+import com.prof18.feedflow.shared.ui.style.OledColorScheme
 
 @Composable
 fun FeedFlowTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    useOledTheme: Boolean = false,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
+        useOledTheme -> OledColorScheme
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)

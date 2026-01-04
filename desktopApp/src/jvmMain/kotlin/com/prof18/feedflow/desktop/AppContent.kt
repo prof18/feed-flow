@@ -48,12 +48,17 @@ internal fun FrameWindowScope.AppContent(
         ThemeMode.SYSTEM -> rememberDesktopDarkTheme()
         ThemeMode.LIGHT -> false
         ThemeMode.DARK -> true
+        ThemeMode.OLED -> true
     }
+    val useOledTheme = themeMode == ThemeMode.OLED
 
-    FeedFlowTheme(darkTheme = isDarkTheme) {
-        LaunchedEffect(isDarkTheme) {
+    FeedFlowTheme(
+        darkTheme = isDarkTheme,
+        useOledTheme = useOledTheme,
+    ) {
+        LaunchedEffect(isDarkTheme, useOledTheme) {
             if (getDesktopOS().isNotMacOs()) {
-                setupLookAndFeel(isDarkTheme)
+                setupLookAndFeel(isDarkTheme, useOledTheme)
             }
         }
 
@@ -63,23 +68,23 @@ internal fun FrameWindowScope.AppContent(
                 this.MainWindow(
                     showBackupLoader = showBackupLoader,
                     isDarkTheme = isDarkTheme,
-                    windowState = windowState,
-                    appConfig = appConfig,
-                )
-            }
+                    useOledTheme = useOledTheme,
+                windowState = windowState,
+                appConfig = appConfig,
+            )}
         }
     }
 }
 
-private fun setupLookAndFeel(isDarkMode: Boolean) {
+private fun setupLookAndFeel(isDarkMode: Boolean, useOledTheme: Boolean) {
     System.setProperty("flatlaf.useWindowDecorations", "true")
     System.setProperty("flatlaf.menuBarEmbedded", "false")
 
     try {
-        val themeFileName = if (isDarkMode) {
-            "feedflow-dark.properties"
-        } else {
-            "feedflow-light.properties"
+        val themeFileName = when {
+            useOledTheme -> "feedflow-oled.properties"
+            isDarkMode -> "feedflow-dark.properties"
+            else -> "feedflow-light.properties"
         }
 
         // Load custom properties theme

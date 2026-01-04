@@ -70,6 +70,13 @@ fun ThemeModeDialog(
                     onThemeModeSelected(ThemeMode.DARK)
                 },
             )
+            ThemeModeOption(
+                text = strings.settingsThemeOled,
+                selected = currentThemeMode == ThemeMode.OLED,
+                onClick = {
+                    onThemeModeSelected(ThemeMode.OLED)
+                },
+            )
         }
     }
 }

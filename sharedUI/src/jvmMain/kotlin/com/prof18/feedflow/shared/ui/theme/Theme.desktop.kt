@@ -10,14 +10,17 @@ import androidx.compose.runtime.setValue
 import com.jthemedetecor.OsThemeDetector
 import com.prof18.feedflow.shared.ui.style.DarkColorScheme
 import com.prof18.feedflow.shared.ui.style.LightColorScheme
+import com.prof18.feedflow.shared.ui.style.OledColorScheme
 import java.util.function.Consumer
 
 @Composable
 fun FeedFlowTheme(
     darkTheme: Boolean = rememberDesktopDarkTheme(),
+    useOledTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
+        useOledTheme -> OledColorScheme
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

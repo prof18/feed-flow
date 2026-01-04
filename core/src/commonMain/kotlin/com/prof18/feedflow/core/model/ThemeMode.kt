@@ -4,4 +4,5 @@ enum class ThemeMode {
     SYSTEM,
     LIGHT,
     DARK,
+    OLED,
 }

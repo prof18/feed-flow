@@ -60,6 +60,35 @@ import md_theme_light_surfaceTint
 import md_theme_light_surfaceVariant
 import md_theme_light_tertiary
 import md_theme_light_tertiaryContainer
+import md_theme_oled_background
+import md_theme_oled_error
+import md_theme_oled_errorContainer
+import md_theme_oled_inverseOnSurface
+import md_theme_oled_inversePrimary
+import md_theme_oled_inverseSurface
+import md_theme_oled_onBackground
+import md_theme_oled_onError
+import md_theme_oled_onErrorContainer
+import md_theme_oled_onPrimary
+import md_theme_oled_onPrimaryContainer
+import md_theme_oled_onSecondary
+import md_theme_oled_onSecondaryContainer
+import md_theme_oled_onSurface
+import md_theme_oled_onSurfaceVariant
+import md_theme_oled_onTertiary
+import md_theme_oled_onTertiaryContainer
+import md_theme_oled_outline
+import md_theme_oled_outlineVariant
+import md_theme_oled_primary
+import md_theme_oled_primaryContainer
+import md_theme_oled_scrim
+import md_theme_oled_secondary
+import md_theme_oled_secondaryContainer
+import md_theme_oled_surface
+import md_theme_oled_surfaceTint
+import md_theme_oled_surfaceVariant
+import md_theme_oled_tertiary
+import md_theme_oled_tertiaryContainer
 
 val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -123,4 +152,36 @@ val DarkColorScheme = darkColorScheme(
     surfaceTint = md_theme_dark_surfaceTint,
     outlineVariant = md_theme_dark_outlineVariant,
     scrim = md_theme_dark_scrim,
+)
+
+val OledColorScheme = darkColorScheme(
+    primary = md_theme_oled_primary,
+    onPrimary = md_theme_oled_onPrimary,
+    primaryContainer = md_theme_oled_primaryContainer,
+    onPrimaryContainer = md_theme_oled_onPrimaryContainer,
+    secondary = md_theme_oled_secondary,
+    onSecondary = md_theme_oled_onSecondary,
+    secondaryContainer = md_theme_oled_secondaryContainer,
+    onSecondaryContainer = md_theme_oled_onSecondaryContainer,
+    tertiary = md_theme_oled_tertiary,
+    onTertiary = md_theme_oled_onTertiary,
+    tertiaryContainer = md_theme_oled_tertiaryContainer,
+    onTertiaryContainer = md_theme_oled_onTertiaryContainer,
+    error = md_theme_oled_error,
+    errorContainer = md_theme_oled_errorContainer,
+    onError = md_theme_oled_onError,
+    onErrorContainer = md_theme_oled_onErrorContainer,
+    background = md_theme_oled_background,
+    onBackground = md_theme_oled_onBackground,
+    surface = md_theme_oled_surface,
+    onSurface = md_theme_oled_onSurface,
+    surfaceVariant = md_theme_oled_surfaceVariant,
+    onSurfaceVariant = md_theme_oled_onSurfaceVariant,
+    outline = md_theme_oled_outline,
+    inverseOnSurface = md_theme_oled_inverseOnSurface,
+    inverseSurface = md_theme_oled_inverseSurface,
+    inversePrimary = md_theme_oled_inversePrimary,
+    surfaceTint = md_theme_oled_surfaceTint,
+    outlineVariant = md_theme_oled_outlineVariant,
+    scrim = md_theme_oled_scrim,
 )

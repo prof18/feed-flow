@@ -64,6 +64,7 @@ import kotlin.math.roundToInt
 internal fun FrameWindowScope.MainWindow(
     windowState: WindowState,
     isDarkTheme: Boolean,
+    useOledTheme: Boolean,
     appConfig: DesktopConfig,
     showBackupLoader: Boolean,
 ) {
@@ -76,7 +77,10 @@ internal fun FrameWindowScope.MainWindow(
     )
 
     if (showBackupLoader) {
-        BackupInProgressScreen(isDarkTheme = isDarkTheme)
+        BackupInProgressScreen(
+            isDarkTheme = isDarkTheme,
+            useOledTheme = useOledTheme,
+        )
     } else {
         MainWindowContent(
             snackbarHostState = snackbarHostState,
@@ -89,8 +93,12 @@ internal fun FrameWindowScope.MainWindow(
 @Composable
 private fun BackupInProgressScreen(
     isDarkTheme: Boolean,
+    useOledTheme: Boolean,
 ) {
-    FeedFlowTheme(darkTheme = isDarkTheme) {
+    FeedFlowTheme(
+        darkTheme = isDarkTheme,
+        useOledTheme = useOledTheme,
+    ) {
         Scaffold {
             Column(
                 modifier = Modifier

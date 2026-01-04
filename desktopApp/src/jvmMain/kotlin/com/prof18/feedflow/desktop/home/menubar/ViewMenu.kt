@@ -29,6 +29,11 @@ internal fun MenuBarScope.ViewMenu(
                 selected = settingsState.themeMode == ThemeMode.DARK,
                 onClick = { callbacks.onThemeModeSelected(ThemeMode.DARK) },
             )
+            RadioButtonItem(
+                text = LocalFeedFlowStrings.current.settingsThemeOled,
+                selected = settingsState.themeMode == ThemeMode.OLED,
+                onClick = { callbacks.onThemeModeSelected(ThemeMode.OLED) },
+            )
         }
 
         Item(

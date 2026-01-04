@@ -39,6 +39,7 @@ on:
 jobs:
   deploy:
     runs-on: macos-15
+    timeout-minutes: 60
     outputs:
       release_path: ${{ steps.path_variables.outputs.release_path }}
       artifact_name: ${{ steps.path_variables.outputs.artifact_name }}

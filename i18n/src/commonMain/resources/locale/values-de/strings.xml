@@ -321,7 +321,7 @@
     <string name="widget_background_color_title">Hintergrundfarbe</string>
     <string name="widget_background_color_default">System</string>
     <string name="widget_background_color_preview">Vorschau</string>
-    <string name="widget_background_opacity_title">Deckkraft des Hintergrunds: %s%</string>
+    <string name="widget_background_opacity_title">Deckkraft des Hintergrunds: %s%%</string>
     <string name="widget_font_size_title">Textgröße</string>
     <string name="menu_view">Ansicht</string>
     <string name="reset_button">Zurücksetzen</string>
@@ -331,4 +331,11 @@
     <string name="settings_sync_and_storage">Synchronisation &amp; Speicher</string>
     <string name="settings_about_and_support">Über &amp; Support</string>
     <string name="import_export_opml_section_title">Abonnements (OPML)</string>
+    <string name="bazqux_account_connected">Ihr BazQux-Konto wurde erfolgreich verbunden</string>
+    <string name="no_bazqux_sync_yet">Daten sind noch nicht synchronisiert</string>
+    <string name="bazqux_last_sync">Letzte Synchronisation: %s</string>
+    <string name="bazqux_username_hint">Ihre BazQux E-Mail Adresse</string>
+    <string name="bazqux_password_hint">Ihr BazQux Konto Passwort</string>
+    <string name="bazqux_login_subscription_expired">Login nicht möglich: Ihr Abonnement ist abgelaufen</string>
+    <string name="bazqux_login_free_trial_expired">Login nicht möglich: Ihr kostenloser Testzugang ist abgelaufen</string>
 </resources>

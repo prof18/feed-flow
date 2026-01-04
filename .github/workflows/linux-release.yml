@@ -19,7 +19,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
     outputs:
       release_path_deb: ${{ steps.path_variables.outputs.release_path_deb }}
       release_path_rpm: ${{ steps.path_variables.outputs.release_path_rpm }}

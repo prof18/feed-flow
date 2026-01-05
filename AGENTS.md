@@ -1,56 +1,62 @@
 # AGENTS.md
 
-This file provides guidance to agents when working with code in this repository.
-
 ## Project Overview
 
-FeedFlow is a cross-platform RSS reader built with Kotlin Multiplatform, Compose Multiplatform and SwiftUI. It targets Android, iOS, macOS, Windows, and Linux. The app uses SwiftUI for iOS-specific UI components and Compose for all other platforms.
+FeedFlow is a multi-platform RSS reader built with Kotlin Multiplatform, Compose Multiplatform and SwiftUI. 
+It targets Android, iOS, macOS, Windows, and Linux. 
+The app uses SwiftUI for iOS-specific UI components and Compose for all other platforms. 
+All the business logic is shared via Kotlin Multiplatform.
 
-## Architecture
+## Project Structure & Module Organization
 
 ### Module Structure
 - **core/**: Core domain models and utilities shared across all platforms
 - **shared/**: Main business logic, repositories, view models, and data layer
-- **sharedUI/**: Compose UI components shared across platforms
+- **sharedUI/**: Compose UI components shared across Android and Desktop
 - **database/**: SQLDelight database implementation
 - **i18n/**: Internationalization resources
-- **feedSync/**: Feed synchronization modules (Dropbox, FreshRSS, iCloud)
+- **feedSync/**: Feed synchronization modules (Dropbox, FreshRSS, iCloud, etc)
 - **androidApp/**: Android-specific app implementation
-- **iosApp/**: iOS/macOS app with SwiftUI
+- **iosApp/**: iOS app with SwiftUI
 - **desktopApp/**: Desktop app for Windows, Linux, and macOS
 - **website/**: Hugo-based website
 
-### Key Technologies
-- **Kotlin Multiplatform**: Core logic sharing
-- **Compose Multiplatform**: UI framework for Android/Desktop
-- **SwiftUI**: iOS native UI
-- **SQLDelight**: Database abstraction
-- **Koin**: Dependency injection
-- **Ktor**: HTTP client
-- **RSS Parser**: Custom RSS parsing library
-
-## Common Development Commands
+## Build, Test, and Development Commands
 
 ### Build Commands
+
+- `./gradlew check` -> Run all checks including tests and linting for Shared code, Android and Desktop
+- `.scripts/ios-format.sh` -> Format iOS code through swiftformat and swiftlint
+- `./gradlew test` -> Run all tests for Shared code, Android and Desktop
+- `.scripts/refresh-translations.sh` -> Regenerate i18n translation code after adding new translations
+- `./gradlew :androidApp:assembleDebug` -> Build Android debug
+- `./gradlew desktopApp:run` -> Run Desktop app
+
+### Build Verification Process
+
+IMPORTANT: When editing code, you MUST:
+1. Build the project after making changes 
+2. Fix any compilation errors before proceeding
+
+## Handing off 
+
+Before handing off you must:
+1. Run `./gradlew check` to ensure all checks pass
+2. Run `.scripts/ios-format.sh` to format iOS code
+3. Fix any issues found during the above steps
+
+### Initial Setup (for building from scratch)
 ```bash
-# Build the entire project
-./gradlew build
+# Android: Copy dummy google-services.json
+cp config/dummy-google-services.json androidApp/src/debug/google-services.json
+cp config/dummy-google-services.json androidApp/src/release/google-services.json
 
-# Build Android app
-./gradlew :androidApp:assembleDebug
-./gradlew :androidApp:assembleRelease
+# iOS: Copy dummy GoogleService-Info.plist
+cp config/dummy-google-service.plist iosApp/GoogleService-Info-dev.plist
+cp config/dummy-google-service.plist iosApp/GoogleService-Info.plist
 
-# Build shared framework for iOS
-./gradlew :shared:linkDebugFrameworkIosArm64
-```
-
-### Code Quality Commands
-```bash
-# Run Detekt linting
-./gradlew detekt
-
-# Format iOS/macOS code
-.scripts/io-format.sh
+# iOS: Create Config.xcconfig
+cp iosApp/Assets/Config.xcconfig.template iosApp/Assets/Config.xcconfig
 ```
 
 ## General rules:
@@ -69,47 +75,17 @@ When creating commits:
 - Example: `git commit -m "Add foundation for unified article parsing system"`
 
 ### iOS Development
-The iOS app uses Xcode and requires iOS-specific setup:
-- Open `iosApp/FeedFlow.xcodeproj` in Xcode
-- Build and run from Xcode
-
 - ALWAYS build with xcodebuild with -quiet flag when building for iOS. If the command returns errors you may run xcodebuild again without the -quiet flag.
+- IMPORTANT: The project now supports iOS 26 SDK (June 2025) while maintaining iOS 18 as the minimum deployment target. Use #available checks when adopting iOS 26+ APIs.
+- Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
+- Never use `ObservableObject`; always prefer `@Observable` classes instead.
+- Never use `Task.sleep(nanoseconds:)`; always use `Task.sleep(for:)` instead.
+- Avoid `AnyView` unless it is absolutely required.
+- Avoid force unwraps and force `try` unless it is unrecoverable.
 
-## Code Structure Notes
-
-### Shared Logic
-- ViewModels in `shared/src/commonMain/kotlin/.../presentation/`
-- Repositories in `shared/src/commonMain/kotlin/.../domain/`
-- Platform-specific implementations use `expect`/`actual` pattern
-
-### Platform-Specific Code
-- Android: `shared/src/androidMain/kotlin/`
-- iOS: `shared/src/iosMain/kotlin/`
-- Desktop: `shared/src/jvmMain/kotlin/`
-
-### Database
-- SQLDelight schema in `database/src/commonMain/sqldelight/`
-- Database drivers are platform-specific
-
-### Dependency Injection
-- Koin modules in `shared/src/commonMain/kotlin/.../di/`
-- Platform-specific modules in respective platform folders
-
-## Testing
-- Common tests in `shared/src/commonTest/kotlin/`
-- Platform-specific tests in respective test folders
-- Uses Kotlin Test framework with JUnit on JVM platforms
-
-## Internationalization
-- String resources in `i18n/src/commonMain/resources/locale/values-[language]/`
-- Refresh
-- Uses Lyricist for multiplatform string handling
-- Translation management via Weblate
+### Internationalization
+- String resources are located in `i18n/src/commonMain/resources/locale/values-[language]/`
 - Run .scripts/refresh-translations.sh after adding a new translation, to re-generate the kotlin code
+- NEVER add hardcoded strings in the code. Always use the i18n resources.
+- NEVER try to translate other languages by yourself. Add only the English strings. The translations will be handled by professionals later.
 
-## Key Features to Understand
-- **Feed Sync**: Supports Dropbox, FreshRSS, and iCloud synchronization
-- **Reader Mode**: HTML content extraction and formatting
-- **OPML Import/Export**: Standard RSS subscription format support
-- **Widgets**: Android App Widget and iOS Widget support
-- **Notifications**: Background feed update notifications

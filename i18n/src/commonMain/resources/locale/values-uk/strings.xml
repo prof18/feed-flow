@@ -323,7 +323,7 @@
     <string name="widget_background_color_title">Колір фону</string>
     <string name="widget_background_color_default">Система</string>
     <string name="widget_background_color_preview">Попередній перегляд</string>
-    <string name="widget_background_opacity_title">Непрозорість фону: %s%</string>
+    <string name="widget_background_opacity_title">Непрозорість фону: %s%%</string>
     <string name="widget_font_size_title">Розмір шрифту</string>
     <string name="reset_button">Скинути</string>
     <string name="settings_feeds_and_accounts">Стрічки та облікові записи</string>
@@ -331,4 +331,11 @@
     <string name="settings_advanced">Розширений</string>
     <string name="settings_sync_and_storage">Синхронізація та сховище</string>
     <string name="settings_about_and_support">Про нас та підтримка</string>
+    <string name="bazqux_account_connected">Ваш обліковий запис BazQux успішно підключено</string>
+    <string name="no_bazqux_sync_yet">Дані ще не синхронізовано</string>
+    <string name="bazqux_last_sync">Остання синхронізація: %s</string>
+    <string name="bazqux_username_hint">Адреса електронної пошти вашого облікового запису BazQux</string>
+    <string name="bazqux_password_hint">Пароль вашого облікового запису BazQux</string>
+    <string name="bazqux_login_subscription_expired">Не вдалося ввійти: термін дії вашої підписки закінчився</string>
+    <string name="bazqux_login_free_trial_expired">Не вдалося ввійти: термін дії вашої безкоштовної пробної версії закінчився</string>
 </resources>

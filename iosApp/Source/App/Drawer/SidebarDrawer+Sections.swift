@@ -379,7 +379,7 @@ extension SidebarDrawer {
     @ViewBuilder
     func selectionBackground(isSelected: Bool) -> some View {
         if appState.sizeClass == .compact {
-            Color(.systemBackground)
+            Color(.secondarySystemGroupedBackground)
                 .overlay(selectionOverlay(isSelected: isSelected))
         } else {
             selectionOverlay(isSelected: isSelected)

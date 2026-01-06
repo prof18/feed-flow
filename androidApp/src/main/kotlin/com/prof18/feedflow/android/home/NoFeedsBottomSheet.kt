@@ -1,10 +1,13 @@
 package com.prof18.feedflow.android.home
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.prof18.feedflow.shared.ui.home.components.NoFeedsInfoContent
 import com.prof18.feedflow.shared.ui.preview.PreviewPhone
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
@@ -30,6 +33,7 @@ internal fun NoFeedsBottomSheet(
         sheetState = sheetState,
     ) {
         NoFeedsInfoContent(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
             onDismissRequest = onDismissRequest,
             onAddFeedClick = onAddFeedClick,
             onImportExportClick = onImportExportClick,

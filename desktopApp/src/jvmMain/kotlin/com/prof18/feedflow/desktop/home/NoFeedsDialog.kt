@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
@@ -47,7 +46,6 @@ internal fun NoFeedsDialog(
         onCloseRequest = onDismissRequest,
     ) {
         Scaffold { paddingValues ->
-            val listState = rememberLazyListState()
             val scrollState = rememberScrollState()
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -87,7 +85,7 @@ internal fun NoFeedsDialog(
                     VerticalScrollbar(
                         modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
                         adapter = rememberScrollbarAdapter(
-                            scrollState = listState,
+                            scrollState = scrollState,
                         ),
                     )
                 }

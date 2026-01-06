@@ -31,6 +31,21 @@ All the business logic is shared via Kotlin Multiplatform.
 - `.scripts/refresh-translations.sh` -> Regenerate i18n translation code after adding new translations
 - `./gradlew :androidApp:assembleDebug` -> Build Android debug
 - `./gradlew desktopApp:run` -> Run Desktop app
+- 
+### Building for iOS Simulator
+To build ReaderFlow for iPhone 17 Pro simulator:
+```bash
+mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/mg/Workspace/feedflow/feed-flow/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
+```
+There could be different project path son your machine. Always use the first one. The alternative paths will be:
+```bash
+mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/mg/Workspace/feedflow/feed-flow-2/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
+```
+
+```bash
+mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/marco.gomiero/Workspace/tmp/feed-flow/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
+```
+
 
 ### Build Verification Process
 

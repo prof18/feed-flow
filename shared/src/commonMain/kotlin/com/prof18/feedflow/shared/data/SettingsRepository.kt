@@ -191,6 +191,12 @@ class SettingsRepository(
         syncPeriodMutableFlow.update { period }
     }
 
+    internal fun getRefreshFeedsOnLaunch(): Boolean =
+        settings.getBoolean(SettingsFields.REFRESH_FEEDS_ON_LAUNCH.name, true)
+
+    internal fun setRefreshFeedsOnLaunch(value: Boolean) =
+        settings.set(SettingsFields.REFRESH_FEEDS_ON_LAUNCH.name, value)
+
     fun getFirstInstallationDate(): Long {
         val currentValue = settings.getLongOrNull(SettingsFields.FIRST_INSTALLATION_DATE.name)
         return if (currentValue == null) {
@@ -402,6 +408,7 @@ internal enum class SettingsFields {
     WIDGET_BACKGROUND_COLOR,
     WIDGET_BACKGROUND_OPACITY_PERCENT,
     THEME_MODE,
+    REFRESH_FEEDS_ON_LAUNCH,
     DESKTOP_WINDOW_WIDTH_DP,
     DESKTOP_WINDOW_HEIGHT_DP,
     DESKTOP_WINDOW_X_POSITION_DP,

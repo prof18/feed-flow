@@ -12,7 +12,8 @@ struct SyncAndStorageScreen: View {
 
     @State private var settingsState = SyncAndStorageState(
         syncPeriod: .oneHour,
-        autoDeletePeriod: .disabled
+        autoDeletePeriod: .disabled,
+        refreshFeedsOnLaunch: true
     )
 
     var body: some View {
@@ -26,6 +27,10 @@ struct SyncAndStorageScreen: View {
             autoDeletePeriod: Binding(
                 get: { settingsState.autoDeletePeriod },
                 set: { vmStoreOwner.instance.updateAutoDeletePeriod(period: $0) }
+            ),
+            refreshFeedsOnLaunch: Binding(
+                get: { settingsState.refreshFeedsOnLaunch },
+                set: { vmStoreOwner.instance.updateRefreshFeedsOnLaunch(enabled: $0) }
             ),
             onClearDownloadedArticles: {
                 vmStoreOwner.instance.clearDownloadedArticleContent()

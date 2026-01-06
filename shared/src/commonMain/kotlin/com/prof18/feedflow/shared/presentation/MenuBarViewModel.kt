@@ -37,6 +37,7 @@ class MenuBarViewModel internal constructor(
         val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
+        val isRefreshFeedsOnLaunchEnabled = settingsRepository.getRefreshFeedsOnLaunch()
         val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
         val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
         val feedOrder = settingsRepository.getFeedOrder()
@@ -49,6 +50,7 @@ class MenuBarViewModel internal constructor(
                 isReaderModeEnabled = isReaderModeEnabled,
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
+                isRefreshFeedsOnLaunchEnabled = isRefreshFeedsOnLaunchEnabled,
                 autoDeletePeriod = autoDeletePeriod,
                 isCrashReportingEnabled = isCrashReportingEnabled,
                 feedOrder = feedOrder,
@@ -109,6 +111,15 @@ class MenuBarViewModel internal constructor(
 
             if (!value) {
                 contentPrefetchRepository.cancelFetching()
+            }
+        }
+    }
+
+    fun updateRefreshFeedsOnLaunch(value: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setRefreshFeedsOnLaunch(value)
+            stateMutableFlow.update {
+                it.copy(isRefreshFeedsOnLaunchEnabled = value)
             }
         }
     }

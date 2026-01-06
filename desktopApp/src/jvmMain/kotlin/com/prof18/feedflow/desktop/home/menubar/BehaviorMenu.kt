@@ -45,6 +45,12 @@ internal fun MenuBarScope.BehaviorMenu(
             onCheckedChange = callbacks.onPrefetchToggle,
         )
 
+        CheckboxItem(
+            text = LocalFeedFlowStrings.current.settingsRefreshFeedsOnLaunch,
+            checked = settingsState.isRefreshFeedsOnLaunchEnabled,
+            onCheckedChange = callbacks.onRefreshFeedsOnLaunchToggled,
+        )
+
         Separator()
 
         CheckboxItem(
@@ -100,6 +106,7 @@ internal data class BehaviorMenuCallbacks(
     val onReaderModeToggled: (Boolean) -> Unit,
     val onSaveReaderModeContentToggled: (Boolean) -> Unit,
     val onPrefetchToggle: (Boolean) -> Unit,
+    val onRefreshFeedsOnLaunchToggled: (Boolean) -> Unit,
     val onMarkReadWhenScrollingToggled: (Boolean) -> Unit,
     val onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     val onClearDownloadedArticles: () -> Unit,

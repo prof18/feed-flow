@@ -31,11 +31,13 @@ class SyncAndStorageSettingsViewModel internal constructor(
 
     private fun loadSettings(syncPeriod: SyncPeriod) {
         val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
+        val refreshFeedsOnLaunch = settingsRepository.getRefreshFeedsOnLaunch()
 
         stateMutableFlow.update {
             SyncAndStorageState(
                 syncPeriod = syncPeriod,
                 autoDeletePeriod = autoDeletePeriod,
+                refreshFeedsOnLaunch = refreshFeedsOnLaunch,
             )
         }
     }
@@ -54,6 +56,15 @@ class SyncAndStorageSettingsViewModel internal constructor(
             settingsRepository.setAutoDeletePeriod(period)
             stateMutableFlow.update {
                 it.copy(autoDeletePeriod = period)
+            }
+        }
+    }
+
+    fun updateRefreshFeedsOnLaunch(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setRefreshFeedsOnLaunch(enabled)
+            stateMutableFlow.update {
+                it.copy(refreshFeedsOnLaunch = enabled)
             }
         }
     }

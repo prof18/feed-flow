@@ -20,12 +20,16 @@ fun SyncAndStorageScreen(
         navigateBack = navigateBack,
         syncPeriod = state.syncPeriod,
         autoDeletePeriod = state.autoDeletePeriod,
+        refreshFeedsOnLaunch = state.refreshFeedsOnLaunch,
         onSyncPeriodSelected = { period ->
             viewModel.updateSyncPeriod(period)
             feedDownloadWorkerEnqueuer.updateWorker(period)
         },
         onAutoDeletePeriodSelected = { period ->
             viewModel.updateAutoDeletePeriod(period)
+        },
+        onRefreshFeedsOnLaunchToggle = { enabled ->
+            viewModel.updateRefreshFeedsOnLaunch(enabled)
         },
         onClearDownloadedArticles = {
             viewModel.clearDownloadedArticleContent()

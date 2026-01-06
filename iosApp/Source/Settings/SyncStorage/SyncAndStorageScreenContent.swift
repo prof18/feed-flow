@@ -4,6 +4,7 @@ import SwiftUI
 struct SyncAndStorageScreenContent: View {
     @Binding var syncPeriod: SyncPeriod
     @Binding var autoDeletePeriod: AutoDeletePeriod
+    @Binding var refreshFeedsOnLaunch: Bool
     let onClearDownloadedArticles: () -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
@@ -11,6 +12,10 @@ struct SyncAndStorageScreenContent: View {
     var body: some View {
         Form {
             Section {
+                Toggle(isOn: $refreshFeedsOnLaunch) {
+                    Label(feedFlowStrings.settingsRefreshFeedsOnLaunch, systemImage: "arrow.triangle.2.circlepath")
+                }
+
                 Picker(selection: $syncPeriod) {
                     Text(feedFlowStrings.settingsSyncPeriodNever)
                         .tag(SyncPeriod.never)

@@ -87,7 +87,9 @@ class HomeViewModel internal constructor(
 
     init {
         observeErrorState()
-        getNewFeeds(isFirstLaunch = true)
+        if (settingsRepository.getRefreshFeedsOnLaunch()) {
+            getNewFeeds(isFirstLaunch = true)
+        }
         viewModelScope.launch {
             feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
             initDrawerData()
@@ -194,6 +196,9 @@ class HomeViewModel internal constructor(
     }
 
     fun getNewFeeds(isFirstLaunch: Boolean = false) {
+        if (isFirstLaunch && !settingsRepository.getRefreshFeedsOnLaunch()) {
+            return
+        }
         lastUpdateIndex = 0
         viewModelScope.launch {
             feedFetcherRepository.fetchFeeds(isFirstLaunch = isFirstLaunch)

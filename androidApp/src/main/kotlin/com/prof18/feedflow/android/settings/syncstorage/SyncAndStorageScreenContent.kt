@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +31,7 @@ import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.ui.settings.ConfirmationSettingItem
 import com.prof18.feedflow.shared.ui.settings.SettingSelectorItem
+import com.prof18.feedflow.shared.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -38,9 +40,11 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 internal fun SyncAndStorageScreenContent(
     syncPeriod: SyncPeriod,
     autoDeletePeriod: AutoDeletePeriod,
+    refreshFeedsOnLaunch: Boolean,
     navigateBack: () -> Unit,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
+    onRefreshFeedsOnLaunchToggle: (Boolean) -> Unit,
     onClearDownloadedArticles: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -67,6 +71,15 @@ internal fun SyncAndStorageScreenContent(
                 .padding(start = paddingValues.calculateLeftPadding(layoutDir))
                 .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
+            item {
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsRefreshFeedsOnLaunch,
+                    icon = Icons.Outlined.Sync,
+                    isChecked = refreshFeedsOnLaunch,
+                    onCheckedChange = onRefreshFeedsOnLaunchToggle,
+                )
+            }
+
             item {
                 SyncPeriodSelector(
                     currentPeriod = syncPeriod,
@@ -148,8 +161,10 @@ private fun SyncAndStorageScreenContentPreview() {
             navigateBack = {},
             syncPeriod = SyncPeriod.ONE_HOUR,
             autoDeletePeriod = AutoDeletePeriod.ONE_WEEK,
+            refreshFeedsOnLaunch = true,
             onSyncPeriodSelected = {},
             onAutoDeletePeriodSelected = {},
+            onRefreshFeedsOnLaunchToggle = {},
             onClearDownloadedArticles = {},
         )
     }

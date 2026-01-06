@@ -26,6 +26,7 @@ All the business logic is shared via Kotlin Multiplatform.
 ### Build Commands
 
 - `./gradlew check` -> Run all checks including tests and linting for Shared code, Android and Desktop
+- `./gradlew detekt` -> Run static analysis with Detekt for Shared code, Android and Desktop
 - `.scripts/ios-format.sh` -> Format iOS code through swiftformat and swiftlint
 - `./gradlew test` -> Run all tests for Shared code, Android and Desktop
 - `.scripts/refresh-translations.sh` -> Regenerate i18n translation code after adding new translations
@@ -56,7 +57,7 @@ IMPORTANT: When editing code, you MUST:
 ## Handing off 
 
 Before handing off you must:
-1. Run `./gradlew check` to ensure all checks pass
+1. Run `./gradlew detekt` to ensure all checks pass
 2. Run `.scripts/ios-format.sh` to format iOS code
 3. Fix any issues found during the above steps
 

@@ -49,13 +49,13 @@ internal class DesktopFeedItemParserWorker(
                     ?.replace(Regex("https?://.*?placeholder\\.png"), "")
 
                 if (content == null) {
-                    logger.e { "No content extracted for: $url" }
+                    logger.d { "No content extracted for: $url" }
                     return@withContext ParsingResult.Error
                 }
 
                 val plainText = article.textContent ?: ""
                 if (plainText.length < MIN_CONTENT_LENGTH) {
-                    logger.w { "Content too short (${plainText.length} chars), rejecting: $url" }
+                    logger.d { "Content too short (${plainText.length} chars), rejecting: $url" }
                     return@withContext ParsingResult.Error
                 }
 

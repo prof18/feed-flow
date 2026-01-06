@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -67,8 +68,8 @@ internal fun HomeScreen(
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsStateWithLifecycle()
 
-    var showChangeCategorySheet by remember { mutableStateOf(false) }
-    var showNoFeedsBottomSheet by remember { mutableStateOf(false) }
+    var showChangeCategorySheet by rememberSaveable { mutableStateOf(false) }
+    var showNoFeedsBottomSheet by rememberSaveable { mutableStateOf(false) }
     val changeCategorySheetState = rememberModalBottomSheetState()
 
     val snackbarHostState = remember { SnackbarHostState() }

@@ -3,6 +3,8 @@ package com.prof18.feedflow.shared.ui.home.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,7 +24,8 @@ fun NoFeedsInfoContent(
     onFeedSuggestionsClick: () -> Unit = {},
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .verticalScroll(rememberScrollState()),
     ) {
         if (showTitle) {
             Text(

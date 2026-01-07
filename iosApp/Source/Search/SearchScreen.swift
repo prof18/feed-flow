@@ -13,6 +13,8 @@ struct SearchScreen: View {
 
     @State var searchFilter: SearchFilter = .all
 
+    @State var currentFeedFilter: FeedFilter?
+
     @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 
     let readerModeViewModel: ReaderModeViewModel
@@ -24,6 +26,7 @@ struct SearchScreen: View {
             searchText: $searchText,
             searchState: $searchState,
             searchFilter: $searchFilter,
+            currentFeedFilter: currentFeedFilter,
             feedFontSizes: $feedFontSizes,
             readerModeViewModel: readerModeViewModel,
             onSearchFilterSelected: { filter in
@@ -64,6 +67,11 @@ struct SearchScreen: View {
         .task {
             for await state in vmStoreOwner.instance.searchFilterState {
                 self.searchFilter = state
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.searchFeedFilterState {
+                self.currentFeedFilter = state
             }
         }
         .task {

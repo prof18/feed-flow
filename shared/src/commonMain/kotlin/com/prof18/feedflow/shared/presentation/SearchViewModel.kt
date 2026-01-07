@@ -12,7 +12,6 @@ import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
-import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -42,7 +41,6 @@ class SearchViewModel internal constructor(
     private val dateFormatter: DateFormatter,
     private val feedFontSizeRepository: FeedFontSizeRepository,
     private val feedStateRepository: FeedStateRepository,
-    private val settingsRepository: SettingsRepository,
     private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
 ) : ViewModel() {
 
@@ -52,8 +50,12 @@ class SearchViewModel internal constructor(
     private val searchQueryMutableState = MutableStateFlow("")
     val searchQueryState = searchQueryMutableState.asStateFlow()
 
+    private val initialFeedFilter: FeedFilter = feedStateRepository.getCurrentFeedFilter()
     private val searchFilterMutableState = MutableStateFlow(getInitialSearchFilter())
     val searchFilterState: StateFlow<SearchFilter> = searchFilterMutableState.asStateFlow()
+
+    private val searchFeedFilterMutableState = MutableStateFlow(initialFeedFilter.toSearchFeedFilter())
+    val searchFeedFilterState: StateFlow<FeedFilter?> = searchFeedFilterMutableState.asStateFlow()
 
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
     val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
@@ -68,10 +70,14 @@ class SearchViewModel internal constructor(
     private val feedLayout = feedAppearanceSettingsRepository.getFeedLayout()
 
     private fun getInitialSearchFilter(): SearchFilter {
-        return when (feedStateRepository.getCurrentFeedFilter()) {
+        return when (initialFeedFilter) {
             is FeedFilter.Bookmarks -> SearchFilter.Bookmarks
             is FeedFilter.Read -> SearchFilter.Read
-            else -> SearchFilter.All
+            is FeedFilter.Category,
+            is FeedFilter.Source,
+            FeedFilter.Uncategorized,
+            -> SearchFilter.CurrentFeed
+            FeedFilter.Timeline -> SearchFilter.All
         }
     }
 
@@ -196,7 +202,6 @@ class SearchViewModel internal constructor(
             .search(
                 query = query,
                 feedFilter = feedFilter,
-                showReadItems = true,
             )
             .onEach { foundFeed ->
                 searchMutableState.update {
@@ -226,8 +231,22 @@ class SearchViewModel internal constructor(
     private fun SearchFilter.toFeedFilter(): FeedFilter? {
         return when (this) {
             SearchFilter.All -> null
+            SearchFilter.CurrentFeed -> initialFeedFilter
             SearchFilter.Read -> FeedFilter.Read
             SearchFilter.Bookmarks -> FeedFilter.Bookmarks
+        }
+    }
+
+    private fun FeedFilter.toSearchFeedFilter(): FeedFilter? {
+        return when (this) {
+            is FeedFilter.Category,
+            is FeedFilter.Source,
+            FeedFilter.Uncategorized,
+            -> this
+            FeedFilter.Timeline,
+            FeedFilter.Read,
+            FeedFilter.Bookmarks,
+            -> null
         }
     }
 }

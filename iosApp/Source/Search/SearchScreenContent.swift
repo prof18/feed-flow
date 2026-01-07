@@ -13,6 +13,7 @@ struct SearchScreenContent: View {
     @Binding var searchText: String
     @Binding var searchState: SearchState
     @Binding var searchFilter: SearchFilter
+    let currentFeedFilter: FeedFilter?
     @Binding var feedFontSizes: FeedFontSizes
 
     @State private var isPresented = true
@@ -28,6 +29,7 @@ struct SearchScreenContent: View {
         VStack(spacing: 0) {
             SearchFilterChipsRow(
                 selectedFilter: searchFilter,
+                currentFeedFilter: currentFeedFilter,
                 onFilterSelected: { filter in
                     onSearchFilterSelected(filter)
                 }
@@ -197,16 +199,26 @@ struct SearchScreenContent: View {
 
 private struct SearchFilterChipsRow: View {
     let selectedFilter: SearchFilter
+    let currentFeedFilter: FeedFilter?
     let onFilterSelected: (SearchFilter) -> Void
 
-    private let filters: [SearchFilter] = [.all, .read, .bookmarks]
+    private var currentFeedLabel: String? {
+        currentFeedFilter?.label
+    }
+
+    private var filters: [SearchFilter] {
+        if currentFeedLabel != nil {
+            return [.currentFeed, .all, .read, .bookmarks]
+        }
+        return [.all, .read, .bookmarks]
+    }
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(filters, id: \.self) { filter in
                     SearchFilterChip(
-                        label: filter.label,
+                        label: filter.label(currentFeedLabel: currentFeedLabel),
                         isSelected: filter == selectedFilter,
                         onTap: {
                             onFilterSelected(filter)
@@ -249,14 +261,35 @@ private struct SearchFilterChip: View {
 }
 
 private extension SearchFilter {
-    var label: String {
+    func label(currentFeedLabel: String?) -> String {
         switch self {
+        case .currentFeed:
+            return currentFeedLabel ?? feedFlowStrings.searchFilterAll
         case .all:
             return feedFlowStrings.searchFilterAll
         case .read:
             return feedFlowStrings.searchFilterRead
         case .bookmarks:
             return feedFlowStrings.searchFilterBookmarks
+        }
+    }
+}
+
+private extension FeedFilter {
+    var label: String {
+        switch self {
+        case let category as FeedFilter.Category:
+            return category.feedCategory.title
+        case let source as FeedFilter.Source:
+            return source.feedSource.title
+        case is FeedFilter.Uncategorized:
+            return feedFlowStrings.noCategory
+        case is FeedFilter.Read:
+            return feedFlowStrings.searchFilterRead
+        case is FeedFilter.Bookmarks:
+            return feedFlowStrings.searchFilterBookmarks
+        default:
+            return feedFlowStrings.searchFilterAll
         }
     }
 }

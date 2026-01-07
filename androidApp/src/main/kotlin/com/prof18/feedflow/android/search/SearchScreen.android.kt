@@ -38,6 +38,7 @@ internal fun SearchScreen(
     val feedFontSizes by viewModel.feedFontSizeState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQueryState.collectAsStateWithLifecycle()
     val searchFilter by viewModel.searchFilterState.collectAsStateWithLifecycle()
+    val currentFeedFilter by viewModel.searchFeedFilterState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
 
@@ -83,6 +84,7 @@ internal fun SearchScreen(
         searchState = state,
         searchQuery = searchQuery,
         searchFilter = searchFilter,
+        currentFeedFilter = currentFeedFilter,
         feedFontSizes = feedFontSizes,
         shareMenuLabel = strings.menuShare,
         shareCommentsMenuLabel = strings.menuShareComments,
@@ -141,6 +143,7 @@ private fun Preview() {
             shareMenuLabel = "Share",
             searchQuery = "",
             searchFilter = SearchFilter.All,
+            currentFeedFilter = null,
             updateSearchQuery = {},
             onSearchFilterSelected = {},
             navigateBack = {},

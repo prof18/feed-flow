@@ -15,6 +15,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.desktopViewModel
@@ -40,6 +41,7 @@ internal class SearchScreen : Screen {
 
         val state: SearchState by viewModel.searchState.collectAsState()
         val searchQuery by viewModel.searchQueryState.collectAsState()
+        val searchFilter by viewModel.searchFilterState.collectAsState()
         val feedFontSizes by viewModel.feedFontSizeState.collectAsState()
         val strings = LocalFeedFlowStrings.current
         val uriHandler = LocalUriHandler.current
@@ -83,11 +85,15 @@ internal class SearchScreen : Screen {
         SearchScreenContent(
             searchState = state,
             searchQuery = searchQuery,
+            searchFilter = searchFilter,
             feedFontSizes = feedFontSizes,
             shareMenuLabel = strings.menuCopyLink,
             shareCommentsMenuLabel = strings.menuCopyLinkComments,
             updateSearchQuery = { query ->
                 viewModel.updateSearchQuery(query)
+            },
+            onSearchFilterSelected = { filter ->
+                viewModel.updateSearchFilter(filter)
             },
             navigateBack = {
                 viewModel.updateSearchQuery("")
@@ -137,10 +143,12 @@ private fun Preview() {
         SearchScreenContent(
             searchState = SearchState.EmptyState,
             searchQuery = "",
+            searchFilter = SearchFilter.Timeline,
             feedFontSizes = FeedFontSizes(),
             shareMenuLabel = "Share",
             shareCommentsMenuLabel = "Share comments",
             updateSearchQuery = {},
+            onSearchFilterSelected = {},
             navigateBack = {},
             onFeedItemClick = {},
             onBookmarkClick = { _, _ -> },

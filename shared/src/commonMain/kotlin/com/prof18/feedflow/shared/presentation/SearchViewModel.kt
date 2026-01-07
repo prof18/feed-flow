@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.DateFormat
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
@@ -50,6 +52,9 @@ class SearchViewModel internal constructor(
     private val searchQueryMutableState = MutableStateFlow("")
     val searchQueryState = searchQueryMutableState.asStateFlow()
 
+    private val searchFilterMutableState = MutableStateFlow(getInitialSearchFilter())
+    val searchFilterState: StateFlow<SearchFilter> = searchFilterMutableState.asStateFlow()
+
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
     val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
 
@@ -62,6 +67,15 @@ class SearchViewModel internal constructor(
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 
     private val feedLayout = feedAppearanceSettingsRepository.getFeedLayout()
+
+    private fun getInitialSearchFilter(): SearchFilter {
+        return when (feedStateRepository.getCurrentFeedFilter()) {
+            is FeedFilter.Bookmarks -> SearchFilter.Bookmarks
+            is FeedFilter.Read -> SearchFilter.Read
+            is FeedFilter.Timeline -> SearchFilter.Timeline
+            else -> SearchFilter.Timeline
+        }
+    }
 
     init {
         searchQueryMutableState
@@ -109,6 +123,14 @@ class SearchViewModel internal constructor(
 
     fun updateSearchQuery(query: String) {
         searchQueryMutableState.update { query }
+    }
+
+    fun updateSearchFilter(filter: SearchFilter) {
+        searchFilterMutableState.update { filter }
+        val currentQuery = searchQueryMutableState.value
+        if (currentQuery.isNotBlank()) {
+            search(currentQuery)
+        }
     }
 
     fun onBookmarkClick(feedItemId: FeedItemId, bookmarked: Boolean) {
@@ -170,14 +192,14 @@ class SearchViewModel internal constructor(
     }
 
     private fun search(query: String) {
-        val currentFeedFilter = feedStateRepository.getCurrentFeedFilter()
-        val showReadItems = settingsRepository.getShowReadArticlesTimeline()
+        val currentSearchFilter = searchFilterMutableState.value
+        val feedFilter = currentSearchFilter.toFeedFilter()
 
         feedActionsRepository
             .search(
                 query = query,
-                feedFilter = currentFeedFilter,
-                showReadItems = showReadItems,
+                feedFilter = feedFilter,
+                showReadItems = true,
             )
             .onEach { foundFeed ->
                 searchMutableState.update {
@@ -202,5 +224,14 @@ class SearchViewModel internal constructor(
                 }
             }
             .launchIn(viewModelScope)
+    }
+
+    private fun SearchFilter.toFeedFilter(): FeedFilter? {
+        return when (this) {
+            SearchFilter.All -> null
+            SearchFilter.Timeline -> FeedFilter.Timeline
+            SearchFilter.Read -> FeedFilter.Read
+            SearchFilter.Bookmarks -> FeedFilter.Bookmarks
+        }
     }
 }

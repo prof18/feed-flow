@@ -241,7 +241,7 @@ internal class FeedActionsRepository(
     ): Flow<List<Search>> =
         databaseHelper.search(
             searchQuery = query,
-            feedFilter = feedFilter ?: feedStateRepository.getCurrentFeedFilter(),
+            feedFilter = feedFilter,
             showReadItems = showReadItems,
         )
 }

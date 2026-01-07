@@ -12,19 +12,30 @@ struct SearchScreenContent: View {
 
     @Binding var searchText: String
     @Binding var searchState: SearchState
+    @Binding var searchFilter: SearchFilter
     @Binding var feedFontSizes: FeedFontSizes
 
     @State private var isPresented = true
 
     let readerModeViewModel: ReaderModeViewModel
+    let onSearchFilterSelected: (SearchFilter) -> Void
     let onBookmarkClick: (FeedItemId, Bool) -> Void
     let onReadStatusClick: (FeedItemId, Bool) -> Void
     let onMarkAllAboveAsRead: (String) -> Void
     let onMarkAllBelowAsRead: (String) -> Void
 
     var body: some View {
-        makeSearchContent()
-            .searchable(text: $searchText, isPresented: $isPresented, placement: .toolbar)
+        VStack(spacing: 0) {
+            SearchFilterChipsRow(
+                selectedFilter: searchFilter,
+                onFilterSelected: { filter in
+                    onSearchFilterSelected(filter)
+                }
+            )
+
+            makeSearchContent()
+        }
+        .searchable(text: $searchText, isPresented: $isPresented, placement: .toolbar)
     }
 
     @ViewBuilder
@@ -180,6 +191,73 @@ struct SearchScreenContent: View {
             } label: {
                 Label(feedFlowStrings.menuOpenComments, systemImage: "bubble.left.and.bubble.right")
             }
+        }
+    }
+}
+
+private struct SearchFilterChipsRow: View {
+    let selectedFilter: SearchFilter
+    let onFilterSelected: (SearchFilter) -> Void
+
+    private let filters: [SearchFilter] = [.all, .timeline, .read, .bookmarks]
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(filters, id: \.self) { filter in
+                    SearchFilterChip(
+                        label: filter.label,
+                        isSelected: filter == selectedFilter,
+                        onTap: {
+                            onFilterSelected(filter)
+                        }
+                    )
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+        }
+    }
+}
+
+private struct SearchFilterChip: View {
+    let label: String
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            Text(label)
+                .font(.subheadline)
+                .fontWeight(isSelected ? .semibold : .regular)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isSelected ? Color.accentColor.opacity(0.15) : Color.clear)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(isSelected ? Color.accentColor : Color.secondary.opacity(0.3), lineWidth: isSelected ? 1.5 : 1)
+                )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private extension SearchFilter {
+    var label: String {
+        switch self {
+        case .all:
+            return feedFlowStrings.searchFilterAll
+        case .timeline:
+            return feedFlowStrings.searchFilterTimeline
+        case .read:
+            return feedFlowStrings.searchFilterRead
+        case .bookmarks:
+            return feedFlowStrings.searchFilterBookmarks
+        default:
+            return ""
         }
     }
 }

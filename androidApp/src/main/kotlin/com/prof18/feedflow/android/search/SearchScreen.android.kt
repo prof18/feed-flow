@@ -14,6 +14,7 @@ import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -36,6 +37,7 @@ internal fun SearchScreen(
     val state: SearchState by viewModel.searchState.collectAsStateWithLifecycle()
     val feedFontSizes by viewModel.feedFontSizeState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQueryState.collectAsStateWithLifecycle()
+    val searchFilter by viewModel.searchFilterState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
 
@@ -80,11 +82,15 @@ internal fun SearchScreen(
     SearchScreenContent(
         searchState = state,
         searchQuery = searchQuery,
+        searchFilter = searchFilter,
         feedFontSizes = feedFontSizes,
         shareMenuLabel = strings.menuShare,
         shareCommentsMenuLabel = strings.menuShareComments,
         updateSearchQuery = { query ->
             viewModel.updateSearchQuery(query)
+        },
+        onSearchFilterSelected = { filter ->
+            viewModel.updateSearchFilter(filter)
         },
         navigateBack = navigateBack,
         onFeedItemClick = { urlInfo ->
@@ -134,7 +140,9 @@ private fun Preview() {
             shareCommentsMenuLabel = "Share Comments",
             shareMenuLabel = "Share",
             searchQuery = "",
+            searchFilter = SearchFilter.Timeline,
             updateSearchQuery = {},
+            onSearchFilterSelected = {},
             navigateBack = {},
             onFeedItemClick = {},
             onBookmarkClick = { _, _ -> },

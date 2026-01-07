@@ -25,6 +25,7 @@ import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.utils.initSentry
+import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -85,8 +86,8 @@ fun main() {
         }
 
         if (isInitialized) {
-            val settingsRepository = remember { DI.koin.get<SettingsRepository>() }
-            val windowState = windowState(settingsRepository)
+            val desktopWindowSettingsRepository = remember { DI.koin.get<DesktopWindowSettingsRepository>() }
+            val windowState = windowState(desktopWindowSettingsRepository)
             var showBackupLoader by remember { mutableStateOf(false) }
 
             Window(
@@ -206,11 +207,11 @@ private fun setupTelemetryAndCrashReporting(appConfig: DesktopConfig) {
 }
 
 @Composable
-private fun windowState(settingsRepository: SettingsRepository): WindowState {
-    val savedWidthDp = settingsRepository.getDesktopWindowWidthDp()
-    val savedHeightDp = settingsRepository.getDesktopWindowHeightDp()
-    val savedPositionX = settingsRepository.getDesktopWindowXPositionDp()
-    val savedPositionY = settingsRepository.getDesktopWindowYPositionDp()
+private fun windowState(desktopWindowSettingsRepository: DesktopWindowSettingsRepository): WindowState {
+    val savedWidthDp = desktopWindowSettingsRepository.getDesktopWindowWidthDp()
+    val savedHeightDp = desktopWindowSettingsRepository.getDesktopWindowHeightDp()
+    val savedPositionX = desktopWindowSettingsRepository.getDesktopWindowXPositionDp()
+    val savedPositionY = desktopWindowSettingsRepository.getDesktopWindowYPositionDp()
 
     val toolkit = Toolkit.getDefaultToolkit()
     val screenSize = toolkit.screenSize

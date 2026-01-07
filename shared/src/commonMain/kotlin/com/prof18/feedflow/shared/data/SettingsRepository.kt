@@ -343,30 +343,6 @@ class SettingsRepository(
         themeModeMutableFlow.update { mode }
     }
 
-    fun getDesktopWindowWidthDp(): Int =
-        settings.getInt(SettingsFields.DESKTOP_WINDOW_WIDTH_DP.name, defaultValue = 800)
-
-    fun setDesktopWindowWidthDp(value: Int) =
-        settings.set(SettingsFields.DESKTOP_WINDOW_WIDTH_DP.name, value)
-
-    fun getDesktopWindowHeightDp(): Int =
-        settings.getInt(SettingsFields.DESKTOP_WINDOW_HEIGHT_DP.name, defaultValue = 600)
-
-    fun setDesktopWindowHeightDp(value: Int) =
-        settings.set(SettingsFields.DESKTOP_WINDOW_HEIGHT_DP.name, value)
-
-    fun getDesktopWindowXPositionDp(): Float? =
-        settings.getFloatOrNull(SettingsFields.DESKTOP_WINDOW_X_POSITION_DP.name)
-
-    fun setDesktopWindowXPositionDp(value: Float) =
-        settings.set(SettingsFields.DESKTOP_WINDOW_X_POSITION_DP.name, value)
-
-    fun getDesktopWindowYPositionDp(): Float? =
-        settings.getFloatOrNull(SettingsFields.DESKTOP_WINDOW_Y_POSITION_DP.name)
-
-    fun setDesktopWindowYPositionDp(value: Float) =
-        settings.set(SettingsFields.DESKTOP_WINDOW_Y_POSITION_DP.name, value)
-
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
@@ -409,8 +385,4 @@ internal enum class SettingsFields {
     WIDGET_BACKGROUND_OPACITY_PERCENT,
     THEME_MODE,
     REFRESH_FEEDS_ON_LAUNCH,
-    DESKTOP_WINDOW_WIDTH_DP,
-    DESKTOP_WINDOW_HEIGHT_DP,
-    DESKTOP_WINDOW_X_POSITION_DP,
-    DESKTOP_WINDOW_Y_POSITION_DP,
 }

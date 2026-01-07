@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.database.createDatabaseDriver
+import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
@@ -121,6 +122,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             "feedflow-dev"
         }
         PreferencesSettings(preferences.node(nodeName))
+    }
+
+    single {
+        DesktopWindowSettingsRepository(
+            settings = get(),
+        )
     }
 
     single<FeedItemContentFileHandler> {

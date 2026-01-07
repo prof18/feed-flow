@@ -47,7 +47,7 @@ import com.prof18.feedflow.desktop.home.menubar.MenuBarActions
 import com.prof18.feedflow.desktop.home.menubar.MenuBarState
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.ui.components.scrollbarStyle
-import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -117,7 +117,7 @@ private fun MainWindowEffects(
 ) {
     val scope = rememberCoroutineScope()
     val flowStrings = LocalFeedFlowStrings.current
-    val settingsRepository = DI.koin.get<SettingsRepository>()
+    val desktopWindowSettingsRepository = DI.koin.get<DesktopWindowSettingsRepository>()
     val feedSyncRepo = DI.koin.get<FeedSyncRepository>()
     val messageQueue = DI.koin.get<FeedSyncMessageQueue>()
 
@@ -158,16 +158,16 @@ private fun MainWindowEffects(
     LaunchedEffect(windowState) {
         snapshotFlow { windowState.size }
             .collect { size ->
-                settingsRepository.setDesktopWindowWidthDp(size.width.value.roundToInt())
-                settingsRepository.setDesktopWindowHeightDp(size.height.value.roundToInt())
+                desktopWindowSettingsRepository.setDesktopWindowWidthDp(size.width.value.roundToInt())
+                desktopWindowSettingsRepository.setDesktopWindowHeightDp(size.height.value.roundToInt())
             }
     }
 
     LaunchedEffect(windowState) {
         snapshotFlow { windowState.position }
             .collect { position ->
-                settingsRepository.setDesktopWindowXPositionDp(position.x.value)
-                settingsRepository.setDesktopWindowYPositionDp(position.y.value)
+                desktopWindowSettingsRepository.setDesktopWindowXPositionDp(position.x.value)
+                desktopWindowSettingsRepository.setDesktopWindowYPositionDp(position.y.value)
             }
     }
 

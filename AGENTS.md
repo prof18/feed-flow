@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-FeedFlow is a multi-platform RSS reader built with Kotlin Multiplatform, Compose Multiplatform and SwiftUI. 
-It targets Android, iOS, macOS, Windows, and Linux. 
-The app uses SwiftUI for iOS-specific UI components and Compose for all other platforms. 
+FeedFlow is a multi-platform RSS reader built with Kotlin Multiplatform, Compose Multiplatform and SwiftUI.
+It targets Android, iOS, macOS, Windows, and Linux.
+The app uses SwiftUI for iOS-specific UI components and Compose for all other platforms.
 All the business logic is shared via Kotlin Multiplatform.
 
 ## Project Structure & Module Organization
@@ -32,7 +32,7 @@ All the business logic is shared via Kotlin Multiplatform.
 - `.scripts/refresh-translations.sh` -> Regenerate i18n translation code after adding new translations
 - `./gradlew :androidApp:assembleDebug` -> Build Android debug
 - `./gradlew desktopApp:run` -> Run Desktop app
-- 
+-
 ### Building for iOS Simulator
 To build ReaderFlow for iPhone 17 Pro simulator:
 ```bash
@@ -51,10 +51,11 @@ mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/marco.gomiero/Works
 ### Build Verification Process
 
 IMPORTANT: When editing code, you MUST:
-1. Build the project after making changes 
+1. Build the project after making changes
 2. Fix any compilation errors before proceeding
+Be sure to build ONLY for the platform you are working on to save time.
 
-## Handing off 
+## Handing off
 
 Before handing off you must:
 1. Run `./gradlew detekt` to ensure all checks pass

@@ -39,21 +39,6 @@ class SettingsRepository(
     private val feedLayoutMutableFlow = MutableStateFlow(getFeedLayout())
     val feedLayout: StateFlow<FeedLayout> = feedLayoutMutableFlow.asStateFlow()
 
-    private val feedWidgetLayoutMutableFlow = MutableStateFlow(getFeedWidgetLayout())
-    val feedWidgetLayout: StateFlow<FeedLayout> = feedWidgetLayoutMutableFlow.asStateFlow()
-
-    private val widgetShowHeaderMutableFlow = MutableStateFlow(getWidgetShowHeader())
-    val widgetShowHeader: StateFlow<Boolean> = widgetShowHeaderMutableFlow.asStateFlow()
-
-    private val widgetFontScaleMutableFlow = MutableStateFlow(getWidgetFontScaleFactor())
-    val widgetFontScale: StateFlow<Int> = widgetFontScaleMutableFlow.asStateFlow()
-
-    private val widgetBackgroundColorMutableFlow = MutableStateFlow(getWidgetBackgroundColor())
-    val widgetBackgroundColor: StateFlow<Int?> = widgetBackgroundColorMutableFlow.asStateFlow()
-
-    private val widgetBackgroundOpacityMutableFlow = MutableStateFlow(getWidgetBackgroundOpacityPercent())
-    val widgetBackgroundOpacity: StateFlow<Int> = widgetBackgroundOpacityMutableFlow.asStateFlow()
-
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
 
@@ -286,54 +271,6 @@ class SettingsRepository(
         feedLayoutMutableFlow.update { feedLayout }
     }
 
-    fun getFeedWidgetLayout(): FeedLayout =
-        settings.getString(SettingsFields.FEED_WIDGET_LAYOUT.name, FeedLayout.LIST.name)
-            .let { FeedLayout.valueOf(it) }
-
-    fun setFeedWidgetLayout(feedLayout: FeedLayout) {
-        settings[SettingsFields.FEED_WIDGET_LAYOUT.name] = feedLayout.name
-        feedWidgetLayoutMutableFlow.update { feedLayout }
-    }
-
-    fun getWidgetShowHeader(): Boolean =
-        settings.getBoolean(SettingsFields.WIDGET_SHOW_HEADER.name, true)
-
-    fun setWidgetShowHeader(value: Boolean) {
-        settings[SettingsFields.WIDGET_SHOW_HEADER.name] = value
-        widgetShowHeaderMutableFlow.update { value }
-    }
-
-    fun getWidgetFontScaleFactor(): Int =
-        settings.getInt(SettingsFields.WIDGET_FONT_SCALE_FACTOR.name, DEFAULT_WIDGET_FONT_SCALE_FACTOR)
-
-    fun setWidgetFontScaleFactor(value: Int) {
-        settings[SettingsFields.WIDGET_FONT_SCALE_FACTOR.name] = value
-        widgetFontScaleMutableFlow.update { value }
-    }
-
-    fun getWidgetBackgroundColor(): Int? =
-        settings.getIntOrNull(SettingsFields.WIDGET_BACKGROUND_COLOR.name)
-
-    fun setWidgetBackgroundColor(colorArgb: Int?) {
-        if (colorArgb == null) {
-            settings.remove(SettingsFields.WIDGET_BACKGROUND_COLOR.name)
-        } else {
-            settings[SettingsFields.WIDGET_BACKGROUND_COLOR.name] = colorArgb
-        }
-        widgetBackgroundColorMutableFlow.update { colorArgb }
-    }
-
-    fun getWidgetBackgroundOpacityPercent(): Int =
-        settings.getInt(
-            SettingsFields.WIDGET_BACKGROUND_OPACITY_PERCENT.name,
-            DEFAULT_WIDGET_BACKGROUND_OPACITY_PERCENT,
-        )
-
-    fun setWidgetBackgroundOpacityPercent(value: Int) {
-        settings[SettingsFields.WIDGET_BACKGROUND_OPACITY_PERCENT.name] = value
-        widgetBackgroundOpacityMutableFlow.update { value }
-    }
-
     fun getThemeMode(): ThemeMode =
         settings.getString(SettingsFields.THEME_MODE.name, ThemeMode.SYSTEM.name)
             .let { ThemeMode.valueOf(it) }
@@ -346,8 +283,6 @@ class SettingsRepository(
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
         const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
-        const val DEFAULT_WIDGET_FONT_SCALE_FACTOR = 0
-        const val DEFAULT_WIDGET_BACKGROUND_OPACITY_PERCENT = 100
     }
 }
 
@@ -378,11 +313,6 @@ internal enum class SettingsFields {
     DATE_FORMAT,
     TIME_FORMAT,
     FEED_LAYOUT,
-    FEED_WIDGET_LAYOUT,
-    WIDGET_SHOW_HEADER,
-    WIDGET_FONT_SCALE_FACTOR,
-    WIDGET_BACKGROUND_COLOR,
-    WIDGET_BACKGROUND_OPACITY_PERCENT,
     THEME_MODE,
     REFRESH_FEEDS_ON_LAUNCH,
 }

@@ -37,16 +37,6 @@ class FeedWidgetRepository internal constructor(
             }
     }
 
-    fun getFeedLayout() = settingsRepository.feedWidgetLayout
-
-    fun getShowHeader() = settingsRepository.widgetShowHeader
-
-    fun getFontScale() = settingsRepository.widgetFontScale
-
-    fun getBackgroundColor() = settingsRepository.widgetBackgroundColor
-
-    fun getBackgroundOpacityPercent() = settingsRepository.widgetBackgroundOpacity
-
     internal suspend fun getFeedItemById(id: FeedItemId): FeedItemUrlInfo? {
         return databaseHelper.getFeedItemUrlInfo(id.id)
     }

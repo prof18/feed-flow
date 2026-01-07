@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class WidgetConfigurationViewModel(
     private val settingsRepository: SettingsRepository,
+    private val widgetSettingsRepository: WidgetSettingsRepository,
     private val feedDownloadWorkerEnqueuer: FeedDownloadWorkerEnqueuer,
 ) : ViewModel() {
 
@@ -23,11 +25,11 @@ class WidgetConfigurationViewModel(
     init {
         viewModelScope.launch {
             val currentPeriod = settingsRepository.getSyncPeriod()
-            val currentFeedLayout = settingsRepository.getFeedWidgetLayout()
-            val currentShowHeader = settingsRepository.getWidgetShowHeader()
-            val currentFontScale = settingsRepository.getWidgetFontScaleFactor()
-            val currentBackgroundColor = settingsRepository.getWidgetBackgroundColor()
-            val currentBackgroundOpacity = settingsRepository.getWidgetBackgroundOpacityPercent()
+            val currentFeedLayout = widgetSettingsRepository.getFeedWidgetLayout()
+            val currentShowHeader = widgetSettingsRepository.getWidgetShowHeader()
+            val currentFontScale = widgetSettingsRepository.getWidgetFontScaleFactor()
+            val currentBackgroundColor = widgetSettingsRepository.getWidgetBackgroundColor()
+            val currentBackgroundOpacity = widgetSettingsRepository.getWidgetBackgroundOpacityPercent()
 
             _settingsState.update {
                 it.copy(
@@ -73,11 +75,11 @@ class WidgetConfigurationViewModel(
     fun enqueueWorker() {
         val state = settingsState.value
         settingsRepository.setSyncPeriod(state.syncPeriod)
-        settingsRepository.setFeedWidgetLayout(state.feedLayout)
-        settingsRepository.setWidgetShowHeader(state.showHeader)
-        settingsRepository.setWidgetFontScaleFactor(state.fontScale)
-        settingsRepository.setWidgetBackgroundColor(state.backgroundColor)
-        settingsRepository.setWidgetBackgroundOpacityPercent(state.backgroundOpacityPercent)
+        widgetSettingsRepository.setFeedWidgetLayout(state.feedLayout)
+        widgetSettingsRepository.setWidgetShowHeader(state.showHeader)
+        widgetSettingsRepository.setWidgetFontScaleFactor(state.fontScale)
+        widgetSettingsRepository.setWidgetBackgroundColor(state.backgroundColor)
+        widgetSettingsRepository.setWidgetBackgroundOpacityPercent(state.backgroundOpacityPercent)
         feedDownloadWorkerEnqueuer.updateWorker(state.syncPeriod)
     }
 }

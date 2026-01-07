@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.createDatabaseDriver
+import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.FeedDownloadWorker
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
@@ -75,6 +76,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     single<Settings> {
         val sharedPrefs = get<Context>().getSharedPreferences("feedflow.shared.pref", Context.MODE_PRIVATE)
         SharedPreferencesSettings(sharedPrefs)
+    }
+
+    single {
+        WidgetSettingsRepository(
+            settings = get(),
+        )
     }
 
     single<DispatcherProvider> {

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.android.widget.WidgetSettingsState
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class WidgetSettingsViewModel(
     private val settingsRepository: SettingsRepository,
+    private val widgetSettingsRepository: WidgetSettingsRepository,
     private val feedDownloadWorkerEnqueuer: FeedDownloadWorkerEnqueuer,
     private val widgetUpdater: WidgetUpdater,
 ) : ViewModel() {
@@ -28,11 +30,11 @@ class WidgetSettingsViewModel(
     init {
         viewModelScope.launch {
             val currentPeriod = settingsRepository.getSyncPeriod()
-            val currentFeedLayout = settingsRepository.getFeedWidgetLayout()
-            val currentShowHeader = settingsRepository.getWidgetShowHeader()
-            val currentFontScale = settingsRepository.getWidgetFontScaleFactor()
-            val currentBackgroundColor = settingsRepository.getWidgetBackgroundColor()
-            val currentBackgroundOpacity = settingsRepository.getWidgetBackgroundOpacityPercent()
+            val currentFeedLayout = widgetSettingsRepository.getFeedWidgetLayout()
+            val currentShowHeader = widgetSettingsRepository.getWidgetShowHeader()
+            val currentFontScale = widgetSettingsRepository.getWidgetFontScaleFactor()
+            val currentBackgroundColor = widgetSettingsRepository.getWidgetBackgroundColor()
+            val currentBackgroundOpacity = widgetSettingsRepository.getWidgetBackgroundOpacityPercent()
             _settingsState.update {
                 it.copy(
                     syncPeriod = if (currentPeriod == SyncPeriod.NEVER) {
@@ -67,7 +69,7 @@ class WidgetSettingsViewModel(
             return
         }
         _settingsState.update { it.copy(feedLayout = feedLayout) }
-        settingsRepository.setFeedWidgetLayout(feedLayout)
+        widgetSettingsRepository.setFeedWidgetLayout(feedLayout)
         viewModelScope.launch {
             widgetUpdater.update()
         }
@@ -78,7 +80,7 @@ class WidgetSettingsViewModel(
             return
         }
         _settingsState.update { it.copy(showHeader = showHeader) }
-        settingsRepository.setWidgetShowHeader(showHeader)
+        widgetSettingsRepository.setWidgetShowHeader(showHeader)
         viewModelScope.launch {
             widgetUpdater.update()
         }
@@ -89,7 +91,7 @@ class WidgetSettingsViewModel(
             return
         }
         _settingsState.update { it.copy(fontScale = scaleFactor) }
-        settingsRepository.setWidgetFontScaleFactor(scaleFactor)
+        widgetSettingsRepository.setWidgetFontScaleFactor(scaleFactor)
         viewModelScope.launch {
             widgetUpdater.update()
         }
@@ -100,7 +102,7 @@ class WidgetSettingsViewModel(
             return
         }
         _settingsState.update { it.copy(backgroundColor = colorArgb) }
-        settingsRepository.setWidgetBackgroundColor(colorArgb)
+        widgetSettingsRepository.setWidgetBackgroundColor(colorArgb)
         viewModelScope.launch {
             widgetUpdater.update()
         }
@@ -111,7 +113,7 @@ class WidgetSettingsViewModel(
             return
         }
         _settingsState.update { it.copy(backgroundOpacityPercent = opacityPercent) }
-        settingsRepository.setWidgetBackgroundOpacityPercent(opacityPercent)
+        widgetSettingsRepository.setWidgetBackgroundOpacityPercent(opacityPercent)
         viewModelScope.launch {
             widgetUpdater.update()
         }

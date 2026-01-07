@@ -16,6 +16,7 @@ import com.prof18.feedflow.android.widget.FeedFlowWidget
 import com.prof18.feedflow.android.widget.WidgetConfigurationViewModel
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
 import com.prof18.feedflow.shared.di.viewModel
@@ -35,6 +36,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
 
     private val feedSyncRepo by inject<FeedSyncRepository>()
     private val widgetRepository by inject<FeedWidgetRepository>()
+    private val widgetSettingsRepository by inject<WidgetSettingsRepository>()
     private val feedDownloadWorkerEnqueuer by inject<FeedDownloadWorkerEnqueuer>()
     private val browserManager by inject<BrowserManager>()
 
@@ -89,19 +91,25 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                 context = this@FeedFlowApp,
                             ).getGlanceIds(FeedFlowWidget::class.java)
                                 .forEach { id ->
-                                    FeedFlowWidget(widgetRepository, get<BrowserManager>()).update(this@FeedFlowApp, id)
+                                    FeedFlowWidget(
+                                        widgetRepository,
+                                        widgetSettingsRepository,
+                                        get<BrowserManager>(),
+                                    ).update(this@FeedFlowApp, id)
                                 }
                         }
                     }
                     viewModel {
                         WidgetConfigurationViewModel(
                             settingsRepository = get(),
+                            widgetSettingsRepository = get(),
                             feedDownloadWorkerEnqueuer = get(),
                         )
                     }
                     viewModel {
                         WidgetSettingsViewModel(
                             settingsRepository = get(),
+                            widgetSettingsRepository = get(),
                             feedDownloadWorkerEnqueuer = get(),
                             widgetUpdater = get(),
                         )
@@ -126,7 +134,11 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                                 context = this@FeedFlowApp,
                             ).getGlanceIds(FeedFlowWidget::class.java)
                                 .forEach { id ->
-                                    FeedFlowWidget(widgetRepository, browserManager).update(this@FeedFlowApp, id)
+                                    FeedFlowWidget(
+                                        widgetRepository,
+                                        widgetSettingsRepository,
+                                        browserManager,
+                                    ).update(this@FeedFlowApp, id)
                                 }
                         }
                     }

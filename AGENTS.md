@@ -30,11 +30,11 @@ All the business logic is shared via Kotlin Multiplatform.
 - `.scripts/ios-format.sh` -> Format iOS code through swiftformat and swiftlint
 - `./gradlew test` -> Run all tests for Shared code, Android and Desktop
 - `.scripts/refresh-translations.sh` -> Regenerate i18n translation code after adding new translations
-- `./gradlew :androidApp:assembleDebug` -> Build Android debug
+- `./gradlew :androidApp:assembleGooglePlayDebug` -> Build Android debug
 - `./gradlew desktopApp:run` -> Run Desktop app
 -
 ### Building for iOS Simulator
-To build ReaderFlow for iPhone 17 Pro simulator:
+To build FeedFlow for iPhone 17 Pro simulator:
 ```bash
 mcp__XcodeBuildMCP__build_sim_name_proj projectPath: "/Users/mg/Workspace/feedflow/feed-flow/iosApp/FeedFlow.xcodeproj" scheme: "FeedFlow" simulatorName: "iPhone 17 Pro"
 ```
@@ -58,8 +58,8 @@ Be sure to build ONLY for the platform you are working on to save time.
 ## Handing off
 
 Before handing off you must:
-1. Run `./gradlew detekt` to ensure all checks pass
-2. Run `.scripts/ios-format.sh` to format iOS code
+1. Run `./gradlew detekt` to ensure all checks pass - don't run it if you modified only swift files
+2. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
 3. Fix any issues found during the above steps
 
 ### Initial Setup (for building from scratch)

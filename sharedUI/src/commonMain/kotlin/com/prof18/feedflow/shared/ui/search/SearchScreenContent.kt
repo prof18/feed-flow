@@ -55,6 +55,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
+import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemContainer
 import com.prof18.feedflow.shared.ui.home.components.list.FeedItemView
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -129,6 +130,7 @@ fun SearchScreenContent(
 
             LazyColumn(
                 modifier = Modifier
+                    .padding(top = Spacing.regular)
                     .fillMaxSize(),
             ) {
                 when (searchState) {
@@ -259,7 +261,6 @@ private fun SearchFilterChipsRow(
     val filters = remember {
         listOf(
             SearchFilter.All,
-            SearchFilter.Timeline,
             SearchFilter.Read,
             SearchFilter.Bookmarks,
         )
@@ -322,10 +323,9 @@ private fun SearchFilterChip(
     }
 }
 
-private fun SearchFilter.getLabel(strings: com.prof18.feedflow.i18n.FeedFlowStrings): String {
+private fun SearchFilter.getLabel(strings: FeedFlowStrings): String {
     return when (this) {
         SearchFilter.All -> strings.searchFilterAll
-        SearchFilter.Timeline -> strings.searchFilterTimeline
         SearchFilter.Read -> strings.searchFilterRead
         SearchFilter.Bookmarks -> strings.searchFilterBookmarks
     }

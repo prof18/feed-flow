@@ -11,7 +11,7 @@ struct SearchScreen: View {
 
     @State var searchState: SearchState = .EmptyState()
 
-    @State var searchFilter: SearchFilter = .timeline
+    @State var searchFilter: SearchFilter = .all
 
     @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
 

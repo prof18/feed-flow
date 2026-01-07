@@ -199,7 +199,7 @@ private struct SearchFilterChipsRow: View {
     let selectedFilter: SearchFilter
     let onFilterSelected: (SearchFilter) -> Void
 
-    private let filters: [SearchFilter] = [.all, .timeline, .read, .bookmarks]
+    private let filters: [SearchFilter] = [.all, .read, .bookmarks]
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -238,7 +238,10 @@ private struct SearchFilterChip: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(isSelected ? Color.accentColor : Color.secondary.opacity(0.3), lineWidth: isSelected ? 1.5 : 1)
+                        .stroke(
+                            isSelected ? Color.accentColor : Color.secondary.opacity(0.3),
+                            lineWidth: isSelected ? 1.5 : 1
+                        )
                 )
         }
         .buttonStyle(.plain)
@@ -250,14 +253,10 @@ private extension SearchFilter {
         switch self {
         case .all:
             return feedFlowStrings.searchFilterAll
-        case .timeline:
-            return feedFlowStrings.searchFilterTimeline
         case .read:
             return feedFlowStrings.searchFilterRead
         case .bookmarks:
             return feedFlowStrings.searchFilterBookmarks
-        default:
-            return ""
         }
     }
 }

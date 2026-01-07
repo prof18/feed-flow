@@ -140,7 +140,7 @@ private fun Preview() {
             shareCommentsMenuLabel = "Share Comments",
             shareMenuLabel = "Share",
             searchQuery = "",
-            searchFilter = SearchFilter.Timeline,
+            searchFilter = SearchFilter.All,
             updateSearchQuery = {},
             onSearchFilterSelected = {},
             navigateBack = {},

@@ -242,4 +242,10 @@
     <string name="clear_old_articles_dialog_message">Voulez-vous vraiment supprimer les articles anciens ?</string>
     <string name="confirm_button">Confirmer</string>
     <string name="cancel_button">Annuler</string>
+    <string name="feed_error_message_improved">Erreur lors du chargement de %s. Ce flux est inaccessible, ou votre connexion est défaillante.</string>
+    <string name="trigger_feed_sync">Déclencher le téléversement vers votre compte</string>
+    <string name="import_export_label">Imports et exports</string>
+    <string name="feed_add_in_progress_message">Importation du flux...</string>
+    <string name="import_export_opml_section_title">Abonnements (OPML)</string>
+    <string name="import_export_articles_section_title">Articles (CSV)</string>
 </resources>

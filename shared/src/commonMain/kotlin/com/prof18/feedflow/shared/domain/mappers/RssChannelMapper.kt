@@ -28,9 +28,18 @@ internal class RssChannelMapper(
                 // Check for URL in enclosures (e.g., podcasts, media items)
                 rssItem.rawEnclosure?.url
             }
-            val dateMillis: Long = rssItem.pubDate?.let {
+            val parsedDateMillis: Long = rssItem.pubDate?.let {
                 dateFormatter.getDateMillisFromString(it)
             } ?: dateFormatter.currentTimeMillis()
+
+            // Normalize future dates to current time to avoid articles with incorrect
+            // future dates always appearing at the top of the feed list
+            val currentTimeMillis = dateFormatter.currentTimeMillis()
+            val dateMillis = if (parsedDateMillis > currentTimeMillis) {
+                currentTimeMillis
+            } else {
+                parsedDateMillis
+            }
 
             val imageUrl = when {
                 rssItem.youtubeItemData?.thumbnailUrl != null -> {

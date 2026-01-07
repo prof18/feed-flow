@@ -1,14 +1,7 @@
 package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
-import com.prof18.feedflow.core.model.DateFormat
-import com.prof18.feedflow.core.model.FeedLayout
-import com.prof18.feedflow.core.model.FeedOrder
-import com.prof18.feedflow.core.model.SwipeActionType
-import com.prof18.feedflow.core.model.SwipeActions
-import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.ThemeMode
-import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
@@ -27,17 +20,6 @@ class SettingsRepository(
 
     private val isSyncUploadRequiredMutableFlow = MutableStateFlow(getIsSyncUploadRequired())
     val isSyncUploadRequired: StateFlow<Boolean> = isSyncUploadRequiredMutableFlow.asStateFlow()
-
-    private val swipeActionsMutableFlow = MutableStateFlow(
-        SwipeActions(
-            leftSwipeAction = getSwipeAction(SwipeDirection.LEFT),
-            rightSwipeAction = getSwipeAction(SwipeDirection.RIGHT),
-        ),
-    )
-    val swipeActions: StateFlow<SwipeActions> = swipeActionsMutableFlow.asStateFlow()
-
-    private val feedLayoutMutableFlow = MutableStateFlow(getFeedLayout())
-    val feedLayout: StateFlow<FeedLayout> = feedLayoutMutableFlow.asStateFlow()
 
     private val syncPeriodMutableFlow = MutableStateFlow(getSyncPeriod())
     val syncPeriodFlow: StateFlow<SyncPeriod> = syncPeriodMutableFlow.asStateFlow()
@@ -116,31 +98,11 @@ class SettingsRepository(
         settings[SettingsFields.IS_SYNC_UPLOAD_REQUIRED.name] = value
     }
 
-    fun getRemoveTitleFromDescription(): Boolean =
-        settings.getBoolean(SettingsFields.REMOVE_TITLE_FROM_DESCRIPTION.name, false)
-
-    fun setRemoveTitleFromDescription(value: Boolean) =
-        settings.set(SettingsFields.REMOVE_TITLE_FROM_DESCRIPTION.name, value)
-
-    fun getHideDescription(): Boolean =
-        settings.getBoolean(SettingsFields.HIDE_DESCRIPTION.name, false)
-
-    fun setHideDescription(value: Boolean) =
-        settings.set(SettingsFields.HIDE_DESCRIPTION.name, value)
-
     fun getReaderModeFontSize(): Int =
         settings.getInt(SettingsFields.READER_MODE_FONT_SIZE.name, DEFAULT_READER_MODE_FONT_SIZE)
 
     fun setReaderModeFontSize(value: Int) =
         settings.set(SettingsFields.READER_MODE_FONT_SIZE.name, value)
-
-    fun getFeedListFontScaleFactor(): Int = settings.getInt(
-        SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name,
-        DEFAULT_FEED_LIST_FONT_SCALE_FACTOR,
-    )
-
-    fun setFeedListFontScaleFactor(value: Int) =
-        settings.set(SettingsFields.FEED_LIST_FONT_SCALE_FACTOR.name, value)
 
     internal fun getAutoDeletePeriod(): AutoDeletePeriod =
         settings.getString(SettingsFields.AUTO_DELETE_PERIOD.name, AutoDeletePeriod.DISABLED.name)
@@ -148,18 +110,6 @@ class SettingsRepository(
 
     internal fun setAutoDeletePeriod(period: AutoDeletePeriod) =
         settings.set(SettingsFields.AUTO_DELETE_PERIOD.name, period.name)
-
-    fun getHideImages(): Boolean =
-        settings.getBoolean(SettingsFields.HIDE_IMAGES.name, false)
-
-    fun setHideImages(value: Boolean) =
-        settings.set(SettingsFields.HIDE_IMAGES.name, value)
-
-    fun getHideDate(): Boolean =
-        settings.getBoolean(SettingsFields.HIDE_DATE.name, false)
-
-    fun setHideDate(value: Boolean) =
-        settings.set(SettingsFields.HIDE_DATE.name, value)
 
     fun getCrashReportingEnabled(): Boolean =
         settings.getBoolean(SettingsFields.CRASH_REPORTING_ENABLED.name, true)
@@ -216,61 +166,6 @@ class SettingsRepository(
     fun setLastReviewVersion(version: String) =
         settings.set(SettingsFields.LAST_REVIEW_VERSION.name, version)
 
-    fun getSwipeAction(direction: SwipeDirection): SwipeActionType {
-        val fieldName = when (direction) {
-            SwipeDirection.LEFT -> SettingsFields.LEFT_SWIPE_ACTION.name
-            SwipeDirection.RIGHT -> SettingsFields.RIGHT_SWIPE_ACTION.name
-        }
-        return settings.getString(fieldName, SwipeActionType.NONE.name)
-            .let { SwipeActionType.valueOf(it) }
-    }
-
-    fun setSwipeAction(direction: SwipeDirection, action: SwipeActionType) {
-        val fieldName = when (direction) {
-            SwipeDirection.LEFT -> SettingsFields.LEFT_SWIPE_ACTION.name
-            SwipeDirection.RIGHT -> SettingsFields.RIGHT_SWIPE_ACTION.name
-        }
-        settings[fieldName] = action.name
-
-        swipeActionsMutableFlow.update { currentSwipeActions ->
-            when (direction) {
-                SwipeDirection.LEFT -> currentSwipeActions.copy(leftSwipeAction = action)
-                SwipeDirection.RIGHT -> currentSwipeActions.copy(rightSwipeAction = action)
-            }
-        }
-    }
-
-    fun getDateFormat(): DateFormat =
-        settings.getString(SettingsFields.DATE_FORMAT.name, DateFormat.NORMAL.name)
-            .let { DateFormat.valueOf(it) }
-
-    fun setDateFormat(format: DateFormat) =
-        settings.set(SettingsFields.DATE_FORMAT.name, format.name)
-
-    fun getTimeFormat(): TimeFormat =
-        settings.getString(SettingsFields.TIME_FORMAT.name, TimeFormat.HOURS_24.name)
-            .let { TimeFormat.valueOf(it) }
-
-    fun setTimeFormat(format: TimeFormat) =
-        settings.set(SettingsFields.TIME_FORMAT.name, format.name)
-
-    fun getFeedOrder(): FeedOrder =
-        settings.getString(SettingsFields.FEED_ORDER.name, FeedOrder.NEWEST_FIRST.name)
-            .let { FeedOrder.valueOf(it) }
-
-    fun setFeedOrder(order: FeedOrder) {
-        settings[SettingsFields.FEED_ORDER.name] = order.name
-    }
-
-    fun getFeedLayout(): FeedLayout =
-        settings.getString(SettingsFields.FEED_LAYOUT.name, FeedLayout.LIST.name)
-            .let { FeedLayout.valueOf(it) }
-
-    fun setFeedLayout(feedLayout: FeedLayout) {
-        settings[SettingsFields.FEED_LAYOUT.name] = feedLayout.name
-        feedLayoutMutableFlow.update { feedLayout }
-    }
-
     fun getThemeMode(): ThemeMode =
         settings.getString(SettingsFields.THEME_MODE.name, ThemeMode.SYSTEM.name)
             .let { ThemeMode.valueOf(it) }
@@ -282,12 +177,10 @@ class SettingsRepository(
 
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
-        const val DEFAULT_FEED_LIST_FONT_SCALE_FACTOR = 0
     }
 }
 
 internal enum class SettingsFields {
-    FEED_ORDER,
     FAVOURITE_BROWSER_ID,
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,
@@ -295,24 +188,14 @@ internal enum class SettingsFields {
     SAVE_ITEM_CONTENT_ON_OPEN,
     PREFETCH_ARTICLE_CONTENT,
     IS_SYNC_UPLOAD_REQUIRED,
-    REMOVE_TITLE_FROM_DESCRIPTION,
-    HIDE_DESCRIPTION,
     READER_MODE_FONT_SIZE,
-    FEED_LIST_FONT_SCALE_FACTOR,
     AUTO_DELETE_PERIOD,
-    HIDE_IMAGES,
-    HIDE_DATE,
     CRASH_REPORTING_ENABLED,
     SYNC_PERIOD,
     FIRST_INSTALLATION_DATE,
     REVIEW_REQUEST_COUNT,
     LAST_REVIEW_REQUEST_DATE,
     LAST_REVIEW_VERSION,
-    LEFT_SWIPE_ACTION,
-    RIGHT_SWIPE_ACTION,
-    DATE_FORMAT,
-    TIME_FORMAT,
-    FEED_LAYOUT,
     THEME_MODE,
     REFRESH_FEEDS_ON_LAUNCH,
 }

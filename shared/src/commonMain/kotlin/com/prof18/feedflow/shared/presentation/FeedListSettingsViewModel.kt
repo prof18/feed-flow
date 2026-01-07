@@ -8,7 +8,7 @@ import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
-import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.presentation.model.FeedListSettingsState
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedListSettingsViewModel internal constructor(
-    private val settingsRepository: SettingsRepository,
+    private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
     private val fontSizeRepository: FeedFontSizeRepository,
     private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
@@ -34,17 +34,17 @@ class FeedListSettingsViewModel internal constructor(
     }
 
     private fun loadSettings() {
-        val isHideDescriptionEnabled = settingsRepository.getHideDescription()
-        val isHideImagesEnabled = settingsRepository.getHideImages()
-        val isHideDateEnabled = settingsRepository.getHideDate()
-        val dateFormat = settingsRepository.getDateFormat()
-        val timeFormat = settingsRepository.getTimeFormat()
-        val feedLayout = settingsRepository.getFeedLayout()
-        val fontScale = settingsRepository.getFeedListFontScaleFactor()
-        val leftSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.LEFT)
-        val rightSwipeAction = settingsRepository.getSwipeAction(SwipeDirection.RIGHT)
-        val isRemoveTitleFromDescriptionEnabled = settingsRepository.getRemoveTitleFromDescription()
-        val feedOrder = settingsRepository.getFeedOrder()
+        val isHideDescriptionEnabled = feedAppearanceSettingsRepository.getHideDescription()
+        val isHideImagesEnabled = feedAppearanceSettingsRepository.getHideImages()
+        val isHideDateEnabled = feedAppearanceSettingsRepository.getHideDate()
+        val dateFormat = feedAppearanceSettingsRepository.getDateFormat()
+        val timeFormat = feedAppearanceSettingsRepository.getTimeFormat()
+        val feedLayout = feedAppearanceSettingsRepository.getFeedLayout()
+        val fontScale = feedAppearanceSettingsRepository.getFeedListFontScaleFactor()
+        val leftSwipeAction = feedAppearanceSettingsRepository.getSwipeAction(SwipeDirection.LEFT)
+        val rightSwipeAction = feedAppearanceSettingsRepository.getSwipeAction(SwipeDirection.RIGHT)
+        val isRemoveTitleFromDescriptionEnabled = feedAppearanceSettingsRepository.getRemoveTitleFromDescription()
+        val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
 
         stateMutableFlow.update {
             FeedListSettingsState(
@@ -65,7 +65,7 @@ class FeedListSettingsViewModel internal constructor(
 
     fun updateHideDescription(value: Boolean) {
         viewModelScope.launch {
-            settingsRepository.setHideDescription(value)
+            feedAppearanceSettingsRepository.setHideDescription(value)
             stateMutableFlow.update {
                 it.copy(isHideDescriptionEnabled = value)
             }
@@ -75,7 +75,7 @@ class FeedListSettingsViewModel internal constructor(
 
     fun updateHideImages(value: Boolean) {
         viewModelScope.launch {
-            settingsRepository.setHideImages(value)
+            feedAppearanceSettingsRepository.setHideImages(value)
             stateMutableFlow.update {
                 it.copy(isHideImagesEnabled = value)
             }
@@ -85,7 +85,7 @@ class FeedListSettingsViewModel internal constructor(
 
     fun updateHideDate(value: Boolean) {
         viewModelScope.launch {
-            settingsRepository.setHideDate(value)
+            feedAppearanceSettingsRepository.setHideDate(value)
             stateMutableFlow.update {
                 it.copy(isHideDateEnabled = value)
             }
@@ -95,7 +95,7 @@ class FeedListSettingsViewModel internal constructor(
 
     fun updateDateFormat(format: DateFormat) {
         viewModelScope.launch {
-            settingsRepository.setDateFormat(format)
+            feedAppearanceSettingsRepository.setDateFormat(format)
             stateMutableFlow.update {
                 it.copy(dateFormat = format)
             }
@@ -105,7 +105,7 @@ class FeedListSettingsViewModel internal constructor(
 
     fun updateTimeFormat(format: TimeFormat) {
         viewModelScope.launch {
-            settingsRepository.setTimeFormat(format)
+            feedAppearanceSettingsRepository.setTimeFormat(format)
             stateMutableFlow.update {
                 it.copy(timeFormat = format)
             }
@@ -115,7 +115,7 @@ class FeedListSettingsViewModel internal constructor(
 
     fun updateFeedLayout(feedLayout: FeedLayout) {
         viewModelScope.launch {
-            settingsRepository.setFeedLayout(feedLayout)
+            feedAppearanceSettingsRepository.setFeedLayout(feedLayout)
             stateMutableFlow.update {
                 it.copy(feedLayout = feedLayout)
             }
@@ -133,7 +133,7 @@ class FeedListSettingsViewModel internal constructor(
 
     fun updateSwipeAction(direction: SwipeDirection, action: SwipeActionType) {
         viewModelScope.launch {
-            settingsRepository.setSwipeAction(direction, action)
+            feedAppearanceSettingsRepository.setSwipeAction(direction, action)
             stateMutableFlow.update {
                 when (direction) {
                     SwipeDirection.LEFT -> it.copy(leftSwipeActionType = action)
@@ -145,7 +145,7 @@ class FeedListSettingsViewModel internal constructor(
 
     fun updateRemoveTitleFromDescription(value: Boolean) {
         viewModelScope.launch {
-            settingsRepository.setRemoveTitleFromDescription(value)
+            feedAppearanceSettingsRepository.setRemoveTitleFromDescription(value)
             stateMutableFlow.update {
                 it.copy(isRemoveTitleFromDescriptionEnabled = value)
             }
@@ -154,7 +154,7 @@ class FeedListSettingsViewModel internal constructor(
 
     fun updateFeedOrder(feedOrder: com.prof18.feedflow.core.model.FeedOrder) {
         viewModelScope.launch {
-            settingsRepository.setFeedOrder(feedOrder)
+            feedAppearanceSettingsRepository.setFeedOrder(feedOrder)
             stateMutableFlow.update {
                 it.copy(feedOrder = feedOrder)
             }

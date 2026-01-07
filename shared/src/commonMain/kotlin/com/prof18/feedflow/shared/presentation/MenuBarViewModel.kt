@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 
 class MenuBarViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
+    private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
     private val feedStateRepository: FeedStateRepository,
     private val contentPrefetchRepository: ContentPrefetchRepository,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
@@ -40,7 +42,7 @@ class MenuBarViewModel internal constructor(
         val isRefreshFeedsOnLaunchEnabled = settingsRepository.getRefreshFeedsOnLaunch()
         val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
         val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
-        val feedOrder = settingsRepository.getFeedOrder()
+        val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
 
         stateMutableFlow.update {
             MenuBarSettingsState(
@@ -144,7 +146,7 @@ class MenuBarViewModel internal constructor(
 
     fun updateFeedOrder(feedOrder: FeedOrder) {
         viewModelScope.launch {
-            settingsRepository.setFeedOrder(feedOrder)
+            feedAppearanceSettingsRepository.setFeedOrder(feedOrder)
             stateMutableFlow.update {
                 it.copy(feedOrder = feedOrder)
             }

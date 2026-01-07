@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.core.model.TimeFormat
+import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFontSizeRepository
@@ -40,6 +41,7 @@ class SearchViewModel internal constructor(
     private val feedFontSizeRepository: FeedFontSizeRepository,
     private val feedStateRepository: FeedStateRepository,
     private val settingsRepository: SettingsRepository,
+    private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
 ) : ViewModel() {
 
     private val searchMutableState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState.EmptyState)
@@ -51,14 +53,15 @@ class SearchViewModel internal constructor(
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
     val errorState: SharedFlow<UIErrorState> = mutableUIErrorState.asSharedFlow()
 
-    private val isRemoveTitleFromDescriptionEnabled: Boolean = settingsRepository.getRemoveTitleFromDescription()
-    private val hideDate: Boolean = settingsRepository.getHideDate()
-    private val dateFormat: DateFormat = settingsRepository.getDateFormat()
-    private val timeFormat: TimeFormat = settingsRepository.getTimeFormat()
+    private val isRemoveTitleFromDescriptionEnabled: Boolean =
+        feedAppearanceSettingsRepository.getRemoveTitleFromDescription()
+    private val hideDate: Boolean = feedAppearanceSettingsRepository.getHideDate()
+    private val dateFormat: DateFormat = feedAppearanceSettingsRepository.getDateFormat()
+    private val timeFormat: TimeFormat = feedAppearanceSettingsRepository.getTimeFormat()
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 
-    private val feedLayout = settingsRepository.getFeedLayout()
+    private val feedLayout = feedAppearanceSettingsRepository.getFeedLayout()
 
     init {
         searchQueryMutableState

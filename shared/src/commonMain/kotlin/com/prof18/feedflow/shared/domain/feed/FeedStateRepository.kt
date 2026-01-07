@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.mappers.toFeedItem
 import com.prof18.feedflow.shared.presentation.model.DatabaseError
@@ -30,6 +31,7 @@ internal class FeedStateRepository(
     private val databaseHelper: DatabaseHelper,
     private val logger: Logger,
     private val settingsRepository: SettingsRepository,
+    private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
     private val dateFormatter: DateFormatter,
 ) {
     private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
@@ -50,7 +52,7 @@ internal class FeedStateRepository(
 
     suspend fun getFeeds() {
         try {
-            val feedOrder = settingsRepository.getFeedOrder()
+            val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
 
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
@@ -62,12 +64,12 @@ internal class FeedStateRepository(
                 )
             }
             currentPage = 1
-            val removeTitleFromDesc = settingsRepository.getRemoveTitleFromDescription()
-            val hideDesc = settingsRepository.getHideDescription()
-            val hideImages = settingsRepository.getHideImages()
-            val hideDate = settingsRepository.getHideDate()
-            val dateFormat = settingsRepository.getDateFormat()
-            val timeFormat = settingsRepository.getTimeFormat()
+            val removeTitleFromDesc = feedAppearanceSettingsRepository.getRemoveTitleFromDescription()
+            val hideDesc = feedAppearanceSettingsRepository.getHideDescription()
+            val hideImages = feedAppearanceSettingsRepository.getHideImages()
+            val hideDate = feedAppearanceSettingsRepository.getHideDate()
+            val dateFormat = feedAppearanceSettingsRepository.getDateFormat()
+            val timeFormat = feedAppearanceSettingsRepository.getTimeFormat()
 
             if (feeds.isNotEmpty()) {
                 updateMutableState.update { FinishedFeedUpdateStatus }
@@ -97,7 +99,7 @@ internal class FeedStateRepository(
             return
         }
         try {
-            val feedOrder = settingsRepository.getFeedOrder()
+            val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
             val feeds = executeWithRetry {
                 databaseHelper.getFeedItems(
                     feedFilter = currentFeedFilterMutableState.value,
@@ -108,12 +110,12 @@ internal class FeedStateRepository(
                 )
             }
             currentPage += 1
-            val removeTitleFromDesc = settingsRepository.getRemoveTitleFromDescription()
-            val hideDesc = settingsRepository.getHideDescription()
-            val hideImages = settingsRepository.getHideImages()
-            val hideDate = settingsRepository.getHideDate()
-            val dateFormat = settingsRepository.getDateFormat()
-            val timeFormat = settingsRepository.getTimeFormat()
+            val removeTitleFromDesc = feedAppearanceSettingsRepository.getRemoveTitleFromDescription()
+            val hideDesc = feedAppearanceSettingsRepository.getHideDescription()
+            val hideImages = feedAppearanceSettingsRepository.getHideImages()
+            val hideDate = feedAppearanceSettingsRepository.getHideDate()
+            val dateFormat = feedAppearanceSettingsRepository.getDateFormat()
+            val timeFormat = feedAppearanceSettingsRepository.getTimeFormat()
             mutableFeedState.update { currentItems ->
                 val newList = feeds.map {
                     it.toFeedItem(

@@ -16,6 +16,7 @@ import com.prof18.feedflow.feedsync.feedbin.di.getFeedbinModule
 import com.prof18.feedflow.feedsync.googledrive.di.googleDriveModule
 import com.prof18.feedflow.feedsync.greader.di.getGReaderModule
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
+import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.ReviewRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DateFormatterImpl
@@ -162,6 +163,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedActionsRepository = get(),
             feedSourcesRepository = get(),
             settingsRepository = get(),
+            feedAppearanceSettingsRepository = get(),
             feedSyncRepository = get(),
             feedFontSizeRepository = get(),
             feedCategoryRepository = get(),
@@ -195,6 +197,12 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     single {
         SettingsRepository(
+            settings = get(),
+        )
+    }
+
+    single {
+        FeedAppearanceSettingsRepository(
             settings = get(),
         )
     }
@@ -239,6 +247,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         MenuBarViewModel(
             settingsRepository = get(),
+            feedAppearanceSettingsRepository = get(),
             feedStateRepository = get(),
             contentPrefetchRepository = get(),
             feedItemContentFileHandler = get(),
@@ -247,7 +256,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     viewModel {
         FeedListSettingsViewModel(
-            settingsRepository = get(),
+            feedAppearanceSettingsRepository = get(),
             fontSizeRepository = get(),
             feedStateRepository = get(),
         )
@@ -283,6 +292,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedActionsRepository = get(),
             dateFormatter = get(),
             settingsRepository = get(),
+            feedAppearanceSettingsRepository = get(),
             feedFontSizeRepository = get(),
             feedStateRepository = get(),
         )
@@ -466,6 +476,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         FeedStateRepository(
             databaseHelper = get(),
             settingsRepository = get(),
+            feedAppearanceSettingsRepository = get(),
             dateFormatter = get(),
             logger = getWith("FeedStateRepository"),
         )
@@ -493,7 +504,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         FeedWidgetRepository(
             databaseHelper = get(),
             dateFormatter = get(),
-            settingsRepository = get(),
+            feedAppearanceSettingsRepository = get(),
         )
     }
 

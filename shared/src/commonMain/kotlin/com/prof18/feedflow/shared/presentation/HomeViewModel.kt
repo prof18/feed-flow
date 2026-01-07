@@ -17,6 +17,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
@@ -50,6 +51,7 @@ class HomeViewModel internal constructor(
     private val feedActionsRepository: FeedActionsRepository,
     private val feedSourcesRepository: FeedSourcesRepository,
     private val settingsRepository: SettingsRepository,
+    private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
     private val feedSyncRepository: FeedSyncRepository,
     private val feedFontSizeRepository: FeedFontSizeRepository,
     private val feedCategoryRepository: FeedCategoryRepository,
@@ -80,8 +82,8 @@ class HomeViewModel internal constructor(
 
     val currentFeedFilter = feedStateRepository.currentFeedFilter
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
-    val swipeActions: StateFlow<SwipeActions> = settingsRepository.swipeActions
-    val feedLayout: StateFlow<FeedLayout> = settingsRepository.feedLayout
+    val swipeActions: StateFlow<SwipeActions> = feedAppearanceSettingsRepository.swipeActions
+    val feedLayout: StateFlow<FeedLayout> = feedAppearanceSettingsRepository.feedLayout
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 

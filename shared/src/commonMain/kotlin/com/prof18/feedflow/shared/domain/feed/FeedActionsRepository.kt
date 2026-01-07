@@ -237,11 +237,9 @@ internal class FeedActionsRepository(
     fun search(
         query: String,
         feedFilter: FeedFilter? = null,
-        showReadItems: Boolean = true,
     ): Flow<List<Search>> =
         databaseHelper.search(
             searchQuery = query,
             feedFilter = feedFilter,
-            showReadItems = showReadItems,
         )
 }

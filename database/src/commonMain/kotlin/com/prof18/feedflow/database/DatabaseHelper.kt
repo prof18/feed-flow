@@ -496,7 +496,6 @@ class DatabaseHelper(
     fun search(
         searchQuery: String,
         feedFilter: FeedFilter? = null,
-        showReadItems: Boolean = true,
     ): Flow<List<Search>> =
         dbRef.feedSearchQueries
             .search(
@@ -504,7 +503,7 @@ class DatabaseHelper(
                 feedSourceId = feedFilter?.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter?.getCategoryId(),
                 isUncategorized = feedFilter?.getIsUncategorized(),
-                isRead = feedFilter?.getIsReadFlag(showReadItems),
+                isRead = feedFilter?.getIsReadFlag(showReadItems = true),
                 isBookmarked = feedFilter?.getBookmarkFlag(),
                 isHidden = feedFilter?.getIsHiddenFromTimelineFlag(),
             )

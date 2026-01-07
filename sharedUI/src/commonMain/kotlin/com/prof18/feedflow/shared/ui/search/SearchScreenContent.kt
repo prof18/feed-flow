@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
@@ -67,6 +68,7 @@ fun SearchScreenContent(
     searchState: SearchState,
     searchQuery: String,
     searchFilter: SearchFilter,
+    currentFeedFilter: FeedFilter?,
     feedFontSizes: FeedFontSizes,
     shareMenuLabel: String,
     shareCommentsMenuLabel: String,
@@ -125,6 +127,7 @@ fun SearchScreenContent(
 
             SearchFilterChipsRow(
                 selectedFilter = searchFilter,
+                currentFeedFilter = currentFeedFilter,
                 onFilterSelected = onSearchFilterSelected,
             )
 
@@ -254,16 +257,23 @@ private fun SearchBar(
 @Composable
 private fun SearchFilterChipsRow(
     selectedFilter: SearchFilter,
+    currentFeedFilter: FeedFilter?,
     onFilterSelected: (SearchFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val strings = LocalFeedFlowStrings.current
-    val filters = remember {
-        listOf(
-            SearchFilter.All,
-            SearchFilter.Read,
-            SearchFilter.Bookmarks,
-        )
+    val currentFeedLabel = remember(currentFeedFilter, strings) {
+        currentFeedFilter?.getLabel(strings)
+    }
+    val filters = remember(currentFeedLabel) {
+        buildList {
+            if (currentFeedLabel != null) {
+                add(SearchFilter.CurrentFeed)
+            }
+            add(SearchFilter.All)
+            add(SearchFilter.Read)
+            add(SearchFilter.Bookmarks)
+        }
     }
 
     LazyRow(
@@ -276,7 +286,7 @@ private fun SearchFilterChipsRow(
             key = { it.name },
         ) { filter ->
             SearchFilterChip(
-                label = filter.getLabel(strings),
+                label = filter.getLabel(strings, currentFeedLabel),
                 isSelected = filter == selectedFilter,
                 onClick = { onFilterSelected(filter) },
             )
@@ -323,10 +333,22 @@ private fun SearchFilterChip(
     }
 }
 
-private fun SearchFilter.getLabel(strings: FeedFlowStrings): String {
+private fun SearchFilter.getLabel(strings: FeedFlowStrings, currentFeedLabel: String?): String {
     return when (this) {
+        SearchFilter.CurrentFeed -> currentFeedLabel ?: strings.searchFilterAll
         SearchFilter.All -> strings.searchFilterAll
         SearchFilter.Read -> strings.searchFilterRead
         SearchFilter.Bookmarks -> strings.searchFilterBookmarks
+    }
+}
+
+private fun FeedFilter.getLabel(strings: FeedFlowStrings): String {
+    return when (this) {
+        is FeedFilter.Category -> feedCategory.title
+        is FeedFilter.Source -> feedSource.title
+        FeedFilter.Uncategorized -> strings.noCategory
+        FeedFilter.Timeline -> strings.searchFilterAll
+        FeedFilter.Read -> strings.searchFilterRead
+        FeedFilter.Bookmarks -> strings.searchFilterBookmarks
     }
 }

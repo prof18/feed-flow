@@ -42,6 +42,7 @@ internal class SearchScreen : Screen {
         val state: SearchState by viewModel.searchState.collectAsState()
         val searchQuery by viewModel.searchQueryState.collectAsState()
         val searchFilter by viewModel.searchFilterState.collectAsState()
+        val currentFeedFilter by viewModel.searchFeedFilterState.collectAsState()
         val feedFontSizes by viewModel.feedFontSizeState.collectAsState()
         val strings = LocalFeedFlowStrings.current
         val uriHandler = LocalUriHandler.current
@@ -86,6 +87,7 @@ internal class SearchScreen : Screen {
             searchState = state,
             searchQuery = searchQuery,
             searchFilter = searchFilter,
+            currentFeedFilter = currentFeedFilter,
             feedFontSizes = feedFontSizes,
             shareMenuLabel = strings.menuCopyLink,
             shareCommentsMenuLabel = strings.menuCopyLinkComments,
@@ -158,6 +160,7 @@ private fun Preview() {
             onCommentClick = {},
             onShareClick = { _ -> },
             onOpenFeedSettings = {},
+            currentFeedFilter = null,
         )
     }
 }

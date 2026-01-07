@@ -291,7 +291,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         SearchViewModel(
             feedActionsRepository = get(),
             dateFormatter = get(),
-            settingsRepository = get(),
             feedAppearanceSettingsRepository = get(),
             feedFontSizeRepository = get(),
             feedStateRepository = get(),

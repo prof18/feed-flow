@@ -495,18 +495,18 @@ class DatabaseHelper(
 
     fun search(
         searchQuery: String,
-        feedFilter: FeedFilter = FeedFilter.Timeline,
+        feedFilter: FeedFilter? = null,
         showReadItems: Boolean = true,
     ): Flow<List<Search>> =
         dbRef.feedSearchQueries
             .search(
                 query = searchQuery,
-                feedSourceId = feedFilter.getFeedSourceId(),
-                feedSourceCategoryId = feedFilter.getCategoryId(),
-                isUncategorized = feedFilter.getIsUncategorized(),
-                isRead = feedFilter.getIsReadFlag(showReadItems),
-                isBookmarked = feedFilter.getBookmarkFlag(),
-                isHidden = feedFilter.getIsHiddenFromTimelineFlag(),
+                feedSourceId = feedFilter?.getFeedSourceId(),
+                feedSourceCategoryId = feedFilter?.getCategoryId(),
+                isUncategorized = feedFilter?.getIsUncategorized(),
+                isRead = feedFilter?.getIsReadFlag(showReadItems),
+                isBookmarked = feedFilter?.getBookmarkFlag(),
+                isHidden = feedFilter?.getIsHiddenFromTimelineFlag(),
             )
             .asFlow()
             .mapToList(backgroundDispatcher)

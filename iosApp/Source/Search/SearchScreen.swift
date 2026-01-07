@@ -4,15 +4,17 @@ import SwiftUI
 struct SearchScreen: View {
     @Environment(AppState.self)
     private var appState
-    
+
     @StateObject private var vmStoreOwner = VMStoreOwner<SearchViewModel>(Deps.shared.getSearchViewModel())
-    
+
     @State var searchText = ""
-    
+
     @State var searchState: SearchState = .EmptyState()
-    
+
+    @State var searchFilter: SearchFilter = .timeline
+
     @State var feedFontSizes: FeedFontSizes = defaultFeedFontSizes()
-    
+
     let readerModeViewModel: ReaderModeViewModel
     
     var body: some View {
@@ -21,8 +23,12 @@ struct SearchScreen: View {
         SearchScreenContent(
             searchText: $searchText,
             searchState: $searchState,
+            searchFilter: $searchFilter,
             feedFontSizes: $feedFontSizes,
             readerModeViewModel: readerModeViewModel,
+            onSearchFilterSelected: { filter in
+                vmStoreOwner.instance.updateSearchFilter(filter: filter)
+            },
             onBookmarkClick: { feedItemId, isBookmarked in
                 vmStoreOwner.instance.onBookmarkClick(feedItemId: feedItemId, bookmarked: isBookmarked)
             },
@@ -53,6 +59,11 @@ struct SearchScreen: View {
         .task {
             for await state in vmStoreOwner.instance.feedFontSizeState {
                 self.feedFontSizes = state
+            }
+        }
+        .task {
+            for await state in vmStoreOwner.instance.searchFilterState {
+                self.searchFilter = state
             }
         }
         .task {

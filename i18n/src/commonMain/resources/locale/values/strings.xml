@@ -114,6 +114,10 @@
     <string name="search_placeholder">Search…</string>
     <string name="search_hint_title">Start typing…</string>
     <string name="search_hint_subtitle">the results will appear automatically</string>
+    <string name="search_filter_all">All</string>
+    <string name="search_filter_timeline">Timeline</string>
+    <string name="search_filter_read">Read</string>
+    <string name="search_filter_bookmarks">Bookmarks</string>
     <string name="link_copied_success">Link successfully copied!</string>
     <string name="reader_mode_warning">ℹ The reader mode tries to get the content of the article. There might be some glitches or unwanted characters.</string>
     <string name="settings_title_feed">Feed</string>

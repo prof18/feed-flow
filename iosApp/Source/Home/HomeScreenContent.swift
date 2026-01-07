@@ -96,6 +96,33 @@ struct HomeContent: View {
         .sheet(item: $sheetToShow) { item in
             sheetContent(item)
         }
+        .onReceive(NotificationCenter.default.publisher(for: .feedFlowRefreshFeeds)) { _ in
+            onRefresh()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .feedFlowForceRefreshFeeds)) { _ in
+            toggleListScroll.toggle()
+            onForceRefreshClick()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .feedFlowMarkAllRead)) { _ in
+            showMarkAllReadDialog = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .feedFlowClearOldArticles)) { _ in
+            showClearOldArticlesDialog = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .feedFlowAddFeed)) { _ in
+            sheetToShow = .addFeed
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .feedFlowEditCurrentFeed)) { _ in
+            if let source = (currentFeedFilter as? FeedFilter.Source)?.feedSource {
+                sheetToShow = .editFeed(source)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .feedFlowImportExport)) { _ in
+            sheetToShow = .importExport
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .feedFlowOpenSettings)) { _ in
+            sheetToShow = .settings
+        }
     }
 }
 

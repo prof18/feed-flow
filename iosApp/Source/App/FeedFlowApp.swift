@@ -105,6 +105,9 @@ struct FeedFlowApp: App {
                     }
                 }
         }
+        .commands {
+            appMenu
+        }
     }
 
     private func handleFeedFlowURL(_ url: URL) {

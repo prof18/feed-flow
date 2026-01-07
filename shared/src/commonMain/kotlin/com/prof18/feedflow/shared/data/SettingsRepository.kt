@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlin.time.Clock
 
 class SettingsRepository(
     private val settings: Settings,
@@ -132,40 +131,6 @@ class SettingsRepository(
     internal fun setRefreshFeedsOnLaunch(value: Boolean) =
         settings.set(SettingsFields.REFRESH_FEEDS_ON_LAUNCH.name, value)
 
-    fun getFirstInstallationDate(): Long {
-        val currentValue = settings.getLongOrNull(SettingsFields.FIRST_INSTALLATION_DATE.name)
-        return if (currentValue == null) {
-            val now = Clock.System.now().toEpochMilliseconds()
-            setFirstInstallationDate(now)
-            now
-        } else {
-            currentValue
-        }
-    }
-
-    private fun setFirstInstallationDate(timestamp: Long) =
-        settings.set(SettingsFields.FIRST_INSTALLATION_DATE.name, timestamp)
-
-    fun getReviewRequestCount(): Int =
-        settings.getInt(SettingsFields.REVIEW_REQUEST_COUNT.name, 0)
-
-    fun incrementReviewRequestCount() {
-        val currentCount = getReviewRequestCount()
-        settings[SettingsFields.REVIEW_REQUEST_COUNT.name] = currentCount + 1
-    }
-
-    fun getLastReviewRequestDate(): Long =
-        settings.getLong(SettingsFields.LAST_REVIEW_REQUEST_DATE.name, 0L)
-
-    fun setLastReviewRequestDate(timestamp: Long) =
-        settings.set(SettingsFields.LAST_REVIEW_REQUEST_DATE.name, timestamp)
-
-    fun getLastReviewVersion(): String? =
-        settings.getStringOrNull(SettingsFields.LAST_REVIEW_VERSION.name)
-
-    fun setLastReviewVersion(version: String) =
-        settings.set(SettingsFields.LAST_REVIEW_VERSION.name, version)
-
     fun getThemeMode(): ThemeMode =
         settings.getString(SettingsFields.THEME_MODE.name, ThemeMode.SYSTEM.name)
             .let { ThemeMode.valueOf(it) }
@@ -180,7 +145,7 @@ class SettingsRepository(
     }
 }
 
-internal enum class SettingsFields {
+private enum class SettingsFields {
     FAVOURITE_BROWSER_ID,
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,
@@ -192,10 +157,6 @@ internal enum class SettingsFields {
     AUTO_DELETE_PERIOD,
     CRASH_REPORTING_ENABLED,
     SYNC_PERIOD,
-    FIRST_INSTALLATION_DATE,
-    REVIEW_REQUEST_COUNT,
-    LAST_REVIEW_REQUEST_DATE,
-    LAST_REVIEW_VERSION,
     THEME_MODE,
     REFRESH_FEEDS_ON_LAUNCH,
 }

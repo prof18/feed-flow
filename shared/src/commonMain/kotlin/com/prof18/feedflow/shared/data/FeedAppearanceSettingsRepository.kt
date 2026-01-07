@@ -121,7 +121,7 @@ class FeedAppearanceSettingsRepository(
     }
 }
 
-internal enum class FeedAppearanceSettingsFields {
+private enum class FeedAppearanceSettingsFields {
     FEED_ORDER,
     REMOVE_TITLE_FROM_DESCRIPTION,
     HIDE_DESCRIPTION,

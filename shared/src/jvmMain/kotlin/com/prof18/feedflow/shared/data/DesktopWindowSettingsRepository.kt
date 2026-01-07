@@ -42,7 +42,7 @@ class DesktopWindowSettingsRepository(
     }
 }
 
-internal enum class DesktopWindowSettingsFields {
+private enum class DesktopWindowSettingsFields {
     DESKTOP_WINDOW_WIDTH_DP,
     DESKTOP_WINDOW_HEIGHT_DP,
     DESKTOP_WINDOW_X_POSITION_DP,

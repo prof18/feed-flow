@@ -209,7 +209,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     factory {
         ReviewRepository(
-            settingsRepository = get(),
+            settings = get(),
             databaseHelper = get(),
             appConfig = appConfig,
         )

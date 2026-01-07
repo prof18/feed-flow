@@ -83,7 +83,7 @@ class WidgetSettingsRepository(
     }
 }
 
-internal enum class WidgetSettingsFields {
+private enum class WidgetSettingsFields {
     FEED_WIDGET_LAYOUT,
     WIDGET_SHOW_HEADER,
     WIDGET_FONT_SCALE_FACTOR,

@@ -63,7 +63,6 @@ class SearchViewModel internal constructor(
     private val hideDate: Boolean = feedAppearanceSettingsRepository.getHideDate()
     private val dateFormat: DateFormat = feedAppearanceSettingsRepository.getDateFormat()
     private val timeFormat: TimeFormat = feedAppearanceSettingsRepository.getTimeFormat()
-
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 
     private val feedLayout = feedAppearanceSettingsRepository.getFeedLayout()
@@ -72,8 +71,7 @@ class SearchViewModel internal constructor(
         return when (feedStateRepository.getCurrentFeedFilter()) {
             is FeedFilter.Bookmarks -> SearchFilter.Bookmarks
             is FeedFilter.Read -> SearchFilter.Read
-            is FeedFilter.Timeline -> SearchFilter.Timeline
-            else -> SearchFilter.Timeline
+            else -> SearchFilter.All
         }
     }
 
@@ -194,7 +192,6 @@ class SearchViewModel internal constructor(
     private fun search(query: String) {
         val currentSearchFilter = searchFilterMutableState.value
         val feedFilter = currentSearchFilter.toFeedFilter()
-
         feedActionsRepository
             .search(
                 query = query,
@@ -229,7 +226,6 @@ class SearchViewModel internal constructor(
     private fun SearchFilter.toFeedFilter(): FeedFilter? {
         return when (this) {
             SearchFilter.All -> null
-            SearchFilter.Timeline -> FeedFilter.Timeline
             SearchFilter.Read -> FeedFilter.Read
             SearchFilter.Bookmarks -> FeedFilter.Bookmarks
         }

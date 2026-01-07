@@ -18,10 +18,10 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.desktop.BrowserManager
-import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
+import com.prof18.feedflow.desktop.screenViewModel
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.SearchViewModel
@@ -37,7 +37,7 @@ internal class SearchScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val browserManager = DI.koin.get<BrowserManager>()
-        val viewModel = desktopViewModel { DI.koin.get<SearchViewModel>() }
+        val viewModel = screenViewModel(this@SearchScreen) { DI.koin.get<SearchViewModel>() }
 
         val state: SearchState by viewModel.searchState.collectAsState()
         val searchQuery by viewModel.searchQueryState.collectAsState()
@@ -143,7 +143,7 @@ private fun Preview() {
         SearchScreenContent(
             searchState = SearchState.EmptyState,
             searchQuery = "",
-            searchFilter = SearchFilter.Timeline,
+            searchFilter = SearchFilter.All,
             feedFontSizes = FeedFontSizes(),
             shareMenuLabel = "Share",
             shareCommentsMenuLabel = "Share comments",

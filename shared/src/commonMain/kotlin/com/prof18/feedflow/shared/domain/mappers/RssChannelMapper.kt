@@ -32,7 +32,7 @@ internal class RssChannelMapper(
                 dateFormatter.getDateMillisFromString(it)
             } ?: dateFormatter.currentTimeMillis()
 
-            // Normalize future dates to current time to avoid articles with incorrect
+            // Normalize future dates to the current time to avoid articles with incorrect
             // future dates always appearing at the top of the feed list
             val currentTimeMillis = dateFormatter.currentTimeMillis()
             val dateMillis = if (parsedDateMillis > currentTimeMillis) {

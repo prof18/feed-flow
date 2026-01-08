@@ -218,6 +218,10 @@ class MainActivity : BaseThemeActivity() {
                         action = Intent.ACTION_VIEW
                         uriPattern = "feedflow://feedsourcefilter/{feedSourceId}"
                     },
+                    navDeepLink {
+                        action = Intent.ACTION_VIEW
+                        uriPattern = "feedflow://category/{categoryId}"
+                    },
                 ),
             ) { backStackEntry ->
                 val route = backStackEntry.toRoute<Home>()
@@ -230,6 +234,12 @@ class MainActivity : BaseThemeActivity() {
                         val feedId: String? = route.feedSourceId
                         if (!feedId.isNullOrEmpty()) {
                             homeViewModel.updateFeedSourceFilter(feedId)
+                            savedStateHandle["deepLinkConsumed"] = true
+                        }
+
+                        val categoryId: String? = route.categoryId
+                        if (!categoryId.isNullOrEmpty()) {
+                            homeViewModel.updateCategoryFilter(categoryId)
                             savedStateHandle["deepLinkConsumed"] = true
                         }
                     }

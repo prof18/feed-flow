@@ -115,7 +115,10 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                         )
                     }
                     single<Notifier> {
-                        AndroidNotifier(context = androidContext())
+                        AndroidNotifier(
+                            context = androidContext(),
+                            settingsRepository = get(),
+                        )
                     }
                 },
             ),

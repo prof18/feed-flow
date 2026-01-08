@@ -342,4 +342,11 @@
     <string name="dropbox_auth_code_expired">The authentication code is not valid anymore. Please try again.</string>
     <string name="database_error_reset">We had trouble loading your data and had to start fresh. Sorry about that.</string>
     <string name="google_drive_auth_retry">You need to re-authenticate to continue using Google Drive sync. Go to Accounts and unlink and link again.</string>
+    <string name="notification_category_body">You have new articles in "%s"</string>
+    <string name="notification_grouped_body">You have new articles ready to be read!</string>
+    <string name="settings_notification_mode">Notification grouping</string>
+    <string name="settings_notification_mode_desc">Group notifications by feed, category, or show one combined notification</string>
+    <string name="settings_notification_mode_feed_source">By feed</string>
+    <string name="settings_notification_mode_category">By category</string>
+    <string name="settings_notification_mode_grouped">All combined</string>
 </resources>

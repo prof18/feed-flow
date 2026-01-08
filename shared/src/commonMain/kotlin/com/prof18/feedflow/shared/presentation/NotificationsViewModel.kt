@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.FeedSourceNotificationPreference
+import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.NotificationSettingState
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -25,6 +26,7 @@ class NotificationsViewModel internal constructor(
         NotificationSettingState(
             feedSources = persistentListOf<FeedSourceNotificationPreference>().toImmutableList(),
             isEnabledForAll = false,
+            notificationMode = NotificationMode.FEED_SOURCE,
         ),
     )
     val notificationSettingState = notificationSettingsMutableStateFlow.asStateFlow()
@@ -48,6 +50,7 @@ class NotificationsViewModel internal constructor(
                         } else {
                             feedSources.all { it.isNotificationEnabled }
                         },
+                        notificationMode = settingsRepository.getNotificationMode(),
                     )
                 }
             }
@@ -89,6 +92,17 @@ class NotificationsViewModel internal constructor(
     fun updateSyncPeriod(period: SyncPeriod) {
         viewModelScope.launch {
             settingsRepository.setSyncPeriod(period)
+        }
+    }
+
+    fun updateNotificationMode(mode: NotificationMode) {
+        viewModelScope.launch {
+            settingsRepository.setNotificationMode(mode)
+            notificationSettingsMutableStateFlow.update { oldValue ->
+                oldValue.copy(
+                    notificationMode = mode,
+                )
+            }
         }
     }
 }

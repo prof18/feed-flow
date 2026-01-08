@@ -288,10 +288,13 @@ LIMIT :pageSize;
 
 selectFeedSourceToNotify:
 SELECT feed_source.title AS feed_source_title,
-       feed_source.url_hash AS feed_source_id
+       feed_source.url_hash AS feed_source_id,
+       feed_source_category.id AS feed_source_category_id,
+       feed_source_category.title AS feed_source_category_title
 FROM feed_item
 INNER JOIN feed_source ON feed_item.feed_source_id == feed_source.url_hash
 LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
+LEFT JOIN feed_source_category ON feed_source.category_id = feed_source_category.id
 WHERE feed_source_preferences.notifications_enabled = 1
 AND feed_item.notification_sent = 0
 AND is_blocked = 0

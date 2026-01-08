@@ -7,6 +7,7 @@ import kotlinx.collections.immutable.ImmutableList
 data class NotificationSettingState(
     val feedSources: ImmutableList<FeedSourceNotificationPreference>,
     val isEnabledForAll: Boolean,
+    val notificationMode: NotificationMode,
 )
 
 data class FeedSourceNotificationPreference(

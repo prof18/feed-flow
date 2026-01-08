@@ -19,16 +19,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.Sync
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -46,7 +50,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.android.BuildConfig
 import com.prof18.feedflow.android.settings.components.SyncPeriodDialog
+import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.NotificationSettingState
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
@@ -81,6 +87,12 @@ internal fun NotificationsSettingsScreen(
         onFeedSourceNotificationsToggle = { feedSourceId, status ->
             viewModel.updateNotificationStatus(status, feedSourceId)
         },
+        onNotificationModeSelected = { mode ->
+            viewModel.updateNotificationMode(mode)
+        },
+        onTriggerManualSync = {
+            feedDownloadWorkerEnqueuer.triggerManualSync()
+        },
     )
 }
 
@@ -92,6 +104,8 @@ private fun NotificationSettingsScreenContent(
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onAllNotificationsToggle: (Boolean) -> Unit,
     onFeedSourceNotificationsToggle: (feedSourceId: String, status: Boolean) -> Unit,
+    onNotificationModeSelected: (NotificationMode) -> Unit,
+    onTriggerManualSync: () -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
 
@@ -126,7 +140,7 @@ private fun NotificationSettingsScreenContent(
                         onClick = onNavigateBack,
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            imageVector = Icons.Default.ArrowBack,
                             contentDescription = null,
                         )
                     }
@@ -190,6 +204,23 @@ private fun NotificationSettingsScreenContent(
                     SyncPeriodSelector(
                         currentPeriod = syncPeriodState,
                         onPeriodSelected = onSyncPeriodSelected,
+                    )
+
+                    if (BuildConfig.DEBUG) {
+                        Button(
+                            onClick = onTriggerManualSync,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = Spacing.regular)
+                                .padding(vertical = Spacing.xsmall),
+                        ) {
+                            Text("Test Notifications Now (Debug)")
+                        }
+                    }
+
+                    NotificationModeSelector(
+                        currentMode = notificationState.notificationMode,
+                        onModeSelected = onNotificationModeSelected,
                     )
 
                     Spacer(modifier = Modifier.height(Spacing.xsmall))
@@ -347,4 +378,108 @@ private fun openAppSettings(context: Context) {
         putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
         context.startActivity(this)
     }
+}
+
+@Composable
+private fun NotificationModeSelector(
+    currentMode: NotificationMode,
+    onModeSelected: (NotificationMode) -> Unit,
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val strings = LocalFeedFlowStrings.current
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable { showDialog = true }
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xsmall)
+            .padding(horizontal = Spacing.regular),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
+    ) {
+        Icon(
+            imageVector = Icons.Default.Notifications,
+            contentDescription = null,
+        )
+
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = strings.settingsNotificationMode,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = when (currentMode) {
+                    NotificationMode.FEED_SOURCE -> strings.settingsNotificationModeFeedSource
+                    NotificationMode.CATEGORY -> strings.settingsNotificationModeCategory
+                    NotificationMode.GROUPED -> strings.settingsNotificationModeGrouped
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+
+    if (showDialog) {
+        NotificationModeDialog(
+            currentMode = currentMode,
+            onModeSelected = onModeSelected,
+            dismissDialog = { showDialog = false },
+        )
+    }
+}
+
+@Composable
+private fun NotificationModeDialog(
+    currentMode: NotificationMode,
+    onModeSelected: (NotificationMode) -> Unit,
+    dismissDialog: () -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+
+    AlertDialog(
+        onDismissRequest = dismissDialog,
+        title = {
+            Text(text = strings.settingsNotificationMode)
+        },
+        text = {
+            Column {
+                Text(
+                    text = strings.settingsNotificationModeDesc,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = Spacing.regular),
+                )
+
+                NotificationMode.entries.forEach { mode ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onModeSelected(mode)
+                                dismissDialog()
+                            }
+                            .padding(vertical = Spacing.small),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RadioButton(
+                            selected = currentMode == mode,
+                            onClick = null,
+                        )
+                        Spacer(modifier = Modifier.width(Spacing.small))
+                        Text(
+                            text = when (mode) {
+                                NotificationMode.FEED_SOURCE -> strings.settingsNotificationModeFeedSource
+                                NotificationMode.CATEGORY -> strings.settingsNotificationModeCategory
+                                NotificationMode.GROUPED -> strings.settingsNotificationModeGrouped
+                            },
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {},
+    )
 }

@@ -33,7 +33,10 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "mcp__XcodeBuildMCP__session-set-defaults",
       "mcp__XcodeBuildMCP__build_sim",
-      "mcp__XcodeBuildMCP__build_run_sim"
+      "mcp__XcodeBuildMCP__build_run_sim",
+      "Bash(adb install:*)",
+      "Bash(adb logcat:*)",
+      "Bash(adb shell am:*)"
     ],
     "deny": []
   }

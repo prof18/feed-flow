@@ -10,6 +10,9 @@ VALUES (?,?);
 getCategoryByName:
 SELECT * FROM feed_source_category WHERE title = ?;
 
+selectById:
+SELECT * FROM feed_source_category WHERE id = ?;
+
 selectAll:
 SELECT * FROM feed_source_category
 ORDER BY title COLLATE NOCASE ASC;

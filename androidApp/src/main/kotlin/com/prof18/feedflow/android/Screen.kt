@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Home(
     val feedSourceId: String? = null,
+    val categoryId: String? = null,
 )
 
 @Serializable

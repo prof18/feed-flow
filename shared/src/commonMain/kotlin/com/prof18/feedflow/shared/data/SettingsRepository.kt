@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.data
 
 import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
@@ -140,6 +141,13 @@ class SettingsRepository(
         themeModeMutableFlow.update { mode }
     }
 
+    fun getNotificationMode(): NotificationMode =
+        settings.getString(SettingsFields.NOTIFICATION_MODE.name, NotificationMode.FEED_SOURCE.name)
+            .let { NotificationMode.valueOf(it) }
+
+    fun setNotificationMode(mode: NotificationMode) =
+        settings.set(SettingsFields.NOTIFICATION_MODE.name, mode.name)
+
     private companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
     }
@@ -159,4 +167,5 @@ private enum class SettingsFields {
     SYNC_PERIOD,
     THEME_MODE,
     REFRESH_FEEDS_ON_LAUNCH,
+    NOTIFICATION_MODE,
 }

@@ -434,6 +434,18 @@ class DatabaseHelper(
                 }
         }
 
+    suspend fun getFeedSourceCategory(categoryId: String): FeedSourceCategory? =
+        withContext(backgroundDispatcher) {
+            dbRef.feedSourceCategoryQueries.selectById(categoryId)
+                .executeAsOneOrNull()
+                ?.let { category ->
+                    FeedSourceCategory(
+                        id = category.id,
+                        title = category.title,
+                    )
+                }
+        }
+
     fun getUnreadFeedCountFlow(feedFilter: FeedFilter): Flow<Long> =
         dbRef.feedItemQueries
             .countUnreadFeeds(
@@ -768,6 +780,8 @@ class DatabaseHelper(
                 FeedSourceToNotify(
                     feedSourceId = item.feed_source_id,
                     feedSourceTitle = item.feed_source_title,
+                    categoryId = item.feed_source_category_id,
+                    categoryTitle = item.feed_source_category_title,
                 )
             }
     }

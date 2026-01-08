@@ -300,6 +300,13 @@ class HomeViewModel internal constructor(
         }
     }
 
+    fun updateCategoryFilter(categoryId: String) {
+        viewModelScope.launch {
+            feedStateRepository.updateCategoryFilter(categoryId)
+            lastUpdateIndex = 0
+        }
+    }
+
     fun onFeedFilterSelected(selectedFeedFilter: FeedFilter) {
         viewModelScope.launch {
             feedStateRepository.updateFeedFilter(selectedFeedFilter)

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -31,11 +32,27 @@ class FeedDownloadWorkerEnqueuer internal constructor(
             -> enqueue(syncPeriod.minutes)
         }
 
+    /**
+     * Manually trigger a one-time feed download for testing notifications
+     */
+    fun triggerManualSync() {
+        val workRequest = OneTimeWorkRequestBuilder<FeedDownloadWorker>()
+            .addTag(WORKER_TAG)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build(),
+            )
+            .build()
+
+        WorkManager.getInstance(context).enqueue(workRequest)
+    }
+
     private fun cancel() {
         WorkManager.getInstance(context).cancelUniqueWork(WORKER_TAG)
     }
 
-    private fun enqueue(minutes: Long = 1) {
+    private fun enqueue(minutes: Long) {
         val instructions = PeriodicWorkRequestBuilder<FeedDownloadWorker>(minutes, MINUTES)
             .addTag(WORKER_TAG)
             .setConstraints(

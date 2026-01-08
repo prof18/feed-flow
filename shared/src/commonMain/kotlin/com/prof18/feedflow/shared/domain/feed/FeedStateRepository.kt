@@ -158,6 +158,21 @@ internal class FeedStateRepository(
         getFeeds()
     }
 
+    suspend fun updateCategoryFilter(categoryId: String) {
+        val category = databaseHelper.getFeedSourceCategory(categoryId)
+        if (category == null) {
+            getFeeds()
+            return
+        }
+        val newFeedFilter = FeedFilter.Category(
+            feedCategory = category,
+        )
+        currentFeedFilterMutableState.update {
+            newFeedFilter
+        }
+        getFeeds()
+    }
+
     fun getUnreadFeedCountFlow(): Flow<Long> =
         currentFeedFilter.flatMapLatest { feedFilter ->
             databaseHelper.getUnreadFeedCountFlow(

@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.ignoreResultOnSuccess
 import com.prof18.feedflow.core.model.success
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.feedsync.feedbin.data.dto.CreateSubscriptionRequest
 import com.prof18.feedflow.feedsync.feedbin.data.dto.CreateTaggingRequest
 import com.prof18.feedflow.feedsync.feedbin.data.dto.DeleteTagRequest
@@ -37,6 +38,7 @@ import io.ktor.client.plugins.resources.delete
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.plugins.resources.patch
 import io.ktor.client.plugins.resources.post
+import io.ktor.client.request.header
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -332,6 +334,7 @@ internal class FeedbinClient internal constructor(
                     }
                 }
                 url(url)
+                header(HttpHeaders.UserAgent, FEEDFLOW_USER_AGENT)
             }
             if (appEnvironment.isDebug()) {
                 install(Logging) {

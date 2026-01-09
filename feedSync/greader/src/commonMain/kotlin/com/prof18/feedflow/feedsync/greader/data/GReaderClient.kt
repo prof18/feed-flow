@@ -11,6 +11,7 @@ import com.prof18.feedflow.core.model.isError
 import com.prof18.feedflow.core.model.onSuccess
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DispatcherProvider
+import com.prof18.feedflow.core.utils.FEEDFLOW_USER_AGENT
 import com.prof18.feedflow.feedsync.greader.data.dto.StreamItemIdDTO
 import com.prof18.feedflow.feedsync.greader.data.dto.StreamItemsContentsDTO
 import com.prof18.feedflow.feedsync.greader.data.dto.SubscriptionListDTO
@@ -34,6 +35,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.Parameters
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
@@ -327,6 +329,7 @@ internal class GReaderClient internal constructor(
                 }
                 url(url)
                 header("Authorization", "GoogleLogin auth=${networkSettings.getSyncPwd()}")
+                header(HttpHeaders.UserAgent, FEEDFLOW_USER_AGENT)
             }
             if (appEnvironment.isDebug()) {
                 install(Logging) {

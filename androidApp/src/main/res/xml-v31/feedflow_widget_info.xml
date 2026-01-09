@@ -11,5 +11,6 @@
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="3"
     android:targetCellHeight="3"
+    android:widgetFeatures="reconfigurable"
     android:updatePeriodMillis="3600000">
 </appwidget-provider>

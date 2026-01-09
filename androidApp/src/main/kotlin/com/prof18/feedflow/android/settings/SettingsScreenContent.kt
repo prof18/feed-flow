@@ -82,7 +82,10 @@ internal fun SettingsScreenContent(
                 if (showDialog) {
                     ThemeModeDialog(
                         currentThemeMode = themeMode,
-                        onThemeModeSelected = onThemeModeSelected,
+                        onThemeModeSelected = { selectedThemeMode ->
+                            onThemeModeSelected(selectedThemeMode)
+                            showDialog = false
+                        },
                         dismissDialog = { showDialog = false },
                     )
                 }

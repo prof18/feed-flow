@@ -10,11 +10,16 @@ class FeedbinV2Resource {
     class Subscriptions(
         val parent: FeedbinV2Resource = FeedbinV2Resource(),
         val since: String? = null,
+    )
+
+    @Resource("subscriptions")
+    class SubscriptionsBase(
+        val parent: FeedbinV2Resource = FeedbinV2Resource(),
     ) {
-        @Resource("{id}.json")
+        @Resource("{id}")
         class ById(
-            val parent: FeedbinV2Resource = FeedbinV2Resource(),
-            val id: Long,
+            val parent: SubscriptionsBase,
+            val id: String,
         )
     }
 
@@ -28,11 +33,16 @@ class FeedbinV2Resource {
         val read: Boolean? = null,
         val starred: Boolean? = null,
         val per_page: Int? = null,
+    )
+
+    @Resource("entries")
+    class EntriesBase(
+        val parent: FeedbinV2Resource = FeedbinV2Resource(),
     ) {
-        @Resource("{id}.json")
+        @Resource("{id}")
         class ById(
-            val parent: FeedbinV2Resource = FeedbinV2Resource(),
-            val id: Long,
+            val parent: EntriesBase,
+            val id: String,
         )
     }
 
@@ -67,11 +77,16 @@ class FeedbinV2Resource {
     @Resource("taggings.json")
     class Taggings(
         val parent: FeedbinV2Resource = FeedbinV2Resource(),
+    )
+
+    @Resource("taggings")
+    class TaggingsBase(
+        val parent: FeedbinV2Resource = FeedbinV2Resource(),
     ) {
-        @Resource("{id}.json")
+        @Resource("{id}")
         class ById(
-            val parent: FeedbinV2Resource = FeedbinV2Resource(),
-            val id: Long,
+            val parent: TaggingsBase,
+            val id: String,
         )
     }
 

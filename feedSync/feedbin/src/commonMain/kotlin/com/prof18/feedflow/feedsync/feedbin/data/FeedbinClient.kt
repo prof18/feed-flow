@@ -97,7 +97,12 @@ internal class FeedbinClient internal constructor(
     suspend fun deleteSubscription(subscriptionId: Long): DataResult<Unit> = withContext(dispatcherProvider.io) {
         val client = getOrCreateHttpClient()
         return@withContext executeNetwork {
-            client.delete(FeedbinV2Resource.Subscriptions.ById(id = subscriptionId))
+            client.delete(
+                FeedbinV2Resource.SubscriptionsBase.ById(
+                    parent = FeedbinV2Resource.SubscriptionsBase(),
+                    id = "$subscriptionId.json",
+                ),
+            )
         }
     }
 
@@ -107,7 +112,12 @@ internal class FeedbinClient internal constructor(
     ): DataResult<SubscriptionDTO> = withContext(dispatcherProvider.io) {
         val client = getOrCreateHttpClient()
         return@withContext executeNetwork {
-            client.patch(FeedbinV2Resource.Subscriptions.ById(id = subscriptionId)) {
+            client.patch(
+                FeedbinV2Resource.SubscriptionsBase.ById(
+                    parent = FeedbinV2Resource.SubscriptionsBase(),
+                    id = "$subscriptionId.json",
+                ),
+            ) {
                 contentType(ContentType.Application.Json)
                 setBody(UpdateSubscriptionRequest(title))
             }
@@ -267,7 +277,12 @@ internal class FeedbinClient internal constructor(
     suspend fun deleteTagging(taggingId: Long): DataResult<Unit> = withContext(dispatcherProvider.io) {
         val client = getOrCreateHttpClient()
         return@withContext executeNetwork {
-            client.delete(FeedbinV2Resource.Taggings.ById(id = taggingId))
+            client.delete(
+                FeedbinV2Resource.TaggingsBase.ById(
+                    parent = FeedbinV2Resource.TaggingsBase(),
+                    id = "$taggingId.json",
+                ),
+            )
         }
     }
 

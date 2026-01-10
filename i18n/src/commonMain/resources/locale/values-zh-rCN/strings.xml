@@ -103,7 +103,7 @@
     <string name="last_upload">上次上传：%s</string>
     <string name="no_feeds_found_message">未找到订阅源，请添加新订阅源！</string>
     <string name="feed_sync_in_progress">正在同步。完成后，应用将自动关闭。</string>
-    <string name="bookmarked_articles_empty_screen_message">尚无收藏，请先添加！</string>
+    <string name="bookmarked_articles_empty_screen_message">尚无文章，请先收藏！</string>
     <string name="link_copied_success">链接复制成功！</string>
     <string name="reader_mode_warning">ℹ 阅读模式会尝试获取文章内容，可能存在解析异常或冗余字符。</string>
     <string name="reader_mode_font_size">字体大小</string>
@@ -242,8 +242,8 @@
     <string name="confirm_button">确认</string>
     <string name="cancel_button">取消</string>
     <string name="reader_mode_comments_button_content_description">打开评论</string>
-    <string name="settings_save_reader_mode_content">打开时保存文章内容以便离线阅读</string>
-    <string name="settings_prefetch_article_content">预先获取文章内容便于离线阅读</string>
+    <string name="settings_save_reader_mode_content">打开时保存文章内容以供离线阅读</string>
+    <string name="settings_prefetch_article_content">预先获取文章内容以供离线阅读</string>
     <string name="settings_prefetch_article_content_warning">启用此选项会增加同步时间和数据使用量，因为在更新订阅源时会下载完整的文章内容。如果文章数量较多，这还可能影响性能。仅在需要离线访问文章内容时才启用此选项。</string>
     <string name="reader_mode_archive_button">在 archive.is 中打开</string>
     <string name="previous_article">上一篇文章</string>
@@ -338,4 +338,17 @@
     <string name="bazqux_password_hint">您的 BazQux 账号密码</string>
     <string name="bazqux_login_subscription_expired">登录失败：您的订阅已过期</string>
     <string name="bazqux_login_free_trial_expired">登录失败：您的免费试用期已过期</string>
+    <string name="search_filter_all">全部</string>
+    <string name="search_filter_read">已读</string>
+    <string name="search_filter_bookmarks">收藏</string>
+    <string name="settings_refresh_feeds_on_launch">应用启动时刷新订阅源</string>
+    <string name="settings_notification_mode">通知分组</string>
+    <string name="settings_extras">其他</string>
+    <string name="settings_notification_mode_desc">按订阅源、类别分组通知，或显示单条合并通知</string>
+    <string name="settings_reduce_motion">减少动态效果和动画</string>
+    <string name="notification_grouped_body">您有新文章待阅读！</string>
+    <string name="settings_notification_mode_feed_source">按订阅源</string>
+    <string name="settings_notification_mode_category">按类别</string>
+    <string name="settings_notification_mode_grouped">全部合并</string>
+    <string name="notification_category_body">您在 %s 中有新文章</string>
 </resources>

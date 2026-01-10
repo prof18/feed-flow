@@ -338,4 +338,17 @@
     <string name="bazqux_password_hint">Sinu salasõna BazQuxis</string>
     <string name="bazqux_login_subscription_expired">Sisselogimine ei õnnestunud: sinu tellimus on aegunud</string>
     <string name="bazqux_login_free_trial_expired">Sisselogimine ei õnnestunud: sinu tasuta prooviperiood on lõppenud</string>
+    <string name="settings_reduce_motion">Vähenda liikumist ja animatsioone</string>
+    <string name="search_filter_all">Kõik</string>
+    <string name="search_filter_read">Loetud</string>
+    <string name="search_filter_bookmarks">Järjehoidjad</string>
+    <string name="settings_refresh_feeds_on_launch">Värskenda uudisvood rakenduse käivitamisel</string>
+    <string name="settings_extras">Lisad</string>
+    <string name="notification_category_body">Sul on uusi artikleid: %s</string>
+    <string name="notification_grouped_body">Sul on uusi artikleid lugemise ootel!</string>
+    <string name="settings_notification_mode">Teavituste rühmitamine</string>
+    <string name="settings_notification_mode_desc">Rühmita teavitusi uudisvoo või kategooria alusel või näita ühte kombineeritud teavitust</string>
+    <string name="settings_notification_mode_feed_source">Uudisvoo alusel</string>
+    <string name="settings_notification_mode_category">Kategooria alusel</string>
+    <string name="settings_notification_mode_grouped">Kõik kombineerituna</string>
 </resources>

@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Duration.Companion.seconds
 
 class ReaderModeViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
@@ -89,7 +91,16 @@ class ReaderModeViewModel internal constructor(
             }
 
             // Content not cached, trigger parsing
-            when (val result = feedItemParserWorker.parse(feedItemId, urlInfo.url)) {
+            val result = withTimeoutOrNull(20.seconds) {
+                feedItemParserWorker.parse(feedItemId, urlInfo.url)
+            }
+
+            when (result) {
+                null -> readerModeMutableState.value = ReaderModeState.HtmlNotAvailable(
+                    url = urlInfo.url,
+                    id = urlInfo.id,
+                    isBookmarked = urlInfo.isBookmarked,
+                )
                 is ParsingResult.Success -> {
                     val htmlContent = result.htmlContent
                     if (htmlContent != null) {

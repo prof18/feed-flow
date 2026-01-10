@@ -29,6 +29,7 @@ struct ReaderModeScreen: View {
     @State private var imageViewerUrl: URL?
     @State private var canNavigatePrevious = false
     @State private var canNavigateNext = false
+    @State private var macOSThemeChangeToken = UUID()
 
     let viewModel: ReaderModeViewModel
 
@@ -49,6 +50,7 @@ struct ReaderModeScreen: View {
                     imageViewerUrl = url
                 }
             ),
+            themeColors: themeColors,
             actions: ReaderViewActions(
                 strings: ReaderViewStrings(
                     share: feedFlowStrings.menuShare,
@@ -186,7 +188,7 @@ struct ReaderModeScreen: View {
                 self.isBookmarked = state.getIsBookmarked
             }
         }
-        .onChange(of: colorScheme) { _, _ in
+        .onChange(of: themeColors) { _, _ in
             updateReaderHTML()
         }
         .task {
@@ -214,13 +216,13 @@ struct ReaderModeScreen: View {
               let baseUrlString = currentBaseUrl,
               let url = articleUrl else { return }
 
-        let isDarkMode = colorScheme == .dark
+        let colors = themeColors
         let html = getReaderModeStyledHtml(
             colors: ReaderColors(
-                textColor: isDarkMode ? "#FFFFFF" : "#000000",
-                linkColor: isDarkMode ? "#3B82F6" : "#2563EB",
-                backgroundColor: isDarkMode ? "#1e1e1e" : "#f6f8fa",
-                borderColor: isDarkMode ? "#444444" : "#d1d9e0"
+                textColor: colors.textColor,
+                linkColor: colors.linkColor,
+                backgroundColor: colors.backgroundColor,
+                borderColor: colors.borderColor
             ),
             content: content,
             fontSize: Int32(fontSize),
@@ -232,5 +234,19 @@ struct ReaderModeScreen: View {
             baseURL: URL(string: baseUrlString) ?? URL(fileURLWithPath: ""),
             url: url
         )
+    }
+
+    private var themeColors: ReaderThemeColors {
+        let isDarkMode = currentIsDarkMode
+        return ReaderThemeColors(
+            textColor: isDarkMode ? "#FFFFFF" : "#000000",
+            linkColor: isDarkMode ? "#3B82F6" : "#2563EB",
+            backgroundColor: isDarkMode ? "#1e1e1e" : "#f6f8fa",
+            borderColor: isDarkMode ? "#444444" : "#d1d9e0"
+        )
+    }
+
+    private var currentIsDarkMode: Bool {
+        return colorScheme == .dark
     }
 }

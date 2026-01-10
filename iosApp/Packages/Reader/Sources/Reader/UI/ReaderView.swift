@@ -43,6 +43,7 @@ public struct ReaderViewActions {
 public struct ReaderView: View {
     @Binding var readerStatus: ReaderStatus
     var options: ReaderViewOptions
+    var themeColors: ReaderThemeColors
     var actions: ReaderViewActions
     var isBookmarked: Bool
     var fontSize: Double
@@ -54,6 +55,7 @@ public struct ReaderView: View {
     public init(
         readerStatus: Binding<ReaderStatus>,
         options: ReaderViewOptions,
+        themeColors: ReaderThemeColors,
         actions: ReaderViewActions,
         isBookmarked: Bool,
         fontSize: Double,
@@ -62,6 +64,7 @@ public struct ReaderView: View {
     ) {
         self._readerStatus = readerStatus
         self.options = options
+        self.themeColors = themeColors
         self.actions = actions
         self.isBookmarked = isBookmarked
         self.fontSize = fontSize
@@ -75,6 +78,9 @@ public struct ReaderView: View {
                 .overlay(content)
                 .overlay(loader)
                 .navigationBarTitleDisplayMode(.inline)
+                .onChange(of: themeColors) { _, newValue in
+                    applyThemeWithJS(newValue)
+                }
                 .toolbar {
                     if isiOS26OrLater() {
                         makeIOS26ToolbarContent()
@@ -114,6 +120,7 @@ public struct ReaderView: View {
                 onImageClicked: options.onImageClicked,
                 onWebContentReady: { content in
                     webContent = content
+                    applyThemeWithJS(themeColors)
                 }
             )
         }
@@ -127,6 +134,17 @@ public struct ReaderView: View {
 
     private func onLinkClicked(_ url: URL) {
         options.onLinkClicked?(url)
+    }
+
+    private func applyThemeWithJS(_ colors: ReaderThemeColors) {
+        guard let webContent = webContent else { return }
+        let script = """
+            document.documentElement.style.setProperty("--reader-text", "\(colors.textColor)");
+            document.documentElement.style.setProperty("--reader-link", "\(colors.linkColor)");
+            document.documentElement.style.setProperty("--reader-bg", "\(colors.backgroundColor)");
+            document.documentElement.style.setProperty("--reader-border", "\(colors.borderColor)");
+        """
+        webContent.evaluateJavaScript(script)
     }
 
     @ToolbarContentBuilder

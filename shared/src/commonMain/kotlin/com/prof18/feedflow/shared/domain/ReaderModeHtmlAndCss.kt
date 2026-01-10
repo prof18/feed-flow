@@ -106,8 +106,19 @@ fun getReaderModeStyledHtml(
 
 internal fun readerModeCss(colors: ReaderColors?, fontSize: Int): String {
     val fontSizeCss = "${fontSize}px"
+    val textColor = colors?.textColor ?: "inherit"
+    val linkColor = colors?.linkColor ?: "inherit"
+    val backgroundColor = colors?.backgroundColor ?: "transparent"
+    val borderColor = colors?.borderColor ?: "transparent"
     // language=css
     return """
+:root {
+    --reader-text: $textColor;
+    --reader-link: $linkColor;
+    --reader-bg: $backgroundColor;
+    --reader-border: $borderColor;
+}
+
 body {
     overflow-wrap: break-word;
     font: -apple-system-body;
@@ -115,7 +126,7 @@ body {
     font-size: $fontSizeCss;
     line-height: 1.5em;
     padding-bottom: 112px;
-    ${colors?.let { "color: ${it.textColor};" }}
+    color: var(--reader-text);
 }
 
 .__hero {
@@ -158,8 +169,8 @@ img, iframe, object, video {
 pre {
     max-width: 100%;
     overflow-x: auto;
-    ${colors?.let { "background-color: ${it.backgroundColor};" }}
-    ${colors?.let { "border: 1px solid ${it.borderColor};" }}
+    background-color: var(--reader-bg);
+    border: 1px solid var(--reader-border);
     border-radius: 6px;
     padding: 12px 16px;
     margin: 16px 0;
@@ -177,8 +188,8 @@ table {
 blockquote {
     margin: 1.5em 0;
     padding: 1em 1.5em;
-    ${colors?.let { "border-left: 4px solid ${it.borderColor};" }}
-    ${colors?.let { "background-color: ${it.backgroundColor};" }}
+    border-left: 4px solid var(--reader-border);
+    background-color: var(--reader-bg);
     border-radius: 0 6px 6px 0;
     font-style: italic;
     position: relative;
@@ -210,7 +221,7 @@ blockquote cite:before {
 }
 
 a:link {
-    ${colors?.let { "color: ${it.linkColor};" }}
+    color: var(--reader-link);
 }
 
 figure {
@@ -288,11 +299,11 @@ code {
     padding: 2px 4px;
     border-radius: 3px;
     line-height: 1.4em;
-    ${colors?.let { "background-color: ${it.backgroundColor};" }}
-    ${colors?.let { "border: 1px solid ${it.borderColor};" }}
+    background-color: var(--reader-bg);
+    border: 1px solid var(--reader-border);
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
     font-size: $fontSizeCss;
-    ${colors?.let { "color: ${it.textColor};" }}
+    color: var(--reader-text);
 }
 
 pre code {

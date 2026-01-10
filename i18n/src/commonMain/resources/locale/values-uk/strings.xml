@@ -338,4 +338,17 @@
     <string name="bazqux_password_hint">Пароль вашого облікового запису BazQux</string>
     <string name="bazqux_login_subscription_expired">Не вдалося ввійти: термін дії вашої підписки закінчився</string>
     <string name="bazqux_login_free_trial_expired">Не вдалося ввійти: термін дії вашої безкоштовної пробної версії закінчився</string>
+    <string name="settings_reduce_motion">Зменшити рух та анімацію</string>
+    <string name="search_filter_all">Усі</string>
+    <string name="search_filter_read">Читати</string>
+    <string name="search_filter_bookmarks">Закладки</string>
+    <string name="settings_refresh_feeds_on_launch">Оновлювати стрічки під час запуску програми</string>
+    <string name="settings_extras">Додатково</string>
+    <string name="notification_category_body">У вас є нові статті в %s</string>
+    <string name="notification_grouped_body">У вас є нові статті, готові до читання!</string>
+    <string name="settings_notification_mode">Групування сповіщень</string>
+    <string name="settings_notification_mode_desc">Групувати сповіщення за стрічкою, категорією або показувати одне об’єднане сповіщення</string>
+    <string name="settings_notification_mode_feed_source">За каналом</string>
+    <string name="settings_notification_mode_category">За категорією</string>
+    <string name="settings_notification_mode_grouped">Усе разом</string>
 </resources>

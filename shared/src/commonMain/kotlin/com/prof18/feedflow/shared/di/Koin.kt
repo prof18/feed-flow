@@ -43,6 +43,7 @@ import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.DeeplinkFeedViewModel
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
+import com.prof18.feedflow.shared.presentation.ExtrasSettingsViewModel
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.FeedSuggestionsViewModel
@@ -240,6 +241,12 @@ private fun getCoreModule(appConfig: AppConfig) = module {
 
     viewModel {
         MainSettingsViewModel(
+            settingsRepository = get(),
+        )
+    }
+
+    viewModel {
+        ExtrasSettingsViewModel(
             settingsRepository = get(),
         )
     }

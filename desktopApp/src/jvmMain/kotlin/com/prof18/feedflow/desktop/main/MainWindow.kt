@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowState
+import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import com.prof18.feedflow.core.model.SyncResult
@@ -54,6 +55,8 @@ import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
+import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
@@ -209,6 +212,7 @@ private fun FrameWindowScope.MainWindowContent(
     CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
         val scope = rememberCoroutineScope()
         val listState = rememberLazyListState()
+        val reduceMotionEnabled = LocalReduceMotion.current
 
         var aboutDialogVisibility by remember { mutableStateOf(false) }
         var showMarkAllReadDialog by remember { mutableStateOf(false) }
@@ -313,7 +317,7 @@ private fun FrameWindowScope.MainWindowContent(
                     actions = MenuBarActions(
                         onRefreshClick = {
                             scope.launch {
-                                listState.animateScrollToItem(0)
+                                listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
                                 homeViewModel.getNewFeeds()
                             }
                         },
@@ -338,7 +342,7 @@ private fun FrameWindowScope.MainWindowContent(
                         },
                         onForceRefreshClick = {
                             scope.launch {
-                                listState.animateScrollToItem(0)
+                                listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
                                 homeViewModel.forceFeedRefresh()
                             }
                         },
@@ -354,7 +358,11 @@ private fun FrameWindowScope.MainWindowContent(
                     ),
                 )
 
-                ScaleTransition(navigator)
+                if (reduceMotionEnabled) {
+                    CurrentScreen()
+                } else {
+                    ScaleTransition(navigator)
+                }
             }
         }
 

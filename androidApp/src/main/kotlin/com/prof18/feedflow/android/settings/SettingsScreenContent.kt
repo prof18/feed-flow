@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.LocalLibrary
@@ -49,6 +50,7 @@ internal fun SettingsScreenContent(
     navigateToReadingBehavior: () -> Unit,
     navigateToSyncAndStorage: () -> Unit,
     navigateToWidgetSettings: () -> Unit,
+    navigateToExtras: () -> Unit,
     navigateToAboutAndSupport: () -> Unit,
     showWidgetSettings: Boolean,
 ) {
@@ -135,6 +137,14 @@ internal fun SettingsScreenContent(
 
             item {
                 SettingItem(
+                    title = LocalFeedFlowStrings.current.settingsExtras,
+                    icon = Icons.Outlined.Extension,
+                    onClick = navigateToExtras,
+                )
+            }
+
+            item {
+                SettingItem(
                     title = LocalFeedFlowStrings.current.settingsAboutAndSupport,
                     icon = Icons.Outlined.Info,
                     onClick = navigateToAboutAndSupport,
@@ -198,6 +208,7 @@ private fun SettingsScreenPreview() {
             navigateToReadingBehavior = {},
             navigateToSyncAndStorage = {},
             navigateToWidgetSettings = {},
+            navigateToExtras = {},
             navigateToAboutAndSupport = {},
             showWidgetSettings = true,
         )

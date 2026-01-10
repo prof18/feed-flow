@@ -59,6 +59,12 @@ internal fun MenuBarScope.BehaviorMenu(
             onCheckedChange = callbacks.onMarkReadWhenScrollingToggled,
         )
 
+        CheckboxItem(
+            text = LocalFeedFlowStrings.current.settingsReduceMotion,
+            checked = settingsState.isReduceMotionEnabled,
+            onCheckedChange = callbacks.onReduceMotionToggled,
+        )
+
         Menu(LocalFeedFlowStrings.current.settingsAutoDelete) {
             RadioButtonItem(
                 text = LocalFeedFlowStrings.current.settingsAutoDeletePeriodDisabled,
@@ -108,6 +114,7 @@ internal data class BehaviorMenuCallbacks(
     val onPrefetchToggle: (Boolean) -> Unit,
     val onRefreshFeedsOnLaunchToggled: (Boolean) -> Unit,
     val onMarkReadWhenScrollingToggled: (Boolean) -> Unit,
+    val onReduceMotionToggled: (Boolean) -> Unit,
     val onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     val onClearDownloadedArticles: () -> Unit,
     val onClearImageCache: () -> Unit,

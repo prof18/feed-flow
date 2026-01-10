@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
@@ -53,6 +54,7 @@ import com.prof18.feedflow.android.settings.SettingsScreen
 import com.prof18.feedflow.android.settings.about.AboutAndSupportScreen
 import com.prof18.feedflow.android.settings.about.subpages.AboutScreen
 import com.prof18.feedflow.android.settings.about.subpages.LicensesScreen
+import com.prof18.feedflow.android.settings.extras.ExtrasScreen
 import com.prof18.feedflow.android.settings.feedlist.FeedListSettingsScreen
 import com.prof18.feedflow.android.settings.feedsandaccounts.FeedsAndAccountsScreen
 import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.BlockedWordsScreen
@@ -75,6 +77,7 @@ import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
 import com.prof18.feedflow.shared.presentation.model.DeeplinkFeedState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -191,17 +194,35 @@ class MainActivity : BaseThemeActivity() {
         navController: NavHostController,
         readerModeViewModel: ReaderModeViewModel,
     ) {
+        val reduceMotionEnabled = LocalReduceMotion.current
+
         NavHost(
             navController = navController,
             startDestination = Home(),
-            enterTransition = { fadeIn() + slideIntoContainer(SlideDirection.Start) },
-            exitTransition = { fadeOut() + slideOutOfContainer(SlideDirection.Start) },
+            enterTransition = {
+                if (reduceMotionEnabled) {
+                    EnterTransition.None
+                } else {
+                    fadeIn() + slideIntoContainer(SlideDirection.Start)
+                }
+            },
+            exitTransition = {
+                if (reduceMotionEnabled) {
+                    ExitTransition.None
+                } else {
+                    fadeOut() + slideOutOfContainer(SlideDirection.Start)
+                }
+            },
             popEnterTransition = { EnterTransition.None },
             popExitTransition = {
-                scaleOut(
-                    targetScale = 0.9f,
-                    transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0.5f),
-                )
+                if (reduceMotionEnabled) {
+                    ExitTransition.None
+                } else {
+                    scaleOut(
+                        targetScale = 0.9f,
+                        transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0.5f),
+                    )
+                }
             },
         ) {
             composable<FeedSuggestions> {
@@ -295,6 +316,9 @@ class MainActivity : BaseThemeActivity() {
                     navigateToWidgetSettings = {
                         navController.navigate(WidgetSettings)
                     },
+                    navigateToExtras = {
+                        navController.navigate(Extras)
+                    },
                     navigateToAboutAndSupport = {
                         navController.navigate(AboutAndSupport)
                     },
@@ -345,6 +369,14 @@ class MainActivity : BaseThemeActivity() {
 
             composable<SyncAndStorage> {
                 SyncAndStorageScreen(
+                    navigateBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<Extras> {
+                ExtrasScreen(
                     navigateBack = {
                         navController.popBackStack()
                     },

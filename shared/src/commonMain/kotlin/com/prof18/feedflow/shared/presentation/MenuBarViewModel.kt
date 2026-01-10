@@ -40,6 +40,7 @@ class MenuBarViewModel internal constructor(
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
         val isRefreshFeedsOnLaunchEnabled = settingsRepository.getRefreshFeedsOnLaunch()
+        val isReduceMotionEnabled = settingsRepository.getReduceMotionEnabled()
         val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
         val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
         val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
@@ -53,6 +54,7 @@ class MenuBarViewModel internal constructor(
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
                 isRefreshFeedsOnLaunchEnabled = isRefreshFeedsOnLaunchEnabled,
+                isReduceMotionEnabled = isReduceMotionEnabled,
                 autoDeletePeriod = autoDeletePeriod,
                 isCrashReportingEnabled = isCrashReportingEnabled,
                 feedOrder = feedOrder,
@@ -122,6 +124,15 @@ class MenuBarViewModel internal constructor(
             settingsRepository.setRefreshFeedsOnLaunch(value)
             stateMutableFlow.update {
                 it.copy(isRefreshFeedsOnLaunchEnabled = value)
+            }
+        }
+    }
+
+    fun updateReduceMotionEnabled(value: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setReduceMotionEnabled(value)
+            stateMutableFlow.update {
+                it.copy(isReduceMotionEnabled = value)
             }
         }
     }

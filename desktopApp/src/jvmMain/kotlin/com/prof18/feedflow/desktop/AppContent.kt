@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,6 +22,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
+import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import javax.swing.UIManager
@@ -41,6 +43,7 @@ internal fun FrameWindowScope.AppContent(
 
     val settingsRepository = DI.koin.get<SettingsRepository>()
     val themeMode by settingsRepository.themeModeFlow.collectAsState()
+    val reduceMotionEnabled by settingsRepository.reduceMotionEnabledFlow.collectAsState()
     val isDarkTheme = when (themeMode) {
         ThemeMode.SYSTEM -> rememberDesktopDarkTheme()
         ThemeMode.LIGHT -> false
@@ -56,12 +59,14 @@ internal fun FrameWindowScope.AppContent(
 
         val lyricist = rememberFeedFlowStrings()
         ProvideFeedFlowStrings(lyricist) {
-            this.MainWindow(
-                showBackupLoader = showBackupLoader,
-                isDarkTheme = isDarkTheme,
-                windowState = windowState,
-                appConfig = appConfig,
-            )
+            CompositionLocalProvider(LocalReduceMotion provides reduceMotionEnabled) {
+                this.MainWindow(
+                    showBackupLoader = showBackupLoader,
+                    isDarkTheme = isDarkTheme,
+                    windowState = windowState,
+                    appConfig = appConfig,
+                )
+            }
         }
     }
 }

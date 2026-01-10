@@ -6,27 +6,34 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.prof18.feedflow.android.util.isSystemInDarkTheme
+import com.prof18.feedflow.android.util.rememberSystemReducedMotionEnabled
 import com.prof18.feedflow.core.model.ThemeMode
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 abstract class BaseThemeActivity : ComponentActivity() {
 
     private val themeViewModel by viewModel<ThemeViewModel>()
+    private val settingsRepository by inject<SettingsRepository>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,12 +76,18 @@ abstract class BaseThemeActivity : ComponentActivity() {
         }
 
         setContent {
+            val reduceMotionOverride by settingsRepository.reduceMotionEnabledFlow.collectAsStateWithLifecycle()
+            val systemReducedMotion = rememberSystemReducedMotionEnabled()
+            val reduceMotionEnabled = reduceMotionOverride || systemReducedMotion
+
             FeedFlowTheme(
                 darkTheme = darkTheme,
             ) {
                 val lyricist = rememberFeedFlowStrings()
                 ProvideFeedFlowStrings(lyricist) {
-                    Content()
+                    CompositionLocalProvider(LocalReduceMotion provides reduceMotionEnabled) {
+                        Content()
+                    }
                 }
             }
         }

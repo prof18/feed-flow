@@ -21,6 +21,7 @@ fun SettingsScreen(
     navigateToReadingBehavior: () -> Unit,
     navigateToSyncAndStorage: () -> Unit,
     navigateToWidgetSettings: () -> Unit,
+    navigateToExtras: () -> Unit,
     navigateToAboutAndSupport: () -> Unit,
 ) {
     val settingsViewModel = koinViewModel<MainSettingsViewModel>()
@@ -48,6 +49,7 @@ fun SettingsScreen(
         navigateToReadingBehavior = navigateToReadingBehavior,
         navigateToSyncAndStorage = navigateToSyncAndStorage,
         navigateToWidgetSettings = navigateToWidgetSettings,
+        navigateToExtras = navigateToExtras,
         navigateToAboutAndSupport = navigateToAboutAndSupport,
         showWidgetSettings = hasWidget,
     )

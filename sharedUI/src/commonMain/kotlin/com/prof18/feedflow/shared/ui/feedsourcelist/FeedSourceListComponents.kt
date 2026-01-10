@@ -1,9 +1,7 @@
 package com.prof18.feedflow.shared.ui.feedsourcelist
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -67,7 +65,9 @@ import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.conditionalAnimateFloatAsState
 import kotlinx.collections.immutable.ImmutableList
 
 expect fun Modifier.singleAndLongClickModifier(
@@ -109,12 +109,13 @@ internal fun FeedSourcesWithCategoryList(
         items(feedSourceState.feedSourcesWithCategory) { feedSourceState ->
             Column {
                 @Suppress("MagicNumber")
-                val degrees by animateFloatAsState(
-                    if (feedSourceState.isExpanded) {
+                val degrees by conditionalAnimateFloatAsState(
+                    targetValue = if (feedSourceState.isExpanded) {
                         -90f
                     } else {
                         90f
                     },
+                    animationSpec = spring(),
                 )
                 Row(
                     modifier = Modifier
@@ -170,7 +171,7 @@ private fun FeedSourcesListWithCategorySelector(
     onPinFeedClick: (FeedSource) -> Unit,
     onOpenWebsite: (String) -> Unit,
 ) {
-    AnimatedVisibility(
+    ConditionalAnimatedVisibility(
         visible = feedSourceState.isExpanded,
         enter = expandVertically(
             spring(
@@ -311,7 +312,7 @@ private fun FeedSourceItem(
                 modifier = Modifier
                     .padding(start = Spacing.regular),
             ) {
-                AnimatedVisibility(!isEditEnabled) {
+                ConditionalAnimatedVisibility(!isEditEnabled) {
                     Text(
                         modifier = Modifier
                             .padding(top = Spacing.small),
@@ -321,7 +322,7 @@ private fun FeedSourceItem(
                 }
                 val interactionSource = remember { MutableInteractionSource() }
 
-                AnimatedVisibility(isEditEnabled) {
+                ConditionalAnimatedVisibility(isEditEnabled) {
                     FeedSourceTitleEdit(
                         focusRequester = focusRequester,
                         feedTitleInput = feedTitleInput,

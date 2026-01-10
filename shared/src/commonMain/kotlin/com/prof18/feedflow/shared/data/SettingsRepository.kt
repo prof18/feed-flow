@@ -27,6 +27,9 @@ class SettingsRepository(
     private val themeModeMutableFlow = MutableStateFlow(getThemeMode())
     val themeModeFlow: StateFlow<ThemeMode> = themeModeMutableFlow.asStateFlow()
 
+    private val reduceMotionEnabledMutableFlow = MutableStateFlow(getReduceMotionEnabled())
+    val reduceMotionEnabledFlow: StateFlow<Boolean> = reduceMotionEnabledMutableFlow.asStateFlow()
+
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
@@ -141,6 +144,14 @@ class SettingsRepository(
         themeModeMutableFlow.update { mode }
     }
 
+    fun getReduceMotionEnabled(): Boolean =
+        settings.getBoolean(SettingsFields.REDUCE_MOTION_ENABLED.name, false)
+
+    fun setReduceMotionEnabled(value: Boolean) {
+        settings[SettingsFields.REDUCE_MOTION_ENABLED.name] = value
+        reduceMotionEnabledMutableFlow.update { value }
+    }
+
     fun getNotificationMode(): NotificationMode =
         settings.getString(SettingsFields.NOTIFICATION_MODE.name, NotificationMode.FEED_SOURCE.name)
             .let { NotificationMode.valueOf(it) }
@@ -166,6 +177,7 @@ private enum class SettingsFields {
     CRASH_REPORTING_ENABLED,
     SYNC_PERIOD,
     THEME_MODE,
+    REDUCE_MOTION_ENABLED,
     REFRESH_FEEDS_ON_LAUNCH,
     NOTIFICATION_MODE,
 }

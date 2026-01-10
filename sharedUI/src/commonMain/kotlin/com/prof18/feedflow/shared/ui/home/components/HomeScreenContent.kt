@@ -24,6 +24,8 @@ import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.home.ShareBehavior
 import com.prof18.feedflow.shared.ui.home.components.list.FeedList
+import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
+import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,6 +50,7 @@ fun HomeScreenContent(
     onEmptyStateClick: (() -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
+    val reduceMotionEnabled = LocalReduceMotion.current
 
     @Suppress("MagicNumber")
     val showScrollToTopButton by remember {
@@ -72,19 +75,19 @@ fun HomeScreenContent(
                 onSettingsButtonClicked = onSettingsButtonClicked,
                 onForceRefreshClick = {
                     scope.launch {
-                        listState.animateScrollToItem(0)
+                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
                         feedListActions.forceRefreshData()
                     }
                 },
                 onEditFeedClick = feedManagementActions.onEditFeedClick,
                 onClick = {
                     scope.launch {
-                        listState.animateScrollToItem(0)
+                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
                     }
                 },
                 onDoubleClick = {
                     scope.launch {
-                        listState.animateScrollToItem(0)
+                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
                         onRefresh()
                     }
                 },
@@ -98,7 +101,7 @@ fun HomeScreenContent(
                 visible = showScrollToTopButton,
                 onClick = {
                     scope.launch {
-                        listState.animateScrollToItem(0)
+                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
                     }
                 },
             )

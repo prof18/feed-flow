@@ -1,9 +1,7 @@
 package com.prof18.feedflow.shared.ui.home.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -76,7 +74,9 @@ import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
 import com.prof18.feedflow.shared.ui.home.FeedManagementActions
 import com.prof18.feedflow.shared.ui.home.HomeDisplayState
 import com.prof18.feedflow.shared.ui.style.Spacing
+import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.ui.utils.conditionalAnimateFloatAsState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -432,12 +432,13 @@ private fun DrawerFeedSourceByCategoryItem(
             .fillMaxWidth(),
     ) {
         @Suppress("MagicNumber")
-        val degrees by animateFloatAsState(
+        val degrees by conditionalAnimateFloatAsState(
             targetValue = if (isCategoryExpanded) {
                 -90f
             } else {
                 90f
             },
+            animationSpec = spring(),
             label = "Category arrow animation",
         )
 
@@ -617,7 +618,7 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
     onChangeFeedCategoryClick: ((FeedSource) -> Unit),
     onOpenWebsite: (String) -> Unit,
 ) {
-    AnimatedVisibility(
+    ConditionalAnimatedVisibility(
         visible = isCategoryExpanded,
         enter = expandVertically(
             spring(

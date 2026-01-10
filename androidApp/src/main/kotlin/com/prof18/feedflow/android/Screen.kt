@@ -27,6 +27,9 @@ data object SyncAndStorage
 data object WidgetSettings
 
 @Serializable
+data object Extras
+
+@Serializable
 data object AboutAndSupport
 
 @Serializable

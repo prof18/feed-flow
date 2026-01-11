@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
@@ -74,6 +75,19 @@ class ChangeFeedCategoryViewModel internal constructor(
             )
             feedStateRepository.getFeeds()
             categoryChangedMutableState.emit(Unit)
+        }
+    }
+
+    fun moveFeedSourcesToCategory(feedSources: List<FeedSource>, category: FeedSourceCategory?) {
+        viewModelScope.launch {
+            feedSources.forEach { feedSource ->
+                val updatedFeedSource = feedSource.copy(category = category)
+                feedSourcesRepository.editFeedSource(
+                    newFeedSource = updatedFeedSource,
+                    originalFeedSource = feedSource,
+                )
+            }
+            feedStateRepository.getFeeds()
         }
     }
 }

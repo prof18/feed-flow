@@ -5,6 +5,7 @@ import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Feed
@@ -55,6 +57,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -66,6 +70,7 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.shared.ui.components.EditCategoryNameDialog
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
@@ -78,6 +83,8 @@ import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.conditionalAnimateFloatAsState
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -88,100 +95,181 @@ internal fun Drawer(
     modifier: Modifier = Modifier,
     onFeedSuggestionsClick: () -> Unit = {},
 ) {
-    LazyColumn(
+    val listState = rememberLazyListState()
+    val dragState = rememberFeedSourceDragState(listState)
+    var drawerCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    var selectedFeedSourceIds by remember { mutableStateOf(persistentSetOf<String>()) }
+
+    val allFeedSources = remember(displayState.navDrawerState) {
+        buildMap<String, FeedSource> {
+            displayState.navDrawerState.pinnedFeedSources
+                .filterIsInstance<DrawerItem.DrawerFeedSource>()
+                .forEach { put(it.feedSource.id, it.feedSource) }
+
+            displayState.navDrawerState.feedSourcesWithoutCategory
+                .filterIsInstance<DrawerItem.DrawerFeedSource>()
+                .forEach { put(it.feedSource.id, it.feedSource) }
+
+            displayState.navDrawerState.feedSourcesByCategory.values
+                .flatten()
+                .filterIsInstance<DrawerItem.DrawerFeedSource>()
+                .forEach { put(it.feedSource.id, it.feedSource) }
+        }
+    }
+
+    val onFeedFilterSelectedWithClear: (FeedFilter) -> Unit = { filter ->
+        selectedFeedSourceIds = persistentSetOf()
+        onFeedFilterSelected(filter)
+    }
+
+    val onFeedSourceClick: (FeedSource, Boolean) -> Unit = { feedSource, isMultiSelect ->
+        if (isMultiSelect) {
+            val currentSelectedId = (displayState.currentFeedFilter as? FeedFilter.Source)
+                ?.feedSource
+                ?.id
+            val initialSelection = if (
+                selectedFeedSourceIds.isEmpty() && currentSelectedId != null
+            ) {
+                persistentSetOf(currentSelectedId)
+            } else {
+                selectedFeedSourceIds
+            }
+            selectedFeedSourceIds = if (initialSelection.contains(feedSource.id)) {
+                initialSelection.remove(feedSource.id)
+            } else {
+                initialSelection.add(feedSource.id)
+            }
+        } else {
+            selectedFeedSourceIds = persistentSetOf()
+            onFeedFilterSelected(FeedFilter.Source(feedSource))
+        }
+    }
+
+    val onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit = { feedSources, category ->
+        feedManagementActions.onMoveFeedSourcesToCategory(feedSources, category)
+        selectedFeedSourceIds = persistentSetOf()
+    }
+
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(Spacing.regular),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .padding(Spacing.regular)
+            .onGloballyPositioned { drawerCoordinates = it },
     ) {
-        item {
-            DrawerTimelineItem(
-                currentFeedFilter = displayState.currentFeedFilter,
-                onFeedFilterSelected = onFeedFilterSelected,
-                drawerItem = displayState.navDrawerState.timeline.filterIsInstance<DrawerItem.Timeline>().firstOrNull()
-                    ?: DrawerItem.Timeline(unreadCount = 0),
-            )
-        }
-
-        item {
-            DrawerReadItem(
-                currentFeedFilter = displayState.currentFeedFilter,
-                onFeedFilterSelected = onFeedFilterSelected,
-            )
-        }
-
-        item {
-            DrawerBookmarksItem(
-                currentFeedFilter = displayState.currentFeedFilter,
-                onFeedFilterSelected = onFeedFilterSelected,
-                drawerItem = displayState.navDrawerState.bookmarks
-                    .filterIsInstance<DrawerItem.Bookmarks>()
-                    .firstOrNull()
-                    ?: DrawerItem.Bookmarks(unreadCount = 0),
-            )
-        }
-
-        item {
-            DrawerFeedSuggestionsItem(
-                onFeedSuggestionsClick = onFeedSuggestionsClick,
-            )
-        }
-
-        item {
-            DrawerAddItem(
-                onAddFeedClicked = feedManagementActions.onAddFeedClick,
-            )
-        }
-
-        if (displayState.navDrawerState.pinnedFeedSources.isNotEmpty()) {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { dragState.updateListBounds(it) },
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             item {
-                DrawerDivider()
+                val timelineItem = displayState.navDrawerState.timeline
+                    .filterIsInstance<DrawerItem.Timeline>()
+                    .firstOrNull()
+                    ?: DrawerItem.Timeline(unreadCount = 0)
+
+                DrawerTimelineItem(
+                    currentFeedFilter = displayState.currentFeedFilter,
+                    onFeedFilterSelected = onFeedFilterSelectedWithClear,
+                    drawerItem = timelineItem,
+                )
             }
 
             item {
-                Column {
-                    Text(
-                        modifier = Modifier
-                            .padding(start = Spacing.regular)
-                            .padding(bottom = Spacing.regular),
-                        text = LocalFeedFlowStrings.current.drawerTitlePinnedFeeds,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
+                DrawerReadItem(
+                    currentFeedFilter = displayState.currentFeedFilter,
+                    onFeedFilterSelected = onFeedFilterSelectedWithClear,
+                )
+            }
 
-                    FeedSourcesList(
-                        drawerFeedSources = displayState.navDrawerState.pinnedFeedSources
-                            .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
+            item {
+                DrawerBookmarksItem(
+                    currentFeedFilter = displayState.currentFeedFilter,
+                    onFeedFilterSelected = onFeedFilterSelectedWithClear,
+                    drawerItem = displayState.navDrawerState.bookmarks
+                        .filterIsInstance<DrawerItem.Bookmarks>()
+                        .firstOrNull()
+                        ?: DrawerItem.Bookmarks(unreadCount = 0),
+                )
+            }
+
+            item {
+                DrawerFeedSuggestionsItem(
+                    onFeedSuggestionsClick = onFeedSuggestionsClick,
+                )
+            }
+
+            item {
+                DrawerAddItem(
+                    onAddFeedClicked = feedManagementActions.onAddFeedClick,
+                )
+            }
+
+            if (displayState.navDrawerState.pinnedFeedSources.isNotEmpty()) {
+                item {
+                    DrawerDivider()
+                }
+
+                item {
+                    Column {
+                        Text(
+                            modifier = Modifier
+                                .padding(start = Spacing.regular)
+                                .padding(bottom = Spacing.regular),
+                            text = LocalFeedFlowStrings.current.drawerTitlePinnedFeeds,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+
+                        FeedSourcesList(
+                            drawerFeedSources = displayState.navDrawerState.pinnedFeedSources
+                                .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
+                            currentFeedFilter = displayState.currentFeedFilter,
+                            selectedFeedSourceIds = selectedFeedSourceIds,
+                            onFeedSourceClick = onFeedSourceClick,
+                            selectedFeedSourcesProvider = { selectedFeedSourceIds.mapNotNull { allFeedSources[it] } },
+                            onEditFeedClick = feedManagementActions.onEditFeedClick,
+                            onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
+                            onPinFeedClick = feedManagementActions.onPinFeedClick,
+                            onChangeFeedCategoryClick = feedManagementActions.onChangeFeedCategoryClick,
+                            onOpenWebsite = feedManagementActions.onOpenWebsite,
+                            onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                            dragState = dragState,
+                        )
+                    }
+                }
+            }
+
+            if (displayState.navDrawerState.feedSourcesByCategory.isNotEmpty() ||
+                displayState.navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
+            ) {
+                item {
+                    DrawerFeedSourcesByCategories(
+                        navDrawerState = displayState.navDrawerState,
                         currentFeedFilter = displayState.currentFeedFilter,
-                        onFeedFilterSelected = onFeedFilterSelected,
+                        onFeedFilterSelected = onFeedFilterSelectedWithClear,
+                        selectedFeedSourceIds = selectedFeedSourceIds,
+                        onFeedSourceClick = onFeedSourceClick,
+                        selectedFeedSourcesProvider = { selectedFeedSourceIds.mapNotNull { allFeedSources[it] } },
                         onEditFeedClick = feedManagementActions.onEditFeedClick,
                         onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
                         onPinFeedClick = feedManagementActions.onPinFeedClick,
                         onChangeFeedCategoryClick = feedManagementActions.onChangeFeedCategoryClick,
                         onOpenWebsite = feedManagementActions.onOpenWebsite,
+                        onEditCategoryClick = feedManagementActions.onEditCategoryClick,
+                        onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
+                        onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                        dragState = dragState,
                     )
                 }
             }
         }
 
-        if (displayState.navDrawerState.feedSourcesByCategory.isNotEmpty() ||
-            displayState.navDrawerState.feedSourcesWithoutCategory.isNotEmpty()
-        ) {
-            item {
-                DrawerFeedSourcesByCategories(
-                    navDrawerState = displayState.navDrawerState,
-                    currentFeedFilter = displayState.currentFeedFilter,
-                    onFeedFilterSelected = onFeedFilterSelected,
-                    onEditFeedClick = feedManagementActions.onEditFeedClick,
-                    onDeleteFeedSourceClick = feedManagementActions.onDeleteFeedSourceClick,
-                    onPinFeedClick = feedManagementActions.onPinFeedClick,
-                    onChangeFeedCategoryClick = feedManagementActions.onChangeFeedCategoryClick,
-                    onOpenWebsite = feedManagementActions.onOpenWebsite,
-                    onEditCategoryClick = feedManagementActions.onEditCategoryClick,
-                    onDeleteCategoryClick = feedManagementActions.onDeleteCategoryClick,
-                )
-            }
-        }
+        DragGhost(
+            dragState = dragState,
+            drawerCoordinates = drawerCoordinates,
+        )
     }
 }
 
@@ -345,6 +433,9 @@ private fun DrawerFeedSourcesByCategories(
     navDrawerState: NavDrawerState,
     currentFeedFilter: FeedFilter,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    selectedFeedSourceIds: ImmutableSet<String>,
+    onFeedSourceClick: (FeedSource, Boolean) -> Unit,
+    selectedFeedSourcesProvider: () -> List<FeedSource>,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
@@ -352,6 +443,8 @@ private fun DrawerFeedSourcesByCategories(
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     onChangeFeedCategoryClick: ((FeedSource) -> Unit),
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
+    dragState: FeedSourceDragState,
 ) {
     Column {
         Column {
@@ -369,12 +462,16 @@ private fun DrawerFeedSourcesByCategories(
                 drawerFeedSources = navDrawerState.feedSourcesWithoutCategory
                     .filterIsInstance<DrawerItem.DrawerFeedSource>().toImmutableList(),
                 currentFeedFilter = currentFeedFilter,
-                onFeedFilterSelected = onFeedFilterSelected,
+                selectedFeedSourceIds = selectedFeedSourceIds,
+                onFeedSourceClick = onFeedSourceClick,
+                selectedFeedSourcesProvider = selectedFeedSourcesProvider,
                 onEditFeedClick = onEditFeedClick,
                 onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                 onPinFeedClick = onPinFeedClick,
                 onChangeFeedCategoryClick = onChangeFeedCategoryClick,
                 onOpenWebsite = onOpenWebsite,
+                onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                dragState = dragState,
             )
 
             for ((categoryWrapper, drawerFeedSources) in navDrawerState.feedSourcesByCategory) {
@@ -392,6 +489,9 @@ private fun DrawerFeedSourcesByCategories(
                         isCategoryExpanded = !isCategoryExpanded
                     },
                     onFeedFilterSelected = onFeedFilterSelected,
+                    selectedFeedSourceIds = selectedFeedSourceIds,
+                    onFeedSourceClick = onFeedSourceClick,
+                    selectedFeedSourcesProvider = selectedFeedSourcesProvider,
                     onEditFeedClick = onEditFeedClick,
                     onDeleteFeedSourceClick = onDeleteFeedSourceClick,
                     onPinFeedClick = onPinFeedClick,
@@ -399,6 +499,8 @@ private fun DrawerFeedSourcesByCategories(
                     onOpenWebsite = onOpenWebsite,
                     onEditCategoryClick = onEditCategoryClick,
                     onDeleteCategoryClick = onDeleteCategoryClick,
+                    onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                    dragState = dragState,
                 )
             }
         }
@@ -413,6 +515,9 @@ private fun DrawerFeedSourceByCategoryItem(
     isCategoryExpanded: Boolean,
     onCategoryExpand: () -> Unit,
     onFeedFilterSelected: (FeedFilter) -> Unit,
+    selectedFeedSourceIds: ImmutableSet<String>,
+    onFeedSourceClick: (FeedSource, Boolean) -> Unit,
+    selectedFeedSourcesProvider: () -> List<FeedSource>,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
@@ -420,12 +525,20 @@ private fun DrawerFeedSourceByCategoryItem(
     onOpenWebsite: (String) -> Unit,
     onEditCategoryClick: (CategoryId, CategoryName) -> Unit,
     onDeleteCategoryClick: (CategoryId) -> Unit,
+    onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
+    dragState: FeedSourceDragState,
 ) {
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
     var showMenu by rememberSaveable { mutableStateOf(false) }
 
     val category = feedSourceCategoryWrapper.feedSourceCategory
     val unreadCount = drawerFeedSources.sumOf { it.unreadCount }
+    val isDropTargetActive = dragState.isDragOver(category)
+
+    FeedSourceDropTargetCleanup(
+        dragState = dragState,
+        category = category,
+    )
 
     Column(
         modifier = Modifier
@@ -433,130 +546,89 @@ private fun DrawerFeedSourceByCategoryItem(
     ) {
         @Suppress("MagicNumber")
         val degrees by conditionalAnimateFloatAsState(
-            targetValue = if (isCategoryExpanded) {
-                -90f
-            } else {
-                90f
-            },
+            targetValue = if (isCategoryExpanded) -90f else 90f,
             animationSpec = spring(),
             label = "Category arrow animation",
         )
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            // Remove extra vertical padding to match feed source item spacing
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val headerText = if (category?.title != null) {
-                requireNotNull(category.title)
+            val headerText = category?.title ?: LocalFeedFlowStrings.current.noCategory
+            val isSelected = if (category != null) {
+                currentFeedFilter is FeedFilter.Category && currentFeedFilter.feedCategory == category
             } else {
-                LocalFeedFlowStrings.current.noCategory
+                currentFeedFilter is FeedFilter.Uncategorized
+            }
+            val navItemColors = NavigationDrawerItemDefaults.colors(
+                unselectedContainerColor = Color.Transparent,
+            )
+            val dropTargetModifier = Modifier.dropTargetModifier(
+                dragState = dragState,
+                category = category,
+                isDropTargetActive = isDropTargetActive,
+                highlightColor = MaterialTheme.colorScheme.primary,
+            )
+            val onClick = {
+                if (category != null) {
+                    onFeedFilterSelected(FeedFilter.Category(feedCategory = category))
+                } else {
+                    onFeedFilterSelected(FeedFilter.Uncategorized)
+                }
             }
 
-            // Category name - pill shaped like inner item when selectable category
-            if (category != null) {
-                val isSelected = currentFeedFilter is FeedFilter.Category &&
-                    currentFeedFilter.feedCategory == category
-                val navItemColors = NavigationDrawerItemDefaults.colors(
-                    unselectedContainerColor = Color.Transparent,
-                )
-
-                Surface(
-                    selected = isSelected,
-                    onClick = { onFeedFilterSelected(FeedFilter.Category(feedCategory = category)) },
-                    shape = CircleShape,
-                    color = navItemColors.containerColor(isSelected).value,
-                    modifier = Modifier
-                        .weight(1f)
-                        .semantics { role = Role.Tab }
-                        .heightIn(min = 56.dp)
-                        .hoverable(remember { MutableInteractionSource() }),
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .singleAndLongClickModifier(
-                                onClick = { onFeedFilterSelected(FeedFilter.Category(feedCategory = category)) },
-                                onLongClick = { showMenu = true },
-                            )
-                            // Match inner feed item content padding (24.dp end)
-                            .padding(start = Spacing.regular, end = 24.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val labelColor = navItemColors.textColor(isSelected).value
-                        CompositionLocalProvider(LocalContentColor provides labelColor) {
-                            Text(
-                                text = headerText,
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.weight(1f),
-                            )
-                        }
-
-                        if (unreadCount > 0) {
-                            Text(
-                                modifier = Modifier.padding(start = Spacing.small),
-                                text = unreadCount.toString(),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = navItemColors.textColor(isSelected).value,
-                            )
-                        }
-
-                        // Arrow moved outside the pill to avoid including it in the hover/selection area
-                    }
+            Surface(
+                selected = isSelected,
+                onClick = onClick,
+                shape = CircleShape,
+                color = navItemColors.containerColor(isSelected).value,
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { role = Role.Tab }
+                    .heightIn(min = 56.dp)
+                    .hoverable(remember { MutableInteractionSource() })
+                    .then(dropTargetModifier),
+            ) {
+                val contentModifier = if (category != null) {
+                    Modifier.singleAndLongClickModifier(
+                        onClick = onClick,
+                        onLongClick = { showMenu = true },
+                    )
+                } else {
+                    Modifier
                 }
-            } else {
-                // Uncategorized: render with the same pill shape/spacing as other category headers
-                val isSelected = currentFeedFilter is FeedFilter.Uncategorized
-                val navItemColors = NavigationDrawerItemDefaults.colors(
-                    unselectedContainerColor = Color.Transparent,
-                )
 
-                Surface(
-                    selected = isSelected,
-                    onClick = { onFeedFilterSelected(FeedFilter.Uncategorized) },
-                    shape = CircleShape,
-                    color = navItemColors.containerColor(isSelected).value,
-                    modifier = Modifier
-                        .weight(1f)
-                        .semantics { role = Role.Tab }
-                        .heightIn(min = 56.dp)
-                        .hoverable(remember { MutableInteractionSource() }),
+                Row(
+                    modifier = contentModifier.padding(start = Spacing.regular, end = 24.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(start = Spacing.regular, end = 24.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val labelColor = navItemColors.textColor(isSelected).value
-                        CompositionLocalProvider(LocalContentColor provides labelColor) {
-                            Text(
-                                text = headerText,
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.weight(1f),
-                            )
-                        }
+                    val labelColor = navItemColors.textColor(isSelected).value
+                    CompositionLocalProvider(LocalContentColor provides labelColor) {
+                        Text(
+                            text = headerText,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
 
-                        if (unreadCount > 0) {
-                            Text(
-                                modifier = Modifier.padding(start = Spacing.small),
-                                text = unreadCount.toString(),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = navItemColors.textColor(isSelected).value,
-                            )
-                        }
-
-                        // Arrow moved outside the pill to avoid including it in the hover/selection area
+                    if (unreadCount > 0) {
+                        Text(
+                            modifier = Modifier.padding(start = Spacing.small),
+                            text = unreadCount.toString(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = navItemColors.textColor(isSelected).value,
+                        )
                     }
                 }
             }
-            // Trailing toggle arrow aligned to the right edge
-            val interaction = remember { MutableInteractionSource() }
+
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
                     .clickable(
-                        interactionSource = interaction,
+                        interactionSource = remember { MutableInteractionSource() },
                         indication = androidx.compose.material3.ripple(),
                     ) { onCategoryExpand() }
                     .padding(12.dp)
@@ -575,12 +647,16 @@ private fun DrawerFeedSourceByCategoryItem(
             isCategoryExpanded = isCategoryExpanded,
             drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
-            onFeedFilterSelected = onFeedFilterSelected,
+            selectedFeedSourceIds = selectedFeedSourceIds,
+            onFeedSourceClick = onFeedSourceClick,
+            selectedFeedSourcesProvider = selectedFeedSourcesProvider,
             onEditFeedClick = onEditFeedClick,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             onPinFeedClick = onPinFeedClick,
             onChangeFeedCategoryClick = onChangeFeedCategoryClick,
             onOpenWebsite = onOpenWebsite,
+            onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+            dragState = dragState,
         )
     }
 
@@ -611,12 +687,16 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
     isCategoryExpanded: Boolean,
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
-    onFeedFilterSelected: (FeedFilter) -> Unit,
+    selectedFeedSourceIds: ImmutableSet<String>,
+    onFeedSourceClick: (FeedSource, Boolean) -> Unit,
+    selectedFeedSourcesProvider: () -> List<FeedSource>,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     onChangeFeedCategoryClick: ((FeedSource) -> Unit),
     onOpenWebsite: (String) -> Unit,
+    onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
+    dragState: FeedSourceDragState,
 ) {
     ConditionalAnimatedVisibility(
         visible = isCategoryExpanded,
@@ -631,12 +711,16 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
         FeedSourcesList(
             drawerFeedSources = drawerFeedSources,
             currentFeedFilter = currentFeedFilter,
-            onFeedFilterSelected = onFeedFilterSelected,
+            selectedFeedSourceIds = selectedFeedSourceIds,
+            onFeedSourceClick = onFeedSourceClick,
+            selectedFeedSourcesProvider = selectedFeedSourcesProvider,
             onEditFeedClick = onEditFeedClick,
             onDeleteFeedSourceClick = onDeleteFeedSourceClick,
             onPinFeedClick = onPinFeedClick,
             onChangeFeedCategoryClick = onChangeFeedCategoryClick,
             onOpenWebsite = onOpenWebsite,
+            onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+            dragState = dragState,
         )
     }
 }
@@ -645,15 +729,21 @@ private fun ColumnScope.FeedSourcesListWithCategorySelector(
 private fun FeedSourcesList(
     drawerFeedSources: ImmutableList<DrawerItem.DrawerFeedSource>,
     currentFeedFilter: FeedFilter,
-    onFeedFilterSelected: (FeedFilter) -> Unit,
+    selectedFeedSourceIds: ImmutableSet<String>,
+    onFeedSourceClick: (FeedSource, Boolean) -> Unit,
+    selectedFeedSourcesProvider: () -> List<FeedSource>,
     onEditFeedClick: (FeedSource) -> Unit,
     onDeleteFeedSourceClick: (FeedSource) -> Unit,
     onPinFeedClick: (FeedSource) -> Unit,
     onChangeFeedCategoryClick: ((FeedSource) -> Unit),
     onOpenWebsite: (String) -> Unit,
+    onMoveFeedSourcesToCategory: (List<FeedSource>, FeedSourceCategory?) -> Unit,
+    dragState: FeedSourceDragState,
 ) {
     Column {
         drawerFeedSources.forEach { feedSourceWrapper ->
+            val isMultiSelectPressed = isMultiSelectModifierPressed()
+            val isMultiSelected = selectedFeedSourceIds.contains(feedSourceWrapper.feedSource.id)
 
             FeedSourceDrawerItem(
                 label = {
@@ -666,11 +756,7 @@ private fun FeedSourcesList(
                 selected = currentFeedFilter is FeedFilter.Source &&
                     currentFeedFilter.feedSource == feedSourceWrapper.feedSource,
                 onClick = {
-                    onFeedFilterSelected(
-                        FeedFilter.Source(
-                            feedSource = feedSourceWrapper.feedSource,
-                        ),
-                    )
+                    onFeedSourceClick(feedSourceWrapper.feedSource, isMultiSelectPressed)
                 },
                 icon = {
                     val imageUrl = feedSourceWrapper.feedSource.logoUrl
@@ -696,6 +782,13 @@ private fun FeedSourcesList(
                 onOpenWebsite = onOpenWebsite,
                 feedSource = feedSourceWrapper.feedSource,
                 unreadCount = feedSourceWrapper.unreadCount,
+                isMultiSelected = isMultiSelected,
+                modifier = Modifier.feedSourceDragSource(
+                    dragState = dragState,
+                    feedSource = feedSourceWrapper.feedSource,
+                    selectedFeedSources = selectedFeedSourcesProvider,
+                    onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
+                ),
             )
         }
     }
@@ -706,6 +799,7 @@ fun FeedSourceDrawerItem(
     feedSource: FeedSource,
     label: @Composable () -> Unit,
     selected: Boolean,
+    isMultiSelected: Boolean,
     onClick: () -> Unit,
     icon: @Composable () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
@@ -717,11 +811,7 @@ fun FeedSourceDrawerItem(
     modifier: Modifier = Modifier,
     colors: NavigationDrawerItemColors = NavigationDrawerItemDefaults.colors(),
 ) {
-    var showFeedMenu by remember {
-        mutableStateOf(
-            false,
-        )
-    }
+    var showFeedMenu by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier,
@@ -748,13 +838,24 @@ fun FeedSourceDrawerItem(
             Spacer(Modifier.width(Spacing.small))
         }
 
+        val multiSelectModifier = if (isMultiSelected && !selected) {
+            Modifier.border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                shape = CircleShape,
+            )
+        } else {
+            Modifier
+        }
+
         Surface(
             selected = selected,
             onClick = onClick,
             modifier = Modifier
                 .semantics { role = Role.Tab }
                 .heightIn(min = 56.0.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .then(multiSelectModifier),
             shape = CircleShape,
             color = colors.containerColor(selected).value,
         ) {

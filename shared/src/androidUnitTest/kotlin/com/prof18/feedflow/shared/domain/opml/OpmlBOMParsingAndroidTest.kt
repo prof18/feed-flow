@@ -6,6 +6,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import java.io.ByteArrayInputStream
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
@@ -58,6 +59,6 @@ class OpmlBOMParsingAndroidTest {
         val opmlInput = OpmlInput(inputStream = inputStream)
 
         val feedSources = parser.generateFeedSources(opmlInput)
-        assertTrue(feedSources.size == 2)
+        assertEquals(feedSources.size, 2)
     }
 }

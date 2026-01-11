@@ -41,6 +41,7 @@ jsystem-theme-detector = "3.9.1"
 junit = "4.13.2"
 kermit = "2.0.8"
 koin-bom = "4.1.1"
+kotest = "6.0.7"
 kotlin = "2.2.21"
 # Because of telemetry deck still using version 0.6.x
 kotlinx-date-time = "0.7.1-0.6.x-compat"
@@ -68,6 +69,7 @@ slf4jNop = "2.0.17"
 sql-delight = "2.1.0"
 stately-concurrency = "2.1.0"
 triplet-play = "3.13.0"
+turbine = "1.2.0"
 voyager = "1.0.1"
 workmanager = "2.11.0"
 compose-hotreload = "1.0.0"
@@ -124,6 +126,8 @@ koin-composeVM = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-test = { module = "io.insert-koin:koin-test" }
 koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
+kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -142,6 +146,7 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-resources = { module = "io.ktor:ktor-client-resources", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 lyricist = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" }
 # TODO: Delete when/if https://github.com/adrielcafe/lyricist/pull/45
 #  and https://github.com/adrielcafe/lyricist/pull/46 gets merged
@@ -151,6 +156,7 @@ material-window-size = { module = "org.jetbrains.compose.material3:material3-win
 multiplatform-markdown-renderer-coil = { module = "com.mikepenz:multiplatform-markdown-renderer-coil3", version.ref = "multiplatformMarkdownRendererM3" }
 multiplatform-markdown-renderer-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "multiplatformMarkdownRendererM3" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
+multiplatform-settings-test = { module = "com.russhwolf:multiplatform-settings-test", version.ref = "multiplatform-settings" }
 org-robolectric = { module = "org.robolectric:robolectric", version.ref = "org-robolectric" }
 play-review = { module = "com.google.android.play:review-ktx", version.ref = "play-review" }
 readability4j = { module = "net.dankito.readability4j:readability4j", version.ref = "readability4j" }
@@ -171,6 +177,7 @@ touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "
 touchlab-kermit-test = { module = "co.touchlab:kermit-test", version.ref = "kermit" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-transition = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "workmanager" }
 telemetry-deck = { module = "com.telemetrydeck:kotlin-sdk", version.ref = "telemetry-deck" }
 telephoto-zoomable = { module = "me.saket.telephoto:zoomable", version.ref = "telephoto" }

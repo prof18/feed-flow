@@ -194,6 +194,9 @@ internal fun HomeScreen(
             showChangeCategorySheet = true
         },
         onOpenWebsite = { url -> uriHandler.openUri(url.sanitizeUrl()) },
+        onMoveFeedSourcesToCategory = { feedSources, category ->
+            changeFeedCategoryViewModel.moveFeedSourcesToCategory(feedSources, category)
+        },
     )
 
     val linkCopiedSuccess = LocalFeedFlowStrings.current.linkCopiedSuccess

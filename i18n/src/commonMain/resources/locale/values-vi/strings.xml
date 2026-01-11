@@ -338,4 +338,17 @@
     <string name="bazqux_password_hint">Mật khẩu tài khoản BazQux của bạn</string>
     <string name="bazqux_login_subscription_expired">Đăng nhập không thành công: gói đăng ký của bạn đã hết hạn</string>
     <string name="bazqux_login_free_trial_expired">Đăng nhập không thành công: gói dùng thử của bạn đã hết hạn</string>
+    <string name="settings_reduce_motion">Giảm chuyển động và hiệu ứng</string>
+    <string name="search_filter_all">Toàn bộ</string>
+    <string name="search_filter_read">Đã đọc</string>
+    <string name="search_filter_bookmarks">Đã lưu</string>
+    <string name="settings_refresh_feeds_on_launch">Làm mới bảng tin khi mở app</string>
+    <string name="settings_extras">Bổ sung</string>
+    <string name="notification_category_body">Bạn có bài viết mới trong %s</string>
+    <string name="notification_grouped_body">Bạn có các bài viết mới đã sẵn sàng để đọc!</string>
+    <string name="settings_notification_mode">Nhóm thông báo</string>
+    <string name="settings_notification_mode_desc">Nhóm thông báo theo nguồn tin, danh mục hoặc hiển thị một thông báo kết hợp</string>
+    <string name="settings_notification_mode_feed_source">Theo nguồn tin</string>
+    <string name="settings_notification_mode_category">Theo danh mục</string>
+    <string name="settings_notification_mode_grouped">Gộp chung lại</string>
 </resources>

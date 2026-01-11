@@ -36,6 +36,9 @@ kotlin {
             export(libs.touchlab.kermit.simple)
             export(libs.androidx.lifecycle.viewModel)
         }
+        it.binaries.all {
+            linkerOpts("-lsqlite3")
+        }
     }
 
     compilerOptions {
@@ -91,9 +94,16 @@ kotlin {
 
         commonTest {
             dependencies {
+                implementation(project(":database"))
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.touchlab.kermit.test)
+                implementation(libs.kotest.assertions)
+                implementation(libs.kotest.property)
+                implementation(libs.koin.test)
+                implementation(libs.turbine)
+                implementation(libs.multiplatform.settings.test)
+                implementation(libs.ktor.client.mock)
             }
         }
 
@@ -137,6 +147,7 @@ kotlin {
                 implementation(libs.junit)
                 implementation(libs.org.robolectric)
                 implementation(libs.androidx.test.core.ktx)
+                implementation(libs.sqldelight.sqlite.driver)
             }
         }
 
@@ -163,6 +174,9 @@ kotlin {
 
         jvmTest {
             dependsOn(commonJvmAndroidTest)
+            dependencies {
+                implementation(libs.sqldelight.sqlite.driver)
+            }
         }
     }
 }

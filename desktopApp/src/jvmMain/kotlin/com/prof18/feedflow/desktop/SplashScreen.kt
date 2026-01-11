@@ -2,6 +2,7 @@ package com.prof18.feedflow.desktop
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,12 +34,18 @@ fun SplashContent(
 
     val backgroundColor = if (isDark) Color(0xFF1A1B1F) else Color(0xFFFDFBFF)
     val primaryColor = if (isDark) Color(0xFFABC7FF) else Color(0xFF2C5EA7)
+    val borderColor = if (isDark) Color(0xFF3A3B3F) else Color(0xFFE0E0E0)
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(16.dp))
-            .background(backgroundColor),
+            .background(backgroundColor)
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(16.dp),
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Column(

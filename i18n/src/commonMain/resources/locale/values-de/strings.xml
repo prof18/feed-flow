@@ -338,4 +338,17 @@
     <string name="bazqux_password_hint">Ihr BazQux Konto Passwort</string>
     <string name="bazqux_login_subscription_expired">Login nicht möglich: Ihr Abonnement ist abgelaufen</string>
     <string name="bazqux_login_free_trial_expired">Login nicht möglich: Ihr kostenloser Testzugang ist abgelaufen</string>
+    <string name="settings_reduce_motion">Bewegung und Animationen reduzieren</string>
+    <string name="search_filter_all">Alle</string>
+    <string name="search_filter_read">Gelesen</string>
+    <string name="search_filter_bookmarks">Lesezeichen</string>
+    <string name="settings_refresh_feeds_on_launch">Feeds beim App-Start auffrischen</string>
+    <string name="settings_extras">Extras</string>
+    <string name="notification_category_body">Sie haben neue Artikel in %s</string>
+    <string name="notification_grouped_body">Sie haben neue, zum Lesen vorbereitete Artikel!</string>
+    <string name="settings_notification_mode">Gruppierung der Benachrichtigungen</string>
+    <string name="settings_notification_mode_desc">Benachrichtigungen gruppieren nach Feed und Kategorie, oder eine kombinierte Benachrichtigung anzeigen</string>
+    <string name="settings_notification_mode_feed_source">Nach Feed</string>
+    <string name="settings_notification_mode_category">Nach Kategorie</string>
+    <string name="settings_notification_mode_grouped">Alles zusammengefasst</string>
 </resources>

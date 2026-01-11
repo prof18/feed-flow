@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared.ui.home.components
+package com.prof18.feedflow.shared.ui.home.components.drawer
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -45,6 +45,7 @@ import androidx.compose.ui.zIndex
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
+import com.prof18.feedflow.shared.ui.home.components.isDragAndDropEnabled
 import com.prof18.feedflow.shared.ui.style.Spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

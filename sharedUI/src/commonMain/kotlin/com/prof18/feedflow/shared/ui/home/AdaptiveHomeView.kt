@@ -18,8 +18,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.core.model.FeedFilter
-import com.prof18.feedflow.shared.ui.home.components.Drawer
 import com.prof18.feedflow.shared.ui.home.components.HomeScreenContent
+import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
 import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.scrollToItemConditionally

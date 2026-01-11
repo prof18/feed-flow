@@ -9,6 +9,10 @@ import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -21,8 +25,8 @@ val LocalReduceMotion = compositionLocalOf { false }
 fun ConditionalAnimatedVisibility(
     visible: Boolean,
     modifier: Modifier = Modifier,
-    enter: EnterTransition = EnterTransition.None,
-    exit: ExitTransition = ExitTransition.None,
+    enter: EnterTransition = fadeIn() + expandIn(),
+    exit: ExitTransition = shrinkOut() + fadeOut(),
     label: String = "AnimatedVisibility",
     content: @Composable AnimatedVisibilityScope.() -> Unit,
 ) {

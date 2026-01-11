@@ -338,4 +338,17 @@
     <string name="bazqux_password_hint">Паролата за вашия BazQux акаунт</string>
     <string name="bazqux_login_subscription_expired">Влизането не бе успешно: абонаментът ви е изтекъл</string>
     <string name="bazqux_login_free_trial_expired">Влизането не бе успешно: безплатният ви пробен период изтече</string>
+    <string name="settings_reduce_motion">Намалете движението и анимациите</string>
+    <string name="search_filter_all">Всички</string>
+    <string name="search_filter_read">Прочетени</string>
+    <string name="search_filter_bookmarks">Отметки</string>
+    <string name="settings_refresh_feeds_on_launch">Опресняване на емисиите при стартиране на приложението</string>
+    <string name="settings_extras">Екстри</string>
+    <string name="notification_category_body">Имате нови статии в %s</string>
+    <string name="notification_grouped_body">Имате нови статии, готови за четене!</string>
+    <string name="settings_notification_mode">Групиране на известия</string>
+    <string name="settings_notification_mode_desc">Групиране на известия по емисия, категория или показване на едно комбинирано известие</string>
+    <string name="settings_notification_mode_feed_source">По емисия</string>
+    <string name="settings_notification_mode_category">По категория</string>
+    <string name="settings_notification_mode_grouped">Всички взети заедно</string>
 </resources>

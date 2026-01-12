@@ -2,12 +2,14 @@ package com.prof18.feedflow.android
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,13 +30,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
+import androidx.navigationevent.NavigationEvent
 import com.prof18.feedflow.android.accounts.AccountsScreen
 import com.prof18.feedflow.android.accounts.bazqux.BazquxSyncScreen
 import com.prof18.feedflow.android.accounts.feedbin.FeedbinSyncScreen
@@ -126,7 +127,7 @@ class MainActivity : BaseThemeActivity() {
         val deeplinkViewModel: DeeplinkFeedViewModel = koinViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
 
-        val navController = rememberNavController()
+        val backStack = rememberNavBackStack(Home())
         val flowStrings = LocalFeedFlowStrings.current
 
         val deeplinkState by deeplinkViewModel.deeplinkFeedState.collectAsStateWithLifecycle()
@@ -151,7 +152,7 @@ class MainActivity : BaseThemeActivity() {
                 state = deeplinkState,
                 deeplinkViewModel = deeplinkViewModel,
                 readerModeViewModel = readerModeViewModel,
-                navController = navController,
+                backStack = backStack,
             )
         }
 
@@ -174,7 +175,7 @@ class MainActivity : BaseThemeActivity() {
             color = MaterialTheme.colorScheme.background,
         ) {
             FeedFlowNavigation(
-                navController = navController,
+                backStack = backStack,
                 readerModeViewModel = readerModeViewModel,
             )
 
@@ -189,423 +190,316 @@ class MainActivity : BaseThemeActivity() {
         }
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     private fun FeedFlowNavigation(
-        navController: NavHostController,
+        backStack: NavBackStack<NavKey>,
         readerModeViewModel: ReaderModeViewModel,
     ) {
         val reduceMotionEnabled = LocalReduceMotion.current
 
-        NavHost(
-            navController = navController,
-            startDestination = Home(),
-            enterTransition = {
+        NavDisplay(
+            backStack = backStack,
+            onBack = { backStack.removeLastOrNull() },
+            transitionSpec = {
                 if (reduceMotionEnabled) {
-                    EnterTransition.None
+                    EnterTransition.None togetherWith ExitTransition.None
                 } else {
-                    fadeIn() + slideIntoContainer(SlideDirection.Start)
+                    (fadeIn() + slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start)) togetherWith
+                        (fadeOut() + slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start))
                 }
             },
-            exitTransition = {
+            popTransitionSpec = {
                 if (reduceMotionEnabled) {
-                    ExitTransition.None
+                    EnterTransition.None togetherWith ExitTransition.None
                 } else {
-                    fadeOut() + slideOutOfContainer(SlideDirection.Start)
-                }
-            },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = {
-                if (reduceMotionEnabled) {
-                    ExitTransition.None
-                } else {
-                    scaleOut(
+                    val rightEdgeOrigin = TransformOrigin(pivotFractionX = 1f, pivotFractionY = 0.5f)
+                    EnterTransition.None togetherWith scaleOut(
                         targetScale = 0.9f,
-                        transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0.5f),
+                        transformOrigin = rightEdgeOrigin,
                     )
                 }
             },
-        ) {
-            composable<FeedSuggestions> {
-                FeedSuggestionsScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
+            predictivePopTransitionSpec = { swipeEdge: Int ->
+                if (reduceMotionEnabled) {
+                    EnterTransition.None togetherWith ExitTransition.None
+                } else {
+                    val origin = when (swipeEdge) {
+                        NavigationEvent.EDGE_LEFT -> TransformOrigin(pivotFractionX = 1f, pivotFractionY = 0.5f)
+                        NavigationEvent.EDGE_RIGHT -> TransformOrigin(pivotFractionX = 0f, pivotFractionY = 0.5f)
+                        else -> TransformOrigin(pivotFractionX = 1f, pivotFractionY = 0.5f)
+                    }
+                    EnterTransition.None togetherWith scaleOut(
+                        targetScale = 0.9f,
+                        transformOrigin = origin,
+                    )
+                }
+            },
+            entryProvider = entryProvider {
+                entry<FeedSuggestions> {
+                    FeedSuggestionsScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
 
-            composable<Home>(
-                deepLinks = listOf(
-                    navDeepLink {
-                        action = Intent.ACTION_VIEW
-                        uriPattern = "feedflow://feedsourcefilter/{feedSourceId}"
-                    },
-                    navDeepLink {
-                        action = Intent.ACTION_VIEW
-                        uriPattern = "feedflow://category/{categoryId}"
-                    },
-                ),
-            ) { backStackEntry ->
-                val route = backStackEntry.toRoute<Home>()
-
-                val savedStateHandle = backStackEntry.savedStateHandle
-
-                LaunchedEffect(Unit) {
-                    val isConsumed = savedStateHandle.get<Boolean>("deepLinkConsumed") ?: false
-                    if (!isConsumed) {
+                entry<Home> { route ->
+                    LaunchedEffect(Unit) {
                         val feedId: String? = route.feedSourceId
                         if (!feedId.isNullOrEmpty()) {
                             homeViewModel.updateFeedSourceFilter(feedId)
-                            savedStateHandle["deepLinkConsumed"] = true
                         }
 
                         val categoryId: String? = route.categoryId
                         if (!categoryId.isNullOrEmpty()) {
                             homeViewModel.updateCategoryFilter(categoryId)
-                            savedStateHandle["deepLinkConsumed"] = true
                         }
                     }
+
+                    HomeScreen(
+                        homeViewModel = homeViewModel,
+                        onSettingsButtonClicked = { backStack.add(Settings) },
+                        onAddFeedClick = { backStack.add(AddFeed) },
+                        onImportExportClick = { backStack.add(ImportExport) },
+                        navigateToReaderMode = { url ->
+                            readerModeViewModel.getReaderModeHtml(url)
+                            backStack.add(ReaderMode)
+                        },
+                        onSearchClick = { backStack.add(Search) },
+                        onAccountsClick = { backStack.add(Accounts) },
+                        onEditFeedClick = { feedSource ->
+                            backStack.add(feedSource.toEditFeed())
+                        },
+                        onFeedSuggestionsClick = { backStack.add(FeedSuggestions) },
+                    )
                 }
 
-                HomeScreen(
-                    homeViewModel = homeViewModel,
-                    onSettingsButtonClicked = {
-                        navController.navigate(Settings)
-                    },
-                    onAddFeedClick = {
-                        navController.navigate(AddFeed)
-                    },
-                    onImportExportClick = {
-                        navController.navigate(ImportExport)
-                    },
-                    navigateToReaderMode = { url ->
-                        readerModeViewModel.getReaderModeHtml(url)
-                        navController.navigate(ReaderMode)
-                    },
-                    onSearchClick = {
-                        navController.navigate(Search)
-                    },
-                    onAccountsClick = {
-                        navController.navigate(Accounts)
-                    },
-                    onEditFeedClick = { feedSource ->
-                        navController.navigate(feedSource.toEditFeed())
-                    },
-                    onFeedSuggestionsClick = {
-                        navController.navigate(FeedSuggestions)
-                    },
-                )
-            }
-
-            composable<Settings> {
-                SettingsScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                    navigateToFeedsAndAccounts = {
-                        navController.navigate(FeedsAndAccounts)
-                    },
-                    navigateToFeedListSettings = {
-                        navController.navigate(FeedListSettings)
-                    },
-                    navigateToReadingBehavior = {
-                        navController.navigate(ReadingBehavior)
-                    },
-                    navigateToSyncAndStorage = {
-                        navController.navigate(SyncAndStorage)
-                    },
-                    navigateToWidgetSettings = {
-                        navController.navigate(WidgetSettings)
-                    },
-                    navigateToExtras = {
-                        navController.navigate(Extras)
-                    },
-                    navigateToAboutAndSupport = {
-                        navController.navigate(AboutAndSupport)
-                    },
-                )
-            }
-
-            composable<FeedsAndAccounts> {
-                FeedsAndAccountsScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                    onFeedListClick = {
-                        navController.navigate(FeedList)
-                    },
-                    onAddFeedClick = {
-                        navController.navigate(AddFeed)
-                    },
-                    navigateToImportExport = {
-                        navController.navigate(ImportExport)
-                    },
-                    navigateToAccounts = {
-                        navController.navigate(Accounts)
-                    },
-                    navigateToNotifications = {
-                        navController.navigate(Notifications)
-                    },
-                    navigateToBlockedWords = {
-                        navController.navigate(BlockedWords)
-                    },
-                )
-            }
-
-            composable<FeedListSettings> {
-                FeedListSettingsScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
-
-            composable<ReadingBehavior> {
-                ReadingBehaviorScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
-
-            composable<SyncAndStorage> {
-                SyncAndStorageScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
-
-            composable<Extras> {
-                ExtrasScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
-
-            composable<WidgetSettings> {
-                WidgetSettingsScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
-
-            composable<AboutAndSupport> {
-                AboutAndSupportScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                    onAboutClick = {
-                        navController.navigate(About)
-                    },
-                )
-            }
-
-            composable<AddFeed> {
-                AddFeedScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
-
-            composable<FeedList> {
-                FeedSourceListScreen(
-                    onAddFeedClick = {
-                        navController.navigate(AddFeed)
-                    },
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                    onEditFeedClick = { feedSource ->
-                        navController.navigate(feedSource.toEditFeed())
-                    },
-                )
-            }
-
-            composable<About> {
-                AboutScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
-                    navigateToLibrariesScreen = {
-                        navController.navigate(Licenses)
-                    },
-                )
-            }
-
-            composable<Licenses> {
-                LicensesScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
-                )
-            }
-
-            composable<ImportExport> {
-                ImportExportScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                    onDoneClick = {
-                        homeViewModel.getNewFeeds()
-                        navController.popBackStack()
-                    },
-                )
-            }
-
-            composable<ReaderMode> {
-                val readerModeState by readerModeViewModel.readerModeState.collectAsStateWithLifecycle()
-                val fontSizeState by readerModeViewModel.readerFontSizeState.collectAsStateWithLifecycle()
-                val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsStateWithLifecycle()
-                val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsStateWithLifecycle()
-
-                ReaderModeScreen(
-                    readerModeState = readerModeState,
-                    fontSize = fontSizeState,
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                    onUpdateFontSize = { newFontSize ->
-                        readerModeViewModel.updateFontSize(newFontSize)
-                    },
-                    onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
-                        readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
-                    },
-                    canNavigatePrevious = canNavigatePrevious,
-                    canNavigateNext = canNavigateNext,
-                    onNavigateToPrevious = {
-                        readerModeViewModel.navigateToPreviousArticle()
-                    },
-                    onNavigateToNext = {
-                        readerModeViewModel.navigateToNextArticle()
-                    },
-                )
-            }
-
-            composable<Search> {
-                SearchScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                    navigateToReaderMode = { urlInfo ->
-                        readerModeViewModel.getReaderModeHtml(urlInfo)
-                        navController.navigate(ReaderMode)
-                    },
-                    navigateToEditFeed = { feedSource ->
-                        navController.navigate(feedSource.toEditFeed())
-                    },
-                )
-            }
-
-            composable<Accounts> {
-                AccountsScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                    navigateToFreshRssSync = {
-                        navController.navigate(FreshRssSync)
-                    },
-                    navigateToMinifluxSync = {
-                        navController.navigate(MinifluxSync)
-                    },
-                    navigateToBazquxSync = {
-                        navController.navigate(BazquxSync)
-                    },
-                    navigateToFeedbinSync = {
-                        navController.navigate(FeedbinSync)
-                    },
-                )
-            }
-
-            composable<EditFeed> { backstackEntry ->
-                val feedSource: FeedSource = backstackEntry.toRoute<EditFeed>().toFeedSource()
-                val viewModel = koinViewModel<EditFeedViewModel>()
-
-                LaunchedEffect(feedSource) {
-                    viewModel.loadFeedToEdit(feedSource)
+                entry<Settings> {
+                    SettingsScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateToFeedsAndAccounts = { backStack.add(FeedsAndAccounts) },
+                        navigateToFeedListSettings = { backStack.add(FeedListSettings) },
+                        navigateToReadingBehavior = { backStack.add(ReadingBehavior) },
+                        navigateToSyncAndStorage = { backStack.add(SyncAndStorage) },
+                        navigateToWidgetSettings = { backStack.add(WidgetSettings) },
+                        navigateToExtras = { backStack.add(Extras) },
+                        navigateToAboutAndSupport = { backStack.add(AboutAndSupport) },
+                    )
                 }
 
-                EditScreen(
-                    viewModel = viewModel,
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
+                entry<FeedsAndAccounts> {
+                    FeedsAndAccountsScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                        onFeedListClick = { backStack.add(FeedList) },
+                        onAddFeedClick = { backStack.add(AddFeed) },
+                        navigateToImportExport = { backStack.add(ImportExport) },
+                        navigateToAccounts = { backStack.add(Accounts) },
+                        navigateToNotifications = { backStack.add(Notifications) },
+                        navigateToBlockedWords = { backStack.add(BlockedWords) },
+                    )
+                }
 
-            composable<FreshRssSync> {
-                FreshRssSyncScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
+                entry<FeedListSettings> {
+                    FeedListSettingsScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
 
-            composable<MinifluxSync> {
-                MinifluxSyncScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
+                entry<ReadingBehavior> {
+                    ReadingBehaviorScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
 
-            composable<BazquxSync> {
-                BazquxSyncScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
+                entry<SyncAndStorage> {
+                    SyncAndStorageScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
 
-            composable<FeedbinSync> {
-                FeedbinSyncScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
+                entry<Extras> {
+                    ExtrasScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
 
-            composable<Notifications> {
-                NotificationsSettingsScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
+                entry<WidgetSettings> {
+                    WidgetSettingsScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
 
-            composable<BlockedWords> {
-                BlockedWordsScreen(
-                    navigateBack = {
-                        navController.popBackStack()
-                    },
-                )
-            }
-        }
+                entry<AboutAndSupport> {
+                    AboutAndSupportScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                        onAboutClick = { backStack.add(About) },
+                    )
+                }
+
+                entry<AddFeed> {
+                    AddFeedScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
+
+                entry<FeedList> {
+                    FeedSourceListScreen(
+                        onAddFeedClick = { backStack.add(AddFeed) },
+                        navigateBack = { backStack.removeLastOrNull() },
+                        onEditFeedClick = { feedSource ->
+                            backStack.add(feedSource.toEditFeed())
+                        },
+                    )
+                }
+
+                entry<About> {
+                    AboutScreen(
+                        onBackClick = { backStack.removeLastOrNull() },
+                        navigateToLibrariesScreen = { backStack.add(Licenses) },
+                    )
+                }
+
+                entry<Licenses> {
+                    LicensesScreen(
+                        onBackClick = { backStack.removeLastOrNull() },
+                    )
+                }
+
+                entry<ImportExport> {
+                    ImportExportScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                        onDoneClick = {
+                            homeViewModel.getNewFeeds()
+                            backStack.removeLastOrNull()
+                        },
+                    )
+                }
+
+                entry<ReaderMode> {
+                    val readerModeState by readerModeViewModel.readerModeState.collectAsStateWithLifecycle()
+                    val fontSizeState by readerModeViewModel.readerFontSizeState.collectAsStateWithLifecycle()
+                    val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState
+                        .collectAsStateWithLifecycle()
+                    val canNavigateNext by readerModeViewModel.canNavigateToNextState
+                        .collectAsStateWithLifecycle()
+
+                    ReaderModeScreen(
+                        readerModeState = readerModeState,
+                        fontSize = fontSizeState,
+                        navigateBack = { backStack.removeLastOrNull() },
+                        onUpdateFontSize = { newFontSize ->
+                            readerModeViewModel.updateFontSize(newFontSize)
+                        },
+                        onBookmarkClick = { feedItemId: FeedItemId, isBookmarked: Boolean ->
+                            readerModeViewModel.updateBookmarkStatus(feedItemId, isBookmarked)
+                        },
+                        canNavigatePrevious = canNavigatePrevious,
+                        canNavigateNext = canNavigateNext,
+                        onNavigateToPrevious = {
+                            readerModeViewModel.navigateToPreviousArticle()
+                        },
+                        onNavigateToNext = {
+                            readerModeViewModel.navigateToNextArticle()
+                        },
+                    )
+                }
+
+                entry<Search> {
+                    SearchScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateToReaderMode = { urlInfo ->
+                            readerModeViewModel.getReaderModeHtml(urlInfo)
+                            backStack.add(ReaderMode)
+                        },
+                        navigateToEditFeed = { feedSource ->
+                            backStack.add(feedSource.toEditFeed())
+                        },
+                    )
+                }
+
+                entry<Accounts> {
+                    AccountsScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                        navigateToFreshRssSync = { backStack.add(FreshRssSync) },
+                        navigateToMinifluxSync = { backStack.add(MinifluxSync) },
+                        navigateToBazquxSync = { backStack.add(BazquxSync) },
+                        navigateToFeedbinSync = { backStack.add(FeedbinSync) },
+                    )
+                }
+
+                entry<EditFeed> { route ->
+                    val feedSource: FeedSource = route.toFeedSource()
+                    val viewModel = koinViewModel<EditFeedViewModel>()
+
+                    LaunchedEffect(feedSource) {
+                        viewModel.loadFeedToEdit(feedSource)
+                    }
+
+                    EditScreen(
+                        viewModel = viewModel,
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
+
+                entry<FreshRssSync> {
+                    FreshRssSyncScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
+
+                entry<MinifluxSync> {
+                    MinifluxSyncScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
+
+                entry<BazquxSync> {
+                    BazquxSyncScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
+
+                entry<FeedbinSync> {
+                    FeedbinSyncScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
+
+                entry<Notifications> {
+                    NotificationsSettingsScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
+
+                entry<BlockedWords> {
+                    BlockedWordsScreen(
+                        navigateBack = { backStack.removeLastOrNull() },
+                    )
+                }
+            },
+        )
     }
 
     private fun handleDeepLinkState(
         state: DeeplinkFeedState,
         deeplinkViewModel: DeeplinkFeedViewModel,
         readerModeViewModel: ReaderModeViewModel,
-        navController: NavHostController,
+        backStack: NavBackStack<NavKey>,
     ) {
         if (state is DeeplinkFeedState.Success) {
             val feedUrlInfo = state.data
             deeplinkViewModel.markAsRead(FeedItemId(feedUrlInfo.id))
-            handleLinkOpeningPreference(feedUrlInfo, readerModeViewModel, navController)
+            handleLinkOpeningPreference(feedUrlInfo, readerModeViewModel, backStack)
         }
     }
 
     private fun handleLinkOpeningPreference(
         feedUrlInfo: FeedItemUrlInfo,
         readerModeViewModel: ReaderModeViewModel,
-        navController: NavHostController,
+        backStack: NavBackStack<NavKey>,
     ) {
         when (feedUrlInfo.linkOpeningPreference) {
             LinkOpeningPreference.READER_MODE -> {
-                navigateToReaderModeIfNeeded(readerModeViewModel, navController, feedUrlInfo)
+                navigateToReaderModeIfNeeded(readerModeViewModel, backStack, feedUrlInfo)
             }
             LinkOpeningPreference.INTERNAL_BROWSER -> {
                 browserManager.openWithInAppBrowser(feedUrlInfo.url, this@MainActivity)
@@ -615,7 +509,7 @@ class MainActivity : BaseThemeActivity() {
             }
             LinkOpeningPreference.DEFAULT -> {
                 if (browserManager.openReaderMode() && !feedUrlInfo.shouldOpenInBrowser()) {
-                    navigateToReaderModeIfNeeded(readerModeViewModel, navController, feedUrlInfo)
+                    navigateToReaderModeIfNeeded(readerModeViewModel, backStack, feedUrlInfo)
                 } else {
                     browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
                 }
@@ -625,12 +519,12 @@ class MainActivity : BaseThemeActivity() {
 
     private fun navigateToReaderModeIfNeeded(
         readerModeViewModel: ReaderModeViewModel,
-        navController: NavHostController,
+        backStack: NavBackStack<NavKey>,
         feedUrlInfo: FeedItemUrlInfo,
     ) {
         readerModeViewModel.getReaderModeHtml(feedUrlInfo)
-        if (navController.currentDestination?.hasRoute(ReaderMode::class) == false) {
-            navController.navigate(ReaderMode)
+        if (!backStack.contains(ReaderMode)) {
+            backStack.add(ReaderMode)
         }
     }
 }

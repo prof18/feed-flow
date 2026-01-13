@@ -56,7 +56,7 @@ jobs:
         run: bash .scripts/refresh-translations.sh
 
       - name: Import Mac App Distribution and Installer certificate
-        uses: apple-actions/import-codesign-certs@v5
+        uses: apple-actions/import-codesign-certs@v6
         with:
           p12-file-base64: ${{ secrets.MAC_APP_DISTRIBUTION_INSTALLER_CERTIFICATE }}
           p12-password: ${{ secrets.MAC_APP_DISTRIBUTION_INSTALLER_CERTIFICATE_PWD }}

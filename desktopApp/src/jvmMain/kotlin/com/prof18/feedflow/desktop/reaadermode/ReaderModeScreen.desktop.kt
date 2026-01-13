@@ -62,9 +62,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
@@ -75,7 +72,6 @@ import com.prof18.feedflow.core.model.ReaderModeState
 import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.utils.copyToClipboard
-import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.ui.readermode.SliderWithPlusMinus
 import com.prof18.feedflow.shared.ui.readermode.hammerIcon
@@ -85,30 +81,27 @@ import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.launch
 
-internal data class ReaderModeScreen(
-    private val feedItemUrlInfo: FeedItemUrlInfo,
-) : Screen {
-    override val key: String = generateUniqueKey()
+@Composable
+internal fun ReaderModeScreen(
+    feedItemUrlInfo: FeedItemUrlInfo,
+    navigateBack: () -> Unit,
+) {
+    val readerModeViewModel = desktopViewModel { DI.koin.get<ReaderModeViewModel>() }
+    val state by readerModeViewModel.readerModeState.collectAsState()
+    val fontSize by readerModeViewModel.readerFontSizeState.collectAsState()
 
-    @Composable
-    override fun Content() {
-        val readerModeViewModel = desktopViewModel { DI.koin.get<ReaderModeViewModel>() }
-        val state by readerModeViewModel.readerModeState.collectAsState()
-        val fontSize by readerModeViewModel.readerFontSizeState.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+    LaunchedEffect(feedItemUrlInfo) {
+        readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
+    }
 
-        LaunchedEffect(feedItemUrlInfo) {
-            readerModeViewModel.getReaderModeHtml(feedItemUrlInfo)
-        }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-        val snackbarHostState = remember { SnackbarHostState() }
-        val scope = rememberCoroutineScope()
+    val message = LocalFeedFlowStrings.current.linkCopiedSuccess
+    val uriHandler = LocalUriHandler.current
 
-        val message = LocalFeedFlowStrings.current.linkCopiedSuccess
-        val uriHandler = LocalUriHandler.current
-
-        val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsState()
-        val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsState()
+    val canNavigatePrevious by readerModeViewModel.canNavigateToPreviousState.collectAsState()
+    val canNavigateNext by readerModeViewModel.canNavigateToNextState.collectAsState()
 
         val focusRequester = remember { FocusRequester() }
 
@@ -137,7 +130,7 @@ internal data class ReaderModeScreen(
                     ReaderModeToolbar(
                         readerModeState = state,
                         fontSize = fontSize,
-                        navigateBack = { navigator.pop() },
+                        navigateBack = navigateBack,
                         openInBrowser = { url ->
                             if (isValidUrl(url)) {
                                 uriHandler.openUri(url)
@@ -338,7 +331,6 @@ internal data class ReaderModeScreen(
                     }
                 }
             }
-        }
     }
 }
 

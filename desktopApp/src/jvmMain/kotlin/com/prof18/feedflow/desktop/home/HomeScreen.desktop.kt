@@ -22,20 +22,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemUrlInfo
 import com.prof18.feedflow.core.model.FeedOperation
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.LinkOpeningPreference
 import com.prof18.feedflow.core.model.shouldOpenInBrowser
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.addfeed.AddFeedFullScreen
 import com.prof18.feedflow.desktop.categoryselection.EditCategoryDialog
-import com.prof18.feedflow.desktop.desktopViewModel
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.utils.copyToClipboard
+import com.prof18.feedflow.desktop.utils.desktopViewModel
+import com.prof18.feedflow.desktop.utils.koinNavViewModel
 import com.prof18.feedflow.desktop.utils.sanitizeUrl
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
@@ -61,6 +60,8 @@ internal fun HomeScreen(
     onAccountsClick: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
+    onAddFeedClick: () -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
     onFeedSuggestionsClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
@@ -84,7 +85,6 @@ internal fun HomeScreen(
     val browserManager = DI.koin.get<BrowserManager>()
     val strings = LocalFeedFlowStrings.current
     val uriHandler = LocalUriHandler.current
-    val navigator = LocalNavigator.currentOrThrow
 
     if (feedOperation != FeedOperation.None) {
         LoadingOperationDialog(feedOperation)
@@ -174,17 +174,9 @@ internal fun HomeScreen(
     )
 
     val feedManagementActions = FeedManagementActions(
-        onAddFeedClick = {
-            navigator.push(
-                AddFeedFullScreen(
-                    onFeedAdded = {
-                        homeViewModel.getNewFeeds()
-                    },
-                ),
-            )
-        },
+        onAddFeedClick = onAddFeedClick,
         onFeedFilterSelected = { feedFilter -> homeViewModel.onFeedFilterSelected(feedFilter) },
-        onEditFeedClick = { feedSource -> navigator.push(EditFeedScreen(feedSource)) }, // Pass the navigator action
+        onEditFeedClick = onEditFeedClick,
         onDeleteFeedSourceClick = { feedSource -> homeViewModel.deleteFeedSource(feedSource) },
         onPinFeedClick = { feedSource -> homeViewModel.toggleFeedPin(feedSource) },
         onEditCategoryClick = { categoryId, newName -> homeViewModel.updateCategoryName(categoryId, newName) },
@@ -285,6 +277,10 @@ internal fun HomeScreen(
         onAccountsClick = {
             showNoFeedsBottomSheet = false
             onAccountsClick()
+        },
+        onAddFeedClick = {
+            showNoFeedsBottomSheet = false
+            onAddFeedClick()
         },
         onFeedSuggestionsClick = {
             showNoFeedsBottomSheet = false

@@ -10,36 +10,32 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalUriHandler
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedItemUrlInfo
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SearchFilter
 import com.prof18.feedflow.core.model.SearchState
 import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
-import com.prof18.feedflow.desktop.reaadermode.ReaderModeScreen
-import com.prof18.feedflow.desktop.screenViewModel
 import com.prof18.feedflow.desktop.utils.copyToClipboard
-import com.prof18.feedflow.desktop.utils.generateUniqueKey
+import com.prof18.feedflow.desktop.utils.koinNavViewModel
 import com.prof18.feedflow.shared.presentation.SearchViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.ui.search.SearchScreenContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
-internal class SearchScreen : Screen {
-    override val key: String = generateUniqueKey()
+@Composable
+internal fun SearchScreen(
+    navigateBack: () -> Unit,
+    navigateToReaderMode: (FeedItemUrlInfo) -> Unit,
+    navigateToEditFeed: (FeedSource) -> Unit,
+) {
+    val browserManager = DI.koin.get<BrowserManager>()
+    val viewModel = koinNavViewModel<SearchViewModel>()
 
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val browserManager = DI.koin.get<BrowserManager>()
-        val viewModel = screenViewModel(this@SearchScreen) { DI.koin.get<SearchViewModel>() }
-
-        val state: SearchState by viewModel.searchState.collectAsState()
+    val state: SearchState by viewModel.searchState.collectAsState()
         val searchQuery by viewModel.searchQueryState.collectAsState()
         val searchFilter by viewModel.searchFilterState.collectAsState()
         val currentFeedFilter by viewModel.searchFeedFilterState.collectAsState()
@@ -99,11 +95,11 @@ internal class SearchScreen : Screen {
             },
             navigateBack = {
                 viewModel.updateSearchQuery("")
-                navigator.pop()
+                navigateBack()
             },
             onFeedItemClick = { urlInfo ->
                 if (browserManager.openReaderMode()) {
-                    navigator.push(ReaderModeScreen(urlInfo))
+                    navigateToReaderMode(urlInfo)
                 } else {
                     uriHandler.openUri(urlInfo.url)
                 }
@@ -132,10 +128,9 @@ internal class SearchScreen : Screen {
                 copyToClipboard(titleAndUrl.url)
             },
             onOpenFeedSettings = { feedSource ->
-                navigator.push(EditFeedScreen(feedSource))
+                navigateToEditFeed(feedSource)
             },
         )
-    }
 }
 
 @Preview

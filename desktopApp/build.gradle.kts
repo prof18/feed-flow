@@ -63,8 +63,9 @@ kotlin {
 
                 implementation(libs.multiplatform.markdown.renderer.m3)
                 implementation(libs.multiplatform.markdown.renderer.coil)
-                implementation(libs.voyager.navigator)
-                implementation(libs.voyager.transition)
+                implementation(libs.jetbrains.navigation3.runtime)
+                implementation(libs.jetbrains.navigation3.ui)
+                implementation(libs.jetbrains.lifecycle.viewmodel.navigation3)
                 implementation(libs.material.window.size)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.okhttp)

@@ -1,6 +1,6 @@
 package com.prof18.feedflow.shared.domain
 
-import com.prof18.feedflow.shared.testLogger
+import com.prof18.feedflow.shared.test.testLogger
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.test.Test

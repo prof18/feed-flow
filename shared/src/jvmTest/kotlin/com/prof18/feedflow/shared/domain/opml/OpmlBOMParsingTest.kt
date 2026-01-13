@@ -1,6 +1,6 @@
 package com.prof18.feedflow.shared.domain.opml
 
-import com.prof18.feedflow.shared.TestDispatcherProvider
+import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.io.File

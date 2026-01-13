@@ -7,7 +7,7 @@ import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
-import com.prof18.feedflow.shared.TestDispatcherProvider
+import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.currentOS
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository

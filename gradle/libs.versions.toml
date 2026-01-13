@@ -74,7 +74,7 @@ triplet-play = "3.13.0"
 voyager = "1.0.1"
 workmanager = "2.11.0"
 flatpack-gradle-generator = "1.5.0"
-telemetry-deck = "6.2.2"
+telemetry-deck = "6.3.0"
 telephoto = "0.18.0"
 
 [libraries]

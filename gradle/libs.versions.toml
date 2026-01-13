@@ -32,7 +32,7 @@ glance = "1.1.1"
 google-services = "4.4.4"
 immutable-collections = "0.4.0"
 io-coil = "3.3.0"
-jsoup = "1.21.2"
+jsoup = "1.22.1"
 # When updating, check the version of jna in the following link:
 # https://github.com/Dansoftowner/jSystemThemeDetector/blob/master/build.gradle
 # if necessary, download again the native library here and uzip the jar: unzip jna-5.15.0/dist/darwin-aarch64.jar

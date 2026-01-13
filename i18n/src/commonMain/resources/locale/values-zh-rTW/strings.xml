@@ -237,7 +237,7 @@
     <string name="previous_article">上一篇文章</string>
     <string name="next_article">下一篇文章</string>
     <string name="settings_theme">主題</string>
-    <string name="settings_theme_system">系統</string>
+    <string name="settings_theme_system">系統預設</string>
     <string name="settings_theme_light">淺色</string>
     <string name="settings_theme_dark">深色</string>
     <string name="icloud_connection_error">抱歉，我們無法連接到iCloud。請檢查您是否已登入、iCloud雲端碟是否已開啟以及是否有可用空間。錯誤代碼：%s。</string>
@@ -284,4 +284,9 @@
     <string name="settings_advanced">進階</string>
     <string name="feedbin_username_hint">你的 Feedbin 電子郵件地址</string>
     <string name="feedbin_password_hint">你的 Feedbin 密碼</string>
+    <string name="widget_background_color_default">系統預設</string>
+    <string name="widget_background_color_preview">預覽</string>
+    <string name="widget_background_color_title">背景顏色</string>
+    <string name="widget_font_size_title">字型大小</string>
+    <string name="settings_about_and_support">關於與支援</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.prof18.feedflow.shared.domain
 
-import com.prof18.feedflow.shared.testLogger
+import com.prof18.feedflow.shared.test.testLogger
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull

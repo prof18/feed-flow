@@ -1,4 +1,4 @@
-package com.prof18.feedflow.shared
+package com.prof18.feedflow.shared.test
 
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity

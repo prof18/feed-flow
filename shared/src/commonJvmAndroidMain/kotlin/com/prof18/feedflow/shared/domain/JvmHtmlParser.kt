@@ -12,7 +12,7 @@ internal class JvmHtmlParser(
             val doc = Jsoup.parse(html)
             doc.text()
         } catch (e: Throwable) {
-            logger.e(e) { "Unable to get text from HTML, skipping" }
+            logger.d(e) { "Unable to get text from HTML, skipping" }
             null
         }
     }

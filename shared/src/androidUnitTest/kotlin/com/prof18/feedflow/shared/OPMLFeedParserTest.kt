@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared
 
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
+import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith

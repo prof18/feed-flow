@@ -48,13 +48,13 @@ kotlin {
 
                 api(libs.lyricist)
                 api(libs.io.coil.compose)
-
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material3)
-                implementation(compose.components.uiToolingPreview)
-                implementation(compose.materialIconsExtended)
-                implementation(compose.material3AdaptiveNavigationSuite)
+ 
+                implementation(libs.compose.multiplatform.runtime)
+                implementation(libs.compose.multiplatform.foundation)
+                implementation(libs.compose.multiplatform.material3)
+                implementation(libs.compose.multiplatform.ui.tooling.preview)
+                implementation(libs.compose.multiplatform.material.icons.extended)
+                implementation(libs.compose.multiplatform.material3.adaptive.navigationsuite)
                 implementation(libs.immutable.collections)
                 implementation(libs.saket.swipe)
                 implementation(libs.components.ui.tooling.preview)

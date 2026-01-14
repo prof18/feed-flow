@@ -134,3 +134,7 @@ iosApp/.compile
 iosApp/.build/
 
 /iosApp/Assets/Config-Debug.xcconfig
+/.junie/.onboarding_migrated
+/.junie/memory/errors.md
+/.junie/memory/feedback.md
+/.junie/memory/tasks.md

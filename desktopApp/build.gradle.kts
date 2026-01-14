@@ -1,5 +1,4 @@
 import com.mikepenz.aboutlibraries.plugin.AboutLibrariesExtension
-import org.gradle.kotlin.dsl.flatpakGradleGenerator
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -8,7 +7,6 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.about.libraries)
-    alias(libs.plugins.compose.hotreload)
     alias(libs.plugins.feedflow.detekt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
@@ -44,15 +42,14 @@ kotlin {
 
     sourceSets {
         jvmMain {
-            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             dependencies {
                 implementation(project(":shared"))
                 implementation(project(":sharedUI"))
                 implementation(compose.desktop.currentOs)
-                implementation(compose.material3)
-                implementation(compose.preview)
-                implementation(compose.materialIconsExtended)
-                implementation(compose.components.resources)
+                implementation(libs.compose.multiplatform.material3)
+                implementation(libs.compose.multiplatform.ui.tooling.preview)
+                implementation(libs.compose.multiplatform.material.icons.extended)
+                implementation(libs.compose.multiplatform.components.resources)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.bundles.about.libraries)
                 implementation(libs.jsoup)

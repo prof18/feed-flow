@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceContextMenu
@@ -44,7 +45,6 @@ import com.prof18.feedflow.shared.ui.preview.feedSourcesForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.PreviewHelper
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 internal fun FeedSourceDrawerItem(

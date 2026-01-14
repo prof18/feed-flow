@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.util.Locale
-import java.util.Properties
+import java.util.*
 
 plugins {
     alias(libs.plugins.android.application)
@@ -137,15 +136,15 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 dependencies {
     implementation(project(":shared"))
     implementation(project(":sharedUI"))
-
-    implementation(compose.runtime)
-    implementation(compose.foundation)
+ 
+    implementation(libs.compose.multiplatform.runtime)
+    implementation(libs.compose.multiplatform.foundation)
     implementation(libs.compose.material3)
-    implementation(compose.materialIconsExtended)
-    implementation(compose.ui)
-    implementation(compose.uiTooling)
-    implementation(compose.material3AdaptiveNavigationSuite)
-
+    implementation(libs.compose.multiplatform.material.icons.extended)
+    implementation(libs.compose.multiplatform.ui)
+    implementation(libs.compose.multiplatform.ui.tooling)
+    implementation(libs.compose.multiplatform.material3.adaptive.navigationsuite)
+ 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewModel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -181,7 +180,7 @@ dependencies {
     "googlePlayImplementation"(libs.google.identity.googleid)
     "googlePlayImplementation"(libs.google.play.services.auth)
 
-    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.compose.multiplatform.ui.tooling)
 
     testImplementation(libs.koin.test)
 }

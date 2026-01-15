@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.prof18.feedflow.desktop.reaadermode
 
 import androidx.compose.foundation.focusable
@@ -84,6 +86,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.launch
+import kotlin.time.ExperimentalTime
 
 internal data class ReaderModeScreen(
     private val feedItemUrlInfo: FeedItemUrlInfo,

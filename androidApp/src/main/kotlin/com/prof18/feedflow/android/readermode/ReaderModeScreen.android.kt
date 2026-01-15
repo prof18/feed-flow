@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.prof18.feedflow.android.readermode
 
 import android.webkit.CookieManager
@@ -49,6 +51,7 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import org.koin.compose.koinInject
+import kotlin.time.ExperimentalTime
 
 @Composable
 internal fun ReaderModeScreen(

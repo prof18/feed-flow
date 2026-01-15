@@ -26,7 +26,7 @@ object FeedItemGenerator {
             feedSource = FeedSourceGenerator.feedSourceArb.bind(),
             pubDateMillis = Arb.long(
                 min = 0,
-                max = 2000000000000L
+                max = 2000000000000L,
             ).orNull(0.1).bind(),
             isRead = Arb.boolean().bind(),
             dateString = Arb.string(10..20).orNull(0.1).bind(),

@@ -2,10 +2,10 @@
 
 package com.prof18.feedflow.shared.domain.opml
 
-import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.opml
 import com.prof18.feedflow.shared.opmlWithMalformedXml
 import com.prof18.feedflow.shared.opmlWithText
+import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.io.File

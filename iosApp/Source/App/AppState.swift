@@ -50,6 +50,8 @@ class AppState {
             colorScheme = .light
         case .dark:
             colorScheme = .dark
+        case .oled:
+            colorScheme = .dark
         case .system:
             colorScheme = nil
         }

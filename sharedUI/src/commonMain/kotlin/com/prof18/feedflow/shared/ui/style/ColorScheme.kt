@@ -86,6 +86,11 @@ import md_theme_oled_secondary
 import md_theme_oled_secondaryContainer
 import md_theme_oled_surface
 import md_theme_oled_surfaceTint
+import md_theme_oled_surfaceContainer
+import md_theme_oled_surfaceContainerHigh
+import md_theme_oled_surfaceContainerHighest
+import md_theme_oled_surfaceContainerLow
+import md_theme_oled_surfaceContainerLowest
 import md_theme_oled_surfaceVariant
 import md_theme_oled_tertiary
 import md_theme_oled_tertiaryContainer
@@ -177,6 +182,11 @@ val OledColorScheme = darkColorScheme(
     onSurface = md_theme_oled_onSurface,
     surfaceVariant = md_theme_oled_surfaceVariant,
     onSurfaceVariant = md_theme_oled_onSurfaceVariant,
+    surfaceContainerHighest = md_theme_oled_surfaceContainerHighest,
+    surfaceContainerHigh = md_theme_oled_surfaceContainerHigh,
+    surfaceContainer = md_theme_oled_surfaceContainer,
+    surfaceContainerLow = md_theme_oled_surfaceContainerLow,
+    surfaceContainerLowest = md_theme_oled_surfaceContainerLowest,
     outline = md_theme_oled_outline,
     inverseOnSurface = md_theme_oled_inverseOnSurface,
     inverseSurface = md_theme_oled_inverseSurface,

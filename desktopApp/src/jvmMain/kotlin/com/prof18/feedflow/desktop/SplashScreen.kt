@@ -29,6 +29,7 @@ import org.jetbrains.compose.resources.painterResource
 fun SplashContent(
     modifier: Modifier = Modifier,
     progress: Float = 0f,
+    useRoundedCorners: Boolean = true,
 ) {
     val isDark = rememberDesktopDarkTheme()
 
@@ -36,15 +37,17 @@ fun SplashContent(
     val primaryColor = if (isDark) Color(0xFFABC7FF) else Color(0xFF2C5EA7)
     val borderColor = if (isDark) Color(0xFF3A3B3F) else Color(0xFFE0E0E0)
 
+    val shape = if (useRoundedCorners) RoundedCornerShape(16.dp) else RoundedCornerShape(0.dp)
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(shape)
             .background(backgroundColor)
             .border(
                 width = 1.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(16.dp),
+                shape = shape,
             ),
         contentAlignment = Alignment.Center,
     ) {

@@ -18,6 +18,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.di.DI
@@ -67,6 +68,7 @@ fun main() {
 
         val scope = rememberCoroutineScope()
         val icon = painterResource(Res.drawable.icon)
+        val isLinux = getDesktopOS() == DesktopOS.LINUX
 
         if (!showMainWindow) {
             Window(
@@ -79,9 +81,12 @@ fun main() {
                 icon = icon,
                 resizable = false,
                 undecorated = true,
-                transparent = true,
+                transparent = !isLinux,
             ) {
-                SplashContent(progress = initProgress)
+                SplashContent(
+                    progress = initProgress,
+                    useRoundedCorners = !isLinux,
+                )
             }
         }
 

@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +18,7 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import co.touchlab.kermit.Logger
+import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.getDesktopOS
@@ -30,16 +32,20 @@ import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.skiko.SkikoProperties.libraryPath
 import java.awt.Toolkit
 import java.io.File
 import java.io.InputStream
 import java.util.Properties
+
+private const val DARK_THEME_BACKGROUND = 0x1C1B1F
+private const val LIGHT_THEME_BACKGROUND = 0xFFFBFE
+private const val OLED_THEME_BACKGROUND = 0x000000
 
 fun main() {
     setupSandboxEnvironment()
@@ -92,8 +98,17 @@ fun main() {
 
         if (isInitialized) {
             val desktopWindowSettingsRepository = remember { DI.koin.get<DesktopWindowSettingsRepository>() }
+            val settingsRepository = remember { DI.koin.get<SettingsRepository>() }
             val windowState = windowState(desktopWindowSettingsRepository)
             var showBackupLoader by remember { mutableStateOf(false) }
+
+            val themeMode = remember { settingsRepository.getThemeMode() }
+            val isDarkTheme = when (themeMode) {
+                ThemeMode.SYSTEM -> rememberDesktopDarkTheme()
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.OLED -> true
+            }
 
             Window(
                 onCloseRequest = {
@@ -115,6 +130,29 @@ fun main() {
                 visible = showMainWindow,
                 onPreviewKeyEvent = { false },
             ) {
+                DisposableEffect(themeMode) {
+                    val backgroundColor = when (themeMode) {
+                        ThemeMode.OLED -> java.awt.Color(OLED_THEME_BACKGROUND)
+                        ThemeMode.DARK -> java.awt.Color(DARK_THEME_BACKGROUND)
+                        ThemeMode.LIGHT -> java.awt.Color(LIGHT_THEME_BACKGROUND)
+                        ThemeMode.SYSTEM -> {
+                            if (isDarkTheme) {
+                                java.awt.Color(DARK_THEME_BACKGROUND)
+                            } else {
+                                java.awt.Color(LIGHT_THEME_BACKGROUND)
+                            }
+                        }
+                    }
+
+                    window.background = backgroundColor
+                    window.contentPane.background = backgroundColor
+                    if (getDesktopOS().isMacOs()) {
+                        window.rootPane.background = backgroundColor
+                    }
+
+                    onDispose { }
+                }
+
                 LaunchedEffect(Unit) {
                     initProgress = 1f
                     delay(timeMillis = 100)
@@ -175,9 +213,9 @@ private fun setupSandboxEnvironment() {
 private fun setupICloudSupport(): Boolean {
     if (!getDesktopOS().isMacOs()) return false
 
+    val resourcesDir = System.getProperty("compose.application.resources.dir")
+    val libraryPath = resourcesDir + File.separator + System.mapLibraryName("ikloud")
     return try {
-        val resourcesDir = System.getProperty("compose.application.resources.dir")
-        val libraryPath = resourcesDir + File.separator + System.mapLibraryName("ikloud")
         System.load(libraryPath)
         true
     } catch (_: UnsatisfiedLinkError) {

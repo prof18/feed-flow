@@ -25,6 +25,7 @@ import com.prof18.feedflow.shared.ui.theme.rememberDesktopDarkTheme
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.shared.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.rememberFeedFlowStrings
+import javax.swing.SwingUtilities
 import javax.swing.UIManager
 
 @Composable
@@ -56,9 +57,11 @@ internal fun FrameWindowScope.AppContent(
         darkTheme = isDarkTheme,
         useOledTheme = useOledTheme,
     ) {
-        LaunchedEffect(isDarkTheme, useOledTheme) {
-            if (getDesktopOS().isNotMacOs()) {
-                setupLookAndFeel(isDarkTheme, useOledTheme)
+        if (getDesktopOS().isNotMacOs()) {
+            LaunchedEffect(isDarkTheme, useOledTheme) {
+                SwingUtilities.invokeLater {
+                    setupLookAndFeel(isDarkTheme, useOledTheme)
+                }
             }
         }
 
@@ -69,49 +72,56 @@ internal fun FrameWindowScope.AppContent(
                     showBackupLoader = showBackupLoader,
                     isDarkTheme = isDarkTheme,
                     useOledTheme = useOledTheme,
-                windowState = windowState,
-                appConfig = appConfig,
-            )}
+                    windowState = windowState,
+                    appConfig = appConfig,
+                )
+            }
         }
     }
 }
 
+@Volatile
+private var isUpdatingLookAndFeel = false
+
 private fun setupLookAndFeel(isDarkMode: Boolean, useOledTheme: Boolean) {
-    System.setProperty("flatlaf.useWindowDecorations", "true")
-    System.setProperty("flatlaf.menuBarEmbedded", "false")
+    if (isUpdatingLookAndFeel) return
 
+    isUpdatingLookAndFeel = true
     try {
-        val themeFileName = when {
-            useOledTheme -> "feedflow-oled.properties"
-            isDarkMode -> "feedflow-dark.properties"
-            else -> "feedflow-light.properties"
-        }
+        System.setProperty("flatlaf.useWindowDecorations", "true")
+        System.setProperty("flatlaf.menuBarEmbedded", "false")
 
-        // Load custom properties theme
-        val themeStream = DI::class.java.classLoader?.getResourceAsStream(themeFileName)
-
-        if (themeStream != null) {
-            val customLaf = FlatPropertiesLaf(themeFileName, themeStream)
-            UIManager.setLookAndFeel(customLaf)
-        } else {
-            // Fallback to standard themes if properties file not found
-            val newLaf = if (isDarkMode) {
-                FlatDarkLaf()
-            } else {
-                FlatLightLaf()
-            }
-            UIManager.setLookAndFeel(newLaf)
-            UIManager.put("MenuBar.border", null)
-        }
-
+        loadAndApplyTheme(isDarkMode, useOledTheme)
         FlatLaf.updateUI()
     } catch (_: Exception) {
-        // Fallback to default theme
-        val newLaf = if (isDarkMode) {
-            FlatDarkLaf()
-        } else {
-            FlatLightLaf()
-        }
-        UIManager.setLookAndFeel(newLaf)
+        applyFallbackTheme(isDarkMode)
+    } finally {
+        isUpdatingLookAndFeel = false
     }
+}
+
+private fun loadAndApplyTheme(isDarkMode: Boolean, useOledTheme: Boolean) {
+    val themeFileName = when {
+        useOledTheme -> "feedflow-oled.properties"
+        isDarkMode -> "feedflow-dark.properties"
+        else -> "feedflow-light.properties"
+    }
+
+    val themeStream = DI::class.java.classLoader?.getResourceAsStream(themeFileName)
+    if (themeStream != null) {
+        val customLaf = FlatPropertiesLaf(themeFileName, themeStream)
+        UIManager.setLookAndFeel(customLaf)
+    } else {
+        applyFallbackTheme(isDarkMode)
+        UIManager.put("MenuBar.border", null)
+    }
+}
+
+private fun applyFallbackTheme(isDarkMode: Boolean) {
+    val newLaf = if (isDarkMode) {
+        FlatDarkLaf()
+    } else {
+        FlatLightLaf()
+    }
+    UIManager.setLookAndFeel(newLaf)
 }

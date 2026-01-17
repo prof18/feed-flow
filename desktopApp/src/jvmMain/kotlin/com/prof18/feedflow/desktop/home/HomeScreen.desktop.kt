@@ -235,7 +235,7 @@ internal fun HomeScreen(
             ) {
                 Box(
                     modifier = Modifier
-                        .padding(end = Spacing.xsmall),
+                        .padding(end = Spacing.medium),
                 ) {
                     content()
                 }

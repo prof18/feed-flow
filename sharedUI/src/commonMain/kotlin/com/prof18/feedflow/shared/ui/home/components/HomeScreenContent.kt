@@ -1,10 +1,13 @@
 package com.prof18.feedflow.shared.ui.home.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -118,74 +121,104 @@ fun HomeScreenContent(
                 .padding(start = innerPadding.calculateLeftPadding(layoutDir))
                 .padding(end = innerPadding.calculateRightPadding(layoutDir))
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val contentModifier = if (windowSizeClass == WindowSizeClass.Expanded) {
-                Modifier.fillMaxWidth(0.6f)
-            } else {
-                Modifier.fillMaxWidth()
-            }
+            BoxWithConstraints {
+                val windowWidth = maxWidth
+                val contentModifier = if (windowSizeClass == WindowSizeClass.Expanded) {
+                    Modifier.fillMaxWidth(0.6f)
+                } else {
+                    Modifier.fillMaxWidth()
+                }
 
-            Column(
-                modifier = contentModifier,
-            ) {
-                toolbarContent()
+                val feedListPadding = if (windowSizeClass == WindowSizeClass.Expanded) {
+                    val width = windowWidth * 0.6f
+                    val padding = (windowWidth - width) / 2
+                    PaddingValues(horizontal = padding)
+                } else {
+                    PaddingValues(0.dp)
+                }
 
-                when {
-                    displayState.feedUpdateStatus is NoFeedSourcesStatus -> NoFeedsSourceView(
-                        onAddFeedClick = onEmptyStateClick ?: feedManagementActions.onAddFeedClick,
-                    )
+                Column {
+                    Box(
+                        modifier = contentModifier.align(Alignment.CenterHorizontally),
+                    ) {
+                        toolbarContent()
+                    }
 
-                    !displayState.feedUpdateStatus.isLoading() && displayState.feedItems.isEmpty() -> EmptyFeedView(
-                        currentFeedFilter = displayState.currentFeedFilter,
-                        onReloadClick = onRefresh,
-                        onBackToTimelineClick = feedListActions.onBackToTimelineClick,
-                        onOpenDrawerClick = onDrawerMenuClick,
-                        isDrawerVisible = showDrawerMenu,
-                    )
+                    when {
+                        displayState.feedUpdateStatus is NoFeedSourcesStatus -> Box(
+                            modifier = contentModifier.align(Alignment.CenterHorizontally),
+                        ) {
+                            NoFeedsSourceView(
+                                onAddFeedClick = onEmptyStateClick ?: feedManagementActions.onAddFeedClick,
+                            )
+                        }
 
-                    else -> feedContentWrapper {
-                        Column {
-                            FeedLoader(loadingState = displayState.feedUpdateStatus)
+                        !displayState.feedUpdateStatus.isLoading() && displayState.feedItems.isEmpty() -> Box(
+                            modifier = contentModifier.align(Alignment.CenterHorizontally),
+                        ) {
+                            EmptyFeedView(
+                                currentFeedFilter = displayState.currentFeedFilter,
+                                onReloadClick = onRefresh,
+                                onBackToTimelineClick = feedListActions.onBackToTimelineClick,
+                                onOpenDrawerClick = onDrawerMenuClick,
+                                isDrawerVisible = showDrawerMenu,
+                            )
+                        }
 
-                            if (displayState.feedItems.isEmpty() && displayState.feedUpdateStatus.isLoading()) {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                ) {
-                                    CircularProgressIndicator()
+                        else -> feedContentWrapper {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.TopCenter,
+                            ) {
+                                Column {
+                                    Box(
+                                        modifier = contentModifier.align(Alignment.CenterHorizontally),
+                                    ) {
+                                        FeedLoader(loadingState = displayState.feedUpdateStatus)
+
+                                        if (displayState.feedItems.isEmpty() && displayState.feedUpdateStatus.isLoading()) {
+                                            Box(
+                                                contentAlignment = Alignment.Center,
+                                                modifier = Modifier
+                                                    .fillMaxSize(),
+                                            ) {
+                                                CircularProgressIndicator()
+                                            }
+                                        }
+                                    }
+
+                                    FeedList(
+                                        modifier = Modifier,
+                                        feedItems = displayState.feedItems,
+                                        listState = listState,
+                                        feedFontSize = displayState.feedFontSizes,
+                                        shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
+                                        shareMenuLabel = shareBehavior.shareLinkTitle,
+                                        currentFeedFilter = displayState.currentFeedFilter,
+                                        swipeActions = displayState.swipeActions,
+                                        requestMoreItems = feedListActions.requestNewData,
+                                        onFeedItemClick = { feedInfo ->
+                                            feedListActions.openUrl(feedInfo)
+                                            feedListActions.markAsRead(FeedItemId(feedInfo.id))
+                                        },
+                                        onBookmarkClick = feedListActions.updateBookmarkStatus,
+                                        onReadStatusClick = feedListActions.updateReadStatus,
+                                        onCommentClick = { feedInfo ->
+                                            feedListActions.openUrl(feedInfo)
+                                            feedListActions.markAsRead(FeedItemId(feedInfo.id))
+                                        },
+                                        updateReadStatus = feedListActions.markAsReadOnScroll,
+                                        markAllAsRead = feedListActions.markAllRead,
+                                        onShareClick = shareBehavior.onShareClick,
+                                        onOpenFeedSettings = feedManagementActions.onEditFeedClick,
+                                        feedLayout = displayState.feedLayout,
+                                        onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
+                                        onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
+                                        contentPadding = feedListPadding,
+                                    )
                                 }
                             }
-
-                            FeedList(
-                                modifier = Modifier,
-                                feedItems = displayState.feedItems,
-                                listState = listState,
-                                feedFontSize = displayState.feedFontSizes,
-                                shareCommentsMenuLabel = shareBehavior.shareCommentsTitle,
-                                shareMenuLabel = shareBehavior.shareLinkTitle,
-                                currentFeedFilter = displayState.currentFeedFilter,
-                                swipeActions = displayState.swipeActions,
-                                requestMoreItems = feedListActions.requestNewData,
-                                onFeedItemClick = { feedInfo ->
-                                    feedListActions.openUrl(feedInfo)
-                                    feedListActions.markAsRead(FeedItemId(feedInfo.id))
-                                },
-                                onBookmarkClick = feedListActions.updateBookmarkStatus,
-                                onReadStatusClick = feedListActions.updateReadStatus,
-                                onCommentClick = { feedInfo ->
-                                    feedListActions.openUrl(feedInfo)
-                                    feedListActions.markAsRead(FeedItemId(feedInfo.id))
-                                },
-                                updateReadStatus = feedListActions.markAsReadOnScroll,
-                                markAllAsRead = feedListActions.markAllRead,
-                                onShareClick = shareBehavior.onShareClick,
-                                onOpenFeedSettings = feedManagementActions.onEditFeedClick,
-                                feedLayout = displayState.feedLayout,
-                                onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
-                                onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
-                            )
                         }
                     }
                 }

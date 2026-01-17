@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.ui.home.components.list
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -77,6 +78,7 @@ internal fun FeedList(
     listState: LazyListState = rememberLazyListState(),
     onMarkAllAboveAsRead: (String) -> Unit = {},
     onMarkAllBelowAsRead: (String) -> Unit = {},
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val shouldStartPaginate = remember {
         derivedStateOf {
@@ -91,6 +93,7 @@ internal fun FeedList(
     LazyColumn(
         modifier = modifier,
         state = listState,
+        contentPadding = contentPadding,
     ) {
         itemsIndexed(
             items = feedItems,

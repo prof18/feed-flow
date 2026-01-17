@@ -74,7 +74,13 @@ disable_android_in_file() {
         print "// " $0
         next
     }
-    
+
+    # Match AboutLibraries Android plugin
+    /com\.mikepenz\.aboutlibraries\.plugin\.android/ {
+        print "// " $0
+        next
+    }
+
     # Match Android imports
     /^import.*android\./ {
         print "// " $0

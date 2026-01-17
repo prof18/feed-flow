@@ -20,7 +20,7 @@ sed -i \
   -e 's/alias(libs\.plugins\.triplet\.play) apply false/\/\/ &/' \
   -e 's/alias(libs\.plugins\.crashlytics) apply false/\/\/ &/' \
   -e 's/alias(libs\.plugins\.google\.services) apply false/\/\/ &/' \
-  -e 's/alias(libs\.plugins\.aboutlibraries\.android) apply false/\/\/ &/' \
+  -e 's/alias(libs\.plugins\.about\.libraries\.android) apply false/\/\/ &/' \
   build.gradle.kts
 
 # Replace JetBrains JDK 17 toolchain with OpenJDK 21

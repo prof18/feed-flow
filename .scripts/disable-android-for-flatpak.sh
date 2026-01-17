@@ -76,7 +76,7 @@ disable_android_in_file() {
     }
 
     # Match AboutLibraries Android plugin
-    /com\.mikepenz\.aboutlibraries\.plugin\.android/ {
+    /com\.mikepenz\.about\.libraries\.plugin\.android/ {
         print "// " $0
         next
     }

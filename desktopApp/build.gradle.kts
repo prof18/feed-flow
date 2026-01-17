@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.feedflow.detekt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.flatpak.gradle.generator)
 }
 
 apply(from = "../versioning.gradle.kts")
@@ -245,10 +244,4 @@ tasks.withType(KotlinCompile::class.java) {
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
         )
     }
-}
-
-tasks.flatpakGradleGenerator {
-    outputFile = project.file("packaging/flatpak/flatpak-sources.json")
-    downloadDirectory.set("./offline-repository")
-    excludeConfigurations.set(listOf("testCompileClasspath", "testRuntimeClasspath"))
 }

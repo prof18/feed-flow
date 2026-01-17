@@ -79,6 +79,7 @@ fun AdaptiveHomeView(
             shareBehavior = shareBehavior,
             onBackupClick = onBackupClick,
             onEmptyStateClick = onEmptyStateClick,
+            windowSizeClass = windowSizeClass,
         )
     }
 

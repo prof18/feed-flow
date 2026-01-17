@@ -84,8 +84,8 @@ fun LicensesScreen(
         }
 
         val colors = LibraryDefaults.libraryColors(
-            backgroundColor = backgroundColor,
-            contentColor = MaterialTheme.colorScheme.onBackground,
+            libraryBackgroundColor = backgroundColor,
+            libraryContentColor = MaterialTheme.colorScheme.onBackground,
             licenseChipColors = LibraryDefaults.chipColors(
                 containerColor = borderColor,
             ),

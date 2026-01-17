@@ -28,6 +28,5 @@
     @kotlinx.serialization.Serializable <fields>;
 }
 
-# Keep the DateTimeComponents class and all its members
-# TODO: remove when https://github.com/Kotlin/kotlinx-datetime/issues/519 is closed
--keep class kotlinx.datetime.format.DateTimeComponents { *; }
+-dontwarn com.google.re2j.Matcher
+-dontwarn com.google.re2j.Pattern

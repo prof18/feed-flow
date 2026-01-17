@@ -76,6 +76,7 @@ import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
 import com.prof18.feedflow.shared.presentation.ReviewViewModel
+import com.prof18.feedflow.shared.presentation.ThemeViewModel
 import com.prof18.feedflow.shared.presentation.model.DeeplinkFeedState
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
@@ -382,9 +383,13 @@ class MainActivity : BaseThemeActivity() {
                     val canNavigateNext by readerModeViewModel.canNavigateToNextState
                         .collectAsStateWithLifecycle()
 
+                    val themeViewModel = koinViewModel<ThemeViewModel>()
+                    val themeState by themeViewModel.themeState.collectAsStateWithLifecycle()
+
                     ReaderModeScreen(
                         readerModeState = readerModeState,
                         fontSize = fontSizeState,
+                        themeMode = themeState,
                         navigateBack = { backStack.removeLastOrNull() },
                         onUpdateFontSize = { newFontSize ->
                             readerModeViewModel.updateFontSize(newFontSize)

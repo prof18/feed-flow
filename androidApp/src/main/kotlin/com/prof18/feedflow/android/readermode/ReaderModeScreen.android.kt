@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,7 @@ import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.openShareSheet
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ReaderModeState
+import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.shared.domain.ReaderColors
 import com.prof18.feedflow.shared.domain.getReaderModeStyledHtml
 import com.prof18.feedflow.shared.ui.style.Spacing
@@ -54,6 +56,7 @@ import org.koin.compose.koinInject
 internal fun ReaderModeScreen(
     readerModeState: ReaderModeState,
     fontSize: Int,
+    themeMode: ThemeMode,
     onUpdateFontSize: (Int) -> Unit,
     onBookmarkClick: (FeedItemId, Boolean) -> Unit,
     navigateBack: () -> Unit,
@@ -197,6 +200,7 @@ internal fun ReaderModeScreen(
                             },
                             contentPadding = contentPadding,
                             navigator = navigator,
+                            themeMode = themeMode,
                         )
                     }
                 }
@@ -231,6 +235,7 @@ private fun FallbackWebView(
 @Composable
 private fun ReaderMode(
     readerModeState: ReaderModeState.Success,
+    themeMode: ThemeMode,
     openInBrowser: (String) -> Unit,
     onImageClick: (String) -> Unit,
     contentPadding: PaddingValues,
@@ -239,7 +244,17 @@ private fun ReaderMode(
     val bodyColor = MaterialTheme.colorScheme.onSurface.toArgb().toHexString().substring(2)
     val linkColor = MaterialTheme.colorScheme.primary.toArgb().toHexString().substring(2)
 
-    val isDarkMode = isSystemInDarkTheme()
+    val systemDarkTheme = isSystemInDarkTheme()
+    val isDarkMode by remember {
+        derivedStateOf {
+            when (themeMode) {
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.SYSTEM -> systemDarkTheme
+                ThemeMode.OLED -> true
+            }
+        }
+    }
     val backgroundColor = if (isDarkMode) {
         "#1e1e1e"
     } else {

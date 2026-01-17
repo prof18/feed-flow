@@ -56,93 +56,96 @@ internal fun FeedItemView(
         )
     }
 
-    Column(
-        modifier = modifier
-            .then(
-                if (disableClick) {
-                    Modifier
-                } else {
-                    Modifier.singleAndLongClickModifier(
-                        onClick = {
-                            onFeedItemClick(
-                                FeedItemUrlInfo(
-                                    id = feedItem.id,
-                                    url = feedItem.url,
-                                    title = feedItem.title,
-                                    isBookmarked = feedItem.isBookmarked,
-                                    linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
-                                    commentsUrl = feedItem.commentsUrl,
-                                ),
-                            )
-                        },
-                        onLongClick = {
-                            showItemMenu = true
-                        },
+    val clickableItemModifier =
+        if (disableClick) {
+            Modifier
+        } else {
+            Modifier.singleAndLongClickModifier(
+                onClick = {
+                    onFeedItemClick(
+                        FeedItemUrlInfo(
+                            id = feedItem.id,
+                            url = feedItem.url,
+                            title = feedItem.title,
+                            isBookmarked = feedItem.isBookmarked,
+                            linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
+                            commentsUrl = feedItem.commentsUrl,
+                        ),
                     )
                 },
+                onLongClick = {
+                    showItemMenu = true
+                },
             )
-            .padding(horizontal = Spacing.regular)
-            .padding(vertical = Spacing.small),
-    ) {
-        FeedSourceAndUnreadDotRow(
-            feedItem = feedItem,
-            feedFontSize = feedFontSize,
-            currentFeedFilter = currentFeedFilter,
-        )
+        }
 
-        TitleSubtitleAndImageRow(
-            modifier = Modifier
-                .height(IntrinsicSize.Min)
-                .fillMaxWidth(),
-            feedItem = feedItem,
-            feedFontSize = feedFontSize,
-            currentFeedFilter = currentFeedFilter,
-        )
-
-        feedItem.dateString?.let { dateString ->
-            Text(
-                modifier = Modifier
-                    .padding(top = Spacing.small),
-                text = dateString,
-                fontSize = feedFontSize.feedMetaFontSize.sp,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = if (feedItem.isRead &&
-                        currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
-                    ) {
-                        0.6f
-                    } else {
-                        1f
-                    },
+    Column(modifier = modifier) {
+        Column(
+            modifier = clickableItemModifier
+                .padding(horizontal = Spacing.regular)
+                .padding(
+                    top = Spacing.small,
+                    bottom = Spacing.regular,
                 ),
+        ) {
+            FeedSourceAndUnreadDotRow(
+                feedItem = feedItem,
+                feedFontSize = feedFontSize,
+                currentFeedFilter = currentFeedFilter,
+            )
+
+            TitleSubtitleAndImageRow(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth(),
+                feedItem = feedItem,
+                feedFontSize = feedFontSize,
+                currentFeedFilter = currentFeedFilter,
+            )
+
+            feedItem.dateString?.let { dateString ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.small),
+                    text = dateString,
+                    fontSize = feedFontSize.feedMetaFontSize.sp,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(
+                        alpha = if (feedItem.isRead &&
+                            currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
+                        ) {
+                            0.6f
+                        } else {
+                            1f
+                        },
+                    ),
+                )
+            }
+
+            FeedItemContextMenu(
+                showMenu = showItemMenu,
+                closeMenu = {
+                    showItemMenu = false
+                },
+                feedItem = feedItem,
+                shareMenuLabel = shareMenuLabel,
+                shareCommentsMenuLabel = shareCommentsMenuLabel,
+                onBookmarkClick = onBookmarkClick,
+                onReadStatusClick = onReadStatusClick,
+                onCommentClick = onCommentClick,
+                onShareClick = onShareClick,
+                onOpenFeedSettings = onOpenFeedSettings,
+                onMarkAllAboveAsRead = onMarkAllAboveAsRead,
+                onMarkAllBelowAsRead = onMarkAllBelowAsRead,
             )
         }
 
         if (feedLayout == FeedLayout.LIST) {
             HorizontalDivider(
-                modifier = Modifier
-                    .padding(top = Spacing.regular),
                 thickness = 0.2.dp,
                 color = Color.Gray,
             )
         }
-
-        FeedItemContextMenu(
-            showMenu = showItemMenu,
-            closeMenu = {
-                showItemMenu = false
-            },
-            feedItem = feedItem,
-            shareMenuLabel = shareMenuLabel,
-            shareCommentsMenuLabel = shareCommentsMenuLabel,
-            onBookmarkClick = onBookmarkClick,
-            onReadStatusClick = onReadStatusClick,
-            onCommentClick = onCommentClick,
-            onShareClick = onShareClick,
-            onOpenFeedSettings = onOpenFeedSettings,
-            onMarkAllAboveAsRead = onMarkAllAboveAsRead,
-            onMarkAllBelowAsRead = onMarkAllBelowAsRead,
-        )
     }
 }
 

@@ -44,6 +44,7 @@ import com.prof18.feedflow.core.model.SwipeActionType.NONE
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_BOOKMARK_STATUS
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_READ_STATUS
 import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.shared.ui.home.WindowSizeClass
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -79,6 +80,7 @@ internal fun FeedList(
     onMarkAllAboveAsRead: (String) -> Unit = {},
     onMarkAllBelowAsRead: (String) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    windowSizeClass: WindowSizeClass = WindowSizeClass.Compact,
 ) {
     val shouldStartPaginate = remember {
         derivedStateOf {
@@ -133,6 +135,7 @@ internal fun FeedList(
                         currentFeedFilter = currentFeedFilter,
                         onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                         onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                        windowSizeClass = windowSizeClass,
                     )
                 } else {
                     SwipeableActionsBox(
@@ -155,6 +158,7 @@ internal fun FeedList(
                             currentFeedFilter = currentFeedFilter,
                             onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                             onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                            windowSizeClass = windowSizeClass,
                         )
                     }
                 }

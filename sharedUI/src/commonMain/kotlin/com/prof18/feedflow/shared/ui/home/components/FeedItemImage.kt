@@ -21,11 +21,12 @@ internal fun FeedItemImage(
     url: String,
     width: Dp,
     modifier: Modifier = Modifier,
+    height: Dp? = null,
 ) {
     if (LocalInspectionMode.current) {
         Box(
             modifier = modifier
-                .size(width)
+                .size(width = width, height = height ?: width)
                 .background(Color.Green),
         )
     } else {
@@ -36,7 +37,7 @@ internal fun FeedItemImage(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier
-                .size(width)
+                .size(width = width, height = height ?: width)
                 .clip(RoundedCornerShape(Spacing.small)),
         )
     }

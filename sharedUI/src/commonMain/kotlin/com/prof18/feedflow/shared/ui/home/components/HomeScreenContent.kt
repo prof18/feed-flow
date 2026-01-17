@@ -125,13 +125,13 @@ fun HomeScreenContent(
             BoxWithConstraints {
                 val windowWidth = maxWidth
                 val contentModifier = if (windowSizeClass == WindowSizeClass.Expanded) {
-                    Modifier.fillMaxWidth(0.6f)
+                    Modifier.fillMaxWidth(0.72f)
                 } else {
                     Modifier.fillMaxWidth()
                 }
 
                 val feedListPadding = if (windowSizeClass == WindowSizeClass.Expanded) {
-                    val width = windowWidth * 0.6f
+                    val width = windowWidth * 0.72f
                     val padding = (windowWidth - width) / 2
                     PaddingValues(horizontal = padding)
                 } else {
@@ -216,6 +216,7 @@ fun HomeScreenContent(
                                         onMarkAllAboveAsRead = feedListActions.markAllAboveAsRead,
                                         onMarkAllBelowAsRead = feedListActions.markAllBelowAsRead,
                                         contentPadding = feedListPadding,
+                                        windowSizeClass = windowSizeClass,
                                     )
                                 }
                             }

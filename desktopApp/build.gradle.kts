@@ -237,12 +237,6 @@ val macExtraPlistKeys: String
         </dict>
     """.trimIndent()
 
-configure<AboutLibrariesExtension> {
-    android {
-        registerAndroidTasks = false
-    }
-}
-
 tasks.withType(KotlinCompile::class.java) {
     dependsOn("exportLibraryDefinitions")
 

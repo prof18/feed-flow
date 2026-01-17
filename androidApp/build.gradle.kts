@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.triplet.play)
-    alias(libs.plugins.about.libraries)
     alias(libs.plugins.about.libraries.android)
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.google.services)

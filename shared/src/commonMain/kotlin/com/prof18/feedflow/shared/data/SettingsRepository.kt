@@ -30,6 +30,9 @@ class SettingsRepository(
     private val reduceMotionEnabledMutableFlow = MutableStateFlow(getReduceMotionEnabled())
     val reduceMotionEnabledFlow: StateFlow<Boolean> = reduceMotionEnabledMutableFlow.asStateFlow()
 
+    private val sidebarWidthFractionMutableFlow = MutableStateFlow(getSidebarWidthFraction())
+    val sidebarWidthFractionFlow: StateFlow<Float> = sidebarWidthFractionMutableFlow.asStateFlow()
+
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
@@ -159,8 +162,21 @@ class SettingsRepository(
     fun setNotificationMode(mode: NotificationMode) =
         settings.set(SettingsFields.NOTIFICATION_MODE.name, mode.name)
 
-    private companion object {
-        const val DEFAULT_READER_MODE_FONT_SIZE = 16
+    fun getSidebarWidthFraction(): Float =
+        settings.getFloat(SettingsFields.SIDEBAR_WIDTH_FRACTION.name, DEFAULT_SIDEBAR_WIDTH_FRACTION)
+            .coerceIn(MIN_SIDEBAR_WIDTH_FRACTION, MAX_SIDEBAR_WIDTH_FRACTION)
+
+    fun setSidebarWidthFraction(value: Float) {
+        val coercedValue = value.coerceIn(MIN_SIDEBAR_WIDTH_FRACTION, MAX_SIDEBAR_WIDTH_FRACTION)
+        settings[SettingsFields.SIDEBAR_WIDTH_FRACTION.name] = coercedValue
+        sidebarWidthFractionMutableFlow.update { coercedValue }
+    }
+
+    companion object {
+        private const val DEFAULT_READER_MODE_FONT_SIZE = 16
+        const val DEFAULT_SIDEBAR_WIDTH_FRACTION = 0.25f
+        const val MIN_SIDEBAR_WIDTH_FRACTION = 0.15f
+        const val MAX_SIDEBAR_WIDTH_FRACTION = 0.35f
     }
 }
 
@@ -180,4 +196,5 @@ private enum class SettingsFields {
     REDUCE_MOTION_ENABLED,
     REFRESH_FEEDS_ON_LAUNCH,
     NOTIFICATION_MODE,
+    SIDEBAR_WIDTH_FRACTION,
 }

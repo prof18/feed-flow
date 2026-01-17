@@ -21,7 +21,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.platform.LocalUriHandler
+import java.awt.Cursor
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.FeedFilter
@@ -37,6 +39,7 @@ import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
 import com.prof18.feedflow.desktop.utils.copyToClipboard
 import com.prof18.feedflow.desktop.utils.sanitizeUrl
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.presentation.ChangeFeedCategoryViewModel
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
@@ -65,6 +68,7 @@ internal fun HomeScreen(
 ) {
     val scope = rememberCoroutineScope()
     val changeFeedCategoryViewModel = desktopViewModel { DI.koin.get<ChangeFeedCategoryViewModel>() }
+    val settingsRepository = remember { DI.koin.get<SettingsRepository>() }
 
     val loadingState by homeViewModel.loadingState.collectAsState()
     val feedState by homeViewModel.feedState.collectAsState()
@@ -75,6 +79,7 @@ internal fun HomeScreen(
     val swipeActions by homeViewModel.swipeActions.collectAsState()
     val feedOperation by homeViewModel.feedOperationState.collectAsState()
     val feedLayout by homeViewModel.feedLayout.collectAsState()
+    val sidebarWidthFraction by settingsRepository.sidebarWidthFractionFlow.collectAsState()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsState()
 
@@ -249,6 +254,14 @@ internal fun HomeScreen(
         onEmptyStateClick = {
             showNoFeedsBottomSheet = true
         },
+        // Resizable sidebar settings
+        sidebarWidthFraction = sidebarWidthFraction,
+        onSidebarWidthChanged = { newFraction ->
+            settingsRepository.setSidebarWidthFraction(newFraction)
+        },
+        minSidebarWidthFraction = SettingsRepository.MIN_SIDEBAR_WIDTH_FRACTION,
+        maxSidebarWidthFraction = SettingsRepository.MAX_SIDEBAR_WIDTH_FRACTION,
+        resizePointerIcon = PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)),
     )
 
     if (showChangeCategorySheet) {

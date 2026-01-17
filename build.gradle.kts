@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.compose.multiplatform) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.about.libraries) apply false
+    alias(libs.plugins.about.libraries.android) apply false
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.org.jetbrains.kotlin.jvm) apply false

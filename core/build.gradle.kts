@@ -13,7 +13,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(compose.runtime)
+                implementation(libs.compose.multiplatform.runtime)
                 implementation(libs.immutable.collections)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.touchlab.kermit)

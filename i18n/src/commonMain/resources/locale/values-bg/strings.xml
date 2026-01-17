@@ -351,4 +351,5 @@
     <string name="settings_notification_mode_feed_source">По емисия</string>
     <string name="settings_notification_mode_category">По категория</string>
     <string name="settings_notification_mode_grouped">Всички взети заедно</string>
+    <string name="settings_theme_oled">Черна</string>
 </resources>

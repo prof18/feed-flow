@@ -9,7 +9,7 @@ echo "Setting up FeedFlow for Flatpak build..."
 
 # Set build properties
 echo "is_release=true" >> desktopApp/src/jvmMain/resources/props.properties
-echo "version=1.8.0" >> desktopApp/src/jvmMain/resources/props.properties
+echo "version=1.9.0" >> desktopApp/src/jvmMain/resources/props.properties
 echo "flatpak=true" >> desktopApp/src/jvmMain/resources/props.properties
 
 # Update Gradle wrapper distribution URL
@@ -20,6 +20,7 @@ sed -i \
   -e 's/alias(libs\.plugins\.triplet\.play) apply false/\/\/ &/' \
   -e 's/alias(libs\.plugins\.crashlytics) apply false/\/\/ &/' \
   -e 's/alias(libs\.plugins\.google\.services) apply false/\/\/ &/' \
+  -e 's/alias(libs\.plugins\.aboutlibraries\.android) apply false/\/\/ &/' \
   build.gradle.kts
 
 # Replace JetBrains JDK 17 toolchain with OpenJDK 21

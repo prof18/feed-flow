@@ -351,4 +351,5 @@
     <string name="settings_notification_mode_feed_source">Nach Feed</string>
     <string name="settings_notification_mode_category">Nach Kategorie</string>
     <string name="settings_notification_mode_grouped">Alles zusammengefasst</string>
+    <string name="settings_theme_oled">Schwarz</string>
 </resources>

@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
-        "revision" : "1cce11cf94d27e2fc194112cc7ad51e8fb279230",
-        "version" : "12.3.0"
+        "revision" : "674d9a7ee9858207181a3dd0b42c77298c6fb71b",
+        "version" : "12.8.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
       "state" : {
-        "revision" : "c7d04b7592d3a1d6f8b7ce4e103cfbcbd766f419",
-        "version" : "3.0.0"
+        "revision" : "35b601a60fbbea2de3ea461f604deaaa4d8bbd0c",
+        "version" : "3.2.0"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/google-api-objectivec-client-for-rest",
       "state" : {
-        "branch" : "main",
-        "revision" : "3bce61669f791f407e3a807c7b36a4ca03fad3ea"
+        "revision" : "295c7caf35f7b7ba7db6d947bb914158a2cf2f66",
+        "version" : "5.1.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "34f5306ed8c9d9493f6390b4c2a18f19ecad1da4",
-        "version" : "12.3.0"
+        "revision" : "2ffd220823f3716904733162e9ae685545c276d1",
+        "version" : "12.8.0"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleSignIn-iOS",
       "state" : {
-        "revision" : "3996d908c7b3ce8a87d39c808f9a6b2a08fbe043",
-        "version" : "9.0.0"
+        "revision" : "913b4005ea26aebe1c97d54e35ad82a515924c71",
+        "version" : "9.1.0"
       }
     },
     {
@@ -190,21 +190,12 @@
       }
     },
     {
-      "identity" : "swift-protobuf",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-protobuf.git",
-      "state" : {
-        "revision" : "f25867a208f459d3c5a06935dceb9083b11cd539",
-        "version" : "1.22.0"
-      }
-    },
-    {
       "identity" : "swiftsdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/TelemetryDeck/SwiftSDK",
       "state" : {
-        "revision" : "a7fd1eb469589a3c8fd8cc3abe19b092b5d674dc",
-        "version" : "2.9.4"
+        "revision" : "8f332c1c256ba26cc46f74c9e5af94f7b1c37a9c",
+        "version" : "2.11.0"
       }
     },
     {
@@ -212,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scinfu/SwiftSoup",
       "state" : {
-        "revision" : "4206bc7b8bd9a4ff8e9511211e1b4bff979ef9c4",
-        "version" : "2.11.1"
+        "revision" : "c1f3348d1845302b8e99b1c0787d9417ffa11053",
+        "version" : "2.11.2"
       }
     },
     {
@@ -221,8 +212,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dropbox/SwiftyDropbox.git",
       "state" : {
-        "revision" : "8e3133d48241e865c7e9de0dc66ac908eb8e02ef",
-        "version" : "10.2.0"
+        "revision" : "e315e0b14edb83f022134aef389deb4e8bee6bbf",
+        "version" : "10.2.4"
       }
     }
   ],

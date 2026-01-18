@@ -1157,7 +1157,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = exactVersion;
-				version = 12.3.0;
+				version = 12.8.0;
 			};
 		};
 		CC0799402C29B74600067E06 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */ = {
@@ -1165,7 +1165,7 @@
 			repositoryURL = "https://github.com/dropbox/SwiftyDropbox.git";
 			requirement = {
 				kind = exactVersion;
-				version = 10.2.0;
+				version = 10.2.4;
 			};
 		};
 		CC23293A29D85208005D0E06 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
@@ -1173,23 +1173,23 @@
 			repositoryURL = "https://github.com/scinfu/SwiftSoup";
 			requirement = {
 				kind = exactVersion;
-				version = 2.11.1;
+				version = 2.11.2;
 			};
 		};
 		CC3A71742EFEE0A000CAACD1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 9.0.0;
+				kind = exactVersion;
+				version = 9.1.0;
 			};
 		};
 		CC3A71772EFEE13200CAACD1 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/google-api-objectivec-client-for-rest";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = exactVersion;
+				version = 5.1.0;
 			};
 		};
 		CC4B803929D98BB20004A0AB /* XCRemoteSwiftPackageReference "Nuke" */ = {
@@ -1213,7 +1213,7 @@
 			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
 			requirement = {
 				kind = exactVersion;
-				version = 2.9.4;
+				version = 2.11.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

@@ -351,4 +351,5 @@
     <string name="settings_notification_mode_feed_source">Uudisvoo alusel</string>
     <string name="settings_notification_mode_category">Kategooria alusel</string>
     <string name="settings_notification_mode_grouped">Kõik kombineerituna</string>
+    <string name="settings_theme_oled">Süsimust kujundus</string>
 </resources>

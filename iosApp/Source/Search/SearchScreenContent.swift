@@ -63,8 +63,9 @@ struct SearchScreenContent: View {
 
     @ViewBuilder
     private func makeSearchFoundContent(state: SearchState.DataFound) -> some View {
+        let items = Array(state.items.enumerated())
         List {
-            ForEach(Array(state.items.enumerated()), id: \.element) { index, feedItem in
+            ForEach(items, id: \.element.id) { index, feedItem in
                 makeSearchResultRow(feedItem: feedItem, index: index)
             }
         }

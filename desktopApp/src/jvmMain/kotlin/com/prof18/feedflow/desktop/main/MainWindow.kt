@@ -217,6 +217,10 @@ private fun FrameWindowScope.MainWindowContent(
     val homeViewModel = desktopViewModel { DI.koin.get<HomeViewModel>() }
     val feedListSettingsViewModel = desktopViewModel { DI.koin.get<FeedListSettingsViewModel>() }
 
+    LaunchedEffect(Unit) {
+        homeViewModel.onAppLaunch()
+    }
+
     CompositionLocalProvider(LocalScrollbarStyle provides scrollbarStyle()) {
         val scope = rememberCoroutineScope()
         val listState = rememberLazyListState()

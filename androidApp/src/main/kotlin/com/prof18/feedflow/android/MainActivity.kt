@@ -97,6 +97,7 @@ class MainActivity : BaseThemeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentIntent = intent
+        homeViewModel.onAppLaunch()
 
         if (BuildConfig.FLAVOR == "googlePlay") {
             lifecycleScope.launch {

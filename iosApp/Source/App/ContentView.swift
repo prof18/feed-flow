@@ -17,6 +17,7 @@ struct ContentView: View {
         Deps.shared.getReaderModeViewModel())
 
     @State private var isAppInBackground = false
+    @State private var hasTriggeredLaunch = false
 
     @State private var selectedDrawerItem: DrawerItem? = DrawerItem.Timeline(unreadCount: 0)
 
@@ -58,6 +59,10 @@ struct ContentView: View {
             switch scenePhase {
             case .active:
                 isAppInBackground = false
+                if !hasTriggeredLaunch {
+                    hasTriggeredLaunch = true
+                    vmStoreOwner.instance.onAppLaunch()
+                }
             case .background:
                 isAppInBackground = true
             default:

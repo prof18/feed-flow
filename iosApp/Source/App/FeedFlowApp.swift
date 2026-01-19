@@ -2,6 +2,7 @@ import BackgroundTasks
 import FeedFlowKit
 import FirebaseCore
 import FirebaseCrashlytics
+import Foundation
 import SwiftUI
 import SwiftyDropbox
 import TelemetryDeck
@@ -39,20 +40,37 @@ struct FeedFlowApp: App {
         ) { task in
             scheduleAppRefresh()
 
+            let completionLock = NSLock()
+            var didComplete = false
+
+            func finish(success: Bool) {
+                completionLock.lock()
+                defer { completionLock.unlock() }
+                guard !didComplete else { return }
+                didComplete = true
+                task.setTaskCompleted(success: success)
+            }
+
             let backgroundTask = Task {
                 do {
                     let repo = Deps.shared.getSerialFeedFetcherRepository()
                     try await repo.fetchFeeds()
+                    if Task.isCancelled {
+                        finish(success: false)
+                        return
+                    }
                     WidgetCenter.shared.reloadAllTimelines()
-                    task.setTaskCompleted(success: true)
+                    finish(success: true)
+                } catch is CancellationError {
+                    finish(success: false)
                 } catch {
-                    task.setTaskCompleted(success: false)
+                    finish(success: false)
                 }
             }
 
             task.expirationHandler = {
                 backgroundTask.cancel()
-                task.setTaskCompleted(success: false)
+                finish(success: false)
             }
         }
     }

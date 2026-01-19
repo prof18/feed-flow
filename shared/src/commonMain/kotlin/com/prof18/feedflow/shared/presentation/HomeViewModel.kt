@@ -79,6 +79,7 @@ class HomeViewModel internal constructor(
     val feedOperationState: StateFlow<FeedOperation> = feedOperationMutableState.asStateFlow()
 
     private var lastUpdateIndex = 0
+    private var hasTriggeredAppLaunch = false
 
     val currentFeedFilter = feedStateRepository.currentFeedFilter
     val isSyncUploadRequired: StateFlow<Boolean> = settingsRepository.isSyncUploadRequired
@@ -89,14 +90,21 @@ class HomeViewModel internal constructor(
 
     init {
         observeErrorState()
-        if (settingsRepository.getRefreshFeedsOnLaunch()) {
-            getNewFeeds(isFirstLaunch = true)
-        }
         viewModelScope.launch {
             feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
             initDrawerData()
+        }
+    }
+
+    fun onAppLaunch() {
+        if (hasTriggeredAppLaunch) {
+            return
+        }
+        hasTriggeredAppLaunch = true
+        viewModelScope.launch {
             feedStateRepository.getFeeds()
         }
+        getNewFeeds(isFirstLaunch = true)
     }
 
     private suspend fun initDrawerData() {

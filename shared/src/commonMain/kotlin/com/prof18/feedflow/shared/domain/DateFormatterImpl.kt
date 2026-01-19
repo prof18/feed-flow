@@ -4,7 +4,6 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.TimeFormat
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.UtcOffset
@@ -20,7 +19,6 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.format.optional
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -727,47 +725,42 @@ class DateFormatterImpl(
 
     override fun formatDateForFeed(millis: Long, dateFormat: DateFormat, timeFormat: TimeFormat): String {
         val instant = Instant.fromEpochMilliseconds(millis)
-        val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        val now = Clock.System.now()
+        val diff = now - instant
+        val diffSeconds = diff.inWholeSeconds
 
-        val today: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        // Constants for time thresholds in seconds
+        val secondsPerMinute = 60L
+        val secondsPerHour = 3600L
+        val secondsPerDay = 86400L
+        val secondsPerMonth = 2592000L // ~30 days
+        val secondsPerYear = 31536000L // 365 days
 
-        val localDate = LocalDate(
-            year = dateTime.year,
-            month = dateTime.month.number,
-            day = dateTime.day,
-        )
-
-        val isToday = today == localDate
-        val isThisYear = today.year == localDate.year
-
-        val dateFormatBuilder = when {
-            isToday -> {
-                LocalDateTime.Format {
-                    hourAndMinute(timeFormat)
-                }
+        return when {
+            diffSeconds < 0 -> {
+                // Future date - show as "now" or handle gracefully
+                "now"
             }
-
-            isThisYear -> {
-                LocalDateTime.Format {
-                    dayAndMonth(dateFormat)
-                    chars(" - ")
-                    hourAndMinute(timeFormat)
-                }
-            }
-
+            diffSeconds < secondsPerMinute -> "now"
+            diffSeconds < secondsPerHour -> "${diffSeconds / secondsPerMinute}m"
+            diffSeconds < secondsPerDay -> "${diffSeconds / secondsPerHour}h"
+            diffSeconds < secondsPerMonth -> "${diffSeconds / secondsPerDay}d"
+            diffSeconds < secondsPerYear -> "${diffSeconds / secondsPerMonth}mo"
             else -> {
-                LocalDateTime.Format {
+                // Fallback to exact date-time for articles >= 12 months old
+                val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+                val dateFormatBuilder = LocalDateTime.Format {
                     dayAndMonth(dateFormat)
                     char('/')
                     year()
                     chars(" - ")
                     hourAndMinute(timeFormat)
                 }
+                dateFormatBuilder.format(dateTime)
             }
         }
-
-        return dateFormatBuilder.format(dateTime)
     }
+
 
     private fun DateTimeFormatBuilder.WithDateTime.dayAndMonth(dateFormat: DateFormat) {
         when (dateFormat) {

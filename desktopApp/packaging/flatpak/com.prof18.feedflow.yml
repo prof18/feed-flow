@@ -10,7 +10,6 @@ finish-args:
   - --share=ipc
   - --socket=x11
   - --device=dri
-  - --filesystem=xdg-documents:ro
   - --filesystem=xdg-download:rw
 
 modules:
@@ -45,4 +44,5 @@ modules:
       - flatpak-sources.json
       - flatpak-sources-convention.json
       - flatpak-sources-manual.json
+      - flatpak-sources-manual2.json
       - flatpak-sources-root.json

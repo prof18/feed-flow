@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.di
 import androidx.lifecycle.ViewModel
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
 import co.touchlab.kermit.StaticConfig
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
@@ -109,9 +110,16 @@ private fun getLoggingModule(
             loggers.add(crashReportingLogWriter)
         }
 
+        val minSeverity = if (appConfig.appEnvironment.isRelease()) {
+            Severity.Info
+        } else {
+            Severity.Verbose
+        }
+
         val baseLogger = Logger(
             config = StaticConfig(
                 logWriterList = loggers,
+                minSeverity = minSeverity,
             ),
             tag = "FeedFlow",
         )

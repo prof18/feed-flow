@@ -116,7 +116,6 @@ fun AccountsContent(
                         if (syncAccount == account) {
                             Icon(
                                 modifier = Modifier
-                                    .padding(top = Spacing.medium)
                                     .padding(horizontal = Spacing.regular),
                                 imageVector = Icons.Filled.Check,
                                 contentDescription = null,

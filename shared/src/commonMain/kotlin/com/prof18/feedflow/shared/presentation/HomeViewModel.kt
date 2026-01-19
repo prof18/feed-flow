@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomeViewModel internal constructor(
@@ -93,6 +94,13 @@ class HomeViewModel internal constructor(
         viewModelScope.launch {
             feedStateRepository.updateFeedFilter(FeedFilter.Timeline)
             initDrawerData()
+        }
+        // Refresh relative timestamps every minute to keep them accurate
+        viewModelScope.launch {
+            while (true) {
+                delay(60_000L)
+                feedStateRepository.refreshRelativeTimes()
+            }
         }
     }
 

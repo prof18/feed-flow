@@ -354,6 +354,29 @@ internal class FeedStateRepository(
         val totalArticles: Int,
     )
 
+    suspend fun refreshRelativeTimes() {
+        val dateFormat = feedAppearanceSettingsRepository.getDateFormat()
+        val timeFormat = feedAppearanceSettingsRepository.getTimeFormat()
+        val hideDate = feedAppearanceSettingsRepository.getHideDate()
+
+        mutableFeedState.update { currentItems ->
+            currentItems.map { feedItem ->
+                val pubDateMillis = feedItem.pubDateMillis
+                feedItem.copy(
+                    dateString = if (pubDateMillis != null && !hideDate) {
+                        dateFormatter.formatDateForFeed(
+                            millis = pubDateMillis,
+                            dateFormat = dateFormat,
+                            timeFormat = timeFormat,
+                        )
+                    } else {
+                        null
+                    },
+                )
+            }.toImmutableList()
+        }
+    }
+
     companion object {
         internal const val FEED_DB_PAGE_SIZE = 40L
         private const val PAGINATION_THRESHOLD = 5

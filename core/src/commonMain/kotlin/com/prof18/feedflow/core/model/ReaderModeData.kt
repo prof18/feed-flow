@@ -5,6 +5,7 @@ data class ReaderModeData(
     val title: String?,
     val content: String,
     val url: String,
+    val baseUrl: String,
     val fontSize: Int,
     val isBookmarked: Boolean,
     val commentsUrl: String? = null,

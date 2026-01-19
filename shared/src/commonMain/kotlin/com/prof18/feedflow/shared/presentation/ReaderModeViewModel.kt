@@ -14,6 +14,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedActionsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
+import io.ktor.http.Url
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -72,6 +73,7 @@ class ReaderModeViewModel internal constructor(
 
             // Use feed item ID directly as filename
             val feedItemId = urlInfo.id
+            val baseUrl = urlInfo.getBaseUrl()
 
             // Check if content is cached
             val cachedContent = feedItemContentFileHandler.loadFeedItemContent(feedItemId)
@@ -82,6 +84,7 @@ class ReaderModeViewModel internal constructor(
                         title = urlInfo.title,
                         content = cachedContent,
                         url = urlInfo.url,
+                        baseUrl = baseUrl,
                         fontSize = settingsRepository.getReaderModeFontSize(),
                         isBookmarked = urlInfo.isBookmarked,
                         commentsUrl = urlInfo.commentsUrl,
@@ -110,6 +113,7 @@ class ReaderModeViewModel internal constructor(
                                 title = result.title ?: urlInfo.title,
                                 content = htmlContent,
                                 url = urlInfo.url,
+                                baseUrl = baseUrl,
                                 fontSize = settingsRepository.getReaderModeFontSize(),
                                 isBookmarked = urlInfo.isBookmarked,
                                 commentsUrl = urlInfo.commentsUrl,
@@ -143,6 +147,13 @@ class ReaderModeViewModel internal constructor(
         viewModelScope.launch {
             feedActionsRepository.updateBookmarkStatus(feedItemId, bookmarked)
         }
+    }
+
+    private fun FeedItemUrlInfo.getBaseUrl(): String = try {
+        val url = Url(url)
+        "${url.protocol.name}://${url.host}"
+    } catch (_: Exception) {
+        url
     }
 
     fun navigateToNextArticle() {

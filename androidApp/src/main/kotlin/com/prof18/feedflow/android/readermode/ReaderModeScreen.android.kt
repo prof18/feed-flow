@@ -317,7 +317,10 @@ private fun ReaderMode(
         )
     }
 
-    val state = rememberWebViewStateWithHTMLData(content)
+    val state = rememberWebViewStateWithHTMLData(
+        data = content,
+        baseUrl = readerModeState.readerModeData.baseUrl,
+    )
 
     val layoutDir = LocalLayoutDirection.current
     WebView(

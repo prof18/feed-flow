@@ -178,7 +178,7 @@ struct ReaderModeScreen: View {
                     self.feedItemTitle = readerModeData.title
                     self.commentsUrl = readerModeData.commentsUrl
                     self.currentContent = readerModeData.content
-                    self.currentBaseUrl = readerModeData.url
+                    self.currentBaseUrl = readerModeData.baseUrl
                     let url = URL(string: readerModeData.url) ?? URL(fileURLWithPath: "")
                     self.articleUrl = url
 

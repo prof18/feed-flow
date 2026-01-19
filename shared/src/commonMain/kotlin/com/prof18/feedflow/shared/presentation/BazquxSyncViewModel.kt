@@ -65,10 +65,13 @@ class BazquxSyncViewModel internal constructor(
                 },
                 onSuccess = {
                     accountsRepository.setBazquxAccount()
+                    uiMutableState.update {
+                        AccountConnectionUiState.Linked(syncState = AccountSyncUIState.Loading)
+                    }
+                    loginLoadingMutableState.update { false }
                     gReaderRepository.sync()
                         .fold(
                             onFailure = {
-                                loginLoadingMutableState.update { false }
                                 errorMutableState.emit(it)
                                 uiMutableState.update {
                                     AccountConnectionUiState.Linked(
@@ -77,7 +80,6 @@ class BazquxSyncViewModel internal constructor(
                                 }
                             },
                             onSuccess = {
-                                loginLoadingMutableState.update { false }
                                 gReaderRepository.updateFavicons()
                                 feedStateRepository.getFeeds()
                                 uiMutableState.update {

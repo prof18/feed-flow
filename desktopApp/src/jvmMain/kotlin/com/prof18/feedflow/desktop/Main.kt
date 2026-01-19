@@ -124,7 +124,7 @@ fun main() {
                         }
                     }
                 },
-                title = "",
+                title = "FeedFlow",
                 state = windowState,
                 icon = icon,
                 visible = showMainWindow,

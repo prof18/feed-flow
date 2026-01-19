@@ -182,6 +182,7 @@ private fun createAppConfig(properties: Properties): DesktopConfig {
     val version = properties["version"]?.toString()
     val isRelease = properties["is_release"]?.toString()?.toBooleanStrictOrNull() ?: false
     val dropboxKey = properties["dropbox_key"]?.toString()
+    val isFlatpak = properties["flatpak"]?.toString()?.toBooleanStrictOrNull() ?: false
 
     val appEnvironment = if (isRelease) AppEnvironment.Release else AppEnvironment.Debug
     val isIcloudEnabled = setupICloudSupport()
@@ -192,6 +193,7 @@ private fun createAppConfig(properties: Properties): DesktopConfig {
         appEnvironment = appEnvironment,
         isIcloudEnabled = isIcloudEnabled,
         isDropboxEnabled = dropboxKey != null,
+        isGoogleDriveEnabled = !isFlatpak,
     )
 }
 
@@ -293,5 +295,5 @@ data class DesktopConfig(
     val appEnvironment: AppEnvironment,
     val isIcloudEnabled: Boolean,
     val isDropboxEnabled: Boolean,
-    val isGoogleDriveEnabled: Boolean = true,
+    val isGoogleDriveEnabled: Boolean,
 )

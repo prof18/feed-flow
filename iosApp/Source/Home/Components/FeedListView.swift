@@ -66,10 +66,11 @@ struct FeedListView: View {
                 Spacer()
             }
         } else {
+            let feedItems = Array(feedState.enumerated())
             VStack(alignment: .center) {
                 LoadingHeaderView(loadingState: loadingState, showLoading: showLoading)
                 List {
-                    ForEach(Array(feedState.enumerated()), id: \.element) { index, feedItem in
+                    ForEach(feedItems, id: \.element.id) { index, feedItem in
                         FeedItemRowView(
                             feedItem: feedItem,
                             index: index,
@@ -123,19 +124,15 @@ struct FeedListView: View {
                         .listRowSeparator(feedLayout == .card ? .hidden : .automatic)
                         .listRowInsets(EdgeInsets())
                         .onAppear {
-                            if let index = feedState.firstIndex(of: feedItem) {
-                                indexHolder.lastAppearedIndex = index
-                                if index == feedState.count - 15 {
-                                    requestNewPage()
-                                }
-                                // Show scroll to top button when user has scrolled past first 3 items
-                                onScrollPositionChanged(index > 3)
+                            indexHolder.lastAppearedIndex = index
+                            if index == feedState.count - 15 {
+                                requestNewPage()
                             }
+                            // Show scroll to top button when user has scrolled past first 3 items
+                            onScrollPositionChanged(index > 3)
                         }
                         .onDisappear {
-                            if let index = feedState.firstIndex(of: feedItem) {
-                                self.indexHolder.updateReadIndex(index: index)
-                            }
+                            self.indexHolder.updateReadIndex(index: index)
                         }
                         if index == feedState.count - 1 {
                             if !(currentFeedFilter is FeedFilter.Read) {

@@ -228,6 +228,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             dispatcherProvider = get(),
             feedStateRepository = get(),
             gReaderRepository = get(),
+            feedbinRepository = get(),
             databaseHelper = get(),
             feedSyncRepository = get(),
             logger = getWith("SerialFeedFetcherRepository"),

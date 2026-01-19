@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
@@ -21,6 +22,7 @@ class SerialFeedFetcherRepository internal constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val feedStateRepository: FeedStateRepository,
     private val gReaderRepository: GReaderRepository,
+    private val feedbinRepository: FeedbinRepository,
     private val databaseHelper: DatabaseHelper,
     private val feedSyncRepository: FeedSyncRepository,
     private val logger: Logger,
@@ -35,7 +37,9 @@ class SerialFeedFetcherRepository internal constructor(
                 gReaderRepository.isAccountSet() -> {
                     fetchFeedsWithGReader()
                 }
-
+                feedbinRepository.isAccountSet() -> {
+                    fetchFeedsWithFeedbin()
+                }
                 else -> {
                     fetchFeedsWithRssParser()
                 }
@@ -45,6 +49,11 @@ class SerialFeedFetcherRepository internal constructor(
 
     private suspend fun fetchFeedsWithGReader() {
         gReaderRepository.sync()
+        feedStateRepository.getFeeds()
+    }
+
+    private suspend fun fetchFeedsWithFeedbin() {
+        feedbinRepository.sync()
         feedStateRepository.getFeeds()
     }
 

@@ -109,7 +109,12 @@ struct FeedItemView: View {
     @ViewBuilder private var feedItemImage: some View {
         if let imageUrl = feedItem.imageUrl {
             Spacer()
-            LazyImage(url: URL(string: imageUrl)) { state in
+            LazyImage(
+                request: ImageRequest.resized(
+                    url: URL(string: imageUrl),
+                    size: CGSize(width: 100, height: 100)
+                )
+            ) { state in
                 if let image = state.image {
                     image
                         .resizable()

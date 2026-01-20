@@ -7,6 +7,7 @@
 //
 
 import FeedFlowKit
+import Nuke
 import NukeUI
 import SwiftUI
 
@@ -143,7 +144,12 @@ private struct FeedSourceListItem: View {
             }
 
             if let imageUrl = feedSource.logoUrl {
-                LazyImage(url: URL(string: imageUrl)) { state in
+                LazyImage(
+                    request: ImageRequest.resized(
+                        url: URL(string: imageUrl),
+                        size: CGSize(width: 24, height: 24)
+                    )
+                ) { state in
                     if let image = state.image {
                         image
                             .resizable()

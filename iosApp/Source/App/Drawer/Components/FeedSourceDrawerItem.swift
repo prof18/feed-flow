@@ -7,6 +7,7 @@
 //
 
 import FeedFlowKit
+import Nuke
 import NukeUI
 import SwiftUI
 
@@ -49,7 +50,7 @@ struct FeedSourceDrawerItem: View {
     @ViewBuilder
     private func makeFeedSourceIcon(logoUrl: String?) -> some View {
         if let imageUrl = logoUrl {
-            LazyImage(url: URL(string: imageUrl)) { state in
+            LazyImage(request: ImageRequest.resized(url: URL(string: imageUrl), size: CGSize(width: 24, height: 24))) { state in
                 if let image = state.image {
                     image
                         .resizable()

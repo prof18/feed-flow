@@ -7,6 +7,7 @@
 //
 
 import FeedFlowKit
+import Nuke
 import NukeUI
 import SwiftUI
 
@@ -167,7 +168,7 @@ private struct SuggestedFeedRow: View {
     var body: some View {
         HStack(spacing: Spacing.regular) {
             if let logoUrl = feed.logoUrl, let url = URL(string: logoUrl) {
-                LazyImage(url: url) { state in
+                LazyImage(request: ImageRequest.resized(url: url, size: CGSize(width: 40, height: 40))) { state in
                     if let image = state.image {
                         image
                             .resizable()

@@ -6,6 +6,7 @@
 //  Copyright © 2023 FeedFlow. All rights reserved.
 //
 
+import Nuke
 import SwiftUI
 
 extension View {
@@ -34,5 +35,15 @@ extension String {
             return self
         }
         return prefix(maxChar) + "..."
+    }
+}
+
+extension ImageRequest {
+    static func resized(url: URL?, size: CGSize) -> ImageRequest? {
+        guard let url else { return nil }
+        return ImageRequest(
+            url: url,
+            processors: [.resize(size: size, contentMode: .aspectFill)]
+        )
     }
 }

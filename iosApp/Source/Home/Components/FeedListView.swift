@@ -132,6 +132,7 @@ struct FeedListView: View {
                             onScrollPositionChanged(index > 3)
                         }
                         .onDisappear {
+                            guard loadingState?.isLoading() != true else { return }
                             self.indexHolder.updateReadIndex(index: index)
                         }
                         if index == feedState.count - 1 {
@@ -152,6 +153,9 @@ struct FeedListView: View {
                     }
                 }
                 .listStyle(PlainListStyle())
+                .onAppear {
+                    indexHolder.resumeUpdates()
+                }
                 .refreshable {
                     onReloadClick()
                 }

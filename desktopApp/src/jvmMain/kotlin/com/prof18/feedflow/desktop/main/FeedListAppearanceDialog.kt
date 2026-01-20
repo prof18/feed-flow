@@ -125,6 +125,13 @@ internal fun FeedListAppearanceDialog(
                         onCheckedChange = { callbacks.onRemoveTitleFromDescUpdate(it) },
                     )
 
+                    SettingSwitchItem(
+                        title = "Hide unread count", // TODO: Add string resource
+                        icon = Icons.Outlined.HideSource, // TODO: Check for better icon
+                        isChecked = settingsState.isHideUnreadCountEnabled,
+                        onCheckedChange = { callbacks.onHideUnreadCountUpdate(it) },
+                    )
+
                     DateFormatSelector(
                         currentFormat = settingsState.dateFormat,
                         onFormatSelected = { format ->
@@ -170,4 +177,5 @@ internal data class FeedListAppearanceCallbacks(
     val onDateFormatUpdate: (DateFormat) -> Unit,
     val onTimeFormatUpdate: (TimeFormat) -> Unit,
     val onSwipeActionUpdate: (SwipeDirection, SwipeActionType) -> Unit,
+    val onHideUnreadCountUpdate: (Boolean) -> Unit,
 )

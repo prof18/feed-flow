@@ -45,6 +45,7 @@ class FeedListSettingsViewModel internal constructor(
         val rightSwipeAction = feedAppearanceSettingsRepository.getSwipeAction(SwipeDirection.RIGHT)
         val isRemoveTitleFromDescriptionEnabled = feedAppearanceSettingsRepository.getRemoveTitleFromDescription()
         val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
+        val isHideUnreadCountEnabled = feedAppearanceSettingsRepository.getHideUnreadCount()
 
         stateMutableFlow.update {
             FeedListSettingsState(
@@ -59,6 +60,7 @@ class FeedListSettingsViewModel internal constructor(
                 rightSwipeActionType = rightSwipeAction,
                 isRemoveTitleFromDescriptionEnabled = isRemoveTitleFromDescriptionEnabled,
                 feedOrder = feedOrder,
+                isHideUnreadCountEnabled = isHideUnreadCountEnabled,
             )
         }
     }
@@ -159,6 +161,15 @@ class FeedListSettingsViewModel internal constructor(
                 it.copy(feedOrder = feedOrder)
             }
             feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateHideUnreadCount(value: Boolean) {
+        viewModelScope.launch {
+            feedAppearanceSettingsRepository.setHideUnreadCount(value)
+            stateMutableFlow.update {
+                it.copy(isHideUnreadCountEnabled = value)
+            }
         }
     }
 }

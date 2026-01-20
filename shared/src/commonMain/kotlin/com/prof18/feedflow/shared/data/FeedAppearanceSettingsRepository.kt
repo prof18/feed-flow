@@ -28,6 +28,9 @@ class FeedAppearanceSettingsRepository(
     private val feedLayoutMutableFlow = MutableStateFlow(getFeedLayout())
     val feedLayout: StateFlow<FeedLayout> = feedLayoutMutableFlow.asStateFlow()
 
+    private val hideUnreadCountMutableFlow = MutableStateFlow(getHideUnreadCount())
+    val hideUnreadCountFlow: StateFlow<Boolean> = hideUnreadCountMutableFlow.asStateFlow()
+
     fun getRemoveTitleFromDescription(): Boolean =
         settings.getBoolean(FeedAppearanceSettingsFields.REMOVE_TITLE_FROM_DESCRIPTION.name, false)
 
@@ -60,6 +63,14 @@ class FeedAppearanceSettingsRepository(
 
     fun setHideDate(value: Boolean) =
         settings.set(FeedAppearanceSettingsFields.HIDE_DATE.name, value)
+
+    fun getHideUnreadCount(): Boolean =
+        settings.getBoolean(FeedAppearanceSettingsFields.HIDE_UNREAD_COUNT.name, false)
+
+    fun setHideUnreadCount(value: Boolean) {
+        settings.set(FeedAppearanceSettingsFields.HIDE_UNREAD_COUNT.name, value)
+        hideUnreadCountMutableFlow.update { value }
+    }
 
     fun getSwipeAction(direction: SwipeDirection): SwipeActionType {
         val fieldName = when (direction) {
@@ -133,4 +144,5 @@ private enum class FeedAppearanceSettingsFields {
     DATE_FORMAT,
     TIME_FORMAT,
     FEED_LAYOUT,
+    HIDE_UNREAD_COUNT,
 }

@@ -64,6 +64,20 @@
   </content_rating>
 
   <releases>
+      <release version="1.9.0" date="2026-01-20">
+          <description>
+              <p>Added Miniflux, Feedbin, and Bazqux sync integrations</p>
+              <p>OLED theme option for true black backgrounds</p>
+              <p>Mark all above/below as read feature</p>
+              <p>Search filter chips for Timeline, Read, and Bookmarks</p>
+              <p>Drag and drop to change feed categories</p>
+              <p>Desktop splash screen</p>
+              <p>Platform-appropriate keyboard shortcuts (F5 refresh, Ctrl+Shift+A mark all read)</p>
+              <p>Improved reader mode rendering</p>
+              <p>Better favicon retrieval</p>
+              <p>Fixed various crashes and stability issues.</p>
+          </description>
+      </release>
       <release version="1.8.0" date="2025-12-12">
           <description>
               <p>Added offline reading - articles can be automatically saved during sync</p>

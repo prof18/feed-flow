@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
 import coil3.compose.AsyncImage
@@ -29,9 +30,11 @@ internal fun FeedItemImage(
                 .background(Color.Green),
         )
     } else {
+        val density = LocalDensity.current
         AsyncImage(
             model = ImageRequest.Builder(LocalPlatformContext.current)
                 .data(url)
+                .size(with(density) { width.roundToPx() })
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,

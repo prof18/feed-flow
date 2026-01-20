@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
 import coil3.compose.AsyncImage
@@ -32,9 +33,11 @@ fun FeedSourceLogoImage(
                 .background(Color.Green),
         )
     } else {
+        val density = LocalDensity.current
         AsyncImage(
             model = ImageRequest.Builder(LocalPlatformContext.current)
                 .data(imageUrl)
+                .size(with(density) { size.roundToPx() })
                 .build(),
             placeholder = rememberVectorPainter(Icons.Default.Category),
             fallback = rememberVectorPainter(Icons.Default.Category),

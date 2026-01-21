@@ -56,28 +56,27 @@ internal fun FeedItemView(
         )
     }
 
-    val clickableItemModifier =
-        if (disableClick) {
-            Modifier
-        } else {
-            Modifier.singleAndLongClickModifier(
-                onClick = {
-                    onFeedItemClick(
-                        FeedItemUrlInfo(
-                            id = feedItem.id,
-                            url = feedItem.url,
-                            title = feedItem.title,
-                            isBookmarked = feedItem.isBookmarked,
-                            linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
-                            commentsUrl = feedItem.commentsUrl,
-                        ),
-                    )
-                },
-                onLongClick = {
-                    showItemMenu = true
-                },
-            )
-        }
+    val clickableItemModifier = if (disableClick) {
+        Modifier
+    } else {
+        Modifier.singleAndLongClickModifier(
+            onClick = {
+                onFeedItemClick(
+                    FeedItemUrlInfo(
+                        id = feedItem.id,
+                        url = feedItem.url,
+                        title = feedItem.title,
+                        isBookmarked = feedItem.isBookmarked,
+                        linkOpeningPreference = feedItem.feedSource.linkOpeningPreference,
+                        commentsUrl = feedItem.commentsUrl,
+                    ),
+                )
+            },
+            onLongClick = {
+                showItemMenu = true
+            },
+        )
+    }
 
     Column(modifier = modifier) {
         Column(

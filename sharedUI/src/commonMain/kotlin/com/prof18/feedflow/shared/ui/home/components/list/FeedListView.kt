@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.ui.home.components.list
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -43,6 +44,7 @@ import com.prof18.feedflow.core.model.SwipeActionType.NONE
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_BOOKMARK_STATUS
 import com.prof18.feedflow.core.model.SwipeActionType.TOGGLE_READ_STATUS
 import com.prof18.feedflow.core.model.SwipeActions
+import com.prof18.feedflow.shared.ui.home.WindowSizeClass
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
@@ -77,6 +79,8 @@ internal fun FeedList(
     listState: LazyListState = rememberLazyListState(),
     onMarkAllAboveAsRead: (String) -> Unit = {},
     onMarkAllBelowAsRead: (String) -> Unit = {},
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    windowSizeClass: WindowSizeClass = WindowSizeClass.Compact,
 ) {
     val shouldStartPaginate = remember {
         derivedStateOf {
@@ -91,6 +95,7 @@ internal fun FeedList(
     LazyColumn(
         modifier = modifier,
         state = listState,
+        contentPadding = contentPadding,
     ) {
         itemsIndexed(
             items = feedItems,
@@ -130,6 +135,7 @@ internal fun FeedList(
                         currentFeedFilter = currentFeedFilter,
                         onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                         onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                        windowSizeClass = windowSizeClass,
                     )
                 } else {
                     SwipeableActionsBox(
@@ -152,6 +158,7 @@ internal fun FeedList(
                             currentFeedFilter = currentFeedFilter,
                             onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                             onMarkAllBelowAsRead = onMarkAllBelowAsRead,
+                            windowSizeClass = windowSizeClass,
                         )
                     }
                 }

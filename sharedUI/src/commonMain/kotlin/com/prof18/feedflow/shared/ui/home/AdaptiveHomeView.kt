@@ -17,8 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.shared.ui.home.components.HomeScreenContent
+import com.prof18.feedflow.shared.ui.home.components.ResizableSidebar
 import com.prof18.feedflow.shared.ui.home.components.drawer.Drawer
 import com.prof18.feedflow.shared.ui.utils.ConditionalAnimatedVisibility
 import com.prof18.feedflow.shared.ui.utils.LocalReduceMotion
@@ -42,6 +44,12 @@ fun AdaptiveHomeView(
     onBackupClick: () -> Unit = {},
     onFeedSuggestionsClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
+    // Resizable sidebar parameters (only used for Medium/Expanded window sizes)
+    sidebarWidthFraction: Float = 0.25f,
+    onSidebarWidthChanged: (Float) -> Unit = {},
+    minSidebarWidthFraction: Float = 0.15f,
+    maxSidebarWidthFraction: Float = 0.35f,
+    resizePointerIcon: PointerIcon = PointerIcon.Default,
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -71,6 +79,7 @@ fun AdaptiveHomeView(
             shareBehavior = shareBehavior,
             onBackupClick = onBackupClick,
             onEmptyStateClick = onEmptyStateClick,
+            windowSizeClass = windowSizeClass,
         )
     }
 
@@ -127,30 +136,44 @@ fun AdaptiveHomeView(
         }
         WindowSizeClass.Medium, WindowSizeClass.Expanded -> {
             var isDrawerMenuFullVisible by remember { mutableStateOf(true) }
-            Row {
-                ConditionalAnimatedVisibility(
-                    modifier = Modifier.weight(1f),
-                    visible = isDrawerMenuFullVisible,
-                ) {
-                    Scaffold { paddingValues ->
-                        DrawerInternal(
-                            modifier = Modifier.padding(paddingValues),
-                            onFeedFilterSelectedLambda = { feedFilter ->
-                                feedManagementActions.onFeedFilterSelected(feedFilter)
-                                scope.launch {
-                                    listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                                }
+
+            if (isDrawerMenuFullVisible) {
+                ResizableSidebar(
+                    sidebarWidthFraction = sidebarWidthFraction,
+                    onSidebarWidthChanged = onSidebarWidthChanged,
+                    minWidthFraction = minSidebarWidthFraction,
+                    maxWidthFraction = maxSidebarWidthFraction,
+                    resizePointerIcon = resizePointerIcon,
+                    sidebarContent = {
+                        Scaffold { paddingValues ->
+                            DrawerInternal(
+                                modifier = Modifier.padding(paddingValues),
+                                onFeedFilterSelectedLambda = { feedFilter ->
+                                    feedManagementActions.onFeedFilterSelected(feedFilter)
+                                    scope.launch {
+                                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                                    }
+                                },
+                            )
+                        }
+                    },
+                    mainContent = {
+                        HomeContentInternal(
+                            showDrawerMenu = true,
+                            isDrawerMenuOpen = true,
+                            onDrawerMenuClick = {
+                                isDrawerMenuFullVisible = false
                             },
                         )
-                    }
-                }
-
+                    },
+                )
+            } else {
+                // Sidebar is hidden - show only the main content
                 HomeContentInternal(
-                    modifier = Modifier.weight(2f),
                     showDrawerMenu = true,
-                    isDrawerMenuOpen = isDrawerMenuFullVisible,
+                    isDrawerMenuOpen = false,
                     onDrawerMenuClick = {
-                        isDrawerMenuFullVisible = !isDrawerMenuFullVisible
+                        isDrawerMenuFullVisible = true
                     },
                 )
             }

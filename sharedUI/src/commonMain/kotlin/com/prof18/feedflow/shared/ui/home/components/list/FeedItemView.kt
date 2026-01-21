@@ -27,6 +27,7 @@ import com.prof18.feedflow.core.model.FeedItemUrlTitle
 import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.shared.ui.feedsourcelist.singleAndLongClickModifier
+import com.prof18.feedflow.shared.ui.home.WindowSizeClass
 import com.prof18.feedflow.shared.ui.preview.feedItemsForPreview
 import com.prof18.feedflow.shared.ui.style.Spacing
 import com.prof18.feedflow.shared.ui.utils.PreviewHelper
@@ -49,6 +50,7 @@ internal fun FeedItemView(
     disableClick: Boolean = false,
     currentFeedFilter: FeedFilter = FeedFilter.Timeline,
     onMarkAllBelowAsRead: (String) -> Unit,
+    windowSizeClass: WindowSizeClass = WindowSizeClass.Compact,
 ) {
     var showItemMenu by remember {
         mutableStateOf(
@@ -84,38 +86,46 @@ internal fun FeedItemView(
             .padding(horizontal = Spacing.regular)
             .padding(vertical = Spacing.small),
     ) {
-        FeedSourceAndUnreadDotRow(
-            feedItem = feedItem,
-            feedFontSize = feedFontSize,
-            currentFeedFilter = currentFeedFilter,
-        )
-
-        TitleSubtitleAndImageRow(
-            modifier = Modifier
-                .height(IntrinsicSize.Min)
-                .fillMaxWidth(),
-            feedItem = feedItem,
-            feedFontSize = feedFontSize,
-            currentFeedFilter = currentFeedFilter,
-        )
-
-        feedItem.dateString?.let { dateString ->
-            Text(
-                modifier = Modifier
-                    .padding(top = Spacing.small),
-                text = dateString,
-                fontSize = feedFontSize.feedMetaFontSize.sp,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = if (feedItem.isRead &&
-                        currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
-                    ) {
-                        0.6f
-                    } else {
-                        1f
-                    },
-                ),
+        if (windowSizeClass == WindowSizeClass.Expanded) {
+            WideScreenFeedItemView(
+                feedItem = feedItem,
+                feedFontSize = feedFontSize,
+                currentFeedFilter = currentFeedFilter,
             )
+        } else {
+            FeedSourceAndUnreadDotRow(
+                feedItem = feedItem,
+                feedFontSize = feedFontSize,
+                currentFeedFilter = currentFeedFilter,
+            )
+
+            TitleSubtitleAndImageRow(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth(),
+                feedItem = feedItem,
+                feedFontSize = feedFontSize,
+                currentFeedFilter = currentFeedFilter,
+            )
+
+            feedItem.dateString?.let { dateString ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = Spacing.small),
+                    text = dateString,
+                    fontSize = feedFontSize.feedMetaFontSize.sp,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(
+                        alpha = if (feedItem.isRead &&
+                            currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
+                        ) {
+                            0.6f
+                        } else {
+                            1f
+                        },
+                    ),
+                )
+            }
         }
 
         if (feedLayout == FeedLayout.LIST) {

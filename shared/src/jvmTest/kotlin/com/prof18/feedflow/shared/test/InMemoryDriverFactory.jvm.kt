@@ -9,4 +9,3 @@ actual fun createInMemoryDriver(): SqlDriver {
     FeedFlowDB.Schema.create(driver)
     return driver
 }
-

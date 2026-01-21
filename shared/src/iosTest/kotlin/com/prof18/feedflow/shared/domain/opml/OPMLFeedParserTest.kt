@@ -1,8 +1,8 @@
 package com.prof18.feedflow.shared.domain.opml
 
-import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.opml
 import com.prof18.feedflow.shared.opmlWithText
+import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
 import platform.Foundation.NSData
 import platform.Foundation.NSString
@@ -26,7 +26,7 @@ class OPMLFeedParserTest {
     @Test
     fun `The number of feeds are correct`() = runTest {
         val feedSources = parser.generateFeedSources(opmlInput)
-        assertTrue(feedSources.size == 6)
+        assertEquals(feedSources.size, 6)
     }
 
     @Test
@@ -37,9 +37,9 @@ class OPMLFeedParserTest {
         val basketFeeds = feedSources.filter { it.category?.title == "Basket" }
         val newsFeeds = feedSources.filter { it.category?.title == "News" }
 
-        assertTrue(techFeeds.size == 3)
-        assertTrue(basketFeeds.size == 2)
-        assertTrue(newsFeeds.size == 1)
+        assertEquals(techFeeds.size, 3)
+        assertEquals(basketFeeds.size, 2)
+        assertEquals(newsFeeds.size, 1)
     }
 
     @Test

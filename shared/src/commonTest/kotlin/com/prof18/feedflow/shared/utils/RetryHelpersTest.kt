@@ -10,10 +10,10 @@ class RetryHelpersTest {
     fun `should retry specified number of times`() {
         var attempts = 0
 
-        assertFailsWith<RuntimeException> {
+        assertFailsWith<IllegalStateException> {
             executeWithRetry(maxRetries = 3) {
                 attempts++
-                throw RuntimeException("Network error")
+                error("Network error")
             }
         }
 
@@ -40,7 +40,7 @@ class RetryHelpersTest {
         val result = executeWithRetry(maxRetries = 5) {
             attempts++
             if (attempts < 3) {
-                throw RuntimeException("Temporary error")
+                error("Temporary error")
             }
             "success"
         }
@@ -53,10 +53,10 @@ class RetryHelpersTest {
     fun `should work with maxRetries of 1`() {
         var attempts = 0
 
-        assertFailsWith<RuntimeException> {
+        assertFailsWith<IllegalStateException> {
             executeWithRetry(maxRetries = 1) {
                 attempts++
-                throw RuntimeException("Error")
+                error("Error")
             }
         }
 

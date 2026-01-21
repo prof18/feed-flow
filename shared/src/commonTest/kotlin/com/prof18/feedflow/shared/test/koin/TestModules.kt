@@ -7,7 +7,6 @@ import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
-import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.currentOS
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -22,6 +21,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
+import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.createInMemoryDriver
 import com.russhwolf.settings.MapSettings
 import com.russhwolf.settings.Settings

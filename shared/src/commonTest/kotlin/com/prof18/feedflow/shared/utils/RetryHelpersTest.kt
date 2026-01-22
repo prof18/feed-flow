@@ -7,7 +7,7 @@ import kotlin.test.assertFailsWith
 class RetryHelpersTest {
 
     @Test
-    fun `should retry specified number of times`() {
+    fun `executeWithRetry retries specified number of times`() {
         var attempts = 0
 
         assertFailsWith<IllegalStateException> {
@@ -21,7 +21,7 @@ class RetryHelpersTest {
     }
 
     @Test
-    fun `should succeed on first attempt if no error`() {
+    fun `executeWithRetry succeeds on first attempt when no error`() {
         var attempts = 0
 
         val result = executeWithRetry(maxRetries = 3) {
@@ -34,7 +34,7 @@ class RetryHelpersTest {
     }
 
     @Test
-    fun `should succeed after some retries`() {
+    fun `executeWithRetry succeeds after some retries`() {
         var attempts = 0
 
         val result = executeWithRetry(maxRetries = 5) {
@@ -50,7 +50,7 @@ class RetryHelpersTest {
     }
 
     @Test
-    fun `should work with maxRetries of 1`() {
+    fun `executeWithRetry works with maxRetries of 1`() {
         var attempts = 0
 
         assertFailsWith<IllegalStateException> {

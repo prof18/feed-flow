@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 class UrlUtilsTest {
 
     @Test
-    fun `should validate valid URLs`() {
+    fun `isValidUrl returns true for valid URLs`() {
         val validUrls = listOf(
             "https://example.com",
             "http://example.com",
@@ -21,7 +21,7 @@ class UrlUtilsTest {
     }
 
     @Test
-    fun `should invalidate invalid URLs`() {
+    fun `isValidUrl returns false for invalid URLs`() {
         val invalidUrls = listOf(
             "",
             "   ",
@@ -36,12 +36,12 @@ class UrlUtilsTest {
     }
 
     @Test
-    fun `should handle URLs with whitespace`() {
+    fun `isValidUrl handles URLs with whitespace`() {
         assertTrue(isValidUrl("  https://example.com  "))
     }
 
     @Test
-    fun `should reject protocol-only URLs`() {
+    fun `isValidUrl rejects protocol only URLs`() {
         assertFalse(isValidUrl("https://"))
         assertFalse(isValidUrl("http://"))
     }

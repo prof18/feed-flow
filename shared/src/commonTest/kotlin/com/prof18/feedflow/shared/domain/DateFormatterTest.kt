@@ -81,7 +81,7 @@ class DateFormatterTest {
     )
 
     @Test
-    fun `getDateMillisFromString returns correct values`() {
+    fun `getDateMillisFromString parses various date formats correctly`() {
         for (input in testInputs) {
             println(input)
             assertNotNull(dateFormatter.getDateMillisFromString(input))

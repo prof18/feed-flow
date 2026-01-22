@@ -12,7 +12,7 @@ class FeedFlowDatabaseTest : KoinTestBase() {
     private val databaseHelper by inject<DatabaseHelper>()
 
     @Test
-    fun insertCategory_works_correctly() = runTest {
+    fun `insertCategories stores categories in database`() = runTest {
         val categories = listOf(
             FeedSourceCategory(id = "1", title = "Category 1"),
             FeedSourceCategory(id = "2", title = "Category 2"),

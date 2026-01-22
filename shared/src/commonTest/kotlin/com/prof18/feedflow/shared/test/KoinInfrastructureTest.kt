@@ -10,7 +10,7 @@ class KoinInfrastructureTest : KoinTestBase() {
     private val feedStateRepository: FeedStateRepository by inject()
 
     @Test
-    fun koin_can_inject_repositories() {
+    fun `inject resolves FeedStateRepository from Koin`() {
         assertNotNull(feedStateRepository)
     }
 }

@@ -24,13 +24,13 @@ class OPMLFeedParserTest {
     )
 
     @Test
-    fun `The number of feeds are correct`() = runTest {
+    fun `generateFeedSources parses correct number of feeds`() = runTest {
         val feedSources = parser.generateFeedSources(opmlInput)
         assertEquals(feedSources.size, 6)
     }
 
     @Test
-    fun `The number of feed in category are correct`() = runTest {
+    fun `generateFeedSources groups feeds by category correctly`() = runTest {
         val feedSources = parser.generateFeedSources(opmlInput)
 
         val techFeeds = feedSources.filter { it.category?.title == "Tech" }
@@ -43,7 +43,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `The feeds are parsed correctly`() = runTest {
+    fun `generateFeedSources extracts feed details correctly`() = runTest {
         val feedSources = parser.generateFeedSources(opmlInput)
 
         assertEquals("Hacker News", feedSources[0].title)
@@ -72,7 +72,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `The opml with text is parsed correctly`() = runTest {
+    fun `generateFeedSources parses OPML with text attribute`() = runTest {
         val opmlInput = OpmlInput(
             opmlData = (opmlWithText as NSString).dataUsingEncoding(NSUTF8StringEncoding)
                 ?: NSData(),

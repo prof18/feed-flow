@@ -30,7 +30,7 @@ class OpmlBOMParsingIosTest {
     """.trimIndent()
 
     @Test
-    fun `iOS OPML with BOM should parse correctly`() = runTest {
+    fun `generateFeedSources parses OPML with BOM correctly`() = runTest {
         val contentWithBom = "\uFEFF$opmlContent"
 
         val data = (contentWithBom as NSString).dataUsingEncoding(NSUTF8StringEncoding)
@@ -42,7 +42,7 @@ class OpmlBOMParsingIosTest {
     }
 
     @Test
-    fun `iOS OPML with ampersand should parse correctly`() = runTest {
+    fun `generateFeedSources parses OPML with ampersand correctly`() = runTest {
         val opmlWithAmpersand = """
             <?xml version="1.0" encoding="UTF-8"?>
             <opml version="1.0">

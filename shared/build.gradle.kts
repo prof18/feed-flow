@@ -127,7 +127,6 @@ kotlin {
                 implementation(libs.koin.android)
                 implementation(libs.workmanager)
                 implementation(libs.koin.workmanager)
-                implementation(libs.kotlinx.coroutines.play.services)
             }
         }
 

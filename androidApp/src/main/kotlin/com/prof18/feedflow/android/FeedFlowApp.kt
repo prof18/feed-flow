@@ -16,6 +16,8 @@ import com.prof18.feedflow.android.widget.FeedFlowWidget
 import com.prof18.feedflow.android.widget.WidgetConfigurationViewModel
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveAndroidDataSourceImpl
+import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceAndroid
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
@@ -30,6 +32,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.koin.workManagerFactory
+import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 
 class FeedFlowApp : Application(), SingletonImageLoader.Factory {
@@ -82,6 +85,14 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                             context = this@FeedFlowApp,
                             logger = getWith("BrowserManager"),
                             settingsRepository = get(),
+                        )
+                    }
+                    single<GoogleDriveDataSourceAndroid> {
+                        GoogleDriveAndroidDataSourceImpl(
+                            context = this@FeedFlowApp,
+                            googleDriveSettings = get(),
+                            logger = get(parameters = { parametersOf("GoogleDriveDataSourceAndroid") }),
+                            dispatcherProvider = get(),
                         )
                     }
                     single { appConfig }

@@ -179,6 +179,9 @@ dependencies {
     "googlePlayImplementation"(libs.telemetry.deck)
     "googlePlayImplementation"(libs.google.identity.googleid)
     "googlePlayImplementation"(libs.google.play.services.auth)
+    "googlePlayImplementation"(libs.kotlinx.coroutines.play.services)
+    "googlePlayImplementation"(libs.google.api.client.android)
+    "googlePlayImplementation"(libs.google.api.services.drive)
 
     debugImplementation(libs.compose.multiplatform.ui.tooling)
 

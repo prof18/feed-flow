@@ -29,13 +29,6 @@ kotlin {
 
         androidMain {
             dependsOn(commonJvmAndroidMain)
-
-            dependencies {
-                implementation(libs.google.play.services.auth)
-                implementation(libs.kotlinx.coroutines.play.services)
-                implementation(libs.google.api.client.android)
-                implementation(libs.google.api.services.drive)
-            }
         }
 
         jvmMain {

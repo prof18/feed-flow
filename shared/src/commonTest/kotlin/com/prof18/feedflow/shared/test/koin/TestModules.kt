@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.FEED_SYNC_SCOPE_NAME
@@ -23,8 +24,10 @@ import com.prof18.feedflow.shared.domain.feed.FeedSourceLogoRetrieverImpl
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feedcategories.FeedCategoryRepository
+import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
+import com.prof18.feedflow.shared.test.FeedItemContentFileHandlerTestImpl
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.createInMemoryDriver
 import com.prof18.feedflow.shared.test.createInMemorySyncDriver
@@ -101,10 +104,12 @@ object TestModules {
         }
         factoryOf(::RssChannelMapper)
         factoryOf(::FeedSourceLogoRetrieverImpl) bind FeedSourceLogoRetriever::class
+        single<FeedItemContentFileHandler> { FeedItemContentFileHandlerTestImpl() }
     }
 
     fun createTestSettingsModule(): Module = module {
         single<Settings> { MapSettings() }
+        single<DispatcherProvider> { TestDispatcherProvider }
     }
 
     fun createTestAccountModule(): Module = module {

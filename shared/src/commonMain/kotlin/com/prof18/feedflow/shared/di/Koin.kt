@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.getFeedSyncModule
@@ -64,6 +65,7 @@ import com.prof18.feedflow.shared.presentation.SyncAndStorageSettingsViewModel
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.defaultRequest
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.KoinApplication
@@ -134,6 +136,14 @@ private fun getLoggingModule(
     }
 
 private fun getCoreModule(appConfig: AppConfig) = module {
+    single<DispatcherProvider> {
+        object : DispatcherProvider {
+            override val main: CoroutineDispatcher = Dispatchers.Main
+            override val default: CoroutineDispatcher = Dispatchers.Default
+            override val io: CoroutineDispatcher = Dispatchers.IO
+        }
+    }
+
     single {
         DatabaseHelper(
             sqlDriver = get(),

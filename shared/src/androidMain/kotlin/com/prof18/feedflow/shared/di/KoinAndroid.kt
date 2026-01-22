@@ -6,7 +6,6 @@ import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.platformLogWriter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
-import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.FeedDownloadWorker
@@ -34,8 +33,6 @@ import com.prof18.feedflow.shared.utils.UserAgentInterceptor
 import com.prof18.rssparser.RssParserBuilder
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.androidx.workmanager.dsl.workerOf
@@ -82,14 +79,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         WidgetSettingsRepository(
             settings = get(),
         )
-    }
-
-    single<DispatcherProvider> {
-        object : DispatcherProvider {
-            override val main: CoroutineDispatcher = Dispatchers.Main
-            override val default: CoroutineDispatcher = Dispatchers.Default
-            override val io: CoroutineDispatcher = Dispatchers.IO
-        }
     }
 
     single<FeedbinHistorySyncScheduler> {

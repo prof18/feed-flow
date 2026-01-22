@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.GoogleDriveSynMessages
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
+import com.prof18.feedflow.feedsync.googledrive.AuthorizationValidationResult
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceAndroid
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
@@ -99,6 +100,9 @@ class GoogleDriveSyncViewModel internal constructor(
     fun showLoading() {
         googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
     }
+
+    suspend fun validateAuthorization(): AuthorizationValidationResult =
+        googleDriveDataSource.validateAuthorization()
 
     private fun restoreAccount() {
         viewModelScope.launch {

@@ -1,5 +1,6 @@
 package com.prof18.feedflow.android.accounts.googledrive
 
+import androidx.activity.result.IntentSenderRequest
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.prof18.feedflow.android.base.BaseThemeActivity
 import com.prof18.feedflow.core.model.GoogleDriveSynMessages
+import com.prof18.feedflow.feedsync.googledrive.AuthorizationValidationResult
 import com.prof18.feedflow.shared.presentation.GoogleDriveSyncViewModel
 import com.prof18.feedflow.shared.ui.accounts.googledrive.GoogleDriveSyncContent
 import com.prof18.feedflow.shared.ui.settings.SettingItem
@@ -29,9 +31,23 @@ class GoogleDriveSyncActivity : BaseThemeActivity() {
     private val authHelper = GoogleDriveAuthHelper(this)
 
     private val authorizationLauncher = authHelper.createAuthorizationLauncher(
-        onSuccess = { viewModel.onAuthorizationSuccess() },
+        onSuccess = { validateAndProceed() },
         onFailure = { viewModel.onAuthorizationFailed() },
     )
+
+    private fun validateAndProceed() {
+        lifecycleScope.launch {
+            when (val result = viewModel.validateAuthorization()) {
+                is AuthorizationValidationResult.Valid -> viewModel.onAuthorizationSuccess()
+                is AuthorizationValidationResult.NeedsReAuth -> {
+                    authorizationLauncher.launch(
+                        IntentSenderRequest.Builder(result.pendingIntent.intentSender).build(),
+                    )
+                }
+                is AuthorizationValidationResult.Failed -> viewModel.onAuthorizationFailed()
+            }
+        }
+    }
 
     @Composable
     override fun Content() {
@@ -75,7 +91,7 @@ class GoogleDriveSyncActivity : BaseThemeActivity() {
     private fun startSignIn() {
         authHelper.startSignIn(
             launcher = authorizationLauncher,
-            onSuccess = { viewModel.onAuthorizationSuccess() },
+            onSuccess = { validateAndProceed() },
             onFailure = { viewModel.onAuthorizationFailed() },
         )
     }

@@ -17,6 +17,9 @@ class GoogleDriveAndroidDataSourceImpl(
         // no-op
     }
 
+    override suspend fun validateAuthorization(): AuthorizationValidationResult =
+        AuthorizationValidationResult.Failed
+
     override suspend fun performDownload(downloadParam: GoogleDriveDownloadParam): GoogleDriveDownloadResult =
         GoogleDriveDownloadResult()
 

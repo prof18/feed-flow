@@ -30,6 +30,32 @@ class GoogleDriveAndroidDataSourceImpl(
         googleDriveSettings.clearAll()
     }
 
+    override suspend fun validateAuthorization(): AuthorizationValidationResult {
+        val authorizationRequest = AuthorizationRequest.builder()
+            .setRequestedScopes(listOf(Scope(DriveScopes.DRIVE_APPDATA)))
+            .build()
+
+        return try {
+            val result = Identity.getAuthorizationClient(context)
+                .authorize(authorizationRequest)
+                .await()
+
+            if (result.hasResolution()) {
+                val pendingIntent = result.pendingIntent
+                if (pendingIntent != null) {
+                    AuthorizationValidationResult.NeedsReAuth(pendingIntent)
+                } else {
+                    AuthorizationValidationResult.Failed
+                }
+            } else {
+                AuthorizationValidationResult.Valid
+            }
+        } catch (e: Throwable) {
+            logger.d(e) { "Failed to validate authorization" }
+            AuthorizationValidationResult.Failed
+        }
+    }
+
     /**
      * Can throw also [GoogleDriveNeedsReAuthException]
      */

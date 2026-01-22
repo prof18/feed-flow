@@ -5,6 +5,8 @@ interface GoogleDriveDataSourceAndroid {
 
     fun revokeAccess()
 
+    suspend fun validateAuthorization(): AuthorizationValidationResult
+
     /**
      * Can throw also [GoogleDriveNeedsReAuthException]
      */

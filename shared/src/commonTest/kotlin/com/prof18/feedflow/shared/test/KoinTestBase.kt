@@ -1,8 +1,8 @@
 package com.prof18.feedflow.shared.test
 
+import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.koin.TestModules
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.koin.core.context.startKoin
@@ -17,8 +17,6 @@ import kotlin.test.BeforeTest
  * Provides a default set of modules that can be overridden or extended by subclasses.
  */
 abstract class KoinTestBase : KoinTest {
-
-    private val testDispatcher = StandardTestDispatcher()
 
     @BeforeTest
     fun setupKoin() {

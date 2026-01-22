@@ -87,19 +87,25 @@ fun initKoin(
     platformSetup: KoinApplication.() -> Unit = {},
 ): KoinApplication {
     return startKoin {
-        modules(
-            modules +
-                getCoreModule(appConfig) +
-                dropboxModule +
-                googleDriveModule(appConfig.appEnvironment) +
-                getGReaderModule(appConfig.appEnvironment) +
-                getFeedbinModule(appConfig.appEnvironment) +
-                getLoggingModule(appConfig, crashReportingLogWriter) +
-                getPlatformModule(appConfig.appEnvironment) +
-                getFeedSyncModule(appConfig.appEnvironment),
-        )
+        modules(getAllModulesModules(appConfig, crashReportingLogWriter, modules))
         platformSetup()
     }
+}
+
+internal fun getAllModulesModules(
+    appConfig: AppConfig,
+    crashReportingLogWriter: LogWriter,
+    extraModules: List<Module> = emptyList(),
+): List<Module> {
+    return extraModules +
+        getCoreModule(appConfig) +
+        dropboxModule +
+        googleDriveModule(appConfig.appEnvironment) +
+        getGReaderModule(appConfig.appEnvironment) +
+        getFeedbinModule(appConfig.appEnvironment) +
+        getLoggingModule(appConfig, crashReportingLogWriter) +
+        getPlatformModule(appConfig.appEnvironment) +
+        getFeedSyncModule(appConfig.appEnvironment)
 }
 
 private fun getLoggingModule(

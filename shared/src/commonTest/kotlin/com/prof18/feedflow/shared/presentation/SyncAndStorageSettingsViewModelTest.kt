@@ -2,14 +2,10 @@ package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.AutoDeletePeriod
-import com.prof18.feedflow.shared.di.viewModel
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.test.KoinTestBase
-import com.prof18.feedflow.shared.test.koin.TestModules.createCompleteTestModule
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,18 +13,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SyncAndStorageSettingsViewModelTest : KoinTestBase() {
-
-    override fun getTestModules(): List<Module> = listOf(
-        createCompleteTestModule(),
-        module {
-            viewModel {
-                SyncAndStorageSettingsViewModel(
-                    settingsRepository = get(),
-                    feedItemContentFileHandler = get(),
-                )
-            }
-        },
-    )
 
     private val viewModel: SyncAndStorageSettingsViewModel by inject()
     private val feedItemContentFileHandler: FeedItemContentFileHandler by inject()

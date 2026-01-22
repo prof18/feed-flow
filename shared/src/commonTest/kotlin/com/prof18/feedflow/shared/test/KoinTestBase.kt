@@ -22,6 +22,7 @@ abstract class KoinTestBase : KoinTest {
     fun setupKoin() {
         Dispatchers.setMain(testDispatcher)
         startKoin {
+            allowOverride(true)
             modules(getTestModules())
         }
     }
@@ -37,7 +38,5 @@ abstract class KoinTestBase : KoinTest {
      * By default, it provides a complete production-like setup.
      * Override this to provide a different set of modules.
      */
-    open fun getTestModules(): List<Module> = listOf(
-        TestModules.createCompleteTestModule(),
-    )
+    open fun getTestModules(): List<Module> = TestModules.createTestModules()
 }

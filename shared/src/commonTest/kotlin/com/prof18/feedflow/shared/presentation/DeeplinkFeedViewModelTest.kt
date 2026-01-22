@@ -12,29 +12,14 @@ import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.presentation.model.DeeplinkFeedState
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
-import com.prof18.feedflow.shared.test.koin.TestModules.createCompleteTestModule
 import io.kotest.property.arbitrary.next
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class DeeplinkFeedViewModelTest : KoinTestBase() {
-
-    override fun getTestModules(): List<Module> = listOf(
-        createCompleteTestModule(),
-        module {
-            factory {
-                DeeplinkFeedViewModel(
-                    widgetRepository = get(),
-                    feedActionsRepository = get(),
-                )
-            }
-        },
-    )
 
     private val viewModel: DeeplinkFeedViewModel by inject()
     private val databaseHelper: DatabaseHelper by inject()

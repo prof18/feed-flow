@@ -1,29 +1,14 @@
 package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
-import com.prof18.feedflow.shared.di.viewModel
 import com.prof18.feedflow.shared.test.KoinTestBase
-import com.prof18.feedflow.shared.test.koin.TestModules.createCompleteTestModule
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
-
-    override fun getTestModules(): List<Module> = listOf(
-        createCompleteTestModule(),
-        module {
-            viewModel {
-                ReadingBehaviorSettingsViewModel(
-                    settingsRepository = get(),
-                )
-            }
-        },
-    )
 
     private val viewModel: ReadingBehaviorSettingsViewModel by inject()
 

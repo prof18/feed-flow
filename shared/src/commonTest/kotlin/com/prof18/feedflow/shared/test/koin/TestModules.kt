@@ -23,6 +23,7 @@ import com.prof18.feedflow.shared.test.FeedItemContentFileHandlerTestImpl
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.createInMemoryDriver
 import com.prof18.feedflow.shared.test.createInMemorySyncDriver
+import com.prof18.feedflow.shared.test.testLogger
 import com.russhwolf.settings.MapSettings
 import com.russhwolf.settings.Settings
 import io.ktor.client.HttpClient
@@ -64,6 +65,7 @@ object TestModules {
 
     fun createTestOverridesModule(): Module = module {
         single<SqlDriver> { createInMemoryDriver() }
+        single { testLogger }
         single {
             DatabaseHelper(
                 sqlDriver = get(),

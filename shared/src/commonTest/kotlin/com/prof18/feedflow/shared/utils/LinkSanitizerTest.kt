@@ -14,7 +14,7 @@ class LinkSanitizerTest {
     private val correctLink = "https://www.example.com"
 
     @Test
-    fun `The sanitizeUrl works correctly with links with www`() {
+    fun `sanitizeUrl handles links with www correctly`() {
         for (link in links) {
             val cleanLink = sanitizeUrl(link)
             assertEquals(correctLink, cleanLink)
@@ -22,13 +22,13 @@ class LinkSanitizerTest {
     }
 
     @Test
-    fun `The sanitize url works correctly with no https and www links`() {
+    fun `sanitizeUrl handles links without https and www`() {
         val cleanLink = sanitizeUrl("example.com")
         assertEquals("https://example.com", cleanLink)
     }
 
     @Test
-    fun `The sanitize url works correctly with http links`() {
+    fun `sanitizeUrl handles http links correctly`() {
         val cleanLink = sanitizeUrl("http://example.com")
         assertEquals("http://example.com", cleanLink)
     }

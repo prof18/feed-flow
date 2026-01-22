@@ -31,7 +31,7 @@ class OpmlBOMParsingAndroidTest {
     """.trimIndent()
 
     @Test
-    fun `Android OPML with BOM should parse correctly`() = runTest {
+    fun `generateFeedSources parses OPML with BOM correctly`() = runTest {
         // Create input stream with BOM \uFEFF
         val contentWithBom = "\uFEFF$opmlContent"
         val inputStream = ByteArrayInputStream(contentWithBom.toByteArray(Charsets.UTF_8))
@@ -43,7 +43,7 @@ class OpmlBOMParsingAndroidTest {
     }
 
     @Test
-    fun `Android OPML with ampersand should parse correctly`() = runTest {
+    fun `generateFeedSources parses OPML with ampersand correctly`() = runTest {
         val opmlWithAmpersand = """
             <?xml version="1.0" encoding="UTF-8"?>
             <opml version="1.0">

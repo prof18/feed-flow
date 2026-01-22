@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.test.koin
 
+import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.StaticConfig
 import com.prof18.feedflow.core.domain.DateFormatter
@@ -7,6 +8,9 @@ import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
+import com.prof18.feedflow.feedsync.database.di.FEED_SYNC_SCOPE_NAME
+import com.prof18.feedflow.feedsync.database.di.SYNC_DB_DRIVER
 import com.prof18.feedflow.shared.currentOS
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -23,6 +27,7 @@ import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.createInMemoryDriver
+import com.prof18.feedflow.shared.test.createInMemorySyncDriver
 import com.russhwolf.settings.MapSettings
 import com.russhwolf.settings.Settings
 import io.ktor.client.HttpClient
@@ -32,6 +37,7 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -57,6 +63,13 @@ object TestModules {
                 backgroundDispatcher = TestDispatcherProvider.testDispatcher,
                 logger = getWith("DatabaseHelper"),
             )
+        }
+    }
+
+    fun createTestSyncedDatabaseModule(): Module = module {
+        single { SyncedDatabaseHelper(backgroundDispatcher = TestDispatcherProvider.testDispatcher) }
+        scope(named(FEED_SYNC_SCOPE_NAME)) {
+            scoped<SqlDriver>(named(SYNC_DB_DRIVER)) { createInMemorySyncDriver() }
         }
     }
 

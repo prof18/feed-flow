@@ -13,7 +13,7 @@ class DateFormatterTimezoneTest {
     private val dateFormatter = DateFormatterImpl(testLogger)
 
     @Test
-    fun `EDT timezone should be correctly interpreted`() {
+    fun `getDateMillisFromString interprets EDT timezone correctly`() {
         // "Fri, 7 May 2021 10:44:02 EDT"
         // EDT is UTC-4, so 10:44:02 EDT = 14:44:02 UTC
         val dateString = "Fri, 7 May 2021 10:44:02 EDT"
@@ -36,7 +36,7 @@ class DateFormatterTimezoneTest {
     }
 
     @Test
-    fun `EST timezone should be correctly interpreted`() {
+    fun `getDateMillisFromString interprets EST timezone correctly`() {
         // "Fri, 7 May 2021 10:44:02 EST"
         // EST is UTC-5, so 10:44:02 EST = 15:44:02 UTC
         val dateString = "Fri, 7 May 2021 10:44:02 EST"
@@ -57,7 +57,7 @@ class DateFormatterTimezoneTest {
     }
 
     @Test
-    fun `offset format should be correctly interpreted`() {
+    fun `getDateMillisFromString interprets offset format correctly`() {
         // "Fri, 7 May 2021 10:44:02 -0400" (same as EDT)
         val dateString = "Fri, 7 May 2021 10:44:02 -0400"
         val millis = dateFormatter.getDateMillisFromString(dateString)

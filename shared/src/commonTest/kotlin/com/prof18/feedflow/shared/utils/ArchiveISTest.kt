@@ -10,7 +10,7 @@ class ArchiveISTest {
     private val expectedYear = 2025
 
     @Test
-    fun `should generate archive URL with correct format`() {
+    fun `getArchiveISUrl generates archive URL with correct format`() {
         val originalUrl = "https://example.com/article/123"
         val archiveUrl = getArchiveISUrl(originalUrl, fakeClock)
 
@@ -18,14 +18,14 @@ class ArchiveISTest {
     }
 
     @Test
-    fun `should handle empty URL`() {
+    fun `getArchiveISUrl handles empty URL`() {
         val result = getArchiveISUrl("", fakeClock)
 
         assertEquals("https://archive.is/$expectedYear/", result)
     }
 
     @Test
-    fun `should preserve complete URL structure`() {
+    fun `getArchiveISUrl preserves complete URL structure`() {
         val originalUrl = "https://blog.example.com:8080/path/to/article?param=value&other=123#anchor"
         val archiveUrl = getArchiveISUrl(originalUrl, fakeClock)
 

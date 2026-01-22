@@ -29,13 +29,13 @@ class OPMLFeedParserTest {
     )
 
     @Test
-    fun `The number of feeds are correct`() = runTest {
+    fun `generateFeedSources parses correct number of feeds`() = runTest {
         val feedSources = parser.generateFeedSources(opmlInput)
         assertEquals(feedSources.size, 6)
     }
 
     @Test
-    fun `The number of feed in category are correct`() = runTest {
+    fun `generateFeedSources groups feeds by category correctly`() = runTest {
         val feedSources = parser.generateFeedSources(opmlInput)
 
         val techFeeds = feedSources.filter { it.category?.title == "Tech" }
@@ -48,7 +48,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `The feeds are parsed correctly`() = runTest {
+    fun `generateFeedSources extracts feed details correctly`() = runTest {
         val feedSources = parser.generateFeedSources(opmlInput)
 
         assertEquals("Hacker News", feedSources[0].title)
@@ -77,7 +77,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `Malformed OPML is parsed correctly`() = runTest {
+    fun `generateFeedSources handles malformed OPML`() = runTest {
         val file = File.createTempFile("malformed-", ".tmp").apply {
             deleteOnExit()
             writeText(opmlWithMalformedXml)
@@ -93,7 +93,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `Invalid XML throws OpmlParsingException`() = runTest {
+    fun `generateFeedSources throws OpmlParsingException for invalid XML`() = runTest {
         val file = File.createTempFile("invalid-", ".tmp").apply {
             deleteOnExit()
             writeText("This is not XML at all")
@@ -110,7 +110,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `The opml with text is parsed correctly`() = runTest {
+    fun `generateFeedSources parses OPML with text attribute`() = runTest {
         val file = File.createTempFile("some-prefix", ".tmp").apply {
             deleteOnExit()
             writeText(opmlWithText)
@@ -125,7 +125,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `should handle deeply nested categories`() = runTest {
+    fun `generateFeedSources handles deeply nested categories`() = runTest {
         val opml = """
             <?xml version="1.0"?>
             <opml version="2.0">
@@ -155,7 +155,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `should handle duplicate feed URLs`() = runTest {
+    fun `generateFeedSources handles duplicate feed URLs`() = runTest {
         val opml = """
             <?xml version="1.0"?>
             <opml version="2.0">
@@ -178,7 +178,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `should handle BOM in UTF-8 encoding`() = runTest {
+    fun `generateFeedSources handles BOM in UTF8 encoding`() = runTest {
         val bomUtf8 = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
         val opmlContent = """
             <?xml version="1.0"?>
@@ -202,7 +202,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `should handle empty OPML file`() = runTest {
+    fun `generateFeedSources returns empty list for empty OPML`() = runTest {
         val opml = """
             <?xml version="1.0"?>
             <opml version="2.0">
@@ -223,7 +223,7 @@ class OPMLFeedParserTest {
     }
 
     @Test
-    fun `should handle OPML with only categories and no feeds`() = runTest {
+    fun `generateFeedSources returns empty list for OPML with only categories`() = runTest {
         val opml = """
             <?xml version="1.0"?>
             <opml version="2.0">

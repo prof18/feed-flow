@@ -10,7 +10,6 @@ abstract class DatabaseTestBase : KoinTestBase() {
     protected val database: DatabaseHelper by inject()
 
     override fun getTestModules(): List<Module> = listOf(
-        TestModules.createTestLoggingModule(),
         TestModules.createTestDatabaseModule(),
     ) + additionalModules()
 

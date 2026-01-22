@@ -96,7 +96,7 @@ internal class ReviewRepository(
     }
 }
 
-private enum class ReviewSettingsFields {
+internal enum class ReviewSettingsFields {
     FIRST_INSTALLATION_DATE,
     REVIEW_REQUEST_COUNT,
     LAST_REVIEW_REQUEST_DATE,

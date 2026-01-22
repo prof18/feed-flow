@@ -76,6 +76,7 @@ class GoogleDriveDataSourceIos(
                 ) { data, error ->
                     if (error != null) {
                         continuation.resumeWithException(error)
+                        return@downloadFile
                     }
 
                     if (data == null) {

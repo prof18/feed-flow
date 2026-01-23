@@ -84,14 +84,8 @@ object TestModules {
         single<DispatcherProvider> { TestDispatcherProvider }
         single<FeedSyncWorker> {
             object : FeedSyncWorker {
-                override fun upload() {
-                    // No-op
-                }
-
-                override suspend fun uploadImmediate() {
-                    // No-op
-                }
-
+                override fun upload() = Unit
+                override suspend fun uploadImmediate() = Unit
                 override suspend fun download(isFirstSync: Boolean): SyncResult = SyncResult.Success
                 override suspend fun syncFeedSources(): SyncResult = SyncResult.Success
                 override suspend fun syncFeedItems(): SyncResult = SyncResult.Success

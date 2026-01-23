@@ -9,6 +9,7 @@ import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.SyncICloudError
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.core.utils.FeedSyncMessageQueue
+import com.prof18.feedflow.feedsync.icloud.ICloudDataSource
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
@@ -27,6 +28,7 @@ class ICloudSyncViewModel internal constructor(
     private val feedFetcherRepository: FeedFetcherRepository,
     private val feedSyncMessageQueue: FeedSyncMessageQueue,
     private val logger: Logger,
+    private val iCloudDataSource: ICloudDataSource,
 ) : ViewModel() {
 
     private val iCloudSyncUiMutableState = MutableStateFlow<AccountConnectionUiState>(
@@ -43,7 +45,7 @@ class ICloudSyncViewModel internal constructor(
     fun setICloudAuth() {
         viewModelScope.launch {
             iCloudSyncUiMutableState.update { AccountConnectionUiState.Loading }
-            val iCloudBaseFolderURL = getICloudBaseFolderURL()
+            val iCloudBaseFolderURL = iCloudDataSource.getICloudBaseFolderURL()
             if (iCloudBaseFolderURL == null) {
                 iCloudSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
                 feedSyncMessageQueue.emitResult(SyncResult.ICloudNotAvailable(SyncICloudError.ServiceNotAvailable))

@@ -14,10 +14,19 @@ import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
 import kotlin.time.Clock
 
-class ICloudDataSource(
+interface ICloudDataSource {
+    suspend fun performUpload(databasePath: NSURL, databaseName: String): ICloudUploadResult
+    suspend fun performDownload(databaseName: String): ICloudDownloadResult
+    suspend fun getICloudBaseFolderURL(
+        timeoutSeconds: Int = 30,
+        initialPollIntervalMs: Long = 500,
+    ): NSURL?
+}
+
+class ICloudDataSourceImpl(
     private val logger: Logger,
-) {
-    suspend fun performUpload(databasePath: NSURL, databaseName: String): ICloudUploadResult {
+) : ICloudDataSource {
+    override suspend fun performUpload(databasePath: NSURL, databaseName: String): ICloudUploadResult {
         val iCloudUrl = getICloudFolderURL(databaseName)
             ?: return ICloudUploadResult.Error.ICloudUrlNotAvailable
 
@@ -47,7 +56,7 @@ class ICloudDataSource(
         return ICloudUploadResult.Success
     }
 
-    suspend fun performDownload(databaseName: String): ICloudDownloadResult {
+    override suspend fun performDownload(databaseName: String): ICloudDownloadResult {
         val iCloudUrl = getICloudFolderURL(databaseName)
             ?: return ICloudDownloadResult.Error.ICloudUrlNotAvailable
 
@@ -87,9 +96,9 @@ class ICloudDataSource(
     private suspend fun getICloudFolderURL(databaseName: String): NSURL? =
         getICloudBaseFolderURL()?.URLByAppendingPathComponent(databaseName)
 
-    private suspend fun getICloudBaseFolderURL(
-        timeoutSeconds: Int = 30,
-        initialPollIntervalMs: Long = 500,
+    override suspend fun getICloudBaseFolderURL(
+        timeoutSeconds: Int,
+        initialPollIntervalMs: Long,
     ): NSURL? {
         val startTime = Clock.System.now()
         var currentPollInterval = initialPollIntervalMs

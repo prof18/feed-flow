@@ -159,7 +159,7 @@ class SettingsRepository(
     fun setNotificationMode(mode: NotificationMode) =
         settings.set(SettingsFields.NOTIFICATION_MODE.name, mode.name)
 
-    private companion object {
+    internal companion object {
         const val DEFAULT_READER_MODE_FONT_SIZE = 16
     }
 }

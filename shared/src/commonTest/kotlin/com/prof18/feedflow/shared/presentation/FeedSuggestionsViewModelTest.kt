@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FeedSuggestionsViewModelTest : KoinTestBase() {
@@ -20,7 +21,7 @@ class FeedSuggestionsViewModelTest : KoinTestBase() {
     @Test
     fun `initial state is loaded correctly`() = runTest {
         viewModel.isLoadingState.test {
-            assertEquals(false, awaitItem())
+            assertFalse(awaitItem())
         }
 
         viewModel.suggestedCategoriesState.test {

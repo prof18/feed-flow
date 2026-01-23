@@ -18,6 +18,7 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 class DeeplinkFeedViewModelTest : KoinTestBase() {
 
@@ -121,6 +122,6 @@ class DeeplinkFeedViewModelTest : KoinTestBase() {
             sortOrder = FeedOrder.NEWEST_FIRST,
         )
         val item = feeds.find { it.url_hash == feedItemId.id }
-        assertEquals(true, item?.is_read)
+        assertTrue(item?.is_read == true)
     }
 }

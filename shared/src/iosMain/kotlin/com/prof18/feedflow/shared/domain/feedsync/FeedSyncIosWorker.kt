@@ -23,9 +23,11 @@ import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceIos
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDownloadParam
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveSettings
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveUploadParam
+import com.prof18.feedflow.feedsync.icloud.ICloudDataSource
+import com.prof18.feedflow.feedsync.icloud.ICloudDownloadResult
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
+import com.prof18.feedflow.feedsync.icloud.ICloudUploadResult
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.presentation.getICloudBaseFolderURL
 import com.prof18.feedflow.shared.utils.Telemetry
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.cinterop.alloc
@@ -41,12 +43,10 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSFileManagerItemReplacementUsingNewMetadataOnly
 import platform.Foundation.NSURL
-import platform.Foundation.NSUserDomainMask
 import kotlin.coroutines.resume
 import kotlin.time.Clock
 
@@ -55,6 +55,7 @@ internal class FeedSyncIosWorker(
     private val feedSyncMessageQueue: FeedSyncMessageQueue,
     private val dropboxDataSource: DropboxDataSource,
     private val googleDriveDataSource: GoogleDriveDataSourceIos,
+    private val iCloudDataSource: ICloudDataSource,
     private val logger: Logger,
     private val feedSyncer: FeedSyncer,
     private val appEnvironment: AppEnvironment,
@@ -291,42 +292,7 @@ internal class FeedSyncIosWorker(
             }
 
             SyncAccounts.ICLOUD -> {
-                val iCloudUrl = getICloudFolderURL()
-                if (iCloudUrl != null) {
-                    memScoped {
-                        val errorPtr: ObjCObjectVar<NSError?> = alloc()
-
-                        // Copy doesn't override the item, so we need to clear it before.
-                        // An alternative would be checking the existence of the file before and copy or replace.
-                        NSFileManager.defaultManager.removeItemAtURL(
-                            iCloudUrl,
-                            null,
-                        )
-
-                        NSFileManager.defaultManager.copyItemAtURL(
-                            srcURL = databasePath,
-                            toURL = iCloudUrl,
-                            error = errorPtr.ptr,
-                        )
-
-                        if (errorPtr.value != null) {
-                            logger.e { "Error uploading to iCloud: ${errorPtr.value}" }
-                            telemetry.trackError(
-                                id = "FeedSyncIosWorker.accountSpecificUpload",
-                                message = "Error uploading to iCloud: ${errorPtr.value}",
-                            )
-                        }
-                    }
-                    iCloudSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
-                    logger.w { "Upload to iCloud successfully" }
-                    telemetry.signal("FeedSyncIosWorker.accountSpecificUpload.iCloud")
-                } else {
-                    logger.e { "Error uploading to iCloud: iCloud URL is null" }
-                    telemetry.trackError(
-                        id = "FeedSyncIosWorker.accountSpecificUpload",
-                        message = "Error uploading to iCloud: iCloud URL is null",
-                    )
-                }
+                iCloudUpload(databasePath)
             }
 
             SyncAccounts.GOOGLE_DRIVE -> {
@@ -387,78 +353,69 @@ internal class FeedSyncIosWorker(
     }
 
     private suspend fun iCloudDownload(isFirstSync: Boolean): SyncResult {
-        val iCloudUrl = getICloudFolderURL()
-        val tempUrl = getTemporaryFileUrl()
-        if (iCloudUrl == null || tempUrl == null) {
-            val iCloudUrlNull = iCloudUrl == null
-            val tempUrlNull = tempUrl == null
-            val message =
-                """
-                    Error downloading from iCloud: iCloud URL is null: $iCloudUrlNull, temporary URL is null: $tempUrlNull
-                """.trimIndent()
-            logger.e { message }
-            telemetry.trackError(
-                id = "FeedSyncIosWorker.iCloudDownload",
-                message = message,
-            )
-            return if (iCloudUrl == null) {
-                SyncResult.ICloudNotAvailable(SyncICloudError.URLNotAvailable)
-            } else {
-                SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
+        return when (val result = iCloudDataSource.performDownload(getDatabaseName())) {
+            is ICloudDownloadResult.Success -> {
+                replaceDatabase(result.destinationUrl)
+                iCloudSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
+                logger.w { "Download from iCloud successfully" }
+                telemetry.signal("FeedSyncIosWorker.iCloudDownload")
+                SyncResult.Success
             }
-        }
-        NSFileManager.defaultManager.removeItemAtURL(
-            tempUrl,
-            null,
-        )
 
-        memScoped {
-            val errorPtr: ObjCObjectVar<NSError?> = alloc()
-
-            NSFileManager.defaultManager.copyItemAtURL(
-                srcURL = iCloudUrl,
-                toURL = tempUrl,
-                error = errorPtr.ptr,
-            )
-
-            if (errorPtr.value != null) {
+            is ICloudDownloadResult.Error -> {
+                val errorMessage = when (result) {
+                    is ICloudDownloadResult.Error.ICloudUrlNotAvailable -> "iCloud URL is not available"
+                    is ICloudDownloadResult.Error.TemporaryUrlNotAvailable -> "Temporary URL is not available"
+                    is ICloudDownloadResult.Error.FileNotFound -> "File not found in iCloud"
+                    is ICloudDownloadResult.Error.CopyOperationFailed -> "Copy operation failed"
+                    is ICloudDownloadResult.Error.FileAlreadyExists -> "File already exists"
+                    is ICloudDownloadResult.Error.DownloadFailed -> result.errorMessage
+                }
                 if (!isFirstSync) {
-                    logger.e { "Error downloading from iCloud: ${errorPtr.value}" }
+                    logger.e { "Error downloading from iCloud: $errorMessage" }
                     telemetry.trackError(
                         id = "FeedSyncIosWorker.iCloudDownload",
-                        message = "Error downloading from iCloud: ${errorPtr.value}",
+                        message = "Error downloading from iCloud: $errorMessage",
                     )
                 }
-                val error = errorPtr.value.toString()
-                return when {
-                    error.contains("Code=260") || error.contains("Code=4") -> SyncResult.General(
-                        SyncICloudError.FileNotFound,
-                    )
-                    error.contains("Code=512") -> SyncResult.General(SyncICloudError.CopyOperationFailed)
-                    error.contains("Code=516") -> SyncResult.General(SyncICloudError.FileAlreadyExists)
-                    else -> SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
+                when (result) {
+                    is ICloudDownloadResult.Error.ICloudUrlNotAvailable ->
+                        SyncResult.ICloudNotAvailable(SyncICloudError.URLNotAvailable)
+                    is ICloudDownloadResult.Error.TemporaryUrlNotAvailable ->
+                        SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
+                    is ICloudDownloadResult.Error.FileNotFound ->
+                        SyncResult.General(SyncICloudError.FileNotFound)
+                    is ICloudDownloadResult.Error.CopyOperationFailed ->
+                        SyncResult.General(SyncICloudError.CopyOperationFailed)
+                    is ICloudDownloadResult.Error.FileAlreadyExists ->
+                        SyncResult.General(SyncICloudError.FileAlreadyExists)
+                    is ICloudDownloadResult.Error.DownloadFailed ->
+                        SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                 }
             }
-
-            replaceDatabase(tempUrl)
-            iCloudSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
-            logger.w { "Download from iCloud successfully" }
-            telemetry.signal("FeedSyncIosWorker.iCloudDownload")
-            return SyncResult.Success
         }
     }
 
-    private suspend fun getICloudFolderURL(): NSURL? = getICloudBaseFolderURL()
-        ?.URLByAppendingPathComponent(getDatabaseName())
+    private suspend fun iCloudUpload(databasePath: NSURL) {
+        when (val result = iCloudDataSource.performUpload(databasePath, getDatabaseName())) {
+            is ICloudUploadResult.Success -> {
+                iCloudSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
+                logger.w { "Upload to iCloud successfully" }
+                telemetry.signal("FeedSyncIosWorker.accountSpecificUpload.iCloud")
+            }
 
-    private fun getTemporaryFileUrl(): NSURL? {
-        val documentsDirectory: NSURL? = NSFileManager.defaultManager.URLsForDirectory(
-            directory = NSDocumentDirectory,
-            inDomains = NSUserDomainMask,
-        ).firstOrNull() as? NSURL?
-        val databaseUrl = documentsDirectory?.URLByAppendingPathComponent(getDatabaseName())
-
-        return databaseUrl
+            is ICloudUploadResult.Error -> {
+                val errorMessage = when (result) {
+                    is ICloudUploadResult.Error.ICloudUrlNotAvailable -> "iCloud URL is not available"
+                    is ICloudUploadResult.Error.UploadFailed -> result.errorMessage
+                }
+                logger.e { "Error uploading to iCloud: $errorMessage" }
+                telemetry.trackError(
+                    id = "FeedSyncIosWorker.accountSpecificUpload",
+                    message = "Error uploading to iCloud: $errorMessage",
+                )
+            }
+        }
     }
 
     private suspend fun googleDriveUpload(databasePath: NSURL) {

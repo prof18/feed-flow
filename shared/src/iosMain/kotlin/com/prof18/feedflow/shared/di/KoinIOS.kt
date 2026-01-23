@@ -14,6 +14,7 @@ import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.googledrive.GoogleDriveDataSourceIos
 import com.prof18.feedflow.feedsync.googledrive.GoogleDrivePlatformClientIos
 import com.prof18.feedflow.feedsync.icloud.ICloudDataSource
+import com.prof18.feedflow.feedsync.icloud.ICloudDataSourceImpl
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
@@ -159,8 +160,8 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    single {
-        ICloudDataSource(
+    single<ICloudDataSource> {
+        ICloudDataSourceImpl(
             logger = getWith("ICloudDataSource"),
         )
     }
@@ -243,6 +244,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedFetcherRepository = get(),
             feedSyncMessageQueue = get(),
             logger = getWith("ICloudSyncViewModel"),
+            iCloudDataSource = get(),
         )
     }
 

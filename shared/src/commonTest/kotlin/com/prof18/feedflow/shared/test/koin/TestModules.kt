@@ -19,6 +19,7 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
+import com.prof18.feedflow.shared.test.ContentPrefetchRepositoryFake
 import com.prof18.feedflow.shared.test.FeedItemContentFileHandlerTestImpl
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import com.prof18.feedflow.shared.test.createInMemoryDriver
@@ -126,21 +127,7 @@ object TestModules {
                 },
             )
         }
-        single<ContentPrefetchRepository> {
-            object : ContentPrefetchRepository {
-                override suspend fun prefetchContent() {
-                    // No-op
-                }
-
-                override fun startBackgroundFetching() {
-                    // No-op
-                }
-
-                override suspend fun cancelFetching() {
-                    // No-op
-                }
-            }
-        }
+        single<ContentPrefetchRepository> { ContentPrefetchRepositoryFake() }
     }
 }
 

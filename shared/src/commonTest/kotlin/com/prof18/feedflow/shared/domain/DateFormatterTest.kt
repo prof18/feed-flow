@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.domain
 
+import com.prof18.feedflow.shared.test.FakeClock
 import com.prof18.feedflow.shared.test.testLogger
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -7,7 +8,10 @@ import kotlin.test.assertNull
 
 class DateFormatterTest {
 
-    private val dateFormatter = DateFormatterImpl(testLogger)
+    private val dateFormatter = DateFormatterImpl(
+        logger = testLogger,
+        clock = FakeClock.DEFAULT,
+    )
 
     private val testInputs = listOf(
         "Wed, 15 May 2019 20:48:02 +0000",

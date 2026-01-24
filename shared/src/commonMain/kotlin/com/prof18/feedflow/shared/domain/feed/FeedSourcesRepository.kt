@@ -30,7 +30,6 @@ import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.model.DeleteFeedSourceError
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.sanitizeUrl
-import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -47,7 +46,7 @@ internal class FeedSourcesRepository(
     private val feedStateRepository: FeedStateRepository,
     private val feedUrlRetriever: FeedUrlRetriever,
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
-    private val parser: RssParser,
+    private val rssParserWrapper: RssParserWrapper,
     private val dateFormatter: DateFormatter,
     private val rssChannelMapper: RssChannelMapper,
 ) {
@@ -474,7 +473,7 @@ internal class FeedSourcesRepository(
             val actualUrl = suffix.buildUrl(originalUrl).trim()
             logger.d { "Trying with actualUrl: $actualUrl" }
             try {
-                val channel = parser.getRssChannel(actualUrl)
+                val channel = rssParserWrapper.getRssChannel(actualUrl)
                 return AddResult(
                     channel = channel,
                     usedUrl = actualUrl,
@@ -489,7 +488,7 @@ internal class FeedSourcesRepository(
         val url = feedUrlRetriever.getFeedUrl(originalUrl) ?: return null
         logger.d { "Found url: $url" }
         return try {
-            val channel = parser.getRssChannel(url)
+            val channel = rssParserWrapper.getRssChannel(url)
             AddResult(
                 channel = channel,
                 usedUrl = url,

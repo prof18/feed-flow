@@ -14,6 +14,8 @@ import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
+import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
+import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncJvmWorker
@@ -83,6 +85,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
                 .build(),
         ).build()
     }
+    single<RssParserWrapper> { RssParserWrapperImpl(get()) }
 
     factory<OpmlFeedHandler> {
         OpmlFeedHandlerJvm(

@@ -23,6 +23,8 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
+import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
+import com.prof18.feedflow.shared.domain.feed.RssParserWrapperImpl
 import com.prof18.feedflow.shared.domain.feed.SerialFeedFetcherRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
@@ -129,6 +131,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             ),
         ).build()
     }
+    single<RssParserWrapper> { RssParserWrapperImpl(get()) }
 
     single<SqlDriver> {
         createDatabaseDriver(appEnvironment)
@@ -230,7 +233,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             databaseHelper = get(),
             feedSyncRepository = get(),
             logger = getWith("SerialFeedFetcherRepository"),
-            rssParser = get(),
+            rssParserWrapper = get(),
             rssChannelMapper = get(),
             dateFormatter = get(),
         )

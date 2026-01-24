@@ -500,7 +500,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedStateRepository = get(),
             feedUrlRetriever = get(),
             feedSourceLogoRetriever = get(),
-            parser = get(),
+            rssParserWrapper = get(),
             dateFormatter = get(),
             rssChannelMapper = get(),
         )
@@ -526,7 +526,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             feedSyncRepository = get(),
             settingsRepository = get(),
             logger = getWith("FeedFetcherRepository"),
-            rssParser = get(),
+            rssParserWrapper = get(),
             rssChannelMapper = get(),
             dateFormatter = get(),
             feedSourceLogoRetriever = get(),

@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.domain
 
+import com.prof18.feedflow.shared.test.FakeClock
 import com.prof18.feedflow.shared.test.testLogger
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -10,7 +11,10 @@ import kotlin.time.Instant
 
 class DateFormatterTimezoneTest {
 
-    private val dateFormatter = DateFormatterImpl(testLogger)
+    private val dateFormatter = DateFormatterImpl(
+        logger = testLogger,
+        clock = FakeClock.DEFAULT,
+    )
 
     @Test
     fun `getDateMillisFromString interprets EDT timezone correctly`() {

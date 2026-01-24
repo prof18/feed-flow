@@ -11,11 +11,13 @@ actual data class CsvOutput(
     val url: NSURL,
 ) {
     actual fun writeText(text: String) {
-        (text as NSString).writeToURL(
+        require(url.isFileURL()) { "CSV output url must be a file url" }
+        val didWrite = (text as NSString).writeToURL(
             url = url,
             atomically = true,
             encoding = NSUTF8StringEncoding,
             error = null,
         )
+        check(didWrite) { "Failed to write CSV output" }
     }
 }

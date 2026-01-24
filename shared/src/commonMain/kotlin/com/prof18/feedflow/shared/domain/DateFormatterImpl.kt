@@ -26,6 +26,7 @@ import kotlin.time.Instant
 
 class DateFormatterImpl(
     private val logger: Logger,
+    private val clock: Clock,
 ) : DateFormatter {
     private val formats = listOf(
         ISO_DATE_TIME_OFFSET,
@@ -729,7 +730,7 @@ class DateFormatterImpl(
         val instant = Instant.fromEpochMilliseconds(millis)
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
 
-        val today: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val today: LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
 
         val localDate = LocalDate(
             year = dateTime.year,
@@ -825,10 +826,10 @@ class DateFormatterImpl(
     }
 
     override fun currentTimeMillis(): Long =
-        Clock.System.now().toEpochMilliseconds()
+        clock.now().toEpochMilliseconds()
 
     override fun getCurrentDateForExport(): String {
-        val instant = Clock.System.now()
+        val instant = clock.now()
         val dateTime: LocalDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
         return "${dateTime.day}-${dateTime.month.number}-${dateTime.year}"
     }

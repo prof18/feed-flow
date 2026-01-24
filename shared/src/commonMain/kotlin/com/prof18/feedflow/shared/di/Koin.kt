@@ -79,6 +79,7 @@ import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
+import kotlin.time.Clock
 
 fun initKoin(
     appConfig: AppConfig,
@@ -142,6 +143,8 @@ private fun getLoggingModule(
     }
 
 private fun getCoreModule(appConfig: AppConfig) = module {
+    single<Clock> { Clock.System }
+
     single<DispatcherProvider> {
         object : DispatcherProvider {
             override val main: CoroutineDispatcher = Dispatchers.Main
@@ -180,6 +183,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     single<DateFormatter> {
         DateFormatterImpl(
             logger = getWith("DateFormatter"),
+            clock = get(),
         )
     }
 

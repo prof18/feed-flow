@@ -25,7 +25,6 @@ import com.prof18.feedflow.shared.presentation.model.FeedErrorState
 import com.prof18.feedflow.shared.presentation.model.SyncError
 import com.prof18.feedflow.shared.utils.getNumberOfConcurrentParsingRequests
 import com.prof18.feedflow.shared.utils.skipLogging
-import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
@@ -45,7 +44,7 @@ class FeedFetcherRepository internal constructor(
     private val settingsRepository: SettingsRepository,
     private val contentPrefetchRepository: ContentPrefetchRepository,
     private val logger: Logger,
-    private val rssParser: RssParser,
+    private val rssParserWrapper: RssParserWrapper,
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
     private val feedSourceLogoRetriever: FeedSourceLogoRetriever,
@@ -263,7 +262,7 @@ class FeedFetcherRepository internal constructor(
                     logger.d { "-> Getting ${feedSource.url}" }
                     try {
                         val rssChannel = withTimeout(1.minutes) {
-                            rssParser.getRssChannel(feedSource.url)
+                            rssParserWrapper.getRssChannel(feedSource.url)
                         }
                         logger.d { "<- Got back ${rssChannel.title}" }
                         feedToUpdate.remove(feedSource.url)

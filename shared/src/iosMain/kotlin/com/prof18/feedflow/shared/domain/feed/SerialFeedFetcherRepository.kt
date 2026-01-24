@@ -10,7 +10,6 @@ import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
-import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.exception.HttpException
 import kotlinx.coroutines.withContext
 
@@ -26,7 +25,7 @@ class SerialFeedFetcherRepository internal constructor(
     private val databaseHelper: DatabaseHelper,
     private val feedSyncRepository: FeedSyncRepository,
     private val logger: Logger,
-    private val rssParser: RssParser,
+    private val rssParserWrapper: RssParserWrapper,
     private val rssChannelMapper: RssChannelMapper,
     private val dateFormatter: DateFormatter,
 ) {
@@ -104,7 +103,7 @@ class SerialFeedFetcherRepository internal constructor(
         for (feedSource in feedsToProcess) {
             logger.d { "-> Getting ${feedSource.url}" }
             try {
-                val rssChannel = rssParser.getRssChannel(feedSource.url)
+                val rssChannel = rssParserWrapper.getRssChannel(feedSource.url)
                 val feedItems = rssChannelMapper.getFeedItems(
                     rssChannel = rssChannel,
                     feedSource = feedSource,

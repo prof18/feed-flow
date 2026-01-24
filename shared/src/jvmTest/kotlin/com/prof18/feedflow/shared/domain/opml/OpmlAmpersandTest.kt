@@ -9,7 +9,7 @@ import kotlin.test.assertTrue
 
 class OpmlAmpersandTest {
 
-    private val parser = OpmlFeedHandler(
+    private val parser = OpmlFeedHandlerJvm(
         dispatcherProvider = TestDispatcherProvider,
     )
 

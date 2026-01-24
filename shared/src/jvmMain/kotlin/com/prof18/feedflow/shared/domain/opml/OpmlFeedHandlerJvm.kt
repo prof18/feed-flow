@@ -16,10 +16,10 @@ import javax.xml.stream.XMLOutputFactory
 
 class OpmlParsingException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
-internal actual class OpmlFeedHandler(
+internal class OpmlFeedHandlerJvm(
     private val dispatcherProvider: DispatcherProvider,
-) {
-    actual suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
+) : OpmlFeedHandler {
+    override suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.io) {
             val feed = opmlInput.file.readText()
 
@@ -49,7 +49,7 @@ internal actual class OpmlFeedHandler(
             }
         }
 
-    actual suspend fun exportFeed(
+    override suspend fun exportFeed(
         opmlOutput: OpmlOutput,
         feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
     ) = withContext(dispatcherProvider.io) {

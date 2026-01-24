@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 
 class OpmlBOMParsingIosTest {
 
-    private val parser = OpmlFeedHandler(
+    private val parser = OpmlFeedHandlerIos(
         dispatcherProvider = TestDispatcherProvider,
     )
 

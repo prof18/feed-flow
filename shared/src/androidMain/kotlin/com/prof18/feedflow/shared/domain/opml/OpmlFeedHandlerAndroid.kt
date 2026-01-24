@@ -13,10 +13,10 @@ import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlSerializer
 import java.io.Reader
 
-internal actual class OpmlFeedHandler(
+internal class OpmlFeedHandlerAndroid(
     private val dispatcherProvider: DispatcherProvider,
-) {
-    actual suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
+) : OpmlFeedHandler {
+    override suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.default) {
             val inputStream = opmlInput.inputStream
             val feedSources = mutableListOf<ParsedFeedSource>()
@@ -70,7 +70,7 @@ internal actual class OpmlFeedHandler(
             return@withContext feedSources
         }
 
-    actual suspend fun exportFeed(
+    override suspend fun exportFeed(
         opmlOutput: OpmlOutput,
         feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
     ): Unit =

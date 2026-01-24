@@ -13,9 +13,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @Suppress("CAST_NEVER_SUCCEEDS")
-class OPMLFeedParserTest {
+class OPMLFeedParserIosTest {
 
-    private val parser = OpmlFeedHandler(
+    private val parser = OpmlFeedHandlerIos(
         dispatcherProvider = TestDispatcherProvider,
     )
 

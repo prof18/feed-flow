@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 @RunWith(RobolectricTestRunner::class)
 class OpmlBOMParsingAndroidTest {
 
-    private val parser = OpmlFeedHandler(
+    private val parser = OpmlFeedHandlerAndroid(
         dispatcherProvider = TestDispatcherProvider,
     )
 

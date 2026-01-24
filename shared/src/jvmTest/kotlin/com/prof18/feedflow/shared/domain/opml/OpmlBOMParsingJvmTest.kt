@@ -9,9 +9,9 @@ import kotlin.test.assertTrue
 /**
  * Validates that OPML files beginning with a Byte Order Mark (BOM) are parsed correctly.
  */
-class OpmlBOMParsingTest {
+class OpmlBOMParsingJvmTest {
 
-    private val parser = OpmlFeedHandler(
+    private val parser = OpmlFeedHandlerJvm(
         dispatcherProvider = TestDispatcherProvider,
     )
 

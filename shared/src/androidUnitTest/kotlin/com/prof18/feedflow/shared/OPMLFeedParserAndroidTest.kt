@@ -1,6 +1,6 @@
 package com.prof18.feedflow.shared
 
-import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
+import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerAndroid
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
@@ -13,9 +13,9 @@ import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class OPMLFeedParserTest {
+class OPMLFeedParserAndroidTest {
 
-    private val parser = OpmlFeedHandler(
+    private val parser = OpmlFeedHandlerAndroid(
         dispatcherProvider = TestDispatcherProvider,
     )
 

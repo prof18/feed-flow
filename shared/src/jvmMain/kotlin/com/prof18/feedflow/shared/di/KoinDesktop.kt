@@ -22,6 +22,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIosDesktop
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
+import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerJvm
 import com.prof18.feedflow.shared.domain.parser.DesktopFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerDesktop
 import com.prof18.feedflow.shared.logging.SentryLogWriter
@@ -83,8 +84,8 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         ).build()
     }
 
-    factory {
-        OpmlFeedHandler(
+    factory<OpmlFeedHandler> {
+        OpmlFeedHandlerJvm(
             dispatcherProvider = get(),
         )
     }

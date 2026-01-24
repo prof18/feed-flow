@@ -19,10 +19,10 @@ import platform.Foundation.writeToURL
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 
-internal actual class OpmlFeedHandler(
+internal class OpmlFeedHandlerIos(
     private val dispatcherProvider: DispatcherProvider,
-) {
-    actual suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
+) : OpmlFeedHandler {
+    override suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.default) {
             suspendCancellableCoroutine { continuation ->
                 val data = opmlInput.opmlData
@@ -41,7 +41,7 @@ internal actual class OpmlFeedHandler(
         }
 
     @Suppress("MaximumLineLength", "CAST_NEVER_SUCCEEDS")
-    actual suspend fun exportFeed(
+    override suspend fun exportFeed(
         opmlOutput: OpmlOutput,
         feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
     ) {

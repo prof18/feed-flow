@@ -13,9 +13,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-class OPMLFeedParserTest {
+class OPMLFeedParserJvmTest {
 
-    private val parser = OpmlFeedHandler(
+    private val parser = OpmlFeedHandlerJvm(
         dispatcherProvider = TestDispatcherProvider,
     )
 

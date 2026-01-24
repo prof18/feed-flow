@@ -24,6 +24,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncWorker
 import com.prof18.feedflow.shared.domain.feedsync.SyncWorkManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
+import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerAndroid
 import com.prof18.feedflow.shared.domain.parser.AndroidFeedItemParserWorker
 import com.prof18.feedflow.shared.domain.parser.FeedItemContentFileHandlerAndroid
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
@@ -58,8 +59,8 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
-    factory {
-        OpmlFeedHandler(
+    factory<OpmlFeedHandler> {
+        OpmlFeedHandlerAndroid(
             dispatcherProvider = get(),
         )
     }

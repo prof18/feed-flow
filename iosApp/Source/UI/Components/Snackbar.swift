@@ -58,9 +58,11 @@ struct Snackbar: View {
         .transition(AnyTransition.move(edge: .bottom).combined(with: .opacity))
         .gesture(
             DragGesture()
-                .onChanged { _ in
-                    withAnimation {
-                        showBanner = false
+                .onEnded { value in
+                    if value.translation.height > 10 {
+                        withAnimation {
+                            showBanner = false
+                        }
                     }
                 }
         )

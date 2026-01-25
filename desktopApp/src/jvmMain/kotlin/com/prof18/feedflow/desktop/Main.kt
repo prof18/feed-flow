@@ -124,7 +124,7 @@ fun main() {
                         }
                     }
                 },
-                title = "FeedFlow",
+                title = if (getDesktopOS().isMacOs()) "" else "FeedFlow",
                 state = windowState,
                 icon = icon,
                 visible = showMainWindow,

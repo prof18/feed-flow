@@ -95,7 +95,8 @@ class FeedbinMockEngineBuilder {
         val url = request.url.toString()
         val method = request.method.value
 
-        return mockResponses.firstOrNull { config ->
+        // Search in reverse order so that more recently added mocks (like error mocks) take precedence
+        return mockResponses.lastOrNull { config ->
             url.contains(config.urlPattern) && method.equals(config.method, ignoreCase = true)
         }
     }

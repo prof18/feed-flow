@@ -63,8 +63,9 @@ internal class FeedbinClient internal constructor(
         password: String,
     ): DataResult<Unit> = withContext(dispatcherProvider.io) {
         val baseURL = "https://api.feedbin.com/"
-        val client = createHttpClient(baseURL, username, password)
-        httpClient = client
+        val client = httpClient ?: createHttpClient(baseURL, username, password).also {
+            httpClient = it
+        }
 
         return@withContext executeNetwork<Unit> {
             client.get(FeedbinV2Resource.Authentication())

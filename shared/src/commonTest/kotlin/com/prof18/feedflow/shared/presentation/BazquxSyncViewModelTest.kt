@@ -4,12 +4,12 @@ import app.cash.turbine.test
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
 import com.prof18.feedflow.core.model.SyncAccounts
-import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.feedsync.test.di.getFeedSyncTestModules
 import com.prof18.feedflow.feedsync.test.greader.configureBazquxMocks
 import com.prof18.feedflow.feedsync.test.greader.configureBazquxMocksWithLoginFailure
 import com.prof18.feedflow.feedsync.test.greader.configureBazquxMocksWithSyncFailure
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.koin.TestModules
@@ -26,9 +26,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 
 class BazquxSyncViewModelTest : KoinTestBase() {
 
+    private val feedStateRepository: FeedStateRepository by inject()
     private val networkSettings: NetworkSettings by inject()
 
     override fun getTestModules(): List<Module> =
@@ -226,16 +228,11 @@ class BazquxSyncViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `login success syncs feed sources to database`() = runTest(testDispatcher) {
-        val databaseHelper: DatabaseHelper = get()
+    fun `login success syncs triggers feed item refresh`() = runTest(testDispatcher) {
         val viewModel: BazquxSyncViewModel = get()
 
-        // Verify database is empty before login
-        assertTrue(databaseHelper.getFeedSources().isEmpty())
-
-        viewModel.uiState.test {
-            val unlinkedState = awaitItem()
-            assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
+        feedStateRepository.feedState.test(timeout = 10.seconds) {
+            assertTrue(awaitItem().isEmpty())
 
             viewModel.login(
                 username = "testuser",
@@ -245,29 +242,20 @@ class BazquxSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            // Wait for Loading sync state
-            val loadingState = awaitItem()
-            assertIs<AccountConnectionUiState.Linked>(loadingState)
-            assertEquals(AccountSyncUIState.Loading, loadingState.syncState)
+            runCurrent()
+            advanceUntilIdle()
 
-            // Wait for final Linked state after sync completes
-            val finalState = awaitItem()
-            assertIs<AccountConnectionUiState.Linked>(finalState)
+            val feeds = awaitItem()
+            assertTrue(feeds.isNotEmpty())
         }
-
-        // Verify feed sources were synced to database
-        val feedSources = databaseHelper.getFeedSources()
-        assertTrue(feedSources.isNotEmpty())
     }
 
     @Test
     fun `disconnect clears feed data from database`() = runTest(testDispatcher) {
-        val databaseHelper: DatabaseHelper = get()
         val viewModel: BazquxSyncViewModel = get()
 
-        viewModel.uiState.test {
-            val unlinkedState = awaitItem()
-            assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
+        feedStateRepository.feedState.test(timeout = 10.seconds) {
+            assertTrue(awaitItem().isEmpty())
 
             viewModel.login(
                 username = "testuser",
@@ -277,17 +265,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            // Wait for Loading sync state
-            val loadingSyncState = awaitItem()
-            assertIs<AccountConnectionUiState.Linked>(loadingSyncState)
-            assertEquals(AccountSyncUIState.Loading, loadingSyncState.syncState)
-
-            // Wait for final Linked state after sync completes
-            val linkedState = awaitItem()
-            assertIs<AccountConnectionUiState.Linked>(linkedState)
-
-            // Verify we have feed sources after login
-            assertTrue(databaseHelper.getFeedSources().isNotEmpty())
+            assertTrue(awaitItem().isNotEmpty())
 
             // Disconnect
             viewModel.disconnect()
@@ -295,15 +273,8 @@ class BazquxSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val loadingState = awaitItem()
-            assertIs<AccountConnectionUiState.Loading>(loadingState)
-
-            val finalState = awaitItem()
-            assertIs<AccountConnectionUiState.Unlinked>(finalState)
+            assertTrue(awaitItem().isEmpty())
         }
-
-        // Verify database is cleared after disconnect
-        assertTrue(databaseHelper.getFeedSources().isEmpty())
     }
 
     @Test

@@ -17,7 +17,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.test.inject
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -28,7 +27,6 @@ class FeedSourcesRepositoryBazquxTest : KoinTestBase() {
 
     private val feedSourcesRepository: FeedSourcesRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
-    private val networkSettings: NetworkSettings by inject()
 
     override fun getTestModules(): List<Module> =
         TestModules.createTestModules() + getFeedSyncTestModules(
@@ -39,16 +37,17 @@ class FeedSourcesRepositoryBazquxTest : KoinTestBase() {
             },
         )
 
-    @BeforeTest
     fun setupBazquxAccount() {
-        networkSettings.setSyncAccountType(SyncAccounts.BAZQUX)
-        networkSettings.setSyncUsername("testuser")
-        networkSettings.setSyncPwd("testpassword")
-        networkSettings.setSyncUrl("https://bazqux.com/reader/api/0/")
+        val settings: NetworkSettings = getKoin().get()
+        settings.setSyncAccountType(SyncAccounts.BAZQUX)
+        settings.setSyncUsername("testuser")
+        settings.setSyncPwd("testpassword")
+        settings.setSyncUrl("https://bazqux.com/reader/api/0/")
     }
 
     @Test
     fun `deleteFeed should call gReaderRepository and delete feed source`() = runTest(testDispatcher) {
+        setupBazquxAccount()
         val feedSource = createFeedSource(
             id = "feed/https://9to5google.com/feed/",
             title = "Test Feed",
@@ -65,6 +64,7 @@ class FeedSourcesRepositoryBazquxTest : KoinTestBase() {
 
     @Test
     fun `updateFeedSourceName should call gReaderRepository and update name`() = runTest(testDispatcher) {
+        setupBazquxAccount()
         val feedSource = createFeedSource(
             id = "feed/https://9to5google.com/feed/",
             title = "Original Name",
@@ -83,6 +83,7 @@ class FeedSourcesRepositoryBazquxTest : KoinTestBase() {
 
     @Test
     fun `addFeedSource should call gReaderRepository and return success`() = runTest(testDispatcher) {
+        setupBazquxAccount()
         val feedUrl = "https://example.com/feed"
         val category = FeedSourceCategory(id = "user/01234567890123456789/label/Tech", title = "Tech")
 
@@ -98,6 +99,7 @@ class FeedSourcesRepositoryBazquxTest : KoinTestBase() {
 
     @Test
     fun `editFeedSource should call gReaderRepository and return success`() = runTest(testDispatcher) {
+        setupBazquxAccount()
         val originalFeedSource = createFeedSource(
             id = "feed/https://9to5google.com/feed/",
             title = "Original Name",

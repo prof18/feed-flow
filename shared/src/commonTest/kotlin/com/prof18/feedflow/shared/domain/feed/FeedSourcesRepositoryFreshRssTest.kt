@@ -17,8 +17,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.test.inject
-import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -27,7 +27,6 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
 
     private val feedSourcesRepository: FeedSourcesRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
-    private val networkSettings: NetworkSettings by inject()
 
     override fun getTestModules(): List<Module> =
         TestModules.createTestModules() + getFeedSyncTestModules(
@@ -38,16 +37,17 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
             },
         )
 
-    @BeforeTest
     fun setupFreshRssAccount() {
-        networkSettings.setSyncAccountType(SyncAccounts.FRESH_RSS)
-        networkSettings.setSyncUsername("testuser")
-        networkSettings.setSyncPwd("testpassword")
-        networkSettings.setSyncUrl("https://freshrss.example.com/api/greader.php/")
+        val settings: NetworkSettings = getKoin().get()
+        settings.setSyncAccountType(SyncAccounts.FRESH_RSS)
+        settings.setSyncUsername("testuser")
+        settings.setSyncPwd("testpassword")
+        settings.setSyncUrl("https://freshrss.example.com/api/greader.php/")
     }
 
     @Test
     fun `deleteFeed should call gReaderRepository and delete feed source`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedSource = createFeedSource(
             id = "feed/242",
             title = "Test Feed",
@@ -64,6 +64,7 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
 
     @Test
     fun `updateFeedSourceName should call gReaderRepository and update name`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedSource = createFeedSource(
             id = "feed/242",
             title = "Original Name",
@@ -77,11 +78,12 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
 
         val updatedFeedSource = databaseHelper.getFeedSource(feedSource.id)
         assertTrue(updatedFeedSource != null, "Feed source should exist")
-        assertTrue(updatedFeedSource?.title == newName, "Feed source name should be updated")
+        assertEquals(updatedFeedSource.title, newName, "Feed source name should be updated")
     }
 
     @Test
     fun `addFeedSource should call gReaderRepository and return success`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedUrl = "https://example.com/feed"
         val category = FeedSourceCategory(id = "user/-/label/Tech", title = "Tech")
 
@@ -97,6 +99,7 @@ class FeedSourcesRepositoryFreshRssTest : KoinTestBase() {
 
     @Test
     fun `editFeedSource should call gReaderRepository and return success`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val originalFeedSource = createFeedSource(
             id = "feed/242",
             title = "Original Name",

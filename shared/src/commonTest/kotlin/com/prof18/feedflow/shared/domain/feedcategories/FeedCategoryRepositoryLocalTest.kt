@@ -15,7 +15,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.test.inject
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -25,23 +24,24 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
 
     private val feedCategoryRepository: FeedCategoryRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
-    private val networkSettings: NetworkSettings by inject()
 
     override fun getTestModules(): List<Module> = TestModules.createTestModules()
 
-    @BeforeTest
     fun setupLocalAccount() {
-        networkSettings.setSyncAccountType(SyncAccounts.LOCAL)
+        val settings: NetworkSettings = getKoin().get()
+        settings.setSyncAccountType(SyncAccounts.LOCAL)
     }
 
     @Test
     fun `getSelectedCategory should return null when no category is selected`() = runTest(testDispatcher) {
+        setupLocalAccount()
         val selectedCategory = feedCategoryRepository.getSelectedCategory()
-        assertNull(selectedCategory, "Should return null when no category is selected")
+        assertNull(selectedCategory)
     }
 
     @Test
     fun `getSelectedCategory should return selected category when one is selected`() = runTest(testDispatcher) {
+        setupLocalAccount()
         val category = FeedSourceCategory(id = "123", title = "TestCategory")
         databaseHelper.insertCategories(listOf(category))
         advanceUntilIdle()
@@ -55,15 +55,16 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
         advanceUntilIdle()
 
         val selectedCategory = feedCategoryRepository.getSelectedCategory()
-        assertTrue(selectedCategory != null, "Should return selected category")
-        assertEquals(selectedCategory!!.id, category.id, "Selected category ID should match")
-        assertEquals(selectedCategory.title, category.title, "Selected category title should match")
+        assertTrue(selectedCategory != null)
+        assertEquals(selectedCategory.id, category.id)
+        assertEquals(selectedCategory.title, category.title)
 
         initJob.cancel()
     }
 
     @Test
     fun `getSelectedCategory should return null when empty category is selected`() = runTest(testDispatcher) {
+        setupLocalAccount()
         val initJob = launch {
             feedCategoryRepository.initCategories()
         }
@@ -74,13 +75,14 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
         advanceUntilIdle()
 
         val selectedCategory = feedCategoryRepository.getSelectedCategory()
-        assertNull(selectedCategory, "Should return null when empty category is selected")
+        assertNull(selectedCategory)
 
         initJob.cancel()
     }
 
     @Test
     fun `addNewCategory should set selectedCategoryName and create category`() = runTest(testDispatcher) {
+        setupLocalAccount()
         val categoryName = CategoryName("NewCategory")
 
         val initJob = launch {
@@ -93,21 +95,22 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
 
         val expectedCategoryId = categoryName.name.hashCode().toString()
         val createdCategory = databaseHelper.getFeedSourceCategory(expectedCategoryId)
-        assertTrue(createdCategory != null, "Category should be created")
-        assertEquals(createdCategory!!.id, expectedCategoryId, "Category ID should be hashCode for local account")
-        assertEquals(createdCategory.title, categoryName.name, "Category title should match the name")
+        assertTrue(createdCategory != null)
+        assertEquals(createdCategory.id, expectedCategoryId)
+        assertEquals(createdCategory.title, categoryName.name)
 
         advanceUntilIdle()
         val categoriesState = feedCategoryRepository.categoriesState.first()
         val categoryItem = categoriesState.categories.firstOrNull { it.id == expectedCategoryId }
-        assertTrue(categoryItem != null, "Category should be in state")
-        assertTrue(categoryItem!!.isSelected, "Category should be selected after addNewCategory")
+        assertTrue(categoryItem != null)
+        assertTrue(categoryItem.isSelected)
 
         initJob.cancel()
     }
 
     @Test
     fun `createCategory should create category with hashCode ID for local account`() = runTest(testDispatcher) {
+        setupLocalAccount()
         val categoryName = CategoryName("TestCategory")
 
         feedCategoryRepository.createCategory(categoryName)
@@ -115,13 +118,14 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
 
         val expectedCategoryId = categoryName.name.hashCode().toString()
         val createdCategory = databaseHelper.getFeedSourceCategory(expectedCategoryId)
-        assertTrue(createdCategory != null, "Category should be created")
-        assertEquals(createdCategory!!.id, expectedCategoryId, "Category ID should be hashCode for local account")
-        assertEquals(createdCategory.title, categoryName.name, "Category title should match the name")
+        assertTrue(createdCategory != null)
+        assertEquals(createdCategory.id, expectedCategoryId)
+        assertEquals(createdCategory.title, categoryName.name)
     }
 
     @Test
     fun `setInitialSelection should set selectedCategoryName`() = runTest(testDispatcher) {
+        setupLocalAccount()
         val categoryName = CategoryName("TestCategory")
         val category = FeedSourceCategory(
             id = categoryName.name.hashCode().toString(),
@@ -138,14 +142,15 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
 
         val categoriesState = feedCategoryRepository.categoriesState.first()
         val categoryItem = categoriesState.categories.firstOrNull { it.name == categoryName.name }
-        assertTrue(categoryItem != null, "Category should exist in state")
-        assertTrue(categoryItem!!.isSelected, "Category should be selected when setInitialSelection is called")
+        assertTrue(categoryItem != null)
+        assertTrue(categoryItem.isSelected)
 
         initJob.cancel()
     }
 
     @Test
     fun `setInitialSelection with null should set empty category as selected`() = runTest(testDispatcher) {
+        setupLocalAccount()
         feedCategoryRepository.setInitialSelection(null)
         val initJob = launch {
             feedCategoryRepository.initCategories()
@@ -154,14 +159,15 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
 
         val categoriesState = feedCategoryRepository.categoriesState.first()
         val emptyCategory = categoriesState.categories.firstOrNull { it.id == Long.MAX_VALUE.toString() }
-        assertTrue(emptyCategory != null, "Empty category should exist")
-        assertTrue(emptyCategory!!.isSelected, "Empty category should be selected when setInitialSelection is null")
+        assertTrue(emptyCategory != null)
+        assertTrue(emptyCategory.isSelected)
 
         initJob.cancel()
     }
 
     @Test
     fun `initCategories should observe categories and update state with empty category`() = runTest(testDispatcher) {
+        setupLocalAccount()
         val category1 = FeedSourceCategory(id = "1", title = "Category1")
         val category2 = FeedSourceCategory(id = "2", title = "Category2")
         databaseHelper.insertCategories(listOf(category1, category2))
@@ -173,53 +179,57 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
         advanceUntilIdle()
 
         val categoriesState = feedCategoryRepository.categoriesState.first()
-        assertEquals(3, categoriesState.categories.size, "Should have empty category + 2 categories")
+        assertEquals(3, categoriesState.categories.size)
         assertTrue(
-            categoriesState.categories.any { it.id == Long.MAX_VALUE.toString() },
-            "Should include empty category",
+            categoriesState.categories.any {
+                it.id == Long.MAX_VALUE.toString()
+            },
         )
         assertTrue(
             categoriesState.categories.any { it.name == "Category1" },
-            "Should include Category1",
         )
         assertTrue(
             categoriesState.categories.any { it.name == "Category2" },
-            "Should include Category2",
         )
 
         job.cancel()
     }
 
     @Test
-    fun `onCategorySelected should update selectedCategoryName and mark category as selected`() = runTest(testDispatcher) {
-        val category1 = FeedSourceCategory(id = "1", title = "Category1")
-        val category2 = FeedSourceCategory(id = "2", title = "Category2")
-        databaseHelper.insertCategories(listOf(category1, category2))
-        advanceUntilIdle()
+    fun `onCategorySelected should update selectedCategoryName and mark category as selected`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+            val category1 = FeedSourceCategory(id = "1", title = "Category1")
+            val category2 = FeedSourceCategory(id = "2", title = "Category2")
+            databaseHelper.insertCategories(listOf(category1, category2))
+            advanceUntilIdle()
 
-        val initJob = launch {
-            feedCategoryRepository.initCategories()
+            val initJob = launch {
+                feedCategoryRepository.initCategories()
+            }
+            advanceUntilIdle()
+
+            feedCategoryRepository.onCategorySelected(CategoryId(category1.id))
+            advanceUntilIdle()
+
+            val categoriesState = feedCategoryRepository.categoriesState.first()
+            val selectedCategoryItem = categoriesState.categories.firstOrNull {
+                it.isSelected && it.id != Long.MAX_VALUE.toString()
+            }
+            assertTrue(selectedCategoryItem != null)
+            assertEquals(selectedCategoryItem.id, category1.id)
+            assertEquals(selectedCategoryItem.name, category1.title)
+
+            val selectedCategory = feedCategoryRepository.getSelectedCategory()
+            assertTrue(selectedCategory != null)
+            assertEquals(selectedCategory.id, category1.id)
+
+            initJob.cancel()
         }
-        advanceUntilIdle()
-
-        feedCategoryRepository.onCategorySelected(CategoryId(category1.id))
-        advanceUntilIdle()
-
-        val categoriesState = feedCategoryRepository.categoriesState.first()
-        val selectedCategoryItem = categoriesState.categories.firstOrNull { it.isSelected && it.id != Long.MAX_VALUE.toString() }
-        assertTrue(selectedCategoryItem != null, "A category should be selected")
-        assertEquals(selectedCategoryItem!!.id, category1.id, "Category1 should be selected")
-        assertEquals(selectedCategoryItem.name, category1.title, "Selected category name should match")
-
-        val selectedCategory = feedCategoryRepository.getSelectedCategory()
-        assertTrue(selectedCategory != null, "getSelectedCategory should return the selected category")
-        assertEquals(selectedCategory!!.id, category1.id, "Selected category ID should match")
-
-        initJob.cancel()
-    }
 
     @Test
     fun `onCategorySelected should deselect other categories`() = runTest(testDispatcher) {
+        setupLocalAccount()
         val category1 = FeedSourceCategory(id = "1", title = "Category1")
         val category2 = FeedSourceCategory(id = "2", title = "Category2")
         databaseHelper.insertCategories(listOf(category1, category2))
@@ -238,10 +248,12 @@ class FeedCategoryRepositoryLocalTest : KoinTestBase() {
 
         val categoriesState = feedCategoryRepository.categoriesState.first()
         val selectedCount = categoriesState.categories.count { it.isSelected }
-        assertEquals(1, selectedCount, "Only one category should be selected")
-        val selectedCategoryItem = categoriesState.categories.firstOrNull { it.isSelected && it.id != Long.MAX_VALUE.toString() }
-        assertTrue(selectedCategoryItem != null, "A category should be selected")
-        assertEquals(selectedCategoryItem!!.id, category2.id, "Category2 should be selected")
+        assertEquals(1, selectedCount)
+        val selectedCategoryItem = categoriesState.categories.firstOrNull {
+            it.isSelected && it.id != Long.MAX_VALUE.toString()
+        }
+        assertTrue(selectedCategoryItem != null)
+        assertEquals(selectedCategoryItem.id, category2.id)
 
         initJob.cancel()
     }

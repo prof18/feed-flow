@@ -5,7 +5,6 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
@@ -19,11 +18,8 @@ import com.prof18.feedflow.shared.test.koin.TestModules
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
-import org.koin.test.get
 import org.koin.test.inject
-import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -32,7 +28,6 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
 
     private val feedActionsRepository: FeedActionsRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
-    private val networkSettings: NetworkSettings by inject()
     private val feedStateRepository: FeedStateRepository by inject()
 
     override fun getTestModules(): List<Module> =
@@ -43,15 +38,16 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
             },
         )
 
-    @BeforeTest
     fun setupFeedbinAccount() {
-        networkSettings.setSyncAccountType(SyncAccounts.FEEDBIN)
-        networkSettings.setSyncUsername("testuser")
-        networkSettings.setSyncPwd("testpassword")
+        val settings: NetworkSettings = getKoin().get()
+        settings.setSyncAccountType(SyncAccounts.FEEDBIN)
+        settings.setSyncUsername("testuser")
+        settings.setSyncPwd("testpassword")
     }
 
     @Test
     fun `markAsRead should call feedbinRepository and update state`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -85,6 +81,7 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
 
     @Test
     fun `markAllAboveAsRead should mark items above target as read`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -127,6 +124,7 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
 
     @Test
     fun `markAllBelowAsRead should mark items below target as read`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -169,6 +167,7 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
 
     @Test
     fun `markAllCurrentFeedAsRead should mark all items in current feed as read`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -207,6 +206,7 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
 
     @Test
     fun `updateBookmarkStatus should star item when isBookmarked is true`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -239,6 +239,7 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
 
     @Test
     fun `updateBookmarkStatus should unstar item when isBookmarked is false`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -272,6 +273,7 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
 
     @Test
     fun `updateReadStatus should mark item as read when isRead is true`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -304,6 +306,7 @@ class FeedActionsRepositoryFeedbinTest : KoinTestBase() {
 
     @Test
     fun `updateReadStatus should mark item as unread when isRead is false`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 

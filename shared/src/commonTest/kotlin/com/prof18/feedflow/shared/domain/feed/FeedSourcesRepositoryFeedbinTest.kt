@@ -17,8 +17,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.test.inject
-import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -27,7 +27,6 @@ class FeedSourcesRepositoryFeedbinTest : KoinTestBase() {
 
     private val feedSourcesRepository: FeedSourcesRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
-    private val networkSettings: NetworkSettings by inject()
 
     override fun getTestModules(): List<Module> =
         TestModules.createTestModules() + getFeedSyncTestModules(
@@ -37,15 +36,16 @@ class FeedSourcesRepositoryFeedbinTest : KoinTestBase() {
             },
         )
 
-    @BeforeTest
     fun setupFeedbinAccount() {
-        networkSettings.setSyncAccountType(SyncAccounts.FEEDBIN)
-        networkSettings.setSyncUsername("testuser")
-        networkSettings.setSyncPwd("testpassword")
+        val settings: NetworkSettings = getKoin().get()
+        settings.setSyncAccountType(SyncAccounts.FEEDBIN)
+        settings.setSyncUsername("testuser")
+        settings.setSyncPwd("testpassword")
     }
 
     @Test
     fun `deleteFeed should call feedbinRepository and delete feed source`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedSource = createFeedSource(
             id = "feedbin/9115993/1240842",
             title = "Test Feed",
@@ -62,6 +62,7 @@ class FeedSourcesRepositoryFeedbinTest : KoinTestBase() {
 
     @Test
     fun `updateFeedSourceName should call feedbinRepository and update name`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedSource = createFeedSource(
             id = "feedbin/9115993/1240842",
             title = "Original Name",
@@ -75,11 +76,12 @@ class FeedSourcesRepositoryFeedbinTest : KoinTestBase() {
 
         val updatedFeedSource = databaseHelper.getFeedSource(feedSource.id)
         assertTrue(updatedFeedSource != null, "Feed source should exist")
-        assertTrue(updatedFeedSource?.title == newName, "Feed source name should be updated")
+        assertEquals(updatedFeedSource.title, newName, "Feed source name should be updated")
     }
 
     @Test
     fun `addFeedSource should call feedbinRepository and return success`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val feedUrl = "https://example.com/feed"
         val category = FeedSourceCategory(id = "user/-/label/Tech", title = "Tech")
 
@@ -95,6 +97,7 @@ class FeedSourcesRepositoryFeedbinTest : KoinTestBase() {
 
     @Test
     fun `editFeedSource should call feedbinRepository and return success`() = runTest(testDispatcher) {
+        setupFeedbinAccount()
         val originalFeedSource = createFeedSource(
             id = "feedbin/9115993/1240842",
             title = "Original Name",
@@ -113,7 +116,7 @@ class FeedSourcesRepositoryFeedbinTest : KoinTestBase() {
         advanceUntilIdle()
 
         assertIs<FeedEditedState.FeedEdited>(result, "Should return FeedEdited on success")
-        assertTrue(result.feedName == "Updated Name", "Should return updated feed name")
+        assertEquals(result.feedName, "Updated Name", "Should return updated feed name")
     }
 
     private fun createFeedSource(

@@ -18,11 +18,8 @@ import com.prof18.feedflow.shared.test.koin.TestModules
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
-import org.koin.test.get
 import org.koin.test.inject
-import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -31,7 +28,6 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
 
     private val feedActionsRepository: FeedActionsRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
-    private val networkSettings: NetworkSettings by inject()
     private val feedStateRepository: FeedStateRepository by inject()
 
     override fun getTestModules(): List<Module> =
@@ -43,16 +39,17 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
             },
         )
 
-    @BeforeTest
     fun setupFreshRssAccount() {
-        networkSettings.setSyncAccountType(SyncAccounts.FRESH_RSS)
-        networkSettings.setSyncUsername("testuser")
-        networkSettings.setSyncPwd("testpassword")
-        networkSettings.setSyncUrl("https://freshrss.example.com/api/greader.php/")
+        val settings: NetworkSettings = getKoin().get()
+        settings.setSyncAccountType(SyncAccounts.FRESH_RSS)
+        settings.setSyncUsername("testuser")
+        settings.setSyncPwd("testpassword")
+        settings.setSyncUrl("https://freshrss.example.com/api/greader.php/")
     }
 
     @Test
     fun `markAsRead should call gReaderRepository and update state`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -86,6 +83,7 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
 
     @Test
     fun `markAllAboveAsRead should mark items above target as read`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -128,6 +126,7 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
 
     @Test
     fun `markAllBelowAsRead should mark items below target as read`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -170,6 +169,7 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
 
     @Test
     fun `markAllCurrentFeedAsRead should mark all items in current feed as read`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -208,6 +208,7 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
 
     @Test
     fun `updateBookmarkStatus should star item when isBookmarked is true`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -240,6 +241,7 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
 
     @Test
     fun `updateBookmarkStatus should unstar item when isBookmarked is false`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -273,6 +275,7 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
 
     @Test
     fun `updateReadStatus should mark item as read when isRead is true`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 
@@ -305,6 +308,7 @@ class FeedActionsRepositoryFreshRssTest : KoinTestBase() {
 
     @Test
     fun `updateReadStatus should mark item as unread when isRead is false`() = runTest(testDispatcher) {
+        setupFreshRssAccount()
         val feedSource = createFeedSource("source-1", "Test Feed")
         databaseHelper.insertFeedSourceWithCategory(feedSource)
 

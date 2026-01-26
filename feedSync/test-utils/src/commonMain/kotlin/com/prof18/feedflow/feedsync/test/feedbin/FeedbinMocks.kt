@@ -74,42 +74,46 @@ fun FeedbinMockEngineBuilder.configureFeedbinMocks() {
         statusCode = HttpStatusCode.NoContent,
     )
 
-    // Update subscription success
+    // Update subscription success (PATCH /v2/subscriptions/{id}.json)
     addMockResponse(
         urlPattern = "/v2/subscriptions/",
         method = "PATCH",
-        responseContent = """{"id":9115993,"created_at":"2025-12-31T11:38:59.810691Z",""" +
-            """"feed_id":1240842,"title":"Updated Feed",""" +
-            """"feed_url":"https://example.com/feed","site_url":"https://example.com"}""",
+        responseContent = """{"id":9152516,"created_at":"2026-01-26T17:25:57.701911Z",""" +
+            """"feed_id":2645601,"title":"Il Postaaa",""" +
+            """"feed_url":"https://www.ilpost.it/feed","site_url":"https://www.ilpost.it"}""",
     )
 
-    // Mark as unread success
+    // Mark as unread success (POST /v2/unread_entries.json)
+    // Returns array of entry IDs that were marked as unread
     addMockResponse(
         urlPattern = "/v2/unread_entries.json",
         method = "POST",
-        responseContent = """[5031084432,5050623384]""",
+        responseContent = """[5095737791]""",
     )
 
-    // Mark as read success (returns empty)
+    // Mark as read success (DELETE /v2/unread_entries.json)
+    // Returns array of entry IDs that were marked as read
     addMockResponse(
         urlPattern = "/v2/unread_entries.json",
         method = "DELETE",
-        responseContent = "",
+        responseContent = """[5095737791]""",
         statusCode = HttpStatusCode.OK,
     )
 
-    // Star entries success
+    // Star entries success (POST /v2/starred_entries.json)
+    // Returns array of entry IDs that were starred
     addMockResponse(
         urlPattern = "/v2/starred_entries.json",
         method = "POST",
-        responseContent = """[5031084432,5050623384]""",
+        responseContent = """[5095737792]""",
     )
 
-    // Unstar entries success
+    // Unstar entries success (DELETE /v2/starred_entries.json)
+    // Returns array of entry IDs that were unstarred
     addMockResponse(
         urlPattern = "/v2/starred_entries.json",
         method = "DELETE",
-        responseContent = "",
+        responseContent = """[5095737792]""",
         statusCode = HttpStatusCode.OK,
     )
 

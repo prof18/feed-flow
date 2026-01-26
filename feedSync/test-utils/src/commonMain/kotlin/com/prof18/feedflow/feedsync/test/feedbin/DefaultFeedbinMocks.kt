@@ -73,33 +73,46 @@ internal fun FeedbinMockEngineBuilder.configureDefaultFeedbinMocks() {
         statusCode = HttpStatusCode.NoContent,
     )
 
-    // Update subscription success
+    // Update subscription success (PATCH /v2/subscriptions/{id}.json)
     addMockResponse(
         urlPattern = "/v2/subscriptions/",
         method = "PATCH",
-        responseContent = """{"id":1,"title":"Updated Feed"}""",
+        responseContent = """{"id":1,"created_at":"2026-01-26T17:25:57.701911Z",""" +
+            """"feed_id":1,"title":"Updated Feed",""" +
+            """"feed_url":"http://example.com/feed","site_url":"http://example.com"}""",
     )
 
-    // Mark as read success (returns empty)
+    // Mark as unread success (POST /v2/unread_entries.json)
+    // Returns array of entry IDs that were marked as unread
+    addMockResponse(
+        urlPattern = "/v2/unread_entries.json",
+        method = "POST",
+        responseContent = """[1]""",
+    )
+
+    // Mark as read success (DELETE /v2/unread_entries.json)
+    // Returns array of entry IDs that were marked as read
     addMockResponse(
         urlPattern = "/v2/unread_entries.json",
         method = "DELETE",
-        responseContent = "",
+        responseContent = """[1]""",
         statusCode = HttpStatusCode.OK,
     )
 
-    // Star entries success
+    // Star entries success (POST /v2/starred_entries.json)
+    // Returns array of entry IDs that were starred
     addMockResponse(
         urlPattern = "/v2/starred_entries.json",
         method = "POST",
-        responseContent = """[]""",
+        responseContent = """[1]""",
     )
 
-    // Unstar entries success
+    // Unstar entries success (DELETE /v2/starred_entries.json)
+    // Returns array of entry IDs that were unstarred
     addMockResponse(
         urlPattern = "/v2/starred_entries.json",
         method = "DELETE",
-        responseContent = "",
+        responseContent = """[1]""",
         statusCode = HttpStatusCode.OK,
     )
 }

@@ -91,7 +91,8 @@ fun GReaderMockEngineBuilder.configureMinifluxMocks() {
     addMockResponse(
         urlPattern = "/reader/api/0/subscription/quickadd",
         method = "POST",
-        responseContent = """{"numResults":1,"streamId":"feed/http://example.com/feed","query":"http://example.com/feed"}""",
+        responseContent = """{"numResults":1,"streamId":"feed/http://example.com/feed",""" +
+            """"query":"http://example.com/feed"}""",
     )
 
     // Rename tag success

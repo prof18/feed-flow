@@ -17,7 +17,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.test.inject
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -27,7 +26,6 @@ class FeedCategoryRepositoryMinifluxTest : KoinTestBase() {
 
     private val feedCategoryRepository: FeedCategoryRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
-    private val networkSettings: NetworkSettings by inject()
 
     override fun getTestModules(): List<Module> =
         TestModules.createTestModules() + getFeedSyncTestModules(
@@ -38,16 +36,17 @@ class FeedCategoryRepositoryMinifluxTest : KoinTestBase() {
             },
         )
 
-    @BeforeTest
     fun setupMinifluxAccount() {
-        networkSettings.setSyncAccountType(SyncAccounts.MINIFLUX)
-        networkSettings.setSyncUsername("testuser")
-        networkSettings.setSyncPwd("testpassword")
-        networkSettings.setSyncUrl("https://miniflux.example.com/reader/api/0/")
+        val settings: NetworkSettings = getKoin().get()
+        settings.setSyncAccountType(SyncAccounts.MINIFLUX)
+        settings.setSyncUsername("testuser")
+        settings.setSyncPwd("testpassword")
+        settings.setSyncUrl("https://miniflux.example.com/reader/api/0/")
     }
 
     @Test
     fun `deleteCategory should call gReaderRepository and delete category`() = runTest(testDispatcher) {
+        setupMinifluxAccount()
         val category = FeedSourceCategory(id = "user/1/label/TestCategory", title = "TestCategory")
         databaseHelper.insertCategories(listOf(category))
 
@@ -63,11 +62,12 @@ class FeedCategoryRepositoryMinifluxTest : KoinTestBase() {
         advanceUntilIdle()
 
         val deletedCategory = databaseHelper.getFeedSourceCategory(category.id)
-        assertNull(deletedCategory, "Category should be deleted")
+        assertNull(deletedCategory)
     }
 
     @Test
     fun `updateCategoryName should call gReaderRepository and update name`() = runTest(testDispatcher) {
+        setupMinifluxAccount()
         val category = FeedSourceCategory(id = "user/1/label/TestCategory", title = "TestCategory")
         databaseHelper.insertCategories(listOf(category))
         advanceUntilIdle()
@@ -78,12 +78,13 @@ class FeedCategoryRepositoryMinifluxTest : KoinTestBase() {
 
         val newCategoryId = "user/1/label/UpdatedCategory"
         val updatedCategory = databaseHelper.getFeedSourceCategory(newCategoryId)
-        assertTrue(updatedCategory != null, "Category should exist with new ID")
-        assertEquals(updatedCategory!!.title, newName.name, "Category name should be updated")
+        assertTrue(updatedCategory != null)
+        assertEquals(updatedCategory.title, newName.name)
     }
 
     @Test
     fun `createCategory should create category with correct GReader ID format`() = runTest(testDispatcher) {
+        setupMinifluxAccount()
         val categoryName = CategoryName("NewCategory")
 
         feedCategoryRepository.createCategory(categoryName)
@@ -91,9 +92,9 @@ class FeedCategoryRepositoryMinifluxTest : KoinTestBase() {
 
         val expectedCategoryId = "user/-/label/${categoryName.name}"
         val createdCategory = databaseHelper.getFeedSourceCategory(expectedCategoryId)
-        assertTrue(createdCategory != null, "Category should be created")
-        assertEquals(createdCategory!!.id, expectedCategoryId, "Category ID should follow GReader format: user/-/label/{name}")
-        assertEquals(createdCategory.title, categoryName.name, "Category title should match the name")
+        assertTrue(createdCategory != null)
+        assertEquals(createdCategory.id, expectedCategoryId)
+        assertEquals(createdCategory.title, categoryName.name)
     }
 
     private fun createFeedSource(

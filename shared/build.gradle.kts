@@ -95,6 +95,8 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(project(":database"))
+                implementation(project(":feedSync:feedbin"))
+                implementation(project(":feedSync:test-utils"))
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.touchlab.kermit.test)
@@ -179,6 +181,21 @@ kotlin {
             }
         }
     }
+}
+
+// Configure TEST_RESOURCES_ROOT for JVM and iOS tests
+val testResourcesDir = project(":feedSync:test-utils")
+    .file("src/commonMain/resources")
+    .absolutePath
+
+tasks.withType<Test> {
+    environment("TEST_RESOURCES_ROOT", testResourcesDir)
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest> {
+    environment("TEST_RESOURCES_ROOT", testResourcesDir)
+    // iOS simulator requires SIMCTL_CHILD_ prefix for environment variables
+    environment("SIMCTL_CHILD_TEST_RESOURCES_ROOT", testResourcesDir)
 }
 
 android {

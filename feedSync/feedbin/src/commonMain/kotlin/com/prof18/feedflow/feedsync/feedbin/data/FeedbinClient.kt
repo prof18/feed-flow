@@ -53,9 +53,10 @@ internal class FeedbinClient internal constructor(
     private val networkSettings: NetworkSettings,
     private val appEnvironment: AppEnvironment,
     private val dispatcherProvider: DispatcherProvider,
+    providedHttpClient: HttpClient? = null,
 ) {
 
-    private var httpClient: HttpClient? = null
+    private var httpClient: HttpClient? = providedHttpClient
 
     suspend fun login(
         username: String,

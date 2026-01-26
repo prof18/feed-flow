@@ -13,6 +13,7 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper
 import com.prof18.feedflow.feedsync.database.di.FEED_SYNC_SCOPE_NAME
 import com.prof18.feedflow.feedsync.database.di.SYNC_DB_DRIVER
+import com.prof18.feedflow.feedsync.test.di.getFeedSyncTestModules
 import com.prof18.feedflow.shared.di.getAllModulesModules
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
@@ -62,7 +63,7 @@ object TestModules {
         getAllModulesModules(
             appConfig = testAppConfig,
             crashReportingLogWriter = noOpLogWriter,
-        ) + createTestOverridesModule()
+        ) + createTestOverridesModule() + getFeedSyncTestModules()
 
     fun createTestOverridesModule(): Module = module {
         single<SqlDriver> { createInMemoryDriver() }

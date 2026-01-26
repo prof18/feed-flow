@@ -48,9 +48,10 @@ internal class GReaderClient internal constructor(
     private val networkSettings: NetworkSettings,
     private val appEnvironment: AppEnvironment,
     private val dispatcherProvider: DispatcherProvider,
+    providedHttpClient: HttpClient? = null,
 ) {
 
-    private var httpClient: HttpClient? = null
+    private var httpClient: HttpClient? = providedHttpClient
     private var postToken = AtomicReference<String?>(null)
 
     suspend fun login(
@@ -58,8 +59,9 @@ internal class GReaderClient internal constructor(
         password: String,
         baseURL: String,
     ): DataResult<String> = withContext(dispatcherProvider.io) {
-        val client = createHttpClient(baseURL)
-        httpClient = client
+        val client = httpClient ?: createHttpClient(baseURL).also {
+            httpClient = it
+        }
         val loginRes = AccountsRes.ClientLogin(
             Email = username,
             Passwd = password,
@@ -300,8 +302,15 @@ internal class GReaderClient internal constructor(
 
     private fun createHttpClient(
         baseURL: String,
-    ): HttpClient =
-        HttpClient {
+    ): HttpClient {
+        val finalBaseURL = with(baseURL) {
+            if (endsWith("/")) {
+                this
+            } else {
+                "$this/"
+            }
+        }
+        return HttpClient {
             install(ContentNegotiation) {
                 json(
                     Json {
@@ -320,14 +329,7 @@ internal class GReaderClient internal constructor(
             }
             install(Resources)
             defaultRequest {
-                val url = with(baseURL) {
-                    if (endsWith("/")) {
-                        this
-                    } else {
-                        "$this/"
-                    }
-                }
-                url(url)
+                url(finalBaseURL)
                 header("Authorization", "GoogleLogin auth=${networkSettings.getSyncPwd()}")
                 header(HttpHeaders.UserAgent, FEEDFLOW_USER_AGENT)
             }
@@ -342,6 +344,7 @@ internal class GReaderClient internal constructor(
                 }
             }
         }
+    }
 
     private suspend fun executeLogin(
         block: suspend () -> HttpResponse,

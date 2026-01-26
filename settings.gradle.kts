@@ -43,6 +43,7 @@ include("feedSync:ikloud-macos")
 include("feedSync:greader")
 include("feedSync:feedbin")
 include("feedSync:networkcore")
+include("feedSync:test-utils")
 
 // includeBuild("../RSS-Parser") {
 //    dependencySubstitution {

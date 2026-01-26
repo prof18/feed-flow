@@ -20,6 +20,8 @@ import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchReposito
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncWorker
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncScheduler
+import com.prof18.feedflow.shared.domain.feedsync.FeedbinHistorySyncSchedulerIosDesktop
 import com.prof18.feedflow.shared.test.ContentPrefetchRepositoryFake
 import com.prof18.feedflow.shared.test.FeedItemContentFileHandlerTestImpl
 import com.prof18.feedflow.shared.test.TestDispatcherProvider
@@ -123,6 +125,14 @@ object TestModules {
             )
         }
         single<ContentPrefetchRepository> { ContentPrefetchRepositoryFake() }
+        single<FeedbinHistorySyncScheduler> {
+            // We use this dependencies for test scenarios because the android one uses WorkManager
+            FeedbinHistorySyncSchedulerIosDesktop(
+                feedbinRepository = get(),
+                logger = getWith("FeedbinHistorySyncSchedulerIosDesktop"),
+                dispatcherProvider = get(),
+            )
+        }
     }
 }
 

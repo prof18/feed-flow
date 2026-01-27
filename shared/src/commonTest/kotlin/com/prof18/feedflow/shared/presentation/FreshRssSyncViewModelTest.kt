@@ -124,6 +124,7 @@ class FreshRssSyncViewModelTest : KoinTestBase() {
                 url = "https://freshrss.example.com/api/greader.php",
             )
 
+            runCurrent()
             assertEquals(true, awaitItem())
             advanceUntilIdle()
             assertEquals(false, awaitItem())

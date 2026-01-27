@@ -63,14 +63,12 @@ internal class FeedbinClient internal constructor(
         password: String,
     ): DataResult<Unit> = withContext(dispatcherProvider.io) {
         val baseURL = "https://api.feedbin.com/"
-
-        val oldClient = httpClient
-        if (oldClient != null && oldClient != providedHttpClient) {
-            oldClient.close()
-        }
-
-        val client = createHttpClient(baseURL, username, password).also {
-            httpClient = it
+        val client = providedHttpClient ?: run {
+            val oldClient = httpClient
+            oldClient?.close()
+            createHttpClient(baseURL, username, password).also {
+                httpClient = it
+            }
         }
 
         return@withContext executeNetwork<Unit> {

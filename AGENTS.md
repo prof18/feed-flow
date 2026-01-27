@@ -76,10 +76,21 @@ cp config/dummy-google-service.plist iosApp/GoogleService-Info.plist
 cp iosApp/Assets/Config.xcconfig.template iosApp/Assets/Config.xcconfig
 ```
 
+## Testing
+
+When writing tests, follow the comprehensive testing guide at **`.ai/TESTING.md`**.
+
+Key points:
+- All tests extend `KoinTestBase` for dependency injection
+- Use Turbine for Flow testing
+- Prefer fakes over mocking libraries
+- Use data generators from `shared/src/commonTest/.../test/generators/`
+- For sync service tests, use the `feedSync/test-utils` module
+
 ## General rules:
 
 - DO NOT write comments for every function or class. Only write comments when the code is not self-explanatory.
-- DO NOT write tests unless specifically told to do so.
+- If you touch any business logic, ensure it's thoroughly tested with unit tests.
 - DO NOT excessively use try/catch blocks for every function. Use them only for the top caller or the bottom callers, depending on the cases.
 - ALWAYS run gradle tasks with the following flag: `--quiet --console=plain`
 

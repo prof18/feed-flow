@@ -37,7 +37,8 @@
       "Bash(adb install:*)",
       "Bash(adb logcat:*)",
       "Bash(adb shell am:*)",
-      "mcp__XcodeBuildMCP__session-show-defaults"
+      "mcp__XcodeBuildMCP__session-show-defaults",
+      "Bash(wc:*)"
     ],
     "deny": []
   }

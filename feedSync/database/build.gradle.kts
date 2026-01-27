@@ -40,6 +40,12 @@ kotlin {
                 implementation(libs.sqldelight.sqlite.driver)
             }
         }
+
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 

@@ -38,7 +38,7 @@ jobs:
           cp config/dummy-google-services.json androidApp/src/release/google-services.json
 
       - name: Run Checks
-        run: ./gradlew check
+        run: ./gradlew detekt allTests
 
       - name: Upload reports
         if: failure()

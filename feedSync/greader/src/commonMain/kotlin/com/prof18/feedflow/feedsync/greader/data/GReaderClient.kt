@@ -48,7 +48,7 @@ internal class GReaderClient internal constructor(
     private val networkSettings: NetworkSettings,
     private val appEnvironment: AppEnvironment,
     private val dispatcherProvider: DispatcherProvider,
-    providedHttpClient: HttpClient? = null,
+    private val providedHttpClient: HttpClient? = null,
 ) {
 
     private var httpClient: HttpClient? = providedHttpClient
@@ -59,7 +59,14 @@ internal class GReaderClient internal constructor(
         password: String,
         baseURL: String,
     ): DataResult<String> = withContext(dispatcherProvider.io) {
-        val client = httpClient ?: createHttpClient(baseURL).also {
+        val oldClient = httpClient
+        if (oldClient != null && oldClient != providedHttpClient) {
+            oldClient.close()
+        }
+
+        postToken.set(null)
+
+        val client = createHttpClient(baseURL).also {
             httpClient = it
         }
         val loginRes = AccountsRes.ClientLogin(

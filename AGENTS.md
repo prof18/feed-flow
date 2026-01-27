@@ -25,7 +25,7 @@ All the business logic is shared via Kotlin Multiplatform.
 
 ### Build Commands
 
-- `./gradlew check` -> Run all checks including tests and linting for Shared code, Android and Desktop
+- `./gradlew detekt allTests` -> Run all checks including tests and linting for Shared code, Android and Desktop
 - `./gradlew detekt` -> Run static analysis with Detekt for Shared code, Android and Desktop
 - `.scripts/ios-format.sh` -> Format iOS code through swiftformat and swiftlint
 - `./gradlew test` -> Run all tests for Shared code, Android and Desktop

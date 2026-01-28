@@ -24,8 +24,6 @@ kotlin {
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
             }
-            // Include commonMain resources in Android main so they're available in the JAR
-            resources.srcDirs("src/commonMain/resources")
         }
 
         jvmMain {

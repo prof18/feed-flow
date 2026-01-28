@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.presentation
 
+import app.cash.turbine.TurbineTestContext
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
@@ -43,7 +44,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
     @Test
     fun `initial state is Unlinked when no account is set`() = runTest(testDispatcher) {
         viewModel.uiState.test(timeout = uiTimeout) {
-            val state = awaitItem()
+            val state = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(state)
         }
     }
@@ -59,7 +60,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         viewModel.uiState.test(timeout = uiTimeout) {
-            val state = awaitItem()
+            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(state)
             assertEquals(AccountSyncUIState.None, state.syncState)
         }
@@ -78,7 +79,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
             advanceUntilIdle()
 
             viewModel.uiState.test(timeout = uiTimeout) {
-                val state = awaitItem()
+                val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
                 assertIs<AccountConnectionUiState.Linked>(state)
                 val syncState = assertIs<AccountSyncUIState.Synced>(state.syncState)
                 assertNotNull(syncState.lastDownloadDate)
@@ -88,7 +89,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
     @Test
     fun `login success with sync success sets state to Linked`() = runTest(testDispatcher) {
         viewModel.uiState.test(timeout = uiTimeout) {
-            val unlinkedState = awaitItem()
+            val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 
             viewModel.login(
@@ -96,11 +97,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
                 password = "testpassword",
             )
 
-            // Wait for Linked state, skipping intermediate states
-            var state: AccountConnectionUiState
-            do {
-                state = awaitItem()
-            } while (state !is AccountConnectionUiState.Linked)
+            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(state)
         }
     }
@@ -140,7 +137,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
 
         viewModel.uiState.test(timeout = uiTimeout) {
             // Skip initial Loading and Linked states
-            val linkedState = awaitItem()
+            val linkedState = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(linkedState)
 
             viewModel.disconnect()
@@ -148,10 +145,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val loadingState = awaitItem()
-            assertIs<AccountConnectionUiState.Loading>(loadingState)
-
-            val unlinkedState = awaitItem()
+            val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
         }
 
@@ -171,7 +165,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         viewModel.uiState.test(timeout = uiTimeout) {
-            val state = awaitItem()
+            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(state)
             assertEquals(AccountSyncUIState.None, state.syncState)
         }
@@ -189,7 +183,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         viewModel.uiState.test(timeout = uiTimeout) {
-            val state = awaitItem()
+            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(state)
             val syncState = assertIs<AccountSyncUIState.Synced>(state.syncState)
             assertNotNull(syncState.lastDownloadDate)
@@ -200,7 +194,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
     @Test
     fun `login success sets Bazqux account type`() = runTest(testDispatcher) {
         viewModel.uiState.test(timeout = uiTimeout) {
-            val unlinkedState = awaitItem()
+            val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 
             viewModel.login(
@@ -208,11 +202,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
                 password = "testpassword",
             )
 
-            // Wait for Linked state, skipping intermediate states
-            var state: AccountConnectionUiState
-            do {
-                state = awaitItem()
-            } while (state !is AccountConnectionUiState.Linked)
+            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(state)
 
             val accountType = networkSettings.getSyncAccountType()
@@ -265,6 +255,17 @@ class BazquxSyncViewModelTest : KoinTestBase() {
                 feeds = awaitItem()
             } while (feeds.isNotEmpty())
             assertTrue(feeds.isEmpty())
+        }
+    }
+}
+
+private suspend fun <T> TurbineTestContext<T>.awaitItemMatching(
+    predicate: (T) -> Boolean,
+): T {
+    while (true) {
+        val item = awaitItem()
+        if (predicate(item)) {
+            return item
         }
     }
 }

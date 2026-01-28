@@ -1,1 +1,1 @@
-{"id":"user/-/state/com.google/reading-list","updated":1769350346,"items":[]}
+{"items":[{"id":"tag:google.com,2005:reader/item/0000000000000002","published":1700000001,"title":"Sample FreshRSS Starred","canonical":[{"href":"https://example.com/freshrss/2"}],"summary":{"content":"Starred"},"origin":{"streamId":"feed/242","title":"Sample Feed","htmlUrl":"https://example.com/feed"},"categories":["user/1/state/com.google/starred"]}],"continuation":null}

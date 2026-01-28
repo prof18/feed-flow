@@ -6,6 +6,10 @@ plugins {
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "com.prof18.feedflow.i18n"
+    }
+
     applyDefaultHierarchyTemplate()
 
     sourceSets {
@@ -21,10 +25,6 @@ kotlin {
             dependsOn(commonJvmAndroidMain)
         }
     }
-}
-
-android {
-    namespace = "com.prof18.feedflow.i18n"
 }
 
 dependencies {

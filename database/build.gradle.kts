@@ -4,6 +4,9 @@ plugins {
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "com.prof18.feedflow.database"
+    }
 
     compilerOptions {
         optIn.add("kotlin.time.ExperimentalTime")
@@ -49,8 +52,4 @@ sqldelight {
             verifyMigrations.set(true)
         }
     }
-}
-
-android {
-    namespace = "com.prof18.feedflow.database"
 }

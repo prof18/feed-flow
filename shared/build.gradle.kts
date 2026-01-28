@@ -2,8 +2,8 @@ import co.touchlab.skie.configuration.SuspendInterop
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.ksp)
     alias(libs.plugins.feedflow.detekt)
     alias(libs.plugins.skie)
@@ -12,9 +12,16 @@ plugins {
 kotlin {
     jvmToolchain(21)
 
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
+    androidLibrary {
+        namespace = "com.prof18.feedflow.shared"
+        compileSdk = libs.versions.android.compile.sdk.get().toInt()
+        minSdk = libs.versions.android.min.sdk.get().toInt()
+        compilerOptions.jvmTarget = JvmTarget.JVM_21
+
+        withHostTest {}
+
+        androidResources {
+            enable = true
         }
     }
 
@@ -142,7 +149,7 @@ kotlin {
             }
         }
 
-        val androidUnitTest by getting {
+        getByName("androidHostTest") {
             dependsOn(commonJvmAndroidTest)
 
             dependencies {
@@ -196,19 +203,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
     environment("TEST_RESOURCES_ROOT", testResourcesDir)
     // iOS simulator requires SIMCTL_CHILD_ prefix for environment variables
     environment("SIMCTL_CHILD_TEST_RESOURCES_ROOT", testResourcesDir)
-}
-
-android {
-    namespace = "com.prof18.feedflow.shared"
-    compileSdk = libs.versions.android.compile.sdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.min.sdk.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
 }
 
 skie {

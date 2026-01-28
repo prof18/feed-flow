@@ -26,7 +26,7 @@ class OPMLFeedParserAndroidTest {
     @Test
     fun `generateFeedSources parses correct number of feeds`() = runTest {
         val feedSources = parser.generateFeedSources(opmlInput)
-        assertTrue(feedSources.size == 6)
+        assertEquals(feedSources.size, actual = 6)
     }
 
     @Test
@@ -37,9 +37,9 @@ class OPMLFeedParserAndroidTest {
         val basketFeeds = feedSources.filter { it.category?.title == "Basket" }
         val newsFeeds = feedSources.filter { it.category?.title == "News" }
 
-        assertTrue(techFeeds.size == 3)
-        assertTrue(basketFeeds.size == 2)
-        assertTrue(newsFeeds.size == 1)
+        assertEquals(techFeeds.size, actual = 3)
+        assertEquals(basketFeeds.size, actual = 2)
+        assertEquals(newsFeeds.size, actual = 1)
     }
 
     @Test

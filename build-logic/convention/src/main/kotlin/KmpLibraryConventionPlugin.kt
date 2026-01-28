@@ -1,5 +1,4 @@
-import com.android.build.gradle.LibraryExtension
-import org.gradle.api.JavaVersion
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
@@ -12,15 +11,15 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("com.android.library")
+                apply("com.android.kotlin.multiplatform.library")
                 apply("org.jetbrains.kotlin.multiplatform")
                 apply("com.feedflow.detekt")
             }
             configure<KotlinMultiplatformExtension> {
-                androidTarget {
-                    compilerOptions {
-                        jvmTarget.set(JvmTarget.JVM_21)
-                    }
+                configure<KotlinMultiplatformAndroidLibraryTarget> {
+                    compileSdk = version("android-compile-sdk").toInt()
+                    minSdk = version("android-min-sdk").toInt()
+                    compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
                 }
 
                 jvmToolchain(21)
@@ -32,17 +31,6 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
 
                 compilerOptions {
                     freeCompilerArgs.add("-Xexpect-actual-classes")
-                }
-            }
-
-            configure<LibraryExtension> {
-                compileSdk = version("android-compile-sdk").toInt()
-                defaultConfig {
-                    minSdk = version("android-min-sdk").toInt()
-                }
-                compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_21
-                    targetCompatibility = JavaVersion.VERSION_21
                 }
             }
         }

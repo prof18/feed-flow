@@ -3,6 +3,10 @@ plugins {
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "com.prof18.feedflow.feedsync.icloud"
+    }
+
     sourceSets {
         matching { it.name.startsWith("ios") }.all {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
@@ -23,8 +27,4 @@ kotlin {
             }
         }
     }
-}
-
-android {
-    namespace = "com.prof18.feedflow.feedsync.icloud"
 }

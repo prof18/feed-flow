@@ -3,6 +3,10 @@ plugins {
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "com.prof18.feedflow.feedsync.dropbox"
+    }
+
     applyDefaultHierarchyTemplate()
 
     sourceSets {
@@ -41,8 +45,4 @@ kotlin {
             }
         }
     }
-}
-
-android {
-    namespace = "com.prof18.feedflow.feedsync.dropbox"
 }

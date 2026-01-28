@@ -5,6 +5,9 @@ plugins {
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "com.prof18.feedflow.core"
+    }
 
     compilerOptions {
         optIn.add("kotlin.contracts.ExperimentalContracts")
@@ -26,8 +29,4 @@ kotlin {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
     }
-}
-
-android {
-    namespace = "com.prof18.feedflow.core"
 }

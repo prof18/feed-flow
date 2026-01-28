@@ -4,6 +4,10 @@ plugins {
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "com.prof18.feedflow.feedsync.networkcore"
+    }
+
     sourceSets {
         commonMain {
             dependencies {
@@ -28,8 +32,4 @@ kotlin {
             }
         }
     }
-}
-
-android {
-    namespace = "com.prof18.feedflow.feedsync.networkcore"
 }

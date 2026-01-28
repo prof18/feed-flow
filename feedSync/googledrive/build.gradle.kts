@@ -4,6 +4,10 @@ plugins {
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "com.prof18.feedflow.feedsync.googledrive"
+    }
+
     applyDefaultHierarchyTemplate()
 
     sourceSets {
@@ -42,8 +46,4 @@ kotlin {
             }
         }
     }
-}
-
-android {
-    namespace = "com.prof18.feedflow.feedsync.googledrive"
 }

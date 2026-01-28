@@ -3,6 +3,10 @@ plugins {
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "com.prof18.feedflow.feedsync.test"
+    }
+
     sourceSets {
         commonMain {
             dependencies {
@@ -20,6 +24,8 @@ kotlin {
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
             }
+            // Include commonMain resources in Android main so they're available in the JAR
+            resources.srcDirs("src/commonMain/resources")
         }
 
         jvmMain {
@@ -32,23 +38,14 @@ kotlin {
             dependencies {
                 implementation(libs.ktor.client.okhttp)
             }
+            // Include commonMain resources in Android main so they're available in the JAR
+            resources.srcDirs("src/commonMain/resources")
         }
 
         iosMain {
             dependencies {
                 implementation(libs.ktor.client.darwin)
             }
-        }
-    }
-}
-
-android {
-    namespace = "com.prof18.feedflow.feedsync.test"
-
-    sourceSets {
-        getByName("main") {
-            // Include commonMain resources in Android main so they're available in the JAR
-            resources.srcDirs("src/commonMain/resources")
         }
     }
 }

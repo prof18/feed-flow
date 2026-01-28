@@ -4,6 +4,10 @@ plugins {
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "com.prof18.feedflow.feedsync.greader"
+    }
+
     sourceSets {
         all {
             languageSettings.optIn("kotlin.time.ExperimentalTime")
@@ -56,8 +60,4 @@ kotlin {
             }
         }
     }
-}
-
-android {
-    namespace = "com.prof18.feedflow.feedsync.greader"
 }

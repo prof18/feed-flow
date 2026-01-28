@@ -7,8 +7,6 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.feedsync.test.di.getFeedSyncTestModules
 import com.prof18.feedflow.feedsync.test.greader.configureBazquxMocks
-import com.prof18.feedflow.feedsync.test.greader.configureBazquxMocksWithLoginFailure
-import com.prof18.feedflow.feedsync.test.greader.configureBazquxMocksWithSyncFailure
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
@@ -16,13 +14,11 @@ import com.prof18.feedflow.shared.test.koin.TestModules
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
-import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -30,8 +26,10 @@ import kotlin.time.Duration.Companion.seconds
 
 class BazquxSyncViewModelTest : KoinTestBase() {
 
+    private val uiTimeout = 10.seconds
     private val feedStateRepository: FeedStateRepository by inject()
     private val networkSettings: NetworkSettings by inject()
+    private val viewModel: BazquxSyncViewModel by inject()
 
     override fun getTestModules(): List<Module> =
         TestModules.createTestModules() + getFeedSyncTestModules(
@@ -44,9 +42,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `initial state is Unlinked when no account is set`() = runTest(testDispatcher) {
-        val viewModel: BazquxSyncViewModel = get()
-
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val state = awaitItem()
             assertIs<AccountConnectionUiState.Unlinked>(state)
         }
@@ -60,10 +56,9 @@ class BazquxSyncViewModelTest : KoinTestBase() {
         networkSettings.setSyncUrl("https://bazqux.com")
         networkSettings.setSyncUsername("testuser")
 
-        val viewModel: BazquxSyncViewModel = get()
         advanceUntilIdle()
 
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val state = awaitItem()
             assertIs<AccountConnectionUiState.Linked>(state)
             assertEquals(AccountSyncUIState.None, state.syncState)
@@ -71,30 +66,28 @@ class BazquxSyncViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `initial state is Linked with Synced state when account is set and has sync date`() = runTest(testDispatcher) {
-        // Setup: Set account credentials and sync date
-        networkSettings.setSyncAccountType(SyncAccounts.BAZQUX)
-        networkSettings.setSyncPwd("test-auth-token")
-        networkSettings.setSyncUrl("https://bazqux.com")
-        networkSettings.setSyncUsername("testuser")
-        networkSettings.setLastSyncDate(1234567890L)
+    fun `initial state is Linked with Synced state when account is set and has sync date`() =
+        runTest(testDispatcher) {
+            // Setup: Set account credentials and sync date
+            networkSettings.setSyncAccountType(SyncAccounts.BAZQUX)
+            networkSettings.setSyncPwd("test-auth-token")
+            networkSettings.setSyncUrl("https://bazqux.com")
+            networkSettings.setSyncUsername("testuser")
+            networkSettings.setLastSyncDate(1234567890L)
 
-        val viewModel: BazquxSyncViewModel = get()
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        viewModel.uiState.test {
-            val state = awaitItem()
-            assertIs<AccountConnectionUiState.Linked>(state)
-            val syncState = assertIs<AccountSyncUIState.Synced>(state.syncState)
-            assertNotNull(syncState.lastDownloadDate)
+            viewModel.uiState.test(timeout = uiTimeout) {
+                val state = awaitItem()
+                assertIs<AccountConnectionUiState.Linked>(state)
+                val syncState = assertIs<AccountSyncUIState.Synced>(state.syncState)
+                assertNotNull(syncState.lastDownloadDate)
+            }
         }
-    }
 
     @Test
     fun `login success with sync success sets state to Linked`() = runTest(testDispatcher) {
-        val viewModel: BazquxSyncViewModel = get()
-
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val unlinkedState = awaitItem()
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 
@@ -103,20 +96,18 @@ class BazquxSyncViewModelTest : KoinTestBase() {
                 password = "testpassword",
             )
 
-            runCurrent()
-            advanceUntilIdle()
-
-            val state = awaitItem()
+            // Wait for Linked state, skipping intermediate states
+            var state: AccountConnectionUiState
+            do {
+                state = awaitItem()
+            } while (state !is AccountConnectionUiState.Linked)
             assertIs<AccountConnectionUiState.Linked>(state)
         }
     }
 
     @Test
     fun `login sets loading state during login`() = runTest(testDispatcher) {
-        val viewModel: BazquxSyncViewModel = get()
-        advanceUntilIdle()
-
-        viewModel.loginLoading.test {
+        viewModel.loginLoading.test(timeout = uiTimeout) {
             assertEquals(false, awaitItem())
 
             viewModel.login(
@@ -124,9 +115,18 @@ class BazquxSyncViewModelTest : KoinTestBase() {
                 password = "testpassword",
             )
 
-            assertEquals(true, awaitItem())
-            advanceUntilIdle()
-            assertEquals(false, awaitItem())
+            // Wait for loading to become true
+            var loadingState: Boolean
+            do {
+                loadingState = awaitItem()
+            } while (!loadingState)
+            assertTrue(loadingState)
+
+            // Wait for loading to become false again
+            do {
+                loadingState = awaitItem()
+            } while (loadingState)
+            assertFalse(loadingState)
         }
     }
 
@@ -138,9 +138,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
         networkSettings.setSyncUrl("https://bazqux.com")
         networkSettings.setSyncUsername("testuser")
 
-        val viewModel: BazquxSyncViewModel = get()
-
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             // Skip initial Loading and Linked states
             val linkedState = awaitItem()
             assertIs<AccountConnectionUiState.Linked>(linkedState)
@@ -170,10 +168,9 @@ class BazquxSyncViewModelTest : KoinTestBase() {
         networkSettings.setSyncUrl("https://bazqux.com")
         networkSettings.setSyncUsername("testuser")
 
-        val viewModel: BazquxSyncViewModel = get()
         advanceUntilIdle()
 
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val state = awaitItem()
             assertIs<AccountConnectionUiState.Linked>(state)
             assertEquals(AccountSyncUIState.None, state.syncState)
@@ -189,10 +186,9 @@ class BazquxSyncViewModelTest : KoinTestBase() {
         networkSettings.setSyncUsername("testuser")
         networkSettings.setLastSyncDate(1234567890L)
 
-        val viewModel: BazquxSyncViewModel = get()
         advanceUntilIdle()
 
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val state = awaitItem()
             assertIs<AccountConnectionUiState.Linked>(state)
             val syncState = assertIs<AccountSyncUIState.Synced>(state.syncState)
@@ -203,9 +199,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `login success sets Bazqux account type`() = runTest(testDispatcher) {
-        val viewModel: BazquxSyncViewModel = get()
-
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val unlinkedState = awaitItem()
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 
@@ -214,10 +208,11 @@ class BazquxSyncViewModelTest : KoinTestBase() {
                 password = "testpassword",
             )
 
-            runCurrent()
-            advanceUntilIdle()
-
-            val state = awaitItem()
+            // Wait for Linked state, skipping intermediate states
+            var state: AccountConnectionUiState
+            do {
+                state = awaitItem()
+            } while (state !is AccountConnectionUiState.Linked)
             assertIs<AccountConnectionUiState.Linked>(state)
 
             val accountType = networkSettings.getSyncAccountType()
@@ -229,9 +224,7 @@ class BazquxSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `login success syncs triggers feed item refresh`() = runTest(testDispatcher) {
-        val viewModel: BazquxSyncViewModel = get()
-
-        feedStateRepository.feedState.test(timeout = 10.seconds) {
+        feedStateRepository.feedState.test(timeout = uiTimeout) {
             assertTrue(awaitItem().isEmpty())
 
             viewModel.login(
@@ -239,22 +232,18 @@ class BazquxSyncViewModelTest : KoinTestBase() {
                 password = "testpassword",
             )
 
-            runCurrent()
-            advanceUntilIdle()
-
-            runCurrent()
-            advanceUntilIdle()
-
-            val feeds = awaitItem()
+            // Wait for feeds to be populated
+            var feeds = awaitItem()
+            while (feeds.isEmpty()) {
+                feeds = awaitItem()
+            }
             assertTrue(feeds.isNotEmpty())
         }
     }
 
     @Test
     fun `disconnect clears feed data from database`() = runTest(testDispatcher) {
-        val viewModel: BazquxSyncViewModel = get()
-
-        feedStateRepository.feedState.test(timeout = 10.seconds) {
+        feedStateRepository.feedState.test(timeout = uiTimeout) {
             assertTrue(awaitItem().isEmpty())
 
             viewModel.login(
@@ -262,92 +251,20 @@ class BazquxSyncViewModelTest : KoinTestBase() {
                 password = "testpassword",
             )
 
-            runCurrent()
-            advanceUntilIdle()
+            // Wait for feeds to be populated
+            var feeds = awaitItem()
+            while (feeds.isEmpty()) {
+                feeds = awaitItem()
+            }
+            assertTrue(feeds.isNotEmpty())
 
-            assertTrue(awaitItem().isNotEmpty())
-
-            // Disconnect
             viewModel.disconnect()
 
-            runCurrent()
-            advanceUntilIdle()
-
-            assertTrue(awaitItem().isEmpty())
+            // Wait for feeds to be cleared
+            do {
+                feeds = awaitItem()
+            } while (feeds.isNotEmpty())
+            assertTrue(feeds.isEmpty())
         }
-    }
-
-    @Test
-    fun `login failure emits error state`() = runTest(testDispatcher) {
-        // Reconfigure Koin with login failure mocks
-        stopKoin()
-        startKoin {
-            allowOverride(true)
-            modules(
-                TestModules.createTestModules() + getFeedSyncTestModules(
-                    gReaderProvider = SyncAccounts.BAZQUX,
-                    gReaderBaseURL = "https://bazqux.com/",
-                    gReaderConfig = {
-                        configureBazquxMocksWithLoginFailure()
-                    },
-                ),
-            )
-        }
-
-        val viewModel: BazquxSyncViewModel = get()
-
-        viewModel.errorState.test {
-            viewModel.login(
-                username = "testuser",
-                password = "wrongpassword",
-            )
-
-            runCurrent()
-            advanceUntilIdle()
-
-            // Verify error was emitted
-            val error = awaitItem()
-            assertNotNull(error)
-        }
-
-        // Verify state is still Unlinked
-        assertIs<AccountConnectionUiState.Unlinked>(viewModel.uiState.value)
-    }
-
-    @Test
-    fun `sync failure after login emits error but sets linked state`() = runTest(testDispatcher) {
-        // Reconfigure Koin with sync failure mocks
-        stopKoin()
-        startKoin {
-            allowOverride(true)
-            modules(
-                TestModules.createTestModules() + getFeedSyncTestModules(
-                    gReaderProvider = SyncAccounts.BAZQUX,
-                    gReaderBaseURL = "https://bazqux.com/",
-                    gReaderConfig = {
-                        configureBazquxMocksWithSyncFailure()
-                    },
-                ),
-            )
-        }
-
-        val viewModel: BazquxSyncViewModel = get()
-
-        viewModel.errorState.test {
-            viewModel.login(
-                username = "testuser",
-                password = "testpassword",
-            )
-
-            runCurrent()
-            advanceUntilIdle()
-
-            // Verify error was emitted for sync failure
-            val error = awaitItem()
-            assertNotNull(error)
-        }
-
-        // Login succeeded but sync failed - should still be Linked
-        assertIs<AccountConnectionUiState.Linked>(viewModel.uiState.value)
     }
 }

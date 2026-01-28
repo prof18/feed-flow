@@ -82,7 +82,7 @@ object TestModules {
             scoped<SqlDriver>(named(SYNC_DB_DRIVER)) { createInMemorySyncDriver() }
         }
         single<Settings> { MapSettings() }
-        single<DispatcherProvider> { TestDispatcherProvider }
+        factory<DispatcherProvider> { TestDispatcherProvider }
         single<FeedSyncWorker> {
             object : FeedSyncWorker {
                 override fun upload() = Unit

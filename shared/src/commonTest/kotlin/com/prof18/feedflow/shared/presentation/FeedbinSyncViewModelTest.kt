@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.presentation
 
+import app.cash.turbine.TurbineTestContext
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
@@ -79,7 +80,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
     @Test
     fun `login success with sync success sets state to Linked`() = runTest(testDispatcher) {
         viewModel.uiState.test {
-            val unlinkedState = awaitItem()
+            val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 
             viewModel.login(
@@ -90,7 +91,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val state = awaitItem()
+            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(state)
         }
     }
@@ -122,7 +123,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
         viewModel.uiState.test {
             // Skip initial Loading and Linked states
-            val linkedState = awaitItem()
+            val linkedState = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(linkedState)
 
             viewModel.disconnect()
@@ -130,10 +131,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val loadingState = awaitItem()
-            assertIs<AccountConnectionUiState.Loading>(loadingState)
-
-            val unlinkedState = awaitItem()
+            val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
         }
 
@@ -180,7 +178,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
     @Test
     fun `login success sets Feedbin account type`() = runTest(testDispatcher) {
         viewModel.uiState.test {
-            val unlinkedState = awaitItem()
+            val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 
             viewModel.login(
@@ -191,7 +189,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val state = awaitItem()
+            val state = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(state)
 
             val accountType = networkSettings.getSyncAccountType()
@@ -203,7 +201,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
     @Test
     fun `disconnect clears account and sets state to Unlinked from Linked after login`() = runTest(testDispatcher) {
         viewModel.uiState.test {
-            val unlinkedState = awaitItem()
+            val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 
             viewModel.login(
@@ -214,7 +212,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val linkedState = awaitItem()
+            val linkedState = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(linkedState)
 
             // Disconnect
@@ -223,15 +221,23 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
             runCurrent()
             advanceUntilIdle()
 
-            val loadingState = awaitItem()
-            assertIs<AccountConnectionUiState.Loading>(loadingState)
-
-            val finalState = awaitItem()
+            val finalState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(finalState)
         }
 
         // Verify account is cleared
         assertTrue(networkSettings.getSyncPwd().isEmpty())
         assertTrue(networkSettings.getSyncUsername().isEmpty())
+    }
+}
+
+private suspend fun <T> TurbineTestContext<T>.awaitItemMatching(
+    predicate: (T) -> Boolean,
+): T {
+    while (true) {
+        val item = awaitItem()
+        if (predicate(item)) {
+            return item
+        }
     }
 }

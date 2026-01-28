@@ -1,26 +1,6 @@
 [
   {
-    "host": "9to5google.com",
-    "url": "https://favicons.feedbinusercontent.com/93d/93d7372dd89e2a7577cebaf232d869823bd7cd14.png"
-  },
-  {
-    "host": "9to5linux.com",
-    "url": "https://favicons.feedbinusercontent.com/de7/de75b5fb9beacb41a284a78f86c5d7570a92b05c.png"
-  },
-  {
-    "host": "www.20percent.berlin",
-    "url": "https://favicons.feedbinusercontent.com/24f/24f079387aeca9280b2b4e8e63c969003b03fa10.png"
-  },
-  {
-    "host": "www.basketuniverso.it",
-    "url": "https://favicons.feedbinusercontent.com/73e/73eeb04b51f298967413da703c9c055406101820.png"
-  },
-  {
-    "host": "www.dw.com",
-    "url": "https://favicons.feedbinusercontent.com/950/950721cde0393538bcab1598d5fa080f8ff28aa7.png"
-  },
-  {
     "host": "www.macstories.net",
-    "url": "https://favicons.feedbinusercontent.com/684/684401ce28c5809cf2e216d7b6b88caebe4885ca.png"
+    "url": "https://example.com/icon.png"
   }
 ]

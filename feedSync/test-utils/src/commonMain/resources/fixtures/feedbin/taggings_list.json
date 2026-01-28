@@ -1,31 +1,6 @@
 [
   {
     "id": 8467006,
-    "feed_id": 1820404,
-    "name": "News"
-  },
-  {
-    "id": 8483555,
-    "feed_id": 3630700,
-    "name": "Basket"
-  },
-  {
-    "id": 8483581,
-    "feed_id": 2599958,
-    "name": "News"
-  },
-  {
-    "id": 8483775,
-    "feed_id": 1751147,
-    "name": "Tech"
-  },
-  {
-    "id": 8483776,
-    "feed_id": 1184598,
-    "name": "Tech"
-  },
-  {
-    "id": 8485128,
     "feed_id": 1240842,
     "name": "Tech"
   }

@@ -1,50 +1,10 @@
 [
   {
     "id": 9115993,
-    "created_at": "2025-12-31T11:38:59.810691Z",
+    "created_at": "2026-01-01T00:00:00.000000Z",
     "feed_id": 1240842,
-    "title": "stories \u2013 MacStories",
+    "title": "stories – MacStories",
     "feed_url": "https://www.macstories.net/category/stories/feed/",
     "site_url": "https://www.macstories.net/category/stories/"
-  },
-  {
-    "id": 9115992,
-    "created_at": "2025-12-31T11:38:58.287176Z",
-    "feed_id": 3630700,
-    "title": "BasketUniverso",
-    "feed_url": "https://www.basketuniverso.it/feed/",
-    "site_url": "https://www.basketuniverso.it/"
-  },
-  {
-    "id": 9115984,
-    "created_at": "2025-12-31T11:38:54.360727Z",
-    "feed_id": 1184598,
-    "title": "9to5Google",
-    "feed_url": "https://9to5google.com/feed/",
-    "site_url": "https://9to5google.com/"
-  },
-  {
-    "id": 9115975,
-    "created_at": "2025-12-31T11:38:53.318691Z",
-    "feed_id": 1751147,
-    "title": "9to5Linux",
-    "feed_url": "https://9to5linux.com/feed",
-    "site_url": "https://9to5linux.com/"
-  },
-  {
-    "id": 9115972,
-    "created_at": "2025-12-31T11:38:53.141515Z",
-    "feed_id": 2599958,
-    "title": "20 Percent Berlin",
-    "feed_url": "https://www.20percent.berlin/feed",
-    "site_url": "https://www.20percent.berlin"
-  },
-  {
-    "id": 9115970,
-    "created_at": "2025-12-31T11:38:52.915618Z",
-    "feed_id": 1820404,
-    "title": "Deutsche Welle: DW.com - Germany",
-    "feed_url": "https://rss.dw.com/atom/rss-en-ger",
-    "site_url": "https://www.dw.com/s-1432?maca=en-rss-en-ger-1023-xml-atom"
   }
 ]

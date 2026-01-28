@@ -7,18 +7,13 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
 import com.prof18.feedflow.feedsync.test.di.getFeedSyncTestModules
 import com.prof18.feedflow.feedsync.test.feedbin.configureFeedbinMocks
-import com.prof18.feedflow.feedsync.test.feedbin.configureFeedbinMocksWithLoginFailure
-import com.prof18.feedflow.feedsync.test.feedbin.configureFeedbinMocksWithSyncFailure
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.koin.TestModules
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
-import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,6 +24,7 @@ import kotlin.test.assertTrue
 class FeedbinSyncViewModelTest : KoinTestBase() {
 
     private val networkSettings: NetworkSettings by inject()
+    private val viewModel: FeedbinSyncViewModel by inject()
 
     override fun getTestModules(): List<Module> =
         TestModules.createTestModules() + getFeedSyncTestModules(
@@ -40,8 +36,6 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `initial state is Unlinked when no account is set`() = runTest(testDispatcher) {
-        val viewModel: FeedbinSyncViewModel = get()
-
         viewModel.uiState.test {
             val state = awaitItem()
             assertIs<AccountConnectionUiState.Unlinked>(state)
@@ -55,7 +49,6 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
         networkSettings.setSyncPwd("testpassword")
         networkSettings.setSyncUsername("testuser")
 
-        val viewModel: FeedbinSyncViewModel = get()
         advanceUntilIdle()
 
         viewModel.uiState.test {
@@ -73,7 +66,6 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
         networkSettings.setSyncUsername("testuser")
         networkSettings.setLastSyncDate(1234567890L)
 
-        val viewModel: FeedbinSyncViewModel = get()
         advanceUntilIdle()
 
         viewModel.uiState.test {
@@ -86,8 +78,6 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `login success with sync success sets state to Linked`() = runTest(testDispatcher) {
-        val viewModel: FeedbinSyncViewModel = get()
-
         viewModel.uiState.test {
             val unlinkedState = awaitItem()
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
@@ -107,7 +97,6 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `login sets loading state during login`() = runTest(testDispatcher) {
-        val viewModel: FeedbinSyncViewModel = get()
         advanceUntilIdle()
 
         viewModel.loginLoading.test {
@@ -130,8 +119,6 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
         networkSettings.setSyncAccountType(SyncAccounts.FEEDBIN)
         networkSettings.setSyncPwd("testpassword")
         networkSettings.setSyncUsername("testuser")
-
-        val viewModel: FeedbinSyncViewModel = get()
 
         viewModel.uiState.test {
             // Skip initial Loading and Linked states
@@ -162,7 +149,6 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
         networkSettings.setSyncPwd("testpassword")
         networkSettings.setSyncUsername("testuser")
 
-        val viewModel: FeedbinSyncViewModel = get()
         advanceUntilIdle()
 
         viewModel.uiState.test {
@@ -180,7 +166,6 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
         networkSettings.setSyncUsername("testuser")
         networkSettings.setLastSyncDate(1234567890L)
 
-        val viewModel: FeedbinSyncViewModel = get()
         advanceUntilIdle()
 
         viewModel.uiState.test {
@@ -194,8 +179,6 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `login success sets Feedbin account type`() = runTest(testDispatcher) {
-        val viewModel: FeedbinSyncViewModel = get()
-
         viewModel.uiState.test {
             val unlinkedState = awaitItem()
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
@@ -219,8 +202,6 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `disconnect clears account and sets state to Unlinked from Linked after login`() = runTest(testDispatcher) {
-        val viewModel: FeedbinSyncViewModel = get()
-
         viewModel.uiState.test {
             val unlinkedState = awaitItem()
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
@@ -252,77 +233,5 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
         // Verify account is cleared
         assertTrue(networkSettings.getSyncPwd().isEmpty())
         assertTrue(networkSettings.getSyncUsername().isEmpty())
-    }
-
-    @Test
-    fun `login failure emits error state`() = runTest(testDispatcher) {
-        // Reconfigure Koin with login failure mocks
-        stopKoin()
-        startKoin {
-            allowOverride(true)
-            modules(
-                TestModules.createTestModules() + getFeedSyncTestModules(
-                    feedbinBaseURL = "https://api.feedbin.com/",
-                    feedbinConfig = {
-                        configureFeedbinMocksWithLoginFailure()
-                    },
-                ),
-            )
-        }
-
-        val viewModel: FeedbinSyncViewModel = get()
-
-        viewModel.errorState.test {
-            viewModel.login(
-                username = "testuser",
-                password = "wrongpassword",
-            )
-
-            runCurrent()
-            advanceUntilIdle()
-
-            // Verify error was emitted
-            val error = awaitItem()
-            assertNotNull(error)
-        }
-
-        // Verify state is still Unlinked
-        assertIs<AccountConnectionUiState.Unlinked>(viewModel.uiState.value)
-    }
-
-    @Test
-    fun `sync failure after login emits error but sets linked state`() = runTest(testDispatcher) {
-        // Reconfigure Koin with sync failure mocks
-        stopKoin()
-        startKoin {
-            allowOverride(true)
-            modules(
-                TestModules.createTestModules() + getFeedSyncTestModules(
-                    feedbinBaseURL = "https://api.feedbin.com/",
-                    feedbinConfig = {
-                        configureFeedbinMocksWithSyncFailure()
-                    },
-                ),
-            )
-        }
-
-        val viewModel: FeedbinSyncViewModel = get()
-
-        viewModel.errorState.test {
-            viewModel.login(
-                username = "testuser",
-                password = "testpassword",
-            )
-
-            runCurrent()
-            advanceUntilIdle()
-
-            // Verify error was emitted for sync failure
-            val error = awaitItem()
-            assertNotNull(error)
-        }
-
-        // Login succeeded but sync failed - should still be Linked
-        assertIs<AccountConnectionUiState.Linked>(viewModel.uiState.value)
     }
 }

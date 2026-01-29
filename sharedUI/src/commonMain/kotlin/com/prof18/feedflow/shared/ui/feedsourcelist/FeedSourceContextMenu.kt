@@ -41,7 +41,7 @@ internal fun FeedSourceContextMenu(
         )
 
         // 2. Open website (rare - only for checking if feed/website is still alive)
-        val websiteUrl = feedSource.websiteUrl
+        val websiteUrl = feedSource.websiteUrlFallback()
         if (websiteUrl != null) {
             DropdownMenuItem(
                 text = {

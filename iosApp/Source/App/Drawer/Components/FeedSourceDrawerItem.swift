@@ -109,7 +109,7 @@ struct FeedSourceDrawerItem: View {
         }
 
         // 2. Open website (rare - only for checking if feed/website is still alive)
-        if let websiteUrl = feedSource.websiteUrl {
+        if let websiteUrl = feedSource.websiteUrlFallback() {
             Button {
                 onOpenWebsite(websiteUrl)
             } label: {

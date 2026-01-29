@@ -9,6 +9,6 @@ actual data class CsvInput(
     val csvData: NSData,
 ) {
     actual fun readText(): String =
-        NSString.create(csvData, NSUTF8StringEncoding) as? String
+        NSString.create(csvData, NSUTF8StringEncoding)?.toString()
             ?: error("CSV input data is not UTF-8")
 }

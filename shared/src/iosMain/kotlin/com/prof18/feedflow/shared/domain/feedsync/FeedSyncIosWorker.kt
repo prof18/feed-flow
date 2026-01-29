@@ -28,7 +28,6 @@ import com.prof18.feedflow.feedsync.icloud.ICloudDownloadResult
 import com.prof18.feedflow.feedsync.icloud.ICloudSettings
 import com.prof18.feedflow.feedsync.icloud.ICloudUploadResult
 import com.prof18.feedflow.shared.data.SettingsRepository
-import com.prof18.feedflow.shared.utils.Telemetry
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
@@ -64,7 +63,6 @@ internal class FeedSyncIosWorker(
     private val settingsRepository: SettingsRepository,
     private val accountsRepository: AccountsRepository,
     private val iCloudSettings: ICloudSettings,
-    private val telemetry: Telemetry,
 ) : FeedSyncWorker {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val mutex = Mutex()
@@ -93,10 +91,6 @@ internal class FeedSyncIosWorker(
                 val databasePath = getDatabaseUrl()
                 if (databasePath == null) {
                     logger.e { "Database URL is null, cannot perform upload" }
-                    telemetry.trackError(
-                        id = "FeedSyncIosWorker.performUpload",
-                        message = "Database URL is null, cannot perform upload",
-                    )
                     emitErrorMessage()
                     return@withLock
                 }
@@ -105,10 +99,6 @@ internal class FeedSyncIosWorker(
                 emitSuccessMessage()
             } catch (e: SQLiteException) {
                 logger.e(e) { "SQLiteException during upload" }
-                telemetry.trackError(
-                    id = "FeedSyncIosWorker.performUpload",
-                    message = "SQLiteException during upload: ${e.message}",
-                )
                 try {
                     feedSyncer.closeDB()
                     logger.e { "Sync database closed after error" }
@@ -116,22 +106,13 @@ internal class FeedSyncIosWorker(
                         NSFileManager.defaultManager.removeItemAtURL(path, null)
                         feedSyncer.populateSyncDbIfEmpty()
                         logger.e { "Sync database recreated after error" }
-                        telemetry.signal("FeedSyncIosWorker.performUpload.recreateDatabase")
                     }
                 } catch (_: Exception) {
                     // best effort
                     logger.e { "Database recreation after error failed" }
-                    telemetry.trackError(
-                        id = "FeedSyncIosWorker.performUpload",
-                        message = "Database recreation after error failed",
-                    )
                 }
             } catch (e: Exception) {
                 logger.e("Upload failed", e)
-                telemetry.trackError(
-                    id = "FeedSyncIosWorker.performUpload",
-                    message = "Upload failed: ${e.message}",
-                )
                 if (e.message?.contains("FeedFlow.DropboxErrors") == true) {
                     feedSyncMessageQueue.emitResult(SyncResult.General(SyncUploadError.DropboxAPIError))
                 } else {
@@ -149,12 +130,6 @@ internal class FeedSyncIosWorker(
             } catch (e: Exception) {
                 if (!isFirstSync) {
                     logger.e("Download failed", e)
-                    if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
-                        telemetry.trackError(
-                            id = "FeedSyncIosWorker.download",
-                            message = "Download failed: ${e.message}",
-                        )
-                    }
                 }
                 SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
             }
@@ -168,16 +143,9 @@ internal class FeedSyncIosWorker(
                 feedSyncer.syncFeedSourceCategory()
                 feedSyncer.syncFeedSource()
                 logger.w { "Syncing feed sources finished" }
-                if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
-                    telemetry.signal("FeedSyncIosWorker.syncFeedSources.iCloud")
-                }
                 SyncResult.Success
             } catch (e: Exception) {
                 logger.e("Sync feed sources failed", e)
-                telemetry.trackError(
-                    id = "FeedSyncIosWorker.syncFeedSources",
-                    message = "Sync feed sources failed: ${e.message}",
-                )
                 SyncResult.General(SyncFeedError.FeedSourcesSyncFailed)
             }
         }
@@ -189,16 +157,9 @@ internal class FeedSyncIosWorker(
                 logger.w { "Start syncing feed items" }
                 feedSyncer.syncFeedItem()
                 logger.w { "Syncing feed items finished" }
-                if (accountsRepository.getCurrentSyncAccount() == SyncAccounts.ICLOUD) {
-                    telemetry.signal("FeedSyncIosWorker.syncFeedItems.iCloud")
-                }
                 SyncResult.Success
             } catch (e: Exception) {
                 logger.e("Sync feed items failed", e)
-                telemetry.trackError(
-                    id = "FeedSyncIosWorker.syncFeedItems",
-                    message = "Sync feed items failed: ${e.message}",
-                )
                 SyncResult.General(SyncFeedError.FeedItemsSyncFailed)
             }
         }
@@ -265,10 +226,6 @@ internal class FeedSyncIosWorker(
 
                 if (errorPtr.value != null) {
                     logger.e { "Error replacing database: ${errorPtr.value}" }
-                    telemetry.trackError(
-                        id = "FeedSyncIosWorker.replaceDatabase",
-                        message = "Error replacing database: ${errorPtr.value}",
-                    )
                     return false
                 }
 
@@ -358,7 +315,6 @@ internal class FeedSyncIosWorker(
                 replaceDatabase(result.destinationUrl)
                 iCloudSettings.setLastDownloadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.w { "Download from iCloud successfully" }
-                telemetry.signal("FeedSyncIosWorker.iCloudDownload")
                 SyncResult.Success
             }
 
@@ -373,10 +329,6 @@ internal class FeedSyncIosWorker(
                 }
                 if (!isFirstSync) {
                     logger.e { "Error downloading from iCloud: $errorMessage" }
-                    telemetry.trackError(
-                        id = "FeedSyncIosWorker.iCloudDownload",
-                        message = "Error downloading from iCloud: $errorMessage",
-                    )
                 }
                 when (result) {
                     is ICloudDownloadResult.Error.ICloudUrlNotAvailable ->
@@ -401,7 +353,6 @@ internal class FeedSyncIosWorker(
             is ICloudUploadResult.Success -> {
                 iCloudSettings.setLastUploadTimestamp(Clock.System.now().toEpochMilliseconds())
                 logger.w { "Upload to iCloud successfully" }
-                telemetry.signal("FeedSyncIosWorker.accountSpecificUpload.iCloud")
             }
 
             is ICloudUploadResult.Error -> {
@@ -410,10 +361,6 @@ internal class FeedSyncIosWorker(
                     is ICloudUploadResult.Error.UploadFailed -> result.errorMessage
                 }
                 logger.e { "Error uploading to iCloud: $errorMessage" }
-                telemetry.trackError(
-                    id = "FeedSyncIosWorker.accountSpecificUpload",
-                    message = "Error uploading to iCloud: $errorMessage",
-                )
             }
         }
     }

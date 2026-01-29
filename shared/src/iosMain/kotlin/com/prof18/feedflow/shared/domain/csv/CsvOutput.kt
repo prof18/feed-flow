@@ -4,6 +4,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSString
 import platform.Foundation.NSURL
 import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.create
 import platform.Foundation.writeToURL
 
 @OptIn(ExperimentalForeignApi::class)
@@ -12,7 +13,7 @@ actual data class CsvOutput(
 ) {
     actual fun writeText(text: String) {
         require(url.isFileURL()) { "CSV output url must be a file url" }
-        val didWrite = (text as NSString).writeToURL(
+        val didWrite = NSString.create(string = text).writeToURL(
             url = url,
             atomically = true,
             encoding = NSUTF8StringEncoding,

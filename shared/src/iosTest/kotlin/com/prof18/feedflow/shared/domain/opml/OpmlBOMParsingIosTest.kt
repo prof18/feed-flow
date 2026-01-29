@@ -4,6 +4,7 @@ import com.prof18.feedflow.shared.test.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +34,7 @@ class OpmlBOMParsingIosTest {
     fun `generateFeedSources parses OPML with BOM correctly`() = runTest {
         val contentWithBom = "\uFEFF$opmlContent"
 
-        val data = (contentWithBom as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+        val data = NSString.create(string = contentWithBom).dataUsingEncoding(NSUTF8StringEncoding)
 
         val opmlInput = OpmlInput(opmlData = data!!)
 
@@ -54,7 +55,7 @@ class OpmlBOMParsingIosTest {
             </opml>
         """.trimIndent()
 
-        val data = (opmlWithAmpersand as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+        val data = NSString.create(string = opmlWithAmpersand).dataUsingEncoding(NSUTF8StringEncoding)
 
         val opmlInput = OpmlInput(opmlData = data!!)
 

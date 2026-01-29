@@ -9,10 +9,11 @@ import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.NSURL
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSUUID
+import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
 
 actual fun createOpmlInput(content: String): OpmlInput {
-    val data = (content as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+    val data = NSString.create(string = content).dataUsingEncoding(NSUTF8StringEncoding)
         ?: error("Failed to encode OPML content")
     return OpmlInput(opmlData = data)
 }
@@ -24,7 +25,7 @@ actual fun createOpmlOutput(): OpmlOutput {
 }
 
 actual fun createCsvInput(content: String): CsvInput {
-    val data = (content as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+    val data = NSString.create(string = content).dataUsingEncoding(NSUTF8StringEncoding)
         ?: error("Failed to encode CSV content")
     return CsvInput(csvData = data)
 }

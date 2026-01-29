@@ -25,6 +25,12 @@ kotlin {
             }
         }
 
+        commonTest {
+            dependencies {
+                implementation(libs.kotlin.test)
+            }
+        }
+
         matching { it.name.startsWith("ios") }.all {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }

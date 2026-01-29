@@ -7,12 +7,12 @@ import kotlinx.coroutines.test.runTest
 import platform.Foundation.NSData
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@Suppress("CAST_NEVER_SUCCEEDS")
 class OPMLFeedParserIosTest {
 
     private val parser = OpmlFeedHandlerIos(
@@ -20,7 +20,7 @@ class OPMLFeedParserIosTest {
     )
 
     private val opmlInput = OpmlInput(
-        opmlData = (opml as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData(),
+        opmlData = NSString.create(string = opml).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData(),
     )
 
     @Test
@@ -74,7 +74,7 @@ class OPMLFeedParserIosTest {
     @Test
     fun `generateFeedSources parses OPML with text attribute`() = runTest {
         val opmlInput = OpmlInput(
-            opmlData = (opmlWithText as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+            opmlData = NSString.create(string = opmlWithText).dataUsingEncoding(NSUTF8StringEncoding)
                 ?: NSData(),
         )
         val feedSources = parser.generateFeedSources(opmlInput)

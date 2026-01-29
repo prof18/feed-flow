@@ -185,7 +185,6 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             settingsRepository = get(),
             accountsRepository = get(),
             iCloudSettings = get(),
-            telemetry = get(),
         )
     }
 

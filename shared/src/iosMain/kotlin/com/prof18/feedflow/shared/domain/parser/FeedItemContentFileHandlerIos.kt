@@ -37,8 +37,9 @@ internal class FeedItemContentFileHandlerIos(
 
                 val path = getArticleFilePath(feedItemId)
 
-                @Suppress("CAST_NEVER_SUCCEEDS")
-                val contentData = (content as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: NSData()
+                val contentData = NSString.create(string = content)
+                    .dataUsingEncoding(NSUTF8StringEncoding)
+                    ?: NSData()
 
                 if (path != null) {
                     NSFileManager.defaultManager.createFileAtPath(

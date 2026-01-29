@@ -26,13 +26,14 @@ internal class OpmlFeedHandlerIos(
         withContext(dispatcherProvider.default) {
             suspendCancellableCoroutine { continuation ->
                 val data = opmlInput.opmlData
-                val string = NSString.create(data, NSUTF8StringEncoding) as String
+                val string = NSString.create(data, NSUTF8StringEncoding)?.toString()
+                    ?: error("OPML input data is not UTF-8")
 
                 val cleanString = string.replace("\uFEFF", "")
                     .replace("&(?!(?:amp|lt|gt|apos|quot|#[0-9]+);)".toRegex(), "&amp;") // Fix unescaped &
                     .trimStart()
 
-                val cleanData = (cleanString as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+                val cleanData = NSString.create(string = cleanString).dataUsingEncoding(NSUTF8StringEncoding)
 
                 NSXMLParser(cleanData ?: data).apply {
                     delegate = NSXMLParserDelegate { continuation.resume(it) }
@@ -40,7 +41,7 @@ internal class OpmlFeedHandlerIos(
             }
         }
 
-    @Suppress("MaximumLineLength", "CAST_NEVER_SUCCEEDS")
+    @Suppress("MaximumLineLength")
     override suspend fun exportFeed(
         opmlOutput: OpmlOutput,
         feedSourcesByCategory: Map<FeedSourceCategory?, List<FeedSource>>,
@@ -59,7 +60,7 @@ internal class OpmlFeedHandlerIos(
             </opml>
         """.trimIndent()
 
-        (opmlString.trim() as NSString)
+        NSString.create(string = opmlString.trim())
             .writeToURL(
                 url = opmlOutput.url,
                 atomically = true,

@@ -27,6 +27,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
         val isMarkReadWhenScrollingEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
         val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
+        val isHideReadItemsEnabled = settingsRepository.getHideReadItems()
 
         stateMutableFlow.update {
             ReadingBehaviorState(
@@ -35,6 +36,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
                 isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
                 isShowReadItemsEnabled = isShowReadItemsEnabled,
+                isHideReadItemsEnabled = isHideReadItemsEnabled,
             )
         }
     }
@@ -80,6 +82,15 @@ class ReadingBehaviorSettingsViewModel internal constructor(
             settingsRepository.setShowReadArticlesTimeline(value)
             stateMutableFlow.update {
                 it.copy(isShowReadItemsEnabled = value)
+            }
+        }
+    }
+
+    fun updateHideReadItems(value: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setHideReadItems(value)
+            stateMutableFlow.update {
+                it.copy(isHideReadItemsEnabled = value)
             }
         }
     }

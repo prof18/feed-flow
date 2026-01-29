@@ -16,7 +16,8 @@ struct ReadingBehaviorScreen: View {
         isSaveReaderModeContentEnabled: false,
         isPrefetchArticleContentEnabled: false,
         isMarkReadWhenScrollingEnabled: false,
-        isShowReadItemsEnabled: false
+        isShowReadItemsEnabled: false,
+        isHideReadItemsEnabled: false
     )
 
     var body: some View {
@@ -44,6 +45,10 @@ struct ReadingBehaviorScreen: View {
             isShowReadItemEnabled: Binding(
                 get: { settingsState.isShowReadItemsEnabled },
                 set: { vmStoreOwner.instance.updateShowReadItemsOnTimeline(value: $0) }
+            ),
+            isHideReadItemsEnabled: Binding(
+                get: { settingsState.isHideReadItemsEnabled },
+                set: { vmStoreOwner.instance.updateHideReadItems(value: $0) }
             )
         )
         .navigationTitle(Text(feedFlowStrings.settingsReadingBehavior))

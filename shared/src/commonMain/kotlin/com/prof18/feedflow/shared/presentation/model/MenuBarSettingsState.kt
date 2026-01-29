@@ -8,6 +8,7 @@ data class MenuBarSettingsState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val isMarkReadWhenScrollingEnabled: Boolean = true,
     val isShowReadItemsEnabled: Boolean = false,
+    val isHideReadItemsEnabled: Boolean = false,
     val isReaderModeEnabled: Boolean = false,
     val isSaveReaderModeContentEnabled: Boolean = false,
     val isPrefetchArticleContentEnabled: Boolean = false,

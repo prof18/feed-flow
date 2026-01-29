@@ -342,6 +342,100 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `markAsRead removes item from feed list when hideReadItems is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setHideReadItems(true)
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        val items = listOf(
+            buildFeedItem(id = "item-1", title = "Item 1", pubDateMillis = 2000, source = feedSource),
+            buildFeedItem(id = "item-2", title = "Item 2", pubDateMillis = 1000, source = feedSource),
+        )
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.feedState.value.size)
+
+        viewModel.markAsRead("item-1")
+        advanceUntilIdle()
+
+        assertEquals(1, viewModel.feedState.value.size)
+        assertEquals("item-2", viewModel.feedState.value.first().id)
+    }
+
+    @Test
+    fun `markAsRead keeps item in feed list when hideReadItems is disabled`() = runTest(testDispatcher) {
+        settingsRepository.setHideReadItems(false)
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        val items = listOf(
+            buildFeedItem(id = "item-1", title = "Item 1", pubDateMillis = 2000, source = feedSource),
+            buildFeedItem(id = "item-2", title = "Item 2", pubDateMillis = 1000, source = feedSource),
+        )
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.feedState.value.size)
+
+        viewModel.markAsRead("item-1")
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.feedState.value.size)
+        assertTrue(viewModel.feedState.value.any { it.id == "item-1" && it.isRead })
+    }
+
+    @Test
+    fun `markAllAboveAsRead removes items from feed list when hideReadItems is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setHideReadItems(true)
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        val items = listOf(
+            buildFeedItem(id = "item-1", title = "Item 1", pubDateMillis = 3000, source = feedSource),
+            buildFeedItem(id = "item-2", title = "Item 2", pubDateMillis = 2000, source = feedSource),
+            buildFeedItem(id = "item-3", title = "Item 3", pubDateMillis = 1000, source = feedSource),
+        )
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        assertEquals(3, viewModel.feedState.value.size)
+
+        viewModel.markAllAboveAsRead("item-2")
+        advanceUntilIdle()
+
+        assertEquals(1, viewModel.feedState.value.size)
+        assertEquals("item-3", viewModel.feedState.value.first().id)
+    }
+
+    @Test
+    fun `markAllBelowAsRead removes items from feed list when hideReadItems is enabled`() = runTest(testDispatcher) {
+        settingsRepository.setHideReadItems(true)
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        val items = listOf(
+            buildFeedItem(id = "item-1", title = "Item 1", pubDateMillis = 3000, source = feedSource),
+            buildFeedItem(id = "item-2", title = "Item 2", pubDateMillis = 2000, source = feedSource),
+            buildFeedItem(id = "item-3", title = "Item 3", pubDateMillis = 1000, source = feedSource),
+        )
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+
+        val viewModel = getViewModel()
+        advanceUntilIdle()
+
+        assertEquals(3, viewModel.feedState.value.size)
+
+        viewModel.markAllBelowAsRead("item-2")
+        advanceUntilIdle()
+
+        assertEquals(1, viewModel.feedState.value.size)
+        assertEquals("item-1", viewModel.feedState.value.first().id)
+    }
+
+    @Test
     fun `markAllAboveAsRead updates database`() = runTest(testDispatcher) {
         val feedSource = createFeedSource(id = "source-1", title = "Source 1")
         insertFeedSources(feedSource)

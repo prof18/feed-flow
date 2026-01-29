@@ -6,4 +6,5 @@ data class ReadingBehaviorState(
     val isPrefetchArticleContentEnabled: Boolean = false,
     val isMarkReadWhenScrollingEnabled: Boolean = true,
     val isShowReadItemsEnabled: Boolean = false,
+    val isHideReadItemsEnabled: Boolean = false,
 )

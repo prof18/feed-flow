@@ -29,5 +29,6 @@ internal fun ReadingBehaviorScreen(
         setPrefetchArticleContent = viewModel::updatePrefetchArticleContent,
         setMarkReadWhenScrolling = viewModel::updateMarkReadWhenScrolling,
         setShowReadItem = viewModel::updateShowReadItemsOnTimeline,
+        setHideReadItems = viewModel::updateHideReadItems,
     )
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DeleteSweep
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
@@ -41,10 +42,12 @@ internal fun SyncAndStorageScreenContent(
     syncPeriod: SyncPeriod,
     autoDeletePeriod: AutoDeletePeriod,
     refreshFeedsOnLaunch: Boolean,
+    showRssParsingErrors: Boolean,
     navigateBack: () -> Unit,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     onRefreshFeedsOnLaunchToggle: (Boolean) -> Unit,
+    onShowRssParsingErrorsToggle: (Boolean) -> Unit,
     onClearDownloadedArticles: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -77,6 +80,15 @@ internal fun SyncAndStorageScreenContent(
                     icon = Icons.Outlined.Sync,
                     isChecked = refreshFeedsOnLaunch,
                     onCheckedChange = onRefreshFeedsOnLaunchToggle,
+                )
+            }
+
+            item {
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsShowRssParsingErrors,
+                    icon = Icons.Outlined.ErrorOutline,
+                    isChecked = showRssParsingErrors,
+                    onCheckedChange = onShowRssParsingErrorsToggle,
                 )
             }
 
@@ -165,6 +177,8 @@ private fun SyncAndStorageScreenContentPreview() {
             onSyncPeriodSelected = {},
             onAutoDeletePeriodSelected = {},
             onRefreshFeedsOnLaunchToggle = {},
+            showRssParsingErrors = true,
+            onShowRssParsingErrorsToggle = {},
             onClearDownloadedArticles = {},
         )
     }

@@ -135,6 +135,12 @@ class SettingsRepository(
     internal fun setRefreshFeedsOnLaunch(value: Boolean) =
         settings.set(SettingsFields.REFRESH_FEEDS_ON_LAUNCH.name, value)
 
+    fun getShowRssParsingErrors(): Boolean =
+        settings.getBoolean(SettingsFields.SHOW_RSS_PARSING_ERRORS.name, true)
+
+    fun setShowRssParsingErrors(value: Boolean) =
+        settings.set(SettingsFields.SHOW_RSS_PARSING_ERRORS.name, value)
+
     fun getThemeMode(): ThemeMode =
         settings.getString(SettingsFields.THEME_MODE.name, ThemeMode.SYSTEM.name)
             .let { ThemeMode.valueOf(it) }
@@ -179,5 +185,6 @@ private enum class SettingsFields {
     THEME_MODE,
     REDUCE_MOTION_ENABLED,
     REFRESH_FEEDS_ON_LAUNCH,
+    SHOW_RSS_PARSING_ERRORS,
     NOTIFICATION_MODE,
 }

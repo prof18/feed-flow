@@ -31,8 +31,13 @@ All the business logic is shared via Kotlin Multiplatform.
 - `./gradlew test` -> Run all tests for Shared code, Android and Desktop
 - `.scripts/refresh-translations.sh` -> Regenerate i18n translation code after adding new translations
 - `./gradlew :androidApp:assembleGooglePlayDebug` -> Build Android debug
+- `.scripts/run-android.sh` -> Install and launch Android Google Play debug
 - `./gradlew desktopApp:run` -> Run Desktop app
 -
+### Running Android App
+Ensure an emulator or device is connected via `adb`, then run:
+- `.scripts/run-android.sh` -> Install and launch the debug app on device/emulator
+
 ### Building for iOS Simulator
 To build FeedFlow for iPhone 17 Pro simulator:
 ```bash
@@ -90,7 +95,7 @@ Key points:
 ## General rules:
 
 - DO NOT write comments for every function or class. Only write comments when the code is not self-explanatory.
-- If you touch any business logic, ensure it's thoroughly tested with unit tests.
+- If you touch or create any business logic, ensure it's thoroughly tested with unit tests.
 - DO NOT excessively use try/catch blocks for every function. Use them only for the top caller or the bottom callers, depending on the cases.
 - ALWAYS run gradle tasks with the following flag: `--quiet --console=plain`
 

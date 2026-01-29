@@ -65,6 +65,7 @@ import com.prof18.feedflow.shared.presentation.SyncAndStorageSettingsViewModel
 import com.prof18.feedflow.shared.utils.UserFeedbackReporter
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -361,10 +362,31 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             logger = getWith("HtmlRetriever"),
             client = HttpClient {
                 defaultRequest {
-                    headers.append("User-Agent", "FeedFlow/6046 CFNetwork/3860.100.1 Darwin/24.6.0")
-                    headers.append("Accept", "*/*")
-                    headers.append("Accept-Language", "en-US,en;q=0.9")
-                    headers.append("Connection", "keep-alive")
+                    with(headers) {
+                        val acceptHeader =
+                            "text/html,application/xhtml+xml,application/xml;q=0.9," +
+                                "image/avif,image/webp,image/apng,*/*;q=0.8," +
+                                "application/signed-exchange;v=b3;q=0.7"
+                        append("User-Agent", "FeedFlow/6046 CFNetwork/3860.100.1 Darwin/24.6.0")
+                        append(HttpHeaders.Accept, acceptHeader)
+                        append(HttpHeaders.AcceptLanguage, "en-US,en;q=0.9")
+                        append(HttpHeaders.Connection, "keep-alive")
+                        val requestUrl = url.buildString()
+                        if (requestUrl.isNotBlank()) {
+                            append("Referer", requestUrl)
+                        }
+                        append("Upgrade-Insecure-Requests", "1")
+                        append(
+                            "sec-ch-ua",
+                            "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
+                        )
+                        append("sec-ch-ua-mobile", "?0")
+                        append("sec-ch-ua-platform", "\"Windows\"")
+                        append("Sec-Fetch-Dest", "document")
+                        append("Sec-Fetch-Mode", "navigate")
+                        append("Sec-Fetch-Site", "none")
+                        append("Sec-Fetch-User", "?1")
+                    }
                 }
             },
         )

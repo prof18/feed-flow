@@ -51,6 +51,12 @@ internal fun MenuBarScope.BehaviorMenu(
             onCheckedChange = callbacks.onRefreshFeedsOnLaunchToggled,
         )
 
+        CheckboxItem(
+            text = LocalFeedFlowStrings.current.settingsShowRssParsingErrors,
+            checked = settingsState.isShowRssParsingErrorsEnabled,
+            onCheckedChange = callbacks.onShowRssParsingErrorsToggled,
+        )
+
         Separator()
 
         CheckboxItem(
@@ -113,6 +119,7 @@ internal data class BehaviorMenuCallbacks(
     val onSaveReaderModeContentToggled: (Boolean) -> Unit,
     val onPrefetchToggle: (Boolean) -> Unit,
     val onRefreshFeedsOnLaunchToggled: (Boolean) -> Unit,
+    val onShowRssParsingErrorsToggled: (Boolean) -> Unit,
     val onMarkReadWhenScrollingToggled: (Boolean) -> Unit,
     val onReduceMotionToggled: (Boolean) -> Unit,
     val onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,

@@ -39,6 +39,7 @@ class MenuBarViewModelTest : KoinTestBase() {
         assertFalse(state.isSaveReaderModeContentEnabled)
         assertFalse(state.isPrefetchArticleContentEnabled)
         assertTrue(state.isRefreshFeedsOnLaunchEnabled)
+        assertTrue(state.isShowRssParsingErrorsEnabled)
         assertFalse(state.isReduceMotionEnabled)
         assertEquals(AutoDeletePeriod.DISABLED, state.autoDeletePeriod)
         assertTrue(state.isCrashReportingEnabled)
@@ -97,6 +98,12 @@ class MenuBarViewModelTest : KoinTestBase() {
     fun `updateRefreshFeedsOnLaunch updates state`() = runTest {
         viewModel.updateRefreshFeedsOnLaunch(false)
         assertFalse(viewModel.state.value.isRefreshFeedsOnLaunchEnabled)
+    }
+
+    @Test
+    fun `updateShowRssParsingErrors updates state`() = runTest {
+        viewModel.updateShowRssParsingErrors(false)
+        assertFalse(viewModel.state.value.isShowRssParsingErrorsEnabled)
     }
 
     @Test

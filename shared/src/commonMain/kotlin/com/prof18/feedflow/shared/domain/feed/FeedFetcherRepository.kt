@@ -243,6 +243,7 @@ class FeedFetcherRepository internal constructor(
         forceRefresh: Boolean,
     ) {
         val allFeedItems = mutableListOf<FeedItem>()
+        val shouldShowParsingErrors = settingsRepository.getShowRssParsingErrors()
 
         feedSourceUrls
             .mapNotNull { feedSource ->
@@ -287,11 +288,13 @@ class FeedFetcherRepository internal constructor(
                         }
                         // Mark failure flag on error
                         databaseHelper.setFeedFetchFailed(feedSource.id, true)
-                        feedStateRepository.emitErrorState(
-                            FeedErrorState(
-                                failingSourceName = feedSource.title,
-                            ),
-                        )
+                        if (shouldShowParsingErrors) {
+                            feedStateRepository.emitErrorState(
+                                FeedErrorState(
+                                    failingSourceName = feedSource.title,
+                                ),
+                            )
+                        }
                         feedToUpdate.remove(feedSource.url)
                         updateRefreshCount()
                         null

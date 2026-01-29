@@ -7,4 +7,5 @@ data class SyncAndStorageState(
     val syncPeriod: SyncPeriod = SyncPeriod.ONE_HOUR,
     val autoDeletePeriod: AutoDeletePeriod = AutoDeletePeriod.DISABLED,
     val refreshFeedsOnLaunch: Boolean = true,
+    val showRssParsingErrors: Boolean = true,
 )

@@ -86,6 +86,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
             }
         },
         onRefreshFeedsOnLaunchToggled = menuBarViewModel::updateRefreshFeedsOnLaunch,
+        onShowRssParsingErrorsToggled = menuBarViewModel::updateShowRssParsingErrors,
         onMarkReadWhenScrollingToggled = menuBarViewModel::updateMarkReadWhenScrolling,
         onReduceMotionToggled = menuBarViewModel::updateReduceMotionEnabled,
         onAutoDeletePeriodSelected = menuBarViewModel::updateAutoDeletePeriod,

@@ -5,6 +5,7 @@ struct SyncAndStorageScreenContent: View {
     @Binding var syncPeriod: SyncPeriod
     @Binding var autoDeletePeriod: AutoDeletePeriod
     @Binding var refreshFeedsOnLaunch: Bool
+    @Binding var showRssParsingErrors: Bool
     let onClearDownloadedArticles: () -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
@@ -14,6 +15,10 @@ struct SyncAndStorageScreenContent: View {
             Section {
                 Toggle(isOn: $refreshFeedsOnLaunch) {
                     Label(feedFlowStrings.settingsRefreshFeedsOnLaunch, systemImage: "arrow.triangle.2.circlepath")
+                }
+
+                Toggle(isOn: $showRssParsingErrors) {
+                    Label(feedFlowStrings.settingsShowRssParsingErrors, systemImage: "exclamationmark.triangle")
                 }
 
                 Picker(selection: $syncPeriod) {

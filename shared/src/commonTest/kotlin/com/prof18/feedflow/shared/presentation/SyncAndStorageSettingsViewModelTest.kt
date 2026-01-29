@@ -24,6 +24,7 @@ class SyncAndStorageSettingsViewModelTest : KoinTestBase() {
             assertEquals(SyncPeriod.NEVER, initialState.syncPeriod)
             assertEquals(AutoDeletePeriod.DISABLED, initialState.autoDeletePeriod)
             assertTrue(initialState.refreshFeedsOnLaunch)
+            assertTrue(initialState.showRssParsingErrors)
         }
     }
 
@@ -61,6 +62,19 @@ class SyncAndStorageSettingsViewModelTest : KoinTestBase() {
 
             viewModel.updateRefreshFeedsOnLaunch(true)
             assertTrue(awaitItem().refreshFeedsOnLaunch)
+        }
+    }
+
+    @Test
+    fun `updateShowRssParsingErrors updates state`() = runTest {
+        viewModel.state.test {
+            awaitItem()
+
+            viewModel.updateShowRssParsingErrors(false)
+            assertFalse(awaitItem().showRssParsingErrors)
+
+            viewModel.updateShowRssParsingErrors(true)
+            assertTrue(awaitItem().showRssParsingErrors)
         }
     }
 

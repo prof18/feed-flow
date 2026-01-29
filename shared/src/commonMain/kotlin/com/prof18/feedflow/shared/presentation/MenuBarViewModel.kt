@@ -40,6 +40,7 @@ class MenuBarViewModel internal constructor(
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
         val isRefreshFeedsOnLaunchEnabled = settingsRepository.getRefreshFeedsOnLaunch()
+        val isShowRssParsingErrorsEnabled = settingsRepository.getShowRssParsingErrors()
         val isReduceMotionEnabled = settingsRepository.getReduceMotionEnabled()
         val autoDeletePeriod = settingsRepository.getAutoDeletePeriod()
         val isCrashReportingEnabled = settingsRepository.getCrashReportingEnabled()
@@ -54,6 +55,7 @@ class MenuBarViewModel internal constructor(
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
                 isRefreshFeedsOnLaunchEnabled = isRefreshFeedsOnLaunchEnabled,
+                isShowRssParsingErrorsEnabled = isShowRssParsingErrorsEnabled,
                 isReduceMotionEnabled = isReduceMotionEnabled,
                 autoDeletePeriod = autoDeletePeriod,
                 isCrashReportingEnabled = isCrashReportingEnabled,
@@ -124,6 +126,15 @@ class MenuBarViewModel internal constructor(
             settingsRepository.setRefreshFeedsOnLaunch(value)
             stateMutableFlow.update {
                 it.copy(isRefreshFeedsOnLaunchEnabled = value)
+            }
+        }
+    }
+
+    fun updateShowRssParsingErrors(value: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setShowRssParsingErrors(value)
+            stateMutableFlow.update {
+                it.copy(isShowRssParsingErrorsEnabled = value)
             }
         }
     }

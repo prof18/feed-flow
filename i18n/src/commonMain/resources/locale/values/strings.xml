@@ -224,6 +224,7 @@
     <string name="settings_sync_period">Background sync frequency</string>
     <string name="settings_sync_period_desc">Choose how often to check for new articles in the background</string>
     <string name="settings_refresh_feeds_on_launch">Refresh feeds on app start</string>
+    <string name="settings_show_rss_parsing_errors">Show RSS parsing errors</string>
     <string name="settings_sync_period_never">Never</string>
     <string name="settings_sync_period_fifteen_minutes">Every 15 minutes</string>
     <string name="settings_sync_period_thirty_minutes">Every 30 minutes</string>

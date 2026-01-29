@@ -311,6 +311,31 @@ class FeedFetcherRepositoryLocalTest : FeedFetcherRepositoryTestBase() {
     }
 
     @Test
+    fun `fetchFeeds marks feed as failed without emitting error when parsing errors are hidden`() =
+        runTest(testDispatcher) {
+            setupLocalAccount()
+            settingsRepository.setShowRssParsingErrors(false)
+
+            val feedSource = createFeedSource(
+                id = "source-1",
+                title = "Broken Feed",
+            )
+            databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+            fakeRssParserWrapper.setError(feedSource.url)
+
+            feedStateRepository.errorState.test {
+                feedFetcherRepository.fetchFeeds()
+                advanceUntilIdle()
+
+                expectNoEvents()
+            }
+
+            val updatedFeedSource = databaseHelper.getFeedSource(feedSource.id)
+            assertNotNull(updatedFeedSource)
+            assertTrue(updatedFeedSource.fetchFailed)
+        }
+
+    @Test
     fun `fetchFeeds cleans old items when auto delete is enabled`() = runTest(testDispatcher) {
         setupLocalAccount()
         settingsRepository.setAutoDeletePeriod(AutoDeletePeriod.ONE_DAY)

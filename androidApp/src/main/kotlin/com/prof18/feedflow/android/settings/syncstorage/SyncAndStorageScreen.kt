@@ -21,6 +21,7 @@ fun SyncAndStorageScreen(
         syncPeriod = state.syncPeriod,
         autoDeletePeriod = state.autoDeletePeriod,
         refreshFeedsOnLaunch = state.refreshFeedsOnLaunch,
+        showRssParsingErrors = state.showRssParsingErrors,
         onSyncPeriodSelected = { period ->
             viewModel.updateSyncPeriod(period)
             feedDownloadWorkerEnqueuer.updateWorker(period)
@@ -30,6 +31,9 @@ fun SyncAndStorageScreen(
         },
         onRefreshFeedsOnLaunchToggle = { enabled ->
             viewModel.updateRefreshFeedsOnLaunch(enabled)
+        },
+        onShowRssParsingErrorsToggle = { enabled ->
+            viewModel.updateShowRssParsingErrors(enabled)
         },
         onClearDownloadedArticles = {
             viewModel.clearDownloadedArticleContent()

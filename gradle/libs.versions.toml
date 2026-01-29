@@ -47,7 +47,7 @@ kotest = "6.0.7"
 kotlin = "2.3.0"
 # Because of telemetry deck still using version 0.6.x
 kotlinx-date-time = "0.7.1-0.6.x-compat"
-kotlinx-serialization = "1.9.0"
+kotlinx-serialization = "1.10.0"
 ksp = "2.3.4"
 ktor = "3.3.3"
 lifecycle = "2.10.0"

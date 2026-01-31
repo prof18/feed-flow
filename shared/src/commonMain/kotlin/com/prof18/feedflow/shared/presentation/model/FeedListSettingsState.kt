@@ -18,4 +18,5 @@ data class FeedListSettingsState(
     val rightSwipeActionType: SwipeActionType = SwipeActionType.TOGGLE_BOOKMARK_STATUS,
     val isRemoveTitleFromDescriptionEnabled: Boolean = false,
     val feedOrder: FeedOrder = FeedOrder.NEWEST_FIRST,
+    val isHideUnreadCountEnabled: Boolean = false,
 )

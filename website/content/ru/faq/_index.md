@@ -6,5 +6,5 @@ layout: "list"
 heading: "Frequently Asked Questions"
 ---
 
-Welcome to FeedFlow's FAQ section. Here you'll find answers to the most common
-questions about using FeedFlow.
+Добро пожаловать в раздел ЧаВо FeedFlow. Здесь вы найдёте ответы на самые
+распространённые вопросы по использованию FeedFlow.

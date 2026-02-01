@@ -93,7 +93,7 @@
     <string name="settings_app_title">Приложение</string>
     <string name="add_feed_category_title">Категория</string>
     <string name="drawer_title_bookmarks">Закладки</string>
-    <string name="import_export_description">FeedFlow поддерживает импорт и экспорт ваших подписок с помощью OPML-файла для лучшей совместимости с другими читалками</string>
+    <string name="import_export_description">FeedFlow поддерживает импорт и экспорт ваших подписок с помощью файла OPML для лучшей совместимости с другими RSS-ридерами.</string>
     <string name="settings_toggle_show_read_articles">Отображать прочитанные статьи в разделе событий</string>
     <string name="drawer_title_read">Читать</string>
     <string name="menu_open_comments">Открыть комментарии</string>
@@ -245,4 +245,15 @@
     <string name="settings_save_reader_mode_content">Открывая статью, сохранить ее содержание в ситуациях, когда нет доступа к интернету</string>
     <string name="settings_prefetch_article_content">Заранее сохранить содержание статьи для ситуаций, когда нет доступа к интернету</string>
     <string name="reader_mode_fallback_open_browser_button">Открыть в браузере</string>
+    <string name="feed_error_message_improved">Не удалось загрузить %s. Возможно, недоступно или нет сети.</string>
+    <string name="trigger_feed_sync">Загрузить в аккаунт</string>
+    <string name="import_export_label">Импорт/экспорт</string>
+    <string name="feed_add_in_progress_message">Импорт ленты...</string>
+    <string name="import_export_opml_section_title">Подписки (OPML)</string>
+    <string name="import_export_articles_section_title">Статьи (CSV)</string>
+    <string name="import_export_articles_description">Экспортируйте и импортируйте свои статьи в виде CSV-файла.\nДля импорта статей необходимо, чтобы источники лент и категории уже были настроены.</string>
+    <string name="import_articles_button">Импорт статей из CSV</string>
+    <string name="export_articles_button">Экспорт статей в CSV</string>
+    <string name="import_articles_dialog_title">Выберите CSV-файл</string>
+    <string name="export_articles_dialog_title">Сохранить CSV-файл</string>
 </resources>

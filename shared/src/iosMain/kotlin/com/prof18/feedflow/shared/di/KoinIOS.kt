@@ -20,6 +20,7 @@ import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
 import com.prof18.feedflow.shared.data.KeychainSettingsWrapper
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepository
 import com.prof18.feedflow.shared.domain.contentprefetch.ContentPrefetchRepositoryIosDesktop
@@ -260,6 +261,10 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             feedItemContentFileHandler = get(),
             logger = getWith("ContentPrefetchRepositoryIosDesktop"),
         )
+    }
+
+    single<BackgroundSyncScheduler> {
+        BackgroundSyncScheduler { }
     }
 }
 

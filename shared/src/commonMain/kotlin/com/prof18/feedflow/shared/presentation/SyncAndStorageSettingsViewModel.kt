@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.model.SyncAndStorageState
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 class SyncAndStorageSettingsViewModel internal constructor(
     private val settingsRepository: SettingsRepository,
     private val feedItemContentFileHandler: FeedItemContentFileHandler,
+    private val backgroundSyncScheduler: BackgroundSyncScheduler,
 ) : ViewModel() {
 
     private val stateMutableFlow = MutableStateFlow(SyncAndStorageState())
@@ -47,6 +49,7 @@ class SyncAndStorageSettingsViewModel internal constructor(
     fun updateSyncPeriod(period: SyncPeriod) {
         viewModelScope.launch {
             settingsRepository.setSyncPeriod(period)
+            backgroundSyncScheduler.updateSyncPeriod(period)
             stateMutableFlow.update {
                 it.copy(syncPeriod = period)
             }

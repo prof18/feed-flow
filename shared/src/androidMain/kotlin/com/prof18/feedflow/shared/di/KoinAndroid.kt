@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
+import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.FeedDownloadWorker
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.JvmHtmlParser
@@ -174,6 +175,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             settingsRepository = get(),
             context = get(),
         )
+    }
+
+    single<BackgroundSyncScheduler> {
+        BackgroundSyncScheduler { syncPeriod ->
+            get<FeedDownloadWorkerEnqueuer>().updateWorker(syncPeriod)
+        }
     }
 
     worker {

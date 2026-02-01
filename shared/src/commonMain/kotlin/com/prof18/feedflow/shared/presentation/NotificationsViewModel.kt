@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.NotificationSettingState
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 class NotificationsViewModel internal constructor(
     private val databaseHelper: DatabaseHelper,
     private val settingsRepository: SettingsRepository,
+    private val backgroundSyncScheduler: BackgroundSyncScheduler,
 ) : ViewModel() {
 
     private val notificationSettingsMutableStateFlow = MutableStateFlow(
@@ -86,12 +88,14 @@ class NotificationsViewModel internal constructor(
     private fun forceUpdateSyncPeriod() {
         if (syncPeriodFlow.value == SyncPeriod.NEVER) {
             settingsRepository.setSyncPeriod(SyncPeriod.ONE_HOUR)
+            backgroundSyncScheduler.updateSyncPeriod(SyncPeriod.ONE_HOUR)
         }
     }
 
     fun updateSyncPeriod(period: SyncPeriod) {
         viewModelScope.launch {
             settingsRepository.setSyncPeriod(period)
+            backgroundSyncScheduler.updateSyncPeriod(period)
         }
     }
 

@@ -309,6 +309,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         SyncAndStorageSettingsViewModel(
             settingsRepository = get(),
             feedItemContentFileHandler = get(),
+            backgroundSyncScheduler = get(),
         )
     }
 
@@ -576,6 +577,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         NotificationsViewModel(
             databaseHelper = get(),
             settingsRepository = get(),
+            backgroundSyncScheduler = get(),
         )
     }
 }

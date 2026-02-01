@@ -11,6 +11,10 @@ finish-args:
   - --socket=x11
   - --device=dri
   - --filesystem=xdg-download:rw
+  # Allow reading GNOME/GTK settings for HiDPI scaling detection
+  - --talk-name=ca.desrt.dconf
+  - --filesystem=xdg-run/dconf
+  - --filesystem=~/.config/dconf:ro
 
 modules:
   - name: openjdk

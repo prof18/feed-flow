@@ -48,6 +48,12 @@ class SettingsRepository(
     internal fun setShowReadArticlesTimeline(value: Boolean) =
         settings.set(SettingsFields.SHOW_READ_ARTICLES_TIMELINE.name, value)
 
+    internal fun getHideReadItems(): Boolean =
+        settings.getBoolean(SettingsFields.HIDE_READ_ITEMS.name, false)
+
+    internal fun setHideReadItems(value: Boolean) =
+        settings.set(SettingsFields.HIDE_READ_ITEMS.name, value)
+
     fun isUseReaderModeEnabled(): Boolean {
         if (isReaderModeEnabled != null) {
             return requireNotNull(isReaderModeEnabled)
@@ -174,6 +180,7 @@ private enum class SettingsFields {
     FAVOURITE_BROWSER_ID,
     MARK_FEED_AS_READ_WHEN_SCROLLING,
     SHOW_READ_ARTICLES_TIMELINE,
+    HIDE_READ_ITEMS,
     USE_READER_MODE,
     SAVE_ITEM_CONTENT_ON_OPEN,
     PREFETCH_ARTICLE_CONTENT,

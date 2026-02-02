@@ -8,6 +8,7 @@ struct ReadingBehaviorScreenContent: View {
     @Binding var isPrefetchArticleContentEnabled: Bool
     @Binding var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isShowReadItemEnabled: Bool
+    @Binding var isHideReadItemsEnabled: Bool
 
     private let feedFlowStrings = Deps.shared.getStrings()
 
@@ -58,6 +59,12 @@ struct ReadingBehaviorScreenContent: View {
                     Label(feedFlowStrings.settingsToggleShowReadArticles, systemImage: "checkmark.circle")
                 }.onTapGesture {
                     isShowReadItemEnabled.toggle()
+                }
+
+                Toggle(isOn: $isHideReadItemsEnabled) {
+                    Label(feedFlowStrings.settingsHideReadItems, systemImage: "eye.slash")
+                }.onTapGesture {
+                    isHideReadItemsEnabled.toggle()
                 }
             }
         }

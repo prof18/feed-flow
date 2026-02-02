@@ -88,6 +88,7 @@ fun FrameWindowScope.FeedFlowMenuBar(
         onRefreshFeedsOnLaunchToggled = menuBarViewModel::updateRefreshFeedsOnLaunch,
         onShowRssParsingErrorsToggled = menuBarViewModel::updateShowRssParsingErrors,
         onMarkReadWhenScrollingToggled = menuBarViewModel::updateMarkReadWhenScrolling,
+        onHideReadItemsToggled = menuBarViewModel::updateHideReadItems,
         onReduceMotionToggled = menuBarViewModel::updateReduceMotionEnabled,
         onAutoDeletePeriodSelected = menuBarViewModel::updateAutoDeletePeriod,
         onClearDownloadedArticles = { showClearDownloadedArticlesDialog = true },

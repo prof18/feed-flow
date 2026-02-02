@@ -270,9 +270,9 @@ class DatabaseHelper(
             }
         }
 
-    suspend fun getItemsAbove(targetItemId: String, feedFilter: FeedFilter): List<String> =
+    suspend fun getNewerItems(targetItemId: String, feedFilter: FeedFilter): List<String> =
         withContext(backgroundDispatcher) {
-            dbRef.feedItemQueries.selectItemsAbove(
+            dbRef.feedItemQueries.selectNewerItems(
                 targetItemId = targetItemId,
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
@@ -280,9 +280,9 @@ class DatabaseHelper(
             ).executeAsList()
         }
 
-    suspend fun getItemsBelow(targetItemId: String, feedFilter: FeedFilter): List<String> =
+    suspend fun getOlderItems(targetItemId: String, feedFilter: FeedFilter): List<String> =
         withContext(backgroundDispatcher) {
-            dbRef.feedItemQueries.selectItemsBelow(
+            dbRef.feedItemQueries.selectOlderItems(
                 targetItemId = targetItemId,
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
@@ -290,9 +290,9 @@ class DatabaseHelper(
             ).executeAsList()
         }
 
-    suspend fun markAllAboveAsRead(targetItemId: String, feedFilter: FeedFilter) =
+    suspend fun markAllNewerAsRead(targetItemId: String, feedFilter: FeedFilter) =
         dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedItemQueries.markAllAboveAsRead(
+            dbRef.feedItemQueries.markAllNewerAsRead(
                 targetItemId = targetItemId,
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),
@@ -300,9 +300,9 @@ class DatabaseHelper(
             )
         }
 
-    suspend fun markAllBelowAsRead(targetItemId: String, feedFilter: FeedFilter) =
+    suspend fun markAllOlderAsRead(targetItemId: String, feedFilter: FeedFilter) =
         dbRef.transactionWithContext(backgroundDispatcher) {
-            dbRef.feedItemQueries.markAllBelowAsRead(
+            dbRef.feedItemQueries.markAllOlderAsRead(
                 targetItemId = targetItemId,
                 feedSourceId = feedFilter.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter.getCategoryId(),

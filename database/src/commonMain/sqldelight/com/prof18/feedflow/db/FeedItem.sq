@@ -209,7 +209,7 @@ UPDATE feed_item
 SET is_read = :isRead
 WHERE url_hash IN :urlHash;
 
-selectItemsAbove:
+selectNewerItems:
 SELECT url_hash FROM feed_item
 WHERE is_read = 0
 AND pub_date >= (
@@ -223,7 +223,7 @@ AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
     SELECT url_hash FROM feed_source WHERE category_id IS NULL
 )));
 
-selectItemsBelow:
+selectOlderItems:
 SELECT url_hash FROM feed_item
 WHERE is_read = 0
 AND pub_date <= (
@@ -237,7 +237,7 @@ AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
     SELECT url_hash FROM feed_source WHERE category_id IS NULL
 )));
 
-markAllAboveAsRead:
+markAllNewerAsRead:
 UPDATE feed_item
 SET is_read = 1
 WHERE is_read = 0
@@ -252,7 +252,7 @@ AND (:isUncategorized IS NULL OR (:isUncategorized = 1 AND feed_source_id IN (
     SELECT url_hash FROM feed_source WHERE category_id IS NULL
 )));
 
-markAllBelowAsRead:
+markAllOlderAsRead:
 UPDATE feed_item
 SET is_read = 1
 WHERE is_read = 0

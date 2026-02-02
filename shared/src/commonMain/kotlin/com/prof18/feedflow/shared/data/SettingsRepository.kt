@@ -30,6 +30,9 @@ class SettingsRepository(
     private val reduceMotionEnabledMutableFlow = MutableStateFlow(getReduceMotionEnabled())
     val reduceMotionEnabledFlow: StateFlow<Boolean> = reduceMotionEnabledMutableFlow.asStateFlow()
 
+    private val showReadArticlesTimelineMutableFlow = MutableStateFlow(getShowReadArticlesTimeline())
+    val showReadArticlesTimelineFlow: StateFlow<Boolean> = showReadArticlesTimelineMutableFlow.asStateFlow()
+
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
@@ -45,8 +48,10 @@ class SettingsRepository(
     internal fun getShowReadArticlesTimeline(): Boolean =
         settings.getBoolean(SettingsFields.SHOW_READ_ARTICLES_TIMELINE.name, false)
 
-    internal fun setShowReadArticlesTimeline(value: Boolean) =
-        settings.set(SettingsFields.SHOW_READ_ARTICLES_TIMELINE.name, value)
+    internal fun setShowReadArticlesTimeline(value: Boolean) {
+        settings[SettingsFields.SHOW_READ_ARTICLES_TIMELINE.name] = value
+        showReadArticlesTimelineMutableFlow.update { value }
+    }
 
     internal fun getHideReadItems(): Boolean =
         settings.getBoolean(SettingsFields.HIDE_READ_ITEMS.name, false)

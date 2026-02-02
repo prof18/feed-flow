@@ -48,6 +48,7 @@ fun HomeScreenContent(
     showDropdownMenu: Boolean = false,
     onBackupClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
+    onShowReadArticlesToggled: (Boolean) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -67,19 +68,12 @@ fun HomeScreenContent(
                 unReadCount = displayState.unReadCount,
                 showDrawerMenu = showDrawerMenu,
                 isDrawerOpen = isDrawerOpen,
-                onDrawerMenuClick = onDrawerMenuClick,
-                onSearchClick = onSearchClick,
                 showDropdownMenu = showDropdownMenu,
+                isShowReadArticlesEnabled = displayState.isShowReadArticlesEnabled,
+                onDrawerMenuClick = onDrawerMenuClick,
                 onMarkAllReadClicked = feedListActions.markAllRead,
-                onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
                 onSettingsButtonClicked = onSettingsButtonClicked,
-                onForceRefreshClick = {
-                    scope.launch {
-                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
-                        feedListActions.forceRefreshData()
-                    }
-                },
-                onEditFeedClick = feedManagementActions.onEditFeedClick,
+                onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
                 onClick = {
                     scope.launch {
                         listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
@@ -91,6 +85,15 @@ fun HomeScreenContent(
                         onRefresh()
                     }
                 },
+                onForceRefreshClick = {
+                    scope.launch {
+                        listState.scrollToItemConditionally(0, reduceMotionEnabled = reduceMotionEnabled)
+                        feedListActions.forceRefreshData()
+                    }
+                },
+                onSearchClick = onSearchClick,
+                onEditFeedClick = feedManagementActions.onEditFeedClick,
+                onShowReadArticlesToggled = onShowReadArticlesToggled,
                 isSyncUploadRequired = displayState.isSyncUploadRequired,
                 onBackupClick = onBackupClick,
             )

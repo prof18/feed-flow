@@ -28,6 +28,7 @@ class HomeDisplayState(
     val swipeActions: SwipeActions,
     val feedLayout: FeedLayout,
     val isSyncUploadRequired: Boolean = false,
+    val isShowReadArticlesEnabled: Boolean = false,
 )
 
 @Stable

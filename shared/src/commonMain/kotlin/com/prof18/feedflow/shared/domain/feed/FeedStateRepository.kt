@@ -204,10 +204,17 @@ internal class FeedStateRepository(
     }
 
     fun markAsRead(itemsToUpdates: HashSet<FeedItemId>) {
+        val hideReadItems = settingsRepository.getHideReadItems()
+        val currentFilter = currentFeedFilter.value
         mutableFeedState.update { currentItems ->
-            currentItems.map { feedItem ->
+            currentItems.mapNotNull { feedItem ->
                 if (FeedItemId(feedItem.id) in itemsToUpdates) {
-                    feedItem.copy(isRead = true)
+                    val updatedItem = feedItem.copy(isRead = true)
+                    if (hideReadItems && currentFilter != FeedFilter.Read) {
+                        null
+                    } else {
+                        updatedItem
+                    }
                 } else {
                     feedItem
                 }
@@ -257,13 +264,20 @@ internal class FeedStateRepository(
     }
 
     fun updateReadStatus(feedItemId: FeedItemId, isRead: Boolean) {
+        val hideReadItems = settingsRepository.getHideReadItems()
+        val currentFilter = currentFeedFilter.value
         mutableFeedState.update { currentItems ->
             currentItems.mapNotNull { feedItem ->
                 if (feedItem.id == feedItemId.id) {
-                    if (currentFeedFilter.value == FeedFilter.Read && !isRead) {
+                    if (currentFilter == FeedFilter.Read && !isRead) {
                         null
                     } else {
-                        feedItem.copy(isRead = isRead)
+                        val updatedItem = feedItem.copy(isRead = isRead)
+                        if (hideReadItems && isRead && currentFilter != FeedFilter.Read) {
+                            null
+                        } else {
+                            updatedItem
+                        }
                     }
                 } else {
                     feedItem
@@ -273,14 +287,21 @@ internal class FeedStateRepository(
     }
 
     fun markItemsAboveAsRead(targetItemId: String) {
+        val hideReadItems = settingsRepository.getHideReadItems()
+        val currentFilter = currentFeedFilter.value
         mutableFeedState.update { currentItems ->
             val targetIndex = currentItems.indexOfFirst { it.id == targetItemId }
             if (targetIndex == -1) {
                 currentItems
             } else {
-                currentItems.mapIndexed { index, feedItem ->
+                currentItems.mapIndexedNotNull { index, feedItem ->
                     if (index <= targetIndex && !feedItem.isRead) {
-                        feedItem.copy(isRead = true)
+                        val updatedItem = feedItem.copy(isRead = true)
+                        if (hideReadItems && currentFilter != FeedFilter.Read) {
+                            null
+                        } else {
+                            updatedItem
+                        }
                     } else {
                         feedItem
                     }
@@ -290,14 +311,21 @@ internal class FeedStateRepository(
     }
 
     fun markItemsBelowAsRead(targetItemId: String) {
+        val hideReadItems = settingsRepository.getHideReadItems()
+        val currentFilter = currentFeedFilter.value
         mutableFeedState.update { currentItems ->
             val targetIndex = currentItems.indexOfFirst { it.id == targetItemId }
             if (targetIndex == -1) {
                 currentItems
             } else {
-                currentItems.mapIndexed { index, feedItem ->
+                currentItems.mapIndexedNotNull { index, feedItem ->
                     if (index >= targetIndex && !feedItem.isRead) {
-                        feedItem.copy(isRead = true)
+                        val updatedItem = feedItem.copy(isRead = true)
+                        if (hideReadItems && currentFilter != FeedFilter.Read) {
+                            null
+                        } else {
+                            updatedItem
+                        }
                     } else {
                         feedItem
                     }

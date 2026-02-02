@@ -36,6 +36,7 @@ class MenuBarViewModel internal constructor(
         val themeMode = settingsRepository.getThemeMode()
         val isMarkReadWhenScrollingEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
         val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
+        val isHideReadItemsEnabled = settingsRepository.getHideReadItems()
         val isReaderModeEnabled = settingsRepository.isUseReaderModeEnabled()
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
@@ -51,6 +52,7 @@ class MenuBarViewModel internal constructor(
                 themeMode = themeMode,
                 isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
                 isShowReadItemsEnabled = isShowReadItemsEnabled,
+                isHideReadItemsEnabled = isHideReadItemsEnabled,
                 isReaderModeEnabled = isReaderModeEnabled,
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
@@ -87,6 +89,15 @@ class MenuBarViewModel internal constructor(
                 it.copy(isShowReadItemsEnabled = value)
             }
             feedStateRepository.getFeeds()
+        }
+    }
+
+    fun updateHideReadItems(value: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setHideReadItems(value)
+            stateMutableFlow.update {
+                it.copy(isHideReadItemsEnabled = value)
+            }
         }
     }
 

@@ -176,6 +176,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             gReaderRepository = get(),
             feedbinRepository = get(),
             accountsRepository = get(),
+            feedAppearanceSettingsRepository = get(),
             feedStateRepository = get(),
             feedItemParserWorker = get(),
         )

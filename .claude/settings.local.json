@@ -38,7 +38,8 @@
       "Bash(adb logcat:*)",
       "Bash(adb shell am:*)",
       "mcp__XcodeBuildMCP__session-show-defaults",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "mcp__XcodeBuildMCP__list_sims"
     ],
     "deny": []
   }

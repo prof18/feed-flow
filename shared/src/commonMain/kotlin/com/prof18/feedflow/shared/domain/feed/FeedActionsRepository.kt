@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.domain.feed
 
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedItemId
+import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.onErrorSuspend
@@ -9,6 +10,7 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.Search
 import com.prof18.feedflow.feedsync.feedbin.domain.FeedbinRepository
 import com.prof18.feedflow.feedsync.greader.domain.GReaderRepository
+import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemParserWorker
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -23,6 +25,7 @@ internal class FeedActionsRepository(
     private val gReaderRepository: GReaderRepository,
     private val feedbinRepository: FeedbinRepository,
     private val accountsRepository: AccountsRepository,
+    private val feedAppearanceSettingsRepository: FeedAppearanceSettingsRepository,
     private val feedStateRepository: FeedStateRepository,
     private val feedItemParserWorker: FeedItemParserWorker,
 ) {
@@ -56,9 +59,14 @@ internal class FeedActionsRepository(
 
     suspend fun markAllAboveAsRead(targetItemId: String) {
         val currentFilter = feedStateRepository.getCurrentFeedFilter()
+        val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
+
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
-                val itemIds = databaseHelper.getItemsAbove(targetItemId, currentFilter)
+                val itemIds = when (feedOrder) {
+                    FeedOrder.NEWEST_FIRST -> databaseHelper.getNewerItems(targetItemId, currentFilter)
+                    FeedOrder.OLDEST_FIRST -> databaseHelper.getOlderItems(targetItemId, currentFilter)
+                }
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
                     gReaderRepository.updateReadStatus(feedItemIds, isRead = true)
@@ -69,7 +77,10 @@ internal class FeedActionsRepository(
             }
 
             SyncAccounts.FEEDBIN -> {
-                val itemIds = databaseHelper.getItemsAbove(targetItemId, currentFilter)
+                val itemIds = when (feedOrder) {
+                    FeedOrder.NEWEST_FIRST -> databaseHelper.getNewerItems(targetItemId, currentFilter)
+                    FeedOrder.OLDEST_FIRST -> databaseHelper.getOlderItems(targetItemId, currentFilter)
+                }
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
                     feedbinRepository.updateReadStatus(feedItemIds, isRead = true)
@@ -84,7 +95,10 @@ internal class FeedActionsRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.markAllAboveAsRead(targetItemId, currentFilter)
+                when (feedOrder) {
+                    FeedOrder.NEWEST_FIRST -> databaseHelper.markAllNewerAsRead(targetItemId, currentFilter)
+                    FeedOrder.OLDEST_FIRST -> databaseHelper.markAllOlderAsRead(targetItemId, currentFilter)
+                }
                 feedSyncRepository.setIsSyncUploadRequired()
             }
         }
@@ -94,9 +108,14 @@ internal class FeedActionsRepository(
 
     suspend fun markAllBelowAsRead(targetItemId: String) {
         val currentFilter = feedStateRepository.getCurrentFeedFilter()
+        val feedOrder = feedAppearanceSettingsRepository.getFeedOrder()
+
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
-                val itemIds = databaseHelper.getItemsBelow(targetItemId, currentFilter)
+                val itemIds = when (feedOrder) {
+                    FeedOrder.NEWEST_FIRST -> databaseHelper.getOlderItems(targetItemId, currentFilter)
+                    FeedOrder.OLDEST_FIRST -> databaseHelper.getNewerItems(targetItemId, currentFilter)
+                }
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
                     gReaderRepository.updateReadStatus(feedItemIds, isRead = true)
@@ -107,7 +126,10 @@ internal class FeedActionsRepository(
             }
 
             SyncAccounts.FEEDBIN -> {
-                val itemIds = databaseHelper.getItemsBelow(targetItemId, currentFilter)
+                val itemIds = when (feedOrder) {
+                    FeedOrder.NEWEST_FIRST -> databaseHelper.getOlderItems(targetItemId, currentFilter)
+                    FeedOrder.OLDEST_FIRST -> databaseHelper.getNewerItems(targetItemId, currentFilter)
+                }
                 if (itemIds.isNotEmpty()) {
                     val feedItemIds = itemIds.map { FeedItemId(it) }
                     feedbinRepository.updateReadStatus(feedItemIds, isRead = true)
@@ -122,7 +144,10 @@ internal class FeedActionsRepository(
             SyncAccounts.GOOGLE_DRIVE,
             SyncAccounts.ICLOUD,
             -> {
-                databaseHelper.markAllBelowAsRead(targetItemId, currentFilter)
+                when (feedOrder) {
+                    FeedOrder.NEWEST_FIRST -> databaseHelper.markAllOlderAsRead(targetItemId, currentFilter)
+                    FeedOrder.OLDEST_FIRST -> databaseHelper.markAllNewerAsRead(targetItemId, currentFilter)
+                }
                 feedSyncRepository.setIsSyncUploadRequired()
             }
         }

@@ -40,6 +40,7 @@ internal fun ReadingBehaviorScreenContent(
     setPrefetchArticleContent: (Boolean) -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
+    setHideReadItems: (Boolean) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -120,6 +121,15 @@ internal fun ReadingBehaviorScreenContent(
             }
 
             item {
+                SettingSwitchItem(
+                    title = LocalFeedFlowStrings.current.settingsHideReadItems,
+                    icon = Icons.Outlined.MarkAsUnread,
+                    isChecked = state.isHideReadItemsEnabled,
+                    onCheckedChange = setHideReadItems,
+                )
+            }
+
+            item {
                 Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
             }
         }
@@ -138,6 +148,7 @@ private fun ReadingBehaviorScreenContentPreview() {
                 isPrefetchArticleContentEnabled = false,
                 isMarkReadWhenScrollingEnabled = true,
                 isShowReadItemsEnabled = true,
+                isHideReadItemsEnabled = false,
             ),
             browsers = persistentListOf(),
             onBrowserSelected = {},
@@ -146,6 +157,7 @@ private fun ReadingBehaviorScreenContentPreview() {
             setPrefetchArticleContent = {},
             setMarkReadWhenScrolling = {},
             setShowReadItem = {},
+            setHideReadItems = {},
         )
     }
 }

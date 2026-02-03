@@ -66,6 +66,12 @@ internal fun MenuBarScope.BehaviorMenu(
         )
 
         CheckboxItem(
+            text = LocalFeedFlowStrings.current.settingsHideReadItems,
+            checked = settingsState.isHideReadItemsEnabled,
+            onCheckedChange = callbacks.onHideReadItemsToggled,
+        )
+
+        CheckboxItem(
             text = LocalFeedFlowStrings.current.settingsReduceMotion,
             checked = settingsState.isReduceMotionEnabled,
             onCheckedChange = callbacks.onReduceMotionToggled,
@@ -121,6 +127,7 @@ internal data class BehaviorMenuCallbacks(
     val onRefreshFeedsOnLaunchToggled: (Boolean) -> Unit,
     val onShowRssParsingErrorsToggled: (Boolean) -> Unit,
     val onMarkReadWhenScrollingToggled: (Boolean) -> Unit,
+    val onHideReadItemsToggled: (Boolean) -> Unit,
     val onReduceMotionToggled: (Boolean) -> Unit,
     val onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     val onClearDownloadedArticles: () -> Unit,

@@ -38,6 +38,7 @@
     <string name="open_source_nav_bar">Open source licenses</string>
     <string name="report_issue_button">Report issue</string>
     <string name="open_website_button">Open website</string>
+    <string name="open_feed_website_button">Open feed website</string>
     <string name="database_error">Something went wrong during the retrieval of the feeds. Please retry or restart the app  - error code: %s :(</string>
     <string name="force_feed_refresh">Force feeds refresh</string>
     <string name="trigger_feed_sync">Trigger upload to your account</string>

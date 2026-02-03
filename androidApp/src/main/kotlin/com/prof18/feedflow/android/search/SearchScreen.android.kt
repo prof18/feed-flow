@@ -129,6 +129,9 @@ internal fun SearchScreen(
             )
         },
         onOpenFeedSettings = navigateToEditFeed,
+        onOpenFeedWebsite = { url ->
+            browserManager.openUrlWithFavoriteBrowser(url, context)
+        },
     )
 }
 
@@ -155,6 +158,7 @@ private fun Preview() {
             onCommentClick = {},
             onShareClick = { _ -> },
             onOpenFeedSettings = {},
+            onOpenFeedWebsite = {},
         )
     }
 }

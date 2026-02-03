@@ -73,6 +73,7 @@ internal fun FeedList(
     markAllAsRead: () -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
     onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
+    onOpenFeedWebsite: (String) -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     onMarkAllAboveAsRead: (String) -> Unit = {},
@@ -125,6 +126,7 @@ internal fun FeedList(
                         onReadStatusClick = onReadStatusClick,
                         feedFontSize = feedFontSize,
                         onOpenFeedSettings = onOpenFeedSettings,
+                        onOpenFeedWebsite = onOpenFeedWebsite,
                         onShareClick = onShareClick,
                         feedLayout = feedLayout,
                         currentFeedFilter = currentFeedFilter,
@@ -148,6 +150,7 @@ internal fun FeedList(
                             onReadStatusClick = onReadStatusClick,
                             feedFontSize = feedFontSize,
                             onOpenFeedSettings = onOpenFeedSettings,
+                            onOpenFeedWebsite = onOpenFeedWebsite,
                             onShareClick = onShareClick,
                             currentFeedFilter = currentFeedFilter,
                             onMarkAllAboveAsRead = onMarkAllAboveAsRead,
@@ -296,6 +299,7 @@ internal fun FeedListPreview() {
                 markAllAsRead = {},
                 onShareClick = {},
                 onOpenFeedSettings = {},
+                onOpenFeedWebsite = {},
             )
 
             FeedList(
@@ -318,6 +322,7 @@ internal fun FeedListPreview() {
                 markAllAsRead = {},
                 onShareClick = {},
                 onOpenFeedSettings = {},
+                onOpenFeedWebsite = {},
             )
         }
     }

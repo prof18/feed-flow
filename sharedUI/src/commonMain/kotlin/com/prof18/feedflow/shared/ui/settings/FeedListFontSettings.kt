@@ -91,6 +91,7 @@ fun FeedItemPreview(
                 onCommentClick = {},
                 onShareClick = {},
                 onOpenFeedSettings = {},
+                onOpenFeedWebsite = {},
                 feedLayout = feedLayout,
                 onMarkAllAboveAsRead = {},
                 onMarkAllBelowAsRead = {},

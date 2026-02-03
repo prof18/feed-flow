@@ -43,6 +43,7 @@ internal fun FeedItemView(
     onReadStatusClick: (FeedItemId, Boolean) -> Unit,
     onCommentClick: (FeedItemUrlInfo) -> Unit,
     onOpenFeedSettings: (FeedSource) -> Unit,
+    onOpenFeedWebsite: (String) -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
     onMarkAllAboveAsRead: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -134,6 +135,7 @@ internal fun FeedItemView(
                 onCommentClick = onCommentClick,
                 onShareClick = onShareClick,
                 onOpenFeedSettings = onOpenFeedSettings,
+                onOpenFeedWebsite = onOpenFeedWebsite,
                 onMarkAllAboveAsRead = onMarkAllAboveAsRead,
                 onMarkAllBelowAsRead = onMarkAllBelowAsRead,
             )
@@ -164,6 +166,7 @@ internal fun FeedItemListViewPreview() {
             onCommentClick = {},
             onShareClick = {},
             onOpenFeedSettings = {},
+            onOpenFeedWebsite = {},
             disableClick = true,
             onMarkAllAboveAsRead = {},
             onMarkAllBelowAsRead = {},

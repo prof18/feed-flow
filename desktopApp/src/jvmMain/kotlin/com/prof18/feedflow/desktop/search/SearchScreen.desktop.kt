@@ -134,6 +134,9 @@ internal class SearchScreen : Screen {
             onOpenFeedSettings = { feedSource ->
                 navigator.push(EditFeedScreen(feedSource))
             },
+            onOpenFeedWebsite = { url ->
+                uriHandler.openUri(url)
+            },
         )
     }
 }
@@ -160,6 +163,7 @@ private fun Preview() {
             onCommentClick = {},
             onShareClick = { _ -> },
             onOpenFeedSettings = {},
+            onOpenFeedWebsite = {},
             currentFeedFilter = null,
         )
     }

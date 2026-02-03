@@ -21,6 +21,10 @@ struct FeedItemContextMenu: View {
         // 1. Open feed settings
         makeFeedSettingsButton(feedItem: feedItem)
 
+        if let websiteUrl = feedItem.feedSource.websiteUrlFallback() {
+            makeOpenWebsiteButton(websiteUrl: websiteUrl)
+        }
+
         // Separator
         Divider()
 
@@ -143,6 +147,27 @@ struct FeedItemContextMenu: View {
             onOpenFeedSettings(feedItem.feedSource)
         } label: {
             Label(feedFlowStrings.openFeedSettings, systemImage: "gearshape")
+        }
+    }
+
+    @ViewBuilder
+    private func makeOpenWebsiteButton(websiteUrl: String) -> some View {
+        Button {
+            openWebsite(websiteUrl)
+        } label: {
+            Label(feedFlowStrings.openFeedWebsiteButton, systemImage: "globe")
+        }
+    }
+
+    private func openWebsite(_ url: String) {
+        if let url = URL(string: url), browserSelector.openInAppBrowser() {
+            if browserSelector.isValidForInAppBrowser(url) {
+                appState.navigate(route: CommonViewRoute.inAppBrowser(url: url))
+            } else {
+                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
+            }
+        } else {
+            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url))
         }
     }
 }

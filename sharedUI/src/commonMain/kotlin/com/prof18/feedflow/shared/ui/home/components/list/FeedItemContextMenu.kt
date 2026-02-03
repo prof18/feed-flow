@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material.icons.filled.MarkEmailUnread
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DropdownMenu
@@ -37,6 +38,7 @@ internal fun FeedItemContextMenu(
     closeMenu: () -> Unit,
     onShareClick: (FeedItemUrlTitle) -> Unit,
     onOpenFeedSettings: (com.prof18.feedflow.core.model.FeedSource) -> Unit,
+    onOpenFeedWebsite: (String) -> Unit,
     onMarkAllAboveAsRead: (String) -> Unit,
     onMarkAllBelowAsRead: (String) -> Unit,
 ) {
@@ -58,6 +60,18 @@ internal fun FeedItemContextMenu(
                 closeMenu()
             },
         )
+
+        val websiteUrl = feedItem.feedSource.websiteUrlFallback()
+        if (websiteUrl != null) {
+            DropdownMenuItem(
+                text = { Text(LocalFeedFlowStrings.current.openFeedWebsiteButton) },
+                leadingIcon = { Icon(imageVector = Icons.Default.Public, contentDescription = null) },
+                onClick = {
+                    onOpenFeedWebsite(websiteUrl)
+                    closeMenu()
+                },
+            )
+        }
 
         // Separator
         HorizontalDivider()

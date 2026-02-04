@@ -15,6 +15,7 @@ struct Snackbar: View {
     @State private var snackbarData: SnackbarData = .init()
 
     @State private var showBanner = false
+    @State private var dismissDirection: SnackbarDismissDirection = .vertical
 
     var body: some View {
         HStack(spacing: Spacing.medium) {
@@ -59,7 +60,12 @@ struct Snackbar: View {
         .gesture(
             DragGesture()
                 .onEnded { value in
-                    if value.translation.height > 10 {
+                    let horizontalDismissThreshold: CGFloat = 40
+                    let horizontalSwipe = abs(value.translation.width) > horizontalDismissThreshold &&
+                        abs(value.translation.width) > abs(value.translation.height)
+
+                    if horizontalSwipe {
+                        dismissDirection = .horizontal(direction: value.translation.width >= 0 ? 1 : -1)
                         withAnimation {
                             showBanner = false
                         }
@@ -68,6 +74,7 @@ struct Snackbar: View {
         )
         .onChange(of: messageQueue) {
             if let data = self.messageQueue.first {
+                dismissDirection = .vertical
                 withAnimation {
                     self.snackbarData = data
                     self.showBanner = true
@@ -75,6 +82,7 @@ struct Snackbar: View {
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                     withAnimation {
+                        dismissDirection = .vertical
                         showBanner = false
                         if !self.messageQueue.isEmpty {
                             self.messageQueue.removeFirst()
@@ -85,7 +93,21 @@ struct Snackbar: View {
         }
         .padding(.bottom, Spacing.regular)
         .zIndex(100)
-        .offset(y: showBanner ? 0 : UIScreen.main.bounds.height)
+        .offset(showBanner ? .zero : hiddenOffset)
         .padding(.horizontal, Spacing.medium)
     }
+
+    private var hiddenOffset: CGSize {
+        switch dismissDirection {
+        case .horizontal(let direction):
+            return CGSize(width: direction * UIScreen.main.bounds.width, height: 0)
+        case .vertical:
+            return CGSize(width: 0, height: UIScreen.main.bounds.height)
+        }
+    }
+}
+
+private enum SnackbarDismissDirection {
+    case horizontal(direction: CGFloat)
+    case vertical
 }

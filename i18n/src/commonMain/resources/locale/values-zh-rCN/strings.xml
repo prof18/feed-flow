@@ -81,7 +81,7 @@
     <string name="no_category">未分类</string>
     <string name="import_export_description">FeedFlow 支持通过 OPML 文件导入和导出订阅内容，以增强与其他 RSS 阅读器的互操作性。</string>
     <string name="no_feed_modal_title">添加新订阅源</string>
-    <string name="settings_toggle_show_read_articles">在时间线显示已读文章</string>
+    <string name="settings_toggle_show_read_articles">在列表中显示已读文章</string>
     <string name="rename_feed_source_name_button">重命名</string>
     <string name="drawer_title_read">已读</string>
     <string name="no_feed_modal_message">您可以手动添加订阅源，可以从其他 RSS 阅读器导入订阅内容，也可以连接账号从其他设备同步数据（此功能处于测试阶段）。</string>
@@ -352,4 +352,8 @@
     <string name="settings_notification_mode_grouped">全部合并</string>
     <string name="notification_category_body">您在 %s 中有新文章</string>
     <string name="settings_theme_oled">黑色</string>
+    <string name="open_feed_website_button">打开订阅源网站</string>
+    <string name="menu_show_read_articles">显示已读文章</string>
+    <string name="settings_hide_read_items">标记为已读时自动隐藏文章</string>
+    <string name="settings_show_rss_parsing_errors">显示订阅源加载错误消息</string>
 </resources>

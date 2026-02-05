@@ -72,7 +72,7 @@
     <string name="dropbox_sync_desktop_description">Nhấn vào nút Kết nối, bạn sẽ được chuyển hướng đến trang web Dropbox. Sau khi kết nối tài khoản, hãy sao chép và nhập mã xác minh vào đây trong ứng dụng</string>
     <string name="feed_sync_in_progress">Đang làm mới. Ứng dụng sẽ tự đóng khi xong.</string>
     <string name="no_icloud_sync_yet">Dữ liệu chưa được đồng bộ hóa với iCloud. Nhấn vào nút Sao lưu để kích hoạt đồng bộ hóa</string>
-    <string name="settings_toggle_show_read_articles">Vẫn hiện các bài viết đã đọc</string>
+    <string name="settings_toggle_show_read_articles">Hiện các bài viết đã đọc trong danh sách</string>
     <string name="about_button">Giới thiệu</string>
     <string name="dropbox_sync_common_description">Kết nối tài khoản Dropbox của bạn để đồng bộ hóa các nguồn tin, danh mục, bài viết đã đọc và đã lưu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong một thư mục dành riêng cho ứng dụng; FeedFlow không có quyền truy cập vào bất kỳ file nào của bạn.</string>
     <string name="last_download">Tải xuống lần cuối: %s</string>
@@ -352,4 +352,8 @@
     <string name="settings_notification_mode_category">Theo danh mục</string>
     <string name="settings_notification_mode_grouped">Gộp chung lại</string>
     <string name="settings_theme_oled">Đen</string>
+    <string name="open_feed_website_button">Mở trang web nguồn tin</string>
+    <string name="menu_show_read_articles">Hiện những bài viết đã đọc</string>
+    <string name="settings_hide_read_items">Ẩn những bài viết đánh dấu đã đọc</string>
+    <string name="settings_show_rss_parsing_errors">Hiện thông báo lỗi tải nguồn tin</string>
 </resources>

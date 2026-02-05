@@ -11,8 +11,8 @@ disable_android_in_file() {
     awk '
     BEGIN { in_android_block = 0; brace_count = 0 }
     
-    # Match androidTarget lines
-    /^[[:space:]]*androidTarget/ {
+    # Match androidLibrary lines
+    /^[[:space:]]*androidLibrary/ {
         print "// " $0
         if ($0 ~ /{[[:space:]]*$/) {
             in_android_block = 1
@@ -106,7 +106,15 @@ disable_android_in_file() {
         brace_count = 1
         next
     }
-    
+
+    # Match KotlinMultiplatformAndroidLibraryTarget configuration blocks
+    /configure<KotlinMultiplatformAndroidLibraryTarget>/ {
+        print "// " $0
+        in_android_block = 1
+        brace_count = 1
+        next
+    }
+
     # Match pure Android source sets (not commonJvmAndroid)
     /^[[:space:]]*androidMain[[:space:]]*{/ {
         print "// " $0
@@ -115,7 +123,7 @@ disable_android_in_file() {
         next
     }
     
-    /^[[:space:]]*val androidUnitTest/ {
+    /getByName\("androidHostTest"\)/ {
         print "// " $0
         in_android_block = 1
         # Check if opening brace is on same line

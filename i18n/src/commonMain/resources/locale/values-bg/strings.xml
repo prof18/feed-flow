@@ -93,7 +93,7 @@
     <string name="menu_add_to_bookmark">Добавяне към отметки</string>
     <string name="import_export_description">FeedFlow поддържа внасянето и изнасянето на вашите абонаменти с OPML файл за по-добра оперативна съвместимост с другите четци на емисии.</string>
     <string name="no_feed_modal_message">Можете ръчно да добавите емисия, можете да внесете вашите абонаменти от друг RSS четец или можете да свържете профил, за да синхронизирате данните от друго устройство (тази функционалност е в бета версия).</string>
-    <string name="settings_toggle_show_read_articles">Показване на прочетени статии в хронологията</string>
+    <string name="settings_toggle_show_read_articles">Показване на прочетени статии в списъци</string>
     <string name="menu_remove_from_bookmark">Премахване от отметки</string>
     <string name="menu_mark_as_read">Маркиране като прочетено</string>
     <string name="read_articles_empty_screen_message">Тук няма нищо, време е да започнете да четете!</string>
@@ -352,4 +352,8 @@
     <string name="settings_notification_mode_category">По категория</string>
     <string name="settings_notification_mode_grouped">Всички взети заедно</string>
     <string name="settings_theme_oled">Черна</string>
+    <string name="open_feed_website_button">Отвори уебсайта на емисията</string>
+    <string name="menu_show_read_articles">Показване на прочетени статии</string>
+    <string name="settings_hide_read_items">Автоматично скриване на статии, когато са маркирани като прочетени</string>
+    <string name="settings_show_rss_parsing_errors">Показване на съобщения за грешки при зареждане на емисията</string>
 </resources>

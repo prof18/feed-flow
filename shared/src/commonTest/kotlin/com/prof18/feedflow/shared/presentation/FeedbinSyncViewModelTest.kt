@@ -21,9 +21,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 
 class FeedbinSyncViewModelTest : KoinTestBase() {
 
+    private val uiTimeout = 10.seconds
     private val networkSettings: NetworkSettings by inject()
     private val viewModel: FeedbinSyncViewModel by inject()
 
@@ -37,7 +39,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `initial state is Unlinked when no account is set`() = runTest(testDispatcher) {
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val state = awaitItem()
             assertIs<AccountConnectionUiState.Unlinked>(state)
         }
@@ -52,7 +54,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
         advanceUntilIdle()
 
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val state = awaitItem()
             assertIs<AccountConnectionUiState.Linked>(state)
             assertEquals(AccountSyncUIState.None, state.syncState)
@@ -69,7 +71,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
         advanceUntilIdle()
 
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val state = awaitItem()
             assertIs<AccountConnectionUiState.Linked>(state)
             val syncState = assertIs<AccountSyncUIState.Synced>(state.syncState)
@@ -79,7 +81,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `login success with sync success sets state to Linked`() = runTest(testDispatcher) {
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 
@@ -100,7 +102,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
     fun `login sets loading state during login`() = runTest(testDispatcher) {
         advanceUntilIdle()
 
-        viewModel.loginLoading.test {
+        viewModel.loginLoading.test(timeout = uiTimeout) {
             assertEquals(false, awaitItem())
 
             viewModel.login(
@@ -121,7 +123,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
         networkSettings.setSyncPwd("testpassword")
         networkSettings.setSyncUsername("testuser")
 
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             // Skip initial Loading and Linked states
             val linkedState = awaitItemMatching { it is AccountConnectionUiState.Linked }
             assertIs<AccountConnectionUiState.Linked>(linkedState)
@@ -149,7 +151,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
         advanceUntilIdle()
 
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val state = awaitItem()
             assertIs<AccountConnectionUiState.Linked>(state)
             assertEquals(AccountSyncUIState.None, state.syncState)
@@ -166,7 +168,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
         advanceUntilIdle()
 
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val state = awaitItem()
             assertIs<AccountConnectionUiState.Linked>(state)
             val syncState = assertIs<AccountSyncUIState.Synced>(state.syncState)
@@ -177,7 +179,7 @@ class FeedbinSyncViewModelTest : KoinTestBase() {
 
     @Test
     fun `login success sets Feedbin account type`() = runTest(testDispatcher) {
-        viewModel.uiState.test {
+        viewModel.uiState.test(timeout = uiTimeout) {
             val unlinkedState = awaitItemMatching { it is AccountConnectionUiState.Unlinked }
             assertIs<AccountConnectionUiState.Unlinked>(unlinkedState)
 

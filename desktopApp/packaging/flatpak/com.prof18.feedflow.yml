@@ -11,6 +11,7 @@ finish-args:
   - --socket=x11
   - --device=dri
   - --filesystem=xdg-download:rw
+  - --talk-name=ca.desrt.dconf
 
 modules:
   - name: openjdk

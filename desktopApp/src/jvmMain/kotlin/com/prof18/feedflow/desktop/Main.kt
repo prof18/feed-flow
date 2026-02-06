@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -9,6 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -75,6 +78,7 @@ fun main() {
         val scope = rememberCoroutineScope()
         val icon = painterResource(Res.drawable.icon)
         val isLinux = getDesktopOS() == DesktopOS.LINUX
+        val requestedUiScale = remember { resolveUiScale() }
 
         if (!showMainWindow) {
             Window(
@@ -89,10 +93,12 @@ fun main() {
                 undecorated = true,
                 transparent = !isLinux,
             ) {
-                SplashContent(
-                    progress = initProgress,
-                    useRoundedCorners = !isLinux,
-                )
+                ProvideUiScale(requestedUiScale) {
+                    SplashContent(
+                        progress = initProgress,
+                        useRoundedCorners = !isLinux,
+                    )
+                }
             }
         }
 
@@ -130,40 +136,42 @@ fun main() {
                 visible = showMainWindow,
                 onPreviewKeyEvent = { false },
             ) {
-                DisposableEffect(themeMode) {
-                    val backgroundColor = when (themeMode) {
-                        ThemeMode.OLED -> java.awt.Color(OLED_THEME_BACKGROUND)
-                        ThemeMode.DARK -> java.awt.Color(DARK_THEME_BACKGROUND)
-                        ThemeMode.LIGHT -> java.awt.Color(LIGHT_THEME_BACKGROUND)
-                        ThemeMode.SYSTEM -> {
-                            if (isDarkTheme) {
-                                java.awt.Color(DARK_THEME_BACKGROUND)
-                            } else {
-                                java.awt.Color(LIGHT_THEME_BACKGROUND)
+                ProvideUiScale(requestedUiScale) {
+                    DisposableEffect(themeMode) {
+                        val backgroundColor = when (themeMode) {
+                            ThemeMode.OLED -> java.awt.Color(OLED_THEME_BACKGROUND)
+                            ThemeMode.DARK -> java.awt.Color(DARK_THEME_BACKGROUND)
+                            ThemeMode.LIGHT -> java.awt.Color(LIGHT_THEME_BACKGROUND)
+                            ThemeMode.SYSTEM -> {
+                                if (isDarkTheme) {
+                                    java.awt.Color(DARK_THEME_BACKGROUND)
+                                } else {
+                                    java.awt.Color(LIGHT_THEME_BACKGROUND)
+                                }
                             }
                         }
+
+                        window.background = backgroundColor
+                        window.contentPane.background = backgroundColor
+                        if (getDesktopOS().isMacOs()) {
+                            window.rootPane.background = backgroundColor
+                        }
+
+                        onDispose { }
                     }
 
-                    window.background = backgroundColor
-                    window.contentPane.background = backgroundColor
-                    if (getDesktopOS().isMacOs()) {
-                        window.rootPane.background = backgroundColor
+                    LaunchedEffect(Unit) {
+                        initProgress = 1f
+                        delay(timeMillis = 100)
+                        showMainWindow = true
                     }
 
-                    onDispose { }
+                    AppContent(
+                        showBackupLoader = showBackupLoader,
+                        windowState = windowState,
+                        appConfig = appConfig,
+                    )
                 }
-
-                LaunchedEffect(Unit) {
-                    initProgress = 1f
-                    delay(timeMillis = 100)
-                    showMainWindow = true
-                }
-
-                AppContent(
-                    showBackupLoader = showBackupLoader,
-                    windowState = windowState,
-                    appConfig = appConfig,
-                )
             }
         }
     }
@@ -250,6 +258,53 @@ private fun setupTelemetryAndCrashReporting(appConfig: DesktopConfig) {
     val telemetryClient = DI.koin.get<TelemetryDeckClient>()
     telemetryClient.signal("TelemetryDeck.Session.started")
 }
+
+@Composable
+private fun ProvideUiScale(
+    requestedUiScale: Float?,
+    content: @Composable () -> Unit,
+) {
+    if (requestedUiScale == null) {
+        content()
+        return
+    }
+
+    val baseDensity = LocalDensity.current
+    val clampedScale = requestedUiScale.coerceIn(MIN_UI_SCALE, MAX_UI_SCALE)
+    val shouldOverride = if (clampedScale <= UI_SCALE_ONE_THRESHOLD) {
+        baseDensity.density <= UI_SCALE_ONE_THRESHOLD
+    } else {
+        true
+    }
+    if (!shouldOverride) {
+        content()
+        return
+    }
+    val scaledDensity = remember(clampedScale, baseDensity) {
+        Density(clampedScale, baseDensity.fontScale)
+    }
+
+    CompositionLocalProvider(LocalDensity provides scaledDensity) {
+        content()
+    }
+}
+
+private fun resolveUiScale(): Float? {
+    val raw = System.getProperty("feedflow.uiScale")
+        ?: System.getenv("FEEDFLOW_UI_SCALE")
+    return parseUiScale(raw)
+}
+
+private fun parseUiScale(raw: String?): Float? {
+    if (raw.isNullOrBlank()) return null
+    val value = raw.trim().toFloatOrNull() ?: return null
+    if (!value.isFinite() || value <= 0f) return null
+    return value
+}
+
+private const val MIN_UI_SCALE = 0.5f
+private const val MAX_UI_SCALE = 4.0f
+private const val UI_SCALE_ONE_THRESHOLD = 1.01f
 
 @Composable
 private fun windowState(desktopWindowSettingsRepository: DesktopWindowSettingsRepository): WindowState {

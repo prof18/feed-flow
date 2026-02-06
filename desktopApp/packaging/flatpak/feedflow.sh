@@ -50,5 +50,6 @@ exec /app/jre/bin/java \
     -Dawt.useSystemAAFontSettings=on \
     -Dswing.aatext=true \
     -Dsun.java2d.uiScale="$UI_SCALE" \
+    -Dfeedflow.uiScale="$UI_SCALE" \
     -Djava.util.prefs.userRoot="${XDG_CONFIG_HOME:-$HOME/.config}/feedflow" \
     -jar /app/lib/feedflow.jar "$@"

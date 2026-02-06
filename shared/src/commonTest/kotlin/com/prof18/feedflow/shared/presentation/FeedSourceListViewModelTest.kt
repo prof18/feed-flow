@@ -135,6 +135,28 @@ class FeedSourceListViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `deleteAllFeedsInCategory removes all feeds in category`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
+        val newsCategory = FeedSourceCategory(id = "news", title = "News")
+        val techSource1 = createFeedSource(id = "tech-1", title = "Tech Source 1", category = techCategory)
+        val techSource2 = createFeedSource(id = "tech-2", title = "Tech Source 2", category = techCategory)
+        val newsSource = createFeedSource(id = "news-1", title = "News Source", category = newsCategory)
+
+        insertFeedSources(databaseHelper, techSource1, techSource2, newsSource)
+        advanceUntilIdle()
+
+        val stateBefore = viewModel.feedSourcesState.value
+        assertEquals(2, stateBefore.feedSourcesWithCategory.size)
+
+        viewModel.deleteAllFeedsInCategory(listOf(techSource1, techSource2))
+        advanceUntilIdle()
+
+        val stateAfter = viewModel.feedSourcesState.value
+        val remainingIds = stateAfter.feedSourcesWithCategory.flatMap { it.feedSources.map { fs -> fs.id } }
+        assertEquals(listOf("news-1"), remainingIds)
+    }
+
+    @Test
     fun `errorState emits mapped errors`() = runTest(testDispatcher) {
         viewModel.errorState.test {
             val feedJob = launch {

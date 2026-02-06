@@ -44,6 +44,8 @@ import org.jetbrains.compose.resources.painterResource
 import java.awt.Toolkit
 import java.io.File
 import java.io.InputStream
+import kotlin.math.abs
+import kotlin.math.max
 import java.util.Properties
 
 private const val DARK_THEME_BACKGROUND = 0x1C1B1F
@@ -271,17 +273,13 @@ private fun ProvideUiScale(
 
     val baseDensity = LocalDensity.current
     val clampedScale = requestedUiScale.coerceIn(MIN_UI_SCALE, MAX_UI_SCALE)
-    val shouldOverride = if (clampedScale <= UI_SCALE_ONE_THRESHOLD) {
-        baseDensity.density <= UI_SCALE_ONE_THRESHOLD
-    } else {
-        true
-    }
-    if (!shouldOverride) {
+    val targetDensity = max(baseDensity.density, clampedScale)
+    if (abs(targetDensity - baseDensity.density) < DENSITY_EPSILON) {
         content()
         return
     }
-    val scaledDensity = remember(clampedScale, baseDensity) {
-        Density(clampedScale, baseDensity.fontScale)
+    val scaledDensity = remember(targetDensity, baseDensity) {
+        Density(targetDensity, baseDensity.fontScale)
     }
 
     CompositionLocalProvider(LocalDensity provides scaledDensity) {
@@ -290,21 +288,32 @@ private fun ProvideUiScale(
 }
 
 private fun resolveUiScale(): Float? {
-    val raw = System.getProperty("feedflow.uiScale")
+    val raw = System.getProperty("sun.java2d.uiScale")
+        ?: System.getProperty("feedflow.uiScale")
         ?: System.getenv("FEEDFLOW_UI_SCALE")
     return parseUiScale(raw)
 }
 
 private fun parseUiScale(raw: String?): Float? {
     if (raw.isNullOrBlank()) return null
-    val value = raw.trim().toFloatOrNull() ?: return null
+    val normalized = raw.trim()
+    val value = when {
+        normalized.endsWith("%") -> {
+            val percentage = normalized.removeSuffix("%").toFloatOrNull() ?: return null
+            percentage / 100f
+        }
+        normalized.endsWith("x", ignoreCase = true) -> {
+            normalized.dropLast(n = 1).toFloatOrNull() ?: return null
+        }
+        else -> normalized.toFloatOrNull() ?: return null
+    }
     if (!value.isFinite() || value <= 0f) return null
     return value
 }
 
 private const val MIN_UI_SCALE = 0.5f
 private const val MAX_UI_SCALE = 4.0f
-private const val UI_SCALE_ONE_THRESHOLD = 1.01f
+private const val DENSITY_EPSILON = 0.01f
 
 @Composable
 private fun windowState(desktopWindowSettingsRepository: DesktopWindowSettingsRepository): WindowState {

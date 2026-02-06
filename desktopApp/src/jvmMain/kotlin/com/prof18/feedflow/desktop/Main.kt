@@ -44,9 +44,9 @@ import org.jetbrains.compose.resources.painterResource
 import java.awt.Toolkit
 import java.io.File
 import java.io.InputStream
+import java.util.Properties
 import kotlin.math.abs
 import kotlin.math.max
-import java.util.Properties
 
 private const val DARK_THEME_BACKGROUND = 0x1C1B1F
 private const val LIGHT_THEME_BACKGROUND = 0xFFFBFE
@@ -300,10 +300,10 @@ private fun parseUiScale(raw: String?): Float? {
     val value = when {
         normalized.endsWith("%") -> {
             val percentage = normalized.removeSuffix("%").toFloatOrNull() ?: return null
-            percentage / 100f
+            percentage / PERCENT_SCALE_DIVISOR
         }
         normalized.endsWith("x", ignoreCase = true) -> {
-            normalized.dropLast(n = 1).toFloatOrNull() ?: return null
+            normalized.dropLast(n = SCALE_SUFFIX_LENGTH).toFloatOrNull() ?: return null
         }
         else -> normalized.toFloatOrNull() ?: return null
     }
@@ -314,6 +314,8 @@ private fun parseUiScale(raw: String?): Float? {
 private const val MIN_UI_SCALE = 0.5f
 private const val MAX_UI_SCALE = 4.0f
 private const val DENSITY_EPSILON = 0.01f
+private const val SCALE_SUFFIX_LENGTH = 1
+private const val PERCENT_SCALE_DIVISOR = 100f
 
 @Composable
 private fun windowState(desktopWindowSettingsRepository: DesktopWindowSettingsRepository): WindowState {

@@ -129,7 +129,7 @@ private fun checkIntegrityAndRecover(
             return newDriver
         }
     } catch (e: Exception) {
-        logger.w("Could not perform integrity check: ${e.message}")
+        logger.d("Could not perform integrity check: ${e.message}")
     }
     return originalDriver
 }
@@ -143,7 +143,7 @@ fun applyPragmaSettings(sqlDriver: SqlDriver, logger: Logger) {
         sqlDriver.execute(null, "PRAGMA cache_size=10000;", 0, null)
         sqlDriver.execute(null, "PRAGMA temp_store=memory;", 0, null)
     } catch (e: Exception) {
-        logger.w("Failed to apply some PRAGMA settings: ${e.message}")
+        logger.d("Failed to apply some PRAGMA settings: ${e.message}")
     }
 }
 

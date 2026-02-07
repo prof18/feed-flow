@@ -23,7 +23,7 @@ fun createDatabaseDriver(
         val properties = Properties().apply {
             setProperty("journal_mode", "WAL")
             setProperty("synchronous", "NORMAL")
-            setProperty("busy_timeout", "5000")
+            setProperty("busy_timeout", "30000")
         }
         return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY + databasePath.absolutePath, properties)
     }

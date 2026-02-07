@@ -138,11 +138,27 @@ class MainActivity : BaseThemeActivity() {
             currentIntent?.let { intent ->
                 if (intent.action == Intent.ACTION_VIEW && intent.data != null) {
                     val uri = intent.data
-                    if (uri?.scheme == "feedflow" && uri.host == "feed") {
-                        val feedId = uri.pathSegments.firstOrNull()
-                        if (feedId != null) {
-                            readerModeViewModel.setLoading()
-                            deeplinkViewModel.getReaderModeUrl(FeedItemId(feedId))
+                    if (uri?.scheme == "feedflow") {
+                        when (uri.host) {
+                            "feed" -> {
+                                val feedId = uri.pathSegments.firstOrNull()
+                                if (feedId != null) {
+                                    readerModeViewModel.setLoading()
+                                    deeplinkViewModel.getReaderModeUrl(FeedItemId(feedId))
+                                }
+                            }
+                            "feedsourcefilter" -> {
+                                val feedSourceId = uri.pathSegments.firstOrNull()
+                                if (feedSourceId != null) {
+                                    homeViewModel.updateFeedSourceFilter(feedSourceId)
+                                }
+                            }
+                            "category" -> {
+                                val categoryId = uri.pathSegments.firstOrNull()
+                                if (categoryId != null) {
+                                    homeViewModel.updateCategoryFilter(categoryId)
+                                }
+                            }
                         }
                     }
                 }

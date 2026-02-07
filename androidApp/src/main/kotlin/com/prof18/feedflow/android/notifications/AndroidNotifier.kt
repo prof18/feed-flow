@@ -103,7 +103,7 @@ class AndroidNotifier(
         }
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            notificationId,
             contentIntent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )

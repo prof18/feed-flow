@@ -26,13 +26,12 @@ import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
 import androidx.glance.layout.RowScope
-import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
-import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.text.FontWeight
@@ -85,7 +84,10 @@ internal fun WidgetFeedItemCard(
     val context = LocalContext.current.applicationContext
     val clickAction = createFeedItemClickAction(feedItem, context, browserManager)
 
-    Column(modifier = modifier) {
+    Box(
+        modifier = modifier
+            .padding(vertical = Spacing.xsmall)
+    ) {
         Row(
             modifier = GlanceModifier
                 .fillMaxWidth()
@@ -97,7 +99,6 @@ internal fun WidgetFeedItemCard(
         ) {
             Content(feedItem, fontSizes)
         }
-        Spacer(GlanceModifier.height(8.dp))
     }
 }
 

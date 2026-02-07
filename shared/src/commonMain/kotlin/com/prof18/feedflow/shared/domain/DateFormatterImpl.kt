@@ -677,6 +677,15 @@ class DateFormatterImpl(
         // Handle double spaces
         normalized = normalized.replace("  ", " ")
 
+        // Handle missing space after day-of-week comma (e.g., "Wed,28" -> "Wed, 28")
+        normalized = Regex("([A-Za-z]{3}),(\\d)")
+            .replace(normalized) { matchResult ->
+                "${matchResult.groupValues[1]}, ${matchResult.groupValues[2]}"
+            }
+
+        // Handle extra hyphen before T in ISO format (e.g., "2026-02-04-T08:00:00" -> "2026-02-04T08:00:00")
+        normalized = normalized.replace("-T", "T")
+
         // Remove appended timestamp (garbage)
         // e.g. "Mar, 09 Dic 2025 13:46:55 +0000 2025-12-09 13:46:55"
         normalized = normalized.replace(Regex("\\s\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}$"), "")

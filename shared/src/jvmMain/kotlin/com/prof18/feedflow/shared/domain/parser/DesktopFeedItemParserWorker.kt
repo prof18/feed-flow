@@ -26,24 +26,12 @@ internal class DesktopFeedItemParserWorker(
 
         return withContext(dispatcherProvider.io) {
             try {
-                val html = htmlRetriever.retrieveHtml(url)
-                if (html == null) {
-                    logger.e { "Failed to fetch HTML for: $url" }
-                    return@withContext ParsingResult.Error
-                }
+                val html = htmlRetriever.retrieveHtml(url) ?: return@withContext ParsingResult.Error
 
                 val readability4J = Readability4JExtended(url, html)
-                val article = try {
+                val article = runCatching {
                     readability4J.parse()
-                } catch (e: Throwable) {
-                    logger.e(e) { "Failed to parse article with Readability4J: $url" }
-                    null
-                }
-
-                if (article == null) {
-                    logger.e { "Readability4J returned null for: $url" }
-                    return@withContext ParsingResult.Error
-                }
+                }.getOrNull() ?: return@withContext ParsingResult.Error
 
                 val content = article.contentWithDocumentsCharsetOrUtf8
                     ?.replace(Regex("https?://.*?placeholder\\.png"), "")
@@ -82,7 +70,7 @@ internal class DesktopFeedItemParserWorker(
                     siteName = null,
                 )
             } catch (e: Throwable) {
-                logger.e(e) { "Error parsing content for: $url" }
+                logger.d(e) { "Error parsing content for: $url" }
                 ParsingResult.Error
             }
         }

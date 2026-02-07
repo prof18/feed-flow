@@ -119,7 +119,7 @@ internal class FeedItemParser(
                                 val plainText = jsonResult.optString("plainText", "")
 
                                 if (plainText.length < MIN_CONTENT_LENGTH) {
-                                    logger.w { "Content too short (${plainText.length} chars), rejecting" }
+                                    logger.d { "Content too short (${plainText.length} chars), rejecting" }
                                     onResult(ParsingResult.Error)
                                     return@evaluateJavascript
                                 }

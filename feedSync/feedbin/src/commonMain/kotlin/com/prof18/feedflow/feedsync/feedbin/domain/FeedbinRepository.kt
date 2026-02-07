@@ -469,7 +469,7 @@ class FeedbinRepository internal constructor(
                 mode = ENTRY_MODE_EXTENDED,
             )
             if (result.isError()) {
-                logger.e { "Failed to fetch entries: $result" }
+                logger.d { "Failed to fetch entries: $result" }
                 return result.failure.error()
             }
             result.onSuccessSuspend { entries ->
@@ -518,7 +518,7 @@ class FeedbinRepository internal constructor(
             )
 
             if (result.isError()) {
-                logger.e { "Failed to fetch entries: $result" }
+                logger.d { "Failed to fetch entries: $result" }
                 return result.failure.error()
             }
 

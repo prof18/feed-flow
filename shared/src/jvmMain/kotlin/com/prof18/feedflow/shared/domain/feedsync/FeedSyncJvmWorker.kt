@@ -118,15 +118,15 @@ internal class FeedSyncJvmWorker(
                     }
 
                     UploadResult.ICLOUD_FOLDER_URL_NULL -> {
-                        logger.e { "iCloud folder URL is null" }
+                        logger.d { "iCloud folder URL is null" }
                     }
 
                     UploadResult.UPLOAD_ERROR -> {
-                        logger.e { "Error during iCloud upload" }
+                        logger.d { "Error during iCloud upload" }
                     }
 
                     UploadResult.UNKNOWN_ERROR -> {
-                        logger.e { "Unknown error during iCloud upload. Check the enum mapping" }
+                        logger.d { "Unknown error during iCloud upload. Check the enum mapping" }
                     }
                 }
             }
@@ -199,27 +199,27 @@ internal class FeedSyncJvmWorker(
                     }
 
                     DownloadResult.URL_NULL -> {
-                        logger.e { "iCloud URL is null" }
+                        logger.d { "iCloud URL is null" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.TEMP_URL_NULL -> {
-                        logger.e { "Temporary URL is null" }
+                        logger.d { "Temporary URL is null" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.DOWNLOAD_ERROR -> {
-                        logger.e { "Error during iCloud download" }
+                        logger.d { "Error during iCloud download" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.DATABASE_REPLACE_ERROR -> {
-                        logger.e { "Error during database replace" }
+                        logger.d { "Error during database replace" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
 
                     DownloadResult.UNKNOWN_ERROR -> {
-                        logger.e { "Unknown error during iCloud download. Check the enum mapping" }
+                        logger.d { "Unknown error during iCloud download. Check the enum mapping" }
                         SyncResult.General(SyncDownloadError.ICloudDownloadFailed)
                     }
                 }

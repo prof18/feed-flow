@@ -84,7 +84,7 @@ class DatabaseHelper(
             .selectFeedUrls()
             .asFlow()
             .catch {
-                logger.e(it) { "Something wrong while getting data from Database" }
+                logger.d(it) { "Something wrong while getting data from Database" }
             }
             .mapToList(backgroundDispatcher)
             .map { feedSources ->
@@ -97,7 +97,7 @@ class DatabaseHelper(
             .getFeedSourcesWithUnreadCount()
             .asFlow()
             .catch {
-                logger.e(it) { "Something wrong while getting data from Database" }
+                logger.d(it) { "Something wrong while getting data from Database" }
             }
             .mapToList(backgroundDispatcher)
             .map { feedSources ->
@@ -339,7 +339,7 @@ class DatabaseHelper(
                 )
             }
         } catch (_: Exception) {
-            logger.e { "Error while deleting old feed items" }
+            logger.d { "Error while deleting old feed items" }
         }
 
     suspend fun getOldFeedItem(timeThreshold: Long, feedFilter: FeedFilter) = withContext(backgroundDispatcher) {
@@ -362,7 +362,7 @@ class DatabaseHelper(
                 dbRef.deletedFeedItemsQueries.cleanupOldDeletedItems(thresholdTime)
             }
         } catch (_: Exception) {
-            logger.e { "Error while cleaning up old deleted items" }
+            logger.d { "Error while cleaning up old deleted items" }
         }
 
     suspend fun deleteFeedSource(feedSourceId: String) =
@@ -457,7 +457,7 @@ class DatabaseHelper(
             )
             .asFlow()
             .catch {
-                logger.e(it) { "Something wrong while getting data from Database" }
+                logger.d(it) { "Something wrong while getting data from Database" }
             }
             .mapToOneOrDefault(0, backgroundDispatcher)
             .flowOn(backgroundDispatcher)
@@ -768,7 +768,7 @@ class DatabaseHelper(
             .selectBlockedKeywords()
             .asFlow()
             .catch {
-                logger.e(it) { "Something wrong while observing blocked words from Database" }
+                logger.d(it) { "Something wrong while observing blocked words from Database" }
             }
             .mapToList(backgroundDispatcher)
             .flowOn(backgroundDispatcher)

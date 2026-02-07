@@ -39,7 +39,13 @@
       "Bash(adb shell am:*)",
       "mcp__XcodeBuildMCP__session-show-defaults",
       "Bash(wc:*)",
-      "mcp__XcodeBuildMCP__list_sims"
+      "mcp__XcodeBuildMCP__list_sims",
+      "Bash(git --no-pager diff --color=never main...test-dpi-2)",
+      "WebFetch(domain:youtrack.jetbrains.com)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:cache-redirector.jetbrains.com)",
+      "Bash(curl:*)",
+      "Bash(shasum:*)"
     ],
     "deny": []
   }

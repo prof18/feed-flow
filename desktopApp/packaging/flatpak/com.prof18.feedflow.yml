@@ -13,10 +13,22 @@ finish-args:
   - --filesystem=xdg-download:rw
 
 modules:
-  - name: openjdk
+  - name: jbr
     buildsystem: simple
     build-commands:
-      - /usr/lib/sdk/openjdk21/install.sh
+      - mkdir -p /app/jre
+      - tar xzf jbr-*.tar.gz -C /app/jre --strip-components=1
+    sources:
+      - type: file
+        url: https://cache-redirector.jetbrains.com/intellij-jbr/jbr-21.0.10-linux-x64-b1163.105.tar.gz
+        sha256: b6a3b13451d296140727bbde9325dd9ee422e2e9b2c6a9378f346f1b8d1111bc
+        only-arches:
+          - x86_64
+      - type: file
+        url: https://cache-redirector.jetbrains.com/intellij-jbr/jbr-21.0.10-linux-aarch64-b1163.105.tar.gz
+        sha256: 38804f526d869f5a9c49e9b90c04edcbc918b41e8e43264e5d5076d352a959bc
+        only-arches:
+          - aarch64
 
   - name: feedflow
     buildsystem: simple

@@ -13,6 +13,9 @@ class SentryLogWriter(
     private val minSeverity: Severity = Severity.Info,
     private val minCrashSeverity: Severity? = Severity.Warn,
     private val messageStringFormatter: MessageStringFormatter = DefaultFormatter,
+    private val isSentryEnabled: () -> Boolean = { Sentry.isEnabled() },
+    private val captureMessage: (String) -> Unit = { message -> Sentry.captureMessage(message) },
+    private val captureException: (Throwable) -> Unit = { throwable -> Sentry.captureException(throwable) },
 ) : LogWriter() {
 
     init {
@@ -31,13 +34,22 @@ class SentryLogWriter(
             return
         }
 
-        if (Sentry.isEnabled()) {
-            Sentry.captureMessage(
-                messageStringFormatter.formatMessage(severity, Tag(tag), Message(message)),
-            )
-            if (throwable != null && minCrashSeverity != null && severity >= minCrashSeverity) {
-                Sentry.captureException(throwable)
-            }
+        if (!isSentryEnabled()) {
+            return
         }
+
+        val shouldCaptureException = throwable != null &&
+            minCrashSeverity != null &&
+            severity >= minCrashSeverity
+
+        if (shouldCaptureException) {
+            // Avoid duplicate Sentry events for throwable logs.
+            captureException(throwable)
+            return
+        }
+
+        captureMessage(
+            messageStringFormatter.formatMessage(severity, Tag(tag), Message(message)),
+        )
     }
 }

@@ -27,9 +27,7 @@ internal class FeedItemParser(
     suspend fun parseFeedItem(url: String, onResult: (ParsingResult) -> Unit) {
         val js = readRawResource(appContext, com.prof18.feedflow.shared.R.raw.defuddle)
         val html = withContext(dispatcherProvider.io) {
-            htmlRetriever.retrieveHtml(url).also {
-                it?.replace(Regex("https?://.*?placeholder\\.png"), "")
-            }
+            htmlRetriever.retrieveHtml(url)?.replace(Regex("https?://.*?placeholder\\.png"), "")
             /*
                 Maybe do also:
                  val doc = Jsoup.parse(html)
@@ -110,13 +108,13 @@ internal class FeedItemParser(
 
                         evaluateJavascript(injectedJS) { result ->
                             logger.d { "Parsed article" }
-                            logger.d { "result: $result" }
                             try {
                                 val jsonResult = JSONObject(result)
                                 var content = jsonResult.getString("content")
                                 val title = jsonResult.optString("title")
                                 val site = jsonResult.optString("site")
                                 val plainText = jsonResult.optString("plainText", "")
+                                logger.d { "title: $title" }
 
                                 if (plainText.length < MIN_CONTENT_LENGTH) {
                                     logger.d { "Content too short (${plainText.length} chars), rejecting" }
@@ -145,7 +143,7 @@ internal class FeedItemParser(
                                         siteName = site.takeIf { it.isNotBlank() },
                                     ),
                                 )
-                            } catch (_: Exception) {
+                            } catch (_: Throwable) {
                                 onResult(ParsingResult.Error)
                             }
                         }

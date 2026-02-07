@@ -166,10 +166,12 @@ internal class FeedSyncJvmWorker(
                 feedSyncer.closeDB()
                 accountSpecificDownload()
             } catch (e: Exception) {
+                val currentAccount = accountsRepository.getCurrentSyncAccount()
+                val downloadError = syncDownloadErrorForAccount(currentAccount)
                 if (!e.isTemporaryNetworkError()) {
-                    logger.e("Download from dropbox failed", e)
+                    logger.e("Download failed for account $currentAccount", e)
                 }
-                SyncResult.General(SyncDownloadError.DropboxDownloadFailed)
+                SyncResult.General(downloadError)
             }
         }
     }
@@ -317,3 +319,16 @@ internal class FeedSyncJvmWorker(
     private suspend fun emitSuccessMessage() =
         feedSyncMessageQueue.emitResult(SyncResult.Success)
 }
+
+internal fun syncDownloadErrorForAccount(account: SyncAccounts): SyncDownloadError =
+    when (account) {
+        SyncAccounts.GOOGLE_DRIVE -> SyncDownloadError.GoogleDriveDownloadFailed
+        SyncAccounts.ICLOUD -> SyncDownloadError.ICloudDownloadFailed
+        SyncAccounts.DROPBOX,
+        SyncAccounts.LOCAL,
+        SyncAccounts.FRESH_RSS,
+        SyncAccounts.MINIFLUX,
+        SyncAccounts.BAZQUX,
+        SyncAccounts.FEEDBIN,
+        -> SyncDownloadError.DropboxDownloadFailed
+    }

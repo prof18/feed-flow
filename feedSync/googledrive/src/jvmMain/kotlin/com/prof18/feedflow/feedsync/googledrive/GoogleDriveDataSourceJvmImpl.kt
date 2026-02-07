@@ -111,23 +111,27 @@ class GoogleDriveDataSourceJvmImpl(
 
     override suspend fun performDownload(downloadParam: GoogleDriveDownloadParam): GoogleDriveDownloadResult =
         withDriveClient { client ->
-            var fileId = googleDriveSettings.getBackupFileId()
-
-            if (fileId == null) {
+            val fileId = googleDriveSettings.getBackupFileId() ?: run {
                 val result = client.files().list()
                     .setSpaces("appDataFolder")
                     .setQ("name = '${downloadParam.fileName}' and trashed = false")
                     .setFields("files(id)")
                     .execute()
 
-                fileId = result.files.firstOrNull()?.id
+                val discoveredFileId = result.files.firstOrNull()?.id
 
-                if (fileId != null) {
-                    googleDriveSettings.setBackupFileId(fileId)
+                if (discoveredFileId != null) {
+                    googleDriveSettings.setBackupFileId(discoveredFileId)
                 }
+                discoveredFileId
             }
 
-            val inputStream = client.files().get(fileId).executeMediaAsInputStream()
+            val resolvedFileId = requireGoogleDriveBackupFileId(
+                fileId = fileId,
+                fileName = downloadParam.fileName,
+            )
+
+            val inputStream = client.files().get(resolvedFileId).executeMediaAsInputStream()
             downloadParam.outputStream.use { outputStream ->
                 inputStream.copyTo(outputStream)
             }
@@ -172,3 +176,10 @@ class GoogleDriveDataSourceJvmImpl(
         googleDriveSettings.setBackupFileId(newFile.id)
     }
 }
+
+internal fun requireGoogleDriveBackupFileId(
+    fileId: String?,
+    fileName: String,
+): String = fileId ?: throw GoogleDriveDownloadException(
+    errorMessage = "No Google Drive backup file found for '$fileName'",
+)

@@ -45,5 +45,11 @@ kotlin {
                 implementation(libs.google.api.services.drive)
             }
         }
+
+        jvmTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }

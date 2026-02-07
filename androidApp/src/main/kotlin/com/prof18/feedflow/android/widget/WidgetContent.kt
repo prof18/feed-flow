@@ -3,8 +3,6 @@ package com.prof18.feedflow.android.widget
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
@@ -18,8 +16,10 @@ import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -114,12 +114,18 @@ internal fun WidgetContent(
             }
         } else {
             LazyColumn {
+                if (!showHeader) {
+                    item { Spacer(modifier = GlanceModifier.height(Spacing.small)) }
+                }
+
                 items(feedItems) { feedItem ->
                     when (feedLayout) {
                         FeedLayout.LIST -> WidgetFeedItemList(feedItem, browserManager, fontSizes)
                         FeedLayout.CARD -> WidgetFeedItemCard(feedItem, browserManager, fontSizes)
                     }
                 }
+
+                item { Spacer(modifier = GlanceModifier.height(Spacing.small)) }
             }
         }
     }

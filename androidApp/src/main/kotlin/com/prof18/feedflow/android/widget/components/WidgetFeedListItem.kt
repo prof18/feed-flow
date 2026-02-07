@@ -86,7 +86,7 @@ internal fun WidgetFeedItemCard(
 
     Box(
         modifier = modifier
-            .padding(vertical = Spacing.xsmall)
+            .padding(vertical = Spacing.xsmall),
     ) {
         Row(
             modifier = GlanceModifier

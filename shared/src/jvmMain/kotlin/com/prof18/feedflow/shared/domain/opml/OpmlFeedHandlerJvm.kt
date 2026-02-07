@@ -11,6 +11,7 @@ import org.xml.sax.helpers.DefaultHandler
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
 import java.io.StringReader
+import java.nio.charset.Charset
 import javax.xml.parsers.SAXParserFactory
 import javax.xml.stream.XMLOutputFactory
 
@@ -21,7 +22,8 @@ internal class OpmlFeedHandlerJvm(
 ) : OpmlFeedHandler {
     override suspend fun generateFeedSources(opmlInput: OpmlInput): List<ParsedFeedSource> =
         withContext(dispatcherProvider.io) {
-            val feed = opmlInput.file.readText()
+            val feedBytes = opmlInput.file.readBytes()
+            val feed = String(feedBytes, detectCharset(feedBytes))
 
             try {
                 // Remove BOM and leading whitespace
@@ -48,6 +50,32 @@ internal class OpmlFeedHandlerJvm(
                 throw OpmlParsingException("Failed to parse OPML file: ${e.message}", e)
             }
         }
+
+    private fun detectCharset(bytes: ByteArray): Charset {
+        if (bytes.startsWith(UTF8_BOM)) {
+            return Charsets.UTF_8
+        }
+        if (bytes.startsWith(UTF16_LE_BOM)) {
+            return Charsets.UTF_16LE
+        }
+        if (bytes.startsWith(UTF16_BE_BOM)) {
+            return Charsets.UTF_16BE
+        }
+
+        val head = bytes.copyOfRange(0, bytes.size.coerceAtMost(XML_DECLARATION_SCAN_LENGTH))
+            .toString(Charsets.ISO_8859_1)
+            .replace("\u0000", "")
+        val encoding = XML_ENCODING_REGEX.find(head)?.groupValues?.get(1)
+
+        return encoding?.let { runCatching { Charset.forName(it) }.getOrNull() } ?: Charsets.UTF_8
+    }
+
+    private fun ByteArray.startsWith(prefix: ByteArray): Boolean {
+        if (size < prefix.size) {
+            return false
+        }
+        return prefix.indices.all { index -> this[index] == prefix[index] }
+    }
 
     override suspend fun exportFeed(
         opmlOutput: OpmlOutput,
@@ -154,5 +182,15 @@ internal class OpmlFeedHandlerJvm(
                 isInsideCategory = false
             }
         }
+    }
+
+    companion object {
+        private const val XML_DECLARATION_SCAN_LENGTH = 1024
+        private val XML_ENCODING_REGEX =
+            Regex("""<\?xml[^>]*encoding\s*=\s*["']([^"']+)["'][^>]*\?>""", RegexOption.IGNORE_CASE)
+
+        private val UTF8_BOM = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
+        private val UTF16_LE_BOM = byteArrayOf(0xFF.toByte(), 0xFE.toByte())
+        private val UTF16_BE_BOM = byteArrayOf(0xFE.toByte(), 0xFF.toByte())
     }
 }

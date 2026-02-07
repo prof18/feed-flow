@@ -202,6 +202,30 @@ class OPMLFeedParserJvmTest {
     }
 
     @Test
+    fun `generateFeedSources parses UTF16 OPML with BOM`() = runTest {
+        val bomUtf16Le = byteArrayOf(0xFF.toByte(), 0xFE.toByte())
+        val opmlContent = """
+            <?xml version="1.0" encoding="UTF-16"?>
+            <opml version="2.0">
+                <body>
+                    <outline text="Feed with UTF16 BOM" xmlUrl="https://example.com/feed.xml" />
+                </body>
+            </opml>
+        """.trimIndent()
+
+        val file = File.createTempFile("bom-utf16le-", ".tmp").apply {
+            deleteOnExit()
+            writeBytes(bomUtf16Le + opmlContent.toByteArray(Charsets.UTF_16LE))
+        }
+
+        val opmlInput = OpmlInput(file = file)
+        val feedSources = parser.generateFeedSources(opmlInput)
+
+        assertTrue(feedSources.isNotEmpty())
+        assertEquals("Feed with UTF16 BOM", feedSources[0].title)
+    }
+
+    @Test
     fun `generateFeedSources returns empty list for empty OPML`() = runTest {
         val opml = """
             <?xml version="1.0"?>

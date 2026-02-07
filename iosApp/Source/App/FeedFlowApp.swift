@@ -15,6 +15,7 @@ struct FeedFlowApp: App {
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
     @State private var appState: AppState = .init()
+    @State private var browserSelector: BrowserSelector = .init()
 
     private var feedSyncTimer: FeedSyncTimer = .init()
 
@@ -79,6 +80,7 @@ struct FeedFlowApp: App {
         WindowGroup {
             ContentView()
                 .environment(appState)
+                .environment(browserSelector)
                 .preferredColorScheme(appState.colorScheme)
                 .onOpenURL { url in
                     if url.scheme == "feedflow" {

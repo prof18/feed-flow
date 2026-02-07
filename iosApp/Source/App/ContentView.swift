@@ -10,7 +10,6 @@ struct ContentView: View {
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass: UserInterfaceSizeClass?
 
-    @State var browserSelector: BrowserSelector = .init()
     @StateObject private var vmStoreOwner = VMStoreOwner<HomeViewModel>(Deps.shared.getHomeViewModel())
     @StateObject private var reviewVmStoreOwner = VMStoreOwner<ReviewViewModel>(Deps.shared.getReviewViewModel())
     @StateObject private var readerModeVmStoreOwner = VMStoreOwner<ReaderModeViewModel>(
@@ -32,7 +31,6 @@ struct ContentView: View {
                     homeViewModel: vmStoreOwner.instance,
                     readerModeViewModel: readerModeVmStoreOwner.instance
                 )
-                .environment(browserSelector)
             } else {
                 RegularView(
                     selectedDrawerItem: $selectedDrawerItem,
@@ -40,7 +38,6 @@ struct ContentView: View {
                     homeViewModel: vmStoreOwner.instance,
                     readerModeViewModel: readerModeVmStoreOwner.instance
                 )
-                .environment(browserSelector)
             }
         }
         .onAppear {

@@ -352,4 +352,8 @@
     <string name="settings_notification_mode_category">Nach Kategorie</string>
     <string name="settings_notification_mode_grouped">Alles zusammengefasst</string>
     <string name="settings_theme_oled">Schwarz</string>
+    <string name="open_feed_website_button">Webseite des Feeds öffnen</string>
+    <string name="menu_show_read_articles">Gelesene Artikel anzeigen</string>
+    <string name="settings_hide_read_items">Artikel automatisch ausblenden, wenn sie als gelesen markiert werden</string>
+    <string name="settings_show_rss_parsing_errors">Fehlermeldungen beim Laden der Feeds anzeigen</string>
 </resources>

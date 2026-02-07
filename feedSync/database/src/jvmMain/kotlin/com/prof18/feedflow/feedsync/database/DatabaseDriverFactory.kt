@@ -11,11 +11,20 @@ import com.prof18.feedflow.feedsync.database.db.FeedFlowFeedSyncDB
 import java.io.File
 import java.util.Properties
 
+private val databaseInitLock = Any()
+private val syncSchemaTables = listOf(
+    "synced_feed_item",
+    "synced_feed_source",
+    "synced_feed_source_category",
+    "sync_metadata",
+)
+
 internal fun createDatabaseDriver(
     appEnvironment: AppEnvironment,
     logger: Logger,
-): SqlDriver {
+): SqlDriver = synchronized(databaseInitLock) {
     val appPath = AppDataPathBuilder.getAppDataPath(appEnvironment)
+    val schemaVersion = FeedFlowFeedSyncDB.Schema.version
 
     val databaseName = if (appEnvironment.isDebug()) {
         SyncedDatabaseHelper.SYNC_DATABASE_NAME_DEBUG
@@ -59,32 +68,26 @@ internal fun createDatabaseDriver(
         val currentVer: Long = sqlCursor.value ?: -1L
 
         if (currentVer == 0L) {
-            FeedFlowFeedSyncDB.Schema.create(driver)
-            setVersion(driver, FeedFlowFeedSyncDB.Schema.version)
-            logger.d("init: created tables, setVersion to ${FeedFlowFeedSyncDB.Schema.version}")
+            if (hasAnySyncSchemaTables(driver)) {
+                logger.w("init: existing sync tables with user_version 0, recreating schema")
+                recreateSyncSchema(driver, schemaVersion)
+            } else {
+                FeedFlowFeedSyncDB.Schema.create(driver)
+                setVersion(driver, schemaVersion)
+                logger.d("init: created tables, setVersion to $schemaVersion")
+            }
         } else {
-            val schemaVer = FeedFlowFeedSyncDB.Schema.version
-            if (schemaVer > currentVer) {
-                FeedFlowFeedSyncDB.Schema.migrate(driver, oldVersion = currentVer, newVersion = schemaVer)
-                setVersion(driver, schemaVer)
-                logger.d("init: migrated from $currentVer to $schemaVer")
+            if (schemaVersion > currentVer) {
+                FeedFlowFeedSyncDB.Schema.migrate(driver, oldVersion = currentVer, newVersion = schemaVersion)
+                setVersion(driver, schemaVersion)
+                logger.d("init: migrated from $currentVer to $schemaVersion")
             } else {
                 logger.d("init with existing sync database")
             }
         }
 
-        val checkTableCursor = driver.executeQuery(
-            null,
-            "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='synced_feed_item';",
-            {
-                QueryResult.Value(it.getLong(0))
-            },
-            0,
-            null,
-        )
-        val tableCount: Long = checkTableCursor.value ?: 0L
-        if (tableCount == 0L) {
-            throw java.sql.SQLException("synced_feed_item table missing despite non-zero version")
+        if (!hasAllSyncSchemaTables(driver)) {
+            throw java.sql.SQLException("sync database schema is incomplete")
         }
 
         return driver
@@ -93,8 +96,7 @@ internal fun createDatabaseDriver(
         deleteDatabaseFiles(databasePath, logger)
         val newDriver = JdbcSqliteDriver("jdbc:sqlite:${databasePath.absolutePath}", properties)
         applyPragmaSettings(newDriver, logger)
-        FeedFlowFeedSyncDB.Schema.create(newDriver)
-        setVersion(newDriver, FeedFlowFeedSyncDB.Schema.version)
+        recreateSyncSchema(newDriver, schemaVersion)
         return newDriver
     }
 }
@@ -171,4 +173,36 @@ private fun deleteDatabaseFiles(databasePath: File, logger: Logger) {
 
 fun setVersion(driver: SqlDriver, version: Long) {
     driver.execute(null, "PRAGMA user_version = $version;", 0, null)
+}
+
+private fun hasAnySyncSchemaTables(driver: SqlDriver): Boolean {
+    val tableCount = countSyncTables(driver)
+    return tableCount > 0
+}
+
+private fun hasAllSyncSchemaTables(driver: SqlDriver): Boolean {
+    val tableCount = countSyncTables(driver)
+    return tableCount == syncSchemaTables.size.toLong()
+}
+
+private fun countSyncTables(driver: SqlDriver): Long {
+    val tableNames = syncSchemaTables.joinToString(",") { "'$it'" }
+    val checkTableCursor = driver.executeQuery(
+        null,
+        "SELECT count(*) FROM sqlite_master WHERE type='table' AND name IN ($tableNames);",
+        {
+            QueryResult.Value(it.getLong(0))
+        },
+        0,
+        null,
+    )
+    return checkTableCursor.value ?: 0L
+}
+
+private fun recreateSyncSchema(driver: SqlDriver, version: Long) {
+    syncSchemaTables.forEach { tableName ->
+        driver.execute(null, "DROP TABLE IF EXISTS $tableName;", 0, null)
+    }
+    FeedFlowFeedSyncDB.Schema.create(driver)
+    setVersion(driver, version)
 }

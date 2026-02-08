@@ -367,6 +367,9 @@ private fun FrameWindowScope.MainWindowContent(
                         onBackupClick = {
                             homeViewModel.enqueueBackup()
                         },
+                        onExitClick = {
+                            window.dispatchEvent(WindowEvent(window, WindowEvent.WINDOW_CLOSING))
+                        },
                     ),
                 )
 

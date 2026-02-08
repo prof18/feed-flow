@@ -511,7 +511,7 @@ class DatabaseHelper(
     ): Flow<List<Search>> =
         dbRef.feedSearchQueries
             .search(
-                query = searchQuery,
+                query = searchQuery.toFtsPrefixQuery(),
                 feedSourceId = feedFilter?.getFeedSourceId(),
                 feedSourceCategoryId = feedFilter?.getCategoryId(),
                 isUncategorized = feedFilter?.getIsUncategorized(),
@@ -522,6 +522,36 @@ class DatabaseHelper(
             .asFlow()
             .mapToList(backgroundDispatcher)
             .flowOn(backgroundDispatcher)
+
+    private fun String.toFtsPrefixQuery(): String {
+        val terms = mutableListOf<String>()
+        val token = StringBuilder()
+        var tokenContainsLettersOrDigits = false
+
+        fun flushToken() {
+            if (tokenContainsLettersOrDigits && token.isNotEmpty()) {
+                terms.add(token.toString())
+            }
+            token.clear()
+            tokenContainsLettersOrDigits = false
+        }
+
+        for (char in this) {
+            when {
+                char.isLetterOrDigit() -> {
+                    token.append(char)
+                    tokenContainsLettersOrDigits = true
+                }
+
+                char.isWhitespace() || char == '-' -> flushToken()
+                char != '"' && token.isNotEmpty() -> token.append(char)
+                else -> flushToken()
+            }
+        }
+        flushToken()
+
+        return terms.joinToString(separator = " ") { "$it*" }
+    }
 
     suspend fun getLastChangeTimestamp(tableName: DatabaseTables): Long? = withContext(backgroundDispatcher) {
         dbRef.syncMetadataQueries.selectLastChangeTimestamp(tableName.tableName)

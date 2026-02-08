@@ -1,6 +1,5 @@
 package com.prof18.feedflow.shared.ui.home.components
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll

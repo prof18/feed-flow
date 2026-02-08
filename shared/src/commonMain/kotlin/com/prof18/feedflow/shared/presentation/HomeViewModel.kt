@@ -88,8 +88,6 @@ class HomeViewModel internal constructor(
 
     val feedFontSizeState: StateFlow<FeedFontSizes> = feedFontSizeRepository.feedFontSizeState
 
-    val showReadArticlesState: StateFlow<Boolean> = settingsRepository.showReadArticlesTimelineFlow
-
     init {
         observeErrorState()
         viewModelScope.launch {
@@ -376,11 +374,4 @@ class HomeViewModel internal constructor(
     }
 
     fun getCurrentThemeMode() = settingsRepository.getThemeMode()
-
-    fun updateShowReadArticlesOnTimeline(value: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setShowReadArticlesTimeline(value)
-            feedStateRepository.getFeeds()
-        }
-    }
 }

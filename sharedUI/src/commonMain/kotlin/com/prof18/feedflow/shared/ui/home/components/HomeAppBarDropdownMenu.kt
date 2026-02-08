@@ -9,10 +9,8 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,14 +28,12 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 internal fun HomeAppBarDropdownMenu(
     showMenu: Boolean,
     feedFilter: FeedFilter,
-    isShowReadArticlesEnabled: Boolean,
     closeMenu: () -> Unit,
     onMarkAllReadClicked: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     onForceRefreshClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
-    onShowReadArticlesToggled: (Boolean) -> Unit,
     isSyncUploadRequired: Boolean,
     onBackupClick: () -> Unit,
 ) {
@@ -105,119 +101,100 @@ internal fun HomeAppBarDropdownMenu(
             dismissOnClickOutside = true,
         ),
     ) {
-        Column {
-            if (isSyncUploadRequired) {
-                DropdownMenuItem(
-                    onClick = {
-                        onBackupClick()
-                        closeMenu()
-                    },
-                    text = {
-                        Text(LocalFeedFlowStrings.current.triggerFeedSync)
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Upload,
-                            contentDescription = null,
-                        )
-                    },
-                )
-            }
-
+        if (isSyncUploadRequired) {
             DropdownMenuItem(
                 onClick = {
-                    showMarkAllReadDialog = true
-                },
-                text = {
-                    Text(LocalFeedFlowStrings.current.markAllReadButton)
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.DoneAll,
-                        contentDescription = null,
-                    )
-                },
-            )
-
-            DropdownMenuItem(
-                onClick = {
-                    showClearOldArticlesDialog = true
-                },
-                text = {
-                    Text(LocalFeedFlowStrings.current.clearOldArticlesButton)
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                    )
-                },
-            )
-
-            DropdownMenuItem(
-                onClick = {
-                    onForceRefreshClick()
+                    onBackupClick()
                     closeMenu()
                 },
                 text = {
-                    Text(LocalFeedFlowStrings.current.forceFeedRefresh)
+                    Text(LocalFeedFlowStrings.current.triggerFeedSync)
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Default.Refresh,
+                        imageVector = Icons.Default.Upload,
                         contentDescription = null,
-                    )
-                },
-            )
-
-            if (feedFilter is FeedFilter.Source) {
-                DropdownMenuItem(
-                    onClick = {
-                        onEditFeedClick(feedFilter.feedSource)
-                    },
-                    text = {
-                        Text(LocalFeedFlowStrings.current.editFeed)
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = null,
-                        )
-                    },
-                )
-            }
-
-            DropdownMenuItem(
-                onClick = {
-                    onSettingsButtonClicked()
-                },
-                text = {
-                    Text(LocalFeedFlowStrings.current.settingsButton)
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = null,
-                    )
-                },
-            )
-
-            HorizontalDivider()
-
-            DropdownMenuItem(
-                onClick = {
-                    onShowReadArticlesToggled(!isShowReadArticlesEnabled)
-                },
-                text = {
-                    Text(LocalFeedFlowStrings.current.menuShowReadArticles)
-                },
-                trailingIcon = {
-                    Checkbox(
-                        checked = isShowReadArticlesEnabled,
-                        onCheckedChange = null,
                     )
                 },
             )
         }
+
+        DropdownMenuItem(
+            onClick = {
+                showMarkAllReadDialog = true
+            },
+            text = {
+                Text(LocalFeedFlowStrings.current.markAllReadButton)
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.DoneAll,
+                    contentDescription = null,
+                )
+            },
+        )
+
+        DropdownMenuItem(
+            onClick = {
+                showClearOldArticlesDialog = true
+            },
+            text = {
+                Text(LocalFeedFlowStrings.current.clearOldArticlesButton)
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                )
+            },
+        )
+
+        DropdownMenuItem(
+            onClick = {
+                onForceRefreshClick()
+                closeMenu()
+            },
+            text = {
+                Text(LocalFeedFlowStrings.current.forceFeedRefresh)
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = null,
+                )
+            },
+        )
+
+        if (feedFilter is FeedFilter.Source) {
+            DropdownMenuItem(
+                onClick = {
+                    onEditFeedClick(feedFilter.feedSource)
+                },
+                text = {
+                    Text(LocalFeedFlowStrings.current.editFeed)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = null,
+                    )
+                },
+            )
+        }
+
+        DropdownMenuItem(
+            onClick = {
+                onSettingsButtonClicked()
+            },
+            text = {
+                Text(LocalFeedFlowStrings.current.settingsButton)
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = null,
+                )
+            },
+        )
     }
 }

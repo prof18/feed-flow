@@ -57,8 +57,6 @@ struct HomeContent: View {
     let onBackToTimelineClick: () -> Void
     let onFeedSyncClick: () -> Void
     let openDrawer: () -> Void
-    let isShowReadArticlesEnabled: Bool
-    let onShowReadArticlesToggled: (Bool) -> Void
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -378,27 +376,6 @@ private extension HomeContent {
             Label(feedFlowStrings.settingsButton, systemImage: "gear")
         }
 
-        makeReadArticlesMenuItem()
-        makeDebugMenuItem()
-    }
-
-    @ViewBuilder
-    private func makeReadArticlesMenuItem() -> some View {
-        Divider()
-
-        Toggle(isOn: Binding(
-            get: { isShowReadArticlesEnabled },
-            set: { onShowReadArticlesToggled($0) }
-        )) {
-            Label(
-                feedFlowStrings.menuShowReadArticles,
-                systemImage: isShowReadArticlesEnabled ? "eye" : "eye.slash"
-            )
-        }
-    }
-
-    @ViewBuilder
-    private func makeDebugMenuItem() -> some View {
         #if DEBUG
             Button {
                 deleteAllFeeds()

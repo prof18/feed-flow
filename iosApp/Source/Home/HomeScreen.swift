@@ -45,8 +45,6 @@ struct HomeScreen: View {
 
     @State var feedLayout: FeedLayout = .list
 
-    @State var isShowReadArticlesEnabled = false
-
     @Binding var toggleListScroll: Bool
 
     @Binding var showSettings: Bool
@@ -123,11 +121,7 @@ struct HomeScreen: View {
             onFeedSyncClick: {
                 homeViewModel.enqueueBackup()
             },
-            openDrawer: openDrawer,
-            isShowReadArticlesEnabled: isShowReadArticlesEnabled,
-            onShowReadArticlesToggled: { value in
-                homeViewModel.updateShowReadArticlesOnTimeline(value: value)
-            }
+            openDrawer: openDrawer
         )
         .snackbar(messageQueue: $appState.snackbarQueue)
         .task {
@@ -234,11 +228,6 @@ struct HomeScreen: View {
         .task {
             for await state in homeViewModel.feedLayout {
                 self.feedLayout = state
-            }
-        }
-        .task {
-            for await state in homeViewModel.showReadArticlesState {
-                self.isShowReadArticlesEnabled = state as? Bool ?? false
             }
         }
         .onChange(of: scenePhase) {

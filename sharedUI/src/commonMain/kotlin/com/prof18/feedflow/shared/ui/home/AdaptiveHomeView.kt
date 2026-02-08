@@ -42,7 +42,6 @@ fun AdaptiveHomeView(
     onBackupClick: () -> Unit = {},
     onFeedSuggestionsClick: () -> Unit = {},
     onEmptyStateClick: (() -> Unit)? = null,
-    onShowReadArticlesToggled: (Boolean) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val reduceMotionEnabled = LocalReduceMotion.current
@@ -72,7 +71,6 @@ fun AdaptiveHomeView(
             shareBehavior = shareBehavior,
             onBackupClick = onBackupClick,
             onEmptyStateClick = onEmptyStateClick,
-            onShowReadArticlesToggled = onShowReadArticlesToggled,
         )
     }
 

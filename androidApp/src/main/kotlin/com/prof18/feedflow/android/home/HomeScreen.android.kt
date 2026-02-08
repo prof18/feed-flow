@@ -65,7 +65,6 @@ internal fun HomeScreen(
     val feedOperation by homeViewModel.feedOperationState.collectAsStateWithLifecycle()
     val feedLayout by homeViewModel.feedLayout.collectAsStateWithLifecycle()
     val isSyncUploadRequired by homeViewModel.isSyncUploadRequired.collectAsStateWithLifecycle()
-    val isShowReadArticlesEnabled by homeViewModel.showReadArticlesState.collectAsStateWithLifecycle()
 
     val categoriesState by changeFeedCategoryViewModel.categoriesState.collectAsStateWithLifecycle()
 
@@ -131,7 +130,6 @@ internal fun HomeScreen(
         swipeActions = swipeActions,
         feedLayout = feedLayout,
         isSyncUploadRequired = isSyncUploadRequired,
-        isShowReadArticlesEnabled = isShowReadArticlesEnabled,
     )
 
     val feedListActions = FeedListActions(
@@ -210,7 +208,6 @@ internal fun HomeScreen(
         onEmptyStateClick = {
             showNoFeedsBottomSheet = true
         },
-        onShowReadArticlesToggled = homeViewModel::updateShowReadArticlesOnTimeline,
     )
 
     if (showChangeCategorySheet) {

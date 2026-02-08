@@ -33,7 +33,6 @@ internal fun HomeAppBar(
     showDrawerMenu: Boolean,
     isDrawerOpen: Boolean,
     showDropdownMenu: Boolean,
-    isShowReadArticlesEnabled: Boolean,
     onDrawerMenuClick: () -> Unit,
     onMarkAllReadClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
@@ -43,7 +42,6 @@ internal fun HomeAppBar(
     onForceRefreshClick: () -> Unit,
     onSearchClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
-    onShowReadArticlesToggled: (Boolean) -> Unit,
     isSyncUploadRequired: Boolean,
     onBackupClick: () -> Unit,
 ) {
@@ -104,7 +102,6 @@ internal fun HomeAppBar(
                 HomeAppBarDropdownMenu(
                     showMenu = showMenu,
                     feedFilter = currentFeedFilter,
-                    isShowReadArticlesEnabled = isShowReadArticlesEnabled,
                     closeMenu = {
                         showMenu = false
                     },
@@ -119,7 +116,6 @@ internal fun HomeAppBar(
                         showMenu = false
                         onEditFeedClick(feedSource)
                     },
-                    onShowReadArticlesToggled = onShowReadArticlesToggled,
                     isSyncUploadRequired = isSyncUploadRequired,
                     onBackupClick = {
                         showMenu = false

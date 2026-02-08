@@ -4,7 +4,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS feed_search USING FTS4(
     url_hash TEXT NOT NULL,
     title TEXT,
     subtitle TEXT,
-    tokenize="unicode61"
+    tokenize=unicode61 "tokenchars=+#"
 );
 
 CREATE TRIGGER IF NOT EXISTS populate_feed_search
@@ -33,7 +33,7 @@ SELECT
 FROM (
   SELECT *
   FROM feed_search
-  WHERE feed_search MATCH :query || '*'
+  WHERE feed_search MATCH :query
 ) AS searched_feeds
 INNER JOIN feed_item
 ON searched_feeds.url_hash = feed_item.url_hash

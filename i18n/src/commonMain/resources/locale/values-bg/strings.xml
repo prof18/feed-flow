@@ -353,7 +353,6 @@
     <string name="settings_notification_mode_grouped">Всички взети заедно</string>
     <string name="settings_theme_oled">Черна</string>
     <string name="open_feed_website_button">Отвори уебсайта на емисията</string>
-    <string name="menu_show_read_articles">Показване на прочетени статии</string>
     <string name="settings_hide_read_items">Автоматично скриване на статии, когато са маркирани като прочетени</string>
     <string name="settings_show_rss_parsing_errors">Показване на съобщения за грешки при зареждане на емисията</string>
 </resources>

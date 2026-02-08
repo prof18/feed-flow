@@ -353,7 +353,6 @@
     <string name="settings_notification_mode_grouped">Gộp chung lại</string>
     <string name="settings_theme_oled">Đen</string>
     <string name="open_feed_website_button">Mở trang web nguồn tin</string>
-    <string name="menu_show_read_articles">Hiện những bài viết đã đọc</string>
     <string name="settings_hide_read_items">Ẩn những bài viết đánh dấu đã đọc</string>
     <string name="settings_show_rss_parsing_errors">Hiện thông báo lỗi tải nguồn tin</string>
 </resources>

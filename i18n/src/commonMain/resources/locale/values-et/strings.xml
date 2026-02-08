@@ -353,7 +353,6 @@
     <string name="settings_notification_mode_grouped">Kõik kombineerituna</string>
     <string name="settings_theme_oled">Süsimust kujundus</string>
     <string name="open_feed_website_button">Ava uudisvoo veebisait</string>
-    <string name="menu_show_read_articles">Näita loetud artikleid</string>
     <string name="settings_hide_read_items">Peida loetuks märkimisel artiklid automaatselt</string>
     <string name="settings_show_rss_parsing_errors">Näita uudisvoo laadimisel tekkinud veateateid</string>
 </resources>

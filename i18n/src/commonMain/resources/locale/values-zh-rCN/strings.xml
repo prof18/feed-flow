@@ -353,7 +353,6 @@
     <string name="notification_category_body">您在 %s 中有新文章</string>
     <string name="settings_theme_oled">黑色</string>
     <string name="open_feed_website_button">打开订阅源网站</string>
-    <string name="menu_show_read_articles">显示已读文章</string>
     <string name="settings_hide_read_items">标记为已读时自动隐藏文章</string>
     <string name="settings_show_rss_parsing_errors">显示订阅源加载错误消息</string>
 </resources>

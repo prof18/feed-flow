@@ -5,6 +5,8 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.MenuBarScope
 import androidx.compose.ui.window.MenuScope
+import com.prof18.feedflow.core.utils.getDesktopOS
+import com.prof18.feedflow.core.utils.isWindows
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 
 @Composable
@@ -80,6 +82,15 @@ internal fun MenuBarScope.FileMenu(
                 KeyShortcut(Key.I, ctrl = true)
             },
         )
+
+        if (getDesktopOS().isWindows()) {
+            Separator()
+
+            Item(
+                text = LocalFeedFlowStrings.current.exitMenu,
+                onClick = actions.onExitClick,
+            )
+        }
 
         DebugMenu(
             showDebugMenu = state.showDebugMenu,

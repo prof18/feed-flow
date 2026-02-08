@@ -279,6 +279,7 @@ data class MenuBarActions(
     val onFeedFontScaleClick: () -> Unit,
     val deleteFeeds: () -> Unit,
     val onBackupClick: () -> Unit,
+    val onExitClick: () -> Unit,
 )
 
 data class MenuBarState(

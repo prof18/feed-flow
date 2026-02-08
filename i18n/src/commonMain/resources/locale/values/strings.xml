@@ -261,6 +261,7 @@
     <string name="widget_background_opacity_title">Background opacity: %s%%</string>
     <string name="widget_font_size_title">Font size</string>
     <string name="file_menu">File</string>
+    <string name="exit_menu">Exit</string>
     <string name="menu_view">View</string>
     <string name="settings_left_swipe_action">Left swipe</string>
     <string name="settings_right_swipe_action">Right swipe</string>

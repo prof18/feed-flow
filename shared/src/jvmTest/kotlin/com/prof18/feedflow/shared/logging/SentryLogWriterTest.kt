@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.logging
 import co.touchlab.kermit.Severity
 import com.dropbox.core.NetworkIOException
 import java.io.IOException
+import java.net.SocketTimeoutException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -118,6 +119,28 @@ class SentryLogWriterTest {
             message = "network",
             tag = "Test",
             throwable = NetworkIOException(IOException("timeout")),
+        )
+
+        assertEquals(0, capturedMessages.size)
+        assertEquals(0, capturedExceptions.size)
+    }
+
+    @Test
+    fun `it skips socket timeout exceptions`() {
+        val capturedMessages = mutableListOf<String>()
+        val capturedExceptions = mutableListOf<Throwable>()
+
+        val logWriter = SentryLogWriter(
+            isSentryEnabled = { true },
+            captureMessage = { capturedMessages.add(it) },
+            captureException = { capturedExceptions.add(it) },
+        )
+
+        logWriter.log(
+            severity = Severity.Error,
+            message = "timeout",
+            tag = "Test",
+            throwable = SocketTimeoutException("Connect timed out"),
         )
 
         assertEquals(0, capturedMessages.size)

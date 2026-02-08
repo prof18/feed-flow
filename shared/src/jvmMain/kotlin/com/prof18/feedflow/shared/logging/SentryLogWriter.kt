@@ -8,6 +8,7 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Tag
 import com.dropbox.core.NetworkIOException
 import io.sentry.Sentry
+import java.net.SocketTimeoutException
 
 class SentryLogWriter(
     private val minSeverity: Severity = Severity.Info,
@@ -30,7 +31,7 @@ class SentryLogWriter(
     override fun isLoggable(tag: String, severity: Severity): Boolean = severity >= minSeverity
 
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
-        if (throwable is NetworkIOException) {
+        if (throwable is NetworkIOException || throwable is SocketTimeoutException) {
             return
         }
 

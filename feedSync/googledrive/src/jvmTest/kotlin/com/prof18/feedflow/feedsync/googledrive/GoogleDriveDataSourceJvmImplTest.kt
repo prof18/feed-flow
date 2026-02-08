@@ -30,4 +30,11 @@ class GoogleDriveDataSourceJvmImplTest {
             exception.message,
         )
     }
+
+    @Test
+    fun `buildLocalServerReceiver uses dynamic free port`() {
+        val receiver = buildLocalServerReceiver()
+
+        assertEquals(-1, receiver.port)
+    }
 }

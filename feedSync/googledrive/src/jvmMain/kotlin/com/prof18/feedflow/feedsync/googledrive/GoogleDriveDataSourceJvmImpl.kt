@@ -36,9 +36,7 @@ class GoogleDriveDataSourceJvmImpl(
     override suspend fun startAuthFlow(): Boolean = withContext(dispatcherProvider.io) {
         try {
             val flow = buildAuthFlow()
-
-            @Suppress("MagicNumber")
-            val receiver = LocalServerReceiver.Builder().setPort(8888).build()
+            val receiver = buildLocalServerReceiver()
             val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
 
             driveService = Drive.Builder(httpTransport, jsonFactory, credential)
@@ -183,3 +181,5 @@ internal fun requireGoogleDriveBackupFileId(
 ): String = fileId ?: throw GoogleDriveDownloadException(
     errorMessage = "No Google Drive backup file found for '$fileName'",
 )
+
+internal fun buildLocalServerReceiver(): LocalServerReceiver = LocalServerReceiver.Builder().build()

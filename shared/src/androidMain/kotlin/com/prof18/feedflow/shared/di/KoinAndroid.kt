@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.database.createDatabaseDriver
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
+import com.prof18.feedflow.shared.domain.AppForegroundState
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.FeedDownloadWorker
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
@@ -165,9 +166,14 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
             widgetUpdater = get(),
             databaseHelper = get(),
             notifier = get(),
+            appForegroundState = get(),
             appContext = get(),
             workerParams = get(),
         )
+    }
+
+    single {
+        AppForegroundState()
     }
 
     single {

@@ -22,6 +22,7 @@ import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoin
 import com.prof18.feedflow.shared.di.viewModel
+import com.prof18.feedflow.shared.domain.AppForegroundState
 import com.prof18.feedflow.shared.domain.FeedDownloadWorkerEnqueuer
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
@@ -41,6 +42,7 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
     private val widgetRepository by inject<FeedWidgetRepository>()
     private val widgetSettingsRepository by inject<WidgetSettingsRepository>()
     private val feedDownloadWorkerEnqueuer by inject<FeedDownloadWorkerEnqueuer>()
+    private val appForegroundState by inject<AppForegroundState>()
     private val browserManager by inject<BrowserManager>()
 
     override fun onCreate() {
@@ -140,8 +142,14 @@ class FeedFlowApp : Application(), SingletonImageLoader.Factory {
         with(ProcessLifecycleOwner.get()) {
             lifecycle.addObserver(
                 object : DefaultLifecycleObserver {
+                    override fun onStart(owner: LifecycleOwner) {
+                        super.onStart(owner)
+                        appForegroundState.onAppForegrounded()
+                    }
+
                     override fun onStop(owner: LifecycleOwner) {
                         super.onStop(owner)
+                        appForegroundState.onAppBackgrounded()
                         feedSyncRepo.enqueueBackup()
                         lifecycle.coroutineScope.launch {
                             GlanceAppWidgetManager(

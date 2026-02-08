@@ -3,13 +3,13 @@ package com.prof18.feedflow.desktop.reaadermode
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -86,6 +86,8 @@ import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.utils.getArchiveISUrl
 import com.prof18.feedflow.shared.utils.isValidUrl
 import kotlinx.coroutines.launch
+
+private val readerModeMaxContentWidth = 720.dp
 
 internal data class ReaderModeScreen(
     private val feedItemUrlInfo: FeedItemUrlInfo,
@@ -175,18 +177,15 @@ internal data class ReaderModeScreen(
                 },
                 snackbarHost = { SnackbarHost(snackbarHostState) },
             ) { contentPadding ->
-                BoxWithConstraints(
+                Box(
                     modifier = Modifier
                         .padding(contentPadding)
                         .fillMaxSize(),
                     contentAlignment = Alignment.TopCenter,
                 ) {
-                    val isWideScreen = maxWidth > 840.dp
-                    val contentModifier = if (isWideScreen) {
-                        Modifier.fillMaxWidth(0.6f)
-                    } else {
-                        Modifier.fillMaxWidth()
-                    }
+                    val contentModifier = Modifier
+                        .widthIn(max = readerModeMaxContentWidth)
+                        .fillMaxWidth()
 
                     when (val s = state) {
                         is ReaderModeState.HtmlNotAvailable -> {

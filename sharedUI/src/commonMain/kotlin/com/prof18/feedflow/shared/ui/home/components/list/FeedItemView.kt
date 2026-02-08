@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.ui.home.components.list
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,7 +14,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -109,23 +112,35 @@ internal fun FeedItemView(
             )
 
             feedItem.dateString?.let { dateString ->
-                Text(
+                Row(
                     modifier = Modifier
                         .padding(top = Spacing.small),
-                    text = dateString,
-                    fontSize = feedFontSize.feedMetaFontSize.sp,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = if (feedItem.isRead &&
-                            currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
-                        ) {
-                            0.6f
-                        } else {
-                            1f
-                        },
-                    ),
-                )
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (!feedItem.isRead) {
+                        UnreadDot(
+                            modifier = Modifier
+                                .padding(end = Spacing.small),
+                        )
+                    }
+
+                    Text(
+                        text = dateString,
+                        fontSize = feedFontSize.feedMetaFontSize.sp,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = if (feedItem.isRead &&
+                                currentFeedFilter !is FeedFilter.Read && currentFeedFilter !is FeedFilter.Bookmarks
+                            ) {
+                                0.6f
+                            } else {
+                                1f
+                            },
+                        ),
+                    )
+                }
             }
+
         }
 
         if (feedLayout == FeedLayout.LIST) {

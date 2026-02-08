@@ -205,4 +205,14 @@
     <string name="next_article">次の記事</string>
     <string name="time_format_title">時刻表記</string>
     <string name="date_format_title">日付表記</string>
+    <string name="settings_sync_period_fifteen_minutes">15分毎</string>
+    <string name="settings_sync_period_thirty_minutes">30分毎</string>
+    <string name="import_export_label">インポートとエクスポート</string>
+    <string name="feed_add_in_progress_message">インポートしています</string>
+    <string name="import_articles_button">CSVからインポート</string>
+    <string name="export_articles_button">記事をCSVにエクスポート</string>
+    <string name="import_articles_dialog_title">CSVファイルを選択</string>
+    <string name="export_articles_dialog_title">CSVファイルを保存</string>
+    <string name="google_drive_sync_common_description">購読しているフィード、カテゴリー、既読、ブックマークを同期するためにGoogleドライブに接続します。データはAndroid, iOS, iPadOS, デスクトップアプリで同期されます。データはアプリ固有のフォルダーに保存され、FeedFlowはそれ以外のデータには一切アクセスしません。</string>
+    <string name="settings_refresh_feeds_on_launch">アプリ起動時にフィードを更新する</string>
 </resources>

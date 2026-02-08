@@ -351,4 +351,5 @@
     <string name="settings_notification_mode_feed_source">За каналом</string>
     <string name="settings_notification_mode_category">За категорією</string>
     <string name="settings_notification_mode_grouped">Усе разом</string>
+    <string name="settings_theme_oled">Чорний</string>
 </resources>

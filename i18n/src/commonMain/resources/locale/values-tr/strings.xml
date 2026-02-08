@@ -62,7 +62,7 @@
     <string name="add_feed_category_title">Kategori</string>
     <string name="add_feed_categories_title">Kategoriler</string>
     <string name="action_save">Kaydet</string>
-    <string name="import_export_description">FeedFlow, diğer akış okuyucularıyla daha iyi birlikte çalışabilirlik için aboneliklerinizi bir OPML dosyasıyla içe ve dışa aktarmayı destekler</string>
+    <string name="import_export_description">FeedFlow, diğer akış okuyucularıyla daha iyi birlikte çalışabilirlik için aboneliklerinizi bir OPML dosyasıyla içe ve dışa aktarmayı destekler.</string>
     <string name="no_feed_modal_title">Yeni bir akış ekle</string>
     <string name="no_feed_modal_message">Manuel olarak bir akış ekleyebilir, aboneliklerinizi başka bir RSS okuyucudan içe aktarabilir veya verileri başka bir cihazdan eşitlemek için bir hesap bağlayabilirsiniz (bu işlevsellik beta aşamasındadır).</string>
     <string name="drawer_title_read">Okunanlar</string>
@@ -225,4 +225,15 @@
     <string name="settings_theme_light">Açık</string>
     <string name="settings_theme_dark">Koyu</string>
     <string name="icloud_connection_error">Üzgünüz, iCloud\'a bağlanılamıyor. Lütfen oturum açıp açmadığınızı, iCloud Drive\'ın açık olup olmadığını ve yeterli alanınızın olup olmadığını kontrol edin - error code: %s.</string>
+    <string name="feed_error_message_improved">%s yüklenemedi. Erişilemiyor olabilir veya internet bağlantınız kesilmiş olabilir.</string>
+    <string name="trigger_feed_sync">Hesabınıza yüklemeyi başlat</string>
+    <string name="import_export_label">İçe ve dışa aktar</string>
+    <string name="feed_add_in_progress_message">Feed içe aktarılıyor...</string>
+    <string name="import_export_opml_section_title">Abonelikler (OPML)</string>
+    <string name="import_export_articles_section_title">Makaleler (CSV)</string>
+    <string name="import_export_articles_description">Makalelerinizi CSV dosyası olarak dışa aktarın ve içe aktarın.\nMakaleleri içe aktarmak için, feed kaynaklarının ve kategorilerin önceden ayarlanmış olması gerekir.</string>
+    <string name="import_articles_button">Makaleleri CSV dosyasından içe aktarın</string>
+    <string name="export_articles_button">Makaleleri CSV\'ye aktar</string>
+    <string name="import_articles_dialog_title">CSV dosyasını seçin</string>
+    <string name="export_articles_dialog_title">CSV dosyasını kaydet</string>
 </resources>

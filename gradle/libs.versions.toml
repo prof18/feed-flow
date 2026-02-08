@@ -2,7 +2,7 @@
 about-libraries = "13.2.1"
 activity-compose = "1.12.2"
 android-compile-sdk = "36"
-android-gradle-plugin = "8.13.2"
+android-gradle-plugin = "8.10.1"
 android-min-sdk = "26"
 android-target-sdk = "36"
 androidx-browser = "1.9.0"

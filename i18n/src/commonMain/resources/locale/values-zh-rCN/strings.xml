@@ -351,4 +351,5 @@
     <string name="settings_notification_mode_category">按类别</string>
     <string name="settings_notification_mode_grouped">全部合并</string>
     <string name="notification_category_body">您在 %s 中有新文章</string>
+    <string name="settings_theme_oled">黑色</string>
 </resources>

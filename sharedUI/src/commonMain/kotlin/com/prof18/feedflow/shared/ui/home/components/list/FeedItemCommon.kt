@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
+import com.prof18.feedflow.shared.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.shared.ui.home.components.FeedItemImage
 import com.prof18.feedflow.shared.ui.style.Spacing
 
@@ -40,13 +41,15 @@ internal fun FeedSourceAndUnreadDotRow(
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (!feedItem.isRead) {
-            UnreadDot(
-                modifier = Modifier
-                    .padding(
-                        bottom = Spacing.small,
-                        end = Spacing.small,
-                    ),
+        val imageUrl = feedItem.feedSource.logoUrl
+        if (imageUrl != null) {
+            FeedSourceLogoImage(
+                size = 16.dp,
+                imageUrl = imageUrl,
+                modifier = Modifier.padding(
+                    bottom = Spacing.small,
+                    end = Spacing.small,
+                ),
             )
         }
 
@@ -155,7 +158,7 @@ internal fun TitleSubtitleAndImageRow(
 }
 
 @Composable
-private fun UnreadDot(
+internal fun UnreadDot(
     modifier: Modifier = Modifier,
 ) {
     Box(

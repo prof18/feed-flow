@@ -38,6 +38,7 @@
     <string name="open_source_nav_bar">Open source licenses</string>
     <string name="report_issue_button">Report issue</string>
     <string name="open_website_button">Open website</string>
+    <string name="open_feed_website_button">Open feed website</string>
     <string name="database_error">Something went wrong during the retrieval of the feeds. Please retry or restart the app  - error code: %s :(</string>
     <string name="force_feed_refresh">Force feeds refresh</string>
     <string name="trigger_feed_sync">Trigger upload to your account</string>
@@ -86,7 +87,9 @@
     <string name="no_feed_modal_title">Add a new feed</string>
     <string name="no_feed_modal_message">You can manually add a feed, you can import your subscriptions from another RSS reader, or you can connect an account to sync the data from another device (this functionality is in beta).</string>
     <string name="drawer_title_read">Read</string>
-    <string name="settings_toggle_show_read_articles">Show read articles on the timeline</string>
+    <string name="settings_toggle_show_read_articles">Show read articles in lists</string>
+    <string name="menu_show_read_articles">Show read articles</string>
+    <string name="settings_hide_read_items">Auto-hide articles when marked as read</string>
     <string name="menu_add_to_bookmark">Add to bookmarks</string>
     <string name="menu_remove_from_bookmark">Remove from bookmarks</string>
     <string name="drawer_title_bookmarks">Bookmarks</string>
@@ -224,6 +227,7 @@
     <string name="settings_sync_period">Background sync frequency</string>
     <string name="settings_sync_period_desc">Choose how often to check for new articles in the background</string>
     <string name="settings_refresh_feeds_on_launch">Refresh feeds on app start</string>
+    <string name="settings_show_rss_parsing_errors">Show feed loading error messages</string>
     <string name="settings_sync_period_never">Never</string>
     <string name="settings_sync_period_fifteen_minutes">Every 15 minutes</string>
     <string name="settings_sync_period_thirty_minutes">Every 30 minutes</string>
@@ -257,6 +261,7 @@
     <string name="widget_background_opacity_title">Background opacity: %s%%</string>
     <string name="widget_font_size_title">Font size</string>
     <string name="file_menu">File</string>
+    <string name="exit_menu">Exit</string>
     <string name="menu_view">View</string>
     <string name="settings_left_swipe_action">Left swipe</string>
     <string name="settings_right_swipe_action">Right swipe</string>

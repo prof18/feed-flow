@@ -125,6 +125,7 @@ class AddFeedExtensionActivity : BaseThemeActivity() {
                                 .fillMaxWidth()
                                 .padding(Spacing.regular),
                             text = LocalFeedFlowStrings.current.addingFeed,
+                            color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleMedium,
                         )
                     }
@@ -134,6 +135,7 @@ class AddFeedExtensionActivity : BaseThemeActivity() {
                             .fillMaxWidth()
                             .padding(Spacing.regular),
                         text = message,
+                        color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }

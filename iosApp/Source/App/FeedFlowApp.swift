@@ -15,13 +15,14 @@ struct FeedFlowApp: App {
     @Environment(\.scenePhase)
     private var scenePhase: ScenePhase
     @State private var appState: AppState = .init()
-    @State private var browserSelector: BrowserSelector = .init()
+    @State private var browserSelector: BrowserSelector
 
     private var feedSyncTimer: FeedSyncTimer = .init()
 
     init() {
         startKoin()
         setupTelemetry()
+        _browserSelector = State(initialValue: BrowserSelector())
 
         if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
             if let keys = NSDictionary(contentsOfFile: path) {

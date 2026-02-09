@@ -1,7 +1,5 @@
-- Added Miniflux, Feedbin, Bazqux, and Google Drive sync integrations
-- Widget customization and reconfiguration support
-- Article export and backup functionality
-- Open images full screen from reader mode
-- Search filters and mark all above/below as read
-- Feed Suggestions to discover new content
-- Change feed category from drawer
+- Added quick Open Feed Website actions from feeds and improved website links in the drawer.
+- Improved reader mode rendering with some characters.
+- Fixed background sync period updates and multiple stability issues.
+- Added an option to hide feed loading error messages.
+-  Fixed some bugs and possible crashes

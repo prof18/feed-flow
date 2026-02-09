@@ -64,6 +64,16 @@
   </content_rating>
 
   <releases>
+      <release version="1.10.0" date="2026-02-09">
+          <description>
+              <p>Fixed text scaling on HDPI screens</p>
+              <p>Added Open Feed Website actions from feed lists for faster source access.</p>
+              <p>Added auto-hide for articles marked as read and an option to hide feed loading errors.</p>
+              <p>Improved reader mode rendering with some characters</p>
+              <p>Fixed some bugs and possible crashes</p>
+              <p>Improved reader mode readability with better content width and spacing on large screens.</p>
+          </description>
+      </release>
       <release version="1.9.0" date="2026-01-20">
           <description>
               <p>Added Miniflux, Feedbin, and Bazqux sync integrations</p>

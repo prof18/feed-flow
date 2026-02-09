@@ -134,6 +134,16 @@ class FeedSourceListViewModel internal constructor(
         }
     }
 
+    fun deleteAllFeedsInCategory(feedSources: List<FeedSource>) {
+        viewModelScope.launch {
+            setExpandedCategory()
+            for (feedSource in feedSources) {
+                feedSourcesRepository.deleteFeed(feedSource)
+            }
+            feedFetcherRepository.fetchFeeds()
+        }
+    }
+
     fun expandCategory(categoryId: CategoryId?) {
         feedsMutableState.update { oldState ->
             val newFeedSourceStates = oldState.feedSourcesWithCategory.map { feedSourceState ->

@@ -316,6 +316,9 @@
     <string name="delete_feed_confirmation_title">Delete feed?</string>
     <string name="delete_feed_confirmation_message">Are you sure you want to delete this feed? This action cannot be undone.</string>
     <string name="delete_feed_button">Delete feed</string>
+    <string name="delete_all_feeds_in_category">Delete all feeds</string>
+    <string name="delete_all_feeds_confirmation_title">Delete all feeds in category?</string>
+    <string name="delete_all_feeds_confirmation_message">Are you sure you want to delete all feeds in this category? This action cannot be undone.</string>
     <string name="feed_fetch_failed_tooltip">Feed update failed. Please check if the site is working</string>
     <string name="feed_fetch_failed_tooltip_short">Feed update failed</string>
     <string name="support_the_project">Support the project</string>

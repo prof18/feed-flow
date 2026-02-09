@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="feed_added_message">خوراک %s اضافه شد</string>
+    <string name="feed_url">آدرس خوراک</string>
+    <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
+    <string name="add_feed">اضافه کردن خوراک</string>
+    <string name="feeds_title">خوراک‌ها</string>
+    <string name="no_feeds_add_one_message">خوراکی نیست، لطفا یکی اضافه کنید</string>
 </resources>

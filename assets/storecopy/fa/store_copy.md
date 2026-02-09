@@ -1,14 +1,14 @@
-# Title
+# عنوان
 
-FeedFlow - RSS Reader
+فید فلو - خوراک خوان
 
-## Short desc
+## توضیح کوتاه
 
 Minimal, fast, uncluttered
 
-## Long desc
+## توضیح بلند
 
-Key Features:
+ویژگی‌های کلیدی:
 
 - Minimalist Design: Focus on what matters with a clutter-free interface
 - Seamless Sync: Keep your feeds in sync across devices with iCloud (iOS/macOS)

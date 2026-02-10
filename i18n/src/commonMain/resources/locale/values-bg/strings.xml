@@ -355,4 +355,5 @@
     <string name="open_feed_website_button">Отвори уебсайта на емисията</string>
     <string name="settings_hide_read_items">Автоматично скриване на статии, когато са маркирани като прочетени</string>
     <string name="settings_show_rss_parsing_errors">Показване на съобщения за грешки при зареждане на емисията</string>
+    <string name="exit_menu">Изход</string>
 </resources>

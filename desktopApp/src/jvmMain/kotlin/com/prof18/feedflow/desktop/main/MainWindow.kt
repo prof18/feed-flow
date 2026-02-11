@@ -274,6 +274,9 @@ private fun FrameWindowScope.MainWindowContent(
                 onSwipeActionUpdate = { direction, action ->
                     feedListSettingsViewModel.updateSwipeAction(direction, action)
                 },
+                onHideUnreadCountUpdate = { enabled ->
+                    feedListSettingsViewModel.updateHideUnreadCount(enabled)
+                },
             ),
         )
 

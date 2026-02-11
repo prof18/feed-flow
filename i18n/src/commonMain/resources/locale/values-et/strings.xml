@@ -355,4 +355,5 @@
     <string name="open_feed_website_button">Ava uudisvoo veebisait</string>
     <string name="settings_hide_read_items">Peida loetuks märkimisel artiklid automaatselt</string>
     <string name="settings_show_rss_parsing_errors">Näita uudisvoo laadimisel tekkinud veateateid</string>
+    <string name="exit_menu">Välju</string>
 </resources>

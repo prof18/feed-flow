@@ -1,6 +1,6 @@
 [versions]
 about-libraries = "13.2.1"
-activity-compose = "1.12.3"
+activity-compose = "1.12.4"
 android-compile-sdk = "36"
 android-gradle-plugin = "8.13.2"
 android-min-sdk = "26"

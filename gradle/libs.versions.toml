@@ -69,7 +69,7 @@ slf4jNop = "2.0.17"
 # https://github.com/cashapp/sqldelight/blob/master/gradle/libs.versions.toml#L74
 # if necessry, dowload again the native library here
 # https://github.com/xerial/sqlite-jdbc/tree/master/src/main/resources/org/sqlite/native/Mac/aarch64
-sql-delight = "2.1.0"
+sql-delight = "2.2.1"
 stately-concurrency = "2.1.0"
 triplet-play = "3.13.0"
 turbine = "1.2.1"

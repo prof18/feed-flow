@@ -44,5 +44,10 @@ internal val developmentFeeds = SuggestedFeedCategory(
             description = "Latest product launches",
             logoUrl = "https://www.google.com/s2/favicons?domain=producthunt.com&sz=64",
         ),
+        SuggestedFeed(
+            name = "Lobsters",
+            url = "https://lobste.rs/rss",
+            logoUrl = "https://lobste.rs/favicon.ico",
+        ),
     ),
 )

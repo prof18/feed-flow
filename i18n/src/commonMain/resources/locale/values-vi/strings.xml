@@ -236,7 +236,7 @@
     <string name="settings_blocked_words">Những từ bị chặn</string>
     <string name="add_word_placeholder">Thêm từ</string>
     <string name="blocked_words_empty_state">Chưa chặn từ nào</string>
-    <string name="blocked_words_description">Các bài viết có chứa những từ này trong tựa đề hoặc mô tả sẽ bị ẩn.</string>
+    <string name="blocked_words_description">Các bài viết có chứa từ này trong tựa đề hoặc mô tả sẽ bị ẩn.</string>
     <string name="mark_all_read_dialog_message">Bạn có chắc muốn đánh dấu tất cả bài viết là đã đọc?</string>
     <string name="clear_old_articles_dialog_message">Bạn có chắc muốn xóa những bài viết cũ?</string>
     <string name="confirm_button">Xác nhận</string>
@@ -252,7 +252,7 @@
     <string name="about_menu_faq">FAQ</string>
     <string name="settings_hide_date">Ẩn ngày bài viết</string>
     <string name="settings_auto_delete_period_one_day">Một ngày</string>
-    <string name="time_format_title">Định dạng thời gian</string>
+    <string name="time_format_title">Định dạng giờ</string>
     <string name="time_format_hours_24">24 giờ</string>
     <string name="time_format_hours_12">12 giờ</string>
     <string name="settings_danger_title">Nguy hiểm</string>
@@ -276,8 +276,8 @@
     <string name="dropbox_auth_code_expired">Mã xác thực không còn hiệu lực. Vui lòng thử lại.</string>
     <string name="database_error_reset">Chúng tôi gặp sự cố khi tải dữ liệu của bạn và phải bắt đầu lại từ đầu. Xin lỗi nha.</string>
     <string name="trigger_feed_sync">Bật tính năng tải lên tài khoản của bạn</string>
-    <string name="menu_mark_all_above_as_read">Đánh dấu đã đọc tất cả nội dung trên</string>
-    <string name="menu_mark_all_below_as_read">Đánh dấu đã đọc tất cả nội dung dưới</string>
+    <string name="menu_mark_all_above_as_read">Đánh dấu đã đọc tất cả bài viết mới hơn</string>
+    <string name="menu_mark_all_below_as_read">Đánh dấu đã đọc tất cả bài viết cũ hơn</string>
     <string name="google_drive_sync_common_description">Kết nối tài khoản Google Drive của bạn để đồng bộ hóa các nguồn tin đăng ký, danh mục, bài viết đã đọc và đánh dấu giữa các thiết bị Android, iOS, iPadOS và máy tính để bàn. Dữ liệu sẽ được lưu trong thư mục dành riêng cho ứng dụng; FeedFlow sẽ không có quyền truy cập vào bất kỳ tệp nào của bạn</string>
     <string name="google_drive_auth_code_hint">Mã xác thực</string>
     <string name="google_drive_confirm_button">Xác nhận</string>
@@ -287,7 +287,7 @@
     <string name="google_drive_connect_button">Kết nối Google Drive</string>
     <string name="google_drive_desktop_sync_description">Nhấn vào nút bên dưới để kết nối tài khoản Google Drive của bạn. Một cửa sổ trình duyệt sẽ mở ra để xác thực. Sau khi hoàn tất đăng nhập, bạn có thể quay lại ứng dụng này.</string>
     <string name="change_category">Đổi danh mục</string>
-    <string name="feed_suggestions_title">Đề xuất bảng tin</string>
+    <string name="feed_suggestions_title">Gợi ý nguồn tin</string>
     <string name="feed_suggestions_description">Duyệt và thêm nguồn tin vào bộ sưu tập của bạn</string>
     <string name="google_drive_auth_retry">Bạn cần xác thực lại để tiếp tục sử dụng tính năng đồng bộ hóa Google Drive. Vào mục Tài khoản, hủy liên kết rồi liên kết lại.</string>
     <string name="miniflux_account_connected">Tài khoản Miniflux của bạn đã được kết nối thành công</string>
@@ -301,7 +301,7 @@
     <string name="import_export_articles_section_title">Bài viết (CSV)</string>
     <string name="import_export_articles_description">Nhập và xuất bài viết của bạn dưới dạng tệp CSV.\nViệc nhập bài viết yêu cầu nguồn tin và danh mục phải được thiết lập sẵn.</string>
     <string name="import_articles_button">Nhập bài viết từ CSV</string>
-    <string name="export_articles_button">Xuất bài viết thành CSV</string>
+    <string name="export_articles_button">Xuất bài viết ra CSV</string>
     <string name="import_articles_dialog_title">Chọn tệp CSV</string>
     <string name="export_articles_dialog_title">Lưu tệp CSV</string>
     <string name="articles_importing_message">Đang nhập các bài viết</string>
@@ -353,6 +353,7 @@
     <string name="settings_notification_mode_grouped">Gộp chung lại</string>
     <string name="settings_theme_oled">Đen</string>
     <string name="open_feed_website_button">Mở trang web nguồn tin</string>
-    <string name="settings_hide_read_items">Ẩn những bài viết đánh dấu đã đọc</string>
+    <string name="settings_hide_read_items">Ẩn các bài viết đánh dấu đã đọc</string>
     <string name="settings_show_rss_parsing_errors">Hiện thông báo lỗi tải nguồn tin</string>
+    <string name="exit_menu">Thoát</string>
 </resources>

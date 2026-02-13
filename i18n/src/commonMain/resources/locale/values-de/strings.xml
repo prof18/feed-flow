@@ -68,7 +68,7 @@
     <string name="link_copied_success">Link erfolgreich kopiert!</string>
     <string name="empty_screen_back_to_timeline">Zurück zur Zeitleiste</string>
     <string name="about_menu_contribute_translations">Mit Übersetzungen helfen</string>
-    <string name="settings_toggle_show_read_articles">Gelesene Artikel in der Zeitleiste anzeigen</string>
+    <string name="settings_toggle_show_read_articles">Gelesene Artikel in Listen anzeigen</string>
     <string name="search_no_data">Keine Übereinstimmungen für %s.</string>
     <string name="search_placeholder">Suchen…</string>
     <string name="action_done">Fertig</string>
@@ -355,4 +355,5 @@
     <string name="open_feed_website_button">Webseite des Feeds öffnen</string>
     <string name="settings_hide_read_items">Artikel automatisch ausblenden, wenn sie als gelesen markiert werden</string>
     <string name="settings_show_rss_parsing_errors">Fehlermeldungen beim Laden der Feeds anzeigen</string>
+    <string name="exit_menu">Beenden</string>
 </resources>

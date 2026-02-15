@@ -47,6 +47,7 @@ internal val developmentFeeds = SuggestedFeedCategory(
         SuggestedFeed(
             name = "Lobsters",
             url = "https://lobste.rs/rss",
+            description = "Lobsters is a computing-focused community centered around link aggregation and discussion"
             logoUrl = "https://lobste.rs/favicon.ico",
         ),
     ),

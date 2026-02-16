@@ -208,8 +208,8 @@
     <string name="settings_experimental_parsing">Použit experimentální engine pro režim čtečky</string>
     <string name="enable_notifications_for_feed">Povolit upozornění na nové články</string>
     <string name="settings_sync_period_fifteen_minutes">Každých 15 minut</string>
-    <string name="settings_left_swipe_action">Swipe doleva</string>
-    <string name="settings_right_swipe_action">Swipe doprava</string>
+    <string name="settings_left_swipe_action">Posun doleva</string>
+    <string name="settings_right_swipe_action">Posun doprava</string>
     <string name="settings_swipe_action_toggle_read">Přepnout stav přečtení</string>
     <string name="settings_swipe_action_toggle_bookmark">Přepnout záložku</string>
     <string name="settings_swipe_action_none">Vypnuté</string>

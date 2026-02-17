@@ -70,6 +70,7 @@ import com.russhwolf.settings.Settings
 import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

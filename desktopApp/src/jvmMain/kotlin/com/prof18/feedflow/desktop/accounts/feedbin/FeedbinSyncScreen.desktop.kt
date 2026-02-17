@@ -9,65 +9,56 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.prof18.feedflow.core.model.DataNotFound
 import com.prof18.feedflow.core.model.NetworkFailure
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.shared.presentation.FeedbinSyncViewModel
 import com.prof18.feedflow.shared.ui.accounts.feedbin.FeedbinSyncContent
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
-internal class FeedbinSyncScreen : Screen {
+@Composable
+internal fun FeedbinSyncScreen(
+    navigateBack: () -> Unit,
+) {
+    val viewModel = koinViewModel<FeedbinSyncViewModel>()
 
-    @Composable
-    override fun Content() {
-        val viewModel = desktopViewModel { DI.koin.get<FeedbinSyncViewModel>() }
+    val uiState by viewModel.uiState.collectAsState()
+    val isLoginLoading by viewModel.loginLoading.collectAsState()
 
-        val navigator = LocalNavigator.currentOrThrow
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-        val uiState by viewModel.uiState.collectAsState()
-        val isLoginLoading by viewModel.loginLoading.collectAsState()
+    val strings = LocalFeedFlowStrings.current
+    LaunchedEffect(Unit) {
+        viewModel.errorState.collect { failure ->
+            val errorMessage = when (failure) {
+                is NetworkFailure.Unauthorised -> strings.wrongCredentialsErrorMessage
+                is DataNotFound -> strings.wrongUrlErrorMessage
+                else -> strings.genericErrorMessage
+            }
 
-        val snackbarHostState = remember { SnackbarHostState() }
-        val scope = rememberCoroutineScope()
-
-        val strings = LocalFeedFlowStrings.current
-        LaunchedEffect(Unit) {
-            viewModel.errorState.collect { failure ->
-                val errorMessage = when (failure) {
-                    is NetworkFailure.Unauthorised -> strings.wrongCredentialsErrorMessage
-                    is DataNotFound -> strings.wrongUrlErrorMessage
-                    else -> strings.genericErrorMessage
-                }
-
-                scope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = errorMessage,
-                        duration = SnackbarDuration.Long,
-                    )
-                }
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = errorMessage,
+                    duration = SnackbarDuration.Long,
+                )
             }
         }
-
-        FeedbinSyncContent(
-            uiState = uiState,
-            isLoginLoading = isLoginLoading,
-            onBackClick = {
-                navigator.pop()
-            },
-            onLoginClick = { username, password ->
-                viewModel.login(username, password)
-            },
-            onDisconnectClick = {
-                viewModel.disconnect()
-            },
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
-            },
-        )
     }
+
+    FeedbinSyncContent(
+        uiState = uiState,
+        isLoginLoading = isLoginLoading,
+        onBackClick = navigateBack,
+        onLoginClick = { username, password ->
+            viewModel.login(username, password)
+        },
+        onDisconnectClick = {
+            viewModel.disconnect()
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
+    )
 }

@@ -13,15 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.window.DialogWindow
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.desktop.addfeed.AddFeedScreenContent
-import com.prof18.feedflow.desktop.desktopViewModel
-import com.prof18.feedflow.desktop.di.DI
-import com.prof18.feedflow.desktop.editfeed.EditFeedScreen
-import com.prof18.feedflow.desktop.utils.generateUniqueKey
 import com.prof18.feedflow.shared.presentation.FeedSourceListViewModel
 import com.prof18.feedflow.shared.presentation.model.UIErrorState
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
@@ -29,97 +23,92 @@ import com.prof18.feedflow.shared.ui.feedsourcelist.FeedSourceListContent
 import com.prof18.feedflow.shared.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.shared.ui.utils.LocalFeedFlowStrings
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.compose.viewmodel.koinViewModel
 
-class FeedSourceListScreen : Screen {
+@Composable
+internal fun FeedSourceListScreen(
+    onAddFeedClick: () -> Unit,
+    navigateBack: () -> Unit,
+    onEditFeedClick: (FeedSource) -> Unit,
+) {
+    var dialogState by remember { mutableStateOf(false) }
 
-    override val key: String = generateUniqueKey()
+    DialogWindow(
+        title = LocalFeedFlowStrings.current.addFeed,
+        visible = dialogState,
+        onCloseRequest = { dialogState = false },
+    ) {
+        AddFeedScreenContent(
+            onFeedAdded = {
+                dialogState = false
+            },
+        )
+    }
+    val viewModel = koinViewModel<FeedSourceListViewModel>()
+    val feedSources by viewModel.feedSourcesState.collectAsState()
 
-    @Composable
-    override fun Content() {
-        var dialogState by remember { mutableStateOf(false) }
+    val strings = LocalFeedFlowStrings.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val uriHandler = LocalUriHandler.current
 
-        DialogWindow(
-            title = LocalFeedFlowStrings.current.addFeed,
-            visible = dialogState,
-            onCloseRequest = { dialogState = false },
-        ) {
-            AddFeedScreenContent(
-                onFeedAdded = {
-                    dialogState = false
-                },
-            )
-        }
-        val viewModel = desktopViewModel { DI.koin.get<FeedSourceListViewModel>() }
-        val feedSources by viewModel.feedSourcesState.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.errorState.collect { errorState ->
+            when (errorState) {
+                is UIErrorState.DatabaseError -> {
+                    snackbarHostState.showSnackbar(
+                        strings.databaseError(errorState.errorCode.code),
+                        duration = SnackbarDuration.Short,
+                    )
+                }
 
-        val navigator = LocalNavigator.currentOrThrow
-        val strings = LocalFeedFlowStrings.current
-        val snackbarHostState = remember { SnackbarHostState() }
-        val uriHandler = LocalUriHandler.current
+                is UIErrorState.FeedErrorState -> {
+                    snackbarHostState.showSnackbar(
+                        strings.feedErrorMessageImproved(errorState.feedName),
+                        duration = SnackbarDuration.Short,
+                    )
+                }
 
-        LaunchedEffect(Unit) {
-            viewModel.errorState.collect { errorState ->
-                when (errorState) {
-                    is UIErrorState.DatabaseError -> {
-                        snackbarHostState.showSnackbar(
-                            strings.databaseError(errorState.errorCode.code),
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
+                is UIErrorState.SyncError -> {
+                    snackbarHostState.showSnackbar(
+                        strings.syncErrorMessage((errorState.errorCode.code)),
+                        duration = SnackbarDuration.Short,
+                    )
+                }
 
-                    is UIErrorState.FeedErrorState -> {
-                        snackbarHostState.showSnackbar(
-                            strings.feedErrorMessageImproved(errorState.feedName),
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
-
-                    is UIErrorState.SyncError -> {
-                        snackbarHostState.showSnackbar(
-                            strings.syncErrorMessage((errorState.errorCode.code)),
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
-
-                    is UIErrorState.DeleteFeedSourceError -> {
-                        snackbarHostState.showSnackbar(
-                            strings.deleteFeedSourceError,
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
+                is UIErrorState.DeleteFeedSourceError -> {
+                    snackbarHostState.showSnackbar(
+                        strings.deleteFeedSourceError,
+                        duration = SnackbarDuration.Short,
+                    )
                 }
             }
         }
-
-        FeedSourceListContent(
-            feedSourceListState = feedSources,
-            onAddFeedClick = {
-                dialogState = true
-            },
-            onDeleteFeedClick = { feedSource ->
-                viewModel.deleteFeedSource(feedSource)
-            },
-            onExpandClicked = { categoryId ->
-                viewModel.expandCategory(categoryId)
-            },
-            navigateBack = {
-                navigator.pop()
-            },
-            onEditFeedSourceClick = { feedSource ->
-                navigator.push(EditFeedScreen(feedSource))
-            },
-            onRenameFeedSourceClick = { feedSource, newName ->
-                viewModel.updateFeedName(feedSource, newName)
-            },
-            onPinFeedClick = { feedSource ->
-                viewModel.toggleFeedPin(feedSource)
-            },
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
-            },
-            onOpenWebsite = { url -> uriHandler.openUri(url) },
-        )
     }
+
+    FeedSourceListContent(
+        feedSourceListState = feedSources,
+        onAddFeedClick = {
+            onAddFeedClick()
+        },
+        onDeleteFeedClick = { feedSource ->
+            viewModel.deleteFeedSource(feedSource)
+        },
+        onExpandClicked = { categoryId ->
+            viewModel.expandCategory(categoryId)
+        },
+        navigateBack = navigateBack,
+        onEditFeedSourceClick = onEditFeedClick,
+        onRenameFeedSourceClick = { feedSource, newName ->
+            viewModel.updateFeedName(feedSource, newName)
+        },
+        onPinFeedClick = { feedSource ->
+            viewModel.toggleFeedPin(feedSource)
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
+        onOpenWebsite = { url -> uriHandler.openUri(url) },
+    )
 }
 
 @Preview

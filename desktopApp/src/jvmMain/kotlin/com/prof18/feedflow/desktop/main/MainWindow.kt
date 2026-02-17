@@ -54,7 +54,6 @@ import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.Accounts
 import com.prof18.feedflow.desktop.AddFeed
 import com.prof18.feedflow.desktop.BazquxSync
-import com.prof18.feedflow.desktop.BlockedWords
 import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.DropboxSync
 import com.prof18.feedflow.desktop.EditFeed
@@ -276,6 +275,7 @@ private fun FrameWindowScope.MainWindowContent(
         var aboutDialogVisibility by remember { mutableStateOf(false) }
         var showMarkAllReadDialog by remember { mutableStateOf(false) }
         var showClearOldArticlesDialog by remember { mutableStateOf(false) }
+        val dialogWindowNavigator = rememberDesktopDialogWindowNavigator()
 
         AboutDialog(
             visible = aboutDialogVisibility,
@@ -340,6 +340,11 @@ private fun FrameWindowScope.MainWindowContent(
                 homeViewModel.deleteOldFeedItems()
                 showClearOldArticlesDialog = false
             },
+        )
+
+        BlockedWordsScreen(
+            visible = dialogWindowNavigator.isOpen(DesktopDialogWindowDestination.BlockedWords),
+            onCloseRequest = { dialogWindowNavigator.close(DesktopDialogWindowDestination.BlockedWords) },
         )
 
         val currentFeedFilter by homeViewModel.currentFeedFilter.collectAsState()
@@ -455,7 +460,9 @@ private fun FrameWindowScope.MainWindowContent(
                     },
                 ),
                 onNavigateToFeedSourceList = { backStack.add(FeedSourceList) },
-                onNavigateToBlockedWords = { backStack.add(BlockedWords) },
+                onNavigateToBlockedWords = {
+                    dialogWindowNavigator.open(DesktopDialogWindowDestination.BlockedWords)
+                },
                 onNavigateToAccounts = { backStack.add(Accounts) },
             )
         }
@@ -632,10 +639,6 @@ private fun EntryProviderScope<NavKey>.screens(
     }
     entry<FeedbinSync> {
         FeedbinSyncScreen(navigateBack = navigateBack)
-    }
-
-    entry<BlockedWords> {
-        BlockedWordsScreen(navigateBack = navigateBack)
     }
 
     entry<FeedSourceList> {

@@ -62,8 +62,6 @@ data class EditFeed(
 @Serializable data object FeedbinSync : NavKey
 
 // Settings
-@Serializable data object BlockedWords : NavKey
-
 @Serializable data object FeedSourceList : NavKey
 
 // Convert domain models to/from routes
